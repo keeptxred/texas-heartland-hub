@@ -111,7 +111,7 @@ function buildDefaultBody(a: Article): ArticleBody {
 }
 
 function ArticlePage() {
-  const { article, body } = Route.useLoaderData();
+  const { article, body } = Route.useLoaderData() as { article: Article; body: ArticleBody };
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
     .filter((a): a is Article => Boolean(a));
