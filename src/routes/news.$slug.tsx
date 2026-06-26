@@ -115,7 +115,7 @@ function ArticlePage() {
   const { article, body } = Route.useLoaderData() as { article: Article; body: ArticleBody };
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
-    .filter((a): a is Article => Boolean(a));
+    .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
 
   const formattedDate = new Date(body.updated).toLocaleDateString("en-US", {
     year: "numeric",
