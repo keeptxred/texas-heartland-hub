@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { ARTICLES, isPublished } from "@/data/articles";
 
-const BASE_URL = "https://keeptxred.com";
+const BASE_URL = "https://www.keeptxred.com";
 const ROUTES = [
   "/",
   "/news",
