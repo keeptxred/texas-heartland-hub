@@ -19,6 +19,7 @@ import { Route as FindRepresentativeRouteImport } from './routes/find-representa
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
+import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -72,6 +73,11 @@ const ContactLegislatorsRoute = ContactLegislatorsRouteImport.update({
   path: '/contact-legislators',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
+  id: '/candidate-guides',
+  path: '/candidate-guides',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -86,6 +92,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/candidate-guides': typeof CandidateGuidesRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/candidate-guides': typeof CandidateGuidesRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/candidate-guides': typeof CandidateGuidesRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/candidate-guides'
     | '/contact-legislators'
     | '/county-elections'
     | '/elections'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/candidate-guides'
     | '/contact-legislators'
     | '/county-elections'
     | '/elections'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/candidate-guides'
     | '/contact-legislators'
     | '/county-elections'
     | '/elections'
@@ -174,6 +186,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  CandidateGuidesRoute: typeof CandidateGuidesRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
   ElectionsRoute: typeof ElectionsRoute
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactLegislatorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/candidate-guides': {
+      id: '/candidate-guides'
+      path: '/candidate-guides'
+      fullPath: '/candidate-guides'
+      preLoaderRoute: typeof CandidateGuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -278,6 +298,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  CandidateGuidesRoute: CandidateGuidesRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
   ElectionsRoute: ElectionsRoute,
