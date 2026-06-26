@@ -7,6 +7,8 @@ export type Article = {
   date: string;
   image: string;
   featured?: boolean;
+  /** ISO timestamp; if set and in the future, the article is hidden from listings, sitemap, and direct routes until that moment. */
+  publishAt?: string;
 };
 
 import capitol from "@/assets/capitol.jpg";
@@ -34,6 +36,8 @@ import boardroom from "@/assets/article-boardroom.jpg";
 import wind from "@/assets/article-wind.jpg";
 import openmeeting from "@/assets/article-openmeeting.jpg";
 import salestax from "@/assets/article-salestax.jpg";
+import governor from "@/assets/article-governor.jpg";
+import ag from "@/assets/article-ag.jpg";
 
 export const ARTICLES: Article[] = [
   {
@@ -307,7 +311,37 @@ export const ARTICLES: Article[] = [
     date: "1 week ago",
     image: salestax,
   },
+  {
+    slug: "texas-attorney-general-powers",
+    category: "Legislature",
+    title: "The Powers of the Texas Attorney General Explained",
+    dek: "From multistate lawsuits and consumer protection to child-support enforcement and open-records opinions — what the elected Attorney General of Texas actually does, and the statutory limits of the office.",
+    author: "Civics Desk",
+    date: "Just published",
+    image: ag,
+    publishAt: "2026-06-29T11:00:00Z",
+  },
+  {
+    slug: "texas-governor-powers",
+    category: "Legislature",
+    title: "The Powers of the Texas Governor Explained",
+    dek: "Texas has one of the most constitutionally limited governors in the country — and one of the most politically powerful. Here's what the office can do with appointments, vetoes, special sessions, and the line-item veto.",
+    author: "Civics Desk",
+    date: "Just published",
+    image: governor,
+    publishAt: "2026-07-02T11:00:00Z",
+  },
 ];
+
+/** True if the article's publishAt is unset or has already passed (relative to `now`). */
+export function isPublished(a: Article, now: Date = new Date()): boolean {
+  return !a.publishAt || new Date(a.publishAt).getTime() <= now.getTime();
+}
+
+/** ARTICLES filtered to only those currently live. */
+export function publishedArticles(now: Date = new Date()): Article[] {
+  return ARTICLES.filter((a) => isPublished(a, now));
+}
 
 export const ELECTION_RACES = [
   { office: "U.S. Senate", incumbent: "Republican Hold", margin: "+12.4", status: "Likely R" },
