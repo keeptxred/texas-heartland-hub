@@ -18,7 +18,7 @@ export const Route = createFileRoute("/elections")({
 });
 
 function ElectionsPage() {
-  const electionNews = ARTICLES.filter((a) => a.category === "Elections" || a.category === "Education");
+  const electionNews = ARTICLES.filter((a) => (a.category === "Elections" || a.category === "Education") && isPublished(a)).sort(sortByDateDesc);
 
   return (
     <>
