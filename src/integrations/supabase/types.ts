@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_articles: {
+        Row: {
+          author: string
+          body: string | null
+          category: string
+          created_at: string
+          dek: string
+          id: string
+          image_url: string | null
+          published_at: string
+          slug: string
+          source_name: string | null
+          source_url: string | null
+          title: string
+        }
+        Insert: {
+          author?: string
+          body?: string | null
+          category: string
+          created_at?: string
+          dek: string
+          id?: string
+          image_url?: string | null
+          published_at?: string
+          slug: string
+          source_name?: string | null
+          source_url?: string | null
+          title: string
+        }
+        Update: {
+          author?: string
+          body?: string | null
+          category?: string
+          created_at?: string
+          dek?: string
+          id?: string
+          image_url?: string | null
+          published_at?: string
+          slug?: string
+          source_name?: string | null
+          source_url?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
