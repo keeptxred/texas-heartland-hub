@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ARTICLES, ELECTION_RACES } from "@/data/articles";
+import { ARTICLES, ELECTION_RACES, isPublished, sortByDateDesc } from "@/data/articles";
 import ballot from "@/assets/ballot.jpg";
 
 export const Route = createFileRoute("/elections")({
@@ -18,7 +18,7 @@ export const Route = createFileRoute("/elections")({
 });
 
 function ElectionsPage() {
-  const electionNews = ARTICLES.filter((a) => a.category === "Elections" || a.category === "Education");
+  const electionNews = ARTICLES.filter((a) => (a.category === "Elections" || a.category === "Education") && isPublished(a)).sort(sortByDateDesc);
 
   return (
     <>

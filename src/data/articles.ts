@@ -9,6 +9,8 @@ export type Article = {
   featured?: boolean;
   /** ISO timestamp; if set and in the future, the article is hidden from listings, sitemap, and direct routes until that moment. */
   publishAt?: string;
+  /** ISO timestamp for sorting and display. Required on all articles. */
+  publishedAt: string;
 };
 
 import capitol from "@/assets/capitol.jpg";
@@ -47,6 +49,7 @@ export const ARTICLES: Article[] = [
     dek: "GOP leaders signal confidence as the historic $18 billion plan reaches final deliberations in the House, promising compression to district maintenance rates.",
     author: "Staff Reporter",
     date: "2 hours ago",
+    publishedAt: "2026-06-26T10:00:00",
     image: capitol,
     featured: true,
   },
@@ -57,6 +60,7 @@ export const ARTICLES: Article[] = [
     dek: "Texas Department of Public Safety expands buoy barriers and razor wire as federal pushback intensifies.",
     author: "Border Bureau",
     date: "5 hours ago",
+    publishedAt: "2026-06-26T07:00:00",
     image: trooper,
   },
   {
@@ -66,6 +70,7 @@ export const ARTICLES: Article[] = [
     dek: "Suburban counties around Houston and DFW post double-digit gains in conservative voter rolls.",
     author: "Politics Desk",
     date: "1 day ago",
+    publishedAt: "2026-06-25T12:00:00",
     image: ballot,
   },
   {
@@ -75,6 +80,7 @@ export const ARTICLES: Article[] = [
     dek: "Parental rights coalitions are running slates of candidates in 87 ISDs across the state this May.",
     author: "Lone Star Civics",
     date: "2 days ago",
+    publishedAt: "2026-06-24T12:00:00",
     image: classroom,
   },
   {
@@ -84,6 +90,7 @@ export const ARTICLES: Article[] = [
     dek: "Conservative caucus members say they will not adjourn until appraisal caps are codified.",
     author: "Austin Bureau",
     date: "3 days ago",
+    publishedAt: "2026-06-23T12:00:00",
     image: podium,
   },
   {
@@ -93,6 +100,7 @@ export const ARTICLES: Article[] = [
     dek: "Our analysis of TEA filings shows where homeowners are paying the steepest ISD M&O rates.",
     author: "Data Desk",
     date: "4 days ago",
+    publishedAt: "2026-06-22T12:00:00",
     image: taxbill,
   },
   {
@@ -102,6 +110,7 @@ export const ARTICLES: Article[] = [
     dek: "West Texas operators warn of EPA overreach even as output climbs to 6.1 million barrels per day.",
     author: "Energy Desk",
     date: "5 days ago",
+    publishedAt: "2026-06-21T12:00:00",
     image: oil,
   },
   {
@@ -111,6 +120,7 @@ export const ARTICLES: Article[] = [
     dek: "A plain-English walkthrough of the $100,000 school-district homestead exemption, over-65 freezes, and disabled-veteran reductions — and how to file with your county appraisal district.",
     author: "Taxpayer Desk",
     date: "1 week ago",
+    publishedAt: "2026-06-19T12:00:00",
     image: suburb,
   },
   {
@@ -120,6 +130,7 @@ export const ARTICLES: Article[] = [
     dek: "From filing in the House clerk's office to the Governor's desk — every committee, calendar, and conference step that shapes the bills you actually live under.",
     author: "Civics Desk",
     date: "1 week ago",
+    publishedAt: "2026-06-19T13:00:00",
     image: rotunda,
   },
   {
@@ -129,6 +140,7 @@ export const ARTICLES: Article[] = [
     dek: "House Bill 1927 lets eligible Texans 21 and older carry a handgun without a permit. Here's where you still can't carry, and what reciprocity means on the road.",
     author: "Liberty Desk",
     date: "2 weeks ago",
+    publishedAt: "2026-06-12T12:00:00",
     image: carry,
   },
   {
@@ -138,6 +150,7 @@ export const ARTICLES: Article[] = [
     dek: "In most Texas districts the Republican primary is the real election. We break down open primaries, runoff math, and why low-turnout March races set the next decade of policy.",
     author: "Elections Desk",
     date: "2 weeks ago",
+    publishedAt: "2026-06-12T13:00:00",
     image: pollingplace,
   },
   {
@@ -147,6 +160,7 @@ export const ARTICLES: Article[] = [
     dek: "How the new ESA program works, who qualifies, what expenses are covered, and the application timeline parents need to know before the fall enrollment window.",
     author: "Education Desk",
     date: "3 weeks ago",
+    publishedAt: "2026-06-05T12:00:00",
     image: library,
   },
   {
@@ -156,6 +170,7 @@ export const ARTICLES: Article[] = [
     dek: "Deadlines, evidence packets, equal-and-uniform comps, and the ARB hearing script that gets values reduced. A practical playbook for every Texas homeowner.",
     author: "Taxpayer Desk",
     date: "3 weeks ago",
+    publishedAt: "2026-06-05T13:00:00",
     image: gavel,
   },
   {
@@ -165,6 +180,7 @@ export const ARTICLES: Article[] = [
     dek: "Why Texas runs its own grid, what the Public Utility Commission actually controls, and the reforms keeping the lights on through summer peaks and winter freezes.",
     author: "Energy Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T12:00:00",
     image: grid,
   },
   {
@@ -174,6 +190,7 @@ export const ARTICLES: Article[] = [
     dek: "How Texas DPS, the National Guard, and county sheriffs coordinate enforcement along the Rio Grande — and the constitutional case for state action when Washington won't act.",
     author: "Border Bureau",
     date: "1 month ago",
+    publishedAt: "2026-05-27T13:00:00",
     image: border,
   },
   {
@@ -183,6 +200,7 @@ export const ARTICLES: Article[] = [
     dek: "How Texas property taxes really work — appraisal caps, homestead exemptions, ISD M&O rates, and a step-by-step walkthrough for estimating what you actually owe.",
     author: "Taxpayer Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T14:00:00",
     image: taxbill,
   },
   {
@@ -192,6 +210,7 @@ export const ARTICLES: Article[] = [
     dek: "How Texas's open-primary system works, when runoffs trigger, how districts are drawn, and the dates every conservative voter should mark on the calendar.",
     author: "Elections Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T15:00:00",
     image: ballot2,
   },
   {
@@ -201,6 +220,7 @@ export const ARTICLES: Article[] = [
     dek: "What an elected school board actually controls — from library policy and bond elections to superintendent hiring — and why low-turnout May races shape your kids' classrooms.",
     author: "Education Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T16:00:00",
     image: boardroom,
   },
   {
@@ -210,6 +230,7 @@ export const ARTICLES: Article[] = [
     dek: "How the Railroad Commission, PUC, and ERCOT divide authority over the nation's largest energy economy — and where renewables fit into a grid built on hydrocarbons.",
     author: "Energy Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T17:00:00",
     image: wind,
   },
   {
@@ -219,6 +240,7 @@ export const ARTICLES: Article[] = [
     dek: "Inside the CAD: how appraisers set market values, what the Appraisal Review Board does, and the statutory rights every property owner can invoke during protest season.",
     author: "Taxpayer Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T18:00:00",
     image: suburb,
   },
   {
@@ -228,6 +250,7 @@ export const ARTICLES: Article[] = [
     dek: "Who can register, the 30-day deadline before each election, accepted photo ID, and how to update your address when you move counties — everything you need before you vote.",
     author: "Civics Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T19:00:00",
     image: voterreg,
   },
   {
@@ -237,6 +260,7 @@ export const ARTICLES: Article[] = [
     dek: "Counties, cities, ISDs, MUDs, and emergency-services districts each levy their own tax — here's who decides what, and which line on your bill funds which service.",
     author: "Civics Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T20:00:00",
     image: courthouse,
   },
   {
@@ -246,6 +270,7 @@ export const ARTICLES: Article[] = [
     dek: "A factual tour of the 1,254-mile border — Border Patrol sectors, international bridges, and the river communities of the Rio Grande Valley, El Paso, and Big Bend.",
     author: "Border Bureau",
     date: "1 month ago",
+    publishedAt: "2026-05-27T21:00:00",
     image: riogrande,
   },
   {
@@ -255,6 +280,7 @@ export const ARTICLES: Article[] = [
     dek: "How the Foundation School Program, basic allotment, and 'Robin Hood' recapture redistribute property-tax dollars — and why two ISDs with identical tax rates fund students very differently.",
     author: "Education Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T22:00:00",
     image: schoolbus,
   },
   {
@@ -264,6 +290,7 @@ export const ARTICLES: Article[] = [
     dek: "Special session, sunset review, calendars committee, constitutional amendment, point of order — a plain-English glossary of the terms Austin reporters never define.",
     author: "Civics Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-27T23:00:00",
     image: capitol,
   },
   {
@@ -273,6 +300,7 @@ export const ARTICLES: Article[] = [
     dek: "Sheriff's office, jail operations, road and bridge, district courts, and indigent defense — a breakdown of where every dollar of your county property tax actually goes.",
     author: "Taxpayer Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-28T00:00:00",
     image: courthouse,
   },
   {
@@ -282,6 +310,7 @@ export const ARTICLES: Article[] = [
     dek: "Surface water belongs to the state; groundwater belongs to the landowner. How prior appropriation, groundwater conservation districts, and interstate compacts shape every drop.",
     author: "Policy Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-28T01:00:00",
     image: water,
   },
   {
@@ -291,6 +320,7 @@ export const ARTICLES: Article[] = [
     dek: "Texas has amended its 1876 constitution more than 500 times. Here's how the two-thirds legislative vote and statewide ballot referendum work — and how to read the November propositions.",
     author: "Civics Desk",
     date: "1 month ago",
+    publishedAt: "2026-05-28T02:00:00",
     image: gavel,
   },
   {
@@ -300,6 +330,7 @@ export const ARTICLES: Article[] = [
     dek: "Every city council, school board, and commissioners court in Texas operates under sunshine laws. Here's how to read a posted agenda, file a public information request, and challenge a closed-door vote.",
     author: "Civics Desk",
     date: "1 week ago",
+    publishedAt: "2026-06-19T14:00:00",
     image: openmeeting,
   },
   {
@@ -309,6 +340,7 @@ export const ARTICLES: Article[] = [
     dek: "Texas is one of nine states without an income tax, and the 2019 constitutional amendment makes it nearly impossible to enact one. Here's the sales-tax-and-property-tax model that funds the second-largest state in the union.",
     author: "Taxpayer Desk",
     date: "1 week ago",
+    publishedAt: "2026-06-19T15:00:00",
     image: salestax,
   },
   {
@@ -318,6 +350,7 @@ export const ARTICLES: Article[] = [
     dek: "From multistate lawsuits and consumer protection to child-support enforcement and open-records opinions — what the elected Attorney General of Texas actually does, and the statutory limits of the office.",
     author: "Civics Desk",
     date: "Just published",
+    publishedAt: "2026-06-26T12:00:00",
     image: ag,
     publishAt: "2026-06-29T11:00:00Z",
   },
@@ -328,6 +361,7 @@ export const ARTICLES: Article[] = [
     dek: "Texas has one of the most constitutionally limited governors in the country — and one of the most politically powerful. Here's what the office can do with appointments, vetoes, special sessions, and the line-item veto.",
     author: "Civics Desk",
     date: "Just published",
+    publishedAt: "2026-06-26T13:00:00",
     image: governor,
     publishAt: "2026-07-02T11:00:00Z",
   },
@@ -341,6 +375,11 @@ export function isPublished(a: Article, now: Date = new Date()): boolean {
 /** ARTICLES filtered to only those currently live. */
 export function publishedArticles(now: Date = new Date()): Article[] {
   return ARTICLES.filter((a) => isPublished(a, now));
+}
+
+/** Sort articles by publishedAt descending (newest first). */
+export function sortByDateDesc(a: Article, b: Article): number {
+  return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
 }
 
 export const ELECTION_RACES = [

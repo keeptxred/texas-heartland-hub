@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroFlag from "@/assets/hero-flag.jpg";
-import { ARTICLES } from "@/data/articles";
+import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { TaxCalculator } from "@/components/tax-calculator";
 
 export const Route = createFileRoute("/")({
@@ -46,8 +46,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const featured = ARTICLES.find((a) => a.featured)!;
-  const rest = ARTICLES.filter((a) => !a.featured).slice(0, 4);
+  const sorted = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
+  const featured = sorted[0] ?? ARTICLES[0];
+  const rest = sorted.filter((a) => a.slug !== featured.slug).slice(0, 4);
 
   return (
     <>

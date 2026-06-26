@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ARTICLES, isPublished, type Article } from "@/data/articles";
+import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 
 export const Route = createFileRoute("/news/$slug")({
@@ -139,6 +139,7 @@ function _buildDefaultBody(a: Article): ArticleBody {
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/" },
     ],
     related: ARTICLES.filter((x) => x.category === a.category && x.slug !== a.slug && isPublished(x))
+      .sort(sortByDateDesc)
       .slice(0, 3)
       .map((x) => x.slug),
     cta: { label: "Browse the Newsroom", href: "/news" },
