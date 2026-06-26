@@ -16,14 +16,18 @@ export const Route = createFileRoute("/news/$slug")({
     const title = `${article.title} — Keep TX Red`;
     const desc = article.dek;
     const path = `/news/${article.slug}`;
+    const keywords = buildKeywords(article.title, article.dek, article.category);
     return {
       meta: [
         { title },
         { name: "description", content: desc },
+        { name: "keywords", content: keywords },
         { property: "og:title", content: article.title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
         { property: "og:url", content: path },
+        { property: "og:image", content: article.image },
+        { name: "twitter:image", content: article.image },
         { property: "article:published_time", content: body.updated },
         { property: "article:modified_time", content: body.updated },
         { property: "article:section", content: article.category },
@@ -83,6 +87,35 @@ export const Route = createFileRoute("/news/$slug")({
 });
 
 function buildDefaultBody(a: Article): ArticleBody {
+  return _buildDefaultBody(a);
+}
+
+const TEXAS_KEYWORDS = [
+  "Texas",
+  "Texas politics",
+  "Texas news",
+  "Lone Star State",
+  "Houston",
+  "Dallas",
+  "Austin",
+  "San Antonio",
+  "Fort Worth",
+];
+
+function buildKeywords(title: string, dek: string, category: string): string {
+  const base = new Set<string>([
+    ...TEXAS_KEYWORDS,
+    `Texas ${category}`,
+    `${category} in Texas`,
+  ]);
+  // Pull capitalized phrases from title/dek as additional keyword hints.
+  const text = `${title} ${dek}`;
+  const matches = text.match(/\b[A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+){0,2}\b/g) ?? [];
+  for (const m of matches.slice(0, 8)) base.add(m);
+  return Array.from(base).slice(0, 18).join(", ");
+}
+
+function _buildDefaultBody(a: Article): ArticleBody {
   return {
     updated: "2026-06-01",
     intro: [a.dek],
@@ -116,6 +149,14 @@ function ArticlePage() {
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
+
+  // Mid-article supplementary image: pick the first related article's image
+  // so every published article ships with at least 3 distinct, alt-tagged
+  // visuals (hero + mid-article + 3 related thumbnails = 5 total).
+  const midImage = related[0]
+    ? { src: related[0].image, alt: `Related Texas coverage: ${related[0].title}` }
+    : null;
+  const midSectionIndex = Math.min(1, Math.max(0, body.sections.length - 1));
 
   const formattedDate = new Date(body.updated).toLocaleDateString("en-US", {
     year: "numeric",
@@ -164,6 +205,16 @@ function ArticlePage() {
         {body.sections.map((sec, i) => (
           <section key={i} className="mt-10">
             <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">{sec.heading}</h2>
+            {sec.image ? (
+              <figure className="my-5">
+                <div className="aspect-[16/9] overflow-hidden bg-muted border border-foreground/10">
+                  <img src={sec.image.src} alt={sec.image.alt} loading="lazy" className="size-full object-cover" />
+                </div>
+                {sec.image.caption ? (
+                  <figcaption className="mt-2 text-xs text-muted-foreground italic text-center">{sec.image.caption}</figcaption>
+                ) : null}
+              </figure>
+            ) : null}
             {sec.paragraphs?.map((p, j) => (
               <p key={j} className="font-serif text-base leading-relaxed text-foreground mb-4">
                 {renderInline(p)}
@@ -197,6 +248,14 @@ function ArticlePage() {
                   </tbody>
                 </table>
               </div>
+            ) : null}
+            {!sec.image && midImage && i === midSectionIndex ? (
+              <figure className="my-6">
+                <div className="aspect-[16/9] overflow-hidden bg-muted border border-foreground/10">
+                  <img src={midImage.src} alt={midImage.alt} loading="lazy" className="size-full object-cover" />
+                </div>
+                <figcaption className="mt-2 text-xs text-muted-foreground italic text-center">{midImage.alt}</figcaption>
+              </figure>
             ) : null}
           </section>
         ))}

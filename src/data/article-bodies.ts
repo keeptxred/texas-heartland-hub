@@ -5,6 +5,7 @@ export type ArticleSection = {
   paragraphs?: string[];
   bullets?: string[];
   table?: { headers: string[]; rows: string[][] };
+  image?: { src: string; alt: string; caption?: string };
 };
 
 export type ArticleBody = {
