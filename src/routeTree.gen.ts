@@ -20,6 +20,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LawsRouteImport } from './routes/laws'
+import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
@@ -85,6 +86,11 @@ const LawsToKnowRoute = LawsToKnowRouteImport.update({
 const LawsRoute = LawsRouteImport.update({
   id: '/laws',
   path: '/laws',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlossaryRoute = GlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GetInvolvedRoute = GetInvolvedRouteImport.update({
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByTo {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -203,6 +211,7 @@ export interface FileRoutesById {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -229,6 +238,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/get-involved'
+    | '/glossary'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -253,6 +263,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/get-involved'
+    | '/glossary'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/get-involved'
+    | '/glossary'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -302,6 +314,7 @@ export interface RootRouteChildren {
   ElectionsRoute: typeof ElectionsRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
+  GlossaryRoute: typeof GlossaryRoute
   LawsRoute: typeof LawsRoute
   LawsToKnowRoute: typeof LawsToKnowRoute
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
@@ -393,6 +406,13 @@ declare module '@tanstack/react-router' {
       path: '/laws'
       fullPath: '/laws'
       preLoaderRoute: typeof LawsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/glossary': {
+      id: '/glossary'
+      path: '/glossary'
+      fullPath: '/glossary'
+      preLoaderRoute: typeof GlossaryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/get-involved': {
@@ -495,6 +515,7 @@ const rootRouteChildren: RootRouteChildren = {
   ElectionsRoute: ElectionsRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
+  GlossaryRoute: GlossaryRoute,
   LawsRoute: LawsRoute,
   LawsToKnowRoute: LawsToKnowRoute,
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
