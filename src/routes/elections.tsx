@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ARTICLES, ELECTION_RACES } from "@/data/articles";
+import { ARTICLES, ELECTION_RACES, isPublished, sortByDateDesc } from "@/data/articles";
 import ballot from "@/assets/ballot.jpg";
 
 export const Route = createFileRoute("/elections")({
