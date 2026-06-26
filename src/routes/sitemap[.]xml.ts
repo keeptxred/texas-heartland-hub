@@ -24,6 +24,7 @@ const ROUTES = [
   "/contact",
   "/privacy",
   "/glossary",
+  "/editorial-standards",
 ] as const;
 
 export const Route = createFileRoute("/sitemap.xml")({

@@ -24,6 +24,7 @@ import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
+import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -108,6 +109,11 @@ const ElectionsRoute = ElectionsRouteImport.update({
   path: '/elections',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
+  id: '/editorial-standards',
+  path: '/editorial-standards',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CountyElectionsRoute = CountyElectionsRouteImport.update({
   id: '/county-elections',
   path: '/county-elections',
@@ -157,6 +163,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/editorial-standards'
     | '/elections'
     | '/find-representative'
     | '/get-involved'
@@ -260,6 +270,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/editorial-standards'
     | '/elections'
     | '/find-representative'
     | '/get-involved'
@@ -285,6 +296,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/editorial-standards'
     | '/elections'
     | '/find-representative'
     | '/get-involved'
@@ -311,6 +323,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
+  EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElectionsRoute: typeof ElectionsRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
@@ -436,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/editorial-standards': {
+      id: '/editorial-standards'
+      path: '/editorial-standards'
+      fullPath: '/editorial-standards'
+      preLoaderRoute: typeof EditorialStandardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/county-elections': {
       id: '/county-elections'
       path: '/county-elections'
@@ -512,6 +532,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
+  EditorialStandardsRoute: EditorialStandardsRoute,
   ElectionsRoute: ElectionsRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
