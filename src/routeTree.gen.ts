@@ -19,6 +19,7 @@ import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
+import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
@@ -77,6 +78,11 @@ const LawsToKnowRoute = LawsToKnowRouteImport.update({
   path: '/laws-to-know',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GetInvolvedRoute = GetInvolvedRouteImport.update({
+  id: '/get-involved',
+  path: '/get-involved',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FindRepresentativeRoute = FindRepresentativeRouteImport.update({
   id: '/find-representative',
   path: '/find-representative',
@@ -121,6 +127,7 @@ export interface FileRoutesByFullPath {
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
@@ -181,6 +190,7 @@ export interface FileRouteTypes {
     | '/county-elections'
     | '/elections'
     | '/find-representative'
+    | '/get-involved'
     | '/laws-to-know'
     | '/legislative-updates'
     | '/news'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/county-elections'
     | '/elections'
     | '/find-representative'
+    | '/get-involved'
     | '/laws-to-know'
     | '/legislative-updates'
     | '/news'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/county-elections'
     | '/elections'
     | '/find-representative'
+    | '/get-involved'
     | '/laws-to-know'
     | '/legislative-updates'
     | '/news'
@@ -239,6 +251,7 @@ export interface RootRouteChildren {
   CountyElectionsRoute: typeof CountyElectionsRoute
   ElectionsRoute: typeof ElectionsRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
+  GetInvolvedRoute: typeof GetInvolvedRoute
   LawsToKnowRoute: typeof LawsToKnowRoute
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
   NewsRoute: typeof NewsRoute
@@ -323,6 +336,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LawsToKnowRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/get-involved': {
+      id: '/get-involved'
+      path: '/get-involved'
+      fullPath: '/get-involved'
+      preLoaderRoute: typeof GetInvolvedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/find-representative': {
       id: '/find-representative'
       path: '/find-representative'
@@ -383,6 +403,7 @@ const rootRouteChildren: RootRouteChildren = {
   CountyElectionsRoute: CountyElectionsRoute,
   ElectionsRoute: ElectionsRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
+  GetInvolvedRoute: GetInvolvedRoute,
   LawsToKnowRoute: LawsToKnowRoute,
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
   NewsRoute: NewsRoute,
