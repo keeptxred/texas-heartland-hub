@@ -8,6 +8,7 @@ const COLUMNS = [
       { to: "/elections", label: "Elections" },
       { to: "/legislative-updates", label: "Legislative Updates" },
       { to: "/candidate-guides", label: "Candidate Guides" },
+      { to: "/glossary", label: "Political Glossary" },
     ],
   },
   {
