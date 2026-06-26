@@ -12,7 +12,6 @@ const ROUTES = [
   "/find-representative",
   "/register-to-vote",
   "/contact-legislators",
-  "/volunteer",
   "/get-involved",
   "/county-elections",
   "/candidate-guides",
