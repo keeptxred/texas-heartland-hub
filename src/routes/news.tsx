@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useMemo } from "react";
 import { ARTICLES } from "@/data/articles";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import capitol from "@/assets/capitol.jpg";
@@ -45,6 +46,16 @@ function timeAgo(iso: string): string {
 function NewsPage() {
   const { articles } = Route.useLoaderData();
   const useLive = articles.length > 0;
+  const [activeCat, setActiveCat] = useState<(typeof CATS)[number]>("All");
+
+  const filteredLive = useMemo(
+    () => (activeCat === "All" ? articles : articles.filter((a: DailyArticle) => a.category === activeCat)),
+    [articles, activeCat]
+  );
+  const filteredStatic = useMemo(
+    () => (activeCat === "All" ? ARTICLES : ARTICLES.filter((a) => a.category === activeCat)),
+    [activeCat]
+  );
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
@@ -57,11 +68,13 @@ function NewsPage() {
       </div>
 
       <div className="flex flex-wrap gap-2 mb-10">
-        {CATS.map((c, i) => (
+        {CATS.map((c) => (
           <button
             key={c}
+            type="button"
+            onClick={() => setActiveCat(c)}
             className={`text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 border ${
-              i === 0
+              c === activeCat
                 ? "bg-foreground text-background border-foreground"
                 : "border-border hover:border-primary hover:text-primary"
             }`}
@@ -73,7 +86,7 @@ function NewsPage() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         {useLive
-          ? articles.map((a: DailyArticle) => {
+          ? filteredLive.map((a: DailyArticle) => {
               const img = a.image_url || CATEGORY_IMAGES[a.category] || capitol;
               const card = (
                 <>
@@ -96,7 +109,7 @@ function NewsPage() {
                 <article key={a.slug} className="group">{card}</article>
               );
             })
-          : ARTICLES.map((a) => (
+          : filteredStatic.map((a) => (
               <article key={a.slug} className="group cursor-pointer">
                 <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
                   <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
