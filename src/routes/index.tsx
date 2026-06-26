@@ -6,7 +6,7 @@ import { TaxCalculator } from "@/components/tax-calculator";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Keep TX Red — Texas Conservative News, Elections & Property Tax Tools" },
+      { title: "Keep TX Red — Texas Conservative News & Tax Tools" },
       { name: "description", content: "Conservative Texas political news, election coverage, and a property tax calculator by county with school district rates. Defending the Lone Star State." },
       { property: "og:title", content: "Keep TX Red — Defending the Lone Star State" },
       { property: "og:description", content: "Texas conservative news, election coverage, and property tax tools." },
@@ -15,6 +15,32 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: heroFlag },
     ],
     links: [{ rel: "canonical", href: "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Keep TX Red",
+          url: "https://www.keeptxred.com/",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://www.keeptxred.com/news?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Keep TX Red",
+          url: "https://www.keeptxred.com/",
+          logo: "https://www.keeptxred.com/favicon.ico",
+        }),
+      },
+    ],
   }),
   component: Index,
 });
@@ -33,6 +59,7 @@ function Index() {
             alt="Texas Lone Star flag waving at sunset"
             width={1024}
             height={1280}
+            fetchPriority="high"
             className="size-full object-cover opacity-50"
           />
           <div className="absolute inset-0 bg-gradient-to-br from-secondary via-secondary/70 to-transparent" />
