@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { ARTICLES } from "@/data/articles";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
@@ -112,7 +113,7 @@ function NewsPage() {
               );
             })
           : filteredStatic.map((a) => (
-              <article key={a.slug} className="group cursor-pointer">
+              <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block cursor-pointer">
                 <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
                   <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 </div>
@@ -120,7 +121,7 @@ function NewsPage() {
                 <h2 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h2>
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{a.dek}</p>
                 <p className="mt-2 text-[11px] text-muted-foreground italic">{a.author} • {a.date}</p>
-              </article>
+              </Link>
             ))}
       </div>
     </div>

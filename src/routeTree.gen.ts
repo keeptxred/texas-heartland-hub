@@ -20,6 +20,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LawsRouteImport } from './routes/laws'
+import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
@@ -29,6 +30,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
 
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
@@ -86,6 +88,11 @@ const LawsRoute = LawsRouteImport.update({
   path: '/laws',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GlossaryRoute = GlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GetInvolvedRoute = GetInvolvedRouteImport.update({
   id: '/get-involved',
   path: '/get-involved',
@@ -131,6 +138,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsSlugRoute = NewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NewsRoute,
+} as any)
 const ApiPublicHooksGenerateNewsRoute =
   ApiPublicHooksGenerateNewsRouteImport.update({
     id: '/api/public/hooks/generate-news',
@@ -148,10 +160,11 @@ export interface FileRoutesByFullPath {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -159,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/tax-calculator': typeof TaxCalculatorRoute
   '/texas-laws': typeof TexasLawsRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRoutesByTo {
@@ -171,10 +185,11 @@ export interface FileRoutesByTo {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -182,6 +197,7 @@ export interface FileRoutesByTo {
   '/tax-calculator': typeof TaxCalculatorRoute
   '/texas-laws': typeof TexasLawsRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRoutesById {
@@ -195,10 +211,11 @@ export interface FileRoutesById {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
-  '/news': typeof NewsRoute
+  '/news': typeof NewsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -206,6 +223,7 @@ export interface FileRoutesById {
   '/tax-calculator': typeof TaxCalculatorRoute
   '/texas-laws': typeof TexasLawsRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRouteTypes {
@@ -220,6 +238,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/get-involved'
+    | '/glossary'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -231,6 +250,7 @@ export interface FileRouteTypes {
     | '/tax-calculator'
     | '/texas-laws'
     | '/voting-locations'
+    | '/news/$slug'
     | '/api/public/hooks/generate-news'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -243,6 +263,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/get-involved'
+    | '/glossary'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -254,6 +275,7 @@ export interface FileRouteTypes {
     | '/tax-calculator'
     | '/texas-laws'
     | '/voting-locations'
+    | '/news/$slug'
     | '/api/public/hooks/generate-news'
   id:
     | '__root__'
@@ -266,6 +288,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/get-involved'
+    | '/glossary'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -277,6 +300,7 @@ export interface FileRouteTypes {
     | '/tax-calculator'
     | '/texas-laws'
     | '/voting-locations'
+    | '/news/$slug'
     | '/api/public/hooks/generate-news'
   fileRoutesById: FileRoutesById
 }
@@ -290,10 +314,11 @@ export interface RootRouteChildren {
   ElectionsRoute: typeof ElectionsRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
+  GlossaryRoute: typeof GlossaryRoute
   LawsRoute: typeof LawsRoute
   LawsToKnowRoute: typeof LawsToKnowRoute
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
-  NewsRoute: typeof NewsRoute
+  NewsRoute: typeof NewsRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
@@ -383,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LawsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/glossary': {
+      id: '/glossary'
+      path: '/glossary'
+      fullPath: '/glossary'
+      preLoaderRoute: typeof GlossaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/get-involved': {
       id: '/get-involved'
       path: '/get-involved'
@@ -446,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/news/$slug': {
+      id: '/news/$slug'
+      path: '/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof NewsSlugRouteImport
+      parentRoute: typeof NewsRoute
+    }
     '/api/public/hooks/generate-news': {
       id: '/api/public/hooks/generate-news'
       path: '/api/public/hooks/generate-news'
@@ -455,6 +494,16 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface NewsRouteChildren {
+  NewsSlugRoute: typeof NewsSlugRoute
+}
+
+const NewsRouteChildren: NewsRouteChildren = {
+  NewsSlugRoute: NewsSlugRoute,
+}
+
+const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -466,10 +515,11 @@ const rootRouteChildren: RootRouteChildren = {
   ElectionsRoute: ElectionsRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
+  GlossaryRoute: GlossaryRoute,
   LawsRoute: LawsRoute,
   LawsToKnowRoute: LawsToKnowRoute,
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
-  NewsRoute: NewsRoute,
+  NewsRoute: NewsRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
