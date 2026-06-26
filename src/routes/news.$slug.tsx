@@ -13,7 +13,8 @@ export const Route = createFileRoute("/news/$slug")({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const { article, body } = loaderData;
-    const title = `${article.title} — Keep TX Red`;
+    const suffixed = `${article.title} — Keep TX Red`;
+    const title = suffixed.length <= 60 ? suffixed : article.title.slice(0, 60);
     const desc = article.dek;
     const path = `/news/${article.slug}`;
     const keywords = buildKeywords(article.title, article.dek, article.category);
