@@ -30,6 +30,7 @@ const COLUMNS = [
       { to: "/tax-calculator", label: "Property Tax Calculator" },
       { to: "/about", label: "About" },
       { to: "/contact", label: "Contact" },
+      { to: "/editorial-standards", label: "Editorial Standards" },
       { to: "/privacy", label: "Privacy Policy" },
     ],
   },
