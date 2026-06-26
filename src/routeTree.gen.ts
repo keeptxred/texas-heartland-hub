@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
-import { Route as VolunteerRouteImport } from './routes/volunteer'
 import { Route as TexasLawsRouteImport } from './routes/texas-laws'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -35,11 +34,6 @@ import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/pub
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
   id: '/voting-locations',
   path: '/voting-locations',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VolunteerRoute = VolunteerRouteImport.update({
-  id: '/volunteer',
-  path: '/volunteer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasLawsRoute = TexasLawsRouteImport.update({
@@ -164,7 +158,6 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/texas-laws': typeof TexasLawsRoute
-  '/volunteer': typeof VolunteerRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -188,7 +181,6 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/texas-laws': typeof TexasLawsRoute
-  '/volunteer': typeof VolunteerRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -213,7 +205,6 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/texas-laws': typeof TexasLawsRoute
-  '/volunteer': typeof VolunteerRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -239,7 +230,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/texas-laws'
-    | '/volunteer'
     | '/voting-locations'
     | '/api/public/hooks/generate-news'
   fileRoutesByTo: FileRoutesByTo
@@ -263,7 +253,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/texas-laws'
-    | '/volunteer'
     | '/voting-locations'
     | '/api/public/hooks/generate-news'
   id:
@@ -287,7 +276,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/texas-laws'
-    | '/volunteer'
     | '/voting-locations'
     | '/api/public/hooks/generate-news'
   fileRoutesById: FileRoutesById
@@ -312,7 +300,6 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TexasLawsRoute: typeof TexasLawsRoute
-  VolunteerRoute: typeof VolunteerRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -324,13 +311,6 @@ declare module '@tanstack/react-router' {
       path: '/voting-locations'
       fullPath: '/voting-locations'
       preLoaderRoute: typeof VotingLocationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/volunteer': {
-      id: '/volunteer'
-      path: '/volunteer'
-      fullPath: '/volunteer'
-      preLoaderRoute: typeof VolunteerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-laws': {
@@ -496,7 +476,6 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TexasLawsRoute: TexasLawsRoute,
-  VolunteerRoute: VolunteerRoute,
   VotingLocationsRoute: VotingLocationsRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
 }
