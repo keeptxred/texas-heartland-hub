@@ -16,6 +16,7 @@ import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
+import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -54,6 +55,11 @@ const ElectionsRoute = ElectionsRouteImport.update({
   path: '/elections',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactLegislatorsRoute = ContactLegislatorsRouteImport.update({
+  id: '/contact-legislators',
+  path: '/contact-legislators',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -68,6 +74,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/contact-legislators'
     | '/elections'
     | '/find-representative'
     | '/news'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/contact-legislators'
     | '/elections'
     | '/find-representative'
     | '/news'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/contact-legislators'
     | '/elections'
     | '/find-representative'
     | '/news'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   ElectionsRoute: typeof ElectionsRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   NewsRoute: typeof NewsRoute
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact-legislators': {
+      id: '/contact-legislators'
+      path: '/contact-legislators'
+      fullPath: '/contact-legislators'
+      preLoaderRoute: typeof ContactLegislatorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ContactLegislatorsRoute: ContactLegislatorsRoute,
   ElectionsRoute: ElectionsRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
   NewsRoute: NewsRoute,
