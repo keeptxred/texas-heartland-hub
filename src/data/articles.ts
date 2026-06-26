@@ -377,6 +377,11 @@ export function publishedArticles(now: Date = new Date()): Article[] {
   return ARTICLES.filter((a) => isPublished(a, now));
 }
 
+/** Sort articles by publishedAt descending (newest first). */
+export function sortByDateDesc(a: Article, b: Article): number {
+  return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+}
+
 export const ELECTION_RACES = [
   { office: "U.S. Senate", incumbent: "Republican Hold", margin: "+12.4", status: "Likely R" },
   { office: "Governor (2026)", incumbent: "Republican Hold", margin: "+9.8", status: "Likely R" },
