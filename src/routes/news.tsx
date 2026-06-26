@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { ARTICLES } from "@/data/articles";
+import { ARTICLES, isPublished } from "@/data/articles";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import capitol from "@/assets/capitol.jpg";
 import border from "@/assets/border.jpg";
@@ -56,7 +56,10 @@ function NewsPage() {
     [articles, activeCat]
   );
   const filteredStatic = useMemo(
-    () => (activeCat === "All" ? ARTICLES : ARTICLES.filter((a) => a.category === activeCat)),
+    () => {
+      const live = ARTICLES.filter((a) => isPublished(a));
+      return activeCat === "All" ? live : live.filter((a) => a.category === activeCat);
+    },
     [activeCat]
   );
 

@@ -716,4 +716,148 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     related: ["texas-property-tax-guide", "what-local-governments-control", "how-texas-counties-spend"],
     cta: { label: "Estimate Your Property Tax", href: "/tax-calculator" },
   },
+  "texas-attorney-general-powers": {
+    updated: "2026-06-29",
+    editorNote: "Part of our Texas civics series. See also our guide to the [Powers of the Texas Governor](/news/texas-governor-powers).",
+    intro: [
+      "The Texas Attorney General is the state's top lawyer — elected statewide, accountable to voters, and constitutionally independent of the governor. Unlike the U.S. Attorney General, who serves at the pleasure of the president, the Texas AG answers only to the people who put them in office.",
+      "That independence has made the office one of the most consequential conservative posts in the country. The AG defends Texas law in court, files suits against federal overreach, issues binding legal opinions to state officials, and runs the largest child-support enforcement operation in the United States.",
+    ],
+    sections: [
+      {
+        heading: "A Constitutional, Elected Office",
+        paragraphs: [
+          "Article 4 of the Texas Constitution creates the Attorney General as a separately elected executive officer serving a four-year term. The AG is not appointed by the governor and cannot be fired by the governor — a structural check that the [Texas Constitution](/news/texas-constitutional-amendments-guide) has preserved since 1876.",
+          "The office operates out of the William P. Clements Building in Austin with more than 4,000 employees statewide, making it one of the largest law offices in the country.",
+        ],
+      },
+      {
+        heading: "Core Powers of the Office",
+        bullets: [
+          "Defend the constitutionality of Texas statutes in state and federal court.",
+          "Represent the State of Texas, its agencies, and its officers in civil litigation.",
+          "Issue Attorney General Opinions interpreting state law for elected officials and agency heads.",
+          "Enforce the Deceptive Trade Practices Act and consumer protection laws.",
+          "Operate the Child Support Division — collecting more than $5 billion in court-ordered support annually.",
+          "Prosecute Medicaid fraud, human trafficking, and certain election-integrity cases.",
+          "Enforce the [Texas Open Meetings and Public Information Acts](/news/texas-open-meetings-public-info).",
+        ],
+      },
+      {
+        heading: "What the AG Cannot Do",
+        paragraphs: [
+          "Despite the broad portfolio, the Texas AG has narrower criminal authority than many people assume. Texas places general criminal prosecution in the hands of locally elected District Attorneys and County Attorneys — not the state AG.",
+          "The AG can prosecute criminal cases only when the Legislature has specifically granted that authority (e.g., Medicaid fraud) or when a local prosecutor formally requests assistance. The Court of Criminal Appeals has reinforced these limits in recent rulings.",
+        ],
+      },
+      {
+        heading: "Powers Compared",
+        table: {
+          headers: ["Power", "Texas AG", "Texas Governor"],
+          rows: [
+            ["Sue the federal government", "Yes (lead role)", "No"],
+            ["Veto legislation", "No", "Yes"],
+            ["Issue binding legal opinions", "Yes", "No"],
+            ["Appoint state judges (vacancies)", "No", "Yes"],
+            ["Prosecute general crimes", "Limited", "No"],
+            ["Enforce consumer protection", "Yes", "No"],
+          ],
+        },
+      },
+    ],
+    faq: [
+      {
+        q: "Can the governor fire the Texas Attorney General?",
+        a: "No. The AG is independently elected. Removal requires impeachment by the Texas House and conviction by the Senate.",
+      },
+      {
+        q: "Are Attorney General Opinions legally binding?",
+        a: "They are binding guidance for state officials and agencies who request them, but courts treat them as persuasive — not controlling — authority.",
+      },
+      {
+        q: "Who can request an Attorney General Opinion?",
+        a: "Only certain officials: the governor, lieutenant governor, House speaker, agency heads, county and district attorneys, and the chairs of legislative committees.",
+      },
+    ],
+    sources: [
+      { label: "Office of the Texas Attorney General", url: "https://www.texasattorneygeneral.gov/" },
+      { label: "Texas Constitution Article 4 (Executive Department)", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm" },
+      { label: "Texas Government Code Chapter 402 (AG Duties)", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.402.htm" },
+    ],
+    related: ["texas-governor-powers", "how-a-bill-becomes-texas-law", "texas-open-meetings-public-info"],
+    cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
+  },
+  "texas-governor-powers": {
+    updated: "2026-07-02",
+    editorNote: "Part of our Texas civics series. See also our guide to the [Powers of the Texas Attorney General](/news/texas-attorney-general-powers).",
+    intro: [
+      "On paper, the Texas Governor is one of the weakest chief executives in the country. Power is deliberately fragmented across separately elected statewide officers — the Lieutenant Governor, Attorney General, Comptroller, Land Commissioner, and Agriculture Commissioner — none of whom answer to the governor.",
+      "In practice, the modern Texas Governor is one of the most politically powerful figures in state government, thanks to a small number of constitutional tools used aggressively: the appointment power, the line-item veto, the special-session call, and command of the Texas National Guard.",
+    ],
+    sections: [
+      {
+        heading: "A Plural Executive by Design",
+        paragraphs: [
+          "The 1876 Texas Constitution was written in reaction to Reconstruction-era Governor E.J. Davis, whose centralized authority Texans loathed. The framers split executive power across multiple elected offices — a structure known as the 'plural executive' — so no single official could dominate state government.",
+          "That's why the [Attorney General](/news/texas-attorney-general-powers), Comptroller, and Land Commissioner each run independent operations. The governor cannot fire them, override their decisions, or veto their budgets.",
+        ],
+      },
+      {
+        heading: "The Powers That Matter",
+        bullets: [
+          "Appointments: roughly 1,500 appointments per term to boards, commissions, and judicial vacancies — including university regents, the Public Utility Commission, and Texas Supreme Court vacancies.",
+          "Line-item veto: the governor can strike individual spending items from the state budget without vetoing the whole bill (a power the U.S. President does not have).",
+          "Special sessions: the governor — and only the governor — can call the Legislature into a 30-day special session and set its agenda.",
+          "Veto power: any bill can be vetoed; overrides require a two-thirds vote in both chambers and are historically rare.",
+          "Commander-in-chief of the Texas National Guard and Texas State Guard, including deployment for border security under [Operation Lone Star](/news/border-security-state-role).",
+          "Emergency declarations and suspension of statutes during declared disasters.",
+        ],
+      },
+      {
+        heading: "What the Governor Cannot Do",
+        paragraphs: [
+          "The governor does not set the legislative agenda the way a president does. The [Speaker of the House and Lieutenant Governor](/news/texas-political-terminology) — the latter elected statewide and presiding over the Senate — control the flow of legislation.",
+          "The governor cannot reorganize state agencies at will, cannot remove most appointees once confirmed, and cannot block the Attorney General from filing or settling lawsuits in the state's name.",
+        ],
+      },
+      {
+        heading: "Term, Salary, and Succession",
+        table: {
+          headers: ["Item", "Detail"],
+          rows: [
+            ["Term length", "4 years, no term limit"],
+            ["Annual salary (2025)", "$153,750"],
+            ["Successor if vacant", "Lieutenant Governor"],
+            ["Residence", "Texas Governor's Mansion, Austin"],
+            ["Minimum age", "30"],
+          ],
+        },
+      },
+    ],
+    faq: [
+      {
+        q: "Does the Texas Governor have term limits?",
+        a: "No. Texas is one of 14 states with no gubernatorial term limit. Rick Perry holds the record at 14 consecutive years.",
+      },
+      {
+        q: "Can the governor override the Lieutenant Governor or Attorney General?",
+        a: "No. Each is independently elected and constitutionally autonomous. The governor's leverage is political and budgetary, not hierarchical.",
+      },
+      {
+        q: "How is the line-item veto different from a regular veto?",
+        a: "A line-item veto lets the governor strike specific dollar amounts from an appropriations bill while signing the rest. It applies only to spending bills, not to substantive policy legislation.",
+      },
+      {
+        q: "Can the Legislature meet without the governor's permission?",
+        a: "During the biennial 140-day regular session, yes. Outside that window, only the governor can call a special session and set its agenda.",
+      },
+    ],
+    sources: [
+      { label: "Office of the Texas Governor", url: "https://gov.texas.gov/" },
+      { label: "Texas Constitution Article 4 §1–§16 (Executive Department)", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm" },
+      { label: "Texas Legislative Reference Library — Governors of Texas", url: "https://lrl.texas.gov/legeLeaders/governors/" },
+    ],
+    related: ["texas-attorney-general-powers", "how-a-bill-becomes-texas-law", "texas-constitutional-amendments-guide"],
+    cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
+  },
 };
