@@ -13,6 +13,7 @@ import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -37,6 +38,11 @@ const NewsRoute = NewsRouteImport.update({
   path: '/news',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FindRepresentativeRoute = FindRepresentativeRouteImport.update({
+  id: '/find-representative',
+  path: '/find-representative',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ElectionsRoute = ElectionsRouteImport.update({
   id: '/elections',
   path: '/elections',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/elections': typeof ElectionsRoute
+  '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/elections': typeof ElectionsRoute
+  '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/elections': typeof ElectionsRoute
+  '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/elections'
+    | '/find-representative'
     | '/news'
     | '/representatives'
     | '/sitemap.xml'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/elections'
+    | '/find-representative'
     | '/news'
     | '/representatives'
     | '/sitemap.xml'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/elections'
+    | '/find-representative'
     | '/news'
     | '/representatives'
     | '/sitemap.xml'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ElectionsRoute: typeof ElectionsRoute
+  FindRepresentativeRoute: typeof FindRepresentativeRoute
   NewsRoute: typeof NewsRoute
   RepresentativesRoute: typeof RepresentativesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -151,6 +164,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/find-representative': {
+      id: '/find-representative'
+      path: '/find-representative'
+      fullPath: '/find-representative'
+      preLoaderRoute: typeof FindRepresentativeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/elections': {
       id: '/elections'
       path: '/elections'
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ElectionsRoute: ElectionsRoute,
+  FindRepresentativeRoute: FindRepresentativeRoute,
   NewsRoute: NewsRoute,
   RepresentativesRoute: RepresentativesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
