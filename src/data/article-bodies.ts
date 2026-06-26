@@ -612,4 +612,108 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     related: ["how-a-bill-becomes-texas-law", "texas-political-terminology"],
     cta: { label: "See This Year's Propositions", href: "/elections" },
   },
+
+  "texas-open-meetings-public-info": {
+    updated: "2026-06-26",
+    editorNote: "New evergreen explainer — June 2026.",
+    intro: [
+      "Texas runs on sunshine laws. The Open Meetings Act (OMA) requires almost every governing body — from your ISD board to the Railroad Commission — to deliberate in public, with posted agendas and recorded votes. The Public Information Act (PIA) gives every Texan the right to request government records and get a written response within 10 business days.",
+      "These two statutes are the most powerful tools a conservative citizen has at the local level. They are how you find out what your school board is actually voting on, how your county is spending bond money, and what your city manager wrote in that email to the developer.",
+    ],
+    sections: [
+      {
+        heading: "What the Open Meetings Act Requires",
+        bullets: [
+          "Written notice posted at least 72 hours before a meeting (Government Code Ch. 551).",
+          "An agenda listing every subject to be discussed — vague items like 'other business' are not allowed.",
+          "Public access to the room and the right to record audio or video.",
+          "Roll-call votes on final action; secret ballots are prohibited.",
+          "Executive (closed) sessions only for narrowly defined topics — real estate, litigation, personnel, security.",
+        ],
+      },
+      {
+        heading: "How to File a Public Information Request",
+        paragraphs: [
+          "Write a short letter or email to the governmental body's designated PIA officer. Describe the records you want with enough detail that staff can find them — date ranges, sender/recipient names, subject keywords.",
+        ],
+        bullets: [
+          "The agency has 10 business days to produce records, ask for a deposit, or seek an Attorney General ruling.",
+          "Charges are limited by Comptroller rules — typically $0.10 per page, no charge for under 50 pages of email.",
+          "If the agency wants to withhold records, it must ask the Attorney General — and you get to argue your side in writing.",
+        ],
+      },
+      {
+        heading: "When the Rules Are Broken",
+        table: {
+          headers: ["Violation", "Remedy"],
+          rows: [
+            ["No 72-hour notice", "Action taken at the meeting is voidable in district court"],
+            ["Walking quorum (members meeting in groups to dodge OMA)", "Criminal misdemeanor under §551.143"],
+            ["Improperly withheld records", "Sue in district court for mandamus and attorney's fees"],
+          ],
+        },
+      },
+    ],
+    faq: [
+      { q: "Does the OMA apply to my HOA?", a: "No — the OMA covers governmental bodies. HOAs are private corporations governed by Property Code Ch. 209." },
+      { q: "Can my school board go into closed session to discuss curriculum?", a: "No. Curriculum is not one of the enumerated exceptions in §551.071-§551.089. Personnel discussions about a specific teacher are." },
+      { q: "What if my PIA request is ignored?", a: "File a complaint with your county or district attorney, or sue for mandamus. The agency pays your attorney's fees if you win." },
+    ],
+    sources: [
+      { label: "Texas Government Code Ch. 551 — Open Meetings", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.551.htm" },
+      { label: "Texas Government Code Ch. 552 — Public Information", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm" },
+      { label: "Attorney General — Open Government", url: "https://www.texasattorneygeneral.gov/open-government" },
+    ],
+    related: ["how-a-bill-becomes-texas-law", "what-local-governments-control", "texas-school-board-powers"],
+    cta: { label: "Find Your Local Officials", href: "/find-representative" },
+  },
+
+  "why-texas-has-no-income-tax": {
+    updated: "2026-06-26",
+    editorNote: "New evergreen explainer — June 2026.",
+    intro: [
+      "Texas is one of nine states without a personal income tax — and thanks to Proposition 4 in 2019, it would now take a two-thirds vote of both chambers plus a statewide referendum to enact one. That low-tax structure is the single biggest reason Texas led the nation in job creation and net domestic migration through the 2020s.",
+      "But government still has to be paid for. This explainer walks through the three pillars that replace an income tax: the state sales tax, local property taxes, and severance taxes on oil and gas — and the trade-offs each one creates.",
+    ],
+    sections: [
+      {
+        heading: "The Three Pillars of Texas Revenue",
+        table: {
+          headers: ["Source", "Rate", "Share of State+Local Revenue"],
+          rows: [
+            ["State sales tax", "6.25% state + up to 2% local", "~26%"],
+            ["Local property tax", "Set by ISDs, counties, cities", "~45%"],
+            ["Severance (oil & gas)", "4.6% oil / 7.5% gas", "~7%"],
+            ["Franchise (margin) tax", "0.375%–0.75% on businesses over $2.47M", "~3%"],
+          ],
+        },
+      },
+      {
+        heading: "How Proposition 4 Locked the Door",
+        paragraphs: [
+          "In November 2019, Texas voters approved Proposition 4 by 74% to 26%, amending Article 8 of the Texas Constitution to prohibit a state tax on the net incomes of natural persons. Repealing the ban would require another two-thirds legislative vote and statewide approval — a much steeper hill than simply passing a tax.",
+          "The amendment built on the older Bullock Amendment (1993), which had already required voter approval for any new income tax. Proposition 4 went further by banning the tax outright, not merely making it harder to enact.",
+        ],
+      },
+      {
+        heading: "The Trade-Off: High Property Taxes",
+        paragraphs: [
+          "Because Texas leans on property tax to fund schools, the state has some of the highest effective property tax rates in the country — typically 1.6%–2.2% of market value once ISD, county, and city rates are combined.",
+          "That's why the 88th and 89th Legislatures put record surplus dollars into school-district rate compression and homestead exemption increases. See the [Texas Property Tax Guide](/news/texas-property-tax-guide) for the full mechanics.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Could Texas ever add an income tax?", a: "Only with two-thirds of the Legislature and a statewide voter referendum — Proposition 4 (2019) wrote the prohibition into the constitution." },
+      { q: "Do Texas businesses pay an income tax?", a: "No — but most businesses with over $2.47M in revenue pay the franchise (margin) tax, which is calculated on gross receipts minus deductions, not net income." },
+      { q: "Why are Texas property taxes so high?", a: "Because there is no income tax, schools and local government rely heavily on property tax. State surplus dollars have been used to compress ISD M&O rates since 2019." },
+    ],
+    sources: [
+      { label: "Texas Comptroller — Sources of Revenue", url: "https://comptroller.texas.gov/transparency/reports/sources-of-revenue/" },
+      { label: "Texas Constitution Article 8 §24-a (Income Tax Prohibition)", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm" },
+      { label: "Tax Foundation — State Tax Climate Index", url: "https://taxfoundation.org/research/state-tax/" },
+    ],
+    related: ["texas-property-tax-guide", "what-local-governments-control", "how-texas-counties-spend"],
+    cta: { label: "Estimate Your Property Tax", href: "/tax-calculator" },
+  },
 };

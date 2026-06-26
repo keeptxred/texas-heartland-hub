@@ -32,6 +32,8 @@ import schoolbus from "@/assets/article-schoolbus.jpg";
 import library from "@/assets/article-library.jpg";
 import boardroom from "@/assets/article-boardroom.jpg";
 import wind from "@/assets/article-wind.jpg";
+import openmeeting from "@/assets/article-openmeeting.jpg";
+import salestax from "@/assets/article-salestax.jpg";
 
 export const ARTICLES: Article[] = [
   {
@@ -286,6 +288,24 @@ export const ARTICLES: Article[] = [
     author: "Civics Desk",
     date: "1 month ago",
     image: gavel,
+  },
+  {
+    slug: "texas-open-meetings-public-info",
+    category: "Legislature",
+    title: "The Texas Open Meetings & Public Information Acts: Your Sunshine Rights",
+    dek: "Every city council, school board, and commissioners court in Texas operates under sunshine laws. Here's how to read a posted agenda, file a public information request, and challenge a closed-door vote.",
+    author: "Civics Desk",
+    date: "1 week ago",
+    image: openmeeting,
+  },
+  {
+    slug: "why-texas-has-no-income-tax",
+    category: "Tax & Spending",
+    title: "Why Texas Has No State Income Tax — and What Pays for Government Instead",
+    dek: "Texas is one of nine states without an income tax, and the 2019 constitutional amendment makes it nearly impossible to enact one. Here's the sales-tax-and-property-tax model that funds the second-largest state in the union.",
+    author: "Taxpayer Desk",
+    date: "1 week ago",
+    image: salestax,
   },
 ];
 
