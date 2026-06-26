@@ -21,6 +21,8 @@ const ROUTES = [
   "/texas-laws",
   "/laws-to-know",
   "/legislative-updates",
+  "/contact",
+  "/privacy",
 ] as const;
 
 export const Route = createFileRoute("/sitemap.xml")({

@@ -29,6 +29,8 @@ const COLUMNS = [
       { to: "/laws-to-know", label: "Laws You Should Know" },
       { to: "/tax-calculator", label: "Property Tax Calculator" },
       { to: "/about", label: "About" },
+      { to: "/contact", label: "Contact" },
+      { to: "/privacy", label: "Privacy Policy" },
     ],
   },
 ] as const;
