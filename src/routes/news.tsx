@@ -7,6 +7,8 @@ import border from "@/assets/border.jpg";
 import ballot from "@/assets/ballot.jpg";
 import suburb from "@/assets/suburb.jpg";
 import podium from "@/assets/podium.jpg";
+import oil from "@/assets/article-oil.jpg";
+import classroom from "@/assets/article-classroom.jpg";
 
 export const Route = createFileRoute("/news")({
   head: () => ({
@@ -30,8 +32,8 @@ const CATEGORY_IMAGES: Record<string, string> = {
   Border: border,
   Elections: ballot,
   "Tax & Spending": suburb,
-  Energy: border,
-  Education: suburb,
+  Energy: oil,
+  Education: classroom,
 };
 
 function timeAgo(iso: string): string {
