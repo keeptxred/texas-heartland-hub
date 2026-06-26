@@ -233,7 +233,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sources: [
       { label: "Texas Secretary of State — Election Dates", url: "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml" },
     ],
-    related: ["primary-vs-general-election", "texas-voter-registration-guide", "county-elections" as string],
+    related: ["primary-vs-general-election", "texas-voter-registration-guide", "texas-school-board-powers"],
     cta: { label: "Check County Election Pages", href: "/county-elections" },
   },
 
