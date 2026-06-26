@@ -28,6 +28,7 @@ import { Route as ContactLegislatorsRouteImport } from './routes/contact-legisla
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
 
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
   id: '/voting-locations',
@@ -124,6 +125,12 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksGenerateNewsRoute =
+  ApiPublicHooksGenerateNewsRouteImport.update({
+    id: '/api/public/hooks/generate-news',
+    path: '/api/public/hooks/generate-news',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/texas-laws': typeof TexasLawsRoute
   '/volunteer': typeof VolunteerRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -166,6 +174,7 @@ export interface FileRoutesByTo {
   '/texas-laws': typeof TexasLawsRoute
   '/volunteer': typeof VolunteerRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -188,6 +197,7 @@ export interface FileRoutesById {
   '/texas-laws': typeof TexasLawsRoute
   '/volunteer': typeof VolunteerRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/texas-laws'
     | '/volunteer'
     | '/voting-locations'
+    | '/api/public/hooks/generate-news'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -232,6 +243,7 @@ export interface FileRouteTypes {
     | '/texas-laws'
     | '/volunteer'
     | '/voting-locations'
+    | '/api/public/hooks/generate-news'
   id:
     | '__root__'
     | '/'
@@ -253,6 +265,7 @@ export interface FileRouteTypes {
     | '/texas-laws'
     | '/volunteer'
     | '/voting-locations'
+    | '/api/public/hooks/generate-news'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -275,6 +288,7 @@ export interface RootRouteChildren {
   TexasLawsRoute: typeof TexasLawsRoute
   VolunteerRoute: typeof VolunteerRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
+  ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -412,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/generate-news': {
+      id: '/api/public/hooks/generate-news'
+      path: '/api/public/hooks/generate-news'
+      fullPath: '/api/public/hooks/generate-news'
+      preLoaderRoute: typeof ApiPublicHooksGenerateNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -435,6 +456,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasLawsRoute: TexasLawsRoute,
   VolunteerRoute: VolunteerRoute,
   VotingLocationsRoute: VotingLocationsRoute,
+  ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
