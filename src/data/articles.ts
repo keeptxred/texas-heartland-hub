@@ -14,6 +14,18 @@ import border from "@/assets/border.jpg";
 import ballot from "@/assets/ballot.jpg";
 import suburb from "@/assets/suburb.jpg";
 import podium from "@/assets/podium.jpg";
+import oil from "@/assets/article-oil.jpg";
+import grid from "@/assets/article-grid.jpg";
+import water from "@/assets/article-water.jpg";
+import classroom from "@/assets/article-classroom.jpg";
+import courthouse from "@/assets/article-courthouse.jpg";
+import taxbill from "@/assets/article-taxbill.jpg";
+import pollingplace from "@/assets/article-pollingplace.jpg";
+import riogrande from "@/assets/article-riogrande.jpg";
+import rotunda from "@/assets/article-rotunda.jpg";
+import gavel from "@/assets/article-gavel.jpg";
+import trooper from "@/assets/article-trooper.jpg";
+import carry from "@/assets/article-carry.jpg";
 
 export const ARTICLES: Article[] = [
   {
@@ -33,7 +45,7 @@ export const ARTICLES: Article[] = [
     dek: "Texas Department of Public Safety expands buoy barriers and razor wire as federal pushback intensifies.",
     author: "Border Bureau",
     date: "5 hours ago",
-    image: border,
+    image: trooper,
   },
   {
     slug: "voter-id-surge",
@@ -51,7 +63,7 @@ export const ARTICLES: Article[] = [
     dek: "Parental rights coalitions are running slates of candidates in 87 ISDs across the state this May.",
     author: "Lone Star Civics",
     date: "2 days ago",
-    image: suburb,
+    image: classroom,
   },
   {
     slug: "speaker-special-session",
@@ -69,7 +81,7 @@ export const ARTICLES: Article[] = [
     dek: "Our analysis of TEA filings shows where homeowners are paying the steepest ISD M&O rates.",
     author: "Data Desk",
     date: "4 days ago",
-    image: suburb,
+    image: taxbill,
   },
   {
     slug: "permian-energy",
@@ -78,7 +90,7 @@ export const ARTICLES: Article[] = [
     dek: "West Texas operators warn of EPA overreach even as output climbs to 6.1 million barrels per day.",
     author: "Energy Desk",
     date: "5 days ago",
-    image: border,
+    image: oil,
   },
   {
     slug: "homestead-exemption-explained",
@@ -96,7 +108,7 @@ export const ARTICLES: Article[] = [
     dek: "From filing in the House clerk's office to the Governor's desk — every committee, calendar, and conference step that shapes the bills you actually live under.",
     author: "Civics Desk",
     date: "1 week ago",
-    image: capitol,
+    image: rotunda,
   },
   {
     slug: "constitutional-carry-one-year-later",
@@ -105,7 +117,7 @@ export const ARTICLES: Article[] = [
     dek: "House Bill 1927 lets eligible Texans 21 and older carry a handgun without a permit. Here's where you still can't carry, and what reciprocity means on the road.",
     author: "Liberty Desk",
     date: "2 weeks ago",
-    image: podium,
+    image: carry,
   },
   {
     slug: "primary-vs-general-election",
@@ -114,7 +126,7 @@ export const ARTICLES: Article[] = [
     dek: "In most Texas districts the Republican primary is the real election. We break down open primaries, runoff math, and why low-turnout March races set the next decade of policy.",
     author: "Elections Desk",
     date: "2 weeks ago",
-    image: ballot,
+    image: pollingplace,
   },
   {
     slug: "school-choice-esa-guide",
@@ -123,7 +135,7 @@ export const ARTICLES: Article[] = [
     dek: "How the new ESA program works, who qualifies, what expenses are covered, and the application timeline parents need to know before the fall enrollment window.",
     author: "Education Desk",
     date: "3 weeks ago",
-    image: suburb,
+    image: classroom,
   },
   {
     slug: "appraisal-protest-playbook",
@@ -132,7 +144,7 @@ export const ARTICLES: Article[] = [
     dek: "Deadlines, evidence packets, equal-and-uniform comps, and the ARB hearing script that gets values reduced. A practical playbook for every Texas homeowner.",
     author: "Taxpayer Desk",
     date: "3 weeks ago",
-    image: suburb,
+    image: gavel,
   },
   {
     slug: "texas-grid-ercot-explained",
@@ -141,7 +153,7 @@ export const ARTICLES: Article[] = [
     dek: "Why Texas runs its own grid, what the Public Utility Commission actually controls, and the reforms keeping the lights on through summer peaks and winter freezes.",
     author: "Energy Desk",
     date: "1 month ago",
-    image: border,
+    image: grid,
   },
   {
     slug: "border-security-state-role",
@@ -159,7 +171,7 @@ export const ARTICLES: Article[] = [
     dek: "How Texas property taxes really work — appraisal caps, homestead exemptions, ISD M&O rates, and a step-by-step walkthrough for estimating what you actually owe.",
     author: "Taxpayer Desk",
     date: "1 month ago",
-    image: suburb,
+    image: taxbill,
   },
   {
     slug: "beginners-guide-texas-elections",
@@ -177,7 +189,7 @@ export const ARTICLES: Article[] = [
     dek: "What an elected school board actually controls — from library policy and bond elections to superintendent hiring — and why low-turnout May races shape your kids' classrooms.",
     author: "Education Desk",
     date: "1 month ago",
-    image: suburb,
+    image: classroom,
   },
   {
     slug: "texas-energy-policy-guide",
@@ -186,7 +198,7 @@ export const ARTICLES: Article[] = [
     dek: "How the Railroad Commission, PUC, and ERCOT divide authority over the nation's largest energy economy — and where renewables fit into a grid built on hydrocarbons.",
     author: "Energy Desk",
     date: "1 month ago",
-    image: border,
+    image: oil,
   },
   {
     slug: "county-appraisal-districts-explained",
@@ -204,7 +216,7 @@ export const ARTICLES: Article[] = [
     dek: "Who can register, the 30-day deadline before each election, accepted photo ID, and how to update your address when you move counties — everything you need before you vote.",
     author: "Civics Desk",
     date: "1 month ago",
-    image: ballot,
+    image: pollingplace,
   },
   {
     slug: "what-local-governments-control",
@@ -213,7 +225,7 @@ export const ARTICLES: Article[] = [
     dek: "Counties, cities, ISDs, MUDs, and emergency-services districts each levy their own tax — here's who decides what, and which line on your bill funds which service.",
     author: "Civics Desk",
     date: "1 month ago",
-    image: suburb,
+    image: courthouse,
   },
   {
     slug: "texas-border-geography-101",
@@ -222,7 +234,7 @@ export const ARTICLES: Article[] = [
     dek: "A factual tour of the 1,254-mile border — Border Patrol sectors, international bridges, and the river communities of the Rio Grande Valley, El Paso, and Big Bend.",
     author: "Border Bureau",
     date: "1 month ago",
-    image: border,
+    image: riogrande,
   },
   {
     slug: "texas-school-finance-explained",
@@ -231,7 +243,7 @@ export const ARTICLES: Article[] = [
     dek: "How the Foundation School Program, basic allotment, and 'Robin Hood' recapture redistribute property-tax dollars — and why two ISDs with identical tax rates fund students very differently.",
     author: "Education Desk",
     date: "1 month ago",
-    image: capitol,
+    image: classroom,
   },
   {
     slug: "texas-political-terminology",
@@ -249,7 +261,7 @@ export const ARTICLES: Article[] = [
     dek: "Sheriff's office, jail operations, road and bridge, district courts, and indigent defense — a breakdown of where every dollar of your county property tax actually goes.",
     author: "Taxpayer Desk",
     date: "1 month ago",
-    image: suburb,
+    image: courthouse,
   },
   {
     slug: "texas-water-rights-explained",
@@ -258,7 +270,7 @@ export const ARTICLES: Article[] = [
     dek: "Surface water belongs to the state; groundwater belongs to the landowner. How prior appropriation, groundwater conservation districts, and interstate compacts shape every drop.",
     author: "Policy Desk",
     date: "1 month ago",
-    image: border,
+    image: water,
   },
   {
     slug: "texas-constitutional-amendments-guide",
@@ -267,7 +279,7 @@ export const ARTICLES: Article[] = [
     dek: "Texas has amended its 1876 constitution more than 500 times. Here's how the two-thirds legislative vote and statewide ballot referendum work — and how to read the November propositions.",
     author: "Civics Desk",
     date: "1 month ago",
-    image: capitol,
+    image: gavel,
   },
 ];
 
