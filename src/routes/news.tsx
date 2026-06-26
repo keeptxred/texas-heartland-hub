@@ -57,7 +57,7 @@ function NewsPage() {
   );
   const filteredStatic = useMemo(
     () => {
-      const live = ARTICLES.filter((a) => isPublished(a));
+      const live = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
       return activeCat === "All" ? live : live.filter((a) => a.category === activeCat);
     },
     [activeCat]
