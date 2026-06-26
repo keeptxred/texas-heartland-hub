@@ -26,6 +26,12 @@ import rotunda from "@/assets/article-rotunda.jpg";
 import gavel from "@/assets/article-gavel.jpg";
 import trooper from "@/assets/article-trooper.jpg";
 import carry from "@/assets/article-carry.jpg";
+import ballot2 from "@/assets/article-ballot2.jpg";
+import voterreg from "@/assets/article-voterreg.jpg";
+import schoolbus from "@/assets/article-schoolbus.jpg";
+import library from "@/assets/article-library.jpg";
+import boardroom from "@/assets/article-boardroom.jpg";
+import wind from "@/assets/article-wind.jpg";
 
 export const ARTICLES: Article[] = [
   {
@@ -135,7 +141,7 @@ export const ARTICLES: Article[] = [
     dek: "How the new ESA program works, who qualifies, what expenses are covered, and the application timeline parents need to know before the fall enrollment window.",
     author: "Education Desk",
     date: "3 weeks ago",
-    image: classroom,
+    image: library,
   },
   {
     slug: "appraisal-protest-playbook",
@@ -180,7 +186,7 @@ export const ARTICLES: Article[] = [
     dek: "How Texas's open-primary system works, when runoffs trigger, how districts are drawn, and the dates every conservative voter should mark on the calendar.",
     author: "Elections Desk",
     date: "1 month ago",
-    image: ballot,
+    image: ballot2,
   },
   {
     slug: "texas-school-board-powers",
@@ -189,7 +195,7 @@ export const ARTICLES: Article[] = [
     dek: "What an elected school board actually controls — from library policy and bond elections to superintendent hiring — and why low-turnout May races shape your kids' classrooms.",
     author: "Education Desk",
     date: "1 month ago",
-    image: classroom,
+    image: boardroom,
   },
   {
     slug: "texas-energy-policy-guide",
@@ -198,7 +204,7 @@ export const ARTICLES: Article[] = [
     dek: "How the Railroad Commission, PUC, and ERCOT divide authority over the nation's largest energy economy — and where renewables fit into a grid built on hydrocarbons.",
     author: "Energy Desk",
     date: "1 month ago",
-    image: oil,
+    image: wind,
   },
   {
     slug: "county-appraisal-districts-explained",
@@ -216,7 +222,7 @@ export const ARTICLES: Article[] = [
     dek: "Who can register, the 30-day deadline before each election, accepted photo ID, and how to update your address when you move counties — everything you need before you vote.",
     author: "Civics Desk",
     date: "1 month ago",
-    image: pollingplace,
+    image: voterreg,
   },
   {
     slug: "what-local-governments-control",
@@ -243,7 +249,7 @@ export const ARTICLES: Article[] = [
     dek: "How the Foundation School Program, basic allotment, and 'Robin Hood' recapture redistribute property-tax dollars — and why two ISDs with identical tax rates fund students very differently.",
     author: "Education Desk",
     date: "1 month ago",
-    image: classroom,
+    image: schoolbus,
   },
   {
     slug: "texas-political-terminology",
