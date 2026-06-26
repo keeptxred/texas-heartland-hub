@@ -9,13 +9,41 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
+import { Route as VolunteerRouteImport } from './routes/volunteer'
+import { Route as TexasLawsRouteImport } from './routes/texas-laws'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RepresentativesRouteImport } from './routes/representatives'
+import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
+import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
+import { Route as LawsRouteImport } from './routes/laws'
+import { Route as GetInvolvedRouteImport } from './routes/get-involved'
+import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
+import { Route as CountyElectionsRouteImport } from './routes/county-elections'
+import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
+import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VotingLocationsRoute = VotingLocationsRouteImport.update({
+  id: '/voting-locations',
+  path: '/voting-locations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VolunteerRoute = VolunteerRouteImport.update({
+  id: '/volunteer',
+  path: '/volunteer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLawsRoute = TexasLawsRouteImport.update({
+  id: '/texas-laws',
+  path: '/texas-laws',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TaxCalculatorRoute = TaxCalculatorRouteImport.update({
   id: '/tax-calculator',
   path: '/tax-calculator',
@@ -26,14 +54,64 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RepresentativesRoute = RepresentativesRouteImport.update({
+  id: '/representatives',
+  path: '/representatives',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
+  id: '/register-to-vote',
+  path: '/register-to-vote',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegislativeUpdatesRoute = LegislativeUpdatesRouteImport.update({
+  id: '/legislative-updates',
+  path: '/legislative-updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LawsToKnowRoute = LawsToKnowRouteImport.update({
+  id: '/laws-to-know',
+  path: '/laws-to-know',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LawsRoute = LawsRouteImport.update({
+  id: '/laws',
+  path: '/laws',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GetInvolvedRoute = GetInvolvedRouteImport.update({
+  id: '/get-involved',
+  path: '/get-involved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindRepresentativeRoute = FindRepresentativeRouteImport.update({
+  id: '/find-representative',
+  path: '/find-representative',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ElectionsRoute = ElectionsRouteImport.update({
   id: '/elections',
   path: '/elections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CountyElectionsRoute = CountyElectionsRouteImport.update({
+  id: '/county-elections',
+  path: '/county-elections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactLegislatorsRoute = ContactLegislatorsRouteImport.update({
+  id: '/contact-legislators',
+  path: '/contact-legislators',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
+  id: '/candidate-guides',
+  path: '/candidate-guides',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -50,66 +128,178 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
+  '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
+  '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
+  '/laws': typeof LawsRoute
+  '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
+  '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
+  '/texas-laws': typeof TexasLawsRoute
+  '/volunteer': typeof VolunteerRoute
+  '/voting-locations': typeof VotingLocationsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
+  '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
+  '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
+  '/laws': typeof LawsRoute
+  '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
+  '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
+  '/texas-laws': typeof TexasLawsRoute
+  '/volunteer': typeof VolunteerRoute
+  '/voting-locations': typeof VotingLocationsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
+  '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
+  '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
+  '/laws': typeof LawsRoute
+  '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
+  '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
+  '/texas-laws': typeof TexasLawsRoute
+  '/volunteer': typeof VolunteerRoute
+  '/voting-locations': typeof VotingLocationsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/candidate-guides'
+    | '/contact-legislators'
+    | '/county-elections'
     | '/elections'
+    | '/find-representative'
+    | '/get-involved'
+    | '/laws'
+    | '/laws-to-know'
+    | '/legislative-updates'
     | '/news'
+    | '/register-to-vote'
+    | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
+    | '/texas-laws'
+    | '/volunteer'
+    | '/voting-locations'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/candidate-guides'
+    | '/contact-legislators'
+    | '/county-elections'
     | '/elections'
+    | '/find-representative'
+    | '/get-involved'
+    | '/laws'
+    | '/laws-to-know'
+    | '/legislative-updates'
     | '/news'
+    | '/register-to-vote'
+    | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
+    | '/texas-laws'
+    | '/volunteer'
+    | '/voting-locations'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/candidate-guides'
+    | '/contact-legislators'
+    | '/county-elections'
     | '/elections'
+    | '/find-representative'
+    | '/get-involved'
+    | '/laws'
+    | '/laws-to-know'
+    | '/legislative-updates'
     | '/news'
+    | '/register-to-vote'
+    | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
+    | '/texas-laws'
+    | '/volunteer'
+    | '/voting-locations'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  CandidateGuidesRoute: typeof CandidateGuidesRoute
+  ContactLegislatorsRoute: typeof ContactLegislatorsRoute
+  CountyElectionsRoute: typeof CountyElectionsRoute
   ElectionsRoute: typeof ElectionsRoute
+  FindRepresentativeRoute: typeof FindRepresentativeRoute
+  GetInvolvedRoute: typeof GetInvolvedRoute
+  LawsRoute: typeof LawsRoute
+  LawsToKnowRoute: typeof LawsToKnowRoute
+  LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
   NewsRoute: typeof NewsRoute
+  RegisterToVoteRoute: typeof RegisterToVoteRoute
+  RepresentativesRoute: typeof RepresentativesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
+  TexasLawsRoute: typeof TexasLawsRoute
+  VolunteerRoute: typeof VolunteerRoute
+  VotingLocationsRoute: typeof VotingLocationsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/voting-locations': {
+      id: '/voting-locations'
+      path: '/voting-locations'
+      fullPath: '/voting-locations'
+      preLoaderRoute: typeof VotingLocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/volunteer': {
+      id: '/volunteer'
+      path: '/volunteer'
+      fullPath: '/volunteer'
+      preLoaderRoute: typeof VolunteerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-laws': {
+      id: '/texas-laws'
+      path: '/texas-laws'
+      fullPath: '/texas-laws'
+      preLoaderRoute: typeof TexasLawsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/tax-calculator': {
       id: '/tax-calculator'
       path: '/tax-calculator'
@@ -124,6 +314,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/representatives': {
+      id: '/representatives'
+      path: '/representatives'
+      fullPath: '/representatives'
+      preLoaderRoute: typeof RepresentativesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register-to-vote': {
+      id: '/register-to-vote'
+      path: '/register-to-vote'
+      fullPath: '/register-to-vote'
+      preLoaderRoute: typeof RegisterToVoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/news': {
       id: '/news'
       path: '/news'
@@ -131,11 +335,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legislative-updates': {
+      id: '/legislative-updates'
+      path: '/legislative-updates'
+      fullPath: '/legislative-updates'
+      preLoaderRoute: typeof LegislativeUpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/laws-to-know': {
+      id: '/laws-to-know'
+      path: '/laws-to-know'
+      fullPath: '/laws-to-know'
+      preLoaderRoute: typeof LawsToKnowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/laws': {
+      id: '/laws'
+      path: '/laws'
+      fullPath: '/laws'
+      preLoaderRoute: typeof LawsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/get-involved': {
+      id: '/get-involved'
+      path: '/get-involved'
+      fullPath: '/get-involved'
+      preLoaderRoute: typeof GetInvolvedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-representative': {
+      id: '/find-representative'
+      path: '/find-representative'
+      fullPath: '/find-representative'
+      preLoaderRoute: typeof FindRepresentativeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/elections': {
       id: '/elections'
       path: '/elections'
       fullPath: '/elections'
       preLoaderRoute: typeof ElectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/county-elections': {
+      id: '/county-elections'
+      path: '/county-elections'
+      fullPath: '/county-elections'
+      preLoaderRoute: typeof CountyElectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact-legislators': {
+      id: '/contact-legislators'
+      path: '/contact-legislators'
+      fullPath: '/contact-legislators'
+      preLoaderRoute: typeof ContactLegislatorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/candidate-guides': {
+      id: '/candidate-guides'
+      path: '/candidate-guides'
+      fullPath: '/candidate-guides'
+      preLoaderRoute: typeof CandidateGuidesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -158,10 +418,23 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  CandidateGuidesRoute: CandidateGuidesRoute,
+  ContactLegislatorsRoute: ContactLegislatorsRoute,
+  CountyElectionsRoute: CountyElectionsRoute,
   ElectionsRoute: ElectionsRoute,
+  FindRepresentativeRoute: FindRepresentativeRoute,
+  GetInvolvedRoute: GetInvolvedRoute,
+  LawsRoute: LawsRoute,
+  LawsToKnowRoute: LawsToKnowRoute,
+  LegislativeUpdatesRoute: LegislativeUpdatesRoute,
   NewsRoute: NewsRoute,
+  RegisterToVoteRoute: RegisterToVoteRoute,
+  RepresentativesRoute: RepresentativesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
+  TexasLawsRoute: TexasLawsRoute,
+  VolunteerRoute: VolunteerRoute,
+  VotingLocationsRoute: VotingLocationsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
