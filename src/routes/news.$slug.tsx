@@ -3,7 +3,7 @@ import { ARTICLES, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 
 export const Route = createFileRoute("/news/$slug")({
-  loader: ({ params }) => {
+  loader: ({ params }): { article: Article; body: ArticleBody } => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
     if (!article) throw notFound();
     const body = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
