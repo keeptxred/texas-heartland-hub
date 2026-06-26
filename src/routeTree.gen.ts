@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as AboutRouteImport } from './routes/about'
@@ -24,6 +25,11 @@ const TaxCalculatorRoute = TaxCalculatorRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RepresentativesRoute = RepresentativesRouteImport.update({
+  id: '/representatives',
+  path: '/representatives',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/elections': typeof ElectionsRoute
   '/news': typeof NewsRoute
+  '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
 }
@@ -60,6 +67,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/elections': typeof ElectionsRoute
   '/news': typeof NewsRoute
+  '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
 }
@@ -69,6 +77,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/elections': typeof ElectionsRoute
   '/news': typeof NewsRoute
+  '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
 }
@@ -79,6 +88,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/elections'
     | '/news'
+    | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
   fileRoutesByTo: FileRoutesByTo
@@ -87,6 +97,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/elections'
     | '/news'
+    | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
   id:
@@ -95,6 +106,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/elections'
     | '/news'
+    | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
   fileRoutesById: FileRoutesById
@@ -104,6 +116,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ElectionsRoute: typeof ElectionsRoute
   NewsRoute: typeof NewsRoute
+  RepresentativesRoute: typeof RepresentativesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
 }
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/representatives': {
+      id: '/representatives'
+      path: '/representatives'
+      fullPath: '/representatives'
+      preLoaderRoute: typeof RepresentativesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -160,6 +180,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ElectionsRoute: ElectionsRoute,
   NewsRoute: NewsRoute,
+  RepresentativesRoute: RepresentativesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
 }
