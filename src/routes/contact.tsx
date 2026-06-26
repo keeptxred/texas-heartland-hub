@@ -22,8 +22,7 @@ function ContactPage() {
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">★ Get In Touch</span>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Contact the Newsroom</h1>
         <p className="mt-3 text-muted-foreground max-w-2xl">
-          Tips, corrections, story ideas, or feedback — we read everything. For volunteer opportunities, visit the{" "}
-          <a href="/volunteer" className="text-primary underline underline-offset-4">volunteer page</a>.
+          Tips, corrections, story ideas, or feedback — we read everything.
         </p>
       </div>
 

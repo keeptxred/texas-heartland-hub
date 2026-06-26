@@ -16,7 +16,6 @@ const COLUMNS = [
       { to: "/register-to-vote", label: "Register to Vote" },
       { to: "/find-representative", label: "Find Your Rep" },
       { to: "/contact-legislators", label: "Contact Legislators" },
-      { to: "/volunteer", label: "Volunteer" },
       { to: "/voting-locations", label: "Voting Locations" },
       { to: "/county-elections", label: "County Elections" },
     ],
