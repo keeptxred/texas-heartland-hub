@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://keeptxred.com/sitemap.xml
+Sitemap: https://www.keeptxred.com/sitemap.xml
