@@ -87,6 +87,35 @@ export const Route = createFileRoute("/news/$slug")({
 });
 
 function buildDefaultBody(a: Article): ArticleBody {
+  return _buildDefaultBody(a);
+}
+
+const TEXAS_KEYWORDS = [
+  "Texas",
+  "Texas politics",
+  "Texas news",
+  "Lone Star State",
+  "Houston",
+  "Dallas",
+  "Austin",
+  "San Antonio",
+  "Fort Worth",
+];
+
+function buildKeywords(title: string, dek: string, category: string): string {
+  const base = new Set<string>([
+    ...TEXAS_KEYWORDS,
+    `Texas ${category}`,
+    `${category} in Texas`,
+  ]);
+  // Pull capitalized phrases from title/dek as additional keyword hints.
+  const text = `${title} ${dek}`;
+  const matches = text.match(/\b[A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+){0,2}\b/g) ?? [];
+  for (const m of matches.slice(0, 8)) base.add(m);
+  return Array.from(base).slice(0, 18).join(", ");
+}
+
+function _buildDefaultBody(a: Article): ArticleBody {
   return {
     updated: "2026-06-01",
     intro: [a.dek],
