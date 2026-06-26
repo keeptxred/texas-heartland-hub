@@ -16,6 +16,7 @@ import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
@@ -25,6 +26,7 @@ import { Route as FindRepresentativeRouteImport } from './routes/find-representa
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -63,6 +65,11 @@ const RepresentativesRoute = RepresentativesRouteImport.update({
 const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
   id: '/register-to-vote',
   path: '/register-to-vote',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -110,6 +117,11 @@ const ContactLegislatorsRoute = ContactLegislatorsRouteImport.update({
   path: '/contact-legislators',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
   id: '/candidate-guides',
   path: '/candidate-guides',
@@ -136,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
@@ -145,6 +158,7 @@ export interface FileRoutesByFullPath {
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -158,6 +172,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
@@ -167,6 +182,7 @@ export interface FileRoutesByTo {
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -181,6 +197,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/elections': typeof ElectionsRoute
@@ -190,6 +207,7 @@ export interface FileRoutesById {
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
+  '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -205,6 +223,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/candidate-guides'
+    | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/elections'
@@ -214,6 +233,7 @@ export interface FileRouteTypes {
     | '/laws-to-know'
     | '/legislative-updates'
     | '/news'
+    | '/privacy'
     | '/register-to-vote'
     | '/representatives'
     | '/sitemap.xml'
@@ -227,6 +247,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/candidate-guides'
+    | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/elections'
@@ -236,6 +257,7 @@ export interface FileRouteTypes {
     | '/laws-to-know'
     | '/legislative-updates'
     | '/news'
+    | '/privacy'
     | '/register-to-vote'
     | '/representatives'
     | '/sitemap.xml'
@@ -249,6 +271,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/candidate-guides'
+    | '/contact'
     | '/contact-legislators'
     | '/county-elections'
     | '/elections'
@@ -258,6 +281,7 @@ export interface FileRouteTypes {
     | '/laws-to-know'
     | '/legislative-updates'
     | '/news'
+    | '/privacy'
     | '/register-to-vote'
     | '/representatives'
     | '/sitemap.xml'
@@ -272,6 +296,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   CandidateGuidesRoute: typeof CandidateGuidesRoute
+  ContactRoute: typeof ContactRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
   ElectionsRoute: typeof ElectionsRoute
@@ -281,6 +306,7 @@ export interface RootRouteChildren {
   LawsToKnowRoute: typeof LawsToKnowRoute
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
   NewsRoute: typeof NewsRoute
+  PrivacyRoute: typeof PrivacyRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -340,6 +366,13 @@ declare module '@tanstack/react-router' {
       path: '/register-to-vote'
       fullPath: '/register-to-vote'
       preLoaderRoute: typeof RegisterToVoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -405,6 +438,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactLegislatorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/candidate-guides': {
       id: '/candidate-guides'
       path: '/candidate-guides'
@@ -440,6 +480,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   CandidateGuidesRoute: CandidateGuidesRoute,
+  ContactRoute: ContactRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
   ElectionsRoute: ElectionsRoute,
@@ -449,6 +490,7 @@ const rootRouteChildren: RootRouteChildren = {
   LawsToKnowRoute: LawsToKnowRoute,
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
   NewsRoute: NewsRoute,
+  PrivacyRoute: PrivacyRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -461,13 +503,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
