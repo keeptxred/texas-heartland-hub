@@ -2,7 +2,26 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
 const BASE_URL = "https://keeptxred.com";
-const ROUTES = ["/", "/news", "/elections", "/tax-calculator", "/about"] as const;
+const ROUTES = [
+  "/",
+  "/news",
+  "/elections",
+  "/tax-calculator",
+  "/about",
+  "/representatives",
+  "/find-representative",
+  "/register-to-vote",
+  "/contact-legislators",
+  "/volunteer",
+  "/get-involved",
+  "/county-elections",
+  "/candidate-guides",
+  "/voting-locations",
+  "/laws",
+  "/texas-laws",
+  "/laws-to-know",
+  "/legislative-updates",
+] as const;
 
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
