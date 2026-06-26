@@ -1,11 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ARTICLES, type Article } from "@/data/articles";
+import { ARTICLES, isPublished, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: ({ params }): { article: Article; body: ArticleBody } => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
     if (!article) throw notFound();
+    if (!isPublished(article)) throw notFound();
     const body = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
     return { article, body };
   },
@@ -103,7 +104,7 @@ function buildDefaultBody(a: Article): ArticleBody {
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/" },
     ],
-    related: ARTICLES.filter((x) => x.category === a.category && x.slug !== a.slug)
+    related: ARTICLES.filter((x) => x.category === a.category && x.slug !== a.slug && isPublished(x))
       .slice(0, 3)
       .map((x) => x.slug),
     cta: { label: "Browse the Newsroom", href: "/news" },

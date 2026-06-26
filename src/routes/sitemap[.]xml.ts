@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { ARTICLES } from "@/data/articles";
+import { ARTICLES, isPublished } from "@/data/articles";
 
 const BASE_URL = "https://keeptxred.com";
 const ROUTES = [
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           (p) =>
             `  <url><loc>${BASE_URL}${p}</loc><changefreq>${p === "/" ? "daily" : "weekly"}</changefreq><priority>${p === "/" ? "1.0" : "0.8"}</priority></url>`
         );
-        const articleUrls = ARTICLES.map(
+        const articleUrls = ARTICLES.filter((a) => isPublished(a)).map(
           (a) =>
             `  <url><loc>${BASE_URL}/news/${a.slug}</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`
         );
