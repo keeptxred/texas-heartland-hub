@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
+import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
@@ -31,6 +32,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const RepresentativesRoute = RepresentativesRouteImport.update({
   id: '/representatives',
   path: '/representatives',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
+  id: '/register-to-vote',
+  path: '/register-to-vote',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/news': typeof NewsRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/news'
+    | '/register-to-vote'
     | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/news'
+    | '/register-to-vote'
     | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/news'
+    | '/register-to-vote'
     | '/representatives'
     | '/sitemap.xml'
     | '/tax-calculator'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   ElectionsRoute: typeof ElectionsRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   NewsRoute: typeof NewsRoute
+  RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
@@ -155,6 +168,13 @@ declare module '@tanstack/react-router' {
       path: '/representatives'
       fullPath: '/representatives'
       preLoaderRoute: typeof RepresentativesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register-to-vote': {
+      id: '/register-to-vote'
+      path: '/register-to-vote'
+      fullPath: '/register-to-vote'
+      preLoaderRoute: typeof RegisterToVoteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   ElectionsRoute: ElectionsRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
   NewsRoute: NewsRoute,
+  RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
