@@ -17,6 +17,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
@@ -64,6 +65,11 @@ const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegislativeUpdatesRoute = LegislativeUpdatesRouteImport.update({
+  id: '/legislative-updates',
+  path: '/legislative-updates',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LawsToKnowRoute = LawsToKnowRouteImport.update({
@@ -116,6 +122,7 @@ export interface FileRoutesByFullPath {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
   '/news': typeof NewsRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/laws-to-know'
+    | '/legislative-updates'
     | '/news'
     | '/register-to-vote'
     | '/representatives'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/laws-to-know'
+    | '/legislative-updates'
     | '/news'
     | '/register-to-vote'
     | '/representatives'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/elections'
     | '/find-representative'
     | '/laws-to-know'
+    | '/legislative-updates'
     | '/news'
     | '/register-to-vote'
     | '/representatives'
@@ -228,6 +240,7 @@ export interface RootRouteChildren {
   ElectionsRoute: typeof ElectionsRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   LawsToKnowRoute: typeof LawsToKnowRoute
+  LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
   NewsRoute: typeof NewsRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
@@ -294,6 +307,13 @@ declare module '@tanstack/react-router' {
       path: '/news'
       fullPath: '/news'
       preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legislative-updates': {
+      id: '/legislative-updates'
+      path: '/legislative-updates'
+      fullPath: '/legislative-updates'
+      preLoaderRoute: typeof LegislativeUpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/laws-to-know': {
@@ -364,6 +384,7 @@ const rootRouteChildren: RootRouteChildren = {
   ElectionsRoute: ElectionsRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
   LawsToKnowRoute: LawsToKnowRoute,
+  LegislativeUpdatesRoute: LegislativeUpdatesRoute,
   NewsRoute: NewsRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
