@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ARTICLES, isPublished, type Article } from "@/data/articles";
+import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 
 export const Route = createFileRoute("/news/$slug")({
