@@ -90,6 +90,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:description", content: "Conservative Texas political news, election coverage, and a property tax calculator by county including school district taxes." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/374bab14-d7e6-41d3-8234-06a7615591f1/id-preview-98e618a4--eabc624d-53f7-4564-8bf9-613c4b63a016.lovable.app-1782478651215.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/374bab14-d7e6-41d3-8234-06a7615591f1/id-preview-98e618a4--eabc624d-53f7-4564-8bf9-613c4b63a016.lovable.app-1782478651215.png" },
+      { name: "google-site-verification", content: "58wEXUcyQN-Wcn4LaY6yS_mUwAWVh99ni3Z2SqJ_Bkk" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
