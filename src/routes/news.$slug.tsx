@@ -16,14 +16,18 @@ export const Route = createFileRoute("/news/$slug")({
     const title = `${article.title} — Keep TX Red`;
     const desc = article.dek;
     const path = `/news/${article.slug}`;
+    const keywords = buildKeywords(article.title, article.dek, article.category);
     return {
       meta: [
         { title },
         { name: "description", content: desc },
+        { name: "keywords", content: keywords },
         { property: "og:title", content: article.title },
         { property: "og:description", content: desc },
         { property: "og:type", content: "article" },
         { property: "og:url", content: path },
+        { property: "og:image", content: article.image },
+        { name: "twitter:image", content: article.image },
         { property: "article:published_time", content: body.updated },
         { property: "article:modified_time", content: body.updated },
         { property: "article:section", content: article.category },
