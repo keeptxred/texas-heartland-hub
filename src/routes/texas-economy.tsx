@@ -4,10 +4,10 @@ import { HubView } from "@/components/hub-view";
 
 const HUB = HUBS.find((h) => h.slug === "texas-economy")!;
 const SECTIONS = [
-  { title: "Energy & Oil", description: "Permian Basin, ERCOT, and the state's energy economy." },
-  { title: "Jobs & Employment", description: "Workforce, in-migration, and the Texas labor market." },
-  { title: "Business Growth", description: "Corporate relocations, startups, and Texas's economic edge." },
-  { title: "Taxes & State Budget", description: "Property taxes, sales tax, appraisals, and how Texas spends." },
+  { title: "Energy & Oil", description: "Permian Basin, ERCOT, and the state's energy economy.", href: "/news/texas-energy-economy-overview" },
+  { title: "Jobs & Employment", description: "Workforce, in-migration, and the Texas labor market.", href: "/texas-business" },
+  { title: "Business Growth", description: "Corporate relocations, startups, and Texas's economic edge.", href: "/texas-business" },
+  { title: "Taxes & State Budget", description: "Property taxes, sales tax, appraisals, and how Texas spends.", href: "/tax-calculator" },
 ];
 
 export const Route = createFileRoute("/texas-economy")({
