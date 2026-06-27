@@ -13,9 +13,9 @@ export const Route = createFileRoute("/hubs/$slug")({
     const { hub } = loaderData;
     return {
       meta: [
-        { title: `${hub.title} — Keep TX Red Hub` },
+        { title: `${hub.title} — Keep TX Red` },
         { name: "description", content: hub.intro.slice(0, 200) },
-        { property: "og:title", content: `${hub.title} — Keep TX Red Hub` },
+        { property: "og:title", content: `${hub.title} — Keep TX Red` },
         { property: "og:description", content: hub.intro.slice(0, 200) },
       ],
       links: [{ rel: "canonical", href: `/hubs/${hub.slug}` }],
@@ -23,14 +23,14 @@ export const Route = createFileRoute("/hubs/$slug")({
   },
   notFoundComponent: () => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-      <h1 className="font-display text-4xl mb-3">Hub Not Found</h1>
-      <Link to="/hubs" className="text-primary underline">All Hubs</Link>
+      <h1 className="font-display text-4xl mb-3">Section Not Found</h1>
+      <Link to="/hubs" className="text-primary underline">All Sections</Link>
     </div>
   ),
   errorComponent: () => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
       <h1 className="font-display text-4xl mb-3">Something went wrong</h1>
-      <Link to="/hubs" className="text-primary underline">All Hubs</Link>
+      <Link to="/hubs" className="text-primary underline">All Sections</Link>
     </div>
   ),
   component: HubPage,

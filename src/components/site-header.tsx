@@ -2,11 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 const NAV = [
-  { to: "/", label: "Home" },
+  { to: "/news", label: "News" },
   { to: "/texas-politics", label: "Politics" },
-  { to: "/texas-economy", label: "Economy" },
-  { to: "/texas-law-policy", label: "Policy" },
   { to: "/elections", label: "Elections" },
+  { to: "/tax-calculator", label: "Property Taxes" },
+  { to: "/texas-law-policy", label: "Texas Law" },
+  { to: "/representatives", label: "Representatives" },
   { to: "/about", label: "About" },
 ] as const;
 
