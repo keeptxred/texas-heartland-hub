@@ -7,10 +7,10 @@ import { AdSlot } from "@/components/ad-slot";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Keep Texas Red – Texas News, Politics & Local Updates" },
-      { name: "description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes — clear, factual updates from across the Lone Star State." },
-      { property: "og:title", content: "Keep Texas Red – Texas News, Politics & Local Updates" },
-      { property: "og:description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes from across the Lone Star State." },
+      { title: "Keep TX Red | Texas News, Politics, Economy, Border & Sports" },
+      { name: "description", content: "Keep TX Red delivers daily Texas news, politics, business, border security, energy, elections, sports and culture. Independent reporting focused on the issues shaping Texas." },
+      { property: "og:title", content: "Keep TX Red | Texas News, Politics, Economy, Border & Sports" },
+      { property: "og:description", content: "Keep TX Red delivers daily Texas news, politics, business, border security, energy, elections, sports and culture. Independent reporting focused on the issues shaping Texas." },
       { property: "og:url", content: "/" },
       { property: "og:image", content: heroFlag },
       { name: "twitter:image", content: heroFlag },
@@ -42,6 +42,39 @@ export const Route = createFileRoute("/")({
           name: "Keep TX Red",
           url: "https://www.keeptxred.com/",
           logo: "https://www.keeptxred.com/favicon.ico",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "NewsMediaOrganization",
+          name: "Keep TX Red",
+          alternateName: "Keep Texas Red",
+          url: "https://www.keeptxred.com/",
+          logo: { "@type": "ImageObject", url: "https://www.keeptxred.com/favicon.ico" },
+          sameAs: [],
+          masthead: "https://www.keeptxred.com/about",
+          ethicsPolicy: "https://www.keeptxred.com/editorial-standards",
+          publishingPrinciples: "https://www.keeptxred.com/editorial-standards",
+          diversityPolicy: "https://www.keeptxred.com/editorial-standards",
+          correctionsPolicy: "https://www.keeptxred.com/about",
+          contactPoint: {
+            "@type": "ContactPoint",
+            email: "contact@keeptxred.com",
+            contactType: "Editorial",
+          },
+          areaServed: { "@type": "State", name: "Texas" },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+          ],
         }),
       },
     ],
@@ -134,13 +167,13 @@ function Index() {
         <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16">
           <div className="max-w-[700px]">
             <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">
-              Everything Texans need to stay informed
+              Keep TX Red | Texas News, Politics & Conservative Commentary
             </h1>
             <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
-              Politics, elections, taxes, and statewide updates—explained clearly and updated regularly.
+              Daily Texas news, politics, business, border, energy, elections, sports and culture — independent reporting focused on the issues shaping Texas.
             </p>
             <p className="mt-4 text-sm text-muted-foreground">
-              Your Texas politics and civic information guide.
+              <Link to="/keep-texas-red" className="text-primary hover:underline font-medium">Read more about Keep Texas Red →</Link>
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
