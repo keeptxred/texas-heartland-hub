@@ -43,6 +43,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
 import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
 
@@ -216,6 +217,12 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksGenerateSportsRoute =
+  ApiPublicHooksGenerateSportsRouteImport.update({
+    id: '/api/public/hooks/generate-sports',
+    path: '/api/public/hooks/generate-sports',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksGenerateNewsRoute =
   ApiPublicHooksGenerateNewsRouteImport.update({
     id: '/api/public/hooks/generate-news',
@@ -266,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -304,6 +312,7 @@ export interface FileRoutesByTo {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -343,6 +352,7 @@ export interface FileRoutesById {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -383,6 +393,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-sports'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -421,6 +432,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-sports'
   id:
     | '__root__'
     | '/'
@@ -459,6 +471,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-sports'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -496,6 +509,7 @@ export interface RootRouteChildren {
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
+  ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -738,6 +752,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/generate-sports': {
+      id: '/api/public/hooks/generate-sports'
+      path: '/api/public/hooks/generate-sports'
+      fullPath: '/api/public/hooks/generate-sports'
+      preLoaderRoute: typeof ApiPublicHooksGenerateSportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/generate-news': {
       id: '/api/public/hooks/generate-news'
       path: '/api/public/hooks/generate-news'
@@ -812,6 +833,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthorsSlugRoute: AuthorsSlugRoute,
   ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
+  ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
