@@ -24,9 +24,11 @@ export type Database = {
           dek: string
           id: string
           image_url: string | null
+          is_breaking: boolean
           keywords: string[] | null
           kind: string
           published_at: string
+          score: number
           slug: string
           source_name: string | null
           source_url: string | null
@@ -41,9 +43,11 @@ export type Database = {
           dek: string
           id?: string
           image_url?: string | null
+          is_breaking?: boolean
           keywords?: string[] | null
           kind?: string
           published_at?: string
+          score?: number
           slug: string
           source_name?: string | null
           source_url?: string | null
@@ -58,9 +62,11 @@ export type Database = {
           dek?: string
           id?: string
           image_url?: string | null
+          is_breaking?: boolean
           keywords?: string[] | null
           kind?: string
           published_at?: string
+          score?: number
           slug?: string
           source_name?: string | null
           source_url?: string | null

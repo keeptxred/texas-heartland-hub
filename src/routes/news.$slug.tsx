@@ -4,6 +4,7 @@ import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
 import { getEvergreenBySlug } from "@/lib/evergreen.functions";
 import capitol from "@/assets/capitol.jpg";
+import { AdSlot } from "@/components/ad-slot";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
@@ -247,6 +248,9 @@ function ArticlePage() {
           </p>
         ))}
 
+        {/* SLOT 1 — after first paragraph */}
+        <AdSlot placement="top" />
+
         {body.sections.map((sec, i) => (
           <section key={i} className="mt-10">
             <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">{sec.heading}</h2>
@@ -304,6 +308,9 @@ function ArticlePage() {
             ) : null}
           </section>
         ))}
+
+        {/* SLOT 2 — between body sections and FAQ */}
+        <AdSlot placement="in-content" />
 
         {body.faq.length > 0 ? (
           <section className="mt-12">
@@ -363,6 +370,9 @@ function ArticlePage() {
           </div>
         </section>
       ) : null}
+
+      {/* SLOT 3 — footer, before author bio */}
+      <AdSlot placement="footer" />
 
       {author ? (
         <section className="mt-12 border-t border-border pt-6">

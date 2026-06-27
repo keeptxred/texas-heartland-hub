@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroFlag from "@/assets/hero-flag.jpg";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { AdSlot } from "@/components/ad-slot";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -44,6 +46,7 @@ export const Route = createFileRoute("/")({
       },
     ],
   }),
+  loader: () => getDailyArticles(),
   component: Index,
 });
 
@@ -93,6 +96,13 @@ const SECTION_CARDS = [
 ];
 
 function Index() {
+  const { articles: live } = Route.useLoaderData() as { articles: DailyArticle[] };
+  const breaking = live.filter((a: DailyArticle) => a.is_breaking).slice(0, 3);
+  const trending = live
+    .filter((a: DailyArticle) => !a.is_breaking)
+    .sort((a: DailyArticle, b: DailyArticle) => (b.score ?? 0) - (a.score ?? 0))
+    .slice(0, 5);
+
   const sorted = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
   const [lead, ...rest] = sorted;
   const featured = rest.slice(0, 4);
@@ -100,6 +110,25 @@ function Index() {
 
   return (
     <div className="bg-background">
+      {/* BREAKING NEWS — top of homepage when score >= 18 */}
+      {breaking.length > 0 ? (
+        <section className="bg-primary text-primary-foreground">
+          <div className="mx-auto max-w-[1200px] px-6 py-6">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="inline-flex items-center gap-2 rounded-sm bg-primary-foreground/15 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.25em]">
+                <span className="size-2 rounded-full bg-primary-foreground animate-pulse" />
+                Breaking
+              </span>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              {breaking.map((a: DailyArticle) => (
+                <BreakingCard key={a.slug} article={a} />
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {/* HERO */}
       <section className="border-b border-border">
         <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16">
@@ -130,6 +159,22 @@ function Index() {
           </div>
         </div>
       </section>
+
+      {/* TRENDING TODAY */}
+      {trending.length > 0 ? (
+        <section className="mx-auto max-w-[1200px] px-6 py-12 border-b border-border">
+          <div className="flex items-end justify-between mb-6">
+            <span className="text-xs font-medium uppercase tracking-wider text-primary">Trending Today</span>
+            <Link to="/news" className="text-sm font-medium text-primary hover:underline">View all news →</Link>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
+            {trending.map((a: DailyArticle) => (
+              <TrendingCard key={a.slug} article={a} />
+            ))}
+          </div>
+          <AdSlot placement="banner" />
+        </section>
+      ) : null}
 
       {/* FEATURED STORIES */}
       {lead && (
@@ -232,5 +277,50 @@ function Index() {
         </div>
       </section>
     </div>
+  );
+}
+
+function articleHref(a: DailyArticle) {
+  return a.kind === "evergreen" ? `/news/${a.slug}` : a.source_url ?? "/news";
+}
+
+function BreakingCard({ article }: { article: DailyArticle }) {
+  const href = articleHref(article);
+  const external = article.kind !== "evergreen";
+  const inner = (
+    <>
+      <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{article.category}</span>
+      <h3 className="font-sans text-base md:text-lg font-semibold leading-snug mt-1">{article.title}</h3>
+    </>
+  );
+  return external ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" className="block rounded-md bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors p-4">
+      {inner}
+    </a>
+  ) : (
+    <Link to="/news/$slug" params={{ slug: article.slug }} className="block rounded-md bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors p-4">
+      {inner}
+    </Link>
+  );
+}
+
+function TrendingCard({ article }: { article: DailyArticle }) {
+  const external = article.kind !== "evergreen";
+  const inner = (
+    <>
+      <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{article.category}</span>
+      <h3 className="font-sans text-sm font-semibold mt-1 leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-4">
+        {article.title}
+      </h3>
+    </>
+  );
+  return external && article.source_url ? (
+    <a key={article.slug} href={article.source_url} target="_blank" rel="noopener noreferrer" className="group block">
+      {inner}
+    </a>
+  ) : (
+    <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="group block">
+      {inner}
+    </Link>
   );
 }
