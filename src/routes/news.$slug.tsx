@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
+import { authorSlug, getAuthor } from "@/data/authors";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: ({ params }): { article: Article; body: ArticleBody } => {
@@ -118,7 +119,7 @@ function buildKeywords(title: string, dek: string, category: string): string {
 
 function _buildDefaultBody(a: Article): ArticleBody {
   return {
-    updated: "2026-06-01",
+    updated: (a.publishedAt ?? new Date().toISOString()).slice(0, 10),
     intro: [a.dek],
     sections: [
       {
@@ -165,6 +166,8 @@ function ArticlePage() {
     month: "long",
     day: "numeric",
   });
+  const author = getAuthor(article.author);
+  const authorHref = author ? `/authors/${author.slug}` : `/authors/${authorSlug(article.author)}`;
 
   return (
     <article className="mx-auto max-w-3xl px-4 py-14">
@@ -179,11 +182,19 @@ function ArticlePage() {
       <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-snug font-serif italic">{article.dek}</p>
 
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground border-y border-border py-3">
-        <span className="font-semibold text-foreground">{article.author}</span>
+        <Link to={authorHref} className="font-semibold text-foreground hover:text-primary underline-offset-2 hover:underline">
+          By {article.author}
+        </Link>
         <span>•</span>
         <span>
           Last updated <time dateTime={body.updated}>{formattedDate}</time>
         </span>
+        {article.pillar ? (
+          <>
+            <span>•</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">★ Pillar Guide</span>
+          </>
+        ) : null}
       </div>
 
       {body.editorNote ? (
@@ -192,6 +203,10 @@ function ArticlePage() {
           {body.editorNote}
         </p>
       ) : null}
+
+      <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground border-l-2 border-primary/40 pl-3">
+        Editorial disclaimer: Opinions and analysis on Keep TX Red are editorial content — not statements of fact. See our <Link to="/editorial-standards" className="text-primary hover:underline">editorial standards</Link>.
+      </p>
 
       <div className="aspect-[16/9] overflow-hidden bg-muted my-8 border-2 border-foreground/10">
         <img src={article.image} alt={article.title} className="size-full object-cover" width={1280} height={720} />
@@ -318,6 +333,18 @@ function ArticlePage() {
               </Link>
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {author ? (
+        <section className="mt-12 border-t border-border pt-6">
+          <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">About the author</span>
+          <h3 className="font-display text-2xl tracking-tight mt-1">{author.name}</h3>
+          <p className="text-sm italic text-muted-foreground">{author.role}</p>
+          <p className="mt-2 font-serif text-sm leading-relaxed text-foreground/90">{author.bio[0]}</p>
+          <Link to={authorHref} className="mt-2 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline">
+            More from {author.name} →
+          </Link>
         </section>
       ) : null}
     </article>

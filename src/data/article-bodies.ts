@@ -861,4 +861,329 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     related: ["texas-attorney-general-powers", "how-a-bill-becomes-texas-law", "texas-constitutional-amendments-guide"],
     cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
   },
+
+  "texas-border-policy-full-guide": {
+    updated: "2026-06-27",
+    editorNote: "This is a Keep TX Red pillar guide — updated June 2026 by our Border Bureau. We refresh it as Operation Lone Star deployments, federal litigation, and Rio Grande conditions change.",
+    intro: [
+      "No policy fight defines modern Texas like the border. The 1,254-mile line between Texas and Mexico runs from El Paso along the Rio Grande to the Gulf of Mexico — through ranchland, river towns, federal wildlife refuges, and the four most populous border metros in the United States. Roughly two-thirds of the entire southwest border is Texas alone, and the policy choices made in Austin reach further than most people in Washington understand.",
+      "Texas has spent more than $11 billion on state-funded border security since 2021 under Operation Lone Star — a deployment of the Department of Public Safety, the Texas Military Department, and county sheriffs that has fundamentally changed how Texans think about state sovereignty. This pillar guide walks through how it works, who runs it, what the law actually says, and where the policy fight is headed in 2026.",
+    ],
+    sections: [
+      {
+        heading: "The 1,254-Mile Line: Geography First",
+        paragraphs: [
+          "Texas's border with Mexico is not a fence on a map. It is the Rio Grande itself — a winding, often shallow river that doubles as the international boundary from the New Mexico state line at El Paso all the way to the Gulf at Boca Chica. The river passes through nine Border Patrol sub-sectors, 28 international ports of entry, and some of the most rugged country in North America, including the Big Bend, where canyon walls drop a thousand feet into the water.",
+          "The four busiest crossing zones are the El Paso sector, the Big Bend sector, the Del Rio sector, and the Rio Grande Valley sector — and they look nothing alike. El Paso is urban, dense, and shares a metroplex with Ciudad Juárez. The RGV is agricultural, hot, and lined with colonias and small river towns. Big Bend is empty. Del Rio is the area where the 2021 Haitian migrant encampment forced a national reckoning.",
+        ],
+      },
+      {
+        heading: "What Operation Lone Star Actually Is",
+        paragraphs: [
+          "Operation Lone Star (OLS) is the umbrella name for the state-funded border deployment Governor Greg Abbott launched in March 2021. It is not one agency or one mission — it is a coordinated, ongoing operation that pulls together:",
+        ],
+        bullets: [
+          "Texas Department of Public Safety (DPS) — state troopers patrolling river roads, working trafficking interdiction, and arresting trespassers under state law.",
+          "Texas Military Department (TMD) — Army and Air National Guard soldiers and airmen running observation posts, installing concertina wire, and operating boats on the river.",
+          "Texas Parks & Wildlife Game Wardens — water patrol and rural enforcement.",
+          "Local county sheriffs in Kinney, Val Verde, Maverick, Webb, Zapata, Starr, Hidalgo, and Cameron counties.",
+          "The Texas Facilities Commission, which builds and operates the state border wall and the buoy barrier on the Rio Grande near Eagle Pass.",
+        ],
+        table: {
+          headers: ["OLS Statistic (cumulative since March 2021)", "Reported Figure"],
+          rows: [
+            ["Migrant apprehensions / encounters", "550,000+"],
+            ["Criminal arrests", "50,000+"],
+            ["Felony charges filed", "45,000+"],
+            ["Fentanyl seized (lethal doses)", "Hundreds of millions"],
+            ["State funds appropriated", "$11+ billion"],
+          ],
+        },
+      },
+      {
+        heading: "State vs. Federal: The Constitutional Question",
+        paragraphs: [
+          "Immigration enforcement is constitutionally a federal power. But Texas's argument — articulated by Governor Abbott in his 2024 invocation of Article I, Section 10 of the U.S. Constitution — is that when the federal government refuses to defend a state from an 'invasion,' the state retains a residual sovereign authority to defend itself. That clause reads, in part, that no state shall 'engage in War, unless actually invaded, or in such imminent Danger as will not admit of delay.'",
+          "The Biden-era Department of Justice sued Texas repeatedly over the buoy barrier, the concertina wire, and Senate Bill 4 — the 2023 law making illegal entry a state crime. The Fifth Circuit, the Supreme Court's shadow docket, and a series of injunctions ping-ponged the cases. The bottom line as of mid-2026: Texas has retained the buoys, kept most of the wire, and continues to make state-law trespass arrests, while SB4 remains the central legal flashpoint.",
+        ],
+      },
+      {
+        heading: "The State Border Wall",
+        paragraphs: [
+          "Texas has built and is building its own physical barrier — separate from the federal wall. The state wall is funded out of OLS appropriations and constructed by the Texas Facilities Commission on land where private owners, the General Land Office, or local governments grant access. Roughly 75 miles of state-funded wall has been constructed across multiple border counties, with hundreds of additional miles planned where rights-of-way can be secured.",
+          "The state wall does not require federal cooperation, which is the point. Texas treats it as a long-term capital investment in deterrence.",
+        ],
+      },
+      {
+        heading: "Senate Bill 4: State Authority to Arrest and Remove",
+        paragraphs: [
+          "Senate Bill 4, passed in 2023 and signed by Governor Abbott, makes illegal entry into Texas from a foreign nation a state crime — a Class B misdemeanor for a first offense, escalating to a state jail felony for repeat offenses. It authorizes state magistrates to order removal to a Mexican port of entry as an alternative to prosecution.",
+          "SB4 is the most aggressive state immigration statute in modern American history. The legal fight over whether Texas can enforce it — and whether it survives federal preemption under Arizona v. United States (2012) — is one of the most important federalism cases of the decade.",
+        ],
+      },
+      {
+        heading: "Ports of Entry and Trade",
+        paragraphs: [
+          "Border policy is not just enforcement. The Texas border is also the largest land-trade interface in the Western Hemisphere. The Laredo port of entry — the World Trade Bridge and the Colombia Solidarity Bridge — handles more truck crossings than any other port in the United States, more than $300 billion in trade with Mexico annually. Mexico is the #1 trading partner of both the United States and the state of Texas.",
+          "That trade reality is why intelligent border policy distinguishes between the river itself, where unlawful crossings happen, and the ports of entry, where legitimate commerce, work visas, and lawful travel move. Conservative border policy in Texas — at its strongest — has done both: secured the river while keeping the ports moving.",
+        ],
+      },
+      {
+        heading: "Who Pays for It",
+        paragraphs: [
+          "Operation Lone Star is paid for out of the Texas General Revenue Fund — appropriated by the Legislature in successive biennia, with the 2023 session alone adding $5.1 billion in border security funding. That is roughly half of what some entire state agencies receive. The political consensus in Austin to keep funding it has held across two regular sessions and multiple special sessions, with bipartisan votes in the Texas House on key border appropriations.",
+        ],
+      },
+      {
+        heading: "What Comes Next",
+        paragraphs: [
+          "Three questions will define Texas border policy in 2026 and beyond. First, does the federal government — under any administration — return to operational control of the border, removing Texas's stated justification for OLS? Second, do the courts ultimately uphold or strike down SB4 and similar state-led enforcement? Third, does Texas continue to scale the state wall and buoy systems into a permanent fortified line, or does it draw down once federal posture changes?",
+          "Read our companion explainers on [Operation Lone Star](/news/border-security-state-role), the [Texas border geography](/news/texas-border-geography-101), and the [reinforced Rio Grande crossings](/news/operation-lone-star).",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Is Operation Lone Star paid for with federal money?", a: "No. OLS is funded entirely with Texas state appropriations. Texas has formally requested federal reimbursement and has been denied." },
+      { q: "Can Texas legally arrest people for illegal entry?", a: "Texas argues yes, under SB4 and its sovereign self-defense authority. The federal government has challenged that position in court, and the litigation is ongoing." },
+      { q: "Does Texas operate its own border wall?", a: "Yes. The Texas Facilities Commission builds the state wall on private and state land, independent of the federal border wall." },
+      { q: "How many troopers and Guard members are deployed?", a: "OLS deployments have ranged from 5,000 to over 10,000 personnel at peak, including DPS, the Texas Military Department, and supporting agencies." },
+      { q: "Where does the Texas border actually run?", a: "From the New Mexico line at El Paso, along the Rio Grande, to the Gulf of Mexico at Boca Chica — 1,254 miles total." },
+    ],
+    sources: [
+      { label: "Office of the Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/news/category/operation-lone-star" },
+      { label: "Texas Department of Public Safety", url: "https://www.dps.texas.gov/" },
+      { label: "Texas Military Department", url: "https://tmd.texas.gov/" },
+      { label: "Senate Bill 4 (88R)", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=88R&Bill=SB4" },
+      { label: "U.S. Customs and Border Protection — Southwest Border Sectors", url: "https://www.cbp.gov/newsroom/stats/southwest-land-border-encounters" },
+    ],
+    related: ["operation-lone-star", "border-security-state-role", "texas-border-geography-101"],
+    cta: { label: "Contact Your Texas Legislators", href: "/contact-legislators" },
+  },
+
+  "texas-energy-economy-overview": {
+    updated: "2026-06-27",
+    editorNote: "This is a Keep TX Red pillar guide — updated June 2026 by our Energy Desk. The Texas energy economy moves fast; we refresh production figures, ERCOT reserve margins, and Railroad Commission rulings as they change.",
+    intro: [
+      "If Texas were its own country, it would be the third-largest oil producer in the world, behind only Saudi Arabia and the rest of the United States. The Permian Basin in West Texas pumps more than 6 million barrels of crude per day — more than the entire output of Iraq. Add the Eagle Ford in South Texas, the Haynesville on the Louisiana line, the Barnett under Fort Worth, and the Anadarko in the Panhandle, and Texas accounts for roughly 43% of all U.S. crude production and 25% of U.S. natural gas.",
+      "But the Texas energy economy is bigger than hydrocarbons. Texas is also the largest wind-power state in the country, leads the nation in installed utility-scale solar, runs its own electric grid through ERCOT, and exports liquefied natural gas from Sabine Pass, Corpus Christi, and Freeport to Europe and Asia. This pillar guide is the Keep TX Red overview of how the whole system fits together — and why it matters to every Texan, not just the ones in Midland or Houston.",
+    ],
+    sections: [
+      {
+        heading: "The Three Pillars: Oil, Gas, Electricity",
+        paragraphs: [
+          "Texas's energy economy rests on three distinct industries that overlap but operate under different regulators, different markets, and different geographies. Understanding the difference is the first step to understanding any Texas energy story.",
+        ],
+        bullets: [
+          "Oil — pumped, refined, exported. Centered in the Permian (Midland and Odessa), refined along the Gulf Coast (Houston, Port Arthur, Corpus Christi).",
+          "Natural gas — produced both as associated gas from oil wells and as the primary product of dry-gas fields like the Haynesville. Liquefied for export at Sabine Pass, Corpus Christi, and Freeport.",
+          "Electricity — generated, transmitted, and sold inside the ERCOT grid. About 90% of Texas load is served by ERCOT; the El Paso area, parts of East Texas, and the Panhandle sit on other grids.",
+        ],
+      },
+      {
+        heading: "The Permian Basin: Why It Matters",
+        paragraphs: [
+          "The Permian Basin straddles West Texas and southeastern New Mexico and is the most productive oil play in the world. The Texas side — anchored by Midland and the Delaware sub-basin to the west — produces more than 6 million barrels of crude per day plus enormous volumes of associated natural gas. At current prices and production, the Permian generates over $150 billion in annual gross revenue for the Texas economy.",
+          "Permian operators range from supermajors like ExxonMobil and Chevron to independents like Pioneer (now part of Exxon), Diamondback, and EOG, down to hundreds of smaller producers. The Railroad Commission of Texas regulates the wells, well spacing, flaring, and plugging of abandoned wells.",
+        ],
+      },
+      {
+        heading: "ERCOT and Why Texas Has Its Own Grid",
+        paragraphs: [
+          "The Electric Reliability Council of Texas, or ERCOT, operates the grid that serves roughly 26 million Texans across 90% of the state's geography. Texas deliberately maintained an intrastate grid — separate from the Eastern and Western Interconnections — so that the federal government, through the Federal Energy Regulatory Commission, has no jurisdiction over Texas wholesale power.",
+          "The Public Utility Commission of Texas (PUC) oversees ERCOT, sets the rules of the deregulated retail market, and supervises reliability standards. After Winter Storm Uri in February 2021, the Legislature passed Senate Bill 3, weatherization mandates, and the Texas Energy Fund — a multi-billion-dollar low-interest loan program for new dispatchable generation, principally natural gas.",
+        ],
+        table: {
+          headers: ["Generation Source", "Approx. % of ERCOT Capacity"],
+          rows: [
+            ["Natural gas", "~40%"],
+            ["Wind", "~28%"],
+            ["Solar", "~18%"],
+            ["Coal", "~8%"],
+            ["Nuclear (Comanche Peak + South Texas Project)", "~4%"],
+            ["Battery storage (utility-scale)", "~2% and growing fast"],
+          ],
+        },
+      },
+      {
+        heading: "LNG Exports: Texas as Energy Diplomat",
+        paragraphs: [
+          "Three Gulf Coast LNG terminals — Cheniere's Sabine Pass and Corpus Christi facilities, plus Freeport LNG — make Texas one of the top liquefied natural gas exporters in the world. After Russia's 2022 invasion of Ukraine, European utilities signed long-term contracts with Texas LNG suppliers that effectively turned the Permian and Haynesville into Europe's strategic gas reserve.",
+          "More export capacity is under construction at Port Arthur, Rio Grande LNG near Brownsville, and additional Cheniere trains. Federal export-permit policy is the single largest variable in how big the Texas LNG industry becomes by the end of the decade.",
+        ],
+      },
+      {
+        heading: "The Railroad Commission of Texas",
+        paragraphs: [
+          "Texas's primary oil and gas regulator is the Railroad Commission — three statewide elected commissioners, six-year staggered terms, all currently Republican. The Commission has not regulated railroads since 2005, but the name has stuck since 1891. The Commission regulates drilling permits, well spacing, pipeline safety, surface mining, and the plugging of orphaned wells.",
+          "It is, in practical terms, one of the most consequential elected bodies in the United States — and one of the lowest-turnout statewide races on the Texas ballot.",
+        ],
+      },
+      {
+        heading: "Property Taxes, Severance Taxes, and the Permanent School Fund",
+        paragraphs: [
+          "The Texas energy economy doesn't just employ Texans — it pays for Texas government. The 4.6% oil severance tax and 7.5% natural gas severance tax flow into the General Revenue Fund and, after thresholds, into the Economic Stabilization Fund (the Rainy Day Fund) and the Permanent School Fund.",
+          "The Permanent School Fund — which owns 13 million acres of state lands including major mineral interests across the Permian — is one of the largest sovereign endowments for public education in the world and currently exceeds $55 billion. Every distribution it makes to ISDs is, in effect, a check that the Texas energy economy writes for Texas schoolchildren.",
+        ],
+      },
+      {
+        heading: "Renewables Are Texan Too",
+        paragraphs: [
+          "Texas leads the United States in installed wind capacity — over 40 gigawatts, more than the next three states combined — and is now the leader in new utility-scale solar deployment. West Texas wind, Panhandle wind, and South Texas solar all feed into ERCOT.",
+          "Conservative energy policy in Texas has generally been 'all of the above with a thumb on dispatchable resources': encourage every form of generation, but make sure firm, dispatchable capacity (natural gas, nuclear, and increasingly batteries) is sized to keep the lights on at peak demand. That is the Texas Energy Fund's core logic.",
+        ],
+      },
+      {
+        heading: "Bottom Line for Texans",
+        paragraphs: [
+          "If you drive in Houston, run an HVAC in Dallas in August, work in a school in Austin, or own a ranch in the Permian, your daily life is downstream of the Texas energy economy. It funds your kids' classrooms, fuels your truck, heats your home, and is increasingly Europe's hedge against authoritarian energy suppliers.",
+          "Read our companion guides: the [Texas grid and ERCOT explained](/news/texas-grid-ercot-explained), the [Texas energy policy guide](/news/texas-energy-policy-guide), and our running [Permian Basin coverage](/news/permian-energy).",
+        ],
+      },
+    ],
+    faq: [
+      { q: "How much oil does Texas produce?", a: "Roughly 5.5 to 6 million barrels per day from the Permian alone, plus material volumes from the Eagle Ford and other plays — about 43% of total U.S. crude production." },
+      { q: "Does Texas really have its own electric grid?", a: "Yes. ERCOT covers about 90% of Texas load and is deliberately separated from the Eastern and Western Interconnections so federal regulators have no jurisdiction." },
+      { q: "Who regulates oil and gas in Texas?", a: "The Railroad Commission of Texas — three statewide elected commissioners. It does not regulate railroads." },
+      { q: "Is Texas pro-renewable?", a: "Texas leads the country in installed wind capacity and is the top state for new utility-scale solar. Conservative policy in Austin favors 'all of the above' generation with firm dispatchable backup." },
+      { q: "How does energy fund Texas schools?", a: "Severance taxes and the Permanent School Fund — which holds mineral interests across the Permian — generate billions annually for K-12 education and the Rainy Day Fund." },
+    ],
+    sources: [
+      { label: "Railroad Commission of Texas", url: "https://www.rrc.texas.gov/" },
+      { label: "ERCOT", url: "https://www.ercot.com/" },
+      { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
+      { label: "Texas Comptroller — Energy Industry", url: "https://comptroller.texas.gov/economy/economic-data/energy/" },
+      { label: "U.S. Energy Information Administration — Texas State Profile", url: "https://www.eia.gov/state/?sid=TX" },
+    ],
+    related: ["permian-energy", "texas-grid-ercot-explained", "texas-energy-policy-guide"],
+    cta: { label: "Browse Energy Coverage", href: "/news" },
+  },
+
+  "texas-voting-guide-2026": {
+    updated: "2026-06-27",
+    editorNote: "This is the Keep TX Red 2026 voting pillar guide — maintained year-round by our Elections Desk. We update it as deadlines, ID rules, and ballot dates change.",
+    intro: [
+      "Texas runs more elections than most voters realize: federal, state, county, ISD, city, MUD, hospital district, water district, and constitutional amendments. In an even-numbered year like 2026, the cycle starts in early January with the candidate filing deadline, runs through the March primary and May runoff, and ends with the November general election. Miss the wrong deadline and you sit out a year that decides governor, lieutenant governor, attorney general, every member of the U.S. House, half the State Senate, and every member of the Texas House.",
+      "This is the Keep TX Red voter guide for 2026 — registration, ID, the calendar, mail ballots, where to vote, and how to find your district. It is written for Texans in Houston, Dallas, San Antonio, Austin, Fort Worth, El Paso, the Rio Grande Valley, and every county in between.",
+    ],
+    sections: [
+      {
+        heading: "The 2026 Calendar",
+        bullets: [
+          "Monday, December 8, 2025 — first day candidates can file for the March 2026 primary.",
+          "Monday, December 8, 2025 — filing deadline for most state and federal primary races.",
+          "Monday, February 2, 2026 — last day to register to vote in the March primary (30 days before Election Day).",
+          "Monday, February 16 – Friday, February 27, 2026 — early voting for the March primary.",
+          "Tuesday, March 3, 2026 — Primary Election Day.",
+          "Tuesday, May 26, 2026 — Primary Runoff Election Day (if needed; many statewide races trigger runoffs).",
+          "Saturday, May 2, 2026 — Uniform Election Date for most ISD trustee, city council, and special-district races.",
+          "Monday, October 5, 2026 — last day to register to vote in the November general election.",
+          "Monday, October 19 – Friday, October 30, 2026 — early voting for the general election.",
+          "Tuesday, November 3, 2026 — General Election Day.",
+        ],
+      },
+      {
+        heading: "How to Register",
+        paragraphs: [
+          "Texas does not offer same-day registration and does not offer fully online registration. To vote, you must submit a paper voter registration application to the voter registrar in the county where you live at least 30 days before the election.",
+          "You can pick up the form at any county tax office, public library, post office, or many high schools, or you can download and print it from the Secretary of State's website at votetexas.gov. The application is free.",
+        ],
+        bullets: [
+          "U.S. citizen.",
+          "Age 18 or older by Election Day (17-year-olds can register if they will turn 18 by the next election).",
+          "Resident of the Texas county where you apply.",
+          "Not finally convicted of a felony — or have completed sentence, parole, and probation.",
+          "Not declared mentally incapacitated by a court.",
+        ],
+      },
+      {
+        heading: "Accepted Photo ID at the Polls",
+        paragraphs: [
+          "Texas has one of the country's strongest voter ID laws. You must present one of the following at the polling place:",
+        ],
+        bullets: [
+          "Texas Driver License (may be expired up to four years; no expiration limit if you're 70 or older).",
+          "Texas Election Identification Certificate (EIC) — free from DPS for those who don't drive.",
+          "Texas Personal Identification Card.",
+          "Texas handgun license.",
+          "U.S. military ID with photo.",
+          "U.S. citizenship certificate with photo.",
+          "U.S. passport (book or card).",
+        ],
+        table: {
+          headers: ["If you don't have an accepted ID", "What to do"],
+          rows: [
+            ["Forgot it at home", "Cast a provisional ballot; bring ID to county registrar within 6 days."],
+            ["Lost or stolen", "Sign a Reasonable Impediment Declaration and present a supporting document (utility bill, paycheck, bank statement)."],
+            ["Never had one", "Apply for a free Election Identification Certificate at any DPS office."],
+          ],
+        },
+      },
+      {
+        heading: "Mail Ballots: Limited and Specific",
+        paragraphs: [
+          "Texas does not have universal mail-in voting. You may vote by mail only if you meet one of four conditions:",
+        ],
+        bullets: [
+          "Age 65 or older on Election Day.",
+          "Disabled (per the Texas Election Code definition).",
+          "Out of the county during the entire early-voting period and on Election Day.",
+          "Confined in jail but otherwise eligible to vote.",
+        ],
+      },
+      {
+        heading: "Primary vs. General: Why March Decides Most Texas Races",
+        paragraphs: [
+          "In most Texas legislative and congressional districts, the Republican primary is the actual election. November is the formality. That is a direct result of how districts have been drawn and how Texas's electorate has sorted geographically over the past two decades.",
+          "For full mechanics, read our companion explainer on the [Texas primary system](/news/primary-vs-general-election) and the [beginner's guide to Texas elections](/news/beginners-guide-texas-elections).",
+        ],
+      },
+      {
+        heading: "How to Find Your Polling Place",
+        paragraphs: [
+          "Most Texas counties — including Harris, Dallas, Tarrant, Bexar, Travis, Collin, Denton, Fort Bend, El Paso, Hidalgo, and dozens of others — participate in the Countywide Polling Place Program. That means on Election Day you may vote at any open polling location in your county, not just one assigned precinct. Smaller and rural counties still assign precinct-specific polling places. Always check before you go.",
+          "Use the Secretary of State's 'My Voter' portal at teamrv-mvp.sos.texas.gov/MVP — or check our [voting locations page](/voting-locations) for county links.",
+        ],
+      },
+      {
+        heading: "Find Your Districts and Representatives",
+        paragraphs: [
+          "Texans live inside multiple overlapping districts: congressional, state Senate, state House, State Board of Education, county commissioner precinct, ISD trustee district, and city council district. The Secretary of State's voter portal lists all of them by your registered address.",
+          "To contact officials once you know them, see our [representatives page](/representatives) and the [contact legislators directory](/contact-legislators).",
+        ],
+      },
+      {
+        heading: "What's on the Ballot in 2026",
+        bullets: [
+          "Governor of Texas",
+          "Lieutenant Governor of Texas",
+          "Attorney General of Texas",
+          "Comptroller of Public Accounts",
+          "Commissioner of the General Land Office",
+          "Commissioner of Agriculture",
+          "Railroad Commissioner (one seat)",
+          "U.S. House of Representatives — all 38 Texas seats",
+          "Texas State Senate — 15 of 31 seats",
+          "Texas State House — all 150 seats",
+          "Court of Criminal Appeals seats and several Texas Supreme Court seats",
+          "State Board of Education (selected seats)",
+          "Local: county commissioners, district attorneys, sheriffs, ISD trustees, city councils where on the cycle",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Can I register to vote online in Texas?", a: "No. You can update your existing registration's address online, but the initial registration must be filed on paper with your county voter registrar." },
+      { q: "Do I need to declare a party to vote in the primary?", a: "Texas does not have party registration. You declare a party only by picking that party's primary ballot on primary day — it then locks you into that party's runoff." },
+      { q: "How early can I vote?", a: "Early voting starts about 17 days before Election Day for the primary and the general election." },
+      { q: "What if my name is not on the rolls when I show up?", a: "Cast a provisional ballot. You then have six days to provide proof of eligibility to the county registrar." },
+      { q: "Can I take my kids to the polls?", a: "Yes. Texas law specifically permits voters to bring children under 18 into the voting booth." },
+    ],
+    sources: [
+      { label: "Texas Secretary of State — VoteTexas.gov", url: "https://www.votetexas.gov/" },
+      { label: "Texas Secretary of State — My Voter Portal", url: "https://teamrv-mvp.sos.texas.gov/MVP/" },
+      { label: "Texas Election Code", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.toc.htm" },
+      { label: "DPS — Election Identification Certificate", url: "https://www.dps.texas.gov/section/driver-license/election-identification-certificate-eic" },
+    ],
+    related: ["texas-voter-registration-guide", "primary-vs-general-election", "beginners-guide-texas-elections"],
+    cta: { label: "Find Your Polling Place", href: "/voting-locations" },
+  },
 };

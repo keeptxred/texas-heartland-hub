@@ -5,6 +5,7 @@ const COLUMNS = [
     heading: "Newsroom",
     links: [
       { to: "/news", label: "Texas News" },
+      { to: "/hubs", label: "Topic Hubs" },
       { to: "/elections", label: "Elections" },
       { to: "/legislative-updates", label: "Legislative Updates" },
       { to: "/candidate-guides", label: "Candidate Guides" },
@@ -28,12 +29,16 @@ const COLUMNS = [
       { to: "/texas-laws", label: "Texas Laws Explained" },
       { to: "/laws-to-know", label: "Laws You Should Know" },
       { to: "/tax-calculator", label: "Property Tax Calculator" },
-      { to: "/about", label: "About" },
-      { to: "/contact", label: "Contact" },
       { to: "/editorial-standards", label: "Editorial Standards" },
-      { to: "/privacy", label: "Privacy Policy" },
     ],
   },
+] as const;
+
+const LEGAL_LINKS = [
+  { to: "/about", label: "About" },
+  { to: "/contact", label: "Contact" },
+  { to: "/privacy", label: "Privacy Policy" },
+  { to: "/terms", label: "Terms of Service" },
 ] as const;
 
 export function SiteFooter() {
@@ -62,6 +67,15 @@ export function SiteFooter() {
               </ul>
             </div>
           ))}
+        </div>
+        <div className="mt-10 pt-6 border-t border-white/10">
+          <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
+            {LEGAL_LINKS.map((l) => (
+              <li key={l.to}>
+                <Link to={l.to} className="hover:text-primary">{l.label}</Link>
+              </li>
+            ))}
+          </ul>
         </div>
         <div className="mt-12 pt-6 border-t border-white/10 text-center text-[10px] text-white/40 uppercase tracking-[0.25em] leading-relaxed">
           &copy; {new Date().getFullYear()} keeptxred.com — All rights reserved
