@@ -41,6 +41,7 @@ import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
+import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
@@ -208,6 +209,11 @@ const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const NewsIndexRoute = NewsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NewsRoute,
+} as any)
 const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
   id: '/$league',
   path: '/$league',
@@ -277,6 +283,7 @@ export interface FileRoutesByFullPath {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/news/': typeof NewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -299,7 +306,6 @@ export interface FileRoutesByTo {
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
-  '/news': typeof NewsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -316,6 +322,7 @@ export interface FileRoutesByTo {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/news': typeof NewsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -357,6 +364,7 @@ export interface FileRoutesById {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/news/': typeof NewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -399,6 +407,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/news/$slug'
     | '/texas-sports/$league'
+    | '/news/'
     | '/texas-sports/'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -421,7 +430,6 @@ export interface FileRouteTypes {
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
-    | '/news'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
@@ -438,6 +446,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/news/$slug'
     | '/texas-sports/$league'
+    | '/news'
     | '/texas-sports'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -478,6 +487,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/news/$slug'
     | '/texas-sports/$league'
+    | '/news/'
     | '/texas-sports/'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -748,6 +758,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSportsIndexRouteImport
       parentRoute: typeof TexasSportsRoute
     }
+    '/news/': {
+      id: '/news/'
+      path: '/'
+      fullPath: '/news/'
+      preLoaderRoute: typeof NewsIndexRouteImport
+      parentRoute: typeof NewsRoute
+    }
     '/texas-sports/$league': {
       id: '/texas-sports/$league'
       path: '/$league'
@@ -795,10 +812,12 @@ declare module '@tanstack/react-router' {
 
 interface NewsRouteChildren {
   NewsSlugRoute: typeof NewsSlugRoute
+  NewsIndexRoute: typeof NewsIndexRoute
 }
 
 const NewsRouteChildren: NewsRouteChildren = {
   NewsSlugRoute: NewsSlugRoute,
+  NewsIndexRoute: NewsIndexRoute,
 }
 
 const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
