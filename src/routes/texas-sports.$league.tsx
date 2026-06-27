@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { listSportsByLeague } from "@/lib/sports.functions";
+import { listSportsByLeague, type SportsListItem } from "@/lib/sports.functions";
 
 const LEAGUE_META: Record<string, { name: string; title: string; desc: string; teams: string }> = {
   nfl: {
@@ -75,7 +75,7 @@ function LeaguePage() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items.map((a) => (
+          {items.map((a: SportsListItem) => (
             <Link
               key={a.slug}
               to="/news/$slug"
