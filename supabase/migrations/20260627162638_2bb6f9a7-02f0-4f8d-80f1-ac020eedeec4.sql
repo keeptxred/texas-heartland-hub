@@ -1,0 +1,3 @@
+UPDATE public.daily_articles SET image_url='https://www.keeptxred.com/__l5e/assets-v1/cc97f0e5-5817-419b-80ed-27c7f73eddde/nfl-1.jpg' WHERE kind='sports-nfl';
+UPDATE public.daily_articles SET image_url='https://www.keeptxred.com/__l5e/assets-v1/0d14382d-24e7-448d-9df6-3bb4acba04d4/mlb-1.jpg' WHERE kind='sports-mlb';
+UPDATE public.daily_articles SET image_url='https://www.keeptxred.com/__l5e/assets-v1/2fb0d24d-c01c-4cca-bfca-16a522cb9eba/nba-1.jpg' WHERE kind='sports-nba';
