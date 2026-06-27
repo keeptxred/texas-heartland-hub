@@ -25,6 +25,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LawsRouteImport } from './routes/laws'
+import { Route as HoustonRouteImport } from './routes/houston'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
@@ -120,6 +121,11 @@ const LawsRoute = LawsRouteImport.update({
   path: '/laws',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HoustonRoute = HoustonRouteImport.update({
+  id: '/houston',
+  path: '/houston',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GlossaryRoute = GlossaryRouteImport.update({
   id: '/glossary',
   path: '/glossary',
@@ -204,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/houston': typeof HoustonRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/houston': typeof HoustonRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -269,6 +277,7 @@ export interface FileRoutesById {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/houston': typeof HoustonRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -303,6 +312,7 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/houston'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -335,6 +345,7 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/houston'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -367,6 +378,7 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/houston'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -400,6 +412,7 @@ export interface RootRouteChildren {
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
   GlossaryRoute: typeof GlossaryRoute
+  HoustonRoute: typeof HoustonRoute
   LawsRoute: typeof LawsRoute
   LawsToKnowRoute: typeof LawsToKnowRoute
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
@@ -534,6 +547,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LawsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/houston': {
+      id: '/houston'
+      path: '/houston'
+      fullPath: '/houston'
+      preLoaderRoute: typeof HoustonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/glossary': {
       id: '/glossary'
       path: '/glossary'
@@ -657,6 +677,7 @@ const rootRouteChildren: RootRouteChildren = {
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
   GlossaryRoute: GlossaryRoute,
+  HoustonRoute: HoustonRoute,
   LawsRoute: LawsRoute,
   LawsToKnowRoute: LawsToKnowRoute,
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
