@@ -1186,4 +1186,71 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     related: ["texas-voter-registration-guide", "primary-vs-general-election", "beginners-guide-texas-elections"],
     cta: { label: "Find Your Polling Place", href: "/voting-locations" },
   },
+
+  "texas-giraffe-story": {
+    updated: "2026-06-27",
+    editorNote: "A Texana feature from the Keep TX Red editorial team. Opinions and framing are editorial — facts are sourced below.",
+    intro: [
+      "Drive an hour southwest of Fort Worth, past the live oaks and limestone of Glen Rose, and you will find something most Americans do not associate with Texas: a herd of giraffes browsing the tops of mesquite trees as casually as whitetail deer browse a Hill Country pasture. They are not lost. They are not on loan. They live here — born in Texas, raised in Texas, and in many cases, never having set foot on the African continent their ancestors came from.",
+      "Texas, by a quiet quirk of private property law and ranching culture, is now home to one of the largest concentrations of giraffes outside Africa. The story of how that happened is part conservation, part rugged individualism, and entirely Texan.",
+    ],
+    sections: [
+      {
+        heading: "It Started at Fossil Rim",
+        paragraphs: [
+          "The center of gravity for Texas giraffes is the Fossil Rim Wildlife Center, a 1,800-acre conservation ranch outside Glen Rose. Founded in 1984 on a former exotic-game ranch, Fossil Rim has bred and raised more than 200 reticulated giraffes — one of the most successful captive breeding programs in North America.",
+          "Calves born at Fossil Rim have been placed in accredited zoos and conservation parks from Florida to California. The ranch's veterinary program has trained a generation of giraffe specialists, and its open pasture model — giraffes walking miles a day across native Texas range — has become a template for humane large-herbivore husbandry.",
+        ],
+      },
+      {
+        heading: "Why Texas, of All Places",
+        paragraphs: [
+          "Three things made Texas the unlikely capital of American giraffe ranching:",
+        ],
+        bullets: [
+          "Climate — the Hill Country's hot, dry summers and mild winters mimic the East African savanna better than almost anywhere else in the United States.",
+          "Land — Texas is overwhelmingly privately owned (about 95% of the state), and the ranches are big enough that exotic species can roam without fences feeling like cages.",
+          "Law — Texas treats most non-native hoofstock as private property rather than state wildlife, which lets ranchers buy, breed, sell, and conserve them without a federal permit for every transaction.",
+        ],
+      },
+      {
+        heading: "The Exotic Ranching Economy",
+        paragraphs: [
+          "Fossil Rim is the flagship, but it is not alone. The Exotic Wildlife Association estimates that Texas private ranches host more than 1 million head of exotic hoofstock across roughly 5,000 properties — including blackbuck antelope, scimitar-horned oryx, addax, and yes, giraffes. Several species the ranches conserve are now extinct or near-extinct in their native ranges.",
+          "Conservatives have long argued that private ownership is the most reliable engine of conservation: a rancher who can profit from a herd has every incentive to keep it healthy, fed, and reproducing. The Texas exotic industry is the closest thing in America to a real-world test of that idea, and the giraffe is its most visible mascot.",
+        ],
+        table: {
+          headers: ["Where to See Giraffes in Texas", "Location", "Type"],
+          rows: [
+            ["Fossil Rim Wildlife Center", "Glen Rose", "Conservation ranch / drive-through"],
+            ["Natural Bridge Wildlife Ranch", "San Antonio", "Drive-through safari park"],
+            ["Dallas Zoo — Giants of the Savanna", "Dallas", "Accredited zoo habitat"],
+            ["Houston Zoo — African Forest", "Houston", "Accredited zoo habitat"],
+            ["Cameron Park Zoo", "Waco", "Accredited zoo habitat"],
+          ],
+        },
+      },
+      {
+        heading: "Conservation by Property Right",
+        paragraphs: [
+          "Reticulated giraffes are listed as endangered by the IUCN, with wild populations down sharply across Kenya, Somalia, and southern Ethiopia. The Texas herds — Fossil Rim's especially — function as a genetic reserve. Calves born here carry bloodlines that may one day be reintroduced if range conditions in East Africa ever stabilize.",
+          "It is a quiet conservative success story: no federal mandate built it, no Washington program funds it, and no environmental lobby gets credit for it. Texas ranchers, Texas veterinarians, and Texas land did the work.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "How many giraffes live in Texas?", a: "There is no official count, but between Fossil Rim, accredited zoos, drive-through safari parks, and private exotic ranches, Texas hosts well over 100 giraffes at any given time — more than several African nations." },
+      { q: "Can you legally own a giraffe in Texas?", a: "Yes, with the right facilities and a USDA exhibitor license if you display them. Texas classifies most non-native hoofstock as private property, which is why the exotic-ranching industry exists here at the scale it does." },
+      { q: "Is Fossil Rim a zoo?", a: "Not exactly. It is an accredited conservation center where visitors drive through open pastures while giraffes, zebras, rhinos, and other species roam. Think wildlife park, not roadside zoo." },
+      { q: "Are Texas giraffes endangered?", a: "The species (reticulated giraffe) is endangered in the wild. The Texas captive population is healthy and reproducing, which is precisely why it matters as a genetic backup." },
+    ],
+    sources: [
+      { label: "Fossil Rim Wildlife Center", url: "https://fossilrim.org/" },
+      { label: "Exotic Wildlife Association", url: "https://www.myewa.org/" },
+      { label: "IUCN Red List — Reticulated Giraffe", url: "https://www.iucnredlist.org/species/88420717/88420720" },
+      { label: "Texas Parks & Wildlife — Exotic Species", url: "https://tpwd.texas.gov/huntwild/wild/nuisance/exotic/" },
+    ],
+    related: ["texas-property-tax-guide", "texas-water-rights-explained", "what-local-governments-control"],
+    cta: { label: "Visit Fossil Rim", href: "https://fossilrim.org/" },
+  },
 };
