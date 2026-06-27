@@ -11,7 +11,7 @@ import podium from "@/assets/podium.jpg";
 import oil from "@/assets/article-oil.jpg";
 import classroom from "@/assets/article-classroom.jpg";
 
-export const Route = createFileRoute("/news")({
+export const Route = createFileRoute("/news/")({
   head: () => ({
     meta: [
       { title: "Texas Political News — Keep TX Red" },
