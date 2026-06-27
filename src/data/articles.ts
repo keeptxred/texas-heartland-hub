@@ -7,6 +7,8 @@ export type Article = {
   date: string;
   image: string;
   featured?: boolean;
+  /** Marks a long-form pillar guide (1500+ words). */
+  pillar?: boolean;
   /** ISO timestamp; if set and in the future, the article is hidden from listings, sitemap, and direct routes until that moment. */
   publishAt?: string;
   /** ISO timestamp for sorting and display. Required on all articles. */
@@ -364,6 +366,40 @@ export const ARTICLES: Article[] = [
     publishedAt: "2026-06-26T13:00:00",
     image: governor,
     publishAt: "2026-07-02T11:00:00Z",
+  },
+  {
+    slug: "texas-border-policy-full-guide",
+    category: "Border",
+    title: "Texas Border Policy Explained: The Full Guide to Operation Lone Star, State Authority & the Rio Grande Fight",
+    dek: "The definitive Keep TX Red guide to Texas border policy in Houston, the Rio Grande Valley, and Austin — Operation Lone Star, state vs. federal authority, DPS, the Texas National Guard, and the 1,254-mile Rio Grande line.",
+    author: "Border Bureau",
+    date: "Pillar guide",
+    publishedAt: "2026-06-27T09:00:00",
+    image: border,
+    pillar: true,
+    featured: true,
+  },
+  {
+    slug: "texas-energy-economy-overview",
+    category: "Energy",
+    title: "The Texas Energy Economy: A Full Overview of Oil, Gas, ERCOT, and the Grid That Powers America",
+    dek: "How Texas became the energy capital of North America — Permian crude, Eagle Ford gas, ERCOT reliability, the Railroad Commission, and what the Houston-led oil and gas industry means for the Texas economy.",
+    author: "Energy Desk",
+    date: "Pillar guide",
+    publishedAt: "2026-06-27T09:30:00",
+    image: oil,
+    pillar: true,
+  },
+  {
+    slug: "texas-voting-guide-2026",
+    category: "Elections",
+    title: "The Texas Voting Guide for 2026: Primaries, Runoffs, ID Rules, and the Calendar That Actually Matters",
+    dek: "Everything a Texas voter needs for 2026 — registration deadlines, March primary, May runoff, November general, accepted photo ID, mail ballot rules, and how to find your polling place in Houston, Dallas, San Antonio, Austin, and beyond.",
+    author: "Elections Desk",
+    date: "Pillar guide",
+    publishedAt: "2026-06-27T10:00:00",
+    image: ballot,
+    pillar: true,
   },
 ];
 
