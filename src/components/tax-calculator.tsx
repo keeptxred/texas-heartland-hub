@@ -112,10 +112,10 @@ export function TaxCalculator() {
 
       <div className="mt-6 bg-secondary text-secondary-foreground p-5 flex items-end justify-between">
         <div>
-          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/60">
+          <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/85">
             Estimated Annual Total
           </div>
-          <div className="text-[10px] text-white/50 mt-1">
+          <div className="text-[10px] text-white/80 mt-1">
             Effective rate: {calc.effective.toFixed(2)}%
           </div>
         </div>

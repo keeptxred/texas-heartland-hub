@@ -51,7 +51,7 @@ export function SiteFooter() {
               <span className="font-display text-2xl text-accent leading-none">★</span>
             </div>
             <h4 className="font-display text-3xl tracking-tight mb-3">KEEP TEXAS RED</h4>
-            <p className="text-sm text-white/60 max-w-xs">
+            <p className="text-sm text-white/85 max-w-xs">
               The premier conservative voice for the Lone Star State. Independent reporting, voter tools, and taxpayer data.
             </p>
           </div>
@@ -77,10 +77,10 @@ export function SiteFooter() {
             ))}
           </ul>
         </div>
-        <div className="mt-12 pt-6 border-t border-white/10 text-center text-[10px] text-white/40 uppercase tracking-[0.25em] leading-relaxed">
+        <div className="mt-12 pt-6 border-t border-white/10 text-center text-[10px] text-white/75 uppercase tracking-[0.25em] leading-relaxed">
           &copy; {new Date().getFullYear()} keeptxred.com — All rights reserved
           <br />
-          <span className="not-italic normal-case tracking-normal text-white/40">Independent commentary. Not authorized by any candidate or candidate's committee.</span>
+          <span className="not-italic normal-case tracking-normal text-white/75">Independent commentary. Not authorized by any candidate or candidate's committee.</span>
         </div>
       </div>
     </footer>
