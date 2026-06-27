@@ -47,24 +47,42 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const HUB_CARDS = [
+const SECTION_CARDS = [
   {
     to: "/texas-politics" as const,
     eyebrow: "Politics",
     title: "Texas Politics",
-    desc: "Elections, the Legislature, the Governor's office, and the voting fights that shape the state.",
+    desc: "The Legislature, statewide offices, and how Texas government works.",
   },
   {
-    to: "/texas-economy" as const,
-    eyebrow: "Economy",
-    title: "Texas Economy",
-    desc: "Energy, jobs, business growth, property taxes, and the state budget.",
+    to: "/elections" as const,
+    eyebrow: "Elections",
+    title: "Texas Elections",
+    desc: "Voter guides, candidate information, and upcoming election dates.",
+  },
+  {
+    to: "/tax-calculator" as const,
+    eyebrow: "Taxes",
+    title: "Property Taxes",
+    desc: "Calculate your tax burden by county, including school district rates.",
   },
   {
     to: "/texas-law-policy" as const,
-    eyebrow: "Law & Policy",
+    eyebrow: "Law",
     title: "Texas Law & Policy",
-    desc: "Border policy, education, public safety, and the legal updates Texans actually feel.",
+    desc: "Border security, education, public safety, and the statutes that affect Texans.",
+  },
+  {
+    to: "/representatives" as const,
+    eyebrow: "Government",
+    title: "Representatives",
+    desc: "Find your state and federal elected officials and how to contact them.",
+  },
+  {
+    to: "/news" as const,
+    eyebrow: "News",
+    title: "Latest News",
+    desc: "Daily updates on Texas politics, policy, and statewide developments.",
   },
 ];
 
