@@ -17,7 +17,7 @@ export const Route = createFileRoute("/texas-news")({
 });
 
 function TexasNewsPage() {
-  const articles = ARTICLES.filter(isPublished).sort(sortByDateDesc);
+  const articles = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
   return (
