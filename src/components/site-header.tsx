@@ -20,10 +20,10 @@ export function SiteHeader() {
         <div className="flex gap-10 whitespace-nowrap animate-marquee text-[10px] font-medium tracking-[0.2em] uppercase text-white/70">
           {Array.from({ length: 2 }).map((_, i) => (
             <div key={i} className="flex shrink-0 gap-10 px-5">
-              <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-primary" />2026 Primary Countdown: 142 Days</span>
-              <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-accent" />Property Tax Relief: Phase II Active</span>
-              <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-primary" />Border Operations: Ongoing</span>
-              <span className="flex items-center gap-2"><span className="size-1.5 rounded-full bg-accent" />Voter ID Required Statewide</span>
+              <Link to="/elections" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-primary" />2026 Primary Countdown: 142 Days</Link>
+              <Link to="/tax-calculator" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-accent" />Property Tax Relief: Phase II Active</Link>
+              <Link to="/texas-politics" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-primary" />Border Operations: Ongoing</Link>
+              <Link to="/register-to-vote" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-accent" />Voter ID Required Statewide</Link>
             </div>
           ))}
         </div>
