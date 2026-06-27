@@ -24,7 +24,6 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LawsRouteImport } from './routes/laws'
-import { Route as HubsRouteImport } from './routes/hubs'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
@@ -37,7 +36,6 @@ import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
-import { Route as HubsSlugRouteImport } from './routes/hubs.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
 
@@ -116,11 +114,6 @@ const LawsRoute = LawsRouteImport.update({
   path: '/laws',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HubsRoute = HubsRouteImport.update({
-  id: '/hubs',
-  path: '/hubs',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const GlossaryRoute = GlossaryRouteImport.update({
   id: '/glossary',
   path: '/glossary',
@@ -181,11 +174,6 @@ const NewsSlugRoute = NewsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => NewsRoute,
 } as any)
-const HubsSlugRoute = HubsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => HubsRoute,
-} as any)
 const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   id: '/authors/$slug',
   path: '/authors/$slug',
@@ -210,7 +198,6 @@ export interface FileRoutesByFullPath {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
-  '/hubs': typeof HubsRouteWithChildren
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -227,7 +214,6 @@ export interface FileRoutesByFullPath {
   '/texas-politics': typeof TexasPoliticsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
-  '/hubs/$slug': typeof HubsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -243,7 +229,6 @@ export interface FileRoutesByTo {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
-  '/hubs': typeof HubsRouteWithChildren
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -260,7 +245,6 @@ export interface FileRoutesByTo {
   '/texas-politics': typeof TexasPoliticsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
-  '/hubs/$slug': typeof HubsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -277,7 +261,6 @@ export interface FileRoutesById {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
-  '/hubs': typeof HubsRouteWithChildren
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -294,7 +277,6 @@ export interface FileRoutesById {
   '/texas-politics': typeof TexasPoliticsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
-  '/hubs/$slug': typeof HubsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -312,7 +294,6 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
-    | '/hubs'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -329,7 +310,6 @@ export interface FileRouteTypes {
     | '/texas-politics'
     | '/voting-locations'
     | '/authors/$slug'
-    | '/hubs/$slug'
     | '/news/$slug'
     | '/api/public/hooks/generate-news'
   fileRoutesByTo: FileRoutesByTo
@@ -345,7 +325,6 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
-    | '/hubs'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -362,7 +341,6 @@ export interface FileRouteTypes {
     | '/texas-politics'
     | '/voting-locations'
     | '/authors/$slug'
-    | '/hubs/$slug'
     | '/news/$slug'
     | '/api/public/hooks/generate-news'
   id:
@@ -378,7 +356,6 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
-    | '/hubs'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -395,7 +372,6 @@ export interface FileRouteTypes {
     | '/texas-politics'
     | '/voting-locations'
     | '/authors/$slug'
-    | '/hubs/$slug'
     | '/news/$slug'
     | '/api/public/hooks/generate-news'
   fileRoutesById: FileRoutesById
@@ -412,7 +388,6 @@ export interface RootRouteChildren {
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
   GlossaryRoute: typeof GlossaryRoute
-  HubsRoute: typeof HubsRouteWithChildren
   LawsRoute: typeof LawsRoute
   LawsToKnowRoute: typeof LawsToKnowRoute
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
@@ -539,13 +514,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LawsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/hubs': {
-      id: '/hubs'
-      path: '/hubs'
-      fullPath: '/hubs'
-      preLoaderRoute: typeof HubsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/glossary': {
       id: '/glossary'
       path: '/glossary'
@@ -630,13 +598,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsSlugRouteImport
       parentRoute: typeof NewsRoute
     }
-    '/hubs/$slug': {
-      id: '/hubs/$slug'
-      path: '/$slug'
-      fullPath: '/hubs/$slug'
-      preLoaderRoute: typeof HubsSlugRouteImport
-      parentRoute: typeof HubsRoute
-    }
     '/authors/$slug': {
       id: '/authors/$slug'
       path: '/authors/$slug'
@@ -653,16 +614,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface HubsRouteChildren {
-  HubsSlugRoute: typeof HubsSlugRoute
-}
-
-const HubsRouteChildren: HubsRouteChildren = {
-  HubsSlugRoute: HubsSlugRoute,
-}
-
-const HubsRouteWithChildren = HubsRoute._addFileChildren(HubsRouteChildren)
 
 interface NewsRouteChildren {
   NewsSlugRoute: typeof NewsSlugRoute
@@ -686,7 +637,6 @@ const rootRouteChildren: RootRouteChildren = {
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
   GlossaryRoute: GlossaryRoute,
-  HubsRoute: HubsRouteWithChildren,
   LawsRoute: LawsRoute,
   LawsToKnowRoute: LawsToKnowRoute,
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
