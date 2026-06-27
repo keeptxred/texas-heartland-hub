@@ -1129,7 +1129,6 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "Out of the county during the entire early-voting period and on Election Day.",
           "Confined in jail but otherwise eligible to vote.",
         ],
-        paragraphs2: [],
       },
       {
         heading: "Primary vs. General: Why March Decides Most Texas Races",
