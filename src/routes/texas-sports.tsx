@@ -32,14 +32,20 @@ function SportsPage() {
 
       <div className="grid md:grid-cols-3 gap-8">
         {[
-          { name: "NFL – Texans &amp; Cowboys", desc: "Houston Texans and Dallas Cowboys weekly updates, draft coverage, and playoff outlook." },
-          { name: "MLB – Astros &amp; Rangers", desc: "Houston Astros and Texas Rangers season tracking, trade-deadline moves, and postseason analysis." },
-          { name: "NBA – Spurs, Rockets &amp; Mavericks", desc: "San Antonio Spurs, Houston Rockets, and Dallas Mavericks roster news and game recaps." },
+          { league: "nfl" as const, name: "NFL – Texans & Cowboys", desc: "Houston Texans and Dallas Cowboys weekly updates, draft coverage, and playoff outlook." },
+          { league: "mlb" as const, name: "MLB – Astros & Rangers", desc: "Houston Astros and Texas Rangers season tracking, trade-deadline moves, and postseason analysis." },
+          { league: "nba" as const, name: "NBA – Spurs, Rockets & Mavericks", desc: "San Antonio Spurs, Houston Rockets, and Dallas Mavericks roster news and game recaps." },
         ].map((c) => (
-          <div key={c.name} className="border border-border rounded-md p-6 bg-card">
-            <h2 className="font-sans text-lg font-semibold text-foreground" dangerouslySetInnerHTML={{ __html: c.name }} />
+          <Link
+            key={c.league}
+            to="/texas-sports/$league"
+            params={{ league: c.league }}
+            className="group block border border-border rounded-md p-6 bg-card hover:shadow-md transition-shadow"
+          >
+            <h2 className="font-sans text-lg font-semibold text-foreground group-hover:text-primary">{c.name}</h2>
             <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
-          </div>
+            <p className="mt-4 text-xs font-medium text-primary">Read the latest →</p>
+          </Link>
         ))}
       </div>
 
