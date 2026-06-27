@@ -10,10 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
+import { Route as TexasSportsRouteImport } from './routes/texas-sports'
 import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
+import { Route as TexasNewsRouteImport } from './routes/texas-news'
 import { Route as TexasLawsRouteImport } from './routes/texas-laws'
 import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
 import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
+import { Route as TexasBusinessRouteImport } from './routes/texas-business'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -24,7 +27,7 @@ import { Route as NewsRouteImport } from './routes/news'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LawsRouteImport } from './routes/laws'
-import { Route as HubsRouteImport } from './routes/hubs'
+import { Route as HoustonRouteImport } from './routes/houston'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
@@ -37,7 +40,6 @@ import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
-import { Route as HubsSlugRouteImport } from './routes/hubs.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
 
@@ -46,9 +48,19 @@ const VotingLocationsRoute = VotingLocationsRouteImport.update({
   path: '/voting-locations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TexasSportsRoute = TexasSportsRouteImport.update({
+  id: '/texas-sports',
+  path: '/texas-sports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
   id: '/texas-politics',
   path: '/texas-politics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasNewsRoute = TexasNewsRouteImport.update({
+  id: '/texas-news',
+  path: '/texas-news',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasLawsRoute = TexasLawsRouteImport.update({
@@ -64,6 +76,11 @@ const TexasLawPolicyRoute = TexasLawPolicyRouteImport.update({
 const TexasEconomyRoute = TexasEconomyRouteImport.update({
   id: '/texas-economy',
   path: '/texas-economy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasBusinessRoute = TexasBusinessRouteImport.update({
+  id: '/texas-business',
+  path: '/texas-business',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -116,9 +133,9 @@ const LawsRoute = LawsRouteImport.update({
   path: '/laws',
   getParentRoute: () => rootRouteImport,
 } as any)
-const HubsRoute = HubsRouteImport.update({
-  id: '/hubs',
-  path: '/hubs',
+const HoustonRoute = HoustonRouteImport.update({
+  id: '/houston',
+  path: '/houston',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GlossaryRoute = GlossaryRouteImport.update({
@@ -181,11 +198,6 @@ const NewsSlugRoute = NewsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => NewsRoute,
 } as any)
-const HubsSlugRoute = HubsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => HubsRoute,
-} as any)
 const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   id: '/authors/$slug',
   path: '/authors/$slug',
@@ -210,7 +222,7 @@ export interface FileRoutesByFullPath {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
-  '/hubs': typeof HubsRouteWithChildren
+  '/houston': typeof HoustonRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -221,13 +233,15 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas-business': typeof TexasBusinessRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-news': typeof TexasNewsRoute
   '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-sports': typeof TexasSportsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
-  '/hubs/$slug': typeof HubsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -243,7 +257,7 @@ export interface FileRoutesByTo {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
-  '/hubs': typeof HubsRouteWithChildren
+  '/houston': typeof HoustonRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -254,13 +268,15 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas-business': typeof TexasBusinessRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-news': typeof TexasNewsRoute
   '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-sports': typeof TexasSportsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
-  '/hubs/$slug': typeof HubsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -277,7 +293,7 @@ export interface FileRoutesById {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
-  '/hubs': typeof HubsRouteWithChildren
+  '/houston': typeof HoustonRoute
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
@@ -288,13 +304,15 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas-business': typeof TexasBusinessRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-news': typeof TexasNewsRoute
   '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-sports': typeof TexasSportsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
-  '/hubs/$slug': typeof HubsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
@@ -312,7 +330,7 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
-    | '/hubs'
+    | '/houston'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -323,13 +341,15 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas-business'
     | '/texas-economy'
     | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-news'
     | '/texas-politics'
+    | '/texas-sports'
     | '/voting-locations'
     | '/authors/$slug'
-    | '/hubs/$slug'
     | '/news/$slug'
     | '/api/public/hooks/generate-news'
   fileRoutesByTo: FileRoutesByTo
@@ -345,7 +365,7 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
-    | '/hubs'
+    | '/houston'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -356,13 +376,15 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas-business'
     | '/texas-economy'
     | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-news'
     | '/texas-politics'
+    | '/texas-sports'
     | '/voting-locations'
     | '/authors/$slug'
-    | '/hubs/$slug'
     | '/news/$slug'
     | '/api/public/hooks/generate-news'
   id:
@@ -378,7 +400,7 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
-    | '/hubs'
+    | '/houston'
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
@@ -389,13 +411,15 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas-business'
     | '/texas-economy'
     | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-news'
     | '/texas-politics'
+    | '/texas-sports'
     | '/voting-locations'
     | '/authors/$slug'
-    | '/hubs/$slug'
     | '/news/$slug'
     | '/api/public/hooks/generate-news'
   fileRoutesById: FileRoutesById
@@ -412,7 +436,7 @@ export interface RootRouteChildren {
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
   GlossaryRoute: typeof GlossaryRoute
-  HubsRoute: typeof HubsRouteWithChildren
+  HoustonRoute: typeof HoustonRoute
   LawsRoute: typeof LawsRoute
   LawsToKnowRoute: typeof LawsToKnowRoute
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
@@ -423,10 +447,13 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
+  TexasBusinessRoute: typeof TexasBusinessRoute
   TexasEconomyRoute: typeof TexasEconomyRoute
   TexasLawPolicyRoute: typeof TexasLawPolicyRoute
   TexasLawsRoute: typeof TexasLawsRoute
+  TexasNewsRoute: typeof TexasNewsRoute
   TexasPoliticsRoute: typeof TexasPoliticsRoute
+  TexasSportsRoute: typeof TexasSportsRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
@@ -441,11 +468,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VotingLocationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-sports': {
+      id: '/texas-sports'
+      path: '/texas-sports'
+      fullPath: '/texas-sports'
+      preLoaderRoute: typeof TexasSportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-politics': {
       id: '/texas-politics'
       path: '/texas-politics'
       fullPath: '/texas-politics'
       preLoaderRoute: typeof TexasPoliticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-news': {
+      id: '/texas-news'
+      path: '/texas-news'
+      fullPath: '/texas-news'
+      preLoaderRoute: typeof TexasNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-laws': {
@@ -467,6 +508,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-economy'
       fullPath: '/texas-economy'
       preLoaderRoute: typeof TexasEconomyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-business': {
+      id: '/texas-business'
+      path: '/texas-business'
+      fullPath: '/texas-business'
+      preLoaderRoute: typeof TexasBusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -539,11 +587,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LawsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/hubs': {
-      id: '/hubs'
-      path: '/hubs'
-      fullPath: '/hubs'
-      preLoaderRoute: typeof HubsRouteImport
+    '/houston': {
+      id: '/houston'
+      path: '/houston'
+      fullPath: '/houston'
+      preLoaderRoute: typeof HoustonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/glossary': {
@@ -630,13 +678,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsSlugRouteImport
       parentRoute: typeof NewsRoute
     }
-    '/hubs/$slug': {
-      id: '/hubs/$slug'
-      path: '/$slug'
-      fullPath: '/hubs/$slug'
-      preLoaderRoute: typeof HubsSlugRouteImport
-      parentRoute: typeof HubsRoute
-    }
     '/authors/$slug': {
       id: '/authors/$slug'
       path: '/authors/$slug'
@@ -653,16 +694,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface HubsRouteChildren {
-  HubsSlugRoute: typeof HubsSlugRoute
-}
-
-const HubsRouteChildren: HubsRouteChildren = {
-  HubsSlugRoute: HubsSlugRoute,
-}
-
-const HubsRouteWithChildren = HubsRoute._addFileChildren(HubsRouteChildren)
 
 interface NewsRouteChildren {
   NewsSlugRoute: typeof NewsSlugRoute
@@ -686,7 +717,7 @@ const rootRouteChildren: RootRouteChildren = {
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
   GlossaryRoute: GlossaryRoute,
-  HubsRoute: HubsRouteWithChildren,
+  HoustonRoute: HoustonRoute,
   LawsRoute: LawsRoute,
   LawsToKnowRoute: LawsToKnowRoute,
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
@@ -697,10 +728,13 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
+  TexasBusinessRoute: TexasBusinessRoute,
   TexasEconomyRoute: TexasEconomyRoute,
   TexasLawPolicyRoute: TexasLawPolicyRoute,
   TexasLawsRoute: TexasLawsRoute,
+  TexasNewsRoute: TexasNewsRoute,
   TexasPoliticsRoute: TexasPoliticsRoute,
+  TexasSportsRoute: TexasSportsRoute,
   VotingLocationsRoute: VotingLocationsRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,

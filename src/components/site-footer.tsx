@@ -4,12 +4,12 @@ const COLUMNS = [
   {
     heading: "Newsroom",
     links: [
-      { to: "/news", label: "Texas News" },
-      { to: "/hubs", label: "Sections" },
+      { to: "/texas-news", label: "Texas News" },
+      { to: "/texas-politics", label: "Texas Politics" },
+      { to: "/houston", label: "Houston" },
+      { to: "/texas-sports", label: "Texas Sports" },
+      { to: "/texas-business", label: "Texas Business" },
       { to: "/elections", label: "Elections" },
-      { to: "/legislative-updates", label: "Legislative Updates" },
-      { to: "/candidate-guides", label: "Candidate Guides" },
-      { to: "/glossary", label: "Political Glossary" },
     ],
   },
   {
