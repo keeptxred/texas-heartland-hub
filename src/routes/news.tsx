@@ -94,6 +94,7 @@ function NewsPage() {
         {useLive
           ? filteredLive.map((a: DailyArticle) => {
               const img = a.image_url || CATEGORY_IMAGES[a.category] || capitol;
+              const isEvergreen = a.kind === "evergreen";
               const card = (
                 <>
                   <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
@@ -107,7 +108,11 @@ function NewsPage() {
                   </p>
                 </>
               );
-              return a.source_url ? (
+              return isEvergreen ? (
+                <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group cursor-pointer block">
+                  {card}
+                </Link>
+              ) : a.source_url ? (
                 <a key={a.slug} href={a.source_url} target="_blank" rel="noopener noreferrer" className="group cursor-pointer block">
                   {card}
                 </a>

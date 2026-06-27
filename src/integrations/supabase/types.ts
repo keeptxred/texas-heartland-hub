@@ -18,11 +18,14 @@ export type Database = {
         Row: {
           author: string
           body: string | null
+          body_json: Json | null
           category: string
           created_at: string
           dek: string
           id: string
           image_url: string | null
+          keywords: string[] | null
+          kind: string
           published_at: string
           slug: string
           source_name: string | null
@@ -32,11 +35,14 @@ export type Database = {
         Insert: {
           author?: string
           body?: string | null
+          body_json?: Json | null
           category: string
           created_at?: string
           dek: string
           id?: string
           image_url?: string | null
+          keywords?: string[] | null
+          kind?: string
           published_at?: string
           slug: string
           source_name?: string | null
@@ -46,11 +52,14 @@ export type Database = {
         Update: {
           author?: string
           body?: string | null
+          body_json?: Json | null
           category?: string
           created_at?: string
           dek?: string
           id?: string
           image_url?: string | null
+          keywords?: string[] | null
+          kind?: string
           published_at?: string
           slug?: string
           source_name?: string | null

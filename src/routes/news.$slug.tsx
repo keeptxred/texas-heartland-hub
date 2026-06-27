@@ -2,14 +2,42 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
+import { getEvergreenBySlug } from "@/lib/evergreen.functions";
+import capitol from "@/assets/capitol.jpg";
 
 export const Route = createFileRoute("/news/$slug")({
-  loader: ({ params }): { article: Article; body: ArticleBody } => {
+  loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
-    if (!article) throw notFound();
-    if (!isPublished(article)) throw notFound();
-    const body = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
-    return { article, body };
+    if (article) {
+      if (!isPublished(article)) throw notFound();
+      const body = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
+      return { article, body };
+    }
+    // Fallback: AI-generated evergreen article stored in daily_articles.
+    const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
+    if (!ever || !ever.body) throw notFound();
+    const allowed = ["Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
+    const cat = (allowed as readonly string[]).includes(ever.category) ? (ever.category as Article["category"]) : "Legislature";
+    const synth: Article = {
+      slug: ever.slug,
+      category: cat,
+      title: ever.title,
+      dek: ever.dek,
+      author: ever.author,
+      date: new Date(ever.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
+      publishedAt: ever.published_at,
+      image: ever.image_url ?? capitol,
+    };
+    const body: ArticleBody = {
+      updated: ever.body.updated,
+      intro: ever.body.intro,
+      sections: ever.body.sections,
+      faq: ever.body.faq,
+      sources: ever.body.sources,
+      related: ARTICLES.filter((x) => x.category === ever.category && isPublished(x)).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
+      cta: { label: "Browse the Newsroom", href: "/news" },
+    };
+    return { article: synth, body };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};

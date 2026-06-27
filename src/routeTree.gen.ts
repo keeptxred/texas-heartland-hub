@@ -42,6 +42,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
+import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
 
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
   id: '/voting-locations',
@@ -209,6 +210,12 @@ const ApiPublicHooksGenerateNewsRoute =
     path: '/api/public/hooks/generate-news',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksGenerateEvergreenRoute =
+  ApiPublicHooksGenerateEvergreenRouteImport.update({
+    id: '/api/public/hooks/generate-evergreen',
+    path: '/api/public/hooks/generate-evergreen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -243,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRoutesByTo {
@@ -278,6 +286,7 @@ export interface FileRoutesByTo {
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRoutesById {
@@ -314,6 +323,7 @@ export interface FileRoutesById {
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
 }
 export interface FileRouteTypes {
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/authors/$slug'
     | '/news/$slug'
+    | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -386,6 +397,7 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/authors/$slug'
     | '/news/$slug'
+    | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
   id:
     | '__root__'
@@ -421,6 +433,7 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/authors/$slug'
     | '/news/$slug'
+    | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
   fileRoutesById: FileRoutesById
 }
@@ -456,6 +469,7 @@ export interface RootRouteChildren {
   TexasSportsRoute: typeof TexasSportsRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
+  ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
 }
 
@@ -692,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksGenerateNewsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/generate-evergreen': {
+      id: '/api/public/hooks/generate-evergreen'
+      path: '/api/public/hooks/generate-evergreen'
+      fullPath: '/api/public/hooks/generate-evergreen'
+      preLoaderRoute: typeof ApiPublicHooksGenerateEvergreenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -737,6 +758,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasSportsRoute: TexasSportsRoute,
   VotingLocationsRoute: VotingLocationsRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
+  ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
 }
 export const routeTree = rootRouteImport
