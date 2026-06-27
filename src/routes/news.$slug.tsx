@@ -4,6 +4,7 @@ import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
 import { getEvergreenBySlug } from "@/lib/evergreen.functions";
 import capitol from "@/assets/capitol.jpg";
+import { AdSlot } from "@/components/ad-slot";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
