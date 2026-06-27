@@ -99,13 +99,13 @@ function Index() {
         <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16">
           <div className="max-w-[700px]">
             <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">
-              Texas news, policy &amp; politics explained
+              Everything Texans need to stay informed
             </h1>
             <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
-              Independent coverage of Texas government, economy, elections, and public policy.
+              Politics, elections, taxes, and statewide updates—explained clearly and updated regularly.
             </p>
             <p className="mt-4 text-sm text-muted-foreground">
-              Updated daily with analysis and reporting on Texas state issues.
+              Your Texas politics and civic information guide.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -118,7 +118,7 @@ function Index() {
                 to="/hubs"
                 className="inline-flex items-center border border-border px-5 py-2.5 text-sm font-medium rounded-md hover:bg-muted transition-colors text-foreground"
               >
-                Explore Topics
+                Browse Sections
               </Link>
             </div>
           </div>
@@ -164,10 +164,10 @@ function Index() {
       <section className="bg-muted/40 border-y border-border">
         <div className="mx-auto max-w-[1200px] px-6 py-20">
           <div className="mb-8">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Topic Hubs</span>
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Sections</span>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {HUB_CARDS.map((h) => (
+            {SECTION_CARDS.map((h) => (
               <Link
                 key={h.to}
                 to={h.to}
