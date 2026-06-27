@@ -30,6 +30,9 @@ const ROUTES = [
   "/hubs/texas-politics",
   "/hubs/texas-economy",
   "/hubs/texas-policy-law",
+  "/texas-politics",
+  "/texas-economy",
+  "/texas-law-policy",
 ] as const;
 
 export const Route = createFileRoute("/sitemap.xml")({

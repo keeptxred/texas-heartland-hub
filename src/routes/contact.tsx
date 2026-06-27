@@ -38,7 +38,7 @@ function ContactPage() {
           </div>
           <div>
             <h3 className="font-display text-xs tracking-[0.25em] uppercase text-primary mb-2">General</h3>
-            <p className="text-muted-foreground">hello@keeptxred.com</p>
+            <p className="text-muted-foreground">contact@keeptxred.com</p>
           </div>
           <div>
             <h3 className="font-display text-xs tracking-[0.25em] uppercase text-primary mb-2">Mail</h3>

@@ -30,7 +30,7 @@ function AboutPage() {
 
       <div className="space-y-5 text-base leading-relaxed">
         <p className="text-lg">
-          <strong>Keep TX Red</strong> is an independent conservative news and tools site covering Texas politics — from the Capitol in Austin to the border in the Rio Grande Valley, from West Texas oilfields to suburban school board races.
+          <strong>Keep TX Red</strong> is an independent Texas-focused news and analysis platform covering politics, policy, economy, and statewide issues. Our mission is to provide clear and accessible reporting on the developments shaping Texas.
         </p>
         <p className="text-muted-foreground">
           We exist to do three things: report the policy fights that matter, track every election that shapes the next decade of Texas, and arm taxpayers with the data they need to push back against runaway local government.

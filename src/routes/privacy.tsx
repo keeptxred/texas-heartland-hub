@@ -59,6 +59,20 @@ function PrivacyPage() {
         </section>
 
         <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Advertising & Google AdSense</h2>
+          <p>
+            Keep TX Red uses Google AdSense to display advertisements. Google and its partners may use cookies and device identifiers to serve ads based on your prior visits to this and other websites. You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google Ads Settings</a> or <a href="https://www.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-primary underline">aboutads.info</a>. Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to our website.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Cookies</h2>
+          <p>
+            We and our advertising partners (including Google) use cookies and similar technologies to measure traffic, remember preferences, and serve advertising. You can control or disable cookies through your browser settings; some site features may stop working if cookies are disabled.
+          </p>
+        </section>
+
+        <section>
           <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Your Choices</h2>
           <ul className="list-disc pl-6 space-y-1 mt-2">
             <li>You may use the site without providing any personal information.</li>
