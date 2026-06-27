@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 
 export const Route = createFileRoute("/houston")({
   head: () => ({
@@ -17,6 +18,24 @@ export const Route = createFileRoute("/houston")({
 
 function HoustonPage() {
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const HOUSTON_SLUGS = [
+    "texas-property-tax-guide",
+    "homestead-exemption-explained",
+    "appraisal-protest-playbook",
+    "county-appraisal-districts-explained",
+    "isd-tax-burdens",
+    "texas-energy-economy-overview",
+    "permian-energy",
+    "texas-grid-ercot-explained",
+    "texas-border-policy-full-guide",
+    "texas-voting-guide-2026",
+    "what-local-governments-control",
+    "how-texas-counties-spend",
+  ];
+  const houstonArticles = HOUSTON_SLUGS
+    .map((s) => ARTICLES.find((a) => a.slug === s))
+    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
+    .sort(sortByDateDesc);
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
       <header className="border-b border-border pb-6 mb-10">
@@ -52,6 +71,23 @@ function HoustonPage() {
           </ul>
         </section>
       </div>
+
+      <section className="mt-16 border-t border-border pt-10">
+        <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">Latest Houston-area coverage</h2>
+        <p className="mt-2 text-sm text-muted-foreground">Property taxes, energy, growth, and the policy stories driving the Houston metro.</p>
+        <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {houstonArticles.map((a) => (
+            <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
+              <div className="aspect-[4/3] overflow-hidden bg-muted mb-3">
+                <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{a.category}</span>
+              <h3 className="font-serif text-base font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h3>
+              <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{a.dek}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       <section className="mt-16 border-t border-border pt-10">
         <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">Related coverage</h2>
