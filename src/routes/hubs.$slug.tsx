@@ -13,9 +13,9 @@ export const Route = createFileRoute("/hubs/$slug")({
     const { hub } = loaderData;
     return {
       meta: [
-        { title: `${hub.title} — Keep TX Red Hub` },
+        { title: `${hub.title} — Keep TX Red` },
         { name: "description", content: hub.intro.slice(0, 200) },
-        { property: "og:title", content: `${hub.title} — Keep TX Red Hub` },
+        { property: "og:title", content: `${hub.title} — Keep TX Red` },
         { property: "og:description", content: hub.intro.slice(0, 200) },
       ],
       links: [{ rel: "canonical", href: `/hubs/${hub.slug}` }],
@@ -23,14 +23,14 @@ export const Route = createFileRoute("/hubs/$slug")({
   },
   notFoundComponent: () => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-      <h1 className="font-display text-4xl mb-3">Hub Not Found</h1>
-      <Link to="/hubs" className="text-primary underline">All Hubs</Link>
+      <h1 className="font-display text-4xl mb-3">Section Not Found</h1>
+      <Link to="/hubs" className="text-primary underline">All Sections</Link>
     </div>
   ),
   errorComponent: () => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
       <h1 className="font-display text-4xl mb-3">Something went wrong</h1>
-      <Link to="/hubs" className="text-primary underline">All Hubs</Link>
+      <Link to="/hubs" className="text-primary underline">All Sections</Link>
     </div>
   ),
   component: HubPage,
@@ -47,7 +47,7 @@ function HubPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
-        <Link to="/hubs" className="hover:text-primary">Hubs</Link>
+        <Link to="/hubs" className="hover:text-primary">Sections</Link>
         <span className="mx-2">/</span>
         <span className="text-primary">{hub.title}</span>
       </nav>
@@ -71,7 +71,7 @@ function HubPage() {
         </Link>
       ) : null}
 
-      <h2 className="font-display text-3xl tracking-tight mt-14 mb-6 border-b-2 border-foreground pb-2">All Coverage in this Hub</h2>
+      <h2 className="font-display text-3xl tracking-tight mt-14 mb-6 border-b-2 border-foreground pb-2">All Coverage in this Section</h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {supporting.map((a) => (
           <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">

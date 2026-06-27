@@ -11,7 +11,7 @@ export const HUBS: Hub[] = [
   {
     slug: "texas-politics",
     title: "Texas Politics",
-    eyebrow: "Hub",
+    eyebrow: "Section",
     intro:
       "From the Capitol in Austin to the county precinct chair, this is the conservative voter's map of how Texas politics actually works — primaries, runoffs, the legislature, statewide offices, and the local races that decide the next decade.",
     pillarSlug: "texas-voting-guide-2026",
@@ -32,9 +32,9 @@ export const HUBS: Hub[] = [
   {
     slug: "texas-economy",
     title: "Texas Economy",
-    eyebrow: "Hub",
+    eyebrow: "Section",
     intro:
-      "The Texas economy runs on energy, property, and the absence of an income tax. This hub explains how each piece fits together — what powers the grid, what fills the budget, and what every Texan pays to keep it all running.",
+      "The Texas economy runs on energy, property, and the absence of an income tax. This section explains how each piece fits together — what powers the grid, what fills the budget, and what every Texan pays to keep it all running.",
     pillarSlug: "texas-energy-economy-overview",
     articleSlugs: [
       "texas-energy-economy-overview",
@@ -54,7 +54,7 @@ export const HUBS: Hub[] = [
   {
     slug: "texas-policy-law",
     title: "Texas Policy & Law",
-    eyebrow: "Hub",
+    eyebrow: "Section",
     intro:
       "Border security, constitutional carry, school choice, water rights, sunshine laws — the statutes and policy fights that define life in Texas, explained for the people who live under them.",
     pillarSlug: "texas-border-policy-full-guide",

@@ -47,24 +47,42 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const HUB_CARDS = [
+const SECTION_CARDS = [
   {
     to: "/texas-politics" as const,
     eyebrow: "Politics",
     title: "Texas Politics",
-    desc: "Elections, the Legislature, the Governor's office, and the voting fights that shape the state.",
+    desc: "The Legislature, statewide offices, and how Texas government works.",
   },
   {
-    to: "/texas-economy" as const,
-    eyebrow: "Economy",
-    title: "Texas Economy",
-    desc: "Energy, jobs, business growth, property taxes, and the state budget.",
+    to: "/elections" as const,
+    eyebrow: "Elections",
+    title: "Texas Elections",
+    desc: "Voter guides, candidate information, and upcoming election dates.",
+  },
+  {
+    to: "/tax-calculator" as const,
+    eyebrow: "Taxes",
+    title: "Property Taxes",
+    desc: "Calculate your tax burden by county, including school district rates.",
   },
   {
     to: "/texas-law-policy" as const,
-    eyebrow: "Law & Policy",
+    eyebrow: "Law",
     title: "Texas Law & Policy",
-    desc: "Border policy, education, public safety, and the legal updates Texans actually feel.",
+    desc: "Border security, education, public safety, and the statutes that affect Texans.",
+  },
+  {
+    to: "/representatives" as const,
+    eyebrow: "Government",
+    title: "Representatives",
+    desc: "Find your state and federal elected officials and how to contact them.",
+  },
+  {
+    to: "/news" as const,
+    eyebrow: "News",
+    title: "Latest News",
+    desc: "Daily updates on Texas politics, policy, and statewide developments.",
   },
 ];
 
@@ -81,13 +99,13 @@ function Index() {
         <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16">
           <div className="max-w-[700px]">
             <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">
-              Texas news, policy &amp; politics explained
+              Everything Texans need to stay informed
             </h1>
             <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
-              Independent coverage of Texas government, economy, elections, and public policy.
+              Politics, elections, taxes, and statewide updates—explained clearly and updated regularly.
             </p>
             <p className="mt-4 text-sm text-muted-foreground">
-              Updated daily with analysis and reporting on Texas state issues.
+              Your Texas politics and civic information guide.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
@@ -100,7 +118,7 @@ function Index() {
                 to="/hubs"
                 className="inline-flex items-center border border-border px-5 py-2.5 text-sm font-medium rounded-md hover:bg-muted transition-colors text-foreground"
               >
-                Explore Topics
+                Browse Sections
               </Link>
             </div>
           </div>
@@ -146,10 +164,10 @@ function Index() {
       <section className="bg-muted/40 border-y border-border">
         <div className="mx-auto max-w-[1200px] px-6 py-20">
           <div className="mb-8">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Topic Hubs</span>
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Sections</span>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {HUB_CARDS.map((h) => (
+            {SECTION_CARDS.map((h) => (
               <Link
                 key={h.to}
                 to={h.to}

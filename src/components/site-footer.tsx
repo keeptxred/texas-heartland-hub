@@ -5,7 +5,7 @@ const COLUMNS = [
     heading: "Newsroom",
     links: [
       { to: "/news", label: "Texas News" },
-      { to: "/hubs", label: "Topic Hubs" },
+      { to: "/hubs", label: "Sections" },
       { to: "/elections", label: "Elections" },
       { to: "/legislative-updates", label: "Legislative Updates" },
       { to: "/candidate-guides", label: "Candidate Guides" },

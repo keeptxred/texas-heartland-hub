@@ -2,11 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 
 const NAV = [
-  { to: "/", label: "Home" },
+  { to: "/news", label: "News" },
   { to: "/texas-politics", label: "Politics" },
-  { to: "/texas-economy", label: "Economy" },
-  { to: "/texas-law-policy", label: "Policy" },
   { to: "/elections", label: "Elections" },
+  { to: "/tax-calculator", label: "Property Taxes" },
+  { to: "/texas-law-policy", label: "Texas Law" },
+  { to: "/representatives", label: "Representatives" },
   { to: "/about", label: "About" },
 ] as const;
 
@@ -32,7 +33,7 @@ export function SiteHeader() {
         </Link>
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
           {NAV.map((n) => (
-            <Link key={n.to} to={n.to} className="hover:text-primary transition-colors" activeProps={{ className: "text-primary" }} activeOptions={{ exact: n.to === "/" }}>
+            <Link key={n.to} to={n.to} className="hover:text-primary transition-colors" activeProps={{ className: "text-primary" }}>
               {n.label}
             </Link>
           ))}
@@ -50,7 +51,7 @@ export function SiteHeader() {
       {open && (
         <nav className="md:hidden border-t border-white/10 bg-secondary px-6 py-4 flex flex-col gap-3 text-sm font-medium">
           {NAV.map((n) => (
-            <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="py-1" activeProps={{ className: "text-primary" }} activeOptions={{ exact: n.to === "/" }}>
+            <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="py-1" activeProps={{ className: "text-primary" }}>
               {n.label}
             </Link>
           ))}
