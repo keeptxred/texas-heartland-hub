@@ -10,7 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
+import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
 import { Route as TexasLawsRouteImport } from './routes/texas-laws'
+import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
+import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -43,9 +46,24 @@ const VotingLocationsRoute = VotingLocationsRouteImport.update({
   path: '/voting-locations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
+  id: '/texas-politics',
+  path: '/texas-politics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasLawsRoute = TexasLawsRouteImport.update({
   id: '/texas-laws',
   path: '/texas-laws',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLawPolicyRoute = TexasLawPolicyRouteImport.update({
+  id: '/texas-law-policy',
+  path: '/texas-law-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasEconomyRoute = TexasEconomyRouteImport.update({
+  id: '/texas-economy',
+  path: '/texas-economy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -203,7 +221,10 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas-economy': typeof TexasEconomyRoute
+  '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-politics': typeof TexasPoliticsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/hubs/$slug': typeof HubsSlugRoute
@@ -233,7 +254,10 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas-economy': typeof TexasEconomyRoute
+  '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-politics': typeof TexasPoliticsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/hubs/$slug': typeof HubsSlugRoute
@@ -264,7 +288,10 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas-economy': typeof TexasEconomyRoute
+  '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-politics': typeof TexasPoliticsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/hubs/$slug': typeof HubsSlugRoute
@@ -296,7 +323,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas-economy'
+    | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-politics'
     | '/voting-locations'
     | '/authors/$slug'
     | '/hubs/$slug'
@@ -326,7 +356,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas-economy'
+    | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-politics'
     | '/voting-locations'
     | '/authors/$slug'
     | '/hubs/$slug'
@@ -356,7 +389,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas-economy'
+    | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-politics'
     | '/voting-locations'
     | '/authors/$slug'
     | '/hubs/$slug'
@@ -387,7 +423,10 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
+  TexasEconomyRoute: typeof TexasEconomyRoute
+  TexasLawPolicyRoute: typeof TexasLawPolicyRoute
   TexasLawsRoute: typeof TexasLawsRoute
+  TexasPoliticsRoute: typeof TexasPoliticsRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
@@ -402,11 +441,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VotingLocationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-politics': {
+      id: '/texas-politics'
+      path: '/texas-politics'
+      fullPath: '/texas-politics'
+      preLoaderRoute: typeof TexasPoliticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-laws': {
       id: '/texas-laws'
       path: '/texas-laws'
       fullPath: '/texas-laws'
       preLoaderRoute: typeof TexasLawsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-law-policy': {
+      id: '/texas-law-policy'
+      path: '/texas-law-policy'
+      fullPath: '/texas-law-policy'
+      preLoaderRoute: typeof TexasLawPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-economy': {
+      id: '/texas-economy'
+      path: '/texas-economy'
+      fullPath: '/texas-economy'
+      preLoaderRoute: typeof TexasEconomyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -637,7 +697,10 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
+  TexasEconomyRoute: TexasEconomyRoute,
+  TexasLawPolicyRoute: TexasLawPolicyRoute,
   TexasLawsRoute: TexasLawsRoute,
+  TexasPoliticsRoute: TexasPoliticsRoute,
   VotingLocationsRoute: VotingLocationsRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
