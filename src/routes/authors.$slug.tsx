@@ -37,7 +37,7 @@ export const Route = createFileRoute("/authors/$slug")({
 });
 
 function AuthorPage() {
-  const { author } = Route.useLoaderData();
+  const { author } = Route.useLoaderData() as { author: Author };
   const byAuthor = ARTICLES.filter((a) => isPublished(a) && authorSlug(a.author) === author.slug).sort(sortByDateDesc);
   return (
     <div className="mx-auto max-w-3xl px-4 py-14">
