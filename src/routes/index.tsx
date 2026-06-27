@@ -13,7 +13,10 @@ export const Route = createFileRoute("/")({
       { property: "og:image", content: heroFlag },
       { name: "twitter:image", content: heroFlag },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [
+      { rel: "canonical", href: "/" },
+      { rel: "preload", as: "image", href: heroFlag, fetchpriority: "high" },
+    ],
     scripts: [
       {
         type: "application/ld+json",
