@@ -5,10 +5,10 @@ import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Texas News, Politics & Policy Updates — Keep TX Red" },
-      { name: "description", content: "Independent coverage of Texas government, elections, economy, and statewide issues — politics, policy, and the stories shaping the Lone Star State." },
-      { property: "og:title", content: "Texas News, Politics & Policy Updates That Matter" },
-      { property: "og:description", content: "Independent coverage of Texas government, elections, economy, and statewide issues." },
+      { title: "Keep Texas Red – Texas News, Politics & Local Updates" },
+      { name: "description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes — clear, factual updates from across the Lone Star State." },
+      { property: "og:title", content: "Keep Texas Red – Texas News, Politics & Local Updates" },
+      { property: "og:description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes from across the Lone Star State." },
       { property: "og:url", content: "/" },
       { property: "og:image", content: heroFlag },
       { name: "twitter:image", content: heroFlag },
@@ -49,10 +49,34 @@ export const Route = createFileRoute("/")({
 
 const SECTION_CARDS = [
   {
+    to: "/texas-news" as const,
+    eyebrow: "News",
+    title: "Texas News",
+    desc: "Statewide breaking news and daily updates from across Texas.",
+  },
+  {
     to: "/texas-politics" as const,
     eyebrow: "Politics",
     title: "Texas Politics",
     desc: "The Legislature, statewide offices, and how Texas government works.",
+  },
+  {
+    to: "/houston" as const,
+    eyebrow: "Local",
+    title: "Houston News",
+    desc: "Houston-area updates covering Katy, Sugar Land, Cypress, and the wider metro.",
+  },
+  {
+    to: "/texas-sports" as const,
+    eyebrow: "Sports",
+    title: "Texas Sports",
+    desc: "Texans, Cowboys, Astros, Rangers, Spurs, and Mavericks coverage and recaps.",
+  },
+  {
+    to: "/texas-business" as const,
+    eyebrow: "Business",
+    title: "Texas Business",
+    desc: "Texas economy, jobs, energy, and the companies reshaping the state.",
   },
   {
     to: "/elections" as const,
@@ -65,24 +89,6 @@ const SECTION_CARDS = [
     eyebrow: "Taxes",
     title: "Property Taxes",
     desc: "Calculate your tax burden by county, including school district rates.",
-  },
-  {
-    to: "/texas-law-policy" as const,
-    eyebrow: "Law",
-    title: "Texas Law & Policy",
-    desc: "Border security, education, public safety, and the statutes that affect Texans.",
-  },
-  {
-    to: "/representatives" as const,
-    eyebrow: "Government",
-    title: "Representatives",
-    desc: "Find your state and federal elected officials and how to contact them.",
-  },
-  {
-    to: "/news" as const,
-    eyebrow: "News",
-    title: "Latest News",
-    desc: "Daily updates on Texas politics, policy, and statewide developments.",
   },
 ];
 
@@ -109,16 +115,16 @@ function Index() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/news"
+                to="/texas-news"
                 className="inline-flex items-center bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
               >
                 Latest Articles
               </Link>
               <Link
-                to="/hubs"
+                to="/texas-politics"
                 className="inline-flex items-center border border-border px-5 py-2.5 text-sm font-medium rounded-md hover:bg-muted transition-colors text-foreground"
               >
-                Browse Sections
+                Texas Politics
               </Link>
             </div>
           </div>
