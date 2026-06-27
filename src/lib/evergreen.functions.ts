@@ -43,7 +43,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       .from("daily_articles")
       .select("slug,category,title,dek,author,image_url,published_at,keywords,body_json,kind")
       .eq("slug", data.slug)
-      .eq("kind", "evergreen")
+      .in("kind", ["evergreen", "sports-nfl", "sports-mlb", "sports-nba"])
       .maybeSingle();
     if (error || !row) return null;
     return {
