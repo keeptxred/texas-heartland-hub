@@ -4,10 +4,10 @@ import { HubView } from "@/components/hub-view";
 
 const HUB = HUBS.find((h) => h.slug === "texas-policy-law")!;
 const SECTIONS = [
-  { title: "Border Policy", description: "Operation Lone Star, border security, and federal-state conflict." },
-  { title: "Education Policy", description: "School choice, ESAs, parental rights, and ISD governance." },
-  { title: "Public Safety", description: "DPS, criminal justice, constitutional carry, and policing." },
-  { title: "Legal Updates", description: "AG opinions, Texas Supreme Court rulings, and new statutes." },
+  { title: "Border Policy", description: "Operation Lone Star, border security, and federal-state conflict.", href: "/news/texas-border-policy-full-guide" },
+  { title: "Education Policy", description: "School choice, ESAs, parental rights, and ISD governance.", href: "/news/school-choice-esa-guide" },
+  { title: "Public Safety", description: "DPS, criminal justice, constitutional carry, and policing.", href: "/news/constitutional-carry-one-year-later" },
+  { title: "Legal Updates", description: "AG opinions, Texas Supreme Court rulings, and new statutes.", href: "/texas-laws" },
 ];
 
 export const Route = createFileRoute("/texas-law-policy")({

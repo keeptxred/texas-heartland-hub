@@ -2,7 +2,9 @@ import { Link } from "@tanstack/react-router";
 import type { Hub } from "@/data/hubs";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 
-export function HubView({ hub, sections }: { hub: Hub; sections?: { title: string; description: string }[] }) {
+export type HubSection = { title: string; description: string; href?: string };
+
+export function HubView({ hub, sections }: { hub: Hub; sections?: HubSection[] }) {
   const articles = hub.articleSlugs
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
@@ -17,12 +19,21 @@ export function HubView({ hub, sections }: { hub: Hub; sections?: { title: strin
 
       {sections && sections.length ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mt-10">
-          {sections.map((s) => (
-            <div key={s.title} className="border-2 border-foreground/10 bg-card p-5">
-              <h3 className="font-display text-lg tracking-tight">{s.title}</h3>
-              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{s.description}</p>
-            </div>
-          ))}
+          {sections.map((s) => {
+            const className = "group block border-2 border-foreground/10 bg-card p-5 hover:border-primary hover:bg-primary/5 transition-colors";
+            const inner = (
+              <>
+                <h3 className="font-display text-lg tracking-tight group-hover:text-primary">{s.title}</h3>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{s.description}</p>
+                {s.href ? <span className="mt-3 inline-block text-[10px] font-bold uppercase tracking-widest text-primary">Explore →</span> : null}
+              </>
+            );
+            return s.href ? (
+              <a key={s.title} href={s.href} className={className}>{inner}</a>
+            ) : (
+              <div key={s.title} className={className.replace("group ", "")}>{inner}</div>
+            );
+          })}
         </div>
       ) : null}
 
