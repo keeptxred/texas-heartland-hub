@@ -16,9 +16,11 @@ export const Route = createFileRoute("/news/$slug")({
     // Fallback: AI-generated evergreen article stored in daily_articles.
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
     if (!ever || !ever.body) throw notFound();
+    const allowed = ["Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
+    const cat = (allowed as readonly string[]).includes(ever.category) ? (ever.category as Article["category"]) : "Legislature";
     const synth: Article = {
       slug: ever.slug,
-      category: ever.category,
+      category: cat,
       title: ever.title,
       dek: ever.dek,
       author: ever.author,
