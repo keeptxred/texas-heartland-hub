@@ -42,6 +42,7 @@ import openmeeting from "@/assets/article-openmeeting.jpg";
 import salestax from "@/assets/article-salestax.jpg";
 import governor from "@/assets/article-governor.jpg";
 import ag from "@/assets/article-ag.jpg";
+import giraffe from "@/assets/article-giraffe.jpg";
 
 export const ARTICLES: Article[] = [
   {
@@ -400,6 +401,16 @@ export const ARTICLES: Article[] = [
     publishedAt: "2026-06-27T10:00:00",
     image: ballot,
     pillar: true,
+  },
+  {
+    slug: "texas-giraffe-story",
+    category: "Education",
+    title: "The Story of the Texas Giraffe: Why the Lone Star State Has More Than Most of Africa",
+    dek: "From Fossil Rim in Glen Rose to the exotic ranches of the Hill Country, Texas has quietly become one of the largest giraffe sanctuaries on the planet — and it happened the Texas way: private land, private money, and a stubborn belief that ranchers conserve what government cannot.",
+    author: "Texana Desk",
+    date: "Feature",
+    publishedAt: "2026-06-27T11:00:00",
+    image: giraffe,
   },
 ];
 
