@@ -403,10 +403,10 @@ export const ARTICLES: Article[] = [
     pillar: true,
   },
   {
-    slug: "texas-giraffe-story",
+    slug: "gracie-the-giraffe",
     category: "Education",
-    title: "The Story of the Texas Giraffe: Why the Lone Star State Has More Than Most of Africa",
-    dek: "From Fossil Rim in Glen Rose to the exotic ranches of the Hill Country, Texas has quietly become one of the largest giraffe sanctuaries on the planet — and it happened the Texas way: private land, private money, and a stubborn belief that ranchers conserve what government cannot.",
+    title: "Gracie the Giraffe: The Hill Country Escape That Captivated Texas",
+    dek: "She slipped off a Real County ranch, dodged drones and search parties for nearly two weeks across the Texas Hill Country, and turned up near Leakey 'fat and happy.' The story of Gracie the giraffe is pure Texas — and a quiet window into the private exotic-ranching tradition that makes the Lone Star State one of the largest giraffe habitats outside Africa.",
     author: "Texana Desk",
     date: "Feature",
     publishedAt: "2026-06-27T11:00:00",

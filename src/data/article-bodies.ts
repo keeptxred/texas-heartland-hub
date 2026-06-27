@@ -1187,37 +1187,38 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     cta: { label: "Find Your Polling Place", href: "/voting-locations" },
   },
 
-  "texas-giraffe-story": {
+  "gracie-the-giraffe": {
     updated: "2026-06-27",
-    editorNote: "A Texana feature from the Keep TX Red editorial team. Opinions and framing are editorial — facts are sourced below.",
+    editorNote: "Updated June 27, 2026. Reporting compiled from AP, Texas Standard, and the Real County Sheriff's Office. Framing and analysis are editorial.",
     intro: [
-      "Drive an hour southwest of Fort Worth, past the live oaks and limestone of Glen Rose, and you will find something most Americans do not associate with Texas: a herd of giraffes browsing the tops of mesquite trees as casually as whitetail deer browse a Hill Country pasture. They are not lost. They are not on loan. They live here — born in Texas, raised in Texas, and in many cases, never having set foot on the African continent their ancestors came from.",
-      "Texas, by a quiet quirk of private property law and ranching culture, is now home to one of the largest concentrations of giraffes outside Africa. The story of how that happened is part conservation, part rugged individualism, and entirely Texan.",
+      "For nearly two weeks in June 2026, the most-watched fugitive in Texas was not a cartel suspect or a border-crosser — it was an 18-foot-tall reticulated giraffe named Gracie. She slipped off the Cedar Hollow Ranch in Real County, vanished into the cedar breaks and limestone canyons of the Hill Country, and led ranchers, sheriff's deputies, drone pilots, and a small army of internet sleuths on one of the most uniquely Texan manhunts in recent memory.",
+      "On Friday, June 26, Gracie was spotted from the air about four miles from the ranch, near Leakey, and recovered safely. Real County Sheriff Nathan Johnson described her as 'fat and happy.' She is fine. The story behind how a giraffe ends up loose in the Hill Country in the first place is a window into a uniquely Texas tradition.",
     ],
     sections: [
       {
-        heading: "It Started at Fossil Rim",
+        heading: "The Escape",
         paragraphs: [
-          "The center of gravity for Texas giraffes is the Fossil Rim Wildlife Center, a 1,800-acre conservation ranch outside Glen Rose. Founded in 1984 on a former exotic-game ranch, Fossil Rim has bred and raised more than 200 reticulated giraffes — one of the most successful captive breeding programs in North America.",
-          "Calves born at Fossil Rim have been placed in accredited zoos and conservation parks from Florida to California. The ranch's veterinary program has trained a generation of giraffe specialists, and its open pasture model — giraffes walking miles a day across native Texas range — has become a template for humane large-herbivore husbandry.",
+          "Gracie went missing in mid-June from Cedar Hollow Ranch, a private exotic property in Real County, west of San Antonio. Ranch manager Vic Jones reported her absence, and the Real County Sheriff's Office posted a $5,000 reward through local channels.",
+          "Within days the story had jumped from the Uvalde Leader-News to the Associated Press, ABC News, and Texas Standard. Drone operators, hunters, and hill-country neighbors fanned out across thousands of acres of brush. For thirteen days she eluded all of them — a 1,500-pound animal hiding in plain sight in country that has swallowed plenty of smaller things.",
         ],
       },
       {
-        heading: "Why Texas, of All Places",
+        heading: "How a Giraffe Survives the Hill Country",
         paragraphs: [
-          "Three things made Texas the unlikely capital of American giraffe ranching:",
+          "Hill Country ranchers were not as surprised as the national press. The terrain Gracie disappeared into is, by accident of climate and geology, one of the better places on the continent for a giraffe to go feral for a week or two:",
         ],
         bullets: [
-          "Climate — the Hill Country's hot, dry summers and mild winters mimic the East African savanna better than almost anywhere else in the United States.",
-          "Land — Texas is overwhelmingly privately owned (about 95% of the state), and the ranches are big enough that exotic species can roam without fences feeling like cages.",
-          "Law — Texas treats most non-native hoofstock as private property rather than state wildlife, which lets ranchers buy, breed, sell, and conserve them without a federal permit for every transaction.",
+          "Climate — June in the Hill Country is hot and dry, much like the East African savanna giraffes evolved on.",
+          "Browse — mesquite, live oak, cedar elm, and persimmon all grow tall enough to feed a browser that prefers tree tops to grass.",
+          "Land — Real County is overwhelmingly privately owned, with ranches measured in thousands of acres and cover thick enough to hide a giraffe from a road but not from a helicopter.",
+          "Water — late-spring rains had filled stock tanks across the region, so Gracie was never far from a drink.",
         ],
       },
       {
-        heading: "The Exotic Ranching Economy",
+        heading: "Why There Was a Giraffe to Lose in the First Place",
         paragraphs: [
-          "Fossil Rim is the flagship, but it is not alone. The Exotic Wildlife Association estimates that Texas private ranches host more than 1 million head of exotic hoofstock across roughly 5,000 properties — including blackbuck antelope, scimitar-horned oryx, addax, and yes, giraffes. Several species the ranches conserve are now extinct or near-extinct in their native ranges.",
-          "Conservatives have long argued that private ownership is the most reliable engine of conservation: a rancher who can profit from a herd has every incentive to keep it healthy, fed, and reproducing. The Texas exotic industry is the closest thing in America to a real-world test of that idea, and the giraffe is its most visible mascot.",
+          "Gracie is one of an estimated several hundred giraffes living in Texas at any given time — across Fossil Rim Wildlife Center in Glen Rose, the Natural Bridge Wildlife Ranch outside San Antonio, accredited zoos in Dallas, Houston, and Waco, and private exotic ranches like Cedar Hollow. The Exotic Wildlife Association estimates Texas private ranches host more than 1 million head of exotic hoofstock across roughly 5,000 properties.",
+          "That industry exists because of three things Texas treats differently than almost any other state: 95% private land ownership, a property-rights tradition that classifies non-native hoofstock as livestock rather than state wildlife, and a federal-permitting environment that lets accredited owners breed and move animals without asking permission for every transaction. Conservatives have long argued private ownership is the most reliable engine of conservation. The Texas exotic-ranching industry is the closest thing in America to a real-world test of that idea.",
         ],
         table: {
           headers: ["Where to See Giraffes in Texas", "Location", "Type"],
@@ -1231,24 +1232,26 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         },
       },
       {
-        heading: "Conservation by Property Right",
+        heading: "Fat, Happy, and Home",
         paragraphs: [
-          "Reticulated giraffes are listed as endangered by the IUCN, with wild populations down sharply across Kenya, Somalia, and southern Ethiopia. The Texas herds — Fossil Rim's especially — function as a genetic reserve. Calves born here carry bloodlines that may one day be reintroduced if range conditions in East Africa ever stabilize.",
-          "It is a quiet conservative success story: no federal mandate built it, no Washington program funds it, and no environmental lobby gets credit for it. Texas ranchers, Texas veterinarians, and Texas land did the work.",
+          "Gracie was located the morning of June 26 about four miles from Cedar Hollow Ranch, near Leakey. Aerial photos from the Real County Sheriff's Office showed her standing calmly in tall grass, in noticeably better condition than when she left. Sheriff Johnson's blunt summary — 'fat and happy' — became the line of the week across Texas talk radio.",
+          "There is something Texas about the whole episode: a giraffe gets loose, the sheriff handles it, neighbors pitch in, the internet cheers her on, and a private landowner gets his animal back without a federal task force or a press conference from Washington. The story ends the way Texans like stories to end — with the animal safe, the rancher whole, and the government barely involved.",
         ],
       },
     ],
     faq: [
-      { q: "How many giraffes live in Texas?", a: "There is no official count, but between Fossil Rim, accredited zoos, drive-through safari parks, and private exotic ranches, Texas hosts well over 100 giraffes at any given time — more than several African nations." },
-      { q: "Can you legally own a giraffe in Texas?", a: "Yes, with the right facilities and a USDA exhibitor license if you display them. Texas classifies most non-native hoofstock as private property, which is why the exotic-ranching industry exists here at the scale it does." },
-      { q: "Is Fossil Rim a zoo?", a: "Not exactly. It is an accredited conservation center where visitors drive through open pastures while giraffes, zebras, rhinos, and other species roam. Think wildlife park, not roadside zoo." },
-      { q: "Are Texas giraffes endangered?", a: "The species (reticulated giraffe) is endangered in the wild. The Texas captive population is healthy and reproducing, which is precisely why it matters as a genetic backup." },
+      { q: "Where was Gracie found?", a: "About four miles from Cedar Hollow Ranch, near Leakey in Real County, on the morning of Friday, June 26, 2026. Authorities spotted her from the air and recovered her safely." },
+      { q: "Who owns Gracie?", a: "She lives at Cedar Hollow Ranch, a private exotic property in Real County. Ranch manager Vic Jones led the recovery effort along with the Real County Sheriff's Office." },
+      { q: "How long was she missing?", a: "Roughly two weeks, from mid-June 2026 until her recovery on June 26." },
+      { q: "Is it legal to own a giraffe in Texas?", a: "Yes. Texas classifies most non-native hoofstock as private livestock rather than state wildlife, which is why the state has one of the largest private exotic-ranching industries in the country." },
+      { q: "How many giraffes are in Texas?", a: "There is no official count, but between Fossil Rim, accredited zoos, drive-through safari parks, and private exotic ranches, Texas hosts several hundred giraffes — more than several African nations." },
     ],
     sources: [
+      { label: "AP — A giraffe named Gracie escaped in Texas", url: "https://apnews.com/article/giraffe-escape-texas-23bd372aa6a09259a302297e3b7b1939" },
+      { label: "Texas Standard — Missing giraffe Gracie found safe near Leakey", url: "https://texasstandard.org/stories/texas-giraffe-missing-found/" },
+      { label: "News 4 San Antonio — Gracie found 'fat and happy'", url: "https://news4sanantonio.com/news/local/gracie-the-giraffe-found-fat-and-happy-real-county-sheriff-johnson-says" },
       { label: "Fossil Rim Wildlife Center", url: "https://fossilrim.org/" },
       { label: "Exotic Wildlife Association", url: "https://www.myewa.org/" },
-      { label: "IUCN Red List — Reticulated Giraffe", url: "https://www.iucnredlist.org/species/88420717/88420720" },
-      { label: "Texas Parks & Wildlife — Exotic Species", url: "https://tpwd.texas.gov/huntwild/wild/nuisance/exotic/" },
     ],
     related: ["texas-property-tax-guide", "texas-water-rights-explained", "what-local-governments-control"],
     cta: { label: "Visit Fossil Rim", href: "https://fossilrim.org/" },
