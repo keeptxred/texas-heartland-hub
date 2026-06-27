@@ -4,6 +4,24 @@ import { createClient } from "@supabase/supabase-js";
 const LEAGUES = ["nfl", "mlb", "nba"] as const;
 type League = (typeof LEAGUES)[number];
 
+const LEAGUE_IMAGES: Record<League, string[]> = {
+  nfl: [
+    "https://www.keeptxred.com/__l5e/assets-v1/cc97f0e5-5817-419b-80ed-27c7f73eddde/nfl-1.jpg",
+    "https://www.keeptxred.com/__l5e/assets-v1/8224cbdd-d972-4bd3-a6fe-8a0dfb3d61b7/nfl-2.jpg",
+    "https://www.keeptxred.com/__l5e/assets-v1/8440c8e2-93f0-435b-ac9d-a59b1c891fe8/nfl-3.jpg",
+  ],
+  mlb: [
+    "https://www.keeptxred.com/__l5e/assets-v1/0d14382d-24e7-448d-9df6-3bb4acba04d4/mlb-1.jpg",
+    "https://www.keeptxred.com/__l5e/assets-v1/99eda2bf-0020-4096-a84d-3b5e585d135a/mlb-2.jpg",
+    "https://www.keeptxred.com/__l5e/assets-v1/c0ea7e8f-6aec-4de0-92d6-21373e70556e/mlb-3.jpg",
+  ],
+  nba: [
+    "https://www.keeptxred.com/__l5e/assets-v1/2fb0d24d-c01c-4cca-bfca-16a522cb9eba/nba-1.jpg",
+    "https://www.keeptxred.com/__l5e/assets-v1/08d4b935-12c9-43e6-bdf7-c9741d1f0fe0/nba-2.jpg",
+    "https://www.keeptxred.com/__l5e/assets-v1/d9dcf452-1451-4ef7-b57a-93b7a5987dd1/nba-3.jpg",
+  ],
+};
+
 const LEAGUE_PROMPT: Record<League, { category: string; teams: string; topics: string[] }> = {
   nfl: {
     category: "NFL",
@@ -118,7 +136,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
             const meta = LEAGUE_PROMPT[league];
             const { data: recent } = await supabase
               .from("daily_articles")
-              .select("title")
+              .select("title,image_url")
               .eq("kind", `sports-${league}`)
               .order("published_at", { ascending: false })
               .limit(10);
@@ -128,6 +146,13 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
             );
             const pool = available.length > 0 ? available : meta.topics;
             const topic = pool[Math.floor(Math.random() * pool.length)];
+
+            // Pick a league image not used by the most recent articles to avoid duplicates.
+            const recentImages = new Set((recent ?? []).slice(0, 3).map((r) => r.image_url ?? ""));
+            const imagePool = LEAGUE_IMAGES[league];
+            const freshImages = imagePool.filter((u) => !recentImages.has(u));
+            const imageChoices = freshImages.length > 0 ? freshImages : imagePool;
+            const image_url = imageChoices[Math.floor(Math.random() * imageChoices.length)];
 
             const gen = await generate(topic, league, lovableApiKey);
             if (!gen?.title || !gen?.dek || !Array.isArray(gen.sections) || gen.sections.length < 3) {
@@ -146,6 +171,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
               author: "Keep TX Red Sports Desk",
               source_name: null as string | null,
               source_url: null as string | null,
+              image_url,
               published_at: now.toISOString(),
               keywords: (gen.keywords ?? []).slice(0, 20),
               body_json: {
