@@ -96,11 +96,11 @@ const SECTION_CARDS = [
 ];
 
 function Index() {
-  const { articles: live } = Route.useLoaderData();
-  const breaking = live.filter((a) => a.is_breaking).slice(0, 3);
+  const { articles: live } = Route.useLoaderData() as { articles: DailyArticle[] };
+  const breaking = live.filter((a: DailyArticle) => a.is_breaking).slice(0, 3);
   const trending = live
-    .filter((a) => !a.is_breaking)
-    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
+    .filter((a: DailyArticle) => !a.is_breaking)
+    .sort((a: DailyArticle, b: DailyArticle) => (b.score ?? 0) - (a.score ?? 0))
     .slice(0, 5);
 
   const sorted = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
@@ -121,7 +121,7 @@ function Index() {
               </span>
             </div>
             <div className="grid md:grid-cols-3 gap-4">
-              {breaking.map((a) => (
+              {breaking.map((a: DailyArticle) => (
                 <BreakingCard key={a.slug} article={a} />
               ))}
             </div>
@@ -168,7 +168,7 @@ function Index() {
             <Link to="/news" className="text-sm font-medium text-primary hover:underline">View all news →</Link>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {trending.map((a) => (
+            {trending.map((a: DailyArticle) => (
               <TrendingCard key={a.slug} article={a} />
             ))}
           </div>
