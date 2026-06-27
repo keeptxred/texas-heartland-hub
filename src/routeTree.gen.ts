@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
+import { Route as TexasSportsRouteImport } from './routes/texas-sports'
 import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
 import { Route as TexasNewsRouteImport } from './routes/texas-news'
 import { Route as TexasLawsRouteImport } from './routes/texas-laws'
@@ -44,6 +45,11 @@ import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/pub
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
   id: '/voting-locations',
   path: '/voting-locations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSportsRoute = TexasSportsRouteImport.update({
+  id: '/texas-sports',
+  path: '/texas-sports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/texas-laws': typeof TexasLawsRoute
   '/texas-news': typeof TexasNewsRoute
   '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-sports': typeof TexasSportsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -259,6 +266,7 @@ export interface FileRoutesByTo {
   '/texas-laws': typeof TexasLawsRoute
   '/texas-news': typeof TexasNewsRoute
   '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-sports': typeof TexasSportsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -293,6 +301,7 @@ export interface FileRoutesById {
   '/texas-laws': typeof TexasLawsRoute
   '/texas-news': typeof TexasNewsRoute
   '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-sports': typeof TexasSportsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -328,6 +337,7 @@ export interface FileRouteTypes {
     | '/texas-laws'
     | '/texas-news'
     | '/texas-politics'
+    | '/texas-sports'
     | '/voting-locations'
     | '/authors/$slug'
     | '/news/$slug'
@@ -361,6 +371,7 @@ export interface FileRouteTypes {
     | '/texas-laws'
     | '/texas-news'
     | '/texas-politics'
+    | '/texas-sports'
     | '/voting-locations'
     | '/authors/$slug'
     | '/news/$slug'
@@ -394,6 +405,7 @@ export interface FileRouteTypes {
     | '/texas-laws'
     | '/texas-news'
     | '/texas-politics'
+    | '/texas-sports'
     | '/voting-locations'
     | '/authors/$slug'
     | '/news/$slug'
@@ -428,6 +440,7 @@ export interface RootRouteChildren {
   TexasLawsRoute: typeof TexasLawsRoute
   TexasNewsRoute: typeof TexasNewsRoute
   TexasPoliticsRoute: typeof TexasPoliticsRoute
+  TexasSportsRoute: typeof TexasSportsRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
@@ -440,6 +453,13 @@ declare module '@tanstack/react-router' {
       path: '/voting-locations'
       fullPath: '/voting-locations'
       preLoaderRoute: typeof VotingLocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-sports': {
+      id: '/texas-sports'
+      path: '/texas-sports'
+      fullPath: '/texas-sports'
+      preLoaderRoute: typeof TexasSportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-politics': {
@@ -693,6 +713,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasLawsRoute: TexasLawsRoute,
   TexasNewsRoute: TexasNewsRoute,
   TexasPoliticsRoute: TexasPoliticsRoute,
+  TexasSportsRoute: TexasSportsRoute,
   VotingLocationsRoute: VotingLocationsRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
