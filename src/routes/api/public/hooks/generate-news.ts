@@ -134,20 +134,30 @@ async function fetchWithTimeout(url: string, ms = 10000): Promise<string | null>
   }
 }
 
-async function rewriteWithAi(items: RssItem[], lovableApiKey: string) {
+async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
   const list = items
-    .map((it, i) => `${i + 1}. [${it.source} — ${it.sourceCategory}] ${it.title}\n   ${it.description.slice(0, 400)}\n   URL: ${it.link}`)
+    .map((it, i) => `${i + 1}. [score=${it.score}${it.isBreaking ? " BREAKING" : ""}] [${it.source} — ${it.sourceCategory}] ${it.title}\n   ${it.description.slice(0, 400)}\n   URL: ${it.link}`)
     .join("\n\n");
 
-  const system = `You are the senior editor of Keep TX Red, a Texas conservative news site. Rewrite headlines and lede paragraphs in a sharp, principled, Reagan-conservative editorial voice: pro-Second Amendment, pro-border-security, pro-life, pro-energy, pro-property-rights, skeptical of federal overreach. Avoid slurs, avoid conspiracy framing, stay factual, never invent quotes or statistics.
+  const system = `You are the senior editor of Keep TX Red, a Texas news site optimized for Google Discover and high click-through rates. Stay factually neutral in headlines; reserve principled conservative framing for analysis. Never invent quotes or statistics.
 
-SEO REQUIREMENTS for every headline and dek:
-- Headline must be keyword-rich and under 110 characters. Lead with the concrete subject (a bill number, an agency, a city, a policy).
-- Headline MUST include at least one Texas-specific keyword: "Texas", a Texas city (Houston, Dallas, Austin, San Antonio, Fort Worth, El Paso), a Texas region (Permian Basin, Rio Grande Valley, Hill Country), or a Texas institution (ERCOT, TxDOT, the Legislature, the AG, the Governor).
-- The "dek" is the meta description — make it compelling, 140-240 characters, summarize the actual reported facts, and naturally include 1-2 additional Texas-specific keywords.
-- Never use clickbait, never use the word "shocking", never end the headline in a question mark unless the source did.
+GOOGLE DISCOVER HEADLINE FORMULAS — pick the best fit per story:
+  • "BREAKING: <event> impacts Texas residents"
+  • "Texas officials respond to <event> affecting <city>"
+  • "What we know about <event> in Texas today"
+  • "<topic> sparks reaction across Texas"
 
-Pick the best ${Math.min(10, items.length)} stories from the list. Return ONLY valid JSON in this exact shape — no markdown, no commentary:
+HEADLINE RULES:
+- Under 110 characters, no clickbait, no "shocking", no all-caps shouting beyond the optional "BREAKING:" prefix.
+- MUST mention Texas or a major Texas city (Houston, Dallas, Austin, San Antonio, Fort Worth, El Paso).
+- Use the "BREAKING:" prefix ONLY when the input is flagged BREAKING.
+
+DEK (first paragraph + meta description) RULES:
+- 2 sentences max, hooks the reader, 140–240 characters.
+- Sentence 1 names Texas + a specific city.
+- Sentence 2 gives the most newsworthy fact.
+
+Pick the best ${Math.min(10, items.length)} stories. Return ONLY valid JSON:
 {"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"..."}]}
 
 Valid categories: ${CATEGORIES.join(", ")}.`;
@@ -200,12 +210,18 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
             return xml ? parseRss(xml, s.name, s.category) : [];
           }),
         );
-        const items = feeds.flat();
-        if (items.length === 0) {
+        const rawItems = feeds.flat();
+        if (rawItems.length === 0) {
           return Response.json({ error: "No RSS items fetched" }, { status: 502 });
         }
 
-        // 2. Ask Lovable AI to rewrite the best stories in editorial voice.
+        // 2. Breaking News Priority Engine — score, drop low-value items.
+        const items = scoreAndFilter(rawItems);
+        if (items.length === 0) {
+          return Response.json({ error: "No items met the publish threshold" }, { status: 200 });
+        }
+
+        // 3. Discover-optimized rewrite.
         let rewritten: { source_index: number; category: string; title: string; dek: string }[];
         try {
           rewritten = await rewriteWithAi(items, lovableApiKey);
@@ -214,7 +230,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           return Response.json({ error: "AI rewrite failed", details: String(err) }, { status: 500 });
         }
 
-        // 3. Insert rewritten articles into the database.
+        // 4. Insert rewritten articles into the database.
         const supabase = createClient(supabaseUrl, serviceKey, {
           auth: { persistSession: false, autoRefreshToken: false },
         });
@@ -234,6 +250,9 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               source_name: src.source,
               source_url: src.link,
               published_at: now.toISOString(),
+              score: src.score,
+              is_breaking: src.isBreaking,
+              kind: "news",
             };
           });
 
@@ -250,11 +269,17 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           return Response.json({ error: insertError.message }, { status: 500 });
         }
 
-        // 4. Prune anything older than 30 days so the table stays lean.
+        // 5. Prune anything older than 30 days so the table stays lean.
         const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-        await supabase.from("daily_articles").delete().lt("published_at", cutoff);
+        await supabase.from("daily_articles").delete().lt("published_at", cutoff).eq("kind", "news");
 
-        return Response.json({ ok: true, inserted: count ?? rows.length, fetched: items.length });
+        return Response.json({
+          ok: true,
+          inserted: count ?? rows.length,
+          fetched: rawItems.length,
+          scored: items.length,
+          breaking: rows.filter((r) => r.is_breaking).length,
+        });
       },
     },
   },
