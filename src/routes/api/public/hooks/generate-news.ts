@@ -7,6 +7,9 @@ const RSS_SOURCES: { name: string; url: string; category: string }[] = [
   { name: "Dallas Express", url: "https://dallasexpress.com/feed/", category: "Elections" },
   { name: "The Center Square — Texas", url: "https://www.thecentersquare.com/texas/?f=rss", category: "Tax & Spending" },
   { name: "Texas Public Policy Foundation", url: "https://www.texaspolicy.com/feed/", category: "Tax & Spending" },
+  { name: "Houston Chronicle — Politics", url: "https://www.houstonchronicle.com/rss/feed/politics-9764.php", category: "Legislature" },
+  { name: "Houston Public Media — News", url: "https://www.houstonpublicmedia.org/feed/?post_type=articles", category: "Legislature" },
+  { name: "KHOU 11 — Local", url: "https://www.khou.com/feeds/syndication/rss/news/local", category: "Legislature" },
 ];
 
 const CATEGORIES = ["Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
@@ -52,6 +55,59 @@ function parseRss(xml: string, source: string, sourceCategory: string): RssItem[
     if (title && link) items.push({ title, link, description, pubDate, source, sourceCategory });
   }
   return items;
+}
+
+// ── Breaking News Priority Engine ─────────────────────────────────────────
+// Scores a raw RSS item before it's ever sent to the rewriter. Items below
+// the publish threshold are discarded; items above the breaking threshold
+// get the BREAKING badge on the homepage.
+const TEXAS_KEYWORDS = ["texas", "lone star", "ercot", "txdot", "rgv", "permian"];
+const METRO_KEYWORDS = ["houston", "harris county", "katy", "sugar land", "cypress", "the woodlands"];
+const POLITICS_KEYWORDS = ["legislature", "governor", "abbott", "paxton", "patrick", "senate", "house bill", "sb ", "hb ", "capitol", "election", "vote", "ballot", "campaign"];
+const BREAKING_KEYWORDS = ["breaking", "shooting", "killed", "arrested", "explosion", "tornado", "hurricane", "flood", "emergency", "evacuation", "manhunt", "amber alert", "indicted", "resign"];
+const ENGAGEMENT_KEYWORDS = ["exclusive", "revealed", "what we know", "first on", "investigation", "leaked", "exposes", "warns"];
+
+function scoreItem(item: RssItem, titleRepetition: number): number {
+  const haystack = `${item.title} ${item.description}`.toLowerCase();
+  let score = 0;
+  if (TEXAS_KEYWORDS.some((k) => haystack.includes(k))) score += 10;
+  if (METRO_KEYWORDS.some((k) => haystack.includes(k))) score += 10;
+  if (POLITICS_KEYWORDS.some((k) => haystack.includes(k))) score += 8;
+  if (BREAKING_KEYWORDS.some((k) => haystack.includes(k))) score += 8;
+  if (ENGAGEMENT_KEYWORDS.some((k) => haystack.includes(k))) score += 6;
+  if (titleRepetition >= 2) score += 5; // trending across multiple sources
+  return score;
+}
+
+function titleFingerprint(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]+/g, " ")
+    .split(/\s+/)
+    .filter((w) => w.length > 4)
+    .slice(0, 6)
+    .sort()
+    .join(" ");
+}
+
+type ScoredItem = RssItem & { score: number; isBreaking: boolean };
+
+function scoreAndFilter(items: RssItem[]): ScoredItem[] {
+  // Count rough title overlap across sources for trending boost.
+  const fingerprints = new Map<string, number>();
+  for (const it of items) {
+    const fp = titleFingerprint(it.title);
+    fingerprints.set(fp, (fingerprints.get(fp) ?? 0) + 1);
+  }
+  return items
+    .map((it) => {
+      const reps = fingerprints.get(titleFingerprint(it.title)) ?? 1;
+      const score = scoreItem(it, reps);
+      return { ...it, score, isBreaking: score >= 18 };
+    })
+    .filter((it) => it.score >= 12)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 20);
 }
 
 function slugify(s: string): string {
