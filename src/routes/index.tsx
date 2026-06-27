@@ -122,8 +122,8 @@ function Index() {
               <h2 className="font-sans text-3xl md:text-4xl font-semibold tracking-tight mt-2 leading-[1.2] text-foreground group-hover:text-primary transition-colors">
                 {lead.title}
               </h2>
-              {lead.excerpt && (
-                <p className="mt-3 text-base text-muted-foreground leading-relaxed line-clamp-2">{lead.excerpt}</p>
+              {lead.dek && (
+                <p className="mt-3 text-base text-muted-foreground leading-relaxed line-clamp-2">{lead.dek}</p>
               )}
               <p className="mt-3 text-xs text-muted-foreground">{lead.author} • {lead.date}</p>
             </Link>
@@ -179,8 +179,8 @@ function Index() {
               </div>
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
               <h3 className="font-sans text-base font-semibold mt-1.5 leading-snug text-foreground group-hover:text-primary transition-colors">{a.title}</h3>
-              {a.excerpt && (
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-2">{a.excerpt}</p>
+              {a.dek && (
+                <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-2">{a.dek}</p>
               )}
               <p className="mt-2 text-xs text-muted-foreground">{a.date}</p>
             </Link>
