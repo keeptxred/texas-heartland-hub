@@ -47,7 +47,7 @@ function HubPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
-        <Link to="/hubs" className="hover:text-primary">Hubs</Link>
+        <Link to="/hubs" className="hover:text-primary">Sections</Link>
         <span className="mx-2">/</span>
         <span className="text-primary">{hub.title}</span>
       </nav>
@@ -71,7 +71,7 @@ function HubPage() {
         </Link>
       ) : null}
 
-      <h2 className="font-display text-3xl tracking-tight mt-14 mb-6 border-b-2 border-foreground pb-2">All Coverage in this Hub</h2>
+      <h2 className="font-display text-3xl tracking-tight mt-14 mb-6 border-b-2 border-foreground pb-2">All Coverage in this Section</h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {supporting.map((a) => (
           <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
