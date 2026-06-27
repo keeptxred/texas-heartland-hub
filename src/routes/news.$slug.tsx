@@ -73,15 +73,30 @@ export const Route = createFileRoute("/news/$slug")({
             "@type": "NewsArticle",
             headline: article.title,
             description: desc,
+            image: [article.image],
             datePublished: body.updated,
             dateModified: body.updated,
-            author: { "@type": "Organization", name: "Keep TX Red Editorial Team" },
+            author: { "@type": "Person", name: article.author },
             publisher: {
-              "@type": "Organization",
+              "@type": "NewsMediaOrganization",
               name: "Keep TX Red",
+              url: "https://www.keeptxred.com/",
               logo: { "@type": "ImageObject", url: "/favicon.ico" },
             },
             mainEntityOfPage: { "@type": "WebPage", "@id": path },
+            articleSection: article.category,
+          }),
+        },
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+              { "@type": "ListItem", position: 2, name: "Newsroom", item: "https://www.keeptxred.com/news" },
+              { "@type": "ListItem", position: 3, name: article.category, item: `https://www.keeptxred.com${path}` },
+            ],
           }),
         },
         body.faq.length > 0
@@ -182,6 +197,18 @@ function ArticlePage() {
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
 
+  // Reading time from full body word count (avg 230 wpm).
+  const wordCount =
+    body.intro.join(" ").split(/\s+/).length +
+    body.sections.reduce(
+      (n, s) =>
+        n +
+        (s.paragraphs?.join(" ").split(/\s+/).length ?? 0) +
+        (s.bullets?.join(" ").split(/\s+/).length ?? 0),
+      0,
+    );
+  const readingMinutes = Math.max(2, Math.round(wordCount / 230));
+
   // Mid-article supplementary image: pick the first related article's image
   // so every published article ships with at least 3 distinct, alt-tagged
   // visuals (hero + mid-article + 3 related thumbnails = 5 total).
@@ -215,9 +242,13 @@ function ArticlePage() {
           By {article.author}
         </Link>
         <span>•</span>
-        <span>
-          Last updated <time dateTime={body.updated}>{formattedDate}</time>
-        </span>
+        <span>Published <time dateTime={article.publishedAt ?? body.updated}>{new Date(article.publishedAt ?? body.updated).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></span>
+        <span>•</span>
+        <span>Updated <time dateTime={body.updated}>{formattedDate}</time></span>
+        <span>•</span>
+        <span>{readingMinutes} min read</span>
+        <span>•</span>
+        <span className="uppercase tracking-wider text-[10px] font-semibold text-primary">{article.category}</span>
         {article.pillar ? (
           <>
             <span>•</span>
@@ -353,6 +384,16 @@ function ArticlePage() {
           </Link>
         </div>
       ) : null}
+
+      {/* Sitewide pillar CTA — every article links to Keep Texas Red */}
+      <div className="mt-8 border-l-4 border-primary bg-muted/40 p-5">
+        <p className="font-serif text-base">
+          <Link to="/keep-texas-red" className="text-primary font-semibold hover:underline">
+            Read more about Keep Texas Red →
+          </Link>
+          <span className="text-muted-foreground"> Our full guide to what Keep Texas Red means and why Texans support it.</span>
+        </p>
+      </div>
 
       {related.length > 0 ? (
         <section className="mt-14 pt-8 border-t-2 border-foreground">
