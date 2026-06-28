@@ -22,15 +22,15 @@ function HoustonPage() {
     "texas-property-tax-guide",
     "homestead-exemption-explained",
     "appraisal-protest-playbook",
-    "county-appraisal-districts-explained",
-    "isd-tax-burdens",
+    "texas-school-board-powers",
+    "texas-school-finance-explained",
     "texas-energy-economy-overview",
-    "permian-energy",
+    "texas-energy-policy-guide",
     "texas-grid-ercot-explained",
     "texas-border-policy-full-guide",
     "texas-voting-guide-2026",
     "what-local-governments-control",
-    "how-texas-counties-spend",
+    "why-texas-has-no-income-tax",
   ];
   const houstonArticles = HOUSTON_SLUGS
     .map((s) => ARTICLES.find((a) => a.slug === s))
