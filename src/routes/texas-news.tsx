@@ -14,12 +14,28 @@ export const Route = createFileRoute("/texas-news")({
     ],
     links: [{ rel: "canonical", href: "https://www.keeptxred.com/texas-news" }],
   }),
+  validateSearch: (search: Record<string, unknown>) => {
+    const t = typeof search.topic === "string" ? search.topic : "";
+    const allowed = ["legislature", "border", "elections", "tax-spending", "energy", "education"];
+    return { topic: allowed.includes(t) ? (t as string) : "" };
+  },
   component: TexasNewsPage,
 });
 
 function TexasNewsPage() {
-  const articles = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
+  const { topic } = Route.useSearch();
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const SECTIONS = [
+    { id: "legislature", title: "Legislature", category: "Legislature", description: "The Texas House, Senate, and the bills moving through Austin." },
+    { id: "border", title: "Border", category: "Border", description: "Border security, immigration enforcement, and the Rio Grande Valley." },
+    { id: "elections", title: "Elections", category: "Elections", description: "Campaigns, primaries, and election integrity across Texas." },
+    { id: "tax-spending", title: "Tax & Spending", category: "Tax & Spending", description: "Property taxes, the state budget, and how Texas spends your money." },
+    { id: "energy", title: "Energy", category: "Energy", description: "Oil and gas, ERCOT, and the policies powering the Texas grid." },
+    { id: "education", title: "Education", category: "Education", description: "Public schools, school choice, and curriculum debates." },
+  ];
+  const activeSection = SECTIONS.find((s) => s.id === topic);
+  const all = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
+  const articles = activeSection ? all.filter((a) => a.category === activeSection.category) : all;
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
@@ -34,6 +50,46 @@ function TexasNewsPage() {
         <p className="mt-3 text-xs text-muted-foreground">Last updated: {lastUpdated}</p>
       </header>
 
+      <section className="mb-10">
+        <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground mb-4">What we cover</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {SECTIONS.map((s) => (
+            <Link
+              key={s.id}
+              to="/texas-news"
+              search={{ topic: topic === s.id ? "" : s.id }}
+              className={`group block border-2 p-5 transition-colors ${
+                topic === s.id
+                  ? "border-primary bg-primary/5"
+                  : "border-foreground/10 bg-card hover:border-primary hover:bg-primary/5"
+              }`}
+            >
+              <h3 className="font-sans text-lg font-semibold tracking-tight group-hover:text-primary">{s.title}</h3>
+              <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{s.description}</p>
+              <span className="mt-3 inline-block text-[10px] font-bold uppercase tracking-widest text-primary">
+                {topic === s.id ? "Showing ✓ — clear" : "Filter →"}
+              </span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="border-t border-border pt-10">
+        <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
+          <div>
+            <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">
+              {activeSection ? `${activeSection.title} coverage` : "Latest Texas coverage"}
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {activeSection ? activeSection.description : "The newest reporting from across the state."}
+            </p>
+          </div>
+          {activeSection && (
+            <Link to="/texas-news" search={{ topic: "" }} className="text-sm text-primary hover:underline">
+              Show all Texas news →
+            </Link>
+          )}
+        </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
         {articles.map((a) => (
           <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
@@ -47,6 +103,7 @@ function TexasNewsPage() {
           </Link>
         ))}
       </div>
+      </section>
 
       <AgedFeedSection
         section="news"
