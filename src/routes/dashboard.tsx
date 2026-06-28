@@ -130,13 +130,35 @@ function DashboardPage() {
   useEffect(() => {
     let active = true;
     async function load() {
-      const { data } = await supabase
+      const sinceIso = new Date(Date.now() - ONE_DAY_MS).toISOString();
+      const [{ data }, { data: demoted }] = await Promise.all([
+        supabase
         .from("texas_news_feed")
         .select("id,title,source,link,description,pub_date")
         .order("pub_date", { ascending: false })
-        .limit(120);
+        .limit(120),
+        supabase
+          .from("daily_articles")
+          .select("id,slug,title,category,dek,source_url,published_at")
+          .eq("is_breaking", true)
+          .gte("published_at", sinceIso)
+          .order("published_at", { ascending: false })
+          .limit(40),
+      ]);
       if (!active) return;
-      setItems((data as Row[]) ?? []);
+      const feedRows = (data as Row[]) ?? [];
+      const demotedRows: Row[] = (demoted ?? []).map((d: { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string }, i: number) => ({
+        id: -1 - i,
+        title: d.title,
+        source: d.category || "Newsroom",
+        link: d.source_url || `/news/${d.slug}`,
+        description: d.dek,
+        pub_date: d.published_at,
+      }));
+      const merged = [...feedRows, ...demotedRows].sort(
+        (a, b) => Date.parse(b.pub_date) - Date.parse(a.pub_date),
+      );
+      setItems(merged);
       setFetchedAt(new Date().toISOString());
       setLoading(false);
     }
