@@ -5,6 +5,7 @@ import { authorSlug, getAuthor } from "@/data/authors";
 import { getEvergreenBySlug } from "@/lib/evergreen.functions";
 import capitol from "@/assets/capitol.jpg";
 import { AdSlot } from "@/components/ad-slot";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
@@ -43,28 +44,24 @@ export const Route = createFileRoute("/news/$slug")({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const { article, body } = loaderData;
-    const suffixed = `${article.title} — Keep TX Red`;
-    const title = suffixed.length <= 60 ? suffixed : article.title.slice(0, 60);
-    const desc = article.dek;
     const path = `/news/${article.slug}`;
     const keywords = buildKeywords(article.title, article.dek, article.category);
+    const seo = buildSeo({
+      title: article.title,
+      description: article.dek,
+      path,
+      image: article.image,
+      imageAlt: article.title,
+      type: "article",
+      publishedTime: body.updated,
+      modifiedTime: body.updated,
+      section: article.category,
+      author: article.author,
+      keywords,
+    });
     return {
-      meta: [
-        { title },
-        { name: "description", content: desc },
-        { name: "keywords", content: keywords },
-        { property: "og:title", content: article.title },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "article" },
-        { property: "og:url", content: path },
-        { property: "og:image", content: article.image },
-        { name: "twitter:image", content: article.image },
-        { property: "article:published_time", content: body.updated },
-        { property: "article:modified_time", content: body.updated },
-        { property: "article:section", content: article.category },
-        { name: "twitter:card", content: "summary_large_image" },
-      ],
-      links: [{ rel: "canonical", href: path }],
+      meta: seo.meta,
+      links: seo.links,
       scripts: [
         {
           type: "application/ld+json",
@@ -72,18 +69,18 @@ export const Route = createFileRoute("/news/$slug")({
             "@context": "https://schema.org",
             "@type": "NewsArticle",
             headline: article.title,
-            description: desc,
-            image: [article.image],
+            description: seo.description,
+            image: [seo.image],
             datePublished: body.updated,
             dateModified: body.updated,
             author: { "@type": "Person", name: article.author },
             publisher: {
               "@type": "NewsMediaOrganization",
               name: "Keep TX Red",
-              url: "https://www.keeptxred.com/",
-              logo: { "@type": "ImageObject", url: "/favicon.ico" },
+              url: `${SITE_URL}/`,
+              logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.ico` },
             },
-            mainEntityOfPage: { "@type": "WebPage", "@id": path },
+            mainEntityOfPage: { "@type": "WebPage", "@id": seo.url },
             articleSection: article.category,
           }),
         },
@@ -93,9 +90,9 @@ export const Route = createFileRoute("/news/$slug")({
             "@context": "https://schema.org",
             "@type": "BreadcrumbList",
             itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
-              { "@type": "ListItem", position: 2, name: "Newsroom", item: "https://www.keeptxred.com/news" },
-              { "@type": "ListItem", position: 3, name: article.category, item: `https://www.keeptxred.com${path}` },
+              { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+              { "@type": "ListItem", position: 2, name: "Newsroom", item: `${SITE_URL}/news` },
+              { "@type": "ListItem", position: 3, name: article.category, item: seo.url },
             ],
           }),
         },
