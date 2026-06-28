@@ -47,35 +47,6 @@ function timeAgo(iso: string) {
   return `${Math.floor(h / 24)}d ago`;
 }
 
-const ARCHIVE_CATEGORIES = [
-  {
-    key: "Elections",
-    label: "Elections & Voting",
-    blurb: "Ballot rules, candidate filings, and election administration updates.",
-    match: /(election|ballot|vote|voter|primary|candidate|polling|precinct)/i,
-  },
-  {
-    key: "Law",
-    label: "Law & Policy",
-    blurb: "Rules, regulations, and legal updates published in the Texas Register.",
-    match: /(register|rule|regulation|statute|law|legal|attorney)/i,
-  },
-  {
-    key: "Politics",
-    label: "Government & Politics",
-    blurb: "Governor's office, agency press releases, and statewide political news.",
-    match: /.*/,
-  },
-] as const;
-
-function categorize(item: { title: string; description: string | null; source: string }) {
-  const hay = `${item.source} ${item.title} ${item.description ?? ""}`;
-  for (const c of ARCHIVE_CATEGORIES) {
-    if (c.match.test(hay)) return c.key;
-  }
-  return "Politics";
-}
-
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 
