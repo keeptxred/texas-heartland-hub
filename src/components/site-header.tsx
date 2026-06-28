@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const NAV = [
   { to: "/texas-news", label: "Texas News" },
-  { to: "/dashboard", label: "Live Dashboard" },
+  { to: "/dashboard", label: "Happening Now" },
   { to: "/texas-politics", label: "Politics" },
   { to: "/houston", label: "Houston" },
   { to: "/texas-sports", label: "Sports" },
