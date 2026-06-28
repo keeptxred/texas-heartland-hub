@@ -164,20 +164,6 @@ function DashboardPage() {
     });
   }, [items, q, src]);
 
-  const archive = useMemo(() => {
-    const cutoff = Date.now() - ONE_DAY_MS;
-    const older = items.filter((it) => {
-      const ts = Date.parse(it.pub_date);
-      return !isNaN(ts) && ts < cutoff;
-    });
-    const buckets: Record<string, Row[]> = {};
-    for (const it of older) {
-      const k = categorize(it);
-      (buckets[k] ||= []).push(it);
-    }
-    return buckets;
-  }, [items]);
-
   const QUICK = ["Tax", "Border", "Primary", "Paxton", "Election", "School"];
 
   return (
@@ -191,7 +177,7 @@ function DashboardPage() {
             <span className="text-primary">Texas Government</span>
           </h1>
           <p className="mt-4 max-w-2xl text-base md:text-lg text-white/75">
-            Real-time feeds from the Texas Legislature, the Governor's Office, and the Secretary of State. The live feed shows the last 24 hours — older updates roll into the topic archive below.
+            Real-time feeds from the Texas Legislature, the Governor's Office, and the Secretary of State. The live feed shows the last 24 hours — older updates automatically move to the matching section page (Elections, Texas Laws, or Texas Politics).
           </p>
           {fetchedAt ? (
             <p className="mt-3 text-xs uppercase tracking-widest text-white/50">
@@ -291,44 +277,6 @@ function DashboardPage() {
           </div>
         )}
       </section>
-
-      {Object.keys(archive).length > 0 ? (
-        <section className="border-t-2 border-foreground/10 bg-muted/30">
-          <div className="mx-auto max-w-6xl px-4 py-12">
-            <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Topic Archive</span>
-            <h2 className="font-display text-3xl md:text-4xl tracking-tight mt-2">Older Updates by Category</h2>
-            <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
-              Once an update is more than a day old it moves out of the live feed and into the topic archive below — sorted so you can still find what came out of Austin this week.
-            </p>
-            <div className="mt-8 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-              {ARCHIVE_CATEGORIES.map((c) => {
-                const list = (archive[c.key] ?? []).slice(0, 12);
-                if (list.length === 0) return null;
-                return (
-                  <div key={c.key}>
-                    <h3 className="font-display text-xl tracking-tight">{c.label}</h3>
-                    <p className="text-xs text-muted-foreground mb-3">{c.blurb}</p>
-                    <ul className="space-y-3">
-                      {list.map((it, i) => (
-                        <li key={`${it.link}-${i}`} className="border-b border-border pb-3 last:border-0">
-                          <a href={it.link} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold leading-snug hover:text-primary">
-                            {it.title}
-                          </a>
-                          <div className="mt-1 flex gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-                            <span>{it.source}</span>
-                            <span>·</span>
-                            <time dateTime={it.pub_date}>{timeAgo(it.pub_date)}</time>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      ) : null}
 
       <section className="border-t-2 border-foreground/10 bg-muted/40">
         <div className="mx-auto max-w-4xl px-4 py-14">
