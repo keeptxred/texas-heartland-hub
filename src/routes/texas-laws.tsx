@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { TEXAS_LAWS } from "@/data/representatives";
+import { AgedFeedSection } from "@/components/aged-feed-section";
 
 export const Route = createFileRoute("/texas-laws")({
   head: () => ({
@@ -27,6 +28,11 @@ function TexasLawsPage() {
           </article>
         ))}
       </div>
+      <AgedFeedSection
+        section="laws"
+        title="Latest Rule & Statute Updates"
+        blurb="Rule changes, Texas Register filings, and Attorney General actions from the Happening Now feed, filed here once they're more than 24 hours old."
+      />
     </>
   );
 }

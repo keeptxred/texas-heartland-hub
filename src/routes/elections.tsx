@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ARTICLES, ELECTION_RACES, isPublished, sortByDateDesc } from "@/data/articles";
 import ballot from "@/assets/ballot.jpg";
+import { AgedFeedSection } from "@/components/aged-feed-section";
 
 export const Route = createFileRoute("/elections")({
   head: () => ({
@@ -87,6 +88,12 @@ function ElectionsPage() {
           ))}
         </div>
       </section>
+
+      <AgedFeedSection
+        section="elections"
+        title="From the Live Feed"
+        blurb="Election-related updates from the Secretary of State and Governor's Office, filed here once they're more than 24 hours old."
+      />
     </>
   );
 }

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import { AgedFeedSection } from "@/components/aged-feed-section";
 
 export const Route = createFileRoute("/texas-news")({
   head: () => ({
@@ -46,6 +47,12 @@ function TexasNewsPage() {
           </Link>
         ))}
       </div>
+
+      <AgedFeedSection
+        section="news"
+        title="Latest Statewide Updates"
+        blurb="Items from the Happening Now feed are automatically filed here once they're more than 24 hours old."
+      />
 
       <section className="mt-16 border-t border-border pt-10">
         <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">More from Keep Texas Red</h2>

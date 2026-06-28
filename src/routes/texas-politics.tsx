@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
+import { AgedFeedSection } from "@/components/aged-feed-section";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
@@ -21,5 +22,18 @@ export const Route = createFileRoute("/texas-politics")({
     ],
     links: [{ rel: "canonical", href: "/texas-politics" }],
   }),
-  component: () => <HubView hub={HUB} sections={SECTIONS} />,
+  component: TexasPoliticsPage,
 });
+
+function TexasPoliticsPage() {
+  return (
+    <>
+      <HubView hub={HUB} sections={SECTIONS} />
+      <AgedFeedSection
+        section="politics"
+        title="Latest from Austin"
+        blurb="Governor's Office press releases and statewide political updates from the Happening Now feed, filed here once they're more than 24 hours old."
+      />
+    </>
+  );
+}
