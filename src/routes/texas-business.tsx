@@ -13,36 +13,60 @@ export const Route = createFileRoute("/texas-business")({
     ],
     links: [{ rel: "canonical", href: "https://www.keeptxred.com/texas-business" }],
   }),
+  validateSearch: (search: Record<string, unknown>) => {
+    const t = typeof search.topic === "string" ? search.topic : "";
+    const allowed = ["energy", "jobs", "relocations", "real-estate", "policy"];
+    return { topic: allowed.includes(t) ? (t as string) : "" };
+  },
   component: BusinessPage,
 });
 
 function BusinessPage() {
+  const { topic } = Route.useSearch();
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  const BUSINESS_SLUGS = [
-    "texas-energy-economy-overview",
-    "permian-energy",
-    "texas-energy-policy-guide",
-    "texas-grid-ercot-explained",
-    "texas-water-rights-explained",
-    "why-texas-has-no-income-tax",
-    "property-tax-relief-package",
-    "isd-tax-burdens",
-    "how-texas-counties-spend",
-    "county-appraisal-districts-explained",
-    "what-local-governments-control",
-    "texas-property-tax-guide",
-  ];
-  const businessArticles = BUSINESS_SLUGS
+  const BUSINESS_SLUGS: Record<string, string[]> = {
+    energy: [
+      "texas-energy-economy-overview",
+      "permian-energy",
+      "texas-energy-policy-guide",
+      "texas-grid-ercot-explained",
+    ],
+    jobs: [
+      "texas-energy-economy-overview",
+      "why-texas-has-no-income-tax",
+    ],
+    relocations: [
+      "why-texas-has-no-income-tax",
+      "what-local-governments-control",
+    ],
+    "real-estate": [
+      "texas-water-rights-explained",
+      "property-tax-relief-package",
+      "county-appraisal-districts-explained",
+      "texas-property-tax-guide",
+      "isd-tax-burdens",
+      "how-texas-counties-spend",
+    ],
+    policy: [
+      "texas-energy-policy-guide",
+      "property-tax-relief-package",
+      "what-local-governments-control",
+    ],
+  };
+  const ALL_SLUGS = Array.from(new Set(Object.values(BUSINESS_SLUGS).flat()));
+  const activeSlugs = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_SLUGS;
+  const businessArticles = activeSlugs
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
     .sort(sortByDateDesc);
   const SECTIONS = [
-    { title: "Energy", description: "Oil and gas, the ERCOT grid, renewables, and Permian production.", href: "/texas-news" },
-    { title: "Jobs & Workforce", description: "Hiring trends, wages, and the Texas labor market.", href: "/texas-news" },
-    { title: "Relocations", description: "Corporate HQ moves to Austin, Dallas-Fort Worth, and Houston.", href: "/texas-news" },
-    { title: "Real Estate", description: "Commercial development, housing supply, and property taxes.", href: "/texas-news" },
-    { title: "Policy", description: "Legislative changes that affect Texas businesses and small employers.", href: "/legislative-updates" },
+    { id: "energy", title: "Energy", description: "Oil and gas, the ERCOT grid, renewables, and Permian production." },
+    { id: "jobs", title: "Jobs & Workforce", description: "Hiring trends, wages, and the Texas labor market." },
+    { id: "relocations", title: "Relocations", description: "Corporate HQ moves to Austin, Dallas-Fort Worth, and Houston." },
+    { id: "real-estate", title: "Real Estate", description: "Commercial development, housing supply, and property taxes." },
+    { id: "policy", title: "Policy", description: "Legislative changes that affect Texas businesses and small employers." },
   ];
+  const activeSection = SECTIONS.find((s) => s.id === topic);
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
@@ -75,21 +99,41 @@ function BusinessPage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {SECTIONS.map((s) => (
             <Link
-              key={s.title}
-              to={s.href}
-              className="group block border-2 border-foreground/10 bg-card p-5 hover:border-primary hover:bg-primary/5 transition-colors"
+              key={s.id}
+              to="/texas-business"
+              search={{ topic: topic === s.id ? "" : s.id }}
+              className={`group block border-2 p-5 transition-colors ${
+                topic === s.id
+                  ? "border-primary bg-primary/5"
+                  : "border-foreground/10 bg-card hover:border-primary hover:bg-primary/5"
+              }`}
             >
               <h3 className="font-sans text-lg font-semibold tracking-tight group-hover:text-primary">{s.title}</h3>
               <p className="mt-1 text-xs text-muted-foreground leading-relaxed">{s.description}</p>
-              <span className="mt-3 inline-block text-[10px] font-bold uppercase tracking-widest text-primary">Explore →</span>
+              <span className="mt-3 inline-block text-[10px] font-bold uppercase tracking-widest text-primary">
+                {topic === s.id ? "Showing ✓ — clear" : "Filter →"}
+              </span>
             </Link>
           ))}
         </div>
       </section>
 
       <section className="mt-16 border-t border-border pt-10">
-        <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">Latest Texas business coverage</h2>
-        <p className="mt-2 text-sm text-muted-foreground">Energy, taxes, jobs, and the policy stories shaping the Texas economy.</p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">
+              {activeSection ? `${activeSection.title} coverage` : "Latest Texas business coverage"}
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {activeSection ? activeSection.description : "Energy, taxes, jobs, and the policy stories shaping the Texas economy."}
+            </p>
+          </div>
+          {activeSection && (
+            <Link to="/texas-business" search={{ topic: "" }} className="text-sm text-primary hover:underline">
+              Show all business coverage →
+            </Link>
+          )}
+        </div>
         <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {businessArticles.map((a) => (
             <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
