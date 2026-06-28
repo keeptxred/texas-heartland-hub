@@ -6,6 +6,12 @@ const SOURCES = [
   { name: "Texas Legislature — Senate Bills Filed", url: "https://capitol.texas.gov/MnuBillsFiledRSS.aspx?Chamber=S" },
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/about/newsreleases.shtml" },
 ];
+const SOURCES2 = [
+  { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss" },
+  { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml" },
+  { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml" },
+];
+void SOURCES;
 
 function decode(s: string) {
   return s
