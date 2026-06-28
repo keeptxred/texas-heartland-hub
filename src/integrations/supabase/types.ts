@@ -74,6 +74,36 @@ export type Database = {
         }
         Relationships: []
       }
+      texas_news_feed: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: number
+          link: string
+          pub_date: string
+          source: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          link: string
+          pub_date?: string
+          source: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: number
+          link?: string
+          pub_date?: string
+          source?: string
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

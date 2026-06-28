@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { getStatewideFeeds, type FeedItem } from "@/lib/rss-feeds.functions";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 
@@ -105,23 +105,54 @@ export const Route = createFileRoute("/dashboard")({
       },
     ],
   }),
-  loader: () => getStatewideFeeds(),
   component: DashboardPage,
 });
 
+type Row = {
+  id: number;
+  title: string;
+  source: string;
+  link: string;
+  description: string | null;
+  pub_date: string;
+};
+
 function DashboardPage() {
-  const { items, fetchedAt } = Route.useLoaderData();
+  const [items, setItems] = useState<Row[]>([]);
+  const [fetchedAt, setFetchedAt] = useState<string>("");
+  const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [src, setSrc] = useState<(typeof SOURCE_FILTERS)[number]>("All");
 
+  useEffect(() => {
+    let active = true;
+    async function load() {
+      const { data } = await supabase
+        .from("texas_news_feed")
+        .select("id,title,source,link,description,pub_date")
+        .order("pub_date", { ascending: false })
+        .limit(120);
+      if (!active) return;
+      setItems((data as Row[]) ?? []);
+      setFetchedAt(new Date().toISOString());
+      setLoading(false);
+    }
+    load();
+    const t = setInterval(load, 60_000);
+    return () => {
+      active = false;
+      clearInterval(t);
+    };
+  }, []);
+
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    return items.filter((it: FeedItem) => {
+    return items.filter((it) => {
       if (src !== "All" && !it.source.toLowerCase().includes(src.toLowerCase())) return false;
       if (!needle) return true;
       return (
         it.title.toLowerCase().includes(needle) ||
-        it.description.toLowerCase().includes(needle) ||
+        (it.description ?? "").toLowerCase().includes(needle) ||
         it.source.toLowerCase().includes(needle)
       );
     });
@@ -199,13 +230,15 @@ function DashboardPage() {
         </div>
         {filtered.length === 0 ? (
           <div className="border-2 border-dashed border-border p-10 text-center text-muted-foreground">
-            {items.length === 0
-              ? "Official feeds are temporarily unreachable. Refresh in a few minutes."
+            {loading
+              ? "Loading the latest Texas political feeds…"
+              : items.length === 0
+              ? "Feed database is warming up. New entries appear automatically every 30 minutes."
               : "No items match your filters."}
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((it: FeedItem, i: number) => (
+            {filtered.map((it, i) => (
               <article
                 key={`${it.link}-${i}`}
                 className="border-2 border-foreground/10 bg-card p-5 hover:border-primary transition-colors"
@@ -214,9 +247,9 @@ function DashboardPage() {
                   <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
                     {it.source}
                   </span>
-                  {it.pubDate ? (
-                    <time className="text-[10px] text-muted-foreground" dateTime={it.pubDate}>
-                      {timeAgo(it.pubDate)}
+                  {it.pub_date ? (
+                    <time className="text-[10px] text-muted-foreground" dateTime={it.pub_date}>
+                      {timeAgo(it.pub_date)}
                     </time>
                   ) : null}
                 </div>
