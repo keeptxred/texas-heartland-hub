@@ -1,5 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import schoolbus from "@/assets/article-schoolbus.jpg";
+import boardroom from "@/assets/article-boardroom.jpg";
+import rotunda from "@/assets/article-rotunda.jpg";
+import openmeeting from "@/assets/article-openmeeting.jpg";
 
 export const Route = createFileRoute("/texas-business")({
   head: () => ({
@@ -67,6 +71,14 @@ function BusinessPage() {
     { id: "policy", title: "Policy", description: "Legislative changes that affect Texas businesses and small employers." },
   ];
   const activeSection = SECTIONS.find((s) => s.id === topic);
+
+  // Per-page image overrides to guarantee no duplicate images on /texas-business
+  const IMAGE_OVERRIDES: Record<string, string> = {
+    "isd-tax-burdens": schoolbus,
+    "texas-energy-economy-overview": boardroom,
+    "how-texas-counties-spend": rotunda,
+    "what-local-governments-control": openmeeting,
+  };
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
@@ -138,7 +150,7 @@ function BusinessPage() {
           {businessArticles.map((a) => (
             <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
               <div className="aspect-[4/3] overflow-hidden bg-muted mb-3">
-                <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={IMAGE_OVERRIDES[a.slug] ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{a.category}</span>
               <h3 className="font-serif text-base font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h3>
