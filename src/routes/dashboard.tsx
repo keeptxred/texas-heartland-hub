@@ -35,7 +35,7 @@ const FAQS = [
   },
 ];
 
-const SOURCE_FILTERS = ["All", "Governor", "House", "Senate", "Secretary of State"] as const;
+const SOURCE_FILTERS = ["All", "Governor", "Secretary of State", "Register"] as const;
 
 function timeAgo(iso: string) {
   const t = Date.parse(iso);
