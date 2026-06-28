@@ -72,19 +72,21 @@ async function handler() {
             "User-Agent": "KeepTXRedBot/1.0 (+https://www.keeptxred.com)",
             Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*",
           },
-          signal: AbortSignal.timeout(10000),
+          signal: AbortSignal.timeout(15000),
         });
-        if (!res.ok) return [];
-        return parseFeed(await res.text(), s.name).slice(0, 25);
-      } catch {
-        return [];
+        if (!res.ok) return { source: s.name, url: s.url, status: res.status, items: [] as Item[] };
+        const items = parseFeed(await res.text(), s.name).slice(0, 25);
+        return { source: s.name, url: s.url, status: res.status, items };
+      } catch (e) {
+        return { source: s.name, url: s.url, status: 0, error: String(e), items: [] as Item[] };
       }
     }),
   );
 
-  const all = results.flat();
+  const all = results.flatMap((r) => r.items);
+  const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
   if (all.length === 0) {
-    return new Response(JSON.stringify({ ok: true, inserted: 0, fetched: 0 }), {
+    return new Response(JSON.stringify({ ok: true, inserted: 0, fetched: 0, diag }), {
       headers: { "Content-Type": "application/json" },
     });
   }
@@ -113,7 +115,7 @@ async function handler() {
   }
 
   return new Response(
-    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted }),
+    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, diag }),
     { headers: { "Content-Type": "application/json" } },
   );
 }
