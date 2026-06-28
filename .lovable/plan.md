@@ -1,0 +1,1 @@
+Update `public/robots.txt` to explicitly allow OAI-SearchBot, GPTBot, PerplexityBot, and ClaudeBot by inserting `User-agent:` / `Allow: /` blocks for each before the existing wildcard entry and Sitemap line.
