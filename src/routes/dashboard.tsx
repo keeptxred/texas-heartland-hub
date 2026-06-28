@@ -47,12 +47,43 @@ function timeAgo(iso: string) {
   return `${Math.floor(h / 24)}d ago`;
 }
 
+const ARCHIVE_CATEGORIES = [
+  {
+    key: "Elections",
+    label: "Elections & Voting",
+    blurb: "Ballot rules, candidate filings, and election administration updates.",
+    match: /(election|ballot|vote|voter|primary|candidate|polling|precinct)/i,
+  },
+  {
+    key: "Law",
+    label: "Law & Policy",
+    blurb: "Rules, regulations, and legal updates published in the Texas Register.",
+    match: /(register|rule|regulation|statute|law|legal|attorney)/i,
+  },
+  {
+    key: "Politics",
+    label: "Government & Politics",
+    blurb: "Governor's office, agency press releases, and statewide political news.",
+    match: /.*/,
+  },
+] as const;
+
+function categorize(item: { title: string; description: string | null; source: string }) {
+  const hay = `${item.source} ${item.title} ${item.description ?? ""}`;
+  for (const c of ARCHIVE_CATEGORIES) {
+    if (c.match.test(hay)) return c.key;
+  }
+  return "Politics";
+}
+
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Texas Conservative News Dashboard — Live Legislative & Political Feeds | Keep TX Red" },
-      { name: "description", content: "Live aggregated feeds from the Texas Legislature, the Governor's Office, and the Secretary of State. Filter bills, press releases, and political updates in real time." },
-      { property: "og:title", content: "Texas Conservative News Dashboard — Keep TX Red" },
+      { title: "Happening Now — Live Texas Political & Legislative Feeds | Keep TX Red" },
+      { name: "description", content: "Happening Now: live aggregated feeds from the Texas Legislature, the Governor's Office, and the Secretary of State. Filter bills, press releases, and political updates in real time." },
+      { property: "og:title", content: "Happening Now — Keep TX Red" },
       { property: "og:description", content: "Real-time Texas political and legislative updates aggregated from official state sources." },
       { property: "og:url", content: "https://www.keeptxred.com/dashboard" },
     ],
@@ -147,7 +178,10 @@ function DashboardPage() {
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
+    const cutoff = Date.now() - ONE_DAY_MS;
     return items.filter((it) => {
+      const ts = Date.parse(it.pub_date);
+      if (!isNaN(ts) && ts < cutoff) return false;
       if (src !== "All" && !it.source.toLowerCase().includes(src.toLowerCase())) return false;
       if (!needle) return true;
       return (
@@ -158,20 +192,34 @@ function DashboardPage() {
     });
   }, [items, q, src]);
 
+  const archive = useMemo(() => {
+    const cutoff = Date.now() - ONE_DAY_MS;
+    const older = items.filter((it) => {
+      const ts = Date.parse(it.pub_date);
+      return !isNaN(ts) && ts < cutoff;
+    });
+    const buckets: Record<string, Row[]> = {};
+    for (const it of older) {
+      const k = categorize(it);
+      (buckets[k] ||= []).push(it);
+    }
+    return buckets;
+  }, [items]);
+
   const QUICK = ["Tax", "Border", "Primary", "Paxton", "Election", "School"];
 
   return (
     <div className="bg-white">
       <section className="bg-secondary text-secondary-foreground border-b-4 border-primary">
         <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
-          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-accent">★ Live Dashboard</span>
+          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-accent">★ Happening Now</span>
           <h1 className="font-display text-4xl md:text-6xl leading-[0.95] tracking-tight mt-3">
-            Statewide Conservative
+            Happening Now in
             <br />
-            <span className="text-primary">News Dashboard</span>
+            <span className="text-primary">Texas Government</span>
           </h1>
           <p className="mt-4 max-w-2xl text-base md:text-lg text-white/75">
-            Real-time feeds from the Texas Legislature, the Governor's Office, and the Secretary of State — aggregated so you can track bills, press releases, and political moves before the major outlets pick them up.
+            Real-time feeds from the Texas Legislature, the Governor's Office, and the Secretary of State. The live feed shows the last 24 hours — older updates roll into the topic archive below.
           </p>
           {fetchedAt ? (
             <p className="mt-3 text-xs uppercase tracking-widest text-white/50">
@@ -225,7 +273,7 @@ function DashboardPage() {
 
       <section className="mx-auto max-w-6xl px-4 py-10">
         <div className="flex items-baseline justify-between mb-6">
-          <h2 className="font-display text-2xl md:text-3xl tracking-tight">Live Feed</h2>
+          <h2 className="font-display text-2xl md:text-3xl tracking-tight">Live Feed · Last 24 Hours</h2>
           <span className="text-xs text-muted-foreground">{filtered.length} updates</span>
         </div>
         {filtered.length === 0 ? (
@@ -271,6 +319,44 @@ function DashboardPage() {
           </div>
         )}
       </section>
+
+      {Object.keys(archive).length > 0 ? (
+        <section className="border-t-2 border-foreground/10 bg-muted/30">
+          <div className="mx-auto max-w-6xl px-4 py-12">
+            <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Topic Archive</span>
+            <h2 className="font-display text-3xl md:text-4xl tracking-tight mt-2">Older Updates by Category</h2>
+            <p className="mt-2 text-sm text-muted-foreground max-w-2xl">
+              Once an update is more than a day old it moves out of the live feed and into the topic archive below — sorted so you can still find what came out of Austin this week.
+            </p>
+            <div className="mt-8 grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+              {ARCHIVE_CATEGORIES.map((c) => {
+                const list = (archive[c.key] ?? []).slice(0, 12);
+                if (list.length === 0) return null;
+                return (
+                  <div key={c.key}>
+                    <h3 className="font-display text-xl tracking-tight">{c.label}</h3>
+                    <p className="text-xs text-muted-foreground mb-3">{c.blurb}</p>
+                    <ul className="space-y-3">
+                      {list.map((it, i) => (
+                        <li key={`${it.link}-${i}`} className="border-b border-border pb-3 last:border-0">
+                          <a href={it.link} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold leading-snug hover:text-primary">
+                            {it.title}
+                          </a>
+                          <div className="mt-1 flex gap-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+                            <span>{it.source}</span>
+                            <span>·</span>
+                            <time dateTime={it.pub_date}>{timeAgo(it.pub_date)}</time>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <section className="border-t-2 border-foreground/10 bg-muted/40">
         <div className="mx-auto max-w-4xl px-4 py-14">
