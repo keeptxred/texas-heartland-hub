@@ -23,6 +23,7 @@ export type Database = {
           created_at: string
           dek: string
           id: string
+          image_hash: string | null
           image_url: string | null
           internal_url: string
           is_breaking: boolean
@@ -44,6 +45,7 @@ export type Database = {
           created_at?: string
           dek: string
           id?: string
+          image_hash?: string | null
           image_url?: string | null
           internal_url: string
           is_breaking?: boolean
@@ -65,6 +67,7 @@ export type Database = {
           created_at?: string
           dek?: string
           id?: string
+          image_hash?: string | null
           image_url?: string | null
           internal_url?: string
           is_breaking?: boolean
