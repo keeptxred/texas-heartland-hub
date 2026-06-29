@@ -9,6 +9,7 @@ export type SportsListItem = {
   author: string;
   published_at: string;
   image_url: string | null;
+  image_hash: string | null;
   category: string;
 };
 
