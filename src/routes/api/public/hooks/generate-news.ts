@@ -244,6 +244,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
             const category = (CATEGORIES as readonly string[]).includes(a.category) ? a.category : src.sourceCategory;
             return {
               slug: `${datePrefix}-${slugify(a.title)}`,
+              internal_url: `/news/${datePrefix}-${slugify(a.title)}`,
+              is_ingested: false,
               category,
               title: a.title.slice(0, 200),
               dek: a.dek.slice(0, 400),
