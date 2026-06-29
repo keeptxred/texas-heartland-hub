@@ -72,6 +72,8 @@ function NewsPage() {
         filteredLive,
         (a: DailyArticle) => a.slug,
         (a: DailyArticle) => a.image_url || CATEGORY_IMAGES[a.category] || capitol,
+        undefined,
+        (a: DailyArticle) => a.image_hash,
       ),
     [filteredLive]
   );
