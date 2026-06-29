@@ -4,6 +4,7 @@ import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { AdSlot } from "@/components/ad-slot";
 import { BrandIdentity } from "@/components/brand-identity";
+import { assignUniqueImages } from "@/lib/dedupe-images";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -159,6 +160,14 @@ function Index() {
   const featuredSlugs = new Set([lead?.slug, ...featured.map((a) => a.slug)].filter(Boolean));
   const latest = sorted.filter((a) => !featuredSlugs.has(a.slug)).slice(0, 8);
 
+  // RULE: no duplicate images on a single page. Dedupe across lead + featured
+  // + latest so every visible card carries a distinct image.
+  const heroImages = assignUniqueImages(
+    [lead, ...featured, ...latest].filter(Boolean) as { slug: string; image: string }[],
+    (a) => a.slug,
+    (a) => a.image,
+  );
+
   return (
     <div className="bg-background">
       {/* BREAKING NEWS — top of homepage when score >= 18 */}
@@ -236,7 +245,7 @@ function Index() {
           <div className="grid lg:grid-cols-3 gap-10">
             <Link to="/news/$slug" params={{ slug: lead.slug }} className="group block lg:col-span-2">
               <div className="aspect-[16/9] overflow-hidden bg-muted mb-5 rounded-md">
-                <img src={lead.image} alt={lead.title} className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+                <img src={heroImages.get(lead.slug) ?? lead.image} alt={lead.title} className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
               </div>
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{lead.category}</span>
               <h2 className="font-sans text-3xl md:text-4xl font-semibold tracking-tight mt-2 leading-[1.2] text-foreground group-hover:text-primary transition-colors">
@@ -295,7 +304,7 @@ function Index() {
           {latest.map((a) => (
             <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
               <div className="aspect-[16/10] overflow-hidden bg-muted mb-4 rounded-md">
-                <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+                <img src={heroImages.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
               </div>
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
               <h3 className="font-sans text-base font-semibold mt-1.5 leading-snug text-foreground group-hover:text-primary transition-colors">{a.title}</h3>
