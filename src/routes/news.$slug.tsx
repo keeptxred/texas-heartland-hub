@@ -38,6 +38,7 @@ export const Route = createFileRoute("/news/$slug")({
       sources: ever.body.sources,
       related: ARTICLES.filter((x) => x.category === ever.category && isPublished(x)).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
       cta: { label: "Browse the Newsroom", href: "/news" },
+      keyTakeaways: ever.body.keyTakeaways,
     };
     return { article: synth, body };
   },
@@ -272,7 +273,7 @@ function ArticlePage() {
       <div className="prose prose-neutral max-w-none">
         {body.intro.map((p, i) => (
           <p key={i} className="font-serif text-lg leading-relaxed text-foreground first:first-letter:text-5xl first:first-letter:font-bold first:first-letter:float-left first:first-letter:mr-2 first:first-letter:leading-none first:first-letter:text-primary mb-5">
-            {p}
+            {renderInline(p)}
           </p>
         ))}
 
@@ -368,6 +369,17 @@ function ArticlePage() {
             </ul>
           </section>
         ) : null}
+
+        {body.keyTakeaways && body.keyTakeaways.length > 0 ? (
+          <aside className="mt-12 border-2 border-primary/60 bg-primary/5 p-5 md:p-6">
+            <h2 className="font-display text-xl md:text-2xl tracking-tight mb-3 text-primary">Key Takeaways</h2>
+            <ul className="list-disc pl-6 space-y-2">
+              {body.keyTakeaways.map((t, i) => (
+                <li key={i} className="font-serif text-base leading-relaxed">{t}</li>
+              ))}
+            </ul>
+          </aside>
+        ) : null}
       </div>
 
       {body.cta ? (
@@ -422,7 +434,18 @@ function ArticlePage() {
             More from {author.name} →
           </Link>
         </section>
-      ) : null}
+      ) : (
+        <section className="mt-12 border-t border-border pt-6">
+          <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">About the author</span>
+          <h3 className="font-display text-2xl tracking-tight mt-1">{article.author}</h3>
+          <p className="mt-2 font-serif text-sm leading-relaxed text-foreground/90">
+            The Keep Texas Red Editorial Staff produces nonpartisan explainers, policy breakdowns, and educational resources to help Texans understand how their government works. All content is reviewed for accuracy and updated regularly.
+          </p>
+          <Link to="/about" className="mt-2 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline">
+            About Keep TX Red →
+          </Link>
+        </section>
+      )}
     </article>
   );
 }
