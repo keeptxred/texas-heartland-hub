@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageExpansion } from "@/components/page-expansion";
+import { SocialLinks } from "@/components/social-links";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -115,6 +116,7 @@ function ContactPage() {
           { to: "/privacy", label: "Privacy policy" },
         ]}
       />
+      <SocialLinks />
     </div>
   );
 }
