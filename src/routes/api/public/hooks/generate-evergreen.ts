@@ -17,6 +17,22 @@ const TOPICS: { category: string; topic: string }[] = [
   { category: "Legislature", topic: "Texas constitutional amendments: how they pass and why they matter" },
   { category: "Border", topic: "The geography of the Texas border with Mexico, county by county" },
   { category: "Energy", topic: "Texas wind and solar: how renewables fit alongside oil and gas" },
+  // Border policy depth
+  { category: "Border", topic: "Title 42 and Title 8 explained: how federal border authorities affect Texas" },
+  { category: "Border", topic: "Texas border wall construction: funding, mileage, and what landowners should know" },
+  { category: "Border", topic: "Texas DPS at the border: how state troopers enforce Operation Lone Star" },
+  { category: "Border", topic: "Asylum process at the Texas border: how claims are filed and processed" },
+  // Energy regulation explainers
+  { category: "Energy", topic: "The Public Utility Commission of Texas explained: what the PUC regulates" },
+  { category: "Energy", topic: "Texas Railroad Commission explained: what it actually regulates" },
+  { category: "Energy", topic: "How Texas electricity bills are calculated and what the charges mean" },
+  { category: "Energy", topic: "Winter Storm Uri and ERCOT reforms: what changed in Texas after 2021" },
+  // Election process guides
+  { category: "Elections", topic: "How early voting works in Texas: dates, locations, and what to bring" },
+  { category: "Elections", topic: "Mail-in ballots in Texas: who qualifies and how to apply" },
+  { category: "Elections", topic: "Texas voter ID requirements: accepted IDs and what to do without one" },
+  { category: "Elections", topic: "How precinct chairs and county party conventions work in Texas" },
+  { category: "Elections", topic: "Texas election audits and ballot security explained" },
 ];
 
 function slugify(s: string): string {
