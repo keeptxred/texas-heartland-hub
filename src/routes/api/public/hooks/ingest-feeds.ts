@@ -203,7 +203,14 @@ async function handler() {
     .is("internal_slug", null)
     .limit(50);
   if (orphans && orphans.length > 0) {
-    const backRows = orphans.map((it: Item) => {
+    const backRows = orphans.map((row) => {
+      const it: Item = {
+        title: row.title,
+        link: row.link,
+        source: row.source,
+        pub_date: row.pub_date,
+        description: row.description ?? "",
+      };
       const datePrefix = it.pub_date.slice(0, 10);
       const slug = `live-${datePrefix}-${slugify(it.title)}-${hashStr(it.link)}`;
       return { slug, item: it };
