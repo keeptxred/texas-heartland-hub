@@ -3,6 +3,7 @@ import heroFlag from "@/assets/hero-flag.jpg";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { AdSlot } from "@/components/ad-slot";
+import { BrandIdentity } from "@/components/brand-identity";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -326,6 +327,7 @@ function Index() {
           </div>
         </div>
       </section>
+      <BrandIdentity />
     </div>
   );
 }

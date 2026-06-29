@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { SocialLinks } from "@/components/social-links";
 
 const COLUMNS = [
   {
@@ -52,7 +53,7 @@ export function SiteFooter() {
             </div>
             <h4 className="font-display text-3xl tracking-tight mb-3">KEEP TEXAS RED</h4>
             <p className="text-sm text-white/85 max-w-xs">
-              The premier conservative voice for the Lone Star State. Independent reporting, voter tools, and taxpayer data.
+              Keep Texas Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state. Independent reporting, voter tools, and taxpayer data — not a PAC or campaign.
             </p>
           </div>
           {COLUMNS.map((col) => (
@@ -68,6 +69,7 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
+        <SocialLinks variant="footer" />
         <div className="mt-10 pt-6 border-t border-white/10">
           <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
             {LEGAL_LINKS.map((l) => (
