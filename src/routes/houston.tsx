@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import { assignUniqueImages } from "@/lib/dedupe-images";
 
 export const Route = createFileRoute("/houston")({
   head: () => ({
@@ -36,6 +37,7 @@ function HoustonPage() {
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
     .sort(sortByDateDesc);
+  const uniqImg = assignUniqueImages(houstonArticles, (a) => a.slug, (a) => a.image);
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
       <header className="border-b border-border pb-6 mb-10">
@@ -79,7 +81,7 @@ function HoustonPage() {
           {houstonArticles.map((a) => (
             <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
               <div className="aspect-[4/3] overflow-hidden bg-muted mb-3">
-                <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={uniqImg.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{a.category}</span>
               <h3 className="font-serif text-base font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h3>
