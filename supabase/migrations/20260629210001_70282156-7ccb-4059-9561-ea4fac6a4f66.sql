@@ -1,0 +1,1 @@
+ALTER TABLE public.texas_news_feed ADD COLUMN IF NOT EXISTS internal_slug text; CREATE INDEX IF NOT EXISTS texas_news_feed_internal_slug_idx ON public.texas_news_feed(internal_slug);
