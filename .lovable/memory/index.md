@@ -1,0 +1,11 @@
+# Project Memory
+
+## Core
+Every evergreen article must follow the Evergreen article spec — neutral tone, required sections (Overview, Why This Matters, Impact on Texans, Historical Context, topical-authority), 900–1,400 words, Key Takeaways box, "Keep Texas Red Editorial Staff" byline + /about bio, 3–5 internal links incl. /glossary + category page, Last updated date.
+No duplicate images on any single page of the site.
+Homepage "Featured Stories" must rotate to a new lead + featured set every calendar day (America/Chicago).
+
+## Memories
+- [Evergreen article spec](mem://features/evergreen-article-spec) — Required structure, tone, linking, and attribution for AI-generated evergreens
+- [No duplicate images per page](mem://design/no-duplicate-images) — Hard rule + enforcement pattern (IMAGE_OVERRIDES) for keeping every page's images unique
+- [Featured Stories daily rotation](mem://features/featured-stories-rotation) — Homepage Featured Stories lineup must change every day via date-based pool rotation
