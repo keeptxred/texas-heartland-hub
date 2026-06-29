@@ -53,7 +53,7 @@ export function SiteFooter() {
             </div>
             <h4 className="font-display text-3xl tracking-tight mb-3">KEEP TEXAS RED</h4>
             <p className="text-sm text-white/85 max-w-xs">
-              The premier conservative voice for the Lone Star State. Independent reporting, voter tools, and taxpayer data.
+              Keep Texas Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state. Independent reporting, voter tools, and taxpayer data — not a PAC or campaign.
             </p>
           </div>
           {COLUMNS.map((col) => (
