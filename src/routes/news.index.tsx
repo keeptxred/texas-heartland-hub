@@ -70,8 +70,8 @@ function NewsPage() {
     () =>
       assignUniqueImages(
         filteredLive,
-        (a) => a.slug,
-        (a) => a.image_url || CATEGORY_IMAGES[a.category] || capitol,
+        (a: DailyArticle) => a.slug,
+        (a: DailyArticle) => a.image_url || CATEGORY_IMAGES[a.category] || capitol,
       ),
     [filteredLive]
   );
