@@ -52,7 +52,7 @@ export const Route = createFileRoute("/texas-sports/$league")({
 function LeaguePage() {
   const { league, items } = Route.useLoaderData();
   const meta = LEAGUE_META[league];
-  const uniqImg = assignUniqueImages(
+  const uniqImg = assignUniqueImages<SportsListItem>(
     items,
     (a) => a.slug,
     (a) => a.image_url,
