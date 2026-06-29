@@ -56,7 +56,7 @@ async function generate(topic: string, category: string, lovableApiKey: string):
 SEO REQUIREMENTS:
 - Title: keyword-rich, under 75 characters, must include "Texas" (or a Texas city/region/institution).
 - dek: 140-220 characters, naturally include 1-2 Texas keywords, summarize the actual content.
-- Total body length: 900-1400 words across intro + sections.
+- Total body length: 900-1400 words across intro + sections. HARD MINIMUM 800 words — reject your own draft and add sections if shorter.
 - 8-14 keywords.
 - 3-5 official .gov / well-known source links.
 - 4-6 FAQ entries (real questions Texans ask).
@@ -68,6 +68,8 @@ REQUIRED SECTIONS (in this order, use these exact headings):
 4. "Historical Context" — relevant Texas/U.S. history; include only when applicable.
 5. One topical-authority section chosen from: "How This Affects Texas Elections", "How This Fits Into Texas Political History", or "How This Impacts Texas Policy Debates".
 6. Plus 1-2 additional explanatory sections relevant to the topic.
+7. "The Texas Angle" — ONE original perspective block (100-150 words): Texas-specific analysis, contrarian viewpoint with evidence, a unique framework, or an on-the-ground reporting summary. Use phrases like "According to internal analysis…", "Our review of county-level filings shows…", or "Local interviews indicate…" where appropriate. This block is REQUIRED.
+8. "Reader Questions" — 2-3 short answers (60-100 words each) covering mid-funnel and bottom-funnel concerns where relevant: implementation ("how do I file…"), cost/ROI ("what does this save Texans…"), or differentiators ("how Texas differs from other states"). Skip questions that do not fit the topic.
 
 INTERNAL LINKS (REQUIRED): Include 3-5 internal links in body paragraphs using markdown syntax [anchor text](/path). Use natural anchor text. Pick from these real internal paths:
 - Category pages: /texas-politics, /texas-news, /texas-laws, /elections, /texas-business, /texas-economy, /tax-calculator
