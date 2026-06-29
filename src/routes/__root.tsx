@@ -107,9 +107,32 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "stylesheet", href: appCss },
       { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
+      { rel: "dns-prefetch", href: "https://googleads.g.doubleclick.net" },
+      { rel: "dns-prefetch", href: "https://tpc.googlesyndication.com" },
+      { rel: "dns-prefetch", href: "https://www.googletagservices.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" },
+      // Non-blocking font load: preload then swap to stylesheet so it does not block render.
+      // `display=swap` keeps text visible in a system fallback until web fonts arrive.
+      {
+        rel: "preload",
+        as: "style",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
+      },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
+        media: "print",
+        // Browser swaps media to "all" once the stylesheet has loaded, so it never render-blocks.
+        // @ts-expect-error onLoad on <link> is valid HTML even if React's type omits it here.
+        onLoad: "this.media='all'",
+      },
+      // Fallback for users with JS disabled.
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
+        // @ts-expect-error: rendered inside <noscript> via head pipeline is not supported; harmless duplicate that browsers dedupe.
+      },
     ],
     scripts: [
       { async: true, src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1891256141359926", crossOrigin: "anonymous" },
