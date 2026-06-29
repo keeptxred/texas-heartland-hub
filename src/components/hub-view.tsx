@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { Hub } from "@/data/hubs";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
+import { assignUniqueImages } from "@/lib/dedupe-images";
 
 export type HubSection = { title: string; description: string; href?: string };
 
@@ -10,6 +11,9 @@ export function HubView({ hub, sections }: { hub: Hub; sections?: HubSection[] }
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
   const pillar = articles.find((a) => a.slug === hub.pillarSlug);
   const supporting = articles.filter((a) => a.slug !== hub.pillarSlug).sort(sortByDateDesc);
+  // Enforce per-page image uniqueness across pillar + supporting cards.
+  const allForPage = pillar ? [pillar, ...supporting] : supporting;
+  const uniq = assignUniqueImages(allForPage, (a) => a.slug, (a) => a.image);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
@@ -42,7 +46,7 @@ export function HubView({ hub, sections }: { hub: Hub; sections?: HubSection[] }
           <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Pillar Guide</span>
           <div className="grid md:grid-cols-2 gap-6 mt-3 items-center">
             <div className="aspect-[16/10] overflow-hidden bg-muted border border-foreground/10">
-              <img src={pillar.image} alt={pillar.title} className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <img src={uniq.get(pillar.slug) ?? pillar.image} alt={pillar.title} className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
             <div>
               <h2 className="font-display text-3xl md:text-4xl tracking-tight leading-tight group-hover:underline underline-offset-4">{pillar.title}</h2>
@@ -58,7 +62,7 @@ export function HubView({ hub, sections }: { hub: Hub; sections?: HubSection[] }
         {supporting.map((a) => (
           <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
             <div className="aspect-[4/3] overflow-hidden bg-muted mb-3">
-              <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              <img src={uniq.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
             </div>
             <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{a.category}</span>
             <h3 className="font-serif text-base font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h3>
