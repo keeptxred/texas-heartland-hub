@@ -31,24 +31,41 @@ type GeneratedBody = {
   sections: { heading: string; paragraphs?: string[]; bullets?: string[] }[];
   faq: { q: string; a: string }[];
   sources: { label: string; url: string }[];
+  keyTakeaways: string[];
 };
 
 async function generate(topic: string, category: string, lovableApiKey: string): Promise<GeneratedBody> {
-  const system = `You are the senior editor of Keep TX Red, a Texas conservative news and explainer site. Write a long-form evergreen explainer in a principled, plain-spoken, fact-driven voice (pro-Second Amendment, pro-border-security, pro-energy, pro-property-rights, skeptical of federal overreach). Stay factual. Never invent statistics, names, or quotes. Cite only well-known public sources (Texas Comptroller, Texas Secretary of State, Texas Legislature Online, ERCOT, U.S. Census, official agency sites).
+  const system = `You are the senior editor of Keep TX Red, a Texas-focused news and civic-education site. Write a long-form evergreen explainer in a neutral, factual, educational tone. Avoid opinionated or partisan language. Stay factual — never invent statistics, names, or quotes. Cite only well-known public sources (Texas Comptroller, Texas Secretary of State, Texas Legislature Online, ERCOT, U.S. Census, official agency sites).
 
 SEO REQUIREMENTS:
 - Title: keyword-rich, under 75 characters, must include "Texas" (or a Texas city/region/institution).
 - dek: 140-220 characters, naturally include 1-2 Texas keywords, summarize the actual content.
-- Total body length: 1200-1800 words.
-- 5-7 sections with H2-style headings.
-- 4-6 FAQ entries (real questions Texans ask).
-- 3-5 official .gov / well-known source links.
+- Total body length: 900-1400 words across intro + sections.
 - 8-14 keywords.
+- 3-5 official .gov / well-known source links.
+- 4-6 FAQ entries (real questions Texans ask).
+
+REQUIRED SECTIONS (in this order, use these exact headings):
+1. An opening explainer section ("Overview" or similar).
+2. "Why This Matters" — explain the significance for Texas voters, Texas politics, or Texas governance.
+3. "Impact on Texans" — 2-3 concrete examples (use bullets where helpful).
+4. "Historical Context" — relevant Texas/U.S. history; include only when applicable.
+5. One topical-authority section chosen from: "How This Affects Texas Elections", "How This Fits Into Texas Political History", or "How This Impacts Texas Policy Debates".
+6. Plus 1-2 additional explanatory sections relevant to the topic.
+
+INTERNAL LINKS (REQUIRED): Include 3-5 internal links in body paragraphs using markdown syntax [anchor text](/path). Use natural anchor text. Pick from these real internal paths:
+- Category pages: /texas-politics, /texas-news, /texas-laws, /elections, /texas-business, /texas-economy, /tax-calculator
+- Glossary: /glossary (link the first mention of any specialized term, e.g. [homestead exemption](/glossary))
+- Related evergreen guides: /news (newsroom index)
+- Pillar: /keep-texas-red
+Link at least one glossary term, at least one related category page, and at least one other internal page. Do not force links — weave them in naturally.
+
+KEY TAKEAWAYS: Provide 4-6 concise bullet points summarizing the article.
 
 Return ONLY valid JSON, no markdown:
-{"title":"...","dek":"...","keywords":["..."],"intro":["paragraph 1","paragraph 2"],"sections":[{"heading":"...","paragraphs":["..."],"bullets":["..."]}],"faq":[{"q":"...","a":"..."}],"sources":[{"label":"Texas Comptroller","url":"https://comptroller.texas.gov/"}]}
+{"title":"...","dek":"...","keywords":["..."],"intro":["paragraph 1","paragraph 2"],"sections":[{"heading":"Overview","paragraphs":["..."]},{"heading":"Why This Matters","paragraphs":["..."]},{"heading":"Impact on Texans","paragraphs":["..."],"bullets":["..."]},{"heading":"Historical Context","paragraphs":["..."]},{"heading":"How This Affects Texas Elections","paragraphs":["..."]}],"keyTakeaways":["...","..."],"faq":[{"q":"...","a":"..."}],"sources":[{"label":"Texas Comptroller","url":"https://comptroller.texas.gov/"}]}
 
-The "bullets" field is optional per section. Use either paragraphs, bullets, or both.`;
+The "bullets" field is optional per section. Use either paragraphs, bullets, or both. Markdown links inside paragraph strings are allowed and encouraged.`;
 
   const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -112,7 +129,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           category: pick.category,
           title: gen.title.slice(0, 200),
           dek: gen.dek.slice(0, 400),
-          author: "Keep TX Red Editorial Team",
+          author: "Keep Texas Red Editorial Staff",
           source_name: null as string | null,
           source_url: null as string | null,
           published_at: now.toISOString(),
@@ -123,6 +140,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
             sections: gen.sections,
             faq: gen.faq ?? [],
             sources: gen.sources ?? [],
+            keyTakeaways: (gen.keyTakeaways ?? []).slice(0, 6),
           },
         };
 
