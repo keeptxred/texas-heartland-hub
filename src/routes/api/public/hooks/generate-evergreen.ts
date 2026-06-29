@@ -125,6 +125,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
         const slug = `${now.toISOString().slice(0, 10)}-${slugify(gen.title)}`;
         const row = {
           slug,
+          internal_url: `/news/${slug}`,
+          is_ingested: true,
           kind: "evergreen",
           category: pick.category,
           title: gen.title.slice(0, 200),
