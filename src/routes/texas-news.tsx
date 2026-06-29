@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { AgedFeedSection } from "@/components/aged-feed-section";
+import { assignUniqueImages } from "@/lib/dedupe-images";
 
 export const Route = createFileRoute("/texas-news")({
   head: () => ({
@@ -36,6 +37,7 @@ function TexasNewsPage() {
   const activeSection = SECTIONS.find((s) => s.id === topic);
   const all = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
   const articles = activeSection ? all.filter((a) => a.category === activeSection.category) : all;
+  const uniqImg = assignUniqueImages(articles, (a) => a.slug, (a) => a.image);
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
@@ -94,7 +96,7 @@ function TexasNewsPage() {
         {articles.map((a) => (
           <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
             <div className="aspect-[16/10] overflow-hidden bg-muted mb-4 rounded-md">
-              <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+              <img src={uniqImg.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
             </div>
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
             <h2 className="font-sans text-base font-semibold mt-1.5 leading-snug text-foreground group-hover:text-primary transition-colors">{a.title}</h2>
