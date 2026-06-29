@@ -112,8 +112,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "dns-prefetch", href: "https://www.googletagservices.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      // Non-blocking font load: preload then swap to stylesheet so it does not block render.
-      // `display=swap` keeps text visible in a system fallback until web fonts arrive.
+      // Preload + load fonts. `display=swap` keeps text visible in a fallback while web fonts arrive,
+      // so this never causes invisible-text (FOIT) and avoids blocking LCP text rendering.
       {
         rel: "preload",
         as: "style",
@@ -122,16 +122,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
-        media: "print",
-        // Browser swaps media to "all" once the stylesheet has loaded, so it never render-blocks.
-        // @ts-expect-error onLoad on <link> is valid HTML even if React's type omits it here.
-        onLoad: "this.media='all'",
-      },
-      // Fallback for users with JS disabled.
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
-        // @ts-expect-error: rendered inside <noscript> via head pipeline is not supported; harmless duplicate that browsers dedupe.
       },
     ],
     scripts: [
