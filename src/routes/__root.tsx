@@ -94,6 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:image:height", content: "630" },
       { property: "og:image:type", content: "image/jpeg" },
       { property: "og:image:alt", content: "Keep TX Red — Texas News, Politics & Conservative Commentary" },
+      { name: "msvalidate.01", content: "74E5E79AEC351CF6D2577A6FC6A125DF" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@KeepTXRed" },
       { name: "twitter:creator", content: "@KeepTXRed" },
