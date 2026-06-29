@@ -219,6 +219,7 @@ function ArticlePage() {
     year: "numeric",
     month: "long",
     day: "numeric",
+    timeZone: "America/Chicago",
   });
   const author = getAuthor(article.author);
   const authorHref = author ? `/authors/${author.slug}` : `/authors/${authorSlug(article.author)}`;
