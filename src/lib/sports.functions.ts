@@ -29,7 +29,7 @@ export const listSportsByLeague = createServerFn({ method: "GET" })
     if (!supabase) return { items: [] };
     const { data: rows, error } = await supabase
       .from("daily_articles")
-      .select("slug,title,dek,author,published_at,image_url,category")
+      .select("slug,title,dek,author,published_at,image_url,image_hash,category")
       .eq("kind", `sports-${data.league}`)
       .order("published_at", { ascending: false })
       .limit(50);
