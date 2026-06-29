@@ -14,6 +14,7 @@ export type EvergreenBody = {
   faq: { q: string; a: string }[];
   sources: { label: string; url: string }[];
   editorNote?: string;
+  keyTakeaways?: string[];
 };
 export type EvergreenArticle = {
   slug: string;
