@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import capitol from "@/assets/capitol.jpg";
 import { PageExpansion } from "@/components/page-expansion";
+import { SocialLinks } from "@/components/social-links";
+import { BrandIdentity } from "@/components/brand-identity";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -105,6 +107,8 @@ function AboutPage() {
             { to: "/tax-calculator", label: "Texas property tax calculator" },
           ]}
         />
+        <BrandIdentity />
+        <SocialLinks />
       </div>
     </div>
   );
