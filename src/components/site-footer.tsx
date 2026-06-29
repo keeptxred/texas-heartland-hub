@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { SocialLinks } from "@/components/social-links";
 
 const COLUMNS = [
   {
@@ -68,6 +69,7 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
+        <SocialLinks variant="footer" />
         <div className="mt-10 pt-6 border-t border-white/10">
           <ul className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/80">
             {LEGAL_LINKS.map((l) => (
