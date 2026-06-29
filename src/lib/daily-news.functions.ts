@@ -43,22 +43,23 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
   const sinceIso = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
   const { data: feed } = await supabase
     .from("texas_news_feed")
-    .select("title,source,link,description,pub_date")
+    .select("title,source,link,description,pub_date,internal_slug")
+    .not("internal_slug", "is", null)
     .gte("pub_date", sinceIso)
     .order("pub_date", { ascending: false })
     .limit(6);
 
-  const liveBreaking: DailyArticle[] = (feed ?? []).map((row, i) => ({
-    slug: `live-${i}-${row.link}`,
+  const liveBreaking: DailyArticle[] = (feed ?? []).map((row) => ({
+    slug: row.internal_slug as string,
     category: row.source ?? "Live",
     title: row.title,
     dek: row.description ?? "",
     author: row.source ?? "Live Feed",
     source_name: row.source ?? null,
-    source_url: row.link,
+    source_url: `/news/${row.internal_slug}`,
     image_url: null,
     published_at: row.pub_date,
-    kind: "live",
+    kind: "ingested",
     score: 100,
     is_breaking: true,
   }));
