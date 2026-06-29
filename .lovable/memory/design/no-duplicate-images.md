@@ -18,6 +18,12 @@ sections, and any component that renders multiple article cards.
    swap the image only. Keep regeneration scope to the image block.
 4. Per-route IMAGE_OVERRIDES maps (see `src/routes/texas-business.tsx`) remain
    valid for hand-curated assignments; pass them in via `getImage`.
+5. EVERY new route/component that renders multiple `<img>` tags from a list
+   MUST wire the list through `assignUniqueImages` before rendering. No
+   exceptions. Current coverage: homepage, news index, dashboard / Happening
+   Now, hub-view (Politics/Economy/Law), texas-news, texas-business, houston,
+   elections, texas-sports/$league. Add new pages to this list when you wire
+   them in.
 
 ## Why
 
