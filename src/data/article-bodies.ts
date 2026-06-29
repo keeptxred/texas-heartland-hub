@@ -17,6 +17,7 @@ export type ArticleBody = {
   sources: ArticleSource[];
   related: string[]; // article slugs
   cta?: { label: string; href: string };
+  keyTakeaways?: string[];
 };
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
