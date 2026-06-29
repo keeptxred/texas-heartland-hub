@@ -137,9 +137,26 @@ function Index() {
     .slice(0, 5);
 
   const sorted = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
-  const [lead, ...rest] = sorted;
-  const featured = rest.slice(0, 4);
-  const latest = rest.slice(4, 12);
+  // RULE: Featured Stories must rotate every day. We derive a daily offset from
+  // the current date in America/Chicago so the lead + 4 featured cards shift to
+  // a new set every 24 hours without requiring a DB write or rebuild.
+  const centralToday = new Date().toLocaleDateString("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const dayKey = Array.from(centralToday).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  const featuredPoolSize = Math.min(sorted.length, 20);
+  const featuredPool = sorted.slice(0, featuredPoolSize);
+  const offset = featuredPool.length > 0 ? dayKey % featuredPool.length : 0;
+  const rotated = [...featuredPool.slice(offset), ...featuredPool.slice(0, offset)];
+  const lead = rotated[0];
+  const featured = rotated.slice(1, 5);
+  // Latest Updates keeps strict newest-first ordering and skips anything
+  // currently surfaced in Featured Stories so we don't duplicate cards.
+  const featuredSlugs = new Set([lead?.slug, ...featured.map((a) => a.slug)].filter(Boolean));
+  const latest = sorted.filter((a) => !featuredSlugs.has(a.slug)).slice(0, 8);
 
   return (
     <div className="bg-background">
