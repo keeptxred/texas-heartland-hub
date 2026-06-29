@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
+import { organizationJsonLd } from "../lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -104,12 +105,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
+      { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap" },
     ],
     scripts: [
       { async: true, src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1891256141359926", crossOrigin: "anonymous" },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(organizationJsonLd()),
+      },
     ],
   }),
   shellComponent: RootShell,

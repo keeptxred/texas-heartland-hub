@@ -114,8 +114,14 @@ export function organizationJsonLd() {
     name: SITE_NAME,
     alternateName: "Keep Texas Red",
     url: `${SITE_URL}/`,
+    description:
+      "Keep Texas Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state.",
+    publishingPrinciples: `${SITE_URL}/editorial-standards`,
+    diversityPolicy: `${SITE_URL}/editorial-standards`,
+    ethicsPolicy: `${SITE_URL}/editorial-standards`,
     logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.ico` },
     sameAs: [],
+    knowsAbout: ["Texas politics", "Texas policy", "Texas elections", "Texas legislature", "Texas news"],
     contactPoint: {
       "@type": "ContactPoint",
       email: "contact@keeptxred.com",

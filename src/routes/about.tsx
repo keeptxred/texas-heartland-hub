@@ -31,10 +31,10 @@ function AboutPage() {
       <div className="space-y-5 text-base leading-relaxed">
         <h2 className="font-display text-3xl tracking-tight">Mission</h2>
         <p className="text-lg">
-          <strong>Keep TX Red</strong> is an independent Texas-focused news and analysis platform covering politics, policy, economy, and statewide issues. Our mission is to provide clear and accessible reporting on the developments shaping Texas.
+          <strong>Keep Texas Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state.</strong>
         </p>
         <p className="text-muted-foreground">
-          We exist to do three things: report the policy fights that matter, track every election that shapes the next decade of Texas, and arm taxpayers with the data they need to push back against runaway local government.
+          Keep TX Red is a news and media publication — not a political action committee, campaign, or candidate organization. We do not raise money for candidates or coordinate with campaigns. Our work is informational and explanatory: report the policy fights that matter, track the elections shaping the next decade of Texas, and give readers the data and context they need to follow their state government.
         </p>
 
         <h2 className="font-display text-3xl tracking-tight pt-4">What We Cover</h2>
