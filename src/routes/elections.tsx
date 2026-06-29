@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ARTICLES, ELECTION_RACES, isPublished, sortByDateDesc } from "@/data/articles";
 import ballot from "@/assets/ballot.jpg";
 import { AgedFeedSection } from "@/components/aged-feed-section";
+import { assignUniqueImages } from "@/lib/dedupe-images";
 
 export const Route = createFileRoute("/elections")({
   head: () => ({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/elections")({
 
 function ElectionsPage() {
   const electionNews = ARTICLES.filter((a) => (a.category === "Elections" || a.category === "Education") && isPublished(a)).sort(sortByDateDesc);
+  const uniqImg = assignUniqueImages(electionNews, (a) => a.slug, (a) => a.image);
 
   return (
     <>
@@ -77,7 +79,7 @@ function ElectionsPage() {
           {electionNews.map((a) => (
             <article key={a.slug} className="grid grid-cols-[140px_1fr] gap-4 group">
               <div className="aspect-square overflow-hidden bg-muted">
-                <img src={a.image} alt={a.title} loading="lazy" className="size-full object-cover" />
+                <img src={uniqImg.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover" />
               </div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{a.category}</span>
