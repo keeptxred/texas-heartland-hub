@@ -146,6 +146,8 @@ async function handler() {
       const cat = categoryFor(it.source);
       return {
         slug,
+        internal_url: `/news/${slug}`,
+        is_ingested: false,
         category: cat,
         title: it.title,
         dek: (it.description || it.title).slice(0, 380),
@@ -218,6 +220,8 @@ async function handler() {
     await supabaseAdmin.from("daily_articles").upsert(
       backRows.map(({ slug, item }) => ({
         slug,
+        internal_url: `/news/${slug}`,
+        is_ingested: false,
         category: categoryFor(item.source),
         title: item.title,
         dek: (item.description || item.title).slice(0, 380),

@@ -164,6 +164,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
             const slug = `${now.toISOString().slice(0, 10)}-${league}-${slugify(gen.title)}`;
             const row = {
               slug,
+              internal_url: `/news/${slug}`,
+              is_ingested: true,
               kind: `sports-${league}`,
               category: meta.category,
               title: gen.title.slice(0, 200),

@@ -24,7 +24,9 @@ export type Database = {
           dek: string
           id: string
           image_url: string | null
+          internal_url: string
           is_breaking: boolean
+          is_ingested: boolean
           keywords: string[] | null
           kind: string
           published_at: string
@@ -43,7 +45,9 @@ export type Database = {
           dek: string
           id?: string
           image_url?: string | null
+          internal_url: string
           is_breaking?: boolean
+          is_ingested?: boolean
           keywords?: string[] | null
           kind?: string
           published_at?: string
@@ -62,7 +66,9 @@ export type Database = {
           dek?: string
           id?: string
           image_url?: string | null
+          internal_url?: string
           is_breaking?: boolean
+          is_ingested?: boolean
           keywords?: string[] | null
           kind?: string
           published_at?: string
