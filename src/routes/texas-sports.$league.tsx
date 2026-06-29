@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { listSportsByLeague, type SportsListItem } from "@/lib/sports.functions";
+import { assignUniqueImages } from "@/lib/dedupe-images";
 
 const LEAGUE_META: Record<string, { name: string; title: string; desc: string; teams: string }> = {
   nfl: {
@@ -51,6 +52,13 @@ export const Route = createFileRoute("/texas-sports/$league")({
 function LeaguePage() {
   const { league, items } = Route.useLoaderData();
   const meta = LEAGUE_META[league];
+  const uniqImg = assignUniqueImages(
+    items,
+    (a) => a.slug,
+    (a) => a.image_url,
+    undefined,
+    (a) => a.image_hash,
+  );
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
       <nav className="text-xs text-muted-foreground mb-4">
@@ -82,11 +90,7 @@ function LeaguePage() {
               params={{ slug: a.slug }}
               className="group block border border-border rounded-md overflow-hidden bg-card hover:shadow-md transition-shadow"
             >
-              {a.image_url ? (
-                <img src={a.image_url} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
-              ) : (
-                <div className="w-full h-44 bg-muted" />
-              )}
+              <img src={uniqImg.get(a.slug) ?? a.image_url ?? ""} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
               <div className="p-5">
                 <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
                 <h2 className="mt-2 font-sans text-lg font-semibold text-foreground group-hover:text-primary leading-snug">
