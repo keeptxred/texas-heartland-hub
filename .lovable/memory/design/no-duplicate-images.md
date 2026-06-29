@@ -24,3 +24,16 @@ sections, and any component that renders multiple article cards.
 Repeated images on the same page look templated and hurt CTR/Discover signals.
 Dedupe runs at render time so it survives daily content rotation and live RSS
 ingestion without DB rewrites.
+
+## Storage layer (CMS)
+
+`daily_articles.image_hash` (text, indexed) holds an md5 fingerprint of the
+normalized `image_url`. A `BEFORE INSERT OR UPDATE OF image_url` trigger
+(`daily_articles_set_image_hash`) keeps it in sync — no app code needs to
+compute it. `getDailyArticles` selects `image_hash` so the render-time scanner
+can dedupe by hash as well as URL (catches the case where two different URLs
+resolve to the same underlying file).
+
+Pass `getHash` to `assignUniqueImages` whenever the source has a stored hash;
+omit it for purely client-side asset lists (the helper falls back to URL
+fingerprinting automatically).
