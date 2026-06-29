@@ -79,6 +79,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: number
+          internal_slug: string | null
           link: string
           pub_date: string
           source: string
@@ -88,6 +89,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: number
+          internal_slug?: string | null
           link: string
           pub_date?: string
           source: string
@@ -97,6 +99,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: number
+          internal_slug?: string | null
           link?: string
           pub_date?: string
           source?: string

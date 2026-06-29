@@ -115,7 +115,7 @@ type Row = {
   id: number;
   title: string;
   source: string;
-  link: string;
+  link: string; // internal path only — always /news/{slug}
   description: string | null;
   pub_date: string;
 };
@@ -134,7 +134,8 @@ function DashboardPage() {
       const [{ data }, { data: demoted }] = await Promise.all([
         supabase
         .from("texas_news_feed")
-        .select("id,title,source,link,description,pub_date")
+        .select("id,title,source,internal_slug,description,pub_date")
+        .not("internal_slug", "is", null)
         .order("pub_date", { ascending: false })
         .limit(120),
         supabase
@@ -146,12 +147,21 @@ function DashboardPage() {
           .limit(40),
       ]);
       if (!active) return;
-      const feedRows = (data as Row[]) ?? [];
+      const feedRows: Row[] = ((data ?? []) as { id: number; title: string; source: string; internal_slug: string | null; description: string | null; pub_date: string }[])
+        .filter((r) => Boolean(r.internal_slug))
+        .map((r) => ({
+          id: r.id,
+          title: r.title,
+          source: r.source,
+          link: `/news/${r.internal_slug}`,
+          description: r.description,
+          pub_date: r.pub_date,
+        }));
       const demotedRows: Row[] = (demoted ?? []).map((d: { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string }, i: number) => ({
         id: -1 - i,
         title: d.title,
         source: d.category || "Newsroom",
-        link: d.source_url || `/news/${d.slug}`,
+        link: `/news/${d.slug}`,
         description: d.dek,
         pub_date: d.published_at,
       }));
@@ -282,12 +292,7 @@ function DashboardPage() {
                   ) : null}
                 </div>
                 <h3 className="font-serif text-base font-bold leading-snug">
-                  <a
-                    href={it.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="hover:underline underline-offset-4"
-                  >
+                  <a href={it.link} className="hover:underline underline-offset-4">
                     {it.title}
                   </a>
                 </h3>

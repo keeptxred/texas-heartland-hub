@@ -108,17 +108,17 @@ function NewsPage() {
                   </p>
                 </>
               );
-              return isEvergreen ? (
-                <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group cursor-pointer block">
-                  {card}
-                </Link>
-              ) : a.source_url ? (
-                <a key={a.slug} href={a.source_url} target="_blank" rel="noopener noreferrer" className="group cursor-pointer block">
-                  {card}
-                </a>
-              ) : (
-                <article key={a.slug} className="group">{card}</article>
-              );
+              const internal =
+                isEvergreen || a.kind === "ingested" || (a.source_url && a.source_url.startsWith("/"));
+              if (internal) {
+                return (
+                  <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group cursor-pointer block">
+                    {card}
+                  </Link>
+                );
+              }
+              // Safety net: never link off-site from the live feed.
+              return <article key={a.slug} className="group">{card}</article>;
             })
           : filteredStatic.map((a) => (
               <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block cursor-pointer">

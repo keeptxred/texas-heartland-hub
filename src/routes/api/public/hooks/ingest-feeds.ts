@@ -26,6 +26,28 @@ function pick(block: string, tag: string): string {
 
 type Item = { title: string; link: string; pub_date: string; source: string; description: string };
 
+function slugify(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 70);
+}
+
+function hashStr(s: string): string {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h).toString(36).slice(0, 6);
+}
+
+function categoryFor(source: string): string {
+  const s = source.toLowerCase();
+  if (s.includes("governor")) return "Politics";
+  if (s.includes("secretary")) return "Elections";
+  if (s.includes("register")) return "Laws";
+  return "Legislature";
+}
+
 function parseFeed(xml: string, source: string): Item[] {
   const items: Item[] = [];
   const blocks = xml.match(/<(item|entry)[\s\S]*?<\/(item|entry)>/gi) || [];
@@ -114,8 +136,130 @@ async function handler() {
     inserted = count ?? fresh.length;
   }
 
+  // Mint a native Keep TX Red article for every freshly ingested feed item so
+  // Happening Now only ever links to internal /news/{slug} URLs.
+  let nativeMinted = 0;
+  if (fresh.length > 0) {
+    const articleRows = fresh.map((it) => {
+      const datePrefix = it.pub_date.slice(0, 10);
+      const slug = `live-${datePrefix}-${slugify(it.title)}-${hashStr(it.link)}`;
+      const cat = categoryFor(it.source);
+      return {
+        slug,
+        category: cat,
+        title: it.title,
+        dek: (it.description || it.title).slice(0, 380),
+        body: it.description ?? "",
+        author: "Keep TX Red Newsroom",
+        source_name: it.source,
+        source_url: it.link,
+        published_at: it.pub_date,
+        kind: "ingested",
+        is_breaking: false,
+        score: 0,
+        body_json: {
+          updated: it.pub_date.slice(0, 10),
+          intro: [it.description || `${it.source} released a new update for Texans.`],
+          sections: [
+            {
+              heading: "What we know",
+              paragraphs: [
+                it.description || "Details from the official source are being added as they become available.",
+                `This update was originally published by the ${it.source}. Keep TX Red is monitoring the story and will expand coverage as new details emerge.`,
+              ],
+            },
+          ],
+          faq: [],
+          sources: [{ label: `${it.source} — official release`, url: it.link }],
+          keyTakeaways: [
+            `Source: ${it.source}.`,
+            "Keep TX Red republishes official Texas government updates with attribution.",
+          ],
+        },
+      };
+    });
+
+    const { error: artErr, count: artCount } = await supabaseAdmin
+      .from("daily_articles")
+      .upsert(articleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
+    if (!artErr) {
+      nativeMinted = artCount ?? articleRows.length;
+      // Write the internal slug back onto the feed row so cards can link to it.
+      await Promise.all(
+        articleRows.map((row, i) =>
+          supabaseAdmin
+            .from("texas_news_feed")
+            .update({ internal_slug: row.slug })
+            .eq("link", fresh[i].link),
+        ),
+      );
+    }
+  }
+
+  // Backfill internal_slug for any older feed rows that don't have one yet.
+  const { data: orphans } = await supabaseAdmin
+    .from("texas_news_feed")
+    .select("id,title,link,source,description,pub_date")
+    .is("internal_slug", null)
+    .limit(50);
+  if (orphans && orphans.length > 0) {
+    const backRows = orphans.map((row) => {
+      const it: Item = {
+        title: row.title,
+        link: row.link,
+        source: row.source,
+        pub_date: row.pub_date,
+        description: row.description ?? "",
+      };
+      const datePrefix = it.pub_date.slice(0, 10);
+      const slug = `live-${datePrefix}-${slugify(it.title)}-${hashStr(it.link)}`;
+      return { slug, item: it };
+    });
+    await supabaseAdmin.from("daily_articles").upsert(
+      backRows.map(({ slug, item }) => ({
+        slug,
+        category: categoryFor(item.source),
+        title: item.title,
+        dek: (item.description || item.title).slice(0, 380),
+        body: item.description ?? "",
+        author: "Keep TX Red Newsroom",
+        source_name: item.source,
+        source_url: item.link,
+        published_at: item.pub_date,
+        kind: "ingested",
+        is_breaking: false,
+        score: 0,
+        body_json: {
+          updated: item.pub_date.slice(0, 10),
+          intro: [item.description || `${item.source} released a new update for Texans.`],
+          sections: [
+            {
+              heading: "What we know",
+              paragraphs: [
+                item.description || "Details from the official source are being added as they become available.",
+                `This update was originally published by the ${item.source}. Keep TX Red is monitoring the story and will expand coverage as new details emerge.`,
+              ],
+            },
+          ],
+          faq: [],
+          sources: [{ label: `${item.source} — official release`, url: item.link }],
+          keyTakeaways: [
+            `Source: ${item.source}.`,
+            "Keep TX Red republishes official Texas government updates with attribution.",
+          ],
+        },
+      })),
+      { onConflict: "slug", ignoreDuplicates: true },
+    );
+    await Promise.all(
+      backRows.map(({ slug, item }) =>
+        supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).eq("link", item.link),
+      ),
+    );
+  }
+
   return new Response(
-    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, diag }),
+    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, diag }),
     { headers: { "Content-Type": "application/json" } },
   );
 }

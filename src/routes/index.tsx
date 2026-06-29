@@ -331,31 +331,29 @@ function Index() {
 }
 
 function articleHref(a: DailyArticle) {
-  return a.kind === "evergreen" ? `/news/${a.slug}` : a.source_url ?? "/news";
+  if (a.kind === "evergreen") return `/news/${a.slug}`;
+  // Ingested live items already carry an internal /news/{slug} URL.
+  if (a.source_url && a.source_url.startsWith("/")) return a.source_url;
+  return `/news/${a.slug}`;
 }
 
 function BreakingCard({ article }: { article: DailyArticle }) {
   const href = articleHref(article);
-  const external = article.kind !== "evergreen";
   const inner = (
     <>
       <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{article.category}</span>
       <h3 className="font-sans text-base md:text-lg font-semibold leading-snug mt-1">{article.title}</h3>
     </>
   );
-  return external ? (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="block rounded-md bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors p-4">
+  return (
+    <a href={href} className="block rounded-md bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors p-4">
       {inner}
     </a>
-  ) : (
-    <Link to="/news/$slug" params={{ slug: article.slug }} className="block rounded-md bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors p-4">
-      {inner}
-    </Link>
   );
 }
 
 function TrendingCard({ article }: { article: DailyArticle }) {
-  const external = article.kind !== "evergreen";
+  const href = articleHref(article);
   const inner = (
     <>
       <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{article.category}</span>
@@ -364,13 +362,9 @@ function TrendingCard({ article }: { article: DailyArticle }) {
       </h3>
     </>
   );
-  return external && article.source_url ? (
-    <a key={article.slug} href={article.source_url} target="_blank" rel="noopener noreferrer" className="group block">
+  return (
+    <a key={article.slug} href={href} className="group block">
       {inner}
     </a>
-  ) : (
-    <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="group block">
-      {inner}
-    </Link>
   );
 }
