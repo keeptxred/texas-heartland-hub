@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
@@ -292,12 +292,9 @@ function DashboardPage() {
                   ) : null}
                 </div>
                 <h3 className="font-serif text-base font-bold leading-snug">
-                  <Link
-                    to={it.link}
-                    className="hover:underline underline-offset-4"
-                  >
+                  <a href={it.link} className="hover:underline underline-offset-4">
                     {it.title}
-                  </Link>
+                  </a>
                 </h3>
                 {it.description ? (
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{it.description}</p>
