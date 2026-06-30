@@ -1,93 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
+import { useQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
+import { getEtsyListings, type EtsyProduct } from "@/lib/etsy.functions";
 
-type Product = {
-  id: string;
-  title: string;
-  price: number;
-  currency: string;
-  image: string;
-  url: string;
-  description: string;
-};
+type Product = EtsyProduct;
 
-// Mock data — replace with Etsy findAllShopListingsActive response once the
-// API key + Shop ID are added to project secrets.
-const MOCK_PRODUCTS: Product[] = [
-  {
-    id: "1",
-    title: "Keep Texas Red — Heavyweight Tee",
-    price: 28,
-    currency: "USD",
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80",
-    url: "https://www.etsy.com/listing/000000001",
-    description: "Classic-fit cotton tee with a bold Lone Star wordmark. Printed in Texas on heavyweight 6 oz cotton.",
-  },
-  {
-    id: "2",
-    title: "Lone Star Enamel Pin",
-    price: 9,
-    currency: "USD",
-    image: "https://images.unsplash.com/photo-1607344645866-009c320b63e0?auto=format&fit=crop&w=800&q=80",
-    url: "https://www.etsy.com/listing/000000002",
-    description: "Hard-enamel lapel pin with a brushed-gold finish. Rubber backing included.",
-  },
-  {
-    id: "3",
-    title: "Don't Mess With Texas — Sticker Pack",
-    price: 6,
-    currency: "USD",
-    image: "https://images.unsplash.com/photo-1622445275576-721325763afe?auto=format&fit=crop&w=800&q=80",
-    url: "https://www.etsy.com/listing/000000003",
-    description: "Set of 4 weatherproof vinyl stickers. Dishwasher safe, perfect for laptops, tumblers, and trucks.",
-  },
-  {
-    id: "4",
-    title: "Texas Flag Trucker Hat",
-    price: 24,
-    currency: "USD",
-    image: "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=800&q=80",
-    url: "https://www.etsy.com/listing/000000004",
-    description: "Structured 5-panel trucker with breathable mesh back and embroidered flag patch.",
-  },
-  {
-    id: "5",
-    title: "Republic of Texas — Letterpress Print",
-    price: 32,
-    currency: "USD",
-    image: "https://images.unsplash.com/photo-1582738411706-bfc8e691d1c2?auto=format&fit=crop&w=800&q=80",
-    url: "https://www.etsy.com/listing/000000005",
-    description: "11x14 letterpress poster on cotton paper. Hand-pressed in Austin, limited run of 100.",
-  },
-  {
-    id: "6",
-    title: "Lone Star Coffee Mug",
-    price: 18,
-    currency: "USD",
-    image: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=800&q=80",
-    url: "https://www.etsy.com/listing/000000006",
-    description: "12 oz ceramic mug with wraparound star print. Microwave and dishwasher safe.",
-  },
-  {
-    id: "7",
-    title: "Texas Constitution Pocket Booklet",
-    price: 12,
-    currency: "USD",
-    image: "https://images.unsplash.com/photo-1457369804613-52c61a468e7d?auto=format&fit=crop&w=800&q=80",
-    url: "https://www.etsy.com/listing/000000007",
-    description: "Pocket-sized reprint of the Texas Constitution with annotated margins. 144 pages.",
-  },
-  {
-    id: "8",
-    title: "Star of Texas Canvas Tote",
-    price: 22,
-    currency: "USD",
-    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80",
-    url: "https://www.etsy.com/listing/000000008",
-    description: "Heavyweight 12 oz natural canvas tote with reinforced straps. Holds up to 30 lbs.",
-  },
-];
+const etsyQuery = queryOptions({
+  queryKey: ["etsy", "listings"],
+  queryFn: () => getEtsyListings(),
+  staleTime: 5 * 60 * 1000,
+});
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
@@ -99,6 +22,7 @@ export const Route = createFileRoute("/shop")({
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop` }],
   }),
+  loader: ({ context }) => context.queryClient.ensureQueryData(etsyQuery),
   component: ShopPage,
 });
 
@@ -109,6 +33,9 @@ function formatPrice(p: Product) {
 type CartItem = { product: Product; qty: number };
 
 function ShopPage() {
+  const { data, isLoading, isError } = useQuery(etsyQuery);
+  const products = data?.products ?? [];
+  const loadError = data?.error;
   const [active, setActive] = useState<Product | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -167,8 +94,30 @@ function ShopPage() {
       </section>
 
       <section className="mx-auto max-w-[1200px] px-6 py-12">
+        {isLoading && (
+          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="bg-card border border-border rounded-xl overflow-hidden animate-pulse">
+                <div className="aspect-square bg-muted" />
+                <div className="p-4 space-y-2">
+                  <div className="h-4 bg-muted rounded w-3/4" />
+                  <div className="h-4 bg-muted rounded w-1/3" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {!isLoading && (isError || loadError || products.length === 0) && (
+          <div className="text-center py-20">
+            <h2 className="font-display text-2xl mb-2">Store is restocking</h2>
+            <p className="text-muted-foreground">
+              {loadError ? "We couldn't load live listings right now. Please check back soon." : "No active listings right now. Check back soon."}
+            </p>
+          </div>
+        )}
+        {!isLoading && products.length > 0 && (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {MOCK_PRODUCTS.map((p) => (
+          {products.map((p) => (
             <button
               key={p.id}
               onClick={() => setActive(p)}
@@ -194,6 +143,7 @@ function ShopPage() {
             </button>
           ))}
         </div>
+        )}
       </section>
 
       {active && (
