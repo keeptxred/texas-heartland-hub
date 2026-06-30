@@ -48,6 +48,116 @@ function categoryFor(source: string): string {
   return "Legislature";
 }
 
+type Rewrite = {
+  title: string;
+  dek: string;
+  keywords: string[];
+  summary: string;
+  relevance: string;
+  analysis?: string;
+  keyTakeaways: string[];
+  faq?: { q: string; a: string }[];
+};
+
+const REWRITE_SYSTEM = `You are the Keep TX Red editorial engine. Rewrite a Texas news item from an official source into a fully ORIGINAL article for keeptxred.com.
+
+HARD RULES:
+- Extract only facts (who/what/when/where/why). Never copy sentences or phrasing from the source. No direct quote longer than 10 words.
+- Neutral, factual tone in Summary, Relevance, and Key Takeaways. Analysis is clearly labeled opinion and is optional.
+- Mobile-friendly paragraphs (2–4 sentences each).
+- Meta description (dek) MUST be <= 155 characters.
+- Title must be SEO-optimized, original, and not resemble the source headline.
+- 5–10 lowercase keywords, Texas-specific where possible.
+- Output VALID JSON only matching the schema below.
+
+SCHEMA:
+{"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"2-3 sentence neutral summary","relevance":"why this matters to Texas (2-4 sentences)","analysis":"optional labeled editorial interpretation, or omit","keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}]}`;
+
+async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
+  try {
+    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+      body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: REWRITE_SYSTEM },
+          {
+            role: "user",
+            content: `SOURCE: ${it.source}\nORIGINAL HEADLINE: ${it.title}\nORIGINAL SUMMARY: ${it.description}\nLINK: ${it.link}\nDATE: ${it.pub_date}\n\nRewrite per the rules. Return JSON only.`,
+          },
+        ],
+        response_format: { type: "json_object" },
+      }),
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!r.ok) return null;
+    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Rewrite;
+    if (!parsed?.title || !parsed?.summary || !parsed?.dek) return null;
+    parsed.dek = parsed.dek.slice(0, 155);
+    parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
+    parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function buildArticleRow(it: Item, rw: Rewrite | null) {
+  const datePrefix = it.pub_date.slice(0, 10);
+  const baseTitle = rw?.title ?? it.title;
+  const slug = `live-${datePrefix}-${slugify(baseTitle)}-${hashStr(it.link)}`;
+  const cat = categoryFor(it.source);
+  const sections: { heading: string; paragraphs: string[] }[] = [
+    {
+      heading: "Texas relevance",
+      paragraphs: [rw?.relevance ?? `This update from the ${it.source} affects Texans and is being tracked by the Keep TX Red newsroom.`],
+    },
+  ];
+  if (rw?.analysis) {
+    sections.push({ heading: "Analysis", paragraphs: [rw.analysis] });
+  }
+  sections.push({
+    heading: "Source attribution",
+    paragraphs: [
+      `This story was reported using a public release from the ${it.source}. Keep TX Red rewrote the coverage independently and links to the official statement for verification.`,
+    ],
+  });
+
+  return {
+    slug,
+    internal_url: `/news/${slug}`,
+    is_ingested: true,
+    category: cat,
+    title: baseTitle.slice(0, 200),
+    dek: (rw?.dek ?? (it.description || it.title)).slice(0, 155),
+    body: rw?.summary ?? it.description ?? "",
+    author: "Keep TX Red Newsroom",
+    source_name: it.source,
+    source_url: it.link,
+    published_at: it.pub_date,
+    kind: "ingested",
+    is_breaking: false,
+    score: 0,
+    keywords: rw?.keywords ?? [],
+    body_json: {
+      updated: it.pub_date.slice(0, 10),
+      intro: [rw?.summary ?? it.description ?? `${it.source} released a new update for Texans.`],
+      sections,
+      faq: rw?.faq ?? [],
+      sources: [{ label: `${it.source} — official release`, url: it.link }],
+      keyTakeaways:
+        rw?.keyTakeaways && rw.keyTakeaways.length > 0
+          ? rw.keyTakeaways
+          : [
+              `Source: ${it.source}.`,
+              "Keep TX Red rewrites every ingested story into original editorial coverage.",
+            ],
+    },
+  };
+}
+
 function parseFeed(xml: string, source: string): Item[] {
   const items: Item[] = [];
   const blocks = xml.match(/<(item|entry)[\s\S]*?<\/(item|entry)>/gi) || [];
@@ -140,46 +250,11 @@ async function handler() {
   // Happening Now only ever links to internal /news/{slug} URLs.
   let nativeMinted = 0;
   if (fresh.length > 0) {
-    const articleRows = fresh.map((it) => {
-      const datePrefix = it.pub_date.slice(0, 10);
-      const slug = `live-${datePrefix}-${slugify(it.title)}-${hashStr(it.link)}`;
-      const cat = categoryFor(it.source);
-      return {
-        slug,
-        internal_url: `/news/${slug}`,
-        is_ingested: false,
-        category: cat,
-        title: it.title,
-        dek: (it.description || it.title).slice(0, 380),
-        body: it.description ?? "",
-        author: "Keep TX Red Newsroom",
-        source_name: it.source,
-        source_url: it.link,
-        published_at: it.pub_date,
-        kind: "ingested",
-        is_breaking: false,
-        score: 0,
-        body_json: {
-          updated: it.pub_date.slice(0, 10),
-          intro: [it.description || `${it.source} released a new update for Texans.`],
-          sections: [
-            {
-              heading: "What we know",
-              paragraphs: [
-                it.description || "Details from the official source are being added as they become available.",
-                `This update was originally published by the ${it.source}. Keep TX Red is monitoring the story and will expand coverage as new details emerge.`,
-              ],
-            },
-          ],
-          faq: [],
-          sources: [{ label: `${it.source} — official release`, url: it.link }],
-          keyTakeaways: [
-            `Source: ${it.source}.`,
-            "Keep TX Red republishes official Texas government updates with attribution.",
-          ],
-        },
-      };
-    });
+    const lovableApiKey = process.env.LOVABLE_API_KEY;
+    const rewrites: (Rewrite | null)[] = lovableApiKey
+      ? await Promise.all(fresh.map((it) => rewriteItem(it, lovableApiKey)))
+      : fresh.map(() => null);
+    const articleRows = fresh.map((it, i) => buildArticleRow(it, rewrites[i]));
 
     const { error: artErr, count: artCount } = await supabaseAdmin
       .from("daily_articles")
@@ -188,7 +263,7 @@ async function handler() {
       nativeMinted = artCount ?? articleRows.length;
       // Write the internal slug back onto the feed row so cards can link to it.
       await Promise.all(
-        articleRows.map((row, i) =>
+        articleRows.map((row: { slug: string }, i: number) =>
           supabaseAdmin
             .from("texas_news_feed")
             .update({ internal_slug: row.slug })
@@ -203,61 +278,26 @@ async function handler() {
     .from("texas_news_feed")
     .select("id,title,link,source,description,pub_date")
     .is("internal_slug", null)
-    .limit(50);
+    .limit(25);
   if (orphans && orphans.length > 0) {
-    const backRows = orphans.map((row) => {
-      const it: Item = {
-        title: row.title,
-        link: row.link,
-        source: row.source,
-        pub_date: row.pub_date,
-        description: row.description ?? "",
-      };
-      const datePrefix = it.pub_date.slice(0, 10);
-      const slug = `live-${datePrefix}-${slugify(it.title)}-${hashStr(it.link)}`;
-      return { slug, item: it };
-    });
-    await supabaseAdmin.from("daily_articles").upsert(
-      backRows.map(({ slug, item }) => ({
-        slug,
-        internal_url: `/news/${slug}`,
-        is_ingested: false,
-        category: categoryFor(item.source),
-        title: item.title,
-        dek: (item.description || item.title).slice(0, 380),
-        body: item.description ?? "",
-        author: "Keep TX Red Newsroom",
-        source_name: item.source,
-        source_url: item.link,
-        published_at: item.pub_date,
-        kind: "ingested",
-        is_breaking: false,
-        score: 0,
-        body_json: {
-          updated: item.pub_date.slice(0, 10),
-          intro: [item.description || `${item.source} released a new update for Texans.`],
-          sections: [
-            {
-              heading: "What we know",
-              paragraphs: [
-                item.description || "Details from the official source are being added as they become available.",
-                `This update was originally published by the ${item.source}. Keep TX Red is monitoring the story and will expand coverage as new details emerge.`,
-              ],
-            },
-          ],
-          faq: [],
-          sources: [{ label: `${item.source} — official release`, url: item.link }],
-          keyTakeaways: [
-            `Source: ${item.source}.`,
-            "Keep TX Red republishes official Texas government updates with attribution.",
-          ],
-        },
-      })),
-      { onConflict: "slug", ignoreDuplicates: true },
-    );
+    const lovableApiKey = process.env.LOVABLE_API_KEY;
+    const items: Item[] = orphans.map((row) => ({
+      title: row.title,
+      link: row.link,
+      source: row.source,
+      pub_date: row.pub_date,
+      description: row.description ?? "",
+    }));
+    const rewrites: (Rewrite | null)[] = lovableApiKey
+      ? await Promise.all(items.map((it) => rewriteItem(it, lovableApiKey)))
+      : items.map(() => null);
+    const backRows = items.map((it, i) => buildArticleRow(it, rewrites[i]));
+    await supabaseAdmin
+      .from("daily_articles")
+      .upsert(backRows, { onConflict: "slug", ignoreDuplicates: true });
     await Promise.all(
-      backRows.map(({ slug, item }) =>
-        supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).eq("link", item.link),
+      backRows.map((row, i) =>
+        supabaseAdmin.from("texas_news_feed").update({ internal_slug: row.slug }).eq("link", items[i].link),
       ),
     );
   }
