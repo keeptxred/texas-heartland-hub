@@ -6,6 +6,24 @@ import { AdSlot } from "@/components/ad-slot";
 import { BrandIdentity } from "@/components/brand-identity";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 
+// Compute the daily-rotated lead article the same way the component does, so
+// the LCP image can be preloaded with fetchpriority="high" during SSR head().
+function getLeadImage(): string | null {
+  const sorted = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
+  const centralToday = new Date().toLocaleDateString("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const dayKey = Array.from(centralToday).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  const poolSize = Math.min(sorted.length, 20);
+  const pool = sorted.slice(0, poolSize);
+  if (pool.length === 0) return null;
+  const offset = dayKey % pool.length;
+  return pool[offset]?.image ?? null;
+}
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -19,7 +37,11 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: "/" },
-      { rel: "preload", as: "image", href: heroFlag, fetchpriority: "high" },
+      // LCP element on this page is the lead featured story image (the
+      // hero-flag asset is used only for social og:image and never rendered).
+      ...(getLeadImage()
+        ? [{ rel: "preload", as: "image", href: getLeadImage() as string, fetchpriority: "high" }]
+        : []),
     ],
     scripts: [
       {
