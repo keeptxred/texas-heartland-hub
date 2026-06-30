@@ -8,6 +8,7 @@ const NAV = [
   { to: "/houston", label: "Houston" },
   { to: "/texas-sports", label: "Sports" },
   { to: "/texas-business", label: "Business" },
+  { to: "/news/non-political", label: "Non-Political" },
   { to: "/elections", label: "Elections" },
   { to: "/tax-calculator", label: "Property Taxes" },
   { to: "/about", label: "About" },
