@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { canonical } from "@/lib/seo";
+import { SITE_URL } from "@/lib/seo";
 
 type Product = {
   id: string;
@@ -97,7 +97,7 @@ export const Route = createFileRoute("/shop")({
       { property: "og:title", content: "Shop — Keep Texas Red" },
       { property: "og:description", content: "Texas-made apparel, prints, and accessories from the Keep Texas Red shop." },
     ],
-    links: [{ rel: "canonical", href: canonical("/shop") }],
+    links: [{ rel: "canonical", href: `${SITE_URL}/shop` }],
   }),
   component: ShopPage,
 });
