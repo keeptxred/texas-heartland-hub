@@ -140,7 +140,21 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
         }
 
         const now = new Date();
+        const { dedupeArticleBody, hasDuplicateContent } = await import("@/lib/article-dedupe");
         const slug = `${now.toISOString().slice(0, 10)}-${slugify(gen.title)}`;
+        const cleanBody = dedupeArticleBody({
+          updated: now.toISOString().slice(0, 10),
+          intro: gen.intro ?? [gen.dek],
+          sections: gen.sections,
+          faq: gen.faq ?? [],
+          sources: gen.sources ?? [],
+          keyTakeaways: (gen.keyTakeaways ?? []).slice(0, 6),
+        });
+        // Block publish if dedupe still detects repetition (it shouldn't, but
+        // hasDuplicateContent re-runs to enforce the quality gate).
+        if (hasDuplicateContent(cleanBody)) {
+          return Response.json({ error: "Duplicate content detected; not published", slug }, { status: 422 });
+        }
         const row = {
           slug,
           internal_url: `/news/${slug}`,
@@ -154,14 +168,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           source_url: null as string | null,
           published_at: now.toISOString(),
           keywords: (gen.keywords ?? []).slice(0, 20),
-          body_json: {
-            updated: now.toISOString().slice(0, 10),
-            intro: gen.intro ?? [gen.dek],
-            sections: gen.sections,
-            faq: gen.faq ?? [],
-            sources: gen.sources ?? [],
-            keyTakeaways: (gen.keyTakeaways ?? []).slice(0, 6),
-          },
+          body_json: cleanBody,
         };
 
         const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
