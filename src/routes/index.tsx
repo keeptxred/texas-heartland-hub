@@ -267,7 +267,16 @@ function Index() {
           <div className="grid lg:grid-cols-3 gap-10">
             <Link to="/news/$slug" params={{ slug: lead.slug }} className="group block lg:col-span-2">
               <div className="aspect-[16/9] overflow-hidden bg-muted mb-5 rounded-md">
-                <img src={heroImages.get(lead.slug) ?? lead.image} alt={lead.title} className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+                <img
+                  src={heroImages.get(lead.slug) ?? lead.image}
+                  alt={lead.title}
+                  width={1200}
+                  height={675}
+                  fetchPriority="high"
+                  loading="eager"
+                  decoding="async"
+                  className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                />
               </div>
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{lead.category}</span>
               <h2 className="font-sans text-3xl md:text-4xl font-semibold tracking-tight mt-2 leading-[1.2] text-foreground group-hover:text-primary transition-colors">
