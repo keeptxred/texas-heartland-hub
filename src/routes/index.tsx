@@ -6,6 +6,24 @@ import { AdSlot } from "@/components/ad-slot";
 import { BrandIdentity } from "@/components/brand-identity";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 
+// Compute the daily-rotated lead article the same way the component does, so
+// the LCP image can be preloaded with fetchpriority="high" during SSR head().
+function getLeadImage(): string | null {
+  const sorted = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
+  const centralToday = new Date().toLocaleDateString("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const dayKey = Array.from(centralToday).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  const poolSize = Math.min(sorted.length, 20);
+  const pool = sorted.slice(0, poolSize);
+  if (pool.length === 0) return null;
+  const offset = dayKey % pool.length;
+  return pool[offset]?.image ?? null;
+}
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -19,7 +37,11 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "canonical", href: "/" },
-      { rel: "preload", as: "image", href: heroFlag, fetchpriority: "high" },
+      // LCP element on this page is the lead featured story image (the
+      // hero-flag asset is used only for social og:image and never rendered).
+      ...(getLeadImage()
+        ? [{ rel: "preload", as: "image", href: getLeadImage() as string, fetchpriority: "high" }]
+        : []),
     ],
     scripts: [
       {
@@ -245,7 +267,16 @@ function Index() {
           <div className="grid lg:grid-cols-3 gap-10">
             <Link to="/news/$slug" params={{ slug: lead.slug }} className="group block lg:col-span-2">
               <div className="aspect-[16/9] overflow-hidden bg-muted mb-5 rounded-md">
-                <img src={heroImages.get(lead.slug) ?? lead.image} alt={lead.title} className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+                <img
+                  src={heroImages.get(lead.slug) ?? lead.image}
+                  alt={lead.title}
+                  width={1200}
+                  height={675}
+                  fetchPriority="high"
+                  loading="eager"
+                  decoding="async"
+                  className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
+                />
               </div>
               <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{lead.category}</span>
               <h2 className="font-sans text-3xl md:text-4xl font-semibold tracking-tight mt-2 leading-[1.2] text-foreground group-hover:text-primary transition-colors">

@@ -126,7 +126,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
     scripts: [
-      { async: true, src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1891256141359926", crossOrigin: "anonymous" },
+      // Defer AdSense until after the window load event so the third-party
+      // script never competes with the LCP image/network on first paint.
+      {
+        children:
+          "(function(){function l(){var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1891256141359926';document.head.appendChild(s);}if(document.readyState==='complete'){setTimeout(l,1500);}else{window.addEventListener('load',function(){setTimeout(l,1500);});}})();",
+      },
       {
         type: "application/ld+json",
         children: JSON.stringify(organizationJsonLd()),
