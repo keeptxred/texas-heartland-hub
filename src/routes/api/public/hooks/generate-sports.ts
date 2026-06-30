@@ -185,7 +185,15 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
             }
 
             const now = new Date();
+            const { dedupeArticleBody } = await import("@/lib/article-dedupe");
             const slug = `${now.toISOString().slice(0, 10)}-${league}-${slugify(gen.title)}`;
+            const cleanBody = dedupeArticleBody({
+              updated: now.toISOString().slice(0, 10),
+              intro: gen.intro ?? [gen.dek],
+              sections: gen.sections,
+              faq: gen.faq ?? [],
+              sources: gen.sources ?? [],
+            });
             const row = {
               slug,
               internal_url: `/news/${slug}`,
@@ -200,13 +208,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
               image_url,
               published_at: now.toISOString(),
               keywords: (gen.keywords ?? []).slice(0, 20),
-              body_json: {
-                updated: now.toISOString().slice(0, 10),
-                intro: gen.intro ?? [gen.dek],
-                sections: gen.sections,
-                faq: gen.faq ?? [],
-                sources: gen.sources ?? [],
-              },
+              body_json: cleanBody,
             };
             const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
             if (error) {
