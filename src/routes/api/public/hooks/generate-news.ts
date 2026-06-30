@@ -12,7 +12,15 @@ const RSS_SOURCES: { name: string; url: string; category: string }[] = [
   { name: "KHOU 11 — Local", url: "https://www.khou.com/feeds/syndication/rss/news/local", category: "Legislature" },
 ];
 
-const CATEGORIES = ["Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
+const CATEGORIES = [
+  "Legislature",
+  "Border",
+  "Elections",
+  "Tax & Spending",
+  "Energy",
+  "Education",
+  "Non-Political",
+] as const;
 
 type RssItem = {
   title: string;
