@@ -60,6 +60,13 @@ function BusinessPage() {
   };
   const ALL_SLUGS = Array.from(new Set(Object.values(BUSINESS_SLUGS).flat()));
   const activeSlugs = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_SLUGS;
+  // Per-page image overrides to guarantee no duplicate images on /texas-business
+  const IMAGE_OVERRIDES: Record<string, string> = {
+    "isd-tax-burdens": schoolbus,
+    "texas-energy-economy-overview": boardroom,
+    "how-texas-counties-spend": rotunda,
+    "what-local-governments-control": openmeeting,
+  };
   const businessArticles = activeSlugs
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
@@ -77,14 +84,6 @@ function BusinessPage() {
     { id: "policy", title: "Policy", description: "Legislative changes that affect Texas businesses and small employers." },
   ];
   const activeSection = SECTIONS.find((s) => s.id === topic);
-
-  // Per-page image overrides to guarantee no duplicate images on /texas-business
-  const IMAGE_OVERRIDES: Record<string, string> = {
-    "isd-tax-burdens": schoolbus,
-    "texas-energy-economy-overview": boardroom,
-    "how-texas-counties-spend": rotunda,
-    "what-local-governments-control": openmeeting,
-  };
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
