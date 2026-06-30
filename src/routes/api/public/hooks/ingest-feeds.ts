@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { dedupeArticleBody } from "@/lib/article-dedupe";
 
 const SOURCES = [
   { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss" },
@@ -141,7 +142,7 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
     is_breaking: false,
     score: 0,
     keywords: rw?.keywords ?? [],
-    body_json: {
+    body_json: dedupeArticleBody({
       updated: it.pub_date.slice(0, 10),
       intro: [rw?.summary ?? it.description ?? `${it.source} released a new update for Texans.`],
       sections,
@@ -154,7 +155,7 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
               `Source: ${it.source}.`,
               "Keep TX Red rewrites every ingested story into original editorial coverage.",
             ],
-    },
+    }),
   };
 }
 

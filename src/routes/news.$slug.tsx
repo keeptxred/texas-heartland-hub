@@ -6,13 +6,15 @@ import { getEvergreenBySlug } from "@/lib/evergreen.functions";
 import capitol from "@/assets/capitol.jpg";
 import { AdSlot } from "@/components/ad-slot";
 import { buildSeo, SITE_URL } from "@/lib/seo";
+import { dedupeArticleBody } from "@/lib/article-dedupe";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
     if (article) {
       if (!isPublished(article)) throw notFound();
-      const body = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
+      const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
+      const body = dedupeArticleBody(rawBody) as ArticleBody;
       return { article, body };
     }
     // Fallback: AI-generated evergreen article stored in daily_articles.
@@ -30,7 +32,7 @@ export const Route = createFileRoute("/news/$slug")({
       publishedAt: ever.published_at,
       image: ever.image_url ?? capitol,
     };
-    const body: ArticleBody = {
+    const rawBody: ArticleBody = {
       updated: ever.body.updated,
       intro: ever.body.intro,
       sections: ever.body.sections,
@@ -40,7 +42,7 @@ export const Route = createFileRoute("/news/$slug")({
       cta: { label: "Browse the Newsroom", href: "/news" },
       keyTakeaways: ever.body.keyTakeaways,
     };
-    return { article: synth, body };
+    return { article: synth, body: dedupeArticleBody(rawBody) as ArticleBody };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
