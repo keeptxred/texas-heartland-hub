@@ -209,13 +209,6 @@ function ArticlePage() {
     );
   const readingMinutes = Math.max(2, Math.round(wordCount / 230));
 
-  // Mid-article supplementary image: pick the first related article's image
-  // so every published article ships with at least 3 distinct, alt-tagged
-  // visuals (hero + mid-article + 3 related thumbnails = 5 total).
-  const midImage = related[0]
-    ? { src: related[0].image, alt: `Related Texas coverage: ${related[0].title}` }
-    : null;
-  const midSectionIndex = Math.min(1, Math.max(0, body.sections.length - 1));
 
   const formattedDate = new Date(body.updated).toLocaleDateString("en-US", {
     year: "numeric",
@@ -329,14 +322,6 @@ function ArticlePage() {
                   </tbody>
                 </table>
               </div>
-            ) : null}
-            {!sec.image && midImage && i === midSectionIndex ? (
-              <figure className="my-6">
-                <div className="aspect-[16/9] overflow-hidden bg-muted border border-foreground/10">
-                  <img src={midImage.src} alt={midImage.alt} loading="lazy" className="size-full object-cover" />
-                </div>
-                <figcaption className="mt-2 text-xs text-muted-foreground italic text-center">{midImage.alt}</figcaption>
-              </figure>
             ) : null}
           </section>
         ))}
