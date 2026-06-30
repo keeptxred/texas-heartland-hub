@@ -1,10 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 
-const SOURCES = [
+const SOURCES: { name: string; url: string; category?: string }[] = [
   { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss" },
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml" },
   { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml" },
+  // Non-Political feed group: human-interest, culture, parks, lifestyle, viral.
+  { name: "Texas Parks & Wildlife", url: "https://tpwd.texas.gov/newsmedia/releases/rss/", category: "Non-Political" },
+  { name: "Texas Monthly", url: "https://www.texasmonthly.com/feed/", category: "Non-Political" },
+  { name: "Texas Standard", url: "https://www.texasstandard.org/feed/", category: "Non-Political" },
 ];
 
 function decode(s: string) {
@@ -25,7 +29,7 @@ function pick(block: string, tag: string): string {
   return m ? decode(m[1]) : "";
 }
 
-type Item = { title: string; link: string; pub_date: string; source: string; description: string };
+type Item = { title: string; link: string; pub_date: string; source: string; description: string; category?: string };
 
 function slugify(s: string): string {
   return s
@@ -41,11 +45,23 @@ function hashStr(s: string): string {
   return Math.abs(h).toString(36).slice(0, 6);
 }
 
+const ALLOWED_CATEGORIES = [
+  "Politics",
+  "Elections",
+  "Laws",
+  "Legislature",
+  "Business",
+  "Sports",
+  "Education",
+  "Non-Political",
+] as const;
+
 function categoryFor(source: string): string {
   const s = source.toLowerCase();
   if (s.includes("governor")) return "Politics";
   if (s.includes("secretary")) return "Elections";
   if (s.includes("register")) return "Laws";
+  if (s.includes("parks") || s.includes("monthly") || s.includes("standard")) return "Non-Political";
   return "Legislature";
 }
 
@@ -58,6 +74,7 @@ type Rewrite = {
   analysis?: string;
   keyTakeaways: string[];
   faq?: { q: string; a: string }[];
+  category?: string;
 };
 
 const REWRITE_SYSTEM = `You are the Keep TX Red editorial engine. Rewrite a Texas news item from an official source into a fully ORIGINAL article for keeptxred.com.
@@ -71,8 +88,10 @@ HARD RULES:
 - 5–10 lowercase keywords, Texas-specific where possible.
 - Output VALID JSON only matching the schema below.
 
+CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Business, Sports, Education, Non-Political. Use "Non-Political" for human-interest, animals, viral, culture, festivals, weather, travel, lifestyle, entertainment, science, and parks/wildlife stories. Do NOT use Education as a fallback — only true school/academic policy.
+
 SCHEMA:
-{"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"2-3 sentence neutral summary","relevance":"why this matters to Texas (2-4 sentences)","analysis":"optional labeled editorial interpretation, or omit","keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}]}`;
+{"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"2-3 sentence neutral summary","relevance":"why this matters to Texas (2-4 sentences)","analysis":"optional labeled editorial interpretation, or omit","keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}],"category":"one of the allowed values"}`;
 
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
   try {
@@ -109,7 +128,9 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
   const datePrefix = it.pub_date.slice(0, 10);
   const baseTitle = rw?.title ?? it.title;
   const slug = `live-${datePrefix}-${slugify(baseTitle)}-${hashStr(it.link)}`;
-  const cat = categoryFor(it.source);
+  const aiCat =
+    rw?.category && (ALLOWED_CATEGORIES as readonly string[]).includes(rw.category) ? rw.category : null;
+  const cat = aiCat ?? it.category ?? categoryFor(it.source);
   const sections: { heading: string; paragraphs: string[] }[] = [
     {
       heading: "Texas relevance",
