@@ -168,7 +168,12 @@ DEK (first paragraph + meta description) RULES:
 Pick the best ${Math.min(10, items.length)} stories. Return ONLY valid JSON:
 {"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"..."}]}
 
-Valid categories: ${CATEGORIES.join(", ")}.`;
+Valid categories: ${CATEGORIES.join(", ")}.
+
+CATEGORY CLASSIFICATION RULES (strict):
+- Classify as "Non-Political" when the story is NOT primarily about: elections or campaigns, political parties, government or legislation, public policy, court rulings tied to politics, border policy, or political opinion. Examples: human-interest, animal stories, viral stories, community news, Texas culture, festivals/events, weather, travel, lifestyle, entertainment, sports, science, space, health (unless primarily political), and consumer news.
+- Do NOT use "Education" as a fallback. Only assign "Education" when the primary subject is K–12 schools, colleges or universities, school boards, teachers, students, curriculum, education funding, or academic policy.
+- When in doubt between "Education" and "Non-Political" for a human-interest story (e.g. a zoo animal, a festival, a community profile), pick "Non-Political".`;
 
   const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
