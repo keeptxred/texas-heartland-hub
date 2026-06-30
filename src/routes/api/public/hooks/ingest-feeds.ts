@@ -229,7 +229,9 @@ async function handler() {
           signal: AbortSignal.timeout(15000),
         });
         if (!res.ok) return { source: s.name, url: s.url, status: res.status, items: [] as Item[] };
-        const items = parseFeed(await res.text(), s.name).slice(0, 25);
+        const items = parseFeed(await res.text(), s.name)
+          .slice(0, 25)
+          .map((it) => ({ ...it, category: s.category }));
         return { source: s.name, url: s.url, status: res.status, items };
       } catch (e) {
         return { source: s.name, url: s.url, status: 0, error: String(e), items: [] as Item[] };
@@ -256,9 +258,11 @@ async function handler() {
 
   let inserted = 0;
   if (fresh.length > 0) {
+    // texas_news_feed has no `category` column — strip it before insert.
+    const feedRows = fresh.map(({ category: _c, ...rest }) => rest);
     const { error, count } = await supabaseAdmin
       .from("texas_news_feed")
-      .upsert(fresh, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
+      .upsert(feedRows, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
     if (error) {
       return new Response(JSON.stringify({ ok: false, error: error.message }), {
         status: 500,
