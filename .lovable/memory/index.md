@@ -6,6 +6,7 @@ No duplicate images on any single page of the site.
 Homepage "Featured Stories" must rotate to a new lead + featured set every calendar day (America/Chicago).
 Every page and article must clear 800 words. When short, append modular PageExpansion blocks (perspective + 3–5 sections + FAQs + summary) — never regenerate. Every article must include one Texas-specific original perspective block and a Reader Questions block.
 Mobile perf is HEAD-only: lazy-load every non-LCP image, preload the LCP image with fetchpriority="high", keep AdSense async, dns-prefetch + preconnect ad/font hosts, never rewrite components for perf.
+Every ingested or generated article must be fully rewritten (no source phrasing, ≤10-word quotes) with Summary + Texas Relevance + optional labeled Analysis + 3–5 Key Takeaways, dek ≤155 chars, and 5–10 keywords.
 
 ## Memories
 - [Evergreen article spec](mem://features/evergreen-article-spec) — Required structure, tone, linking, and attribution for AI-generated evergreens
@@ -13,3 +14,4 @@ Mobile perf is HEAD-only: lazy-load every non-LCP image, preload the LCP image w
 - [Featured Stories daily rotation](mem://features/featured-stories-rotation) — Homepage Featured Stories lineup must change every day via date-based pool rotation
 - [Content quality rules](mem://features/content-quality-rules) — 800-word minimum, 60% reader-question coverage, 60% originality, credit-optimized expansion via PageExpansion
 - [Mobile performance rules](mem://features/mobile-performance-rules) — LCP <4s via HEAD-only changes: image lazy-load, hero preload, font/ad resource hints
+- [Editorial engine rewrite rules](mem://features/editorial-engine-rewrite) — Originality, required structure, SEO, AdSense, and CWV rules for every ingested/generated article
