@@ -11,6 +11,7 @@ const NAV = [
   { to: "/news/non-political", label: "Non-Political" },
   { to: "/elections", label: "Elections" },
   { to: "/tax-calculator", label: "Property Taxes" },
+  { to: "/shop", label: "Shop" },
   { to: "/about", label: "About" },
 ] as const;
 
