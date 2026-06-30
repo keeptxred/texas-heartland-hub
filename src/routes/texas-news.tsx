@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import { getArticlesByCategory, isCategorySlug } from "@/lib/articles-by-category";
 import { AgedFeedSection } from "@/components/aged-feed-section";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 
@@ -17,8 +18,7 @@ export const Route = createFileRoute("/texas-news")({
   }),
   validateSearch: (search: Record<string, unknown>) => {
     const t = typeof search.topic === "string" ? search.topic : "";
-    const allowed = ["legislature", "border", "elections", "tax-spending", "energy", "education"];
-    return { topic: allowed.includes(t) ? (t as string) : "" };
+    return { topic: isCategorySlug(t) ? t : "" };
   },
   component: TexasNewsPage,
 });
@@ -27,16 +27,17 @@ function TexasNewsPage() {
   const { topic } = Route.useSearch();
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const SECTIONS = [
-    { id: "legislature", title: "Legislature", category: "Legislature", description: "The Texas House, Senate, and the bills moving through Austin." },
-    { id: "border", title: "Border", category: "Border", description: "Border security, immigration enforcement, and the Rio Grande Valley." },
-    { id: "elections", title: "Elections", category: "Elections", description: "Campaigns, primaries, and election integrity across Texas." },
-    { id: "tax-spending", title: "Tax & Spending", category: "Tax & Spending", description: "Property taxes, the state budget, and how Texas spends your money." },
-    { id: "energy", title: "Energy", category: "Energy", description: "Oil and gas, ERCOT, and the policies powering the Texas grid." },
-    { id: "education", title: "Education", category: "Education", description: "Public schools, school choice, and curriculum debates." },
+    { id: "legislature", title: "Legislature", description: "The Texas House, Senate, and the bills moving through Austin." },
+    { id: "border", title: "Border", description: "Border security, immigration enforcement, and the Rio Grande Valley." },
+    { id: "elections", title: "Elections", description: "Campaigns, primaries, and election integrity across Texas." },
+    { id: "tax-spending", title: "Tax & Spending", description: "Property taxes, the state budget, and how Texas spends your money." },
+    { id: "energy", title: "Energy", description: "Oil and gas, ERCOT, and the policies powering the Texas grid." },
+    { id: "education", title: "Education", description: "Public schools, school choice, and curriculum debates." },
   ];
   const activeSection = SECTIONS.find((s) => s.id === topic);
-  const all = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
-  const articles = activeSection ? all.filter((a) => a.category === activeSection.category) : all;
+  const articles = activeSection
+    ? getArticlesByCategory(activeSection.id)
+    : ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
   const uniqImg = assignUniqueImages(articles, (a) => a.slug, (a) => a.image);
 
   return (

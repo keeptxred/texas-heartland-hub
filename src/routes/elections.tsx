@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ARTICLES, ELECTION_RACES, isPublished, sortByDateDesc } from "@/data/articles";
+import { ELECTION_RACES } from "@/data/articles";
+import { getArticlesByCategory } from "@/lib/articles-by-category";
 import ballot from "@/assets/ballot.jpg";
 import { AgedFeedSection } from "@/components/aged-feed-section";
 import { assignUniqueImages } from "@/lib/dedupe-images";
@@ -20,7 +21,8 @@ export const Route = createFileRoute("/elections")({
 });
 
 function ElectionsPage() {
-  const electionNews = ARTICLES.filter((a) => (a.category === "Elections" || a.category === "Education") && isPublished(a)).sort(sortByDateDesc);
+  // Category page = exactly one category_slug, sourced from this route's URL.
+  const electionNews = getArticlesByCategory("elections");
   const uniqImg = assignUniqueImages(electionNews, (a) => a.slug, (a) => a.image);
 
   return (

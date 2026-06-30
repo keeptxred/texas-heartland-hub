@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { filterByCategorySlug, CATEGORY_NAME_TO_SLUG, type CategoryName } from "@/lib/articles-by-category";
 import capitol from "@/assets/capitol.jpg";
 import border from "@/assets/border.jpg";
 import ballot from "@/assets/ballot.jpg";
@@ -29,6 +30,11 @@ export const Route = createFileRoute("/news/")({
 
 const CATS = ["All", "Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
 
+function catToSlug(cat: (typeof CATS)[number]): string {
+  if (cat === "All") return "";
+  return CATEGORY_NAME_TO_SLUG[cat as CategoryName];
+}
+
 const CATEGORY_IMAGES: Record<string, string> = {
   Legislature: capitol,
   Border: border,
@@ -53,13 +59,16 @@ function NewsPage() {
   const [activeCat, setActiveCat] = useState<(typeof CATS)[number]>("All");
 
   const filteredLive = useMemo(
-    () => (activeCat === "All" ? articles : articles.filter((a: DailyArticle) => a.category === activeCat)),
+    () =>
+      activeCat === "All"
+        ? articles
+        : filterByCategorySlug(articles as DailyArticle[], catToSlug(activeCat)),
     [articles, activeCat]
   );
   const filteredStatic = useMemo(
     () => {
       const live = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
-      return activeCat === "All" ? live : live.filter((a) => a.category === activeCat);
+      return activeCat === "All" ? live : filterByCategorySlug(live, catToSlug(activeCat));
     },
     [activeCat]
   );
