@@ -1,0 +1,1 @@
+UPDATE daily_articles SET image_url = '/__l5e/assets-v1/154c83ac-b244-4741-9260-6f3fdab8e374/bbq.jpg' WHERE slug = 'live-2026-06-30-dallas-barbecue-hotspot-sees-record-tourism-numbers-during-world-cup-xexg9e';
