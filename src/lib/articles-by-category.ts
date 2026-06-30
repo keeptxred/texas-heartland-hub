@@ -12,6 +12,7 @@ export const CATEGORY_SLUG_TO_NAME = {
   "tax-spending": "Tax & Spending",
   energy: "Energy",
   education: "Education",
+  "non-political": "Non-Political",
 } as const;
 
 export type CategorySlug = keyof typeof CATEGORY_SLUG_TO_NAME;
