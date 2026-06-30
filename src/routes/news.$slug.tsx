@@ -323,14 +323,6 @@ function ArticlePage() {
                 </table>
               </div>
             ) : null}
-            {!sec.image && midImage && i === midSectionIndex ? (
-              <figure className="my-6">
-                <div className="aspect-[16/9] overflow-hidden bg-muted border border-foreground/10">
-                  <img src={midImage.src} alt={midImage.alt} loading="lazy" className="size-full object-cover" />
-                </div>
-                <figcaption className="mt-2 text-xs text-muted-foreground italic text-center">{midImage.alt}</figcaption>
-              </figure>
-            ) : null}
           </section>
         ))}
 
