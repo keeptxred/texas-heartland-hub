@@ -1,6 +1,6 @@
 export type Article = {
   slug: string;
-  category: "Legislature" | "Border" | "Elections" | "Tax & Spending" | "Energy" | "Education";
+  category: "Legislature" | "Border" | "Elections" | "Tax & Spending" | "Energy" | "Education" | "Non-Political";
   title: string;
   dek: string;
   author: string;
