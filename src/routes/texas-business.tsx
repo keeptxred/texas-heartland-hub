@@ -26,47 +26,58 @@ export const Route = createFileRoute("/texas-business")({
   component: BusinessPage,
 });
 
+const BUSINESS_SLUGS: Record<string, string[]> = {
+  energy: [
+    "texas-energy-economy-overview",
+    "permian-energy",
+    "texas-energy-policy-guide",
+    "texas-grid-ercot-explained",
+  ],
+  jobs: [
+    "texas-energy-economy-overview",
+    "why-texas-has-no-income-tax",
+  ],
+  relocations: [
+    "why-texas-has-no-income-tax",
+    "what-local-governments-control",
+  ],
+  "real-estate": [
+    "texas-water-rights-explained",
+    "property-tax-relief-package",
+    "county-appraisal-districts-explained",
+    "texas-property-tax-guide",
+    "isd-tax-burdens",
+    "how-texas-counties-spend",
+  ],
+  policy: [
+    "texas-energy-policy-guide",
+    "property-tax-relief-package",
+    "what-local-governments-control",
+  ],
+};
+
+const ALL_BUSINESS_SLUGS = Array.from(new Set(Object.values(BUSINESS_SLUGS).flat()));
+
+// Per-page image overrides to guarantee no duplicate images on /texas-business.
+const IMAGE_OVERRIDES: Record<string, string> = {
+  "isd-tax-burdens": schoolbus,
+  "texas-energy-economy-overview": boardroom,
+  "how-texas-counties-spend": rotunda,
+  "what-local-governments-control": openmeeting,
+};
+
+const BUSINESS_SECTIONS = [
+  { id: "energy", title: "Energy", description: "Oil and gas, the ERCOT grid, renewables, and Permian production." },
+  { id: "jobs", title: "Jobs & Workforce", description: "Hiring trends, wages, and the Texas labor market." },
+  { id: "relocations", title: "Relocations", description: "Corporate HQ moves to Austin, Dallas-Fort Worth, and Houston." },
+  { id: "real-estate", title: "Real Estate", description: "Commercial development, housing supply, and property taxes." },
+  { id: "policy", title: "Policy", description: "Legislative changes that affect Texas businesses and small employers." },
+];
+
 function BusinessPage() {
   const { topic } = Route.useSearch();
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  const BUSINESS_SLUGS: Record<string, string[]> = {
-    energy: [
-      "texas-energy-economy-overview",
-      "permian-energy",
-      "texas-energy-policy-guide",
-      "texas-grid-ercot-explained",
-    ],
-    jobs: [
-      "texas-energy-economy-overview",
-      "why-texas-has-no-income-tax",
-    ],
-    relocations: [
-      "why-texas-has-no-income-tax",
-      "what-local-governments-control",
-    ],
-    "real-estate": [
-      "texas-water-rights-explained",
-      "property-tax-relief-package",
-      "county-appraisal-districts-explained",
-      "texas-property-tax-guide",
-      "isd-tax-burdens",
-      "how-texas-counties-spend",
-    ],
-    policy: [
-      "texas-energy-policy-guide",
-      "property-tax-relief-package",
-      "what-local-governments-control",
-    ],
-  };
-  const ALL_SLUGS = Array.from(new Set(Object.values(BUSINESS_SLUGS).flat()));
-  const activeSlugs = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_SLUGS;
-  // Per-page image overrides to guarantee no duplicate images on /texas-business
-  const IMAGE_OVERRIDES: Record<string, string> = {
-    "isd-tax-burdens": schoolbus,
-    "texas-energy-economy-overview": boardroom,
-    "how-texas-counties-spend": rotunda,
-    "what-local-governments-control": openmeeting,
-  };
+  const activeSlugs = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_BUSINESS_SLUGS;
   const businessArticles = activeSlugs
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
@@ -76,14 +87,7 @@ function BusinessPage() {
     (a) => a.slug,
     (a) => IMAGE_OVERRIDES[a.slug] ?? a.image,
   );
-  const SECTIONS = [
-    { id: "energy", title: "Energy", description: "Oil and gas, the ERCOT grid, renewables, and Permian production." },
-    { id: "jobs", title: "Jobs & Workforce", description: "Hiring trends, wages, and the Texas labor market." },
-    { id: "relocations", title: "Relocations", description: "Corporate HQ moves to Austin, Dallas-Fort Worth, and Houston." },
-    { id: "real-estate", title: "Real Estate", description: "Commercial development, housing supply, and property taxes." },
-    { id: "policy", title: "Policy", description: "Legislative changes that affect Texas businesses and small employers." },
-  ];
-  const activeSection = SECTIONS.find((s) => s.id === topic);
+  const activeSection = BUSINESS_SECTIONS.find((s) => s.id === topic);
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
@@ -114,7 +118,7 @@ function BusinessPage() {
       <section className="mb-10">
         <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground mb-4">What we cover</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          {SECTIONS.map((s) => (
+          {BUSINESS_SECTIONS.map((s) => (
             <Link
               key={s.id}
               to="/texas-business"
