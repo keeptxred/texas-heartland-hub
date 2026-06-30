@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ELECTION_RACES } from "@/data/articles";
 import { getArticlesByCategory } from "@/lib/articles-by-category";
 import ballot from "@/assets/ballot.jpg";
@@ -79,7 +79,12 @@ function ElectionsPage() {
         <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground pb-3 mb-8">Election News</h2>
         <div className="grid md:grid-cols-2 gap-8">
           {electionNews.map((a) => (
-            <article key={a.slug} className="grid grid-cols-[140px_1fr] gap-4 group">
+            <Link
+              key={a.slug}
+              to="/news/$slug"
+              params={{ slug: a.slug }}
+              className="grid grid-cols-[140px_1fr] gap-4 group cursor-pointer"
+            >
               <div className="aspect-square overflow-hidden bg-muted">
                 <img src={uniqImg.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover" />
               </div>
@@ -88,7 +93,7 @@ function ElectionsPage() {
                 <h3 className="font-serif font-bold mt-1 leading-snug group-hover:underline underline-offset-4">{a.title}</h3>
                 <p className="text-[11px] text-muted-foreground mt-2 italic">{a.date}</p>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </section>
