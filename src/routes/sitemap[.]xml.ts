@@ -7,6 +7,7 @@ const BASE_URL = "https://www.keeptxred.com";
 const ROUTES = [
   "/",
   "/news",
+  "/news/non-political",
   "/dashboard",
   "/keep-texas-red",
   "/texas-news",
