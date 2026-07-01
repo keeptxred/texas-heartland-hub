@@ -1,9 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 
 export type ProductVariant = {
+  id: number;
+  title: string;
+  price: number;
+  image: string | null;
   color: string;
-  image: string;
-  variant_ids: number[];
 };
 
 export type Product = {
