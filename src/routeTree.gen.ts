@@ -45,6 +45,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
+import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
@@ -236,6 +237,11 @@ const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
   path: '/$league',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const ShopProductIdRoute = ShopProductIdRouteImport.update({
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => ShopRoute,
+} as any)
 const NewsNonPoliticalRoute = NewsNonPoliticalRouteImport.update({
   id: '/non-political',
   path: '/non-political',
@@ -315,7 +321,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
-  '/shop': typeof ShopRoute
+  '/shop': typeof ShopRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -330,6 +336,7 @@ export interface FileRoutesByFullPath {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
+  '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news/': typeof NewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
@@ -362,7 +369,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
-  '/shop': typeof ShopRoute
+  '/shop': typeof ShopRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -376,6 +383,7 @@ export interface FileRoutesByTo {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
+  '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news': typeof NewsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
@@ -410,7 +418,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
-  '/shop': typeof ShopRoute
+  '/shop': typeof ShopRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -425,6 +433,7 @@ export interface FileRoutesById {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
+  '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news/': typeof NewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
@@ -475,6 +484,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/news/$slug'
     | '/news/non-political'
+    | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news/'
     | '/texas-sports/'
@@ -521,6 +531,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/news/$slug'
     | '/news/non-political'
+    | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news'
     | '/texas-sports'
@@ -569,6 +580,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/news/$slug'
     | '/news/non-political'
+    | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news/'
     | '/texas-sports/'
@@ -603,7 +615,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
-  ShopRoute: typeof ShopRoute
+  ShopRoute: typeof ShopRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
@@ -879,6 +891,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSportsLeagueRouteImport
       parentRoute: typeof TexasSportsRoute
     }
+    '/shop/$productId': {
+      id: '/shop/$productId'
+      path: '/$productId'
+      fullPath: '/shop/$productId'
+      preLoaderRoute: typeof ShopProductIdRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/news/non-political': {
       id: '/news/non-political'
       path: '/non-political'
@@ -966,6 +985,16 @@ const NewsRouteChildren: NewsRouteChildren = {
 
 const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
 
+interface ShopRouteChildren {
+  ShopProductIdRoute: typeof ShopProductIdRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopProductIdRoute: ShopProductIdRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
 interface TexasSportsRouteChildren {
   TexasSportsLeagueRoute: typeof TexasSportsLeagueRoute
   TexasSportsIndexRoute: typeof TexasSportsIndexRoute
@@ -1002,7 +1031,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
-  ShopRoute: ShopRoute,
+  ShopRoute: ShopRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
@@ -1026,3 +1055,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
