@@ -34,6 +34,7 @@ function ShopPage() {
   const { data } = useSuspenseQuery(productsQuery);
   const products = data?.products ?? [];
   const loadError = data?.error;
+  console.log("PRODUCT DATA:", products);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
 
