@@ -11,7 +11,7 @@ import podium from "@/assets/podium.jpg";
 import oil from "@/assets/article-oil.jpg";
 import classroom from "@/assets/article-classroom.jpg";
 import { assignUniqueImages } from "@/lib/dedupe-images";
-import { getArticleImage } from "@/lib/fallback-images";
+import { getDisplayTitle, resolveArticleImage } from "@/lib/seo-headline";
 
 export const Route = createFileRoute("/news/")({
   head: () => ({
@@ -81,7 +81,7 @@ function NewsPage() {
       assignUniqueImages(
         filteredLive,
         (a: DailyArticle) => a.slug,
-        (a: DailyArticle) => getArticleImage(a),
+        (a: DailyArticle) => resolveArticleImage(a),
         undefined,
         (a: DailyArticle) => a.image_hash,
       ),
@@ -122,15 +122,16 @@ function NewsPage() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         {useLive
           ? filteredLive.map((a: DailyArticle) => {
-              const img = liveImages.get(a.slug) ?? getArticleImage(a);
+              const img = liveImages.get(a.slug) ?? resolveArticleImage(a);
+              const title = getDisplayTitle(a);
               const isEvergreen = a.kind === "evergreen";
               const card = (
                 <>
                   <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
-                    <img src={img} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={img} alt={title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   </div>
                   <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{a.category}</span>
-                  <h2 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h2>
+                  <h2 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{title}</h2>
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{a.dek}</p>
                   <p className="mt-2 text-[11px] text-muted-foreground italic">
                     {a.source_name ? `Source: ${a.source_name}` : a.author} • {timeAgo(a.published_at)}
