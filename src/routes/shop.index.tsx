@@ -28,6 +28,77 @@ function formatPrice(p: Product) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: p.currency }).format(p.price);
 }
 
+function ProductCard({ p }: { p: Product }) {
+  // Group variants by color (ignoring size suffix like "Red / S" -> "Red")
+  const colorToImage = new Map<string, string>();
+  for (const v of p.variants ?? []) {
+    const color = (v.color || v.title?.split("/")[0] || "").trim();
+    if (!color) continue;
+    if (!colorToImage.has(color) && v.image) colorToImage.set(color, v.image);
+  }
+  const colorChips = colorToImage.size > 0
+    ? Array.from(colorToImage.keys())
+    : (p.colors ?? []);
+
+  // Each card owns its own selected color/variant state.
+  const [selectedColor, setSelectedColor] = useState<string | null>(null);
+  const displayImage =
+    (selectedColor && colorToImage.get(selectedColor)) || p.image;
+
+  return (
+    <Link
+      to="/shop/$productId"
+      params={{ productId: p.id }}
+      className="group text-left bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all"
+    >
+      <div className="aspect-square overflow-hidden bg-muted">
+        <img
+          key={displayImage}
+          src={displayImage}
+          alt={selectedColor ? `${p.title} in ${selectedColor}` : p.title}
+          loading="lazy"
+          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+        />
+      </div>
+      <div className="p-4">
+        <h3 className="font-display text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors">
+          {p.title}
+        </h3>
+        <div className="mt-2 flex items-center justify-between">
+          <span className="font-semibold">{formatPrice(p)}</span>
+          <span className="text-[11px] uppercase tracking-wider text-muted-foreground">View</span>
+        </div>
+        {colorChips.length > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1">
+            {colorChips.map((color) => {
+              const isSelected = color === selectedColor;
+              return (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setSelectedColor(isSelected ? null : color);
+                  }}
+                  aria-pressed={isSelected}
+                  className={`inline-block rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                    isSelected
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-secondary text-secondary-foreground hover:border-primary/60"
+                  }`}
+                >
+                  {color}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+}
+
 type CartItem = { product: Product; qty: number };
 
 function ShopPage() {
@@ -90,41 +161,7 @@ function ShopPage() {
         )}
         {products.length > 0 && (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((p) => (
-              <Link
-                key={p.id}
-                to="/shop/$productId"
-                params={{ productId: p.id }}
-                className="group text-left bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all"
-              >
-                <div className="aspect-square overflow-hidden bg-muted">
-                  <img
-                    src={p.image}
-                    alt={p.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-display text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-                    {p.title}
-                  </h3>
-                  <div className="mt-2 flex items-center justify-between">
-                    <span className="font-semibold">{formatPrice(p)}</span>
-                    <span className="text-[11px] uppercase tracking-wider text-muted-foreground">View</span>
-                  </div>
-                  {p.colors && p.colors.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {p.colors.map((color) => (
-                        <span key={color} className="inline-block rounded-full border border-border bg-secondary px-2 py-0.5 text-[11px] font-medium text-secondary-foreground">
-                          {color}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            ))}
+            {products.map((p) => <ProductCard key={p.id} p={p} />)}
           </div>
         )}
       </section>
