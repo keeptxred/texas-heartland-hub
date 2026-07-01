@@ -44,10 +44,26 @@ function variantIdFromSrc(src: string): number | null {
 function imagesForVariant(
   variantId: number,
   images: PrintifyImage[],
+  colorByVariantId: Map<number, string>,
 ): PrintifyImage[] {
-  // Prefer URL-encoded variant id (accurate). Fall back to variant_ids field.
+  // 1. Exact URL match: /mockup/{productId}/{variantId}/...
   const urlMatches = images.filter((img) => variantIdFromSrc(img.src) === variantId);
   if (urlMatches.length > 0) return urlMatches;
+
+  // 2. Color match: Printify often generates ONE mockup per color, encoded via
+  //    the URL's variant id (e.g. Black/L is used to render every Black size).
+  //    Match by color so all sizes of a color share the correct mockup.
+  const wantColor = colorByVariantId.get(variantId);
+  if (wantColor) {
+    const byColor = images.filter((img) => {
+      const mockupVariantId = variantIdFromSrc(img.src);
+      if (mockupVariantId == null) return false;
+      return colorByVariantId.get(mockupVariantId) === wantColor;
+    });
+    if (byColor.length > 0) return byColor;
+  }
+
+  // 3. Last-resort fallback: variant_ids listing (often includes ALL variants).
   return images.filter((img) => (img.variant_ids ?? []).includes(variantId));
 }
 
@@ -88,6 +104,13 @@ function buildVariants(
   color: string;
   is_enabled: boolean;
 }> {
+  const colorByVariantId = new Map<number, string>();
+  for (const v of variants) {
+    if (v.title) {
+      const c = v.title.split("/")[0].trim();
+      if (c) colorByVariantId.set(v.id, c);
+    }
+  }
   return (variants ?? [])
     // Only include variants the merchant actually assigned to this product.
     // Printify's product payload can echo blueprint/catalog variants that
@@ -96,7 +119,7 @@ function buildVariants(
     .map((v) => {
       const parts = v.title!.split("/").map((s) => s.trim());
       const color = parts[0] ?? "";
-      const matches = imagesForVariant(v.id, images ?? []);
+      const matches = imagesForVariant(v.id, images ?? [], colorByVariantId);
       const imgs = matches.map((m) => m.src);
       return {
         id: v.id,
