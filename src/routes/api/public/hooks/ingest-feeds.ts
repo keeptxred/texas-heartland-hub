@@ -337,9 +337,9 @@ async function handler() {
   try {
     const { data: dupes } = await supabaseAdmin
       .from("daily_articles")
-      .select("id, slug, source_url, updated_at, published_at")
+      .select("id, slug, source_url, published_at")
       .not("source_url", "is", null)
-      .order("updated_at", { ascending: false, nullsFirst: false })
+      .order("published_at", { ascending: false, nullsFirst: false })
       .limit(1000);
     if (dupes && dupes.length > 0) {
       const seen = new Set<string>();
