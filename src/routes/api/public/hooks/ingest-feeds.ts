@@ -86,6 +86,9 @@ HARD RULES:
 - Meta description (dek) MUST be <= 155 characters.
 - Title must be SEO-optimized, original, and not resemble the source headline.
 - 5–10 lowercase keywords, Texas-specific where possible.
+- MINIMUM LENGTH: summary + relevance + analysis combined MUST be at least 600 words of original prose. Expand context, background, and impact until the threshold is met.
+- TEXAS RELEVANCE IS REQUIRED — the "relevance" field must always name Texas or a specific Texas city/region and explain the local stake, even if the source is national.
+- Add a short original CONTEXT paragraph (history, prior action, comparable state precedent) inside the "summary" or as the first sentences of "relevance".
 - Output VALID JSON only matching the schema below.
 
 CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Business, Sports, Education, Non-Political. Use "Non-Political" for human-interest, animals, viral, culture, festivals, weather, travel, lifestyle, entertainment, science, and parks/wildlife stories. Do NOT use Education as a fallback — only true school/academic policy.
@@ -328,8 +331,35 @@ async function handler() {
     );
   }
 
+  // Canonical-URL dedupe: for any daily_articles rows sharing the same
+  // source_url, keep the most-recently-updated slug and drop the rest.
+  let dedupedCanonical = 0;
+  try {
+    const { data: dupes } = await supabaseAdmin
+      .from("daily_articles")
+      .select("id, slug, source_url, published_at")
+      .not("source_url", "is", null)
+      .order("published_at", { ascending: false, nullsFirst: false })
+      .limit(1000);
+    if (dupes && dupes.length > 0) {
+      const seen = new Set<string>();
+      const toDelete: string[] = [];
+      for (const row of dupes as { id: string; slug: string; source_url: string }[]) {
+        const key = row.source_url;
+        if (seen.has(key)) toDelete.push(row.id);
+        else seen.add(key);
+      }
+      if (toDelete.length > 0) {
+        await supabaseAdmin.from("daily_articles").delete().in("id", toDelete);
+        dedupedCanonical = toDelete.length;
+      }
+    }
+  } catch (e) {
+    console.error("canonical dedupe failed", e);
+  }
+
   return new Response(
-    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, diag }),
+    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, diag }),
     { headers: { "Content-Type": "application/json" } },
   );
 }
