@@ -60,8 +60,16 @@ function ProductPage() {
 
   const variants = product.variants ?? [];
 
-  // Resolve the best available image for a variant, tolerating shirts/sweatshirts
-  // where `image` may be null but `images[]` is populated.
+  // Canonical image getter — always recalculates from selectedVariant.
+  const getProductImage = (
+    prod: Product,
+    variant: (typeof variants)[number] | null,
+  ) =>
+    variant?.image ||
+    variant?.images?.[0] ||
+    prod.images?.[0] ||
+    prod.image;
+
   const variantImage = (v: (typeof variants)[number]) =>
     v.image || v.images?.[0] || null;
 
@@ -95,7 +103,7 @@ function ProductPage() {
       : null;
 
   const displayImage =
-    (selectedVariant && variantImage(selectedVariant)) ||
+    getProductImage(product, selectedVariant) ||
     (selectedColor && colorToImage.get(selectedColor)) ||
     product.image;
 
@@ -110,7 +118,7 @@ function ProductPage() {
       <section className="mx-auto max-w-[1200px] px-6 pb-16 grid gap-10 md:grid-cols-2">
         <div className="bg-muted rounded-2xl overflow-hidden aspect-square">
           <img
-            key={displayImage}
+            key={`${selectedColor ?? "default"}-${displayImage}`}
             src={displayImage}
             alt={selectedColor ? `${product.title} in ${selectedColor}` : product.title}
             className="h-full w-full object-cover"
