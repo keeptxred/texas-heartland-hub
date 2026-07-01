@@ -214,7 +214,11 @@ function _buildDefaultBody(a: Article): ArticleBody {
 }
 
 function ArticlePage() {
-  const { article, body, ctr } = Route.useLoaderData();
+  const { article, body, ctr } = Route.useLoaderData() as {
+    article: Article;
+    body: ArticleBody;
+    ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
+  };
 
   // A/B variant selection is deterministic per slug + ctr_score.
   const { headline: displayTitle, variant } = resolveDisplayHeadline({
