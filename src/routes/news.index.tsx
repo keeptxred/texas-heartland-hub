@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { filterByCategorySlug, CATEGORY_NAME_TO_SLUG, type CategoryName } from "@/lib/articles-by-category";
-import capitol from "@/assets/capitol.jpg";
 import border from "@/assets/border.jpg";
 import ballot from "@/assets/ballot.jpg";
 import suburb from "@/assets/suburb.jpg";
@@ -12,6 +11,7 @@ import podium from "@/assets/podium.jpg";
 import oil from "@/assets/article-oil.jpg";
 import classroom from "@/assets/article-classroom.jpg";
 import { assignUniqueImages } from "@/lib/dedupe-images";
+import { pickFallbackImage } from "@/lib/fallback-images";
 
 export const Route = createFileRoute("/news/")({
   head: () => ({
@@ -36,7 +36,6 @@ function catToSlug(cat: (typeof CATS)[number]): string {
 }
 
 const CATEGORY_IMAGES: Record<string, string> = {
-  Legislature: capitol,
   Border: border,
   Elections: ballot,
   "Tax & Spending": suburb,
@@ -80,7 +79,7 @@ function NewsPage() {
       assignUniqueImages(
         filteredLive,
         (a: DailyArticle) => a.slug,
-        (a: DailyArticle) => a.image_url || CATEGORY_IMAGES[a.category] || capitol,
+        (a: DailyArticle) => a.image_url || CATEGORY_IMAGES[a.category] || pickFallbackImage(a.slug),
         undefined,
         (a: DailyArticle) => a.image_hash,
       ),
@@ -121,7 +120,7 @@ function NewsPage() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         {useLive
           ? filteredLive.map((a: DailyArticle) => {
-              const img = liveImages.get(a.slug) ?? (a.image_url || CATEGORY_IMAGES[a.category] || capitol);
+              const img = liveImages.get(a.slug) ?? (a.image_url || CATEGORY_IMAGES[a.category] || pickFallbackImage(a.slug));
               const isEvergreen = a.kind === "evergreen";
               const card = (
                 <>
