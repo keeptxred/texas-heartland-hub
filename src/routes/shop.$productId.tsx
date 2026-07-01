@@ -97,7 +97,6 @@ function ProductPage() {
   const displayImage =
     (selectedVariant && variantImage(selectedVariant)) ||
     (selectedColor && colorToImage.get(selectedColor)) ||
-    product.images?.[0] ||
     product.image;
 
   return (
