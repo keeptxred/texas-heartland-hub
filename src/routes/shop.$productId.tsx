@@ -67,7 +67,6 @@ function ProductPage() {
   ) =>
     variant?.image ||
     variant?.images?.[0] ||
-    prod.images?.[0] ||
     prod.image;
 
   const variantImage = (v: (typeof variants)[number]) =>
