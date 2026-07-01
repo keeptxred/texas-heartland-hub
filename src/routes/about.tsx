@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import heroImg from "@/assets/article-rotunda.jpg";
+import heroImg from "@/assets/about-hero.png.asset.json";
 import { PageExpansion } from "@/components/page-expansion";
 import { SocialLinks } from "@/components/social-links";
 import { BrandIdentity } from "@/components/brand-identity";
@@ -28,7 +28,7 @@ function AboutPage() {
       </h1>
 
       <div className="aspect-video overflow-hidden my-10 bg-muted">
-        <img src={heroImg} alt="Texas State Capitol rotunda" loading="lazy" className="size-full object-cover" />
+        <img src={heroImg.url} alt="Keep Texas Red banner" loading="lazy" className="size-full object-cover" />
       </div>
 
       <div className="space-y-5 text-base leading-relaxed">
