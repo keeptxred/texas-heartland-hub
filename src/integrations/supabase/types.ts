@@ -22,6 +22,7 @@ export type Database = {
           category: string
           created_at: string
           dek: string
+          discover_category: string | null
           id: string
           image_category: string | null
           image_hash: string | null
@@ -33,6 +34,8 @@ export type Database = {
           kind: string
           published_at: string
           score: number
+          seo_headline: string | null
+          seo_keywords: string[] | null
           slug: string
           source_name: string | null
           source_url: string | null
@@ -45,6 +48,7 @@ export type Database = {
           category: string
           created_at?: string
           dek: string
+          discover_category?: string | null
           id?: string
           image_category?: string | null
           image_hash?: string | null
@@ -56,6 +60,8 @@ export type Database = {
           kind?: string
           published_at?: string
           score?: number
+          seo_headline?: string | null
+          seo_keywords?: string[] | null
           slug: string
           source_name?: string | null
           source_url?: string | null
@@ -68,6 +74,7 @@ export type Database = {
           category?: string
           created_at?: string
           dek?: string
+          discover_category?: string | null
           id?: string
           image_category?: string | null
           image_hash?: string | null
@@ -79,6 +86,8 @@ export type Database = {
           kind?: string
           published_at?: string
           score?: number
+          seo_headline?: string | null
+          seo_keywords?: string[] | null
           slug?: string
           source_name?: string | null
           source_url?: string | null

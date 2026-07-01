@@ -6,7 +6,7 @@ import { getEvergreenBySlug } from "@/lib/evergreen.functions";
 import { AdSlot } from "@/components/ad-slot";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
-import { getArticleImage } from "@/lib/fallback-images";
+import { resolveArticleImage } from "@/lib/seo-headline";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
@@ -25,19 +25,23 @@ export const Route = createFileRoute("/news/$slug")({
     const synth: Article = {
       slug: ever.slug,
       category: cat,
-      title: ever.title,
+      // Prefer AI-rewritten SEO/Discover headline; original stays in DB.
+      title: (ever.seo_headline ?? "").trim() || ever.title,
       dek: ever.dek,
       author: ever.author,
       date: new Date(ever.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
       publishedAt: ever.published_at,
-      image: getArticleImage({
+      image: resolveArticleImage({
         slug: ever.slug,
+        title: ever.title,
+        dek: ever.dek,
+        seo_headline: ever.seo_headline,
+        discover_category: ever.discover_category,
         image_url: ever.image_url,
         image_category: ever.image_category,
         category: ever.category,
-        title: ever.title,
-        dek: ever.dek,
         keywords: ever.keywords,
+        seo_keywords: ever.seo_keywords,
       }),
     };
     const rawBody: ArticleBody = {
