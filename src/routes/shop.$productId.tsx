@@ -59,17 +59,26 @@ function ProductPage() {
   const product = data.products.find((p) => p.id === productId)!;
 
   const variants = product.variants ?? [];
-  const initialColor = variants[0]?.color ?? product.colors?.[0] ?? null;
+  // Group variants by color, keeping the first variant that has an image per color.
+  const colorToImage = new Map<string, string>();
+  for (const v of variants) {
+    if (!v.color) continue;
+    if (!colorToImage.has(v.color) && v.image) {
+      colorToImage.set(v.color, v.image);
+    }
+  }
+  // Ensure colors without a variant image still appear as chips.
+  for (const v of variants) {
+    if (v.color && !colorToImage.has(v.color)) colorToImage.set(v.color, product.image);
+  }
+  const colorChips = colorToImage.size > 0
+    ? Array.from(colorToImage.keys())
+    : (product.colors ?? []);
+  const initialColor = colorChips[0] ?? null;
   const [selectedColor, setSelectedColor] = useState<string | null>(initialColor);
 
-  const selectedVariant = variants.find((v) => v.color === selectedColor);
-  // Fallback to product default image if no variant image exists.
-  const displayImage = selectedVariant?.image || product.image;
-
-  // Colors from either variant records (preferred) or the flat colors list.
-  const colorChips = variants.length > 0
-    ? variants.map((v) => v.color)
-    : (product.colors ?? []);
+  const displayImage =
+    (selectedColor && colorToImage.get(selectedColor)) || product.image;
 
   return (
     <div className="bg-background">
