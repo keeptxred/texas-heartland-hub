@@ -43,9 +43,6 @@ export const CATEGORY_IMAGE_POOLS: Record<ImageCategory, string[]> = {
   ],
 };
 
-// Legacy alias kept so callers still importing STOCK_FALLBACK_POOL keep working.
-export const STOCK_FALLBACK_POOL: string[] = CATEGORY_IMAGE_POOLS.default;
-
 const KEYWORD_MAP: Record<Exclude<ImageCategory, "default">, string[]> = {
   food: ["bbq", "barbecue", "chicken", "recipe", "grill", "food", "restaurant", "chef", "brisket", "taco"],
   sports: ["game", "team", "score", "nfl", "nba", "mlb", "cowboys", "texans", "astros", "rangers", "spurs", "mavericks", "rockets", "playoff", "coach", "quarterback"],
@@ -119,10 +116,4 @@ export function getArticleImage(article: ArticleImageInput): string {
   if (siteCat) return pickFromPool(article.slug, CATEGORY_IMAGE_POOLS[siteCat]);
 
   return pickFromPool(article.slug, CATEGORY_IMAGE_POOLS.default);
-}
-
-// Backwards-compatible thin fallback: same output as getArticleImage when only
-// a slug is available. Kept so older call sites don't break.
-export function pickFallbackImage(key?: string | null): string {
-  return pickFromPool((key || "article").trim(), CATEGORY_IMAGE_POOLS.default);
 }

@@ -15,7 +15,6 @@ export type Article = {
   publishedAt: string;
 };
 
-import capitol from "@/assets/capitol.jpg";
 import border from "@/assets/border.jpg";
 import ballot from "@/assets/ballot.jpg";
 import suburb from "@/assets/suburb.jpg";
@@ -53,7 +52,7 @@ export const ARTICLES: Article[] = [
     author: "Staff Reporter",
     date: "2 hours ago",
     publishedAt: "2026-06-26T10:00:00",
-    image: capitol,
+    image: taxbill,
     featured: true,
   },
   {
@@ -294,7 +293,7 @@ export const ARTICLES: Article[] = [
     author: "Civics Desk",
     date: "1 month ago",
     publishedAt: "2026-05-27T23:00:00",
-    image: capitol,
+    image: rotunda,
   },
   {
     slug: "how-texas-counties-spend",
