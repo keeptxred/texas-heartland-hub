@@ -66,7 +66,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
     });
     const { data, error } = await supabase
       .from("products")
-      .select("id,title,price,currency,image_url,product_url,description,tags")
+      .select("id,title,price,currency,image_url,product_url,description,tags,colors")
       .eq("is_active", true)
       .order("synced_at", { ascending: false })
       .limit(120);
