@@ -115,6 +115,7 @@ export type Database = {
       }
       products: {
         Row: {
+          colors: string[]
           created_at: string
           currency: string
           description: string
@@ -130,6 +131,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          colors?: string[]
           created_at?: string
           currency?: string
           description?: string
@@ -145,6 +147,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          colors?: string[]
           created_at?: string
           currency?: string
           description?: string

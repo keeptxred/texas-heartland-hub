@@ -4,7 +4,7 @@ const PRINTIFY_BASE = "https://api.printify.com/v1";
 
 type PrintifyShop = { id: number; title: string };
 type PrintifyImage = { src: string; is_default?: boolean; position?: string };
-type PrintifyVariant = { price: number; is_enabled: boolean; is_default?: boolean };
+type PrintifyVariant = { title?: string; price: number; is_enabled: boolean; is_default?: boolean };
 type PrintifyProduct = {
   id: string;
   title: string;
@@ -19,6 +19,18 @@ type PrintifyProduct = {
 
 function stripHtml(s: string): string {
   return (s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function extractColors(variants: PrintifyVariant[]): string[] {
+  const colors = new Set<string>();
+  for (const v of variants) {
+    if (v.title) {
+      // Printify usually formats like: "White / S" or "Red / M"
+      const color = v.title.split("/")[0].trim();
+      if (color) colors.add(color);
+    }
+  }
+  return Array.from(colors);
 }
 
 async function resolveShopId(token: string, requested: string): Promise<string> {
@@ -55,6 +67,7 @@ function mapProduct(p: PrintifyProduct, shopId: string) {
     image_url: image,
     product_url: url,
     tags: p.tags ?? [],
+    colors: extractColors(enabled),
     source: "printify",
     is_active: (p.visible ?? true) && enabled.length > 0 && Boolean(image),
     synced_at: new Date().toISOString(),
