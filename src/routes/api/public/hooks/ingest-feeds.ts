@@ -476,7 +476,7 @@ async function handler() {
 
       const resolvedImageUrl = getArticleImage({
         slug: row.slug,
-        image_url: row.image_url ?? null,
+        image_url: (anyRow.image_url as string | null | undefined) ?? null,
         image_category: (anyRow.image_category as string | null) ?? null,
         category: row.category,
         title: variants.a,
@@ -490,7 +490,7 @@ async function handler() {
         seo_headline: (anyRow.seo_headline as string | null) ?? null,
         discover_category: (anyRow.discover_category as string | null) ?? null,
         image_category: (anyRow.image_category as string | null) ?? null,
-        image_url: row.image_url ?? null,
+        image_url: (anyRow.image_url as string | null | undefined) ?? null,
         category: row.category,
         keywords: row.keywords ?? null,
         seo_keywords: (anyRow.seo_keywords as string[] | null) ?? null,
