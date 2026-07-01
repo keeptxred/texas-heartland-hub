@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import heroImg from "@/assets/article-rotunda.jpg";
+import heroImg from "@/assets/about-hero.png.asset.json";
 import { PageExpansion } from "@/components/page-expansion";
 import { SocialLinks } from "@/components/social-links";
 import { BrandIdentity } from "@/components/brand-identity";
