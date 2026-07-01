@@ -89,7 +89,10 @@ function buildVariants(
   is_enabled: boolean;
 }> {
   return (variants ?? [])
-    .filter((v) => v.title)
+    // Only include variants the merchant actually assigned to this product.
+    // Printify's product payload can echo blueprint/catalog variants that
+    // are not enabled on the listing — those must never reach the UI.
+    .filter((v) => v.is_enabled && v.title)
     .map((v) => {
       const parts = v.title!.split("/").map((s) => s.trim());
       const color = parts[0] ?? "";
