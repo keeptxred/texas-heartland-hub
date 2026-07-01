@@ -50,6 +50,7 @@ import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
+import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
 import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
 import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
@@ -262,6 +263,11 @@ const ApiPublicHooksSyncPrintifyRoute =
     path: '/api/public/hooks/sync-printify',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksListShopsRoute = ApiPublicHooksListShopsRouteImport.update({
+  id: '/api/public/hooks/list-shops',
+  path: '/api/public/hooks/list-shops',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksIngestFeedsRoute =
   ApiPublicHooksIngestFeedsRouteImport.update({
     id: '/api/public/hooks/ingest-feeds',
@@ -331,6 +337,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
 }
@@ -376,6 +383,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
 }
@@ -424,6 +432,7 @@ export interface FileRoutesById {
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
 }
@@ -473,6 +482,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
   fileRoutesByTo: FileRoutesByTo
@@ -518,6 +528,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
   id:
@@ -565,6 +576,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
   fileRoutesById: FileRoutesById
@@ -608,6 +620,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
   ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
   ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
+  ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
   ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
 }
@@ -901,6 +914,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncPrintifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/list-shops': {
+      id: '/api/public/hooks/list-shops'
+      path: '/api/public/hooks/list-shops'
+      fullPath: '/api/public/hooks/list-shops'
+      preLoaderRoute: typeof ApiPublicHooksListShopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/ingest-feeds': {
       id: '/api/public/hooks/ingest-feeds'
       path: '/api/public/hooks/ingest-feeds'
@@ -999,6 +1019,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
   ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
   ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
+  ApiPublicHooksListShopsRoute: ApiPublicHooksListShopsRoute,
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
   ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
 }
