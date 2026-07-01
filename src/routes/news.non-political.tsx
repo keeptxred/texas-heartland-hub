@@ -4,7 +4,6 @@ import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions"
 import { getArticlesByCategory, filterByCategorySlug } from "@/lib/articles-by-category";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { getArticleImage } from "@/lib/fallback-images";
-import giraffe from "@/assets/article-giraffe.jpg";
 
 const CATEGORY_SLUG = "non-political";
 const CATEGORY_NAME = "Non-Political";
