@@ -11,7 +11,7 @@ import podium from "@/assets/podium.jpg";
 import oil from "@/assets/article-oil.jpg";
 import classroom from "@/assets/article-classroom.jpg";
 import { assignUniqueImages } from "@/lib/dedupe-images";
-import { getDisplayTitle, resolveArticleImage } from "@/lib/seo-headline";
+import { resolveArticleImage } from "@/lib/seo-headline";
 import { resolveDisplayHeadline } from "@/lib/ctr-score";
 
 export const Route = createFileRoute("/news/")({
