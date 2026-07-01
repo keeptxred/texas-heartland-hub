@@ -59,30 +59,23 @@ function pickPrimaryImage(images: PrintifyImage[]): string {
 }
 
 // Build per-color variant image map for the product detail page.
-// Returns [{ color, image, variantIds }] with one entry per distinct color.
-function buildColorVariants(
+// Returns one entry per enabled variant with { id, title, price, image, color }.
+function buildVariants(
   variants: PrintifyVariant[],
   images: PrintifyImage[],
-): Array<{ color: string; image: string; variant_ids: number[] }> {
+): Array<{ id: number; title: string; price: number; image: string | null; color: string }> {
   const enabled = variants.filter((v) => v.is_enabled && v.title);
-  const byColor = new Map<string, number[]>();
-  for (const v of enabled) {
+  return enabled.map((v) => {
     const color = v.title!.split("/")[0].trim();
-    if (!color) continue;
-    const list = byColor.get(color) ?? [];
-    list.push(v.id);
-    byColor.set(color, list);
-  }
-  const out: Array<{ color: string; image: string; variant_ids: number[] }> = [];
-  for (const [color, ids] of byColor.entries()) {
-    const idSet = new Set(ids);
-    const match = images.find((img) =>
-      (img.variant_ids ?? []).some((vid) => idSet.has(vid)),
-    );
-    if (!match) continue;
-    out.push({ color, image: match.src, variant_ids: ids });
-  }
-  return out;
+    const match = images.find((img) => (img.variant_ids ?? []).includes(v.id));
+    return {
+      id: v.id,
+      title: v.title!,
+      price: Math.round(v.price) / 100,
+      image: match?.src ?? null,
+      color,
+    };
+  });
 }
 
 async function resolveShopId(token: string, requested: string): Promise<string> {
@@ -103,7 +96,7 @@ function mapProduct(p: PrintifyProduct, shopId: string) {
   const chosen = enabled.find((v) => v.is_default) ?? enabled[0];
   const priceCents = chosen?.price ?? 0;
   const image = pickPrimaryImage(p.images ?? []);
-  const variants = buildColorVariants(p.variants ?? [], p.images ?? []);
+  const variants = buildVariants(p.variants ?? [], p.images ?? []);
   const handle = p.external?.handle;
   const url = handle
     ? handle.startsWith("http")
