@@ -3,7 +3,6 @@
 // image is already used on the same page, it swaps in the next available
 // fallback from `pool`. Cheap, render-time only — no image regeneration.
 
-import capitol from "@/assets/capitol.jpg";
 import border from "@/assets/border.jpg";
 import ballot from "@/assets/ballot.jpg";
 import suburb from "@/assets/suburb.jpg";
@@ -30,11 +29,13 @@ import salestax from "@/assets/article-salestax.jpg";
 import boardroom from "@/assets/article-boardroom.jpg";
 import openmeeting from "@/assets/article-openmeeting.jpg";
 import carry from "@/assets/article-carry.jpg";
+import { STOCK_FALLBACK_POOL } from "@/lib/fallback-images";
 
 export const DEFAULT_IMAGE_POOL: string[] = [
-  capitol, border, ballot, suburb, podium, oil, classroom, rotunda, gavel,
+  border, ballot, suburb, podium, oil, classroom, rotunda, gavel,
   courthouse, rio, trooper, wind, grid, water, schoolbus, library, pollingplace,
   voterreg, ballot2, governor, ag, taxbill, salestax, boardroom, openmeeting, carry,
+  ...STOCK_FALLBACK_POOL,
 ];
 
 // Stable index from a string so the same slug always falls back to the same
