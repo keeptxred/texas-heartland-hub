@@ -12,6 +12,7 @@ import oil from "@/assets/article-oil.jpg";
 import classroom from "@/assets/article-classroom.jpg";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { getDisplayTitle, resolveArticleImage } from "@/lib/seo-headline";
+import { resolveDisplayHeadline } from "@/lib/ctr-score";
 
 export const Route = createFileRoute("/news/")({
   head: () => ({
@@ -123,7 +124,7 @@ function NewsPage() {
         {useLive
           ? filteredLive.map((a: DailyArticle) => {
               const img = liveImages.get(a.slug) ?? resolveArticleImage(a);
-              const title = getDisplayTitle(a);
+              const { headline: title } = resolveDisplayHeadline(a);
               const isEvergreen = a.kind === "evergreen";
               const card = (
                 <>
