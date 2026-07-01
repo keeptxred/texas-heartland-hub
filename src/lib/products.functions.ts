@@ -92,6 +92,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       url: r.product_url,
       description: r.description ?? "",
       tags: r.tags ?? [],
+      colors: r.colors ?? [],
     }));
     return { products };
   } catch {
