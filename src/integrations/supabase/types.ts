@@ -129,6 +129,7 @@ export type Database = {
           tags: string[]
           title: string
           updated_at: string
+          variants: Json
         }
         Insert: {
           colors?: string[]
@@ -145,6 +146,7 @@ export type Database = {
           tags?: string[]
           title: string
           updated_at?: string
+          variants?: Json
         }
         Update: {
           colors?: string[]
@@ -161,6 +163,7 @@ export type Database = {
           tags?: string[]
           title?: string
           updated_at?: string
+          variants?: Json
         }
         Relationships: []
       }
