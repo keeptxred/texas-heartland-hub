@@ -1,5 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 
+export type ProductVariant = {
+  color: string;
+  image: string;
+  variant_ids: number[];
+};
+
 export type Product = {
   id: string;
   title: string;
@@ -10,6 +16,7 @@ export type Product = {
   description: string;
   tags?: string[];
   colors?: string[];
+  variants?: ProductVariant[];
 };
 
 const MOCK_PRODUCTS: Product[] = [
@@ -66,7 +73,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
     });
     const { data, error } = await supabase
       .from("products")
-      .select("id,title,price,currency,image_url,product_url,description,tags,colors")
+      .select("id,title,price,currency,image_url,product_url,description,tags,colors,variants")
       .eq("is_active", true)
       .order("synced_at", { ascending: false })
       .limit(120);
@@ -83,6 +90,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       description: string;
       tags: string[] | null;
       colors: string[] | null;
+      variants: ProductVariant[] | null;
     }>).map((r) => ({
       id: r.id,
       title: r.title,
@@ -93,6 +101,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       description: r.description ?? "",
       tags: r.tags ?? [],
       colors: r.colors ?? [],
+      variants: Array.isArray(r.variants) ? r.variants : [],
     }));
     return { products };
   } catch {
