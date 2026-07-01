@@ -86,6 +86,9 @@ HARD RULES:
 - Meta description (dek) MUST be <= 155 characters.
 - Title must be SEO-optimized, original, and not resemble the source headline.
 - 5–10 lowercase keywords, Texas-specific where possible.
+- MINIMUM LENGTH: summary + relevance + analysis combined MUST be at least 600 words of original prose. Expand context, background, and impact until the threshold is met.
+- TEXAS RELEVANCE IS REQUIRED — the "relevance" field must always name Texas or a specific Texas city/region and explain the local stake, even if the source is national.
+- Add a short original CONTEXT paragraph (history, prior action, comparable state precedent) inside the "summary" or as the first sentences of "relevance".
 - Output VALID JSON only matching the schema below.
 
 CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Business, Sports, Education, Non-Political. Use "Non-Political" for human-interest, animals, viral, culture, festivals, weather, travel, lifestyle, entertainment, science, and parks/wildlife stories. Do NOT use Education as a fallback — only true school/academic policy.
