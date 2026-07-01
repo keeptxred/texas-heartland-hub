@@ -2,13 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
-import { getEtsyListings, type EtsyProduct } from "@/lib/etsy.functions";
+import { getProducts, type Product } from "@/lib/products.functions";
 
-type Product = EtsyProduct;
-
-const etsyQuery = queryOptions({
-  queryKey: ["etsy", "listings"],
-  queryFn: () => getEtsyListings(),
+const productsQuery = queryOptions({
+  queryKey: ["products", "listings"],
+  queryFn: () => getProducts(),
   staleTime: 5 * 60 * 1000,
 });
 
@@ -22,7 +20,7 @@ export const Route = createFileRoute("/shop")({
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop` }],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(etsyQuery),
+  loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
   component: ShopPage,
 });
 
@@ -33,7 +31,7 @@ function formatPrice(p: Product) {
 type CartItem = { product: Product; qty: number };
 
 function ShopPage() {
-  const { data, isLoading, isError } = useQuery(etsyQuery);
+  const { data, isLoading, isError } = useQuery(productsQuery);
   const products = data?.products ?? [];
   const loadError = data?.error;
   const [active, setActive] = useState<Product | null>(null);
