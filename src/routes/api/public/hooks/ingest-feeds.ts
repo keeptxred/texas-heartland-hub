@@ -331,8 +331,35 @@ async function handler() {
     );
   }
 
+  // Canonical-URL dedupe: for any daily_articles rows sharing the same
+  // source_url, keep the most-recently-updated slug and drop the rest.
+  let dedupedCanonical = 0;
+  try {
+    const { data: dupes } = await supabaseAdmin
+      .from("daily_articles")
+      .select("id, slug, source_url, updated_at, published_at")
+      .not("source_url", "is", null)
+      .order("updated_at", { ascending: false, nullsFirst: false })
+      .limit(1000);
+    if (dupes && dupes.length > 0) {
+      const seen = new Set<string>();
+      const toDelete: string[] = [];
+      for (const row of dupes as { id: string; slug: string; source_url: string }[]) {
+        const key = row.source_url;
+        if (seen.has(key)) toDelete.push(row.id);
+        else seen.add(key);
+      }
+      if (toDelete.length > 0) {
+        await supabaseAdmin.from("daily_articles").delete().in("id", toDelete);
+        dedupedCanonical = toDelete.length;
+      }
+    }
+  } catch (e) {
+    console.error("canonical dedupe failed", e);
+  }
+
   return new Response(
-    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, diag }),
+    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, diag }),
     { headers: { "Content-Type": "application/json" } },
   );
 }
