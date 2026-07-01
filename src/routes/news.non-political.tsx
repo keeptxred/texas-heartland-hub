@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { getArticlesByCategory, filterByCategorySlug } from "@/lib/articles-by-category";
 import { assignUniqueImages } from "@/lib/dedupe-images";
+import { getArticleImage } from "@/lib/fallback-images";
 import giraffe from "@/assets/article-giraffe.jpg";
 
 const CATEGORY_SLUG = "non-political";
@@ -47,7 +48,7 @@ function NonPoliticalPage() {
       assignUniqueImages(
         live,
         (a: DailyArticle) => a.slug,
-        (a: DailyArticle) => a.image_url || giraffe,
+        (a: DailyArticle) => getArticleImage(a),
         undefined,
         (a: DailyArticle) => a.image_hash,
       ),
@@ -74,7 +75,7 @@ function NonPoliticalPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {useLive
             ? live.map((a: DailyArticle) => {
-                const img = liveImages.get(a.slug) ?? (a.image_url || giraffe);
+                const img = liveImages.get(a.slug) ?? getArticleImage(a);
                 return (
                   <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group cursor-pointer block">
                     <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
