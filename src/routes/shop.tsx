@@ -137,6 +137,15 @@ function ShopPage() {
                   <span className="font-semibold">{formatPrice(p)}</span>
                   <span className="text-[11px] uppercase tracking-wider text-muted-foreground">View</span>
                 </div>
+                {p.colors && p.colors.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {p.colors.map((color) => (
+                      <span key={color} className="inline-block rounded-full border border-border bg-secondary px-2 py-0.5 text-[11px] font-medium text-secondary-foreground">
+                        {color}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </button>
           ))}
