@@ -1,6 +1,55 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 
+// Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
+// src/lib/fallback-images.ts. AI batch classifier tags each new article with
+// one of these so the render layer can pick a matching free stock photo.
+const IMAGE_BUCKETS = ["food", "sports", "politics", "business", "weather", "technology", "default"] as const;
+type ImageBucket = (typeof IMAGE_BUCKETS)[number];
+
+/**
+ * ONE Gemini call per ingestion batch. Sends only {id, title, dek} — never the
+ * full body — and asks for a JSON map of id -> image bucket. Cached in
+ * daily_articles.image_category so we never re-classify the same article.
+ */
+async function classifyImageBuckets(
+  rows: { slug: string; title: string; dek: string }[],
+  lovableApiKey: string,
+): Promise<Record<string, ImageBucket>> {
+  if (rows.length === 0) return {};
+  const payload = rows.map((r) => ({ id: r.slug, title: r.title.slice(0, 180), summary: (r.dek || "").slice(0, 200) }));
+  try {
+    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+      body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Classify each article into ONE image category: food, sports, politics, business, weather, technology, default. Use 'default' when nothing fits. Return JSON object mapping id -> category. No prose.",
+          },
+          { role: "user", content: JSON.stringify(payload) },
+        ],
+        response_format: { type: "json_object" },
+      }),
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!r.ok) return {};
+    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Record<string, string>;
+    const out: Record<string, ImageBucket> = {};
+    for (const [id, cat] of Object.entries(parsed)) {
+      const c = String(cat).toLowerCase().trim() as ImageBucket;
+      if ((IMAGE_BUCKETS as readonly string[]).includes(c)) out[id] = c;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
 const SOURCES: { name: string; url: string; category?: string }[] = [
   { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss" },
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml" },
@@ -284,6 +333,17 @@ async function handler() {
       ? await Promise.all(fresh.map((it) => rewriteItem(it, lovableApiKey)))
       : fresh.map(() => null);
     const articleRows = fresh.map((it, i) => buildArticleRow(it, rewrites[i]));
+
+    // ONE AI call classifies the whole batch into image buckets (cached in DB).
+    const imageMap = lovableApiKey
+      ? await classifyImageBuckets(
+          articleRows.map((r) => ({ slug: r.slug, title: r.title, dek: r.dek })),
+          lovableApiKey,
+        )
+      : {};
+    for (const row of articleRows) {
+      (row as { image_category?: string | null }).image_category = imageMap[row.slug] ?? null;
+    }
 
     const { error: artErr, count: artCount } = await supabaseAdmin
       .from("daily_articles")
