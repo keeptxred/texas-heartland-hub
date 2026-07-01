@@ -12,6 +12,7 @@ export const Route = createFileRoute("/about")({
       { property: "og:title", content: "About Keep TX Red | Mission, Editorial Standards & AI Disclosure" },
       { property: "og:description", content: "Mission, editorial standards, AI disclosure, corrections policy, and contact information for Keep TX Red." },
       { property: "og:url", content: "/about" },
+      { property: "og:image", content: "https://www.keeptxred.com" + heroImg.url },
     ],
     links: [{ rel: "canonical", href: "/about" }],
   }),
