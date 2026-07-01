@@ -113,6 +113,54 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          created_at: string
+          currency: string
+          description: string
+          id: string
+          image_url: string
+          is_active: boolean
+          price: number
+          product_url: string
+          source: string
+          synced_at: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          description?: string
+          id: string
+          image_url?: string
+          is_active?: boolean
+          price?: number
+          product_url?: string
+          source?: string
+          synced_at?: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          description?: string
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          price?: number
+          product_url?: string
+          source?: string
+          synced_at?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       texas_news_feed: {
         Row: {
           created_at: string
