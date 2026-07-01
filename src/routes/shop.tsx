@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { useQuery, queryOptions } from "@tanstack/react-query";
+import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product } from "@/lib/products.functions";
 
@@ -31,7 +31,7 @@ function formatPrice(p: Product) {
 type CartItem = { product: Product; qty: number };
 
 function ShopPage() {
-  const { data, isLoading, isError } = useQuery(productsQuery);
+  const { data } = useSuspenseQuery(productsQuery);
   const products = data?.products ?? [];
   const loadError = data?.error;
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -81,20 +81,7 @@ function ShopPage() {
       </section>
 
       <section className="mx-auto max-w-[1200px] px-6 py-12">
-        {isLoading && (
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-card border border-border rounded-xl overflow-hidden animate-pulse">
-                <div className="aspect-square bg-muted" />
-                <div className="p-4 space-y-2">
-                  <div className="h-4 bg-muted rounded w-3/4" />
-                  <div className="h-4 bg-muted rounded w-1/3" />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {!isLoading && (isError || loadError || products.length === 0) && (
+        {(loadError || products.length === 0) && (
           <div className="text-center py-20">
             <h2 className="font-display text-2xl mb-2">Store is restocking</h2>
             <p className="text-muted-foreground">
@@ -102,7 +89,7 @@ function ShopPage() {
             </p>
           </div>
         )}
-        {!isLoading && products.length > 0 && (
+        {products.length > 0 && (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((p) => (
             <Link
