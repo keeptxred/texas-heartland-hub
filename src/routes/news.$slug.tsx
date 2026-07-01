@@ -3,10 +3,10 @@ import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/arti
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
 import { getEvergreenBySlug } from "@/lib/evergreen.functions";
-import capitol from "@/assets/capitol.jpg";
 import { AdSlot } from "@/components/ad-slot";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
+import { pickFallbackImage } from "@/lib/fallback-images";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/news/$slug")({
       author: ever.author,
       date: new Date(ever.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
       publishedAt: ever.published_at,
-      image: ever.image_url ?? capitol,
+      image: ever.image_url ?? pickFallbackImage(ever.slug),
     };
     const rawBody: ArticleBody = {
       updated: ever.body.updated,
