@@ -63,19 +63,34 @@ function pickPrimaryImage(images: PrintifyImage[]): string {
 function buildVariants(
   variants: PrintifyVariant[],
   images: PrintifyImage[],
-): Array<{ id: number; title: string; price: number; image: string | null; color: string }> {
-  const enabled = variants.filter((v) => v.is_enabled && v.title);
-  return enabled.map((v) => {
-    const color = v.title!.split("/")[0].trim();
-    const match = images.find((img) => (img.variant_ids ?? []).includes(v.id));
-    return {
-      id: v.id,
-      title: v.title!,
-      price: Math.round(v.price) / 100,
-      image: match?.src ?? null,
-      color,
-    };
-  });
+): Array<{
+  id: number;
+  title: string;
+  price: number;
+  image: string | null;
+  images: string[];
+  color: string;
+  is_enabled: boolean;
+}> {
+  return (variants ?? [])
+    .filter((v) => v.title)
+    .map((v) => {
+      const parts = v.title!.split("/").map((s) => s.trim());
+      const color = parts[0] ?? "";
+      const matches = (images ?? []).filter((img) =>
+        (img.variant_ids ?? []).includes(v.id),
+      );
+      const imgs = matches.map((m) => m.src);
+      return {
+        id: v.id,
+        title: v.title!,
+        price: Math.round(v.price) / 100,
+        image: imgs[0] ?? null,
+        images: imgs,
+        color,
+        is_enabled: v.is_enabled,
+      };
+    });
 }
 
 async function resolveShopId(token: string, requested: string): Promise<string> {
