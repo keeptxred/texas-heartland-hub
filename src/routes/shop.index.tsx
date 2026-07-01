@@ -29,6 +29,17 @@ function formatPrice(p: Product) {
 }
 
 function ProductCard({ p }: { p: Product }) {
+  // DEBUG: log product + variant data availability
+  console.log("[SHOP DEBUG] product", {
+    id: p.id,
+    title: p.title,
+    image: p.image,
+    variants: p.variants,
+  });
+  (p.variants ?? []).forEach((v) => {
+    console.log("[SHOP DEBUG] variant", { title: v.title, image: v.image });
+  });
+
   // Group variants by color (ignoring size suffix like "Red / S" -> "Red")
   const colorToImage = new Map<string, string>();
   for (const v of p.variants ?? []) {
@@ -94,6 +105,12 @@ function ProductCard({ p }: { p: Product }) {
             })}
           </div>
         )}
+        <div className="mt-2 rounded-md border border-dashed border-border bg-muted/40 px-2 py-1 text-[10px] font-mono text-muted-foreground">
+          <div>variants: {(p.variants ?? []).length}</div>
+          <div>
+            variant images: {String((p.variants ?? []).some((v) => Boolean(v.image)))}
+          </div>
+        </div>
       </div>
     </Link>
   );
