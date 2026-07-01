@@ -11,6 +11,7 @@ export type DailyArticle = {
   source_url: string | null;
   image_url: string | null;
   image_hash: string | null;
+  image_category: string | null;
   published_at: string;
   kind?: string | null;
   score?: number | null;
@@ -28,7 +29,7 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
 
   const { data, error } = await supabase
     .from("daily_articles")
-    .select("slug,category,title,dek,author,source_name,source_url,image_url,image_hash,published_at,kind,score,is_breaking")
+    .select("slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,published_at,kind,score,is_breaking")
     .order("published_at", { ascending: false })
     .limit(30);
 
@@ -60,6 +61,7 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
     source_url: `/news/${row.internal_slug}`,
     image_url: null,
     image_hash: null,
+    image_category: null,
     published_at: row.pub_date,
     kind: "ingested",
     score: 100,
