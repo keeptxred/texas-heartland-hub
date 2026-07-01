@@ -23,6 +23,7 @@ export type Database = {
           created_at: string
           dek: string
           id: string
+          image_category: string | null
           image_hash: string | null
           image_url: string | null
           internal_url: string
@@ -45,6 +46,7 @@ export type Database = {
           created_at?: string
           dek: string
           id?: string
+          image_category?: string | null
           image_hash?: string | null
           image_url?: string | null
           internal_url: string
@@ -67,6 +69,7 @@ export type Database = {
           created_at?: string
           dek?: string
           id?: string
+          image_category?: string | null
           image_hash?: string | null
           image_url?: string | null
           internal_url?: string
