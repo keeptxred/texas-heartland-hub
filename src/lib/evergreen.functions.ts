@@ -23,6 +23,7 @@ export type EvergreenArticle = {
   dek: string;
   author: string;
   image_url: string | null;
+  image_category: string | null;
   published_at: string;
   keywords: string[] | null;
   body: EvergreenBody | null;
@@ -42,7 +43,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
     if (!supabase) return null;
     const { data: row, error } = await supabase
       .from("daily_articles")
-      .select("slug,category,title,dek,author,image_url,published_at,keywords,body_json,kind")
+      .select("slug,category,title,dek,author,image_url,image_category,published_at,keywords,body_json,kind")
       .eq("slug", data.slug)
       .in("kind", ["evergreen", "ingested", "sports-nfl", "sports-mlb", "sports-nba"])
       .maybeSingle();
@@ -54,6 +55,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       dek: row.dek,
       author: row.author ?? "Keep TX Red Editorial Team",
       image_url: row.image_url,
+      image_category: (row as { image_category?: string | null }).image_category ?? null,
       published_at: row.published_at,
       keywords: (row as { keywords?: string[] | null }).keywords ?? null,
       body: (row as { body_json?: EvergreenBody | null }).body_json ?? null,
