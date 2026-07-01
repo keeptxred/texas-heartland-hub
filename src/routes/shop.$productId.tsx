@@ -59,26 +59,45 @@ function ProductPage() {
   const product = data.products.find((p) => p.id === productId)!;
 
   const variants = product.variants ?? [];
-  // Group variants by color, keeping the first variant that has an image per color.
+
+  // Resolve the best available image for a variant, tolerating shirts/sweatshirts
+  // where `image` may be null but `images[]` is populated.
+  const variantImage = (v: (typeof variants)[number]) =>
+    v.image || v.images?.[0] || null;
+
+  // Group variants by color. Scan ALL variants for each color (not just the
+  // first) so we still find an image when the first size variant lacks one.
   const colorToImage = new Map<string, string>();
+  const colorOrder: string[] = [];
   for (const v of variants) {
     if (!v.color) continue;
-    if (!colorToImage.has(v.color) && v.image) {
-      colorToImage.set(v.color, v.image);
+    if (!colorOrder.includes(v.color)) colorOrder.push(v.color);
+    const img = variantImage(v);
+    if (img && !colorToImage.has(v.color)) {
+      colorToImage.set(v.color, img);
     }
   }
-  // Ensure colors without a variant image still appear as chips.
-  for (const v of variants) {
-    if (v.color && !colorToImage.has(v.color)) colorToImage.set(v.color, product.image);
+  // Ensure colors without any variant image still appear as chips.
+  for (const color of colorOrder) {
+    if (!colorToImage.has(color)) colorToImage.set(color, product.image);
   }
-  const colorChips = colorToImage.size > 0
-    ? Array.from(colorToImage.keys())
-    : (product.colors ?? []);
+
+  const colorChips = colorOrder.length > 0 ? colorOrder : (product.colors ?? []);
   const initialColor = colorChips[0] ?? null;
   const [selectedColor, setSelectedColor] = useState<string | null>(initialColor);
 
+  // Recomputes on every render, so it always reflects the current selectedColor.
+  const selectedVariant =
+    selectedColor != null
+      ? variants.find((v) => v.color === selectedColor && variantImage(v)) ??
+        variants.find((v) => v.color === selectedColor) ??
+        null
+      : null;
+
   const displayImage =
-    (selectedColor && colorToImage.get(selectedColor)) || product.image;
+    (selectedVariant && variantImage(selectedVariant)) ||
+    (selectedColor && colorToImage.get(selectedColor)) ||
+    product.image;
 
   return (
     <div className="bg-background">
