@@ -48,6 +48,7 @@ import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$le
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
 import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
 import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
@@ -248,6 +249,12 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksTrackVariantRoute =
+  ApiPublicHooksTrackVariantRouteImport.update({
+    id: '/api/public/hooks/track-variant',
+    path: '/api/public/hooks/track-variant',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksIngestFeedsRoute =
   ApiPublicHooksIngestFeedsRouteImport.update({
     id: '/api/public/hooks/ingest-feeds',
@@ -317,6 +324,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -360,6 +368,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -406,6 +415,7 @@ export interface FileRoutesById {
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -453,6 +463,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/track-variant'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -496,6 +507,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/track-variant'
   id:
     | '__root__'
     | '/'
@@ -541,6 +553,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
     | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/track-variant'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -582,6 +595,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
   ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
   ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
+  ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -859,6 +873,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/track-variant': {
+      id: '/api/public/hooks/track-variant'
+      path: '/api/public/hooks/track-variant'
+      fullPath: '/api/public/hooks/track-variant'
+      preLoaderRoute: typeof ApiPublicHooksTrackVariantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/ingest-feeds': {
       id: '/api/public/hooks/ingest-feeds'
       path: '/api/public/hooks/ingest-feeds'
@@ -957,6 +978,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
   ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
   ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
+  ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
