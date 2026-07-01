@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { detectDiscoverCategory } from "@/lib/seo-headline";
+import { scoreDiscoverMatch, type HeadlineVariants } from "@/lib/ctr-score";
+import { getArticleImage } from "@/lib/fallback-images";
 
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
 // src/lib/fallback-images.ts. AI batch classifier tags each new article with
@@ -87,6 +89,53 @@ async function rewriteHeadlinesBatch(
     for (const [id, headline] of Object.entries(parsed)) {
       const h = String(headline ?? "").trim();
       if (h.length >= 15 && h.length <= 140) out[id] = h;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * ONE Gemini call per ingestion batch. Generates 2 factual headline variants
+ * (A = SEO-focused, B = direct) for cheap A/B testing at render time. Never
+ * called per-request; result cached in daily_articles.headline_variants.
+ */
+async function generateHeadlineVariantsBatch(
+  rows: { slug: string; title: string }[],
+  lovableApiKey: string,
+): Promise<Record<string, HeadlineVariants>> {
+  if (rows.length === 0) return {};
+  const payload = rows.map((r) => ({ id: r.slug, title: r.title.slice(0, 200) }));
+  try {
+    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+      body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Create 2 headline versions for each article optimized for Google Discover CTR. Rules: both must be factual (no clickbait exaggeration); variant 'a' is slightly more SEO-focused (front-loads key entity/topic, 50-90 chars); variant 'b' is more direct and conversational (shorter, punchier). Return JSON object: { id: { a: '...', b: '...' } }. No prose.",
+          },
+          { role: "user", content: JSON.stringify(payload) },
+        ],
+        response_format: { type: "json_object" },
+      }),
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!r.ok) return {};
+    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Record<string, unknown>;
+    const out: Record<string, HeadlineVariants> = {};
+    for (const [id, v] of Object.entries(parsed)) {
+      const obj = v as { a?: unknown; b?: unknown };
+      const a = String(obj?.a ?? "").trim();
+      const b = String(obj?.b ?? "").trim();
+      if (a.length >= 15 && a.length <= 140 && b.length >= 15 && b.length <= 140) {
+        out[id] = { a, b };
+      }
     }
     return out;
   } catch {
@@ -401,6 +450,52 @@ async function handler() {
       (row as { discover_category?: string | null }).discover_category =
         discover === "other" ? null : discover;
       (row as { seo_keywords?: string[] | null }).seo_keywords = row.keywords ?? null;
+    }
+
+    // ONE AI call generates A/B headline variants for the whole batch.
+    const variantMap = lovableApiKey
+      ? await generateHeadlineVariantsBatch(
+          articleRows.map((r) => ({
+            slug: r.slug,
+            title: (r as { seo_headline?: string | null }).seo_headline ?? r.title,
+          })),
+          lovableApiKey,
+        )
+      : {};
+
+    // Compute CTR score deterministically for every row (0 AI calls).
+    for (const row of articleRows) {
+      const anyRow = row as Record<string, unknown>;
+      const variants =
+        variantMap[row.slug] ??
+        ({
+          a: (anyRow.seo_headline as string | null) ?? row.title,
+          b: row.title,
+        } as HeadlineVariants);
+      anyRow.headline_variants = variants;
+
+      const resolvedImageUrl = getArticleImage({
+        slug: row.slug,
+        image_url: (anyRow.image_url as string | null | undefined) ?? null,
+        image_category: (anyRow.image_category as string | null) ?? null,
+        category: row.category,
+        title: variants.a,
+        dek: row.dek,
+        keywords: row.keywords ?? null,
+      });
+      anyRow.ctr_score = scoreDiscoverMatch({
+        slug: row.slug,
+        title: row.title,
+        dek: row.dek,
+        seo_headline: (anyRow.seo_headline as string | null) ?? null,
+        discover_category: (anyRow.discover_category as string | null) ?? null,
+        image_category: (anyRow.image_category as string | null) ?? null,
+        image_url: (anyRow.image_url as string | null | undefined) ?? null,
+        category: row.category,
+        keywords: row.keywords ?? null,
+        seo_keywords: (anyRow.seo_keywords as string[] | null) ?? null,
+        resolvedImageUrl,
+      });
     }
 
     const { error: artErr, count: artCount } = await supabaseAdmin

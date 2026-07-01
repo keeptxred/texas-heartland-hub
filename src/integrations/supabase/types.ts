@@ -21,8 +21,10 @@ export type Database = {
           body_json: Json | null
           category: string
           created_at: string
+          ctr_score: number
           dek: string
           discover_category: string | null
+          headline_variants: Json | null
           id: string
           image_category: string | null
           image_hash: string | null
@@ -40,6 +42,10 @@ export type Database = {
           source_name: string | null
           source_url: string | null
           title: string
+          variant_a_clicks: number
+          variant_a_impressions: number
+          variant_b_clicks: number
+          variant_b_impressions: number
         }
         Insert: {
           author?: string
@@ -47,8 +53,10 @@ export type Database = {
           body_json?: Json | null
           category: string
           created_at?: string
+          ctr_score?: number
           dek: string
           discover_category?: string | null
+          headline_variants?: Json | null
           id?: string
           image_category?: string | null
           image_hash?: string | null
@@ -66,6 +74,10 @@ export type Database = {
           source_name?: string | null
           source_url?: string | null
           title: string
+          variant_a_clicks?: number
+          variant_a_impressions?: number
+          variant_b_clicks?: number
+          variant_b_impressions?: number
         }
         Update: {
           author?: string
@@ -73,8 +85,10 @@ export type Database = {
           body_json?: Json | null
           category?: string
           created_at?: string
+          ctr_score?: number
           dek?: string
           discover_category?: string | null
+          headline_variants?: Json | null
           id?: string
           image_category?: string | null
           image_hash?: string | null
@@ -92,6 +106,10 @@ export type Database = {
           source_name?: string | null
           source_url?: string | null
           title?: string
+          variant_a_clicks?: number
+          variant_a_impressions?: number
+          variant_b_clicks?: number
+          variant_b_impressions?: number
         }
         Relationships: []
       }
@@ -133,7 +151,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_variant_metric: {
+        Args: { _kind: string; _slug: string; _variant: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
