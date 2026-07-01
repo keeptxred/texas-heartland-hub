@@ -82,6 +82,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       product_url: string;
       description: string;
       tags: string[] | null;
+      colors: string[] | null;
     }>).map((r) => ({
       id: r.id,
       title: r.title,
