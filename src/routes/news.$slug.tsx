@@ -6,7 +6,7 @@ import { getEvergreenBySlug } from "@/lib/evergreen.functions";
 import { AdSlot } from "@/components/ad-slot";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
-import { pickFallbackImage } from "@/lib/fallback-images";
+import { getArticleImage } from "@/lib/fallback-images";
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
@@ -30,7 +30,15 @@ export const Route = createFileRoute("/news/$slug")({
       author: ever.author,
       date: new Date(ever.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }),
       publishedAt: ever.published_at,
-      image: ever.image_url ?? pickFallbackImage(ever.slug),
+      image: getArticleImage({
+        slug: ever.slug,
+        image_url: ever.image_url,
+        image_category: ever.image_category,
+        category: ever.category,
+        title: ever.title,
+        dek: ever.dek,
+        keywords: ever.keywords,
+      }),
     };
     const rawBody: ArticleBody = {
       updated: ever.body.updated,
