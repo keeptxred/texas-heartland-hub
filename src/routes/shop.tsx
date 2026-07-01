@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { useQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
@@ -34,19 +34,8 @@ function ShopPage() {
   const { data, isLoading, isError } = useQuery(productsQuery);
   const products = data?.products ?? [];
   const loadError = data?.error;
-  const [active, setActive] = useState<Product | null>(null);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
-
-  const addToBag = (p: Product) => {
-    setCart((prev) => {
-      const found = prev.find((i) => i.product.id === p.id);
-      if (found) return prev.map((i) => (i.product.id === p.id ? { ...i, qty: i.qty + 1 } : i));
-      return [...prev, { product: p, qty: 1 }];
-    });
-    setActive(null);
-    setCartOpen(true);
-  };
 
   const updateQty = (id: string, qty: number) =>
     setCart((prev) => (qty <= 0 ? prev.filter((i) => i.product.id !== id) : prev.map((i) => (i.product.id === id ? { ...i, qty } : i))));
@@ -116,9 +105,10 @@ function ShopPage() {
         {!isLoading && products.length > 0 && (
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((p) => (
-            <button
+            <Link
               key={p.id}
-              onClick={() => setActive(p)}
+              to="/shop/$productId"
+              params={{ productId: p.id }}
               className="group text-left bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all"
             >
               <div className="aspect-square overflow-hidden bg-muted">
@@ -147,53 +137,11 @@ function ShopPage() {
                   </div>
                 )}
               </div>
-            </button>
+            </Link>
           ))}
         </div>
         )}
       </section>
-
-      {active && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setActive(null)}
-          role="dialog"
-          aria-modal="true"
-          aria-label={active.title}
-        >
-          <div
-            className="bg-card rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl grid md:grid-cols-2"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="aspect-square md:aspect-auto bg-muted">
-              <img src={active.image} alt={active.title} className="h-full w-full object-cover" />
-            </div>
-            <div className="p-6 md:p-8 flex flex-col">
-              <div className="flex items-start justify-between gap-4">
-                <h2 className="font-display text-2xl leading-tight">{active.title}</h2>
-                <button
-                  onClick={() => setActive(null)}
-                  aria-label="Close"
-                  className="text-muted-foreground hover:text-foreground text-2xl leading-none -mt-1"
-                >
-                  ×
-                </button>
-              </div>
-              <div className="mt-2 text-2xl font-semibold text-primary">{formatPrice(active)}</div>
-              <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{active.description}</p>
-              <button
-                onClick={() => addToBag(active)}
-                className="mt-auto inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                Add to Bag
-              </button>
-              <p className="mt-3 text-[11px] text-muted-foreground text-center">
-                Secure checkout. Free returns within 30 days.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Slide-over cart */}
       <div
