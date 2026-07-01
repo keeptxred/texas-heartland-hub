@@ -27,6 +27,8 @@ export type EvergreenArticle = {
   seo_headline: string | null;
   discover_category: string | null;
   seo_keywords: string[] | null;
+  ctr_score: number | null;
+  headline_variants: { a: string; b: string } | null;
   published_at: string;
   keywords: string[] | null;
   body: EvergreenBody | null;
@@ -46,7 +48,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
     if (!supabase) return null;
     const { data: row, error } = await supabase
       .from("daily_articles")
-      .select("slug,category,title,dek,author,image_url,image_category,seo_headline,discover_category,seo_keywords,published_at,keywords,body_json,kind")
+      .select("slug,category,title,dek,author,image_url,image_category,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
       .eq("slug", data.slug)
       .in("kind", ["evergreen", "ingested", "sports-nfl", "sports-mlb", "sports-nba"])
       .maybeSingle();
@@ -62,6 +64,9 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       seo_headline: (row as { seo_headline?: string | null }).seo_headline ?? null,
       discover_category: (row as { discover_category?: string | null }).discover_category ?? null,
       seo_keywords: (row as { seo_keywords?: string[] | null }).seo_keywords ?? null,
+      ctr_score: (row as { ctr_score?: number | null }).ctr_score ?? null,
+      headline_variants:
+        (row as { headline_variants?: { a: string; b: string } | null }).headline_variants ?? null,
       published_at: row.published_at,
       keywords: (row as { keywords?: string[] | null }).keywords ?? null,
       body: (row as { body_json?: EvergreenBody | null }).body_json ?? null,
