@@ -9,6 +9,7 @@ export type Product = {
   url: string;
   description: string;
   tags?: string[];
+  colors?: string[];
 };
 
 const MOCK_PRODUCTS: Product[] = [
