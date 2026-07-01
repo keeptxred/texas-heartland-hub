@@ -11,7 +11,7 @@ import podium from "@/assets/podium.jpg";
 import oil from "@/assets/article-oil.jpg";
 import classroom from "@/assets/article-classroom.jpg";
 import { assignUniqueImages } from "@/lib/dedupe-images";
-import { pickFallbackImage } from "@/lib/fallback-images";
+import { getArticleImage } from "@/lib/fallback-images";
 
 export const Route = createFileRoute("/news/")({
   head: () => ({
@@ -35,6 +35,8 @@ function catToSlug(cat: (typeof CATS)[number]): string {
   return CATEGORY_NAME_TO_SLUG[cat as CategoryName];
 }
 
+// Static topical hero images for the built-in category boxes. Live articles
+// resolve their image through getArticleImage() (AI category → keyword → pool).
 const CATEGORY_IMAGES: Record<string, string> = {
   Border: border,
   Elections: ballot,
@@ -79,7 +81,7 @@ function NewsPage() {
       assignUniqueImages(
         filteredLive,
         (a: DailyArticle) => a.slug,
-        (a: DailyArticle) => a.image_url || CATEGORY_IMAGES[a.category] || pickFallbackImage(a.slug),
+        (a: DailyArticle) => getArticleImage(a),
         undefined,
         (a: DailyArticle) => a.image_hash,
       ),
@@ -120,7 +122,7 @@ function NewsPage() {
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
         {useLive
           ? filteredLive.map((a: DailyArticle) => {
-              const img = liveImages.get(a.slug) ?? (a.image_url || CATEGORY_IMAGES[a.category] || pickFallbackImage(a.slug));
+              const img = liveImages.get(a.slug) ?? getArticleImage(a);
               const isEvergreen = a.kind === "evergreen";
               const card = (
                 <>
