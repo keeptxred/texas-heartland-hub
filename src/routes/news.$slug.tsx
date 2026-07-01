@@ -7,15 +7,21 @@ import { AdSlot } from "@/components/ad-slot";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { resolveArticleImage } from "@/lib/seo-headline";
+import { resolveDisplayHeadline, type HeadlineVariants } from "@/lib/ctr-score";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/news/$slug")({
-  loader: async ({ params }): Promise<{ article: Article; body: ArticleBody }> => {
+  loader: async ({ params }): Promise<{
+    article: Article;
+    body: ArticleBody;
+    ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
+  }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
     if (article) {
       if (!isPublished(article)) throw notFound();
       const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
       const body = dedupeArticleBody(rawBody) as ArticleBody;
-      return { article, body };
+      return { article, body, ctr: null };
     }
     // Fallback: AI-generated evergreen article stored in daily_articles.
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
@@ -54,7 +60,11 @@ export const Route = createFileRoute("/news/$slug")({
       cta: { label: "Browse the Newsroom", href: "/news" },
       keyTakeaways: ever.body.keyTakeaways,
     };
-    return { article: synth, body: dedupeArticleBody(rawBody) as ArticleBody };
+    return {
+      article: synth,
+      body: dedupeArticleBody(rawBody) as ArticleBody,
+      ctr: { variants: ever.headline_variants, score: ever.ctr_score },
+    };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
@@ -204,7 +214,33 @@ function _buildDefaultBody(a: Article): ArticleBody {
 }
 
 function ArticlePage() {
-  const { article, body } = Route.useLoaderData() as { article: Article; body: ArticleBody };
+  const { article, body, ctr } = Route.useLoaderData();
+
+  // A/B variant selection is deterministic per slug + ctr_score.
+  const { headline: displayTitle, variant } = resolveDisplayHeadline({
+    slug: article.slug,
+    title: article.title,
+    dek: article.dek,
+    seo_headline: article.title, // synth title already prefers seo_headline
+    ctr_score: ctr?.score ?? null,
+    headline_variants: ctr?.variants ?? null,
+  });
+
+  // Fire-and-forget impression track. No PII, no cookies, no blocking.
+  useEffect(() => {
+    if (!ctr?.variants) return;
+    try {
+      fetch("/api/public/hooks/track-variant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: article.slug, variant, kind: "impression" }),
+        keepalive: true,
+      }).catch(() => {});
+    } catch {
+      /* noop */
+    }
+  }, [article.slug, variant, ctr?.variants]);
+
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
@@ -240,7 +276,7 @@ function ArticlePage() {
       </nav>
 
       <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ {article.category}</span>
-      <h1 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] mt-2">{article.title}</h1>
+      <h1 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] mt-2">{displayTitle}</h1>
       <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-snug font-serif italic">{article.dek}</p>
 
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground border-y border-border py-3">
