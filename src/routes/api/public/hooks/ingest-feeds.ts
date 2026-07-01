@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
+import { detectDiscoverCategory } from "@/lib/seo-headline";
 
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
 // src/lib/fallback-images.ts. AI batch classifier tags each new article with
@@ -43,6 +44,49 @@ async function classifyImageBuckets(
     for (const [id, cat] of Object.entries(parsed)) {
       const c = String(cat).toLowerCase().trim() as ImageBucket;
       if ((IMAGE_BUCKETS as readonly string[]).includes(c)) out[id] = c;
+    }
+    return out;
+  } catch {
+    return {};
+  }
+}
+
+/**
+ * ONE Gemini call per ingestion batch. Sends ONLY {id, title} — never the
+ * body — and asks for SEO-optimized Google Discover headlines. Cached in
+ * daily_articles.seo_headline so the frontend never reprocesses.
+ */
+async function rewriteHeadlinesBatch(
+  rows: { slug: string; title: string }[],
+  lovableApiKey: string,
+): Promise<Record<string, string>> {
+  if (rows.length === 0) return {};
+  const payload = rows.map((r) => ({ id: r.slug, title: r.title.slice(0, 200) }));
+  try {
+    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+      body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          {
+            role: "system",
+            content:
+              "Rewrite each headline to be SEO-friendly and optimized for Google Discover. Rules: no clickbait, keep factual accuracy, improve clarity and search relevance, front-load the key topic (Texas, Houston, BBQ, Election, etc.), active voice, 50-90 characters preferred. Return JSON object mapping id -> rewritten_headline. No prose.",
+          },
+          { role: "user", content: JSON.stringify(payload) },
+        ],
+        response_format: { type: "json_object" },
+      }),
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!r.ok) return {};
+    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Record<string, unknown>;
+    const out: Record<string, string> = {};
+    for (const [id, headline] of Object.entries(parsed)) {
+      const h = String(headline ?? "").trim();
+      if (h.length >= 15 && h.length <= 140) out[id] = h;
     }
     return out;
   } catch {
@@ -341,8 +385,22 @@ async function handler() {
           lovableApiKey,
         )
       : {};
+    // ONE AI call rewrites the batch's headlines for SEO/Discover (cached in DB).
+    const seoMap = lovableApiKey
+      ? await rewriteHeadlinesBatch(
+          articleRows.map((r) => ({ slug: r.slug, title: r.title })),
+          lovableApiKey,
+        )
+      : {};
     for (const row of articleRows) {
+      const seo = seoMap[row.slug] ?? null;
+      const headline = seo ?? row.title;
+      const discover = detectDiscoverCategory(`${headline} ${row.dek}`);
       (row as { image_category?: string | null }).image_category = imageMap[row.slug] ?? null;
+      (row as { seo_headline?: string | null }).seo_headline = seo;
+      (row as { discover_category?: string | null }).discover_category =
+        discover === "other" ? null : discover;
+      (row as { seo_keywords?: string[] | null }).seo_keywords = row.keywords ?? null;
     }
 
     const { error: artErr, count: artCount } = await supabaseAdmin
