@@ -20,6 +20,7 @@ import { Route as TexasBusinessRouteImport } from './routes/texas-business'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as PrivacyRouteImport } from './routes/privacy'
@@ -42,6 +43,7 @@ import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
+import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
@@ -109,6 +111,11 @@ const TaxCalculatorRoute = TaxCalculatorRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RepresentativesRoute = RepresentativesRouteImport.update({
@@ -221,6 +228,11 @@ const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
+} as any)
 const NewsIndexRoute = NewsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -232,9 +244,9 @@ const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
   getParentRoute: () => TexasSportsRoute,
 } as any)
 const ShopProductIdRoute = ShopProductIdRouteImport.update({
-  id: '/shop/$productId',
-  path: '/shop/$productId',
-  getParentRoute: () => rootRouteImport,
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => ShopRoute,
 } as any)
 const NewsNonPoliticalRoute = NewsNonPoliticalRouteImport.update({
   id: '/non-political',
@@ -315,6 +327,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
+  '/shop': typeof ShopRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -332,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news/': typeof NewsIndexRoute
+  '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -378,6 +392,7 @@ export interface FileRoutesByTo {
   '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news': typeof NewsIndexRoute
+  '/shop': typeof ShopIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -410,6 +425,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
+  '/shop': typeof ShopRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -427,6 +443,7 @@ export interface FileRoutesById {
   '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news/': typeof NewsIndexRoute
+  '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -460,6 +477,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
+    | '/shop'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -477,6 +495,7 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news/'
+    | '/shop/'
     | '/texas-sports/'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -523,6 +542,7 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news'
+    | '/shop'
     | '/texas-sports'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -554,6 +574,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
+    | '/shop'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -571,6 +592,7 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news/'
+    | '/shop/'
     | '/texas-sports/'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -603,6 +625,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
+  ShopRoute: typeof ShopRouteWithChildren
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
@@ -615,7 +638,6 @@ export interface RootRouteChildren {
   TexasSportsRoute: typeof TexasSportsRouteWithChildren
   VotingLocationsRoute: typeof VotingLocationsRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
-  ShopProductIdRoute: typeof ShopProductIdRoute
   ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
   ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
@@ -702,6 +724,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/representatives': {
@@ -858,6 +887,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSportsIndexRouteImport
       parentRoute: typeof TexasSportsRoute
     }
+    '/shop/': {
+      id: '/shop/'
+      path: '/'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/news/': {
       id: '/news/'
       path: '/'
@@ -874,10 +910,10 @@ declare module '@tanstack/react-router' {
     }
     '/shop/$productId': {
       id: '/shop/$productId'
-      path: '/shop/$productId'
+      path: '/$productId'
       fullPath: '/shop/$productId'
       preLoaderRoute: typeof ShopProductIdRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ShopRoute
     }
     '/news/non-political': {
       id: '/news/non-political'
@@ -966,6 +1002,18 @@ const NewsRouteChildren: NewsRouteChildren = {
 
 const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
 
+interface ShopRouteChildren {
+  ShopProductIdRoute: typeof ShopProductIdRoute
+  ShopIndexRoute: typeof ShopIndexRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopProductIdRoute: ShopProductIdRoute,
+  ShopIndexRoute: ShopIndexRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
 interface TexasSportsRouteChildren {
   TexasSportsLeagueRoute: typeof TexasSportsLeagueRoute
   TexasSportsIndexRoute: typeof TexasSportsIndexRoute
@@ -1002,6 +1050,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
+  ShopRoute: ShopRouteWithChildren,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
@@ -1014,7 +1063,6 @@ const rootRouteChildren: RootRouteChildren = {
   TexasSportsRoute: TexasSportsRouteWithChildren,
   VotingLocationsRoute: VotingLocationsRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
-  ShopProductIdRoute: ShopProductIdRoute,
   ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
   ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
