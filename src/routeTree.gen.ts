@@ -43,6 +43,7 @@ import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
+import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
@@ -227,6 +228,11 @@ const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
+} as any)
 const NewsIndexRoute = NewsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -339,6 +345,7 @@ export interface FileRoutesByFullPath {
   '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news/': typeof NewsIndexRoute
+  '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -369,7 +376,6 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
-  '/shop': typeof ShopRouteWithChildren
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -386,6 +392,7 @@ export interface FileRoutesByTo {
   '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news': typeof NewsIndexRoute
+  '/shop': typeof ShopIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -436,6 +443,7 @@ export interface FileRoutesById {
   '/shop/$productId': typeof ShopProductIdRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news/': typeof NewsIndexRoute
+  '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -487,6 +495,7 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news/'
+    | '/shop/'
     | '/texas-sports/'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -517,7 +526,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
-    | '/shop'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -534,6 +542,7 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news'
+    | '/shop'
     | '/texas-sports'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -583,6 +592,7 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/texas-sports/$league'
     | '/news/'
+    | '/shop/'
     | '/texas-sports/'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -877,6 +887,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSportsIndexRouteImport
       parentRoute: typeof TexasSportsRoute
     }
+    '/shop/': {
+      id: '/shop/'
+      path: '/'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/news/': {
       id: '/news/'
       path: '/'
@@ -987,10 +1004,12 @@ const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
 
 interface ShopRouteChildren {
   ShopProductIdRoute: typeof ShopProductIdRoute
+  ShopIndexRoute: typeof ShopIndexRoute
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
   ShopProductIdRoute: ShopProductIdRoute,
+  ShopIndexRoute: ShopIndexRoute,
 }
 
 const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
