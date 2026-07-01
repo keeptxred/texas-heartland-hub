@@ -32,6 +32,25 @@ function stripHtml(s: string): string {
   return (s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+// Printify's list/detail endpoints return every mockup with variant_ids
+// populated with ALL variant IDs, but the actual variant a mockup depicts
+// is encoded in the URL path: /mockup/{productId}/{variantId}/... .
+// Parse that path segment so we can map each mockup to its true variant.
+function variantIdFromSrc(src: string): number | null {
+  const m = src.match(/\/mockup\/[^/]+\/(\d+)\//);
+  return m ? Number(m[1]) : null;
+}
+
+function imagesForVariant(
+  variantId: number,
+  images: PrintifyImage[],
+): PrintifyImage[] {
+  // Prefer URL-encoded variant id (accurate). Fall back to variant_ids field.
+  const urlMatches = images.filter((img) => variantIdFromSrc(img.src) === variantId);
+  if (urlMatches.length > 0) return urlMatches;
+  return images.filter((img) => (img.variant_ids ?? []).includes(variantId));
+}
+
 function extractColors(variants: PrintifyVariant[]): string[] {
   const colors = new Set<string>();
   for (const v of variants) {
@@ -48,13 +67,10 @@ function extractColors(variants: PrintifyVariant[]): string[] {
 // Prefers non-white/off-white shots, then default flag, then position=front, then first.
 function pickPrimaryImage(images: PrintifyImage[]): string {
   if (!images || images.length === 0) return "";
-  const isWhitish = (src: string) => /white|blank|ghost/i.test(src);
-  const nonWhite = images.filter((i) => !isWhitish(i.src));
-  const pool = nonWhite.length > 0 ? nonWhite : images;
   return (
-    pool.find((i) => i.is_default)?.src ??
-    pool.find((i) => (i.position ?? "").toLowerCase() === "front")?.src ??
-    pool[0].src
+    images.find((i) => i.is_default)?.src ??
+    images.find((i) => (i.position ?? "").toLowerCase() === "front")?.src ??
+    images[0].src
   );
 }
 
@@ -77,9 +93,7 @@ function buildVariants(
     .map((v) => {
       const parts = v.title!.split("/").map((s) => s.trim());
       const color = parts[0] ?? "";
-      const matches = (images ?? []).filter((img) =>
-        (img.variant_ids ?? []).includes(v.id),
-      );
+      const matches = imagesForVariant(v.id, images ?? []);
       const imgs = matches.map((m) => m.src);
       return {
         id: v.id,
