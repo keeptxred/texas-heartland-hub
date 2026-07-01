@@ -8,6 +8,7 @@ export type Product = {
   image: string;
   url: string;
   description: string;
+  tags?: string[];
 };
 
 const MOCK_PRODUCTS: Product[] = [
@@ -63,13 +64,34 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
     });
     const { data, error } = await supabase
-      .from("products" as never)
-      .select("id,title,price,currency,image,url,description")
-      .limit(60);
+      .from("products")
+      .select("id,title,price,currency,image_url,product_url,description,tags")
+      .eq("is_active", true)
+      .order("synced_at", { ascending: false })
+      .limit(120);
     if (error || !data || (Array.isArray(data) && data.length === 0)) {
       return { products: MOCK_PRODUCTS };
     }
-    return { products: data as unknown as Product[] };
+    const products: Product[] = (data as Array<{
+      id: string;
+      title: string;
+      price: number | string;
+      currency: string;
+      image_url: string;
+      product_url: string;
+      description: string;
+      tags: string[] | null;
+    }>).map((r) => ({
+      id: r.id,
+      title: r.title,
+      price: typeof r.price === "string" ? Number(r.price) : r.price,
+      currency: r.currency || "USD",
+      image: r.image_url,
+      url: r.product_url,
+      description: r.description ?? "",
+      tags: r.tags ?? [],
+    }));
+    return { products };
   } catch {
     return { products: MOCK_PRODUCTS };
   }
