@@ -126,7 +126,7 @@ export function CartDrawer() {
               <span className="font-display text-xl font-semibold">{subtotalFormatted}</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Checkout opens each item's Etsy listing in a new tab — complete purchase on Etsy.
+              We keep every item in your bag and hand you off to the matching Etsy listings for secure purchase.
             </p>
             <div className="grid grid-cols-2 gap-2">
               <button
