@@ -292,7 +292,7 @@ function ProductPage() {
             <span aria-hidden>→</span>
           </button>
           <p className="mt-3 text-[11px] text-muted-foreground text-center">
-            🔒 Secure checkout at next step • Free returns within 30 days
+            🔒 Checkout completes on Etsy • Free returns within 30 days
           </p>
         </div>
       </section>
