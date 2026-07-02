@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product } from "@/lib/products.functions";
@@ -107,12 +107,17 @@ function ProductPage() {
   }, [variants, selectedColor]);
 
   const [selectedSize, setSelectedSize] = useState<string | null>(sizesForColor[0] ?? null);
-  // Reset size when color changes and current size isn't available.
-  if (selectedSize && !sizesForColor.includes(selectedSize)) {
-    // Note: safe because we set state during render only if it's stale.
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    queueMicrotask(() => setSelectedSize(sizesForColor[0] ?? null));
-  }
+  // If the color changes and current size isn't offered in that color, snap
+  // to the first available size.
+  useEffect(() => {
+    if (sizesForColor.length === 0) {
+      if (selectedSize !== null) setSelectedSize(null);
+      return;
+    }
+    if (!selectedSize || !sizesForColor.includes(selectedSize)) {
+      setSelectedSize(sizesForColor[0]);
+    }
+  }, [sizesForColor, selectedSize]);
 
   const [qty, setQty] = useState(1);
 
