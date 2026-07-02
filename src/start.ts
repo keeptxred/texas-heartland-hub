@@ -27,6 +27,9 @@ const slugify = (s: string) =>
 
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
+  if (url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe") {
+    return next();
+  }
   const topic = url.searchParams.get("topic");
   if (topic && REDIRECT_PATHS.has(url.pathname)) {
     const slug = slugify(topic);
