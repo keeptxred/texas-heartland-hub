@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 import type { Product, ProductVariant } from "@/lib/products.functions";
 
 export const ETSY_CHECKOUT_STORAGE_KEY = "keeptxred:etsy-checkout-items:v1";
-const CART_STORAGE_KEY = "keeptxred:cart-items:v1";
+export const CART_STORAGE_KEY = "keeptxred:cart-items:v1";
 
 export type CartItem = {
   key: string; // productId::color::size
@@ -37,6 +37,7 @@ const CartContext = createContext<CartContextValue | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [isOpen, setOpen] = useState(false);
+  const [hasLoadedStoredCart, setHasLoadedStoredCart] = useState(false);
 
   useEffect(() => {
     try {
@@ -46,16 +47,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
       if (Array.isArray(parsed)) setItems(parsed);
     } catch {
       // Ignore blocked/corrupt storage; the in-memory cart still works.
+    } finally {
+      setHasLoadedStoredCart(true);
     }
   }, []);
 
   useEffect(() => {
+    if (!hasLoadedStoredCart) return;
     try {
       window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
     } catch {
       // Ignore blocked storage.
     }
-  }, [items]);
+  }, [items, hasLoadedStoredCart]);
 
   const addItem: CartContextValue["addItem"] = (input) => {
     const key = `${input.productId}::${input.variantId ?? "_"}::${input.color ?? "_"}::${input.size ?? "_"}`;
