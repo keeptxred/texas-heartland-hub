@@ -35,15 +35,8 @@ function restoreCheckoutItems(): CartItem[] {
   }
 }
 
-function withEtsyTracking(url: string) {
-  try {
-    const u = new URL(url);
-    u.searchParams.set("utm_source", "keeptxred.com");
-    u.searchParams.set("utm_medium", "shop_checkout_handoff");
-    return u.toString();
-  } catch {
-    return url;
-  }
+function getEtsyCartUrl() {
+  return "https://www.etsy.com/cart?ref=keeptxred_checkout&utm_source=keeptxred.com&utm_medium=shop_checkout_handoff";
 }
 
 function optionText(item: CartItem) {
@@ -62,10 +55,8 @@ function EtsyCheckoutPage() {
   const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.price * item.qty, 0), [items]);
   const currency = items[0]?.currency ?? "USD";
 
-  const openAllListings = () => {
-    const urls = items.map((item) => item.url).filter(Boolean).map(withEtsyTracking);
-    const unique = Array.from(new Set(urls));
-    unique.forEach((url) => window.open(url, "_blank", "noopener,noreferrer"));
+  const checkoutOnEtsy = () => {
+    window.location.href = getEtsyCartUrl();
   };
 
   return (
@@ -77,9 +68,7 @@ function EtsyCheckoutPage() {
           </div>
           <h1 className="font-display text-4xl md:text-5xl leading-tight">Complete your purchase on Etsy</h1>
           <p className="mt-4 max-w-3xl text-white/70">
-            Your Keep Texas Red bag is preserved below. Etsy does not provide a supported public method for outside
-            websites to create one pre-filled multi-item Etsy cart, so use the matching listing links below to complete
-            secure checkout on Etsy without losing track of what you selected.
+            Your Keep Texas Red bag is preserved below. Review the items, then continue to Etsy for secure payment.
           </p>
         </div>
       </section>
@@ -127,14 +116,6 @@ function EtsyCheckoutPage() {
                           <p className="text-xs text-muted-foreground">{formatMoney(item.price, item.currency)} each</p>
                         </div>
                       </div>
-                      <a
-                        href={withEtsyTracking(item.url)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-4 inline-flex rounded-lg bg-primary text-primary-foreground px-4 py-2 text-sm font-semibold hover:bg-primary/90"
-                      >
-                        Buy this item on Etsy
-                      </a>
                     </div>
                   </div>
                 </article>
@@ -154,15 +135,15 @@ function EtsyCheckoutPage() {
                 </div>
               </div>
               <p className="mt-5 text-xs text-muted-foreground leading-relaxed">
-                Etsy will calculate final shipping, tax, discounts, and payment details. If your bag contains multiple
-                products, Etsy may require you to add/confirm each listing on Etsy before final checkout.
+                Etsy calculates final shipping, tax, discounts, and payment details. Your selected Keep Texas Red items
+                remain listed here for review before payment.
               </p>
               <button
                 type="button"
-                onClick={openAllListings}
+                onClick={checkoutOnEtsy}
                 className="mt-5 w-full rounded-lg bg-primary text-primary-foreground font-display font-semibold px-4 py-3 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
               >
-                Open all Etsy listings
+                Check out on Etsy
               </button>
               <Link
                 to="/shop"
