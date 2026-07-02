@@ -23,7 +23,6 @@ type FeedRow = {
   source: string;
   internal_slug: string | null;
   pub_date: string;
-  image_category: string | null;
 };
 
 type ArticleRow = {
@@ -93,7 +92,7 @@ function AdminDashboard() {
       const [{ data: f }, { data: a }] = await Promise.all([
         supabase
           .from("texas_news_feed")
-          .select("id,title,source,internal_slug,pub_date,image_category")
+          .select("id,title,source,internal_slug,pub_date")
           .order("pub_date", { ascending: false })
           .limit(50),
         supabase
