@@ -4,7 +4,7 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product } from "@/lib/products.functions";
 import { useCart } from "@/lib/cart-context";
-import { seoTitle, seoDescription, seoAlt } from "@/lib/shop-seo";
+import { seoTitle, seoAlt } from "@/lib/shop-seo";
 
 const productsQuery = queryOptions({
   queryKey: ["products", "listings"],
