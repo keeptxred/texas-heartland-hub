@@ -55,10 +55,6 @@ function EtsyCheckoutPage() {
   const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.price * item.qty, 0), [items]);
   const currency = items[0]?.currency ?? "USD";
 
-  const checkoutOnEtsy = () => {
-    window.location.href = getEtsyCartUrl();
-  };
-
   return (
     <div className="bg-background">
       <section className="border-b border-border bg-secondary text-secondary-foreground">
@@ -138,13 +134,14 @@ function EtsyCheckoutPage() {
                 Etsy calculates final shipping, tax, discounts, and payment details. Your selected Keep Texas Red items
                 remain listed here for review before payment.
               </p>
-              <button
-                type="button"
-                onClick={checkoutOnEtsy}
+              <a
+                href={getEtsyCartUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="mt-5 w-full rounded-lg bg-primary text-primary-foreground font-display font-semibold px-4 py-3 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
               >
                 Check out on Etsy
-              </button>
+              </a>
               <Link
                 to="/shop"
                 className="mt-3 block w-full rounded-lg border border-border bg-background px-4 py-3 text-center text-sm font-semibold hover:bg-muted transition-colors"
