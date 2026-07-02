@@ -139,7 +139,7 @@ export function CartDrawer() {
                 onClick={checkout}
                 className="rounded-lg bg-primary text-primary-foreground font-display font-semibold px-4 py-3 text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
               >
-                Buy on Etsy
+                Check out on Etsy
               </button>
             </div>
             <p className="text-[11px] text-center text-muted-foreground">

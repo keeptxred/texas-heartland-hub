@@ -35,17 +35,6 @@ function restoreCheckoutItems(): CartItem[] {
   }
 }
 
-function withEtsyTracking(url: string) {
-  try {
-    const u = new URL(url);
-    u.searchParams.set("utm_source", "keeptxred.com");
-    u.searchParams.set("utm_medium", "shop_checkout_handoff");
-    return u.toString();
-  } catch {
-    return url;
-  }
-}
-
 function getEtsyCartUrl() {
   return "https://www.etsy.com/cart?ref=keeptxred_checkout&utm_source=keeptxred.com&utm_medium=shop_checkout_handoff";
 }
