@@ -49,11 +49,13 @@ import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
 import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
-import { Route as ShopEtsyCheckoutRouteImport } from './routes/shop.etsy-checkout'
+import { Route as ShopCheckoutReturnRouteImport } from './routes/shop.checkout-return'
+import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
 import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
@@ -262,9 +264,14 @@ const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
   path: '/$topic',
   getParentRoute: () => TexasBusinessRoute,
 } as any)
-const ShopEtsyCheckoutRoute = ShopEtsyCheckoutRouteImport.update({
-  id: '/etsy-checkout',
-  path: '/etsy-checkout',
+const ShopCheckoutReturnRoute = ShopCheckoutReturnRouteImport.update({
+  id: '/checkout-return',
+  path: '/checkout-return',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopCheckoutRoute = ShopCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => ShopRoute,
 } as any)
 const ShopProductIdRoute = ShopProductIdRouteImport.update({
@@ -287,6 +294,12 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksTrackVariantRoute =
   ApiPublicHooksTrackVariantRouteImport.update({
     id: '/api/public/hooks/track-variant',
@@ -368,7 +381,8 @@ export interface FileRoutesByFullPath {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
-  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
+  '/shop/checkout': typeof ShopCheckoutRoute
+  '/shop/checkout-return': typeof ShopCheckoutReturnRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -382,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -419,7 +434,8 @@ export interface FileRoutesByTo {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
-  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
+  '/shop/checkout': typeof ShopCheckoutRoute
+  '/shop/checkout-return': typeof ShopCheckoutReturnRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -433,6 +449,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -474,7 +491,8 @@ export interface FileRoutesById {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
-  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
+  '/shop/checkout': typeof ShopCheckoutRoute
+  '/shop/checkout-return': typeof ShopCheckoutReturnRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -488,6 +506,7 @@ export interface FileRoutesById {
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -530,7 +549,8 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
-    | '/shop/etsy-checkout'
+    | '/shop/checkout'
+    | '/shop/checkout-return'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -544,6 +564,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -581,7 +602,8 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
-    | '/shop/etsy-checkout'
+    | '/shop/checkout'
+    | '/shop/checkout-return'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -595,6 +617,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
+    | '/api/public/payments/webhook'
   id:
     | '__root__'
     | '/'
@@ -635,7 +658,8 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
-    | '/shop/etsy-checkout'
+    | '/shop/checkout'
+    | '/shop/checkout-return'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -649,6 +673,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -694,6 +719,7 @@ export interface RootRouteChildren {
   ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
   ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -978,11 +1004,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasBusinessTopicRouteImport
       parentRoute: typeof TexasBusinessRoute
     }
-    '/shop/etsy-checkout': {
-      id: '/shop/etsy-checkout'
-      path: '/etsy-checkout'
-      fullPath: '/shop/etsy-checkout'
-      preLoaderRoute: typeof ShopEtsyCheckoutRouteImport
+    '/shop/checkout-return': {
+      id: '/shop/checkout-return'
+      path: '/checkout-return'
+      fullPath: '/shop/checkout-return'
+      preLoaderRoute: typeof ShopCheckoutReturnRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/checkout': {
+      id: '/shop/checkout'
+      path: '/checkout'
+      fullPath: '/shop/checkout'
+      preLoaderRoute: typeof ShopCheckoutRouteImport
       parentRoute: typeof ShopRoute
     }
     '/shop/$productId': {
@@ -1011,6 +1044,13 @@ declare module '@tanstack/react-router' {
       path: '/authors/$slug'
       fullPath: '/authors/$slug'
       preLoaderRoute: typeof AuthorsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/track-variant': {
@@ -1081,13 +1121,15 @@ const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
 
 interface ShopRouteChildren {
   ShopProductIdRoute: typeof ShopProductIdRoute
-  ShopEtsyCheckoutRoute: typeof ShopEtsyCheckoutRoute
+  ShopCheckoutRoute: typeof ShopCheckoutRoute
+  ShopCheckoutReturnRoute: typeof ShopCheckoutReturnRoute
   ShopIndexRoute: typeof ShopIndexRoute
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
   ShopProductIdRoute: ShopProductIdRoute,
-  ShopEtsyCheckoutRoute: ShopEtsyCheckoutRoute,
+  ShopCheckoutRoute: ShopCheckoutRoute,
+  ShopCheckoutReturnRoute: ShopCheckoutReturnRoute,
   ShopIndexRoute: ShopIndexRoute,
 }
 
@@ -1174,6 +1216,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksListShopsRoute: ApiPublicHooksListShopsRoute,
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
   ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -117,7 +117,7 @@ function ShopPage() {
                 Texas-made goods. Built for patriots.
               </h1>
               <p className="mt-4 max-w-2xl text-white/70">
-                Every order helps keep our newsroom independent. Add items to your cart, review your bag, and complete secure purchase on Etsy.
+                Every order helps keep our newsroom independent. Add items to your cart, review your bag, and check out securely with card.
               </p>
             </div>
             <button

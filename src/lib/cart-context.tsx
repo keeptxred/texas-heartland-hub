@@ -83,19 +83,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => prev.filter((i) => i.key !== key));
 
   const checkout = () => {
-    // Etsy does not provide a supported public endpoint for an outside site to
-    // create a pre-filled multi-item Etsy cart. Preserve the complete local bag
-    // and send the buyer to our Etsy handoff page instead of dropping them on
-    // whichever listing happens to open first.
+    // Persist the bag so the checkout route can rehydrate on navigation,
+    // then hand off to our Stripe-powered secure checkout page.
     try {
-      const serialized = JSON.stringify(items);
-      window.sessionStorage.setItem(ETSY_CHECKOUT_STORAGE_KEY, serialized);
-      window.localStorage.setItem(ETSY_CHECKOUT_STORAGE_KEY, serialized);
+      window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
     } catch {
-      // Storage can be blocked in some browsers; still navigate so the buyer
-      // gets a clear next step instead of an empty/random Etsy listing.
+      // ignore blocked storage; in-memory cart still flows through.
     }
-    window.location.assign("/shop/etsy-checkout");
+    setOpen(false);
+    window.location.assign("/shop/checkout");
   };
 
   const value = useMemo<CartContextValue>(() => {

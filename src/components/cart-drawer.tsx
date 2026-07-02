@@ -126,7 +126,7 @@ export function CartDrawer() {
               <span className="font-display text-xl font-semibold">{subtotalFormatted}</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              We keep every item in your bag so you can match your selections on Etsy before secure purchase.
+              Secure card checkout. Ships from our print partner in 3–7 business days.
             </p>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -139,11 +139,11 @@ export function CartDrawer() {
                 onClick={checkout}
                 className="rounded-lg bg-primary text-primary-foreground font-display font-semibold px-4 py-3 text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
               >
-                Check out on Etsy
+                Proceed to Checkout
               </button>
             </div>
             <p className="text-[11px] text-center text-muted-foreground">
-              🔒 Secure checkout handled by Etsy.
+              🔒 Secure payment · Powered by Stripe.
             </p>
           </div>
         )}
