@@ -44,10 +44,9 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
   }
 
   // Pull the freshest live RSS items and surface them as breaking cards so the
-  // homepage breaking strip refreshes every 30 minutes alongside the RSS feed.
-  // Only items from the last 6 hours stay in the rotation — older items get
-  // demoted to "Happening Now" (last 24h) and then to topic pages.
-  const sinceIso = new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString();
+  // homepage breaking strip refreshes alongside the RSS feed. Window is 24h
+  // so the strip stays populated even when feeds are quiet for a few hours.
+  const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
   const { data: feed } = await supabase
     .from("texas_news_feed")
     .select("title,source,link,description,pub_date,internal_slug")
@@ -81,7 +80,7 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
   // Demote daily breaking articles older than 6 hours: clear the flag in-memory
   // so the homepage strip only shows fresh items. They still appear in news
   // listings and topic pages via the normal sort.
-  const demoteCutoff = Date.now() - 6 * 60 * 60 * 1000;
+  const demoteCutoff = Date.now() - 24 * 60 * 60 * 1000;
   const dailyRotated = ((data ?? []) as DailyArticle[]).map((a) => {
     if (a.is_breaking && Date.parse(a.published_at) < demoteCutoff) {
       return { ...a, is_breaking: false };
