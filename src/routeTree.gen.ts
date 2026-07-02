@@ -30,12 +30,12 @@ import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LawsRouteImport } from './routes/laws'
 import { Route as KeepTexasRedRouteImport } from './routes/keep-texas-red'
 import { Route as HoustonRouteImport } from './routes/houston'
+import { Route as HappeningNowRouteImport } from './routes/happening-now'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -163,6 +163,11 @@ const HoustonRoute = HoustonRouteImport.update({
   path: '/houston',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HappeningNowRoute = HappeningNowRouteImport.update({
+  id: '/happening-now',
+  path: '/happening-now',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GlossaryRoute = GlossaryRouteImport.update({
   id: '/glossary',
   path: '/glossary',
@@ -186,11 +191,6 @@ const ElectionsRoute = ElectionsRouteImport.update({
 const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
   id: '/editorial-standards',
   path: '/editorial-standards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CountyElectionsRoute = CountyElectionsRouteImport.update({
@@ -312,12 +312,12 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
-  '/dashboard': typeof DashboardRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
   '/laws': typeof LawsRoute
@@ -362,12 +362,12 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
-  '/dashboard': typeof DashboardRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
   '/laws': typeof LawsRoute
@@ -410,12 +410,12 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
-  '/dashboard': typeof DashboardRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
   '/laws': typeof LawsRoute
@@ -462,12 +462,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
-    | '/dashboard'
     | '/editorial-standards'
     | '/elections'
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/happening-now'
     | '/houston'
     | '/keep-texas-red'
     | '/laws'
@@ -512,12 +512,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
-    | '/dashboard'
     | '/editorial-standards'
     | '/elections'
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/happening-now'
     | '/houston'
     | '/keep-texas-red'
     | '/laws'
@@ -559,12 +559,12 @@ export interface FileRouteTypes {
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
-    | '/dashboard'
     | '/editorial-standards'
     | '/elections'
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/happening-now'
     | '/houston'
     | '/keep-texas-red'
     | '/laws'
@@ -610,12 +610,12 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
-  DashboardRoute: typeof DashboardRoute
   EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElectionsRoute: typeof ElectionsRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
   GlossaryRoute: typeof GlossaryRoute
+  HappeningNowRoute: typeof HappeningNowRoute
   HoustonRoute: typeof HoustonRoute
   KeepTexasRedRoute: typeof KeepTexasRedRoute
   LawsRoute: typeof LawsRoute
@@ -796,6 +796,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HoustonRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/happening-now': {
+      id: '/happening-now'
+      path: '/happening-now'
+      fullPath: '/happening-now'
+      preLoaderRoute: typeof HappeningNowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/glossary': {
       id: '/glossary'
       path: '/glossary'
@@ -829,13 +836,6 @@ declare module '@tanstack/react-router' {
       path: '/editorial-standards'
       fullPath: '/editorial-standards'
       preLoaderRoute: typeof EditorialStandardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/county-elections': {
@@ -1035,12 +1035,12 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
-  DashboardRoute: DashboardRoute,
   EditorialStandardsRoute: EditorialStandardsRoute,
   ElectionsRoute: ElectionsRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
   GlossaryRoute: GlossaryRoute,
+  HappeningNowRoute: HappeningNowRoute,
   HoustonRoute: HoustonRoute,
   KeepTexasRedRoute: KeepTexasRedRoute,
   LawsRoute: LawsRoute,
@@ -1074,13 +1074,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

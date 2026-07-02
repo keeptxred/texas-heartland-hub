@@ -50,7 +50,7 @@ function timeAgo(iso: string) {
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/happening-now")({
   head: () => ({
     meta: [
       { title: "Happening Now — Live Texas Political & Legislative Feeds | Keep TX Red" },
