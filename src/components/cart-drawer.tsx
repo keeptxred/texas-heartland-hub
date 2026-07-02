@@ -125,7 +125,9 @@ export function CartDrawer() {
               <span className="text-sm text-muted-foreground">Subtotal</span>
               <span className="font-display text-xl font-semibold">{subtotalFormatted}</span>
             </div>
-            <p className="text-[11px] text-muted-foreground">Shipping & tax calculated at checkout.</p>
+            <p className="text-[11px] text-muted-foreground">
+              Checkout opens each item's Etsy listing in a new tab — complete purchase on Etsy.
+            </p>
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={close}
@@ -137,11 +139,11 @@ export function CartDrawer() {
                 onClick={checkout}
                 className="rounded-lg bg-primary text-primary-foreground font-display font-semibold px-4 py-3 text-sm shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
               >
-                Proceed to Secure Checkout
+                Buy on Etsy
               </button>
             </div>
             <p className="text-[11px] text-center text-muted-foreground">
-              🔒 256-bit SSL encrypted • Your payment info is never stored on our servers.
+              🔒 Secure checkout handled by Etsy.
             </p>
           </div>
         )}

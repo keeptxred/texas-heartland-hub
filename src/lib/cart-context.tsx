@@ -55,7 +55,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => prev.filter((i) => i.key !== key));
 
   const checkout = () => {
-    // Open each product's fulfillment URL in a new tab (Printify listing).
+    // Open each item's Etsy listing in a new tab. Etsy can't receive a cart
+    // from us, so buyers complete purchase on Etsy per listing.
     const seen = new Set<string>();
     items.forEach((i) => {
       if (i.url && !seen.has(i.url)) {
