@@ -156,6 +156,13 @@ const SOURCES: { name: string; url: string; category?: string }[] = [
 function decode(s: string) {
   return s
     .replace(/<!\[CDATA\[(.*?)\]\]>/gs, "$1")
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(parseInt(d, 10)))
+    .replace(/&nbsp;/g, " ")
+    .replace(/&(?:lsquo|rsquo);/g, "'")
+    .replace(/&(?:ldquo|rdquo);/g, '"')
+    .replace(/&(?:ndash|mdash);/g, "—")
+    .replace(/&hellip;/g, "…")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
