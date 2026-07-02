@@ -57,9 +57,9 @@ export const Route = createFileRoute("/happening-now")({
       { name: "description", content: "Happening Now: live aggregated feeds from the Texas Legislature, the Governor's Office, and the Secretary of State. Filter bills, press releases, and political updates in real time." },
       { property: "og:title", content: "Happening Now — Keep TX Red" },
       { property: "og:description", content: "Real-time Texas political and legislative updates aggregated from official state sources." },
-      { property: "og:url", content: "https://www.keeptxred.com/dashboard" },
+      { property: "og:url", content: "https://www.keeptxred.com/happening-now" },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/dashboard" }],
+    links: [{ rel: "canonical", href: "https://www.keeptxred.com/happening-now" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -84,8 +84,8 @@ export const Route = createFileRoute("/happening-now")({
             },
             {
               "@type": "CollectionPage",
-              "@id": "https://www.keeptxred.com/dashboard#page",
-              url: "https://www.keeptxred.com/dashboard",
+              "@id": "https://www.keeptxred.com/happening-now#page",
+              url: "https://www.keeptxred.com/happening-now",
               name: "Statewide Conservative News Dashboard",
               description: "Live aggregated feeds from official Texas government sources: Legislature bills filed, Governor press releases, and Secretary of State updates.",
               isPartOf: { "@id": "https://www.keeptxred.com/#org" },
