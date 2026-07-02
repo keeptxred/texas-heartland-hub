@@ -48,6 +48,7 @@ import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
+import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
@@ -255,6 +256,11 @@ const TexasNewsTopicRoute = TexasNewsTopicRouteImport.update({
   path: '/$topic',
   getParentRoute: () => TexasNewsRoute,
 } as any)
+const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
+  id: '/$topic',
+  path: '/$topic',
+  getParentRoute: () => TexasBusinessRoute,
+} as any)
 const ShopProductIdRoute = ShopProductIdRouteImport.update({
   id: '/$productId',
   path: '/$productId',
@@ -344,7 +350,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
-  '/texas-business': typeof TexasBusinessRoute
+  '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
@@ -356,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news/': typeof NewsIndexRoute
@@ -394,7 +401,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
-  '/texas-business': typeof TexasBusinessRoute
+  '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
@@ -405,6 +412,7 @@ export interface FileRoutesByTo {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news': typeof NewsIndexRoute
@@ -446,7 +454,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
-  '/texas-business': typeof TexasBusinessRoute
+  '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
@@ -458,6 +466,7 @@ export interface FileRoutesById {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/news/': typeof NewsIndexRoute
@@ -512,6 +521,7 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
+    | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/news/'
@@ -561,6 +571,7 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
+    | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/news'
@@ -613,6 +624,7 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
+    | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/news/'
@@ -654,7 +666,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
-  TexasBusinessRoute: typeof TexasBusinessRoute
+  TexasBusinessRoute: typeof TexasBusinessRouteWithChildren
   TexasEconomyRoute: typeof TexasEconomyRoute
   TexasLawPolicyRoute: typeof TexasLawPolicyRoute
   TexasLawsRoute: typeof TexasLawsRoute
@@ -947,6 +959,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasNewsTopicRouteImport
       parentRoute: typeof TexasNewsRoute
     }
+    '/texas-business/$topic': {
+      id: '/texas-business/$topic'
+      path: '/$topic'
+      fullPath: '/texas-business/$topic'
+      preLoaderRoute: typeof TexasBusinessTopicRouteImport
+      parentRoute: typeof TexasBusinessRoute
+    }
     '/shop/$productId': {
       id: '/shop/$productId'
       path: '/$productId'
@@ -1053,6 +1072,18 @@ const ShopRouteChildren: ShopRouteChildren = {
 
 const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
+interface TexasBusinessRouteChildren {
+  TexasBusinessTopicRoute: typeof TexasBusinessTopicRoute
+}
+
+const TexasBusinessRouteChildren: TexasBusinessRouteChildren = {
+  TexasBusinessTopicRoute: TexasBusinessTopicRoute,
+}
+
+const TexasBusinessRouteWithChildren = TexasBusinessRoute._addFileChildren(
+  TexasBusinessRouteChildren,
+)
+
 interface TexasNewsRouteChildren {
   TexasNewsTopicRoute: typeof TexasNewsTopicRoute
 }
@@ -1106,7 +1137,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
-  TexasBusinessRoute: TexasBusinessRoute,
+  TexasBusinessRoute: TexasBusinessRouteWithChildren,
   TexasEconomyRoute: TexasEconomyRoute,
   TexasLawPolicyRoute: TexasLawPolicyRoute,
   TexasLawsRoute: TexasLawsRoute,
