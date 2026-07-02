@@ -4,31 +4,6 @@ import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
-  return await next().catch(handleMiddlewareError);
-});
-
-async function handleMiddlewareError(error: unknown): Promise<Response> {
-  if (error != null && typeof error === "object" && "statusCode" in error) {
-    throw error;
-  }
-  console.error(error);
-  return new Response(renderErrorPage(), {
-    status: 500,
-    headers: { "content-type": "text/html; charset=utf-8" },
-  });
-}
-
-// Bypass all app-level middleware for /lovable/* internal routes
-// (email queue processing, webhooks, previews). Each handler authenticates itself.
-const bypassLovableRoutes = createMiddleware().server(async ({ next, request }) => {
-  const url = new URL(request.url);
-  if (url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe") {
-    return next();
-  }
-  return next();
-});
-
-const errorMiddlewareLegacy = createMiddleware().server(async ({ next }) => {
   try {
     return await next();
   } catch (error) {
