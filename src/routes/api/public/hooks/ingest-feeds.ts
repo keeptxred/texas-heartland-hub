@@ -339,6 +339,13 @@ function parseFeed(xml: string, source: string): Item[] {
     const description = pick(b, "description") || pick(b, "summary") || pick(b, "content");
     const ts = Date.parse(rawDate);
     if (title && link) {
+      // Skip junk titles like "PDF format" / "HTML format" that some feeds
+      // (e.g. Texas Register) emit as separate items pointing to the same
+      // issue in a different file format. They aren't headlines.
+      const t = title.trim().toLowerCase();
+      if (/^(pdf|html|rss|xml|word|doc|docx|txt|text|epub)\s*(format|version)?$/.test(t)) {
+        continue;
+      }
       items.push({
         title: title.slice(0, 500),
         link,
