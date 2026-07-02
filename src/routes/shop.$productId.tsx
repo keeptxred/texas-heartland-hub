@@ -168,6 +168,7 @@ function ProductPage() {
         image: displayImage,
         price: unitPrice,
         qty,
+        variant: selectedVariant,
       }),
     );
   };
