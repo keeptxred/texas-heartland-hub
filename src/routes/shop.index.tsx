@@ -354,7 +354,7 @@ function ShopPage() {
             <li key={l.to}>
               <Link
                 to={l.to}
-                className="inline-block rounded-full border border-border bg-secondary px-3 py-1.5 text-sm font-medium hover:border-primary/60 hover:text-primary transition-colors"
+                className="inline-block rounded-full border border-border bg-secondary text-secondary-foreground px-3 py-1.5 text-sm font-medium hover:border-primary/60 hover:bg-primary hover:text-primary-foreground transition-colors"
               >
                 {l.label}
               </Link>
