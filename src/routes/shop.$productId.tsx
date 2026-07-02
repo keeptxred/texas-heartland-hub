@@ -1,8 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product } from "@/lib/products.functions";
+import { buildAddPayload, parseVariantSize, useCart } from "@/lib/cart-context";
 
 const productsQuery = queryOptions({
   queryKey: ["products", "listings"],
@@ -57,6 +58,7 @@ function ProductPage() {
   const { productId } = Route.useParams();
   const { data } = useSuspenseQuery(productsQuery);
   const product = data.products.find((p) => p.id === productId)!;
+  const { addItem } = useCart();
 
   const variants = product.variants ?? [];
 
@@ -93,18 +95,58 @@ function ProductPage() {
   const initialColor = colorChips[0] ?? null;
   const [selectedColor, setSelectedColor] = useState<string | null>(initialColor);
 
-  // Recomputes on every render, so it always reflects the current selectedColor.
+  // Sizes available for the currently selected color, in variant order.
+  const sizesForColor = useMemo(() => {
+    const seen: string[] = [];
+    for (const v of variants) {
+      if (selectedColor && v.color !== selectedColor) continue;
+      const size = parseVariantSize(v.title);
+      if (size && !seen.includes(size)) seen.push(size);
+    }
+    return seen;
+  }, [variants, selectedColor]);
+
+  const [selectedSize, setSelectedSize] = useState<string | null>(sizesForColor[0] ?? null);
+  // If the color changes and current size isn't offered in that color, snap
+  // to the first available size.
+  useEffect(() => {
+    if (sizesForColor.length === 0) {
+      if (selectedSize !== null) setSelectedSize(null);
+      return;
+    }
+    if (!selectedSize || !sizesForColor.includes(selectedSize)) {
+      setSelectedSize(sizesForColor[0]);
+    }
+  }, [sizesForColor, selectedSize]);
+
+  const [qty, setQty] = useState(1);
+
+  // Match variant by color + size when possible.
   const selectedVariant =
-    selectedColor != null
-      ? variants.find((v) => v.color === selectedColor && variantImage(v)) ??
-        variants.find((v) => v.color === selectedColor) ??
-        null
-      : null;
+    variants.find(
+      (v) =>
+        (!selectedColor || v.color === selectedColor) &&
+        (!selectedSize || parseVariantSize(v.title) === selectedSize),
+    ) ?? null;
 
   const displayImage =
     getProductImage(product, selectedVariant) ||
     (selectedColor && colorToImage.get(selectedColor)) ||
     product.image;
+
+  const unitPrice = selectedVariant?.price ?? product.price;
+
+  const handleAdd = () => {
+    addItem(
+      buildAddPayload(product, {
+        color: selectedColor,
+        size: selectedSize,
+        image: displayImage,
+        price: unitPrice,
+        qty,
+      }),
+    );
+  };
 
   return (
     <div className="bg-background">
@@ -159,23 +201,73 @@ function ProductPage() {
             </div>
           )}
 
+          {sizesForColor.length > 0 && (
+            <div className="mt-5">
+              <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                Size{selectedSize ? `: ${selectedSize}` : ""}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {sizesForColor.map((size) => {
+                  const isSelected = size === selectedSize;
+                  return (
+                    <button
+                      key={size}
+                      type="button"
+                      onClick={() => setSelectedSize(size)}
+                      aria-pressed={isSelected}
+                      className={`min-w-[3rem] rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-secondary text-secondary-foreground hover:border-primary/60"
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="mt-5">
+            <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              Quantity
+            </div>
+            <div className="inline-flex items-center border border-border rounded-md">
+              <button
+                onClick={() => setQty((q) => Math.max(1, q - 1))}
+                className="w-10 h-10 hover:bg-muted text-lg"
+                aria-label="Decrease quantity"
+              >
+                −
+              </button>
+              <span className="w-10 text-center font-semibold">{qty}</span>
+              <button
+                onClick={() => setQty((q) => q + 1)}
+                className="w-10 h-10 hover:bg-muted text-lg"
+                aria-label="Increase quantity"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
           {product.description && (
             <p className="mt-6 text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
               {product.description}
             </p>
           )}
 
-          <a
-            href={product.url}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={handleAdd}
             className="mt-8 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground font-display font-semibold tracking-wide px-6 py-4 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all"
           >
-            Proceed to Secure Checkout
+            Add to Cart
             <span aria-hidden>→</span>
-          </a>
+          </button>
           <p className="mt-3 text-[11px] text-muted-foreground text-center">
-            🔒 Secure checkout • Free returns within 30 days
+            🔒 Secure checkout at next step • Free returns within 30 days
           </p>
         </div>
       </section>
