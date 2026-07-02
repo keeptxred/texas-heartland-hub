@@ -54,7 +54,11 @@ import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
@@ -290,11 +294,33 @@ const NewsSlugRoute = NewsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => NewsRoute,
 } as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   id: '/authors/$slug',
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailQueueProcessRoute =
   LovableEmailQueueProcessRouteImport.update({
     id: '/lovable/email/queue/process',
@@ -385,6 +411,7 @@ export interface FileRoutesByFullPath {
   '/texas-sports': typeof TexasSportsRouteWithChildren
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -396,6 +423,7 @@ export interface FileRoutesByFullPath {
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -405,6 +433,8 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -439,6 +469,7 @@ export interface FileRoutesByTo {
   '/texas-politics': typeof TexasPoliticsRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -450,6 +481,7 @@ export interface FileRoutesByTo {
   '/news': typeof NewsIndexRoute
   '/shop': typeof ShopIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -459,6 +491,8 @@ export interface FileRoutesByTo {
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -497,6 +531,7 @@ export interface FileRoutesById {
   '/texas-sports': typeof TexasSportsRouteWithChildren
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -508,6 +543,7 @@ export interface FileRoutesById {
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -517,6 +553,8 @@ export interface FileRoutesById {
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -556,6 +594,7 @@ export interface FileRouteTypes {
     | '/texas-sports'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/email/unsubscribe'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -567,6 +606,7 @@ export interface FileRouteTypes {
     | '/news/'
     | '/shop/'
     | '/texas-sports/'
+    | '/lovable/email/suppression'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -576,6 +616,8 @@ export interface FileRouteTypes {
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -610,6 +652,7 @@ export interface FileRouteTypes {
     | '/texas-politics'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/email/unsubscribe'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -621,6 +664,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/shop'
     | '/texas-sports'
+    | '/lovable/email/suppression'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -630,6 +674,8 @@ export interface FileRouteTypes {
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   id:
     | '__root__'
     | '/'
@@ -667,6 +713,7 @@ export interface FileRouteTypes {
     | '/texas-sports'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/email/unsubscribe'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -678,6 +725,7 @@ export interface FileRouteTypes {
     | '/news/'
     | '/shop/'
     | '/texas-sports/'
+    | '/lovable/email/suppression'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -687,6 +735,8 @@ export interface FileRouteTypes {
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
     | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -725,6 +775,8 @@ export interface RootRouteChildren {
   TexasSportsRoute: typeof TexasSportsRouteWithChildren
   VotingLocationsRoute: typeof VotingLocationsRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
+  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
   ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
@@ -734,6 +786,8 @@ export interface RootRouteChildren {
   ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1053,11 +1107,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsSlugRouteImport
       parentRoute: typeof NewsRoute
     }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/authors/$slug': {
       id: '/authors/$slug'
       path: '/authors/$slug'
       fullPath: '/authors/$slug'
       preLoaderRoute: typeof AuthorsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/queue/process': {
@@ -1230,6 +1312,8 @@ const rootRouteChildren: RootRouteChildren = {
   TexasSportsRoute: TexasSportsRouteWithChildren,
   VotingLocationsRoute: VotingLocationsRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
+  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
   ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
@@ -1239,6 +1323,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
