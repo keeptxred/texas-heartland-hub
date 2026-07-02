@@ -55,6 +55,7 @@ import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
@@ -294,6 +295,12 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -397,6 +404,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -450,6 +458,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -507,6 +516,7 @@ export interface FileRoutesById {
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -565,6 +575,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -618,6 +629,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
   id:
     | '__root__'
     | '/'
@@ -674,6 +686,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -720,6 +733,7 @@ export interface RootRouteChildren {
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
   ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1046,6 +1060,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -1217,6 +1238,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
   ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
