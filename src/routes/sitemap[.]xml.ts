@@ -8,7 +8,7 @@ const ROUTES = [
   "/",
   "/news",
   "/news/non-political",
-  "/dashboard",
+  "/happening-now",
   "/keep-texas-red",
   "/texas-news",
   "/houston",

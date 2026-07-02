@@ -226,7 +226,7 @@ function Index() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/dashboard"
+                to="/happening-now"
                 className="inline-flex items-center bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
               >
                 Latest Articles
