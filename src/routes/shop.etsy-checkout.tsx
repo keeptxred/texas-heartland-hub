@@ -8,6 +8,7 @@ export const Route = createFileRoute("/shop/etsy-checkout")({
     meta: [
       { title: "Etsy Checkout — Keep Texas Red" },
       { name: "description", content: "Review your Keep Texas Red bag and complete secure checkout on Etsy." },
+      { name: "robots", content: "noindex,follow" },
       { property: "og:title", content: "Etsy Checkout — Keep Texas Red" },
       { property: "og:description", content: "Review your Keep Texas Red bag and complete secure checkout on Etsy." },
     ],
