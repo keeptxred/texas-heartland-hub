@@ -49,6 +49,7 @@ import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
 import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
+import { Route as ShopEtsyCheckoutRouteImport } from './routes/shop.etsy-checkout'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
@@ -261,6 +262,11 @@ const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
   path: '/$topic',
   getParentRoute: () => TexasBusinessRoute,
 } as any)
+const ShopEtsyCheckoutRoute = ShopEtsyCheckoutRouteImport.update({
+  id: '/etsy-checkout',
+  path: '/etsy-checkout',
+  getParentRoute: () => ShopRoute,
+} as any)
 const ShopProductIdRoute = ShopProductIdRouteImport.update({
   id: '/$productId',
   path: '/$productId',
@@ -362,6 +368,7 @@ export interface FileRoutesByFullPath {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -412,6 +419,7 @@ export interface FileRoutesByTo {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -466,6 +474,7 @@ export interface FileRoutesById {
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -521,6 +530,7 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
+    | '/shop/etsy-checkout'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -571,6 +581,7 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
+    | '/shop/etsy-checkout'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -624,6 +635,7 @@ export interface FileRouteTypes {
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
+    | '/shop/etsy-checkout'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -966,6 +978,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasBusinessTopicRouteImport
       parentRoute: typeof TexasBusinessRoute
     }
+    '/shop/etsy-checkout': {
+      id: '/shop/etsy-checkout'
+      path: '/etsy-checkout'
+      fullPath: '/shop/etsy-checkout'
+      preLoaderRoute: typeof ShopEtsyCheckoutRouteImport
+      parentRoute: typeof ShopRoute
+    }
     '/shop/$productId': {
       id: '/shop/$productId'
       path: '/$productId'
@@ -1062,11 +1081,13 @@ const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
 
 interface ShopRouteChildren {
   ShopProductIdRoute: typeof ShopProductIdRoute
+  ShopEtsyCheckoutRoute: typeof ShopEtsyCheckoutRoute
   ShopIndexRoute: typeof ShopIndexRoute
 }
 
 const ShopRouteChildren: ShopRouteChildren = {
   ShopProductIdRoute: ShopProductIdRoute,
+  ShopEtsyCheckoutRoute: ShopEtsyCheckoutRoute,
   ShopIndexRoute: ShopIndexRoute,
 }
 
