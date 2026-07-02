@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ETSY_CHECKOUT_STORAGE_KEY, type CartItem, useCart } from "@/lib/cart-context";
+import { CART_STORAGE_KEY, ETSY_CHECKOUT_STORAGE_KEY, type CartItem, useCart } from "@/lib/cart-context";
 import { SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/shop/etsy-checkout")({
@@ -25,7 +25,8 @@ function restoreCheckoutItems(): CartItem[] {
   if (typeof window === "undefined") return [];
   const raw =
     window.sessionStorage.getItem(ETSY_CHECKOUT_STORAGE_KEY) ||
-    window.localStorage.getItem(ETSY_CHECKOUT_STORAGE_KEY);
+    window.localStorage.getItem(ETSY_CHECKOUT_STORAGE_KEY) ||
+    window.localStorage.getItem(CART_STORAGE_KEY);
   if (!raw) return [];
   try {
     const parsed = JSON.parse(raw);
@@ -35,8 +36,9 @@ function restoreCheckoutItems(): CartItem[] {
   }
 }
 
-function getEtsyCartUrl() {
-  return "https://www.etsy.com/cart?ref=keeptxred_checkout&utm_source=keeptxred.com&utm_medium=shop_checkout_handoff";
+function getEtsyItemUrl(item: CartItem) {
+  if (item.url && /^https?:\/\//i.test(item.url)) return item.url;
+  return "https://www.etsy.com/shop/KeepTXRed?ref=keeptxred_checkout&utm_source=keeptxred.com&utm_medium=shop_checkout_handoff";
 }
 
 function optionText(item: CartItem) {
@@ -46,14 +48,17 @@ function optionText(item: CartItem) {
 function EtsyCheckoutPage() {
   const cart = useCart();
   const [storedItems, setStoredItems] = useState<CartItem[]>([]);
+  const [hasRestoredItems, setHasRestoredItems] = useState(false);
 
   useEffect(() => {
     setStoredItems(restoreCheckoutItems());
+    setHasRestoredItems(true);
   }, []);
 
   const items = cart.items.length > 0 ? cart.items : storedItems;
   const subtotal = useMemo(() => items.reduce((sum, item) => sum + item.price * item.qty, 0), [items]);
   const currency = items[0]?.currency ?? "USD";
+  const primaryEtsyUrl = items[0] ? getEtsyItemUrl(items[0]) : "https://www.etsy.com/shop/KeepTXRed";
 
   return (
     <div className="bg-background">
@@ -64,13 +69,19 @@ function EtsyCheckoutPage() {
           </div>
           <h1 className="font-display text-4xl md:text-5xl leading-tight">Complete your purchase on Etsy</h1>
           <p className="mt-4 max-w-3xl text-white/70">
-            Your Keep Texas Red bag is preserved below. Review the items, then continue to Etsy for secure payment.
+            Your Keep Texas Red bag is preserved below. Review the selected items, then continue to Etsy to finish purchase.
           </p>
         </div>
       </section>
 
       <section className="mx-auto max-w-[1100px] px-6 py-12">
-        {items.length === 0 ? (
+        {!hasRestoredItems ? (
+          <div className="rounded-2xl border border-border bg-card p-10 text-center">
+            <div className="text-4xl mb-3">🛍</div>
+            <h2 className="font-display text-2xl mb-2">Loading your bag</h2>
+            <p className="text-muted-foreground">Restoring your selected Keep Texas Red items…</p>
+          </div>
+        ) : items.length === 0 ? (
           <div className="rounded-2xl border border-border bg-card p-10 text-center">
             <div className="text-4xl mb-3">🛍</div>
             <h2 className="font-display text-2xl mb-2">No checkout items found</h2>
@@ -131,14 +142,14 @@ function EtsyCheckoutPage() {
                 </div>
               </div>
               <p className="mt-5 text-xs text-muted-foreground leading-relaxed">
-                Etsy calculates final shipping, tax, discounts, and payment details. Your selected Keep Texas Red items
-                remain listed here for review before payment.
+                Etsy does not allow outside websites to pre-fill a buyer's Etsy cart. Your selected Keep Texas Red items
+                remain listed here so you can match them on Etsy before secure payment.
               </p>
               <a
-                href={getEtsyCartUrl()}
+                href={primaryEtsyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-5 w-full rounded-lg bg-primary text-primary-foreground font-display font-semibold px-4 py-3 shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
+                className="mt-5 inline-flex w-full items-center justify-center rounded-lg bg-primary text-primary-foreground font-display font-semibold px-4 py-3 text-center shadow-lg shadow-primary/20 hover:bg-primary/90 transition-colors"
               >
                 Check out on Etsy
               </a>
