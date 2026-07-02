@@ -103,7 +103,18 @@ function ProductPage() {
       const size = parseVariantSize(v.title);
       if (size && !seen.includes(size)) seen.push(size);
     }
-    return seen;
+    const ORDER = ["XXS","XS","S","M","L","XL","2XL","XXL","3XL","XXXL","4XL","XXXXL","5XL","6XL"];
+    const rank = (s: string) => {
+      const up = s.toUpperCase().replace(/\s+/g, "");
+      const i = ORDER.indexOf(up);
+      return i === -1 ? 999 : i;
+    };
+    return [...seen].sort((a, b) => {
+      const ra = rank(a);
+      const rb = rank(b);
+      if (ra !== rb) return ra - rb;
+      return a.localeCompare(b);
+    });
   }, [variants, selectedColor]);
 
   const [selectedSize, setSelectedSize] = useState<string | null>(sizesForColor[0] ?? null);
