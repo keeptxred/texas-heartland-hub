@@ -212,7 +212,7 @@ function ProductPage() {
             </div>
           )}
 
-          {sizesForColor.length > 0 && (
+          {sizesForColor.length > 1 && (
             <div className="mt-5">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                 Size{selectedSize ? `: ${selectedSize}` : ""}
