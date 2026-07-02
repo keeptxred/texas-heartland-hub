@@ -4,6 +4,7 @@ import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product } from "@/lib/products.functions";
 import { buildAddPayload, parseVariantSize, useCart } from "@/lib/cart-context";
+import { seoTitle, seoDescription, seoAlt } from "@/lib/shop-seo";
 
 const productsQuery = queryOptions({
   queryKey: ["products", "listings"],
@@ -20,17 +21,30 @@ export const Route = createFileRoute("/shop/$productId")({
   },
   head: ({ loaderData }) => {
     const p = loaderData?.product;
-    const title = p ? `${p.title} — Keep Texas Red Shop` : "Product — Keep Texas Red";
-    const description = p?.description?.slice(0, 155) ?? "Texas-made apparel and accessories from Keep Texas Red.";
+    if (!p) {
+      return {
+        meta: [{ title: "Product — Keep Texas Red" }],
+      };
+    }
+    const displayTitle = seoTitle(p);
+    const title = `${displayTitle} | Keep Texas Red Shop`;
+    const description = seoDescription(p);
+    const url = `${SITE_URL}/shop/${p.id}`;
     return {
       meta: [
         { title },
         { name: "description", content: description },
-        { property: "og:title", content: title },
+        { property: "og:title", content: displayTitle },
         { property: "og:description", content: description },
-        ...(p?.image ? [{ property: "og:image", content: p.image }] : []),
+        { property: "og:type", content: "product" },
+        { property: "og:url", content: url },
+        ...(p.image ? [{ property: "og:image", content: p.image }] : []),
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: displayTitle },
+        { name: "twitter:description", content: description },
+        ...(p.image ? [{ name: "twitter:image", content: p.image }] : []),
       ],
-      links: p ? [{ rel: "canonical", href: `${SITE_URL}/shop/${p.id}` }] : [],
+      links: [{ rel: "canonical", href: url }],
     };
   },
   notFoundComponent: () => (
@@ -59,6 +73,7 @@ function ProductPage() {
   const { data } = useSuspenseQuery(productsQuery);
   const product = data.products.find((p) => p.id === productId)!;
   const { addItem } = useCart();
+  const displayTitle = seoTitle(product);
 
   const variants = product.variants ?? [];
 
@@ -175,10 +190,16 @@ function ProductPage() {
 
   return (
     <div className="bg-background">
-      <section className="mx-auto max-w-[1200px] px-6 py-8">
-        <Link to="/shop" className="text-sm text-muted-foreground hover:text-foreground">
-          ← Back to shop
-        </Link>
+      <section className="mx-auto max-w-[1200px] px-6 py-6">
+        <nav aria-label="Breadcrumb" className="text-xs text-muted-foreground">
+          <ol className="flex items-center gap-1 flex-wrap">
+            <li><Link to="/" className="hover:text-primary">Home</Link></li>
+            <li aria-hidden>/</li>
+            <li><Link to="/shop" className="hover:text-primary">Shop</Link></li>
+            <li aria-hidden>/</li>
+            <li className="text-foreground font-medium line-clamp-1">{displayTitle}</li>
+          </ol>
+        </nav>
       </section>
 
       <section className="mx-auto max-w-[1200px] px-6 pb-16 grid gap-10 md:grid-cols-2">
@@ -186,7 +207,7 @@ function ProductPage() {
           <img
             key={`${selectedColor ?? "default"}-${displayImage}`}
             src={displayImage}
-            alt={selectedColor ? `${product.title} in ${selectedColor}` : product.title}
+            alt={seoAlt(product, selectedColor)}
             className="h-full w-full object-cover"
           />
         </div>
@@ -195,7 +216,7 @@ function ProductPage() {
           <div className="text-[11px] font-semibold tracking-[0.3em] uppercase text-primary mb-3">
             Keep TX Red — Official Shop
           </div>
-          <h1 className="font-display text-3xl md:text-4xl leading-tight">{product.title}</h1>
+          <h1 className="font-display text-3xl md:text-4xl leading-tight">{displayTitle}</h1>
           <div className="mt-3 text-2xl font-semibold text-primary">{formatPrice(product)}</div>
 
           {colorChips.length > 1 && (
@@ -297,6 +318,43 @@ function ProductPage() {
           </p>
         </div>
       </section>
+
+      {/* Structured data: Product + Breadcrumb */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: displayTitle,
+            description: seoDescription(product),
+            image: displayImage,
+            url: `${SITE_URL}/shop/${product.id}`,
+            brand: { "@type": "Brand", name: "Keep Texas Red" },
+            offers: {
+              "@type": "Offer",
+              price: unitPrice.toFixed(2),
+              priceCurrency: product.currency || "USD",
+              availability: "https://schema.org/InStock",
+              url: `${SITE_URL}/shop/${product.id}`,
+            },
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+              { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE_URL}/shop` },
+              { "@type": "ListItem", position: 3, name: displayTitle, item: `${SITE_URL}/shop/${product.id}` },
+            ],
+          }),
+        }}
+      />
     </div>
   );
 }
