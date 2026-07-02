@@ -37,15 +37,15 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
       });
     }
   }
-  const response = await next();
+  const result = await next();
   if (url.search) {
     try {
-      response.headers.set("X-Robots-Tag", "noindex, follow");
+      result.response.headers.set("X-Robots-Tag", "noindex, follow");
     } catch {
       // response headers may be immutable in some runtimes; ignore.
     }
   }
-  return response;
+  return result;
 });
 
 export const startInstance = createStart(() => ({
