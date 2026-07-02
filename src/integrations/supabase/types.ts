@@ -113,6 +113,69 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          admin_notified: boolean
+          created_at: string
+          currency: string
+          customer_email: string
+          customer_name: string
+          customer_notified: boolean
+          customer_phone: string | null
+          environment: string
+          id: string
+          items: Json
+          printify_order_id: string | null
+          shipping_address: Json
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string
+          subtotal_cents: number
+          total_cents: number
+          updated_at: string
+        }
+        Insert: {
+          admin_notified?: boolean
+          created_at?: string
+          currency?: string
+          customer_email: string
+          customer_name: string
+          customer_notified?: boolean
+          customer_phone?: string | null
+          environment?: string
+          id?: string
+          items: Json
+          printify_order_id?: string | null
+          shipping_address: Json
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id: string
+          subtotal_cents?: number
+          total_cents?: number
+          updated_at?: string
+        }
+        Update: {
+          admin_notified?: boolean
+          created_at?: string
+          currency?: string
+          customer_email?: string
+          customer_name?: string
+          customer_notified?: boolean
+          customer_phone?: string | null
+          environment?: string
+          id?: string
+          items?: Json
+          printify_order_id?: string | null
+          shipping_address?: Json
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string
+          subtotal_cents?: number
+          total_cents?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           colors: string[]
