@@ -49,7 +49,6 @@ import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
 import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
-import { Route as ShopEtsyCheckoutRouteImport } from './routes/shop.etsy-checkout'
 import { Route as ShopCheckoutReturnRouteImport } from './routes/shop.checkout-return'
 import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
@@ -265,11 +264,6 @@ const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
   path: '/$topic',
   getParentRoute: () => TexasBusinessRoute,
 } as any)
-const ShopEtsyCheckoutRoute = ShopEtsyCheckoutRouteImport.update({
-  id: '/etsy-checkout',
-  path: '/etsy-checkout',
-  getParentRoute: () => ShopRoute,
-} as any)
 const ShopCheckoutReturnRoute = ShopCheckoutReturnRouteImport.update({
   id: '/checkout-return',
   path: '/checkout-return',
@@ -389,7 +383,6 @@ export interface FileRoutesByFullPath {
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
-  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -443,7 +436,6 @@ export interface FileRoutesByTo {
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
-  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -501,7 +493,6 @@ export interface FileRoutesById {
   '/shop/$productId': typeof ShopProductIdRoute
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
-  '/shop/etsy-checkout': typeof ShopEtsyCheckoutRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
@@ -560,7 +551,6 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/shop/checkout'
     | '/shop/checkout-return'
-    | '/shop/etsy-checkout'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -614,7 +604,6 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/shop/checkout'
     | '/shop/checkout-return'
-    | '/shop/etsy-checkout'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -671,7 +660,6 @@ export interface FileRouteTypes {
     | '/shop/$productId'
     | '/shop/checkout'
     | '/shop/checkout-return'
-    | '/shop/etsy-checkout'
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
@@ -1016,13 +1004,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasBusinessTopicRouteImport
       parentRoute: typeof TexasBusinessRoute
     }
-    '/shop/etsy-checkout': {
-      id: '/shop/etsy-checkout'
-      path: '/etsy-checkout'
-      fullPath: '/shop/etsy-checkout'
-      preLoaderRoute: typeof ShopEtsyCheckoutRouteImport
-      parentRoute: typeof ShopRoute
-    }
     '/shop/checkout-return': {
       id: '/shop/checkout-return'
       path: '/checkout-return'
@@ -1142,7 +1123,6 @@ interface ShopRouteChildren {
   ShopProductIdRoute: typeof ShopProductIdRoute
   ShopCheckoutRoute: typeof ShopCheckoutRoute
   ShopCheckoutReturnRoute: typeof ShopCheckoutReturnRoute
-  ShopEtsyCheckoutRoute: typeof ShopEtsyCheckoutRoute
   ShopIndexRoute: typeof ShopIndexRoute
 }
 
@@ -1150,7 +1130,6 @@ const ShopRouteChildren: ShopRouteChildren = {
   ShopProductIdRoute: ShopProductIdRoute,
   ShopCheckoutRoute: ShopCheckoutRoute,
   ShopCheckoutReturnRoute: ShopCheckoutReturnRoute,
-  ShopEtsyCheckoutRoute: ShopEtsyCheckoutRoute,
   ShopIndexRoute: ShopIndexRoute,
 }
 
