@@ -187,7 +187,8 @@ function ProductPage() {
           {colorChips.length > 1 && (
             <div className="mt-6">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                Color{selectedColor ? `: ${selectedColor}` : ""}
+                {product.title.toLowerCase().includes("sticker") || colorChips.every((c) => /^\d+x\d+$/.test(c.trim())) ? "Size" : "Color"}
+                {selectedColor ? `: ${selectedColor}` : ""}
               </div>
               <div className="flex flex-wrap gap-2">
                 {colorChips.map((color) => {
