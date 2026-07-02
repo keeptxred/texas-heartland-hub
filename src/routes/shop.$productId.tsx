@@ -91,7 +91,20 @@ function ProductPage() {
     if (!colorToImage.has(color)) colorToImage.set(color, product.image);
   }
 
-  const colorChips = colorOrder.length > 0 ? colorOrder : (product.colors ?? []);
+  // Sort dimension-style options (e.g. 2"×2", 3"×3") numerically for stickers.
+  const isDimensionProduct = product.title.toLowerCase().includes("sticker")
+    || colorOrder.every((c) => /^\d+/.test(c.trim()));
+
+  const dimensionRank = (s: string) => {
+    const m = s.trim().match(/^(\d+)/);
+    return m ? parseInt(m[1], 10) : Infinity;
+  };
+
+  const sortedColorOrder = isDimensionProduct
+    ? [...colorOrder].sort((a, b) => dimensionRank(a) - dimensionRank(b))
+    : colorOrder;
+
+  const colorChips = sortedColorOrder.length > 0 ? sortedColorOrder : (product.colors ?? []);
   const initialColor = colorChips[0] ?? null;
   const [selectedColor, setSelectedColor] = useState<string | null>(initialColor);
 
