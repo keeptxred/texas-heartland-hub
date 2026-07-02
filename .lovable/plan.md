@@ -1,14 +1,20 @@
-## Problem
-The article at `/news/live-2026-06-30-dallas-barbecue-hotspot-sees-record-tourism-numbers-during-world-cup-xexg9e` currently shows an unrelated stock image. The user uploaded a photo of Terry Black's BBQ (bbq.jpg) that is directly relevant to the story.
+## Goal
+Automatically sync products from Printify into the database every hour using a `pg_cron` job.
 
-## Plan
-1. **Upload the BBQ photo to Lovable Assets CDN** so it has a stable, fast-loading URL.
-2. **Update the `daily_articles` Supabase row** for slug `live-2026-06-30-dallas-barbecue-hotspot-sees-record-tourism-numbers-during-world-cup-xexg9e` to set `image_url` to the new CDN asset URL.
-3. **Verify** the article page renders with the new image in the preview.
+## What already exists
+- `/api/public/hooks/sync-printify` — a server route that fetches all products from Printify, maps them, upserts them into the `products` table, and deactivates stale ones.
+- `pg_cron` and `pg_net` extensions — already enabled and used by the email queue.
 
-## Scope
-- One-time fix for this single article only.
-- No changes to the generation pipeline or other articles.
+## What will be added
+A single `pg_cron` schedule named `sync-printify-hourly` that calls the existing sync endpoint via `pg_net` every hour.
 
-## Technical Detail
-The article is an AI-generated evergreen stored in the `daily_articles` table. Its `image_url` column drives the hero image on the `news.$slug.tsx` route. Updating that column is sufficient to swap the image sitewide (article page, homepage cards, category listings, etc.).
+## Cron schedule
+`0 * * * *` — runs at the top of every hour.
+
+## Technical details
+- Endpoint: `POST https://project--eabc624d-53f7-4564-8bf9-613c4b63a016.lovable.app/api/public/hooks/sync-printify`
+- The endpoint accepts POST with an empty body and returns `{ ok, fetched, upserted, deactivated }`.
+- No auth headers needed — `/api/public/*` routes are public.
+
+## Validation after setup
+Query `cron.job` to confirm the schedule exists, and optionally check `cron.job_run_details` after the first hour to verify successful runs.
