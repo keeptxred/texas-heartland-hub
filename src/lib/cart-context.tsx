@@ -1,5 +1,7 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import type { Product } from "@/lib/products.functions";
+import type { Product, ProductVariant } from "@/lib/products.functions";
+
+export const ETSY_CHECKOUT_STORAGE_KEY = "keeptxred:etsy-checkout-items:v1";
 
 export type CartItem = {
   key: string; // productId::color::size
@@ -12,6 +14,8 @@ export type CartItem = {
   size: string | null;
   qty: number;
   url: string;
+  variantId?: number | null;
+  variantTitle?: string | null;
 };
 
 type CartContextValue = {
@@ -34,7 +38,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [isOpen, setOpen] = useState(false);
 
   const addItem: CartContextValue["addItem"] = (input) => {
-    const key = `${input.productId}::${input.color ?? "_"}::${input.size ?? "_"}`;
+    const key = `${input.productId}::${input.variantId ?? "_"}::${input.color ?? "_"}::${input.size ?? "_"}`;
     const qty = input.qty ?? 1;
     setItems((prev) => {
       const existing = prev.find((i) => i.key === key);
@@ -55,15 +59,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setItems((prev) => prev.filter((i) => i.key !== key));
 
   const checkout = () => {
-    // Open each item's Etsy listing in a new tab. Etsy can't receive a cart
-    // from us, so buyers complete purchase on Etsy per listing.
-    const seen = new Set<string>();
-    items.forEach((i) => {
-      if (i.url && !seen.has(i.url)) {
-        seen.add(i.url);
-        window.open(i.url, "_blank", "noopener,noreferrer");
-      }
-    });
+    // Etsy does not provide a supported public endpoint for an outside site to
+    // create a pre-filled multi-item Etsy cart. Preserve the complete local bag
+    // and send the buyer to our Etsy handoff page instead of dropping them on
+    // whichever listing happens to open first.
+    try {
+      const serialized = JSON.stringify(items);
+      window.sessionStorage.setItem(ETSY_CHECKOUT_STORAGE_KEY, serialized);
+      window.localStorage.setItem(ETSY_CHECKOUT_STORAGE_KEY, serialized);
+    } catch {
+      // Storage can be blocked in some browsers; still navigate so the buyer
+      // gets a clear next step instead of an empty/random Etsy listing.
+    }
+    window.location.assign("/shop/etsy-checkout");
   };
 
   const value = useMemo<CartContextValue>(() => {
@@ -102,7 +110,14 @@ export function parseVariantSize(title: string | undefined): string | null {
 
 export function buildAddPayload(
   product: Product,
-  opts: { color: string | null; size: string | null; image: string; price: number; qty: number },
+  opts: {
+    color: string | null;
+    size: string | null;
+    image: string;
+    price: number;
+    qty: number;
+    variant?: ProductVariant | null;
+  },
 ) {
   return {
     productId: product.id,
@@ -114,5 +129,7 @@ export function buildAddPayload(
     size: opts.size,
     qty: opts.qty,
     url: product.url,
+    variantId: opts.variant?.id ?? null,
+    variantTitle: opts.variant?.title ?? null,
   };
 }
