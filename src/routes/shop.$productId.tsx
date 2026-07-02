@@ -184,7 +184,7 @@ function ProductPage() {
           <h1 className="font-display text-3xl md:text-4xl leading-tight">{product.title}</h1>
           <div className="mt-3 text-2xl font-semibold text-primary">{formatPrice(product)}</div>
 
-          {colorChips.length > 0 && (
+          {colorChips.length > 1 && (
             <div className="mt-6">
               <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
                 Color{selectedColor ? `: ${selectedColor}` : ""}
