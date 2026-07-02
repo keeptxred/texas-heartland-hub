@@ -293,7 +293,7 @@ function ProductPage() {
             <span aria-hidden>→</span>
           </button>
           <p className="mt-3 text-[11px] text-muted-foreground text-center">
-            🔒 Checkout completes on Etsy • Free returns within 30 days
+            🔒 Secure checkout · Ships in 3–7 business days
           </p>
         </div>
       </section>
