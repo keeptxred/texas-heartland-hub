@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { TEAMS, LEAGUE_META, type LeagueSlug } from "@/lib/texas-teams";
 
 export const Route = createFileRoute("/texas-sports/")({
   head: () => ({
@@ -17,6 +18,7 @@ export const Route = createFileRoute("/texas-sports/")({
 
 function SportsPage() {
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  const leagues: LeagueSlug[] = ["nfl", "mlb", "nba", "cfb"];
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
       <header className="border-b border-border pb-6 mb-10">
@@ -25,28 +27,46 @@ function SportsPage() {
           Texas Sports News &amp; Game Coverage
         </h1>
         <p className="mt-4 max-w-3xl text-base text-muted-foreground leading-relaxed">
-          Houston sports news and statewide coverage — the Houston Texans, Dallas Cowboys, Houston Astros, Texas Rangers, San Antonio Spurs, and Dallas Mavericks. Game recaps, season storylines, and the front-office moves shaping Texas franchises.
+          Every Texas team gets its own section. Pro football, baseball, basketball, and college football — recaps, roster moves, and the storylines Texas fans actually care about. Articles that touch more than one team are cross-posted so nothing gets missed.
         </p>
         <p className="mt-3 text-xs text-muted-foreground">Last updated: {lastUpdated}</p>
       </header>
 
-      <div className="grid md:grid-cols-3 gap-8">
-        {[
-          { league: "nfl" as const, name: "NFL – Texans & Cowboys", desc: "Houston Texans and Dallas Cowboys weekly updates, draft coverage, and playoff outlook." },
-          { league: "mlb" as const, name: "MLB – Astros & Rangers", desc: "Houston Astros and Texas Rangers season tracking, trade-deadline moves, and postseason analysis." },
-          { league: "nba" as const, name: "NBA – Spurs, Rockets & Mavericks", desc: "San Antonio Spurs, Houston Rockets, and Dallas Mavericks roster news and game recaps." },
-        ].map((c) => (
-          <Link
-            key={c.league}
-            to="/texas-sports/$league"
-            params={{ league: c.league }}
-            className="group block border border-border rounded-md p-6 bg-card hover:shadow-md transition-shadow"
-          >
-            <h2 className="font-sans text-lg font-semibold text-foreground group-hover:text-primary">{c.name}</h2>
-            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
-            <p className="mt-4 text-xs font-medium text-primary">Read the latest →</p>
-          </Link>
-        ))}
+      <div className="space-y-12">
+        {leagues.map((lg) => {
+          const teamsInLeague = TEAMS.filter((t) => t.league === lg);
+          const leagueLinkable = lg !== "cfb"; // no aggregate league page for college yet
+          return (
+            <section key={lg}>
+              <div className="flex items-baseline justify-between border-b border-border pb-3 mb-6">
+                <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">{LEAGUE_META[lg].long}</h2>
+                {leagueLinkable && (
+                  <Link
+                    to="/texas-sports/$league"
+                    params={{ league: lg as "nfl" | "mlb" | "nba" }}
+                    className="text-sm text-primary hover:underline shrink-0"
+                  >
+                    League overview →
+                  </Link>
+                )}
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {teamsInLeague.map((t) => (
+                  <Link
+                    key={t.slug}
+                    to="/texas-sports/team/$team"
+                    params={{ team: t.slug }}
+                    className="group block border border-border rounded-md p-5 bg-card hover:shadow-md transition-shadow"
+                  >
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t.city}</span>
+                    <h3 className="mt-1 font-sans text-lg font-semibold text-foreground group-hover:text-primary">{t.name}</h3>
+                    <p className="mt-3 text-xs font-medium text-primary">Latest {t.short} coverage →</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          );
+        })}
       </div>
 
       <section className="mt-16 border-t border-border pt-10">
