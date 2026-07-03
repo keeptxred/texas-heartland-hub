@@ -49,23 +49,24 @@ export function inferCategory(entities: ExtractedEntities): string {
   return "Non-Political";
 }
 
-// Lifestyle classifier aligned to the /texas-news topic slugs
-// (economy, housing, migration, education, sports, culture). Always returns
-// a non-empty value so `daily_articles.category` (NOT NULL) accepts it.
+// Lifestyle classifier. Returns the DISPLAY name used by
+// `CATEGORY_SLUG_TO_NAME` so rows land in the correct /texas-news filter
+// when queried by `daily_articles.category`. Always returns a non-empty
+// value so the NOT NULL column accepts the insert.
 export type TexasNewsCategory =
-  | "economy"
-  | "housing"
-  | "migration"
-  | "education"
-  | "sports"
-  | "culture";
+  | "Economy"
+  | "Housing"
+  | "Growth & Migration"
+  | "Education"
+  | "Sports Culture"
+  | "Culture & Identity";
 
 export function classifyStory(text: string): TexasNewsCategory {
   const t = text.toLowerCase();
-  if (t.includes("economy") || t.includes("job")) return "economy";
-  if (t.includes("rent") || t.includes("housing")) return "housing";
-  if (t.includes("border") || t.includes("immigration")) return "migration";
-  if (t.includes("school")) return "education";
-  if (t.includes("football") || t.includes("sports")) return "sports";
-  return "culture";
+  if (t.includes("economy") || t.includes("job")) return "Economy";
+  if (t.includes("rent") || t.includes("housing")) return "Housing";
+  if (t.includes("border") || t.includes("immigration")) return "Growth & Migration";
+  if (t.includes("school")) return "Education";
+  if (t.includes("football") || t.includes("sports")) return "Sports Culture";
+  return "Culture & Identity";
 }

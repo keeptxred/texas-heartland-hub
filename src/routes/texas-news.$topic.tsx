@@ -1,5 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { TexasNewsView, TEXAS_NEWS_SECTIONS } from "@/components/texas-news-view";
+import { getLiveArticlesByCategory } from "@/lib/articles-by-category.functions";
 
 const VALID = new Set(TEXAS_NEWS_SECTIONS.map((s) => s.id));
 
@@ -7,6 +8,7 @@ export const Route = createFileRoute("/texas-news/$topic")({
   beforeLoad: ({ params }) => {
     if (!VALID.has(params.topic)) throw notFound();
   },
+  loader: ({ params }) => getLiveArticlesByCategory({ data: { activeFilter: params.topic } }),
   head: ({ params }) => {
     const section = TEXAS_NEWS_SECTIONS.find((s) => s.id === params.topic);
     const title = section ? `${section.title} — Texas News` : "Texas News";
@@ -29,5 +31,6 @@ export const Route = createFileRoute("/texas-news/$topic")({
 
 function TopicPage() {
   const { topic } = Route.useParams();
-  return <TexasNewsView topic={topic} />;
+  const liveArticles = Route.useLoaderData();
+  return <TexasNewsView topic={topic} liveArticles={liveArticles} />;
 }

@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { assignUniqueImages } from "@/lib/dedupe-images";
+import type { LiveArticleRow } from "@/lib/articles-by-category.functions";
+import { resolveArticleImage } from "@/lib/seo-headline";
 
 export const TEXAS_NEWS_SECTIONS = [
   { id: "economy", title: "Economy", description: "Texas economy trends, jobs, and cost-of-living updates." },
@@ -71,13 +73,29 @@ function articlesForSlugs(slugs: string[]) {
     .sort(sortByDateDesc);
 }
 
-export function TexasNewsView({ topic }: { topic: string }) {
+export function TexasNewsView({
+  topic,
+  liveArticles = [],
+}: {
+  topic: string;
+  liveArticles?: LiveArticleRow[];
+}) {
   // Use UTC to avoid SSR/client hydration mismatch across timezones.
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
   const activeSection = TEXAS_NEWS_SECTIONS.find((s) => s.id === topic);
   const activeSlugs = activeSection ? TEXAS_NEWS_SLUGS[activeSection.id] : ALL_TEXAS_NEWS_SLUGS;
   const articles = articlesForSlugs(activeSlugs ?? []);
   const uniqImg = assignUniqueImages(articles, (a) => a.slug, (a) => a.image);
+
+  // Live rows from the DB for the active filter. De-dup against curated
+  // static slugs so an article never renders twice on the same page.
+  const staticSlugSet = new Set(articles.map((a) => a.slug));
+  const liveOnly = liveArticles.filter((r) => !staticSlugSet.has(r.slug));
+  const liveImg = assignUniqueImages(
+    liveOnly,
+    (r) => r.slug,
+    (r) => resolveArticleImage(r),
+  );
 
   // Scroll to top when the active filter changes so mobile users see the
   // updated header + section title instead of appearing to sit in place.
@@ -144,7 +162,7 @@ export function TexasNewsView({ topic }: { topic: string }) {
           )}
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
-          {articles.length === 0 && (
+          {articles.length === 0 && liveOnly.length === 0 && (
             <div className="col-span-full border-2 border-dashed border-border p-8 text-center">
               <p className="text-sm text-muted-foreground">
                 No {activeSection?.title.toLowerCase()} stories published yet. New evergreen coverage is added regularly.
@@ -154,6 +172,19 @@ export function TexasNewsView({ topic }: { topic: string }) {
               </Link>
             </div>
           )}
+          {liveOnly.map((a) => (
+            <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
+              <div className="aspect-[16/10] overflow-hidden bg-muted mb-4 rounded-md">
+                <img src={liveImg.get(a.slug) ?? resolveArticleImage(a)} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+              </div>
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
+              <h2 className="font-sans text-base font-semibold mt-1.5 leading-snug text-foreground group-hover:text-primary transition-colors">{a.title}</h2>
+              {a.dek && <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-2">{a.dek}</p>}
+              <p className="mt-2 text-xs text-muted-foreground">
+                {a.source_name ?? a.author} • {new Date(a.published_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" })}
+              </p>
+            </Link>
+          ))}
           {articles.map((a) => (
             <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
               <div className="aspect-[16/10] overflow-hidden bg-muted mb-4 rounded-md">
