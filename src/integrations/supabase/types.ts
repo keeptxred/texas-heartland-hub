@@ -41,6 +41,7 @@ export type Database = {
           slug: string
           source_name: string | null
           source_url: string | null
+          teams: string[]
           title: string
           variant_a_clicks: number
           variant_a_impressions: number
@@ -73,6 +74,7 @@ export type Database = {
           slug: string
           source_name?: string | null
           source_url?: string | null
+          teams?: string[]
           title: string
           variant_a_clicks?: number
           variant_a_impressions?: number
@@ -105,6 +107,7 @@ export type Database = {
           slug?: string
           source_name?: string | null
           source_url?: string | null
+          teams?: string[]
           title?: string
           variant_a_clicks?: number
           variant_a_impressions?: number
