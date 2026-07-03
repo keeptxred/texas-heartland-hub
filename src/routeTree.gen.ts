@@ -45,6 +45,7 @@ import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TexasIndexRouteImport } from './routes/texas.index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
@@ -251,6 +252,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TexasIndexRoute = TexasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasRoute,
+} as any)
 const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -414,7 +420,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
-  '/texas': typeof TexasRoute
+  '/texas': typeof TexasRouteWithChildren
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -437,6 +443,7 @@ export interface FileRoutesByFullPath {
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
+  '/texas/': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -475,7 +482,6 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
-  '/texas': typeof TexasRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -497,6 +503,7 @@ export interface FileRoutesByTo {
   '/news': typeof NewsIndexRoute
   '/shop': typeof ShopIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
+  '/texas': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -538,7 +545,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
-  '/texas': typeof TexasRoute
+  '/texas': typeof TexasRouteWithChildren
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -561,6 +568,7 @@ export interface FileRoutesById {
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
+  '/texas/': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -626,6 +634,7 @@ export interface FileRouteTypes {
     | '/news/'
     | '/shop/'
     | '/texas-sports/'
+    | '/texas/'
     | '/lovable/email/suppression'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -664,7 +673,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
-    | '/texas'
     | '/texas-business'
     | '/texas-economy'
     | '/texas-law-policy'
@@ -686,6 +694,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/shop'
     | '/texas-sports'
+    | '/texas'
     | '/lovable/email/suppression'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -749,6 +758,7 @@ export interface FileRouteTypes {
     | '/news/'
     | '/shop/'
     | '/texas-sports/'
+    | '/texas/'
     | '/lovable/email/suppression'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -790,7 +800,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
-  TexasRoute: typeof TexasRoute
+  TexasRoute: typeof TexasRouteWithChildren
   TexasBusinessRoute: typeof TexasBusinessRouteWithChildren
   TexasEconomyRoute: typeof TexasEconomyRoute
   TexasLawPolicyRoute: typeof TexasLawPolicyRoute
@@ -1070,6 +1080,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas/': {
+      id: '/texas/'
+      path: '/'
+      fullPath: '/texas/'
+      preLoaderRoute: typeof TexasIndexRouteImport
+      parentRoute: typeof TexasRoute
+    }
     '/texas-sports/': {
       id: '/texas-sports/'
       path: '/'
@@ -1278,6 +1295,16 @@ const ShopRouteChildren: ShopRouteChildren = {
 
 const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
+interface TexasRouteChildren {
+  TexasIndexRoute: typeof TexasIndexRoute
+}
+
+const TexasRouteChildren: TexasRouteChildren = {
+  TexasIndexRoute: TexasIndexRoute,
+}
+
+const TexasRouteWithChildren = TexasRoute._addFileChildren(TexasRouteChildren)
+
 interface TexasBusinessRouteChildren {
   TexasBusinessTopicRoute: typeof TexasBusinessTopicRoute
 }
@@ -1343,7 +1370,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
-  TexasRoute: TexasRoute,
+  TexasRoute: TexasRouteWithChildren,
   TexasBusinessRoute: TexasBusinessRouteWithChildren,
   TexasEconomyRoute: TexasEconomyRoute,
   TexasLawPolicyRoute: TexasLawPolicyRoute,
