@@ -18,6 +18,7 @@ import { Route as TexasLawsRouteImport } from './routes/texas-laws'
 import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
 import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
 import { Route as TexasBusinessRouteImport } from './routes/texas-business'
+import { Route as TexasRouteImport } from './routes/texas'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
@@ -113,6 +114,11 @@ const TexasEconomyRoute = TexasEconomyRouteImport.update({
 const TexasBusinessRoute = TexasBusinessRouteImport.update({
   id: '/texas-business',
   path: '/texas-business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasRoute = TexasRouteImport.update({
+  id: '/texas',
+  path: '/texas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -408,6 +414,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas': typeof TexasRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -468,6 +475,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas': typeof TexasRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -530,6 +538,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/texas': typeof TexasRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
@@ -594,6 +603,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas'
     | '/texas-business'
     | '/texas-economy'
     | '/texas-law-policy'
@@ -654,6 +664,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas'
     | '/texas-business'
     | '/texas-economy'
     | '/texas-law-policy'
@@ -715,6 +726,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/texas'
     | '/texas-business'
     | '/texas-economy'
     | '/texas-law-policy'
@@ -778,6 +790,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
+  TexasRoute: typeof TexasRoute
   TexasBusinessRoute: typeof TexasBusinessRouteWithChildren
   TexasEconomyRoute: typeof TexasEconomyRoute
   TexasLawPolicyRoute: typeof TexasLawPolicyRoute
@@ -866,6 +879,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-business'
       fullPath: '/texas-business'
       preLoaderRoute: typeof TexasBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas': {
+      id: '/texas'
+      path: '/texas'
+      fullPath: '/texas'
+      preLoaderRoute: typeof TexasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -1323,6 +1343,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
+  TexasRoute: TexasRoute,
   TexasBusinessRoute: TexasBusinessRouteWithChildren,
   TexasEconomyRoute: TexasEconomyRoute,
   TexasLawPolicyRoute: TexasLawPolicyRoute,
