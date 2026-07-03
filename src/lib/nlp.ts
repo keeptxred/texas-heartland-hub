@@ -48,3 +48,9 @@ export function inferCategory(entities: ExtractedEntities): string {
   if (entities.includes("Texas Legislature")) return "Legislature";
   return "Non-Political";
 }
+
+// Convenience: classify straight from raw text. Guarantees a non-empty
+// category so `daily_articles.category` (NOT NULL) never rejects the insert.
+export function classifyStory(text: string): string {
+  return inferCategory(extractEntities(text));
+}
