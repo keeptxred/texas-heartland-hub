@@ -216,9 +216,13 @@ const LEAGUE_IMAGE_FALLBACK: Record<string, string[]> = {
   cfb: LEAGUE_IMAGES.nfl, // reuse until dedicated CFB imagery is added
 };
 
+// Deliberately loose type: we pass the app's service-role client through and
+// don't want strict per-call Database generics interfering here.
+type AnySupabase = ReturnType<typeof createClient<any, any, any>>;
+
 async function generateForTeam(
   team: TeamMeta,
-  supabase: ReturnType<typeof createClient>,
+  supabase: AnySupabase,
   lovableApiKey: string,
 ): Promise<{ slug?: string; error?: string }> {
   const pool = TEAM_TOPIC_POOL[team.slug] ?? [`Weekly outlook for the ${team.name}`];
@@ -228,14 +232,15 @@ async function generateForTeam(
     .contains("teams", [team.slug])
     .order("published_at", { ascending: false })
     .limit(6);
-  const recentTitles = new Set((recent ?? []).map((r) => (r.title ?? "").toLowerCase()));
+  const recentRows = (recent ?? []) as Array<{ title: string | null; image_url: string | null }>;
+  const recentTitles = new Set(recentRows.map((r) => (r.title ?? "").toLowerCase()));
   const available = pool.filter(
     (t) => !Array.from(recentTitles).some((rt) => rt.includes(t.slice(0, 25).toLowerCase())),
   );
   const topicPool = available.length > 0 ? available : pool;
   const topic = topicPool[Math.floor(Math.random() * topicPool.length)];
 
-  const recentImages = new Set((recent ?? []).slice(0, 3).map((r) => r.image_url ?? ""));
+  const recentImages = new Set(recentRows.slice(0, 3).map((r) => r.image_url ?? ""));
   const imagePool = LEAGUE_IMAGE_FALLBACK[team.league] ?? LEAGUE_IMAGES.nfl;
   const freshImages = imagePool.filter((u) => !recentImages.has(u));
   const imageChoices = freshImages.length > 0 ? freshImages : imagePool;
