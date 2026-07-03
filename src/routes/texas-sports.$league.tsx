@@ -71,7 +71,7 @@ function LeaguePage() {
     const tagged = Array.isArray(a.teams) && a.teams.length > 0
       ? a.teams
       : detectTeams(`${a.title} ${a.dek}`);
-    const inLeague = tagged.filter((s) => byTeam.has(s));
+    const inLeague = tagged.filter((s: string) => byTeam.has(s));
     if (inLeague.length === 0) uncategorized.push(a);
     else for (const s of inLeague) byTeam.get(s)!.push(a);
   }
