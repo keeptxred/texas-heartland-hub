@@ -31,7 +31,7 @@ function keywordMatches(section: string) {
   if (words.length === 0) return [];
   return ARTICLES.filter((a) => {
     if (!isPublished(a)) return false;
-    const hay = `${a.title} ${a.dek ?? ""} ${(a.tags ?? []).join(" ")} ${a.category}`.toLowerCase();
+    const hay = `${a.title} ${a.dek ?? ""} ${a.category}`.toLowerCase();
     return words.some((w) => hay.includes(w));
   }).sort(sortByDateDesc);
 }
