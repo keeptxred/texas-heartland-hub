@@ -48,9 +48,9 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
     if (!supabase) return null;
     const { data: row, error } = await supabase
       .from("daily_articles")
-      .select("slug,category,title,dek,author,image_url,image_category,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
+      .select("slug,category,title,dek,author,source_name,source_url,image_url,image_category,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
       .eq("slug", data.slug)
-      .in("kind", ["evergreen", "ingested", "sports-nfl", "sports-mlb", "sports-nba"])
+      .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"])
       .maybeSingle();
     if (error || !row) return null;
     return {
@@ -69,9 +69,41 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
         (row as { headline_variants?: { a: string; b: string } | null }).headline_variants ?? null,
       published_at: row.published_at,
       keywords: (row as { keywords?: string[] | null }).keywords ?? null,
-      body: (row as { body_json?: EvergreenBody | null }).body_json ?? null,
+      body: (row as { body_json?: EvergreenBody | null }).body_json ?? synthMinimalBody(row),
     };
   });
+
+function synthMinimalBody(row: {
+  dek: string;
+  title: string;
+  source_name?: string | null;
+  source_url?: string | null;
+  category?: string | null;
+}): EvergreenBody {
+  const intro = [
+    row.dek || `${row.title}.`,
+    "This story is developing. Keep TX Red is following updates and will expand this report as more verified information becomes available.",
+  ];
+  const sections: EvergreenSection[] = [
+    {
+      heading: "Why This Matters for Texans",
+      paragraphs: [
+        `This ${row.category ?? "Texas"} story affects how the state is governed, funded, and represented. Keep TX Red is monitoring it because policy decisions in Austin and Washington ripple through every Texas community.`,
+      ],
+    },
+  ];
+  const sources = row.source_url && row.source_name
+    ? [{ label: row.source_name, url: row.source_url }]
+    : [];
+  return {
+    updated: new Date().toISOString(),
+    intro,
+    sections,
+    faq: [],
+    sources,
+    keyTakeaways: [row.dek || row.title],
+  };
+}
 
 export const listEvergreenSlugs = createServerFn({ method: "GET" }).handler(async () => {
   const supabase = client();
