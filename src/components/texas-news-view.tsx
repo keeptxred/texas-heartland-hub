@@ -37,7 +37,8 @@ function keywordMatches(section: string) {
 }
 
 export function TexasNewsView({ topic }: { topic: string }) {
-  const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  // Use UTC to avoid SSR/client hydration mismatch across timezones.
+  const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
   const activeSection = TEXAS_NEWS_SECTIONS.find((s) => s.id === topic);
   let articles = activeSection
     ? getArticlesByCategory(activeSection.id)
