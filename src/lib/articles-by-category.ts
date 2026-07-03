@@ -13,6 +13,12 @@ export const CATEGORY_SLUG_TO_NAME = {
   energy: "Energy",
   education: "Education",
   "non-political": "Non-Political",
+  // Texas News (culture / economy / lifestyle) categories
+  economy: "Economy",
+  housing: "Housing",
+  migration: "Growth & Migration",
+  culture: "Culture & Identity",
+  "sports-culture": "Sports Culture",
 } as const;
 
 export type CategorySlug = keyof typeof CATEGORY_SLUG_TO_NAME;

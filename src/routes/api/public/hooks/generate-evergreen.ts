@@ -33,6 +33,25 @@ const TOPICS: { category: string; topic: string }[] = [
   { category: "Elections", topic: "Texas voter ID requirements: accepted IDs and what to do without one" },
   { category: "Elections", topic: "How precinct chairs and county party conventions work in Texas" },
   { category: "Elections", topic: "Texas election audits and ballot security explained" },
+
+  // ── Texas News (culture / economy / lifestyle) — evergreen, NOT breaking ──
+  { category: "Economy", topic: "Why Texas is growing so fast in 2026" },
+  { category: "Economy", topic: "What is driving jobs in Texas in 2026" },
+  { category: "Economy", topic: "The real cost of living in Texas right now" },
+  { category: "Economy", topic: "Texas business climate 2026: why companies keep relocating" },
+  { category: "Housing", topic: "Texas housing market trends explained" },
+  { category: "Housing", topic: "Texas suburbs expansion: how the metros keep spreading" },
+  { category: "Housing", topic: "Renting vs buying in Texas in 2026: what actually pencils out" },
+  { category: "Growth & Migration", topic: "Why more people are moving to Texas" },
+  { category: "Growth & Migration", topic: "Where Texas newcomers are actually settling in 2026" },
+  { category: "Growth & Migration", topic: "The Texas triangle: how DFW, Houston, Austin, and San Antonio anchor growth" },
+  { category: "Culture & Identity", topic: "What Texas identity actually means in 2026" },
+  { category: "Culture & Identity", topic: "Small-town Texas: how rural communities are changing" },
+  { category: "Culture & Identity", topic: "Texas food culture: BBQ, Tex-Mex, and what defines the state's table" },
+  { category: "Education Trends", topic: "Texas school performance trends: what the numbers actually show" },
+  { category: "Education Trends", topic: "How Texas universities became a magnet for out-of-state students" },
+  { category: "Sports Culture", topic: "Why Friday night football still defines Texas towns" },
+  { category: "Sports Culture", topic: "College football culture in Texas: what makes it different" },
 ];
 
 function slugify(s: string): string {
@@ -50,8 +69,36 @@ type GeneratedBody = {
   keyTakeaways: string[];
 };
 
+const TEXAS_NEWS_CATEGORIES = new Set([
+  "Economy",
+  "Housing",
+  "Growth & Migration",
+  "Culture & Identity",
+  "Education Trends",
+  "Sports Culture",
+]);
+
 async function generate(topic: string, category: string, lovableApiKey: string): Promise<GeneratedBody> {
-  const system = `You are the senior editor of Keep TX Red, a Texas-focused news and civic-education site. Write a long-form evergreen explainer in a neutral, factual, educational tone. Avoid opinionated or partisan language. Stay factual — never invent statistics, names, or quotes. Cite only well-known public sources (Texas Comptroller, Texas Secretary of State, Texas Legislature Online, ERCOT, U.S. Census, official agency sites).
+  const isTexasNews = TEXAS_NEWS_CATEGORIES.has(category);
+
+  const toneBlock = isTexasNews
+    ? `TONE: Texas pride, neutral-to-proud, informational. This is an evergreen Texas News piece about culture, economy, housing, jobs, migration, or lifestyle — NOT breaking news, NOT emergency alerts, NOT government announcements, NOT legislative updates. Do not cover police scenes, urgent weather warnings, or partisan political figures. Keep the framing on long-term Texas identity, growth, and daily life. Length target: 800–1500 words.`
+    : `TONE: neutral, factual, educational. Avoid opinionated or partisan language.`;
+
+  const internalLinksBlock = isTexasNews
+    ? `INTERNAL LINKS (REQUIRED): Include 3–5 internal links in body paragraphs using markdown syntax [anchor text](/path). MUST include at least ONE link to each of these pillar guides where natural:
+- /texas/no-state-income-tax-2026
+- /texas/property-taxes-2026
+- /texas/moving-to-texas-2026
+Also acceptable: /texas-news, /texas-business, /texas-economy, /houston, /glossary. Do not force links — weave them in naturally.`
+    : `INTERNAL LINKS (REQUIRED): Include 3-5 internal links in body paragraphs using markdown syntax [anchor text](/path). Use natural anchor text. Pick from these real internal paths:
+- Category pages: /texas-politics, /texas-news, /texas-laws, /elections, /texas-business, /texas-economy, /tax-calculator
+- Glossary: /glossary (link the first mention of any specialized term, e.g. [homestead exemption](/glossary))
+- Related evergreen guides: /news (newsroom index)
+- Pillar: /keep-texas-red
+Link at least one glossary term, at least one related category page, and at least one other internal page. Do not force links — weave them in naturally.`;
+
+  const system = `You are the senior editor of Keep TX Red, a Texas-focused news and civic-education site. Write a long-form evergreen explainer. ${toneBlock} Stay factual — never invent statistics, names, or quotes. Cite only well-known public sources (Texas Comptroller, Texas Secretary of State, Texas Legislature Online, ERCOT, U.S. Census, official agency sites).
 
 SEO REQUIREMENTS:
 - Title: keyword-rich, under 75 characters, must include "Texas" (or a Texas city/region/institution).
@@ -71,12 +118,7 @@ REQUIRED SECTIONS (in this order, use these exact headings):
 7. "The Texas Angle" — ONE original perspective block (100-150 words): Texas-specific analysis, contrarian viewpoint with evidence, a unique framework, or an on-the-ground reporting summary. Use phrases like "According to internal analysis…", "Our review of county-level filings shows…", or "Local interviews indicate…" where appropriate. This block is REQUIRED.
 8. "Reader Questions" — 2-3 short answers (60-100 words each) covering mid-funnel and bottom-funnel concerns where relevant: implementation ("how do I file…"), cost/ROI ("what does this save Texans…"), or differentiators ("how Texas differs from other states"). Skip questions that do not fit the topic.
 
-INTERNAL LINKS (REQUIRED): Include 3-5 internal links in body paragraphs using markdown syntax [anchor text](/path). Use natural anchor text. Pick from these real internal paths:
-- Category pages: /texas-politics, /texas-news, /texas-laws, /elections, /texas-business, /texas-economy, /tax-calculator
-- Glossary: /glossary (link the first mention of any specialized term, e.g. [homestead exemption](/glossary))
-- Related evergreen guides: /news (newsroom index)
-- Pillar: /keep-texas-red
-Link at least one glossary term, at least one related category page, and at least one other internal page. Do not force links — weave them in naturally.
+${internalLinksBlock}
 
 KEY TAKEAWAYS: Provide 4-6 concise bullet points summarizing the article.
 
