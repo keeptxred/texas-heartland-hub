@@ -49,8 +49,23 @@ export function inferCategory(entities: ExtractedEntities): string {
   return "Non-Political";
 }
 
-// Convenience: classify straight from raw text. Guarantees a non-empty
-// category so `daily_articles.category` (NOT NULL) never rejects the insert.
-export function classifyStory(text: string): string {
-  return inferCategory(extractEntities(text));
+// Lifestyle classifier aligned to the /texas-news topic slugs
+// (economy, housing, migration, education, sports, culture). Always returns
+// a non-empty value so `daily_articles.category` (NOT NULL) accepts it.
+export type TexasNewsCategory =
+  | "economy"
+  | "housing"
+  | "migration"
+  | "education"
+  | "sports"
+  | "culture";
+
+export function classifyStory(text: string): TexasNewsCategory {
+  const t = text.toLowerCase();
+  if (t.includes("economy") || t.includes("job")) return "economy";
+  if (t.includes("rent") || t.includes("housing")) return "housing";
+  if (t.includes("border") || t.includes("immigration")) return "migration";
+  if (t.includes("school")) return "education";
+  if (t.includes("football") || t.includes("sports")) return "sports";
+  return "culture";
 }
