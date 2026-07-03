@@ -11,6 +11,7 @@ Every ingested or generated article must be fully rewritten (no source phrasing,
 ## Memories
 - [Evergreen article spec](mem://features/evergreen-article-spec) — Required structure, tone, linking, and attribution for AI-generated evergreens
 - [No duplicate images per page](mem://design/no-duplicate-images) — Hard rule + enforcement pattern (IMAGE_OVERRIDES) for keeping every page's images unique
+- [CTR + Discover + rotation rules](mem://features/ctr-discover-rotation) — Title patterns, opening hook, pillar link weighting, no-cannibalization rules, and pre-publish quality gates for every evergreen
 - [Duplicate-content quality gate](mem://features/dedupe-quality-gate) — dedupeArticleBody is mandatory on every body_json write + render
 - [Featured Stories daily rotation](mem://features/featured-stories-rotation) — Homepage Featured Stories lineup must change every day via date-based pool rotation
 - [Content quality rules](mem://features/content-quality-rules) — 800-word minimum, 60% reader-question coverage, 60% originality, credit-optimized expansion via PageExpansion
