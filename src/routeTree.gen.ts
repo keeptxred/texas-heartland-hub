@@ -47,6 +47,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TexasIndexRouteImport } from './routes/texas.index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
+import { Route as TexasNewsIndexRouteImport } from './routes/texas-news.index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
@@ -263,6 +264,11 @@ const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const TexasNewsIndexRoute = TexasNewsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasNewsRoute,
+} as any)
 const ShopIndexRoute = ShopIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -449,6 +455,7 @@ export interface FileRoutesByFullPath {
   '/texas/$slug': typeof TexasSlugRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
+  '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -493,7 +500,6 @@ export interface FileRoutesByTo {
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
-  '/texas-news': typeof TexasNewsRouteWithChildren
   '/texas-politics': typeof TexasPoliticsRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
@@ -510,6 +516,7 @@ export interface FileRoutesByTo {
   '/texas/$slug': typeof TexasSlugRoute
   '/news': typeof NewsIndexRoute
   '/shop': typeof ShopIndexRoute
+  '/texas-news': typeof TexasNewsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
   '/texas': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -576,6 +583,7 @@ export interface FileRoutesById {
   '/texas/$slug': typeof TexasSlugRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
+  '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -643,6 +651,7 @@ export interface FileRouteTypes {
     | '/texas/$slug'
     | '/news/'
     | '/shop/'
+    | '/texas-news/'
     | '/texas-sports/'
     | '/texas/'
     | '/lovable/email/suppression'
@@ -687,7 +696,6 @@ export interface FileRouteTypes {
     | '/texas-economy'
     | '/texas-law-policy'
     | '/texas-laws'
-    | '/texas-news'
     | '/texas-politics'
     | '/unsubscribe'
     | '/voting-locations'
@@ -704,6 +712,7 @@ export interface FileRouteTypes {
     | '/texas/$slug'
     | '/news'
     | '/shop'
+    | '/texas-news'
     | '/texas-sports'
     | '/texas'
     | '/lovable/email/suppression'
@@ -769,6 +778,7 @@ export interface FileRouteTypes {
     | '/texas/$slug'
     | '/news/'
     | '/shop/'
+    | '/texas-news/'
     | '/texas-sports/'
     | '/texas/'
     | '/lovable/email/suppression'
@@ -1106,6 +1116,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSportsIndexRouteImport
       parentRoute: typeof TexasSportsRoute
     }
+    '/texas-news/': {
+      id: '/texas-news/'
+      path: '/'
+      fullPath: '/texas-news/'
+      preLoaderRoute: typeof TexasNewsIndexRouteImport
+      parentRoute: typeof TexasNewsRoute
+    }
     '/shop/': {
       id: '/shop/'
       path: '/'
@@ -1340,10 +1357,12 @@ const TexasBusinessRouteWithChildren = TexasBusinessRoute._addFileChildren(
 
 interface TexasNewsRouteChildren {
   TexasNewsTopicRoute: typeof TexasNewsTopicRoute
+  TexasNewsIndexRoute: typeof TexasNewsIndexRoute
 }
 
 const TexasNewsRouteChildren: TexasNewsRouteChildren = {
   TexasNewsTopicRoute: TexasNewsTopicRoute,
+  TexasNewsIndexRoute: TexasNewsIndexRoute,
 }
 
 const TexasNewsRouteWithChildren = TexasNewsRoute._addFileChildren(
@@ -1419,13 +1438,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
