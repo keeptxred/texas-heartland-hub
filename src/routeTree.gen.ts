@@ -61,6 +61,7 @@ import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-politica
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -334,6 +335,11 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TexasSportsTeamTeamRoute = TexasSportsTeamTeamRouteImport.update({
+  id: '/team/$team',
+  path: '/team/$team',
+  getParentRoute: () => TexasSportsRoute,
+} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -459,6 +465,7 @@ export interface FileRoutesByFullPath {
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -520,6 +527,7 @@ export interface FileRoutesByTo {
   '/texas-sports': typeof TexasSportsIndexRoute
   '/texas': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -587,6 +595,7 @@ export interface FileRoutesById {
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -655,6 +664,7 @@ export interface FileRouteTypes {
     | '/texas-sports/'
     | '/texas/'
     | '/lovable/email/suppression'
+    | '/texas-sports/team/$team'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -716,6 +726,7 @@ export interface FileRouteTypes {
     | '/texas-sports'
     | '/texas'
     | '/lovable/email/suppression'
+    | '/texas-sports/team/$team'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -782,6 +793,7 @@ export interface FileRouteTypes {
     | '/texas-sports/'
     | '/texas/'
     | '/lovable/email/suppression'
+    | '/texas-sports/team/$team'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -1214,6 +1226,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-sports/team/$team': {
+      id: '/texas-sports/team/$team'
+      path: '/team/$team'
+      fullPath: '/texas-sports/team/$team'
+      preLoaderRoute: typeof TexasSportsTeamTeamRouteImport
+      parentRoute: typeof TexasSportsRoute
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -1372,11 +1391,13 @@ const TexasNewsRouteWithChildren = TexasNewsRoute._addFileChildren(
 interface TexasSportsRouteChildren {
   TexasSportsLeagueRoute: typeof TexasSportsLeagueRoute
   TexasSportsIndexRoute: typeof TexasSportsIndexRoute
+  TexasSportsTeamTeamRoute: typeof TexasSportsTeamTeamRoute
 }
 
 const TexasSportsRouteChildren: TexasSportsRouteChildren = {
   TexasSportsLeagueRoute: TexasSportsLeagueRoute,
   TexasSportsIndexRoute: TexasSportsIndexRoute,
+  TexasSportsTeamTeamRoute: TexasSportsTeamTeamRoute,
 }
 
 const TexasSportsRouteWithChildren = TexasSportsRoute._addFileChildren(
