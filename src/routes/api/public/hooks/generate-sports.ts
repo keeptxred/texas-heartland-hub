@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { TEAMS, TEAM_BY_SLUG, teamsForLeague, detectTeams, type TeamMeta } from "@/lib/texas-teams";
 
 const LEAGUES = ["nfl", "mlb", "nba"] as const;
 type League = (typeof LEAGUES)[number];
@@ -79,6 +80,89 @@ const LEAGUE_PROMPT: Record<League, { category: string; teams: string; topics: s
   },
 };
 
+// Per-team weekly topic packs. Cron requests `?team=<slug>` and the handler
+// picks a topic from that team's pool, generates the article, and tags the
+// row with `teams: [<slug>]`. Cross-posting happens automatically at
+// read-time: an article whose title/dek also mentions another team appears
+// on that team's page too (see listSportsByTeam).
+const TEAM_TOPIC_POOL: Record<string, string[]> = {
+  texans: [
+    "Houston Texans weekly outlook: what fans should watch for",
+    "Houston Texans offense: scheme, playmakers, and identity",
+    "Houston Texans defense: front seven, secondary, and coaching",
+    "Houston Texans quarterback situation and Texas fan expectations",
+    "NRG Stadium home-field advantage and the Houston Texans",
+    "Houston Texans draft tradition: building through the AFC South",
+    "Special teams and situational football for the Houston Texans",
+  ],
+  cowboys: [
+    "Dallas Cowboys weekly outlook: what fans should watch for",
+    "Dallas Cowboys offense: scheme, playmakers, and identity",
+    "Dallas Cowboys defense: front seven, secondary, and coaching",
+    "Dallas Cowboys quarterback storyline and America's Team expectations",
+    "AT&T Stadium and how home-field shapes the Dallas Cowboys",
+    "Dallas Cowboys draft history: building the NFC East contender",
+    "The Dallas Cowboys coaching staff and its philosophy for Texas fans",
+  ],
+  astros: [
+    "Houston Astros weekly outlook: rotation, lineup, and bullpen",
+    "Houston Astros starting rotation: identity and Texas fan expectations",
+    "Houston Astros lineup construction and the AL West race",
+    "Minute Maid Park and how it shapes Houston Astros baseball",
+    "Houston Astros farm system: prospects Texas fans should know",
+  ],
+  rangers: [
+    "Texas Rangers weekly outlook: rotation, lineup, and bullpen",
+    "Texas Rangers starting rotation and postseason outlook",
+    "Texas Rangers lineup and the fight for the AL West",
+    "Globe Life Field and how it shapes Texas Rangers baseball",
+    "Texas Rangers farm system: prospects to watch this season",
+  ],
+  spurs: [
+    "San Antonio Spurs weekly outlook: what fans should watch for",
+    "San Antonio Spurs young core: development and expectations",
+    "Frost Bank Center and the Spurs home-court identity",
+    "Southwest Division outlook from a Spurs perspective",
+  ],
+  rockets: [
+    "Houston Rockets weekly outlook: what fans should watch for",
+    "Houston Rockets rebuild: how Houston is building its next contender",
+    "Toyota Center and Houston Rockets home-court identity",
+    "Southwest Division outlook from a Rockets perspective",
+  ],
+  mavericks: [
+    "Dallas Mavericks weekly outlook: what fans should watch for",
+    "Dallas Mavericks roster identity: stars, role players, and hoops culture",
+    "American Airlines Center and Mavs home-court identity",
+    "Southwest Division outlook from a Mavericks perspective",
+  ],
+  longhorns: [
+    "Texas Longhorns weekly football outlook",
+    "Texas Longhorns offense and Big 12/SEC outlook",
+    "Darrell K Royal Stadium and Longhorns home-field culture",
+  ],
+  aggies: [
+    "Texas A&M Aggies weekly football outlook",
+    "Texas A&M Aggies offense and SEC outlook",
+    "Kyle Field, the 12th Man, and Aggies home-field culture",
+  ],
+  "horned-frogs": [
+    "TCU Horned Frogs weekly football outlook",
+    "TCU Horned Frogs offense and Big 12 outlook",
+    "Amon G. Carter Stadium and TCU home-field culture",
+  ],
+  bears: [
+    "Baylor Bears weekly football outlook",
+    "Baylor Bears offense and Big 12 outlook",
+    "McLane Stadium and Baylor Bears home-field culture",
+  ],
+  "red-raiders": [
+    "Texas Tech Red Raiders weekly football outlook",
+    "Texas Tech Red Raiders offense and Big 12 outlook",
+    "Jones AT&T Stadium and Red Raiders home-field culture",
+  ],
+};
+
 function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 90);
 }
@@ -93,9 +177,8 @@ type GeneratedBody = {
   sources: { label: string; url: string }[];
 };
 
-async function generate(topic: string, league: League, lovableApiKey: string): Promise<GeneratedBody> {
-  const meta = LEAGUE_PROMPT[league];
-  const system = `You are a Texas sports writer for Keep TX Red. Write a weekly evergreen-style overview about ${meta.teams} in a clear, fan-friendly tone. Stay factual and timeless — describe ongoing storylines, team identity, recent seasons, and what fans should watch for. Do NOT invent specific scores, dates, injuries, trades, or quotes. Reference only publicly known team facts and rosters.
+async function generate(topic: string, subject: string, lovableApiKey: string): Promise<GeneratedBody> {
+  const system = `You are a Texas sports writer for Keep TX Red. Write a weekly evergreen-style overview about ${subject} in a clear, fan-friendly tone. Stay factual and timeless — describe ongoing storylines, team identity, recent seasons, and what fans should watch for. Do NOT invent specific scores, dates, injuries, trades, or quotes. Reference only publicly known team facts and rosters.
 
 REQUIREMENTS:
 - Title: keyword-rich, under 75 characters, must include a Texas team or city name.
@@ -116,7 +199,7 @@ Return ONLY valid JSON:
       model: "google/gemini-3-flash-preview",
       messages: [
         { role: "system", content: system },
-        { role: "user", content: `League: ${meta.category}\nTeams: ${meta.teams}\nTopic: ${topic}\n\nWrite the full article now.` },
+        { role: "user", content: `Subject: ${subject}\nTopic: ${topic}\n\nWrite the full article now.` },
       ],
       response_format: { type: "json_object" },
     }),
@@ -124,6 +207,82 @@ Return ONLY valid JSON:
   if (!r.ok) throw new Error(`AI gateway ${r.status}: ${(await r.text()).slice(0, 300)}`);
   const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
   return JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as GeneratedBody;
+}
+
+const LEAGUE_IMAGE_FALLBACK: Record<string, string[]> = {
+  nfl: LEAGUE_IMAGES.nfl,
+  mlb: LEAGUE_IMAGES.mlb,
+  nba: LEAGUE_IMAGES.nba,
+  cfb: LEAGUE_IMAGES.nfl, // reuse until dedicated CFB imagery is added
+};
+
+async function generateForTeam(
+  team: TeamMeta,
+  supabase: ReturnType<typeof createClient>,
+  lovableApiKey: string,
+): Promise<{ slug?: string; error?: string }> {
+  const pool = TEAM_TOPIC_POOL[team.slug] ?? [`Weekly outlook for the ${team.name}`];
+  const { data: recent } = await supabase
+    .from("daily_articles")
+    .select("title,image_url")
+    .contains("teams", [team.slug])
+    .order("published_at", { ascending: false })
+    .limit(6);
+  const recentTitles = new Set((recent ?? []).map((r) => (r.title ?? "").toLowerCase()));
+  const available = pool.filter(
+    (t) => !Array.from(recentTitles).some((rt) => rt.includes(t.slice(0, 25).toLowerCase())),
+  );
+  const topicPool = available.length > 0 ? available : pool;
+  const topic = topicPool[Math.floor(Math.random() * topicPool.length)];
+
+  const recentImages = new Set((recent ?? []).slice(0, 3).map((r) => r.image_url ?? ""));
+  const imagePool = LEAGUE_IMAGE_FALLBACK[team.league] ?? LEAGUE_IMAGES.nfl;
+  const freshImages = imagePool.filter((u) => !recentImages.has(u));
+  const imageChoices = freshImages.length > 0 ? freshImages : imagePool;
+  const image_url = imageChoices[Math.floor(Math.random() * imageChoices.length)];
+
+  const gen = await generate(topic, team.name, lovableApiKey);
+  if (!gen?.title || !gen?.dek || !Array.isArray(gen.sections) || gen.sections.length < 3) {
+    return { error: "Bad AI output" };
+  }
+
+  // Cross-posting: an article about the Texans that also mentions the
+  // Cowboys is tagged with both, so it shows up on both team pages.
+  const detected = detectTeams(`${gen.title} ${gen.dek} ${(gen.intro ?? []).join(" ")}`);
+  const teams = Array.from(new Set<string>([team.slug, ...detected]));
+
+  const now = new Date();
+  const { dedupeArticleBody } = await import("@/lib/article-dedupe");
+  const kind = team.league === "cfb" ? "sports-cfb" : `sports-${team.league}`;
+  const categoryLabel = team.league === "cfb" ? "College Football" : team.league.toUpperCase();
+  const slug = `${now.toISOString().slice(0, 10)}-${team.slug}-${slugify(gen.title)}`;
+  const cleanBody = dedupeArticleBody({
+    updated: now.toISOString().slice(0, 10),
+    intro: gen.intro ?? [gen.dek],
+    sections: gen.sections,
+    faq: gen.faq ?? [],
+    sources: gen.sources ?? [],
+  });
+  const row = {
+    slug,
+    internal_url: `/news/${slug}`,
+    is_ingested: true,
+    kind,
+    category: categoryLabel,
+    title: gen.title.slice(0, 200),
+    dek: gen.dek.slice(0, 400),
+    author: "Keep TX Red Sports Desk",
+    source_name: null as string | null,
+    source_url: null as string | null,
+    image_url,
+    published_at: now.toISOString(),
+    keywords: (gen.keywords ?? []).slice(0, 20),
+    body_json: cleanBody,
+    teams,
+  };
+  const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
+  if (error) return { error: error.message };
+  return { slug };
 }
 
 export const Route = createFileRoute("/api/public/hooks/generate-sports")({
@@ -138,86 +297,47 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
         }
 
         let leagueParam: string | undefined;
+        let teamParam: string | undefined;
+        let countParam: number | undefined;
         try {
-          const body = (await request.json()) as { league?: string } | null;
+          const body = (await request.json()) as { league?: string; team?: string; count?: number } | null;
           leagueParam = body?.league;
+          teamParam = body?.team;
+          countParam = typeof body?.count === "number" ? Math.max(1, Math.min(5, body.count)) : undefined;
         } catch {
-          // empty body is fine — we'll generate for all leagues
+          // empty body is fine — we'll fall through to auto-scheduling below
         }
-
-        const targets: League[] = leagueParam && (LEAGUES as readonly string[]).includes(leagueParam)
-          ? [leagueParam as League]
-          : [...LEAGUES];
 
         const supabase = createClient(supabaseUrl, serviceKey, {
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
-        const results: { league: League; slug?: string; error?: string }[] = [];
+        // Resolve the set of teams to generate for.
+        // - `team: "cowboys"` → single team
+        // - `league: "nfl"` → every Texas team in that league
+        // - no body → in-season teams (currently NFL, per weekly cadence)
+        let teamTargets: TeamMeta[];
+        if (teamParam && TEAM_BY_SLUG[teamParam]) {
+          teamTargets = [TEAM_BY_SLUG[teamParam]];
+        } else if (leagueParam) {
+          const lg = leagueParam as "nfl" | "mlb" | "nba" | "cfb";
+          teamTargets = teamsForLeague(lg);
+        } else {
+          // Default cron behavior: cover the currently in-season pro leagues.
+          const inSeason = currentInSeasonLeagues();
+          teamTargets = TEAMS.filter((t) => inSeason.includes(t.league));
+        }
 
-        for (const league of targets) {
-          try {
-            const meta = LEAGUE_PROMPT[league];
-            const { data: recent } = await supabase
-              .from("daily_articles")
-              .select("title,image_url")
-              .eq("kind", `sports-${league}`)
-              .order("published_at", { ascending: false })
-              .limit(10);
-            const recentTitles = new Set((recent ?? []).map((r) => (r.title ?? "").toLowerCase()));
-            const available = meta.topics.filter(
-              (t) => !Array.from(recentTitles).some((rt) => rt.includes(t.slice(0, 25).toLowerCase())),
-            );
-            const pool = available.length > 0 ? available : meta.topics;
-            const topic = pool[Math.floor(Math.random() * pool.length)];
-
-            // Pick a league image not used by the most recent articles to avoid duplicates.
-            const recentImages = new Set((recent ?? []).slice(0, 3).map((r) => r.image_url ?? ""));
-            const imagePool = LEAGUE_IMAGES[league];
-            const freshImages = imagePool.filter((u) => !recentImages.has(u));
-            const imageChoices = freshImages.length > 0 ? freshImages : imagePool;
-            const image_url = imageChoices[Math.floor(Math.random() * imageChoices.length)];
-
-            const gen = await generate(topic, league, lovableApiKey);
-            if (!gen?.title || !gen?.dek || !Array.isArray(gen.sections) || gen.sections.length < 3) {
-              results.push({ league, error: "Bad AI output" });
-              continue;
+        const perTeam = countParam ?? 1;
+        const results: { team: string; slug?: string; error?: string }[] = [];
+        for (const team of teamTargets) {
+          for (let i = 0; i < perTeam; i++) {
+            try {
+              const r = await generateForTeam(team, supabase, lovableApiKey);
+              results.push({ team: team.slug, ...r });
+            } catch (err) {
+              results.push({ team: team.slug, error: String(err) });
             }
-
-            const now = new Date();
-            const { dedupeArticleBody } = await import("@/lib/article-dedupe");
-            const slug = `${now.toISOString().slice(0, 10)}-${league}-${slugify(gen.title)}`;
-            const cleanBody = dedupeArticleBody({
-              updated: now.toISOString().slice(0, 10),
-              intro: gen.intro ?? [gen.dek],
-              sections: gen.sections,
-              faq: gen.faq ?? [],
-              sources: gen.sources ?? [],
-            });
-            const row = {
-              slug,
-              internal_url: `/news/${slug}`,
-              is_ingested: true,
-              kind: `sports-${league}`,
-              category: meta.category,
-              title: gen.title.slice(0, 200),
-              dek: gen.dek.slice(0, 400),
-              author: "Keep TX Red Sports Desk",
-              source_name: null as string | null,
-              source_url: null as string | null,
-              image_url,
-              published_at: now.toISOString(),
-              keywords: (gen.keywords ?? []).slice(0, 20),
-              body_json: cleanBody,
-            };
-            const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
-            if (error) {
-              results.push({ league, error: error.message });
-            } else {
-              results.push({ league, slug });
-            }
-          } catch (err) {
-            results.push({ league, error: String(err) });
           }
         }
 
@@ -226,3 +346,15 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
     },
   },
 });
+
+// Approximate US sports seasons. Used by the default (no-body) cron path so
+// we only generate for leagues that are actually playing.
+function currentInSeasonLeagues(): ("nfl" | "mlb" | "nba" | "cfb")[] {
+  const month = new Date().getUTCMonth() + 1; // 1-12
+  const out: ("nfl" | "mlb" | "nba" | "cfb")[] = [];
+  if (month >= 9 || month <= 2) out.push("nfl");
+  if (month >= 8 || month <= 1) out.push("cfb");
+  if (month >= 4 && month <= 10) out.push("mlb");
+  if (month >= 10 || month <= 6) out.push("nba");
+  return out;
+}
