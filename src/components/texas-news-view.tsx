@@ -37,11 +37,11 @@ const TEXAS_NEWS_SLUGS: Record<string, string[]> = {
     "texas-property-tax-guide",
   ],
   culture: [
-    "gracie-the-giraffe",
     "constitutional-carry-one-year-later",
     "texas-water-rights-explained",
     "texas-open-meetings-public-info",
     "texas-political-terminology",
+    "texas-constitutional-amendments-guide",
   ],
   education: [
     "school-choice-esa-guide",
@@ -51,19 +51,23 @@ const TEXAS_NEWS_SLUGS: Record<string, string[]> = {
     "beginners-guide-texas-elections",
   ],
   "sports-culture": [
-    "gracie-the-giraffe",
     "texas-voting-guide-2026",
     "texas-border-policy-full-guide",
     "texas-energy-economy-overview",
+    "school-board-elections",
+    "primary-vs-general-election",
   ],
 };
 
-const ALL_TEXAS_NEWS_SLUGS = Array.from(new Set(Object.values(TEXAS_NEWS_SLUGS).flat()));
+const TEXAS_NEWS_EXCLUDED_SLUGS = new Set(["gracie-the-giraffe"]);
+const ALL_TEXAS_NEWS_SLUGS = Array.from(new Set(Object.values(TEXAS_NEWS_SLUGS).flat())).filter(
+  (slug) => !TEXAS_NEWS_EXCLUDED_SLUGS.has(slug),
+);
 
 function articlesForSlugs(slugs: string[]) {
   return slugs
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
-    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
+    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!) && !TEXAS_NEWS_EXCLUDED_SLUGS.has(a!.slug))
     .sort(sortByDateDesc);
 }
 
