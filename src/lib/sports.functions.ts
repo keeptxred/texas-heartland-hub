@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { TEAM_BY_SLUG, isTeamSlug } from "./texas-teams";
 
 export type SportsListItem = {
   slug: string;
@@ -11,6 +12,7 @@ export type SportsListItem = {
   image_url: string | null;
   image_hash: string | null;
   category: string;
+  teams?: string[] | null;
 };
 
 const LEAGUES = ["nfl", "mlb", "nba"] as const;
@@ -30,10 +32,60 @@ export const listSportsByLeague = createServerFn({ method: "GET" })
     if (!supabase) return { items: [] };
     const { data: rows, error } = await supabase
       .from("daily_articles")
-      .select("slug,title,dek,author,published_at,image_url,image_hash,category")
+      .select("slug,title,dek,author,published_at,image_url,image_hash,category,teams")
       .eq("kind", `sports-${data.league}`)
       .order("published_at", { ascending: false })
       .limit(50);
     if (error || !rows) return { items: [] };
     return { items: rows as SportsListItem[] };
+  });
+
+/** Team page feed: an article shows up on a team page if either
+ *  (a) its `teams[]` array contains the team slug (canonical, set at ingest), or
+ *  (b) its title/dek mentions the team by keyword (fallback for legacy rows
+ *      written before teams[] existed). This is what makes cross-posting work
+ *      — one article can appear on multiple team pages. */
+export const listSportsByTeam = createServerFn({ method: "GET" })
+  .inputValidator((d) => z.object({ team: z.string().min(1) }).parse(d))
+  .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
+    if (!isTeamSlug(data.team)) return { items: [] };
+    const supabase = client();
+    if (!supabase) return { items: [] };
+    const team = TEAM_BY_SLUG[data.team];
+
+    // Primary: canonical tag match.
+    const canonical = await supabase
+      .from("daily_articles")
+      .select("slug,title,dek,author,published_at,image_url,image_hash,category,teams")
+      .contains("teams", [team.slug])
+      .order("published_at", { ascending: false })
+      .limit(50);
+
+    // Fallback: keyword scan of sports rows for the team's league (covers rows
+    // written before teams[] was added, and lets an NFL story that mentions
+    // "Cowboys" show up on the Cowboys page even if ingest missed it).
+    const kindFilter = `sports-${team.league}`;
+    const keywordOr = team.keywords
+      .map((k) => k.replace(/[,()]/g, " ").trim())
+      .filter(Boolean)
+      .flatMap((k) => [`title.ilike.%${k}%`, `dek.ilike.%${k}%`])
+      .join(",");
+    const legacy = keywordOr
+      ? await supabase
+          .from("daily_articles")
+          .select("slug,title,dek,author,published_at,image_url,image_hash,category,teams")
+          .eq("kind", kindFilter)
+          .or(keywordOr)
+          .order("published_at", { ascending: false })
+          .limit(50)
+      : { data: [], error: null as unknown };
+
+    const merged = new Map<string, SportsListItem>();
+    for (const r of (canonical.data ?? []) as SportsListItem[]) merged.set(r.slug, r);
+    for (const r of (legacy.data ?? []) as SportsListItem[]) if (!merged.has(r.slug)) merged.set(r.slug, r);
+
+    const items = Array.from(merged.values()).sort(
+      (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime(),
+    );
+    return { items };
   });
