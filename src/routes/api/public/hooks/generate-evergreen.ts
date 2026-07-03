@@ -102,7 +102,9 @@ Link at least one glossary term, at least one related category page, and at leas
 
 SEO REQUIREMENTS:
 - Title: keyword-rich, under 75 characters, must include "Texas" (or a Texas city/region/institution).
+- CTR BOOST: strongly prefer one of these framings in the title when natural: "What This Means for Texans", "The Real Reason Behind …", "… Explained Simply", "Most People Don't Realize …", or "What's Actually Changing in Texas in 2026". Use Texas-identity language. FORBIDDEN: generic informational titles ("A Guide to X", "Overview of Y"), repetitive/templated headlines, or stale news phrasing ("Breaking:", "Update:").
 - dek: 140-220 characters, naturally include 1-2 Texas keywords, summarize the actual content.
+- OPENING HOOK (REQUIRED): the FIRST sentence of intro[0] must be an emotional-curiosity hook using Texas-identity language. Good examples: "Texas is changing faster than most people realize.", "The reality in Texas is more complex than it looks.", "Here's what actually matters in Texas in 2026.". Do NOT start with "In this article" or a dry definition.
 - Total body length: 900-1400 words across intro + sections. HARD MINIMUM 800 words — reject your own draft and add sections if shorter.
 - 8-14 keywords.
 - 3-5 official .gov / well-known source links.
@@ -119,6 +121,18 @@ REQUIRED SECTIONS (in this order, use these exact headings):
 8. "Reader Questions" — 2-3 short answers (60-100 words each) covering mid-funnel and bottom-funnel concerns where relevant: implementation ("how do I file…"), cost/ROI ("what does this save Texans…"), or differentiators ("how Texas differs from other states"). Skip questions that do not fit the topic.
 
 ${internalLinksBlock}
+
+PILLAR LINK WEIGHTING (REQUIRED): Every article MUST link to ALL THREE pillar guides at least once, using natural anchor text: /texas/no-state-income-tax-2026, /texas/property-taxes-2026, /texas/moving-to-texas-2026. Also include one link back to the Texas News hub (/texas-news). Avoid isolated pages — every article must feed the pillar/hub graph.
+
+CONTENT ROTATION (REQUIRED — NO CANNIBALIZATION):
+- Do NOT repeat the search intent of an existing pillar. If the topic overlaps a pillar (income tax, property tax, moving to Texas), take a DIFFERENT angle (e.g. a subtopic, a county-level cut, a comparison, an FAQ deep-dive) and link to the pillar instead of rewriting it.
+- Do NOT frame this as breaking news. No "today", "this week", "just announced" language. Evergreen only.
+- Each article must own a UNIQUE search intent (one primary question answered). State that intent implicitly in the title.
+
+GOOGLE DISCOVER READINESS:
+- Take a fresh angle on the evergreen topic (comparison, contrarian, "what most people miss", county-level, cost breakdown, etc.).
+- Use emotional-curiosity phrasing in the title without clickbait.
+- Weave Texas-identity language ("Lone Star", "Texans", specific city/county names) into the intro and at least two sections.
 
 KEY TAKEAWAYS: Provide 4-6 concise bullet points summarizing the article.
 
@@ -197,6 +211,34 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
         if (hasDuplicateContent(cleanBody)) {
           return Response.json({ error: "Duplicate content detected; not published", slug }, { status: 422 });
         }
+
+        // Quality filter: pre-publish gate.
+        // 1) Unique title angle — reject if an existing evergreen already has a
+        //    near-identical title (first 40 chars, case-insensitive).
+        const titleKey = gen.title.toLowerCase().slice(0, 40);
+        const { data: titleDupes } = await supabase
+          .from("daily_articles")
+          .select("slug,title")
+          .eq("kind", "evergreen")
+          .ilike("title", `${titleKey}%`)
+          .limit(1);
+        if (titleDupes && titleDupes.length > 0) {
+          return Response.json({ error: "Duplicate title angle; not published", slug, existing: titleDupes[0].slug }, { status: 422 });
+        }
+
+        // 2) Texas context must be present in title or dek.
+        const hasTexasContext = /texas|houston|dallas|austin|san antonio|fort worth|lone star/i.test(
+          `${gen.title} ${gen.dek}`
+        );
+        if (!hasTexasContext) {
+          return Response.json({ error: "Missing Texas context in title/dek", slug }, { status: 422 });
+        }
+
+        // 3) No breaking-news framing in evergreen.
+        if (/\b(breaking|just announced|today|this week|developing)\b/i.test(`${gen.title} ${gen.dek}`)) {
+          return Response.json({ error: "Breaking-news framing not allowed in evergreen", slug }, { status: 422 });
+        }
+
         const row = {
           slug,
           internal_url: `/news/${slug}`,
