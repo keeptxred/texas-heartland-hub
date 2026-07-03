@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { getArticlesByCategory } from "@/lib/articles-by-category";
 import { assignUniqueImages } from "@/lib/dedupe-images";
@@ -12,13 +13,45 @@ export const TEXAS_NEWS_SECTIONS = [
   { id: "sports-culture", title: "Sports Culture", description: "High school, college, and pro sports as part of Texas life." },
 ];
 
+// Keyword fallback: when a section has no articles tagged with its exact
+// category, surface related published articles by matching keywords in the
+// title, dek, and tags. Keeps filter buttons useful even before the AI
+// generator has produced lifestyle-tagged evergreens.
+const SECTION_KEYWORDS: Record<string, string[]> = {
+  economy: ["econom", "job", "wage", "cost of living", "inflation", "business", "tax"],
+  housing: ["hous", "home", "rent", "mortgage", "property", "suburb", "real estate"],
+  migration: ["migrat", "moving", "population", "growth", "relocat", "newcomer", "census"],
+  culture: ["cultur", "identity", "community", "tradition", "heritage", "family", "faith"],
+  education: ["school", "educat", "student", "teacher", "district", "university", "college"],
+  "sports-culture": ["sport", "football", "baseball", "basketball", "team", "coach", "athlet"],
+};
+
+function keywordMatches(section: string) {
+  const words = SECTION_KEYWORDS[section] ?? [];
+  if (words.length === 0) return [];
+  return ARTICLES.filter((a) => {
+    if (!isPublished(a)) return false;
+    const hay = `${a.title} ${a.dek ?? ""} ${a.category}`.toLowerCase();
+    return words.some((w) => hay.includes(w));
+  }).sort(sortByDateDesc);
+}
+
 export function TexasNewsView({ topic }: { topic: string }) {
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
   const activeSection = TEXAS_NEWS_SECTIONS.find((s) => s.id === topic);
-  const articles = activeSection
+  let articles = activeSection
     ? getArticlesByCategory(activeSection.id)
     : ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
+  if (activeSection && articles.length === 0) {
+    articles = keywordMatches(activeSection.id);
+  }
   const uniqImg = assignUniqueImages(articles, (a) => a.slug, (a) => a.image);
+
+  // Scroll to top when the active filter changes so mobile users see the
+  // updated header + section title instead of appearing to sit in place.
+  useEffect(() => {
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [topic]);
 
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
@@ -79,6 +112,16 @@ export function TexasNewsView({ topic }: { topic: string }) {
           )}
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
+          {articles.length === 0 && (
+            <div className="col-span-full border-2 border-dashed border-border p-8 text-center">
+              <p className="text-sm text-muted-foreground">
+                No {activeSection?.title.toLowerCase()} stories published yet. New evergreen coverage is added regularly.
+              </p>
+              <Link to="/texas-news" className="mt-3 inline-block text-sm text-primary hover:underline">
+                ← Back to all Texas news
+              </Link>
+            </div>
+          )}
           {articles.map((a) => (
             <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
               <div className="aspect-[16/10] overflow-hidden bg-muted mb-4 rounded-md">
