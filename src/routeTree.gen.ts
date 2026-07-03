@@ -49,6 +49,7 @@ import { Route as TexasIndexRouteImport } from './routes/texas.index'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
+import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
 import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
@@ -272,6 +273,11 @@ const NewsIndexRoute = NewsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => NewsRoute,
 } as any)
+const TexasSlugRoute = TexasSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TexasRoute,
+} as any)
 const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
   id: '/$league',
   path: '/$league',
@@ -440,6 +446,7 @@ export interface FileRoutesByFullPath {
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/$slug': typeof TexasSlugRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
@@ -500,6 +507,7 @@ export interface FileRoutesByTo {
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/$slug': typeof TexasSlugRoute
   '/news': typeof NewsIndexRoute
   '/shop': typeof ShopIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
@@ -565,6 +573,7 @@ export interface FileRoutesById {
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/$slug': typeof TexasSlugRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
@@ -631,6 +640,7 @@ export interface FileRouteTypes {
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
+    | '/texas/$slug'
     | '/news/'
     | '/shop/'
     | '/texas-sports/'
@@ -691,6 +701,7 @@ export interface FileRouteTypes {
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
+    | '/texas/$slug'
     | '/news'
     | '/shop'
     | '/texas-sports'
@@ -755,6 +766,7 @@ export interface FileRouteTypes {
     | '/texas-business/$topic'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
+    | '/texas/$slug'
     | '/news/'
     | '/shop/'
     | '/texas-sports/'
@@ -1108,6 +1120,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsIndexRouteImport
       parentRoute: typeof NewsRoute
     }
+    '/texas/$slug': {
+      id: '/texas/$slug'
+      path: '/$slug'
+      fullPath: '/texas/$slug'
+      preLoaderRoute: typeof TexasSlugRouteImport
+      parentRoute: typeof TexasRoute
+    }
     '/texas-sports/$league': {
       id: '/texas-sports/$league'
       path: '/$league'
@@ -1296,10 +1315,12 @@ const ShopRouteChildren: ShopRouteChildren = {
 const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
 
 interface TexasRouteChildren {
+  TexasSlugRoute: typeof TexasSlugRoute
   TexasIndexRoute: typeof TexasIndexRoute
 }
 
 const TexasRouteChildren: TexasRouteChildren = {
+  TexasSlugRoute: TexasSlugRoute,
   TexasIndexRoute: TexasIndexRoute,
 }
 
