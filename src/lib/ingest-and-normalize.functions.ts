@@ -9,7 +9,7 @@
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { extractEntities, inferCategory } from "./nlp";
+import { classifyStory, extractEntities } from "./nlp";
 
 const RawStorySchema = z.object({
   title: z.string().min(4).max(240),
@@ -42,8 +42,9 @@ export const ingestStory = createServerFn({ method: "POST" })
       auth: { persistSession: false, autoRefreshToken: false },
     });
 
-    const entities = extractEntities(`${story.title} ${story.content}`);
-    const category = inferCategory(entities);
+    const haystack = `${story.title} ${story.content}`;
+    const entities = extractEntities(haystack);
+    const category = classifyStory(haystack);
     const publishedAt = story.publishedAt ?? new Date().toISOString();
     const datePrefix = publishedAt.slice(0, 10);
     const slug = `${datePrefix}-${slugify(story.title)}`;
