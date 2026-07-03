@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { TexasNewsView } from "@/components/texas-news-view";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/texas-news")({
+  component: () => <Outlet />,
+});
   head: () => ({
     meta: [
       { title: "Texas News & Insights (Culture, Economy, Lifestyle Updates)" },
