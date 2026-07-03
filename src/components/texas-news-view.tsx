@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
-import { getArticlesByCategory } from "@/lib/articles-by-category";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 
 export const TEXAS_NEWS_SECTIONS = [
@@ -13,39 +12,67 @@ export const TEXAS_NEWS_SECTIONS = [
   { id: "sports-culture", title: "Sports Culture", description: "High school, college, and pro sports as part of Texas life." },
 ];
 
-// Keyword fallback: when a section has no articles tagged with its exact
-// category, surface related published articles by matching keywords in the
-// title, dek, and tags. Keeps filter buttons useful even before the AI
-// generator has produced lifestyle-tagged evergreens.
-const SECTION_KEYWORDS: Record<string, string[]> = {
-  economy: ["econom", "job", "wage", "cost of living", "inflation", "business", "tax"],
-  housing: ["hous", "home", "rent", "mortgage", "property", "suburb", "real estate"],
-  migration: ["migrat", "moving", "population", "growth", "relocat", "newcomer", "census"],
-  culture: ["cultur", "identity", "community", "tradition", "heritage", "family", "faith"],
-  education: ["school", "educat", "student", "teacher", "district", "university", "college"],
-  "sports-culture": ["sport", "football", "baseball", "basketball", "team", "coach", "athlet"],
+const TEXAS_NEWS_SLUGS: Record<string, string[]> = {
+  economy: [
+    "texas-energy-economy-overview",
+    "why-texas-has-no-income-tax",
+    "permian-energy",
+    "texas-grid-ercot-explained",
+    "texas-energy-policy-guide",
+    "property-tax-relief-package",
+  ],
+  housing: [
+    "texas-property-tax-guide",
+    "homestead-exemption-explained",
+    "appraisal-protest-playbook",
+    "county-appraisal-districts-explained",
+    "isd-tax-burdens",
+    "property-tax-relief-package",
+  ],
+  migration: [
+    "why-texas-has-no-income-tax",
+    "what-local-governments-control",
+    "texas-water-rights-explained",
+    "texas-border-geography-101",
+    "texas-property-tax-guide",
+  ],
+  culture: [
+    "gracie-the-giraffe",
+    "constitutional-carry-one-year-later",
+    "texas-water-rights-explained",
+    "texas-open-meetings-public-info",
+    "texas-political-terminology",
+  ],
+  education: [
+    "school-choice-esa-guide",
+    "texas-school-board-powers",
+    "texas-school-finance-explained",
+    "school-board-elections",
+    "beginners-guide-texas-elections",
+  ],
+  "sports-culture": [
+    "gracie-the-giraffe",
+    "texas-voting-guide-2026",
+    "texas-border-policy-full-guide",
+    "texas-energy-economy-overview",
+  ],
 };
 
-function keywordMatches(section: string) {
-  const words = SECTION_KEYWORDS[section] ?? [];
-  if (words.length === 0) return [];
-  return ARTICLES.filter((a) => {
-    if (!isPublished(a)) return false;
-    const hay = `${a.title} ${a.dek ?? ""} ${a.category}`.toLowerCase();
-    return words.some((w) => hay.includes(w));
-  }).sort(sortByDateDesc);
+const ALL_TEXAS_NEWS_SLUGS = Array.from(new Set(Object.values(TEXAS_NEWS_SLUGS).flat()));
+
+function articlesForSlugs(slugs: string[]) {
+  return slugs
+    .map((slug) => ARTICLES.find((a) => a.slug === slug))
+    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
+    .sort(sortByDateDesc);
 }
 
 export function TexasNewsView({ topic }: { topic: string }) {
   // Use UTC to avoid SSR/client hydration mismatch across timezones.
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric", timeZone: "UTC" });
   const activeSection = TEXAS_NEWS_SECTIONS.find((s) => s.id === topic);
-  let articles = activeSection
-    ? getArticlesByCategory(activeSection.id)
-    : ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
-  if (activeSection && articles.length === 0) {
-    articles = keywordMatches(activeSection.id);
-  }
+  const activeSlugs = activeSection ? TEXAS_NEWS_SLUGS[activeSection.id] : ALL_TEXAS_NEWS_SLUGS;
+  const articles = articlesForSlugs(activeSlugs ?? []);
   const uniqImg = assignUniqueImages(articles, (a) => a.slug, (a) => a.image);
 
   // Scroll to top when the active filter changes so mobile users see the
