@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { listSportsByLeague, type SportsListItem } from "@/lib/sports.functions";
 import { assignUniqueImages } from "@/lib/dedupe-images";
+import { teamsForLeague, detectTeams, type TeamMeta } from "@/lib/texas-teams";
 
 const LEAGUE_META: Record<string, { name: string; title: string; desc: string; teams: string }> = {
   nfl: {
@@ -59,6 +60,22 @@ function LeaguePage() {
     undefined,
     (a) => a.image_hash,
   );
+  const teams = teamsForLeague(league as "nfl" | "mlb" | "nba");
+
+  // Group each article under every team it mentions. An article that names
+  // both the Texans and the Cowboys is cross-posted to both sections.
+  const byTeam = new Map<string, SportsListItem[]>();
+  for (const t of teams) byTeam.set(t.slug, []);
+  const uncategorized: SportsListItem[] = [];
+  for (const a of items) {
+    const tagged = Array.isArray(a.teams) && a.teams.length > 0
+      ? a.teams
+      : detectTeams(`${a.title} ${a.dek}`);
+    const inLeague = tagged.filter((s) => byTeam.has(s));
+    if (inLeague.length === 0) uncategorized.push(a);
+    else for (const s of inLeague) byTeam.get(s)!.push(a);
+  }
+
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
       <nav className="text-xs text-muted-foreground mb-4">
@@ -82,27 +99,77 @@ function LeaguePage() {
           </p>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items.map((a: SportsListItem) => (
-            <Link
-              key={a.slug}
-              to="/news/$slug"
-              params={{ slug: a.slug }}
-              className="group block border border-border rounded-md overflow-hidden bg-card hover:shadow-md transition-shadow"
-            >
-              <img src={uniqImg.get(a.slug) ?? a.image_url ?? ""} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
-              <div className="p-5">
-                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
-                <h2 className="mt-2 font-sans text-lg font-semibold text-foreground group-hover:text-primary leading-snug">
-                  {a.title}
-                </h2>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-3">{a.dek}</p>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  {new Date(a.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
-                </p>
+        <div className="space-y-14">
+          {teams.map((t: TeamMeta) => {
+            const rows = byTeam.get(t.slug) ?? [];
+            return (
+              <section key={t.slug} id={t.slug}>
+                <div className="flex items-baseline justify-between border-b border-border pb-3 mb-6">
+                  <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">{t.name}</h2>
+                  <Link
+                    to="/texas-sports/team/$team"
+                    params={{ team: t.slug }}
+                    className="text-sm text-primary hover:underline shrink-0"
+                  >
+                    All {t.short} coverage →
+                  </Link>
+                </div>
+                {rows.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">New {t.short} coverage publishes weekly — check back soon.</p>
+                ) : (
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {rows.slice(0, 6).map((a) => (
+                      <Link
+                        key={`${t.slug}-${a.slug}`}
+                        to="/news/$slug"
+                        params={{ slug: a.slug }}
+                        className="group block border border-border rounded-md overflow-hidden bg-card hover:shadow-md transition-shadow"
+                      >
+                        {(uniqImg.get(a.slug) ?? a.image_url) && (
+                          <img src={uniqImg.get(a.slug) ?? a.image_url ?? ""} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
+                        )}
+                        <div className="p-5">
+                          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t.short}</span>
+                          <h3 className="mt-2 font-sans text-lg font-semibold text-foreground group-hover:text-primary leading-snug">{a.title}</h3>
+                          <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-3">{a.dek}</p>
+                          <p className="mt-3 text-xs text-muted-foreground">
+                            {new Date(a.published_at).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                          </p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </section>
+            );
+          })}
+
+          {uncategorized.length > 0 && (
+            <section>
+              <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground border-b border-border pb-3 mb-6">
+                More {meta.name} coverage
+              </h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {uncategorized.slice(0, 6).map((a) => (
+                  <Link
+                    key={a.slug}
+                    to="/news/$slug"
+                    params={{ slug: a.slug }}
+                    className="group block border border-border rounded-md overflow-hidden bg-card hover:shadow-md transition-shadow"
+                  >
+                    {(uniqImg.get(a.slug) ?? a.image_url) && (
+                      <img src={uniqImg.get(a.slug) ?? a.image_url ?? ""} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
+                    )}
+                    <div className="p-5">
+                      <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
+                      <h3 className="mt-2 font-sans text-lg font-semibold text-foreground group-hover:text-primary leading-snug">{a.title}</h3>
+                      <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-3">{a.dek}</p>
+                    </div>
+                  </Link>
+                ))}
               </div>
-            </Link>
-          ))}
+            </section>
+          )}
         </div>
       )}
 
