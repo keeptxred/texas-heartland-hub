@@ -1,16 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { getArticlesByCategory } from "@/lib/articles-by-category";
-import { AgedFeedSection } from "@/components/aged-feed-section";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 
 export const TEXAS_NEWS_SECTIONS = [
-  { id: "legislature", title: "Legislature", description: "The Texas House, Senate, and the bills moving through Austin." },
-  { id: "border", title: "Border", description: "Border security, immigration enforcement, and the Rio Grande Valley." },
-  { id: "elections", title: "Elections", description: "Campaigns, primaries, and election integrity across Texas." },
-  { id: "tax-spending", title: "Tax & Spending", description: "Property taxes, the state budget, and how Texas spends your money." },
-  { id: "energy", title: "Energy", description: "Oil and gas, ERCOT, and the policies powering the Texas grid." },
-  { id: "education", title: "Education", description: "Public schools, school choice, and curriculum debates." },
+  { id: "economy", title: "Economy", description: "Texas economy trends, jobs, and cost-of-living updates." },
+  { id: "housing", title: "Housing", description: "Texas housing market trends, affordability, and suburban growth." },
+  { id: "migration", title: "Growth & Migration", description: "Population growth and why people keep moving to Texas." },
+  { id: "culture", title: "Culture & Identity", description: "Texas culture, identity, and community life across the state." },
+  { id: "education", title: "Education Trends", description: "School performance, education trends, and long-term shifts." },
+  { id: "sports-culture", title: "Sports Culture", description: "High school, college, and pro sports as part of Texas life." },
 ];
 
 export function TexasNewsView({ topic }: { topic: string }) {
@@ -24,14 +23,14 @@ export function TexasNewsView({ topic }: { topic: string }) {
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
       <header className="border-b border-border pb-6 mb-10">
-        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Texas News</span>
+        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Texas News &amp; Insights</span>
         <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight mt-2 text-foreground">
-          {activeSection ? `${activeSection.title} — Texas News` : "Texas News & Statewide Updates"}
+          {activeSection ? `${activeSection.title} — Texas News` : "Texas News, Culture & Economy"}
         </h1>
         <p className="mt-4 max-w-3xl text-base text-muted-foreground leading-relaxed">
           {activeSection
             ? activeSection.description
-            : "Independent reporting on breaking Texas news — politics in Austin, energy and the economy, border security, and the policy fights shaping daily life across the state. Updated every morning."}
+            : "Ongoing coverage of Texas culture, economy, housing, jobs, and lifestyle trends. Not breaking news — long-term insights into what makes Texas grow. For breaking political and government updates, see Happening Now."}
         </p>
         <p className="mt-3 text-xs text-muted-foreground">Last updated: {lastUpdated}</p>
       </header>
@@ -95,11 +94,17 @@ export function TexasNewsView({ topic }: { topic: string }) {
       </section>
 
       {!activeSection && (
-        <AgedFeedSection
-          section="news"
-          title="Latest Statewide Updates"
-          blurb="Items from the Happening Now feed are automatically filed here once they're more than 24 hours old."
-        />
+        <section className="mt-16 border-t border-border pt-10">
+          <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">Texas Pillar Guides</h2>
+          <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
+            The evergreen references we recommend to every new and longtime Texan.
+          </p>
+          <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+            <li><Link to="/texas/no-state-income-tax-2026" className="text-primary hover:underline">Why Texas Has No State Income Tax →</Link></li>
+            <li><Link to="/texas/property-taxes-2026" className="text-primary hover:underline">Texas Property Taxes in 2026 →</Link></li>
+            <li><Link to="/texas/moving-to-texas-2026" className="text-primary hover:underline">Moving to Texas in 2026 →</Link></li>
+          </ul>
+        </section>
       )}
 
       <section className="mt-16 border-t border-border pt-10">
