@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { listSportsByTeam, type SportsListItem } from "@/lib/sports.functions";
 import { assignUniqueImages } from "@/lib/dedupe-images";
-import { TEAM_BY_SLUG, isTeamSlug, LEAGUE_META, teamsForLeague } from "@/lib/texas-teams";
+import { TEAM_BY_SLUG, isTeamSlug, LEAGUE_META, teamsForLeague, type TeamMeta } from "@/lib/texas-teams";
 
 export const Route = createFileRoute("/texas-sports/team/$team")({
   loader: async ({ params }) => {
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/texas-sports/team/$team")({
 });
 
 function TeamPage() {
-  const { team, items } = Route.useLoaderData();
+  const { team, items } = Route.useLoaderData() as { team: TeamMeta; items: SportsListItem[] };
   const league = LEAGUE_META[team.league];
   const uniqImg = assignUniqueImages<SportsListItem>(
     items,
