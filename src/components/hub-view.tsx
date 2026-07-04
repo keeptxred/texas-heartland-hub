@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import type { Hub } from "@/data/hubs";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
@@ -5,7 +6,7 @@ import { assignUniqueImages } from "@/lib/dedupe-images";
 
 export type HubSection = { title: string; description: string; href?: string };
 
-export function HubView({ hub, sections }: { hub: Hub; sections?: HubSection[] }) {
+export function HubView({ hub, sections, children }: { hub: Hub; sections?: HubSection[]; children?: ReactNode }) {
   const articles = hub.articleSlugs
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
@@ -56,6 +57,8 @@ export function HubView({ hub, sections }: { hub: Hub; sections?: HubSection[] }
           </div>
         </Link>
       ) : null}
+
+      {children}
 
       <h2 className="font-display text-3xl tracking-tight mt-14 mb-6 border-b-2 border-foreground pb-2">All Coverage in this Section</h2>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
