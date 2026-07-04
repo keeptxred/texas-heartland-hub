@@ -50,6 +50,7 @@ const ROUTES = [
   "/glossary",
   "/editorial-standards",
   "/texas-politics",
+  "/authors",
   "/texas-economy",
   "/texas-law-policy",
   "/shop",
