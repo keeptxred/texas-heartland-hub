@@ -135,6 +135,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "(function(){function l(){var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1891256141359926';document.head.appendChild(s);}if(document.readyState==='complete'){setTimeout(l,1500);}else{window.addEventListener('load',function(){setTimeout(l,1500);});}})();",
       },
       {
+        async: true,
+        src: "https://www.googletagmanager.com/gtag/js?id=G-R7QW1X96TW",
+      },
+      {
+        children:
+          "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-R7QW1X96TW');",
+      },
+      {
         type: "application/ld+json",
         children: JSON.stringify(organizationJsonLd()),
       },
