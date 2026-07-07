@@ -3,6 +3,7 @@ import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { detectDiscoverCategory } from "@/lib/seo-headline";
 import { scoreDiscoverMatch, type HeadlineVariants } from "@/lib/ctr-score";
 import { getArticleImage } from "@/lib/fallback-images";
+import { enrichArticleRow } from "@/lib/content-quality";
 
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
 // src/lib/fallback-images.ts. AI batch classifier tags each new article with
@@ -512,6 +513,8 @@ async function handler() {
       });
     }
 
+    articleRows.forEach((r) => enrichArticleRow(r));
+
     const { error: artErr, count: artCount } = await supabaseAdmin
       .from("daily_articles")
       .upsert(articleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
@@ -548,6 +551,7 @@ async function handler() {
       ? await Promise.all(items.map((it) => rewriteItem(it, lovableApiKey)))
       : items.map(() => null);
     const backRows = items.map((it, i) => buildArticleRow(it, rewrites[i]));
+    backRows.forEach((r) => enrichArticleRow(r));
     await supabaseAdmin
       .from("daily_articles")
       .upsert(backRows, { onConflict: "slug", ignoreDuplicates: true });

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { enrichArticleRow } from "@/lib/content-quality";
 
 const RSS_SOURCES: { name: string; url: string; category: string }[] = [
   { name: "Texas Scorecard", url: "https://texasscorecard.com/feed/", category: "Legislature" },
@@ -274,6 +275,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
         if (rows.length === 0) {
           return Response.json({ error: "No valid rewritten articles" }, { status: 500 });
         }
+
+        rows.forEach((r) => enrichArticleRow(r));
 
         const { error: insertError, count } = await supabase
           .from("daily_articles")

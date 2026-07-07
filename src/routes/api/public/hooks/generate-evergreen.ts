@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { enrichArticleRow } from "@/lib/content-quality";
 
 const TOPICS: { category: string; topic: string }[] = [
   { category: "Tax & Spending", topic: "How Texas keeps property taxes high and what homeowners can do about it" },
@@ -254,6 +255,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           keywords: (gen.keywords ?? []).slice(0, 20),
           body_json: cleanBody,
         };
+        enrichArticleRow(row);
 
         const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
         if (error) {

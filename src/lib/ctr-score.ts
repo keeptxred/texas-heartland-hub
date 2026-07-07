@@ -161,3 +161,37 @@ export function resolveDisplayHeadline(article: ArticleLike & {
   if (variants?.a) return { headline: variants.a, variant: "a" };
   return { headline: getDisplayTitle(article), variant: "a" };
 }
+
+/**
+ * Decide whether an article's B variant should be regenerated.
+ *
+ * Signal: both variants have enough total impressions to make a judgement
+ * AND the best-performing variant's CTR is meaningfully below the site
+ * average. Returns true only when both hold.
+ *
+ * Called from the manual CTR loop (src/lib/ctr-loop.functions.ts). Does
+ * not change article URLs or headlines by itself.
+ */
+export function shouldGenerateNewVariant(
+  row: {
+    variant_a_impressions?: number | null;
+    variant_b_impressions?: number | null;
+    variant_a_clicks?: number | null;
+    variant_b_clicks?: number | null;
+  },
+  siteAverageCtr: number,
+  options?: { minImpressions?: number; underperformFactor?: number },
+): boolean {
+  const minImp = options?.minImpressions ?? 1000;
+  const factor = options?.underperformFactor ?? 0.8;
+  const impA = row.variant_a_impressions ?? 0;
+  const impB = row.variant_b_impressions ?? 0;
+  const total = impA + impB;
+  if (total < minImp) return false;
+  const clkA = row.variant_a_clicks ?? 0;
+  const clkB = row.variant_b_clicks ?? 0;
+  const ctrA = impA > 0 ? clkA / impA : 0;
+  const ctrB = impB > 0 ? clkB / impB : 0;
+  const bestCtr = Math.max(ctrA, ctrB);
+  return bestCtr < siteAverageCtr * factor;
+}

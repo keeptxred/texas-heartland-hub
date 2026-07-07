@@ -16,25 +16,36 @@ export type Database = {
     Tables: {
       daily_articles: {
         Row: {
+          affected_regions: string[] | null
+          affiliate_category: string | null
           author: string
           body: string | null
           body_json: Json | null
           category: string
+          content_quality_score: number | null
           created_at: string
           ctr_score: number
           dek: string
           discover_category: string | null
+          gsc_avg_position: number | null
+          gsc_clicks: number
+          gsc_ctr: number | null
+          gsc_impressions: number
+          gsc_last_update: string | null
           headline_variants: Json | null
           id: string
           image_category: string | null
           image_hash: string | null
+          image_score: number | null
           image_url: string | null
+          internal_links: Json | null
           internal_url: string
           is_breaking: boolean
           is_ingested: boolean
           keywords: string[] | null
           kind: string
           published_at: string
+          quality_flags: string[] | null
           score: number
           seo_headline: string | null
           seo_keywords: string[] | null
@@ -42,6 +53,7 @@ export type Database = {
           source_name: string | null
           source_url: string | null
           teams: string[]
+          texas_impact_summary: string | null
           title: string
           variant_a_clicks: number
           variant_a_impressions: number
@@ -49,25 +61,36 @@ export type Database = {
           variant_b_impressions: number
         }
         Insert: {
+          affected_regions?: string[] | null
+          affiliate_category?: string | null
           author?: string
           body?: string | null
           body_json?: Json | null
           category: string
+          content_quality_score?: number | null
           created_at?: string
           ctr_score?: number
           dek: string
           discover_category?: string | null
+          gsc_avg_position?: number | null
+          gsc_clicks?: number
+          gsc_ctr?: number | null
+          gsc_impressions?: number
+          gsc_last_update?: string | null
           headline_variants?: Json | null
           id?: string
           image_category?: string | null
           image_hash?: string | null
+          image_score?: number | null
           image_url?: string | null
+          internal_links?: Json | null
           internal_url: string
           is_breaking?: boolean
           is_ingested?: boolean
           keywords?: string[] | null
           kind?: string
           published_at?: string
+          quality_flags?: string[] | null
           score?: number
           seo_headline?: string | null
           seo_keywords?: string[] | null
@@ -75,6 +98,7 @@ export type Database = {
           source_name?: string | null
           source_url?: string | null
           teams?: string[]
+          texas_impact_summary?: string | null
           title: string
           variant_a_clicks?: number
           variant_a_impressions?: number
@@ -82,25 +106,36 @@ export type Database = {
           variant_b_impressions?: number
         }
         Update: {
+          affected_regions?: string[] | null
+          affiliate_category?: string | null
           author?: string
           body?: string | null
           body_json?: Json | null
           category?: string
+          content_quality_score?: number | null
           created_at?: string
           ctr_score?: number
           dek?: string
           discover_category?: string | null
+          gsc_avg_position?: number | null
+          gsc_clicks?: number
+          gsc_ctr?: number | null
+          gsc_impressions?: number
+          gsc_last_update?: string | null
           headline_variants?: Json | null
           id?: string
           image_category?: string | null
           image_hash?: string | null
+          image_score?: number | null
           image_url?: string | null
+          internal_links?: Json | null
           internal_url?: string
           is_breaking?: boolean
           is_ingested?: boolean
           keywords?: string[] | null
           kind?: string
           published_at?: string
+          quality_flags?: string[] | null
           score?: number
           seo_headline?: string | null
           seo_keywords?: string[] | null
@@ -108,6 +143,7 @@ export type Database = {
           source_name?: string | null
           source_url?: string | null
           teams?: string[]
+          texas_impact_summary?: string | null
           title?: string
           variant_a_clicks?: number
           variant_a_impressions?: number
@@ -200,6 +236,27 @@ export type Database = {
           id?: string
           token?: string
           used_at?: string | null
+        }
+        Relationships: []
+      }
+      newsletter_signups: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          source_page: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          source_page?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          source_page?: string | null
         }
         Relationships: []
       }
