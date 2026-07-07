@@ -22,6 +22,7 @@ import { Route as TexasRouteImport } from './routes/texas'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
@@ -139,6 +140,11 @@ const TaxCalculatorRoute = TaxCalculatorRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
+  id: '/sitemap-pages.xml',
+  path: '/sitemap-pages.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -441,6 +447,7 @@ export interface FileRoutesByFullPath {
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -507,6 +514,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -573,6 +581,7 @@ export interface FileRoutesById {
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -643,6 +652,7 @@ export interface FileRouteTypes {
     | '/register-to-vote'
     | '/representatives'
     | '/shop'
+    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -709,6 +719,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
+    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -774,6 +785,7 @@ export interface FileRouteTypes {
     | '/register-to-vote'
     | '/representatives'
     | '/shop'
+    | '/sitemap-pages.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -843,6 +855,7 @@ export interface RootRouteChildren {
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
   ShopRoute: typeof ShopRouteWithChildren
+  SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
@@ -964,6 +977,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages.xml': {
+      id: '/sitemap-pages.xml'
+      path: '/sitemap-pages.xml'
+      fullPath: '/sitemap-pages.xml'
+      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -1448,6 +1468,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
   ShopRoute: ShopRouteWithChildren,
+  SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
