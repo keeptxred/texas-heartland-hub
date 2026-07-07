@@ -117,3 +117,34 @@ export const listEvergreenSlugs = createServerFn({ method: "GET" }).handler(asyn
   if (error) return { slugs: [] };
   return { slugs: data ?? [] };
 });
+
+export type SitemapArticle = {
+  slug: string;
+  title: string;
+  published_at: string;
+  updated_at: string | null;
+  image_url: string | null;
+  kind: string;
+};
+
+/** Returns all indexable cloud articles (evergreen + ingested news/sports) with data
+ *  needed to build page, news, evergreen, and image sitemaps in one query. */
+export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
+  async (): Promise<{ articles: SitemapArticle[] }> => {
+    const supabase = client();
+    if (!supabase) return { articles: [] };
+    const { data, error } = await supabase
+      .from("daily_articles")
+      .select("slug,title,published_at,image_url,kind")
+      .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"])
+      .order("published_at", { ascending: false })
+      .limit(5000);
+    if (error || !data) return { articles: [] };
+    return {
+      articles: (data as Omit<SitemapArticle, "updated_at">[]).map((a) => ({
+        ...a,
+        updated_at: null,
+      })),
+    };
+  },
+);

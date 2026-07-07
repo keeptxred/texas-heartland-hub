@@ -1,108 +1,78 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
-import { listEvergreenSlugs } from "@/lib/evergreen.functions";
+import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
+import { AUTHORS } from "@/data/authors";
 
-const BASE_URL = "https://www.keeptxred.com";
-const ROUTES = [
-  "/",
-  "/news",
-  "/news/non-political",
-  "/happening-now",
-  "/keep-texas-red",
-  "/texas-news",
-  "/texas-news/economy",
-  "/texas-news/housing",
-  "/texas-news/migration",
-  "/texas-news/culture",
-  "/texas-news/education",
-  "/texas-news/sports-culture",
-  "/houston",
-  "/texas-sports",
-  "/texas-sports/nfl",
-  "/texas-sports/mlb",
-  "/texas-sports/nba",
-  "/texas-business",
-  "/texas-business/energy",
-  "/texas-business/jobs",
-  "/texas-business/relocations",
-  "/texas-business/real-estate",
-  "/texas-business/policy",
-  "/elections",
-  "/tax-calculator",
-  "/about",
-  "/representatives",
-  "/find-representative",
-  "/register-to-vote",
-  "/contact-legislators",
-  "/get-involved",
-  "/county-elections",
-  "/candidate-guides",
-  "/voting-locations",
-  "/laws",
-  "/texas-laws",
-  "/laws-to-know",
-  "/legislative-updates",
-  "/contact",
-  "/privacy",
-  "/terms",
-  "/glossary",
-  "/editorial-standards",
-  "/texas-politics",
-  "/authors",
-  "/texas-economy",
-  "/texas-law-policy",
-  "/shop",
-  "/texas",
-  "/texas/no-state-income-tax-2026",
-  "/texas/property-taxes-2026",
-  "/texas/moving-to-texas-2026",
-] as const;
-
+/** Sitemap INDEX. Includes only sub-sitemaps that would contain >0 URLs. */
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const staticUrls = ROUTES.map(
-          (p) =>
-            `  <url><loc>${BASE_URL}${p}</loc><changefreq>${p === "/" ? "daily" : "weekly"}</changefreq><priority>${p === "/" ? "1.0" : "0.8"}</priority></url>`
-        );
-        const articleUrls = ARTICLES.filter((a) => isPublished(a)).map(
-          (a) =>
-            `  <url><loc>${BASE_URL}/news/${a.slug}</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`
-        );
-        let evergreenUrls: string[] = [];
+        const now = Date.now();
+        const cutoff = now - 48 * 60 * 60 * 1000;
+
+        const localArticles = ARTICLES.filter((a) => isPublished(a));
+        let cloudArticles: Array<{
+          published_at: string;
+          image_url: string | null;
+          title: string;
+          slug: string;
+          kind: string;
+          updated_at: string | null;
+        }> = [];
         try {
-          const { slugs } = await listEvergreenSlugs();
-          evergreenUrls = slugs.map(
-            (s) => `  <url><loc>${BASE_URL}/news/${s.slug}</loc><lastmod>${s.published_at.slice(0, 10)}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>`
-          );
+          const res = await listSitemapArticles();
+          cloudArticles = res.articles;
         } catch (e) {
-          console.error("sitemap evergreen fetch failed", e);
+          console.error("sitemap index: cloud articles fetch failed", e);
         }
-        let productUrls: string[] = [];
+
+        const newsCount =
+          localArticles.filter((a) => new Date(a.publishedAt).getTime() >= cutoff).length +
+          cloudArticles.filter(
+            (a) =>
+              new Date(a.published_at).getTime() >= cutoff &&
+              (a.kind === "ingested" || a.kind === "news"),
+          ).length;
+
+        const evergreenCount = localArticles.length + cloudArticles.length;
+
+        let productCount = 0;
         try {
           const { products } = await getProducts();
-          const today = new Date().toISOString().slice(0, 10);
-          productUrls = products.map(
-            (p) =>
-              `  <url><loc>${BASE_URL}/shop/${p.id}</loc><lastmod>${today}</lastmod><changefreq>weekly</changefreq><priority>0.6</priority></url>`
-          );
+          productCount = products.length;
         } catch (e) {
-          console.error("sitemap products fetch failed", e);
+          console.error("sitemap index: products fetch failed", e);
         }
-        const authorSlugs = Array.from(
-          new Set(ARTICLES.filter((a) => isPublished(a)).map((a) => a.author.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")))
-        );
-        const authorUrls = authorSlugs.map(
-          (s) => `  <url><loc>${BASE_URL}/authors/${s}</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>`
-        );
-        const urls = [...staticUrls, ...articleUrls, ...evergreenUrls, ...productUrls, ...authorUrls].join("\n");
-        const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
-        return new Response(xml, {
-          headers: { "Content-Type": "application/xml", "Cache-Control": "public, max-age=3600" },
-        });
+
+        const authorCount = AUTHORS.length;
+        const imageCount =
+          localArticles.length +
+          cloudArticles.filter((a) => !!a.image_url).length +
+          productCount;
+
+        const included = [
+          { file: "sitemap-pages.xml", count: 1 },
+          { file: "sitemap-news.xml", count: newsCount },
+          { file: "sitemap-evergreen.xml", count: evergreenCount },
+          { file: "sitemap-products.xml", count: productCount },
+          { file: "sitemap-authors.xml", count: authorCount },
+          { file: "sitemap-images.xml", count: imageCount },
+        ].filter((s) => s.count > 0);
+
+        const lastmod = new Date().toISOString();
+        const entries = included
+          .map(
+            (s) =>
+              `  <sitemap>\n    <loc>${xmlEscape(`${BASE_URL}/${s.file}`)}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </sitemap>`,
+          )
+          .join("\n");
+
+        const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</sitemapindex>`;
+        return xmlResponse(xml);
       },
     },
   },
