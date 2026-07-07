@@ -14,7 +14,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const now = Date.now();
         const cutoff = now - 48 * 60 * 60 * 1000;
 
-        const localArticles = ARTICLES.filter(isPublished);
+        const localArticles = ARTICLES.filter((a) => isPublished(a));
         let cloudArticles: Array<{
           published_at: string;
           image_url: string | null;
