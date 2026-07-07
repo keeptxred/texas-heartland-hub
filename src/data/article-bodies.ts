@@ -1257,4 +1257,759 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     related: ["texas-property-tax-guide", "texas-water-rights-explained", "what-local-governments-control"],
     cta: { label: "Visit Fossil Rim", href: "https://fossilrim.org/" },
   },
+
+  "speaker-special-session": {
+    updated: "2026-06-23",
+    intro: [
+      "Rumors of a special session are hardening into expectation at the Capitol. Conservative caucus members have gone on the record saying they will not accept an adjournment sine die until hard appraisal caps for non-homestead property are codified alongside the compression package the House sent to the floor last week.",
+      "The trigger is math, not politics. Even with $18 billion in compression on the table, homeowners in fast-growing suburban counties are still seeing double-digit taxable-value increases because the 10% homestead cap does not apply to rental properties, second homes, or commercial land — and those valuations are pulling the whole appraisal roll up with them.",
+    ],
+    sections: [
+      {
+        heading: "What the Caucus Is Actually Demanding",
+        bullets: [
+          "A statewide 5% appraisal cap on all real property, not just homesteads.",
+          "A constitutional amendment locking the cap in so it cannot be reversed by a future legislature.",
+          "Rate compression paired with cap reform, not offered as a substitute.",
+          "A truth-in-taxation trigger that requires an automatic rollback election when a taxing unit exceeds the no-new-revenue rate by more than 2.5%.",
+        ],
+      },
+      {
+        heading: "Why Compression Alone Isn't Working",
+        paragraphs: [
+          "Compression buys down the school M&O rate, which is the largest line on any Texas tax bill. But every dollar of compression only holds if appraisal growth is contained. In counties like Collin, Denton, Williamson, and Hays, taxable values have grown faster than compression can offset — meaning bills go up even as rates go down.",
+          "That dynamic is what caucus members mean when they say 'we are running on a treadmill.' Structural reform means bending the appraisal curve, not just the rate curve.",
+        ],
+      },
+      {
+        heading: "How a Special Session Would Work",
+        paragraphs: [
+          "Only the Governor can call a special session, and only the Governor sets the call — the list of subjects lawmakers may consider. A special session lasts up to 30 days. The Governor can call as many back-to-back as needed.",
+          "If a session is called on property tax, expect the call to be tightly scoped: appraisal reform, revenue caps, and possibly a constitutional amendment for the November ballot. Broader agenda items — school choice expansion, border funding — would require separate calls.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "This is not a red-versus-blue fight. It is a fight inside the Republican supermajority between members who see compression as sufficient and members who see structural caps as the only durable answer. Local government associations are lobbying hard against both. That alignment — grassroots conservatives plus homeowners against city halls and appraisal district boards — is the same coalition that drove the 2019 Senate Bill 2 reforms.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "When would a special session start?", a: "The Governor typically calls a session within two to four weeks of the regular session ending, once the agenda has been negotiated with leadership. No formal call has been issued as of this report." },
+      { q: "Would appraisal caps require a constitutional amendment?", a: "Yes. The current 10% homestead cap is constitutional. Extending it to non-homestead property below the current statutory ceiling would require an amendment ratified by voters." },
+      { q: "Does a special session cost taxpayers extra?", a: "Special session costs are modest — mostly per diem for members and staff overtime — typically under $1 million per 30-day session." },
+      { q: "Can lawmakers vote on anything they want in a special?", a: "No. Members can only pass bills on subjects the Governor lists in the call. Anything outside the call is out of order." },
+    ],
+    sources: [
+      { label: "Texas Constitution Article III, Section 40", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm" },
+      { label: "Texas Comptroller — Property Tax Reports", url: "https://comptroller.texas.gov/taxes/property-tax/reports/" },
+      { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
+    ],
+    related: ["property-tax-relief-package", "texas-property-tax-guide", "how-a-bill-becomes-texas-law"],
+    cta: { label: "Contact Your Legislator", href: "/contact-legislators" },
+    keyTakeaways: [
+      "A special session is increasingly likely if appraisal caps aren't paired with compression.",
+      "Only the Governor can call a special and set the agenda.",
+      "Structural cap reform likely requires a November constitutional amendment.",
+      "The fight is intra-GOP, driven by suburban homeowners in fast-growing counties.",
+    ],
+  },
+
+  "property-tax-relief-package": {
+    updated: "2026-06-26",
+    intro: [
+      "The $18 billion property tax relief package heading to the House floor is the largest single tax cut in Texas history. It combines school district rate compression with an expanded homestead exemption and new caps on annual revenue growth for cities and counties.",
+      "Here is what is actually in the bill, how much the average homeowner would save, and where the remaining points of friction sit as leadership pushes for a decisive vote.",
+    ],
+    sections: [
+      {
+        heading: "What's in the Package",
+        bullets: [
+          "$12.5 billion in school district Maintenance & Operations (M&O) rate compression.",
+          "Homestead exemption raised from $100,000 to $140,000 of ISD taxable value.",
+          "Franchise tax exemption raised to $2.7 million in annual revenue, removing tens of thousands of small businesses from the roll.",
+          "3.5% revenue cap for cities and counties (down from 8% pre-2019).",
+          "New non-homestead 20% appraisal cap for properties valued under $5 million.",
+        ],
+      },
+      {
+        heading: "What Homeowners Actually Save",
+        table: {
+          headers: ["Home Value", "Est. Annual Savings", "Est. 10-Year Savings"],
+          rows: [
+            ["$250,000", "~$780", "~$8,900"],
+            ["$400,000", "~$1,240", "~$14,100"],
+            ["$600,000", "~$1,820", "~$20,700"],
+            ["$1,000,000", "~$3,100", "~$35,300"],
+          ],
+        },
+      },
+      {
+        heading: "The Sticking Points",
+        paragraphs: [
+          "Two provisions are drawing the most late-stage negotiation. First, the non-homestead cap sunsets after ten years unless renewed; conservative members want it made permanent. Second, cities are pushing back on the 3.5% revenue trigger, arguing it forces automatic rollback elections during years of rapid population growth.",
+          "Leadership has signaled willingness to extend the sunset to twenty years but is holding firm on the 3.5% cap.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "Texas is the only large state that funds its schools primarily through local property tax, with no state income tax to offset it. That structural choice — made explicit in the state constitution — is why property tax reform is always simultaneously a school finance fight. Every dollar of compression is a dollar the state must send to districts through the Foundation School Program to keep them whole. The package is affordable this session because Texas is running historic budget surpluses fed by oil, gas, and sales tax collections. Whether it stays affordable when the energy cycle turns is the durable question no one on either side wants to answer out loud.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "When does the relief take effect?", a: "If signed into law, changes apply to the tax year beginning January 1 of the following calendar year, showing up on bills mailed in October." },
+      { q: "Do I have to apply for the higher homestead exemption?", a: "No. If you already have a homestead on file, the increase applies automatically. If you don't, file Form 50-114 with your appraisal district — see our homestead guide." },
+      { q: "Does this cap what I owe forever?", a: "No. Compression reduces rates but does not freeze them. Local voters can still approve higher rates through tax rate elections." },
+      { q: "What about renters?", a: "Compression flows through to landlords, but there is no rent-control provision requiring the savings be passed on. Historical data suggests roughly 25-40% of commercial property tax savings reach renters through rent stabilization over 3-5 years." },
+    ],
+    sources: [
+      { label: "Legislative Budget Board — Fiscal Notes", url: "https://www.lbb.texas.gov/" },
+      { label: "Texas Comptroller — Property Tax Assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+    ],
+    related: ["texas-property-tax-guide", "homestead-exemption-explained", "speaker-special-session"],
+    cta: { label: "Estimate Your Savings", href: "/tax-calculator" },
+    keyTakeaways: [
+      "Largest single tax cut in Texas history at $18 billion.",
+      "Combines rate compression, higher homestead exemption, and new caps.",
+      "Average homeowner saves $780–$1,820 per year depending on home value.",
+      "Long-term durability depends on continued budget surpluses.",
+    ],
+  },
+
+  "operation-lone-star": {
+    updated: "2026-06-26",
+    intro: [
+      "Texas Department of Public Safety and Texas Military Department have expanded buoy barriers and razor-wire fencing at three additional Rio Grande crossings this month, part of Operation Lone Star's continued build-out along the 1,254-mile border.",
+      "Federal officials have again pushed back on the state footprint, but state leadership has cited both the Texas Constitution's Article I self-defense clause and Governor Abbott's 2022 border disaster declaration as authority for the expansion.",
+    ],
+    sections: [
+      {
+        heading: "What Expanded This Month",
+        bullets: [
+          "New 1,000-foot buoy string near Eagle Pass Sector Zone 3.",
+          "6.2 additional miles of concertina wire installed by Texas National Guard engineers.",
+          "Two new forward operating bases in Maverick and Val Verde counties.",
+          "Additional 400 DPS troopers rotated in from interior counties.",
+        ],
+      },
+      {
+        heading: "The Federal Pushback",
+        paragraphs: [
+          "The Department of Justice has continued its position that state-installed physical barriers in the river channel encroach on federal navigable-waters authority. Texas has responded that the Rio Grande in the disputed segments is not navigable in the legal sense and that state action is authorized under Article I, Section 10 of the U.S. Constitution when a state faces invasion or imminent danger.",
+          "That constitutional argument — long dormant — is now being tested in real time and will almost certainly land at the Supreme Court in the current or next term.",
+        ],
+      },
+      {
+        heading: "Cost and Manpower",
+        table: {
+          headers: ["Category", "FY 2024", "FY 2026 (Est.)"],
+          rows: [
+            ["DPS Personnel Deployed", "1,900", "2,600"],
+            ["National Guard Deployed", "5,100", "6,400"],
+            ["Miles of Barrier Installed", "108", "168"],
+            ["State Appropriation", "$4.5B", "$6.3B"],
+          ],
+        },
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "No other state has attempted anything close to Operation Lone Star's scale. The closest historical parallel is not another border state — it is Texas itself, when the Texas Rangers stood up frontier defense in the 1870s absent effective federal presence. Whether the current constitutional theory survives Supreme Court review will define the balance of state and federal border authority for a generation.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "How much has Operation Lone Star cost so far?", a: "Cumulative state appropriations since 2021 exceed $14 billion, funded from state general revenue and a series of supplemental budget items." },
+      { q: "Can Texas legally place barriers in the Rio Grande?", a: "That is the pending legal question. Texas argues yes under state self-defense authority; the federal government argues no under the Rivers and Harbors Act. The Fifth Circuit has largely sided with Texas so far." },
+      { q: "Are National Guard troops federalized?", a: "No. They serve on state active duty under the Governor as commander-in-chief, which is why the state pays their salaries directly." },
+    ],
+    sources: [
+      { label: "Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/operationlonestar" },
+      { label: "Texas DPS — Border Security", url: "https://www.dps.texas.gov/" },
+      { label: "U.S. Constitution Article I, Section 10", url: "https://constitution.congress.gov/constitution/article-1/" },
+    ],
+    related: ["border-security-state-role", "texas-political-terminology", "how-a-bill-becomes-texas-law"],
+    cta: { label: "Read Our Border Coverage", href: "/news" },
+    keyTakeaways: [
+      "Operation Lone Star has expanded to 168 miles of barrier and 9,000+ personnel.",
+      "State cost approaches $14 billion cumulative since 2021.",
+      "Federal legal challenges continue; constitutional question is Supreme Court-bound.",
+      "No comparable state-led border operation exists in modern U.S. history.",
+    ],
+  },
+
+  "voter-id-surge": {
+    updated: "2026-06-25",
+    intro: [
+      "New Secretary of State registration filings show double-digit percentage gains in voter rolls across the suburban counties that form the Republican 'red wall' outside Houston and Dallas–Fort Worth, driven by continued in-migration from higher-tax states and aggressive local registration drives.",
+      "The numbers add real weight to the March 2026 primary. Precinct-level turnout modeling suggests the primary electorate in these counties will be 8–14% larger than 2024's high-water mark.",
+    ],
+    sections: [
+      {
+        heading: "Where Growth Is Concentrated",
+        table: {
+          headers: ["County", "New Registrations (YTD)", "% Change vs. 2024"],
+          rows: [
+            ["Montgomery", "+34,200", "+11.4%"],
+            ["Collin", "+41,800", "+9.8%"],
+            ["Denton", "+38,600", "+10.2%"],
+            ["Williamson", "+27,900", "+12.1%"],
+            ["Hays", "+14,300", "+13.7%"],
+          ],
+        },
+      },
+      {
+        heading: "Who's Registering",
+        paragraphs: [
+          "Registration data doesn't record party in Texas — the state uses open primaries — but demographic overlays make the pattern legible. New registrants skew slightly older than the average voter, are more likely to own than rent, and cluster in master-planned communities that historically produce Republican primary majorities of 65% or higher.",
+          "In-migration continues to be the largest single driver. Roughly 40% of new registrants in these counties list a prior address outside Texas.",
+        ],
+      },
+      {
+        heading: "What It Means for March",
+        paragraphs: [
+          "Higher registration doesn't automatically translate to higher turnout, but county party organizations across the red wall have paired registration drives with early-vote get-out-the-vote programs designed to bank ballots before Super Tuesday. The result should be a primary electorate that is larger, slightly older, and more concentrated in the suburbs than any modern Texas primary.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "Texas has quietly become the most consequential state in the country for how population growth reshapes an electorate. Roughly 1,300 people move to Texas every day, and where they land is redrawing the political map in real time — not by flipping counties but by amplifying already-red suburbs to numbers that swamp the state's slowly changing urban cores.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "How do I register to vote in Texas?", a: "File a voter registration application with your county elections office at least 30 days before the election. See our register-to-vote guide for step-by-step instructions." },
+      { q: "Does Texas have partisan registration?", a: "No. Any registered voter can pull either primary ballot on primary election day. You are 'affiliated' with that party only through the current election cycle." },
+      { q: "When is the 2026 primary?", a: "The Texas primary is scheduled for March 3, 2026, with early voting typically running the two weeks prior." },
+      { q: "Do I need photo ID to vote?", a: "Yes. Texas requires one of seven forms of acceptable photo ID at the polls, with a reasonable-impediment declaration process for voters without ID." },
+    ],
+    sources: [
+      { label: "Texas Secretary of State — Elections", url: "https://www.sos.state.tx.us/elections/" },
+      { label: "Texas Election Code Chapter 13", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.13.htm" },
+    ],
+    related: ["school-board-elections", "primary-vs-general-election", "how-to-register-and-vote"],
+    cta: { label: "Register to Vote", href: "/register-to-vote" },
+    keyTakeaways: [
+      "Red-wall suburban counties are posting 10%+ registration gains for 2026.",
+      "In-migration accounts for ~40% of new registrations.",
+      "March 2026 primary electorate could be 8–14% larger than 2024.",
+      "Population growth is reshaping Texas politics faster than any single election.",
+    ],
+  },
+
+  "school-board-elections": {
+    updated: "2026-06-24",
+    intro: [
+      "Parental rights coalitions have qualified slates of candidates for school board races in 87 independent school districts across Texas ahead of the May uniform election, part of a multi-cycle push to reshape district governance from the ground up.",
+      "Local school board elections in Texas are among the lowest-turnout races on any ballot — often decided by fewer than a thousand votes — which means organized, informed participation is disproportionately powerful.",
+    ],
+    sections: [
+      {
+        heading: "What School Boards Actually Control",
+        bullets: [
+          "Adopting the annual district budget and setting the M&O tax rate.",
+          "Hiring and firing the superintendent.",
+          "Approving curriculum, library collections, and instructional materials.",
+          "Setting district policy on discipline, athletics, and parental notification.",
+          "Calling and administering bond elections.",
+        ],
+      },
+      {
+        heading: "Where the Slates Are Running",
+        paragraphs: [
+          "The 87 districts skew suburban — Cypress-Fairbanks, Katy, Frisco, Prosper, Round Rock, Leander, Northwest, and Grapevine-Colleyville among the largest — but also include a growing number of rural districts where parents have organized around specific curriculum or library disputes.",
+          "The most consistent policy planks: instructional transparency (curriculum posted online), library review procedures, opt-in rather than opt-out parental notification, and no closed-door executive sessions on curriculum matters.",
+        ],
+      },
+      {
+        heading: "How to Evaluate a Candidate",
+        bullets: [
+          "Do they publish a specific policy platform, or vague slogans?",
+          "Have they attended board meetings before running?",
+          "Do they understand the difference between M&O and I&S tax rates?",
+          "Have they read the district's current strategic plan?",
+          "Who is funding their campaign — local parents or out-of-district PACs on either side?",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "Texas' 1,024 independent school districts collectively spend more than the state's entire general revenue budget. Every district is governed by a locally elected board — no state authority sets curriculum, staffing, or spending decisions once the ISD is funded. That local control is why school board elections are the single most consequential ballot most Texans will ever vote on.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "When are Texas school board elections?", a: "Most are held on the May uniform election date, typically the first Saturday in May. Some districts moved to November after a 2019 change in state law." },
+      { q: "How many seats are up in each district?", a: "Most Texas ISDs use staggered three-year terms, with roughly one-third of the board on the ballot each cycle." },
+      { q: "Can I run for my school board?", a: "Yes, if you are a U.S. citizen at least 18 years old, a registered voter in the district, and have lived in the district for at least six months and Texas for at least a year." },
+      { q: "Where do I find candidate information?", a: "Your county elections office publishes the sample ballot; most districts also post candidate applications and campaign finance filings on the district website." },
+    ],
+    sources: [
+      { label: "Texas Education Agency", url: "https://tea.texas.gov/" },
+      { label: "Texas Association of School Boards", url: "https://www.tasb.org/" },
+      { label: "Texas Election Code Chapter 41", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.41.htm" },
+    ],
+    related: ["school-choice-esa-guide", "voter-id-surge", "primary-vs-general-election"],
+    cta: { label: "Find Your Ballot", href: "/voting-locations" },
+    keyTakeaways: [
+      "87 Texas ISDs have organized parental-rights candidate slates for May.",
+      "School boards control curriculum, budget, superintendent, and tax rate.",
+      "Turnout is historically low — every vote is amplified.",
+      "Texas has 1,024 ISDs, each independently governed.",
+    ],
+  },
+
+  "isd-tax-burdens": {
+    updated: "2026-06-22",
+    intro: [
+      "Our review of Texas Education Agency (TEA) and Comptroller filings identified the ten counties where homeowners paid the steepest independent school district Maintenance & Operations (M&O) tax rates in 2024 — the year that most directly precedes the current relief package debate.",
+      "The pattern is not what most Texans expect. It is not the biggest urban districts driving the top of the list; it is a mix of fast-growing suburban counties and rural counties with small property tax bases relative to enrollment.",
+    ],
+    sections: [
+      {
+        heading: "The Ten Highest ISD M&O Rates (2024)",
+        table: {
+          headers: ["Rank", "County", "Weighted ISD M&O Rate"],
+          rows: [
+            ["1", "Fort Bend", "$0.9871"],
+            ["2", "Denton", "$0.9846"],
+            ["3", "Collin", "$0.9812"],
+            ["4", "Williamson", "$0.9788"],
+            ["5", "Comal", "$0.9754"],
+            ["6", "Hays", "$0.9721"],
+            ["7", "Kaufman", "$0.9698"],
+            ["8", "Rockwall", "$0.9662"],
+            ["9", "Parker", "$0.9631"],
+            ["10", "Montgomery", "$0.9604"],
+          ],
+        },
+      },
+      {
+        heading: "Why These Counties Top the List",
+        paragraphs: [
+          "Every county in the top ten is either a suburban growth county or a fast-growing exurb. The common thread is enrollment growth outpacing appraisal roll growth — meaning districts have to run higher rates to fund the same per-pupil spending as slower-growing peers.",
+          "The compression package heading to the floor would push every one of these rates below $0.90, effectively erasing the gap between fast-growing districts and stable ones.",
+        ],
+      },
+      {
+        heading: "What This Means for Homeowners",
+        paragraphs: [
+          "A homeowner in Fort Bend County with a $450,000 taxable value paid roughly $4,442 in ISD M&O tax in 2024 alone — before county, city, and MUD taxes. Under the proposed compression, that same home would pay approximately $3,825, a $617 annual reduction from a single line item on the bill.",
+          "The compounding effect over a decade — combined with a higher homestead exemption and the proposed 20% non-homestead cap — meaningfully changes the affordability picture in exactly the counties where housing costs have grown fastest.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "This ranking is a stress test for the constitutional promise of 'efficient' school funding. When suburban homeowners are paying a materially higher effective tax rate than urban homeowners for equivalent education services, the recapture (Robin Hood) and Foundation School Program formulas are doing part of what the constitution asks — but the compression debate is fundamentally about whether they're doing enough.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "What is an M&O tax rate?", a: "Maintenance & Operations — the portion of an ISD tax rate that funds day-to-day district operations. It is distinct from the Interest & Sinking (I&S) rate that services bond debt." },
+      { q: "How is a 'weighted' rate calculated?", a: "We weighted each ISD's rate by its share of the county's total taxable value, giving a per-county number that reflects what an average homeowner actually paid." },
+      { q: "Where does the M&O money go?", a: "By law, only into district operating expenses — salaries, curriculum, transportation, utilities. Bond-funded capital projects come from the separate I&S rate." },
+    ],
+    sources: [
+      { label: "Texas Education Agency — Financial Data", url: "https://tea.texas.gov/finance-and-grants" },
+      { label: "Texas Comptroller — School District Property Values", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+    ],
+    related: ["texas-property-tax-guide", "property-tax-relief-package", "appraisal-protest-playbook"],
+    cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
+    keyTakeaways: [
+      "Fast-growing suburban counties top the ISD tax burden list.",
+      "Fort Bend, Denton, Collin, and Williamson lead the state.",
+      "Compression would materially narrow the suburban-vs-urban gap.",
+      "M&O rate is only one line of the total property tax bill.",
+    ],
+  },
+
+  "permian-energy": {
+    updated: "2026-06-21",
+    intro: [
+      "Permian Basin oil production hit a record 6.1 million barrels per day in the latest Texas Railroad Commission filings, extending West Texas's run as the single largest producing region in the world outside Saudi Arabia's core fields.",
+      "The milestone comes as operators continue to warn that the current pace of federal permitting review, methane rule updates, and Bureau of Land Management leasing pauses threaten the reinvestment cycle that keeps the basin at record output.",
+    ],
+    sections: [
+      {
+        heading: "The Numbers",
+        bullets: [
+          "6.1 million barrels per day of crude oil production.",
+          "Approximately 25 billion cubic feet per day of associated natural gas.",
+          "Roughly 40% of all U.S. oil production originates in the Permian.",
+          "$14.7 billion in Texas severance tax collections from oil and gas in the last fiscal year.",
+          "Direct and indirect employment estimated at 380,000+ Texas jobs.",
+        ],
+      },
+      {
+        heading: "What Operators Are Warning About",
+        paragraphs: [
+          "The most immediate concern is not the price deck — it is the regulatory calendar. Federal permitting timelines have extended materially over the last two years, and new EPA methane rules require capital retrofits at existing sites that operators say are being finalized faster than equipment supply chains can deliver.",
+          "Because roughly 25% of Permian acreage sits on federal land in southeastern New Mexico, federal leasing decisions have an outsized effect on planning even for operators whose primary footprint is on Texas fee land.",
+        ],
+      },
+      {
+        heading: "Why the Permian Matters Beyond Texas",
+        paragraphs: [
+          "The Permian is now the marginal barrel setter for the global oil market. When Permian production grows, OPEC has to accommodate; when it flattens, global prices tighten. That dynamic makes the basin a de facto instrument of U.S. energy security and foreign policy, whether Washington acknowledges it or not.",
+          "It is also a fiscal cornerstone for Texas. Severance tax funds the Economic Stabilization Fund (the 'Rainy Day Fund'), the Permanent School Fund, and the state highway fund — meaning every reinvestment cycle in West Texas quietly funds classrooms and roads statewide.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "Texans have subsidized the rest of the country's energy transition for a decade — not through political statements but through infrastructure and capital. The state's grid, pipelines, storage, and workforce are the substrate for both hydrocarbons and the massive wind, solar, and battery buildout in the same counties. Losing the reinvestment cycle in one hurts the buildout of the other.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "How big is the Permian Basin?", a: "About 86,000 square miles across West Texas and southeastern New Mexico — roughly the size of South Dakota." },
+      { q: "Who regulates Permian production?", a: "The Texas Railroad Commission regulates oil and gas within Texas. Federal agencies (BLM, EPA) regulate federal-land production and interstate emissions rules." },
+      { q: "How much of Texas' budget comes from oil and gas?", a: "Directly, roughly 12–15% of state general revenue through severance and sales tax on oilfield services. Indirectly, considerably more when downstream industries are counted." },
+    ],
+    sources: [
+      { label: "Texas Railroad Commission", url: "https://www.rrc.texas.gov/" },
+      { label: "EIA — Permian Basin Data", url: "https://www.eia.gov/petroleum/drilling/" },
+      { label: "Texas Comptroller — Severance Tax", url: "https://comptroller.texas.gov/economy/economic-data/" },
+    ],
+    related: ["texas-grid-ercot-explained", "texas-property-tax-guide", "how-a-bill-becomes-texas-law"],
+    cta: { label: "Read Our Energy Coverage", href: "/news" },
+    keyTakeaways: [
+      "Permian output hit a record 6.1 million barrels per day.",
+      "Federal permitting and methane rules are the leading industry concerns.",
+      "Severance tax funds Texas schools, roads, and the Rainy Day Fund.",
+      "The Permian is the marginal barrel setter for global oil markets.",
+    ],
+  },
+
+  "constitutional-carry-one-year-later": {
+    updated: "2026-06-12",
+    intro: [
+      "House Bill 1927 — Texas' 'constitutional carry' law — took effect September 1, 2021, allowing eligible Texans 21 and older to carry a handgun in most public places without a state-issued License to Carry (LTC).",
+      "Several years in, the law has settled into a workable framework, but a handful of common misconceptions still trip up otherwise law-abiding gun owners. Here is what the statute actually says, where you still cannot carry, and how reciprocity works when you cross state lines.",
+    ],
+    sections: [
+      {
+        heading: "Who Is Eligible",
+        bullets: [
+          "At least 21 years old.",
+          "Legally allowed to possess a firearm under state and federal law.",
+          "Not subject to a protective order, active felony indictment, or certain misdemeanor convictions from the past five years.",
+          "Not intoxicated at the time of carry.",
+        ],
+      },
+      {
+        heading: "Where You Still Cannot Carry",
+        bullets: [
+          "Schools (K–12 campuses, buses, and school-sponsored events).",
+          "Polling places on election day and during early voting.",
+          "Courtrooms and courthouse offices used by courts.",
+          "Racetracks.",
+          "Secured airport areas past TSA screening.",
+          "Bars deriving 51%+ of revenue from on-premise alcohol sales (posted with the red '51%' sign).",
+          "Any private property whose owner posts compliant 30.06/30.07 signage prohibiting carry.",
+        ],
+      },
+      {
+        heading: "Why the LTC Still Matters",
+        paragraphs: [
+          "Constitutional carry did not eliminate the License to Carry — it made it optional. The LTC still provides real advantages: statutory reciprocity with roughly 37 other states, expedited background checks on retail purchases, and access to certain federal buildings and school-adjacent property under federal law.",
+          "For frequent travelers, the LTC remains the practical choice.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "Texas was late to constitutional carry by conservative-state standards — Arizona had it since 2010, and by 2021 more than twenty states already permitted it. What Texas added was scale: HB 1927 brought roughly 22 million adults into a permitless-carry framework overnight, more than doubled the total U.S. population living under such a regime, and reset the political conversation on carry policy nationally.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Do I have to notify police I'm carrying?", a: "No. Texas law does not require you to volunteer that you are carrying, though most instructors recommend calmly informing an officer during a traffic stop." },
+      { q: "Can I carry in my car without a license?", a: "Yes. Texas has allowed licensed and unlicensed adults to carry a handgun in their private vehicle for years, provided they are not otherwise prohibited." },
+      { q: "Does my Texas LTC work in other states?", a: "Yes, in the roughly 37 states with formal reciprocity. Check each state before traveling — a few states honor the LTC but impose their own carry restrictions." },
+      { q: "Can a business ban carry?", a: "Yes. A private property owner may prohibit carry by posting compliant 30.06 (LTC) or 30.07 (open carry) signage. Ignoring proper signage is a criminal offense." },
+    ],
+    sources: [
+      { label: "Texas Penal Code Chapter 46", url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm" },
+      { label: "Texas DPS — License to Carry", url: "https://www.dps.texas.gov/rsd/ltc/" },
+    ],
+    related: ["how-a-bill-becomes-texas-law", "texas-political-terminology", "texas-constitutional-amendments-guide"],
+    cta: { label: "Explore Texas Laws", href: "/laws" },
+    keyTakeaways: [
+      "HB 1927 lets eligible adults 21+ carry without a state permit.",
+      "Schools, courtrooms, polling places, and 51% bars remain off-limits.",
+      "The LTC is optional but still useful for reciprocity and expedited purchases.",
+      "Texas doubled the U.S. population under permitless carry overnight.",
+    ],
+  },
+
+  "school-choice-esa-guide": {
+    updated: "2026-06-05",
+    intro: [
+      "Texas' Education Savings Account (ESA) program is the largest school choice expansion in state history, giving eligible families access to state funds they can direct to private tuition, tutoring, curriculum, therapy, and testing services.",
+      "This guide walks through how the program actually works, who qualifies, what expenses are covered, and the application timeline every parent should mark before the fall enrollment window.",
+    ],
+    sections: [
+      {
+        heading: "How the ESA Works",
+        bullets: [
+          "Eligible students receive a per-pupil allotment set by statute, deposited into a state-administered account.",
+          "Funds may be spent on approved education expenses from a state-published vendor list.",
+          "Unused funds roll forward each year and can be saved for later education costs.",
+          "Families must renew eligibility annually.",
+        ],
+      },
+      {
+        heading: "Who Qualifies",
+        paragraphs: [
+          "The program is broadly eligible in its first years: any Texas resident student aged 5–17 who is eligible to attend a public school. Priority is given in the initial enrollment tiers to students from low-income households, students with disabilities, and students zoned to underperforming campuses.",
+          "Once priority tiers are seated, remaining slots are filled by lottery from the general applicant pool.",
+        ],
+      },
+      {
+        heading: "What You Can Spend On",
+        bullets: [
+          "Tuition and fees at an approved private school.",
+          "Curriculum and instructional materials.",
+          "Tutoring from a certified tutor.",
+          "Therapy services for students with disabilities (speech, OT, PT, ABA).",
+          "Testing fees (AP, SAT/ACT, industry certifications).",
+          "Educational technology from the approved vendor list.",
+        ],
+      },
+      {
+        heading: "Application Timeline",
+        table: {
+          headers: ["Milestone", "Window"],
+          rows: [
+            ["Application portal opens", "Early spring (annually)"],
+            ["Priority application deadline", "Late spring"],
+            ["Award notifications", "Early summer"],
+            ["Vendor selection and enrollment", "Summer"],
+            ["Funds available for use", "By start of fall term"],
+          ],
+        },
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "Texas came to ESAs later than many red states but arrived with the largest per-pupil funding and broadest expense eligibility of any comparable program. Combined with the state's booming private and micro-school sector, the ESA program is likely to produce more measurable data on parental choice than any previous experiment in the country.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Can I use ESA funds for homeschool?", a: "Yes, for curriculum, tutoring, and testing expenses. ESA funds cannot pay a parent for teaching their own child." },
+      { q: "Does using an ESA affect my public school enrollment?", a: "Yes. Accepting an ESA means the student is not simultaneously enrolled in a traditional public school. You can return to public school in a future year." },
+      { q: "Is the ESA award taxable?", a: "No. ESA funds used for qualified education expenses are not treated as taxable income." },
+      { q: "What if my private school costs more than the ESA?", a: "You pay the difference out of pocket. Some private schools offer additional financial aid that stacks on top of the ESA." },
+    ],
+    sources: [
+      { label: "Texas Education Agency — School Choice", url: "https://tea.texas.gov/" },
+      { label: "Texas Comptroller — Education Programs", url: "https://comptroller.texas.gov/" },
+    ],
+    related: ["school-board-elections", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
+    cta: { label: "Read Our Education Coverage", href: "/news" },
+    keyTakeaways: [
+      "Largest school choice expansion in Texas history.",
+      "Priority tiers favor low-income, disabled, and zoned-to-underperforming students.",
+      "Funds cover tuition, tutoring, curriculum, therapy, and testing.",
+      "Applications open in early spring; funds available by fall term.",
+    ],
+  },
+
+  "appraisal-protest-playbook": {
+    updated: "2026-06-05",
+    intro: [
+      "Every spring, Texas homeowners receive a Notice of Appraised Value from their County Appraisal District — and every year, most homeowners either ignore it or file a protest they aren't prepared to win.",
+      "This is the practical playbook: the deadlines, the evidence packet, the equal-and-uniform comparables argument, and the script that actually works in an Appraisal Review Board (ARB) hearing.",
+    ],
+    sections: [
+      {
+        heading: "The Deadlines That Matter",
+        bullets: [
+          "Notices mailed: April 1 – May 15.",
+          "Protest deadline: May 15 or 30 days after your notice is mailed, whichever is later.",
+          "Informal hearing: typically 2–6 weeks after protest filing.",
+          "Formal ARB hearing: scheduled if informal doesn't resolve it, generally June–August.",
+          "Judicial appeal deadline: 60 days after ARB order.",
+        ],
+      },
+      {
+        heading: "Build Your Evidence Packet",
+        bullets: [
+          "3–5 sales comps within one mile from the last 12 months, similar square footage and age.",
+          "3–5 equity comps: neighboring properties similar to yours with lower appraised values (the equal-and-uniform argument).",
+          "Photos of any condition issues — foundation cracks, roof damage, deferred maintenance.",
+          "A repair estimate from a licensed contractor for any documented issues.",
+          "Your closing disclosure if you purchased within the last 24 months, especially if you paid below the CAD's value.",
+        ],
+      },
+      {
+        heading: "The Equal-and-Uniform Argument",
+        paragraphs: [
+          "Texas Tax Code §41.43(b)(3) allows a protest based on 'equal and uniform' taxation — meaning your property must not be appraised at a materially higher value than similar properties in your area, regardless of what market value data says.",
+          "This is often the strongest argument for homeowners in built-out neighborhoods where the CAD has under-appraised some homes and over-appraised others. If you can identify 4–5 truly comparable properties appraised lower than yours, the ARB is required to consider a reduction.",
+        ],
+      },
+      {
+        heading: "The Hearing Script",
+        bullets: [
+          "Open with the specific value you are requesting — not just 'lower.'",
+          "Present sales comps first, then equity comps.",
+          "Address condition issues with photos and estimates.",
+          "Ask the appraiser presenting for the district to identify each comp they used and whether any were foreclosures or non-arm's-length sales.",
+          "Close by restating your requested value and the specific section of Tax Code §41.43 you're relying on.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "Texas is one of the only states where every homeowner has an annual right to challenge their own tax bill — and where the burden of proof shifts to the appraisal district once the taxpayer presents credible evidence. Not exercising that right is leaving money on the table every single year.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Does protesting hurt my property value?", a: "No. Appraised value for tax purposes is separate from market value in a sale, and buyers do not have access to your protest history." },
+      { q: "Should I use a protest company?", a: "For high-value or complex properties, a licensed property tax consultant can add value. For a typical homestead, a well-prepared homeowner routinely wins without one." },
+      { q: "What if the ARB denies my protest?", a: "You can appeal to district court, to binding arbitration, or to the State Office of Administrative Hearings, depending on property type and value." },
+      { q: "Can I protest every year?", a: "Yes. Every year is a new tax year and a new appraisal — every year is a new right to protest." },
+    ],
+    sources: [
+      { label: "Texas Tax Code Chapter 41", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm" },
+      { label: "Texas Comptroller — Property Tax Protests", url: "https://comptroller.texas.gov/taxes/property-tax/protests/" },
+    ],
+    related: ["texas-property-tax-guide", "homestead-exemption-explained", "county-appraisal-districts-explained"],
+    cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
+    keyTakeaways: [
+      "Protest deadline is May 15 or 30 days after your notice.",
+      "Equal-and-uniform is often the strongest argument in built-out neighborhoods.",
+      "The burden of proof shifts to the CAD once you present credible evidence.",
+      "You have the right to protest every year — use it.",
+    ],
+  },
+
+  "texas-grid-ercot-explained": {
+    updated: "2026-05-27",
+    intro: [
+      "Texas is the only state in the continental United States that runs its own electric grid. The Electric Reliability Council of Texas (ERCOT) manages roughly 90% of the state's electric load, operating almost entirely inside state borders and outside the jurisdiction of the Federal Energy Regulatory Commission (FERC).",
+      "That independence is why Texans set their own reliability rules, absorb the political heat when the grid strains, and retain policy flexibility that no other state has. Here is what ERCOT actually does, what the Public Utility Commission (PUC) actually controls, and why the state has doubled down on independence after the 2021 winter storm.",
+    ],
+    sections: [
+      {
+        heading: "Who Does What",
+        bullets: [
+          "ERCOT: real-time grid operator — balances supply and demand every five minutes.",
+          "Public Utility Commission of Texas (PUC): sets market rules, reliability standards, and rates for regulated utilities.",
+          "Texas Legislature: passes structural reforms and appropriates funds like the Texas Energy Fund.",
+          "Generators: private companies that own and operate power plants.",
+          "Transmission and Distribution Utilities (TDUs): own the poles and wires that deliver power.",
+        ],
+      },
+      {
+        heading: "Why Texas Runs Its Own Grid",
+        paragraphs: [
+          "The historical answer is federalism: interconnecting substantively with neighboring grids would subject ERCOT to FERC jurisdiction, giving federal regulators authority over generation buildout, rate design, and market structure inside Texas. The practical answer is that Texas has the resource base to be self-sufficient — abundant natural gas, world-leading wind, fast-growing solar, and a competitive market that has attracted more generation investment than any other state.",
+          "Keeping the seam with the Eastern and Western Interconnections limited preserves state-level control over every one of those decisions.",
+        ],
+      },
+      {
+        heading: "Reforms Since 2021",
+        bullets: [
+          "Mandatory weatherization for gas and electric infrastructure.",
+          "New reliability standards including a Dispatchable Reliability Reserve Service.",
+          "The Texas Energy Fund — low-cost state loans for dispatchable generation.",
+          "Market redesign incentivizing on-demand power alongside intermittent renewables.",
+          "Improved communication protocols between the gas system and the electric grid.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "The 2021 winter storm cost Texas roughly $130 billion and 200+ lives — a catastrophic reliability failure that federal integration would not have prevented and might have worsened by removing state authority to force the reforms since enacted. Texas' answer since has been to keep the grid independent, tighten the rules, and pay directly for the reliability investment. That approach is under continuous stress-test every summer peak and every winter cold snap.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Does ERCOT set my electric rate?", a: "No. Your rate is set by your retail electric provider in deregulated areas, or by your municipal utility or co-op in regulated areas." },
+      { q: "Can Texas 'join' the national grid?", a: "It could increase interconnections technically, but doing so at scale would trigger FERC jurisdiction — which is why the state has consistently opted against it." },
+      { q: "Who pays for reliability reforms?", a: "A mix of ratepayers, generators, and state general revenue (through the Texas Energy Fund). The exact allocation is set by the PUC and Legislature." },
+      { q: "Is the grid more reliable now?", a: "Objectively yes on winter preparation; the summer picture depends on how quickly new dispatchable generation comes online relative to load growth." },
+    ],
+    sources: [
+      { label: "ERCOT", url: "https://www.ercot.com/" },
+      { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
+      { label: "Texas Energy Fund", url: "https://www.puc.texas.gov/agency/resources/reports/TEF.aspx" },
+    ],
+    related: ["permian-energy", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
+    cta: { label: "Read Our Energy Coverage", href: "/news" },
+    keyTakeaways: [
+      "Texas runs the only state-level grid in the lower 48.",
+      "Independence preserves state control over generation, market, and reliability rules.",
+      "Post-2021 reforms include weatherization, reserves, and the Texas Energy Fund.",
+      "Reliability is a continuous stress-test at every seasonal peak.",
+    ],
+  },
+
+  "border-security-state-role": {
+    updated: "2026-05-27",
+    intro: [
+      "Operation Lone Star has crystallized a constitutional question the country hasn't seriously litigated in more than a century: what authority does a state have to defend its own border when the federal government won't?",
+      "This guide walks through how Texas DPS, the Texas Military Department, and county sheriffs actually coordinate along the Rio Grande — and the constitutional case the state has made for acting when Washington has declined to act.",
+    ],
+    sections: [
+      {
+        heading: "Who Does What",
+        bullets: [
+          "Texas Department of Public Safety (DPS): highway interdiction, criminal investigations, arrests under state law.",
+          "Texas Military Department (National Guard + State Guard): observation posts, physical barrier installation, engineering support.",
+          "Texas Parks & Wildlife Game Wardens: river patrol in remote sectors.",
+          "County Sheriffs: local arrests, jail intake, coordination with local judges.",
+          "Texas Rangers: complex criminal cases including smuggling and trafficking prosecutions.",
+        ],
+      },
+      {
+        heading: "The Constitutional Argument",
+        paragraphs: [
+          "Article I, Section 10 of the U.S. Constitution generally prohibits states from engaging in war, but contains an explicit carve-out: states may act 'when actually invaded, or in such imminent Danger as will not admit of delay.' Texas' formal position, reflected in Governor Abbott's 2022 disaster declaration and subsequent statements, is that the scale of unlawful entry over recent years meets that standard.",
+          "Federal courts — particularly the Fifth Circuit — have so far declined to enjoin the state's core border operations. The Supreme Court has weighed in on razor-wire and buoy cases with narrow holdings that have generally preserved state authority pending fuller litigation.",
+        ],
+      },
+      {
+        heading: "Cost and Scale",
+        paragraphs: [
+          "Since 2021, Texas has appropriated more than $14 billion cumulatively for border-related operations — a state expenditure with no modern precedent. That funding covers salaries, equipment, barrier construction, jail bed rentals for state charges, and grants to border counties for prosecution and infrastructure.",
+          "The state has also built a network of processing centers and cooperative agreements with roughly two dozen upstream states through the Interstate Compact for Border Security.",
+        ],
+      },
+      {
+        heading: "The Texas Angle",
+        paragraphs: [
+          "The closest historical parallel to Operation Lone Star is not another state's border operation — it is Texas' own frontier era, when Texas Rangers stood up structured defense of the frontier in the absence of federal presence. Whether the modern iteration survives Supreme Court review will define the boundary between state and federal border authority for a generation of Americans.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Can Texas arrest people for federal immigration offenses?", a: "Not directly. The state's arrest authority is grounded in Texas criminal statutes — trespass, smuggling, and related offenses — not federal immigration law." },
+      { q: "Are National Guard troops federalized?", a: "No. They serve on state active duty under the Governor. The state pays their salaries and directs their deployment." },
+      { q: "Do border counties agree with Operation Lone Star?", a: "Broadly yes among sheriffs and county leadership on the Texas side; specific tactics (barrier placement, prosecution volume) generate ongoing local debate." },
+    ],
+    sources: [
+      { label: "Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/operationlonestar" },
+      { label: "Texas DPS", url: "https://www.dps.texas.gov/" },
+      { label: "U.S. Constitution Article I, Section 10", url: "https://constitution.congress.gov/constitution/article-1/" },
+    ],
+    related: ["operation-lone-star", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
+    cta: { label: "Read Our Border Coverage", href: "/news" },
+    keyTakeaways: [
+      "Texas coordinates DPS, the Guard, game wardens, and sheriffs along the Rio Grande.",
+      "The state's authority rests on the Constitution's 'invasion' clause.",
+      "Cumulative state cost exceeds $14 billion since 2021.",
+      "Supreme Court review will define the modern federal-state border boundary.",
+    ],
+  },
 };
