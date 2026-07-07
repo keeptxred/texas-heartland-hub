@@ -2,7 +2,14 @@
 // repeated sentences within paragraphs, repeated headings, repeated bullets,
 // and repeated FAQ questions. Pure function — no side effects.
 
-export type Section = { heading?: string; paragraphs?: string[] };
+export type Section = {
+  heading?: string;
+  paragraphs?: string[];
+  bullets?: string[];
+  table?: unknown;
+  image?: unknown;
+  [k: string]: unknown;
+};
 export type FaqItem = { q?: string; a?: string };
 export type ArticleBodyShape = {
   updated?: string;
@@ -89,8 +96,11 @@ export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
       const paragraphs = Array.isArray(sec.paragraphs)
         ? dedupeParagraphs(sec.paragraphs, seenPara, seenSent)
         : [];
-      if (paragraphs.length === 0 && !h) continue;
-      sections.push({ heading: h || undefined, paragraphs });
+      const bullets = Array.isArray(sec.bullets) ? dedupeList(sec.bullets, new Set<string>()) : sec.bullets;
+      const hasTable = Boolean(sec.table);
+      const hasImage = Boolean(sec.image);
+      if (paragraphs.length === 0 && (!bullets || bullets.length === 0) && !hasTable && !hasImage && !h) continue;
+      sections.push({ ...sec, heading: h || undefined, paragraphs, bullets });
     }
   }
 
