@@ -91,3 +91,37 @@ export function toImageInput(article: ArticleLike): ArticleImageInput {
 export function resolveArticleImage(article: ArticleLike): string {
   return getArticleImage(toImageInput(article));
 }
+
+/**
+ * Unified headline set builder. Extends the existing SEO pipeline with a
+ * single call that returns the four canonical variants used across the
+ * site. Existing per-field callers keep working — this is additive.
+ *
+ *  - seo_headline: keyword-rich, Texas-relevant, front-loads the entity
+ *  - reader_headline: friendly / conversational display headline
+ *  - variant_a: Discover A (SEO focus)
+ *  - variant_b: Discover B (direct / punchy)
+ *
+ * When only a title is available (no AI output), it falls back to the
+ * original title for every slot so downstream code always has something
+ * to render.
+ */
+export function buildHeadlineSet(input: {
+  title: string;
+  seo?: string | null;
+  reader?: string | null;
+  variants?: { a?: string | null; b?: string | null } | null;
+}): { seo_headline: string; reader_headline: string; variant_a: string; variant_b: string } {
+  const clean = (s?: string | null) => (s ?? "").trim();
+  const base = clean(input.title);
+  const seo = clean(input.seo) || base;
+  const reader = clean(input.reader) || seo;
+  const a = clean(input.variants?.a) || seo;
+  const b = clean(input.variants?.b) || reader;
+  return {
+    seo_headline: seo,
+    reader_headline: reader,
+    variant_a: a,
+    variant_b: b,
+  };
+}
