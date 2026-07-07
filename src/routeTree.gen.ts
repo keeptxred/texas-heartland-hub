@@ -24,6 +24,7 @@ import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
+import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
@@ -151,6 +152,11 @@ const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
 const SitemapNewsDotxmlRoute = SitemapNewsDotxmlRouteImport.update({
   id: '/sitemap-news.xml',
   path: '/sitemap-news.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapEvergreenDotxmlRoute = SitemapEvergreenDotxmlRouteImport.update({
+  id: '/sitemap-evergreen.xml',
+  path: '/sitemap-evergreen.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -453,6 +459,7 @@ export interface FileRoutesByFullPath {
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -521,6 +528,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
+  '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -589,6 +597,7 @@ export interface FileRoutesById {
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/shop': typeof ShopRouteWithChildren
+  '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -661,6 +670,7 @@ export interface FileRouteTypes {
     | '/register-to-vote'
     | '/representatives'
     | '/shop'
+    | '/sitemap-evergreen.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
     | '/sitemap.xml'
@@ -729,6 +739,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
+    | '/sitemap-evergreen.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
     | '/sitemap.xml'
@@ -796,6 +807,7 @@ export interface FileRouteTypes {
     | '/register-to-vote'
     | '/representatives'
     | '/shop'
+    | '/sitemap-evergreen.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
     | '/sitemap.xml'
@@ -867,6 +879,7 @@ export interface RootRouteChildren {
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
   ShopRoute: typeof ShopRouteWithChildren
+  SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -1004,6 +1017,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-news.xml'
       fullPath: '/sitemap-news.xml'
       preLoaderRoute: typeof SitemapNewsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-evergreen.xml': {
+      id: '/sitemap-evergreen.xml'
+      path: '/sitemap-evergreen.xml'
+      fullPath: '/sitemap-evergreen.xml'
+      preLoaderRoute: typeof SitemapEvergreenDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -1488,6 +1508,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
   ShopRoute: ShopRouteWithChildren,
+  SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
