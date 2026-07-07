@@ -22,6 +22,7 @@ import { Route as TexasRouteImport } from './routes/texas'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-products[.]xml'
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
 import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
@@ -142,6 +143,11 @@ const TaxCalculatorRoute = TaxCalculatorRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapProductsDotxmlRoute = SitemapProductsDotxmlRouteImport.update({
+  id: '/sitemap-products.xml',
+  path: '/sitemap-products.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
@@ -462,6 +468,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -531,6 +538,7 @@ export interface FileRoutesByTo {
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -600,6 +608,7 @@ export interface FileRoutesById {
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -673,6 +682,7 @@ export interface FileRouteTypes {
     | '/sitemap-evergreen.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-products.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -742,6 +752,7 @@ export interface FileRouteTypes {
     | '/sitemap-evergreen.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-products.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -810,6 +821,7 @@ export interface FileRouteTypes {
     | '/sitemap-evergreen.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
+    | '/sitemap-products.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -882,6 +894,7 @@ export interface RootRouteChildren {
   SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
+  SitemapProductsDotxmlRoute: typeof SitemapProductsDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
@@ -1003,6 +1016,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-products.xml': {
+      id: '/sitemap-products.xml'
+      path: '/sitemap-products.xml'
+      fullPath: '/sitemap-products.xml'
+      preLoaderRoute: typeof SitemapProductsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-pages.xml': {
@@ -1511,6 +1531,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
+  SitemapProductsDotxmlRoute: SitemapProductsDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
