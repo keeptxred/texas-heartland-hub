@@ -4,6 +4,7 @@ import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
 import { getEvergreenBySlug } from "@/lib/evergreen.functions";
 import { AdSlot } from "@/components/ad-slot";
+import { NewsletterSignup } from "@/components/newsletter-signup";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { resolveArticleImage } from "@/lib/seo-headline";
@@ -463,6 +464,10 @@ function ArticlePage() {
 
       {/* SLOT 3 — footer, before author bio */}
       <AdSlot placement="footer" />
+
+      <div className="mt-10">
+        <NewsletterSignup sourcePage={`/news/${article.slug}`} compact />
+      </div>
 
       {author ? (
         <section className="mt-12 border-t border-border pt-6">
