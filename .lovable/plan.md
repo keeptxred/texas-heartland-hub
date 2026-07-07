@@ -1,20 +1,35 @@
-## Goal
-Automatically sync products from Printify into the database every hour using a `pg_cron` job.
+## Cleanup Plan
 
-## What already exists
-- `/api/public/hooks/sync-printify` — a server route that fetches all products from Printify, maps them, upserts them into the `products` table, and deactivates stale ones.
-- `pg_cron` and `pg_net` extensions — already enabled and used by the email queue.
+### 1. Remove duplicate Printify cron
 
-## What will be added
-A single `pg_cron` schedule named `sync-printify-hourly` that calls the existing sync endpoint via `pg_net` every hour.
+Unschedule `sync-printify-6h`, keep `sync-printify-hourly` (`0 * * * *`).
 
-## Cron schedule
-`0 * * * *` — runs at the top of every hour.
+Via `supabase--insert`:
+```sql
+SELECT cron.unschedule('sync-printify-6h');
+```
 
-## Technical details
-- Endpoint: `POST https://project--eabc624d-53f7-4564-8bf9-613c4b63a016.lovable.app/api/public/hooks/sync-printify`
-- The endpoint accepts POST with an empty body and returns `{ ok, fetched, upserted, deactivated }`.
-- No auth headers needed — `/api/public/*` routes are public.
+### 2. Add health endpoint
 
-## Validation after setup
-Query `cron.job` to confirm the schedule exists, and optionally check `cron.job_run_details` after the first hour to verify successful runs.
+Create `src/routes/api/public/hooks/health.ts` — a GET server route that returns JSON:
+
+```json
+{
+  "status": "ok",
+  "timestamp": "<now ISO>",
+  "database": "ok" | "error",
+  "articles_last_24h": <count>,
+  "latest_published_at": "<ISO or null>"
+}
+```
+
+Implementation notes:
+- Use the server publishable Supabase client (`SUPABASE_URL` + `SUPABASE_PUBLISHABLE_KEY`) inside the handler — no service role, no secrets exposed.
+- Query `daily_articles` with `count: 'exact', head: true` filtered by `published_at >= now-24h`, and a single-row `select('published_at').order(...).limit(1)` for the latest timestamp.
+- On DB error, return `database: "error"` and HTTP 200 with `status: "degraded"` so uptime checkers get a clear signal without leaking error details.
+- No cache headers; response is small.
+
+### Files touched
+- **Created:** `src/routes/api/public/hooks/health.ts`
+- **DB change (via insert tool):** unschedule `sync-printify-6h`
+- Nothing else — no changes to generation, SEO, schema, or sitemap logic.

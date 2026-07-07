@@ -79,6 +79,7 @@ import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
 import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
 import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
+import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
 import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
 import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
@@ -440,6 +441,11 @@ const ApiPublicHooksIngestFeedsRoute =
     path: '/api/public/hooks/ingest-feeds',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksHealthRoute = ApiPublicHooksHealthRouteImport.update({
+  id: '/api/public/hooks/health',
+  path: '/api/public/hooks/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksGenerateSportsRoute =
   ApiPublicHooksGenerateSportsRouteImport.update({
     id: '/api/public/hooks/generate-sports',
@@ -525,6 +531,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
+  '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
@@ -595,6 +602,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
+  '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
@@ -671,6 +679,7 @@ export interface FileRoutesById {
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
+  '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
@@ -748,6 +757,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
+    | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
@@ -818,6 +828,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
+    | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
@@ -893,6 +904,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
+    | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/sync-printify'
@@ -954,6 +966,7 @@ export interface RootRouteChildren {
   ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
   ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
+  ApiPublicHooksHealthRoute: typeof ApiPublicHooksHealthRoute
   ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
   ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
@@ -1456,6 +1469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksIngestFeedsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/health': {
+      id: '/api/public/hooks/health'
+      path: '/api/public/hooks/health'
+      fullPath: '/api/public/hooks/health'
+      preLoaderRoute: typeof ApiPublicHooksHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/generate-sports': {
       id: '/api/public/hooks/generate-sports'
       path: '/api/public/hooks/generate-sports'
@@ -1615,6 +1635,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
   ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
+  ApiPublicHooksHealthRoute: ApiPublicHooksHealthRoute,
   ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
   ApiPublicHooksListShopsRoute: ApiPublicHooksListShopsRoute,
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
@@ -1627,13 +1648,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
