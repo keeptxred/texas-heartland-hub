@@ -276,7 +276,7 @@ export function detectAffiliateCategory(text: string): AffiliateCategory | null 
 // One-shot enrichment: mutates a row in place with the new columns.
 // Called from every generation hook right before .upsert().
 // ─────────────────────────────────────────────────────────────
-export function enrichArticleRow<T extends QualityRow & Record<string, unknown>>(row: T): T {
+export function enrichArticleRow<T extends QualityRow>(row: T): T {
   const text = `${row.title ?? ""} ${row.dek ?? ""} ${bodyToText(row)}`;
 
   const regions = classifyRegions(text);
@@ -295,13 +295,14 @@ export function enrichArticleRow<T extends QualityRow & Record<string, unknown>>
   });
   const quality = scoreQuality(row);
 
-  row.affected_regions = regions.length > 0 ? regions : null;
-  row.texas_impact_summary = impact || null;
-  row.affiliate_category = affiliate;
-  row.internal_links = links;
-  row.image_score = imageScore;
-  row.content_quality_score = quality.score;
-  row.quality_flags = quality.flags.length > 0 ? quality.flags : null;
+  const bag = row as unknown as Record<string, unknown>;
+  bag.affected_regions = regions.length > 0 ? regions : null;
+  bag.texas_impact_summary = impact || null;
+  bag.affiliate_category = affiliate;
+  bag.internal_links = links;
+  bag.image_score = imageScore;
+  bag.content_quality_score = quality.score;
+  bag.quality_flags = quality.flags.length > 0 ? quality.flags : null;
 
   return row;
 }
