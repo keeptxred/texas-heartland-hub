@@ -4,6 +4,7 @@ import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { AdSlot } from "@/components/ad-slot";
 import { BrandIdentity } from "@/components/brand-identity";
+import { NewsletterSignup } from "@/components/newsletter-signup";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 
 // Compute the daily-rotated lead article the same way the component does, so
@@ -366,6 +367,9 @@ function Index() {
             </div>
           </div>
         </div>
+      </section>
+      <section className="mx-auto max-w-[1200px] px-6 py-14">
+        <NewsletterSignup sourcePage="/" />
       </section>
       <BrandIdentity />
     </div>
