@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { TEAMS, TEAM_BY_SLUG, teamsForLeague, detectTeams, type TeamMeta } from "@/lib/texas-teams";
+import { enrichArticleRow } from "@/lib/content-quality";
 
 const LEAGUES = ["nfl", "mlb", "nba"] as const;
 type League = (typeof LEAGUES)[number];
@@ -285,6 +286,7 @@ async function generateForTeam(
     body_json: cleanBody,
     teams,
   };
+  enrichArticleRow(row);
   const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
   if (error) return { error: error.message };
   return { slug };
