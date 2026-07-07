@@ -135,11 +135,16 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     if (!supabase) return { articles: [] };
     const { data, error } = await supabase
       .from("daily_articles")
-      .select("slug,title,published_at,updated_at,image_url,kind")
+      .select("slug,title,published_at,image_url,kind")
       .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"])
       .order("published_at", { ascending: false })
       .limit(5000);
     if (error || !data) return { articles: [] };
-    return { articles: data as SitemapArticle[] };
+    return {
+      articles: (data as Omit<SitemapArticle, "updated_at">[]).map((a) => ({
+        ...a,
+        updated_at: null,
+      })),
+    };
   },
 );
