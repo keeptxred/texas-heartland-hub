@@ -268,6 +268,11 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
     const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
     const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Rewrite;
     if (!parsed?.title || !parsed?.summary || !parsed?.dek) return null;
+    if (!parsed?.relevance || parsed.relevance.trim().length < 40) return null;
+    const hasBody =
+      (parsed.summary && parsed.summary.trim().length >= 200) ||
+      (Array.isArray(parsed.keyTakeaways) && parsed.keyTakeaways.length >= 3);
+    if (!hasBody) return null;
     parsed.dek = parsed.dek.slice(0, 155);
     parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
     parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
@@ -275,6 +280,14 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
   } catch {
     return null;
   }
+}
+
+// Retry once on transient AI gateway failures (most rewrite failures are timeouts).
+async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
+  const first = await rewriteItem(it, lovableApiKey);
+  if (first) return first;
+  await new Promise((res) => setTimeout(res, 600));
+  return rewriteItem(it, lovableApiKey);
 }
 
 function buildArticleRow(it: Item, rw: Rewrite | null) {
@@ -438,9 +451,20 @@ async function handler() {
   if (fresh.length > 0) {
     const lovableApiKey = process.env.LOVABLE_API_KEY;
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await Promise.all(fresh.map((it) => rewriteItem(it, lovableApiKey)))
+      ? await Promise.all(fresh.map((it) => rewriteItemWithRetry(it, lovableApiKey)))
       : fresh.map(() => null);
-    const articleRows = fresh.map((it, i) => buildArticleRow(it, rewrites[i]));
+    // Skip items whose AI rewrite failed — never publish empty stub articles.
+    const paired = fresh
+      .map((it, i) => ({ it, rw: rewrites[i] }))
+      .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
+    const articleRows = paired.map(({ it, rw }) => buildArticleRow(it, rw));
+    const articleSourceItems = paired.map(({ it }) => it);
+    if (articleRows.length === 0) {
+      return new Response(
+        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length }),
+        { headers: { "Content-Type": "application/json" } },
+      );
+    }
 
     // ONE AI call classifies the whole batch into image buckets (cached in DB).
     const imageMap = lovableApiKey
@@ -526,7 +550,7 @@ async function handler() {
           supabaseAdmin
             .from("texas_news_feed")
             .update({ internal_slug: row.slug })
-            .eq("link", fresh[i].link),
+            .eq("link", articleSourceItems[i].link),
         ),
       );
     }
@@ -548,18 +572,24 @@ async function handler() {
       description: row.description ?? "",
     }));
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await Promise.all(items.map((it) => rewriteItem(it, lovableApiKey)))
+      ? await Promise.all(items.map((it) => rewriteItemWithRetry(it, lovableApiKey)))
       : items.map(() => null);
-    const backRows = items.map((it, i) => buildArticleRow(it, rewrites[i]));
+    // Only mint articles for orphans whose rewrite succeeded.
+    const paired = items
+      .map((it, i) => ({ it, rw: rewrites[i] }))
+      .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
+    const backRows = paired.map(({ it, rw }) => buildArticleRow(it, rw));
     backRows.forEach((r) => enrichArticleRow(r));
-    await supabaseAdmin
-      .from("daily_articles")
-      .upsert(backRows, { onConflict: "slug", ignoreDuplicates: true });
-    await Promise.all(
-      backRows.map((row, i) =>
-        supabaseAdmin.from("texas_news_feed").update({ internal_slug: row.slug }).eq("link", items[i].link),
-      ),
-    );
+    if (backRows.length > 0) {
+      await supabaseAdmin
+        .from("daily_articles")
+        .upsert(backRows, { onConflict: "slug", ignoreDuplicates: true });
+      await Promise.all(
+        backRows.map((row, i) =>
+          supabaseAdmin.from("texas_news_feed").update({ internal_slug: row.slug }).eq("link", paired[i].it.link),
+        ),
+      );
+    }
   }
 
   // Canonical-URL dedupe: for any daily_articles rows sharing the same

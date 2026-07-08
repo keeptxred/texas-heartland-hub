@@ -1,102 +1,46 @@
-## Content Growth Optimization Layer — Plan
+# Fix empty ingested articles
 
-Scope is broad. Grouping into 3 small, production-safe migrations + edits to existing hooks and a couple of new UI files. No pipeline rewrites.
+## Root cause
 
-### Migration 1 — Schema additions to `daily_articles` + new `newsletter_signups`
+In `src/routes/api/public/hooks/ingest-feeds.ts`, when `rewriteItem()` returns `null` (AI gateway timeout, non-2xx, or invalid JSON), the code still calls `buildArticleRow(it, null)` and upserts the row. The resulting article contains only boilerplate: the source's short RSS blurb as the intro, the generic "affects Texans and is being tracked by the Keep TX Red newsroom" stub as the only section, and the two-line boilerplate takeaways. That's the article you linked, and there are **36 rows** in the same shape currently live.
+
+Note on the credit-refund ask: I can't issue refunds. That's handled by Lovable support (Help menu in the workspace). What I can do is actually fix the pipeline so this stops recurring.
+
+## Changes (minimal, edits only — no schema changes, no new files)
+
+### 1. `src/routes/api/public/hooks/ingest-feeds.ts`
+
+- **Retry once on rewrite failure.** Wrap the `rewriteItem` call in a small helper that retries a single time after a short delay when the first attempt returns `null`. Rewrites fail almost entirely due to transient gateway timeouts.
+- **Skip rows with no successful rewrite.** After `Promise.all(... rewriteItem ...)` in both call sites (lines ~441 and ~551), filter out items whose rewrite is still `null`. Only items with a real rewrite become article rows. This is the hard guard — an ingested article without an AI rewrite is never published.
+- **Tighten the "successful rewrite" check.** In `rewriteItem`, additionally require `parsed.relevance` and either `parsed.summary` of ≥ 200 chars or a non-empty `parsed.keyTakeaways` — this catches AI responses that come back structurally valid but semantically empty.
+- Leave `buildArticleRow` alone; it will only ever be called with a real rewrite now.
+
+### 2. One-time cleanup migration
+
+Add a migration that deletes the existing stub rows so the site immediately stops serving them (and the sitemap stops linking to them). The condition matches only the exact boilerplate strings this bug produces, so it can't touch legitimate articles:
+
 ```sql
-ALTER TABLE public.daily_articles
-  ADD COLUMN IF NOT EXISTS image_score integer,
-  ADD COLUMN IF NOT EXISTS internal_links jsonb,          -- [{label,href,kind}]
-  ADD COLUMN IF NOT EXISTS texas_impact_summary text,
-  ADD COLUMN IF NOT EXISTS affected_regions text[],       -- statewide|houston|dfw|austin|rural|...
-  ADD COLUMN IF NOT EXISTS content_quality_score integer, -- 0-100
-  ADD COLUMN IF NOT EXISTS quality_flags text[],          -- ['missing_image','thin_body',...]
-  ADD COLUMN IF NOT EXISTS affiliate_category text,
-  ADD COLUMN IF NOT EXISTS gsc_impressions integer DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS gsc_clicks integer DEFAULT 0,
-  ADD COLUMN IF NOT EXISTS gsc_ctr numeric,
-  ADD COLUMN IF NOT EXISTS gsc_avg_position numeric,
-  ADD COLUMN IF NOT EXISTS gsc_last_update timestamptz;
-
-CREATE TABLE public.newsletter_signups (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  email citext NOT NULL,
-  source_page text,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (email)
-);
-GRANT INSERT ON public.newsletter_signups TO anon, authenticated;
-GRANT ALL ON public.newsletter_signups TO service_role;
-ALTER TABLE public.newsletter_signups ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Anyone can subscribe" ON public.newsletter_signups
-  FOR INSERT TO anon, authenticated WITH CHECK (true);
--- no SELECT policy: reads via service role only
+delete from public.daily_articles
+where kind = 'ingested'
+  and (body_json #>> '{sections,0,paragraphs,0}')
+      like '%affects Texans and is being tracked by the Keep TX Red newsroom%';
 ```
 
-Reuses existing `seo_headline`, `headline_variants`, `ctr_score`, `image_hash`, `body_json`.
+Expected deletion: 36 rows (verified via read query).
 
-### New helper library — `src/lib/content-quality.ts`
-Pure functions used inside existing hooks (no new automation):
+### 3. Render-side safety net in `src/routes/news.$slug.tsx`
 
-- `buildHeadlineSet(story) → { seo_headline, reader_headline, variant_a, variant_b }` — enhances existing SEO logic (calls into `src/lib/seo-headline.ts`; extends, does not replace).
-- `scoreImage({url, title, category}) → number` — heuristic 0–100 (Texas keywords in filename/alt, deduped via existing `image_hash`, penalizes known stock hosts).
-- `pickInternalLinks(title, category, body) → {label,href,kind}[]` — max 5; category → hub map (tax → `/tax-calculator` + `/texas/property-taxes-2026`; elections → `/register-to-vote` + `/candidate-guides`; business → `/texas-business`; etc.). Adds 1 evergreen from `daily_articles` matched by shared keywords, 1 category page, 1 resource page.
-- `classifyRegions(text) → string[]` — statewide/houston/dfw/austin/rural via keyword match (extends `nlp.ts`).
-- `buildTexasImpact(text, regions) → string` — templated 1–2 sentence summary.
-- `scoreQuality(article) → { score, flags }` — checks author, image, min body length, presence of "Why This Matters", FAQ, key-takeaways markers, internal links. Returns 0–100 and flags list. Never blocks publish.
-- `detectAffiliateCategory(text) → string | null` — moving | homes | insurance | energy | business | travel | products | services.
+In the ingested-article branch of the loader, if `body_json.sections` contains only the boilerplate stub strings and the intro is ≤ 1 short paragraph, throw `notFound()`. This is a belt-and-suspenders guard so any future regression can't publish a blank page — worst case the URL 404s instead of rendering an empty article that Google Discover will penalize.
 
-### Edits to existing hooks (small)
-- `src/routes/api/public/hooks/generate-news.ts`
-- `src/routes/api/public/hooks/generate-evergreen.ts`
-- `src/routes/api/public/hooks/generate-sports.ts`
-- `src/routes/api/public/hooks/ingest-feeds.ts`
+## Out of scope
 
-In each row-build step, call the helpers and set the new columns before upsert. No control-flow changes, no new API calls, no new AI models — the existing AI rewrite output feeds into these pure post-processors.
+- No changes to `generate-news`, `generate-evergreen`, `generate-sports`, or `enrichArticleRow`.
+- No sitemap logic changes (the deleted rows drop out automatically).
+- No schema changes, no new tables, no new cron jobs.
+- No changes to the AI prompt itself beyond the stricter response validation described above.
 
-Extend `seo-headline.ts` (already the SEO source of truth) so `buildHeadlineSet` lives alongside `pickHeadline`; existing callers keep working.
+## Verification after build
 
-### Newsletter capture (UI + endpoint)
-- **New component** `src/components/newsletter-signup.tsx` — email input, POSTs to server fn. Message: "Get Texas updates delivered weekly."
-- **New server fn** `src/lib/newsletter.functions.ts` → `subscribeNewsletter({email, source_page})` — Zod-validated, insert to `newsletter_signups`, dedupe on unique constraint.
-- Placement (small edits): `src/routes/news.$slug.tsx`, `src/routes/index.tsx`, evergreen article surface (already renders through news.$slug). One import + one `<NewsletterSignup source_page={pathname}/>` line each.
-
-### GSC feedback storage — data layer only
-- New util `src/lib/gsc.ts` exporting `applyGscMetrics(rows)` — takes an array of `{slug, impressions, clicks, ctr, position}` and writes to the new columns. No OAuth, no cron. Ready for future integration.
-
-### CTR improvement loop — reuse existing fields
-- New helper in `src/lib/ctr-score.ts`: `shouldGenerateNewVariant(row, siteAvgCtr)` — true when `variant_a_impressions + variant_b_impressions >= 1000` AND best-variant CTR < site avg × 0.8.
-- New tiny server fn `src/lib/ctr-loop.functions.ts` → `refreshUnderperformingHeadlines()`: pulls flagged rows, calls the existing Lovable AI Gateway with the same rewrite system prompt to generate a new variant, writes it into `headline_variants`. **Not scheduled** in this change — safe manual/admin trigger. (User can add a cron later.)
-
-### Files to be touched
-**Migration:** 1 file (schema + newsletter table)
-**New files:**
-- `src/lib/content-quality.ts`
-- `src/lib/newsletter.functions.ts`
-- `src/lib/ctr-loop.functions.ts`
-- `src/lib/gsc.ts`
-- `src/components/newsletter-signup.tsx`
-
-**Edited:**
-- `src/lib/seo-headline.ts` (add `buildHeadlineSet`)
-- `src/lib/ctr-score.ts` (add `shouldGenerateNewVariant`)
-- `src/lib/nlp.ts` (add region classifier)
-- `src/routes/api/public/hooks/generate-news.ts`
-- `src/routes/api/public/hooks/generate-evergreen.ts`
-- `src/routes/api/public/hooks/generate-sports.ts`
-- `src/routes/api/public/hooks/ingest-feeds.ts`
-- `src/routes/news.$slug.tsx` (insert newsletter component)
-- `src/routes/index.tsx` (insert newsletter component)
-
-### Not doing (per spec)
-- No new automation pipeline, no new cron, no sitemap changes, no schema on other tables.
-- Affiliate: only tagging, no link injection.
-- GSC: storage + util only, no OAuth.
-- CTR loop: helper + server fn only, not scheduled.
-
-### Manual setup required after ship
-1. (Optional) Add a weekly pg_cron to call the CTR refresh server fn when you're ready.
-2. (Optional) Later, provide GSC API access to activate `applyGscMetrics`.
-3. Newsletter signups are visible only via service role; add an admin view when you want to export.
-
-Approve to build.
+1. Re-query the count of stub rows — must return 0.
+2. Visit the failing URL from your message — must return 404 (not an empty article).
+3. Manually POST to `/api/public/hooks/ingest-feeds` and confirm the response reports `inserted` ≤ `fetched` (skipped items are the diff) and no newly inserted row matches the stub pattern.
