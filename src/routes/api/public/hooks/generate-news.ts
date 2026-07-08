@@ -166,8 +166,14 @@ DEK (first paragraph + meta description) RULES:
 - Sentence 1 names Texas + a specific city.
 - Sentence 2 gives the most newsworthy fact.
 
+BODY RULES (required for every picked story):
+- "summary": 2–3 neutral sentences, ≥ 220 characters, expanding the dek with concrete facts drawn from the source blurb. No invented quotes or stats.
+- "relevance": 2–4 sentences explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
+- "keyTakeaways": 3–5 short bullet strings.
+- "faq": 2–3 Q&A entries answering the most likely reader questions.
+
 Pick the best ${Math.min(10, items.length)} stories. Return ONLY valid JSON:
-{"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"..."}]}
+{"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"...","summary":"...","relevance":"...","keyTakeaways":["..."],"faq":[{"q":"...","a":"..."}]}]}
 
 Valid categories: ${CATEGORIES.join(", ")}.
 
@@ -200,7 +206,16 @@ CATEGORY CLASSIFICATION RULES (strict):
   const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
   const content = data.choices?.[0]?.message?.content ?? "{}";
   const parsed = JSON.parse(content) as {
-    articles?: { source_index: number; category: string; title: string; dek: string }[];
+    articles?: {
+      source_index: number;
+      category: string;
+      title: string;
+      dek: string;
+      summary?: string;
+      relevance?: string;
+      keyTakeaways?: string[];
+      faq?: { q: string; a: string }[];
+    }[];
   };
   return parsed.articles ?? [];
 }
@@ -252,13 +267,28 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
         const now = new Date();
         const datePrefix = now.toISOString().slice(0, 10);
         const rows = rewritten
-          .filter((a) => a.title && a.dek && a.source_index >= 1 && a.source_index <= items.length)
+          .filter(
+            (a) =>
+              a.title &&
+              a.dek &&
+              a.source_index >= 1 &&
+              a.source_index <= items.length &&
+              typeof a.summary === "string" &&
+              a.summary.trim().length >= 200 &&
+              typeof a.relevance === "string" &&
+              a.relevance.trim().length >= 40,
+          )
           .map((a) => {
             const src = items[a.source_index - 1];
             const category = (CATEGORIES as readonly string[]).includes(a.category) ? a.category : src.sourceCategory;
+            const slug = `${datePrefix}-${slugify(a.title)}`;
+            const takeaways =
+              Array.isArray(a.keyTakeaways) && a.keyTakeaways.length > 0
+                ? a.keyTakeaways.slice(0, 5)
+                : [`Source: ${src.source}.`, "Keep TX Red rewrote this update for Texas readers."];
             return {
-              slug: `${datePrefix}-${slugify(a.title)}`,
-              internal_url: `/news/${datePrefix}-${slugify(a.title)}`,
+              slug,
+              internal_url: `/news/${slug}`,
               is_ingested: false,
               category,
               title: a.title.slice(0, 200),
@@ -269,6 +299,23 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               score: src.score,
               is_breaking: src.isBreaking,
               kind: "news",
+              body: (a.summary ?? "").slice(0, 4000),
+              body_json: {
+                updated: now.toISOString().slice(0, 10),
+                intro: [a.summary!.trim()],
+                sections: [
+                  { heading: "Texas relevance", paragraphs: [a.relevance!.trim()] },
+                  {
+                    heading: "Source attribution",
+                    paragraphs: [
+                      `This story was reported using a public release from ${src.source}. Keep TX Red rewrote the coverage independently and links to the original for verification.`,
+                    ],
+                  },
+                ],
+                faq: Array.isArray(a.faq) ? a.faq.slice(0, 4) : [],
+                sources: [{ label: `${src.source} — original report`, url: src.link }],
+                keyTakeaways: takeaways,
+              },
             };
           });
 
