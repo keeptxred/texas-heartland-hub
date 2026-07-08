@@ -590,8 +590,6 @@ async function handler() {
         ),
       );
     }
-      ),
-    );
   }
 
   // Canonical-URL dedupe: for any daily_articles rows sharing the same
