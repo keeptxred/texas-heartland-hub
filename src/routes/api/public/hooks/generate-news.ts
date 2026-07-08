@@ -251,7 +251,16 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
         }
 
         // 3. Discover-optimized rewrite.
-        let rewritten: { source_index: number; category: string; title: string; dek: string }[];
+        let rewritten: {
+          source_index: number;
+          category: string;
+          title: string;
+          dek: string;
+          summary?: string;
+          relevance?: string;
+          keyTakeaways?: string[];
+          faq?: { q: string; a: string }[];
+        }[];
         try {
           rewritten = await rewriteWithAi(items, lovableApiKey);
         } catch (err) {
