@@ -1,0 +1,1 @@
+DELETE FROM public.daily_articles WHERE kind = 'news' AND body_json IS NULL;
