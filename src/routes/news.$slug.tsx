@@ -27,6 +27,15 @@ export const Route = createFileRoute("/news/$slug")({
     // Fallback: AI-generated evergreen article stored in daily_articles.
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
     if (!ever || !ever.body) throw notFound();
+    // Safety net: never render a stub article. If the body is only the
+    // "affects Texans and is being tracked" boilerplate with a one-line
+    // intro, treat it as missing rather than serve an empty page.
+    const stubPattern = /affects Texans and is being tracked by the Keep TX Red newsroom/i;
+    const introText = (ever.body.intro ?? []).join(" ").trim();
+    const nonStubSections = (ever.body.sections ?? []).filter(
+      (s) => !(s.paragraphs ?? []).some((p) => stubPattern.test(p)),
+    );
+    if (nonStubSections.length === 0 && introText.length < 200) throw notFound();
     const allowed = ["Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
     const cat = (allowed as readonly string[]).includes(ever.category) ? (ever.category as Article["category"]) : "Legislature";
     const synth: Article = {
