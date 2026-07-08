@@ -268,6 +268,11 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
     const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
     const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Rewrite;
     if (!parsed?.title || !parsed?.summary || !parsed?.dek) return null;
+    if (!parsed?.relevance || parsed.relevance.trim().length < 40) return null;
+    const hasBody =
+      (parsed.summary && parsed.summary.trim().length >= 200) ||
+      (Array.isArray(parsed.keyTakeaways) && parsed.keyTakeaways.length >= 3);
+    if (!hasBody) return null;
     parsed.dek = parsed.dek.slice(0, 155);
     parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
     parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
@@ -275,6 +280,14 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
   } catch {
     return null;
   }
+}
+
+// Retry once on transient AI gateway failures (most rewrite failures are timeouts).
+async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
+  const first = await rewriteItem(it, lovableApiKey);
+  if (first) return first;
+  await new Promise((res) => setTimeout(res, 600));
+  return rewriteItem(it, lovableApiKey);
 }
 
 function buildArticleRow(it: Item, rw: Rewrite | null) {
