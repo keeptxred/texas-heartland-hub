@@ -43,6 +43,8 @@ import { Route as HappeningNowRouteImport } from './routes/happening-now'
 import { Route as GlossaryRouteImport } from './routes/glossary'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
+import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-school-district'
+import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
@@ -252,6 +254,16 @@ const GetInvolvedRoute = GetInvolvedRouteImport.update({
 const FindRepresentativeRoute = FindRepresentativeRouteImport.update({
   id: '/find-representative',
   path: '/find-representative',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindMySchoolDistrictRoute = FindMySchoolDistrictRouteImport.update({
+  id: '/find-my-school-district',
+  path: '/find-my-school-district',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindMyDmvRoute = FindMyDmvRouteImport.update({
+  id: '/find-my-dmv',
+  path: '/find-my-dmv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ElectionsRoute = ElectionsRouteImport.update({
@@ -475,6 +487,8 @@ export interface FileRoutesByFullPath {
   '/county-elections': typeof CountyElectionsRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
+  '/find-my-dmv': typeof FindMyDmvRoute
+  '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
@@ -551,6 +565,8 @@ export interface FileRoutesByTo {
   '/county-elections': typeof CountyElectionsRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
+  '/find-my-dmv': typeof FindMyDmvRoute
+  '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
@@ -623,6 +639,8 @@ export interface FileRoutesById {
   '/county-elections': typeof CountyElectionsRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
+  '/find-my-dmv': typeof FindMyDmvRoute
+  '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
@@ -701,6 +719,8 @@ export interface FileRouteTypes {
     | '/county-elections'
     | '/editorial-standards'
     | '/elections'
+    | '/find-my-dmv'
+    | '/find-my-school-district'
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
@@ -777,6 +797,8 @@ export interface FileRouteTypes {
     | '/county-elections'
     | '/editorial-standards'
     | '/elections'
+    | '/find-my-dmv'
+    | '/find-my-school-district'
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
@@ -848,6 +870,8 @@ export interface FileRouteTypes {
     | '/county-elections'
     | '/editorial-standards'
     | '/elections'
+    | '/find-my-dmv'
+    | '/find-my-school-district'
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
@@ -925,6 +949,8 @@ export interface RootRouteChildren {
   CountyElectionsRoute: typeof CountyElectionsRoute
   EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElectionsRoute: typeof ElectionsRoute
+  FindMyDmvRoute: typeof FindMyDmvRoute
+  FindMySchoolDistrictRoute: typeof FindMySchoolDistrictRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
   GlossaryRoute: typeof GlossaryRoute
@@ -1215,6 +1241,20 @@ declare module '@tanstack/react-router' {
       path: '/find-representative'
       fullPath: '/find-representative'
       preLoaderRoute: typeof FindRepresentativeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-my-school-district': {
+      id: '/find-my-school-district'
+      path: '/find-my-school-district'
+      fullPath: '/find-my-school-district'
+      preLoaderRoute: typeof FindMySchoolDistrictRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-my-dmv': {
+      id: '/find-my-dmv'
+      path: '/find-my-dmv'
+      fullPath: '/find-my-dmv'
+      preLoaderRoute: typeof FindMyDmvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/elections': {
@@ -1594,6 +1634,8 @@ const rootRouteChildren: RootRouteChildren = {
   CountyElectionsRoute: CountyElectionsRoute,
   EditorialStandardsRoute: EditorialStandardsRoute,
   ElectionsRoute: ElectionsRoute,
+  FindMyDmvRoute: FindMyDmvRoute,
+  FindMySchoolDistrictRoute: FindMySchoolDistrictRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
   GlossaryRoute: GlossaryRoute,
