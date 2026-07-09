@@ -21,6 +21,166 @@ export type ArticleBody = {
 };
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
+  "moving-to-texas-guide": {
+    updated: "2026-07-09",
+    intro: [
+      "Every year, hundreds of thousands of people pack up and head for Texas — drawn by no state income tax, a lower cost of living than the coasts, a business-friendly regulatory climate, and a political culture built on limited government and individual liberty.",
+      "This guide is for anyone packing a moving truck for Texas, or anyone who just arrived and is trying to make sense of property tax bills, ISD ballots, and an electric bill that works nothing like the one back home. We'll walk through taxes, schools, voting, energy, gun laws, and the civic institutions that make Texas run.",
+    ],
+    sections: [
+      {
+        heading: "Why People Are Moving to Texas",
+        paragraphs: [
+          "Texas has added more new residents than any other state for over a decade running, driven by job growth in energy, tech, healthcare, and manufacturing, plus corporate relocations to Austin, Dallas-Fort Worth, and Houston.",
+          "But the tradeoffs are real: Texas makes up for the lack of an income tax with property and sales tax, government here is unusually decentralized, and a huge amount of what affects your daily life — your kids' schools, your electricity, your water — is decided locally, not in Austin.",
+        ],
+      },
+      {
+        heading: "Choosing Where in Texas to Land",
+        paragraphs: [
+          "Texas is closer to four or five different states stitched together under one flag. Houston is the state's largest metro, built on the energy industry and the Port of Houston, with no zoning code and sprawling suburbs. Dallas-Fort Worth is the corporate relocation capital of the country right now, split across dozens of independent suburban cities, each with its own tax rate and school district.",
+          "Austin is the state capital and a tech hub, but also the most liberal major city in Texas by a wide margin — the suburbs ringing it (Georgetown, Leander, Round Rock) are considerably more conservative than the city itself. San Antonio is more affordable, anchored by military installations and healthcare, with a political character that leans more purple. The Rio Grande Valley and Hill Country represent opposite ends of the state's geography and politics.",
+          "If you're weighing a move to South Texas specifically, our guide to [Texas Border Geography 101](/news/texas-border-geography-101) covers the region's ports of entry and sector maps.",
+        ],
+      },
+      {
+        heading: "No State Income Tax — But Read the Fine Print",
+        paragraphs: [
+          "The single biggest reason people cite for moving to Texas is the tax bill. Texas is one of only nine states with no personal income tax, and voters amended the constitution in 2019 to make one nearly impossible to enact without another statewide vote.",
+          "That doesn't mean low taxes overall — it means a different structure. Texas leans on sales and property tax instead. For the full breakdown, see [Why Texas Has No State Income Tax](/news/why-texas-has-no-income-tax).",
+        ],
+      },
+      {
+        heading: "Property Taxes: The Bill That Surprises Every Newcomer",
+        paragraphs: [
+          "Texas has some of the highest effective property tax rates in the country, because property tax — not income tax — is the primary funding mechanism for schools, counties, and cities. A $400,000 home in a typical suburb can carry a $8,000-$10,000+ annual bill, split across your ISD, county, city, and often a municipal utility district (MUD).",
+          "Your tax rate and your appraised value are two separate numbers. The rate is set by each taxing entity; the appraised value is set independently by your county appraisal district and can rise even in years your local governments don't raise rates at all — which is the number worth protesting every year.",
+          "File your homestead exemption immediately if the home will be your primary residence. Texas voters raised this exemption from $100,000 to $140,000 via a 2025 constitutional amendment, with a larger reduction for homeowners 65+. This isn't automatic — you file directly with your county appraisal district. See [The Texas Homestead Exemption Explained](/news/homestead-exemption-explained) for eligibility and deadlines.",
+          "For a full walkthrough of how the bill is calculated from appraisal to final total, read [The Texas Property Tax Guide](/news/texas-property-tax-guide). To get an actual dollar estimate before you buy, use our own [Property Tax Calculator](/tax-calculator).",
+          "Protesting your appraisal every year is routine, expected, and effective in Texas. See [How to Protest Your Property Appraisal — and Actually Win](/news/appraisal-protest-playbook) for deadlines and the evidence-packet approach that works, and [How County Appraisal Districts Work](/news/county-appraisal-districts-explained) for your statutory rights during that process.",
+        ],
+      },
+      {
+        heading: "Understanding Local Government: Who Actually Runs Your Life",
+        paragraphs: [
+          "Counties, cities, ISDs, MUDs, and emergency services districts each have their own elected boards and their own taxing authority. If you buy in a newer suburban development, you may be inside two or three overlapping special districts you'll only discover on your tax bill. See [What Local Governments Actually Control in Texas](/news/what-local-governments-control).",
+          "Counties carry more weight in Texas than in many states, running the sheriff's department, jails, district courts, and rural roads. See [How Texas Counties Actually Spend Your Money](/news/how-texas-counties-spend) for where that money goes.",
+        ],
+      },
+      {
+        heading: "Registering to Vote and Understanding Texas Elections",
+        paragraphs: [
+          "Texas requires voter registration at least 30 days before an election, and you'll need to update it any time you move counties. See [The Texas Voter Registration Guide](/news/texas-voter-registration-guide) for accepted ID and mail-ballot rules.",
+          "In much of Texas, the March Republican primary effectively decides who holds the seat — the November general is often a formality. See [Primary vs. General](/news/primary-vs-general-election) for how that works, and [The Texas Voting Guide for 2026](/news/texas-voting-guide-2026) for the full calendar. If you're new to open primaries and runoff math, start with [A Beginner's Guide to Texas Elections](/news/beginners-guide-texas-elections).",
+        ],
+      },
+      {
+        heading: "Schools: ISDs, School Boards, and School Choice",
+        paragraphs: [
+          "Public education runs through more than 1,000 independent school districts, each with its own elected board. Not sure which ISD you fall under? Use our [Find My School District](/find-my-school-district) tool to look it up by address and jump straight to that district's registration page.",
+          "School board elections are low-turnout and often decided by a few hundred votes, yet they determine curriculum, budgets, and bond measures. See [Local School Board Elections: Why Every Conservative Vote Matters](/news/school-board-elections) and [Texas School Board Powers Explained](/news/texas-school-board-powers).",
+          "Understand how your ISD is actually funded, especially in a high-property-value district — Texas's 'Robin Hood' recapture system redistributes revenue between districts. See [Understanding Texas School Finance](/news/texas-school-finance-explained).",
+          "If school choice factors into your decision, Texas's new Education Savings Account program gives parents access to state funds for private tuition and other expenses. See [Education Savings Accounts: A Parent's Guide to Texas School Choice](/news/school-choice-esa-guide).",
+        ],
+      },
+      {
+        heading: "Registering Your Vehicle and Getting a Texas License",
+        paragraphs: [
+          "New residents generally have 30 days to title and register a vehicle and 90 days to get a Texas driver's license — two different agencies, two different deadlines. Registration happens at your county tax assessor-collector's office; the license comes from the Department of Public Safety (DPS).",
+          "Use our [Find My DMV](/find-my-dmv) tool to locate your county tax office and nearest DPS office, with what to bring for each.",
+        ],
+      },
+      {
+        heading: "Energy and Utilities: Welcome to ERCOT",
+        paragraphs: [
+          "Most of the state runs its own electric grid, managed by ERCOT, specifically to avoid federal regulation. If you're in Houston, Dallas-Fort Worth, or most of the ERCOT footprint, you'll actually get to shop for your electricity provider and plan. See [The Texas Grid Explained](/news/texas-grid-ercot-explained).",
+          "For the bigger picture on how Texas became the country's energy capital, see [The Texas Energy Economy](/news/texas-energy-economy-overview). If you're moving somewhere rural and relying on a well, see [Texas Water Rights Explained](/news/texas-water-rights-explained).",
+        ],
+      },
+      {
+        heading: "Gun Laws: Constitutional Carry",
+        paragraphs: [
+          "Since House Bill 1927 took effect, eligible Texans 21 and older can carry a handgun, openly or concealed, without a state-issued permit — though location restrictions and reciprocity rules still apply. See [Constitutional Carry in Texas: What the Law Actually Says](/news/constitutional-carry-one-year-later).",
+        ],
+      },
+      {
+        heading: "Learning How Texas Government Actually Works",
+        paragraphs: [
+          "Austin politics runs on its own vocabulary — special sessions, sunset review, points of order. See [A Guide to Texas Political Terminology](/news/texas-political-terminology) and [How a Bill Becomes Texas Law](/news/how-a-bill-becomes-texas-law).",
+          "Texas has one of the most constitutionally limited governors in the country on paper, paired with significant informal power. See [The Powers of the Texas Governor Explained](/news/texas-governor-powers) and [The Powers of the Texas Attorney General Explained](/news/texas-attorney-general-powers).",
+          "Every city council, school board, and commissioners court operates under sunshine laws — see [The Texas Open Meetings & Public Information Acts](/news/texas-open-meetings-public-info). And Texas has amended its constitution more than 500 times — see [A Guide to Texas Constitutional Amendments](/news/texas-constitutional-amendments-guide) for how that process works.",
+        ],
+      },
+      {
+        heading: "A Practical First-90-Days Checklist",
+        paragraphs: [
+          "1. Register your vehicle within 30 days and get a Texas driver's license within 90 days — use [Find My DMV](/find-my-dmv) to locate both offices.",
+          "2. File your homestead exemption the moment you close on a home — most counties tie the deadline to January 1 of the following tax year.",
+          "3. Register to vote and mark your calendar for the March primary, not just the November general.",
+          "4. Shop your electricity plan if you're in ERCOT territory.",
+          "5. Look up your county appraisal district and set a reminder for protest season, typically April–May.",
+          "6. Find your ISD using [Find My School District](/find-my-school-district) and check when the next school board election falls.",
+          "7. Bookmark your county and city government sites for commissioners court and council meeting agendas.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Do I have to give up my old state's driver's license right away?",
+        a: "Texas requires new residents to title and register a vehicle within 30 days of establishing residency and to obtain a Texas driver's license within 90 days. Registration is handled at your county tax assessor-collector's office, not a DMV branch, while the driver's license comes from the Department of Public Safety — use our Find My DMV tool to locate both.",
+      },
+      {
+        q: "Is it true I can shop for my own electricity provider?",
+        a: "In most of the ERCOT service area — roughly 90% of the state, including Houston and Dallas-Fort Worth — yes. A handful of cities, including Austin and San Antonio, run municipally owned utilities instead, so you won't get a choice of provider there.",
+      },
+      {
+        q: "How different is a Texas primary from what I'm used to?",
+        a: "Texas has open primaries — you don't register by party. You simply choose which party's primary ballot to request when you vote, and that choice isn't a permanent party registration the way it is in some closed-primary states.",
+      },
+      {
+        q: "Will my property tax bill really be that much higher than my old state's?",
+        a: "It depends on the comparison. Coming from a high-property-tax, high-income-tax state, Texas is close to a pure win. Coming from a low-property-tax state, the property tax bill will likely be the biggest sticker shock — which is why filing your homestead exemption and protesting your appraisal every year matters.",
+      },
+      {
+        q: "Do I need to worry about hurricanes or winter storms depending on where I move?",
+        a: "Coastal and Houston-area residents should budget for hurricane season (June–November) and related insurance costs. Nearly anywhere in the state can also see a severe winter storm capable of straining the ERCOT grid, as happened in February 2021.",
+      },
+    ],
+    sources: [
+      { label: "TxDMV: New to Texas", url: "https://www.txdmv.gov/motorists/new-to-texas" },
+      { label: "Texas DPS: Moving to Texas", url: "https://www.dps.texas.gov/section/driver-license/moving-texas" },
+      {
+        label: "Texas Comptroller: Homestead Exemption Form 50-114",
+        url: "https://comptroller.texas.gov/forms/50-114.pdf",
+      },
+      {
+        label: "Texas Comptroller: County Appraisal District Directory",
+        url: "https://comptroller.texas.gov/taxes/property-tax/references/directory/cad.php",
+      },
+      {
+        label: "Texas Comptroller: Property Tax Exemptions",
+        url: "https://comptroller.texas.gov/taxes/property-tax/exemptions/",
+      },
+      {
+        label: "Texas.gov: Property Tax Transparency",
+        url: "https://www.texas.gov/living-in-texas/property-tax-transparency/",
+      },
+      {
+        label: "Texas Education Agency: School District Locator",
+        url: "https://tea.texas.gov/texas-schools/general-information/school-district-locator",
+      },
+      { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
+    ],
+    related: [
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+      "texas-voter-registration-guide",
+      "texas-grid-ercot-explained",
+      "texas-school-board-powers",
+      "constitutional-carry-one-year-later",
+    ],
+    cta: { label: "Browse the Newsroom", href: "/news" },
+  },
   "texas-property-tax-guide": {
     updated: "2026-06-15",
     editorNote: "Updated June 2026 by the Keep TX Red editorial team.",
@@ -31,9 +191,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sections: [
       {
         heading: "The Three-Step Formula",
-        paragraphs: [
-          "Every Texas property tax bill follows the same arithmetic, no matter which county you live in:",
-        ],
+        paragraphs: ["Every Texas property tax bill follows the same arithmetic, no matter which county you live in:"],
         bullets: [
           "Step 1 — Appraised value: your County Appraisal District (CAD) sets a market value as of January 1.",
           "Step 2 — Taxable value: subtract exemptions (homestead, over-65, disabled veteran) to get the value actually taxed.",
@@ -76,7 +234,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Texas Comptroller — Property Tax Basics", url: "https://comptroller.texas.gov/taxes/property-tax/" },
-      { label: "Texas Tax Code Chapter 11 (Exemptions)", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.11.htm" },
+      {
+        label: "Texas Tax Code Chapter 11 (Exemptions)",
+        url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.11.htm",
+      },
     ],
     related: ["homestead-exemption-explained", "appraisal-protest-playbook", "county-appraisal-districts-explained"],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
@@ -114,13 +275,25 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Can I claim a homestead on more than one house?", a: "No. Texas allows one homestead per family, and it must be your principal residence." },
-      { q: "Do I have to refile every year?", a: "No. Once granted, the exemption stays in place until you move, sell, or the CAD requests reverification." },
-      { q: "What if I bought mid-year?", a: "You still qualify for the full year as long as you occupied the home as your principal residence by January 1 of the next year." },
+      {
+        q: "Can I claim a homestead on more than one house?",
+        a: "No. Texas allows one homestead per family, and it must be your principal residence.",
+      },
+      {
+        q: "Do I have to refile every year?",
+        a: "No. Once granted, the exemption stays in place until you move, sell, or the CAD requests reverification.",
+      },
+      {
+        q: "What if I bought mid-year?",
+        a: "You still qualify for the full year as long as you occupied the home as your principal residence by January 1 of the next year.",
+      },
     ],
     sources: [
       { label: "Form 50-114 — Residence Homestead Application", url: "https://comptroller.texas.gov/forms/50-114.pdf" },
-      { label: "Texas Comptroller — Homestead Exemptions", url: "https://comptroller.texas.gov/taxes/property-tax/exemptions/residence-homestead.php" },
+      {
+        label: "Texas Comptroller — Homestead Exemptions",
+        url: "https://comptroller.texas.gov/taxes/property-tax/exemptions/residence-homestead.php",
+      },
     ],
     related: ["texas-property-tax-guide", "appraisal-protest-playbook", "county-appraisal-districts-explained"],
     cta: { label: "Calculate Your Savings", href: "/tax-calculator" },
@@ -155,9 +328,18 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "When can I testify on a bill?", a: "Only during the committee hearing stage. Most committees post hearings 24-72 hours in advance on the Texas Legislature Online site." },
-      { q: "Can the Governor line-item veto?", a: "Only on appropriations bills. On every other bill, the Governor must sign or veto the entire bill." },
-      { q: "Why do so many bills die?", a: "Most bills never receive a committee hearing. Calendar deadlines and committee chair discretion kill the vast majority." },
+      {
+        q: "When can I testify on a bill?",
+        a: "Only during the committee hearing stage. Most committees post hearings 24-72 hours in advance on the Texas Legislature Online site.",
+      },
+      {
+        q: "Can the Governor line-item veto?",
+        a: "Only on appropriations bills. On every other bill, the Governor must sign or veto the entire bill.",
+      },
+      {
+        q: "Why do so many bills die?",
+        a: "Most bills never receive a committee hearing. Calendar deadlines and committee chair discretion kill the vast majority.",
+      },
     ],
     sources: [
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
@@ -196,12 +378,21 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Can I vote in both primaries?", a: "No. Picking one party's primary ballot locks you out of the other party's runoff." },
-      { q: "Do I need to register as a Republican?", a: "Texas does not have party registration. Anyone registered to vote can request either party's primary ballot." },
+      {
+        q: "Can I vote in both primaries?",
+        a: "No. Picking one party's primary ballot locks you out of the other party's runoff.",
+      },
+      {
+        q: "Do I need to register as a Republican?",
+        a: "Texas does not have party registration. Anyone registered to vote can request either party's primary ballot.",
+      },
     ],
     sources: [
       { label: "Texas Secretary of State — Voter Information", url: "https://www.votetexas.gov/" },
-      { label: "Election Code Chapter 172 (Primaries)", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.172.htm" },
+      {
+        label: "Election Code Chapter 172 (Primaries)",
+        url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.172.htm",
+      },
     ],
     related: ["beginners-guide-texas-elections", "texas-voter-registration-guide", "voter-id-surge"],
     cta: { label: "Find Your Polling Place", href: "/voting-locations" },
@@ -229,11 +420,17 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Why are there so many May elections?", a: "Texas law lets local governments (ISDs, cities, MUDs) hold elections on uniform May or November dates. Most pick May to depress turnout and let core voters decide." },
+      {
+        q: "Why are there so many May elections?",
+        a: "Texas law lets local governments (ISDs, cities, MUDs) hold elections on uniform May or November dates. Most pick May to depress turnout and let core voters decide.",
+      },
       { q: "When do I vote on judges?", a: "Texas elects most judges in partisan November elections." },
     ],
     sources: [
-      { label: "Texas Secretary of State — Election Dates", url: "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml" },
+      {
+        label: "Texas Secretary of State — Election Dates",
+        url: "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
+      },
     ],
     related: ["primary-vs-general-election", "texas-voter-registration-guide", "texas-school-board-powers"],
     cta: { label: "Check County Election Pages", href: "/county-elections" },
@@ -271,8 +468,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "What if I moved counties?", a: "You must re-register in your new county. Update your address on the Secretary of State portal." },
-      { q: "Can I register online?", a: "Texas does not have full online voter registration — you must mail or hand-deliver a paper application." },
+      {
+        q: "What if I moved counties?",
+        a: "You must re-register in your new county. Update your address on the Secretary of State portal.",
+      },
+      {
+        q: "Can I register online?",
+        a: "Texas does not have full online voter registration — you must mail or hand-deliver a paper application.",
+      },
     ],
     sources: [
       { label: "Vote Texas — Register to Vote", url: "https://www.votetexas.gov/register-to-vote/" },
@@ -306,12 +509,21 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Are school board races partisan?", a: "Officially no — but coalitions of parents, teachers' unions, and political groups openly endorse and fund slates." },
-      { q: "Can I recall a board member?", a: "Texas does not allow recall of elected ISD trustees; you must wait for the next election." },
+      {
+        q: "Are school board races partisan?",
+        a: "Officially no — but coalitions of parents, teachers' unions, and political groups openly endorse and fund slates.",
+      },
+      {
+        q: "Can I recall a board member?",
+        a: "Texas does not allow recall of elected ISD trustees; you must wait for the next election.",
+      },
     ],
     sources: [
       { label: "Texas Education Agency", url: "https://tea.texas.gov/" },
-      { label: "Texas Education Code Chapter 11 (School Districts)", url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.11.htm" },
+      {
+        label: "Texas Education Code Chapter 11 (School Districts)",
+        url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.11.htm",
+      },
     ],
     related: ["school-board-elections", "texas-school-finance-explained", "school-choice-esa-guide"],
     cta: { label: "Find Your School Board Race", href: "/county-elections" },
@@ -342,8 +554,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Does Texas import electricity?", a: "ERCOT is largely self-contained, though small DC ties exist with the Eastern grid and Mexico." },
-      { q: "Who sets electricity prices?", a: "In deregulated areas, the PUC supervises a competitive retail market; you pick your provider." },
+      {
+        q: "Does Texas import electricity?",
+        a: "ERCOT is largely self-contained, though small DC ties exist with the Eastern grid and Mexico.",
+      },
+      {
+        q: "Who sets electricity prices?",
+        a: "In deregulated areas, the PUC supervises a competitive retail market; you pick your provider.",
+      },
     ],
     sources: [
       { label: "Texas Railroad Commission", url: "https://www.rrc.texas.gov/" },
@@ -379,11 +597,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Who pays for the CAD?", a: "The taxing units inside the county (ISDs, the county itself, cities) fund it proportionally to their levies." },
-      { q: "Can the CAD enter my property?", a: "Not without your permission. CAD valuations are based on exterior observation, sales data, and your improvements on file." },
+      {
+        q: "Who pays for the CAD?",
+        a: "The taxing units inside the county (ISDs, the county itself, cities) fund it proportionally to their levies.",
+      },
+      {
+        q: "Can the CAD enter my property?",
+        a: "Not without your permission. CAD valuations are based on exterior observation, sales data, and your improvements on file.",
+      },
     ],
     sources: [
-      { label: "Texas Comptroller — Appraisal Districts", url: "https://comptroller.texas.gov/taxes/property-tax/cad/" },
+      {
+        label: "Texas Comptroller — Appraisal Districts",
+        url: "https://comptroller.texas.gov/taxes/property-tax/cad/",
+      },
       { label: "Tax Code Chapter 41 (Local Review)", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm" },
     ],
     related: ["appraisal-protest-playbook", "texas-property-tax-guide", "homestead-exemption-explained"],
@@ -411,8 +638,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Why do I pay so many different property taxes?", a: "Because each layer is a separate government with its own elected board and its own tax rate, all stacked on the same parcel." },
-      { q: "Who handles 911?", a: "Cities handle 911 inside city limits; counties or Emergency Services Districts (ESDs) handle it elsewhere." },
+      {
+        q: "Why do I pay so many different property taxes?",
+        a: "Because each layer is a separate government with its own elected board and its own tax rate, all stacked on the same parcel.",
+      },
+      {
+        q: "Who handles 911?",
+        a: "Cities handle 911 inside city limits; counties or Emergency Services Districts (ESDs) handle it elsewhere.",
+      },
     ],
     sources: [
       { label: "Texas Association of Counties", url: "https://www.county.org/" },
@@ -446,11 +679,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Where is the river the deepest?", a: "Below Falcon and Amistad reservoirs the Rio Grande runs deep and wide; in the Big Bend and upper sectors it is often walkable in dry months." },
-      { q: "Is the border fenced everywhere?", a: "No. Roughly a third of the Texas border has some form of barrier; the rest is open river, ranchland, or desert." },
+      {
+        q: "Where is the river the deepest?",
+        a: "Below Falcon and Amistad reservoirs the Rio Grande runs deep and wide; in the Big Bend and upper sectors it is often walkable in dry months.",
+      },
+      {
+        q: "Is the border fenced everywhere?",
+        a: "No. Roughly a third of the Texas border has some form of barrier; the rest is open river, ranchland, or desert.",
+      },
     ],
     sources: [
-      { label: "U.S. Customs and Border Protection — Sectors", url: "https://www.cbp.gov/border-security/along-us-borders/border-patrol-sectors" },
+      {
+        label: "U.S. Customs and Border Protection — Sectors",
+        url: "https://www.cbp.gov/border-security/along-us-borders/border-patrol-sectors",
+      },
       { label: "Texas DPS — Border Operations", url: "https://www.dps.texas.gov/" },
     ],
     related: ["operation-lone-star", "border-security-state-role"],
@@ -477,8 +719,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Does recapture leave Texas?", a: "No. Every recaptured dollar is spent inside the Texas school finance system." },
-      { q: "What is the basic allotment?", a: "The dollar-per-student amount the Legislature sets as the funding floor. It is the lever that drives nearly every other formula." },
+      {
+        q: "Does recapture leave Texas?",
+        a: "No. Every recaptured dollar is spent inside the Texas school finance system.",
+      },
+      {
+        q: "What is the basic allotment?",
+        a: "The dollar-per-student amount the Legislature sets as the funding floor. It is the lever that drives nearly every other formula.",
+      },
     ],
     sources: [
       { label: "TEA — School Finance", url: "https://tea.texas.gov/finance-and-grants/state-funding" },
@@ -509,7 +757,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     faq: [
       { q: "What is 'chub'?", a: "House slang for talking a bill to death as a procedural deadline approaches." },
-      { q: "What is the 'Local & Consent Calendar'?", a: "The House calendar for non-controversial bills, debated under time-limited rules." },
+      {
+        q: "What is the 'Local & Consent Calendar'?",
+        a: "The House calendar for non-controversial bills, debated under time-limited rules.",
+      },
     ],
     sources: [
       { label: "Texas House Rules", url: "https://capitol.texas.gov/" },
@@ -541,11 +792,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Who sets the county budget?", a: "The five-member Commissioners Court — the county judge plus four precinct commissioners." },
-      { q: "Why is the jail so expensive?", a: "Counties bear nearly all pretrial detention costs and most jails operate 24/7 with state-mandated staffing ratios." },
+      {
+        q: "Who sets the county budget?",
+        a: "The five-member Commissioners Court — the county judge plus four precinct commissioners.",
+      },
+      {
+        q: "Why is the jail so expensive?",
+        a: "Counties bear nearly all pretrial detention costs and most jails operate 24/7 with state-mandated staffing ratios.",
+      },
     ],
     sources: [
-      { label: "Texas Association of Counties — Budgets", url: "https://www.county.org/Education-Training/County-Budgets" },
+      {
+        label: "Texas Association of Counties — Budgets",
+        url: "https://www.county.org/Education-Training/County-Budgets",
+      },
       { label: "Texas Comptroller — Local Finances", url: "https://comptroller.texas.gov/transparency/local/" },
     ],
     related: ["what-local-governments-control", "texas-property-tax-guide"],
@@ -572,8 +832,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Can my neighbor drain my well?", a: "Under classic rule of capture, generally yes — though most aquifers are now overseen by a GCD with permit limits." },
-      { q: "Who decides Rio Grande shares with Mexico?", a: "The 1944 Water Treaty, administered by the International Boundary and Water Commission." },
+      {
+        q: "Can my neighbor drain my well?",
+        a: "Under classic rule of capture, generally yes — though most aquifers are now overseen by a GCD with permit limits.",
+      },
+      {
+        q: "Who decides Rio Grande shares with Mexico?",
+        a: "The 1944 Water Treaty, administered by the International Boundary and Water Commission.",
+      },
     ],
     sources: [
       { label: "Texas Water Development Board", url: "https://www.twdb.texas.gov/" },
@@ -604,8 +870,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "When are amendments on the ballot?", a: "Odd-year Novembers, in standalone constitutional amendment elections that turn out roughly 10% of registered voters." },
-      { q: "Can the Governor veto an amendment?", a: "No. Joint Resolutions proposing amendments are not subject to gubernatorial veto." },
+      {
+        q: "When are amendments on the ballot?",
+        a: "Odd-year Novembers, in standalone constitutional amendment elections that turn out roughly 10% of registered voters.",
+      },
+      {
+        q: "Can the Governor veto an amendment?",
+        a: "No. Joint Resolutions proposing amendments are not subject to gubernatorial veto.",
+      },
     ],
     sources: [
       { label: "Texas Legislative Reference Library — Amendments", url: "https://lrl.texas.gov/legis/constAmends/" },
@@ -657,13 +929,28 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Does the OMA apply to my HOA?", a: "No — the OMA covers governmental bodies. HOAs are private corporations governed by Property Code Ch. 209." },
-      { q: "Can my school board go into closed session to discuss curriculum?", a: "No. Curriculum is not one of the enumerated exceptions in §551.071-§551.089. Personnel discussions about a specific teacher are." },
-      { q: "What if my PIA request is ignored?", a: "File a complaint with your county or district attorney, or sue for mandamus. The agency pays your attorney's fees if you win." },
+      {
+        q: "Does the OMA apply to my HOA?",
+        a: "No — the OMA covers governmental bodies. HOAs are private corporations governed by Property Code Ch. 209.",
+      },
+      {
+        q: "Can my school board go into closed session to discuss curriculum?",
+        a: "No. Curriculum is not one of the enumerated exceptions in §551.071-§551.089. Personnel discussions about a specific teacher are.",
+      },
+      {
+        q: "What if my PIA request is ignored?",
+        a: "File a complaint with your county or district attorney, or sue for mandamus. The agency pays your attorney's fees if you win.",
+      },
     ],
     sources: [
-      { label: "Texas Government Code Ch. 551 — Open Meetings", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.551.htm" },
-      { label: "Texas Government Code Ch. 552 — Public Information", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm" },
+      {
+        label: "Texas Government Code Ch. 551 — Open Meetings",
+        url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.551.htm",
+      },
+      {
+        label: "Texas Government Code Ch. 552 — Public Information",
+        url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm",
+      },
       { label: "Attorney General — Open Government", url: "https://www.texasattorneygeneral.gov/open-government" },
     ],
     related: ["how-a-bill-becomes-texas-law", "what-local-governments-control", "texas-school-board-powers"],
@@ -706,13 +993,28 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Could Texas ever add an income tax?", a: "Only with two-thirds of the Legislature and a statewide voter referendum — Proposition 4 (2019) wrote the prohibition into the constitution." },
-      { q: "Do Texas businesses pay an income tax?", a: "No — but most businesses with over $2.47M in revenue pay the franchise (margin) tax, which is calculated on gross receipts minus deductions, not net income." },
-      { q: "Why are Texas property taxes so high?", a: "Because there is no income tax, schools and local government rely heavily on property tax. State surplus dollars have been used to compress ISD M&O rates since 2019." },
+      {
+        q: "Could Texas ever add an income tax?",
+        a: "Only with two-thirds of the Legislature and a statewide voter referendum — Proposition 4 (2019) wrote the prohibition into the constitution.",
+      },
+      {
+        q: "Do Texas businesses pay an income tax?",
+        a: "No — but most businesses with over $2.47M in revenue pay the franchise (margin) tax, which is calculated on gross receipts minus deductions, not net income.",
+      },
+      {
+        q: "Why are Texas property taxes so high?",
+        a: "Because there is no income tax, schools and local government rely heavily on property tax. State surplus dollars have been used to compress ISD M&O rates since 2019.",
+      },
     ],
     sources: [
-      { label: "Texas Comptroller — Sources of Revenue", url: "https://comptroller.texas.gov/transparency/reports/sources-of-revenue/" },
-      { label: "Texas Constitution Article 8 §24-a (Income Tax Prohibition)", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm" },
+      {
+        label: "Texas Comptroller — Sources of Revenue",
+        url: "https://comptroller.texas.gov/transparency/reports/sources-of-revenue/",
+      },
+      {
+        label: "Texas Constitution Article 8 §24-a (Income Tax Prohibition)",
+        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm",
+      },
       { label: "Tax Foundation — State Tax Climate Index", url: "https://taxfoundation.org/research/state-tax/" },
     ],
     related: ["texas-property-tax-guide", "what-local-governments-control", "how-texas-counties-spend"],
@@ -720,7 +1022,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
   },
   "texas-attorney-general-powers": {
     updated: "2026-06-29",
-    editorNote: "Part of our Texas civics series. See also our guide to the [Powers of the Texas Governor](/news/texas-governor-powers).",
+    editorNote:
+      "Part of our Texas civics series. See also our guide to the [Powers of the Texas Governor](/news/texas-governor-powers).",
     intro: [
       "The Texas Attorney General is the state's top lawyer — elected statewide, accountable to voters, and constitutionally independent of the governor. Unlike the U.S. Attorney General, who serves at the pleasure of the president, the Texas AG answers only to the people who put them in office.",
       "That independence has made the office one of the most consequential conservative posts in the country. The AG defends Texas law in court, files suits against federal overreach, issues binding legal opinions to state officials, and runs the largest child-support enforcement operation in the United States.",
@@ -783,15 +1086,22 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Office of the Texas Attorney General", url: "https://www.texasattorneygeneral.gov/" },
-      { label: "Texas Constitution Article 4 (Executive Department)", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm" },
-      { label: "Texas Government Code Chapter 402 (AG Duties)", url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.402.htm" },
+      {
+        label: "Texas Constitution Article 4 (Executive Department)",
+        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm",
+      },
+      {
+        label: "Texas Government Code Chapter 402 (AG Duties)",
+        url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.402.htm",
+      },
     ],
     related: ["texas-governor-powers", "how-a-bill-becomes-texas-law", "texas-open-meetings-public-info"],
     cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
   },
   "texas-governor-powers": {
     updated: "2026-07-02",
-    editorNote: "Part of our Texas civics series. See also our guide to the [Powers of the Texas Attorney General](/news/texas-attorney-general-powers).",
+    editorNote:
+      "Part of our Texas civics series. See also our guide to the [Powers of the Texas Attorney General](/news/texas-attorney-general-powers).",
     intro: [
       "On paper, the Texas Governor is one of the weakest chief executives in the country. Power is deliberately fragmented across separately elected statewide officers — the Lieutenant Governor, Attorney General, Comptroller, Land Commissioner, and Agriculture Commissioner — none of whom answer to the governor.",
       "In practice, the modern Texas Governor is one of the most politically powerful figures in state government, thanks to a small number of constitutional tools used aggressively: the appointment power, the line-item veto, the special-session call, and command of the Texas National Guard.",
@@ -856,8 +1166,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Office of the Texas Governor", url: "https://gov.texas.gov/" },
-      { label: "Texas Constitution Article 4 §1–§16 (Executive Department)", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm" },
-      { label: "Texas Legislative Reference Library — Governors of Texas", url: "https://lrl.texas.gov/legeLeaders/governors/" },
+      {
+        label: "Texas Constitution Article 4 §1–§16 (Executive Department)",
+        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm",
+      },
+      {
+        label: "Texas Legislative Reference Library — Governors of Texas",
+        url: "https://lrl.texas.gov/legeLeaders/governors/",
+      },
     ],
     related: ["texas-attorney-general-powers", "how-a-bill-becomes-texas-law", "texas-constitutional-amendments-guide"],
     cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
@@ -865,7 +1181,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
 
   "texas-border-policy-full-guide": {
     updated: "2026-06-27",
-    editorNote: "This is a Keep TX Red pillar guide — updated June 2026 by our Border Bureau. We refresh it as Operation Lone Star deployments, federal litigation, and Rio Grande conditions change.",
+    editorNote:
+      "This is a Keep TX Red pillar guide — updated June 2026 by our Border Bureau. We refresh it as Operation Lone Star deployments, federal litigation, and Rio Grande conditions change.",
     intro: [
       "No policy fight defines modern Texas like the border. The 1,254-mile line between Texas and Mexico runs from El Paso along the Rio Grande to the Gulf of Mexico — through ranchland, river towns, federal wildlife refuges, and the four most populous border metros in the United States. Roughly two-thirds of the entire southwest border is Texas alone, and the policy choices made in Austin reach further than most people in Washington understand.",
       "Texas has spent more than $11 billion on state-funded border security since 2021 under Operation Lone Star — a deployment of the Department of Public Safety, the Texas Military Department, and county sheriffs that has fundamentally changed how Texans think about state sovereignty. This pillar guide walks through how it works, who runs it, what the law actually says, and where the policy fight is headed in 2026.",
@@ -944,18 +1261,39 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Is Operation Lone Star paid for with federal money?", a: "No. OLS is funded entirely with Texas state appropriations. Texas has formally requested federal reimbursement and has been denied." },
-      { q: "Can Texas legally arrest people for illegal entry?", a: "Texas argues yes, under SB4 and its sovereign self-defense authority. The federal government has challenged that position in court, and the litigation is ongoing." },
-      { q: "Does Texas operate its own border wall?", a: "Yes. The Texas Facilities Commission builds the state wall on private and state land, independent of the federal border wall." },
-      { q: "How many troopers and Guard members are deployed?", a: "OLS deployments have ranged from 5,000 to over 10,000 personnel at peak, including DPS, the Texas Military Department, and supporting agencies." },
-      { q: "Where does the Texas border actually run?", a: "From the New Mexico line at El Paso, along the Rio Grande, to the Gulf of Mexico at Boca Chica — 1,254 miles total." },
+      {
+        q: "Is Operation Lone Star paid for with federal money?",
+        a: "No. OLS is funded entirely with Texas state appropriations. Texas has formally requested federal reimbursement and has been denied.",
+      },
+      {
+        q: "Can Texas legally arrest people for illegal entry?",
+        a: "Texas argues yes, under SB4 and its sovereign self-defense authority. The federal government has challenged that position in court, and the litigation is ongoing.",
+      },
+      {
+        q: "Does Texas operate its own border wall?",
+        a: "Yes. The Texas Facilities Commission builds the state wall on private and state land, independent of the federal border wall.",
+      },
+      {
+        q: "How many troopers and Guard members are deployed?",
+        a: "OLS deployments have ranged from 5,000 to over 10,000 personnel at peak, including DPS, the Texas Military Department, and supporting agencies.",
+      },
+      {
+        q: "Where does the Texas border actually run?",
+        a: "From the New Mexico line at El Paso, along the Rio Grande, to the Gulf of Mexico at Boca Chica — 1,254 miles total.",
+      },
     ],
     sources: [
-      { label: "Office of the Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/news/category/operation-lone-star" },
+      {
+        label: "Office of the Texas Governor — Operation Lone Star",
+        url: "https://gov.texas.gov/news/category/operation-lone-star",
+      },
       { label: "Texas Department of Public Safety", url: "https://www.dps.texas.gov/" },
       { label: "Texas Military Department", url: "https://tmd.texas.gov/" },
       { label: "Senate Bill 4 (88R)", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=88R&Bill=SB4" },
-      { label: "U.S. Customs and Border Protection — Southwest Border Sectors", url: "https://www.cbp.gov/newsroom/stats/southwest-land-border-encounters" },
+      {
+        label: "U.S. Customs and Border Protection — Southwest Border Sectors",
+        url: "https://www.cbp.gov/newsroom/stats/southwest-land-border-encounters",
+      },
     ],
     related: ["operation-lone-star", "border-security-state-role", "texas-border-geography-101"],
     cta: { label: "Contact Your Texas Legislators", href: "/contact-legislators" },
@@ -963,7 +1301,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
 
   "texas-energy-economy-overview": {
     updated: "2026-06-27",
-    editorNote: "This is a Keep TX Red pillar guide — updated June 2026 by our Energy Desk. The Texas energy economy moves fast; we refresh production figures, ERCOT reserve margins, and Railroad Commission rulings as they change.",
+    editorNote:
+      "This is a Keep TX Red pillar guide — updated June 2026 by our Energy Desk. The Texas energy economy moves fast; we refresh production figures, ERCOT reserve margins, and Railroad Commission rulings as they change.",
     intro: [
       "If Texas were its own country, it would be the third-largest oil producer in the world, behind only Saudi Arabia and the rest of the United States. The Permian Basin in West Texas pumps more than 6 million barrels of crude per day — more than the entire output of Iraq. Add the Eagle Ford in South Texas, the Haynesville on the Louisiana line, the Barnett under Fort Worth, and the Anadarko in the Panhandle, and Texas accounts for roughly 43% of all U.S. crude production and 25% of U.S. natural gas.",
       "But the Texas energy economy is bigger than hydrocarbons. Texas is also the largest wind-power state in the country, leads the nation in installed utility-scale solar, runs its own electric grid through ERCOT, and exports liquefied natural gas from Sabine Pass, Corpus Christi, and Freeport to Europe and Asia. This pillar guide is the Keep TX Red overview of how the whole system fits together — and why it matters to every Texan, not just the ones in Midland or Houston.",
@@ -1042,18 +1381,39 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "How much oil does Texas produce?", a: "Roughly 5.5 to 6 million barrels per day from the Permian alone, plus material volumes from the Eagle Ford and other plays — about 43% of total U.S. crude production." },
-      { q: "Does Texas really have its own electric grid?", a: "Yes. ERCOT covers about 90% of Texas load and is deliberately separated from the Eastern and Western Interconnections so federal regulators have no jurisdiction." },
-      { q: "Who regulates oil and gas in Texas?", a: "The Railroad Commission of Texas — three statewide elected commissioners. It does not regulate railroads." },
-      { q: "Is Texas pro-renewable?", a: "Texas leads the country in installed wind capacity and is the top state for new utility-scale solar. Conservative policy in Austin favors 'all of the above' generation with firm dispatchable backup." },
-      { q: "How does energy fund Texas schools?", a: "Severance taxes and the Permanent School Fund — which holds mineral interests across the Permian — generate billions annually for K-12 education and the Rainy Day Fund." },
+      {
+        q: "How much oil does Texas produce?",
+        a: "Roughly 5.5 to 6 million barrels per day from the Permian alone, plus material volumes from the Eagle Ford and other plays — about 43% of total U.S. crude production.",
+      },
+      {
+        q: "Does Texas really have its own electric grid?",
+        a: "Yes. ERCOT covers about 90% of Texas load and is deliberately separated from the Eastern and Western Interconnections so federal regulators have no jurisdiction.",
+      },
+      {
+        q: "Who regulates oil and gas in Texas?",
+        a: "The Railroad Commission of Texas — three statewide elected commissioners. It does not regulate railroads.",
+      },
+      {
+        q: "Is Texas pro-renewable?",
+        a: "Texas leads the country in installed wind capacity and is the top state for new utility-scale solar. Conservative policy in Austin favors 'all of the above' generation with firm dispatchable backup.",
+      },
+      {
+        q: "How does energy fund Texas schools?",
+        a: "Severance taxes and the Permanent School Fund — which holds mineral interests across the Permian — generate billions annually for K-12 education and the Rainy Day Fund.",
+      },
     ],
     sources: [
       { label: "Railroad Commission of Texas", url: "https://www.rrc.texas.gov/" },
       { label: "ERCOT", url: "https://www.ercot.com/" },
       { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
-      { label: "Texas Comptroller — Energy Industry", url: "https://comptroller.texas.gov/economy/economic-data/energy/" },
-      { label: "U.S. Energy Information Administration — Texas State Profile", url: "https://www.eia.gov/state/?sid=TX" },
+      {
+        label: "Texas Comptroller — Energy Industry",
+        url: "https://comptroller.texas.gov/economy/economic-data/energy/",
+      },
+      {
+        label: "U.S. Energy Information Administration — Texas State Profile",
+        url: "https://www.eia.gov/state/?sid=TX",
+      },
     ],
     related: ["permian-energy", "texas-grid-ercot-explained", "texas-energy-policy-guide"],
     cta: { label: "Browse Energy Coverage", href: "/news" },
@@ -1061,7 +1421,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
 
   "texas-voting-guide-2026": {
     updated: "2026-06-27",
-    editorNote: "This is the Keep TX Red 2026 voting pillar guide — maintained year-round by our Elections Desk. We update it as deadlines, ID rules, and ballot dates change.",
+    editorNote:
+      "This is the Keep TX Red 2026 voting pillar guide — maintained year-round by our Elections Desk. We update it as deadlines, ID rules, and ballot dates change.",
     intro: [
       "Texas runs more elections than most voters realize: federal, state, county, ISD, city, MUD, hospital district, water district, and constitutional amendments. In an even-numbered year like 2026, the cycle starts in early January with the candidate filing deadline, runs through the March primary and May runoff, and ends with the November general election. Miss the wrong deadline and you sit out a year that decides governor, lieutenant governor, attorney general, every member of the U.S. House, half the State Senate, and every member of the Texas House.",
       "This is the Keep TX Red voter guide for 2026 — registration, ID, the calendar, mail ballots, where to vote, and how to find your district. It is written for Texans in Houston, Dallas, San Antonio, Austin, Fort Worth, El Paso, the Rio Grande Valley, and every county in between.",
@@ -1114,7 +1475,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           headers: ["If you don't have an accepted ID", "What to do"],
           rows: [
             ["Forgot it at home", "Cast a provisional ballot; bring ID to county registrar within 6 days."],
-            ["Lost or stolen", "Sign a Reasonable Impediment Declaration and present a supporting document (utility bill, paycheck, bank statement)."],
+            [
+              "Lost or stolen",
+              "Sign a Reasonable Impediment Declaration and present a supporting document (utility bill, paycheck, bank statement).",
+            ],
             ["Never had one", "Apply for a free Election Identification Certificate at any DPS office."],
           ],
         },
@@ -1172,17 +1536,35 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Can I register to vote online in Texas?", a: "No. You can update your existing registration's address online, but the initial registration must be filed on paper with your county voter registrar." },
-      { q: "Do I need to declare a party to vote in the primary?", a: "Texas does not have party registration. You declare a party only by picking that party's primary ballot on primary day — it then locks you into that party's runoff." },
-      { q: "How early can I vote?", a: "Early voting starts about 17 days before Election Day for the primary and the general election." },
-      { q: "What if my name is not on the rolls when I show up?", a: "Cast a provisional ballot. You then have six days to provide proof of eligibility to the county registrar." },
-      { q: "Can I take my kids to the polls?", a: "Yes. Texas law specifically permits voters to bring children under 18 into the voting booth." },
+      {
+        q: "Can I register to vote online in Texas?",
+        a: "No. You can update your existing registration's address online, but the initial registration must be filed on paper with your county voter registrar.",
+      },
+      {
+        q: "Do I need to declare a party to vote in the primary?",
+        a: "Texas does not have party registration. You declare a party only by picking that party's primary ballot on primary day — it then locks you into that party's runoff.",
+      },
+      {
+        q: "How early can I vote?",
+        a: "Early voting starts about 17 days before Election Day for the primary and the general election.",
+      },
+      {
+        q: "What if my name is not on the rolls when I show up?",
+        a: "Cast a provisional ballot. You then have six days to provide proof of eligibility to the county registrar.",
+      },
+      {
+        q: "Can I take my kids to the polls?",
+        a: "Yes. Texas law specifically permits voters to bring children under 18 into the voting booth.",
+      },
     ],
     sources: [
       { label: "Texas Secretary of State — VoteTexas.gov", url: "https://www.votetexas.gov/" },
       { label: "Texas Secretary of State — My Voter Portal", url: "https://teamrv-mvp.sos.texas.gov/MVP/" },
       { label: "Texas Election Code", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.toc.htm" },
-      { label: "DPS — Election Identification Certificate", url: "https://www.dps.texas.gov/section/driver-license/election-identification-certificate-eic" },
+      {
+        label: "DPS — Election Identification Certificate",
+        url: "https://www.dps.texas.gov/section/driver-license/election-identification-certificate-eic",
+      },
     ],
     related: ["texas-voter-registration-guide", "primary-vs-general-election", "beginners-guide-texas-elections"],
     cta: { label: "Find Your Polling Place", href: "/voting-locations" },
@@ -1190,7 +1572,8 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
 
   "gracie-the-giraffe": {
     updated: "2026-06-27",
-    editorNote: "Updated June 27, 2026. Reporting compiled from AP, Texas Standard, and the Real County Sheriff's Office. Framing and analysis are editorial.",
+    editorNote:
+      "Updated June 27, 2026. Reporting compiled from AP, Texas Standard, and the Real County Sheriff's Office. Framing and analysis are editorial.",
     intro: [
       "For nearly two weeks in June 2026, the most-watched fugitive in Texas was not a cartel suspect or a border-crosser — it was an 18-foot-tall reticulated giraffe named Gracie. She slipped off the Cedar Hollow Ranch in Real County, vanished into the cedar breaks and limestone canyons of the Hill Country, and led ranchers, sheriff's deputies, drone pilots, and a small army of internet sleuths on one of the most uniquely Texan manhunts in recent memory.",
       "On Friday, June 26, Gracie was spotted from the air about four miles from the ranch, near Leakey, and recovered safely. Real County Sheriff Nathan Johnson described her as 'fat and happy.' She is fine. The story behind how a giraffe ends up loose in the Hill Country in the first place is a window into a uniquely Texas tradition.",
@@ -1241,16 +1624,37 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Where was Gracie found?", a: "About four miles from Cedar Hollow Ranch, near Leakey in Real County, on the morning of Friday, June 26, 2026. Authorities spotted her from the air and recovered her safely." },
-      { q: "Who owns Gracie?", a: "She lives at Cedar Hollow Ranch, a private exotic property in Real County. Ranch manager Vic Jones led the recovery effort along with the Real County Sheriff's Office." },
+      {
+        q: "Where was Gracie found?",
+        a: "About four miles from Cedar Hollow Ranch, near Leakey in Real County, on the morning of Friday, June 26, 2026. Authorities spotted her from the air and recovered her safely.",
+      },
+      {
+        q: "Who owns Gracie?",
+        a: "She lives at Cedar Hollow Ranch, a private exotic property in Real County. Ranch manager Vic Jones led the recovery effort along with the Real County Sheriff's Office.",
+      },
       { q: "How long was she missing?", a: "Roughly two weeks, from mid-June 2026 until her recovery on June 26." },
-      { q: "Is it legal to own a giraffe in Texas?", a: "Yes. Texas classifies most non-native hoofstock as private livestock rather than state wildlife, which is why the state has one of the largest private exotic-ranching industries in the country." },
-      { q: "How many giraffes are in Texas?", a: "There is no official count, but between Fossil Rim, accredited zoos, drive-through safari parks, and private exotic ranches, Texas hosts several hundred giraffes — more than several African nations." },
+      {
+        q: "Is it legal to own a giraffe in Texas?",
+        a: "Yes. Texas classifies most non-native hoofstock as private livestock rather than state wildlife, which is why the state has one of the largest private exotic-ranching industries in the country.",
+      },
+      {
+        q: "How many giraffes are in Texas?",
+        a: "There is no official count, but between Fossil Rim, accredited zoos, drive-through safari parks, and private exotic ranches, Texas hosts several hundred giraffes — more than several African nations.",
+      },
     ],
     sources: [
-      { label: "AP — A giraffe named Gracie escaped in Texas", url: "https://apnews.com/article/giraffe-escape-texas-23bd372aa6a09259a302297e3b7b1939" },
-      { label: "Texas Standard — Missing giraffe Gracie found safe near Leakey", url: "https://texasstandard.org/stories/texas-giraffe-missing-found/" },
-      { label: "News 4 San Antonio — Gracie found 'fat and happy'", url: "https://news4sanantonio.com/news/local/gracie-the-giraffe-found-fat-and-happy-real-county-sheriff-johnson-says" },
+      {
+        label: "AP — A giraffe named Gracie escaped in Texas",
+        url: "https://apnews.com/article/giraffe-escape-texas-23bd372aa6a09259a302297e3b7b1939",
+      },
+      {
+        label: "Texas Standard — Missing giraffe Gracie found safe near Leakey",
+        url: "https://texasstandard.org/stories/texas-giraffe-missing-found/",
+      },
+      {
+        label: "News 4 San Antonio — Gracie found 'fat and happy'",
+        url: "https://news4sanantonio.com/news/local/gracie-the-giraffe-found-fat-and-happy-real-county-sheriff-johnson-says",
+      },
       { label: "Fossil Rim Wildlife Center", url: "https://fossilrim.org/" },
       { label: "Exotic Wildlife Association", url: "https://www.myewa.org/" },
     ],
@@ -1296,14 +1700,32 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "When would a special session start?", a: "The Governor typically calls a session within two to four weeks of the regular session ending, once the agenda has been negotiated with leadership. No formal call has been issued as of this report." },
-      { q: "Would appraisal caps require a constitutional amendment?", a: "Yes. The current 10% homestead cap is constitutional. Extending it to non-homestead property below the current statutory ceiling would require an amendment ratified by voters." },
-      { q: "Does a special session cost taxpayers extra?", a: "Special session costs are modest — mostly per diem for members and staff overtime — typically under $1 million per 30-day session." },
-      { q: "Can lawmakers vote on anything they want in a special?", a: "No. Members can only pass bills on subjects the Governor lists in the call. Anything outside the call is out of order." },
+      {
+        q: "When would a special session start?",
+        a: "The Governor typically calls a session within two to four weeks of the regular session ending, once the agenda has been negotiated with leadership. No formal call has been issued as of this report.",
+      },
+      {
+        q: "Would appraisal caps require a constitutional amendment?",
+        a: "Yes. The current 10% homestead cap is constitutional. Extending it to non-homestead property below the current statutory ceiling would require an amendment ratified by voters.",
+      },
+      {
+        q: "Does a special session cost taxpayers extra?",
+        a: "Special session costs are modest — mostly per diem for members and staff overtime — typically under $1 million per 30-day session.",
+      },
+      {
+        q: "Can lawmakers vote on anything they want in a special?",
+        a: "No. Members can only pass bills on subjects the Governor lists in the call. Anything outside the call is out of order.",
+      },
     ],
     sources: [
-      { label: "Texas Constitution Article III, Section 40", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm" },
-      { label: "Texas Comptroller — Property Tax Reports", url: "https://comptroller.texas.gov/taxes/property-tax/reports/" },
+      {
+        label: "Texas Constitution Article III, Section 40",
+        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm",
+      },
+      {
+        label: "Texas Comptroller — Property Tax Reports",
+        url: "https://comptroller.texas.gov/taxes/property-tax/reports/",
+      },
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
     ],
     related: ["property-tax-relief-package", "texas-property-tax-guide", "how-a-bill-becomes-texas-law"],
@@ -1360,14 +1782,29 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "When does the relief take effect?", a: "If signed into law, changes apply to the tax year beginning January 1 of the following calendar year, showing up on bills mailed in October." },
-      { q: "Do I have to apply for the higher homestead exemption?", a: "No. If you already have a homestead on file, the increase applies automatically. If you don't, file Form 50-114 with your appraisal district — see our homestead guide." },
-      { q: "Does this cap what I owe forever?", a: "No. Compression reduces rates but does not freeze them. Local voters can still approve higher rates through tax rate elections." },
-      { q: "What about renters?", a: "Compression flows through to landlords, but there is no rent-control provision requiring the savings be passed on. Historical data suggests roughly 25-40% of commercial property tax savings reach renters through rent stabilization over 3-5 years." },
+      {
+        q: "When does the relief take effect?",
+        a: "If signed into law, changes apply to the tax year beginning January 1 of the following calendar year, showing up on bills mailed in October.",
+      },
+      {
+        q: "Do I have to apply for the higher homestead exemption?",
+        a: "No. If you already have a homestead on file, the increase applies automatically. If you don't, file Form 50-114 with your appraisal district — see our homestead guide.",
+      },
+      {
+        q: "Does this cap what I owe forever?",
+        a: "No. Compression reduces rates but does not freeze them. Local voters can still approve higher rates through tax rate elections.",
+      },
+      {
+        q: "What about renters?",
+        a: "Compression flows through to landlords, but there is no rent-control provision requiring the savings be passed on. Historical data suggests roughly 25-40% of commercial property tax savings reach renters through rent stabilization over 3-5 years.",
+      },
     ],
     sources: [
       { label: "Legislative Budget Board — Fiscal Notes", url: "https://www.lbb.texas.gov/" },
-      { label: "Texas Comptroller — Property Tax Assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      {
+        label: "Texas Comptroller — Property Tax Assistance",
+        url: "https://comptroller.texas.gov/taxes/property-tax/",
+      },
     ],
     related: ["texas-property-tax-guide", "homestead-exemption-explained", "speaker-special-session"],
     cta: { label: "Estimate Your Savings", href: "/tax-calculator" },
@@ -1422,14 +1859,26 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "How much has Operation Lone Star cost so far?", a: "Cumulative state appropriations since 2021 exceed $14 billion, funded from state general revenue and a series of supplemental budget items." },
-      { q: "Can Texas legally place barriers in the Rio Grande?", a: "That is the pending legal question. Texas argues yes under state self-defense authority; the federal government argues no under the Rivers and Harbors Act. The Fifth Circuit has largely sided with Texas so far." },
-      { q: "Are National Guard troops federalized?", a: "No. They serve on state active duty under the Governor as commander-in-chief, which is why the state pays their salaries directly." },
+      {
+        q: "How much has Operation Lone Star cost so far?",
+        a: "Cumulative state appropriations since 2021 exceed $14 billion, funded from state general revenue and a series of supplemental budget items.",
+      },
+      {
+        q: "Can Texas legally place barriers in the Rio Grande?",
+        a: "That is the pending legal question. Texas argues yes under state self-defense authority; the federal government argues no under the Rivers and Harbors Act. The Fifth Circuit has largely sided with Texas so far.",
+      },
+      {
+        q: "Are National Guard troops federalized?",
+        a: "No. They serve on state active duty under the Governor as commander-in-chief, which is why the state pays their salaries directly.",
+      },
     ],
     sources: [
       { label: "Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/operationlonestar" },
       { label: "Texas DPS — Border Security", url: "https://www.dps.texas.gov/" },
-      { label: "U.S. Constitution Article I, Section 10", url: "https://constitution.congress.gov/constitution/article-1/" },
+      {
+        label: "U.S. Constitution Article I, Section 10",
+        url: "https://constitution.congress.gov/constitution/article-1/",
+      },
     ],
     related: ["border-security-state-role", "texas-political-terminology", "how-a-bill-becomes-texas-law"],
     cta: { label: "Read Our Border Coverage", href: "/news" },
@@ -1482,10 +1931,22 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "How do I register to vote in Texas?", a: "File a voter registration application with your county elections office at least 30 days before the election. See our register-to-vote guide for step-by-step instructions." },
-      { q: "Does Texas have partisan registration?", a: "No. Any registered voter can pull either primary ballot on primary election day. You are 'affiliated' with that party only through the current election cycle." },
-      { q: "When is the 2026 primary?", a: "The Texas primary is scheduled for March 3, 2026, with early voting typically running the two weeks prior." },
-      { q: "Do I need photo ID to vote?", a: "Yes. Texas requires one of seven forms of acceptable photo ID at the polls, with a reasonable-impediment declaration process for voters without ID." },
+      {
+        q: "How do I register to vote in Texas?",
+        a: "File a voter registration application with your county elections office at least 30 days before the election. See our register-to-vote guide for step-by-step instructions.",
+      },
+      {
+        q: "Does Texas have partisan registration?",
+        a: "No. Any registered voter can pull either primary ballot on primary election day. You are 'affiliated' with that party only through the current election cycle.",
+      },
+      {
+        q: "When is the 2026 primary?",
+        a: "The Texas primary is scheduled for March 3, 2026, with early voting typically running the two weeks prior.",
+      },
+      {
+        q: "Do I need photo ID to vote?",
+        a: "Yes. Texas requires one of seven forms of acceptable photo ID at the polls, with a reasonable-impediment declaration process for voters without ID.",
+      },
     ],
     sources: [
       { label: "Texas Secretary of State — Elections", url: "https://www.sos.state.tx.us/elections/" },
@@ -1543,10 +2004,22 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "When are Texas school board elections?", a: "Most are held on the May uniform election date, typically the first Saturday in May. Some districts moved to November after a 2019 change in state law." },
-      { q: "How many seats are up in each district?", a: "Most Texas ISDs use staggered three-year terms, with roughly one-third of the board on the ballot each cycle." },
-      { q: "Can I run for my school board?", a: "Yes, if you are a U.S. citizen at least 18 years old, a registered voter in the district, and have lived in the district for at least six months and Texas for at least a year." },
-      { q: "Where do I find candidate information?", a: "Your county elections office publishes the sample ballot; most districts also post candidate applications and campaign finance filings on the district website." },
+      {
+        q: "When are Texas school board elections?",
+        a: "Most are held on the May uniform election date, typically the first Saturday in May. Some districts moved to November after a 2019 change in state law.",
+      },
+      {
+        q: "How many seats are up in each district?",
+        a: "Most Texas ISDs use staggered three-year terms, with roughly one-third of the board on the ballot each cycle.",
+      },
+      {
+        q: "Can I run for my school board?",
+        a: "Yes, if you are a U.S. citizen at least 18 years old, a registered voter in the district, and have lived in the district for at least six months and Texas for at least a year.",
+      },
+      {
+        q: "Where do I find candidate information?",
+        a: "Your county elections office publishes the sample ballot; most districts also post candidate applications and campaign finance filings on the district website.",
+      },
     ],
     sources: [
       { label: "Texas Education Agency", url: "https://tea.texas.gov/" },
@@ -1610,13 +2083,25 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "What is an M&O tax rate?", a: "Maintenance & Operations — the portion of an ISD tax rate that funds day-to-day district operations. It is distinct from the Interest & Sinking (I&S) rate that services bond debt." },
-      { q: "How is a 'weighted' rate calculated?", a: "We weighted each ISD's rate by its share of the county's total taxable value, giving a per-county number that reflects what an average homeowner actually paid." },
-      { q: "Where does the M&O money go?", a: "By law, only into district operating expenses — salaries, curriculum, transportation, utilities. Bond-funded capital projects come from the separate I&S rate." },
+      {
+        q: "What is an M&O tax rate?",
+        a: "Maintenance & Operations — the portion of an ISD tax rate that funds day-to-day district operations. It is distinct from the Interest & Sinking (I&S) rate that services bond debt.",
+      },
+      {
+        q: "How is a 'weighted' rate calculated?",
+        a: "We weighted each ISD's rate by its share of the county's total taxable value, giving a per-county number that reflects what an average homeowner actually paid.",
+      },
+      {
+        q: "Where does the M&O money go?",
+        a: "By law, only into district operating expenses — salaries, curriculum, transportation, utilities. Bond-funded capital projects come from the separate I&S rate.",
+      },
     ],
     sources: [
       { label: "Texas Education Agency — Financial Data", url: "https://tea.texas.gov/finance-and-grants" },
-      { label: "Texas Comptroller — School District Property Values", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      {
+        label: "Texas Comptroller — School District Property Values",
+        url: "https://comptroller.texas.gov/taxes/property-tax/",
+      },
     ],
     related: ["texas-property-tax-guide", "property-tax-relief-package", "appraisal-protest-playbook"],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
@@ -1667,9 +2152,18 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "How big is the Permian Basin?", a: "About 86,000 square miles across West Texas and southeastern New Mexico — roughly the size of South Dakota." },
-      { q: "Who regulates Permian production?", a: "The Texas Railroad Commission regulates oil and gas within Texas. Federal agencies (BLM, EPA) regulate federal-land production and interstate emissions rules." },
-      { q: "How much of Texas' budget comes from oil and gas?", a: "Directly, roughly 12–15% of state general revenue through severance and sales tax on oilfield services. Indirectly, considerably more when downstream industries are counted." },
+      {
+        q: "How big is the Permian Basin?",
+        a: "About 86,000 square miles across West Texas and southeastern New Mexico — roughly the size of South Dakota.",
+      },
+      {
+        q: "Who regulates Permian production?",
+        a: "The Texas Railroad Commission regulates oil and gas within Texas. Federal agencies (BLM, EPA) regulate federal-land production and interstate emissions rules.",
+      },
+      {
+        q: "How much of Texas' budget comes from oil and gas?",
+        a: "Directly, roughly 12–15% of state general revenue through severance and sales tax on oilfield services. Indirectly, considerably more when downstream industries are counted.",
+      },
     ],
     sources: [
       { label: "Texas Railroad Commission", url: "https://www.rrc.texas.gov/" },
@@ -1729,10 +2223,22 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Do I have to notify police I'm carrying?", a: "No. Texas law does not require you to volunteer that you are carrying, though most instructors recommend calmly informing an officer during a traffic stop." },
-      { q: "Can I carry in my car without a license?", a: "Yes. Texas has allowed licensed and unlicensed adults to carry a handgun in their private vehicle for years, provided they are not otherwise prohibited." },
-      { q: "Does my Texas LTC work in other states?", a: "Yes, in the roughly 37 states with formal reciprocity. Check each state before traveling — a few states honor the LTC but impose their own carry restrictions." },
-      { q: "Can a business ban carry?", a: "Yes. A private property owner may prohibit carry by posting compliant 30.06 (LTC) or 30.07 (open carry) signage. Ignoring proper signage is a criminal offense." },
+      {
+        q: "Do I have to notify police I'm carrying?",
+        a: "No. Texas law does not require you to volunteer that you are carrying, though most instructors recommend calmly informing an officer during a traffic stop.",
+      },
+      {
+        q: "Can I carry in my car without a license?",
+        a: "Yes. Texas has allowed licensed and unlicensed adults to carry a handgun in their private vehicle for years, provided they are not otherwise prohibited.",
+      },
+      {
+        q: "Does my Texas LTC work in other states?",
+        a: "Yes, in the roughly 37 states with formal reciprocity. Check each state before traveling — a few states honor the LTC but impose their own carry restrictions.",
+      },
+      {
+        q: "Can a business ban carry?",
+        a: "Yes. A private property owner may prohibit carry by posting compliant 30.06 (LTC) or 30.07 (open carry) signage. Ignoring proper signage is a criminal offense.",
+      },
     ],
     sources: [
       { label: "Texas Penal Code Chapter 46", url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm" },
@@ -1803,10 +2309,22 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Can I use ESA funds for homeschool?", a: "Yes, for curriculum, tutoring, and testing expenses. ESA funds cannot pay a parent for teaching their own child." },
-      { q: "Does using an ESA affect my public school enrollment?", a: "Yes. Accepting an ESA means the student is not simultaneously enrolled in a traditional public school. You can return to public school in a future year." },
-      { q: "Is the ESA award taxable?", a: "No. ESA funds used for qualified education expenses are not treated as taxable income." },
-      { q: "What if my private school costs more than the ESA?", a: "You pay the difference out of pocket. Some private schools offer additional financial aid that stacks on top of the ESA." },
+      {
+        q: "Can I use ESA funds for homeschool?",
+        a: "Yes, for curriculum, tutoring, and testing expenses. ESA funds cannot pay a parent for teaching their own child.",
+      },
+      {
+        q: "Does using an ESA affect my public school enrollment?",
+        a: "Yes. Accepting an ESA means the student is not simultaneously enrolled in a traditional public school. You can return to public school in a future year.",
+      },
+      {
+        q: "Is the ESA award taxable?",
+        a: "No. ESA funds used for qualified education expenses are not treated as taxable income.",
+      },
+      {
+        q: "What if my private school costs more than the ESA?",
+        a: "You pay the difference out of pocket. Some private schools offer additional financial aid that stacks on top of the ESA.",
+      },
     ],
     sources: [
       { label: "Texas Education Agency — School Choice", url: "https://tea.texas.gov/" },
@@ -1874,14 +2392,29 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Does protesting hurt my property value?", a: "No. Appraised value for tax purposes is separate from market value in a sale, and buyers do not have access to your protest history." },
-      { q: "Should I use a protest company?", a: "For high-value or complex properties, a licensed property tax consultant can add value. For a typical homestead, a well-prepared homeowner routinely wins without one." },
-      { q: "What if the ARB denies my protest?", a: "You can appeal to district court, to binding arbitration, or to the State Office of Administrative Hearings, depending on property type and value." },
-      { q: "Can I protest every year?", a: "Yes. Every year is a new tax year and a new appraisal — every year is a new right to protest." },
+      {
+        q: "Does protesting hurt my property value?",
+        a: "No. Appraised value for tax purposes is separate from market value in a sale, and buyers do not have access to your protest history.",
+      },
+      {
+        q: "Should I use a protest company?",
+        a: "For high-value or complex properties, a licensed property tax consultant can add value. For a typical homestead, a well-prepared homeowner routinely wins without one.",
+      },
+      {
+        q: "What if the ARB denies my protest?",
+        a: "You can appeal to district court, to binding arbitration, or to the State Office of Administrative Hearings, depending on property type and value.",
+      },
+      {
+        q: "Can I protest every year?",
+        a: "Yes. Every year is a new tax year and a new appraisal — every year is a new right to protest.",
+      },
     ],
     sources: [
       { label: "Texas Tax Code Chapter 41", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm" },
-      { label: "Texas Comptroller — Property Tax Protests", url: "https://comptroller.texas.gov/taxes/property-tax/protests/" },
+      {
+        label: "Texas Comptroller — Property Tax Protests",
+        url: "https://comptroller.texas.gov/taxes/property-tax/protests/",
+      },
     ],
     related: ["texas-property-tax-guide", "homestead-exemption-explained", "county-appraisal-districts-explained"],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
@@ -1935,10 +2468,22 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Does ERCOT set my electric rate?", a: "No. Your rate is set by your retail electric provider in deregulated areas, or by your municipal utility or co-op in regulated areas." },
-      { q: "Can Texas 'join' the national grid?", a: "It could increase interconnections technically, but doing so at scale would trigger FERC jurisdiction — which is why the state has consistently opted against it." },
-      { q: "Who pays for reliability reforms?", a: "A mix of ratepayers, generators, and state general revenue (through the Texas Energy Fund). The exact allocation is set by the PUC and Legislature." },
-      { q: "Is the grid more reliable now?", a: "Objectively yes on winter preparation; the summer picture depends on how quickly new dispatchable generation comes online relative to load growth." },
+      {
+        q: "Does ERCOT set my electric rate?",
+        a: "No. Your rate is set by your retail electric provider in deregulated areas, or by your municipal utility or co-op in regulated areas.",
+      },
+      {
+        q: "Can Texas 'join' the national grid?",
+        a: "It could increase interconnections technically, but doing so at scale would trigger FERC jurisdiction — which is why the state has consistently opted against it.",
+      },
+      {
+        q: "Who pays for reliability reforms?",
+        a: "A mix of ratepayers, generators, and state general revenue (through the Texas Energy Fund). The exact allocation is set by the PUC and Legislature.",
+      },
+      {
+        q: "Is the grid more reliable now?",
+        a: "Objectively yes on winter preparation; the summer picture depends on how quickly new dispatchable generation comes online relative to load growth.",
+      },
     ],
     sources: [
       { label: "ERCOT", url: "https://www.ercot.com/" },
@@ -1994,14 +2539,26 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Can Texas arrest people for federal immigration offenses?", a: "Not directly. The state's arrest authority is grounded in Texas criminal statutes — trespass, smuggling, and related offenses — not federal immigration law." },
-      { q: "Are National Guard troops federalized?", a: "No. They serve on state active duty under the Governor. The state pays their salaries and directs their deployment." },
-      { q: "Do border counties agree with Operation Lone Star?", a: "Broadly yes among sheriffs and county leadership on the Texas side; specific tactics (barrier placement, prosecution volume) generate ongoing local debate." },
+      {
+        q: "Can Texas arrest people for federal immigration offenses?",
+        a: "Not directly. The state's arrest authority is grounded in Texas criminal statutes — trespass, smuggling, and related offenses — not federal immigration law.",
+      },
+      {
+        q: "Are National Guard troops federalized?",
+        a: "No. They serve on state active duty under the Governor. The state pays their salaries and directs their deployment.",
+      },
+      {
+        q: "Do border counties agree with Operation Lone Star?",
+        a: "Broadly yes among sheriffs and county leadership on the Texas side; specific tactics (barrier placement, prosecution volume) generate ongoing local debate.",
+      },
     ],
     sources: [
       { label: "Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/operationlonestar" },
       { label: "Texas DPS", url: "https://www.dps.texas.gov/" },
-      { label: "U.S. Constitution Article I, Section 10", url: "https://constitution.congress.gov/constitution/article-1/" },
+      {
+        label: "U.S. Constitution Article I, Section 10",
+        url: "https://constitution.congress.gov/constitution/article-1/",
+      },
     ],
     related: ["operation-lone-star", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
     cta: { label: "Read Our Border Coverage", href: "/news" },

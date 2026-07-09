@@ -56,6 +56,18 @@ export const ARTICLES: Article[] = [
     featured: true,
   },
   {
+    slug: "moving-to-texas-guide",
+    category: "Tax & Spending",
+    title: "Moving to Texas: The Complete Guide to Taxes, Schools, Voting, and Life in the Lone Star State",
+    dek: "Everything a new Texan needs to know — property taxes and the homestead exemption, ISDs and school boards, the ERCOT grid, constitutional carry, and how to register your car, your kids, and your vote.",
+    author: "Civics Desk",
+    date: "Pillar guide",
+    publishedAt: "2026-07-09T12:00:00",
+    image: suburb,
+    pillar: true,
+    featured: true,
+  },
+  {
     slug: "operation-lone-star",
     category: "Border",
     title: "Operation Lone Star Reinforces Key Crossing Points Along the Rio Grande",
@@ -370,7 +382,8 @@ export const ARTICLES: Article[] = [
   {
     slug: "texas-border-policy-full-guide",
     category: "Border",
-    title: "Texas Border Policy Explained: The Full Guide to Operation Lone Star, State Authority & the Rio Grande Fight",
+    title:
+      "Texas Border Policy Explained: The Full Guide to Operation Lone Star, State Authority & the Rio Grande Fight",
     dek: "The definitive Keep TX Red guide to Texas border policy in Houston, the Rio Grande Valley, and Austin — Operation Lone Star, state vs. federal authority, DPS, the Texas National Guard, and the 1,254-mile Rio Grande line.",
     author: "Border Bureau",
     date: "Pillar guide",
