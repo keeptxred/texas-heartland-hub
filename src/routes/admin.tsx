@@ -52,6 +52,7 @@ function AdminPage() {
     e.preventDefault();
     if (pass === PASSCODE) {
       sessionStorage.setItem(STORAGE_KEY, "1");
+      sessionStorage.setItem("ktr-admin-passcode", pass);
       setOk(true);
     } else {
       setErr("Incorrect passcode.");
