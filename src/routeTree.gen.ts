@@ -85,6 +85,7 @@ import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/ho
 import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
 import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
+import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
 
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
   id: '/voting-locations',
@@ -476,6 +477,12 @@ const ApiPublicHooksGenerateEvergreenRoute =
     path: '/api/public/hooks/generate-evergreen',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksBackfillFeaturedImagesRoute =
+  ApiPublicHooksBackfillFeaturedImagesRouteImport.update({
+    id: '/api/public/hooks/backfill-featured-images',
+    path: '/api/public/hooks/backfill-featured-images',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -542,6 +549,7 @@ export interface FileRoutesByFullPath {
   '/texas/': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -615,6 +623,7 @@ export interface FileRoutesByTo {
   '/texas': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -694,6 +703,7 @@ export interface FileRoutesById {
   '/texas/': typeof TexasIndexRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
   '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
@@ -774,6 +784,7 @@ export interface FileRouteTypes {
     | '/texas/'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
+    | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -847,6 +858,7 @@ export interface FileRouteTypes {
     | '/texas'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
+    | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -925,6 +937,7 @@ export interface FileRouteTypes {
     | '/texas/'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
+    | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
     | '/api/public/hooks/generate-sports'
@@ -989,6 +1002,7 @@ export interface RootRouteChildren {
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicHooksBackfillFeaturedImagesRoute: typeof ApiPublicHooksBackfillFeaturedImagesRoute
   ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
   ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
@@ -1537,6 +1551,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksGenerateEvergreenRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/backfill-featured-images': {
+      id: '/api/public/hooks/backfill-featured-images'
+      path: '/api/public/hooks/backfill-featured-images'
+      fullPath: '/api/public/hooks/backfill-featured-images'
+      preLoaderRoute: typeof ApiPublicHooksBackfillFeaturedImagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1674,6 +1695,8 @@ const rootRouteChildren: RootRouteChildren = {
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicHooksBackfillFeaturedImagesRoute:
+    ApiPublicHooksBackfillFeaturedImagesRoute,
   ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
   ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
   ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
