@@ -24,6 +24,8 @@ export type EvergreenArticle = {
   author: string;
   image_url: string | null;
   image_category: string | null;
+  featured_image_url: string | null;
+  image_alt_text: string | null;
   seo_headline: string | null;
   discover_category: string | null;
   seo_keywords: string[] | null;
@@ -48,7 +50,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
     if (!supabase) return null;
     const { data: row, error } = await supabase
       .from("daily_articles")
-      .select("slug,category,title,dek,author,source_name,source_url,image_url,image_category,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
+      .select("slug,category,title,dek,author,source_name,source_url,image_url,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
       .eq("slug", data.slug)
       .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"])
       .maybeSingle();
@@ -61,6 +63,10 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       author: row.author ?? "Keep TX Red Editorial Team",
       image_url: row.image_url,
       image_category: (row as { image_category?: string | null }).image_category ?? null,
+      featured_image_url:
+        (row as { featured_image_url?: string | null }).featured_image_url ?? null,
+      image_alt_text:
+        (row as { image_alt_text?: string | null }).image_alt_text ?? null,
       seo_headline: (row as { seo_headline?: string | null }).seo_headline ?? null,
       discover_category: (row as { discover_category?: string | null }).discover_category ?? null,
       seo_keywords: (row as { seo_keywords?: string[] | null }).seo_keywords ?? null,

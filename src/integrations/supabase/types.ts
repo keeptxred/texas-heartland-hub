@@ -27,6 +27,7 @@ export type Database = {
           ctr_score: number
           dek: string
           discover_category: string | null
+          featured_image_url: string | null
           gsc_avg_position: number | null
           gsc_clicks: number
           gsc_ctr: number | null
@@ -34,8 +35,11 @@ export type Database = {
           gsc_last_update: string | null
           headline_variants: Json | null
           id: string
+          image_alt_text: string | null
           image_category: string | null
+          image_generation_status: string
           image_hash: string | null
+          image_prompt: string | null
           image_score: number | null
           image_url: string | null
           internal_links: Json | null
@@ -72,6 +76,7 @@ export type Database = {
           ctr_score?: number
           dek: string
           discover_category?: string | null
+          featured_image_url?: string | null
           gsc_avg_position?: number | null
           gsc_clicks?: number
           gsc_ctr?: number | null
@@ -79,8 +84,11 @@ export type Database = {
           gsc_last_update?: string | null
           headline_variants?: Json | null
           id?: string
+          image_alt_text?: string | null
           image_category?: string | null
+          image_generation_status?: string
           image_hash?: string | null
+          image_prompt?: string | null
           image_score?: number | null
           image_url?: string | null
           internal_links?: Json | null
@@ -117,6 +125,7 @@ export type Database = {
           ctr_score?: number
           dek?: string
           discover_category?: string | null
+          featured_image_url?: string | null
           gsc_avg_position?: number | null
           gsc_clicks?: number
           gsc_ctr?: number | null
@@ -124,8 +133,11 @@ export type Database = {
           gsc_last_update?: string | null
           headline_variants?: Json | null
           id?: string
+          image_alt_text?: string | null
           image_category?: string | null
+          image_generation_status?: string
           image_hash?: string | null
+          image_prompt?: string | null
           image_score?: number | null
           image_url?: string | null
           internal_links?: Json | null

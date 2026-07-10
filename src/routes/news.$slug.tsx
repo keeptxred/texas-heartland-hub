@@ -58,6 +58,8 @@ export const Route = createFileRoute("/news/$slug")({
         category: ever.category,
         keywords: ever.keywords,
         seo_keywords: ever.seo_keywords,
+        featured_image_url: ever.featured_image_url,
+        image_alt_text: ever.image_alt_text,
       }),
     };
     const rawBody: ArticleBody = {

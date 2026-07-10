@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -32,6 +33,8 @@ type ArticleRow = {
   category: string;
   is_breaking: boolean | null;
   published_at: string;
+  featured_image_url?: string | null;
+  image_generation_status?: string | null;
 };
 
 function AdminPage() {
@@ -49,6 +52,7 @@ function AdminPage() {
     e.preventDefault();
     if (pass === PASSCODE) {
       sessionStorage.setItem(STORAGE_KEY, "1");
+      sessionStorage.setItem("ktr-admin-passcode", pass);
       setOk(true);
     } else {
       setErr("Incorrect passcode.");
@@ -97,7 +101,7 @@ function AdminDashboard() {
           .limit(50),
         supabase
           .from("daily_articles")
-          .select("id,slug,title,category,is_breaking,published_at")
+        .select("id,slug,title,category,is_breaking,published_at,featured_image_url,image_generation_status")
           .order("published_at", { ascending: false })
           .limit(50),
       ]);
@@ -166,17 +170,79 @@ function AdminDashboard() {
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-bold uppercase tracking-widest text-primary">{a.category}</span>
                     {a.is_breaking ? <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Breaking</span> : null}
+                    <ImageStatusBadge status={a.image_generation_status} hasImage={!!a.featured_image_url} />
                   </div>
                   <a href={`/news/${a.slug}`} className="text-sm font-medium leading-snug hover:underline">{a.title}</a>
                   <div className="text-[11px] text-muted-foreground">
                     {new Date(a.published_at).toLocaleString("en-US", { timeZone: "America/Chicago" })}
                   </div>
+                  <RegenerateImageButton slug={a.slug} />
                 </li>
               ))}
             </ul>
           )}
         </Panel>
       </section>
+    </div>
+  );
+}
+
+function ImageStatusBadge({ status, hasImage }: { status?: string | null; hasImage: boolean }) {
+  if (hasImage) {
+    return <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">AI Image</span>;
+  }
+  if (status === "failed") {
+    return <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">Img Failed</span>;
+  }
+  if (status === "generating") {
+    return <span className="text-[10px] font-bold uppercase tracking-widest text-amber-600">Img Gen…</span>;
+  }
+  return <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">No Img</span>;
+}
+
+function RegenerateImageButton({ slug }: { slug: string }) {
+  const [state, setState] = useState<"idle" | "working" | "done" | "err">("idle");
+  const [msg, setMsg] = useState("");
+  async function regen() {
+    setState("working");
+    setMsg("");
+    try {
+      const token =
+        (typeof window !== "undefined" &&
+          (sessionStorage.getItem("ktr-admin-passcode") ||
+            (import.meta.env.VITE_ADMIN_PASSCODE as string) ||
+            "keeptxred")) ||
+        "keeptxred";
+      const res = await regenerateFeaturedImage({ data: { slug, token } });
+      if (res.ok) {
+        setState("done");
+        setMsg("Regenerated");
+      } else {
+        setState("err");
+        setMsg(res.error);
+      }
+    } catch (e) {
+      setState("err");
+      setMsg(e instanceof Error ? e.message : "Failed");
+    }
+  }
+  return (
+    <div className="mt-1 flex items-center gap-2">
+      <button
+        type="button"
+        onClick={regen}
+        disabled={state === "working"}
+        className="text-[11px] underline text-primary disabled:opacity-50"
+      >
+        {state === "working" ? "Regenerating…" : "Regenerate Featured Image"}
+      </button>
+      {msg ? (
+        <span
+          className={`text-[11px] ${state === "err" ? "text-destructive" : "text-emerald-600"}`}
+        >
+          {msg}
+        </span>
+      ) : null}
     </div>
   );
 }
