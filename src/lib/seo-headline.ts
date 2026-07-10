@@ -50,6 +50,8 @@ export type ArticleLike = {
   category?: string | null;
   keywords?: string[] | null;
   seo_keywords?: string[] | null;
+  featured_image_url?: string | null;
+  image_alt_text?: string | null;
 };
 
 /**
@@ -89,6 +91,9 @@ export function toImageInput(article: ArticleLike): ArticleImageInput {
  * Convenience: same output as getArticleImage(toImageInput(article)).
  */
 export function resolveArticleImage(article: ArticleLike): string {
+  // AI-generated featured image always wins.
+  const featured = (article.featured_image_url ?? "").trim();
+  if (featured) return featured;
   return getArticleImage(toImageInput(article));
 }
 
