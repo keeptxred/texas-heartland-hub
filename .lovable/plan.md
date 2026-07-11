@@ -1,46 +1,66 @@
-# Fix empty ingested articles
+# Fix AI Featured Image Generator — Subject-Accurate Prompts + Validation
 
-## Root cause
+The current `buildImagePrompt` in `src/lib/featured-image.functions.ts` leans on `category` and generic "editorial photography" language, so stories like *"Australian Spotted Jellyfish Migration Reaches Texas Coast"* get generic newsroom scenes. Fix the prompt to lock onto the article's actual subject and add a validator that rejects off-topic images before we save them.
 
-In `src/routes/api/public/hooks/ingest-feeds.ts`, when `rewriteItem()` returns `null` (AI gateway timeout, non-2xx, or invalid JSON), the code still calls `buildArticleRow(it, null)` and upserts the row. The resulting article contains only boilerplate: the source's short RSS blurb as the intro, the generic "affects Texans and is being tracked by the Keep TX Red newsroom" stub as the only section, and the two-line boilerplate takeaways. That's the article you linked, and there are **36 rows** in the same shape currently live.
+## 1. Subject extraction (new)
 
-Note on the credit-refund ask: I can't issue refunds. That's handled by Lovable support (Help menu in the workspace). What I can do is actually fix the pipeline so this stops recurring.
+Add a helper `extractImageSubject(article)` in `src/lib/featured-image.functions.ts` that returns a structured subject the prompt builder can use:
 
-## Changes (minimal, edits only — no schema changes, no new files)
+- **Title** (primary anchor)
+- **First paragraph** — pulled from `body_json.intro` or the first section's paragraph, truncated to ~400 chars
+- **Named entities** — reuse `extractEntities` from `src/lib/nlp.ts`
+- **Locations** — from `affected_regions` + entities that match places
+- **Animals / species / objects / events** — via a lightweight keyword pass (jellyfish, hurricane, oil rig, flood, etc.) plus a small LLM-assisted extraction fallback using `google/gemini-3.1-flash-lite` for one JSON call when the keyword pass finds nothing concrete
+- **Domain hint** — wildlife / weather / infrastructure / politics / sports / business (derived, not the DB `category`)
 
-### 1. `src/routes/api/public/hooks/ingest-feeds.ts`
+The DB `category` field is used only as a *tiebreaker*, never as the main subject.
 
-- **Retry once on rewrite failure.** Wrap the `rewriteItem` call in a small helper that retries a single time after a short delay when the first attempt returns `null`. Rewrites fail almost entirely due to transient gateway timeouts.
-- **Skip rows with no successful rewrite.** After `Promise.all(... rewriteItem ...)` in both call sites (lines ~441 and ~551), filter out items whose rewrite is still `null`. Only items with a real rewrite become article rows. This is the hard guard — an ingested article without an AI rewrite is never published.
-- **Tighten the "successful rewrite" check.** In `rewriteItem`, additionally require `parsed.relevance` and either `parsed.summary` of ≥ 200 chars or a non-empty `parsed.keyTakeaways` — this catches AI responses that come back structurally valid but semantically empty.
-- Leave `buildArticleRow` alone; it will only ever be called with a real rewrite now.
+## 2. Rewrite `buildImagePrompt`
 
-### 2. One-time cleanup migration
+New prompt structure:
 
-Add a migration that deletes the existing stub rows so the site immediately stops serving them (and the sitemap stops linking to them). The condition matches only the exact boilerplate strings this bug produces, so it can't touch legitimate articles:
+1. Lead with the concrete subject: *"Photograph of Australian spotted jellyfish (Phyllorhiza punctata) drifting in shallow Gulf of Mexico coastal water near Galveston, Texas."*
+2. Include location + environmental context when present.
+3. Editorial style line stays, but is demoted below the subject.
+4. Expanded **hard-avoid list** (always on unless the article is literally about them):
+   - newspapers, stacks of paper, printing presses
+   - reporters, microphones, press conferences, news anchors, TV studios
+   - laptops / computers / generic office scenes / desks
+   - stock "breaking news" graphics
+   - Texas Capitol dome / flags (existing rule kept)
+5. Domain-specific steering:
+   - **wildlife/environment** → depict the species in habitat, correct anatomy, natural lighting
+   - **weather** → the phenomenon + affected landscape
+   - **infrastructure/energy** → the actual asset (rig, grid, pipeline)
+   - **policy/legislative** → allow capitol/officials only when title mentions them
 
-```sql
-delete from public.daily_articles
-where kind = 'ingested'
-  and (body_json #>> '{sections,0,paragraphs,0}')
-      like '%affects Texans and is being tracked by the Keep TX Red newsroom%';
-```
+## 3. AI validation step (new)
 
-Expected deletion: 36 rows (verified via read query).
+Add `validateImageMatchesArticle(imageBytes, article)`:
 
-### 3. Render-side safety net in `src/routes/news.$slug.tsx`
+- Calls `google/gemini-2.5-flash` (vision) via the Lovable AI Gateway chat endpoint with the image (base64) + a short question: *"Does this image clearly depict the main subject of an article titled '<title>' about <subject summary>? Reply strict JSON: {\"matches\": boolean, \"reason\": string}."*
+- If `matches === false`, regenerate **once** with a strengthened prompt that appends the validator's `reason` as an explicit "must depict / must not depict" instruction.
+- After one retry, save the best attempt and set `image_generation_status = "ready"` but log the validator verdict in a new nullable `image_validation_note` text column (added via migration) so admins can spot weak matches.
 
-In the ingested-article branch of the loader, if `body_json.sections` contains only the boilerplate stub strings and the intro is ≤ 1 short paragraph, throw `notFound()`. This is a belt-and-suspenders guard so any future regression can't publish a blank page — worst case the URL 404s instead of rendering an empty article that Google Discover will penalize.
+Validation is skipped only if the gateway validator call itself errors (fail-open, don't block the pipeline).
 
-## Out of scope
+## 4. Migration
 
-- No changes to `generate-news`, `generate-evergreen`, `generate-sports`, or `enrichArticleRow`.
-- No sitemap logic changes (the deleted rows drop out automatically).
-- No schema changes, no new tables, no new cron jobs.
-- No changes to the AI prompt itself beyond the stricter response validation described above.
+One migration adds `image_validation_note text` to `daily_articles`. No other schema changes; existing `featured_image_url`, `image_prompt`, `image_generation_status`, `image_alt_text` are reused.
 
-## Verification after build
+## 5. Regeneration / backfill
 
-1. Re-query the count of stub rows — must return 0.
-2. Visit the failing URL from your message — must return 404 (not an empty article).
-3. Manually POST to `/api/public/hooks/ingest-feeds` and confirm the response reports `inserted` ≤ `fetched` (skipped items are the diff) and no newly inserted row matches the stub pattern.
+- `regenerateFeaturedImage` (admin) and `backfillBatch` both go through the new pipeline automatically — no route or admin UI changes needed.
+- Existing generic images stay until an admin clicks "Regenerate Featured Image" on that article, or backfill is re-run with an `?overwrite=1` flag (small addition to the backfill route).
+
+## What is NOT changing
+
+- No changes to article slugs, URLs, sitemap, existing SEO fields, article body, or the storage bucket / public passthrough route.
+- Model stays **Nano Banana 2** (`google/gemini-3.1-flash-image`); only the *prompt* and a *validator call* change.
+- Admin auth stays on the existing `/admin` passcode gate.
+
+## Files touched
+
+- `src/lib/featured-image.functions.ts` — new `extractImageSubject`, rewritten `buildImagePrompt`, new `validateImageMatchesArticle`, updated `generateAndStore` to run validate → retry once → save note.
+- `src/routes/api/public/hooks/backfill-featured-images.ts` — accept `?overwrite=1`.
+- New migration: `add image_validation_note to daily_articles`.
