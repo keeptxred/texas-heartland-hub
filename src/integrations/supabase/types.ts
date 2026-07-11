@@ -42,6 +42,7 @@ export type Database = {
           image_prompt: string | null
           image_score: number | null
           image_url: string | null
+          image_validation_note: string | null
           internal_links: Json | null
           internal_url: string
           is_breaking: boolean
@@ -91,6 +92,7 @@ export type Database = {
           image_prompt?: string | null
           image_score?: number | null
           image_url?: string | null
+          image_validation_note?: string | null
           internal_links?: Json | null
           internal_url: string
           is_breaking?: boolean
@@ -140,6 +142,7 @@ export type Database = {
           image_prompt?: string | null
           image_score?: number | null
           image_url?: string | null
+          image_validation_note?: string | null
           internal_links?: Json | null
           internal_url?: string
           is_breaking?: boolean

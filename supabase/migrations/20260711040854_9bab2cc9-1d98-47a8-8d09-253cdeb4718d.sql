@@ -1,0 +1,1 @@
+ALTER TABLE public.daily_articles ADD COLUMN IF NOT EXISTS image_validation_note text;
