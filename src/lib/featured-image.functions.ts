@@ -414,27 +414,33 @@ export const regenerateFeaturedImage = createServerFn({ method: "POST" })
     return generateAndStore(row as ArticleRow, { overwrite: true });
   });
 
-/** Backfill helper: pull N articles missing a featured image and generate them. */
-export async function backfillBatch(limit = 5): Promise<{
+/** Backfill helper: pull N articles missing a featured image and generate them.
+ *  Pass overwrite=true to also regenerate articles that already have one. */
+export async function backfillBatch(
+  limit = 5,
+  overwrite = false,
+): Promise<{
   processed: number;
   ok: number;
   failed: number;
   results: { slug: string; ok: boolean; error?: string }[];
 }> {
   const supabase = await serviceClient();
-  const { data: rows } = await supabase
+  let q = supabase
     .from("daily_articles")
     .select(SELECT_COLS)
-    .is("featured_image_url", null)
     .neq("image_generation_status", "generating")
-    .in("image_generation_status", ["pending", "failed"])
     .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"])
     .order("published_at", { ascending: false })
     .limit(limit);
+  if (!overwrite) {
+    q = q.is("featured_image_url", null).in("image_generation_status", ["pending", "failed"]);
+  }
+  const { data: rows } = await q;
 
   const results: { slug: string; ok: boolean; error?: string }[] = [];
   for (const row of (rows ?? []) as ArticleRow[]) {
-    const r = await generateAndStore(row, { overwrite: false });
+    const r = await generateAndStore(row, { overwrite });
     results.push({ slug: row.slug, ok: r.ok, error: r.ok ? undefined : r.error });
   }
   return {
