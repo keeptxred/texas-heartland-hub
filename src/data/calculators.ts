@@ -1,0 +1,236 @@
+export interface CalculatorDirectoryItem {
+  id: string;
+  title: string;
+  slug: string;
+  description: string;
+
+  category:
+    | "Housing"
+    | "Taxes"
+    | "Insurance"
+    | "Utilities"
+    | "Relocation"
+    | "Financial";
+
+  icon?: string;
+
+  keywords: string[];
+
+  featured?: boolean;
+}
+
+
+export const calculators: CalculatorDirectoryItem[] = [
+
+  {
+    id:
+      "mortgage-calculator",
+
+    title:
+      "Texas Mortgage Calculator",
+
+    slug:
+      "/tools/mortgage-calculator",
+
+    description:
+      "Estimate your Texas mortgage payment including principal, interest, property taxes, insurance, PMI, and HOA costs.",
+
+    category:
+      "Housing",
+
+    icon:
+      "Home",
+
+    keywords: [
+      "texas mortgage calculator",
+      "home payment calculator",
+      "monthly mortgage payment texas",
+      "buying a house in texas",
+    ],
+
+    featured:
+      true,
+  },
+
+
+  {
+    id:
+      "property-tax-calculator",
+
+    title:
+      "Texas Property Tax Calculator",
+
+    slug:
+      "/tools/property-tax-calculator",
+
+    description:
+      "Estimate Texas property taxes using home value, tax rates, and homestead exemptions.",
+
+    category:
+      "Taxes",
+
+    icon:
+      "Landmark",
+
+    keywords: [
+      "texas property tax calculator",
+      "texas property taxes",
+      "homestead exemption texas",
+      "property tax estimate",
+    ],
+
+    featured:
+      true,
+  },
+
+
+  {
+    id:
+      "home-insurance-calculator",
+
+    title:
+      "Texas Home Insurance Calculator",
+
+    slug:
+      "/tools/home-insurance-calculator",
+
+    description:
+      "Estimate homeowners insurance costs based on home value, coverage, deductibles, and Texas risk factors.",
+
+    category:
+      "Insurance",
+
+    icon:
+      "Shield",
+
+    keywords: [
+      "texas homeowners insurance calculator",
+      "home insurance cost texas",
+      "texas insurance rates",
+    ],
+
+    featured:
+      true,
+  },
+
+
+  {
+    id:
+      "home-affordability-calculator",
+
+    title:
+      "Texas Home Affordability Calculator",
+
+    slug:
+      "/tools/home-affordability-calculator",
+
+    description:
+      "Find out how much home you can afford in Texas based on income, debts, mortgage rates, taxes, and insurance.",
+
+    category:
+      "Housing",
+
+    icon:
+      "Calculator",
+
+    keywords: [
+      "how much house can i afford texas",
+      "texas affordability calculator",
+      "home buying calculator",
+    ],
+
+    featured:
+      true,
+  },
+
+
+  {
+    id:
+      "closing-cost-calculator",
+
+    title:
+      "Texas Closing Cost Calculator",
+
+    slug:
+      "/tools/closing-cost-calculator",
+
+    description:
+      "Estimate buyer closing costs in Texas including lender fees, title costs, prepaid taxes, and insurance.",
+
+    category:
+      "Housing",
+
+    icon:
+      "FileText",
+
+    keywords: [
+      "texas closing costs",
+      "home buying costs texas",
+      "cash needed to buy house",
+    ],
+
+  },
+
+
+  {
+    id:
+      "utilities-calculator",
+
+    title:
+      "Texas Utilities Cost Calculator",
+
+    slug:
+      "/tools/texas-utilities-calculator",
+
+    description:
+      "Estimate monthly Texas utility costs including electricity, water, gas, internet, trash, and pool expenses.",
+
+    category:
+      "Utilities",
+
+    icon:
+      "Zap",
+
+    keywords: [
+      "texas utility costs",
+      "cost of living texas",
+      "moving to texas expenses",
+    ],
+
+  },
+
+];
+
+
+export function getFeaturedCalculators() {
+
+  return calculators.filter(
+    (calculator) =>
+      calculator.featured
+  );
+
+}
+
+
+export function getCalculatorsByCategory(
+  category: CalculatorDirectoryItem["category"]
+) {
+
+  return calculators.filter(
+    (calculator) =>
+      calculator.category === category
+  );
+
+}
+
+
+export function getCalculatorBySlug(
+  slug: string
+) {
+
+  return calculators.find(
+    (calculator) =>
+      calculator.slug === slug
+  );
+
+}
