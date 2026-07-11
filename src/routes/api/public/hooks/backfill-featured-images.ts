@@ -11,14 +11,16 @@ export const Route = createFileRoute("/api/public/hooks/backfill-featured-images
         const url = new URL(request.url);
         const raw = Number(url.searchParams.get("limit") ?? "5");
         const limit = Math.max(1, Math.min(20, Number.isFinite(raw) ? raw : 5));
-        const result = await backfillBatch(limit);
+        const overwrite = url.searchParams.get("overwrite") === "1";
+        const result = await backfillBatch(limit, overwrite);
         return Response.json(result);
       },
       POST: async ({ request }) => {
         const url = new URL(request.url);
         const raw = Number(url.searchParams.get("limit") ?? "5");
         const limit = Math.max(1, Math.min(20, Number.isFinite(raw) ? raw : 5));
-        const result = await backfillBatch(limit);
+        const overwrite = url.searchParams.get("overwrite") === "1";
+        const result = await backfillBatch(limit, overwrite);
         return Response.json(result);
       },
     },
