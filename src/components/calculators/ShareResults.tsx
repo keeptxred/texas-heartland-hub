@@ -36,9 +36,10 @@ export default function ShareResults({
 
   const encodedUrl = encodeURIComponent(shareUrl);
   const encodedText = encodeURIComponent(shareText);
+  const canNativeShare = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
   async function handleNativeShare() {
-    if (!navigator.share) return;
+    if (!canNativeShare) return;
 
     try {
       await navigator.share({
@@ -80,7 +81,7 @@ export default function ShareResults({
 
       <div className="mt-6 flex flex-wrap gap-3">
 
-        {navigator.share && (
+        {canNativeShare && (
           <button
             onClick={handleNativeShare}
             className="rounded-lg bg-red-700 px-4 py-3 font-medium text-white transition hover:bg-red-800"
