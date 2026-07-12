@@ -31,6 +31,48 @@ type ArticleRow = {
   body_json: unknown;
 };
 
+type BodySection = { heading?: string; paragraphs?: string[]; bullets?: string[] };
+
+function bodyJsonText(bodyJson: unknown): string {
+  if (!bodyJson || typeof bodyJson !== "object") return "";
+  const bj = bodyJson as { intro?: unknown; sections?: unknown; faq?: unknown; keyTakeaways?: unknown };
+  const parts: string[] = [];
+  if (Array.isArray(bj.intro)) {
+    for (const p of bj.intro) if (typeof p === "string") parts.push(p);
+  }
+  if (Array.isArray(bj.sections)) {
+    for (const raw of bj.sections) {
+      const s = raw as BodySection;
+      if (typeof s.heading === "string") parts.push(s.heading);
+      if (Array.isArray(s.paragraphs)) for (const p of s.paragraphs) if (typeof p === "string") parts.push(p);
+      if (Array.isArray(s.bullets)) for (const p of s.bullets) if (typeof p === "string") parts.push(p);
+    }
+  }
+  if (Array.isArray(bj.faq)) {
+    for (const raw of bj.faq) {
+      const f = raw as { q?: unknown; a?: unknown };
+      if (typeof f.q === "string") parts.push(f.q);
+      if (typeof f.a === "string") parts.push(f.a);
+    }
+  }
+  if (Array.isArray(bj.keyTakeaways)) {
+    for (const p of bj.keyTakeaways) if (typeof p === "string") parts.push(p);
+  }
+  return parts.join(" ").replace(/\s+/g, " ").trim();
+}
+
+function topArticleTerms(text: string): string[] {
+  const terms = new Set<string>();
+  const titleCase = text.match(/\b(?:[A-Z][a-z]+(?:\s+|$)){1,5}/g) ?? [];
+  for (const raw of titleCase) {
+    const term = raw.trim().replace(/\s+/g, " ");
+    if (term.length >= 4 && !/^(Texas|Keep TX Red|The|This|What|Why|How)$/i.test(term)) terms.add(term);
+  }
+  const species = text.match(/\b(?:Australian spotted jellyfish|jellyfish|alligator|sea turtle|turtle|dolphin|shark|whale|bird|fish|deer|coyote|snake|manatee|bat|oyster|coral|wildlife|species)\b/gi) ?? [];
+  for (const s of species) terms.add(s.toLowerCase());
+  return Array.from(terms).slice(0, 12);
+}
+
 function sanitizeFilename(slug: string): string {
   return (
     slug
@@ -108,7 +150,8 @@ type SubjectExtract = {
 function extractImageSubject(row: ArticleRow): SubjectExtract {
   const title = row.seo_headline?.trim() || row.title;
   const intro = firstParagraph(row.body_json);
-  const haystack = `${title} ${row.dek ?? ""} ${intro}`;
+  const fullBody = bodyJsonText(row.body_json).slice(0, 2500);
+  const haystack = `${title} ${row.dek ?? ""} ${intro} ${fullBody}`;
   const entities = extractEntities(haystack);
   const locations = [
     ...(row.affected_regions ?? []),
@@ -118,10 +161,13 @@ function extractImageSubject(row: ArticleRow): SubjectExtract {
   ].filter((v, i, a) => a.indexOf(v) === i);
   const domain = inferDomain(haystack);
 
+  const terms = topArticleTerms(haystack);
+
   // First-pass concrete subject = the title itself, refined by the first
-  // paragraph. The AI validator later gets a chance to catch drift.
+  // paragraph and concrete article terms. The category is never used as the
+  // visual subject because it causes generic "news" imagery.
   const concreteSubject = intro
-    ? `${title}. Context: ${intro}`
+    ? `${title}. Context: ${intro}. Concrete subjects to show if present: ${terms.join(", ") || "the specific event, place, animal, object, or people described"}.`
     : title;
 
   return { title, firstParagraph: intro, entities, locations, domain, concreteSubject };
@@ -192,10 +238,12 @@ export function buildImagePrompt(
   const loc = subject.locations.slice(0, 2).join(", ");
 
   return [
+    `Create a specific featured image for this exact article, not a generic news illustration. Ignore broad categories such as news, politics, non-political, or business unless they are the literal topic.`,
     `PRIMARY SUBJECT (must be clearly the main focus of the image): ${subject.concreteSubject}`,
     loc ? `Location context: ${loc}, Texas.` : "",
     DOMAIN_STEER[subject.domain],
-    `The image must visually depict the primary subject above — a viewer glancing at the image should immediately understand it is about this specific subject, not a generic news topic.`,
+    `The image must visually depict the primary subject above — a viewer glancing at the image should immediately understand it is about this specific story, not a generic news topic.`,
+    `Do not use symbolic substitutes when the story names a concrete thing. If the article names an animal, species, location, facility, road, storm, event, or object, that concrete thing must dominate the image.`,
     `If people appear, show anonymous everyday Texans from behind or in silhouette, faces obscured or out of frame. Do not depict identifiable real politicians or celebrities.`,
     style,
     `Strict rules: ${avoid}.`,
@@ -217,6 +265,7 @@ async function generateImageBytes(prompt: string): Promise<Uint8Array> {
     method: "POST",
     headers: {
       Authorization: `Bearer ${key}`,
+      "Lovable-API-Key": key,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -255,7 +304,7 @@ async function validateImageMatchesArticle(
     b64 = btoa(b64);
     const res = await fetch(CHAT_URL, {
       method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${key}`, "Lovable-API-Key": key, "Content-Type": "application/json" },
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
@@ -326,19 +375,19 @@ async function generateAndStore(
     let bytes = await generateImageBytes(prompt);
     let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
-    if (!verdict.matches) {
+    for (let attempt = 1; !verdict.matches && attempt <= 2; attempt += 1) {
       const stronger = buildImagePrompt(
         subject,
-        `PREVIOUS ATTEMPT FAILED VALIDATION because: "${verdict.reason}". You MUST fix this. Depict the primary subject literally and specifically. Do not include anything the validator flagged.`,
+        `PREVIOUS ATTEMPT FAILED VALIDATION because: "${verdict.reason}". You MUST fix this. Depict the primary subject literally and specifically. Do not include anything the validator flagged. Reject generic news symbolism completely.`,
       );
       usedPrompt = stronger;
       const retryBytes = await generateImageBytes(stronger);
       const retryVerdict = await validateImageMatchesArticle(retryBytes, subject);
-      // Keep the better of the two attempts.
-      if (retryVerdict.matches || !verdict.matches) {
-        bytes = retryBytes;
-        verdict = retryVerdict;
-      }
+      bytes = retryBytes;
+      verdict = retryVerdict;
+    }
+    if (!verdict.matches) {
+      throw new Error(`Generated image failed story-match validation: ${verdict.reason}`);
     }
     const path = filename;
     const { error: upErr } = await supabase.storage
@@ -395,6 +444,20 @@ export const generateFeaturedImageForSlug = createServerFn({ method: "POST" })
     if (error || !row) return { ok: false as const, error: "Article not found" };
     return generateAndStore(row as ArticleRow, { overwrite: !!data.overwrite });
   });
+
+export async function generateFeaturedImageForSlugDirect(
+  slug: string,
+  overwrite = false,
+): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
+  const supabase = await serviceClient();
+  const { data: row, error } = await supabase
+    .from("daily_articles")
+    .select(SELECT_COLS)
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error || !row) return { ok: false, error: "Article not found" };
+  return generateAndStore(row as ArticleRow, { overwrite });
+}
 
 /** Admin-gated regenerate (checks shared passcode header). */
 export const regenerateFeaturedImage = createServerFn({ method: "POST" })
