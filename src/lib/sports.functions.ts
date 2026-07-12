@@ -11,6 +11,13 @@ export type SportsListItem = {
   published_at: string;
   image_url: string | null;
   image_hash: string | null;
+  image_category?: string | null;
+  featured_image_url?: string | null;
+  image_alt_text?: string | null;
+  seo_headline?: string | null;
+  discover_category?: string | null;
+  keywords?: string[] | null;
+  seo_keywords?: string[] | null;
   category: string;
   teams?: string[] | null;
 };
@@ -32,7 +39,7 @@ export const listSportsByLeague = createServerFn({ method: "GET" })
     if (!supabase) return { items: [] };
     const { data: rows, error } = await supabase
       .from("daily_articles")
-      .select("slug,title,dek,author,published_at,image_url,image_hash,category,teams")
+      .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams")
       .eq("kind", `sports-${data.league}`)
       .order("published_at", { ascending: false })
       .limit(50);
@@ -56,7 +63,7 @@ export const listSportsByTeam = createServerFn({ method: "GET" })
     // Primary: canonical tag match.
     const canonical = await supabase
       .from("daily_articles")
-      .select("slug,title,dek,author,published_at,image_url,image_hash,category,teams")
+      .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams")
       .contains("teams", [team.slug])
       .order("published_at", { ascending: false })
       .limit(50);
@@ -73,7 +80,7 @@ export const listSportsByTeam = createServerFn({ method: "GET" })
     const legacy = keywordOr
       ? await supabase
           .from("daily_articles")
-          .select("slug,title,dek,author,published_at,image_url,image_hash,category,teams")
+          .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams")
           .eq("kind", kindFilter)
           .or(keywordOr)
           .order("published_at", { ascending: false })
