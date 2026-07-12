@@ -16,6 +16,14 @@ export type LiveArticleRow = {
   dek: string | null;
   category: string;
   image_url: string | null;
+  image_category?: string | null;
+  image_hash?: string | null;
+  featured_image_url?: string | null;
+  image_alt_text?: string | null;
+  seo_headline?: string | null;
+  discover_category?: string | null;
+  keywords?: string[] | null;
+  seo_keywords?: string[] | null;
   source_name: string | null;
   author: string;
   published_at: string;
@@ -41,7 +49,7 @@ export const getLiveArticlesByCategory = createServerFn({ method: "GET" })
     const { data: rows, error } = await supabase
       .from("daily_articles")
       .select(
-        "slug,title,dek,category,image_url,source_name,author,published_at,kind",
+        "slug,title,dek,category,image_url,image_category,image_hash,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,kind",
       )
       .eq("category", categoryName)
       .order("published_at", { ascending: false })

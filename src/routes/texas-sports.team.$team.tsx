@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { listSportsByTeam, type SportsListItem } from "@/lib/sports.functions";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { TEAM_BY_SLUG, isTeamSlug, LEAGUE_META, teamsForLeague, type TeamMeta } from "@/lib/texas-teams";
+import { resolveArticleImage } from "@/lib/seo-headline";
 
 export const Route = createFileRoute("/texas-sports/team/$team")({
   loader: async ({ params }) => {
@@ -39,7 +40,7 @@ function TeamPage() {
   const uniqImg = assignUniqueImages<SportsListItem>(
     items,
     (a) => a.slug,
-    (a) => a.image_url,
+    (a) => resolveArticleImage(a),
     undefined,
     (a) => a.image_hash,
   );
@@ -85,9 +86,7 @@ function TeamPage() {
               params={{ slug: a.slug }}
               className="group block border border-border rounded-md overflow-hidden bg-card hover:shadow-md transition-shadow"
             >
-              {(uniqImg.get(a.slug) ?? a.image_url) && (
-                <img src={uniqImg.get(a.slug) ?? a.image_url ?? ""} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
-              )}
+              <img src={uniqImg.get(a.slug) ?? resolveArticleImage(a)} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
               <div className="p-5">
                 <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
                 <h2 className="mt-2 font-sans text-lg font-semibold text-foreground group-hover:text-primary leading-snug">{a.title}</h2>

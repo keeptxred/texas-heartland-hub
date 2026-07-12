@@ -1,6 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
+import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+
+type NewsSection = { heading: string; paragraphs: string[] };
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function articleBodyText(body: {
+  intro: string[];
+  sections: { heading?: string; paragraphs?: string[]; bullets?: string[] }[];
+  faq?: { q?: string; a?: string }[];
+  keyTakeaways?: string[];
+}): string {
+  const parts: string[] = [];
+  (body.intro ?? []).forEach((p) => parts.push(p));
+  (body.sections ?? []).forEach((s) => {
+    if (s.heading) parts.push(s.heading);
+    (s.paragraphs ?? []).forEach((p) => parts.push(p));
+    (s.bullets ?? []).forEach((p) => parts.push(p));
+  });
+  (body.faq ?? []).forEach((f) => {
+    if (f.q) parts.push(f.q);
+    if (f.a) parts.push(f.a);
+  });
+  (body.keyTakeaways ?? []).forEach((p) => parts.push(p));
+  return parts.join(" ");
+}
 
 const RSS_SOURCES: { name: string; url: string; category: string }[] = [
   { name: "Texas Scorecard", url: "https://texasscorecard.com/feed/", category: "Legislature" },
@@ -167,13 +195,15 @@ DEK (first paragraph + meta description) RULES:
 - Sentence 2 gives the most newsworthy fact.
 
 BODY RULES (required for every picked story):
-- "summary": 2–3 neutral sentences, ≥ 220 characters, expanding the dek with concrete facts drawn from the source blurb. No invented quotes or stats.
-- "relevance": 2–4 sentences explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
+- Every non-evergreen article MUST be at least 2,000 words across summary + relevance + sections + FAQ. There is no upper word limit. Expand until the minimum is met.
+- "summary": a substantial neutral opening section, grounded in concrete facts drawn from the source blurb. No invented quotes or stats.
+- "relevance": a substantial Texas relevance section explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
+- "sections": 5–8 additional H2-style sections, each with 2–4 substantial paragraphs covering background, timeline, stakeholders, local implications, what changes next, and practical reader context.
 - "keyTakeaways": 3–5 short bullet strings.
-- "faq": 2–3 Q&A entries answering the most likely reader questions.
+- "faq": 4–6 Q&A entries answering likely reader questions with substantive answers.
 
 Pick the best ${Math.min(10, items.length)} stories. Return ONLY valid JSON:
-{"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"...","summary":"...","relevance":"...","keyTakeaways":["..."],"faq":[{"q":"...","a":"..."}]}]}
+{"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"...","summary":"...","relevance":"...","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["..."],"faq":[{"q":"...","a":"..."}]}]}
 
 Valid categories: ${CATEGORIES.join(", ")}.
 
@@ -258,6 +288,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           dek: string;
           summary?: string;
           relevance?: string;
+          sections?: NewsSection[];
           keyTakeaways?: string[];
           faq?: { q: string; a: string }[];
         }[];
@@ -283,7 +314,14 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               a.source_index >= 1 &&
               a.source_index <= items.length &&
               typeof a.summary === "string" &&
-              a.summary.trim().length >= 200 &&
+              wordCount(
+                [
+                  a.summary,
+                  a.relevance ?? "",
+                  ...(a.sections ?? []).flatMap((s) => [s.heading, ...(s.paragraphs ?? [])]),
+                  ...(a.faq ?? []).flatMap((f) => [f.q, f.a]),
+                ].join(" "),
+              ) >= 2000 &&
               typeof a.relevance === "string" &&
               a.relevance.trim().length >= 40,
           )
@@ -295,6 +333,27 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               Array.isArray(a.keyTakeaways) && a.keyTakeaways.length > 0
                 ? a.keyTakeaways.slice(0, 5)
                 : [`Source: ${src.source}.`, "Keep TX Red rewrote this update for Texas readers."];
+            const bodyJson = {
+              updated: now.toISOString().slice(0, 10),
+              intro: [a.summary!.trim()],
+              sections: [
+                { heading: "Texas relevance", paragraphs: [a.relevance!.trim()] },
+                ...(Array.isArray(a.sections)
+                  ? a.sections
+                      .filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0)
+                      .slice(0, 10)
+                  : []),
+                {
+                  heading: "Source attribution",
+                  paragraphs: [
+                    `This story was reported using a public release from ${src.source}. Keep TX Red rewrote the coverage independently and links to the original for verification.`,
+                  ],
+                },
+              ],
+              faq: Array.isArray(a.faq) ? a.faq.slice(0, 6) : [],
+              sources: [{ label: `${src.source} — original report`, url: src.link }],
+              keyTakeaways: takeaways,
+            };
             return {
               slug,
               internal_url: `/news/${slug}`,
@@ -308,23 +367,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               score: src.score,
               is_breaking: src.isBreaking,
               kind: "news",
-              body: (a.summary ?? "").slice(0, 4000),
-              body_json: {
-                updated: now.toISOString().slice(0, 10),
-                intro: [a.summary!.trim()],
-                sections: [
-                  { heading: "Texas relevance", paragraphs: [a.relevance!.trim()] },
-                  {
-                    heading: "Source attribution",
-                    paragraphs: [
-                      `This story was reported using a public release from ${src.source}. Keep TX Red rewrote the coverage independently and links to the original for verification.`,
-                    ],
-                  },
-                ],
-                faq: Array.isArray(a.faq) ? a.faq.slice(0, 4) : [],
-                sources: [{ label: `${src.source} — original report`, url: src.link }],
-                keyTakeaways: takeaways,
-              },
+              body: articleBodyText(bodyJson),
+              body_json: bodyJson,
             };
           });
 
@@ -342,6 +386,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           console.error("Insert failed", insertError);
           return Response.json({ error: insertError.message }, { status: 500 });
         }
+
+        await Promise.allSettled(rows.map((row) => generateFeaturedImageForSlugDirect(row.slug, true)));
 
         // 5. Prune anything older than 30 days so the table stays lean.
         const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();

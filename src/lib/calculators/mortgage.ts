@@ -28,7 +28,7 @@ export interface MortgageResults {
   monthlyPMI: number;
   monthlyHOA: number;
 
-  totalMonthlyPayment;
+  totalMonthlyPayment: number;
 
   totalInterest: number;
   totalPayments: number;

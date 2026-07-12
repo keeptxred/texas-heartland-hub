@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { TEAMS, TEAM_BY_SLUG, teamsForLeague, detectTeams, type TeamMeta } from "@/lib/texas-teams";
 import { enrichArticleRow } from "@/lib/content-quality";
+import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 
 const LEAGUES = ["nfl", "mlb", "nba"] as const;
 type League = (typeof LEAGUES)[number];
@@ -178,15 +179,34 @@ type GeneratedBody = {
   sources: { label: string; url: string }[];
 };
 
+function articleBodyText(body: {
+  intro?: string[];
+  sections?: { heading?: string; paragraphs?: string[]; bullets?: string[] }[];
+  faq?: { q?: string; a?: string }[];
+}): string {
+  const parts: string[] = [];
+  (body.intro ?? []).forEach((p) => parts.push(p));
+  (body.sections ?? []).forEach((s) => {
+    if (s.heading) parts.push(s.heading);
+    (s.paragraphs ?? []).forEach((p) => parts.push(p));
+    (s.bullets ?? []).forEach((p) => parts.push(p));
+  });
+  (body.faq ?? []).forEach((f) => {
+    if (f.q) parts.push(f.q);
+    if (f.a) parts.push(f.a);
+  });
+  return parts.join(" ");
+}
+
 async function generate(topic: string, subject: string, lovableApiKey: string): Promise<GeneratedBody> {
   const system = `You are a Texas sports writer for Keep TX Red. Write a weekly evergreen-style overview about ${subject} in a clear, fan-friendly tone. Stay factual and timeless — describe ongoing storylines, team identity, recent seasons, and what fans should watch for. Do NOT invent specific scores, dates, injuries, trades, or quotes. Reference only publicly known team facts and rosters.
 
 REQUIREMENTS:
 - Title: keyword-rich, under 75 characters, must include a Texas team or city name.
 - dek: 140-220 characters, fan-oriented summary.
-- Body length: 900-1400 words.
-- 4-6 H2 sections.
-- 4-6 FAQ entries common Texas sports fans ask.
+- Body length: minimum 2,000 words. There is no upper word limit. Expand with team context, roster identity, coaching philosophy, season stakes, fan impact, schedule context, venue context, and practical reader questions until the minimum is met.
+- 6-9 H2 sections with 2-4 substantial paragraphs each.
+- 5-8 FAQ entries common Texas sports fans ask, with substantive answers.
 - 3-5 official source links (team .com pages, ESPN, league .com).
 - 8-14 keywords.
 
@@ -241,12 +261,6 @@ async function generateForTeam(
   const topicPool = available.length > 0 ? available : pool;
   const topic = topicPool[Math.floor(Math.random() * topicPool.length)];
 
-  const recentImages = new Set(recentRows.slice(0, 3).map((r) => r.image_url ?? ""));
-  const imagePool = LEAGUE_IMAGE_FALLBACK[team.league] ?? LEAGUE_IMAGES.nfl;
-  const freshImages = imagePool.filter((u) => !recentImages.has(u));
-  const imageChoices = freshImages.length > 0 ? freshImages : imagePool;
-  const image_url = imageChoices[Math.floor(Math.random() * imageChoices.length)];
-
   const gen = await generate(topic, team.name, lovableApiKey);
   if (!gen?.title || !gen?.dek || !Array.isArray(gen.sections) || gen.sections.length < 3) {
     return { error: "Bad AI output" };
@@ -280,15 +294,17 @@ async function generateForTeam(
     author: "Keep TX Red Sports Desk",
     source_name: null as string | null,
     source_url: null as string | null,
-    image_url,
+    image_url: null as string | null,
     published_at: now.toISOString(),
     keywords: (gen.keywords ?? []).slice(0, 20),
     body_json: cleanBody,
+    body: articleBodyText(cleanBody),
     teams,
   };
   enrichArticleRow(row);
   const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
   if (error) return { error: error.message };
+  await generateFeaturedImageForSlugDirect(slug, true);
   return { slug };
 }
 
