@@ -4,6 +4,7 @@ import { detectDiscoverCategory } from "@/lib/seo-headline";
 import { scoreDiscoverMatch, type HeadlineVariants } from "@/lib/ctr-score";
 import { getArticleImage } from "@/lib/fallback-images";
 import { enrichArticleRow } from "@/lib/content-quality";
+import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
 // src/lib/fallback-images.ts. AI batch classifier tags each new article with
@@ -222,10 +223,38 @@ type Rewrite = {
   summary: string;
   relevance: string;
   analysis?: string;
+  sections?: { heading: string; paragraphs: string[] }[];
   keyTakeaways: string[];
   faq?: { q: string; a: string }[];
   category?: string;
 };
+
+type GeneratedArticleBody = {
+  intro: string[];
+  sections: { heading?: string; paragraphs?: string[]; bullets?: string[] }[];
+  faq?: { q?: string; a?: string }[];
+  keyTakeaways?: string[];
+};
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function articleBodyText(body: GeneratedArticleBody): string {
+  const parts: string[] = [];
+  (body.intro ?? []).forEach((p) => parts.push(p));
+  (body.sections ?? []).forEach((s) => {
+    if (s.heading) parts.push(s.heading);
+    (s.paragraphs ?? []).forEach((p) => parts.push(p));
+    (s.bullets ?? []).forEach((p) => parts.push(p));
+  });
+  (body.faq ?? []).forEach((f) => {
+    if (f.q) parts.push(f.q);
+    if (f.a) parts.push(f.a);
+  });
+  (body.keyTakeaways ?? []).forEach((p) => parts.push(p));
+  return parts.join(" ");
+}
 
 const REWRITE_SYSTEM = `You are the Keep TX Red editorial engine. Rewrite a Texas news item from an official source into a fully ORIGINAL article for keeptxred.com.
 
@@ -236,15 +265,17 @@ HARD RULES:
 - Meta description (dek) MUST be <= 155 characters.
 - Title must be SEO-optimized, original, and not resemble the source headline.
 - 5–10 lowercase keywords, Texas-specific where possible.
-- MINIMUM LENGTH: summary + relevance + analysis combined MUST be at least 600 words of original prose. Expand context, background, and impact until the threshold is met.
+- MINIMUM LENGTH: every non-evergreen article MUST be at least 2,000 words of original prose across summary + relevance + analysis + sections + FAQ. There is no upper word limit. Do not summarize briefly; expand with source-grounded context, background, stakeholders, local impact, timeline, what changes next, and reader questions until the 2,000-word minimum is met.
 - TEXAS RELEVANCE IS REQUIRED — the "relevance" field must always name Texas or a specific Texas city/region and explain the local stake, even if the source is national.
 - Add a short original CONTEXT paragraph (history, prior action, comparable state precedent) inside the "summary" or as the first sentences of "relevance".
+- Include 5–8 additional article sections in "sections". Each section must have a clear heading and 2–4 substantial paragraphs. Do not use filler, generic slogans, or repeated paragraphs.
+- FAQ answers should be substantial enough to help readers, not one-line answers.
 - Output VALID JSON only matching the schema below.
 
 CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Business, Sports, Education, Non-Political. Use "Non-Political" for human-interest, animals, viral, culture, festivals, weather, travel, lifestyle, entertainment, science, and parks/wildlife stories. Do NOT use Education as a fallback — only true school/academic policy.
 
 SCHEMA:
-{"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"2-3 sentence neutral summary","relevance":"why this matters to Texas (2-4 sentences)","analysis":"optional labeled editorial interpretation, or omit","keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}],"category":"one of the allowed values"}`;
+{"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"substantial opening section","relevance":"substantial Texas relevance section","analysis":"optional labeled editorial interpretation, or omit","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}],"category":"one of the allowed values"}`;
 
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
   try {
@@ -262,20 +293,27 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
         ],
         response_format: { type: "json_object" },
       }),
-      signal: AbortSignal.timeout(20000),
+        signal: AbortSignal.timeout(90000),
     });
     if (!r.ok) return null;
     const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
     const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Rewrite;
     if (!parsed?.title || !parsed?.summary || !parsed?.dek) return null;
     if (!parsed?.relevance || parsed.relevance.trim().length < 40) return null;
-    const hasBody =
-      (parsed.summary && parsed.summary.trim().length >= 200) ||
-      (Array.isArray(parsed.keyTakeaways) && parsed.keyTakeaways.length >= 3);
-    if (!hasBody) return null;
+    const prose = [
+      parsed.summary,
+      parsed.relevance,
+      parsed.analysis ?? "",
+      ...(parsed.sections ?? []).flatMap((s) => [s.heading, ...(s.paragraphs ?? [])]),
+      ...(parsed.faq ?? []).flatMap((f) => [f.q, f.a]),
+    ].join(" ");
+    if (wordCount(prose) < 1900) return null;
     parsed.dek = parsed.dek.slice(0, 155);
     parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
     parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
+    parsed.sections = (parsed.sections ?? [])
+      .filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0)
+      .slice(0, 10);
     return parsed;
   } catch {
     return null;
@@ -303,6 +341,11 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
       paragraphs: [rw?.relevance ?? `This update from the ${it.source} affects Texans and is being tracked by the Keep TX Red newsroom.`],
     },
   ];
+  for (const section of rw?.sections ?? []) {
+    if (section.heading && Array.isArray(section.paragraphs) && section.paragraphs.length > 0) {
+      sections.push({ heading: section.heading, paragraphs: section.paragraphs });
+    }
+  }
   if (rw?.analysis) {
     sections.push({ heading: "Analysis", paragraphs: [rw.analysis] });
   }
@@ -313,6 +356,21 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
     ],
   });
 
+  const bodyJson = dedupeArticleBody({
+    updated: it.pub_date.slice(0, 10),
+    intro: [rw?.summary ?? it.description ?? `${it.source} released a new update for Texans.`],
+    sections,
+    faq: rw?.faq ?? [],
+    sources: [{ label: `${it.source} — official release`, url: it.link }],
+    keyTakeaways:
+      rw?.keyTakeaways && rw.keyTakeaways.length > 0
+        ? rw.keyTakeaways
+        : [
+            `Source: ${it.source}.`,
+            "Keep TX Red rewrites every ingested story into original editorial coverage.",
+          ],
+  });
+
   return {
     slug,
     internal_url: `/news/${slug}`,
@@ -320,7 +378,7 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
     category: cat,
     title: baseTitle.slice(0, 200),
     dek: (rw?.dek ?? (it.description || it.title)).slice(0, 155),
-    body: rw?.summary ?? it.description ?? "",
+    body: articleBodyText(bodyJson),
     author: "Keep TX Red Newsroom",
     source_name: it.source,
     source_url: it.link,
@@ -329,20 +387,7 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
     is_breaking: false,
     score: 0,
     keywords: rw?.keywords ?? [],
-    body_json: dedupeArticleBody({
-      updated: it.pub_date.slice(0, 10),
-      intro: [rw?.summary ?? it.description ?? `${it.source} released a new update for Texans.`],
-      sections,
-      faq: rw?.faq ?? [],
-      sources: [{ label: `${it.source} — official release`, url: it.link }],
-      keyTakeaways:
-        rw?.keyTakeaways && rw.keyTakeaways.length > 0
-          ? rw.keyTakeaways
-          : [
-              `Source: ${it.source}.`,
-              "Keep TX Red rewrites every ingested story into original editorial coverage.",
-            ],
-    }),
+    body_json: bodyJson,
   };
 }
 
@@ -544,6 +589,9 @@ async function handler() {
       .upsert(articleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
     if (!artErr) {
       nativeMinted = artCount ?? articleRows.length;
+      await Promise.allSettled(
+        articleRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
+      );
       // Write the internal slug back onto the feed row so cards can link to it.
       await Promise.all(
         articleRows.map((row: { slug: string }, i: number) =>
@@ -584,6 +632,9 @@ async function handler() {
       await supabaseAdmin
         .from("daily_articles")
         .upsert(backRows, { onConflict: "slug", ignoreDuplicates: true });
+      await Promise.allSettled(
+        backRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
+      );
       await Promise.all(
         backRows.map((row, i) =>
           supabaseAdmin.from("texas_news_feed").update({ internal_slug: row.slug }).eq("link", paired[i].it.link),
