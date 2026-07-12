@@ -307,7 +307,7 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
       ...(parsed.sections ?? []).flatMap((s) => [s.heading, ...(s.paragraphs ?? [])]),
       ...(parsed.faq ?? []).flatMap((f) => [f.q, f.a]),
     ].join(" ");
-    if (wordCount(prose) < 1900) return null;
+    if (wordCount(prose) < 2000) return null;
     parsed.dek = parsed.dek.slice(0, 155);
     parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
     parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);

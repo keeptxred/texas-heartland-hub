@@ -321,7 +321,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
                   ...(a.sections ?? []).flatMap((s) => [s.heading, ...(s.paragraphs ?? [])]),
                   ...(a.faq ?? []).flatMap((f) => [f.q, f.a]),
                 ].join(" "),
-              ) >= 1900 &&
+              ) >= 2000 &&
               typeof a.relevance === "string" &&
               a.relevance.trim().length >= 40,
           )
