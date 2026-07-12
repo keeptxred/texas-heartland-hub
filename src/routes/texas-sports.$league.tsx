@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { listSportsByLeague, type SportsListItem } from "@/lib/sports.functions";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { teamsForLeague, detectTeams, type TeamMeta } from "@/lib/texas-teams";
+import { resolveArticleImage } from "@/lib/seo-headline";
 
 const LEAGUE_META: Record<string, { name: string; title: string; desc: string; teams: string }> = {
   nfl: {
@@ -56,7 +57,7 @@ function LeaguePage() {
   const uniqImg = assignUniqueImages<SportsListItem>(
     items,
     (a) => a.slug,
-    (a) => a.image_url,
+    (a) => resolveArticleImage(a),
     undefined,
     (a) => a.image_hash,
   );
@@ -125,9 +126,7 @@ function LeaguePage() {
                         params={{ slug: a.slug }}
                         className="group block border border-border rounded-md overflow-hidden bg-card hover:shadow-md transition-shadow"
                       >
-                        {(uniqImg.get(a.slug) ?? a.image_url) && (
-                          <img src={uniqImg.get(a.slug) ?? a.image_url ?? ""} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
-                        )}
+                        <img src={uniqImg.get(a.slug) ?? resolveArticleImage(a)} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
                         <div className="p-5">
                           <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{t.short}</span>
                           <h3 className="mt-2 font-sans text-lg font-semibold text-foreground group-hover:text-primary leading-snug">{a.title}</h3>
@@ -157,9 +156,7 @@ function LeaguePage() {
                     params={{ slug: a.slug }}
                     className="group block border border-border rounded-md overflow-hidden bg-card hover:shadow-md transition-shadow"
                   >
-                    {(uniqImg.get(a.slug) ?? a.image_url) && (
-                      <img src={uniqImg.get(a.slug) ?? a.image_url ?? ""} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
-                    )}
+                    <img src={uniqImg.get(a.slug) ?? resolveArticleImage(a)} alt={a.title} loading="lazy" className="w-full h-44 object-cover" />
                     <div className="p-5">
                       <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
                       <h3 className="mt-2 font-sans text-lg font-semibold text-foreground group-hover:text-primary leading-snug">{a.title}</h3>
