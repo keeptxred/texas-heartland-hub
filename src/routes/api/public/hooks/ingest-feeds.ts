@@ -5,6 +5,7 @@ import { scoreDiscoverMatch, type HeadlineVariants } from "@/lib/ctr-score";
 import { getArticleImage } from "@/lib/fallback-images";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
 
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
 // src/lib/fallback-images.ts. AI batch classifier tags each new article with
@@ -602,22 +603,47 @@ async function handler() {
 
     articleRows.forEach((r) => enrichArticleRow(r));
 
+    // Deduplicate: (1) collapse near-duplicate titles within this batch,
+    // (2) drop anything whose title matches an article published in the
+    // last 7 days. Same story, different wording must never appear twice.
+    const withinBatch = dedupeByTitle(articleRows as Array<{ title: string; slug: string }>);
+    const sinceIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: recent } = await supabaseAdmin
+      .from("daily_articles")
+      .select("title")
+      .gte("published_at", sinceIso);
+    const recentTitles = (recent ?? []).map((r: { title: string }) => r.title);
+    const dedupedSlugs = new Set(
+      withinBatch
+        .filter((r) => !recentTitles.some((t) => isDuplicateTitle(t, r.title)))
+        .map((r) => r.slug),
+    );
+    const uniqueArticleRows = articleRows.filter((r) => dedupedSlugs.has(r.slug));
+    if (uniqueArticleRows.length === 0) {
+      return new Response(
+        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, dedupedAll: true }),
+        { headers: { "Content-Type": "application/json" } },
+      );
+    }
+
     const { error: artErr, count: artCount } = await supabaseAdmin
       .from("daily_articles")
-      .upsert(articleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
+      .upsert(uniqueArticleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
     if (!artErr) {
-      nativeMinted = artCount ?? articleRows.length;
+      nativeMinted = artCount ?? uniqueArticleRows.length;
       await Promise.allSettled(
-        articleRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
+        uniqueArticleRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
       );
       // Write the internal slug back onto the feed row so cards can link to it.
       await Promise.all(
-        articleRows.map((row: { slug: string }, i: number) =>
-          supabaseAdmin
+        uniqueArticleRows.map((row: { slug: string }) => {
+          const originalIndex = articleRows.findIndex((r) => r.slug === row.slug);
+          const src = articleSourceItems[originalIndex];
+          return supabaseAdmin
             .from("texas_news_feed")
             .update({ internal_slug: row.slug })
-            .eq("link", articleSourceItems[i].link),
-        ),
+            .eq("link", src.link);
+        }),
       );
     }
   }

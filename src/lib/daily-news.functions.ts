@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
+import { dedupeByTitle } from "@/lib/title-similarity";
 
 export type DailyArticle = {
   slug: string;
@@ -103,5 +104,8 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
     return a;
   });
 
-  return { articles: [...liveBreaking, ...dailyRotated] };
+  // Global near-duplicate title guard: same story rewritten by two sources must
+  // never render twice on the homepage/breaking strip.
+  const merged = dedupeByTitle([...liveBreaking, ...dailyRotated]);
+  return { articles: merged };
 });
