@@ -55,9 +55,20 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
     .not("internal_slug", "is", null)
     .gte("pub_date", sinceIso)
     .order("pub_date", { ascending: false })
-    .limit(6);
+    .limit(12);
 
-  const liveBreaking: DailyArticle[] = (feed ?? []).map((row) => ({
+  const isPuzzle = (t: string) => {
+    const s = (t || "").toLowerCase();
+    return (
+      /\bcrossword\b/.test(s) ||
+      /\bsudoku\b/.test(s) ||
+      /\bword\s*(game|search|jumble)\b/.test(s) ||
+      /\b(daily|weekly)\s+puzzle\b/.test(s) ||
+      /\bpuzzle\s+(for|of\s+the\s+day)\b/.test(s) ||
+      /\bmini\s+puzzle\b/.test(s)
+    );
+  };
+  const liveBreaking: DailyArticle[] = (feed ?? []).filter((row) => !isPuzzle(row.title)).slice(0, 6).map((row) => ({
     slug: row.internal_slug as string,
     category: row.source ?? "Live",
     title: row.title,
