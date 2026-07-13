@@ -412,6 +412,9 @@ function parseFeed(xml: string, source: string): Item[] {
       if (/^(pdf|html|rss|xml|word|doc|docx|txt|text|epub)\s*(format|version)?$/.test(t)) {
         continue;
       }
+      // Skip daily puzzle / crossword / word-game filler that some lifestyle
+      // feeds (Texas Monthly, etc.) publish every day. They aren't news.
+      if (isPuzzleTitle(title)) continue;
       items.push({
         title: title.slice(0, 500),
         link,
