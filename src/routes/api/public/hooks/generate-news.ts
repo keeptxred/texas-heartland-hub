@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+import { isPuzzleTitle } from "./ingest-feeds";
 
 type NewsSection = { heading: string; paragraphs: string[] };
 
@@ -142,7 +143,7 @@ function scoreAndFilter(items: RssItem[]): ScoredItem[] {
       const score = scoreItem(it, reps);
       return { ...it, score, isBreaking: score >= 18 };
     })
-    .filter((it) => it.score >= 12)
+    .filter((it) => it.score >= 12 && !isPuzzleTitle(it.title))
     .sort((a, b) => b.score - a.score)
     .slice(0, 20);
 }
