@@ -190,6 +190,21 @@ function slugify(s: string): string {
     .slice(0, 70);
 }
 
+// Block daily puzzle / crossword / word-game filler that some lifestyle
+// feeds (Texas Monthly, etc.) publish every day. Matches variants like
+// "The Daily Crossword", "Daily Puzzle for ...", "Word Game", "Sudoku".
+export function isPuzzleTitle(title: string): boolean {
+  const t = title.toLowerCase();
+  return (
+    /\bcrossword\b/.test(t) ||
+    /\bsudoku\b/.test(t) ||
+    /\bword\s*(game|search|jumble)\b/.test(t) ||
+    /\b(daily|weekly)\s+puzzle\b/.test(t) ||
+    /\bpuzzle\s+(for|of\s+the\s+day)\b/.test(t) ||
+    /\bmini\s+puzzle\b/.test(t)
+  );
+}
+
 function hashStr(s: string): string {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
@@ -412,6 +427,9 @@ function parseFeed(xml: string, source: string): Item[] {
       if (/^(pdf|html|rss|xml|word|doc|docx|txt|text|epub)\s*(format|version)?$/.test(t)) {
         continue;
       }
+      // Skip daily puzzle / crossword / word-game filler that some lifestyle
+      // feeds (Texas Monthly, etc.) publish every day. They aren't news.
+      if (isPuzzleTitle(title)) continue;
       items.push({
         title: title.slice(0, 500),
         link,
