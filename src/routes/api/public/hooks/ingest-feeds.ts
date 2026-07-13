@@ -5,6 +5,7 @@ import { scoreDiscoverMatch, type HeadlineVariants } from "@/lib/ctr-score";
 import { getArticleImage } from "@/lib/fallback-images";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
 
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
 // src/lib/fallback-images.ts. AI batch classifier tags each new article with
