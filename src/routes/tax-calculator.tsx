@@ -67,6 +67,17 @@ export const Route = createFileRoute("/tax-calculator")({
           })),
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 2, name: "Texas Property Tax Calculator", item: "https://www.keeptxred.com/tax-calculator" },
+          ],
+        }),
+      },
     ],
   }),
   component: TaxPage,
@@ -118,7 +129,7 @@ function TaxPage() {
         </div>
 
         <div className="mt-10 bg-muted border-l-4 border-primary p-6">
-          <h3 className="font-display text-2xl mb-2 tracking-tight">How Texas Property Taxes Work</h3>
+          <h2 className="font-display text-2xl mb-2 tracking-tight">How Texas Property Taxes Work</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Texas has no state income tax — local governments fund themselves through property taxes. Your annual bill is the sum of levies from your county, city, school district (ISD), and any special districts (hospital, MUD, college). The school district line item is almost always the largest, and the 2023 homestead exemption raised the ISD exemption to $100,000 of appraised value for owner-occupied homes.
           </p>
@@ -181,7 +192,7 @@ function TaxPage() {
         </div>
 
         <div className="mt-12 bg-muted border-l-4 border-primary p-6">
-          <h3 className="font-display text-xl mb-2 tracking-tight">Related Reading</h3>
+          <h2 className="font-display text-xl mb-2 tracking-tight">Related Reading</h2>
           <ul className="text-sm space-y-2">
             <li>
               <Link to="/texas/$slug" params={{ slug: "why-texas-has-no-income-tax" }} className="text-primary underline">
