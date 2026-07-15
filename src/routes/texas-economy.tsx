@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
 
@@ -50,7 +51,9 @@ function TexasEconomyPage() {
             local school districts and counties lean on appraisals — and appraisals have risen sharply
             as new residents bid up home prices. The Legislature's ongoing property-tax-relief packages,
             the homestead exemption, and the appraisal protest process are the tools every Texas
-            homeowner needs to understand. Our coverage below walks through each of them.
+            homeowner needs to understand. Use our{" "}
+            <Link to="/tax-calculator" className="underline text-primary">Texas property tax calculator</Link>{" "}
+            to estimate your Texas property taxes by county and ISD. Our coverage below walks through each of them.
           </p>
         </div>
       </section>
