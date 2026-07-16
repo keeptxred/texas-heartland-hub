@@ -5,6 +5,8 @@
 // Every helper is safe to call on a partially populated row; missing
 // input simply produces a lower score / empty output.
 
+import { articleMainWordCount, requiredMainWordCountForKind } from "@/lib/article-length";
+
 export type QualityRow = {
   slug: string;
   title?: string | null;
@@ -225,7 +227,8 @@ export function scoreQuality(row: QualityRow): QualityResult {
   const flags: string[] = [];
   let score = 0;
   const text = bodyToText(row);
-  const wc = text.trim().split(/\s+/).filter(Boolean).length;
+  const wc = articleMainWordCount(row.body_json as never) || text.trim().split(/\s+/).filter(Boolean).length;
+  const requiredWords = requiredMainWordCountForKind(row.kind);
 
   // Structural fields
   if (row.title && row.title.trim().length >= 20) score += 10; else flags.push("weak_title");
@@ -235,9 +238,9 @@ export function scoreQuality(row: QualityRow): QualityResult {
   if (row.image_url) score += 10; else flags.push("missing_image");
 
   // Body substance
-  if (wc >= 250) score += 10;
-  if (wc >= 600) score += 15;
-  if (wc < 200) flags.push("thin_body");
+  if (wc >= Math.floor(requiredWords / 2)) score += 10;
+  if (wc >= requiredWords) score += 15;
+  if (wc < requiredWords) flags.push("thin_body");
 
   // Required editorial sections (heuristic match on rendered text)
   const has = (needle: RegExp) => needle.test(text);

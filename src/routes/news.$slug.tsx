@@ -9,6 +9,7 @@ import { buildSeo, SITE_URL } from "@/lib/seo";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { resolveArticleImage } from "@/lib/seo-headline";
 import { resolveDisplayHeadline, type HeadlineVariants } from "@/lib/ctr-score";
+import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { useEffect } from "react";
 
 export const Route = createFileRoute("/news/$slug")({
@@ -36,6 +37,7 @@ export const Route = createFileRoute("/news/$slug")({
       (s) => !(s.paragraphs ?? []).some((p) => stubPattern.test(p)),
     );
     if (nonStubSections.length === 0 && introText.length < 200) throw notFound();
+    if (!meetsArticleMainWordCount(ever.kind, ever.body)) throw notFound();
     const allowed = ["Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
     const cat = (allowed as readonly string[]).includes(ever.category) ? (ever.category as Article["category"]) : "Legislature";
     const synth: Article = {

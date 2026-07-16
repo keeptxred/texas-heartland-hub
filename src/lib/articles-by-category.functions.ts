@@ -9,6 +9,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { CATEGORY_SLUG_TO_NAME, isCategorySlug } from "./articles-by-category";
+import { meetsArticleMainWordCount } from "@/lib/article-length";
 
 export type LiveArticleRow = {
   slug: string;
@@ -49,15 +50,18 @@ export const getLiveArticlesByCategory = createServerFn({ method: "GET" })
     const { data: rows, error } = await supabase
       .from("daily_articles")
       .select(
-        "slug,title,dek,category,image_url,image_category,image_hash,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,kind",
+        "slug,title,dek,category,image_url,image_category,image_hash,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,kind,body_json",
       )
       .eq("category", categoryName)
       .order("published_at", { ascending: false })
-      .limit(24);
+      .limit(80);
 
     if (error) {
       console.error("getLiveArticlesByCategory failed", error);
       return [];
     }
-    return (rows ?? []) as LiveArticleRow[];
+    return ((rows ?? []) as (LiveArticleRow & { body_json?: unknown })[])
+      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
+      .slice(0, 24)
+      .map(({ body_json: _bodyJson, ...row }) => row);
   });
