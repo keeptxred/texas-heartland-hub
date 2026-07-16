@@ -521,10 +521,11 @@ async function handler() {
     const paired = fresh
       .map((it, i) => ({ it, rw: rewrites[i] }))
       .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
-    const articleRows = paired
-      .map(({ it, rw }) => buildArticleRow(it, rw))
-      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json));
-    const articleSourceItems = paired.map(({ it }) => it);
+    const pairedRows = paired
+      .map(({ it, rw }) => ({ it, row: buildArticleRow(it, rw) }))
+      .filter(({ row }) => meetsArticleMainWordCount(row.kind, row.body_json));
+    const articleRows = pairedRows.map(({ row }) => row);
+    const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
     if (articleRows.length === 0) {
       return new Response(
         JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length }),
@@ -639,8 +640,8 @@ async function handler() {
       // Write the internal slug back onto the feed row so cards can link to it.
       await Promise.all(
         uniqueArticleRows.map((row: { slug: string }) => {
-          const originalIndex = articleRows.findIndex((r) => r.slug === row.slug);
-          const src = articleSourceItems[originalIndex];
+          const src = articleSourceBySlug.get(row.slug);
+          if (!src) return Promise.resolve();
           return supabaseAdmin
             .from("texas_news_feed")
             .update({ internal_slug: row.slug })
