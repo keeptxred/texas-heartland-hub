@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { TEAM_BY_SLUG, isTeamSlug } from "./texas-teams";
+import { meetsArticleMainWordCount } from "@/lib/article-length";
 
 export type SportsListItem = {
   slug: string;
@@ -39,12 +40,16 @@ export const listSportsByLeague = createServerFn({ method: "GET" })
     if (!supabase) return { items: [] };
     const { data: rows, error } = await supabase
       .from("daily_articles")
-      .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams")
+      .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams,kind,body_json")
       .eq("kind", `sports-${data.league}`)
       .order("published_at", { ascending: false })
-      .limit(50);
+      .limit(100);
     if (error || !rows) return { items: [] };
-    return { items: rows as SportsListItem[] };
+    const items = (rows as (SportsListItem & { kind?: string | null; body_json?: unknown })[])
+      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
+      .slice(0, 50)
+      .map(({ kind: _kind, body_json: _bodyJson, ...row }) => row);
+    return { items };
   });
 
 /** Team page feed: an article shows up on a team page if either
@@ -63,7 +68,7 @@ export const listSportsByTeam = createServerFn({ method: "GET" })
     // Primary: canonical tag match.
     const canonical = await supabase
       .from("daily_articles")
-      .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams")
+      .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams,kind,body_json")
       .contains("teams", [team.slug])
       .order("published_at", { ascending: false })
       .limit(50);
@@ -80,19 +85,21 @@ export const listSportsByTeam = createServerFn({ method: "GET" })
     const legacy = keywordOr
       ? await supabase
           .from("daily_articles")
-          .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams")
+          .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams,kind,body_json")
           .eq("kind", kindFilter)
           .or(keywordOr)
           .order("published_at", { ascending: false })
           .limit(50)
       : { data: [], error: null as unknown };
 
-    const merged = new Map<string, SportsListItem>();
-    for (const r of (canonical.data ?? []) as SportsListItem[]) merged.set(r.slug, r);
-    for (const r of (legacy.data ?? []) as SportsListItem[]) if (!merged.has(r.slug)) merged.set(r.slug, r);
+    const merged = new Map<string, SportsListItem & { kind?: string | null; body_json?: unknown }>();
+    for (const r of (canonical.data ?? []) as (SportsListItem & { kind?: string | null; body_json?: unknown })[]) merged.set(r.slug, r);
+    for (const r of (legacy.data ?? []) as (SportsListItem & { kind?: string | null; body_json?: unknown })[]) if (!merged.has(r.slug)) merged.set(r.slug, r);
 
     const items = Array.from(merged.values()).sort(
       (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime(),
-    );
+    )
+      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
+      .map(({ kind: _kind, body_json: _bodyJson, ...row }) => row);
     return { items };
   });
