@@ -1,10 +1,10 @@
 # Project Memory
 
 ## Core
-Every evergreen article must follow the Evergreen article spec — neutral tone, required sections (Overview, Why This Matters, Impact on Texans, Historical Context, topical-authority), 900–1,400 words, Key Takeaways box, "Keep Texas Red Editorial Staff" byline + /about bio, 3–5 internal links incl. /glossary + category page, Last updated date.
+Evergreen articles publish only with 5,000+ words of main story prose, excluding Texas relevance, attribution, FAQ, takeaways, sources, title, and dek.
 No duplicate images on any single page of the site.
 Homepage "Featured Stories" must rotate to a new lead + featured set every calendar day (America/Chicago).
-Every page and article must clear 800 words. When short, append modular PageExpansion blocks (perspective + 3–5 sections + FAQs + summary) — never regenerate. Every article must include one Texas-specific original perspective block and a Reader Questions block.
+Non-evergreen articles publish only with 2,000+ words of main story prose, excluding Texas relevance, attribution, FAQ, takeaways, sources, title, and dek.
 Mobile perf is HEAD-only: lazy-load every non-LCP image, preload the LCP image with fetchpriority="high", keep AdSense async, dns-prefetch + preconnect ad/font hosts, never rewrite components for perf.
 Every ingested or generated article must be fully rewritten (no source phrasing, ≤10-word quotes) with Summary + Texas Relevance + optional labeled Analysis + 3–5 Key Takeaways, dek ≤155 chars, and 5–10 keywords.
 

@@ -21,6 +21,12 @@ Stored on `daily_articles.body_json`:
 - `faq` → optional Q&A
 - `sources` → official link with attribution
 
+## Word-count publish gate
+- Non-evergreen articles require 2,000+ words of main story prose.
+- Evergreen articles require 5,000+ words of main story prose.
+- Do not count title, dek, Texas relevance, source attribution, FAQ, Reader Questions, key takeaways, sources, or other boilerplate toward the minimum.
+- If a rewrite or generator returns less than the required main-body count, block publishing instead of inserting a stub or fallback article.
+
 ## SEO
 - `title` = original SEO headline (not source wording)
 - `dek` = meta description, MAX 155 characters

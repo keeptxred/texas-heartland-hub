@@ -1,18 +1,24 @@
 ---
-name: Content quality rules (800-word, 60% coverage, 60% originality)
-description: Global minimums for every page and article — word count, reader-question coverage, originality, and credit-optimized expansion pattern
+name: Content quality rules (2,000/5,000-word article gates, 60% coverage, 60% originality)
+description: Global minimums for pages and articles — article main-body word count, reader-question coverage, originality, and expansion pattern
 type: feature
 ---
 # Content Quality Rules
 
-## Word Count (800+ words, hard minimum)
-Every page and article must clear 800 words of rendered prose. When a page is short, DO NOT regenerate — APPEND modular blocks via `src/components/page-expansion.tsx` (PageExpansion):
+## Article Word Count (hard publish gates)
+Every non-evergreen article must contain at least 2,000 words of main story prose.
+Every evergreen article must contain at least 5,000 words of main story prose.
+
+The article word count does NOT include title, dek, Texas relevance, source attribution, FAQ, Reader Questions, key takeaways, sources, or other boilerplate/metadata. If the main body is short, the article must not publish or render.
+
+## Page Word Count (800+ words, hard minimum)
+Every non-article page must clear 800 words of rendered prose. When a page is short, DO NOT regenerate — APPEND modular blocks via `src/components/page-expansion.tsx` (PageExpansion):
 - 3–5 concise sections (100–150 words each)
 - 4–6 FAQs (50–100 words each)
 - One summary block (50–75 words)
 - One originality "Texas Angle" block (100–150 words)
 
-Applies to: Homepage, About, Contact, Contact Legislators, Dashboard, and all future pages. Reject any new page lacking expansion-ready sections.
+Applies to: Homepage, About, Contact, Contact Legislators, Dashboard, and all future non-article pages. Reject any new page lacking expansion-ready sections.
 
 ## Reader Question Coverage (target 60%)
 Every article must answer reader questions across funnel stages:
