@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
+import { EVERGREEN_MIN_MAIN_WORDS, articleMainWordCount } from "@/lib/article-length";
 
 const TOPICS: { category: string; topic: string }[] = [
   { category: "Tax & Spending", topic: "How Texas keeps property taxes high and what homeowners can do about it" },
@@ -83,7 +84,7 @@ async function generate(topic: string, category: string, lovableApiKey: string):
   const isTexasNews = TEXAS_NEWS_CATEGORIES.has(category);
 
   const toneBlock = isTexasNews
-    ? `TONE: Texas pride, neutral-to-proud, informational. This is an evergreen Texas News piece about culture, economy, housing, jobs, migration, or lifestyle — NOT breaking news, NOT emergency alerts, NOT government announcements, NOT legislative updates. Do not cover police scenes, urgent weather warnings, or partisan political figures. Keep the framing on long-term Texas identity, growth, and daily life. Length target: 800–1500 words.`
+    ? `TONE: Texas pride, neutral-to-proud, informational. This is an evergreen Texas News piece about culture, economy, housing, jobs, migration, or lifestyle — NOT breaking news, NOT emergency alerts, NOT government announcements, NOT legislative updates. Do not cover police scenes, urgent weather warnings, or partisan political figures. Keep the framing on long-term Texas identity, growth, and daily life. Length target: minimum ${EVERGREEN_MIN_MAIN_WORDS} words of main story prose.`
     : `TONE: neutral, factual, educational. Avoid opinionated or partisan language.`;
 
   const internalLinksBlock = isTexasNews
@@ -106,7 +107,7 @@ SEO REQUIREMENTS:
 - CTR BOOST: strongly prefer one of these framings in the title when natural: "What This Means for Texans", "The Real Reason Behind …", "… Explained Simply", "Most People Don't Realize …", or "What's Actually Changing in Texas in 2026". Use Texas-identity language. FORBIDDEN: generic informational titles ("A Guide to X", "Overview of Y"), repetitive/templated headlines, or stale news phrasing ("Breaking:", "Update:").
 - dek: 140-220 characters, naturally include 1-2 Texas keywords, summarize the actual content.
 - OPENING HOOK (REQUIRED): the FIRST sentence of intro[0] must be an emotional-curiosity hook using Texas-identity language. Good examples: "Texas is changing faster than most people realize.", "The reality in Texas is more complex than it looks.", "Here's what actually matters in Texas in 2026.". Do NOT start with "In this article" or a dry definition.
-- Total body length: 900-1400 words across intro + sections. HARD MINIMUM 800 words — reject your own draft and add sections if shorter.
+ - MAIN STORY LENGTH: at least ${EVERGREEN_MIN_MAIN_WORDS} words across intro + article sections only. Do NOT count FAQ, keyTakeaways, sources, source attribution, Texas relevance boilerplate, title, or dek toward the minimum. There is no upper word limit. Reject your own draft and add substantial sections if the main story prose is shorter.
 - 8-14 keywords.
 - 3-5 official .gov / well-known source links.
 - 4-6 FAQ entries (real questions Texans ask).
@@ -117,7 +118,7 @@ REQUIRED SECTIONS (in this order, use these exact headings):
 3. "Impact on Texans" — 2-3 concrete examples (use bullets where helpful).
 4. "Historical Context" — relevant Texas/U.S. history; include only when applicable.
 5. One topical-authority section chosen from: "How This Affects Texas Elections", "How This Fits Into Texas Political History", or "How This Impacts Texas Policy Debates".
-6. Plus 1-2 additional explanatory sections relevant to the topic.
+6. Plus 6-10 additional explanatory sections relevant to the topic so the main story body clears ${EVERGREEN_MIN_MAIN_WORDS} words without filler.
 7. "The Texas Angle" — ONE original perspective block (100-150 words): Texas-specific analysis, contrarian viewpoint with evidence, a unique framework, or an on-the-ground reporting summary. Use phrases like "According to internal analysis…", "Our review of county-level filings shows…", or "Local interviews indicate…" where appropriate. This block is REQUIRED.
 8. "Reader Questions" — 2-3 short answers (60-100 words each) covering mid-funnel and bottom-funnel concerns where relevant: implementation ("how do I file…"), cost/ROI ("what does this save Texans…"), or differentiators ("how Texas differs from other states"). Skip questions that do not fit the topic.
 
@@ -152,6 +153,7 @@ The "bullets" field is optional per section. Use either paragraphs, bullets, or 
         { role: "user", content: `Topic: ${topic}\nCategory: ${category}\n\nWrite the full long-form evergreen article now.` },
       ],
       response_format: { type: "json_object" },
+      max_tokens: 16000,
     }),
   });
   if (!r.ok) throw new Error(`AI gateway ${r.status}: ${(await r.text()).slice(0, 300)}`);
@@ -211,6 +213,10 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
         // hasDuplicateContent re-runs to enforce the quality gate).
         if (hasDuplicateContent(cleanBody)) {
           return Response.json({ error: "Duplicate content detected; not published", slug }, { status: 422 });
+        }
+        const mainWordCount = articleMainWordCount(cleanBody);
+        if (mainWordCount < EVERGREEN_MIN_MAIN_WORDS) {
+          return Response.json({ error: "Evergreen article below 5,000-word main-body minimum; not published", slug, mainWordCount }, { status: 422 });
         }
 
         // Quality filter: pre-publish gate.
