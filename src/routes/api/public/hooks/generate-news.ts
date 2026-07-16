@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { isPuzzleTitle } from "./ingest-feeds";
+import { meetsArticleMainWordCount, NON_EVERGREEN_MIN_MAIN_WORDS } from "@/lib/article-length";
 
 type NewsSection = { heading: string; paragraphs: string[] };
 
@@ -196,7 +197,7 @@ DEK (first paragraph + meta description) RULES:
 - Sentence 2 gives the most newsworthy fact.
 
 BODY RULES (required for every picked story):
-- Every non-evergreen article MUST be at least 2,000 words across summary + relevance + sections + FAQ. There is no upper word limit. Expand until the minimum is met.
+- Every non-evergreen article MUST be at least ${NON_EVERGREEN_MIN_MAIN_WORDS} words of MAIN STORY PROSE across summary + sections only. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward the minimum. There is no upper word limit. Expand until the main story prose meets the minimum.
 - "summary": a substantial neutral opening section, grounded in concrete facts drawn from the source blurb. No invented quotes or stats.
 - "relevance": a substantial Texas relevance section explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
 - "sections": 5–8 additional H2-style sections, each with 2–4 substantial paragraphs covering background, timeline, stakeholders, local implications, what changes next, and practical reader context.
@@ -226,6 +227,7 @@ CATEGORY CLASSIFICATION RULES (strict):
         { role: "user", content: `Source stories:\n\n${list}` },
       ],
       response_format: { type: "json_object" },
+      max_tokens: 9000,
     }),
   });
 
@@ -315,14 +317,6 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               a.source_index >= 1 &&
               a.source_index <= items.length &&
               typeof a.summary === "string" &&
-              wordCount(
-                [
-                  a.summary,
-                  a.relevance ?? "",
-                  ...(a.sections ?? []).flatMap((s) => [s.heading, ...(s.paragraphs ?? [])]),
-                  ...(a.faq ?? []).flatMap((f) => [f.q, f.a]),
-                ].join(" "),
-              ) >= 2000 &&
               typeof a.relevance === "string" &&
               a.relevance.trim().length >= 40,
           )
@@ -371,7 +365,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               body: articleBodyText(bodyJson),
               body_json: bodyJson,
             };
-          });
+          })
+          .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json));
 
         if (rows.length === 0) {
           return Response.json({ error: "No valid rewritten articles" }, { status: 500 });

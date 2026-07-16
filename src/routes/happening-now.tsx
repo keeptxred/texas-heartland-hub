@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
+import { meetsArticleMainWordCount } from "@/lib/article-length";
 
 const FAQS = [
   {
@@ -131,7 +132,7 @@ function DashboardPage() {
     let active = true;
     async function load() {
       const sinceIso = new Date(Date.now() - ONE_DAY_MS).toISOString();
-      const [{ data }, { data: demoted }] = await Promise.all([
+      const [{ data }, { data: demoted }, { data: linkedArticles }] = await Promise.all([
         supabase
         .from("texas_news_feed")
         .select("id,title,source,internal_slug,description,pub_date")
@@ -140,15 +141,26 @@ function DashboardPage() {
         .limit(120),
         supabase
           .from("daily_articles")
-          .select("id,slug,title,category,dek,source_url,published_at")
+          .select("id,slug,title,category,dek,source_url,published_at,kind,body_json")
           .eq("is_breaking", true)
           .gte("published_at", sinceIso)
           .order("published_at", { ascending: false })
           .limit(40),
+        supabase
+          .from("daily_articles")
+          .select("slug,kind,body_json,published_at")
+          .gte("published_at", sinceIso)
+          .order("published_at", { ascending: false })
+          .limit(200),
       ]);
       if (!active) return;
+      const validArticleSlugs = new Set(
+        ((linkedArticles ?? []) as { slug: string; kind?: string | null; body_json?: unknown }[])
+          .filter((r) => meetsArticleMainWordCount(r.kind, r.body_json as never))
+          .map((r) => r.slug),
+      );
       const feedRows: Row[] = ((data ?? []) as { id: number; title: string; source: string; internal_slug: string | null; description: string | null; pub_date: string }[])
-        .filter((r) => Boolean(r.internal_slug))
+        .filter((r) => Boolean(r.internal_slug) && validArticleSlugs.has(r.internal_slug as string))
         .map((r) => ({
           id: r.id,
           title: r.title,
@@ -157,14 +169,16 @@ function DashboardPage() {
           description: r.description,
           pub_date: r.pub_date,
         }));
-      const demotedRows: Row[] = (demoted ?? []).map((d: { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string }, i: number) => ({
-        id: -1 - i,
-        title: d.title,
-        source: d.category || "Newsroom",
-        link: `/news/${d.slug}`,
-        description: d.dek,
-        pub_date: d.published_at,
-      }));
+      const demotedRows: Row[] = ((demoted ?? []) as { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string; kind?: string | null; body_json?: unknown }[])
+        .filter((d) => meetsArticleMainWordCount(d.kind, d.body_json as never))
+        .map((d, i) => ({
+          id: -1 - i,
+          title: d.title,
+          source: d.category || "Newsroom",
+          link: `/news/${d.slug}`,
+          description: d.dek,
+          pub_date: d.published_at,
+        }));
       const merged = [...feedRows, ...demotedRows].sort(
         (a, b) => Date.parse(b.pub_date) - Date.parse(a.pub_date),
       );

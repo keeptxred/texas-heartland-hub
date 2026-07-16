@@ -6,6 +6,7 @@ import { getArticleImage } from "@/lib/fallback-images";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
+import { meetsArticleMainWordCount, NON_EVERGREEN_MIN_MAIN_WORDS } from "@/lib/article-length";
 
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
 // src/lib/fallback-images.ts. AI batch classifier tags each new article with
@@ -281,7 +282,7 @@ HARD RULES:
 - Meta description (dek) MUST be <= 155 characters.
 - Title must be SEO-optimized, original, and not resemble the source headline.
 - 5–10 lowercase keywords, Texas-specific where possible.
-- MINIMUM LENGTH: every non-evergreen article MUST be at least 2,000 words of original prose across summary + relevance + analysis + sections + FAQ. There is no upper word limit. Do not summarize briefly; expand with source-grounded context, background, stakeholders, local impact, timeline, what changes next, and reader questions until the 2,000-word minimum is met.
+- MINIMUM LENGTH: every non-evergreen article MUST be at least ${NON_EVERGREEN_MIN_MAIN_WORDS} words of original MAIN STORY PROSE across summary + analysis + sections only. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward this minimum. There is no upper word limit. Do not summarize briefly; expand with source-grounded context, background, stakeholders, local impact, timeline, what changes next, and reader context until the main story prose meets the minimum.
 - TEXAS RELEVANCE IS REQUIRED — the "relevance" field must always name Texas or a specific Texas city/region and explain the local stake, even if the source is national.
 - Add a short original CONTEXT paragraph (history, prior action, comparable state precedent) inside the "summary" or as the first sentences of "relevance".
 - Include 5–8 additional article sections in "sections". Each section must have a clear heading and 2–4 substantial paragraphs. Do not use filler, generic slogans, or repeated paragraphs.
@@ -308,6 +309,7 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
           },
         ],
         response_format: { type: "json_object" },
+        max_tokens: 9000,
       }),
         signal: AbortSignal.timeout(90000),
     });
@@ -318,12 +320,10 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
     if (!parsed?.relevance || parsed.relevance.trim().length < 40) return null;
     const prose = [
       parsed.summary,
-      parsed.relevance,
       parsed.analysis ?? "",
-      ...(parsed.sections ?? []).flatMap((s) => [s.heading, ...(s.paragraphs ?? [])]),
-      ...(parsed.faq ?? []).flatMap((f) => [f.q, f.a]),
+      ...(parsed.sections ?? []).flatMap((s) => s.paragraphs ?? []),
     ].join(" ");
-    if (wordCount(prose) < 2000) return null;
+    if (wordCount(prose) < NON_EVERGREEN_MIN_MAIN_WORDS) return null;
     parsed.dek = parsed.dek.slice(0, 155);
     parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
     parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
@@ -521,8 +521,11 @@ async function handler() {
     const paired = fresh
       .map((it, i) => ({ it, rw: rewrites[i] }))
       .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
-    const articleRows = paired.map(({ it, rw }) => buildArticleRow(it, rw));
-    const articleSourceItems = paired.map(({ it }) => it);
+    const pairedRows = paired
+      .map(({ it, rw }) => ({ it, row: buildArticleRow(it, rw) }))
+      .filter(({ row }) => meetsArticleMainWordCount(row.kind, row.body_json));
+    const articleRows = pairedRows.map(({ row }) => row);
+    const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
     if (articleRows.length === 0) {
       return new Response(
         JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length }),
@@ -637,8 +640,8 @@ async function handler() {
       // Write the internal slug back onto the feed row so cards can link to it.
       await Promise.all(
         uniqueArticleRows.map((row: { slug: string }) => {
-          const originalIndex = articleRows.findIndex((r) => r.slug === row.slug);
-          const src = articleSourceItems[originalIndex];
+          const src = articleSourceBySlug.get(row.slug);
+          if (!src) return Promise.resolve();
           return supabaseAdmin
             .from("texas_news_feed")
             .update({ internal_slug: row.slug })
@@ -670,7 +673,9 @@ async function handler() {
     const paired = items
       .map((it, i) => ({ it, rw: rewrites[i] }))
       .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
-    const backRows = paired.map(({ it, rw }) => buildArticleRow(it, rw));
+    const backRows = paired
+      .map(({ it, rw }) => buildArticleRow(it, rw))
+      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json));
     backRows.forEach((r) => enrichArticleRow(r));
     if (backRows.length > 0) {
       await supabaseAdmin

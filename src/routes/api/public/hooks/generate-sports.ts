@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { TEAMS, TEAM_BY_SLUG, teamsForLeague, detectTeams, type TeamMeta } from "@/lib/texas-teams";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
+import { NON_EVERGREEN_MIN_MAIN_WORDS, articleMainWordCount } from "@/lib/article-length";
 
 const LEAGUES = ["nfl", "mlb", "nba"] as const;
 type League = (typeof LEAGUES)[number];
@@ -204,7 +205,7 @@ async function generate(topic: string, subject: string, lovableApiKey: string): 
 REQUIREMENTS:
 - Title: keyword-rich, under 75 characters, must include a Texas team or city name.
 - dek: 140-220 characters, fan-oriented summary.
-- Body length: minimum 2,000 words. There is no upper word limit. Expand with team context, roster identity, coaching philosophy, season stakes, fan impact, schedule context, venue context, and practical reader questions until the minimum is met.
+- Body length: minimum ${NON_EVERGREEN_MIN_MAIN_WORDS} words of main story prose across intro + sections only. Do NOT count FAQ, sources, key takeaways, title, or dek toward the minimum. There is no upper word limit. Expand with team context, roster identity, coaching philosophy, season stakes, fan impact, schedule context, venue context, and practical reader questions until the main story prose meets the minimum.
 - 6-9 H2 sections with 2-4 substantial paragraphs each.
 - 5-8 FAQ entries common Texas sports fans ask, with substantive answers.
 - 3-5 official source links (team .com pages, ESPN, league .com).
@@ -223,6 +224,7 @@ Return ONLY valid JSON:
         { role: "user", content: `Subject: ${subject}\nTopic: ${topic}\n\nWrite the full article now.` },
       ],
       response_format: { type: "json_object" },
+      max_tokens: 9000,
     }),
   });
   if (!r.ok) throw new Error(`AI gateway ${r.status}: ${(await r.text()).slice(0, 300)}`);
@@ -283,6 +285,10 @@ async function generateForTeam(
     faq: gen.faq ?? [],
     sources: gen.sources ?? [],
   });
+  const mainWordCount = articleMainWordCount(cleanBody);
+  if (mainWordCount < NON_EVERGREEN_MIN_MAIN_WORDS) {
+    return { error: `Article below ${NON_EVERGREEN_MIN_MAIN_WORDS}-word main-body minimum (${mainWordCount})` };
+  }
   const row = {
     slug,
     internal_url: `/news/${slug}`,
