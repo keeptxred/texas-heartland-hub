@@ -318,12 +318,6 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
     const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Rewrite;
     if (!parsed?.title || !parsed?.summary || !parsed?.dek) return null;
     if (!parsed?.relevance || parsed.relevance.trim().length < 40) return null;
-    const prose = [
-      parsed.summary,
-      parsed.analysis ?? "",
-      ...(parsed.sections ?? []).flatMap((s) => s.paragraphs ?? []),
-    ].join(" ");
-    if (wordCount(prose) < NON_EVERGREEN_MIN_MAIN_WORDS) return null;
     parsed.dek = parsed.dek.slice(0, 155);
     parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
     parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
@@ -336,12 +330,75 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
   }
 }
 
-// Retry once on transient AI gateway failures (most rewrite failures are timeouts).
+function rewriteMainProseWordCount(rw: Rewrite): number {
+  const prose = [
+    rw.summary,
+    rw.analysis ?? "",
+    ...(rw.sections ?? []).flatMap((s) => s.paragraphs ?? []),
+  ].join(" ");
+  return wordCount(prose);
+}
+
+// Ask the model to expand an existing draft up to the required length. Feeds
+// like TPWD press releases are 100–200 words, so a single-shot rewrite rarely
+// clears the 2,000-word non-evergreen floor. This pass grows the draft
+// section-by-section using the same source facts.
+async function expandRewrite(it: Item, prior: Rewrite, lovableApiKey: string): Promise<Rewrite | null> {
+  const currentWords = rewriteMainProseWordCount(prior);
+  const need = NON_EVERGREEN_MIN_MAIN_WORDS - currentWords;
+  if (need <= 0) return prior;
+  try {
+    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+      body: JSON.stringify({
+        model: "google/gemini-3-flash-preview",
+        messages: [
+          { role: "system", content: REWRITE_SYSTEM },
+          {
+            role: "user",
+            content: `SOURCE: ${it.source}\nORIGINAL HEADLINE: ${it.title}\nORIGINAL SUMMARY: ${it.description}\nLINK: ${it.link}\nDATE: ${it.pub_date}\n\nDRAFT (JSON) — expand this into a longer, source-grounded article. Keep every existing fact, do not fabricate quotes or figures, and add ${need + 400}+ words of additional MAIN STORY PROSE (summary + analysis + sections). Add 3–6 new sections covering Texas background, prior actions, stakeholders, timeline, what changes next, and reader impact. Preserve the schema.\n\n${JSON.stringify(prior)}`,
+          },
+        ],
+        response_format: { type: "json_object" },
+        max_tokens: 12000,
+      }),
+      signal: AbortSignal.timeout(120000),
+    });
+    if (!r.ok) return null;
+    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Rewrite;
+    if (!parsed?.title || !parsed?.summary || !parsed?.dek || !parsed?.relevance) return null;
+    parsed.dek = parsed.dek.slice(0, 155);
+    parsed.keywords = (parsed.keywords ?? prior.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
+    parsed.keyTakeaways = (parsed.keyTakeaways ?? prior.keyTakeaways ?? []).slice(0, 5);
+    parsed.sections = (parsed.sections ?? [])
+      .filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0)
+      .slice(0, 12);
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+// Rewrite pipeline: first pass drafts, then up to two expansion passes grow
+// the article until it clears the non-evergreen minimum word count.
+// Transient AI-gateway failures also get one retry on the initial draft.
 async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
-  const first = await rewriteItem(it, lovableApiKey);
-  if (first) return first;
-  await new Promise((res) => setTimeout(res, 600));
-  return rewriteItem(it, lovableApiKey);
+  let draft = await rewriteItem(it, lovableApiKey);
+  if (!draft) {
+    await new Promise((res) => setTimeout(res, 600));
+    draft = await rewriteItem(it, lovableApiKey);
+  }
+  if (!draft) return null;
+  for (let pass = 0; pass < 2; pass++) {
+    if (rewriteMainProseWordCount(draft) >= NON_EVERGREEN_MIN_MAIN_WORDS) return draft;
+    const expanded = await expandRewrite(it, draft, lovableApiKey);
+    if (!expanded) break;
+    draft = expanded;
+  }
+  if (rewriteMainProseWordCount(draft) < NON_EVERGREEN_MIN_MAIN_WORDS) return null;
+  return draft;
 }
 
 function buildArticleRow(it: Item, rw: Rewrite | null) {
