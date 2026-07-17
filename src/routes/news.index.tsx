@@ -83,13 +83,13 @@ function NewsPage() {
         filteredLive,
         (a: DailyArticle) => a.slug,
         (a: DailyArticle) => resolveArticleImage(a),
-        undefined,
+        (a: DailyArticle) => a.category ?? null,
         (a: DailyArticle) => a.image_hash,
       ),
     [filteredLive]
   );
   const staticImages = useMemo(
-    () => assignUniqueImages(filteredStatic, (a) => a.slug, (a) => a.image),
+    () => assignUniqueImages(filteredStatic, (a) => a.slug, (a) => a.image, (a) => a.category ?? null),
     [filteredStatic]
   );
 
