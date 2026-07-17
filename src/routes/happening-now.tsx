@@ -290,7 +290,7 @@ function DashboardPage() {
             {loading
               ? "Loading the latest Texas political feeds…"
               : items.length === 0
-              ? "Feed database is warming up. New entries appear automatically every 30 minutes."
+              ? "No Texas political updates in the last 24 hours. Check back soon — the feed refreshes every few minutes."
               : "No items match your filters."}
           </div>
         ) : (
