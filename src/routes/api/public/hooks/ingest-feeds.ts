@@ -816,24 +816,59 @@ async function handler() {
   // Canonical-URL dedupe: for any daily_articles rows sharing the same
   // source_url, keep the most-recently-updated slug and drop the rest.
   let dedupedCanonical = 0;
+  let dedupeSkippedReason: string | null = null;
   try {
-    const { data: dupes } = await supabaseAdmin
+    // Total daily_articles row count — used both to skip cleanup on empty-run
+    // scenarios and to enforce a % safety cap on how much a single ingest may
+    // delete. A prior version of this block wiped the whole table when the
+    // rewrite batch produced no rows AND canonical dedupe ran unchecked.
+    const { count: totalArticles } = await supabaseAdmin
       .from("daily_articles")
-      .select("id, slug, source_url, published_at")
-      .not("source_url", "is", null)
-      .order("published_at", { ascending: false, nullsFirst: false })
-      .limit(1000);
-    if (dupes && dupes.length > 0) {
-      const seen = new Set<string>();
-      const toDelete: string[] = [];
-      for (const row of dupes as { id: string; slug: string; source_url: string }[]) {
-        const key = row.source_url;
-        if (seen.has(key)) toDelete.push(row.id);
-        else seen.add(key);
-      }
-      if (toDelete.length > 0) {
-        await supabaseAdmin.from("daily_articles").delete().in("id", toDelete);
-        dedupedCanonical = toDelete.length;
+      .select("id", { count: "exact", head: true });
+    const totalCount = totalArticles ?? 0;
+
+    // Safety rule 3: if the table already has articles but THIS ingest run
+    // produced zero successful rewrites (native mint + backfill both silent),
+    // do not run destructive cleanup — an empty rewrite batch is not evidence
+    // that historical rows are duplicates.
+    if (totalCount > 0 && nativeMinted === 0) {
+      dedupeSkippedReason = "no successful rewrites in this run";
+    } else {
+      const { data: dupes } = await supabaseAdmin
+        .from("daily_articles")
+        .select("id, slug, source_url, published_at")
+        .not("source_url", "is", null)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .limit(1000);
+      if (dupes && dupes.length > 0) {
+        // Group by canonical source_url; keep the newest (list is already
+        // sorted desc by published_at), mark strictly older siblings for
+        // deletion. Rows without a source_url were excluded above.
+        const seen = new Set<string>();
+        const toDelete: string[] = [];
+        for (const row of dupes as { id: string; slug: string; source_url: string | null }[]) {
+          const key = row.source_url;
+          if (!key) continue;
+          if (seen.has(key)) toDelete.push(row.id);
+          else seen.add(key);
+        }
+        if (toDelete.length > 0) {
+          // Safety rule 2: never delete more than 10% of daily_articles in a
+          // single cleanup pass. If the candidate set exceeds that cap, abort
+          // so a bad dedupe signature can't wipe the archive.
+          const cap = Math.max(1, Math.floor(totalCount * 0.1));
+          if (toDelete.length > cap) {
+            dedupeSkippedReason = `refused to delete ${toDelete.length} rows (>10% of ${totalCount})`;
+            console.warn("[ingest-feeds] canonical dedupe aborted", {
+              candidates: toDelete.length,
+              total: totalCount,
+              cap,
+            });
+          } else {
+            await supabaseAdmin.from("daily_articles").delete().in("id", toDelete);
+            dedupedCanonical = toDelete.length;
+          }
+        }
       }
     }
   } catch (e) {
@@ -841,7 +876,7 @@ async function handler() {
   }
 
   return new Response(
-    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, diag }),
+    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, dedupeSkippedReason, diag }),
     { headers: { "Content-Type": "application/json" } },
   );
 }
