@@ -14,7 +14,7 @@ export function HubView({ hub, sections, children }: { hub: Hub; sections?: HubS
   const supporting = articles.filter((a) => a.slug !== hub.pillarSlug).sort(sortByDateDesc);
   // Enforce per-page image uniqueness across pillar + supporting cards.
   const allForPage = pillar ? [pillar, ...supporting] : supporting;
-  const uniq = assignUniqueImages(allForPage, (a) => a.slug, (a) => a.image);
+  const uniq = assignUniqueImages(allForPage, (a) => a.slug, (a) => a.image, (a) => a.category ?? null);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
