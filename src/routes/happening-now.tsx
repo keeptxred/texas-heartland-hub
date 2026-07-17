@@ -116,7 +116,8 @@ type Row = {
   id: number;
   title: string;
   source: string;
-  link: string; // internal path only — always /news/{slug}
+  link: string; // /news/{slug} for linked articles, external URL otherwise
+  external: boolean;
   description: string | null;
   pub_date: string;
 };
@@ -135,8 +136,7 @@ function DashboardPage() {
       const [{ data }, { data: demoted }, { data: linkedArticles }] = await Promise.all([
         supabase
         .from("texas_news_feed")
-        .select("id,title,source,internal_slug,description,pub_date")
-        .not("internal_slug", "is", null)
+        .select("id,title,source,internal_slug,description,pub_date,link")
         .order("pub_date", { ascending: false })
         .limit(120),
         supabase
@@ -159,16 +159,20 @@ function DashboardPage() {
           .filter((r) => meetsArticleMainWordCount(r.kind, r.body_json as never))
           .map((r) => r.slug),
       );
-      const feedRows: Row[] = ((data ?? []) as { id: number; title: string; source: string; internal_slug: string | null; description: string | null; pub_date: string }[])
-        .filter((r) => Boolean(r.internal_slug) && validArticleSlugs.has(r.internal_slug as string))
-        .map((r) => ({
-          id: r.id,
-          title: r.title,
-          source: r.source,
-          link: `/news/${r.internal_slug}`,
-          description: r.description,
-          pub_date: r.pub_date,
-        }));
+      const feedRows: Row[] = ((data ?? []) as { id: number; title: string; source: string; internal_slug: string | null; description: string | null; pub_date: string; link: string }[])
+        .map((r) => {
+          const hasInternal = Boolean(r.internal_slug) && validArticleSlugs.has(r.internal_slug as string);
+          return {
+            id: r.id,
+            title: r.title,
+            source: r.source,
+            link: hasInternal ? `/news/${r.internal_slug}` : r.link,
+            external: !hasInternal,
+            description: r.description,
+            pub_date: r.pub_date,
+          };
+        })
+        .filter((r) => Boolean(r.link));
       const demotedRows: Row[] = ((demoted ?? []) as { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string; kind?: string | null; body_json?: unknown }[])
         .filter((d) => meetsArticleMainWordCount(d.kind, d.body_json as never))
         .map((d, i) => ({
@@ -176,6 +180,7 @@ function DashboardPage() {
           title: d.title,
           source: d.category || "Newsroom",
           link: `/news/${d.slug}`,
+          external: false,
           description: d.dek,
           pub_date: d.published_at,
         }));
@@ -285,7 +290,7 @@ function DashboardPage() {
             {loading
               ? "Loading the latest Texas political feeds…"
               : items.length === 0
-              ? "Feed database is warming up. New entries appear automatically every 30 minutes."
+              ? "No Texas political updates in the last 24 hours. Check back soon — the feed refreshes every few minutes."
               : "No items match your filters."}
           </div>
         ) : (
@@ -306,7 +311,11 @@ function DashboardPage() {
                   ) : null}
                 </div>
                 <h3 className="font-serif text-base font-bold leading-snug">
-                  <a href={it.link} className="hover:underline underline-offset-4">
+                  <a
+                    href={it.link}
+                    className="hover:underline underline-offset-4"
+                    {...(it.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  >
                     {it.title}
                   </a>
                 </h3>
