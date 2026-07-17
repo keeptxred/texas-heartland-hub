@@ -41,7 +41,6 @@ import openmeeting from "@/assets/article-openmeeting.jpg";
 import salestax from "@/assets/article-salestax.jpg";
 import governor from "@/assets/article-governor.jpg";
 import ag from "@/assets/article-ag.jpg";
-import giraffe from "@/assets/article-giraffe.jpg";
 
 export const ARTICLES: Article[] = [
   {
