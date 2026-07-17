@@ -3,11 +3,17 @@
 // image is already used on the same page, it swaps in the next available
 // fallback from `pool`. Cheap, render-time only — no image regeneration.
 
-import { CATEGORY_IMAGE_POOLS } from "@/lib/fallback-images";
+import {
+  CATEGORY_IMAGE_POOLS,
+  getCategoryFallbackPool,
+  resolveImageCategory,
+  type ImageCategory,
+} from "@/lib/fallback-images";
 
-// The dedupe swap pool draws from the same stock pools that `getArticleImage`
-// selects from — one source of truth. No hard-coded political fallbacks.
-export const DEFAULT_IMAGE_POOL: string[] = Object.values(CATEGORY_IMAGE_POOLS).flat();
+// Kept exported for backward compat, but no longer used as a general swap
+// pool — flattening every bucket allowed unrelated categories (e.g. weather /
+// wildlife) to be assigned to politics cards. Prefer category-scoped pools.
+export const DEFAULT_IMAGE_POOL: string[] = CATEGORY_IMAGE_POOLS.default;
 
 // Stable index from a string so the same slug always falls back to the same
 // pool image until a collision forces a swap.
@@ -30,7 +36,9 @@ export function assignUniqueImages<T>(
   items: T[],
   getKey: (item: T) => string,
   getImage: (item: T) => string | null | undefined,
-  pool: string[] = DEFAULT_IMAGE_POOL,
+  poolOrGetCategory?:
+    | string[]
+    | ((item: T) => string | ImageCategory | null | undefined),
   getHash?: (item: T) => string | null | undefined,
 ): Map<string, string> {
   const usedUrls = new Set<string>();
@@ -42,8 +50,23 @@ export function assignUniqueImages<T>(
     for (let i = 0; i < url.length; i++) h = (h * 31 + url.charCodeAt(i)) >>> 0;
     return `u_${h.toString(16)}`;
   };
+  const getCategory =
+    typeof poolOrGetCategory === "function" ? poolOrGetCategory : undefined;
+  const staticPool = Array.isArray(poolOrGetCategory) ? poolOrGetCategory : null;
+  const poolFor = (item: T): string[] => {
+    if (staticPool) return staticPool;
+    if (getCategory) {
+      const raw = getCategory(item);
+      const cat = resolveImageCategory({ category: raw ?? null });
+      return getCategoryFallbackPool(cat);
+    }
+    // No category hint provided: keep the default bucket only (never mix
+    // unrelated topics like weather/wildlife into swap fallback).
+    return CATEGORY_IMAGE_POOLS.default;
+  };
   for (const item of items) {
     const key = getKey(item);
+    const pool = poolFor(item);
     const initial = getImage(item) || pool[hashIndex(key, pool.length)];
     const initialHash = (getHash?.(item) ?? null) || fingerprint(initial);
     let pick = initial;

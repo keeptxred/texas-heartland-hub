@@ -37,7 +37,7 @@ function HoustonPage() {
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
     .sort(sortByDateDesc);
-  const uniqImg = assignUniqueImages(houstonArticles, (a) => a.slug, (a) => a.image);
+  const uniqImg = assignUniqueImages(houstonArticles, (a) => a.slug, (a) => a.image, () => "relocation");
   return (
     <div className="mx-auto max-w-[1200px] px-6 py-14">
       <header className="border-b border-border pb-6 mb-10">

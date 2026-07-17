@@ -48,13 +48,13 @@ function NonPoliticalPage() {
         live,
         (a: DailyArticle) => a.slug,
         (a: DailyArticle) => getArticleImage(a),
-        undefined,
+        (a: DailyArticle) => a.category ?? null,
         (a: DailyArticle) => a.image_hash,
       ),
     [live]
   );
   const staticImages = useMemo(
-    () => assignUniqueImages(staticArticles, (a) => a.slug, (a) => a.image),
+    () => assignUniqueImages(staticArticles, (a) => a.slug, (a) => a.image, (a) => a.category ?? null),
     [staticArticles]
   );
 

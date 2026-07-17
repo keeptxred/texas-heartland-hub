@@ -186,9 +186,10 @@ function Index() {
   // RULE: no duplicate images on a single page. Dedupe across lead + featured
   // + latest so every visible card carries a distinct image.
   const heroImages = assignUniqueImages(
-    [lead, ...featured, ...latest].filter(Boolean) as { slug: string; image: string }[],
+    [lead, ...featured, ...latest].filter(Boolean) as { slug: string; image: string; category?: string }[],
     (a) => a.slug,
     (a) => a.image,
+    (a) => a.category ?? null,
   );
 
   return (

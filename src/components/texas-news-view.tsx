@@ -85,7 +85,7 @@ export function TexasNewsView({
   const activeSection = TEXAS_NEWS_SECTIONS.find((s) => s.id === topic);
   const activeSlugs = activeSection ? TEXAS_NEWS_SLUGS[activeSection.id] : ALL_TEXAS_NEWS_SLUGS;
   const articles = articlesForSlugs(activeSlugs ?? []);
-  const uniqImg = assignUniqueImages(articles, (a) => a.slug, (a) => a.image);
+  const uniqImg = assignUniqueImages(articles, (a) => a.slug, (a) => a.image, (a) => a.category ?? null);
 
   // Live rows from the DB for the active filter. De-dup against curated
   // static slugs so an article never renders twice on the same page.
@@ -95,6 +95,7 @@ export function TexasNewsView({
     liveOnly,
     (r) => r.slug,
     (r) => resolveArticleImage(r),
+    (r) => r.category ?? null,
   );
 
   // Scroll to top when the active filter changes so mobile users see the

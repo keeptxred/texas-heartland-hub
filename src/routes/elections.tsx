@@ -23,7 +23,7 @@ export const Route = createFileRoute("/elections")({
 function ElectionsPage() {
   // Category page = exactly one category_slug, sourced from this route's URL.
   const electionNews = getArticlesByCategory("elections");
-  const uniqImg = assignUniqueImages(electionNews, (a) => a.slug, (a) => a.image);
+  const uniqImg = assignUniqueImages(electionNews, (a) => a.slug, (a) => a.image, () => "elections");
 
   return (
     <>
