@@ -15,6 +15,9 @@ import { articleMainWordCount } from "@/lib/article-length";
 // separate pipeline and still enforce the 5,000-word rule there.
 const MIN_WORDS_BREAKING = 800;
 const MIN_WORDS_ANALYSIS = 1200;
+// Used inside the AI prompt/expansion payload as the baseline the model
+// should aim for. Individual items are gated by their tiered target below.
+const NON_EVERGREEN_MIN_MAIN_WORDS = MIN_WORDS_BREAKING;
 
 function minWordsForItem(it: Item, rw: Rewrite | null): number {
   const cat = (rw?.category ?? it.category ?? categoryFor(it.source)).toLowerCase();
@@ -613,8 +616,21 @@ async function handler() {
       .map((it, i) => ({ it, rw: rewrites[i] }))
       .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
     const pairedRows = paired
-      .map(({ it, rw }) => ({ it, row: buildArticleRow(it, rw) }))
-      .filter(({ row }) => meetsArticleMainWordCount(row.kind, row.body_json));
+      .map(({ it, rw }) => ({ it, rw, row: buildArticleRow(it, rw) }))
+      .filter(({ it, rw, row }) => {
+        const target = minWordsForItem(it, rw);
+        const words = articleMainWordCount(row.body_json);
+        if (words < target) {
+          console.warn("[ingest-feeds] dropping article below tiered floor", {
+            slug: row.slug,
+            source: it.source,
+            words,
+            target,
+          });
+          return false;
+        }
+        return true;
+      });
     const articleRows = pairedRows.map(({ row }) => row);
     const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
     if (articleRows.length === 0) {
