@@ -780,9 +780,23 @@ async function handler() {
     const paired = items
       .map((it, i) => ({ it, rw: rewrites[i] }))
       .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
-    const backRows = paired
-      .map(({ it, rw }) => buildArticleRow(it, rw))
-      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json));
+    const backPaired = paired
+      .map(({ it, rw }) => ({ it, rw, row: buildArticleRow(it, rw) }))
+      .filter(({ it, rw, row }) => {
+        const target = minWordsForItem(it, rw);
+        const words = articleMainWordCount(row.body_json);
+        if (words < target) {
+          console.warn("[ingest-feeds] backfill dropped article below tiered floor", {
+            slug: row.slug,
+            source: it.source,
+            words,
+            target,
+          });
+          return false;
+        }
+        return true;
+      });
+    const backRows = backPaired.map(({ row }) => row);
     backRows.forEach((r) => enrichArticleRow(r));
     if (backRows.length > 0) {
       await supabaseAdmin
@@ -792,8 +806,8 @@ async function handler() {
         backRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
       );
       await Promise.all(
-        backRows.map((row, i) =>
-          supabaseAdmin.from("texas_news_feed").update({ internal_slug: row.slug }).eq("link", paired[i].it.link),
+        backPaired.map(({ it, row }) =>
+          supabaseAdmin.from("texas_news_feed").update({ internal_slug: row.slug }).eq("link", it.link),
         ),
       );
     }
