@@ -59,6 +59,7 @@ export function TexasBusinessView({ topic }: { topic: string }) {
     businessArticles,
     (a) => a.slug,
     (a) => IMAGE_OVERRIDES[a.slug] ?? a.image,
+    (a) => a.category ?? "business",
   );
   const activeSection = BUSINESS_SECTIONS.find((s) => s.id === topic);
 
