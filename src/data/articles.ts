@@ -413,16 +413,6 @@ export const ARTICLES: Article[] = [
     image: ballot,
     pillar: true,
   },
-  {
-    slug: "gracie-the-giraffe",
-    category: "Non-Political",
-    title: "Gracie the Giraffe: The Hill Country Escape That Captivated Texas",
-    dek: "She slipped off a Real County ranch, dodged drones and search parties for nearly two weeks across the Texas Hill Country, and turned up near Leakey 'fat and happy.' The story of Gracie the giraffe is pure Texas — and a quiet window into the private exotic-ranching tradition that makes the Lone Star State one of the largest giraffe habitats outside Africa.",
-    author: "Texana Desk",
-    date: "Feature",
-    publishedAt: "2026-06-27T11:00:00",
-    image: giraffe,
-  },
 ];
 
 /** True if the article's publishAt is unset or has already passed (relative to `now`). */
