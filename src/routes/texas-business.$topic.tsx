@@ -9,6 +9,14 @@ export const Route = createFileRoute("/texas-business/$topic")({
   },
   head: ({ params }) => {
     const section = BUSINESS_SECTIONS.find((s) => s.id === params.topic);
+    if (!section) {
+      return {
+        meta: [
+          { title: "Topic not found — Texas Business" },
+          { name: "robots", content: "noindex,follow" },
+        ],
+      };
+    }
     const title = section ? `${section.title} — Texas Business` : "Texas Business";
     const desc = section?.description ?? "Texas business coverage.";
     const url = `https://www.keeptxred.com/texas-business/${params.topic}`;

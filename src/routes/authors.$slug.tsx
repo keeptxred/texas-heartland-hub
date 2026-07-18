@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AUTHORS, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import { SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/authors/$slug")({
   loader: ({ params }): { author: Author } => {
@@ -9,16 +10,49 @@ export const Route = createFileRoute("/authors/$slug")({
     return { author };
   },
   head: ({ loaderData }) => {
-    if (!loaderData) return {};
+    if (!loaderData) {
+      return {
+        meta: [
+          { title: "Author not found — Keep TX Red" },
+          { name: "robots", content: "noindex,follow" },
+        ],
+      };
+    }
     const { author } = loaderData;
+    const url = `${SITE_URL}/authors/${author.slug}`;
+    const description = `${author.name}, ${author.role} at Keep TX Red. ${author.bio[0].slice(0, 140)}`;
     return {
       meta: [
         { title: `${author.name} — Keep TX Red` },
-        { name: "description", content: `${author.name}, ${author.role} at Keep TX Red. ${author.bio[0].slice(0, 140)}` },
+        { name: "description", content: description },
         { property: "og:title", content: `${author.name} — Keep TX Red` },
+        { property: "og:description", content: description },
+        { property: "og:url", content: url },
         { property: "og:type", content: "profile" },
       ],
-      links: [{ rel: "canonical", href: `/authors/${author.slug}` }],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfilePage",
+            mainEntity: {
+              "@type": "Person",
+              name: author.name,
+              jobTitle: author.role,
+              description: author.bio.join(" "),
+              knowsAbout: author.beats,
+              url,
+              worksFor: {
+                "@type": "NewsMediaOrganization",
+                name: "Keep TX Red",
+                url: `${SITE_URL}/`,
+              },
+            },
+          }),
+        },
+      ],
     };
   },
   notFoundComponent: () => (
