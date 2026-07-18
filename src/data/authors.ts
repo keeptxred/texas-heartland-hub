@@ -17,6 +17,26 @@ export const AUTHORS: Author[] = [
     ],
   },
   {
+    slug: "keep-tx-red-sports-desk",
+    name: "Keep TX Red Sports Desk",
+    role: "Texas sports & culture",
+    beats: ["Cowboys", "Texans", "Rangers", "Astros", "Spurs", "Mavericks", "Rockets", "Texas HS football"],
+    bio: [
+      "The Keep TX Red Sports Desk covers the teams and leagues that shape Texas identity — the NFL's Cowboys and Texans, MLB's Rangers and Astros, the NBA's Spurs, Mavericks, and Rockets, plus the Friday-night high-school football culture that defines fall in the Lone Star State.",
+      "Reporting focuses on the business of Texas sports, stadium and municipal-financing debates, and the on-field storylines that Texans actually argue about at the barbershop.",
+    ],
+  },
+  {
+    slug: "texana-desk",
+    name: "Texana Desk",
+    role: "Texas culture, history & identity",
+    beats: ["Texas history", "Landmarks & heritage", "Regional identity", "Music & food culture"],
+    bio: [
+      "The Texana Desk is Keep TX Red's culture and heritage byline — the history, landmarks, and traditions that make Texas Texas. From the Alamo to the King Ranch, from Selena to George Strait, from the Astrodome to the Cotton Bowl, we cover the stories that carry the state's identity forward.",
+      "Coverage blends primary-source history with contemporary reporting on the places, people, and rituals that anchor Texas culture.",
+    ],
+  },
+  {
     slug: "border-bureau",
     name: "Border Bureau",
     role: "Border & Rio Grande Valley",

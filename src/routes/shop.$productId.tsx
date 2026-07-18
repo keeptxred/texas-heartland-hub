@@ -23,17 +23,24 @@ export const Route = createFileRoute("/shop/$productId")({
     const p = loaderData?.product;
     if (!p) {
       return {
-        meta: [{ title: "Product — Keep Texas Red" }],
+        meta: [
+          { title: "Product not found — Keep Texas Red" },
+          { name: "robots", content: "noindex,follow" },
+        ],
       };
     }
     const displayTitle = seoTitle(p);
     const title = `${displayTitle} | Keep Texas Red Shop`;
     const description = seoDescription(p);
     const url = `${SITE_URL}/shop/${p.id}`;
+    // Products lacking a real description are Printify placeholders — keep the page
+    // reachable but noindex to prevent thin/duplicate URLs from being crawled.
+    const isThin = !p.description || p.description.trim().length < 40;
     return {
       meta: [
         { title },
         { name: "description", content: description },
+        ...(isThin ? [{ name: "robots", content: "noindex,follow" }] : []),
         { property: "og:title", content: displayTitle },
         { property: "og:description", content: description },
         { property: "og:type", content: "product" },

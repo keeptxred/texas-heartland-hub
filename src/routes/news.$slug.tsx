@@ -81,7 +81,14 @@ export const Route = createFileRoute("/news/$slug")({
     };
   },
   head: ({ loaderData }) => {
-    if (!loaderData) return {};
+    if (!loaderData) {
+      return {
+        meta: [
+          { title: "Article not found — Keep TX Red" },
+          { name: "robots", content: "noindex,follow" },
+        ],
+      };
+    }
     const { article, body } = loaderData;
     const path = `/news/${article.slug}`;
     const keywords = buildKeywords(article.title, article.dek, article.category);

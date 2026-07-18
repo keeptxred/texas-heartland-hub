@@ -11,6 +11,14 @@ export const Route = createFileRoute("/texas-news/$topic")({
   loader: ({ params }) => getLiveArticlesByCategory({ data: { activeFilter: params.topic } }),
   head: ({ params }) => {
     const section = TEXAS_NEWS_SECTIONS.find((s) => s.id === params.topic);
+    if (!section) {
+      return {
+        meta: [
+          { title: "Topic not found — Texas News" },
+          { name: "robots", content: "noindex,follow" },
+        ],
+      };
+    }
     const title = section ? `${section.title} — Texas News` : "Texas News";
     const desc = section?.description ?? "Texas news coverage.";
     const url = `https://www.keeptxred.com/texas-news/${params.topic}`;
