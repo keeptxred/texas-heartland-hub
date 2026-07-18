@@ -2,6 +2,7 @@ import type { ArticleBodyShape } from "@/lib/article-dedupe";
 
 export const NON_EVERGREEN_MIN_MAIN_WORDS = 2000;
 export const EVERGREEN_MIN_MAIN_WORDS = 5000;
+export const SPORTS_MIN_MAIN_WORDS = 1200;
 
 const EXCLUDED_SECTION_RE =
   /\b(texas\s+relevance|source\s+attribution|sources?|faq|frequently\s+asked\s+questions|key\s+takeaways?|reader\s+questions?)\b/i;
