@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { TEAM_BY_SLUG, isTeamSlug } from "./texas-teams";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
 
 export type SportsListItem = {
   slug: string;
@@ -47,6 +48,7 @@ export const listSportsByLeague = createServerFn({ method: "GET" })
     if (error || !rows) return { items: [] };
     const items = (rows as (SportsListItem & { kind?: string | null; body_json?: unknown })[])
       .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
+      .filter((row) => shouldDisplayBreakingSports(row.kind, row.published_at, "league"))
       .slice(0, 50)
       .map(({ kind: _kind, body_json: _bodyJson, ...row }) => row);
     return { items };
@@ -100,6 +102,7 @@ export const listSportsByTeam = createServerFn({ method: "GET" })
       (a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime(),
     )
       .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
+      .filter((row) => shouldDisplayBreakingSports(row.kind, row.published_at, "team"))
       .map(({ kind: _kind, body_json: _bodyJson, ...row }) => row);
     return { items };
   });
