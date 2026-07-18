@@ -39,25 +39,19 @@ const TEXAS_NEWS_SLUGS: Record<string, string[]> = {
     "texas-property-tax-guide",
   ],
   culture: [
-    "constitutional-carry-one-year-later",
-    "texas-water-rights-explained",
-    "texas-open-meetings-public-info",
-    "texas-political-terminology",
-    "texas-constitutional-amendments-guide",
+    // Culture retains only true culture/identity pieces. Government, laws,
+    // voting, and infrastructure articles moved to Politics / Elections /
+    // Economy per the taxonomy cleanup.
   ],
   education: [
     "school-choice-esa-guide",
     "texas-school-board-powers",
     "texas-school-finance-explained",
-    "school-board-elections",
-    "beginners-guide-texas-elections",
   ],
   "sports-culture": [
-    "texas-voting-guide-2026",
-    "texas-border-policy-full-guide",
-    "texas-energy-economy-overview",
-    "school-board-elections",
-    "primary-vs-general-election",
+    // Sports Culture stays empty until we publish true sports-culture
+    // coverage. Elections, border, and energy stories moved to their
+    // correct sections.
   ],
 };
 
