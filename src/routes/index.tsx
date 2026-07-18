@@ -28,10 +28,10 @@ function getLeadImage(): string | null {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Keep TX Red | Texas News, Politics, Economy, Border & Sports" },
-      { name: "description", content: "Keep TX Red delivers daily Texas news, politics, business, border security, energy, elections, sports and culture. Independent reporting focused on the issues shaping Texas." },
-      { property: "og:title", content: "Keep TX Red | Texas News, Politics, Economy, Border & Sports" },
-      { property: "og:description", content: "Keep TX Red delivers daily Texas news, politics, business, border security, energy, elections, sports and culture. Independent reporting focused on the issues shaping Texas." },
+      { title: "Keep Texas Red | Texas Relocation Tools, Calculators & Resources" },
+      { name: "description", content: "Keep Texas Red is the home for Texas relocation tools, Texas calculators, and Texas resources — plus daily news, politics, and analysis for people moving to and living in Texas." },
+      { property: "og:title", content: "Keep Texas Red | Texas Relocation Tools, Calculators & Resources" },
+      { property: "og:description", content: "Keep Texas Red is the home for Texas relocation tools, Texas calculators, and Texas resources — plus daily news, politics, and analysis for people moving to and living in Texas." },
       { property: "og:url", content: "/" },
       { property: "og:image", content: heroFlag },
       { name: "twitter:image", content: heroFlag },
@@ -50,11 +50,12 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "Keep TX Red",
-          url: "https://www.keeptxred.com/",
+          name: "Keep Texas Red",
+          alternateName: ["Keep TX Red", "KeepTXRed"],
+          url: "https://keeptxred.com/",
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://www.keeptxred.com/news?q={search_term_string}",
+            target: "https://keeptxred.com/news?q={search_term_string}",
             "query-input": "required name=search_term_string",
           },
         }),
@@ -64,9 +65,10 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "Keep TX Red",
-          url: "https://www.keeptxred.com/",
-          logo: "https://www.keeptxred.com/favicon.ico",
+          name: "Keep Texas Red",
+          alternateName: ["Keep TX Red", "KeepTXRed"],
+          url: "https://keeptxred.com/",
+          logo: "https://keeptxred.com/favicon.ico",
         }),
       },
       {
