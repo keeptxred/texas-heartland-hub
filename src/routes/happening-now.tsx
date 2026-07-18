@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
+import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
 
 const FAQS = [
   {
@@ -174,7 +175,8 @@ function DashboardPage() {
           description: r.description,
           pub_date: r.pub_date,
         }));
-      const demotedRows: Row[] = ((demoted ?? []) as { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string }[])
+      const demotedRows: Row[] = ((demoted ?? []) as { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string; kind?: string | null }[])
+        .filter((d) => shouldDisplayBreakingSports(d.kind, d.published_at, "happening-now"))
         .map((d, i) => ({
           id: -1 - i,
           title: d.title,
