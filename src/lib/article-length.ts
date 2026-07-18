@@ -39,7 +39,8 @@ export function articleMainWordCount(body: ArticleBodyShape | null | undefined):
 
 export function requiredMainWordCountForKind(kind?: string | null): number {
   if (kind === "evergreen") return EVERGREEN_MIN_MAIN_WORDS;
-  if (kind?.startsWith("sports-")) return SPORTS_MIN_MAIN_WORDS;
+  if (kind?.startsWith("sports-breaking")) return SPORTS_BREAKING_MIN_MAIN_WORDS;
+  if (kind?.startsWith("sports-")) return SPORTS_ANALYSIS_MIN_MAIN_WORDS;
   return NON_EVERGREEN_MIN_MAIN_WORDS;
 }
 
