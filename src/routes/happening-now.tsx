@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import { meetsArticleMainWordCount } from "@/lib/article-length";
 
 const FAQS = [
   {
@@ -148,16 +147,17 @@ function DashboardPage() {
           .limit(40),
         supabase
           .from("daily_articles")
-          .select("slug,kind,body_json,published_at")
+          .select("slug,published_at")
           .gte("published_at", sinceIso)
           .order("published_at", { ascending: false })
           .limit(200),
       ]);
       if (!active) return;
+      // Live Feed gates on "a rewritten native article exists" — NOT the
+      // 2,000-word long-form floor (that gate applies to sitemaps and
+      // evergreen surfaces). Breaking news is intentionally shorter.
       const validArticleSlugs = new Set(
-        ((linkedArticles ?? []) as { slug: string; kind?: string | null; body_json?: unknown }[])
-          .filter((r) => meetsArticleMainWordCount(r.kind, r.body_json as never))
-          .map((r) => r.slug),
+        ((linkedArticles ?? []) as { slug: string }[]).map((r) => r.slug),
       );
       const feedRows: Row[] = ((data ?? []) as { id: number; title: string; source: string; internal_slug: string | null; description: string | null; pub_date: string; link: string }[])
         // RULE: never link out to the original source. Feed items must be
@@ -174,8 +174,7 @@ function DashboardPage() {
           description: r.description,
           pub_date: r.pub_date,
         }));
-      const demotedRows: Row[] = ((demoted ?? []) as { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string; kind?: string | null; body_json?: unknown }[])
-        .filter((d) => meetsArticleMainWordCount(d.kind, d.body_json as never))
+      const demotedRows: Row[] = ((demoted ?? []) as { id: string; slug: string; title: string; category: string; dek: string | null; source_url: string | null; published_at: string }[])
         .map((d, i) => ({
           id: -1 - i,
           title: d.title,
