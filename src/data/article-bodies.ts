@@ -2478,4 +2478,507 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       "Supreme Court review will define the modern federal-state border boundary.",
     ],
   },
+  "texas-gun-laws-explained": {
+    updated: "2026-07-15",
+    intro: [
+      "Texas has among the most permissive firearm statutes in the country, but 'Texas gun laws' is a shorthand that hides a real amount of nuance — federal purchase rules apply the same way here as anywhere else, certain places are still off-limits regardless of what you're carrying, and the private-property owner's right to post a firearm notice remains fully enforceable. This guide walks every Texas resident through the framework: who can own, who can carry, where you can't, and what changed after House Bill 1927 made Texas a constitutional-carry state in 2021.",
+      "The audience for this guide is broad on purpose. First-time buyers moving into a Houston or DFW suburb, longtime hunters in East Texas trying to make sense of the new License to Carry rules, and out-of-state residents wondering whether their permit is honored here will all find the answers below. For a companion piece focused specifically on the enabling statute, read [Constitutional Carry in Texas](/news/constitutional-carry-one-year-later).",
+    ],
+    sections: [
+      {
+        heading: "The Legal Framework: State Statute on Top of Federal Law",
+        paragraphs: [
+          "Texas firearm law lives primarily in Chapter 46 of the Penal Code and Subchapter H of Chapter 411 of the Government Code, layered on top of the federal Gun Control Act of 1968 and the National Firearms Act. That layering matters: even when Texas law permits a specific behavior, federal prohibitions on possession by felons, unlawful drug users, adjudicated mental defectives, and those subject to certain protective orders continue to apply. Nothing at the state level overrides those.",
+          "The Texas Constitution's Article I, Section 23 guarantees the right to keep and bear arms 'in the lawful defense of himself or the State,' with the Legislature retaining power to 'regulate the wearing of arms, with a view to prevent crime.' Courts have historically read that clause as protecting individual ownership while allowing reasonable place-and-manner restrictions.",
+        ],
+      },
+      {
+        heading: "Who Can Legally Own a Firearm in Texas",
+        paragraphs: [
+          "Under federal law, a licensed dealer (FFL) must run every buyer through the NICS background check. Texas has no state waiting period, no permit-to-purchase, no registry, and no assault-weapons list. Once NICS returns a proceed, the sale completes the same day.",
+          "Federal prohibited persons categories still apply: felony conviction, misdemeanor domestic violence conviction, active protective order for family violence, dishonorable discharge, illegal drug use (including state-legal marijuana under federal classification), and adjudicated mental illness with commitment. Texas adds a few of its own: someone under a Chapter 411 or Chapter 46 disability, or a minor in most cases.",
+          "Private, in-state, person-to-person sales between two Texas residents are legal without a background check, provided the seller does not have reasonable cause to believe the buyer is prohibited. Serious sellers still route private sales through an FFL for a modest fee — it's the cleanest paper trail if the firearm is ever traced.",
+        ],
+      },
+      {
+        heading: "Age Requirements — Federal Floor, Texas Ceiling",
+        paragraphs: [
+          "Federal law sets the floor: 18 to purchase a long gun from an FFL, 21 to purchase a handgun from an FFL. Private long-gun sales to those 18 and over are permitted; private handgun sales to those under 21 are federally prohibited.",
+          "Texas layers on the carry age: constitutional carry and the License to Carry both require you to be 21, with a narrow exception for active-duty and honorably discharged military members who may qualify at 18. Long-gun carry in most public contexts does not require a permit at any age but is limited by federal age of purchase.",
+        ],
+      },
+      {
+        heading: "Constitutional Carry: What HB 1927 Actually Did",
+        paragraphs: [
+          "In September 2021, HB 1927 removed the License to Carry requirement for Texans 21 and older who are not otherwise prohibited from possessing a firearm. Since then, an eligible Texan may carry a handgun openly in a holster or concealed on the person in most public places without any state-issued permit.",
+          "'Constitutional carry' did not repeal the LTC — it made it optional. Many Texans still get the license because it unlocks reciprocity with 37 other states, waives the NICS check on future purchases in Texas, and provides an affirmative defense in specific location-based prosecutions. For anyone who travels or crosses state lines regularly, the LTC remains genuinely useful.",
+          "HB 1927 did not change where you can and cannot carry, did not authorize carry by prohibited persons, and did not affect federal restrictions in federal buildings, federal courthouses, or on federal property. It also did not modify Section 30.06 and 30.07 signage — the notices private property owners post to prohibit carry — both of which remain fully enforceable.",
+        ],
+      },
+      {
+        heading: "The License to Carry — Still Worth Getting",
+        paragraphs: [
+          "The Texas Department of Public Safety issues the LTC. Applicants must be 21 (18 for qualifying military), a legal U.S. resident, not in default on state taxes or child support, not a felon, not chemically dependent, and mentally sound. The process requires a written application, fingerprints, a four-to-six-hour classroom course, and a written and range proficiency test through a state-certified instructor.",
+          "The license, once issued, is valid for five years initially and every subsequent renewal. It costs less than most people expect and can be done online for renewals. The reciprocity map — the states that honor a Texas LTC — is maintained by DPS and worth checking before an out-of-state trip.",
+        ],
+      },
+      {
+        heading: "Where You Cannot Carry, Permit or No Permit",
+        paragraphs: [
+          "Section 46.03 of the Penal Code lists the places where carry is generally prohibited regardless of LTC or constitutional carry status: school premises, school buses, polling places on election day and during early voting, courts and offices of courts, racetracks, secured areas of airports past the TSA checkpoint, and within 1,000 feet of an execution facility on execution days. Federal law adds federal buildings, post offices, military installations, and secure federal courthouses.",
+          "Section 46.035 layers additional restrictions on LTC holders and, by extension, constitutional carriers: bars deriving 51% or more of receipts from on-premises alcohol sales (marked with a red 51% sign), high school and collegiate sporting events, correctional facilities, hospitals with proper notice, nursing homes with proper notice, amusement parks with proper notice, meetings of governmental bodies where proper notice is posted, and civil-commitment facilities.",
+          "Private property owners in Texas may prohibit carry by giving effective notice — the classic Section 30.06 sign prohibits concealed carry by LTC holders, and Section 30.07 prohibits open carry by LTC holders. After constitutional carry, the effective standard is essentially that private property owners may exclude firearms by posting statutory notice or by giving verbal notice; ignoring either after receiving notice is a criminal trespass.",
+        ],
+      },
+      {
+        heading: "Castle Doctrine and the Use of Force in Texas",
+        paragraphs: [
+          "Texas has a robust castle doctrine codified in Sections 9.31, 9.32, and 9.42 of the Penal Code. A person is presumed to have acted reasonably in using deadly force against an intruder who unlawfully and with force enters or attempts to enter an occupied habitation, vehicle, or place of business or employment, provided the defender was not engaged in criminal activity at the time.",
+          "Texas also has a stand-your-ground provision — there is no duty to retreat before using force or deadly force in self-defense, provided the person had a right to be at the location and was not engaged in criminal activity. Section 9.42 permits the use of deadly force to protect property under specific, narrow circumstances (at night, to prevent arson, burglary, robbery, aggravated robbery, or theft during the nighttime), and this is one of the more legally aggressive property-defense standards in the country.",
+          "None of this means a shooting is legally uncomplicated. Any use of deadly force triggers a police investigation, a grand jury review, and often a civil suit even after criminal acquittal. Insurance products marketed as 'self-defense coverage' exist for exactly this reason; consulting an attorney immediately after any defensive incident is standard advice.",
+        ],
+      },
+      {
+        heading: "Carrying in Your Vehicle",
+        paragraphs: [
+          "Texas has long allowed a non-LTC holder to carry a handgun in their own motor vehicle or watercraft, so long as the person is not otherwise prohibited, not a member of a criminal street gang, and not engaged in criminal activity other than a Class C traffic offense. The handgun must not be in plain view unless the driver has an LTC or is otherwise legally carrying under constitutional carry (which for a person 21+ effectively resolves the plain-view question).",
+          "Officers may still ask about firearms during a traffic stop. Texas does not require automatic disclosure, but most instructors recommend calm, factual disclosure at the start of any stop — hands on the wheel, license and insurance ready, and a straightforward statement that a firearm is present and where.",
+        ],
+      },
+      {
+        heading: "Long Guns, Suppressors, NFA Items, and the Made-in-Texas Statute",
+        paragraphs: [
+          "Rifles and shotguns are unrestricted at the state level in Texas beyond federal rules. There is no state assault-weapons ban, no state magazine capacity limit, and no state red-flag law.",
+          "Suppressors, short-barreled rifles, and other NFA items require the standard federal ATF Form 4 process, a $200 tax stamp, and typically several months of wait time. Texas passed a Firearms Freedom Act arguing that firearms manufactured, sold, and kept exclusively within Texas fall outside federal Commerce Clause jurisdiction. In practice, federal law still governs — the ATF has not conceded the state's theory — and residents are advised to comply with federal NFA rules regardless.",
+        ],
+      },
+      {
+        heading: "Special Rules by Setting: Home, Work, School, Church, Business",
+        paragraphs: [
+          "At home, Texas has essentially no restrictions on lawful ownership. Storage requirements only kick in when a child under 17 gains access and causes death or serious injury — a Class C misdemeanor unless reckless, in which case it becomes a Class A. Safe storage is best practice regardless.",
+          "At work, private employers may prohibit firearms on the premises but generally cannot prohibit them from being kept locked in an employee's personal vehicle in the parking lot, per Section 52.061 of the Labor Code. Certain regulated employers (school districts, federal contractors, chemical facilities) have carve-outs.",
+          "Churches: after 2019 reforms, licensed carriers may lawfully carry in houses of worship in Texas unless the congregation posts effective notice barring firearms. Many congregations have adopted written security plans that welcome trained congregants to carry.",
+          "Schools: still prohibited without written authorization from the school district. The 'Guardian' and 'School Marshal' programs allow specifically trained employees to carry on campus with school-board approval.",
+        ],
+      },
+      {
+        heading: "How Texas Law Interacts with Federal Firearms Law",
+        paragraphs: [
+          "State permissiveness does not preempt federal restrictions. A Texan cannot use constitutional carry to enter a federal courthouse. A resident cannot buy from an FFL if a federal prohibitor applies. Federal machine-gun rules, silencer rules, and interstate transfer rules still control.",
+          "This friction is most visible in the marijuana context. Texas has no adult-use marijuana program, but any user of a federally controlled substance is federally prohibited from possessing a firearm — a question that shows up honestly on ATF Form 4473 during every FFL purchase. The prohibition is well established in federal case law, though currently under litigation in multiple circuits.",
+        ],
+      },
+      {
+        heading: "Common Situations Texans Ask About",
+        paragraphs: [
+          "New residents relocating from a permit-required state often ask whether their out-of-state license works here. Texas honors permits from any state that honors ours — DPS publishes the reciprocity list — and constitutional carry means most permitless carriers 21 and over are effectively covered anyway.",
+          "Hunters ask about carrying a personal handgun into the field. Legal for anyone 21+ under constitutional carry, and legal for LTC holders regardless of age qualifications, subject to hunting regulations set by Texas Parks and Wildlife.",
+          "Business owners ask whether they can post their own establishment. Yes — Sections 30.06 and 30.07 signage, or verbal notice, are enforceable. A number of chain retailers with corporate policies against carry post statewide.",
+          "Renters ask whether landlords can prohibit firearms in leased dwellings. Texas has narrow tenant protections here; most reasonable, non-discriminatory firearm rules in a lease are enforceable, but blanket prohibitions in a residence face more scrutiny than similar prohibitions in commercial space.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Do I need any license to carry a handgun in Texas?", a: "If you are 21 or older, a legal U.S. resident, and not otherwise prohibited under state or federal law, you may lawfully carry a handgun in most public places without a permit under HB 1927. Location restrictions in Sections 46.03 and 46.035 still apply." },
+      { q: "Is the Texas License to Carry still worth getting after constitutional carry?", a: "Yes for most active carriers — the LTC provides reciprocity with 37 other states, exempts you from NICS on future purchases, gives you an affirmative defense to certain location prosecutions, and often reduces friction with law enforcement." },
+      { q: "Can I carry openly in Texas?", a: "Open carry of a holstered handgun by someone 21 or older is generally legal in most public places. Long-gun open carry has always been legal but can trigger disorderly conduct scrutiny if used to intimidate." },
+      { q: "Where can I never carry a firearm in Texas regardless of my license?", a: "Schools, courts, polling places during voting, secured airport areas, federal buildings, correctional facilities, and any private property that has posted effective notice under Sections 30.06 or 30.07." },
+      { q: "Do I have to tell an officer I have a firearm during a traffic stop?", a: "Texas law does not require automatic disclosure, but calm, prompt disclosure with your hands visible is the standard recommended practice and usually shortens the encounter." },
+      { q: "Can a Texas landlord prohibit firearms in a rented home?", a: "Landlords can include reasonable, non-discriminatory firearm provisions in a residential lease, though blanket bans in a private residence face more scrutiny than in commercial contexts." },
+    ],
+    sources: [
+      { label: "Texas Penal Code Chapter 46", url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm" },
+      { label: "Texas DPS License to Carry", url: "https://www.dps.texas.gov/rsd/ltc" },
+      { label: "HB 1927 (2021) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=87R&Bill=HB1927" },
+      { label: "ATF Firearms Verification", url: "https://www.atf.gov/firearms" },
+      { label: "Texas Constitution Article I, Section 23", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.1.htm" },
+    ],
+    related: [
+      "constitutional-carry-one-year-later",
+      "texas-new-laws-2026",
+      "texas-election-laws-explained",
+      "moving-to-texas-guide",
+      "how-a-bill-becomes-texas-law",
+    ],
+    cta: { label: "Explore More Texas Law Guides", href: "/laws" },
+    keyTakeaways: [
+      "Texans 21+ can carry a handgun without a permit under HB 1927, subject to Section 46 place restrictions.",
+      "Federal prohibitor categories (felony, drug use, protective order) still apply regardless of Texas law.",
+      "The License to Carry is optional but still unlocks reciprocity and NICS-exempt future purchases.",
+      "Castle doctrine and stand-your-ground protections are among the strongest in the nation.",
+      "Private property owners retain full authority to prohibit carry via 30.06/30.07 notice.",
+    ],
+  },
+  "texas-property-tax-laws-explained": {
+    updated: "2026-07-15",
+    intro: [
+      "Property tax is the single most consequential tax a Texas homeowner pays, and it operates under a body of law most residents never encounter until the appraisal notice arrives in April. This guide explains the statutory framework that governs how your home is valued, how your rate is set, how your bill is calculated, and what legal tools you have to challenge every one of those steps.",
+      "Texas property tax law is a mix of the Property Tax Code (Title 1), the Tax Code (Chapter 26), constitutional caps (Article VIII), and voter-approved amendments — including the 2025 measure that raised the residence homestead exemption to $140,000. If you're new to the state and want the whole system in plain English, start with [The Texas Property Tax Guide](/news/texas-property-tax-guide), and use our [Property Tax Calculator](/tax-calculator) to run your actual numbers.",
+    ],
+    sections: [
+      {
+        heading: "Why Texas Relies on Property Tax So Heavily",
+        paragraphs: [
+          "Texas has no personal income tax, and voters made that permanent with a 2019 constitutional amendment. That leaves property tax as the primary funding mechanism for local government — school districts, counties, cities, community colleges, hospital districts, MUDs, and emergency-service districts all draw from it. The state itself does not levy property tax; the whole system is local, which is why identical homes in adjacent ZIP codes can carry very different bills.",
+          "For a full explanation of the trade-off, see [Why Texas Has No State Income Tax](/news/why-texas-has-no-income-tax). The upside is choice: Texans decide the size of local government by voting on bonds and by voting for the elected officials who set rates.",
+        ],
+      },
+      {
+        heading: "How Your Property Gets Valued: County Appraisal Districts",
+        paragraphs: [
+          "Every Texas county has a Central Appraisal District (CAD) governed by a board and led by a chief appraiser. The CAD is legally independent of every taxing entity — the county doesn't set your value, the school district doesn't set your value, only the CAD does. Values are certified in July and used by every entity that draws from your property.",
+          "By statute, the CAD must appraise at market value as of January 1 each year using mass appraisal techniques. Residential appraisers analyze comparable sales, adjust for differences, and generate a value for every parcel. The methodology is public. The result is the 'appraised value' that appears on your April notice.",
+          "For homestead properties, the Texas Constitution caps the growth of the taxable value at 10% per year regardless of how much the market value rose. That 'assessed value' is what your rate is applied to, not the raw market number. For non-homestead residential properties valued at $5 million or less, a temporary 20% growth cap runs through the 2026 tax year.",
+          "For a deeper dive into how the CAD operates and your statutory rights during the process, see [How County Appraisal Districts Work](/news/county-appraisal-districts-explained).",
+        ],
+      },
+      {
+        heading: "The Homestead Exemption and Other Statutory Reductions",
+        paragraphs: [
+          "The residence homestead exemption is the single largest reduction most Texans will ever qualify for. As of the November 2025 constitutional amendment, the school-district homestead exemption is $140,000, up from $100,000. Homeowners 65 or older or with a qualifying disability receive an additional $10,000 ($60,000 in some prior packages) plus a school-district tax freeze that caps school taxes at the level owed the year they qualified.",
+          "Optional local homestead exemptions of up to 20% of appraised value may be adopted by counties, cities, and other taxing units. Many major counties have adopted them. Disabled veterans qualify for exemptions ranging from $5,000 to a full exemption depending on VA disability rating; 100% disabled veterans and their surviving spouses pay no property tax on their homestead.",
+          "The exemption is not automatic. It must be applied for at your county appraisal district using Form 50-114, ordinarily by April 30 of the tax year, though late filings back two years are commonly accepted. See [The Texas Homestead Exemption Explained](/news/homestead-exemption-explained) for the filing walkthrough.",
+        ],
+      },
+      {
+        heading: "How Rates Are Set: Truth-in-Taxation and the Voter-Approval Rate",
+        paragraphs: [
+          "Each taxing entity — school district, county, city, hospital district, and so on — must adopt a tax rate every year. That rate is expressed in dollars per $100 of assessed valuation. Rates are the second half of the bill; the first half is your assessed value.",
+          "The 'no-new-revenue rate' is the rate that would generate the same total revenue as last year on the same properties. The 'voter-approval rate' is generally the no-new-revenue rate plus 3.5% for most cities and counties and 2.5% for school districts. If a taxing unit adopts a rate above the voter-approval rate, voters automatically get a rollback election in November — a reform put in place by Senate Bill 2 in 2019 to force elected officials to defend increases at the ballot box.",
+          "Truth-in-taxation notices must be published, posted online, and mailed to homeowners in advance of the rate-adoption hearing. The Texas Comptroller maintains a truth-in-taxation lookup site where any resident can see every entity's proposed rate side by side.",
+        ],
+      },
+      {
+        heading: "How the Bill Is Actually Calculated",
+        paragraphs: [
+          "The formula is straightforward: assessed value minus exemptions, times the sum of all applicable tax rates, divided by 100. If your home is assessed at $400,000, your homestead exemption is $140,000 for school purposes, and your school district rate is $1.05 per $100, your school-district portion is (($400,000 − $140,000) × 1.05) / 100 = $2,730. Add the county, city, MUD, and hospital-district portions, each calculated on their own exempted taxable value and their own rate, and you have the total bill.",
+          "Bills are mailed in October and are legally due by January 31 without penalty. Payment options include installment plans for homeowners 65 and older and for qualifying disabled Texans, plus escrowed payment through the mortgage servicer for most buyers.",
+        ],
+      },
+      {
+        heading: "Your Right to Protest — And Why You Should",
+        paragraphs: [
+          "Every property owner has a statutory right to protest the appraised value each year. The typical protest deadline is May 15 or 30 days after the notice was mailed, whichever is later. Two grounds carry the most weight: (1) the market value is too high compared to actual sales of comparable properties, and (2) the appraisal is unequal — comparable properties in the neighborhood are appraised for less on a per-square-foot basis.",
+          "The process starts with an informal meeting at the CAD, where a substantial percentage of protests are resolved. If not, the case moves to the Appraisal Review Board (ARB) — a panel of citizen volunteers who hear evidence from both sides. ARB hearings are not adversarial in the courtroom sense; they are structured, brief, and evidence-driven. From an ARB order, the property owner may appeal to district court, to binding arbitration, or to SOAH (the State Office of Administrative Hearings) depending on the property type.",
+          "Practical advice: file the protest online the day the notice arrives, request the CAD's evidence packet (they are required to provide it), and build a five-page comparable-sales packet from MLS data, closing statements, or a fee appraisal. See [How to Protest Your Property Appraisal — and Actually Win](/news/appraisal-protest-playbook) for the full playbook.",
+        ],
+      },
+      {
+        heading: "What the 2023 and 2025 Reform Packages Actually Changed",
+        paragraphs: [
+          "The 2023 reform package (SB 2, the constitutional Proposition 4) delivered the largest one-time property tax reduction in Texas history: $18 billion. It compressed school district M&O rates by roughly 10.7 cents, raised the school-district homestead exemption from $40,000 to $100,000, and introduced the temporary 20% cap on non-homestead residential properties valued at $5 million or under.",
+          "The 2025 constitutional amendment approved by voters raised the homestead exemption further to $140,000 and expanded the additional over-65/disabled exemption. School district rate compression continued in the 2025 budget. Both packages left the underlying formula intact — Texas still funds schools through property tax with state supplementation — but shifted a meaningful share of the burden off the residential homeowner.",
+          "For related coverage, see [New Property Tax Relief Package](/news/property-tax-relief-package) and our [Texas Property Tax Relief Calculator](/tax-calculator).",
+        ],
+      },
+      {
+        heading: "Special Situations: Ag-Use, Wildlife, Timber, and Open Space",
+        paragraphs: [
+          "Texas allows productivity-based appraisal for land in agricultural, wildlife, or timber use — often shorthanded as 'ag exemption,' though it is technically a special use valuation. The valuation is based on the land's productive value, not market value, resulting in dramatically lower tax bills on qualifying tracts. Rules and minimum acreage vary by county.",
+          "Rollback taxes apply when land drops out of qualifying use — typically five years of the difference between what was paid and what would have been paid at market value, with interest. Anyone buying land with an existing ag valuation should confirm the current productivity status and understand what an intended change of use would trigger.",
+        ],
+      },
+      {
+        heading: "MUDs, PIDs, and the Other Line Items That Surprise Newcomers",
+        paragraphs: [
+          "A Municipal Utility District (MUD) is a special-purpose local government created to finance water, sewer, and drainage infrastructure in a developing subdivision. MUDs levy their own property tax, sometimes at rates of $0.50-$1.00 per $100, which sits on top of the county, city, and school portions of your bill.",
+          "Public Improvement Districts (PIDs) and Emergency Services Districts (ESDs) function similarly. Buyers of new construction in Texas's expanding suburbs should ask specifically about every overlapping district before closing — the true tax rate is the sum of every entity your property falls inside, and it can meaningfully change what a $400,000 house actually costs to hold.",
+          "For a broader look at these overlapping entities, see [What Local Governments Actually Control in Texas](/news/what-local-governments-control).",
+        ],
+      },
+      {
+        heading: "Enforcement, Delinquency, and the Statute of Limitations",
+        paragraphs: [
+          "Unpaid property taxes accrue penalty and interest starting February 1. After delinquency, the taxing unit can sue for a personal judgment, place a lien on the property, and ultimately foreclose. Tax lien foreclosures happen at monthly courthouse-step auctions in every Texas county.",
+          "Texas has a strong statutory framework for tax deferrals for homeowners 65 and over and for surviving spouses — the tax accrues but cannot be collected during the deferral period, protecting seniors on fixed incomes from being taxed out of long-held homes. Interest continues to accumulate; the deferral is not forgiveness.",
+        ],
+      },
+      {
+        heading: "What Every Homeowner Should Do Every Year",
+        paragraphs: [
+          "Three steps, every year, without exception: (1) verify your homestead exemption is on file with your CAD, (2) protest the appraised value when it arrives in April, and (3) show up or vote absentee in the November constitutional-amendment and rollback elections. These are the only levers a homeowner controls, and each one measurably affects the annual bill.",
+          "For a full first-year checklist for new arrivals, our [Moving to Texas Guide](/news/moving-to-texas-guide) walks through the entire property tax cycle in the context of everything else a new resident has to file.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "How much is the Texas homestead exemption in 2026?", a: "The residence homestead exemption for school district purposes is $140,000 as of the November 2025 constitutional amendment. Homeowners 65 or older or with a qualifying disability receive an additional exemption plus a school-tax freeze." },
+      { q: "When is the deadline to protest my property appraisal?", a: "The standard deadline is May 15 or 30 days after the appraisal notice was mailed, whichever is later. File online with your county appraisal district as soon as the notice arrives." },
+      { q: "Who actually sets my property tax rate?", a: "Each taxing entity — school district, county, city, hospital district, MUD — sets its own rate every year. If the total exceeds the voter-approval rate, a rollback election is automatic in November." },
+      { q: "What is the appraisal cap and how does it work?", a: "The Texas Constitution caps growth of the taxable value on a homestead at 10% per year regardless of market value. A temporary 20% cap applies to non-homestead residential properties valued under $5 million through the 2026 tax year." },
+      { q: "Can I stop paying property tax when I turn 65?", a: "No, but you may qualify for a school-tax freeze, an additional exemption, and a full deferral of collection during your lifetime (interest continues to accrue). File with your CAD when you qualify." },
+      { q: "What happens if I do not pay my property tax bill?", a: "Delinquency triggers penalty and interest starting February 1, followed by potential lawsuit, lien, and eventually tax-lien foreclosure at courthouse auction." },
+    ],
+    sources: [
+      { label: "Texas Property Tax Code (Title 1)", url: "https://statutes.capitol.texas.gov/?link=TX" },
+      { label: "Texas Comptroller — Property Tax Assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      { label: "Truth-in-Taxation Portal", url: "https://truth-in-taxation.com/" },
+      { label: "Constitutional Amendments Ballot History", url: "https://www.sos.state.tx.us/elections/historical/index.shtml" },
+      { label: "Senate Bill 2 (2019) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=86R&Bill=SB2" },
+    ],
+    related: [
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+      "appraisal-protest-playbook",
+      "county-appraisal-districts-explained",
+      "texas-new-laws-2026",
+    ],
+    cta: { label: "Estimate Your Bill With Our Calculator", href: "/tax-calculator" },
+    keyTakeaways: [
+      "The homestead exemption is $140,000 for school purposes as of 2025's constitutional amendment.",
+      "Homestead values are capped at 10% annual growth regardless of market appreciation.",
+      "Every taxing entity sets its own rate; rates above the voter-approval rate trigger November rollback elections.",
+      "The protest deadline is May 15 or 30 days after your notice — file online and request the CAD evidence packet.",
+      "Seniors 65+ qualify for a school-tax freeze and can defer collection entirely during their lifetime.",
+    ],
+  },
+  "texas-election-laws-explained": {
+    updated: "2026-07-15",
+    intro: [
+      "Texas election law lives principally in the Texas Election Code, a document that runs to hundreds of chapters and governs everything from voter registration to how a ballot is counted after the polls close. This guide summarizes the practical rules that actually affect a Texas voter: who can register, what identification is accepted, when and how to vote early or by mail, what happens at the polling place, and the enforcement provisions added by Senate Bill 1 in 2021.",
+      "Whether you are a first-time voter, a new Texas resident, or a longtime resident brushing up before the March primary, the framework below covers what the law requires and what your rights are. For a broader walkthrough written for civic education, see [A Beginner's Guide to Texas Elections](/news/beginners-guide-texas-elections) and [The Texas Voting Guide for 2026](/news/texas-voting-guide-2026).",
+    ],
+    sections: [
+      {
+        heading: "Who Runs Elections in Texas",
+        paragraphs: [
+          "The Texas Secretary of State is the chief election officer of the state, responsible for uniform interpretation of the Election Code and for certifying voting equipment. Actual administration happens county by county — 254 counties, each with an elections administrator or a combination of county clerk and voter registrar handling registration, polling places, ballots, and results reporting.",
+          "This decentralization is a feature. The Legislature sets the statewide floor; counties implement within that floor. Local nuances — where polling places are, whether countywide voting is offered, how many voting machines each precinct receives — vary considerably between Harris, Dallas, Travis, Tarrant, Bexar, and the smaller counties.",
+        ],
+      },
+      {
+        heading: "Voter Registration: Deadlines and Requirements",
+        paragraphs: [
+          "To vote in Texas, you must be a U.S. citizen, at least 18 years old on election day (17 years, 10 months to register), a resident of the Texas county where you're registering, not a convicted felon (unless the sentence has been fully discharged), and not declared mentally incapacitated by a court.",
+          "Registration must be received by the county voter registrar at least 30 days before an election in which you want to vote. Texas does not offer same-day registration, and does not offer online voter registration in the way most other states do — the application must be printed and mailed, or handed in in person, though you can update an existing registration online through the Secretary of State's site if you have a Texas driver license.",
+          "Registration is permanent within a county but does not transfer automatically across county lines. Any Texan who moves to a new county must submit a new application. See [The Texas Voter Registration Guide](/news/texas-voter-registration-guide) for the full walkthrough.",
+        ],
+      },
+      {
+        heading: "Photo ID Requirements at the Polls",
+        paragraphs: [
+          "Texas requires voters to present one of seven forms of acceptable photo identification at the polling place. The accepted list is: Texas driver license, Texas Election Identification Certificate, Texas personal ID card, Texas concealed handgun license or License to Carry, U.S. military ID with photo, U.S. citizenship certificate with photo, and U.S. passport (book or card). IDs may be expired by up to four years (no expiration limit for voters 70 and over).",
+          "Voters without an acceptable photo ID may still vote by presenting a supporting document (voter registration certificate, utility bill, bank statement, government check, or paycheck) and signing a Reasonable Impediment Declaration. The ballot is counted as a regular ballot.",
+          "The Texas Election Identification Certificate is issued free by DPS specifically to satisfy voter ID and requires the same base documentation as a driver license (proof of identity, citizenship, and Texas residency).",
+        ],
+      },
+      {
+        heading: "Early Voting: The Way Most Texans Actually Vote",
+        paragraphs: [
+          "Texas offers a robust early voting period — typically 17 to 12 days before election day for a general election, and 10 to 4 days before a primary. During early voting, any registered voter in the county may vote at any designated early voting location in most participating counties (Harris, Dallas, Tarrant, Travis, Bexar, and most large counties all use countywide voting).",
+          "Turnout during early voting typically exceeds election-day turnout for major statewide contests. It is the recommended way to vote for most Texans — shorter lines, more flexible hours, and no need to identify a specific precinct polling place.",
+        ],
+      },
+      {
+        heading: "Vote by Mail: Narrow Eligibility, Strict Rules",
+        paragraphs: [
+          "Texas is a limited excuse mail ballot state. To vote by mail, you must be at least 65 years old, disabled, out of the county during the entire early voting period and on election day, expected to give birth within three weeks before or after election day, or confined in jail but otherwise eligible to vote.",
+          "The application for a Ballot by Mail must be received by the early voting clerk by the 11th day before the election. Voters must include the same identification number they used to register (Texas driver license, personal ID, or last four SSN) on both the application and the ballot return carrier envelope. Mismatches trigger a curative process — the county must notify the voter and allow correction — but this rule tightened materially under SB 1 in 2021 and is a common cause of rejection for first-time mail voters.",
+          "Ballots must be received by 7:00 PM on election day or postmarked by 7:00 PM on election day and received by 5:00 PM the next day.",
+        ],
+      },
+      {
+        heading: "Election Day: Polling Places, Countywide Voting, and Provisional Ballots",
+        paragraphs: [
+          "Election-day polling places are open 7:00 AM to 7:00 PM. Anyone in line at 7:00 PM must be allowed to vote. In counties using countywide voting on election day (a majority of Texas voters live in one), any voter may cast a ballot at any of the county's polling locations. In counties that maintain traditional precinct voting, you must vote at your assigned precinct.",
+          "Provisional ballots are available when a voter's eligibility is questioned at the polls — for example, if they appear to be at the wrong precinct or their name isn't found on the rolls. Provisional ballots are counted only after the county verifies eligibility, which happens during canvass in the following week.",
+        ],
+      },
+      {
+        heading: "Primaries, Runoffs, and How Texas Nominates",
+        paragraphs: [
+          "Texas holds open primaries, meaning a voter chooses which party's primary to vote in on primary day (typically the first Tuesday in March) without prior party registration. The party you vote in that year becomes your party affiliation for the remainder of that cycle for purposes such as county-convention delegate participation.",
+          "If no candidate wins more than 50% of the vote in a primary, the top two candidates advance to a runoff — typically held on a Tuesday in late May. Runoffs are famously low-turnout, which is why organized primary voters have outsized influence in the resulting nomination.",
+          "For most Texas districts drawn since the last redistricting, the Republican primary is where the seat is actually decided. See [Primary vs. General](/news/primary-vs-general-election) for why that matters.",
+        ],
+      },
+      {
+        heading: "General Elections, Constitutional Amendments, and Special Elections",
+        paragraphs: [
+          "The general election is the first Tuesday after the first Monday in November. Every partisan office, every constitutional amendment referred by the Legislature, and every county rollback election appears on the November ballot.",
+          "Constitutional amendments in Texas require a two-thirds vote of each chamber of the Legislature to be placed on the ballot, then a simple majority of voters statewide to be adopted. Texas has amended its 1876 constitution more than 500 times. For more, see [A Guide to Texas Constitutional Amendments](/news/texas-constitutional-amendments-guide).",
+          "Special elections fill vacancies and are held on uniform election dates — the first Saturday in May and the November general election date — with specific exceptions the governor may call.",
+        ],
+      },
+      {
+        heading: "Senate Bill 1 (2021) and Enforcement Provisions",
+        paragraphs: [
+          "SB 1 in 2021 rewrote large portions of election administration. Key provisions include: uniform statewide early voting hours (6:00 AM to 10:00 PM at most), a ban on drive-thru voting and 24-hour voting, the ID requirement on mail-ballot applications and return envelopes described above, new criminal penalties for election-worker conduct that improperly obstructs poll watchers, and enhanced authority for poll watchers to move freely inside polling places.",
+          "The law also created new civil and criminal enforcement mechanisms for the Attorney General and Secretary of State, and empowered private-citizen election integrity officers within each county party.",
+        ],
+      },
+      {
+        heading: "Poll Watchers, Election Workers, and What You Can and Cannot Do at the Polls",
+        paragraphs: [
+          "Each candidate, party, and specific-purpose PAC on the ballot may appoint poll watchers who may observe the entire voting and counting process. SB 1 clarified that watchers must be permitted 'free movement' inside the polling place, though not close enough to see how a specific voter marks a ballot.",
+          "Voters may not electioneer within 100 feet of a polling place entrance and may not wear campaign apparel, buttons, or hats inside that zone. Photography of ballots (ballot selfies) remains prohibited in Texas.",
+        ],
+      },
+      {
+        heading: "Rights of Voters With Disabilities and Limited English",
+        paragraphs: [
+          "Voters with disabilities have the right to curbside voting at any polling place, the right to an assistant of their choice (excluding an employer or union agent), and the right to accessible voting equipment. Signage and accessible parking are required.",
+          "Texas provides Spanish-language ballots and materials in every county under federal law, and provides materials in additional languages (Vietnamese, Chinese, Korean) in counties that meet Section 203 thresholds. Voters may bring an interpreter of their choice, subject to the same limitations as any voter-assistant.",
+        ],
+      },
+      {
+        heading: "Contest, Recount, and Post-Election Rights",
+        paragraphs: [
+          "Candidates and, in some cases, voters may contest election results in court under specified grounds. Recounts are available under Chapter 212 of the Election Code — automatic in ties, on request in close races, with the requesting party bearing the cost unless the recount reverses the result.",
+          "County canvassing occurs within a set number of days after election day; statewide canvassing happens on the second Tuesday after election day for general elections. Results are unofficial until canvass is complete.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "What is the deadline to register to vote in Texas?", a: "Registration must be received by your county voter registrar at least 30 days before the election. There is no same-day registration in Texas." },
+      { q: "What forms of ID does Texas accept at the polls?", a: "Texas driver license, Election ID Certificate, personal ID, License to Carry, military ID with photo, U.S. passport, or U.S. citizenship certificate with photo. Voters without ID can use a supporting document and sign a Reasonable Impediment Declaration." },
+      { q: "Can I vote by mail in Texas?", a: "Only if you are 65 or older, disabled, out of the county during the entire early voting period and election day, expecting to give birth, or confined in jail but eligible." },
+      { q: "When is early voting in Texas?", a: "Early voting is typically 17 to 12 days before a general election and 10 to 4 days before a primary. Most large counties allow countywide voting during early voting." },
+      { q: "What is an open primary and can I switch parties?", a: "Texas has open primaries — you choose which party's primary to vote in on primary day without registering by party. Your choice binds you to that party for the remainder of the primary cycle." },
+      { q: "What happens if I vote at the wrong precinct?", a: "In most large counties Texas allows countywide voting on election day, so any polling place counts. In smaller counties that still use precinct voting, you can cast a provisional ballot, which will be counted only for races you are eligible to vote in from your correct precinct." },
+    ],
+    sources: [
+      { label: "Texas Election Code", url: "https://statutes.capitol.texas.gov/?link=EL" },
+      { label: "Texas Secretary of State — Voting", url: "https://www.sos.state.tx.us/elections/voter/" },
+      { label: "Senate Bill 1 (2021) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=872&Bill=SB1" },
+      { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
+      { label: "Federal Voting Rights Act Section 203", url: "https://www.justice.gov/crt/language-minority-provisions" },
+    ],
+    related: [
+      "texas-voting-guide-2026",
+      "texas-voter-registration-guide",
+      "beginners-guide-texas-elections",
+      "primary-vs-general-election",
+      "texas-new-laws-2026",
+    ],
+    cta: { label: "Register or Update Your Registration", href: "/register-to-vote" },
+    keyTakeaways: [
+      "You must register at least 30 days before an election; Texas has no same-day registration.",
+      "Seven forms of photo ID are accepted; a Reasonable Impediment Declaration is available without ID.",
+      "Vote by mail is limited to 65+, disabled, out-of-county, expecting, or lawfully confined voters.",
+      "SB 1 (2021) tightened mail-ballot ID matching and standardized early-voting hours statewide.",
+      "Most large counties allow countywide voting during early voting and often on election day.",
+    ],
+  },
+  "texas-new-laws-2026": {
+    updated: "2026-07-15",
+    intro: [
+      "Every regular session of the Texas Legislature produces hundreds of bills that make it to the governor's desk, and every biennium a specific slate of laws takes effect on September 1 (the default effective date) or on January 1 of the following year. This guide covers the major statutes that took effect for the 2026 cycle — the property tax reform package voters approved in November 2025, the expanded education savings account program, additional border security funding, criminal justice updates, and the elections-and-administration bills that shape day-to-day life in Texas.",
+      "For an overview of how any Texas bill becomes law, see [How a Bill Becomes Texas Law](/news/how-a-bill-becomes-texas-law). For the ongoing tracker used by the newsroom, visit our [Legislative Updates](/legislative-updates) hub.",
+    ],
+    sections: [
+      {
+        heading: "Property Tax Relief: $140,000 Homestead Exemption and Continued Rate Compression",
+        paragraphs: [
+          "The single largest change taking effect for the 2026 tax year is the increase of the residence homestead exemption from $100,000 to $140,000, approved by voters as a constitutional amendment on the November 2025 ballot. The additional exemption for homeowners 65 and older or with a qualifying disability was also expanded.",
+          "Alongside the exemption increase, the 2025 legislative package continued the school district maintenance-and-operations rate compression that began with SB 2 in 2019 and the 2023 relief package. Combined, the compression and exemption produce a meaningful reduction on the school-district portion of most residential bills. See [Texas Property Tax Laws Explained](/news/texas-property-tax-laws-explained) for the full framework.",
+          "The temporary 20% appraisal cap for non-homestead residential properties valued at $5 million or less remains in effect through the 2026 tax year. Whether the Legislature extends or makes it permanent will be a headline debate in the next session.",
+        ],
+      },
+      {
+        heading: "Education Savings Accounts: Statewide Implementation",
+        paragraphs: [
+          "The Texas Education Savings Account program authorized by SB 2 in 2025 begins operating at scale in the 2026-27 school year. Eligible families receive approximately $10,000 per participating child (with a higher amount for students with disabilities and a lower amount for homeschool families) that can be spent on private-school tuition, tutoring, curriculum, therapy services, and other qualifying educational expenses.",
+          "The initial rollout prioritizes low-income families, students with disabilities, and children currently enrolled in public schools rated as low performing, then expands to other Texas families as capacity permits. Applications open through a state-selected program manager. See [Education Savings Accounts: A Parent's Guide](/news/school-choice-esa-guide) for the qualification walkthrough and timeline.",
+        ],
+      },
+      {
+        heading: "Border Security Funding and Operation Lone Star Continuation",
+        paragraphs: [
+          "The 2026-27 biennial budget continues Operation Lone Star funding at record levels, with allocations for Texas Department of Public Safety border deployments, the Texas National Guard, and the state's construction of border barrier infrastructure. Statutory provisions extend the trespass authorities granted to state and local law enforcement in border counties.",
+          "The Texas Attorney General retains enhanced authority to bring civil actions against entities that assist unauthorized crossings and to coordinate with county prosecutors on transnational criminal cases. Federal preemption litigation on state border authority remains active, and the Legislature may return to the issue in the next session depending on how the courts rule.",
+          "For deeper context, see [Operation Lone Star](/news/operation-lone-star) and the pillar [Texas Border Policy Explained](/news/texas-border-policy-full-guide).",
+        ],
+      },
+      {
+        heading: "Criminal Justice and Public Safety Updates",
+        paragraphs: [
+          "Several criminal-justice bills took effect for 2026, including sentence enhancements for organized retail theft, fentanyl-related distribution offenses, and human smuggling in border counties. A dedicated statutory framework for prosecuting fentanyl deaths as murder in certain circumstances expanded during the 2025 session.",
+          "The Legislature also continued the phased expansion of the state's mental-health beds through the Texas Health and Human Services Commission, and refined the involuntary commitment process for individuals repeatedly charged with certain violent offenses.",
+          "Bail reform provisions from earlier sessions remain in effect, with additional restrictions on cash-bond releases for defendants with prior violent-offense histories.",
+        ],
+      },
+      {
+        heading: "Elections Administration: Continued SB 1 Implementation",
+        paragraphs: [
+          "The 2025 session refined the SB 1 (2021) framework rather than reopening its core provisions. Adjustments included tighter deadlines for ballot-cure notifications, standardized statewide poll watcher training curricula, and additional record-retention requirements on county elections administrators.",
+          "The Secretary of State retains expanded authority to audit county election administration, and the Attorney General's election integrity unit continues its investigative work under existing statutory grants. See [Texas Election Laws Explained](/news/texas-election-laws-explained) for the full framework.",
+        ],
+      },
+      {
+        heading: "Firearms Law Refinements",
+        paragraphs: [
+          "House Bill 1927's constitutional-carry framework remains the backbone of Texas firearms law. The 2025 session added narrow clarifications on carry authority in state parks, at governmental meetings, and by peace officers in their private capacity, plus continued expansion of the School Marshal and Guardian programs that allow trained employees to be armed on campus.",
+          "No state-level restrictions on firearm ownership, magazine capacity, or so-called assault weapons were enacted. For the operational reality of Texas gun law in 2026, see [Texas Gun Laws Explained](/news/texas-gun-laws-explained).",
+        ],
+      },
+      {
+        heading: "Business, Regulatory, and Tort Reform",
+        paragraphs: [
+          "The 2025 session included several statutes aimed at the business-relocation pipeline. The Texas Business Court, a specialized commercial court created in 2023, expanded operational capacity in 2026 with additional divisions in Houston, Dallas, and Austin — handling complex commercial cases with a specialized bench.",
+          "Franchise-tax thresholds were adjusted for inflation, marginally expanding the number of small businesses exempted from filing. Occupational licensing reforms narrowed several boards' authority to impose fees or continuing-education requirements that were determined to lack a substantive public-safety justification.",
+          "Tort reform legislation refined damage caps in specific medical liability contexts and clarified attorney-fee recovery rules in construction disputes.",
+        ],
+      },
+      {
+        heading: "Water, Energy, and Infrastructure",
+        paragraphs: [
+          "The Texas Water Fund, created by voters in 2023 and expanded by the Legislature in 2025, continues to distribute grants and low-interest loans for municipal water infrastructure and new water supply. Rural water systems and border-region infrastructure received priority allocations in the 2026 disbursement cycle.",
+          "The Texas Energy Fund, aimed at incentivizing dispatchable (non-intermittent) generation on the ERCOT grid, entered its second application round. Approved projects receive low-interest loans conditioned on completion and interconnection by set deadlines. See [The Texas Grid Explained](/news/texas-grid-ercot-explained) for how the fund fits the broader ERCOT reliability question.",
+          "Water rights and groundwater conservation district authorities remained unchanged in substance for 2026; see [Texas Water Rights Explained](/news/texas-water-rights-explained).",
+        ],
+      },
+      {
+        heading: "Health Care and Family Policy",
+        paragraphs: [
+          "Continued statutory protections for pre-born children remain in effect, with the Texas Attorney General maintaining primary enforcement authority. Expanded maternal-health investments — including a longer postpartum Medicaid coverage window — took effect for the 2026 fiscal year.",
+          "The Legislature strengthened parental rights notification requirements for public schools on health-related interventions and continued reforms to the Texas foster-care system, including additional oversight of contracted care providers.",
+        ],
+      },
+      {
+        heading: "Effective Dates and How to Track Ongoing Changes",
+        paragraphs: [
+          "Most Texas laws take effect September 1 following the regular session, with some designated for earlier effect (immediate effect with two-thirds vote) or later (January 1 or specific fiscal year). Constitutional amendments take effect upon voter approval and canvass of the November election.",
+          "The Legislative Reference Library, Texas Legislature Online, and Texas Register are the three primary places to track statutes and rulemaking. Our [Legislative Updates](/legislative-updates) hub aggregates the bills we're tracking for readers.",
+        ],
+      },
+      {
+        heading: "What Ordinary Texans Should Do About New Laws",
+        paragraphs: [
+          "For most residents, staying current on new Texas law involves a small set of habits: watch the November constitutional-amendment ballot each odd-numbered year, review the changes to your annual property tax notice each spring, and check the [Texas Laws Explained](/texas-laws) page for major statutes that touch your household directly.",
+          "For families with school-age children, the ESA rollout is the practical change most likely to affect a household decision this cycle. For property owners, the exemption increase and rate compression will show up on the fall bill without any action required beyond confirming your homestead exemption is on file.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "What was the biggest new Texas law for 2026?", a: "The constitutional amendment raising the residence homestead exemption to $140,000, combined with continued school-district rate compression — the largest ongoing property tax relief package in state history." },
+      { q: "When did the education savings account program actually start?", a: "The ESA program authorized by SB 2 in 2025 begins operating at scale in the 2026-27 school year, prioritizing low-income families, students with disabilities, and children in low-performing public schools." },
+      { q: "Did Texas pass any new gun laws in 2025?", a: "No major changes. Constitutional carry under HB 1927 remains the operative framework, with narrow clarifications on carry in state parks and expansions of the School Marshal program." },
+      { q: "How do I find out when a specific bill takes effect?", a: "Check the bill's caption on Texas Legislature Online — the effective date is stated in the final section of every enrolled bill. Default is September 1 after the regular session." },
+      { q: "What is the Texas Business Court and does it affect small businesses?", a: "The Business Court handles complex commercial disputes above a jurisdictional threshold — it primarily affects mid-size and larger enterprises, not typical small-business litigation." },
+      { q: "Are there major new laws taking effect in 2027?", a: "The Legislature will meet in regular session in early 2027; new statutes from that session typically take effect September 1, 2027, or January 1, 2028." },
+    ],
+    sources: [
+      { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
+      { label: "Legislative Reference Library", url: "https://lrl.texas.gov/" },
+      { label: "Texas Register", url: "https://www.sos.state.tx.us/texreg/" },
+      { label: "Texas Comptroller — Property Tax", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      { label: "Texas Education Agency — ESA Program", url: "https://tea.texas.gov/" },
+    ],
+    related: [
+      "texas-property-tax-laws-explained",
+      "texas-gun-laws-explained",
+      "texas-election-laws-explained",
+      "school-choice-esa-guide",
+      "legislative-updates",
+    ],
+    cta: { label: "Track Bills In Our Legislative Hub", href: "/legislative-updates" },
+    keyTakeaways: [
+      "The homestead exemption rose to $140,000 for the 2026 tax year via 2025 constitutional amendment.",
+      "The Texas ESA program begins at scale for 2026-27, prioritizing low-income and disabled students.",
+      "Operation Lone Star funding continues at record levels through the 2026-27 biennium.",
+      "SB 1's elections framework was refined, not reopened, in the 2025 session.",
+      "Most 2025 session bills took effect September 1, 2025; constitutional amendments effective on canvass.",
+    ],
+  },
 };

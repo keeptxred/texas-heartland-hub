@@ -13,6 +13,26 @@ export type Article = {
   publishAt?: string;
   /** ISO timestamp for sorting and display. Required on all articles. */
   publishedAt: string;
+  /** Evergreen maintenance metadata. Assigned automatically for new evergreens
+   *  so future content-review sweeps know when to re-examine an article.
+   *  See src/lib/content-maintenance.ts for review-interval rules. */
+  contentCategory?:
+    | "laws"
+    | "elections"
+    | "taxes"
+    | "regulations"
+    | "government-policy"
+    | "relocation"
+    | "housing"
+    | "financial"
+    | "cost-of-living"
+    | "history"
+    | "culture"
+    | "lifestyle";
+  /** ISO date of the last editorial content review (may equal publishedAt). */
+  lastReviewedDate?: string;
+  /** ISO date of the last meaningful content update (drives dateModified schema). */
+  dateModified?: string;
 };
 
 import border from "@/assets/border.jpg";
@@ -412,6 +432,62 @@ export const ARTICLES: Article[] = [
     publishedAt: "2026-06-27T10:00:00",
     image: ballot,
     pillar: true,
+  },
+  {
+    slug: "texas-gun-laws-explained",
+    category: "Legislature",
+    title: "Texas Gun Laws Explained: What Every Texas Resident Should Know",
+    dek: "A plain-English guide to Texas firearm law in 2026 — constitutional carry, License to Carry, purchase and ownership rules, restricted places, castle doctrine, and how state law interacts with federal firearms restrictions.",
+    author: "Liberty Desk",
+    date: "Evergreen guide",
+    publishedAt: "2026-07-15T09:00:00",
+    image: carry,
+    pillar: true,
+    contentCategory: "laws",
+    lastReviewedDate: "2026-07-15",
+    dateModified: "2026-07-15",
+  },
+  {
+    slug: "texas-property-tax-laws-explained",
+    category: "Tax & Spending",
+    title: "Texas Property Tax Laws Explained: What Homeowners Need to Know",
+    dek: "How Texas property tax law actually works in 2026 — appraisals, exemptions, rate-setting, ARB protests, truth-in-taxation notices, and the constitutional amendments that raised the homestead exemption to $140,000.",
+    author: "Taxpayer Desk",
+    date: "Evergreen guide",
+    publishedAt: "2026-07-15T09:30:00",
+    image: taxbill,
+    pillar: true,
+    contentCategory: "taxes",
+    lastReviewedDate: "2026-07-15",
+    dateModified: "2026-07-15",
+  },
+  {
+    slug: "texas-election-laws-explained",
+    category: "Elections",
+    title: "Texas Election Laws Explained: Voting Rules, Registration, and Requirements",
+    dek: "The definitive guide to Texas election law — voter registration, accepted photo ID, mail ballot eligibility, early voting, primary rules, runoffs, provisional ballots, and the enforcement provisions added by SB 1.",
+    author: "Elections Desk",
+    date: "Evergreen guide",
+    publishedAt: "2026-07-15T10:00:00",
+    image: voterreg,
+    pillar: true,
+    contentCategory: "elections",
+    lastReviewedDate: "2026-07-15",
+    dateModified: "2026-07-15",
+  },
+  {
+    slug: "texas-new-laws-2026",
+    category: "Legislature",
+    title: "Texas New Laws 2026: Major Legislative Changes Explained",
+    dek: "The major statutes that took effect in Texas for 2026 — property tax relief, education savings accounts, border security funding, criminal justice updates, and the effective dates every Texan should know.",
+    author: "Austin Bureau",
+    date: "Evergreen guide",
+    publishedAt: "2026-07-15T10:30:00",
+    image: rotunda,
+    pillar: true,
+    contentCategory: "laws",
+    lastReviewedDate: "2026-07-15",
+    dateModified: "2026-07-15",
   },
 ];
 
