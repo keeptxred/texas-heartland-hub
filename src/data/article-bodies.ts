@@ -2828,6 +2828,15 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "County canvassing occurs within a set number of days after election day; statewide canvassing happens on the second Tuesday after election day for general elections. Results are unofficial until canvass is complete.",
         ],
       },
+      {
+        heading: "Practical Advice for First-Time and New-Resident Voters",
+        paragraphs: [
+          "New arrivals to Texas from states with same-day registration, automatic registration, or all-mail voting often assume similar rules apply here. They do not. The single most important date on a new Texan's calendar is the 30-day registration deadline before each election — miss it and there is no cure. Download the application from the Secretary of State site, mail it or drop it off in person with the county voter registrar, and confirm receipt through the online lookup after two weeks.",
+          "Sample ballots are published online by every county elections office roughly two weeks before early voting begins. Studying the sample ballot before you arrive is the single largest quality-of-vote improvement most voters can make — a Texas ballot typically contains 40 to 90 individual contests including judicial races, school board races, constitutional amendments, and local bond propositions that receive little media coverage.",
+          "Down-ballot judicial races are decided almost entirely on party affiliation in most Texas jurisdictions. Voters who care about specific judicial philosophy should study the State Bar of Texas judicial evaluation polls and the Texans for Lawsuit Reform PAC endorsements, which publish detailed race-by-race information ahead of primary and general elections.",
+          "For voters new to the concept of a runoff, note that runoffs are separate elections requiring a separate trip to the polls — they are not automatic. Turnout in primary runoffs is often in the single-digit percentages, which means an organized voter's ballot is disproportionately powerful in choosing the eventual nominee.",
+        ],
+      },
     ],
     faq: [
       { q: "What is the deadline to register to vote in Texas?", a: "Registration must be received by your county voter registrar at least 30 days before the election. There is no same-day registration in Texas." },
