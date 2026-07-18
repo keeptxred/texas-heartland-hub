@@ -1,11 +1,16 @@
-// Free-to-use stock image pools per topic bucket (Pexels license: free for
-// commercial use, no attribution required). Never uses copyrighted publisher
-// photos or political imagery as a generic fallback — that mis-signals the
-// story's topic when the article is about food, sports, tech, etc.
+import ballot from "@/assets/ballot.jpg";
+import ballot2 from "@/assets/article-ballot2.jpg";
+import pollingplace from "@/assets/article-pollingplace.jpg";
+import electionRegistration from "@/assets/fallback-election-registration.jpg";
+
+// Free-to-use image pools per topic bucket. Never uses copyrighted publisher
+// photos or unrelated imagery as a generic fallback — that mis-signals the
+// story's topic when the article is about food, sports, elections, tech, etc.
 
 export type ImageCategory =
   | "food"
   | "sports"
+  | "elections"
   | "politics"
   | "business"
   | "finance"
@@ -23,9 +28,14 @@ export const CATEGORY_IMAGE_POOLS: Record<ImageCategory, string[]> = {
     "https://images.pexels.com/photos/274422/pexels-photo-274422.jpeg",
     "https://images.pexels.com/photos/209977/pexels-photo-209977.jpeg",
   ],
+  elections: [
+    ballot,
+    ballot2,
+    pollingplace,
+    electionRegistration,
+  ],
   politics: [
     "https://images.pexels.com/photos/1550337/pexels-photo-1550337.jpeg",
-    "https://images.pexels.com/photos/2872418/pexels-photo-2872418.jpeg",
   ],
   business: [
     "https://images.pexels.com/photos/210607/pexels-photo-210607.jpeg",
@@ -56,7 +66,8 @@ export const CATEGORY_IMAGE_POOLS: Record<ImageCategory, string[]> = {
 const KEYWORD_MAP: Record<Exclude<ImageCategory, "default">, string[]> = {
   food: ["bbq", "barbecue", "chicken", "recipe", "grill", "food", "restaurant", "chef", "brisket", "taco"],
   sports: ["game", "team", "score", "nfl", "nba", "mlb", "cowboys", "texans", "astros", "rangers", "spurs", "mavericks", "rockets", "playoff", "coach", "quarterback"],
-  politics: ["senate", "congress", "vote", "election", "bill", "governor", "abbott", "paxton", "patrick", "legislature", "capitol", "campaign", "ballot", "primary", "law"],
+  elections: ["vote", "voter", "registration", "election", "elections", "ballot", "primary", "polling", "polls"],
+  politics: ["senate", "congress", "bill", "governor", "abbott", "paxton", "patrick", "legislature", "capitol", "campaign", "law"],
   business: ["stocks", "market", "economy", "jobs", "company", "revenue", "earnings", "layoffs", "ceo", "investment", "startup"],
   finance: ["tax", "mortgage", "insurance", "budget", "spending", "deficit", "inflation", "wages", "salary", "cost of living", "affordability"],
   relocation: ["move", "moving", "relocate", "relocation", "houston", "dallas", "austin", "san antonio", "fort worth", "suburb", "housing", "home price", "neighborhood"],
@@ -85,7 +96,8 @@ function normalizeCategory(raw?: string | null): ImageCategory | null {
   const c = raw.toLowerCase().trim();
   if (c in CATEGORY_IMAGE_POOLS) return c as ImageCategory;
   // Map site taxonomy -> image bucket.
-  if (["politics", "elections", "laws", "legislature", "law"].includes(c)) return "politics";
+  if (["elections", "election", "voting", "voter registration"].includes(c)) return "elections";
+  if (["politics", "laws", "legislature", "law"].includes(c)) return "politics";
   if (["business", "economy", "energy"].includes(c)) return "business";
   if (["finance", "tax & spending", "taxes", "money"].includes(c)) return "finance";
   if (["relocation", "move to texas", "housing", "real estate"].includes(c)) return "relocation";
