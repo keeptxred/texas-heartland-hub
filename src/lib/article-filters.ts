@@ -49,7 +49,7 @@ export function filterArticlesByCategory(
   articles: Article[],
   topic?: string | null,
 ): Article[] {
-  const list = articles.filter(isPublished);
+  const list = articles.filter((a) => isPublished(a));
   const scoped = topic ? list.filter((a) => matchesTopic(a, topic)) : list;
   return scoped.slice().sort(sortByDateDesc);
 }
@@ -68,7 +68,7 @@ export function getRelatedArticles(
   topic?: string | null,
   limit = 3,
 ): Article[] {
-  const base = ARTICLES.filter(isPublished).filter((a) => a.slug !== slug);
+  const base = ARTICLES.filter((a) => isPublished(a)).filter((a) => a.slug !== slug);
   const scoped = topic ? base.filter((a) => matchesTopic(a, topic)) : base;
   return scoped.slice().sort(sortByDateDesc).slice(0, limit);
 }
