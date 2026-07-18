@@ -28,10 +28,10 @@ function getLeadImage(): string | null {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Keep TX Red | Texas News, Politics, Economy, Border & Sports" },
-      { name: "description", content: "Keep TX Red delivers daily Texas news, politics, business, border security, energy, elections, sports and culture. Independent reporting focused on the issues shaping Texas." },
-      { property: "og:title", content: "Keep TX Red | Texas News, Politics, Economy, Border & Sports" },
-      { property: "og:description", content: "Keep TX Red delivers daily Texas news, politics, business, border security, energy, elections, sports and culture. Independent reporting focused on the issues shaping Texas." },
+      { title: "Keep Texas Red | Texas Relocation Tools, Calculators & Resources" },
+      { name: "description", content: "Keep Texas Red is the home for Texas relocation tools, Texas calculators, and Texas resources — plus daily news, politics, and analysis for people moving to and living in Texas." },
+      { property: "og:title", content: "Keep Texas Red | Texas Relocation Tools, Calculators & Resources" },
+      { property: "og:description", content: "Keep Texas Red is the home for Texas relocation tools, Texas calculators, and Texas resources — plus daily news, politics, and analysis for people moving to and living in Texas." },
       { property: "og:url", content: "/" },
       { property: "og:image", content: heroFlag },
       { name: "twitter:image", content: heroFlag },
@@ -50,11 +50,12 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "Keep TX Red",
-          url: "https://www.keeptxred.com/",
+          name: "Keep Texas Red",
+          alternateName: ["Keep TX Red", "KeepTXRed"],
+          url: "https://keeptxred.com/",
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://www.keeptxred.com/news?q={search_term_string}",
+            target: "https://keeptxred.com/news?q={search_term_string}",
             "query-input": "required name=search_term_string",
           },
         }),
@@ -64,9 +65,10 @@ export const Route = createFileRoute("/")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "Keep TX Red",
-          url: "https://www.keeptxred.com/",
-          logo: "https://www.keeptxred.com/favicon.ico",
+          name: "Keep Texas Red",
+          alternateName: ["Keep TX Red", "KeepTXRed"],
+          url: "https://keeptxred.com/",
+          logo: "https://keeptxred.com/favicon.ico",
         }),
       },
       {
@@ -99,6 +101,39 @@ export const Route = createFileRoute("/")({
           "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "What is Keep Texas Red?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Keep Texas Red (KeepTXRed) is an independent Texas resource site offering relocation tools, calculators, and daily news to help people move to, live in, and understand Texas.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What resources does Keep Texas Red provide?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Keep Texas Red publishes Texas relocation tools, a property-tax relief calculator, DMV and school-district finders, representative lookups, voter guides, and daily Texas news and analysis.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Who is Keep Texas Red designed for?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Keep Texas Red is designed for Texans, new residents relocating to Texas, and anyone researching Texas taxes, elections, government, and cost of living.",
+              },
+            },
           ],
         }),
       },
@@ -218,13 +253,15 @@ function Index() {
         <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16">
           <div className="max-w-[700px]">
             <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">
-              Keep TX Red | Texas News, Politics & Conservative Commentary
+              Keep Texas Red — Texas Relocation Tools, Calculators & Resources
             </h1>
             <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
-              Daily Texas news, politics, business, border, energy, elections, sports and culture — independent reporting focused on the issues shaping Texas.
+              Keep Texas Red (KeepTXRed) is your hub for Texas relocation resources, tax and cost-of-living calculators, and daily reporting on the issues shaping Texas.
             </p>
             <p className="mt-4 text-sm text-muted-foreground">
-              <Link to="/keep-texas-red" className="text-primary hover:underline font-medium">Read more about Keep Texas Red →</Link>
+              <Link to="/about-keep-texas-red" className="text-primary hover:underline font-medium">About Keep Texas Red →</Link>
+              {" · "}
+              <Link to="/keep-texas-red" className="text-primary hover:underline font-medium">What "Keep Texas Red" means →</Link>
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
