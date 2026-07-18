@@ -52,6 +52,7 @@ import { Route as ContactLegislatorsRouteImport } from './routes/contact-legisla
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TexasIndexRouteImport } from './routes/texas.index'
@@ -303,6 +304,11 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutKeepTexasRedRoute = AboutKeepTexasRedRouteImport.update({
+  id: '/about-keep-texas-red',
+  path: '/about-keep-texas-red',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -494,6 +500,7 @@ const ApiPublicArticleImageFilenameRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
@@ -574,6 +581,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
@@ -650,6 +658,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
@@ -732,6 +741,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/about-keep-texas-red'
     | '/admin'
     | '/candidate-guides'
     | '/contact'
@@ -812,6 +822,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/about-keep-texas-red'
     | '/admin'
     | '/candidate-guides'
     | '/contact'
@@ -887,6 +898,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/about-keep-texas-red'
     | '/admin'
     | '/candidate-guides'
     | '/contact'
@@ -968,6 +980,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AboutKeepTexasRedRoute: typeof AboutKeepTexasRedRoute
   AdminRoute: typeof AdminRoute
   CandidateGuidesRoute: typeof CandidateGuidesRoute
   ContactRoute: typeof ContactRoute
@@ -1334,6 +1347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about-keep-texas-red': {
+      id: '/about-keep-texas-red'
+      path: '/about-keep-texas-red'
+      fullPath: '/about-keep-texas-red'
+      preLoaderRoute: typeof AboutKeepTexasRedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -1669,6 +1689,7 @@ const TexasSportsRouteWithChildren = TexasSportsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AboutKeepTexasRedRoute: AboutKeepTexasRedRoute,
   AdminRoute: AdminRoute,
   CandidateGuidesRoute: CandidateGuidesRoute,
   ContactRoute: ContactRoute,
