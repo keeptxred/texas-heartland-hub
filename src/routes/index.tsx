@@ -220,13 +220,15 @@ function Index() {
         <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16">
           <div className="max-w-[700px]">
             <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">
-              Keep TX Red | Texas News, Politics & Conservative Commentary
+              Keep Texas Red — Texas Relocation Tools, Calculators & Resources
             </h1>
             <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
-              Daily Texas news, politics, business, border, energy, elections, sports and culture — independent reporting focused on the issues shaping Texas.
+              Keep Texas Red (KeepTXRed) is your hub for Texas relocation resources, tax and cost-of-living calculators, and daily reporting on the issues shaping Texas.
             </p>
             <p className="mt-4 text-sm text-muted-foreground">
-              <Link to="/keep-texas-red" className="text-primary hover:underline font-medium">Read more about Keep Texas Red →</Link>
+              <Link to="/about-keep-texas-red" className="text-primary hover:underline font-medium">About Keep Texas Red →</Link>
+              {" · "}
+              <Link to="/keep-texas-red" className="text-primary hover:underline font-medium">What "Keep Texas Red" means →</Link>
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
