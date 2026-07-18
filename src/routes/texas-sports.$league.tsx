@@ -3,6 +3,8 @@ import { listSportsByLeague, type SportsListItem } from "@/lib/sports.functions"
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { teamsForLeague, detectTeams, type TeamMeta } from "@/lib/texas-teams";
 import { resolveArticleImage } from "@/lib/seo-headline";
+import { MIN_ARTICLES_DEFAULT, isReadyFromItems } from "@/lib/content-readiness";
+import { SportsCoveragePlaceholder } from "@/components/sports-coverage-placeholder";
 
 const LEAGUE_META: Record<string, { name: string; title: string; desc: string; teams: string }> = {
   nfl: {
@@ -36,6 +38,7 @@ export const Route = createFileRoute("/texas-sports/$league")({
     const meta = loaderData ? LEAGUE_META[loaderData.league] : null;
     if (!meta) return {};
     const url = `https://www.keeptxred.com/texas-sports/${loaderData!.league}`;
+    const thin = !isReadyFromItems(loaderData!.items, MIN_ARTICLES_DEFAULT);
     return {
       meta: [
         { title: meta.title },
@@ -44,6 +47,7 @@ export const Route = createFileRoute("/texas-sports/$league")({
         { property: "og:description", content: meta.desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "website" },
+        ...(thin ? [{ name: "robots", content: "noindex,follow" }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
     };
@@ -93,12 +97,7 @@ function LeaguePage() {
       </header>
 
       {items.length === 0 ? (
-        <div className="border border-border rounded-md p-8 bg-card text-center">
-          <p className="text-base text-foreground font-medium">Fresh {meta.name} coverage is on the way.</p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Our weekly Texas sports update publishes every Monday morning. Check back soon, or browse other Texas coverage below.
-          </p>
-        </div>
+        <SportsCoveragePlaceholder label={`Texas ${meta.name}`} />
       ) : (
         <div className="space-y-14">
           {teams.map((t: TeamMeta) => {
