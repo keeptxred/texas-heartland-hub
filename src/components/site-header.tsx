@@ -9,6 +9,7 @@ const NAV = [
   { to: "/texas-sports", label: "Sports" },
   { to: "/texas-business", label: "Business" },
   { to: "/news/non-political", label: "Non-Political" },
+  { to: "/laws", label: "Laws" },
   { to: "/elections", label: "Elections" },
   { to: "/tax-calculator", label: "Property Taxes" },
   { to: "/shop", label: "Shop" },
