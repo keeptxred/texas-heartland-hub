@@ -2958,6 +2958,28 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           "For families with school-age children, the ESA rollout is the practical change most likely to affect a household decision this cycle. For property owners, the exemption increase and rate compression will show up on the fall bill without any action required beyond confirming your homestead exemption is on file.",
         ],
       },
+      {
+        heading: "Constitutional Amendments on Recent and Upcoming Ballots",
+        paragraphs: [
+          "The November 2025 ballot delivered the most consequential set of Texas constitutional amendments in a decade, headlined by the homestead exemption increase to $140,000. Additional propositions addressed the Texas Water Fund expansion, the Texas Energy Fund's dispatchable-generation loan program, judicial retirement changes, and various housekeeping items in the Property Code.",
+          "Constitutional amendments in Texas require a two-thirds vote of each chamber of the Legislature to be referred to voters, then a simple majority of Texans voting on the specific proposition to be adopted. Because Texas has amended its 1876 constitution more than 500 times, the November ballot in every odd-numbered year is where a substantial amount of Texas law is actually written.",
+          "The 2027 ballot is likely to include amendments touching bail reform, further property tax reductions, and specific water infrastructure authorizations, though the actual set will not be finalized until the 2027 regular session concludes.",
+        ],
+      },
+      {
+        heading: "What Did Not Change in 2025",
+        paragraphs: [
+          "As important as what took effect is what did not. The 2025 session did not enact a state personal income tax, an assault-weapons ban, universal mail-in voting, same-day voter registration, adult-use marijuana legalization, or a state-level minimum-wage increase. None of these was seriously considered in either chamber. Understanding what a session did not do is often as useful as understanding what it did.",
+          "The 2025 session also declined to make the temporary 20% non-homestead residential appraisal cap permanent. That cap expires at the end of the 2026 tax year unless extended by the 2027 Legislature, which is one of the highest-stakes property tax questions on the near horizon for owners of rental single-family and small multi-family properties.",
+        ],
+      },
+      {
+        heading: "How to Read a Texas Bill",
+        paragraphs: [
+          "A Texas bill's caption is a one-sentence description of what the bill does; the caption is legally binding on what the bill can contain under the single-subject rule. The body of the bill sets out new statutory text (in underlined type) and struck-through language (existing text being deleted). The final sections state the effective date and any severability, applicability, or transition provisions.",
+          "For any bill under active consideration, the most useful pages on Texas Legislature Online are the Bill Analysis (a plain-English committee summary), the Fiscal Note (the projected cost to the state), and the Actions history (a chronological record of every committee referral, hearing, vote, and floor action). These three documents together will tell any reader most of what they need to know about the actual policy content of a bill.",
+        ],
+      },
     ],
     faq: [
       { q: "What was the biggest new Texas law for 2026?", a: "The constitutional amendment raising the residence homestead exemption to $140,000, combined with continued school-district rate compression — the largest ongoing property tax relief package in state history." },
