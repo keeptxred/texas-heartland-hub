@@ -32,13 +32,13 @@ export function SiteHeader() {
           ))}
         </div>
       </div>
-      <div className="mx-auto max-w-[1200px] px-6 py-4 flex items-center justify-between">
-        <Link to="/" className="font-display text-2xl leading-none tracking-tight flex items-baseline gap-1.5">
+      <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+        <Link to="/" className="font-display text-2xl leading-none tracking-tight flex items-baseline gap-1.5 shrink-0">
           Keep <span className="text-primary">TX</span> Red
         </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
+        <nav className="hidden md:flex items-center gap-5 lg:gap-6 xl:gap-7 text-sm font-medium">
           {NAV.map((n) => (
-            <Link key={n.to} to={n.to} className="hover:text-primary transition-colors" activeProps={{ className: "text-primary" }}>
+            <Link key={n.to} to={n.to} className="whitespace-nowrap hover:text-primary transition-colors" activeProps={{ className: "text-primary" }}>
               {n.label}
             </Link>
           ))}
