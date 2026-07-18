@@ -181,6 +181,8 @@ export const ARTICLES: Article[] = [
     date: "2 weeks ago",
     publishedAt: "2026-06-12T12:00:00",
     image: carry,
+    topics: ["legislature", "laws"],
+    subcategory: "laws",
   },
   {
     slug: "primary-vs-general-election",
@@ -191,6 +193,8 @@ export const ARTICLES: Article[] = [
     date: "2 weeks ago",
     publishedAt: "2026-06-12T13:00:00",
     image: pollingplace,
+    topics: ["elections"],
+    subcategory: "elections",
   },
   {
     slug: "school-choice-esa-guide",
@@ -251,6 +255,8 @@ export const ARTICLES: Article[] = [
     date: "1 month ago",
     publishedAt: "2026-05-27T15:00:00",
     image: ballot2,
+    topics: ["elections"],
+    subcategory: "elections",
   },
   {
     slug: "texas-school-board-powers",
@@ -331,6 +337,8 @@ export const ARTICLES: Article[] = [
     date: "1 month ago",
     publishedAt: "2026-05-27T23:00:00",
     image: rotunda,
+    topics: ["legislature", "governor-leadership"],
+    subcategory: "government",
   },
   {
     slug: "how-texas-counties-spend",
@@ -351,6 +359,8 @@ export const ARTICLES: Article[] = [
     date: "1 month ago",
     publishedAt: "2026-05-28T01:00:00",
     image: water,
+    topics: ["economy", "infrastructure"],
+    subcategory: "infrastructure",
   },
   {
     slug: "texas-constitutional-amendments-guide",
@@ -361,6 +371,8 @@ export const ARTICLES: Article[] = [
     date: "1 month ago",
     publishedAt: "2026-05-28T02:00:00",
     image: gavel,
+    topics: ["voting-policy", "elections"],
+    subcategory: "voting",
   },
   {
     slug: "texas-open-meetings-public-info",
@@ -371,6 +383,8 @@ export const ARTICLES: Article[] = [
     date: "1 week ago",
     publishedAt: "2026-06-19T14:00:00",
     image: openmeeting,
+    topics: ["legislature", "governor-leadership"],
+    subcategory: "government",
   },
   {
     slug: "why-texas-has-no-income-tax",
