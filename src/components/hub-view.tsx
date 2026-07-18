@@ -63,6 +63,13 @@ export function HubView({ hub, sections, children, filterTopic }: { hub: Hub; se
       {children}
 
       <h2 className="font-display text-3xl tracking-tight mt-14 mb-6 border-b-2 border-foreground pb-2">All Coverage in this Section</h2>
+      {supporting.length === 0 ? (
+        <div className="border-2 border-dashed border-border p-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            No articles currently available in this topic. Browse related Texas coverage.
+          </p>
+        </div>
+      ) : (
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {supporting.map((a) => (
           <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
@@ -75,6 +82,7 @@ export function HubView({ hub, sections, children, filterTopic }: { hub: Hub; se
           </Link>
         ))}
       </div>
+      )}
     </div>
   );
 }
