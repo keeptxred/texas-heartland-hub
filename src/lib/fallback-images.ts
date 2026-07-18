@@ -95,21 +95,6 @@ function normalizeCategory(raw?: string | null): ImageCategory | null {
   return null;
 }
 
-// Related-category chain used by the dedupe swap. When the primary pool is
-// exhausted we fall back to logically related buckets — never to unrelated
-// topics (a politics article must never swap to weather/wildlife).
-const RELATED_CATEGORIES: Record<ImageCategory, ImageCategory[]> = {
-  politics: ["politics"],
-  business: ["business", "finance"],
-  finance: ["finance", "business"],
-  relocation: ["relocation"],
-  weather: ["weather"],
-  sports: ["sports"],
-  technology: ["technology", "business"],
-  food: ["food"],
-  default: ["default"],
-};
-
 export function resolveImageCategory(input: {
   image_category?: string | null;
   category?: string | null;
@@ -130,23 +115,11 @@ export function resolveImageCategory(input: {
 }
 
 /**
- * Ordered pool of candidate images for a given category, primary bucket
- * first, then related buckets. Never mixes unrelated topics — a politics
- * article will not fall back into weather/wildlife.
+ * Ordered pool of candidate images for a given category.
+ * Dedupe replacements must come only from that category's own bucket.
  */
 export function getCategoryFallbackPool(category: ImageCategory): string[] {
-  const chain = RELATED_CATEGORIES[category] ?? [category];
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const c of chain) {
-    for (const url of CATEGORY_IMAGE_POOLS[c] ?? []) {
-      if (!seen.has(url)) {
-        seen.add(url);
-        out.push(url);
-      }
-    }
-  }
-  return out;
+  return CATEGORY_IMAGE_POOLS[category] ?? CATEGORY_IMAGE_POOLS.default;
 }
 
 export type ArticleImageInput = {
