@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { assignUniqueImages } from "@/lib/dedupe-images";
+import { filterArticlesByCategory } from "@/lib/article-filters";
 import schoolbus from "@/assets/article-schoolbus.jpg";
 import boardroom from "@/assets/article-boardroom.jpg";
 import rotunda from "@/assets/article-rotunda.jpg";
@@ -50,11 +51,16 @@ export const BUSINESS_SECTIONS = [
 
 export function TexasBusinessView({ topic }: { topic: string }) {
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  const activeSlugs = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_BUSINESS_SLUGS;
-  const businessArticles = activeSlugs
+  // Prefer the curated per-topic slug lists (hand-picked evergreen coverage);
+  // fall back to the shared keyword filter so newly-tagged articles show up.
+  const curated = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_BUSINESS_SLUGS;
+  const curatedArticles = curated
     .map((s) => ARTICLES.find((a) => a.slug === s))
-    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!))
-    .sort(sortByDateDesc);
+    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!));
+  const filtered = topic ? filterArticlesByCategory(ARTICLES, topic) : [];
+  const merged = new Map<string, (typeof ARTICLES)[number]>();
+  for (const a of [...curatedArticles, ...filtered]) merged.set(a.slug, a);
+  const businessArticles = Array.from(merged.values()).sort(sortByDateDesc);
   const uniqImg = assignUniqueImages(
     businessArticles,
     (a) => a.slug,
@@ -97,8 +103,8 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           {BUSINESS_SECTIONS.map((s) => {
             const active = topic === s.id;
             const linkProps = active
-              ? ({ to: "/texas-business" } as const)
-              : ({ to: "/texas-business/$topic", params: { topic: s.id } } as const);
+              ? ({ to: "/texas-business", search: { topic: "" } } as const)
+              : ({ to: "/texas-business", search: { topic: s.id } } as const);
             return (
               <Link
                 key={s.id}
@@ -129,12 +135,22 @@ export function TexasBusinessView({ topic }: { topic: string }) {
             </p>
           </div>
           {activeSection && (
-            <Link to="/texas-business" className="text-sm text-primary hover:underline">
+            <Link to="/texas-business" search={{ topic: "" }} className="text-sm text-primary hover:underline">
               Show all business coverage →
             </Link>
           )}
         </div>
         <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {businessArticles.length === 0 && (
+            <div className="col-span-full border-2 border-dashed border-border p-8 text-center">
+              <p className="text-sm text-muted-foreground">
+                No articles currently available in this topic. Browse related Texas coverage.
+              </p>
+              <Link to="/texas-business" search={{ topic: "" }} className="mt-3 inline-block text-sm text-primary hover:underline">
+                ← Back to all business coverage
+              </Link>
+            </div>
+          )}
           {businessArticles.map((a) => (
             <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
               <div className="aspect-[4/3] overflow-hidden bg-muted mb-3">

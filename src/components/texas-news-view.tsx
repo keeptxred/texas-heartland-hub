@@ -125,8 +125,8 @@ export function TexasNewsView({
           {TEXAS_NEWS_SECTIONS.map((s) => {
             const active = topic === s.id;
             const linkProps = active
-              ? ({ to: "/texas-news" } as const)
-              : ({ to: "/texas-news/$topic", params: { topic: s.id } } as const);
+              ? ({ to: "/texas-news", search: { topic: "" } } as const)
+              : ({ to: "/texas-news", search: { topic: s.id } } as const);
             return (
               <Link
                 key={s.id}
@@ -157,7 +157,7 @@ export function TexasNewsView({
             </p>
           </div>
           {activeSection && (
-            <Link to="/texas-news" className="text-sm text-primary hover:underline">
+            <Link to="/texas-news" search={{ topic: "" }} className="text-sm text-primary hover:underline">
               Show all Texas news →
             </Link>
           )}
@@ -166,9 +166,9 @@ export function TexasNewsView({
           {articles.length === 0 && liveOnly.length === 0 && (
             <div className="col-span-full border-2 border-dashed border-border p-8 text-center">
               <p className="text-sm text-muted-foreground">
-                No {activeSection?.title.toLowerCase()} stories published yet. New evergreen coverage is added regularly.
+                No articles currently available in this topic. Browse related Texas coverage.
               </p>
-              <Link to="/texas-news" className="mt-3 inline-block text-sm text-primary hover:underline">
+              <Link to="/texas-news" search={{ topic: "" }} className="mt-3 inline-block text-sm text-primary hover:underline">
                 ← Back to all Texas news
               </Link>
             </div>

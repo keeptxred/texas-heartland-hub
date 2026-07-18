@@ -19,17 +19,18 @@ export const Route = createFileRoute("/texas-business/$topic")({
     }
     const title = section ? `${section.title} — Texas Business` : "Texas Business";
     const desc = section?.description ?? "Texas business coverage.";
-    const url = `https://www.keeptxred.com/texas-business/${params.topic}`;
+    const canonical = "https://www.keeptxred.com/texas-business";
     return {
       meta: [
         { title: `${title} | Keep Texas Red` },
         { name: "description", content: desc },
+        { name: "robots", content: "noindex,follow" },
         { property: "og:title", content: title },
         { property: "og:description", content: desc },
-        { property: "og:url", content: url },
+        { property: "og:url", content: canonical },
         { property: "og:type", content: "website" },
       ],
-      links: [{ rel: "canonical", href: url }],
+      links: [{ rel: "canonical", href: canonical }],
     };
   },
   component: TopicPage,

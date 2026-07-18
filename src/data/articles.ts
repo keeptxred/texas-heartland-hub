@@ -33,6 +33,12 @@ export type Article = {
   lastReviewedDate?: string;
   /** ISO date of the last meaningful content update (drives dateModified schema). */
   dateModified?: string;
+  /** Optional topical tags used by the client-side category filters
+   *  (e.g. "energy", "property-tax", "elections"). Falls back to
+   *  keyword matching in src/lib/article-filters.ts when omitted. */
+  topics?: string[];
+  /** Optional single subcategory (finer-grained than `category`). */
+  subcategory?: string;
 };
 
 import border from "@/assets/border.jpg";

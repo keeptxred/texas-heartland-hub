@@ -3,15 +3,17 @@ import { Link } from "@tanstack/react-router";
 import type { Hub } from "@/data/hubs";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { assignUniqueImages } from "@/lib/dedupe-images";
+import { matchesTopic } from "@/lib/article-filters";
 
 export type HubSection = { title: string; description: string; href?: string };
 
-export function HubView({ hub, sections, children }: { hub: Hub; sections?: HubSection[]; children?: ReactNode }) {
+export function HubView({ hub, sections, children, filterTopic }: { hub: Hub; sections?: HubSection[]; children?: ReactNode; filterTopic?: string }) {
   const articles = hub.articleSlugs
     .map((s) => ARTICLES.find((a) => a.slug === s))
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
   const pillar = articles.find((a) => a.slug === hub.pillarSlug);
-  const supporting = articles.filter((a) => a.slug !== hub.pillarSlug).sort(sortByDateDesc);
+  const supportingAll = articles.filter((a) => a.slug !== hub.pillarSlug);
+  const supporting = (filterTopic ? supportingAll.filter((a) => matchesTopic(a, filterTopic)) : supportingAll).sort(sortByDateDesc);
   // Enforce per-page image uniqueness across pillar + supporting cards.
   const allForPage = pillar ? [pillar, ...supporting] : supporting;
   const uniq = assignUniqueImages(allForPage, (a) => a.slug, (a) => a.image, (a) => a.category ?? null);
@@ -61,6 +63,13 @@ export function HubView({ hub, sections, children }: { hub: Hub; sections?: HubS
       {children}
 
       <h2 className="font-display text-3xl tracking-tight mt-14 mb-6 border-b-2 border-foreground pb-2">All Coverage in this Section</h2>
+      {supporting.length === 0 ? (
+        <div className="border-2 border-dashed border-border p-8 text-center">
+          <p className="text-sm text-muted-foreground">
+            No articles currently available in this topic. Browse related Texas coverage.
+          </p>
+        </div>
+      ) : (
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {supporting.map((a) => (
           <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
@@ -73,6 +82,7 @@ export function HubView({ hub, sections, children }: { hub: Hub; sections?: HubS
           </Link>
         ))}
       </div>
+      )}
     </div>
   );
 }
