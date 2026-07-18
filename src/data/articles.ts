@@ -430,6 +430,8 @@ export const ARTICLES: Article[] = [
     image: border,
     pillar: true,
     featured: true,
+    topics: ["legislature", "governor-leadership"],
+    subcategory: "government",
   },
   {
     slug: "texas-energy-economy-overview",
@@ -441,6 +443,8 @@ export const ARTICLES: Article[] = [
     publishedAt: "2026-06-27T09:30:00",
     image: oil,
     pillar: true,
+    topics: ["economy", "energy"],
+    subcategory: "business",
   },
   {
     slug: "texas-voting-guide-2026",
@@ -452,6 +456,8 @@ export const ARTICLES: Article[] = [
     publishedAt: "2026-06-27T10:00:00",
     image: ballot,
     pillar: true,
+    topics: ["elections", "voting-policy"],
+    subcategory: "elections",
   },
   {
     slug: "texas-gun-laws-explained",
