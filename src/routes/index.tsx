@@ -104,6 +104,39 @@ export const Route = createFileRoute("/")({
           ],
         }),
       },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: "What is Keep Texas Red?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Keep Texas Red (KeepTXRed) is an independent Texas resource site offering relocation tools, calculators, and daily news to help people move to, live in, and understand Texas.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "What resources does Keep Texas Red provide?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Keep Texas Red publishes Texas relocation tools, a property-tax relief calculator, DMV and school-district finders, representative lookups, voter guides, and daily Texas news and analysis.",
+              },
+            },
+            {
+              "@type": "Question",
+              name: "Who is Keep Texas Red designed for?",
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: "Keep Texas Red is designed for Texans, new residents relocating to Texas, and anyone researching Texas taxes, elections, government, and cost of living.",
+              },
+            },
+          ],
+        }),
+      },
     ],
   }),
   loader: () => getDailyArticles(),
