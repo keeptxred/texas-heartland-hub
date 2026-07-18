@@ -144,22 +144,22 @@ const TEAM_TOPIC_POOL: Record<string, string[]> = {
     "Texas Longhorns offense and Big 12/SEC outlook",
     "Darrell K Royal Stadium and Longhorns home-field culture",
   ],
-  aggies: [
+  "texas-am": [
     "Texas A&M Aggies weekly football outlook",
     "Texas A&M Aggies offense and SEC outlook",
     "Kyle Field, the 12th Man, and Aggies home-field culture",
   ],
-  "horned-frogs": [
+  tcu: [
     "TCU Horned Frogs weekly football outlook",
     "TCU Horned Frogs offense and Big 12 outlook",
     "Amon G. Carter Stadium and TCU home-field culture",
   ],
-  bears: [
+  baylor: [
     "Baylor Bears weekly football outlook",
     "Baylor Bears offense and Big 12 outlook",
     "McLane Stadium and Baylor Bears home-field culture",
   ],
-  "red-raiders": [
+  "texas-tech": [
     "Texas Tech Red Raiders weekly football outlook",
     "Texas Tech Red Raiders offense and Big 12 outlook",
     "Jones AT&T Stadium and Red Raiders home-field culture",

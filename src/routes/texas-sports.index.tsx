@@ -4,10 +4,10 @@ import { TEAMS, LEAGUE_META, type LeagueSlug } from "@/lib/texas-teams";
 export const Route = createFileRoute("/texas-sports/")({
   head: () => ({
     meta: [
-      { title: "Texas Sports – Texans, Cowboys, Astros & Rangers News" },
-      { name: "description", content: "Texas sports news covering the Houston Texans, Dallas Cowboys, Houston Astros, Texas Rangers, Spurs, and Mavericks — game updates, recaps, and storylines that matter." },
-      { property: "og:title", content: "Texas Sports – Texans, Cowboys, Astros & Rangers News" },
-      { property: "og:description", content: "Texas sports news covering the Texans, Cowboys, Astros, Rangers, Spurs, and Mavericks." },
+      { title: "Texas Sports – Pro & College Team Coverage" },
+      { name: "description", content: "Texas sports news covering the Texans, Cowboys, Astros, Rangers, Spurs, Mavericks, Longhorns, Texas A&M, TCU, Baylor, and Texas Tech — game updates, recaps, and storylines that matter." },
+      { property: "og:title", content: "Texas Sports – Pro & College Team Coverage" },
+      { property: "og:description", content: "Texas sports news covering the Texans, Cowboys, Astros, Rangers, Spurs, Mavericks, Longhorns, Texas A&M, TCU, Baylor, and Texas Tech." },
       { property: "og:url", content: "https://www.keeptxred.com/texas-sports" },
       { property: "og:type", content: "website" },
     ],

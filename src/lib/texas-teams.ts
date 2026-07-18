@@ -38,14 +38,14 @@ export const TEAMS: readonly TeamMeta[] = [
   // College football
   { slug: "longhorns", name: "Texas Longhorns", short: "Longhorns", league: "cfb", kind: "college", city: "Austin",
     keywords: ["longhorns", "texas longhorns", "hook 'em", "ut football", "darrell k royal"] },
-  { slug: "aggies", name: "Texas A&M Aggies", short: "Aggies", league: "cfb", kind: "college", city: "College Station",
-    keywords: ["aggies", "texas a&m", "12th man", "kyle field"] },
-  { slug: "horned-frogs", name: "TCU Horned Frogs", short: "Horned Frogs", league: "cfb", kind: "college", city: "Fort Worth",
+  { slug: "texas-am", name: "Texas A&M Aggies", short: "Texas A&M", league: "cfb", kind: "college", city: "College Station",
+    keywords: ["aggies", "texas a&m", "texas-am", "12th man", "kyle field"] },
+  { slug: "tcu", name: "TCU Horned Frogs", short: "TCU", league: "cfb", kind: "college", city: "Fort Worth",
     keywords: ["tcu", "horned frogs", "amon g. carter stadium"] },
-  { slug: "bears", name: "Baylor Bears", short: "Bears", league: "cfb", kind: "college", city: "Waco",
-    keywords: ["baylor bears", "baylor football", "mclane stadium"] },
-  { slug: "red-raiders", name: "Texas Tech Red Raiders", short: "Red Raiders", league: "cfb", kind: "college", city: "Lubbock",
-    keywords: ["texas tech", "red raiders", "jones at&t stadium", "wreck 'em"] },
+  { slug: "baylor", name: "Baylor Bears", short: "Baylor", league: "cfb", kind: "college", city: "Waco",
+    keywords: ["baylor bears", "baylor football", "baylor", "mclane stadium"] },
+  { slug: "texas-tech", name: "Texas Tech Red Raiders", short: "Texas Tech", league: "cfb", kind: "college", city: "Lubbock",
+    keywords: ["texas tech", "red raiders", "texas-tech", "jones at&t stadium", "wreck 'em"] },
 ] as const;
 
 export const TEAM_BY_SLUG: Record<string, TeamMeta> = Object.fromEntries(
