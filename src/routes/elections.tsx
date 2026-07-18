@@ -4,6 +4,7 @@ import { getArticlesByCategory } from "@/lib/articles-by-category";
 import ballot from "@/assets/ballot.jpg";
 import { AgedFeedSection } from "@/components/aged-feed-section";
 import { assignUniqueImages } from "@/lib/dedupe-images";
+import { getNextElection, daysUntil, formatElectionDate, electionTypeLabel } from "@/lib/election-calendar";
 
 export const Route = createFileRoute("/elections")({
   head: () => ({
@@ -24,6 +25,11 @@ function ElectionsPage() {
   // Category page = exactly one category_slug, sourced from this route's URL.
   const electionNews = getArticlesByCategory("elections");
   const uniqImg = assignUniqueImages(electionNews, (a) => a.slug, (a) => a.image, () => "elections");
+  const nextElection = getNextElection();
+  const countdownValue = nextElection ? String(daysUntil(nextElection)) : "—";
+  const countdownLabel = nextElection ? `Days to ${nextElection.name}` : "Next Texas Election";
+  const dateValue = nextElection ? formatElectionDate(nextElection) : "TBA";
+  const typeValue = nextElection ? electionTypeLabel(nextElection.type) : "—";
 
   return (
     <>
@@ -38,9 +44,9 @@ function ElectionsPage() {
             Statewide and district-by-district analysis of the Texas elections shaping the next decade. Polls, ratings, and a complete voter guide.
           </p>
           <div className="grid sm:grid-cols-3 gap-4 mt-10">
-            <Stat value="142" label="Days to Primary" />
-            <Stat value="+8.4" label="GOP Generic Ballot" />
-            <Stat value="38" label="Statewide Offices" />
+            <Stat value={countdownValue} label={countdownLabel} />
+            <Stat value={dateValue} label="Election Date" />
+            <Stat value={typeValue} label="Election Type" />
           </div>
         </div>
       </section>
