@@ -3,6 +3,9 @@ import { TexasNewsView } from "@/components/texas-news-view";
 import { getLiveArticlesByCategory } from "@/lib/articles-by-category.functions";
 
 export const Route = createFileRoute("/texas-news/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    topic: typeof search.topic === "string" ? search.topic : "",
+  }),
   loaderDeps: ({ search }) => ({ topic: (search as { topic?: string }).topic ?? "" }),
   loader: ({ deps }) =>
     deps.topic
