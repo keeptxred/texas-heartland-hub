@@ -3,6 +3,8 @@ import { listSportsByTeam, type SportsListItem } from "@/lib/sports.functions";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { TEAM_BY_SLUG, isTeamSlug, LEAGUE_META, teamsForLeague, type TeamMeta } from "@/lib/texas-teams";
 import { resolveArticleImage } from "@/lib/seo-headline";
+import { MIN_ARTICLES_DEFAULT, isReadyFromItems } from "@/lib/content-readiness";
+import { SportsCoveragePlaceholder } from "@/components/sports-coverage-placeholder";
 
 export const Route = createFileRoute("/texas-sports/team/$team")({
   loader: async ({ params }) => {
@@ -17,6 +19,7 @@ export const Route = createFileRoute("/texas-sports/team/$team")({
     const title = `${t.name} News – Texas Sports Coverage`;
     const desc = `${t.name} weekly coverage — recaps, roster moves, and storylines shaping the ${t.short} season, from a Texas fan perspective.`;
     const url = `https://www.keeptxred.com/texas-sports/team/${t.slug}`;
+    const thin = !isReadyFromItems(loaderData.items, MIN_ARTICLES_DEFAULT);
     return {
       meta: [
         { title },
@@ -25,6 +28,7 @@ export const Route = createFileRoute("/texas-sports/team/$team")({
         { property: "og:description", content: desc },
         { property: "og:url", content: url },
         { property: "og:type", content: "website" },
+        ...(thin ? [{ name: "robots", content: "noindex,follow" }] : []),
       ],
       links: [{ rel: "canonical", href: url }],
     };
@@ -71,12 +75,7 @@ function TeamPage() {
       </header>
 
       {items.length === 0 ? (
-        <div className="border border-border rounded-md p-8 bg-card text-center">
-          <p className="text-base text-foreground font-medium">Fresh {team.short} coverage is on the way.</p>
-          <p className="mt-2 text-sm text-muted-foreground">
-            New stories publish weekly. Check back soon, or browse other Texas coverage below.
-          </p>
-        </div>
+        <SportsCoveragePlaceholder label={team.name} />
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.map((a: SportsListItem) => (
