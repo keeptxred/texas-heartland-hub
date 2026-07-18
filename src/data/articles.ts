@@ -121,6 +121,8 @@ export const ARTICLES: Article[] = [
     date: "2 days ago",
     publishedAt: "2026-06-24T12:00:00",
     image: classroom,
+    topics: ["elections", "education"],
+    subcategory: "elections",
   },
   {
     slug: "speaker-special-session",
