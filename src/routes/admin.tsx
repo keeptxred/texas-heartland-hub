@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
+import { ContentOpportunityPanel } from "@/components/admin/ContentOpportunityPanel";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -182,6 +183,10 @@ function AdminDashboard() {
             </ul>
           )}
         </Panel>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <ContentOpportunityPanel />
       </section>
     </div>
   );
