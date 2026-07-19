@@ -234,7 +234,10 @@ export function ContentOpportunityPanel() {
                   <Fragment key={r.id}>
                   <tr className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
-                      <div className="font-medium leading-snug truncate">{r.title}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium leading-snug truncate">{r.title}</div>
+                        <OpportunityStatusBadges status={statuses[r.id]} />
+                      </div>
                     </td>
                     <td className="py-2 pr-2 text-[11px] text-muted-foreground">{r.source}</td>
                     <td className="py-2 pr-2 text-[11px] text-muted-foreground whitespace-nowrap">
