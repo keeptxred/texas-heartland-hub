@@ -6,8 +6,40 @@ import {
   type QueueEntry,
   type QueueStatus,
 } from "@/services/publishingQueue";
+import { listContentPackages, type SavedPackage } from "@/services/contentPackages";
 
-const TABS: QueueStatus[] = ["DRAFT", "READY", "PUBLISHED", "ARCHIVED"];
+type TabKey = QueueStatus | "READY_TO_POST";
+const TABS: TabKey[] = ["DRAFT", "READY", "READY_TO_POST", "PUBLISHED", "ARCHIVED"];
+const TAB_LABEL: Record<TabKey, string> = {
+  DRAFT: "DRAFT",
+  READY: "READY",
+  READY_TO_POST: "READY TO POST",
+  PUBLISHED: "PUBLISHED",
+  ARCHIVED: "ARCHIVED",
+};
+
+function buildFacebookCaption(p: SavedPackage): string {
+  return [p.facebook_hook, p.facebook_body, p.facebook_cta, p.facebook_hashtags]
+    .filter(Boolean)
+    .join("\n\n")
+    .trim();
+}
+
+function buildInstagramCaption(p: SavedPackage): string {
+  return [p.instagram_hook, p.instagram_caption, p.instagram_hashtags]
+    .filter(Boolean)
+    .join("\n\n")
+    .trim();
+}
+
+async function copyText(text: string, label: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+    alert(`${label} copied.`);
+  } catch {
+    alert("Copy failed. Select and copy manually.");
+  }
+}
 
 export function PublishingQueuePanel({
   onOpenPackage,
@@ -15,16 +47,21 @@ export function PublishingQueuePanel({
   onOpenPackage?: (packageId: string) => void;
 }) {
   const [rows, setRows] = useState<QueueEntry[]>([]);
+  const [packages, setPackages] = useState<Record<string, SavedPackage>>({});
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState("");
-  const [tab, setTab] = useState<QueueStatus>("DRAFT");
+  const [tab, setTab] = useState<TabKey>("DRAFT");
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
     setErr("");
     try {
-      setRows(await listQueueEntries());
+      const [entries, pkgs] = await Promise.all([listQueueEntries(), listContentPackages()]);
+      setRows(entries);
+      const map: Record<string, SavedPackage> = {};
+      for (const p of pkgs) map[p.id] = p;
+      setPackages(map);
     } catch (e) {
       setErr(e instanceof Error ? e.message : "Failed to load");
     } finally {
@@ -43,7 +80,18 @@ export function PublishingQueuePanel({
     setBusyId(id);
     try {
       await setQueueStatus(id, status);
-      setRows((r) => r.map((x) => (x.id === id ? { ...x, status } : x)));
+      setRows((r) =>
+        r.map((x) =>
+          x.id === id
+            ? {
+                ...x,
+                status,
+                published_time:
+                  status === "PUBLISHED" ? new Date().toISOString() : x.published_time,
+              }
+            : x,
+        ),
+      );
     } catch (e) {
       alert(e instanceof Error ? e.message : "Update failed");
     } finally {
@@ -64,10 +112,22 @@ export function PublishingQueuePanel({
     }
   }
 
-  const filtered = useMemo(() => rows.filter((r) => r.status === tab), [rows, tab]);
+  const filtered = useMemo(
+    () => rows.filter((r) => (tab === "READY_TO_POST" ? r.status === "READY" : r.status === tab)),
+    [rows, tab],
+  );
   const counts = useMemo(() => {
-    const c: Record<QueueStatus, number> = { DRAFT: 0, READY: 0, PUBLISHED: 0, ARCHIVED: 0 };
-    for (const r of rows) c[r.status] += 1;
+    const c: Record<TabKey, number> = {
+      DRAFT: 0,
+      READY: 0,
+      READY_TO_POST: 0,
+      PUBLISHED: 0,
+      ARCHIVED: 0,
+    };
+    for (const r of rows) {
+      c[r.status] += 1;
+      if (r.status === "READY") c.READY_TO_POST += 1;
+    }
     return c;
   }, [rows]);
 
@@ -97,7 +157,7 @@ export function PublishingQueuePanel({
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
-            {t} ({counts[t]})
+            {TAB_LABEL[t]} ({counts[t]})
           </button>
         ))}
       </div>
@@ -106,10 +166,22 @@ export function PublishingQueuePanel({
       {loading ? (
         <div className="text-sm text-muted-foreground mt-3">Loading…</div>
       ) : filtered.length === 0 ? (
-        <div className="text-sm text-muted-foreground mt-3">Nothing in {tab.toLowerCase()}.</div>
+        <div className="text-sm text-muted-foreground mt-3">
+          Nothing in {TAB_LABEL[tab].toLowerCase()}.
+        </div>
       ) : (
         <ul className="mt-3 divide-y divide-border">
-          {filtered.map((r) => (
+          {filtered.map((r) => {
+            const pkg = packages[r.content_package_id];
+            const isReady = r.status === "READY";
+            const platform = r.platform.toLowerCase();
+            const isFacebook = platform.includes("facebook");
+            const isInstagram = platform.includes("instagram");
+            const fbCaption = pkg ? buildFacebookCaption(pkg) : "";
+            const igCaption = pkg ? buildInstagramCaption(pkg) : "";
+            const hashtags = isInstagram ? pkg?.instagram_hashtags : pkg?.facebook_hashtags;
+            const previewCaption = isInstagram ? igCaption : isFacebook ? fbCaption : fbCaption || igCaption;
+            return (
             <li key={r.id} className="py-3 flex items-start gap-3">
               <div className="min-w-0 flex-1">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-primary">
@@ -132,6 +204,81 @@ export function PublishingQueuePanel({
                     </>
                   ) : null}
                 </div>
+
+                {isReady ? (
+                  <div className="mt-3 border border-border/70 bg-muted/30 p-3 text-[12px] space-y-2">
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      Content Preview
+                    </div>
+                    {previewCaption ? (
+                      <div className="whitespace-pre-wrap leading-snug">{previewCaption}</div>
+                    ) : (
+                      <div className="text-muted-foreground italic">No caption on this package.</div>
+                    )}
+                    {hashtags ? (
+                      <div className="text-[11px] text-primary break-words">{hashtags}</div>
+                    ) : null}
+                    <div className="text-[11px] text-muted-foreground">
+                      Assets: no image or reel attached to this package.
+                    </div>
+                    <div className="flex flex-wrap gap-3 pt-1 text-[11px]">
+                      {isFacebook || !isInstagram ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => copyText(fbCaption, "Facebook caption")}
+                            disabled={!fbCaption}
+                            className="underline text-primary disabled:opacity-40"
+                          >
+                            Copy Facebook Caption
+                          </button>
+                          <a
+                            href="https://www.facebook.com/"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="underline text-primary"
+                          >
+                            Open Facebook
+                          </a>
+                        </>
+                      ) : null}
+                      {isInstagram || !isFacebook ? (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => copyText(igCaption, "Instagram caption")}
+                            disabled={!igCaption}
+                            className="underline text-primary disabled:opacity-40"
+                          >
+                            Copy Instagram Caption
+                          </button>
+                          <a
+                            href="https://www.instagram.com/"
+                            target="_blank"
+                            rel="noreferrer"
+                            className="underline text-primary"
+                          >
+                            Open Instagram
+                          </a>
+                        </>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => alert("No image attached to this package yet.")}
+                        className="underline text-muted-foreground"
+                      >
+                        Download Available Image
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => alert("No reel assets attached to this package yet.")}
+                        className="underline text-muted-foreground"
+                      >
+                        Download Available Reel Assets
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
               </div>
               <div className="flex flex-wrap gap-3 justify-end text-[11px] shrink-0">
                 {onOpenPackage ? (
@@ -151,6 +298,16 @@ export function PublishingQueuePanel({
                     className="underline text-emerald-700 disabled:opacity-50"
                   >
                     Move to Ready
+                  </button>
+                ) : null}
+                {isReady ? (
+                  <button
+                    type="button"
+                    onClick={() => change(r.id, "DRAFT")}
+                    disabled={busyId === r.id}
+                    className="underline text-muted-foreground disabled:opacity-50"
+                  >
+                    Return to Draft
                   </button>
                 ) : null}
                 {r.status !== "PUBLISHED" ? (
@@ -192,7 +349,8 @@ export function PublishingQueuePanel({
                 </button>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       )}
     </div>
