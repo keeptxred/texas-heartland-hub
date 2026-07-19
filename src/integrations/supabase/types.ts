@@ -80,6 +80,39 @@ export type Database = {
         }
         Relationships: []
       }
+      content_sources: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          platform: string
+          source_name: string
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          platform: string
+          source_name: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          platform?: string
+          source_name?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       daily_articles: {
         Row: {
           affected_regions: string[] | null
