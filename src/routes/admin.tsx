@@ -8,6 +8,7 @@ import { ContentOpportunityPanel } from "@/components/admin/ContentOpportunityPa
 import { SavedPackagesPanel } from "@/components/admin/SavedPackagesPanel";
 import { BrandSettings } from "@/components/admin/BrandSettings";
 import { ReelRadarPanel } from "@/components/admin/ReelRadarPanel";
+import { ContentSourceManager } from "@/components/admin/ContentSourceManager";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -194,6 +195,10 @@ function AdminDashboard() {
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <ReelRadarPanel />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <ContentSourceManager />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
