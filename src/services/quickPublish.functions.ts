@@ -18,6 +18,23 @@ const Input = z.object({
 
 const GRAPH_VERSION = "v21.0";
 const KEEP_TX_RED_PAGE_ID = "1211420085383129";
+const SITE_URL = "https://www.keeptxred.com";
+
+function normalizeAssetUrl(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  let candidate = trimmed;
+  if (candidate.startsWith("//")) candidate = `https:${candidate}`;
+  else if (candidate.startsWith("/")) candidate = `${SITE_URL}${candidate}`;
+  try {
+    const u = new URL(candidate);
+    if (u.protocol !== "https:" && u.protocol !== "http:") return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
+}
 
 export type QuickPublishResult =
   | {
@@ -132,12 +149,32 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
           .select("featured_image_url")
           .eq("slug", slug)
           .maybeSingle();
-        if (articleRow?.featured_image_url) {
-          resolvedAssetUrl = articleRow.featured_image_url;
+        const raw = articleRow?.featured_image_url ?? null;
+        console.log("[quickPublish:server] daily_articles featured_image_url", {
+          slug,
+          value_type: raw === null ? "null" : typeof raw,
+          value_length: typeof raw === "string" ? raw.length : 0,
+          is_empty: typeof raw === "string" ? raw.trim().length === 0 : true,
+          starts_with: typeof raw === "string" ? raw.slice(0, 8) : null,
+        });
+        if (raw) {
+          resolvedAssetUrl = raw;
           assetSource = "daily_articles";
         }
       }
     }
+
+    // Normalize to an absolute http(s) URL. Relative paths (e.g. "/api/public/...")
+    // are valid on the site but Facebook /photos requires a fully qualified URL.
+    const normalizedAssetUrl = normalizeAssetUrl(resolvedAssetUrl);
+    if (resolvedAssetUrl && !normalizedAssetUrl) {
+      console.log("[quickPublish:server] asset_url rejected as invalid", {
+        raw_length: resolvedAssetUrl.length,
+        raw_starts_with: resolvedAssetUrl.slice(0, 8),
+      });
+    }
+    resolvedAssetUrl = normalizedAssetUrl;
+    if (!resolvedAssetUrl) assetSource = assetSource === "caller" ? "none" : assetSource;
     console.log("[quickPublish:server] asset resolution", {
       feed_item_id: data.feed_item_id ?? null,
       source: assetSource,
