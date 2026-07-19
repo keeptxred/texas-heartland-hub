@@ -12,6 +12,17 @@ export type SourcePreset = {
   priority: 1 | 2 | 3;
   source_reputation_score: number; // 0-100
   source_quality_reason: string;
+  /**
+   * Optional viral discovery metadata. These fields extend existing preset
+   * objects only — no schema changes. `source_type` classifies the signal
+   * shape so the admin UI and future ViralRadar filters can prioritize
+   * video/community sources; `viral_weight` (0-100) is a soft hint the
+   * scorer may consult when a matching row exists. Sources without RSS
+   * are marked `discovery_mode: "manual"` — no fake feeds.
+   */
+  source_type?: "news" | "official" | "social" | "video" | "community";
+  viral_weight?: number;
+  discovery_mode?: "rss" | "manual";
 };
 
 export type SourceGroup =
@@ -20,7 +31,8 @@ export type SourceGroup =
   | "Public Safety"
   | "Sports"
   | "Weather"
-  | "Business";
+  | "Business"
+  | "Viral Discovery";
 
 export const SOURCE_GROUPS: SourceGroup[] = [
   "Government",
@@ -29,6 +41,7 @@ export const SOURCE_GROUPS: SourceGroup[] = [
   "Sports",
   "Weather",
   "Business",
+  "Viral Discovery",
 ];
 
 export const SOURCE_PRESETS: SourcePreset[] = [
