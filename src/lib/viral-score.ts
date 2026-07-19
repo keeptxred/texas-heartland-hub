@@ -99,7 +99,7 @@ export function scoreFeedItem(item: {
 
   // Entities/category computed first so Texas relevance can consult them.
   const entities = extractEntities(hay);
-  const category = inferCategory(entities);
+  const category = inferCategory(entities, `${hay} ${sourceHay}`);
 
   // Texas relevance (0-40) — do NOT require the literal word "Texas" in title.
   let texas = 0;
