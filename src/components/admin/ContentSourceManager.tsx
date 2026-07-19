@@ -98,7 +98,9 @@ export function ContentSourceManager() {
     return {
       platform: p.platform,
       source_name: p.source_name,
-      source_url: p.rss_url || p.source_url,
+      source_url: p.source_url,
+      rss_url: p.rss_url ?? null,
+      enabled: true,
       category: p.category,
       notes: presetNotes(p),
     };

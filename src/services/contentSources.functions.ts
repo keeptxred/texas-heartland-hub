@@ -11,6 +11,8 @@ export type ContentSource = {
   platform: string;
   source_name: string;
   source_url: string | null;
+  rss_url: string | null;
+  enabled: boolean;
   category: string | null;
   notes: string | null;
   created_at: string;
@@ -21,6 +23,8 @@ const BaseFields = {
   platform: z.string().min(1).max(40),
   source_name: z.string().min(1).max(160),
   source_url: z.string().url().max(500).nullable().optional(),
+  rss_url: z.string().url().max(500).nullable().optional(),
+  enabled: z.boolean().optional(),
   category: z.string().max(120).nullable().optional(),
   notes: z.string().max(2000).nullable().optional(),
 };
@@ -63,6 +67,8 @@ export const addContentSourceFn = createServerFn({ method: "POST" })
         platform: data.platform,
         source_name: data.source_name,
         source_url: data.source_url ?? null,
+        rss_url: data.rss_url ?? null,
+        enabled: data.enabled ?? true,
         category: data.category ?? null,
         notes: data.notes ?? null,
       })
@@ -96,6 +102,8 @@ export const updateContentSourceFn = createServerFn({ method: "POST" })
         platform: data.platform,
         source_name: data.source_name,
         source_url: data.source_url ?? null,
+        rss_url: data.rss_url ?? null,
+        enabled: data.enabled ?? true,
         category: data.category ?? null,
         notes: data.notes ?? null,
       })

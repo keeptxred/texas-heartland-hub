@@ -166,7 +166,10 @@ async function generateHeadlineVariantsBatch(
   }
 }
 
-const SOURCES: { name: string; url: string; category?: string }[] = [
+// Hard-coded official Texas RSS feeds. Preserved as a fallback (and always
+// merged with enabled content_sources rows) so ingestion keeps working even
+// if the Source Library is empty or the DB read fails.
+const HARDCODED_SOURCES: { name: string; url: string; category?: string }[] = [
   { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss" },
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml" },
   { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml" },
@@ -175,6 +178,43 @@ const SOURCES: { name: string; url: string; category?: string }[] = [
   { name: "Texas Monthly", url: "https://www.texasmonthly.com/feed/", category: "Non-Political" },
   { name: "Texas Standard", url: "https://www.texasstandard.org/feed/", category: "Non-Political" },
 ];
+
+type IngestSource = { name: string; url: string; category?: string };
+
+// Merge hard-coded official sources with any enabled content_sources rows that
+// declare an rss_url. Dedupe by feed URL (case-insensitive). The Source Library
+// is additive — it never removes an official feed.
+async function loadSources(
+  supabaseAdmin: { from: (t: string) => { select: (c: string) => { eq: (col: string, val: unknown) => { not: (col: string, op: string, val: unknown) => Promise<{ data: unknown; error: { message: string } | null }> } } } },
+): Promise<{ sources: IngestSource[]; enabledDbCount: number }> {
+  const list: IngestSource[] = [...HARDCODED_SOURCES];
+  const seen = new Set(list.map((s) => s.url.toLowerCase()));
+  let enabledDbCount = 0;
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("content_sources")
+      .select("source_name, rss_url, category, enabled")
+      .eq("enabled", true)
+      .not("rss_url", "is", null);
+    if (error) {
+      console.warn("[ingest-feeds] content_sources load failed:", error.message);
+    } else if (Array.isArray(data)) {
+      const rows = data as { source_name: string; rss_url: string | null; category: string | null }[];
+      enabledDbCount = rows.length;
+      for (const r of rows) {
+        const url = (r.rss_url ?? "").trim();
+        if (!url) continue;
+        const key = url.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        list.push({ name: r.source_name, url, category: r.category ?? undefined });
+      }
+    }
+  } catch (e) {
+    console.warn("[ingest-feeds] content_sources load threw:", e);
+  }
+  return { sources: list, enabledDbCount };
+}
 
 function decode(s: string) {
   return s
@@ -549,6 +589,13 @@ export const Route = createFileRoute("/api/public/hooks/ingest-feeds")({
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+  const { sources: SOURCES, enabledDbCount } = await loadSources(
+    supabaseAdmin as unknown as Parameters<typeof loadSources>[0],
+  );
+  console.log(
+    `[ingest-feeds] sources: ${SOURCES.length} total (hardcoded=${HARDCODED_SOURCES.length}, db_enabled_with_rss=${enabledDbCount})`,
+  );
+
   const results = await Promise.all(
     SOURCES.map(async (s) => {
       try {
@@ -572,6 +619,8 @@ async function handler() {
 
   const all = results.flatMap((r) => r.items);
   const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
+  const okSources = results.filter((r) => (r as { status?: number }).status && (r as { status: number }).status >= 200 && (r as { status: number }).status < 300).length;
+  console.log(`[ingest-feeds] fetched ${all.length} items from ${okSources}/${SOURCES.length} sources`);
   if (all.length === 0) {
     return new Response(JSON.stringify({ ok: true, inserted: 0, fetched: 0, diag }), {
       headers: { "Content-Type": "application/json" },
@@ -602,6 +651,7 @@ async function handler() {
     }
     inserted = count ?? fresh.length;
   }
+  console.log(`[ingest-feeds] imported ${inserted} new items into texas_news_feed (fresh=${fresh.length})`);
 
   // Mint a native Keep TX Red article for every freshly ingested feed item so
   // Happening Now only ever links to internal /news/{slug} URLs.
