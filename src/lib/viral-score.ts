@@ -68,7 +68,8 @@ export function scoreFeedItem(item: {
   // Social hooks (0-30) — topics that historically drive engagement
   let social = 0;
   const hookMatches = title.match(new RegExp(SOCIAL_HOOK_WORDS, "gi")) ?? [];
-  if (hookMatches.length >= 1) { social += 15; reasons.push(`Hook: ${hookMatches[0].toLowerCase()}`); }
+  const firstHook = hookMatches[0];
+  if (firstHook) { social += 15; reasons.push(`Hook: ${firstHook.toLowerCase()}`); }
   if (hookMatches.length >= 2) { social += 10; reasons.push("Multi-hook headline"); }
   if (/[?!]/.test(title)) { social += 5; reasons.push("Emotive punctuation"); }
   social = Math.min(30, social);
