@@ -1,0 +1,163 @@
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+type FeedItem = {
+  id: number;
+  title: string;
+  source: string;
+  pub_date: string;
+};
+
+type Scored = FeedItem & {
+  texasScore: number;
+  breakingScore: number;
+  socialScore: number;
+  total: number;
+};
+
+const TEXAS_TOPICS = /\b(tax|taxes|election|elections|law|laws|border|economy|economic|public safety|police|crime)\b/i;
+const OFFICIAL_SOURCES = /(governor|texas\.gov|office of the governor|attorney general|texas tribune official|state of texas)/i;
+const BREAKING_WORDS = /\b(breaking|signs|declares|announces|emergency|ruling|election|law|veto|appoints)\b/i;
+const SOCIAL_TOPICS = /\b(election|elections|tax|taxes|border|crime|governor|abbott|hurricane|storm|shooting|flood)\b/i;
+
+function hoursSince(iso: string): number {
+  const t = new Date(iso).getTime();
+  if (Number.isNaN(t)) return Infinity;
+  return (Date.now() - t) / 3_600_000;
+}
+
+function score(item: FeedItem): Scored {
+  const title = item.title ?? "";
+  const source = item.source ?? "";
+  const hrs = hoursSince(item.pub_date);
+
+  let texas = 0;
+  if (/\btexas\b/i.test(title)) texas += 30;
+  if (OFFICIAL_SOURCES.test(source)) texas += 20;
+  if (TEXAS_TOPICS.test(title)) texas += 20;
+  if (hrs <= 24) texas += 10;
+
+  let breaking = 0;
+  if (BREAKING_WORDS.test(title)) breaking += 30;
+  if (hrs <= 12) breaking += 20;
+
+  let social = 0;
+  if (SOCIAL_TOPICS.test(title)) social += 30;
+  if (breaking >= 30) social += 20;
+
+  return { ...item, texasScore: texas, breakingScore: breaking, socialScore: social, total: texas + breaking + social };
+}
+
+function recommendation(total: number): { label: string; tone: string } {
+  if (total >= 80) return { label: "Create Social Package", tone: "text-emerald-600" };
+  if (total >= 60) return { label: "Review", tone: "text-amber-600" };
+  return { label: "Monitor", tone: "text-muted-foreground" };
+}
+
+export function ContentOpportunityPanel() {
+  const [items, setItems] = useState<FeedItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [actions, setActions] = useState<Record<number, "package" | "ignored">>({});
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      const { data } = await supabase
+        .from("texas_news_feed")
+        .select("id,title,source,pub_date")
+        .order("pub_date", { ascending: false })
+        .limit(50);
+      if (!active) return;
+      setItems((data ?? []) as FeedItem[]);
+      setLoading(false);
+    })();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const scored = useMemo(
+    () => items.map(score).sort((a, b) => b.total - a.total),
+    [items],
+  );
+
+  return (
+    <div className="border-2 border-foreground/10 bg-card p-5">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-display text-xl">Content Opportunities</h2>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          Rule-based · no AI calls
+        </span>
+      </div>
+      {loading ? (
+        <div className="text-sm text-muted-foreground">Loading…</div>
+      ) : scored.length === 0 ? (
+        <div className="text-sm text-muted-foreground">No recent feed items.</div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">
+                <th className="py-2 pr-2">Headline</th>
+                <th className="py-2 pr-2">Source</th>
+                <th className="py-2 pr-2">Published</th>
+                <th className="py-2 pr-2 text-right">TX</th>
+                <th className="py-2 pr-2 text-right">Break</th>
+                <th className="py-2 pr-2 text-right">Social</th>
+                <th className="py-2 pr-2">Action</th>
+                <th className="py-2 pr-2" />
+              </tr>
+            </thead>
+            <tbody>
+              {scored.slice(0, 25).map((r) => {
+                const rec = recommendation(r.total);
+                const state = actions[r.id];
+                return (
+                  <tr key={r.id} className="border-b border-border/50 align-top">
+                    <td className="py-2 pr-2 max-w-[24rem]">
+                      <div className="font-medium leading-snug truncate">{r.title}</div>
+                    </td>
+                    <td className="py-2 pr-2 text-[11px] text-muted-foreground">{r.source}</td>
+                    <td className="py-2 pr-2 text-[11px] text-muted-foreground whitespace-nowrap">
+                      {new Date(r.pub_date).toLocaleString("en-US", { timeZone: "America/Chicago" })}
+                    </td>
+                    <td className="py-2 pr-2 text-right tabular-nums">{r.texasScore}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">{r.breakingScore}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">{r.socialScore}</td>
+                    <td className={`py-2 pr-2 text-[11px] font-bold uppercase tracking-widest ${rec.tone}`}>
+                      {rec.label}
+                    </td>
+                    <td className="py-2 pr-2 whitespace-nowrap">
+                      {state === "package" ? (
+                        <span className="text-[11px] text-emerald-600">Package queued</span>
+                      ) : state === "ignored" ? (
+                        <span className="text-[11px] text-muted-foreground">Ignored</span>
+                      ) : (
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setActions((s) => ({ ...s, [r.id]: "package" }))}
+                            className="text-[11px] underline text-primary"
+                          >
+                            Generate Package
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setActions((s) => ({ ...s, [r.id]: "ignored" }))}
+                            className="text-[11px] underline text-muted-foreground"
+                          >
+                            Ignore
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
