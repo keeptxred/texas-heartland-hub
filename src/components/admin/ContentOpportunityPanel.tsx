@@ -6,6 +6,7 @@ import {
   type ContentPackage,
 } from "@/components/admin/ContentPackagePreview";
 import { generateContentPackage, type ContentAIResult } from "@/services/contentAI";
+import { quickPublishToFacebook } from "@/services/quickPublish";
 
 type FeedItem = {
   id: number;
@@ -69,6 +70,33 @@ export function ContentOpportunityPanel() {
   const [ai, setAi] = useState<Record<number, ContentAIResult>>({});
   const [aiLoading, setAiLoading] = useState<Record<number, boolean>>({});
   const [aiError, setAiError] = useState<Record<number, string>>({});
+  const [publishing, setPublishing] = useState<Record<number, boolean>>({});
+  const [publishMsg, setPublishMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
+
+  async function quickPost(r: Scored) {
+    setPublishing((s) => ({ ...s, [r.id]: true }));
+    setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: "" } }));
+    try {
+      const res = await quickPublishToFacebook({
+        headline: r.title,
+        source: r.source,
+        feed_item_id: r.id,
+      });
+      if (res.ok) {
+        setPublishMsg((s) => ({ ...s, [r.id]: { ok: true, text: "Published to Facebook" } }));
+        setActions((s) => ({ ...s, [r.id]: "ignored" }));
+      } else {
+        setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
+      }
+    } catch (e) {
+      setPublishMsg((s) => ({
+        ...s,
+        [r.id]: { ok: false, text: e instanceof Error ? e.message : "Publish failed" },
+      }));
+    } finally {
+      setPublishing((s) => ({ ...s, [r.id]: false }));
+    }
+  }
 
   async function runAI(r: Scored) {
     setAiLoading((s) => ({ ...s, [r.id]: true }));
@@ -170,28 +198,50 @@ export function ContentOpportunityPanel() {
                           {isOpen ? "Hide Draft" : "View Draft"}
                         </button>
                       ) : state === "ignored" ? (
-                        <span className="text-[11px] text-muted-foreground">Ignored</span>
+                        <div className="flex flex-col gap-1">
+                          <span className="text-[11px] text-muted-foreground">Done</span>
+                          {publishMsg[r.id]?.text ? (
+                            <span className={`text-[10px] ${publishMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
+                              {publishMsg[r.id].text}
+                            </span>
+                          ) : null}
+                        </div>
                       ) : (
-                        <div className="flex gap-2">
+                        <div className="flex flex-col items-start gap-1">
                           <button
                             type="button"
-                            onClick={() => {
-                              setActions((s) => ({ ...s, [r.id]: "package" }));
-                              setPackages((p) => ({ ...p, [r.id]: buildPackage(r) }));
-                              setOpenId(r.id);
-                              void runAI(r);
-                            }}
-                            className="text-[11px] underline text-primary"
+                            disabled={!!publishing[r.id]}
+                            onClick={() => void quickPost(r)}
+                            className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
                           >
-                            Generate Package
+                            {publishing[r.id] ? "Posting…" : "Post to Facebook"}
                           </button>
-                          <button
-                            type="button"
-                            onClick={() => setActions((s) => ({ ...s, [r.id]: "ignored" }))}
-                            className="text-[11px] underline text-muted-foreground"
-                          >
-                            Ignore
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActions((s) => ({ ...s, [r.id]: "package" }));
+                                setPackages((p) => ({ ...p, [r.id]: buildPackage(r) }));
+                                setOpenId(r.id);
+                                void runAI(r);
+                              }}
+                              className="text-[11px] underline text-primary"
+                            >
+                              Generate Package
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setActions((s) => ({ ...s, [r.id]: "ignored" }))}
+                              className="text-[11px] underline text-muted-foreground"
+                            >
+                              Ignore
+                            </button>
+                          </div>
+                          {publishMsg[r.id]?.text ? (
+                            <span className={`text-[10px] ${publishMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
+                              {publishMsg[r.id].text}
+                            </span>
+                          ) : null}
                         </div>
                       )}
                     </td>
