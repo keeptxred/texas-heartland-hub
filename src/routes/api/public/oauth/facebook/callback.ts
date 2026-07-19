@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "crypto";
 
 const GRAPH_VERSION = "v21.0";
+const KEEP_TX_RED_PAGE_ID = "1211420085383129";
+
+type FacebookPage = { id: string; name: string; access_token?: string };
 
 function verifyState(state: string, secret: string): { ok: boolean; origin?: string } {
   const idx = state.lastIndexOf(".");
@@ -38,6 +41,14 @@ function htmlResult(title: string, message: string, ok: boolean): Response {
     status: ok ? 200 : 400,
     headers: { "Content-Type": "text/html; charset=utf-8" },
   });
+}
+
+function safePageSummary(pages: FacebookPage[] | undefined) {
+  return (pages ?? []).map((page) => ({
+    id: page.id,
+    name: page.name,
+    has_access_token: Boolean(page.access_token),
+  }));
 }
 
 export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
@@ -104,10 +115,15 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
           `https://graph.facebook.com/${GRAPH_VERSION}/me/accounts?fields=id,name,access_token&access_token=${encodeURIComponent(userToken)}`,
         );
         const pagesJson = (await pagesRes.json()) as {
-          data?: Array<{ id: string; name: string; access_token: string }>;
+          data?: FacebookPage[];
           error?: { message?: string };
         };
-        console.log("[fb-oauth-debug] /me/accounts status", pagesRes.status, "body", JSON.stringify(pagesJson));
+        console.log("[fb-oauth-debug] /me/accounts", {
+          status: pagesRes.status,
+          page_count: pagesJson.data?.length ?? 0,
+          pages: safePageSummary(pagesJson.data),
+          error: pagesJson.error?.message ?? null,
+        });
         if (!pagesRes.ok || !pagesJson.data) {
           return htmlResult("Could not list Facebook Pages", pagesJson.error?.message ?? "Unknown error", false);
         }
@@ -118,7 +134,27 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
             false,
           );
         }
-        const page = pagesJson.data[0];
+        const page = pagesJson.data.find((p) => p.id === KEEP_TX_RED_PAGE_ID);
+        console.log("[fb-oauth-debug] selected page", {
+          expected_page_id: KEEP_TX_RED_PAGE_ID,
+          selected_page_id: page?.id ?? null,
+          selected_page_name: page?.name ?? null,
+          has_page_access_token: Boolean(page?.access_token),
+        });
+        if (!page) {
+          return htmlResult(
+            "Keep TX Red Page not available",
+            "Facebook did not return the Keep TX Red Page for this authorization. Reconnect and ensure the Page is selected in the Meta consent screen.",
+            false,
+          );
+        }
+        if (!page.access_token) {
+          return htmlResult(
+            "Missing Page access token",
+            "Facebook returned the Keep TX Red Page but did not include a Page access token for publishing.",
+            false,
+          );
+        }
 
         // 4. Upsert connection row
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -137,6 +173,13 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
           token_expires_at: null as string | null,
           updated_at: new Date().toISOString(),
         };
+
+        console.log("[fb-oauth-debug] storing facebook connection", {
+          provider: "facebook",
+          page_id: row.account_id,
+          page_name: row.account_name,
+          has_page_access_token: Boolean(row.access_token),
+        });
 
         if (existing?.id) {
           await supabaseAdmin.from("social_connections").update(row).eq("id", existing.id);
