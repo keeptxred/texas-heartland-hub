@@ -17,8 +17,32 @@ export type ViralSignals = {
 export type ViralResult = {
   viralScore: number; // 0-100, integer
   classificationConfidence: number; // 0-1
+  texasRelevanceScore: number; // 0-100, normalized
+  sourceReputationScore: number; // 0-100
+  sourceReputationReason: string;
+  routingType: RoutingType;
   signals: ViralSignals;
 };
+
+export type RoutingType = "SEO_ARTICLE" | "FACEBOOK_ONLY" | "REEL_CANDIDATE" | "BOTH";
+
+// Reputation classifier — pure & deterministic. Overridable via content_sources.
+const HIGH_REP =
+  /\b(governor|texas\.gov|attorney general|state of texas|dps|department of public safety|sheriff|police department|police dept|city of |county of |texas tribune|houston chronicle|dallas morning news|austin american-statesman|san antonio express|fort worth star-telegram|texas monthly|kxan|khou|wfaa|kens5|abc13|nbc dfw|cbs austin|fox 4|fox 7|associated press|reuters|espn|mlb\.com|nba\.com|nfl\.com|nhl\.com)\b/i;
+const MED_REP =
+  /\b(community impact|patch\.com|local ?news|gazette|herald|tribune|chronicle|journal|star|times|post|record|observer|beacon|weekly|kut|kera|tpr)\b/i;
+
+export function classifySourceReputation(source: string): { score: number; reason: string } {
+  const s = source ?? "";
+  if (HIGH_REP.test(s)) return { score: 90, reason: "Official/major outlet" };
+  if (MED_REP.test(s)) return { score: 65, reason: "Established local source" };
+  if (!s.trim()) return { score: 30, reason: "Unknown source" };
+  return { score: 45, reason: "Unclassified source" };
+}
+
+export const SOURCE_REPUTATION_FLOOR = 55;
+export const TEXAS_RELEVANCE_MIN = 40;
+export const TEXAS_RELEVANCE_AUTO = 85;
 
 const TEXAS_STRONG = /\btexas\b|\btexan\b|\bt\.x\.\b/i;
 const TEXAS_CITIES = /\b(houston|dallas|austin|san antonio|fort worth|el paso|rgv|rio grande|mcallen|brownsville|lubbock|amarillo|corpus christi|waco|arlington|plano|frisco|midland|odessa|beaumont|galveston)\b/i;
@@ -41,6 +65,9 @@ export function scoreFeedItem(item: {
   source: string;
   pub_date: string;
   description?: string | null;
+  has_video?: boolean | null;
+  source_reputation_score?: number | null;
+  source_reputation_reason?: string | null;
 }): ViralResult {
   const title = item.title ?? "";
   const source = item.source ?? "";
@@ -86,11 +113,35 @@ export function scoreFeedItem(item: {
   if (texas >= 20) confidence += 0.25;
   confidence = Math.min(1, Number(confidence.toFixed(2)));
 
-  const viralScore = Math.min(100, Math.round(texas + velocity + social));
+  // Source reputation acts as a multiplier (0.5x - 1.0x) on the raw score.
+  const rep = item.source_reputation_score != null
+    ? { score: item.source_reputation_score, reason: item.source_reputation_reason || "From content_sources" }
+    : classifySourceReputation(source);
+  const repMultiplier = 0.5 + (Math.max(0, Math.min(100, rep.score)) / 200); // 0.5..1.0
+  const rawScore = texas + velocity + social;
+  const viralScore = Math.min(100, Math.round(rawScore * repMultiplier));
+  if (rep.score >= 85) reasons.push("High-reputation source");
+  else if (rep.score < SOURCE_REPUTATION_FLOOR) reasons.push("Low-reputation source");
+
+  // Normalize Texas relevance to 0-100 (raw is 0-40).
+  const texasRelevanceScore = Math.round((texas / 40) * 100);
+
+  // Routing decision.
+  const hasVideo = !!item.has_video;
+  const searchWorthy = viralScore >= 60 && texasRelevanceScore >= 50 && category !== "Non-Political";
+  let routingType: RoutingType;
+  if (hasVideo && viralScore >= 70 && searchWorthy) routingType = "BOTH";
+  else if (hasVideo && viralScore >= 70) routingType = "REEL_CANDIDATE";
+  else if (searchWorthy) routingType = "SEO_ARTICLE";
+  else routingType = "FACEBOOK_ONLY";
 
   return {
     viralScore,
     classificationConfidence: confidence,
+    texasRelevanceScore,
+    sourceReputationScore: rep.score,
+    sourceReputationReason: rep.reason,
+    routingType,
     signals: {
       reasons,
       texasRelevance: texas,
@@ -106,10 +157,24 @@ export function scoreFeedItem(item: {
 // low-confidence items in the panel for manual review.
 export const VIRAL_AUTO_REWRITE_MIN_SCORE = 70;
 export const VIRAL_AUTO_REWRITE_MIN_CONFIDENCE = 0.6;
+// Stricter "Ready for Rewrite" auto-flag gate.
+export const VIRAL_READY_MIN_SCORE = 90;
+export const VIRAL_READY_MIN_CONFIDENCE = 0.8;
 
 export function qualifiesForAutoRewrite(r: ViralResult): boolean {
   return (
     r.viralScore >= VIRAL_AUTO_REWRITE_MIN_SCORE &&
-    r.classificationConfidence >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE
+    r.classificationConfidence >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE &&
+    r.texasRelevanceScore >= TEXAS_RELEVANCE_MIN &&
+    r.sourceReputationScore >= SOURCE_REPUTATION_FLOOR
+  );
+}
+
+export function qualifiesReadyForRewrite(r: ViralResult): boolean {
+  return (
+    r.viralScore >= VIRAL_READY_MIN_SCORE &&
+    r.classificationConfidence >= VIRAL_READY_MIN_CONFIDENCE &&
+    r.texasRelevanceScore >= TEXAS_RELEVANCE_AUTO &&
+    r.sourceReputationScore >= SOURCE_REPUTATION_FLOOR
   );
 }

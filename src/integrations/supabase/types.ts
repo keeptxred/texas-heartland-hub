@@ -103,6 +103,8 @@ export type Database = {
           notes: string | null
           platform: string
           source_name: string
+          source_quality_reason: string | null
+          source_reputation_score: number | null
           source_url: string | null
           updated_at: string
         }
@@ -113,6 +115,8 @@ export type Database = {
           notes?: string | null
           platform: string
           source_name: string
+          source_quality_reason?: string | null
+          source_reputation_score?: number | null
           source_url?: string | null
           updated_at?: string
         }
@@ -123,6 +127,8 @@ export type Database = {
           notes?: string | null
           platform?: string
           source_name?: string
+          source_quality_reason?: string | null
+          source_reputation_score?: number | null
           source_url?: string | null
           updated_at?: string
         }
@@ -655,9 +661,15 @@ export type Database = {
           internal_slug: string | null
           link: string
           pub_date: string
+          ready_for_rewrite: boolean
+          routing_type: string | null
           source: string
+          source_count: number | null
+          source_reputation_score: number | null
+          texas_relevance_score: number | null
           title: string
           trend_source: string | null
+          trend_velocity: number | null
           viral_score: number
           viral_scored_at: string | null
           viral_signals: Json | null
@@ -670,9 +682,15 @@ export type Database = {
           internal_slug?: string | null
           link: string
           pub_date?: string
+          ready_for_rewrite?: boolean
+          routing_type?: string | null
           source: string
+          source_count?: number | null
+          source_reputation_score?: number | null
+          texas_relevance_score?: number | null
           title: string
           trend_source?: string | null
+          trend_velocity?: number | null
           viral_score?: number
           viral_scored_at?: string | null
           viral_signals?: Json | null
@@ -685,9 +703,15 @@ export type Database = {
           internal_slug?: string | null
           link?: string
           pub_date?: string
+          ready_for_rewrite?: boolean
+          routing_type?: string | null
           source?: string
+          source_count?: number | null
+          source_reputation_score?: number | null
+          texas_relevance_score?: number | null
           title?: string
           trend_source?: string | null
+          trend_velocity?: number | null
           viral_score?: number
           viral_scored_at?: string | null
           viral_signals?: Json | null
