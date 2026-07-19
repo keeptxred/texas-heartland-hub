@@ -39,14 +39,10 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<QuickPublishResult> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
-    console.log("[quickPublish:server] incoming payload", {
-      headline_length: data.headline?.length ?? 0,
-      source: data.source ?? null,
+    console.log("[quickPublish] incoming", {
       feed_item_id: data.feed_item_id ?? null,
-      has_source_url: Boolean(data.source_url),
       has_asset_url: Boolean(data.asset_url),
-      asset_url_preview: data.asset_url ? String(data.asset_url).slice(0, 120) : null,
-      caption_provided: Boolean(data.caption),
+      has_source_url: Boolean(data.source_url),
     });
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -119,6 +115,35 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       }
     }
 
+    // 1b. Resolve media: if caller didn't pass asset_url, look up the article's featured image
+    // via feed_item_id -> texas_news_feed.internal_slug -> daily_articles.featured_image_url.
+    let resolvedAssetUrl: string | null = data.asset_url ?? null;
+    let assetSource: "caller" | "daily_articles" | "none" = resolvedAssetUrl ? "caller" : "none";
+    if (!resolvedAssetUrl && data.feed_item_id) {
+      const { data: feedRow } = await supabaseAdmin
+        .from("texas_news_feed")
+        .select("internal_slug")
+        .eq("id", data.feed_item_id)
+        .maybeSingle();
+      const slug = feedRow?.internal_slug ?? null;
+      if (slug) {
+        const { data: articleRow } = await supabaseAdmin
+          .from("daily_articles")
+          .select("featured_image_url")
+          .eq("slug", slug)
+          .maybeSingle();
+        if (articleRow?.featured_image_url) {
+          resolvedAssetUrl = articleRow.featured_image_url;
+          assetSource = "daily_articles";
+        }
+      }
+    }
+    console.log("[quickPublish:server] asset resolution", {
+      feed_item_id: data.feed_item_id ?? null,
+      source: assetSource,
+      has_asset_url: Boolean(resolvedAssetUrl),
+    });
+
     // 2. Persist a lightweight content package (no AI).
     const caption = data.caption?.trim() || buildDefaultCaption(data.headline, data.source);
     const { data: pkg, error: pkgErr } = await supabaseAdmin
@@ -131,8 +156,8 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         facebook_body: caption,
         facebook_cta: "",
         facebook_hashtags: "",
-        asset_type: data.asset_url ? "IMAGE" : null,
-        asset_url: data.asset_url ?? null,
+        asset_type: resolvedAssetUrl ? "IMAGE" : null,
+        asset_url: resolvedAssetUrl,
         status: "DRAFT",
         workflow_status: "READY_TO_POST",
       })
@@ -152,21 +177,18 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       let endpoint: string;
       const body = new URLSearchParams();
       body.set("access_token", pageToken);
-      if (data.asset_url) {
+      if (resolvedAssetUrl) {
         endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/photos`;
-        body.set("url", data.asset_url);
+        body.set("url", resolvedAssetUrl);
         body.set("caption", caption);
       } else {
         endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/feed`;
         body.set("message", caption);
         if (link) body.set("link", link);
       }
-      console.log("[quickPublish:server] resolved publish mode", {
-        mode: data.asset_url ? "PHOTO" : link ? "LINK" : "TEXT",
-        endpoint_kind: data.asset_url ? "/photos" : "/feed",
-        has_asset_url: Boolean(data.asset_url),
-        has_link: Boolean(link),
-        reason_no_image: data.asset_url ? null : "no asset_url was passed to quickPublishToFacebook",
+      console.log("[quickPublish:server] publish mode", {
+        mode: resolvedAssetUrl ? "PHOTO" : link ? "LINK" : "TEXT",
+        asset_source: assetSource,
       });
       console.log("[quickPublish] Graph API request", {
         provider: "facebook",
