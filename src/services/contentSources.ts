@@ -12,6 +12,8 @@ export type ContentSourceInput = {
   platform: string;
   source_name: string;
   source_url?: string | null;
+  rss_url?: string | null;
+  enabled?: boolean;
   category?: string | null;
   notes?: string | null;
 };
