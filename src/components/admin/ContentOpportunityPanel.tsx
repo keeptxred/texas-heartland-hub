@@ -5,6 +5,7 @@ import {
   buildPackage,
   type ContentPackage,
 } from "@/components/admin/ContentPackagePreview";
+import { generateContentPackage, type ContentAIResult } from "@/services/contentAI";
 
 type FeedItem = {
   id: number;
@@ -65,6 +66,29 @@ export function ContentOpportunityPanel() {
   const [actions, setActions] = useState<Record<number, "package" | "ignored">>({});
   const [packages, setPackages] = useState<Record<number, ContentPackage>>({});
   const [openId, setOpenId] = useState<number | null>(null);
+  const [ai, setAi] = useState<Record<number, ContentAIResult>>({});
+  const [aiLoading, setAiLoading] = useState<Record<number, boolean>>({});
+  const [aiError, setAiError] = useState<Record<number, string>>({});
+
+  async function runAI(r: Scored) {
+    setAiLoading((s) => ({ ...s, [r.id]: true }));
+    setAiError((s) => ({ ...s, [r.id]: "" }));
+    try {
+      const result = await generateContentPackage({
+        headline: r.title,
+        source: r.source,
+        publishedAt: r.pub_date,
+      });
+      setAi((s) => ({ ...s, [r.id]: result }));
+    } catch (e) {
+      setAiError((s) => ({
+        ...s,
+        [r.id]: e instanceof Error ? e.message : "AI generation failed",
+      }));
+    } finally {
+      setAiLoading((s) => ({ ...s, [r.id]: false }));
+    }
+  }
 
   useEffect(() => {
     let active = true;
@@ -93,7 +117,7 @@ export function ContentOpportunityPanel() {
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-display text-xl">Content Opportunities</h2>
         <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-          Rule-based · no AI calls
+          AI runs only on Generate Package click
         </span>
       </div>
       {loading ? (
@@ -155,6 +179,7 @@ export function ContentOpportunityPanel() {
                               setActions((s) => ({ ...s, [r.id]: "package" }));
                               setPackages((p) => ({ ...p, [r.id]: buildPackage(r) }));
                               setOpenId(r.id);
+                              void runAI(r);
                             }}
                             className="text-[11px] underline text-primary"
                           >
@@ -178,6 +203,10 @@ export function ContentOpportunityPanel() {
                           item={r}
                           pkg={packages[r.id]}
                           onClose={() => setOpenId(null)}
+                          ai={ai[r.id]}
+                          aiLoading={!!aiLoading[r.id]}
+                          aiError={aiError[r.id]}
+                          onRegenerate={() => runAI(r)}
                         />
                       </td>
                     </tr>
