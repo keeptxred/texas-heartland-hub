@@ -1,3 +1,6 @@
+import { useState } from "react";
+import type { ContentAIResult } from "@/services/contentAI";
+
 type SourceItem = {
   id: number;
   title: string;
@@ -78,10 +81,18 @@ export function ContentPackagePreview({
   item,
   pkg,
   onClose,
+  ai,
+  aiLoading = false,
+  aiError = "",
+  onRegenerate,
 }: {
   item: SourceItem;
   pkg: ContentPackage;
   onClose: () => void;
+  ai?: ContentAIResult;
+  aiLoading?: boolean;
+  aiError?: string;
+  onRegenerate?: () => void;
 }) {
   return (
     <div className="mt-3 border-2 border-primary/40 bg-white p-4 space-y-4">
@@ -91,9 +102,57 @@ export function ContentPackagePreview({
           <div className="text-sm font-medium leading-snug">{item.title}</div>
           <div className="text-[11px] text-muted-foreground">{item.source}</div>
         </div>
-        <button type="button" onClick={onClose} className="text-[11px] underline text-muted-foreground">
-          Close
-        </button>
+        <div className="flex items-center gap-3">
+          {onRegenerate ? (
+            <button
+              type="button"
+              onClick={onRegenerate}
+              disabled={aiLoading}
+              className="text-[11px] underline text-primary disabled:opacity-50"
+            >
+              {aiLoading ? "Generating…" : ai ? "Regenerate with AI" : "Generate with AI"}
+            </button>
+          ) : null}
+          <button type="button" onClick={onClose} className="text-[11px] underline text-muted-foreground">
+            Close
+          </button>
+        </div>
+      </div>
+
+      {aiError ? (
+        <div className="text-[11px] text-destructive border border-destructive/40 bg-destructive/5 p-2">
+          {aiError}
+        </div>
+      ) : null}
+
+      {aiLoading && !ai ? (
+        <div className="text-sm text-muted-foreground">Generating AI content package…</div>
+      ) : null}
+
+      {ai ? (
+        <div className="space-y-4">
+          <Section title="AI · Facebook Post">
+            <CopyField label="Hook" value={ai.facebookPost.hook} />
+            <CopyField label="Body" value={ai.facebookPost.body} multiline />
+            <CopyField label="Call to Action" value={ai.facebookPost.callToAction} />
+            <CopyField label="Hashtags" value={ai.facebookPost.hashtags.join(" ")} />
+          </Section>
+          <Section title="AI · Instagram Reel">
+            <CopyField label="3-Second Hook" value={ai.instagramReel.hook} />
+            <CopyField label="Script" value={ai.instagramReel.script} multiline />
+            <CopyField label="Caption" value={ai.instagramReel.caption} multiline />
+            <CopyField label="Hashtags" value={ai.instagramReel.hashtags.join(" ")} />
+          </Section>
+          <Section title="AI · SEO Package">
+            <CopyField label="SEO Title" value={ai.seoPackage.title} />
+            <CopyField label="Meta Description" value={ai.seoPackage.metaDescription} multiline />
+            <CopyField label="Suggested Keywords" value={ai.seoPackage.suggestedKeywords.join(", ")} />
+          </Section>
+        </div>
+      ) : null}
+
+      <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground pt-2 border-t border-border">
+        Rule-based fallback
       </div>
 
       <Section title="Facebook Post">
@@ -148,6 +207,38 @@ function Field({ label, value, multiline = false }: { label: string; value: stri
   return (
     <div>
       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
+      {multiline ? (
+        <pre className="text-sm whitespace-pre-wrap font-sans mt-0.5">{value}</pre>
+      ) : (
+        <div className="text-sm mt-0.5">{value}</div>
+      )}
+    </div>
+  );
+}
+
+function CopyField({ label, value, multiline = false }: { label: string; value: string; multiline?: boolean }) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // ignore
+    }
+  }
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
+        <button
+          type="button"
+          onClick={copy}
+          className="text-[10px] uppercase tracking-widest underline text-primary"
+        >
+          {copied ? "Copied" : "Copy"}
+        </button>
+      </div>
       {multiline ? (
         <pre className="text-sm whitespace-pre-wrap font-sans mt-0.5">{value}</pre>
       ) : (
