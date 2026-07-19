@@ -4,6 +4,7 @@ import {
   deleteContentPackage,
   type SavedPackage,
 } from "@/services/contentPackages";
+import { MediaPackageBuilder } from "./media-package/MediaPackageBuilder";
 
 export function SavedPackagesPanel() {
   const [rows, setRows] = useState<SavedPackage[]>([]);
@@ -119,6 +120,7 @@ export function SavedPackagesPanel() {
 function PackageDetail({ row }: { row: SavedPackage }) {
   return (
     <div className="border border-border bg-white p-4 space-y-3 text-sm">
+      <MediaPackageBuilder row={row} />
       <Section title="Facebook">
         <Line label="Hook" value={row.facebook_hook} />
         <Line label="Body" value={row.facebook_body} multiline />
