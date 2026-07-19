@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { FileText, Image, Video } from "lucide-react";
 import {
   ContentPackagePreview,
   buildPackage,
@@ -13,6 +14,14 @@ type FeedItem = {
   title: string;
   source: string;
   pub_date: string;
+  internal_slug: string | null;
+  link: string | null;
+};
+
+type OpportunityStatus = {
+  rewritten: boolean;
+  imageReady: boolean;
+  reelReady: boolean;
 };
 
 type Scored = FeedItem & {
