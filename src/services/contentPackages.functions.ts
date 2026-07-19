@@ -48,6 +48,11 @@ export type SavedPackage = {
   seo_title: string | null;
   seo_description: string | null;
   seo_keywords: string | null;
+  asset_type: "IMAGE" | "REEL" | null;
+  asset_url: string | null;
+  asset_source_account: string | null;
+  asset_notes: string | null;
+  workflow_status: "DRAFT" | "ASSET_READY" | "READY_TO_POST" | "PUBLISHED";
 };
 
 export const saveContentPackageFn = createServerFn({ method: "POST" })
@@ -104,6 +109,51 @@ export const deleteContentPackageFn = createServerFn({ method: "POST" })
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin.from("content_packages").delete().eq("id", data.id);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  });
+
+const AssetInput = z.object({
+  token: z.string().min(1),
+  id: z.string().uuid(),
+  asset_type: z.enum(["IMAGE", "REEL"]).nullable(),
+  asset_url: z.string().max(2000).nullable().optional(),
+  asset_source_account: z.string().max(200).nullable().optional(),
+  asset_notes: z.string().max(2000).nullable().optional(),
+});
+
+export const updateContentPackageAssetFn = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => AssetInput.parse(d))
+  .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
+    if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const patch: Record<string, unknown> = {
+      asset_type: data.asset_type,
+      asset_url: data.asset_url ?? null,
+      asset_source_account: data.asset_source_account ?? null,
+      asset_notes: data.asset_notes ?? null,
+    };
+    if (data.asset_type && data.asset_url) patch.workflow_status = "ASSET_READY";
+    const { error } = await supabaseAdmin.from("content_packages").update(patch).eq("id", data.id);
+    if (error) return { ok: false, error: error.message };
+    return { ok: true };
+  });
+
+const WorkflowInput = z.object({
+  token: z.string().min(1),
+  id: z.string().uuid(),
+  workflow_status: z.enum(["DRAFT", "ASSET_READY", "READY_TO_POST", "PUBLISHED"]),
+});
+
+export const updateContentPackageWorkflowFn = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => WorkflowInput.parse(d))
+  .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
+    if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("content_packages")
+      .update({ workflow_status: data.workflow_status })
+      .eq("id", data.id);
     if (error) return { ok: false, error: error.message };
     return { ok: true };
   });
