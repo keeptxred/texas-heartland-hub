@@ -73,6 +73,7 @@ function recommendation(total: number): { label: string; tone: string } {
 export function ContentOpportunityPanel() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statuses, setStatuses] = useState<Record<number, OpportunityStatus>>({});
   const [actions, setActions] = useState<Record<number, "package" | "ignored">>({});
   const [packages, setPackages] = useState<Record<number, ContentPackage>>({});
   const [openId, setOpenId] = useState<number | null>(null);
