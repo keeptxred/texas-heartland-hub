@@ -20,7 +20,7 @@ export type SourcePreset = {
    * scorer may consult when a matching row exists. Sources without RSS
    * are marked `discovery_mode: "manual"` — no fake feeds.
    */
-  source_type?: "news" | "official" | "social" | "video" | "community";
+  source_type?: "news" | "official" | "social" | "video" | "community" | "politics" | "culture";
   viral_weight?: number;
   discovery_mode?: "rss" | "manual";
 };
@@ -32,7 +32,8 @@ export type SourceGroup =
   | "Sports"
   | "Weather"
   | "Business"
-  | "Viral Discovery";
+  | "Viral Discovery"
+  | "Viral Watch";
 
 export const SOURCE_GROUPS: SourceGroup[] = [
   "Government",
@@ -42,6 +43,7 @@ export const SOURCE_GROUPS: SourceGroup[] = [
   "Weather",
   "Business",
   "Viral Discovery",
+  "Viral Watch",
 ];
 
 export const SOURCE_PRESETS: SourcePreset[] = [
