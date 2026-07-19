@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ContentAIResult } from "@/services/contentAI";
 import { saveContentPackage } from "@/services/contentPackages";
+import { addQueueEntry } from "@/services/publishingQueue";
 
 type SourceItem = {
   id: number;
@@ -102,6 +103,8 @@ export function ContentPackagePreview({
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
   const [savedId, setSavedId] = useState<string | null>(null);
+  const [queueMsg, setQueueMsg] = useState("");
+  const [queuing, setQueuing] = useState<"facebook" | "instagram" | null>(null);
 
   async function save() {
     if (!ai) return;
@@ -119,6 +122,21 @@ export function ContentPackagePreview({
       setSaveError(e instanceof Error ? e.message : "Save failed");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function sendToQueue(platform: "Facebook" | "Instagram") {
+    if (!savedId) return;
+    setQueuing(platform.toLowerCase() as "facebook" | "instagram");
+    setQueueMsg("");
+    try {
+      await addQueueEntry({ content_package_id: savedId, platform });
+      setQueueMsg(`Added to Publishing Queue (${platform}).`);
+      window.dispatchEvent(new CustomEvent("ktr-publishing-queue-updated"));
+    } catch (e) {
+      setQueueMsg(e instanceof Error ? e.message : "Failed to queue");
+    } finally {
+      setQueuing(null);
     }
   }
 
@@ -163,8 +181,26 @@ export function ContentPackagePreview({
         </div>
       ) : null}
       {savedId ? (
-        <div className="text-[11px] text-emerald-700 border border-emerald-600/30 bg-emerald-50 p-2">
-          Package saved as DRAFT.
+        <div className="text-[11px] text-emerald-700 border border-emerald-600/30 bg-emerald-50 p-2 flex flex-wrap items-center gap-3">
+          <span>Package saved as DRAFT.</span>
+          <span className="text-muted-foreground">Open it in Saved Packages to attach an image or reel.</span>
+          <button
+            type="button"
+            onClick={() => sendToQueue("Facebook")}
+            disabled={queuing !== null}
+            className="underline text-primary disabled:opacity-50"
+          >
+            {queuing === "facebook" ? "Queuing…" : "Send to Publishing Queue → Facebook"}
+          </button>
+          <button
+            type="button"
+            onClick={() => sendToQueue("Instagram")}
+            disabled={queuing !== null}
+            className="underline text-primary disabled:opacity-50"
+          >
+            {queuing === "instagram" ? "Queuing…" : "Send to Publishing Queue → Instagram"}
+          </button>
+          {queueMsg ? <span className="text-muted-foreground">{queueMsg}</span> : null}
         </div>
       ) : null}
 
