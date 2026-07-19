@@ -99,9 +99,11 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string
+          enabled: boolean
           id: string
           notes: string | null
           platform: string
+          rss_url: string | null
           source_name: string
           source_quality_reason: string | null
           source_reputation_score: number | null
@@ -111,9 +113,11 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string
+          enabled?: boolean
           id?: string
           notes?: string | null
           platform: string
+          rss_url?: string | null
           source_name: string
           source_quality_reason?: string | null
           source_reputation_score?: number | null
@@ -123,9 +127,11 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string
+          enabled?: boolean
           id?: string
           notes?: string | null
           platform?: string
+          rss_url?: string | null
           source_name?: string
           source_quality_reason?: string | null
           source_reputation_score?: number | null
