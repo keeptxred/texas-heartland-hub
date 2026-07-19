@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { isLowValueTitle } from "@/lib/low-value-titles";
 import { FileText, Image, Video } from "lucide-react";
 import {
   ContentPackagePreview,
