@@ -77,18 +77,6 @@ export function ContentOpportunityPanel() {
     setPublishing((s) => ({ ...s, [r.id]: true }));
     setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: "" } }));
     try {
-      const payload = {
-        headline: r.title,
-        source: r.source,
-        feed_item_id: r.id,
-      };
-      console.log("[quickPublish:client] payload before send", {
-        ...payload,
-        has_asset_url: false,
-        has_source_url: false,
-        has_image_url: false,
-        note: "ContentOpportunityPanel does not fetch or pass any image/link — text-only by design of this call site",
-      });
       const res = await quickPublishToFacebook({
         headline: r.title,
         source: r.source,
