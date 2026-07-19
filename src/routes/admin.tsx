@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
 import { ContentOpportunityPanel } from "@/components/admin/ContentOpportunityPanel";
 import { SavedPackagesPanel } from "@/components/admin/SavedPackagesPanel";
+import { BrandSettings } from "@/components/admin/BrandSettings";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -192,6 +193,10 @@ function AdminDashboard() {
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <SavedPackagesPanel />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <BrandSettings />
       </section>
     </div>
   );

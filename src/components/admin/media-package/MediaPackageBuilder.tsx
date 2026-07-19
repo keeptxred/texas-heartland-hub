@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { SavedPackage } from "@/services/contentPackages";
+import { useBrandSettings } from "@/lib/brand-settings";
 import { TemplateSelector } from "./TemplateSelector";
 import { SocialImagePreview } from "./SocialImagePreview";
 import { ReelBlueprintPreview } from "./ReelBlueprintPreview";
@@ -8,7 +9,8 @@ import { buildMediaPackage, type MediaTemplateId } from "./types";
 export function MediaPackageBuilder({ row }: { row: SavedPackage }) {
   const [generated, setGenerated] = useState(false);
   const [templateId, setTemplateId] = useState<MediaTemplateId>(guessTemplate(row));
-  const pkg = useMemo(() => buildMediaPackage(row), [row]);
+  const brand = useBrandSettings();
+  const pkg = useMemo(() => buildMediaPackage(row, brand), [row, brand]);
 
   if (!generated) {
     return (

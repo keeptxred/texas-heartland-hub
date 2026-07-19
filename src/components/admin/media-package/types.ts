@@ -1,4 +1,5 @@
 import type { SavedPackage } from "@/services/contentPackages";
+import type { BrandSettings } from "@/lib/brand-settings";
 
 export type MediaTemplateId = "breaking" | "politics" | "election" | "economy" | "tax";
 
@@ -8,6 +9,8 @@ export type MediaPackage = {
   source: string;
   brand: string;
   url: string;
+  logoUrl: string;
+  footerText: string;
   reel: {
     hook: string;
     mainStory: string[];
@@ -17,7 +20,7 @@ export type MediaPackage = {
   };
 };
 
-export function buildMediaPackage(row: SavedPackage): MediaPackage {
+export function buildMediaPackage(row: SavedPackage, brand: BrandSettings): MediaPackage {
   const headline = (row.seo_title || row.source_title || "").trim();
   const subheadline = (row.seo_description || row.facebook_hook || "").trim();
   const sourceHost = safeHost(row.source_url) || "KeepTXRed";
@@ -27,12 +30,14 @@ export function buildMediaPackage(row: SavedPackage): MediaPackage {
     headline,
     subheadline,
     source: `Source: ${sourceHost}`,
-    brand: "KEEP TX RED",
-    url: "keeptxred.com",
+    brand: brand.brandName,
+    url: brand.websiteUrl,
+    logoUrl: brand.logoUrl,
+    footerText: brand.footerText,
     reel: {
       hook: row.instagram_hook || row.facebook_hook || headline,
       mainStory: points,
-      closing: row.facebook_cta || "Follow @KeepTXRed for more Texas coverage.",
+      closing: row.facebook_cta || brand.socialCta,
       caption: row.instagram_caption || row.facebook_body || "",
       hashtags: row.instagram_hashtags || row.facebook_hashtags || "",
     },
