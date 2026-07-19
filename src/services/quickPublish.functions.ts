@@ -161,6 +161,13 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         body.set("message", caption);
         if (link) body.set("link", link);
       }
+      console.log("[quickPublish:server] resolved publish mode", {
+        mode: data.asset_url ? "PHOTO" : link ? "LINK" : "TEXT",
+        endpoint_kind: data.asset_url ? "/photos" : "/feed",
+        has_asset_url: Boolean(data.asset_url),
+        has_link: Boolean(link),
+        reason_no_image: data.asset_url ? null : "no asset_url was passed to quickPublishToFacebook",
+      });
       console.log("[quickPublish] Graph API request", {
         provider: "facebook",
         endpoint,
