@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
+import { toPng } from "html-to-image";
 import type { SavedPackage } from "@/services/contentPackages";
 import { useBrandSettings } from "@/lib/brand-settings";
 import { TemplateSelector } from "./TemplateSelector";
@@ -11,6 +12,28 @@ export function MediaPackageBuilder({ row }: { row: SavedPackage }) {
   const [templateId, setTemplateId] = useState<MediaTemplateId>(guessTemplate(row));
   const brand = useBrandSettings();
   const pkg = useMemo(() => buildMediaPackage(row, brand), [row, brand]);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const [downloading, setDownloading] = useState(false);
+
+  async function handleDownload() {
+    if (!imageRef.current) return;
+    setDownloading(true);
+    try {
+      const dataUrl = await toPng(imageRef.current, {
+        cacheBust: true,
+        pixelRatio: 2,
+      });
+      const date = new Date().toISOString().slice(0, 10);
+      const link = document.createElement("a");
+      link.download = `keeptxred-social-${date}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Failed to export social image", err);
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   if (!generated) {
     return (
@@ -55,7 +78,17 @@ export function MediaPackageBuilder({ row }: { row: SavedPackage }) {
           <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
             Social Image Preview
           </div>
-          <SocialImagePreview pkg={pkg} templateId={templateId} />
+          <div ref={imageRef}>
+            <SocialImagePreview pkg={pkg} templateId={templateId} />
+          </div>
+          <button
+            type="button"
+            onClick={handleDownload}
+            disabled={downloading}
+            className="mt-2 text-[11px] uppercase tracking-widest px-3 py-2 bg-primary text-primary-foreground border-2 border-primary disabled:opacity-60"
+          >
+            {downloading ? "Preparing…" : "Download Image"}
+          </button>
         </div>
         <div>
           <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
