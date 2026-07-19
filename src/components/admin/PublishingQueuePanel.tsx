@@ -7,6 +7,7 @@ import {
   type QueueStatus,
 } from "@/services/publishingQueue";
 import { listContentPackages, type SavedPackage } from "@/services/contentPackages";
+import { publishToFacebook, publishToInstagram } from "@/services/metaPublisher";
 
 type TabKey = QueueStatus | "READY_TO_POST";
 const TABS: TabKey[] = ["DRAFT", "READY", "READY_TO_POST", "PUBLISHED", "ARCHIVED"];
@@ -221,6 +222,23 @@ export function PublishingQueuePanel({
                     <div className="text-[11px] text-muted-foreground">
                       Assets: no image or reel attached to this package.
                     </div>
+                    {pkg?.asset_url ? (
+                      <div className="mt-2 border border-border/60 bg-white p-2">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                          Attached {pkg.asset_type}
+                        </div>
+                        {pkg.asset_type === "IMAGE" ? (
+                          <img src={pkg.asset_url} alt="asset preview" className="max-h-40 border border-border" />
+                        ) : (
+                          <a href={pkg.asset_url} target="_blank" rel="noreferrer" className="text-[11px] underline text-primary">
+                            {pkg.asset_url}
+                          </a>
+                        )}
+                        {pkg.asset_source_account ? (
+                          <div className="text-[11px] text-muted-foreground mt-1">Source: {pkg.asset_source_account}</div>
+                        ) : null}
+                      </div>
+                    ) : null}
                     <div className="flex flex-wrap gap-3 pt-1 text-[11px]">
                       {isFacebook || !isInstagram ? (
                         <>
@@ -240,6 +258,14 @@ export function PublishingQueuePanel({
                           >
                             Open Facebook
                           </a>
+                          <PublishButton
+                            label="Post to Facebook"
+                            onPublish={async () => {
+                              const res = await publishToFacebook({ package_id: r.content_package_id, queue_id: r.id });
+                              if (res.ok) await change(r.id, "PUBLISHED");
+                              return res;
+                            }}
+                          />
                         </>
                       ) : null}
                       {isInstagram || !isFacebook ? (
@@ -260,6 +286,14 @@ export function PublishingQueuePanel({
                           >
                             Open Instagram
                           </a>
+                          <PublishButton
+                            label="Post to Instagram"
+                            onPublish={async () => {
+                              const res = await publishToInstagram({ package_id: r.content_package_id, queue_id: r.id });
+                              if (res.ok) await change(r.id, "PUBLISHED");
+                              return res;
+                            }}
+                          />
                         </>
                       ) : null}
                       <button
