@@ -12,6 +12,17 @@ export type SourcePreset = {
   priority: 1 | 2 | 3;
   source_reputation_score: number; // 0-100
   source_quality_reason: string;
+  /**
+   * Optional viral discovery metadata. These fields extend existing preset
+   * objects only — no schema changes. `source_type` classifies the signal
+   * shape so the admin UI and future ViralRadar filters can prioritize
+   * video/community sources; `viral_weight` (0-100) is a soft hint the
+   * scorer may consult when a matching row exists. Sources without RSS
+   * are marked `discovery_mode: "manual"` — no fake feeds.
+   */
+  source_type?: "news" | "official" | "social" | "video" | "community";
+  viral_weight?: number;
+  discovery_mode?: "rss" | "manual";
 };
 
 export type SourceGroup =
@@ -20,7 +31,8 @@ export type SourceGroup =
   | "Public Safety"
   | "Sports"
   | "Weather"
-  | "Business";
+  | "Business"
+  | "Viral Discovery";
 
 export const SOURCE_GROUPS: SourceGroup[] = [
   "Government",
@@ -29,6 +41,7 @@ export const SOURCE_GROUPS: SourceGroup[] = [
   "Sports",
   "Weather",
   "Business",
+  "Viral Discovery",
 ];
 
 export const SOURCE_PRESETS: SourcePreset[] = [
@@ -98,6 +111,50 @@ export const SOURCE_PRESETS: SourcePreset[] = [
   { group: "Business", platform: "Website", source_name: "Railroad Commission of Texas", source_url: "https://www.rrc.texas.gov/news/", category: "Energy", priority: 1, source_reputation_score: 92, source_quality_reason: "Oil & gas regulator" },
   { group: "Business", platform: "Website", source_name: "ERCOT", source_url: "https://www.ercot.com/news", category: "Energy", priority: 1, source_reputation_score: 92, source_quality_reason: "Texas power grid operator" },
   { group: "Business", platform: "Website", source_name: "Texas Oil & Gas Association", source_url: "https://www.txoga.org/news/", category: "Energy", priority: 2, source_reputation_score: 82, source_quality_reason: "Industry trade group" },
+
+  // -------------------- VIRAL DISCOVERY --------------------
+  // These sources exist to surface content that is already gaining engagement.
+  // Most social/video platforms do not expose stable public RSS, so entries
+  // without `rss_url` are flagged `discovery_mode: "manual"` — an operator
+  // logs viral candidates through the existing ViralRadar / reel_candidates
+  // flow rather than the automated ingester. No fake feeds.
+
+  // Video / social discovery
+  { group: "Viral Discovery", platform: "TikTok", source_name: "TikTok — Texas Trends", source_url: "https://www.tiktok.com/tag/texas", category: "Social Video", priority: 1, source_reputation_score: 60, source_quality_reason: "Statewide TikTok trend discovery", source_type: "social", viral_weight: 90, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "TikTok", source_name: "TikTok — Houston Trends", source_url: "https://www.tiktok.com/tag/houston", category: "Social Video", priority: 2, source_reputation_score: 58, source_quality_reason: "Metro TikTok trend discovery", source_type: "social", viral_weight: 85, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "TikTok", source_name: "TikTok — Dallas Trends", source_url: "https://www.tiktok.com/tag/dallas", category: "Social Video", priority: 2, source_reputation_score: 58, source_quality_reason: "Metro TikTok trend discovery", source_type: "social", viral_weight: 85, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "TikTok", source_name: "TikTok — Austin Trends", source_url: "https://www.tiktok.com/tag/austin", category: "Social Video", priority: 2, source_reputation_score: 58, source_quality_reason: "Metro TikTok trend discovery", source_type: "social", viral_weight: 85, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "YouTube Shorts — Texas Search", source_url: "https://www.youtube.com/results?search_query=texas&sp=EgIYAQ%253D%253D", category: "Short Video", priority: 1, source_reputation_score: 62, source_quality_reason: "Statewide Shorts discovery", source_type: "video", viral_weight: 85, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "KHOU 11 Houston (YouTube)", source_url: "https://www.youtube.com/@KHOU11", rss_url: "https://www.youtube.com/feeds/videos.xml?user=KHOU11News", category: "Local News Video", priority: 1, source_reputation_score: 85, source_quality_reason: "TV station video feed", source_type: "video", viral_weight: 75, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "ABC13 Houston (YouTube)", source_url: "https://www.youtube.com/@abc13houston", rss_url: "https://www.youtube.com/feeds/videos.xml?user=abc13houston", category: "Local News Video", priority: 1, source_reputation_score: 85, source_quality_reason: "TV station video feed", source_type: "video", viral_weight: 75, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "WFAA Dallas (YouTube)", source_url: "https://www.youtube.com/@wfaa", rss_url: "https://www.youtube.com/feeds/videos.xml?user=wfaa8", category: "Local News Video", priority: 1, source_reputation_score: 85, source_quality_reason: "TV station video feed", source_type: "video", viral_weight: 75, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "NBC 5 Dallas-Fort Worth (YouTube)", source_url: "https://www.youtube.com/@nbcdfw", category: "Local News Video", priority: 2, source_reputation_score: 82, source_quality_reason: "TV station video feed", source_type: "video", viral_weight: 72, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "KVUE Austin (YouTube)", source_url: "https://www.youtube.com/@KVUE", rss_url: "https://www.youtube.com/feeds/videos.xml?user=KVUEnews", category: "Local News Video", priority: 2, source_reputation_score: 82, source_quality_reason: "TV station video feed", source_type: "video", viral_weight: 72, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "KSAT 12 San Antonio (YouTube)", source_url: "https://www.youtube.com/@ksat12", category: "Local News Video", priority: 2, source_reputation_score: 82, source_quality_reason: "TV station video feed", source_type: "video", viral_weight: 72, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "Reed Timmer — Texas Weather Chasing", source_url: "https://www.youtube.com/@ReedTimmerAccu", category: "Weather Video", priority: 2, source_reputation_score: 78, source_quality_reason: "Storm chaser video coverage", source_type: "video", viral_weight: 80, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "Ryan Hall, Y'all — Severe Weather", source_url: "https://www.youtube.com/@RyanHallYall", category: "Weather Video", priority: 2, source_reputation_score: 78, source_quality_reason: "Severe weather livestream", source_type: "video", viral_weight: 82, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "Texas Storm Chasers", source_url: "https://www.youtube.com/@TexasStormChasers", category: "Weather Video", priority: 2, source_reputation_score: 78, source_quality_reason: "Texas-focused storm coverage", source_type: "video", viral_weight: 82, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "Dallas Cowboys (YouTube)", source_url: "https://www.youtube.com/@dallascowboys", category: "Sports Highlights", priority: 2, source_reputation_score: 88, source_quality_reason: "Official highlights channel", source_type: "video", viral_weight: 78, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "Houston Texans (YouTube)", source_url: "https://www.youtube.com/@HoustonTexans", category: "Sports Highlights", priority: 2, source_reputation_score: 88, source_quality_reason: "Official highlights channel", source_type: "video", viral_weight: 78, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "Texas Longhorns (YouTube)", source_url: "https://www.youtube.com/@TexasLonghorns", category: "Sports Highlights", priority: 2, source_reputation_score: 86, source_quality_reason: "Official highlights channel", source_type: "video", viral_weight: 76, discovery_mode: "manual" },
+
+  // Emergency / incident video sources
+  { group: "Viral Discovery", platform: "YouTube", source_name: "Texas DPS (YouTube)", source_url: "https://www.youtube.com/@TxDPS", category: "Emergency Video", priority: 2, source_reputation_score: 90, source_quality_reason: "Official public safety video", source_type: "video", viral_weight: 70, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "YouTube", source_name: "TDEM (YouTube)", source_url: "https://www.youtube.com/@TexasDivisionofEmergencyMgmt", category: "Emergency Video", priority: 2, source_reputation_score: 92, source_quality_reason: "Official state disaster response video", source_type: "video", viral_weight: 72, discovery_mode: "manual" },
+
+  // Community signals
+  { group: "Viral Discovery", platform: "Reddit", source_name: "r/texas", source_url: "https://www.reddit.com/r/texas/", rss_url: "https://www.reddit.com/r/texas/.rss", category: "Community", priority: 1, source_reputation_score: 65, source_quality_reason: "Statewide subreddit — trend signal", source_type: "community", viral_weight: 80, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "Reddit", source_name: "r/houston", source_url: "https://www.reddit.com/r/houston/", rss_url: "https://www.reddit.com/r/houston/.rss", category: "Community", priority: 2, source_reputation_score: 62, source_quality_reason: "Metro subreddit — trend signal", source_type: "community", viral_weight: 75, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "Reddit", source_name: "r/dallas", source_url: "https://www.reddit.com/r/dallas/", rss_url: "https://www.reddit.com/r/dallas/.rss", category: "Community", priority: 2, source_reputation_score: 62, source_quality_reason: "Metro subreddit — trend signal", source_type: "community", viral_weight: 75, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "Reddit", source_name: "r/austin", source_url: "https://www.reddit.com/r/austin/", rss_url: "https://www.reddit.com/r/austin/.rss", category: "Community", priority: 2, source_reputation_score: 62, source_quality_reason: "Metro subreddit — trend signal", source_type: "community", viral_weight: 75, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "Reddit", source_name: "r/sanantonio", source_url: "https://www.reddit.com/r/sanantonio/", rss_url: "https://www.reddit.com/r/sanantonio/.rss", category: "Community", priority: 2, source_reputation_score: 62, source_quality_reason: "Metro subreddit — trend signal", source_type: "community", viral_weight: 72, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "Reddit", source_name: "r/fortworth", source_url: "https://www.reddit.com/r/fortworth/", rss_url: "https://www.reddit.com/r/fortworth/.rss", category: "Community", priority: 3, source_reputation_score: 60, source_quality_reason: "Metro subreddit — trend signal", source_type: "community", viral_weight: 70, discovery_mode: "rss" },
+  { group: "Viral Discovery", platform: "Reddit", source_name: "r/TexasPolitics", source_url: "https://www.reddit.com/r/TexasPolitics/", rss_url: "https://www.reddit.com/r/TexasPolitics/.rss", category: "Community", priority: 2, source_reputation_score: 64, source_quality_reason: "Texas politics discussion", source_type: "community", viral_weight: 78, discovery_mode: "rss" },
+
+  // Public incident feeds
+  { group: "Viral Discovery", platform: "Website", source_name: "PulsePoint — Texas Incidents", source_url: "https://web.pulsepoint.org", category: "Incident Feed", priority: 3, source_reputation_score: 75, source_quality_reason: "Live fire/EMS incident data", source_type: "community", viral_weight: 68, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "Website", source_name: "Broadcastify — Texas Scanners", source_url: "https://www.broadcastify.com/listen/stid/48", category: "Incident Feed", priority: 3, source_reputation_score: 72, source_quality_reason: "Live public safety audio", source_type: "community", viral_weight: 65, discovery_mode: "manual" },
+  { group: "Viral Discovery", platform: "Website", source_name: "USGS Earthquakes — Texas", source_url: "https://earthquake.usgs.gov/earthquakes/map/", rss_url: "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_week.atom", category: "Incident Feed", priority: 2, source_reputation_score: 95, source_quality_reason: "Official seismic events", source_type: "official", viral_weight: 74, discovery_mode: "rss" },
 ];
 
 export function presetsByGroup(): Record<SourceGroup, SourcePreset[]> {
@@ -109,6 +166,9 @@ export function presetsByGroup(): Record<SourceGroup, SourcePreset[]> {
 
 export function presetNotes(p: SourcePreset): string {
   const parts: string[] = [`priority:${p.priority}`];
+  if (p.source_type) parts.push(`type:${p.source_type}`);
+  if (typeof p.viral_weight === "number") parts.push(`viral:${p.viral_weight}`);
+  if (p.discovery_mode === "manual") parts.push("manual discovery");
   if (p.rss_url) parts.push(`rss:${p.rss_url}`);
   parts.push(p.source_quality_reason);
   return parts.join(" · ");
