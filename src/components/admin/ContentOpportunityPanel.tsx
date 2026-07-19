@@ -170,7 +170,8 @@ export function ContentOpportunityPanel() {
         .order("pub_date", { ascending: false })
         .limit(50);
       if (!active) return;
-      const feed = (data ?? []) as FeedItem[];
+      const raw = (data ?? []) as FeedItem[];
+      const feed = raw.filter((f) => !isLowValueTitle(f.title));
       setItems(feed);
 
       const slugs = feed.map((f) => f.internal_slug).filter(Boolean) as string[];
