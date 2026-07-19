@@ -5,6 +5,7 @@ import {
   type SavedPackage,
 } from "@/services/contentPackages";
 import { MediaPackageBuilder } from "./media-package/MediaPackageBuilder";
+import { addQueueEntry } from "@/services/publishingQueue";
 
 export function SavedPackagesPanel() {
   const [rows, setRows] = useState<SavedPackage[]>([]);
@@ -120,6 +121,7 @@ export function SavedPackagesPanel() {
 function PackageDetail({ row }: { row: SavedPackage }) {
   return (
     <div className="border border-border bg-white p-4 space-y-3 text-sm">
+      <AddToQueue packageId={row.id} />
       <MediaPackageBuilder row={row} />
       <Section title="Facebook">
         <Line label="Hook" value={row.facebook_hook} />
@@ -139,6 +141,66 @@ function PackageDetail({ row }: { row: SavedPackage }) {
         <Line label="Keywords" value={row.seo_keywords} />
       </Section>
     </div>
+  );
+}
+
+const QUEUE_PLATFORMS = ["Facebook", "Instagram", "X", "TikTok", "Other"];
+
+function AddToQueue({ packageId }: { packageId: string }) {
+  const [platform, setPlatform] = useState(QUEUE_PLATFORMS[0]);
+  const [notes, setNotes] = useState("");
+  const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [err, setErr] = useState("");
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setState("saving");
+    setErr("");
+    try {
+      await addQueueEntry({ content_package_id: packageId, platform, notes: notes.trim() || null });
+      setState("saved");
+      setNotes("");
+      window.dispatchEvent(new CustomEvent("ktr-publishing-queue-updated"));
+      setTimeout(() => setState("idle"), 1500);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Failed to queue");
+      setState("error");
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="flex flex-wrap items-end gap-2 border border-dashed border-border p-3">
+      <label>
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Platform</div>
+        <select
+          value={platform}
+          onChange={(e) => setPlatform(e.target.value)}
+          className="border border-border bg-white px-2 py-1.5 text-sm"
+        >
+          {QUEUE_PLATFORMS.map((p) => (
+            <option key={p} value={p}>{p}</option>
+          ))}
+        </select>
+      </label>
+      <label className="flex-1 min-w-[16rem]">
+        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Notes</div>
+        <input
+          type="text"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Optional publishing note"
+          className="w-full border border-border bg-white px-2 py-1.5 text-sm"
+        />
+      </label>
+      <button
+        type="submit"
+        disabled={state === "saving"}
+        className="text-[11px] uppercase tracking-widest px-3 py-2 bg-primary text-primary-foreground border-2 border-primary disabled:opacity-50"
+      >
+        {state === "saving" ? "Queuing…" : state === "saved" ? "Queued ✓" : "Add to Publishing Queue"}
+      </button>
+      {err ? <span className="text-xs text-destructive">{err}</span> : null}
+    </form>
   );
 }
 
