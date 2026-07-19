@@ -11,6 +11,7 @@ import { ReelRadarPanel } from "@/components/admin/ReelRadarPanel";
 import { ContentSourceManager } from "@/components/admin/ContentSourceManager";
 import { PublishingQueuePanel } from "@/components/admin/PublishingQueuePanel";
 import { MetaConnectionManager } from "@/components/admin/MetaConnectionManager";
+import { ViralRadarPanel } from "@/components/admin/ViralRadarPanel";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -193,6 +194,10 @@ function AdminDashboard() {
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <ContentOpportunityPanel />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <ViralRadarPanel />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
