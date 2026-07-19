@@ -70,6 +70,29 @@ function recommendation(total: number): { label: string; tone: string } {
   return { label: "Monitor", tone: "text-muted-foreground" };
 }
 
+function OpportunityStatusBadges({ status }: { status?: OpportunityStatus }) {
+  if (!status) return null;
+  return (
+    <div className="flex items-center gap-1 shrink-0" aria-label="Media status">
+      {status.rewritten ? (
+        <span title="Rewritten" className="text-emerald-600">
+          <FileText size={14} />
+        </span>
+      ) : null}
+      {status.imageReady ? (
+        <span title="Image Ready" className="text-blue-600">
+          <Image size={14} />
+        </span>
+      ) : null}
+      {status.reelReady ? (
+        <span title="Reel Ready" className="text-purple-600">
+          <Video size={14} />
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 export function ContentOpportunityPanel() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
