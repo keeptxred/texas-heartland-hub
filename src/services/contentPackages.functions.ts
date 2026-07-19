@@ -127,13 +127,13 @@ export const updateContentPackageAssetFn = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = {
+    const patch = {
       asset_type: data.asset_type,
       asset_url: data.asset_url ?? null,
       asset_source_account: data.asset_source_account ?? null,
       asset_notes: data.asset_notes ?? null,
+      ...(data.asset_type && data.asset_url ? { workflow_status: "ASSET_READY" as const } : {}),
     };
-    if (data.asset_type && data.asset_url) patch.workflow_status = "ASSET_READY";
     const { error } = await supabaseAdmin.from("content_packages").update(patch).eq("id", data.id);
     if (error) return { ok: false, error: error.message };
     return { ok: true };
