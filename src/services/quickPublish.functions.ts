@@ -39,6 +39,15 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<QuickPublishResult> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
+    console.log("[quickPublish:server] incoming payload", {
+      headline_length: data.headline?.length ?? 0,
+      source: data.source ?? null,
+      feed_item_id: data.feed_item_id ?? null,
+      has_source_url: Boolean(data.source_url),
+      has_asset_url: Boolean(data.asset_url),
+      asset_url_preview: data.asset_url ? String(data.asset_url).slice(0, 120) : null,
+      caption_provided: Boolean(data.caption),
+    });
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // 1. Connection check first — cheapest exit, no writes.
