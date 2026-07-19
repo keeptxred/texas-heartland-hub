@@ -1,5 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  ContentPackagePreview,
+  buildPackage,
+  type ContentPackage,
+} from "@/components/admin/ContentPackagePreview";
 
 type FeedItem = {
   id: number;
@@ -58,6 +63,8 @@ export function ContentOpportunityPanel() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [actions, setActions] = useState<Record<number, "package" | "ignored">>({});
+  const [packages, setPackages] = useState<Record<number, ContentPackage>>({});
+  const [openId, setOpenId] = useState<number | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -112,8 +119,10 @@ export function ContentOpportunityPanel() {
               {scored.slice(0, 25).map((r) => {
                 const rec = recommendation(r.total);
                 const state = actions[r.id];
+                const isOpen = openId === r.id && !!packages[r.id];
                 return (
-                  <tr key={r.id} className="border-b border-border/50 align-top">
+                  <Fragment key={r.id}>
+                  <tr className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
                       <div className="font-medium leading-snug truncate">{r.title}</div>
                     </td>
@@ -129,14 +138,24 @@ export function ContentOpportunityPanel() {
                     </td>
                     <td className="py-2 pr-2 whitespace-nowrap">
                       {state === "package" ? (
-                        <span className="text-[11px] text-emerald-600">Package queued</span>
+                        <button
+                          type="button"
+                          onClick={() => setOpenId(isOpen ? null : r.id)}
+                          className="text-[11px] underline text-emerald-600"
+                        >
+                          {isOpen ? "Hide Draft" : "View Draft"}
+                        </button>
                       ) : state === "ignored" ? (
                         <span className="text-[11px] text-muted-foreground">Ignored</span>
                       ) : (
                         <div className="flex gap-2">
                           <button
                             type="button"
-                            onClick={() => setActions((s) => ({ ...s, [r.id]: "package" }))}
+                            onClick={() => {
+                              setActions((s) => ({ ...s, [r.id]: "package" }));
+                              setPackages((p) => ({ ...p, [r.id]: buildPackage(r) }));
+                              setOpenId(r.id);
+                            }}
                             className="text-[11px] underline text-primary"
                           >
                             Generate Package
@@ -152,6 +171,18 @@ export function ContentOpportunityPanel() {
                       )}
                     </td>
                   </tr>
+                  {isOpen && packages[r.id] ? (
+                    <tr>
+                      <td colSpan={8} className="pb-4">
+                        <ContentPackagePreview
+                          item={r}
+                          pkg={packages[r.id]}
+                          onClose={() => setOpenId(null)}
+                        />
+                      </td>
+                    </tr>
+                  ) : null}
+                  </Fragment>
                 );
               })}
             </tbody>
