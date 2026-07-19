@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import {
   listContentPackages,
   deleteContentPackage,
@@ -67,8 +67,8 @@ export function SavedPackagesPanel() {
               {rows.map((r) => {
                 const open = openId === r.id;
                 return (
-                  <>
-                    <tr key={r.id} className="border-b border-border/50 align-top">
+                  <Fragment key={r.id}>
+                    <tr className="border-b border-border/50 align-top">
                       <td className="py-2 pr-2 max-w-[24rem]">
                         <div className="font-medium leading-snug truncate">{r.source_title}</div>
                       </td>
@@ -99,13 +99,13 @@ export function SavedPackagesPanel() {
                       </td>
                     </tr>
                     {open ? (
-                      <tr key={`${r.id}-detail`}>
+                      <tr>
                         <td colSpan={5} className="pb-4">
                           <PackageDetail row={r} />
                         </td>
                       </tr>
                     ) : null}
-                  </>
+                  </Fragment>
                 );
               })}
             </tbody>
