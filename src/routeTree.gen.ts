@@ -80,6 +80,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
+import { Route as ApiPublicHooksScoreViralBackfillRouteImport } from './routes/api/public/hooks/score-viral-backfill'
 import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
 import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
 import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
@@ -453,6 +454,12 @@ const ApiPublicHooksSyncPrintifyRoute =
     path: '/api/public/hooks/sync-printify',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksScoreViralBackfillRoute =
+  ApiPublicHooksScoreViralBackfillRouteImport.update({
+    id: '/api/public/hooks/score-viral-backfill',
+    path: '/api/public/hooks/score-viral-backfill',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksScoreViralRoute =
   ApiPublicHooksScoreViralRouteImport.update({
     id: '/api/public/hooks/score-viral',
@@ -593,6 +600,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
+  '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -672,6 +680,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
+  '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -757,6 +766,7 @@ export interface FileRoutesById {
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
+  '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -843,6 +853,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/score-viral'
+    | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
@@ -922,6 +933,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/score-viral'
+    | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
@@ -1006,6 +1018,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
     | '/api/public/hooks/score-viral'
+    | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
@@ -1076,6 +1089,7 @@ export interface RootRouteChildren {
   ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
   ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
   ApiPublicHooksScoreViralRoute: typeof ApiPublicHooksScoreViralRoute
+  ApiPublicHooksScoreViralBackfillRoute: typeof ApiPublicHooksScoreViralBackfillRoute
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
   ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -1585,6 +1599,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncPrintifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/score-viral-backfill': {
+      id: '/api/public/hooks/score-viral-backfill'
+      path: '/api/public/hooks/score-viral-backfill'
+      fullPath: '/api/public/hooks/score-viral-backfill'
+      preLoaderRoute: typeof ApiPublicHooksScoreViralBackfillRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/score-viral': {
       id: '/api/public/hooks/score-viral'
       path: '/api/public/hooks/score-viral'
@@ -1810,6 +1831,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
   ApiPublicHooksListShopsRoute: ApiPublicHooksListShopsRoute,
   ApiPublicHooksScoreViralRoute: ApiPublicHooksScoreViralRoute,
+  ApiPublicHooksScoreViralBackfillRoute: ApiPublicHooksScoreViralBackfillRoute,
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
   ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

@@ -34,6 +34,7 @@ export function ViralRadarPanel() {
   const [articles, setArticles] = useState<Record<string, ArticleMeta>>({});
   const [loading, setLoading] = useState(true);
   const [scoring, setScoring] = useState(false);
+  const [backfilling, setBackfilling] = useState(false);
   const [msg, setMsg] = useState<string>("");
   const [publishing, setPublishing] = useState<Record<number, boolean>>({});
   const [publishMsg, setPublishMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
@@ -76,6 +77,25 @@ export function ViralRadarPanel() {
       setMsg(e instanceof Error ? e.message : "Rescore failed");
     } finally {
       setScoring(false);
+    }
+  }
+
+  async function scoreUnscored() {
+    setBackfilling(true);
+    setMsg("");
+    try {
+      const res = await fetch("/api/public/hooks/score-viral-backfill", { method: "POST" });
+      const body = await res.json();
+      setMsg(
+        body.ok
+          ? `Backfilled ${body.updated}/${body.scanned} (${body.remaining} unscored remaining)`
+          : `Error: ${body.error}`
+      );
+      await load();
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : "Backfill failed");
+    } finally {
+      setBackfilling(false);
     }
   }
 
@@ -141,6 +161,14 @@ export function ViralRadarPanel() {
             className="text-[11px] font-bold uppercase tracking-widest text-primary underline disabled:opacity-50"
           >
             {scoring ? "Scoring…" : "Rescore Now"}
+          </button>
+          <button
+            type="button"
+            onClick={() => void scoreUnscored()}
+            disabled={backfilling}
+            className="text-[11px] font-bold uppercase tracking-widest text-primary underline disabled:opacity-50"
+          >
+            {backfilling ? "Backfilling…" : "Score Unscored"}
           </button>
         </div>
       </div>
