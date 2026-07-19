@@ -61,7 +61,17 @@ function score(item: FeedItem): Scored {
   if (SOCIAL_TOPICS.test(title)) social += 30;
   if (breaking >= 30) social += 20;
 
-  return { ...item, texasScore: texas, breakingScore: breaking, socialScore: social, total: texas + breaking + social };
+  let freshness = 0;
+  if (hrs <= 24) freshness = 50;
+  else if (hrs <= 48) freshness = 25;
+
+  return {
+    ...item,
+    texasScore: texas,
+    breakingScore: breaking,
+    socialScore: social,
+    total: texas + breaking + social + freshness,
+  };
 }
 
 function recommendation(total: number): { label: string; tone: string } {
