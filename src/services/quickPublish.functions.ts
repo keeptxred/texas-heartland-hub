@@ -16,6 +16,9 @@ const Input = z.object({
   asset_url: z.string().nullable().optional(),
 });
 
+const GRAPH_VERSION = "v21.0";
+const KEEP_TX_RED_PAGE_ID = "1211420085383129";
+
 export type QuickPublishResult =
   | {
       ok: true;
@@ -41,9 +44,17 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     // 1. Connection check first — cheapest exit, no writes.
     const { data: conn } = await supabaseAdmin
       .from("social_connections")
-      .select("connection_status, account_id, access_token")
+      .select("platform, connection_status, account_id, account_name, access_token")
       .ilike("platform", "facebook")
       .maybeSingle();
+    console.log("[quickPublish] Stored social connection", {
+      provider: conn?.platform ?? "facebook",
+      page_id: conn?.account_id ?? null,
+      page_name: conn?.account_name ?? null,
+      connection_status: conn?.connection_status ?? null,
+      has_access_token: Boolean(conn?.access_token),
+      expected_page_id: KEEP_TX_RED_PAGE_ID,
+    });
     if (!conn || conn.connection_status !== "CONNECTED" || !conn.access_token || !conn.account_id) {
       return {
         ok: false,
@@ -51,6 +62,52 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
           "Facebook is not connected. Connect your Meta account to enable one-click publishing.",
         requires_connection: true,
       };
+    }
+    if (String(conn.account_id) !== KEEP_TX_RED_PAGE_ID) {
+      return {
+        ok: false,
+        error: `Facebook is connected to Page ID ${conn.account_id}, but Keep TX Red publishing requires Page ID ${KEEP_TX_RED_PAGE_ID}. Reconnect Facebook and select the Keep TX Red Page.`,
+        requires_connection: true,
+      };
+    }
+
+    const appId = process.env.FACEBOOK_APP_ID;
+    const appSecret = process.env.FACEBOOK_APP_SECRET;
+    if (appId && appSecret) {
+      try {
+        const debugUrl = new URL(`https://graph.facebook.com/${GRAPH_VERSION}/debug_token`);
+        debugUrl.searchParams.set("input_token", String(conn.access_token));
+        debugUrl.searchParams.set("access_token", `${appId}|${appSecret}`);
+        const debugRes = await fetch(debugUrl.toString());
+        const debugJson = (await debugRes.json()) as {
+          data?: {
+            app_id?: string;
+            type?: string;
+            profile_id?: string;
+            is_valid?: boolean;
+            expires_at?: number;
+          };
+          error?: { message?: string };
+        };
+        console.log("[quickPublish] Stored token debug", {
+          status: debugRes.status,
+          ok: debugRes.ok,
+          token_type: debugJson.data?.type ?? null,
+          token_profile_id: debugJson.data?.profile_id ?? null,
+          token_app_id: debugJson.data?.app_id ?? null,
+          token_is_valid: debugJson.data?.is_valid ?? null,
+          token_expires_at: debugJson.data?.expires_at ?? null,
+          error: debugJson.error?.message ?? null,
+        });
+        if (debugRes.ok && debugJson.data?.is_valid === false) {
+          return { ok: false, error: "Stored Facebook Page token is invalid. Reconnect Facebook.", requires_connection: true };
+        }
+        if (debugRes.ok && debugJson.data?.type && debugJson.data.type !== "PAGE") {
+          return { ok: false, error: "Stored Facebook token is not a Page access token. Reconnect Facebook.", requires_connection: true };
+        }
+      } catch (e) {
+        console.error("[quickPublish] Stored token debug failed", e);
+      }
     }
 
     // 2. Persist a lightweight content package (no AI).
@@ -87,17 +144,21 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       const body = new URLSearchParams();
       body.set("access_token", pageToken);
       if (data.asset_url) {
-        endpoint = `https://graph.facebook.com/v21.0/${pageId}/photos`;
+        endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/photos`;
         body.set("url", data.asset_url);
         body.set("caption", caption);
       } else {
-        endpoint = `https://graph.facebook.com/v21.0/${pageId}/feed`;
+        endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/feed`;
         body.set("message", caption);
         if (link) body.set("link", link);
       }
       console.log("[quickPublish] Graph API request", {
+        provider: "facebook",
         endpoint,
         pageId,
+        pageName: conn.account_name ?? null,
+        usesExpectedKeepTxRedPageId: pageId === KEEP_TX_RED_PAGE_ID,
+        hasPageAccessToken: Boolean(pageToken),
         hasAsset: !!data.asset_url,
         hasLink: !!link,
         captionLength: caption.length,
