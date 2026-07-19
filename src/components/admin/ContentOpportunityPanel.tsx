@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   ContentPackagePreview,
@@ -121,8 +121,8 @@ export function ContentOpportunityPanel() {
                 const state = actions[r.id];
                 const isOpen = openId === r.id && !!packages[r.id];
                 return (
-                  <>
-                  <tr key={r.id} className="border-b border-border/50 align-top">
+                  <Fragment key={r.id}>
+                  <tr className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
                       <div className="font-medium leading-snug truncate">{r.title}</div>
                     </td>
@@ -172,7 +172,7 @@ export function ContentOpportunityPanel() {
                     </td>
                   </tr>
                   {isOpen && packages[r.id] ? (
-                    <tr key={`${r.id}-preview`}>
+                    <tr>
                       <td colSpan={8} className="pb-4">
                         <ContentPackagePreview
                           item={r}
@@ -182,7 +182,7 @@ export function ContentOpportunityPanel() {
                       </td>
                     </tr>
                   ) : null}
-                  </>
+                  </Fragment>
                 );
               })}
             </tbody>
