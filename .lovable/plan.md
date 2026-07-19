@@ -105,4 +105,15 @@ Do not build a parallel pipeline. The engine is a **scoring + selection layer** 
 - A second admin route.
 - A separate storage bucket or image pipeline.
 
+## Additional Constraints (approved)
+
+- No new categories. Classifier maps to existing `daily_articles.category` values only.
+- `discover_category` behavior untouched.
+- Reuse existing `keywords` + `seo_keywords` fields — no new tag columns.
+- Require classification confidence ≥ threshold before auto-invoking `generate-news`; low-confidence items stay in the panel for manual review.
+- `viral_score` alone never triggers publish. Publishing still requires the human "Post to Facebook" click (or the existing package approval flow).
+- Respect existing breaking-news aging (`daily-news.functions` 6h/24h demote) and sports lifecycle windows.
+- Reuse existing image validation + `quickPublishToFacebook` end-to-end.
+- SEO, sitemap, canonical, and indexing rules unchanged.
+
 Confirm this integration shape and I'll implement in one focused change set.

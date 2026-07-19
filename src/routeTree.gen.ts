@@ -80,6 +80,7 @@ import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/e
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
+import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
 import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
 import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
 import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
@@ -452,6 +453,12 @@ const ApiPublicHooksSyncPrintifyRoute =
     path: '/api/public/hooks/sync-printify',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksScoreViralRoute =
+  ApiPublicHooksScoreViralRouteImport.update({
+    id: '/api/public/hooks/score-viral',
+    path: '/api/public/hooks/score-viral',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksListShopsRoute = ApiPublicHooksListShopsRouteImport.update({
   id: '/api/public/hooks/list-shops',
   path: '/api/public/hooks/list-shops',
@@ -585,6 +592,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -663,6 +671,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -747,6 +756,7 @@ export interface FileRoutesById {
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
   '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
@@ -832,6 +842,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/score-viral'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
@@ -910,6 +921,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/score-viral'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
@@ -993,6 +1005,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/score-viral'
     | '/api/public/hooks/sync-printify'
     | '/api/public/hooks/track-variant'
     | '/api/public/payments/webhook'
@@ -1062,6 +1075,7 @@ export interface RootRouteChildren {
   ApiPublicHooksHealthRoute: typeof ApiPublicHooksHealthRoute
   ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
   ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
+  ApiPublicHooksScoreViralRoute: typeof ApiPublicHooksScoreViralRoute
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
   ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -1571,6 +1585,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksSyncPrintifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/score-viral': {
+      id: '/api/public/hooks/score-viral'
+      path: '/api/public/hooks/score-viral'
+      fullPath: '/api/public/hooks/score-viral'
+      preLoaderRoute: typeof ApiPublicHooksScoreViralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/list-shops': {
       id: '/api/public/hooks/list-shops'
       path: '/api/public/hooks/list-shops'
@@ -1788,6 +1809,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksHealthRoute: ApiPublicHooksHealthRoute,
   ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
   ApiPublicHooksListShopsRoute: ApiPublicHooksListShopsRoute,
+  ApiPublicHooksScoreViralRoute: ApiPublicHooksScoreViralRoute,
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
   ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
@@ -1800,13 +1822,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
