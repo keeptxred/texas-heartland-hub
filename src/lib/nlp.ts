@@ -8,6 +8,22 @@ const ENTITY_DICT: Record<string, string[]> = {
   "Ken Paxton": ["ken paxton", "attorney general paxton", "ag paxton"],
   "Ted Cruz": ["ted cruz", "senator cruz", "sen. cruz"],
   "John Cornyn": ["john cornyn", "senator cornyn", "sen. cornyn"],
+  // Executive / government actions — presence strongly implies a political story
+  "Texas Governor": ["office of the governor", "governor of texas", "gov. greg abbott", "governor's office"],
+  "Executive Action": [
+    "executive order",
+    "disaster declaration",
+    "proclamation",
+    "state of emergency",
+    "emergency declaration",
+    "signs bill",
+    "signs into law",
+    "signed into law",
+    "vetoes",
+    "veto",
+    "appoints",
+    "appointment of",
+  ],
   // Places
   "Houston": ["houston", "harris county"],
   "Dallas": ["dallas", "dallas county"],
@@ -39,13 +55,36 @@ export function extractEntities(text: string): ExtractedEntities {
   return Array.from(hits);
 }
 
-export function inferCategory(entities: ExtractedEntities): string {
+// Texas officials / government-source signals that route a story to a
+// political category even when explicit topic keywords are absent.
+const TX_OFFICIAL_ENTITIES = new Set([
+  "Greg Abbott",
+  "Dan Patrick",
+  "Ken Paxton",
+  "Ted Cruz",
+  "John Cornyn",
+  "Texas Governor",
+  "Texas Legislature",
+  "Executive Action",
+]);
+
+// Fallback government-action keywords for callers that can pass the raw
+// title/body. Keeps the entity dictionary focused while catching stories
+// like "Governor Abbott signs disaster declaration…".
+const GOV_ACTION_RE =
+  /\b(governor|abbott|paxton|legislature|executive order|disaster declaration|proclamation|signs (?:bill|into law)|signed into law|vetoes?|appoints|policy|state of emergency)\b/i;
+
+export function inferCategory(entities: ExtractedEntities, rawText?: string): string {
+  // Topic entities take precedence — preserves existing routing.
   if (entities.includes("Border")) return "Border";
   if (entities.includes("Elections")) return "Elections";
   if (entities.includes("Energy")) return "Energy";
   if (entities.includes("Taxes")) return "Tax & Spending";
   if (entities.includes("Education")) return "Education";
   if (entities.includes("Texas Legislature")) return "Legislature";
+  // Government/official signals → route to Legislature (existing political bucket).
+  if (entities.some((e) => TX_OFFICIAL_ENTITIES.has(e))) return "Legislature";
+  if (rawText && GOV_ACTION_RE.test(rawText)) return "Legislature";
   return "Non-Political";
 }
 
