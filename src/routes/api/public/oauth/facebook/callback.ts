@@ -84,6 +84,22 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
         const userToken = llJson.access_token ?? tokenJson.access_token;
 
         // 3. Fetch pages the user manages (page tokens are long-lived when derived from long-lived user token)
+        // DEBUG: inspect what the user actually granted and which pages/business assets FB returns.
+        try {
+          const [permsRes, meRes, businessesRes] = await Promise.all([
+            fetch(`https://graph.facebook.com/${GRAPH_VERSION}/me/permissions?access_token=${encodeURIComponent(userToken)}`),
+            fetch(`https://graph.facebook.com/${GRAPH_VERSION}/me?fields=id,name&access_token=${encodeURIComponent(userToken)}`),
+            fetch(`https://graph.facebook.com/${GRAPH_VERSION}/me/businesses?access_token=${encodeURIComponent(userToken)}`),
+          ]);
+          const permsJson = await permsRes.json();
+          const meJson = await meRes.json();
+          const businessesJson = await businessesRes.json();
+          console.log("[fb-oauth-debug] /me/permissions", JSON.stringify(permsJson));
+          console.log("[fb-oauth-debug] /me", JSON.stringify(meJson));
+          console.log("[fb-oauth-debug] /me/businesses", JSON.stringify(businessesJson));
+        } catch (e) {
+          console.error("[fb-oauth-debug] permission probe failed", e);
+        }
         const pagesRes = await fetch(
           `https://graph.facebook.com/${GRAPH_VERSION}/me/accounts?fields=id,name,access_token&access_token=${encodeURIComponent(userToken)}`,
         );
@@ -91,13 +107,14 @@ export const Route = createFileRoute("/api/public/oauth/facebook/callback")({
           data?: Array<{ id: string; name: string; access_token: string }>;
           error?: { message?: string };
         };
+        console.log("[fb-oauth-debug] /me/accounts status", pagesRes.status, "body", JSON.stringify(pagesJson));
         if (!pagesRes.ok || !pagesJson.data) {
           return htmlResult("Could not list Facebook Pages", pagesJson.error?.message ?? "Unknown error", false);
         }
         if (pagesJson.data.length === 0) {
           return htmlResult(
             "No Facebook Pages available",
-            "This account does not manage any Pages, or you did not grant Page access. Re-run the flow and select at least one Page.",
+            "This account does not manage any Pages, or you did not grant Page access. Re-run the flow and select at least one Page. (Debug logs written server-side — check server function logs for [fb-oauth-debug].)",
             false,
           );
         }
