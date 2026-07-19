@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { listSocialConnections, type SocialConnection } from "@/services/socialConnections";
+import {
+  listSocialConnections,
+  disconnectSocial,
+  testSocialConnection,
+  facebookConnectUrl,
+  type SocialConnection,
+} from "@/services/socialConnections";
 
 type PlatformKey = "facebook" | "instagram";
 
@@ -43,26 +49,54 @@ export function MetaConnectionManager() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [busy, setBusy] = useState<string | null>(null);
 
-  useEffect(() => {
-    let cancelled = false;
+  function refresh() {
+    setLoading(true);
     listSocialConnections()
       .then((r) => {
-        if (!cancelled) setRows(r);
+        setRows(r);
+        setError(null);
       })
-      .catch((e: unknown) => {
-        if (!cancelled) setError(e instanceof Error ? e.message : String(e));
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
+      .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)))
+      .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    refresh();
   }, []);
 
   function findRow(key: PlatformKey): SocialConnection | undefined {
     return rows.find((r) => r.platform.toLowerCase() === key);
+  }
+
+  async function handleConnect(key: PlatformKey) {
+    if (key === "instagram") {
+      setNotice("Instagram publishes through a linked Facebook Page. Connect Facebook first; Instagram support is coming next.");
+      return;
+    }
+    window.location.href = facebookConnectUrl();
+  }
+
+  async function handleDisconnect(key: PlatformKey) {
+    setBusy(`disconnect-${key}`);
+    setNotice(null);
+    const res = await disconnectSocial(key);
+    setBusy(null);
+    if (!res.ok) setError(res.error ?? "Disconnect failed");
+    else setNotice(`${key} disconnected.`);
+    refresh();
+  }
+
+  async function handleTest(key: PlatformKey) {
+    setBusy(`test-${key}`);
+    setNotice(null);
+    setError(null);
+    const res = await testSocialConnection(key);
+    setBusy(null);
+    if (res.ok) setNotice(`✓ ${key} connection works. Linked to: ${res.account}`);
+    else setError(`Test failed: ${res.error}`);
+    refresh();
   }
 
   return (
@@ -98,16 +132,44 @@ export function MetaConnectionManager() {
               <p className="mb-3 text-sm text-neutral-600">
                 {row?.account_name || p.placeholder}
               </p>
-              <Button
-                type="button"
-                variant="outline"
-                disabled={loading}
-                onClick={() =>
-                  setNotice(`${p.connectLabel}: Connection setup required. Meta API integration is not enabled yet.`)
-                }
-              >
-                {p.connectLabel}
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                {status !== "CONNECTED" ? (
+                  <Button
+                    type="button"
+                    disabled={loading || busy !== null}
+                    onClick={() => handleConnect(p.key)}
+                  >
+                    {p.connectLabel}
+                  </Button>
+                ) : (
+                  <>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={busy !== null}
+                      onClick={() => handleTest(p.key)}
+                    >
+                      {busy === `test-${p.key}` ? "Testing…" : "Test Connection"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={busy !== null}
+                      onClick={() => handleDisconnect(p.key)}
+                    >
+                      {busy === `disconnect-${p.key}` ? "Disconnecting…" : "Disconnect"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      disabled={busy !== null}
+                      onClick={() => handleConnect(p.key)}
+                    >
+                      Reconnect
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           );
         })}

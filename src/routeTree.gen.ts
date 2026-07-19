@@ -88,6 +88,8 @@ import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/pub
 import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
 import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
 import { Route as ApiPublicArticleImageFilenameRouteImport } from './routes/api/public/article-image.$filename'
+import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
+import { Route as ApiPublicOauthFacebookCallbackRouteImport } from './routes/api/public/oauth/facebook/callback'
 
 const VotingLocationsRoute = VotingLocationsRouteImport.update({
   id: '/voting-locations',
@@ -496,6 +498,18 @@ const ApiPublicArticleImageFilenameRoute =
     path: '/api/public/article-image/$filename',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicOauthFacebookStartRoute =
+  ApiPublicOauthFacebookStartRouteImport.update({
+    id: '/api/public/oauth/facebook/start',
+    path: '/api/public/oauth/facebook/start',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicOauthFacebookCallbackRoute =
+  ApiPublicOauthFacebookCallbackRouteImport.update({
+    id: '/api/public/oauth/facebook/callback',
+    path: '/api/public/oauth/facebook/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -577,6 +591,8 @@ export interface FileRoutesByFullPath {
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
+  '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -653,6 +669,8 @@ export interface FileRoutesByTo {
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
+  '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -735,6 +753,8 @@ export interface FileRoutesById {
   '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
+  '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -818,6 +838,8 @@ export interface FileRouteTypes {
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
+    | '/api/public/oauth/facebook/callback'
+    | '/api/public/oauth/facebook/start'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -894,6 +916,8 @@ export interface FileRouteTypes {
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
+    | '/api/public/oauth/facebook/callback'
+    | '/api/public/oauth/facebook/start'
   id:
     | '__root__'
     | '/'
@@ -975,6 +999,8 @@ export interface FileRouteTypes {
     | '/lovable/email/queue/process'
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
+    | '/api/public/oauth/facebook/callback'
+    | '/api/public/oauth/facebook/start'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1042,6 +1068,8 @@ export interface RootRouteChildren {
   LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
+  ApiPublicOauthFacebookCallbackRoute: typeof ApiPublicOauthFacebookCallbackRoute
+  ApiPublicOauthFacebookStartRoute: typeof ApiPublicOauthFacebookStartRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1599,6 +1627,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicArticleImageFilenameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/oauth/facebook/start': {
+      id: '/api/public/oauth/facebook/start'
+      path: '/api/public/oauth/facebook/start'
+      fullPath: '/api/public/oauth/facebook/start'
+      preLoaderRoute: typeof ApiPublicOauthFacebookStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/oauth/facebook/callback': {
+      id: '/api/public/oauth/facebook/callback'
+      path: '/api/public/oauth/facebook/callback'
+      fullPath: '/api/public/oauth/facebook/callback'
+      preLoaderRoute: typeof ApiPublicOauthFacebookCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1752,6 +1794,8 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
+  ApiPublicOauthFacebookCallbackRoute: ApiPublicOauthFacebookCallbackRoute,
+  ApiPublicOauthFacebookStartRoute: ApiPublicOauthFacebookStartRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

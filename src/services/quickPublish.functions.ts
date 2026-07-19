@@ -41,10 +41,10 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     // 1. Connection check first — cheapest exit, no writes.
     const { data: conn } = await supabaseAdmin
       .from("social_connections")
-      .select("connection_status")
+      .select("connection_status, account_id, access_token")
       .ilike("platform", "facebook")
       .maybeSingle();
-    if (!conn || conn.connection_status !== "CONNECTED") {
+    if (!conn || conn.connection_status !== "CONNECTED" || !conn.access_token || !conn.account_id) {
       return {
         ok: false,
         error:
@@ -74,22 +74,53 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       .single();
     if (pkgErr || !pkg) return { ok: false, error: pkgErr?.message ?? "Failed to create package" };
 
-    // 3. Meta Graph API call — stub until OAuth is wired.
-    // TODO: replace with real Graph API POST once Facebook OAuth is completed.
-    const graphOk = false as boolean;
-    if (!graphOk) {
+    // 3. Real Meta Graph API publish.
+    const pageId = String(conn.account_id);
+    const pageToken = String(conn.access_token);
+    const link = data.source_url ?? null;
+    let externalId: string | null = null;
+    let postUrl: string | null = null;
+    let graphError: string | null = null;
+
+    try {
+      let endpoint: string;
+      const body = new URLSearchParams();
+      body.set("access_token", pageToken);
+      if (data.asset_url) {
+        endpoint = `https://graph.facebook.com/v21.0/${pageId}/photos`;
+        body.set("url", data.asset_url);
+        body.set("caption", caption);
+      } else {
+        endpoint = `https://graph.facebook.com/v21.0/${pageId}/feed`;
+        body.set("message", caption);
+        if (link) body.set("link", link);
+      }
+      const res = await fetch(endpoint, { method: "POST", body });
+      const json = (await res.json()) as {
+        id?: string;
+        post_id?: string;
+        error?: { message?: string };
+      };
+      if (!res.ok || json.error) {
+        graphError = json.error?.message ?? `HTTP ${res.status}`;
+      } else {
+        externalId = json.post_id ?? json.id ?? null;
+        if (externalId) postUrl = `https://www.facebook.com/${externalId}`;
+      }
+    } catch (e) {
+      graphError = e instanceof Error ? e.message : String(e);
+    }
+
+    if (graphError || !externalId) {
       return {
         ok: false,
-        error: "Meta Graph API not enabled. Complete Facebook connection to publish.",
-        requires_connection: true,
+        error: graphError ?? "Facebook did not return a post id",
         package_id: pkg.id as string,
       };
     }
 
-    // 4. On real success: record publish + queue history.
+    // 4. Record publish + queue history.
     const postedAt = new Date().toISOString();
-    const externalId: string | null = null;
-    const postUrl: string | null = null;
     await supabaseAdmin
       .from("content_packages")
       .update({ workflow_status: "PUBLISHED", status: "PUBLISHED" })
