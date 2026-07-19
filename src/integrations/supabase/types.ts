@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      content_packages: {
+        Row: {
+          category: string | null
+          content_item_id: string | null
+          created_at: string
+          facebook_body: string | null
+          facebook_cta: string | null
+          facebook_hashtags: string | null
+          facebook_hook: string | null
+          id: string
+          instagram_caption: string | null
+          instagram_hashtags: string | null
+          instagram_hook: string | null
+          instagram_script: string | null
+          seo_description: string | null
+          seo_keywords: string | null
+          seo_title: string | null
+          source_title: string
+          source_url: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          content_item_id?: string | null
+          created_at?: string
+          facebook_body?: string | null
+          facebook_cta?: string | null
+          facebook_hashtags?: string | null
+          facebook_hook?: string | null
+          id?: string
+          instagram_caption?: string | null
+          instagram_hashtags?: string | null
+          instagram_hook?: string | null
+          instagram_script?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+          source_title: string
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          content_item_id?: string | null
+          created_at?: string
+          facebook_body?: string | null
+          facebook_cta?: string | null
+          facebook_hashtags?: string | null
+          facebook_hook?: string | null
+          id?: string
+          instagram_caption?: string | null
+          instagram_hashtags?: string | null
+          instagram_hook?: string | null
+          instagram_script?: string | null
+          seo_description?: string | null
+          seo_keywords?: string | null
+          seo_title?: string | null
+          source_title?: string
+          source_url?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       daily_articles: {
         Row: {
           affected_regions: string[] | null

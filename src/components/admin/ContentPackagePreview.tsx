@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ContentAIResult } from "@/services/contentAI";
+import { saveContentPackage } from "@/services/contentPackages";
 
 type SourceItem = {
   id: number;
@@ -85,6 +86,8 @@ export function ContentPackagePreview({
   aiLoading = false,
   aiError = "",
   onRegenerate,
+  category,
+  onSaved,
 }: {
   item: SourceItem;
   pkg: ContentPackage;
@@ -93,7 +96,32 @@ export function ContentPackagePreview({
   aiLoading?: boolean;
   aiError?: string;
   onRegenerate?: () => void;
+  category?: string;
+  onSaved?: (id: string) => void;
 }) {
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+  const [savedId, setSavedId] = useState<string | null>(null);
+
+  async function save() {
+    if (!ai) return;
+    setSaving(true);
+    setSaveError("");
+    try {
+      const id = await saveContentPackage({
+        sourceTitle: item.title,
+        category: category ?? null,
+        ai,
+      });
+      setSavedId(id);
+      onSaved?.(id);
+    } catch (e) {
+      setSaveError(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
     <div className="mt-3 border-2 border-primary/40 bg-white p-4 space-y-4">
       <div className="flex items-start justify-between gap-4">
@@ -103,6 +131,16 @@ export function ContentPackagePreview({
           <div className="text-[11px] text-muted-foreground">{item.source}</div>
         </div>
         <div className="flex items-center gap-3">
+          {ai ? (
+            <button
+              type="button"
+              onClick={save}
+              disabled={saving}
+              className="text-[11px] underline text-emerald-700 disabled:opacity-50"
+            >
+              {saving ? "Saving…" : savedId ? "Saved ✓" : "Save Package"}
+            </button>
+          ) : null}
           {onRegenerate ? (
             <button
               type="button"
@@ -118,6 +156,17 @@ export function ContentPackagePreview({
           </button>
         </div>
       </div>
+
+      {saveError ? (
+        <div className="text-[11px] text-destructive border border-destructive/40 bg-destructive/5 p-2">
+          {saveError}
+        </div>
+      ) : null}
+      {savedId ? (
+        <div className="text-[11px] text-emerald-700 border border-emerald-600/30 bg-emerald-50 p-2">
+          Package saved as DRAFT.
+        </div>
+      ) : null}
 
       {aiError ? (
         <div className="text-[11px] text-destructive border border-destructive/40 bg-destructive/5 p-2">
