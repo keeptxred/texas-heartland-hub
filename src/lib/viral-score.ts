@@ -45,12 +45,15 @@ export const TEXAS_RELEVANCE_MIN = 40;
 export const TEXAS_RELEVANCE_AUTO = 85;
 
 const TEXAS_STRONG = /\btexas\b|\btexan\b|\bt\.x\.\b/i;
-const TEXAS_CITIES = /\b(houston|dallas|austin|san antonio|fort worth|el paso|rgv|rio grande|mcallen|brownsville|lubbock|amarillo|corpus christi|waco|arlington|plano|frisco|midland|odessa|beaumont|galveston)\b/i;
+const TEXAS_CITIES = /\b(houston|dallas|austin|san antonio|fort worth|el paso|rgv|rio grande valley|rio grande|mcallen|brownsville|laredo|lubbock|amarillo|corpus christi|waco|arlington|plano|frisco|mckinney|denton|irving|garland|richardson|round rock|tyler|abilene|midland|odessa|beaumont|galveston|killeen|college station|bryan|san marcos|new braunfels|conroe|the woodlands|sugar land|katy|pearland|pasadena tx|humble|spring tx)\b/i;
+const TEXAS_COUNTIES = /\b(harris county|dallas county|tarrant county|bexar county|travis county|collin county|denton county|fort bend county|montgomery county|williamson county|hidalgo county|el paso county|nueces county|cameron county|galveston county|brazoria county|jefferson county|lubbock county|mclennan county)\b/i;
 const OFFICIAL_SOURCE = /(governor|texas\.gov|office of the governor|attorney general|state of texas)/i;
 // Texas officials and political figures — presence alone strongly implies TX relevance.
-const TEXAS_OFFICIALS = /\b(abbott|dan patrick|lt\.? gov(?:ernor)? patrick|ken paxton|paxton|ted cruz|john cornyn|greg abbott|dade phelan|glenn hegar|george p\.? bush|sid miller|wayne christian|chip roy|dan crenshaw|colin allred|wesley hunt|ronny jackson|jodey arrington|beto o'?rourke|sylvester turner|john whitmire|eric johnson|kirk watson|ron nirenberg|mattie parker)\b/i;
+const TEXAS_OFFICIALS = /\b(abbott|dan patrick|lt\.? gov(?:ernor)? patrick|ken paxton|paxton|ted cruz|john cornyn|greg abbott|dade phelan|glenn hegar|george p\.? bush|sid miller|wayne christian|chip roy|dan crenshaw|colin allred|wesley hunt|ronny jackson|jodey arrington|beto o'?rourke|sylvester turner|john whitmire|eric johnson|kirk watson|ron nirenberg|mattie parker|lina hidalgo|clay jenkins|nirenberg|tim o'?hare)\b/i;
 // Texas state agencies / bodies frequently appearing in source or body.
-const TEXAS_AGENCIES = /\b(txdot|tceq|tea\b|twdb|tdcj|tabc|tdi|tpwd|tdlr|puc(?: of texas)?|ercot|texas rangers dps|texas dps|department of public safety|texas national guard|texas military department|texas workforce commission|texas health and human services|hhsc|texas education agency|texas department of transportation|texas commission on environmental quality|texas legislature|texas house|texas senate|texas supreme court|court of criminal appeals of texas|texas a&m|university of texas|ut austin|texas tech)\b/i;
+const TEXAS_AGENCIES = /\b(txdot|tceq|tea\b|twdb|tdcj|tabc|tdi|tpwd|tdlr|tdem|puc(?: of texas)?|ercot|texas rangers dps|texas dps|department of public safety|texas national guard|texas military department|texas workforce commission|texas health and human services|hhsc|texas education agency|texas department of transportation|texas department of emergency management|texas commission on environmental quality|texas legislature|texas house|texas senate|texas supreme court|court of criminal appeals of texas|texas a&m|university of texas|ut austin|texas tech)\b/i;
+// Texas sports franchises / programs — inherently Texas coverage.
+const TEXAS_SPORTS = /\b(astros|cowboys|texans|rangers baseball|texas rangers|mavericks|mavs|rockets|spurs|stars|fc dallas|houston dynamo|longhorns|aggies|texas a&m|red raiders|horned frogs|baylor bears|smu mustangs|utep miners|dallas wings)\b/i;
 // Categories that inherently imply Texas coverage on this site.
 const TEXAS_CATEGORIES = new Set([
   "Texas Politics",
@@ -103,15 +106,18 @@ export function scoreFeedItem(item: {
   if (TEXAS_STRONG.test(title)) { texas += 20; reasons.push("Texas in headline"); }
   else if (TEXAS_STRONG.test(desc)) { texas += 10; reasons.push("Texas in body"); }
   if (TEXAS_CITIES.test(hay)) { texas += 12; reasons.push("Texas city named"); }
+  if (TEXAS_COUNTIES.test(hay)) { texas += 10; reasons.push("Texas county named"); }
   if (OFFICIAL_SOURCE.test(sourceHay) || TEXAS_STRONG.test(sourceHay) || TEXAS_AGENCIES.test(sourceHay)) {
     texas += 20; reasons.push("Texas government/agency source");
   }
   if (TEXAS_OFFICIALS.test(hay)) { texas += 20; reasons.push("Texas official named"); }
   if (TEXAS_AGENCIES.test(hay)) { texas += 15; reasons.push("Texas agency named"); }
+  if (TEXAS_SPORTS.test(hay)) { texas += 15; reasons.push("Texas sports team"); }
   if (TEXAS_CATEGORIES.has(category)) { texas += 8; reasons.push(`TX category: ${category}`); }
   if (entities.some((e) => TEXAS_OFFICIALS.test(e) || TEXAS_CITIES.test(e) || TEXAS_STRONG.test(e))) {
     texas += 8; reasons.push("TX entity match");
   }
+  if (texas === 0) reasons.push("No Texas signals found");
   texas = Math.min(40, texas);
 
   // Breakout velocity (0-30) — recency + breaking-verb weight
