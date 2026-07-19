@@ -491,6 +491,50 @@ export type Database = {
         }
         Relationships: []
       }
+      publishing_queue: {
+        Row: {
+          content_package_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          platform: string
+          published_time: string | null
+          scheduled_time: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          content_package_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          platform: string
+          published_time?: string | null
+          scheduled_time?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          content_package_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          platform?: string
+          published_time?: string | null
+          scheduled_time?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publishing_queue_content_package_id_fkey"
+            columns: ["content_package_id"]
+            isOneToOne: false
+            referencedRelation: "content_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reel_candidates: {
         Row: {
           created_at: string
