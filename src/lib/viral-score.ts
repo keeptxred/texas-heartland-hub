@@ -47,6 +47,23 @@ export const TEXAS_RELEVANCE_AUTO = 85;
 const TEXAS_STRONG = /\btexas\b|\btexan\b|\bt\.x\.\b/i;
 const TEXAS_CITIES = /\b(houston|dallas|austin|san antonio|fort worth|el paso|rgv|rio grande|mcallen|brownsville|lubbock|amarillo|corpus christi|waco|arlington|plano|frisco|midland|odessa|beaumont|galveston)\b/i;
 const OFFICIAL_SOURCE = /(governor|texas\.gov|office of the governor|attorney general|state of texas)/i;
+// Texas officials and political figures — presence alone strongly implies TX relevance.
+const TEXAS_OFFICIALS = /\b(abbott|dan patrick|lt\.? gov(?:ernor)? patrick|ken paxton|paxton|ted cruz|john cornyn|greg abbott|dade phelan|glenn hegar|george p\.? bush|sid miller|wayne christian|chip roy|dan crenshaw|colin allred|wesley hunt|ronny jackson|jodey arrington|beto o'?rourke|sylvester turner|john whitmire|eric johnson|kirk watson|ron nirenberg|mattie parker)\b/i;
+// Texas state agencies / bodies frequently appearing in source or body.
+const TEXAS_AGENCIES = /\b(txdot|tceq|tea\b|twdb|tdcj|tabc|tdi|tpwd|tdlr|puc(?: of texas)?|ercot|texas rangers dps|texas dps|department of public safety|texas national guard|texas military department|texas workforce commission|texas health and human services|hhsc|texas education agency|texas department of transportation|texas commission on environmental quality|texas legislature|texas house|texas senate|texas supreme court|court of criminal appeals of texas|texas a&m|university of texas|ut austin|texas tech)\b/i;
+// Categories that inherently imply Texas coverage on this site.
+const TEXAS_CATEGORIES = new Set([
+  "Texas Politics",
+  "Texas Economy",
+  "Texas Law & Policy",
+  "Elections",
+  "Border",
+  "Energy",
+  "Public Safety",
+  "Education",
+  "Weather",
+  "Local",
+]);
 
 const BREAKING_WORDS =
   /\b(breaking|signs|declares|announces|emergency|ruling|indicted|arrested|veto|appoints|filed|passes|approves|dies|killed|shooting|storm|hurricane|flood|tornado|evacuation|recall|impeach)\b/i;
@@ -73,15 +90,28 @@ export function scoreFeedItem(item: {
   const source = item.source ?? "";
   const desc = item.description ?? "";
   const hay = `${title} ${desc}`;
+  const sourceHay = source;
   const hrs = hoursSince(item.pub_date);
   const reasons: string[] = [];
 
-  // Texas relevance (0-40)
+  // Entities/category computed first so Texas relevance can consult them.
+  const entities = extractEntities(hay);
+  const category = inferCategory(entities);
+
+  // Texas relevance (0-40) — do NOT require the literal word "Texas" in title.
   let texas = 0;
   if (TEXAS_STRONG.test(title)) { texas += 20; reasons.push("Texas in headline"); }
   else if (TEXAS_STRONG.test(desc)) { texas += 10; reasons.push("Texas in body"); }
-  if (TEXAS_CITIES.test(hay)) { texas += 10; reasons.push("Texas city named"); }
-  if (OFFICIAL_SOURCE.test(source)) { texas += 10; reasons.push("Official Texas source"); }
+  if (TEXAS_CITIES.test(hay)) { texas += 12; reasons.push("Texas city named"); }
+  if (OFFICIAL_SOURCE.test(sourceHay) || TEXAS_STRONG.test(sourceHay) || TEXAS_AGENCIES.test(sourceHay)) {
+    texas += 20; reasons.push("Texas government/agency source");
+  }
+  if (TEXAS_OFFICIALS.test(hay)) { texas += 20; reasons.push("Texas official named"); }
+  if (TEXAS_AGENCIES.test(hay)) { texas += 15; reasons.push("Texas agency named"); }
+  if (TEXAS_CATEGORIES.has(category)) { texas += 8; reasons.push(`TX category: ${category}`); }
+  if (entities.some((e) => TEXAS_OFFICIALS.test(e) || TEXAS_CITIES.test(e) || TEXAS_STRONG.test(e))) {
+    texas += 8; reasons.push("TX entity match");
+  }
   texas = Math.min(40, texas);
 
   // Breakout velocity (0-30) — recency + breaking-verb weight
@@ -100,9 +130,6 @@ export function scoreFeedItem(item: {
   if (hookMatches.length >= 2) { social += 10; reasons.push("Multi-hook headline"); }
   if (/[?!]/.test(title)) { social += 5; reasons.push("Emotive punctuation"); }
   social = Math.min(30, social);
-
-  const entities = extractEntities(hay);
-  const category = inferCategory(entities);
 
   // Classification confidence — reuses existing category vocabulary only.
   // Higher when the story matches a Texas topic AND has strong entities.
