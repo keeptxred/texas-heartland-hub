@@ -651,6 +651,7 @@ async function handler() {
     }
     inserted = count ?? fresh.length;
   }
+  console.log(`[ingest-feeds] imported ${inserted} new items into texas_news_feed (fresh=${fresh.length})`);
 
   // Mint a native Keep TX Red article for every freshly ingested feed item so
   // Happening Now only ever links to internal /news/{slug} URLs.
