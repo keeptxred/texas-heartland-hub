@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { FileText, Image, Video } from "lucide-react";
 import {
   ContentPackagePreview,
   buildPackage,
@@ -13,6 +14,14 @@ type FeedItem = {
   title: string;
   source: string;
   pub_date: string;
+  internal_slug: string | null;
+  link: string | null;
+};
+
+type OpportunityStatus = {
+  rewritten: boolean;
+  imageReady: boolean;
+  reelReady: boolean;
 };
 
 type Scored = FeedItem & {
@@ -61,9 +70,33 @@ function recommendation(total: number): { label: string; tone: string } {
   return { label: "Monitor", tone: "text-muted-foreground" };
 }
 
+function OpportunityStatusBadges({ status }: { status?: OpportunityStatus }) {
+  if (!status) return null;
+  return (
+    <div className="flex items-center gap-1 shrink-0" aria-label="Media status">
+      {status.rewritten ? (
+        <span title="Rewritten" className="text-emerald-600">
+          <FileText size={14} />
+        </span>
+      ) : null}
+      {status.imageReady ? (
+        <span title="Image Ready" className="text-blue-600">
+          <Image size={14} />
+        </span>
+      ) : null}
+      {status.reelReady ? (
+        <span title="Reel Ready" className="text-purple-600">
+          <Video size={14} />
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
 export function ContentOpportunityPanel() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statuses, setStatuses] = useState<Record<number, OpportunityStatus>>({});
   const [actions, setActions] = useState<Record<number, "package" | "ignored">>({});
   const [packages, setPackages] = useState<Record<number, ContentPackage>>({});
   const [openId, setOpenId] = useState<number | null>(null);
@@ -123,11 +156,59 @@ export function ContentOpportunityPanel() {
     (async () => {
       const { data } = await supabase
         .from("texas_news_feed")
-        .select("id,title,source,pub_date")
+        .select("id,title,source,pub_date,internal_slug,link")
         .order("pub_date", { ascending: false })
         .limit(50);
       if (!active) return;
-      setItems((data ?? []) as FeedItem[]);
+      const feed = (data ?? []) as FeedItem[];
+      setItems(feed);
+
+      const slugs = feed.map((f) => f.internal_slug).filter(Boolean) as string[];
+      const links = feed.map((f) => f.link).filter(Boolean) as string[];
+      const titles = feed.map((f) => f.title).filter(Boolean) as string[];
+
+      const [articlesRes, reelsRes] = await Promise.all([
+        slugs.length > 0
+          ? supabase.from("daily_articles").select("slug,featured_image_url").in("slug", slugs)
+          : Promise.resolve({ data: [] as { slug: string; featured_image_url: string | null }[] }),
+        links.length > 0 || titles.length > 0
+          ? supabase.from("reel_candidates").select("source_url,title")
+          : Promise.resolve({ data: [] as { source_url: string | null; title: string | null }[] }),
+      ]);
+
+      const articleMap = new Map<string, { featured_image_url: string | null }>();
+      (articlesRes.data ?? []).forEach((a) => articleMap.set(a.slug, a));
+
+      const normalizedTitles = new Set(titles.map((t) => t.toLowerCase().trim()));
+      const normalizedLinks = new Set(links.map((l) => l.toLowerCase().trim()));
+      const reelSet = new Set<number>();
+      (reelsRes.data ?? []).forEach((rc) => {
+        if (rc.source_url && normalizedLinks.has(rc.source_url.toLowerCase().trim())) {
+          feed.forEach((f) => {
+            if (f.link && f.link.toLowerCase().trim() === rc.source_url!.toLowerCase().trim()) {
+              reelSet.add(f.id);
+            }
+          });
+        }
+        if (rc.title && normalizedTitles.has(rc.title.toLowerCase().trim())) {
+          feed.forEach((f) => {
+            if (f.title.toLowerCase().trim() === rc.title!.toLowerCase().trim()) {
+              reelSet.add(f.id);
+            }
+          });
+        }
+      });
+
+      const statusMap: Record<number, OpportunityStatus> = {};
+      feed.forEach((f) => {
+        const article = f.internal_slug ? articleMap.get(f.internal_slug) : null;
+        statusMap[f.id] = {
+          rewritten: !!article,
+          imageReady: !!article?.featured_image_url,
+          reelReady: reelSet.has(f.id),
+        };
+      });
+      setStatuses(statusMap);
       setLoading(false);
     })();
     return () => {
@@ -176,7 +257,10 @@ export function ContentOpportunityPanel() {
                   <Fragment key={r.id}>
                   <tr className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
-                      <div className="font-medium leading-snug truncate">{r.title}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="font-medium leading-snug truncate">{r.title}</div>
+                        <OpportunityStatusBadges status={statuses[r.id]} />
+                      </div>
                     </td>
                     <td className="py-2 pr-2 text-[11px] text-muted-foreground">{r.source}</td>
                     <td className="py-2 pr-2 text-[11px] text-muted-foreground whitespace-nowrap">
