@@ -648,6 +648,7 @@ export type Database = {
       }
       texas_news_feed: {
         Row: {
+          classification_confidence: number | null
           created_at: string
           description: string | null
           id: number
@@ -656,8 +657,13 @@ export type Database = {
           pub_date: string
           source: string
           title: string
+          trend_source: string | null
+          viral_score: number
+          viral_scored_at: string | null
+          viral_signals: Json | null
         }
         Insert: {
+          classification_confidence?: number | null
           created_at?: string
           description?: string | null
           id?: number
@@ -666,8 +672,13 @@ export type Database = {
           pub_date?: string
           source: string
           title: string
+          trend_source?: string | null
+          viral_score?: number
+          viral_scored_at?: string | null
+          viral_signals?: Json | null
         }
         Update: {
+          classification_confidence?: number | null
           created_at?: string
           description?: string | null
           id?: number
@@ -676,6 +687,10 @@ export type Database = {
           pub_date?: string
           source?: string
           title?: string
+          trend_source?: string | null
+          viral_score?: number
+          viral_scored_at?: string | null
+          viral_signals?: Json | null
         }
         Relationships: []
       }
