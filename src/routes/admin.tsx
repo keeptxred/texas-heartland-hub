@@ -7,6 +7,7 @@ import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
 import { ContentOpportunityPanel } from "@/components/admin/ContentOpportunityPanel";
 import { SavedPackagesPanel } from "@/components/admin/SavedPackagesPanel";
 import { BrandSettings } from "@/components/admin/BrandSettings";
+import { ReelRadarPanel } from "@/components/admin/ReelRadarPanel";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -189,6 +190,10 @@ function AdminDashboard() {
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <ContentOpportunityPanel />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <ReelRadarPanel />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">

@@ -458,6 +458,42 @@ export type Database = {
         }
         Relationships: []
       }
+      reel_candidates: {
+        Row: {
+          created_at: string
+          id: string
+          notes: string | null
+          source_account: string
+          source_platform: string
+          source_url: string
+          status: string
+          title: string | null
+          topic: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          source_account: string
+          source_platform: string
+          source_url: string
+          status?: string
+          title?: string | null
+          topic?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          notes?: string | null
+          source_account?: string
+          source_platform?: string
+          source_url?: string
+          status?: string
+          title?: string | null
+          topic?: string | null
+        }
+        Relationships: []
+      }
       suppressed_emails: {
         Row: {
           created_at: string
