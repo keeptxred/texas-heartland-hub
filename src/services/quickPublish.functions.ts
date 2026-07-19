@@ -95,23 +95,50 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         body.set("message", caption);
         if (link) body.set("link", link);
       }
+      console.log("[quickPublish] Graph API request", {
+        endpoint,
+        pageId,
+        hasAsset: !!data.asset_url,
+        hasLink: !!link,
+        captionLength: caption.length,
+      });
       const res = await fetch(endpoint, { method: "POST", body });
-      const json = (await res.json()) as {
+      const rawText = await res.text();
+      let json: {
         id?: string;
         post_id?: string;
         error?: { message?: string };
-      };
+      } = {};
+      try {
+        json = JSON.parse(rawText);
+      } catch {
+        // non-JSON body
+      }
+      console.log("[quickPublish] Graph API response", {
+        status: res.status,
+        ok: res.ok,
+        body: rawText.slice(0, 1000),
+      });
       if (!res.ok || json.error) {
         graphError = json.error?.message ?? `HTTP ${res.status}`;
       } else {
         externalId = json.post_id ?? json.id ?? null;
         if (externalId) postUrl = `https://www.facebook.com/${externalId}`;
+        if (!externalId) {
+          console.error("[quickPublish] Graph API returned no post id", { json });
+        }
       }
     } catch (e) {
       graphError = e instanceof Error ? e.message : String(e);
+      console.error("[quickPublish] Graph API fetch threw", e);
     }
 
     if (graphError || !externalId) {
+      console.error("[quickPublish] Publish failed — not marking success", {
+        graphError,
+        externalId,
+        package_id: pkg.id,
+      });
       return {
         ok: false,
         error: graphError ?? "Facebook did not return a post id",
@@ -121,11 +148,14 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
 
     // 4. Record publish + queue history.
     const postedAt = new Date().toISOString();
-    await supabaseAdmin
+    const { error: updErr } = await supabaseAdmin
       .from("content_packages")
       .update({ workflow_status: "PUBLISHED", status: "PUBLISHED" })
       .eq("id", pkg.id);
-    const { data: q } = await supabaseAdmin
+    if (updErr) {
+      console.error("[quickPublish] content_packages update failed", updErr);
+    }
+    const { data: q, error: qErr } = await supabaseAdmin
       .from("publishing_queue")
       .insert({
         content_package_id: pkg.id,
@@ -136,10 +166,28 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       })
       .select("id")
       .single();
+    if (qErr || !q) {
+      console.error("[quickPublish] publishing_queue insert failed", {
+        error: qErr,
+        package_id: pkg.id,
+        external_id: externalId,
+      });
+      return {
+        ok: false,
+        error: `Posted to Facebook (${externalId}) but failed to record in publishing_queue: ${qErr?.message ?? "unknown error"}`,
+        package_id: pkg.id as string,
+      };
+    }
+    console.log("[quickPublish] Success", {
+      package_id: pkg.id,
+      queue_id: q.id,
+      external_id: externalId,
+      post_url: postUrl,
+    });
     return {
       ok: true,
       package_id: pkg.id as string,
-      queue_id: (q?.id as string) ?? "",
+      queue_id: q.id as string,
       external_id: externalId,
       post_url: postUrl,
       posted_at: postedAt,
