@@ -8,6 +8,7 @@ const SCOPES = [
   "pages_manage_posts",
   "public_profile",
 ].join(",");
+const FB_CONFIG_ID = "1430025278935088";
 
 function signState(payload: string, secret: string): string {
   const sig = createHmac("sha256", secret).update(payload).digest("hex");
@@ -40,8 +41,8 @@ export const Route = createFileRoute("/api/public/oauth/facebook/start")({
         authorize.searchParams.set("client_id", appId);
         authorize.searchParams.set("redirect_uri", redirectUri);
         authorize.searchParams.set("state", state);
-        authorize.searchParams.set("scope", SCOPES);
         authorize.searchParams.set("response_type", "code");
+        authorize.searchParams.set("config_id", FB_CONFIG_ID);
         return Response.redirect(authorize.toString(), 302);
       },
     },
