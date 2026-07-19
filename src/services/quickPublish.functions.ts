@@ -144,6 +144,42 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       has_asset_url: Boolean(resolvedAssetUrl),
     });
 
+    // Validate asset URL before handing it to Facebook. Never log the URL or tokens.
+    if (resolvedAssetUrl) {
+      const isHttps = resolvedAssetUrl.startsWith("https://");
+      const isHttp = resolvedAssetUrl.startsWith("http://");
+      let extension: string | null = null;
+      try {
+        const pathname = new URL(resolvedAssetUrl).pathname;
+        const match = pathname.match(/\.([a-zA-Z0-9]{2,5})(?:$)/);
+        if (match) extension = match[1].toLowerCase();
+      } catch {
+        // ignore parse errors
+      }
+      let contentType: string | null = null;
+      let reachable = false;
+      let status: number | null = null;
+      try {
+        let probe = await fetch(resolvedAssetUrl, { method: "HEAD" });
+        if (!probe.ok || !probe.headers.get("content-type")) {
+          probe = await fetch(resolvedAssetUrl, { method: "GET", headers: { Range: "bytes=0-0" } });
+        }
+        status = probe.status;
+        contentType = probe.headers.get("content-type");
+        reachable = probe.ok && !!contentType && contentType.startsWith("image/");
+      } catch (e) {
+        console.error("[quickPublish:server] asset validation fetch failed", e instanceof Error ? e.message : String(e));
+      }
+      console.log("[quickPublish:server] asset validation", {
+        is_https: isHttps,
+        is_http: isHttp,
+        extension,
+        content_type: contentType,
+        http_status: status,
+        reachable,
+      });
+    }
+
     // 2. Persist a lightweight content package (no AI).
     const caption = data.caption?.trim() || buildDefaultCaption(data.headline, data.source);
     const { data: pkg, error: pkgErr } = await supabaseAdmin
