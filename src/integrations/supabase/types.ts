@@ -16,6 +16,10 @@ export type Database = {
     Tables: {
       content_packages: {
         Row: {
+          asset_notes: string | null
+          asset_source_account: string | null
+          asset_type: string | null
+          asset_url: string | null
           category: string | null
           content_item_id: string | null
           created_at: string
@@ -35,8 +39,13 @@ export type Database = {
           source_url: string | null
           status: string
           updated_at: string
+          workflow_status: string
         }
         Insert: {
+          asset_notes?: string | null
+          asset_source_account?: string | null
+          asset_type?: string | null
+          asset_url?: string | null
           category?: string | null
           content_item_id?: string | null
           created_at?: string
@@ -56,8 +65,13 @@ export type Database = {
           source_url?: string | null
           status?: string
           updated_at?: string
+          workflow_status?: string
         }
         Update: {
+          asset_notes?: string | null
+          asset_source_account?: string | null
+          asset_type?: string | null
+          asset_url?: string | null
           category?: string | null
           content_item_id?: string | null
           created_at?: string
@@ -77,6 +91,7 @@ export type Database = {
           source_url?: string | null
           status?: string
           updated_at?: string
+          workflow_status?: string
         }
         Relationships: []
       }

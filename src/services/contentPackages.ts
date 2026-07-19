@@ -2,11 +2,15 @@ import {
   saveContentPackageFn,
   listContentPackagesFn,
   deleteContentPackageFn,
+  updateContentPackageAssetFn,
+  updateContentPackageWorkflowFn,
   type SavedPackage,
 } from "./contentPackages.functions";
 import type { ContentAIResult } from "./contentAI";
 
 export type { SavedPackage };
+export type WorkflowStatus = "DRAFT" | "ASSET_READY" | "READY_TO_POST" | "PUBLISHED";
+export type AssetType = "IMAGE" | "REEL";
 
 function getAdminToken(): string {
   if (typeof window === "undefined") return "";
@@ -60,5 +64,23 @@ export async function listContentPackages(): Promise<SavedPackage[]> {
 
 export async function deleteContentPackage(id: string): Promise<void> {
   const res = await deleteContentPackageFn({ data: { token: getAdminToken(), id } });
+  if (!res.ok) throw new Error(res.error);
+}
+
+export async function updateContentPackageAsset(input: {
+  id: string;
+  asset_type: AssetType | null;
+  asset_url?: string | null;
+  asset_source_account?: string | null;
+  asset_notes?: string | null;
+}): Promise<void> {
+  const res = await updateContentPackageAssetFn({ data: { token: getAdminToken(), ...input } });
+  if (!res.ok) throw new Error(res.error);
+}
+
+export async function setContentPackageWorkflow(id: string, workflow_status: WorkflowStatus): Promise<void> {
+  const res = await updateContentPackageWorkflowFn({
+    data: { token: getAdminToken(), id, workflow_status },
+  });
   if (!res.ok) throw new Error(res.error);
 }

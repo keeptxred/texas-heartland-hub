@@ -7,6 +7,7 @@ import {
   type QueueStatus,
 } from "@/services/publishingQueue";
 import { listContentPackages, type SavedPackage } from "@/services/contentPackages";
+import { publishToFacebook, publishToInstagram, type PublishResult } from "@/services/metaPublisher";
 
 type TabKey = QueueStatus | "READY_TO_POST";
 const TABS: TabKey[] = ["DRAFT", "READY", "READY_TO_POST", "PUBLISHED", "ARCHIVED"];
@@ -221,6 +222,23 @@ export function PublishingQueuePanel({
                     <div className="text-[11px] text-muted-foreground">
                       Assets: no image or reel attached to this package.
                     </div>
+                    {pkg?.asset_url ? (
+                      <div className="mt-2 border border-border/60 bg-white p-2">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">
+                          Attached {pkg.asset_type}
+                        </div>
+                        {pkg.asset_type === "IMAGE" ? (
+                          <img src={pkg.asset_url} alt="asset preview" className="max-h-40 border border-border" />
+                        ) : (
+                          <a href={pkg.asset_url} target="_blank" rel="noreferrer" className="text-[11px] underline text-primary">
+                            {pkg.asset_url}
+                          </a>
+                        )}
+                        {pkg.asset_source_account ? (
+                          <div className="text-[11px] text-muted-foreground mt-1">Source: {pkg.asset_source_account}</div>
+                        ) : null}
+                      </div>
+                    ) : null}
                     <div className="flex flex-wrap gap-3 pt-1 text-[11px]">
                       {isFacebook || !isInstagram ? (
                         <>
@@ -240,6 +258,14 @@ export function PublishingQueuePanel({
                           >
                             Open Facebook
                           </a>
+                          <PublishButton
+                            label="Post to Facebook"
+                            onPublish={async () => {
+                              const res = await publishToFacebook({ package_id: r.content_package_id, queue_id: r.id });
+                              if (res.ok) await change(r.id, "PUBLISHED");
+                              return res;
+                            }}
+                          />
                         </>
                       ) : null}
                       {isInstagram || !isFacebook ? (
@@ -260,6 +286,14 @@ export function PublishingQueuePanel({
                           >
                             Open Instagram
                           </a>
+                          <PublishButton
+                            label="Post to Instagram"
+                            onPublish={async () => {
+                              const res = await publishToInstagram({ package_id: r.content_package_id, queue_id: r.id });
+                              if (res.ok) await change(r.id, "PUBLISHED");
+                              return res;
+                            }}
+                          />
                         </>
                       ) : null}
                       <button
@@ -354,5 +388,43 @@ export function PublishingQueuePanel({
         </ul>
       )}
     </div>
+  );
+}
+
+function PublishButton({
+  label,
+  onPublish,
+}: {
+  label: string;
+  onPublish: () => Promise<PublishResult>;
+}) {
+  const [state, setState] = useState<"idle" | "working" | "ok" | "err">("idle");
+  const [msg, setMsg] = useState("");
+  async function run() {
+    setState("working");
+    setMsg("");
+    try {
+      const res = await onPublish();
+      if (res.ok) { setState("ok"); setMsg("Posted"); }
+      else { setState("err"); setMsg(res.error); }
+    } catch (e) {
+      setState("err");
+      setMsg(e instanceof Error ? e.message : "Failed");
+    }
+  }
+  return (
+    <span className="inline-flex items-center gap-1">
+      <button
+        type="button"
+        onClick={run}
+        disabled={state === "working"}
+        className="underline text-primary font-bold disabled:opacity-50"
+      >
+        {state === "working" ? "Posting…" : label}
+      </button>
+      {msg ? (
+        <span className={state === "err" ? "text-destructive" : "text-emerald-700"}>{msg}</span>
+      ) : null}
+    </span>
   );
 }

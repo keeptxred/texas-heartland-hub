@@ -2,10 +2,13 @@ import { Fragment, useCallback, useEffect, useState } from "react";
 import {
   listContentPackages,
   deleteContentPackage,
+  updateContentPackageAsset,
+  setContentPackageWorkflow,
   type SavedPackage,
 } from "@/services/contentPackages";
 import { MediaPackageBuilder } from "./media-package/MediaPackageBuilder";
 import { addQueueEntry } from "@/services/publishingQueue";
+import { publishToFacebook, publishToInstagram } from "@/services/metaPublisher";
 
 export function SavedPackagesPanel() {
   const [rows, setRows] = useState<SavedPackage[]>([]);
@@ -61,7 +64,8 @@ export function SavedPackagesPanel() {
                 <th className="py-2 pr-2">Title</th>
                 <th className="py-2 pr-2">Category</th>
                 <th className="py-2 pr-2">Created</th>
-                <th className="py-2 pr-2">Status</th>
+                <th className="py-2 pr-2">Workflow</th>
+                <th className="py-2 pr-2">Asset</th>
                 <th className="py-2 pr-2" />
               </tr>
             </thead>
@@ -78,8 +82,9 @@ export function SavedPackagesPanel() {
                       <td className="py-2 pr-2 text-[11px] text-muted-foreground whitespace-nowrap">
                         {new Date(r.created_at).toLocaleString("en-US", { timeZone: "America/Chicago" })}
                       </td>
-                      <td className="py-2 pr-2 text-[11px] font-bold uppercase tracking-widest text-primary">
-                        {r.status}
+                      <td className="py-2 pr-2"><WorkflowBadge status={r.workflow_status} /></td>
+                      <td className="py-2 pr-2 text-[11px] text-muted-foreground">
+                        {r.asset_type ? `${r.asset_type}` : "—"}
                       </td>
                       <td className="py-2 pr-2 whitespace-nowrap">
                         <div className="flex gap-3">
@@ -102,8 +107,8 @@ export function SavedPackagesPanel() {
                     </tr>
                     {open ? (
                       <tr>
-                        <td colSpan={5} className="pb-4">
-                          <PackageDetail row={r} />
+                        <td colSpan={6} className="pb-4">
+                          <PackageDetail row={r} onChanged={load} />
                         </td>
                       </tr>
                     ) : null}
@@ -118,9 +123,25 @@ export function SavedPackagesPanel() {
   );
 }
 
-function PackageDetail({ row }: { row: SavedPackage }) {
+function WorkflowBadge({ status }: { status: SavedPackage["workflow_status"] }) {
+  const map: Record<string, string> = {
+    DRAFT: "bg-neutral-200 text-neutral-800",
+    ASSET_READY: "bg-amber-100 text-amber-800",
+    READY_TO_POST: "bg-emerald-100 text-emerald-800",
+    PUBLISHED: "bg-primary/10 text-primary",
+  };
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest ${map[status] ?? map.DRAFT}`}>
+      {status.replace(/_/g, " ")}
+    </span>
+  );
+}
+
+function PackageDetail({ row, onChanged }: { row: SavedPackage; onChanged: () => void }) {
   return (
     <div className="border border-border bg-white p-4 space-y-3 text-sm">
+      <WorkflowActions row={row} onChanged={onChanged} />
+      <AssetAttachForm row={row} onChanged={onChanged} />
       <AddToQueue packageId={row.id} />
       <MediaPackageBuilder row={row} />
       <Section title="Facebook">
@@ -141,6 +162,135 @@ function PackageDetail({ row }: { row: SavedPackage }) {
         <Line label="Keywords" value={row.seo_keywords} />
       </Section>
     </div>
+  );
+}
+
+function WorkflowActions({ row, onChanged }: { row: SavedPackage; onChanged: () => void }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+
+  async function approve() {
+    setBusy(true); setMsg("");
+    try {
+      await setContentPackageWorkflow(row.id, "READY_TO_POST");
+      setMsg("Approved — ready to post");
+      onChanged();
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : "Failed");
+    } finally { setBusy(false); }
+  }
+
+  async function publish(platform: "facebook" | "instagram") {
+    setBusy(true); setMsg("");
+    try {
+      const fn = platform === "facebook" ? publishToFacebook : publishToInstagram;
+      const res = await fn({ package_id: row.id });
+      if (res.ok) {
+        await setContentPackageWorkflow(row.id, "PUBLISHED");
+        setMsg(`Posted to ${platform}`);
+        onChanged();
+      } else {
+        setMsg(res.error);
+      }
+    } catch (e) {
+      setMsg(e instanceof Error ? e.message : "Failed");
+    } finally { setBusy(false); }
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-3 border border-dashed border-border p-3 text-[11px]">
+      <span className="font-bold uppercase tracking-widest text-muted-foreground">Workflow:</span>
+      <WorkflowBadge status={row.workflow_status} />
+      {row.workflow_status !== "READY_TO_POST" && row.workflow_status !== "PUBLISHED" ? (
+        <button type="button" onClick={approve} disabled={busy} className="underline text-emerald-700 disabled:opacity-50">
+          Approve (Ready to Post)
+        </button>
+      ) : null}
+      {row.workflow_status !== "DRAFT" ? (
+        <button
+          type="button"
+          onClick={async () => { setBusy(true); await setContentPackageWorkflow(row.id, "DRAFT").catch(() => {}); onChanged(); setBusy(false); }}
+          disabled={busy}
+          className="underline text-muted-foreground disabled:opacity-50"
+        >
+          Return to Draft
+        </button>
+      ) : null}
+      <button type="button" onClick={() => publish("facebook")} disabled={busy} className="underline text-primary disabled:opacity-50">
+        Post to Facebook
+      </button>
+      <button type="button" onClick={() => publish("instagram")} disabled={busy} className="underline text-primary disabled:opacity-50">
+        Post to Instagram
+      </button>
+      {msg ? <span className="text-muted-foreground">{msg}</span> : null}
+    </div>
+  );
+}
+
+function AssetAttachForm({ row, onChanged }: { row: SavedPackage; onChanged: () => void }) {
+  const [type, setType] = useState<"IMAGE" | "REEL">(row.asset_type ?? "IMAGE");
+  const [url, setUrl] = useState(row.asset_url ?? "");
+  const [account, setAccount] = useState(row.asset_source_account ?? "");
+  const [notes, setNotes] = useState(row.asset_notes ?? "");
+  const [state, setState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [err, setErr] = useState("");
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setState("saving"); setErr("");
+    try {
+      await updateContentPackageAsset({
+        id: row.id,
+        asset_type: type,
+        asset_url: url.trim() || null,
+        asset_source_account: account.trim() || null,
+        asset_notes: notes.trim() || null,
+      });
+      setState("saved");
+      onChanged();
+      setTimeout(() => setState("idle"), 1500);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Failed");
+      setState("error");
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="border border-dashed border-border p-3 space-y-2">
+      <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Attach Social Asset</div>
+      <div className="flex flex-wrap gap-2 items-end">
+        <label>
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Type</div>
+          <select value={type} onChange={(e) => setType(e.target.value as "IMAGE" | "REEL")} className="border border-border bg-white px-2 py-1.5 text-sm">
+            <option value="IMAGE">Image</option>
+            <option value="REEL">Reel</option>
+          </select>
+        </label>
+        <label className="flex-1 min-w-[16rem]">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{type === "IMAGE" ? "Image URL" : "Reel URL"}</div>
+          <input type="url" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://…" className="w-full border border-border bg-white px-2 py-1.5 text-sm" />
+        </label>
+        {type === "REEL" ? (
+          <label className="min-w-[10rem]">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Source Account</div>
+            <input type="text" value={account} onChange={(e) => setAccount(e.target.value)} placeholder="@handle" className="w-full border border-border bg-white px-2 py-1.5 text-sm" />
+          </label>
+        ) : null}
+        <label className="flex-1 min-w-[14rem]">
+          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Notes</div>
+          <input type="text" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Optional" className="w-full border border-border bg-white px-2 py-1.5 text-sm" />
+        </label>
+        <button type="submit" disabled={state === "saving"} className="text-[11px] uppercase tracking-widest px-3 py-2 bg-primary text-primary-foreground border-2 border-primary disabled:opacity-50">
+          {state === "saving" ? "Saving…" : state === "saved" ? "Saved ✓" : "Attach Asset"}
+        </button>
+        {err ? <span className="text-xs text-destructive">{err}</span> : null}
+      </div>
+      {row.asset_url && row.asset_type === "IMAGE" ? (
+        <img src={row.asset_url} alt="attached asset preview" className="mt-2 max-h-40 border border-border" />
+      ) : row.asset_url && row.asset_type === "REEL" ? (
+        <a href={row.asset_url} target="_blank" rel="noreferrer" className="text-[11px] underline text-primary block mt-1">Open reel ↗</a>
+      ) : null}
+    </form>
   );
 }
 
