@@ -7,7 +7,7 @@ import {
   type QueueStatus,
 } from "@/services/publishingQueue";
 import { listContentPackages, type SavedPackage } from "@/services/contentPackages";
-import { publishToFacebook, publishToInstagram } from "@/services/metaPublisher";
+import { publishToFacebook, publishToInstagram, type PublishResult } from "@/services/metaPublisher";
 
 type TabKey = QueueStatus | "READY_TO_POST";
 const TABS: TabKey[] = ["DRAFT", "READY", "READY_TO_POST", "PUBLISHED", "ARCHIVED"];
@@ -388,5 +388,43 @@ export function PublishingQueuePanel({
         </ul>
       )}
     </div>
+  );
+}
+
+function PublishButton({
+  label,
+  onPublish,
+}: {
+  label: string;
+  onPublish: () => Promise<PublishResult>;
+}) {
+  const [state, setState] = useState<"idle" | "working" | "ok" | "err">("idle");
+  const [msg, setMsg] = useState("");
+  async function run() {
+    setState("working");
+    setMsg("");
+    try {
+      const res = await onPublish();
+      if (res.ok) { setState("ok"); setMsg("Posted"); }
+      else { setState("err"); setMsg(res.error); }
+    } catch (e) {
+      setState("err");
+      setMsg(e instanceof Error ? e.message : "Failed");
+    }
+  }
+  return (
+    <span className="inline-flex items-center gap-1">
+      <button
+        type="button"
+        onClick={run}
+        disabled={state === "working"}
+        className="underline text-primary font-bold disabled:opacity-50"
+      >
+        {state === "working" ? "Posting…" : label}
+      </button>
+      {msg ? (
+        <span className={state === "err" ? "text-destructive" : "text-emerald-700"}>{msg}</span>
+      ) : null}
+    </span>
   );
 }
