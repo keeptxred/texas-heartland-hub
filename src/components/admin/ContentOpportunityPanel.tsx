@@ -1,14 +1,9 @@
-import { Fragment, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { FileText, Image, Video } from "lucide-react";
-import {
-  ContentPackagePreview,
-  buildPackage,
-  type ContentPackage,
-} from "@/components/admin/ContentPackagePreview";
-import { generateContentPackage, type ContentAIResult } from "@/services/contentAI";
 import { quickPublishToFacebook } from "@/services/quickPublish";
+import { publishFeedItem } from "@/services/publishArticle";
 
 type FeedItem = {
   id: number;
@@ -108,14 +103,10 @@ export function ContentOpportunityPanel() {
   const [items, setItems] = useState<FeedItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [statuses, setStatuses] = useState<Record<number, OpportunityStatus>>({});
-  const [actions, setActions] = useState<Record<number, "package" | "ignored">>({});
-  const [packages, setPackages] = useState<Record<number, ContentPackage>>({});
-  const [openId, setOpenId] = useState<number | null>(null);
-  const [ai, setAi] = useState<Record<number, ContentAIResult>>({});
-  const [aiLoading, setAiLoading] = useState<Record<number, boolean>>({});
-  const [aiError, setAiError] = useState<Record<number, string>>({});
   const [publishing, setPublishing] = useState<Record<number, boolean>>({});
   const [publishMsg, setPublishMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
+  const [articleWorking, setArticleWorking] = useState<Record<number, boolean>>({});
+  const [articleMsg, setArticleMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
 
   async function quickPost(r: Scored) {
     setPublishing((s) => ({ ...s, [r.id]: true }));
@@ -128,7 +119,6 @@ export function ContentOpportunityPanel() {
       });
       if (res.ok) {
         setPublishMsg((s) => ({ ...s, [r.id]: { ok: true, text: "Published to Facebook" } }));
-        setActions((s) => ({ ...s, [r.id]: "ignored" }));
       } else {
         setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
       }
@@ -142,23 +132,37 @@ export function ContentOpportunityPanel() {
     }
   }
 
-  async function runAI(r: Scored) {
-    setAiLoading((s) => ({ ...s, [r.id]: true }));
-    setAiError((s) => ({ ...s, [r.id]: "" }));
+  async function publishArticle(r: Scored) {
+    setArticleWorking((s) => ({ ...s, [r.id]: true }));
+    setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: "" } }));
     try {
-      const result = await generateContentPackage({
-        headline: r.title,
-        source: r.source,
-        publishedAt: r.pub_date,
-      });
-      setAi((s) => ({ ...s, [r.id]: result }));
+      const res = await publishFeedItem(r.id);
+      if (res.ok) {
+        setArticleMsg((s) => ({
+          ...s,
+          [r.id]: {
+            ok: true,
+            text: res.alreadyPublished ? "Already published" : "Published to Keep TX Red",
+          },
+        }));
+        setStatuses((s) => ({
+          ...s,
+          [r.id]: {
+            rewritten: true,
+            imageReady: s[r.id]?.imageReady ?? false,
+            reelReady: s[r.id]?.reelReady ?? false,
+          },
+        }));
+      } else {
+        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
+      }
     } catch (e) {
-      setAiError((s) => ({
+      setArticleMsg((s) => ({
         ...s,
-        [r.id]: e instanceof Error ? e.message : "AI generation failed",
+        [r.id]: { ok: false, text: e instanceof Error ? e.message : "Publish failed" },
       }));
     } finally {
-      setAiLoading((s) => ({ ...s, [r.id]: false }));
+      setArticleWorking((s) => ({ ...s, [r.id]: false }));
     }
   }
 
@@ -238,7 +242,7 @@ export function ContentOpportunityPanel() {
       <div className="flex items-center justify-between mb-3">
         <h2 className="font-display text-xl">Content Opportunities</h2>
         <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-          AI runs only on Generate Package click
+          AI handles category, type, SEO, and image
         </span>
       </div>
       {loading ? (
@@ -256,22 +260,19 @@ export function ContentOpportunityPanel() {
                 <th className="py-2 pr-2 text-right">TX</th>
                 <th className="py-2 pr-2 text-right">Break</th>
                 <th className="py-2 pr-2 text-right">Social</th>
-                <th className="py-2 pr-2">Action</th>
-                <th className="py-2 pr-2" />
+                <th className="py-2 pr-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               {scored.slice(0, 25).map((r) => {
-                const rec = recommendation(r.total);
-                const state = actions[r.id];
-                const isOpen = openId === r.id && !!packages[r.id];
+                const status = statuses[r.id];
+                const alreadyPublished = !!status?.rewritten;
                 return (
-                  <Fragment key={r.id}>
-                  <tr className="border-b border-border/50 align-top">
+                  <tr key={r.id} className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
                       <div className="flex items-center gap-2">
                         <div className="font-medium leading-snug truncate">{r.title}</div>
-                        <OpportunityStatusBadges status={statuses[r.id]} />
+                        <OpportunityStatusBadges status={status} />
                       </div>
                     </td>
                     <td className="py-2 pr-2 text-[11px] text-muted-foreground">{r.source}</td>
@@ -281,29 +282,21 @@ export function ContentOpportunityPanel() {
                     <td className="py-2 pr-2 text-right tabular-nums">{r.texasScore}</td>
                     <td className="py-2 pr-2 text-right tabular-nums">{r.breakingScore}</td>
                     <td className="py-2 pr-2 text-right tabular-nums">{r.socialScore}</td>
-                    <td className={`py-2 pr-2 text-[11px] font-bold uppercase tracking-widest ${rec.tone}`}>
-                      {rec.label}
-                    </td>
                     <td className="py-2 pr-2 whitespace-nowrap">
-                      {state === "package" ? (
-                        <button
-                          type="button"
-                          onClick={() => setOpenId(isOpen ? null : r.id)}
-                          className="text-[11px] underline text-emerald-600"
-                        >
-                          {isOpen ? "Hide Draft" : "View Draft"}
-                        </button>
-                      ) : state === "ignored" ? (
-                        <div className="flex flex-col gap-1">
-                          <span className="text-[11px] text-muted-foreground">Done</span>
-                          {publishMsg[r.id]?.text ? (
-                            <span className={`text-[10px] ${publishMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
-                              {publishMsg[r.id].text}
-                            </span>
-                          ) : null}
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-start gap-1">
+                      <div className="flex flex-col items-start gap-1">
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            disabled={!!articleWorking[r.id]}
+                            onClick={() => void publishArticle(r)}
+                            className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                          >
+                            {articleWorking[r.id]
+                              ? "Publishing…"
+                              : alreadyPublished
+                              ? "Republish"
+                              : "Publish to Keep Texas Red"}
+                          </button>
                           <button
                             type="button"
                             disabled={!!publishing[r.id]}
@@ -312,52 +305,20 @@ export function ContentOpportunityPanel() {
                           >
                             {publishing[r.id] ? "Posting…" : "Post to Facebook"}
                           </button>
-                          <div className="flex gap-2">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setActions((s) => ({ ...s, [r.id]: "package" }));
-                                setPackages((p) => ({ ...p, [r.id]: buildPackage(r) }));
-                                setOpenId(r.id);
-                                void runAI(r);
-                              }}
-                              className="text-[11px] underline text-primary"
-                            >
-                              Generate Package
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => setActions((s) => ({ ...s, [r.id]: "ignored" }))}
-                              className="text-[11px] underline text-muted-foreground"
-                            >
-                              Ignore
-                            </button>
-                          </div>
-                          {publishMsg[r.id]?.text ? (
-                            <span className={`text-[10px] ${publishMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
-                              {publishMsg[r.id].text}
-                            </span>
-                          ) : null}
                         </div>
-                      )}
+                        {articleMsg[r.id]?.text ? (
+                          <span className={`text-[10px] ${articleMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
+                            {articleMsg[r.id].text}
+                          </span>
+                        ) : null}
+                        {publishMsg[r.id]?.text ? (
+                          <span className={`text-[10px] ${publishMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
+                            {publishMsg[r.id].text}
+                          </span>
+                        ) : null}
+                      </div>
                     </td>
                   </tr>
-                  {isOpen && packages[r.id] ? (
-                    <tr>
-                      <td colSpan={8} className="pb-4">
-                        <ContentPackagePreview
-                          item={r}
-                          pkg={packages[r.id]}
-                          onClose={() => setOpenId(null)}
-                          ai={ai[r.id]}
-                          aiLoading={!!aiLoading[r.id]}
-                          aiError={aiError[r.id]}
-                          onRegenerate={() => runAI(r)}
-                        />
-                      </td>
-                    </tr>
-                  ) : null}
-                  </Fragment>
                 );
               })}
             </tbody>
