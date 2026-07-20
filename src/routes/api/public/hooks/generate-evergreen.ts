@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { EVERGREEN_MIN_MAIN_WORDS, articleMainWordCount } from "@/lib/article-length";
+import { EDITORIAL_SYSTEM_ADDENDUM, validateArticle } from "@/lib/editorial-pipeline";
 
 const TOPICS: { category: string; topic: string }[] = [
   { category: "Tax & Spending", topic: "How Texas keeps property taxes high and what homeowners can do about it" },
@@ -149,7 +150,7 @@ The "bullets" field is optional per section. Use either paragraphs, bullets, or 
     body: JSON.stringify({
       model: "google/gemini-3-flash-preview",
       messages: [
-        { role: "system", content: system },
+        { role: "system", content: system + EDITORIAL_SYSTEM_ADDENDUM },
         { role: "user", content: `Topic: ${topic}\nCategory: ${category}\n\nWrite the full long-form evergreen article now.` },
       ],
       response_format: { type: "json_object" },
@@ -158,7 +159,36 @@ The "bullets" field is optional per section. Use either paragraphs, bullets, or 
   });
   if (!r.ok) throw new Error(`AI gateway ${r.status}: ${(await r.text()).slice(0, 300)}`);
   const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-  return JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as GeneratedBody;
+  const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as GeneratedBody & {
+    brief?: import("@/lib/editorial-pipeline").StoryBrief;
+  };
+  // Evergreen: run the same editorial validation, but do not block on
+  // hasClearNewsEvent (these are explainers, not breaking news).
+  const v = validateArticle(
+    {
+      title: parsed.title,
+      dek: parsed.dek,
+      summary: parsed.intro?.[0],
+      sections: parsed.sections,
+      faq: parsed.faq,
+      keyTakeaways: parsed.keyTakeaways,
+    },
+    parsed.brief,
+  );
+  if (!v.ok) {
+    // Filter fatal-only reasons; evergreen tolerates a missing hard news
+    // event and a soft headline/body overlap (the topic itself is the hook).
+    const fatal = v.reasons.filter(
+      (r) =>
+        !r.startsWith("brief_no_clear_news_event") &&
+        !r.startsWith("headline_does_not_match_body"),
+    );
+    if (fatal.length > 0) {
+      throw new Error(`Editorial validation failed: ${fatal.join(", ")}`);
+    }
+  }
+  delete (parsed as { brief?: unknown }).brief;
+  return parsed;
 }
 
 export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
