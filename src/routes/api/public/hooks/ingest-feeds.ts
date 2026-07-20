@@ -404,6 +404,100 @@ async function fetchRedditSelftext(link: string): Promise<string | null> {
   }
 }
 
+type RedditPostData = {
+  selftext: string | null;
+  externalUrl: string | null;
+};
+
+// One request covers both self-posts and link-posts: Reddit's JSON returns
+// selftext plus `url_overridden_by_dest` / `url` for the outbound link.
+async function fetchRedditPostData(link: string): Promise<RedditPostData> {
+  try {
+    const u = new URL(link);
+    const jsonUrl = `https://www.reddit.com${u.pathname.replace(/\/?$/, "")}.json`;
+    const r = await fetch(jsonUrl, {
+      headers: { "User-Agent": "KeepTXRed/1.0 (+https://www.keeptxred.com)" },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) return { selftext: null, externalUrl: null };
+    const data = (await r.json()) as Array<{
+      data?: {
+        children?: Array<{
+          data?: {
+            selftext?: string;
+            url_overridden_by_dest?: string;
+            url?: string;
+            is_self?: boolean;
+            domain?: string;
+          };
+        }>;
+      };
+    }>;
+    const post = data?.[0]?.data?.children?.[0]?.data ?? {};
+    const selftextRaw = post.selftext ?? "";
+    const selftext = selftextRaw.replace(/\s+/g, " ").trim() || null;
+    const candidate = post.url_overridden_by_dest || post.url || "";
+    let externalUrl: string | null = null;
+    if (candidate && !post.is_self) {
+      try {
+        const cu = new URL(candidate);
+        // Skip self-referential Reddit URLs (comment permalinks, image hosts).
+        if (!/(^|\.)reddit\.com$/i.test(cu.hostname) && !/(^|\.)redd\.it$/i.test(cu.hostname)) {
+          externalUrl = cu.toString();
+        }
+      } catch {
+        externalUrl = null;
+      }
+    }
+    return { selftext, externalUrl };
+  } catch {
+    return { selftext: null, externalUrl: null };
+  }
+}
+
+// Lightweight readable-text extraction for a linked article page. No JS
+// execution; we strip scripts/styles/nav chrome and collapse whitespace so the
+// AI rewrite has factual source content without invoking a heavy scraper.
+async function fetchLinkedArticleText(url: string): Promise<string | null> {
+  try {
+    const r = await fetch(url, {
+      headers: {
+        "User-Agent": "KeepTXRed/1.0 (+https://www.keeptxred.com)",
+        Accept: "text/html,application/xhtml+xml",
+      },
+      redirect: "follow",
+      signal: AbortSignal.timeout(10000),
+    });
+    if (!r.ok) return null;
+    const ct = r.headers.get("content-type") ?? "";
+    if (!/text\/html|application\/xhtml/i.test(ct)) return null;
+    const html = await r.text();
+    const stripped = html
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<noscript[\s\S]*?<\/noscript>/gi, " ")
+      .replace(/<(header|footer|nav|aside|form)[\s\S]*?<\/\1>/gi, " ");
+    // Prefer <article> body when present; fall back to full body text.
+    const articleMatch = stripped.match(/<article[\s\S]*?<\/article>/i);
+    const region = articleMatch ? articleMatch[0] : stripped;
+    const text = region
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&#39;|&apos;/g, "'")
+      .replace(/&quot;/g, '"')
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (!text) return null;
+    // Cap to keep the rewrite prompt bounded.
+    return text.length > 8000 ? text.slice(0, 8000) : text;
+  } catch {
+    return null;
+  }
+}
+
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
   try {
     // Neutralize first-person / personal-experience headlines BEFORE the AI
@@ -1035,19 +1129,34 @@ export async function publishSingleFeedItem(
   // the public JSON endpoint so the AI rewrite has real source material.
   // Refuse to publish headline-only Reddit posts rather than fabricating facts.
   if (isRedditLink(item.link)) {
-    const selftext = await fetchRedditSelftext(item.link);
-    const meaningful = selftext && wordCount(selftext) >= 40;
-    if (!meaningful) {
+    const { selftext, externalUrl } = await fetchRedditPostData(item.link);
+    const selftextMeaningful = !!selftext && wordCount(selftext) >= 40;
+    let linkedText: string | null = null;
+    let linkedFrom: string | null = null;
+    if (!selftextMeaningful && externalUrl) {
+      const fetched = await fetchLinkedArticleText(externalUrl);
+      if (fetched && wordCount(fetched) >= 80) {
+        linkedText = fetched;
+        linkedFrom = externalUrl;
+      }
+    }
+    if (!selftextMeaningful && !linkedText) {
       return {
         ok: false,
         error:
           "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",
       };
     }
+    const parts: string[] = [];
     const base = item.description?.trim() ?? "";
-    item.description = base
-      ? `${base}\n\nREDDIT SELFTEXT:\n${selftext}`
-      : `REDDIT SELFTEXT:\n${selftext}`;
+    if (base) parts.push(base);
+    if (selftextMeaningful) parts.push(`REDDIT SELFTEXT:\n${selftext}`);
+    if (linkedText) parts.push(`LINKED SOURCE (${linkedFrom}):\n${linkedText}`);
+    item.description = parts.join("\n\n");
+    if (linkedFrom && (!item.link || isRedditLink(item.link))) {
+      // Keep the original Reddit link untouched on the feed row; only surface
+      // the linked source in-prompt so the AI cites the underlying article.
+    }
   }
 
   const rw = await rewriteItemWithRetry(item, lovableApiKey);
