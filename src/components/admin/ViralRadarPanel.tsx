@@ -416,6 +416,13 @@ export function ViralRadarPanel() {
                           >
                             {publishing[r.id] ? "Posting…" : "Post to Facebook"}
                           </button>
+                          <button
+                            type="button"
+                            onClick={() => ignoreRow(r.id)}
+                            className="px-3 py-1 border border-border text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground"
+                          >
+                            Ignore
+                          </button>
                         </div>
                         {!qualifies ? (
                           <span className="text-[10px] text-muted-foreground">Below auto-rewrite gate</span>
