@@ -8,6 +8,7 @@ import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functio
 import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
 import { articleMainWordCount } from "@/lib/article-length";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
+import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
 
 // Reuses the existing Texas relevance scorer (title + description + source
 // entity signals) so a source labelled "USGS Earthquakes — Texas" cannot push
@@ -405,6 +406,13 @@ async function fetchRedditSelftext(link: string): Promise<string | null> {
 
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
   try {
+    // Neutralize first-person / personal-experience headlines BEFORE the AI
+    // sees them so the model never echoes "I visited…" / "My parents…" back
+    // into the article title, prompt, or downstream Facebook caption.
+    const neutralized = neutralizeFirstPersonTitle(it.title);
+    if (neutralized && neutralized !== it.title) {
+      it.title = neutralized;
+    }
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
