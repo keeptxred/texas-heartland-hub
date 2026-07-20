@@ -376,6 +376,33 @@ CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Busi
 SCHEMA:
 {"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"substantial opening section","relevance":"substantial Texas relevance section","analysis":"optional labeled editorial interpretation, or omit","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}],"category":"one of the allowed values"}`;
 
+function isRedditLink(link: string): boolean {
+  try {
+    const u = new URL(link);
+    return /(^|\.)reddit\.com$/i.test(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
+async function fetchRedditSelftext(link: string): Promise<string | null> {
+  try {
+    const u = new URL(link);
+    const jsonUrl = `https://www.reddit.com${u.pathname.replace(/\/?$/, "")}.json`;
+    const r = await fetch(jsonUrl, {
+      headers: { "User-Agent": "KeepTXRed/1.0 (+https://www.keeptxred.com)" },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) return null;
+    const data = (await r.json()) as Array<{ data?: { children?: Array<{ data?: { selftext?: string } }> } }>;
+    const selftext = data?.[0]?.data?.children?.[0]?.data?.selftext ?? "";
+    const cleaned = selftext.replace(/\s+/g, " ").trim();
+    return cleaned.length > 0 ? cleaned : null;
+  } catch {
+    return null;
+  }
+}
+
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
   try {
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
