@@ -31,10 +31,11 @@ export type CategoryFeedItem = {
   source_name: string | null;
   author: string;
   published_at: string;
+  teams: string[] | null;
 };
 
 const SELECT_COLS =
-  "slug,title,dek,category,kind,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,body_json";
+  "slug,title,dek,category,kind,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,teams,body_json";
 
 const InputSchema = z.object({
   // Display category name as stored on daily_articles.category (e.g. "Economy",
