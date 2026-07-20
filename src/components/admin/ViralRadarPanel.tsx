@@ -155,10 +155,22 @@ export function ViralRadarPanel() {
     }
   }
 
-  const total = useMemo(() => rows.length, [rows]);
+  const RECENT_DAYS = 14;
+
+  const recentRows = useMemo(() => {
+    const cutoff = Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000;
+    return rows.filter((r) => {
+      const dateIso = r.pub_date || r.created_at;
+      if (!dateIso) return true;
+      const dateMs = new Date(dateIso).getTime();
+      return !Number.isNaN(dateMs) && dateMs >= cutoff;
+    });
+  }, [rows]);
+
+  const total = useMemo(() => recentRows.length, [recentRows]);
 
   const filtered = useMemo(() => {
-    const arr = [...rows];
+    const arr = [...recentRows];
     switch (filter) {
       case "score":
         return arr.sort((a, b) => (b.viral_score ?? 0) - (a.viral_score ?? 0));
