@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { isLowValueTitle } from "@/lib/low-value-titles";
 import { FileText, Image as ImageIcon, Flame, Video, Sparkles } from "lucide-react";
 import {
   VIRAL_AUTO_REWRITE_MIN_SCORE,
