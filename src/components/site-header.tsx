@@ -22,16 +22,34 @@ export function SiteHeader() {
   const electionHeadline = nextElectionHeadline();
   return (
     <header className="sticky top-0 z-50 bg-secondary text-secondary-foreground border-b border-white/10">
-      <div className="overflow-hidden border-b border-white/10 bg-tx-ink/40 py-1.5">
-        <div className="flex gap-10 whitespace-nowrap animate-marquee text-[10px] font-medium tracking-[0.2em] uppercase text-white/70">
-          {Array.from({ length: 2 }).map((_, i) => (
-            <div key={i} className="flex shrink-0 gap-10 px-5">
-              <Link to="/elections" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-primary" />{electionHeadline}</Link>
-              <Link to="/tax-calculator" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-accent" />Property Tax Relief: Phase II Active</Link>
-              <Link to="/texas-politics" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-primary" />Border Operations: Ongoing</Link>
-              <Link to="/register-to-vote" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-accent" />Voter ID Required Statewide</Link>
+      <div className="overflow-hidden border-b border-white/10 bg-tx-ink/40">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-1.5">
+          <span className="pl-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 shrink-0">Latest Texas News:</span>
+          <div className="flex-1 overflow-hidden">
+            <div className="flex gap-10 whitespace-nowrap animate-marquee text-[10px] font-medium tracking-[0.2em] uppercase text-white/70">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="flex shrink-0 gap-10 px-5">
+                  <Link to="/elections" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-primary" />{electionHeadline}</Link>
+                  <Link to="/texas-politics" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-primary" />Border Operations: Ongoing</Link>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+        </div>
+      </div>
+      <div className="overflow-hidden border-b border-white/10 bg-tx-ink/40">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-1.5">
+          <span className="pl-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 shrink-0">Texas Resources:</span>
+          <div className="flex-1 overflow-hidden">
+            <div className="flex gap-10 whitespace-nowrap animate-marquee text-[10px] font-medium tracking-[0.2em] uppercase text-white/70">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="flex shrink-0 gap-10 px-5">
+                  <Link to="/tax-calculator" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-accent" />Property Tax Calculator</Link>
+                  <Link to="/register-to-vote" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-accent" />Voter Registration Resources</Link>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
       <div className="mx-auto w-full max-w-[1440px] px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
