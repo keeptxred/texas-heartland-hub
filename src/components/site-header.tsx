@@ -1,6 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { nextElectionHeadline } from "@/lib/election-calendar";
+import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 
 const NAV = [
   { to: "/texas-news", label: "Texas News" },
@@ -20,6 +23,20 @@ const NAV = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const electionHeadline = nextElectionHeadline();
+  const fetchDaily = useServerFn(getDailyArticles);
+  const { data } = useQuery({
+    queryKey: ["site-header-ticker"],
+    queryFn: () => fetchDaily(),
+    staleTime: 5 * 60 * 1000,
+  });
+  // Reuse the already-validated daily article feed (word-count gated,
+  // dedupe'd, and guaranteed to resolve on /news/$slug). Breaking items
+  // lead, then newest, capped for a smooth marquee.
+  const articles: DailyArticle[] = data?.articles ?? [];
+  const validTicker = articles.filter((a) => a.slug && a.title);
+  const breaking = validTicker.filter((a) => a.is_breaking);
+  const rest = validTicker.filter((a) => !a.is_breaking);
+  const tickerItems = [...breaking, ...rest].slice(0, 12);
   return (
     <header className="sticky top-0 z-50 bg-secondary text-secondary-foreground border-b border-white/10">
       <div className="overflow-hidden border-b border-white/10 bg-tx-ink/40">
@@ -29,23 +46,24 @@ export function SiteHeader() {
             <div className="flex gap-10 whitespace-nowrap animate-marquee text-[10px] font-medium tracking-[0.2em] uppercase text-white/70">
               {Array.from({ length: 2 }).map((_, i) => (
                 <div key={i} className="flex shrink-0 gap-10 px-5">
-                  <Link to="/elections" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-primary" />{electionHeadline}</Link>
-                  <Link to="/texas-politics" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-primary" />Border Operations: Ongoing</Link>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="overflow-hidden border-b border-white/10 bg-tx-ink/40">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-1.5">
-          <span className="pl-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 shrink-0">Texas Resources:</span>
-          <div className="flex-1 overflow-hidden">
-            <div className="flex gap-10 whitespace-nowrap animate-marquee text-[10px] font-medium tracking-[0.2em] uppercase text-white/70">
-              {Array.from({ length: 2 }).map((_, i) => (
-                <div key={i} className="flex shrink-0 gap-10 px-5">
-                  <Link to="/tax-calculator" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-accent" />Property Tax Calculator</Link>
-                  <Link to="/register-to-vote" className="flex items-center gap-2 hover:text-primary transition-colors"><span className="size-1.5 rounded-full bg-accent" />Voter Registration Resources</Link>
+                  {tickerItems.length > 0 ? (
+                    tickerItems.map((a) => (
+                      <Link
+                        key={`${i}-${a.slug}`}
+                        to="/news/$slug"
+                        params={{ slug: a.slug }}
+                        className="flex items-center gap-2 hover:text-primary transition-colors"
+                      >
+                        <span className={`size-1.5 rounded-full ${a.is_breaking ? "bg-primary" : "bg-accent"}`} />
+                        {a.title}
+                      </Link>
+                    ))
+                  ) : (
+                    <Link to="/elections" className="flex items-center gap-2 hover:text-primary transition-colors">
+                      <span className="size-1.5 rounded-full bg-primary" />
+                      {electionHeadline}
+                    </Link>
+                  )}
                 </div>
               ))}
             </div>
