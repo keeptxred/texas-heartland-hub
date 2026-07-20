@@ -930,3 +930,65 @@ async function handler() {
     { headers: { "Content-Type": "application/json" } },
   );
 }
+
+/**
+ * Single-item publish path used by the Admin "Publish to Keep Texas Red"
+ * button. Reuses the same rewrite → build → enrich → image pipeline as the
+ * batch ingestion so category, article type, SEO and image logic remain the
+ * single source of truth. Safe to call multiple times: if the feed row is
+ * already linked to a daily_articles slug, returns that slug unchanged.
+ */
+export async function publishSingleFeedItem(
+  feedItemId: number,
+): Promise<{ ok: boolean; slug?: string; error?: string; alreadyPublished?: boolean }> {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: row, error: rowErr } = await supabaseAdmin
+    .from("texas_news_feed")
+    .select("id,title,link,source,description,pub_date,internal_slug")
+    .eq("id", feedItemId)
+    .maybeSingle();
+  if (rowErr || !row) {
+    return { ok: false, error: rowErr?.message ?? "Feed item not found" };
+  }
+  if (row.internal_slug) {
+    return { ok: true, slug: row.internal_slug, alreadyPublished: true };
+  }
+  if (isPuzzleTitle(row.title)) {
+    return { ok: false, error: "Puzzle / filler titles are blocked from publish." };
+  }
+  const lovableApiKey = process.env.LOVABLE_API_KEY;
+  if (!lovableApiKey) return { ok: false, error: "Missing LOVABLE_API_KEY" };
+
+  const item: Item = {
+    title: row.title,
+    link: row.link,
+    source: row.source,
+    pub_date: row.pub_date,
+    description: row.description ?? "",
+  };
+  const rw = await rewriteItemWithRetry(item, lovableApiKey);
+  if (!rw) return { ok: false, error: "AI rewrite failed" };
+
+  const articleRow = buildArticleRow(item, rw);
+  const target = minWordsForItem(item, rw);
+  const words = articleMainWordCount(articleRow.body_json);
+  if (words < target) {
+    return { ok: false, error: `Rewrite below tiered minimum (${words}/${target} words). Try again.` };
+  }
+  enrichArticleRow(articleRow);
+
+  const { error: upsertErr } = await supabaseAdmin
+    .from("daily_articles")
+    .upsert([articleRow], { onConflict: "slug", ignoreDuplicates: true });
+  if (upsertErr) return { ok: false, error: upsertErr.message };
+
+  await supabaseAdmin
+    .from("texas_news_feed")
+    .update({ internal_slug: articleRow.slug })
+    .eq("id", feedItemId);
+
+  // Fire-and-forget image generation; UI already renders without it.
+  void generateFeaturedImageForSlugDirect(articleRow.slug, true).catch(() => undefined);
+
+  return { ok: true, slug: articleRow.slug };
+}
