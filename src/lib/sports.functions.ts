@@ -35,6 +35,27 @@ function client() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 
+function toSportsListItem(r: CategoryFeedItem): SportsListItem {
+  return {
+    slug: r.slug,
+    title: r.title,
+    dek: r.dek ?? "",
+    author: r.author,
+    published_at: r.published_at,
+    image_url: r.image_url,
+    image_hash: r.image_hash,
+    image_category: r.image_category,
+    featured_image_url: r.featured_image_url,
+    image_alt_text: r.image_alt_text,
+    seo_headline: r.seo_headline,
+    discover_category: r.discover_category,
+    keywords: r.keywords,
+    seo_keywords: r.seo_keywords,
+    category: r.category,
+    teams: r.teams,
+  };
+}
+
 export const listSportsByLeague = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ league: z.enum(LEAGUES) }).parse(d))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
