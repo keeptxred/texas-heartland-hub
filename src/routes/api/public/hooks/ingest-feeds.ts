@@ -276,10 +276,16 @@ export function isPuzzleTitle(title: string): boolean {
   return (
     /\bcrossword\b/.test(t) ||
     /\bsudoku\b/.test(t) ||
-    /\bword\s*(game|search|jumble)\b/.test(t) ||
+    /\bword\s*(game|search|jumble|wrangler)\b/.test(t) ||
     /\b(daily|weekly)\s+puzzle\b/.test(t) ||
     /\bpuzzle\s+(for|of\s+the\s+day)\b/.test(t) ||
-    /\bmini\s+puzzle\b/.test(t)
+    /\bmini\s+puzzle\b/.test(t) ||
+    // recurring daily-column filler (mirrors src/lib/low-value-titles.ts)
+    /\bword\s+wrangler\b/.test(t) ||
+    /\bhoroscope(s)?\b/.test(t) ||
+    /\bquiz\s+of\s+the\s+(day|week)\b/.test(t) ||
+    /\bcartoon\s+of\s+the\s+day\b/.test(t) ||
+    /\bnewsletter\b/.test(t)
   );
 }
 

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { isLowValueTitle } from "@/lib/low-value-titles";
 import { FileText, Image as ImageIcon, Flame, Video, Sparkles } from "lucide-react";
 import {
   VIRAL_AUTO_REWRITE_MIN_SCORE,
@@ -48,7 +49,7 @@ export function ViralRadarPanel() {
       .order("viral_score", { ascending: false })
       .order("pub_date", { ascending: false })
       .limit(60);
-    const feed = (data ?? []) as Row[];
+    const feed = ((data ?? []) as Row[]).filter((r) => !isLowValueTitle(r.title));
     setRows(feed);
     const slugs = feed.map((r) => r.internal_slug).filter(Boolean) as string[];
     if (slugs.length > 0) {
