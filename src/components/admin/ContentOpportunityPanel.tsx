@@ -106,6 +106,42 @@ export function ContentOpportunityPanel() {
   const [publishMsg, setPublishMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
   const [articleWorking, setArticleWorking] = useState<Record<number, boolean>>({});
   const [articleMsg, setArticleMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
+  // Ignored opportunities persist in localStorage — no schema change needed and
+  // no underlying feed/article rows are deleted. Keyed by feed id for numeric
+  // ids and by internal slug for synthetic daily_articles rows (negative ids).
+  const IGNORE_STORAGE_KEY = "ktr.opportunities.ignored.v1";
+  const [ignored, setIgnored] = useState<Set<string>>(() => {
+    if (typeof window === "undefined") return new Set();
+    try {
+      const raw = window.localStorage.getItem(IGNORE_STORAGE_KEY);
+      if (!raw) return new Set();
+      const arr = JSON.parse(raw) as unknown;
+      return new Set(Array.isArray(arr) ? arr.map(String) : []);
+    } catch {
+      return new Set();
+    }
+  });
+
+  function ignoreKey(r: Pick<FeedItem, "id" | "internal_slug" | "article_slug" | "link">): string {
+    if (r.id > 0) return `feed:${r.id}`;
+    const slug = r.article_slug ?? r.internal_slug ?? r.link ?? String(r.id);
+    return `article:${slug}`;
+  }
+
+  function ignoreOpportunity(r: FeedItem) {
+    const key = ignoreKey(r);
+    setIgnored((prev) => {
+      if (prev.has(key)) return prev;
+      const next = new Set(prev);
+      next.add(key);
+      try {
+        window.localStorage.setItem(IGNORE_STORAGE_KEY, JSON.stringify([...next]));
+      } catch {
+        // ignore quota errors
+      }
+      return next;
+    });
+  }
 
   async function quickPost(r: Scored) {
     setPublishing((s) => ({ ...s, [r.id]: true }));
@@ -177,7 +213,7 @@ export function ContentOpportunityPanel() {
           .from("texas_news_feed")
           .select("id,title,source,pub_date,internal_slug,link")
           .order("pub_date", { ascending: false })
-          .limit(50),
+          .limit(150),
         // Include original KeepTXRed articles (e.g. sports) that never entered
         // texas_news_feed so they can still be pushed to Facebook.
         supabase
@@ -185,7 +221,7 @@ export function ContentOpportunityPanel() {
           .select("slug,title,category,source_name,published_at,featured_image_url")
           .in("kind", ["sports-nfl", "sports-mlb", "sports-nba", "evergreen"])
           .order("published_at", { ascending: false })
-          .limit(25),
+          .limit(50),
         supabase
           .from("content_packages")
           .select("source_url,source_title")
@@ -302,8 +338,12 @@ export function ContentOpportunityPanel() {
   }, []);
 
   const scored = useMemo(
-    () => items.map(score).sort((a, b) => b.total - a.total),
-    [items],
+    () =>
+      items
+        .filter((it) => !ignored.has(ignoreKey(it)))
+        .map(score)
+        .sort((a, b) => b.total - a.total),
+    [items, ignored],
   );
 
   return (
@@ -333,7 +373,7 @@ export function ContentOpportunityPanel() {
               </tr>
             </thead>
             <tbody>
-              {scored.slice(0, 25).map((r) => {
+              {scored.slice(0, 75).map((r) => {
                 const status = statuses[r.id];
                 const alreadyPublished = !!status?.rewritten;
                 const isDailyArticle = r.id < 0;
@@ -386,6 +426,14 @@ export function ContentOpportunityPanel() {
                             className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
                           >
                             {publishing[r.id] ? "Posting…" : "Post to Facebook"}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => ignoreOpportunity(r)}
+                            title="Hide this opportunity from the list (does not delete the source article)."
+                            className="px-3 py-1 border border-border text-[11px] font-bold uppercase tracking-widest hover:bg-muted"
+                          >
+                            Ignore
                           </button>
                         </div>
                         {articleMsg[r.id]?.text ? (
