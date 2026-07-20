@@ -7,12 +7,14 @@ import {
   VIRAL_AUTO_REWRITE_MIN_CONFIDENCE,
 } from "@/lib/viral-score";
 import { quickPublishToFacebook } from "@/services/quickPublish";
+import { publishFeedItem } from "@/services/publishArticle";
 
 type Row = {
   id: number;
   title: string;
   source: string;
   pub_date: string;
+  created_at: string | null;
   internal_slug: string | null;
   viral_score: number | null;
   classification_confidence: number | null;
@@ -39,13 +41,15 @@ export function ViralRadarPanel() {
   const [msg, setMsg] = useState<string>("");
   const [publishing, setPublishing] = useState<Record<number, boolean>>({});
   const [publishMsg, setPublishMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
+  const [articleWorking, setArticleWorking] = useState<Record<number, boolean>>({});
+  const [articleMsg, setArticleMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
   const [filter, setFilter] = useState<FilterKey>("all");
 
   async function load() {
     setLoading(true);
     const { data } = await supabase
       .from("texas_news_feed")
-      .select("id,title,source,pub_date,internal_slug,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite")
+      .select("id,title,source,pub_date,created_at,internal_slug,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite")
       .order("viral_score", { ascending: false })
       .order("pub_date", { ascending: false })
       .limit(60);
@@ -107,6 +111,7 @@ export function ViralRadarPanel() {
         headline: r.title,
         source: r.source,
         feed_item_id: r.id,
+        slug: r.internal_slug ?? null,
       });
       setPublishMsg((s) => ({
         ...s,
@@ -119,6 +124,34 @@ export function ViralRadarPanel() {
       }));
     } finally {
       setPublishing((s) => ({ ...s, [r.id]: false }));
+    }
+  }
+
+  async function publishToKtr(r: Row) {
+    setArticleWorking((s) => ({ ...s, [r.id]: true }));
+    setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: "" } }));
+    try {
+      const res = await publishFeedItem(r.id);
+      if (res.ok) {
+        setArticleMsg((s) => ({
+          ...s,
+          [r.id]: {
+            ok: true,
+            text: res.alreadyPublished ? "Already published" : "Published to Keep TX Red",
+          },
+        }));
+        // Refresh so the newly created daily_articles row lights up FB button.
+        await load();
+      } else {
+        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
+      }
+    } catch (e) {
+      setArticleMsg((s) => ({
+        ...s,
+        [r.id]: { ok: false, text: e instanceof Error ? e.message : "Publish failed" },
+      }));
+    } finally {
+      setArticleWorking((s) => ({ ...s, [r.id]: false }));
     }
   }
 
@@ -236,6 +269,17 @@ export function ViralRadarPanel() {
                 const qualifies =
                   score >= VIRAL_AUTO_REWRITE_MIN_SCORE &&
                   conf >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE;
+                const canPostToFacebook = !!r.internal_slug && rewritten;
+                const displayDateIso = r.pub_date || r.created_at || null;
+                const displayDateLabel = displayDateIso
+                  ? new Date(displayDateIso).toLocaleDateString("en-US", {
+                      month: "long",
+                      day: "numeric",
+                      year: "numeric",
+                      timeZone: "America/Chicago",
+                    })
+                  : null;
+                const displayDatePrefix = r.pub_date ? "Published" : "Discovered";
                 return (
                   <tr key={r.id} className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
@@ -267,6 +311,11 @@ export function ViralRadarPanel() {
                         {(r.source_count ?? 1) > 1 ? ` · ${r.source_count} sources` : ""}
                         {r.trend_velocity ? ` · v${r.trend_velocity.toFixed(0)}` : ""}
                       </div>
+                      {displayDateLabel ? (
+                        <div className="text-[11px] text-muted-foreground">
+                          {displayDatePrefix}: {displayDateLabel}
+                        </div>
+                      ) : null}
                     </td>
                     <td className="py-2 pr-2 text-[11px] text-muted-foreground">{cat}</td>
                     <td className="py-2 pr-2 text-[10px] font-bold uppercase tracking-widest">{route}</td>
@@ -287,16 +336,40 @@ export function ViralRadarPanel() {
                     </td>
                     <td className="py-2 pr-2 whitespace-nowrap">
                       <div className="flex flex-col items-start gap-1">
-                        <button
-                          type="button"
-                          disabled={!!publishing[r.id]}
-                          onClick={() => void post(r)}
-                          className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
-                        >
-                          {publishing[r.id] ? "Posting…" : "Post to Facebook"}
-                        </button>
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            disabled={!!articleWorking[r.id]}
+                            onClick={() => void publishToKtr(r)}
+                            className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                          >
+                            {articleWorking[r.id]
+                              ? "Publishing…"
+                              : rewritten
+                              ? "Republish"
+                              : "Publish to Keep Texas Red"}
+                          </button>
+                          <button
+                            type="button"
+                            disabled={!!publishing[r.id] || !canPostToFacebook}
+                            onClick={() => void post(r)}
+                            title={
+                              canPostToFacebook
+                                ? undefined
+                                : "Publish to Keep Texas Red first — Facebook posts require a KeepTXRed article URL."
+                            }
+                            className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            {publishing[r.id] ? "Posting…" : "Post to Facebook"}
+                          </button>
+                        </div>
                         {!qualifies ? (
                           <span className="text-[10px] text-muted-foreground">Below auto-rewrite gate</span>
+                        ) : null}
+                        {articleMsg[r.id]?.text ? (
+                          <span className={`text-[10px] ${articleMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
+                            {articleMsg[r.id].text}
+                          </span>
                         ) : null}
                         {publishMsg[r.id]?.text ? (
                           <span className={`text-[10px] ${publishMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
