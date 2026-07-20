@@ -32,6 +32,32 @@ type ArticleMeta = { slug: string; featured_image_url: string | null };
 
 type FilterKey = "all" | "score" | "texas" | "video" | "reel" | "fb" | "seo" | "ready";
 
+const IGNORE_STORAGE_KEY = "ktr.viral.ignored.v1";
+const RECENT_DAYS = 14;
+const FETCH_LIMIT = 150;
+
+function loadIgnored(): Set<number> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const raw = window.localStorage.getItem(IGNORE_STORAGE_KEY);
+    if (!raw) return new Set();
+    const arr = JSON.parse(raw) as unknown;
+    if (!Array.isArray(arr)) return new Set();
+    return new Set(arr.filter((v): v is number => typeof v === "number"));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveIgnored(ids: Set<number>) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(IGNORE_STORAGE_KEY, JSON.stringify([...ids]));
+  } catch {
+    /* ignore quota errors */
+  }
+}
+
 export function ViralRadarPanel() {
   const [rows, setRows] = useState<Row[]>([]);
   const [articles, setArticles] = useState<Record<string, ArticleMeta>>({});
@@ -44,15 +70,18 @@ export function ViralRadarPanel() {
   const [articleWorking, setArticleWorking] = useState<Record<number, boolean>>({});
   const [articleMsg, setArticleMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
   const [filter, setFilter] = useState<FilterKey>("all");
+  const [ignored, setIgnored] = useState<Set<number>>(() => loadIgnored());
 
   async function load() {
     setLoading(true);
+    const cutoffIso = new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000).toISOString();
     const { data } = await supabase
       .from("texas_news_feed")
       .select("id,title,source,pub_date,created_at,internal_slug,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite")
-      .order("viral_score", { ascending: false })
+      .gte("pub_date", cutoffIso)
       .order("pub_date", { ascending: false })
-      .limit(60);
+      .order("viral_score", { ascending: false })
+      .limit(FETCH_LIMIT);
     const feed = ((data ?? []) as Row[]).filter((r) => !isLowValueTitle(r.title));
     setRows(feed);
     const slugs = feed.map((r) => r.internal_slug).filter(Boolean) as string[];
@@ -68,7 +97,21 @@ export function ViralRadarPanel() {
     setLoading(false);
   }
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => {
+    void load();
+    const onFocus = () => { void load(); };
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
+
+  function ignoreRow(id: number) {
+    setIgnored((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      saveIgnored(next);
+      return next;
+    });
+  }
 
   async function rescoreNow() {
     setScoring(true);
@@ -155,17 +198,16 @@ export function ViralRadarPanel() {
     }
   }
 
-  const RECENT_DAYS = 14;
-
   const recentRows = useMemo(() => {
     const cutoff = Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000;
     return rows.filter((r) => {
+      if (ignored.has(r.id)) return false;
       const dateIso = r.pub_date || r.created_at;
       if (!dateIso) return true;
       const dateMs = new Date(dateIso).getTime();
       return !Number.isNaN(dateMs) && dateMs >= cutoff;
     });
-  }, [rows]);
+  }, [rows, ignored]);
 
   const total = useMemo(() => recentRows.length, [recentRows]);
 
@@ -189,7 +231,7 @@ export function ViralRadarPanel() {
       default:
         return arr;
     }
-  }, [rows, filter]);
+  }, [recentRows, filter]);
 
   return (
     <div className="border-2 border-foreground/10 bg-card p-5">
