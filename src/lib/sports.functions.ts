@@ -4,6 +4,7 @@ import { z } from "zod";
 import { TEAM_BY_SLUG, isTeamSlug } from "./texas-teams";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
+import { getArticlesByCategory, type CategoryFeedItem } from "./category-feed.functions";
 
 export type SportsListItem = {
   slug: string;
@@ -37,20 +38,16 @@ function client() {
 export const listSportsByLeague = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ league: z.enum(LEAGUES) }).parse(d))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
-    const supabase = client();
-    if (!supabase) return { items: [] };
-    const { data: rows, error } = await supabase
-      .from("daily_articles")
-      .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams,kind,body_json")
-      .eq("kind", `sports-${data.league}`)
-      .order("published_at", { ascending: false })
-      .limit(100);
-    if (error || !rows) return { items: [] };
-    const items = (rows as (SportsListItem & { kind?: string | null; body_json?: unknown })[])
-      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
-      .filter((row) => shouldDisplayBreakingSports(row.kind, row.published_at, "league"))
+    // Route the league feed through the shared category feed service so
+    // daily_articles stays the single source of truth. Sports-specific
+    // lifecycle gating (breaking → team → archive) is applied after.
+    const rows = await getArticlesByCategory({
+      data: { kind: `sports-${data.league}`, limit: 100, order: "newest" },
+    });
+    const items = rows
+      .filter((r) => shouldDisplayBreakingSports(r.kind, r.published_at, "league"))
       .slice(0, 50)
-      .map(({ kind: _kind, body_json: _bodyJson, ...row }) => row);
+      .map(toSportsListItem);
     return { items };
   });
 
