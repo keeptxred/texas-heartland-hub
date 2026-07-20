@@ -208,6 +208,7 @@ function DashboardPage() {
     return items.filter((it) => {
       const ts = Date.parse(it.pub_date);
       if (!isNaN(ts) && ts < cutoff) return false;
+      if (isLowValueTitle(it.title)) return false;
       if (src !== "All" && !it.source.toLowerCase().includes(src.toLowerCase())) return false;
       if (!needle) return true;
       return (
