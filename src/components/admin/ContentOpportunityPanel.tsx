@@ -116,7 +116,7 @@ export function ContentOpportunityPanel() {
         source: r.source,
         // Daily-articles rows use synthetic negative ids; feed rows keep their real id.
         feed_item_id: r.id > 0 ? r.id : null,
-        slug: r.article_slug ?? null,
+        slug: r.article_slug ?? r.internal_slug ?? null,
         source_url: r.article_url ?? null,
         asset_url: r.article_asset_url ?? null,
       });
@@ -337,6 +337,11 @@ export function ContentOpportunityPanel() {
                 const status = statuses[r.id];
                 const alreadyPublished = !!status?.rewritten;
                 const isDailyArticle = r.id < 0;
+                // Facebook posts always link to a KeepTXRed article URL. A
+                // feed row is only postable once it has an internal_slug AND
+                // a matching daily_articles row (status.rewritten).
+                const canPostToFacebook =
+                  isDailyArticle || (!!r.internal_slug && !!status?.rewritten);
                 return (
                   <tr key={r.id} className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
@@ -371,9 +376,14 @@ export function ContentOpportunityPanel() {
                           )}
                           <button
                             type="button"
-                            disabled={!!publishing[r.id]}
+                            disabled={!!publishing[r.id] || !canPostToFacebook}
                             onClick={() => void quickPost(r)}
-                            className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                            title={
+                              canPostToFacebook
+                                ? undefined
+                                : "Publish to Keep Texas Red first — Facebook posts require a KeepTXRed article URL."
+                            }
+                            className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
                           >
                             {publishing[r.id] ? "Posting…" : "Post to Facebook"}
                           </button>
