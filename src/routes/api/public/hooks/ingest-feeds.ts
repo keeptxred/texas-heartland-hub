@@ -634,7 +634,13 @@ async function handler() {
     }),
   );
 
-  const all = results.flatMap((r) => r.items);
+  const allRaw = results.flatMap((r) => r.items);
+  const preRelevanceCount = allRaw.length;
+  const all = allRaw.filter(isTexasRelevantItem);
+  const droppedNonTexas = preRelevanceCount - all.length;
+  if (droppedNonTexas > 0) {
+    console.log(`[ingest-feeds] dropped ${droppedNonTexas} non-Texas items (relevance < ${TEXAS_RELEVANCE_MIN})`);
+  }
   const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
   const okSources = results.filter((r) => (r as { status?: number }).status && (r as { status: number }).status >= 200 && (r as { status: number }).status < 300).length;
   console.log(`[ingest-feeds] fetched ${all.length} items from ${okSources}/${SOURCES.length} sources`);
