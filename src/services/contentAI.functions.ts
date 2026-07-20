@@ -39,12 +39,14 @@ Category: ${data.category}
 Published: ${data.publishedAt}
 Description: ${data.description || "(none)"}
 
-Generate a social + SEO package. Return JSON exactly in this shape:
+Generate a social + SEO package. Return JSON exactly in this shape.
+Rules for facebookPost: Do NOT include the publisher name or any "Source:" line.
+Do NOT write "Read more at KeepTXRed.com". Do NOT include any URL — Facebook attaches the article link automatically.
 {
   "facebookPost": {
     "hook": "1 attention-grabbing opening line",
-    "body": "2-4 sentence summary grounded in the headline",
-    "callToAction": "1 short CTA pointing to KeepTXRed.com",
+    "body": "2-4 sentence engagement summary grounded in the headline. No publisher name, no 'Source:' line, no URL.",
+    "callToAction": "1 short engagement CTA (e.g. a question to readers). Do NOT write 'Read more at KeepTXRed.com'. No URL.",
     "hashtags": ["#KeepTexasRed", "..."]
   },
   "instagramReel": {
