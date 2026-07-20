@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
+import { isLowValueTitle } from "@/lib/low-value-titles";
 
 const FAQS = [
   {
