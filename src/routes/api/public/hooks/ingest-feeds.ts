@@ -1129,19 +1129,34 @@ export async function publishSingleFeedItem(
   // the public JSON endpoint so the AI rewrite has real source material.
   // Refuse to publish headline-only Reddit posts rather than fabricating facts.
   if (isRedditLink(item.link)) {
-    const selftext = await fetchRedditSelftext(item.link);
-    const meaningful = selftext && wordCount(selftext) >= 40;
-    if (!meaningful) {
+    const { selftext, externalUrl } = await fetchRedditPostData(item.link);
+    const selftextMeaningful = !!selftext && wordCount(selftext) >= 40;
+    let linkedText: string | null = null;
+    let linkedFrom: string | null = null;
+    if (!selftextMeaningful && externalUrl) {
+      const fetched = await fetchLinkedArticleText(externalUrl);
+      if (fetched && wordCount(fetched) >= 80) {
+        linkedText = fetched;
+        linkedFrom = externalUrl;
+      }
+    }
+    if (!selftextMeaningful && !linkedText) {
       return {
         ok: false,
         error:
           "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",
       };
     }
+    const parts: string[] = [];
     const base = item.description?.trim() ?? "";
-    item.description = base
-      ? `${base}\n\nREDDIT SELFTEXT:\n${selftext}`
-      : `REDDIT SELFTEXT:\n${selftext}`;
+    if (base) parts.push(base);
+    if (selftextMeaningful) parts.push(`REDDIT SELFTEXT:\n${selftext}`);
+    if (linkedText) parts.push(`LINKED SOURCE (${linkedFrom}):\n${linkedText}`);
+    item.description = parts.join("\n\n");
+    if (linkedFrom && (!item.link || isRedditLink(item.link))) {
+      // Keep the original Reddit link untouched on the feed row; only surface
+      // the linked source in-prompt so the AI cites the underlying article.
+    }
   }
 
   const rw = await rewriteItemWithRetry(item, lovableApiKey);
