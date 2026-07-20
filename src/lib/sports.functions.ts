@@ -4,6 +4,7 @@ import { z } from "zod";
 import { TEAM_BY_SLUG, isTeamSlug } from "./texas-teams";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
+import { getArticlesByCategory } from "./category-feed.functions";
 
 export type SportsListItem = {
   slug: string;
@@ -37,20 +38,30 @@ function client() {
 export const listSportsByLeague = createServerFn({ method: "GET" })
   .inputValidator((d) => z.object({ league: z.enum(LEAGUES) }).parse(d))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
-    const supabase = client();
-    if (!supabase) return { items: [] };
-    const { data: rows, error } = await supabase
-      .from("daily_articles")
-      .select("slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams,kind,body_json")
-      .eq("kind", `sports-${data.league}`)
-      .order("published_at", { ascending: false })
-      .limit(100);
-    if (error || !rows) return { items: [] };
-    const items = (rows as (SportsListItem & { kind?: string | null; body_json?: unknown })[])
-      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
+    const rows = await getArticlesByCategory({
+      data: { kind: `sports-${data.league}`, limit: 100, order: "newest" },
+    });
+    const items = rows
       .filter((row) => shouldDisplayBreakingSports(row.kind, row.published_at, "league"))
       .slice(0, 50)
-      .map(({ kind: _kind, body_json: _bodyJson, ...row }) => row);
+      .map((r) => ({
+        slug: r.slug,
+        title: r.title,
+        dek: r.dek ?? "",
+        author: r.author,
+        published_at: r.published_at,
+        image_url: r.image_url,
+        image_hash: r.image_hash,
+        image_category: r.image_category,
+        featured_image_url: r.featured_image_url,
+        image_alt_text: r.image_alt_text,
+        seo_headline: r.seo_headline,
+        discover_category: r.discover_category,
+        keywords: r.keywords,
+        seo_keywords: r.seo_keywords,
+        category: r.category,
+        teams: null,
+      }));
     return { items };
   });
 
