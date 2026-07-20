@@ -70,12 +70,6 @@ function score(item: FeedItem): Scored {
   };
 }
 
-function recommendation(total: number): { label: string; tone: string } {
-  if (total >= 80) return { label: "Create Social Package", tone: "text-emerald-600" };
-  if (total >= 60) return { label: "Review", tone: "text-amber-600" };
-  return { label: "Monitor", tone: "text-muted-foreground" };
-}
-
 function OpportunityStatusBadges({ status }: { status?: OpportunityStatus }) {
   if (!status) return null;
   return (
