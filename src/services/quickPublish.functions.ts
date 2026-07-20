@@ -14,6 +14,7 @@ const Input = z.object({
   feed_item_id: z.number().int().nullable().optional(),
   caption: z.string().default(""),
   asset_url: z.string().nullable().optional(),
+  slug: z.string().nullable().optional(),
 });
 
 const GRAPH_VERSION = "v21.0";
@@ -246,7 +247,15 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     }
 
     // 2. Validate article URL — Facebook article posts must always carry a link.
-    const articleUrl = validateArticleUrl(data.source_url);
+    //    For original KeepTXRed articles (daily_articles), the caller may pass a slug
+    //    instead of an external source_url. Fall back to the canonical internal URL.
+    let articleUrl = validateArticleUrl(data.source_url);
+    if (!articleUrl && data.slug) {
+      const safeSlug = String(data.slug).trim().replace(/^\/+|\/+$/g, "");
+      if (safeSlug && /^[a-z0-9-]+$/i.test(safeSlug)) {
+        articleUrl = `${SITE_URL}/news/${safeSlug}`;
+      }
+    }
     if (!articleUrl) {
       return {
         ok: false,
