@@ -9,7 +9,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { CATEGORY_SLUG_TO_NAME, isCategorySlug } from "./articles-by-category";
-import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { getArticlesByCategory, type CategoryFeedItem } from "./category-feed.functions";
 
 export type LiveArticleRow = {
   slug: string;
@@ -38,30 +38,26 @@ export const getLiveArticlesByCategory = createServerFn({ method: "GET" })
   .handler(async ({ data }): Promise<LiveArticleRow[]> => {
     if (!isCategorySlug(data.activeFilter)) return [];
     const categoryName = CATEGORY_SLUG_TO_NAME[data.activeFilter];
-
-    const { createClient } = await import("@supabase/supabase-js");
-    const url = process.env.SUPABASE_URL;
-    const key = process.env.SUPABASE_PUBLISHABLE_KEY;
-    if (!url || !key) return [];
-    const supabase = createClient(url, key, {
-      auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+    const rows = await getArticlesByCategory({
+      data: { category: categoryName, limit: 24, order: "newest" },
     });
-
-    const { data: rows, error } = await supabase
-      .from("daily_articles")
-      .select(
-        "slug,title,dek,category,image_url,image_category,image_hash,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,kind,body_json",
-      )
-      .eq("category", categoryName)
-      .order("published_at", { ascending: false })
-      .limit(80);
-
-    if (error) {
-      console.error("getLiveArticlesByCategory failed", error);
-      return [];
-    }
-    return ((rows ?? []) as (LiveArticleRow & { body_json?: unknown })[])
-      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
-      .slice(0, 24)
-      .map(({ body_json: _bodyJson, ...row }) => row);
+    return rows.map((r: CategoryFeedItem) => ({
+      slug: r.slug,
+      title: r.title,
+      dek: r.dek,
+      category: r.category,
+      image_url: r.image_url,
+      image_category: r.image_category,
+      image_hash: r.image_hash,
+      featured_image_url: r.featured_image_url,
+      image_alt_text: r.image_alt_text,
+      seo_headline: r.seo_headline,
+      discover_category: r.discover_category,
+      keywords: r.keywords,
+      seo_keywords: r.seo_keywords,
+      source_name: r.source_name,
+      author: r.author,
+      published_at: r.published_at,
+      kind: r.kind ?? "",
+    }));
   });
