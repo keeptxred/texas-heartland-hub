@@ -17,6 +17,7 @@ export function isLowValueTitle(title: string | null | undefined): boolean {
     /\bword\s+wrangler\b/.test(t) ||
     /\bhoroscope(s)?\b/.test(t) ||
     /\bquiz\s+of\s+the\s+(day|week)\b/.test(t) ||
-    /\bcartoon\s+of\s+the\s+day\b/.test(t)
+    /\bcartoon\s+of\s+the\s+day\b/.test(t) ||
+    /\bnewsletter\b/.test(t)
   );
 }
