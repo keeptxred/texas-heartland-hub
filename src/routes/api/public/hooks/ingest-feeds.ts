@@ -377,6 +377,7 @@ SCHEMA:
 {"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"substantial opening section","relevance":"substantial Texas relevance section","analysis":"optional labeled editorial interpretation, or omit","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}],"category":"one of the allowed values"}`;
 
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
+  // no-op marker to anchor patch
   try {
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
