@@ -106,6 +106,55 @@ const POLITICS_KEYWORDS = ["legislature", "governor", "abbott", "paxton", "patri
 const BREAKING_KEYWORDS = ["breaking", "shooting", "killed", "arrested", "explosion", "tornado", "hurricane", "flood", "emergency", "evacuation", "manhunt", "amber alert", "indicted", "resign"];
 const ENGAGEMENT_KEYWORDS = ["exclusive", "revealed", "what we know", "first on", "investigation", "leaked", "exposes", "warns"];
 
+// Hard disqualifiers — content shapes that must NEVER be tagged breaking,
+// regardless of raw keyword score. Covers Reddit-style help posts, personal
+// experiences, listicles, travel/restaurant guides, opinion threads, and
+// evergreen explainers. Genuine news (politics, public safety, weather
+// emergencies, court rulings, elections, major business/sports) is unaffected.
+const NON_BREAKING_TITLE_PATTERNS: RegExp[] = [
+  /^\s*(looking for|anyone (?:know|have|tried)|recommend|recommendations?|suggestions?|advice|help|where (?:can|do|to)|how (?:do|to|can)|what(?:'s| is) the best|best way to|has anyone|is there|question:|discussion:|thoughts on)\b/i,
+  /\b(my|our) (?:experience|story|take|journey|trip)\b/i,
+  /\b(top|best|worst)\s+\d+\b/i,
+  /\b\d+\s+(?:things|ways|reasons|tips|places|foods|restaurants|hikes|spots|facts|signs)\b/i,
+  /\b(travel guide|city guide|restaurant (?:review|guide)|food review|things to do|day trip|road trip|weekend (?:in|getaway)|hidden gems|bucket list)\b/i,
+  /\b(opinion|op-ed|editorial|commentary|column|hot take|unpopular opinion|change my mind)\b/i,
+  /\b(quiz|horoscope|crossword|sudoku|puzzle|recipe|meal plan|workout|playlist)\b/i,
+  /\b(everything you need to know|complete guide|ultimate guide|explained|explainer|primer|faq)\b/i,
+  /\b(house call|mobile (?:vet|veterinar)|pet sitter|babysitter|handyman|plumber|electrician|contractor|realtor)\b/i,
+];
+
+// Sources that are structurally discussion/personal-experience venues.
+// Anything from these is disqualified from breaking even if the neutralized
+// headline picks up an incidental keyword.
+const NON_BREAKING_SOURCE_PATTERNS: RegExp[] = [
+  /^r\//i,           // any subreddit
+  /reddit/i,
+  /medium/i,
+  /substack/i,
+  /blog/i,
+  /opinion/i,
+  /lifestyle/i,
+  /travel/i,
+  /food(?:ie)?/i,
+  /eater/i,
+  /culture/i,
+];
+
+// Positive signal required for a breaking classification: a real news verb
+// or a hard-news noun tied to Texas government / public safety / markets.
+// Without at least one of these, we don't upgrade to breaking even if the
+// score crosses the threshold via generic Texas/metro weight alone.
+const HARD_NEWS_SIGNAL =
+  /\b(breaking|shooting|killed|arrested|explosion|tornado|hurricane|flood|emergency|evacuation|manhunt|amber alert|indicted|resign|signs|declares|announces|ruling|verdict|convicted|charged|sues|lawsuit|veto|vetoes|appoints|passes|approves|filed|election|ballot|primary|runoff|governor|legislature|senate bill|house bill|\bsb\s?\d|\bhb\s?\d|paxton|abbott|patrick|cornyn|cruz|border|ercot|grid|recall|impeach|storm|wildfire|evacuat|acquires|merger|ipo|championship|traded|signs deal|hired|fired)\b/i;
+
+function isDisqualifiedFromBreaking(item: RssItem): boolean {
+  const title = item.title ?? "";
+  const src = item.source ?? "";
+  if (NON_BREAKING_TITLE_PATTERNS.some((re) => re.test(title))) return true;
+  if (NON_BREAKING_SOURCE_PATTERNS.some((re) => re.test(src))) return true;
+  return false;
+}
+
 function scoreItem(item: RssItem, titleRepetition: number): number {
   const haystack = `${item.title} ${item.description}`.toLowerCase();
   let score = 0;
@@ -142,7 +191,11 @@ function scoreAndFilter(items: RssItem[]): ScoredItem[] {
     .map((it) => {
       const reps = fingerprints.get(titleFingerprint(it.title)) ?? 1;
       const score = scoreItem(it, reps);
-      return { ...it, score, isBreaking: score >= 18 };
+      const haystack = `${it.title} ${it.description}`;
+      const hasHardNews = HARD_NEWS_SIGNAL.test(haystack);
+      const disqualified = isDisqualifiedFromBreaking(it);
+      const isBreaking = score >= 18 && hasHardNews && !disqualified;
+      return { ...it, score, isBreaking };
     })
     .filter((it) => it.score >= 12 && !isPuzzleTitle(it.title))
     .sort((a, b) => b.score - a.score)
