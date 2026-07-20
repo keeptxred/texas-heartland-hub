@@ -304,16 +304,11 @@ function DashboardPage() {
                 key={`${it.link}-${i}`}
                 className="border-2 border-foreground/10 bg-card p-5 hover:border-primary transition-colors"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
-                    {it.source}
-                  </span>
-                  {it.pub_date ? (
-                    <time className="text-[10px] text-muted-foreground" dateTime={it.pub_date}>
-                      {timeAgo(it.pub_date)}
-                    </time>
-                  ) : null}
-                </div>
+                {it.pub_date ? (
+                  <time className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-2" dateTime={it.pub_date}>
+                    {timeAgo(it.pub_date)}
+                  </time>
+                ) : null}
                 <h3 className="font-serif text-base font-bold leading-snug">
                   <a
                     href={it.link}
@@ -326,6 +321,9 @@ function DashboardPage() {
                 {it.description ? (
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{it.description}</p>
                 ) : null}
+                <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-primary">
+                  Source: {it.source}
+                </p>
               </article>
             ))}
           </div>
