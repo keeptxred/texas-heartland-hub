@@ -9,6 +9,10 @@ import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
 import { articleMainWordCount } from "@/lib/article-length";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
+import {
+  runEditorialRewrite,
+  type StoryBrief,
+} from "@/lib/editorial-pipeline";
 
 // Reuses the existing Texas relevance scorer (title + description + source
 // entity signals) so a source labelled "USGS Earthquakes — Texas" cannot push
