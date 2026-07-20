@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { meetsArticleMainWordCount } from "@/lib/article-length";
 
 function authOk(token: string): boolean {
   const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
@@ -262,6 +263,32 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         error:
           "Cannot publish to Facebook: a valid http(s) article URL is required. This item has no article link attached.",
       };
+    }
+
+    // 2b. If we're linking to an internal KeepTXRed article, verify the row
+    //     exists AND passes the same visibility gate that /news/{slug} uses.
+    //     Otherwise Facebook would happily post a link that 404s on click.
+    if (data.slug && articleUrl.startsWith(`${SITE_URL}/news/`)) {
+      const safeSlug = String(data.slug).trim().replace(/^\/+|\/+$/g, "");
+      const { data: articleRow } = await supabaseAdmin
+        .from("daily_articles")
+        .select("kind, body_json")
+        .eq("slug", safeSlug)
+        .maybeSingle();
+      if (!articleRow) {
+        return {
+          ok: false,
+          error:
+            "Cannot publish: this item does not have a KeepTXRed article yet. Click 'Publish to Keep Texas Red' first.",
+        };
+      }
+      if (!meetsArticleMainWordCount(articleRow.kind, articleRow.body_json as never)) {
+        return {
+          ok: false,
+          error:
+            "Cannot publish: the KeepTXRed article is below the minimum length and would 404. Regenerate the article before posting.",
+        };
+      }
     }
 
     // 3. Persist a lightweight content package (no AI).
