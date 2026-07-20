@@ -995,6 +995,26 @@ export async function publishSingleFeedItem(
     pub_date: row.pub_date,
     description: row.description ?? "",
   };
+
+  // Reddit RSS descriptions rarely contain the post body — pull selftext from
+  // the public JSON endpoint so the AI rewrite has real source material.
+  // Refuse to publish headline-only Reddit posts rather than fabricating facts.
+  if (isRedditLink(item.link)) {
+    const selftext = await fetchRedditSelftext(item.link);
+    const meaningful = selftext && wordCount(selftext) >= 40;
+    if (!meaningful) {
+      return {
+        ok: false,
+        error:
+          "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",
+      };
+    }
+    const base = item.description?.trim() ?? "";
+    item.description = base
+      ? `${base}\n\nREDDIT SELFTEXT:\n${selftext}`
+      : `REDDIT SELFTEXT:\n${selftext}`;
+  }
+
   const rw = await rewriteItemWithRetry(item, lovableApiKey);
   if (!rw) return { ok: false, error: "AI rewrite failed" };
 
