@@ -12,6 +12,11 @@ type FeedItem = {
   pub_date: string;
   internal_slug: string | null;
   link: string | null;
+  // When set, this row is an already-published daily_articles piece surfaced
+  // for Facebook distribution rather than an RSS feed item.
+  article_slug?: string | null;
+  article_asset_url?: string | null;
+  article_url?: string | null;
 };
 
 type OpportunityStatus = {
@@ -109,7 +114,11 @@ export function ContentOpportunityPanel() {
       const res = await quickPublishToFacebook({
         headline: r.title,
         source: r.source,
-        feed_item_id: r.id,
+        // Daily-articles rows use synthetic negative ids; feed rows keep their real id.
+        feed_item_id: r.id > 0 ? r.id : null,
+        slug: r.article_slug ?? null,
+        source_url: r.article_url ?? null,
+        asset_url: r.article_asset_url ?? null,
       });
       if (res.ok) {
         setPublishMsg((s) => ({ ...s, [r.id]: { ok: true, text: "Published to Facebook" } }));
@@ -163,14 +172,69 @@ export function ContentOpportunityPanel() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const { data } = await supabase
-        .from("texas_news_feed")
-        .select("id,title,source,pub_date,internal_slug,link")
-        .order("pub_date", { ascending: false })
-        .limit(50);
+      const [feedRes, articleRes, pkgRes] = await Promise.all([
+        supabase
+          .from("texas_news_feed")
+          .select("id,title,source,pub_date,internal_slug,link")
+          .order("pub_date", { ascending: false })
+          .limit(50),
+        // Include original KeepTXRed articles (e.g. sports) that never entered
+        // texas_news_feed so they can still be pushed to Facebook.
+        supabase
+          .from("daily_articles")
+          .select("slug,title,category,source_name,published_at,featured_image_url")
+          .in("kind", ["sports-nfl", "sports-mlb", "sports-nba", "evergreen"])
+          .order("published_at", { ascending: false })
+          .limit(25),
+        supabase
+          .from("content_packages")
+          .select("source_url,source_title")
+          .eq("workflow_status", "PUBLISHED"),
+      ]);
       if (!active) return;
-      const raw = (data ?? []) as FeedItem[];
-      const feed = raw.filter((f) => !isLowValueTitle(f.title));
+      const rawFeed = (feedRes.data ?? []) as FeedItem[];
+      const rawArticles = (articleRes.data ?? []) as Array<{
+        slug: string;
+        title: string;
+        category: string | null;
+        source_name: string | null;
+        published_at: string;
+        featured_image_url: string | null;
+      }>;
+
+      // Dedupe: skip daily_articles items already sent to Facebook via a
+      // published content_packages row (matched by internal URL slug or title).
+      const publishedSlugs = new Set<string>();
+      const publishedTitles = new Set<string>();
+      ((pkgRes.data ?? []) as Array<{ source_url: string | null; source_title: string | null }>).forEach(
+        (p) => {
+          if (p.source_url) {
+            const m = p.source_url.match(/\/news\/([^/?#]+)/);
+            if (m) publishedSlugs.add(m[1].toLowerCase());
+          }
+          if (p.source_title) publishedTitles.add(p.source_title.toLowerCase().trim());
+        },
+      );
+
+      const articleFeed: FeedItem[] = rawArticles
+        .filter(
+          (a) =>
+            !publishedSlugs.has(a.slug.toLowerCase()) &&
+            !publishedTitles.has(a.title.toLowerCase().trim()),
+        )
+        .map((a, i) => ({
+          id: -(i + 1), // synthetic negative id to avoid colliding with feed ids
+          title: a.title,
+          source: a.source_name || a.category || "KeepTXRed",
+          pub_date: a.published_at,
+          internal_slug: a.slug,
+          link: `https://www.keeptxred.com/news/${a.slug}`,
+          article_slug: a.slug,
+          article_asset_url: a.featured_image_url,
+          article_url: `https://www.keeptxred.com/news/${a.slug}`,
+        }));
+
+      const feed = [...rawFeed, ...articleFeed].filter((f) => !isLowValueTitle(f.title));
       setItems(feed);
 
       const slugs = feed.map((f) => f.internal_slug).filter(Boolean) as string[];
@@ -212,6 +276,17 @@ export function ContentOpportunityPanel() {
       const statusMap: Record<number, OpportunityStatus> = {};
       feed.forEach((f) => {
         const article = f.internal_slug ? articleMap.get(f.internal_slug) : null;
+        // Daily-articles rows are already published on-site; mark them as
+        // rewritten + imageReady based on their own data so the badges reflect
+        // reality even though they never went through the feed rewrite path.
+        if (f.id < 0) {
+          statusMap[f.id] = {
+            rewritten: true,
+            imageReady: !!f.article_asset_url,
+            reelReady: reelSet.has(f.id),
+          };
+          return;
+        }
         statusMap[f.id] = {
           rewritten: !!article,
           imageReady: !!article?.featured_image_url,
@@ -261,6 +336,7 @@ export function ContentOpportunityPanel() {
               {scored.slice(0, 25).map((r) => {
                 const status = statuses[r.id];
                 const alreadyPublished = !!status?.rewritten;
+                const isDailyArticle = r.id < 0;
                 return (
                   <tr key={r.id} className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
@@ -279,18 +355,20 @@ export function ContentOpportunityPanel() {
                     <td className="py-2 pr-2 whitespace-nowrap">
                       <div className="flex flex-col items-start gap-1">
                         <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            disabled={!!articleWorking[r.id]}
-                            onClick={() => void publishArticle(r)}
-                            className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
-                          >
-                            {articleWorking[r.id]
-                              ? "Publishing…"
-                              : alreadyPublished
-                              ? "Republish"
-                              : "Publish to Keep Texas Red"}
-                          </button>
+                          {isDailyArticle ? null : (
+                            <button
+                              type="button"
+                              disabled={!!articleWorking[r.id]}
+                              onClick={() => void publishArticle(r)}
+                              className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                            >
+                              {articleWorking[r.id]
+                                ? "Publishing…"
+                                : alreadyPublished
+                                ? "Republish"
+                                : "Publish to Keep Texas Red"}
+                            </button>
+                          )}
                           <button
                             type="button"
                             disabled={!!publishing[r.id]}

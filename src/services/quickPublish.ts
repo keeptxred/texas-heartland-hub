@@ -18,6 +18,7 @@ export function quickPublishToFacebook(input: {
   feed_item_id?: number | null;
   caption?: string;
   asset_url?: string | null;
+  slug?: string | null;
 }): Promise<QuickPublishResult> {
   return quickPublishToFacebookFn({
     data: {
@@ -28,6 +29,7 @@ export function quickPublishToFacebook(input: {
       feed_item_id: input.feed_item_id ?? null,
       caption: input.caption ?? "",
       asset_url: input.asset_url ?? null,
+      slug: input.slug ?? null,
     },
   });
 }
