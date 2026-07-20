@@ -4,6 +4,11 @@ import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { isPuzzleTitle } from "./ingest-feeds";
 import { meetsArticleMainWordCount, NON_EVERGREEN_MIN_MAIN_WORDS } from "@/lib/article-length";
+import {
+  EDITORIAL_SYSTEM_ADDENDUM,
+  validateArticle,
+  type StoryBrief,
+} from "@/lib/editorial-pipeline";
 
 type NewsSection = { heading: string; paragraphs: string[] };
 
@@ -276,7 +281,7 @@ CATEGORY CLASSIFICATION RULES (strict):
     body: JSON.stringify({
       model: "google/gemini-3-flash-preview",
       messages: [
-        { role: "system", content: system },
+        { role: "system", content: system + EDITORIAL_SYSTEM_ADDENDUM + `\n\nBATCH NOTE: for a batch call, include the "brief" object INSIDE each articles[] entry, e.g. {"articles":[{"brief":{...}, "source_index":..., "title":..., ...}]}. Any article whose brief.hasClearNewsEvent is false will be discarded — leave that entry's body fields empty rather than fabricating.` },
         { role: "user", content: `Source stories:\n\n${list}` },
       ],
       response_format: { type: "json_object" },
@@ -293,6 +298,7 @@ CATEGORY CLASSIFICATION RULES (strict):
   const content = data.choices?.[0]?.message?.content ?? "{}";
   const parsed = JSON.parse(content) as {
     articles?: {
+      brief?: StoryBrief;
       source_index: number;
       category: string;
       title: string;
@@ -303,7 +309,35 @@ CATEGORY CLASSIFICATION RULES (strict):
       faq?: { q: string; a: string }[];
     }[];
   };
-  return parsed.articles ?? [];
+  // Editorial validation: drop fabricated / off-topic / filler drafts before
+  // they reach the insert path. Batch mode does not retry per-item — a
+  // failing article is simply omitted from this run.
+  const raw = parsed.articles ?? [];
+  const kept: typeof raw = [];
+  for (const a of raw) {
+    if (a?.brief?.hasClearNewsEvent === false) continue;
+    const v = validateArticle(
+      {
+        title: a.title,
+        dek: a.dek,
+        summary: a.summary,
+        relevance: a.relevance,
+        sections: (a as { sections?: NewsSection[] }).sections,
+        faq: a.faq,
+        keyTakeaways: a.keyTakeaways,
+      },
+      a.brief,
+    );
+    if (!v.ok) {
+      console.warn("[generate-news] editorial validation dropped article", {
+        title: a.title,
+        reasons: v.reasons,
+      });
+      continue;
+    }
+    kept.push(a);
+  }
+  return kept;
 }
 
 export const Route = createFileRoute("/api/public/hooks/generate-news")({

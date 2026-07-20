@@ -9,6 +9,7 @@ import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
 import { articleMainWordCount } from "@/lib/article-length";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
+import { runEditorialRewrite } from "@/lib/editorial-pipeline";
 
 // Reuses the existing Texas relevance scorer (title + description + source
 // entity signals) so a source labelled "USGS Earthquakes — Texas" cannot push
@@ -499,46 +500,68 @@ async function fetchLinkedArticleText(url: string): Promise<string | null> {
 }
 
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
-  try {
-    // Neutralize first-person / personal-experience headlines BEFORE the AI
-    // sees them so the model never echoes "I visited…" / "My parents…" back
-    // into the article title, prompt, or downstream Facebook caption.
-    const neutralized = neutralizeFirstPersonTitle(it.title);
-    if (neutralized && neutralized !== it.title) {
-      it.title = neutralized;
-    }
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          { role: "system", content: REWRITE_SYSTEM },
-          {
-            role: "user",
-            content: `SOURCE: ${it.source}\nORIGINAL HEADLINE: ${it.title}\nORIGINAL SUMMARY: ${it.description}\nLINK: ${it.link}\nDATE: ${it.pub_date}\n\nRewrite per the rules. Return JSON only.`,
-          },
-        ],
-        response_format: { type: "json_object" },
-        max_tokens: 9000,
-      }),
+  // Neutralize first-person / personal-experience headlines BEFORE the AI
+  // sees them so the model never echoes "I visited…" / "My parents…" back
+  // into the article title, prompt, or downstream Facebook caption.
+  const neutralized = neutralizeFirstPersonTitle(it.title);
+  if (neutralized && neutralized !== it.title) {
+    it.title = neutralized;
+  }
+
+  // Route the AI call through the shared editorial pipeline. The pipeline
+  // appends the analyze-first / fact-extraction / relationship-validation
+  // addendum to REWRITE_SYSTEM, requires the model to emit a "brief" block
+  // before any article prose, validates the returned article, and retries
+  // once with a stricter prompt if validation fails. If the brief reports no
+  // clear news event, or validation fails twice, the pipeline returns null
+  // instead of a fabricated article.
+  const userMessage = `SOURCE: ${it.source}\nORIGINAL HEADLINE: ${it.title}\nORIGINAL SUMMARY: ${it.description}\nLINK: ${it.link}\nDATE: ${it.pub_date}\n\nRewrite per the rules. Return JSON only.`;
+
+  const result = await runEditorialRewrite<Rewrite>(async (addendum) => {
+    try {
+      const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+        body: JSON.stringify({
+          model: "google/gemini-3-flash-preview",
+          messages: [
+            { role: "system", content: REWRITE_SYSTEM + addendum },
+            { role: "user", content: userMessage },
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: 9000,
+        }),
         signal: AbortSignal.timeout(90000),
-    });
-    if (!r.ok) return null;
-    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Rewrite;
-    if (!parsed?.title || !parsed?.summary || !parsed?.dek) return null;
-    if (!parsed?.relevance || parsed.relevance.trim().length < 40) return null;
-    parsed.dek = parsed.dek.slice(0, 155);
-    parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
-    parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
-    parsed.sections = (parsed.sections ?? [])
-      .filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0)
-      .slice(0, 10);
-    return parsed;
-  } catch {
+      });
+      if (!r.ok) return { raw: null };
+      const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+      return { raw: data.choices?.[0]?.message?.content ?? null };
+    } catch {
+      return { raw: null };
+    }
+  });
+
+  const parsed = result.article;
+  if (!parsed) {
+    if (result.droppedReason) {
+      console.warn("[ingest-feeds] editorial pipeline dropped item", {
+        source: it.source,
+        link: it.link,
+        reason: result.droppedReason,
+        validation: result.validation.reasons,
+      });
+    }
     return null;
   }
+  if (!parsed.title || !parsed.summary || !parsed.dek) return null;
+  if (!parsed.relevance || parsed.relevance.trim().length < 40) return null;
+  parsed.dek = parsed.dek.slice(0, 155);
+  parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
+  parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
+  parsed.sections = (parsed.sections ?? [])
+    .filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0)
+    .slice(0, 10);
+  return parsed;
 }
 
 function rewriteMainProseWordCount(rw: Rewrite): number {
