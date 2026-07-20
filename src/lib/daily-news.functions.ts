@@ -50,54 +50,6 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
   const rawDaily = ((data ?? []) as (DailyArticle & { body_json?: unknown })[])
     .filter((a) => meetsArticleMainWordCount(a.kind, a.body_json as never))
     .map(({ body_json: _bodyJson, ...a }) => a);
-  const validArticleSlugs = new Set(rawDaily.map((a) => a.slug));
-
-  // Pull the freshest live RSS items and surface them as breaking cards so the
-  // homepage breaking strip refreshes alongside the RSS feed. Window is 24h
-  // so the strip stays populated even when feeds are quiet for a few hours.
-  const sinceIso = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-  const { data: feed } = await supabase
-    .from("texas_news_feed")
-    .select("title,source,link,description,pub_date,internal_slug")
-    .not("internal_slug", "is", null)
-    .gte("pub_date", sinceIso)
-    .order("pub_date", { ascending: false })
-    .limit(12);
-
-  const isPuzzle = (t: string) => {
-    const s = (t || "").toLowerCase();
-    return (
-      /\bcrossword\b/.test(s) ||
-      /\bsudoku\b/.test(s) ||
-      /\bword\s*(game|search|jumble)\b/.test(s) ||
-      /\b(daily|weekly)\s+puzzle\b/.test(s) ||
-      /\bpuzzle\s+(for|of\s+the\s+day)\b/.test(s) ||
-      /\bmini\s+puzzle\b/.test(s)
-    );
-  };
-  const liveBreaking: DailyArticle[] = (feed ?? []).filter((row) => !isPuzzle(row.title) && validArticleSlugs.has(row.internal_slug as string)).slice(0, 6).map((row) => ({
-    slug: row.internal_slug as string,
-    category: row.source ?? "Live",
-    title: row.title,
-    dek: row.description ?? "",
-    author: row.source ?? "Live Feed",
-    source_name: row.source ?? null,
-    source_url: `/news/${row.internal_slug}`,
-    image_url: null,
-    image_hash: null,
-    image_category: null,
-    featured_image_url: null,
-    image_alt_text: null,
-    seo_headline: null,
-    discover_category: null,
-    seo_keywords: null,
-    ctr_score: null,
-    headline_variants: null,
-    published_at: row.pub_date,
-    kind: "ingested",
-    score: 100,
-    is_breaking: true,
-  }));
 
   // Demote daily breaking articles older than 6 hours: clear the flag in-memory
   // so the homepage strip only shows fresh items. They still appear in news
@@ -112,6 +64,6 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
 
   // Global near-duplicate title guard: same story rewritten by two sources must
   // never render twice on the homepage/breaking strip.
-  const merged = dedupeByTitle([...liveBreaking, ...dailyRotated]).slice(0, 30);
+  const merged = dedupeByTitle(dailyRotated).slice(0, 30);
   return { articles: merged };
 });
