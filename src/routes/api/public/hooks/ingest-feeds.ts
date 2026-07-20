@@ -376,6 +376,33 @@ CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Busi
 SCHEMA:
 {"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"substantial opening section","relevance":"substantial Texas relevance section","analysis":"optional labeled editorial interpretation, or omit","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}],"category":"one of the allowed values"}`;
 
+function isRedditLink(link: string): boolean {
+  try {
+    const u = new URL(link);
+    return /(^|\.)reddit\.com$/i.test(u.hostname);
+  } catch {
+    return false;
+  }
+}
+
+async function fetchRedditSelftext(link: string): Promise<string | null> {
+  try {
+    const u = new URL(link);
+    const jsonUrl = `https://www.reddit.com${u.pathname.replace(/\/?$/, "")}.json`;
+    const r = await fetch(jsonUrl, {
+      headers: { "User-Agent": "KeepTXRed/1.0 (+https://www.keeptxred.com)" },
+      signal: AbortSignal.timeout(8000),
+    });
+    if (!r.ok) return null;
+    const data = (await r.json()) as Array<{ data?: { children?: Array<{ data?: { selftext?: string } }> } }>;
+    const selftext = data?.[0]?.data?.children?.[0]?.data?.selftext ?? "";
+    const cleaned = selftext.replace(/\s+/g, " ").trim();
+    return cleaned.length > 0 ? cleaned : null;
+  } catch {
+    return null;
+  }
+}
+
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
   try {
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -995,6 +1022,26 @@ export async function publishSingleFeedItem(
     pub_date: row.pub_date,
     description: row.description ?? "",
   };
+
+  // Reddit RSS descriptions rarely contain the post body — pull selftext from
+  // the public JSON endpoint so the AI rewrite has real source material.
+  // Refuse to publish headline-only Reddit posts rather than fabricating facts.
+  if (isRedditLink(item.link)) {
+    const selftext = await fetchRedditSelftext(item.link);
+    const meaningful = selftext && wordCount(selftext) >= 40;
+    if (!meaningful) {
+      return {
+        ok: false,
+        error:
+          "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",
+      };
+    }
+    const base = item.description?.trim() ?? "";
+    item.description = base
+      ? `${base}\n\nREDDIT SELFTEXT:\n${selftext}`
+      : `REDDIT SELFTEXT:\n${selftext}`;
+  }
+
   const rw = await rewriteItemWithRetry(item, lovableApiKey);
   if (!rw) return { ok: false, error: "AI rewrite failed" };
 
