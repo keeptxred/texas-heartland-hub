@@ -5,6 +5,14 @@ export const EVERGREEN_MIN_MAIN_WORDS = 5000;
 export const SPORTS_BREAKING_MIN_MAIN_WORDS = 800;
 export const SPORTS_ANALYSIS_MIN_MAIN_WORDS = 1200;
 export const SPORTS_MIN_MAIN_WORDS = SPORTS_ANALYSIS_MIN_MAIN_WORDS;
+// Ingested RSS rewrites (kind = "ingested" or "news") are gated at the
+// breaking-news floor used by the ingestion pipeline. The publish path in
+// src/routes/api/public/hooks/ingest-feeds.ts commits rows above this
+// threshold, so the read/visibility gate MUST match — otherwise articles
+// that publish successfully (and get posted to Facebook) would 404 on
+// /news/{slug}. Evergreen and generic long-form (tools/guides) still use
+// the higher NON_EVERGREEN_MIN_MAIN_WORDS / EVERGREEN_MIN_MAIN_WORDS.
+export const INGESTED_MIN_MAIN_WORDS = 800;
 
 const EXCLUDED_SECTION_RE =
   /\b(texas\s+relevance|source\s+attribution|sources?|faq|frequently\s+asked\s+questions|key\s+takeaways?|reader\s+questions?)\b/i;
@@ -41,6 +49,7 @@ export function requiredMainWordCountForKind(kind?: string | null): number {
   if (kind === "evergreen") return EVERGREEN_MIN_MAIN_WORDS;
   if (kind?.startsWith("sports-breaking")) return SPORTS_BREAKING_MIN_MAIN_WORDS;
   if (kind?.startsWith("sports-")) return SPORTS_ANALYSIS_MIN_MAIN_WORDS;
+  if (kind === "ingested" || kind === "news") return INGESTED_MIN_MAIN_WORDS;
   return NON_EVERGREEN_MIN_MAIN_WORDS;
 }
 
