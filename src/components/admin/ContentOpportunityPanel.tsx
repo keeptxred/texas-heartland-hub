@@ -336,6 +336,7 @@ export function ContentOpportunityPanel() {
               {scored.slice(0, 25).map((r) => {
                 const status = statuses[r.id];
                 const alreadyPublished = !!status?.rewritten;
+                const isDailyArticle = r.id < 0;
                 return (
                   <tr key={r.id} className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
@@ -354,18 +355,20 @@ export function ContentOpportunityPanel() {
                     <td className="py-2 pr-2 whitespace-nowrap">
                       <div className="flex flex-col items-start gap-1">
                         <div className="flex flex-wrap gap-2">
-                          <button
-                            type="button"
-                            disabled={!!articleWorking[r.id]}
-                            onClick={() => void publishArticle(r)}
-                            className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
-                          >
-                            {articleWorking[r.id]
-                              ? "Publishing…"
-                              : alreadyPublished
-                              ? "Republish"
-                              : "Publish to Keep Texas Red"}
-                          </button>
+                          {isDailyArticle ? null : (
+                            <button
+                              type="button"
+                              disabled={!!articleWorking[r.id]}
+                              onClick={() => void publishArticle(r)}
+                              className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                            >
+                              {articleWorking[r.id]
+                                ? "Publishing…"
+                                : alreadyPublished
+                                ? "Republish"
+                                : "Publish to Keep Texas Red"}
+                            </button>
+                          )}
                           <button
                             type="button"
                             disabled={!!publishing[r.id]}
