@@ -7,6 +7,23 @@ import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
 import { articleMainWordCount } from "@/lib/article-length";
+import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
+
+// Reuses the existing Texas relevance scorer (title + description + source
+// entity signals) so a source labelled "USGS Earthquakes — Texas" cannot push
+// non-Texas events (Peru, California, etc.) into Texas-facing surfaces.
+// Items that score below the shared TEXAS_RELEVANCE_MIN floor are dropped
+// before they reach texas_news_feed and before native articles are minted,
+// which is what gates visibility on /happening-now and category feeds.
+function isTexasRelevantItem(it: Item): boolean {
+  const r = scoreFeedItem({
+    title: it.title ?? "",
+    source: it.source ?? "",
+    pub_date: it.pub_date,
+    description: it.description ?? "",
+  });
+  return r.texasRelevanceScore >= TEXAS_RELEVANCE_MIN;
+}
 
 // Tiered minimum word counts for ingested RSS rewrites. Short official press
 // releases (governor, SoS, Texas Register) rarely justify 2,000 words, so we
