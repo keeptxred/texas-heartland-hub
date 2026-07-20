@@ -48,8 +48,36 @@ export type QuickPublishResult =
   | { ok: false; error: string; requires_connection?: boolean; package_id?: string };
 
 function buildDefaultCaption(headline: string, source: string): string {
-  const src = source ? `\n\nSource: ${source}` : "";
-  return `${headline}${src}\n\nRead more at KeepTXRed.com`;
+  void source;
+  return headline;
+}
+
+function sanitizeCaption(raw: string): string {
+  const lines = raw.split(/\r?\n/).filter((line) => {
+    const t = line.trim();
+    if (/^source\s*:/i.test(t)) return false;
+    if (/read\s+more\s+at\s+keeptxred\.com/i.test(t)) return false;
+    if (/^https?:\/\/(www\.)?keeptxred\.com\S*$/i.test(t)) return false;
+    return true;
+  });
+  return lines
+    .join("\n")
+    .replace(/https?:\/\/(www\.)?keeptxred\.com\S*/gi, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+function validateArticleUrl(raw: unknown): string | null {
+  if (typeof raw !== "string") return null;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  try {
+    const u = new URL(trimmed);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+    return u.toString();
+  } catch {
+    return null;
+  }
 }
 
 export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
@@ -217,13 +245,24 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       });
     }
 
-    // 2. Persist a lightweight content package (no AI).
-    const caption = data.caption?.trim() || buildDefaultCaption(data.headline, data.source);
+    // 2. Validate article URL — Facebook article posts must always carry a link.
+    const articleUrl = validateArticleUrl(data.source_url);
+    if (!articleUrl) {
+      return {
+        ok: false,
+        error:
+          "Cannot publish to Facebook: a valid http(s) article URL is required. This item has no article link attached.",
+      };
+    }
+
+    // 3. Persist a lightweight content package (no AI).
+    const rawCaption = data.caption?.trim() || buildDefaultCaption(data.headline, data.source);
+    const caption = sanitizeCaption(rawCaption);
     const { data: pkg, error: pkgErr } = await supabaseAdmin
       .from("content_packages")
       .insert({
         source_title: data.headline,
-        source_url: data.source_url ?? null,
+        source_url: articleUrl,
         category: null,
         facebook_hook: data.headline,
         facebook_body: caption,
@@ -238,10 +277,10 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       .single();
     if (pkgErr || !pkg) return { ok: false, error: pkgErr?.message ?? "Failed to create package" };
 
-    // 3. Real Meta Graph API publish.
+    // 4. Real Meta Graph API publish.
     const pageId = String(conn.account_id);
     const pageToken = String(conn.access_token);
-    const link = data.source_url ?? null;
+    const link = articleUrl;
     let externalId: string | null = null;
     let postUrl: string | null = null;
     let graphError: string | null = null;
@@ -253,14 +292,15 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       if (resolvedAssetUrl) {
         endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/photos`;
         body.set("url", resolvedAssetUrl);
-        body.set("caption", caption);
+        // Graph /photos ignores `link`; append the article URL to the caption.
+        body.set("caption", `${caption}\n\n${link}`);
       } else {
         endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/feed`;
         body.set("message", caption);
-        if (link) body.set("link", link);
+        body.set("link", link);
       }
       console.log("[quickPublish:server] publish mode", {
-        mode: resolvedAssetUrl ? "PHOTO" : link ? "LINK" : "TEXT",
+        mode: resolvedAssetUrl ? "PHOTO" : "LINK",
         asset_source: assetSource,
       });
       console.log("[quickPublish] Graph API request", {
