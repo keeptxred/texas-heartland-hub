@@ -49,11 +49,11 @@ const InputSchema = z.object({
 
 export type GetArticlesByCategoryInput = z.input<typeof InputSchema>;
 
-function client() {
+async function client() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) return null;
-  const { createClient } = require("@supabase/supabase-js") as typeof import("@supabase/supabase-js");
+  const { createClient } = await import("@supabase/supabase-js");
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
@@ -62,7 +62,7 @@ function client() {
 export const getArticlesByCategory = createServerFn({ method: "GET" })
   .inputValidator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }): Promise<CategoryFeedItem[]> => {
-    const supabase = client();
+    const supabase = await client();
     if (!supabase) return [];
 
     // Fetch a padded window so word-count filtering and pagination still
