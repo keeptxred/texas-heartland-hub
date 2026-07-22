@@ -208,3 +208,48 @@ export function preflightStatusLabel(result: RewritePreflightResult): string {
   if (result.reason === "PENDING_EXTRACTION") return "Checking source";
   return result.message;
 }
+
+// Explicit guard used by the paid rewrite path. Throws if a caller ever tries
+// to spend AI credits on a source that failed preflight. Exists so we can
+// assert in tests that a blocked preflight can never reach the rewrite mock.
+export class PreflightBlockedError extends Error {
+  readonly reason: RewritePreflightReason;
+  readonly result: RewritePreflightResult;
+  constructor(result: RewritePreflightResult) {
+    super(result.message);
+    this.name = "PreflightBlockedError";
+    this.reason = result.reason;
+    this.result = result;
+  }
+}
+
+export function assertRewriteableOrThrow(result: RewritePreflightResult): void {
+  if (!result.rewriteable) throw new PreflightBlockedError(result);
+}
+
+// Snapshot persisted on texas_news_feed.preflight_json so page loads and
+// dashboards can render the block reason without recomputing extraction.
+export type PreflightPersistedSnapshot = {
+  status: RewritePreflightReason;
+  reason: RewritePreflightReason;
+  message: string;
+  sourceWordCount: number;
+  factualSignalCount: number;
+  checkedAt: string;
+  failureStage: "extraction" | "preflight" | "none";
+};
+
+export function toPersistedSnapshot(
+  result: RewritePreflightResult,
+  failureStage: PreflightPersistedSnapshot["failureStage"],
+): PreflightPersistedSnapshot {
+  return {
+    status: result.reason,
+    reason: result.reason,
+    message: result.message,
+    sourceWordCount: result.sourceWordCount,
+    factualSignalCount: result.factualSignalCount,
+    checkedAt: new Date().toISOString(),
+    failureStage,
+  };
+}
