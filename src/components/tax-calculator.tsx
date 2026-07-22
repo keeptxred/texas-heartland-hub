@@ -285,7 +285,7 @@ export function TaxCalculator() {
         <header className="border-b-2 border-foreground p-6 md:p-8">
           <button type="button" onClick={() => setStartMode("choice")} className="text-xs font-bold uppercase tracking-widest text-primary">← Back</button>
           <h2 className="mt-5 font-display text-3xl">Find rates by address</h2>
-          <p className="mt-2 text-sm text-muted-foreground">We’ll use public Census geography data to identify the county, city, and school district.</p>
+          <p className="mt-2 text-sm text-muted-foreground">We’ll use trusted public geographic data to automatically identify your Texas county, city, and school district.</p>
         </header>
         <form onSubmit={findProperty} className="p-6 md:p-8">
           <div className="grid gap-4 sm:grid-cols-2">
@@ -331,7 +331,7 @@ export function TaxCalculator() {
             {lookupStatus === "loading" ? "Finding property…" : "Find my property"}
           </button>
           <button type="button" onClick={() => setStartMode("manual")} className="mt-4 w-full border border-border px-5 py-3 text-sm font-bold uppercase tracking-widest">Continue manually</button>
-          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Your address is sent directly to the U.S. Census geocoder only to identify local jurisdictions. It is not saved by this calculator and is never included in a shared link.</p>
+          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Your address is used only to identify the correct local tax jurisdictions. It is never stored by this calculator and is never included in shared links.</p>
         </form>
       </section>
     );
