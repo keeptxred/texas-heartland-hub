@@ -663,9 +663,11 @@ export type Database = {
           classification_confidence: number | null
           created_at: string
           description: string | null
+          extracted_body: string | null
           id: number
           internal_slug: string | null
           link: string
+          preflight_json: Json | null
           pub_date: string
           ready_for_rewrite: boolean
           routing_type: string | null
@@ -684,9 +686,11 @@ export type Database = {
           classification_confidence?: number | null
           created_at?: string
           description?: string | null
+          extracted_body?: string | null
           id?: number
           internal_slug?: string | null
           link: string
+          preflight_json?: Json | null
           pub_date?: string
           ready_for_rewrite?: boolean
           routing_type?: string | null
@@ -705,9 +709,11 @@ export type Database = {
           classification_confidence?: number | null
           created_at?: string
           description?: string | null
+          extracted_body?: string | null
           id?: number
           internal_slug?: string | null
           link?: string
+          preflight_json?: Json | null
           pub_date?: string
           ready_for_rewrite?: boolean
           routing_type?: string | null
