@@ -161,7 +161,7 @@ export async function lookupTexasProperty(
   const match = payload.result?.addressMatches?.[0];
   if (!match) {
     throw new PropertyLookupError(
-      "We could not find this exact property in Census records. This is common for newer homes and recently developed neighborhoods. Continue manually to enter the county and school district rates.",
+      "We could not verify this property through the available address services. Continue manually to enter the county and school district rates.",
       "NOT_FOUND",
     );
   }
@@ -169,7 +169,7 @@ export async function lookupTexasProperty(
   const countyFromCensus = firstGeographyName(match.geographies, ["Counties"]);
   const countyName = normalizeCountyName(countyFromCensus);
   const county = COUNTIES.find(
-    (item) => normalized(item.name) === normalized(countyName),
+    (item) => normalized(normalizeCountyName(item.name)) === normalized(countyName),
   );
 
   if (!county) {
