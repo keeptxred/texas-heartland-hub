@@ -341,6 +341,30 @@ function wordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+// Small concurrency limiter used by the batch rewrite path. Cloudflare Workers
+// have a fixed wall-clock budget per request; firing `Promise.all` over
+// hundreds of 15–90s AI fetches was killing the whole invocation, which
+// showed up in logs as every rewrite ending in `no_response` (the fetch was
+// aborted before it ever reached the AI gateway). Capping concurrency lets
+// each rewrite complete and lets us log per-item outcomes.
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const out: R[] = new Array(items.length);
+  let cursor = 0;
+  const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
+    while (true) {
+      const i = cursor++;
+      if (i >= items.length) return;
+      out[i] = await fn(items[i], i);
+    }
+  });
+  await Promise.all(workers);
+  return out;
+}
+
 function articleBodyText(body: GeneratedArticleBody): string {
   const parts: string[] = [];
   (body.intro ?? []).forEach((p) => parts.push(p));
@@ -837,11 +861,31 @@ async function handler() {
   // Mint a native Keep TX Red article for every freshly ingested feed item so
   // Happening Now only ever links to internal /news/{slug} URLs.
   let nativeMinted = 0;
+  const stageCounts = {
+    fresh: fresh.length,
+    rewriteAttempted: 0,
+    rewriteSucceeded: 0,
+    rewriteFailed: 0,
+    droppedBelowFloor: 0,
+    dedupedInBatch: 0,
+    dedupedVsRecent: 0,
+    articlesUpserted: 0,
+    internalSlugsLinked: 0,
+  };
   if (fresh.length > 0) {
     const lovableApiKey = process.env.LOVABLE_API_KEY;
+    // Concurrency-limited so the Worker request budget can absorb large
+    // ingestion bursts (Google News catch-up windows can produce 100+ fresh
+    // items). Empirically 4 parallel Gemini calls complete comfortably inside
+    // the request budget; unbounded Promise.all caused every fetch to abort.
+    stageCounts.rewriteAttempted = lovableApiKey ? fresh.length : 0;
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await Promise.all(fresh.map((it) => rewriteItemWithRetry(it, lovableApiKey)))
+      ? await mapWithConcurrency(fresh, 4, (it) => rewriteItemWithRetry(it, lovableApiKey))
       : fresh.map(() => null);
+    for (const r of rewrites) {
+      if (r) stageCounts.rewriteSucceeded++;
+      else stageCounts.rewriteFailed++;
+    }
     // Skip items whose AI rewrite failed — never publish empty stub articles.
     const paired = fresh
       .map((it, i) => ({ it, rw: rewrites[i] }))
@@ -858,6 +902,7 @@ async function handler() {
             words,
             target,
           });
+          stageCounts.droppedBelowFloor++;
           return false;
         }
         return true;
@@ -865,8 +910,9 @@ async function handler() {
     const articleRows = pairedRows.map(({ row }) => row);
     const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
     if (articleRows.length === 0) {
+      console.log("[ingest-feeds] batch produced 0 articles", stageCounts);
       return new Response(
-        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length }),
+        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, stageCounts }),
         { headers: { "Content-Type": "application/json" } },
       );
     }
@@ -948,6 +994,7 @@ async function handler() {
     // (2) drop anything whose title matches an article published in the
     // last 7 days. Same story, different wording must never appear twice.
     const withinBatch = dedupeByTitle(articleRows as Array<{ title: string; slug: string }>);
+    stageCounts.dedupedInBatch = articleRows.length - withinBatch.length;
     const sinceIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const { data: recent } = await supabaseAdmin
       .from("daily_articles")
@@ -959,10 +1006,12 @@ async function handler() {
         .filter((r) => !recentTitles.some((t) => isDuplicateTitle(t, r.title)))
         .map((r) => r.slug),
     );
+    stageCounts.dedupedVsRecent = withinBatch.length - dedupedSlugs.size;
     const uniqueArticleRows = articleRows.filter((r) => dedupedSlugs.has(r.slug));
     if (uniqueArticleRows.length === 0) {
+      console.log("[ingest-feeds] all articles deduped", stageCounts);
       return new Response(
-        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, dedupedAll: true }),
+        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, dedupedAll: true, stageCounts }),
         { headers: { "Content-Type": "application/json" } },
       );
     }
@@ -970,23 +1019,34 @@ async function handler() {
     const { error: artErr, count: artCount } = await supabaseAdmin
       .from("daily_articles")
       .upsert(uniqueArticleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
+    if (artErr) {
+      console.error("[ingest-feeds] daily_articles upsert failed", { message: artErr.message, count: uniqueArticleRows.length });
+    }
     if (!artErr) {
       nativeMinted = artCount ?? uniqueArticleRows.length;
+      stageCounts.articlesUpserted = nativeMinted;
       await Promise.allSettled(
         uniqueArticleRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
       );
       // Write the internal slug back onto the feed row so cards can link to it.
-      await Promise.all(
+      const linkResults = await Promise.all(
         uniqueArticleRows.map((row: { slug: string }) => {
           const src = articleSourceBySlug.get(row.slug);
-          if (!src) return Promise.resolve();
+          if (!src) return Promise.resolve({ ok: false });
           return supabaseAdmin
             .from("texas_news_feed")
             .update({ internal_slug: row.slug })
-            .eq("link", src.link);
+            .eq("link", src.link)
+            .then((r) => ({ ok: !r.error, error: r.error?.message }));
         }),
       );
+      stageCounts.internalSlugsLinked = linkResults.filter((r) => (r as { ok?: boolean }).ok).length;
+      const linkErrors = linkResults.filter((r) => (r as { ok?: boolean }).ok === false && (r as { error?: string }).error);
+      if (linkErrors.length > 0) {
+        console.error("[ingest-feeds] internal_slug writeback errors", { count: linkErrors.length, sample: linkErrors.slice(0, 3) });
+      }
     }
+    console.log("[ingest-feeds] batch complete", stageCounts);
   }
 
   // Backfill internal_slug for any older feed rows that don't have one yet.
@@ -1005,8 +1065,13 @@ async function handler() {
       description: row.description ?? "",
     }));
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await Promise.all(items.map((it) => rewriteItemWithRetry(it, lovableApiKey)))
+      ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, lovableApiKey))
       : items.map(() => null);
+    console.log("[ingest-feeds] orphan backfill", {
+      candidates: items.length,
+      rewriteSucceeded: rewrites.filter(Boolean).length,
+      rewriteFailed: rewrites.filter((r) => !r).length,
+    });
     // Only mint articles for orphans whose rewrite succeeded.
     const paired = items
       .map((it, i) => ({ it, rw: rewrites[i] }))
@@ -1107,7 +1172,7 @@ async function handler() {
   }
 
   return new Response(
-    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, dedupeSkippedReason, diag }),
+    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, dedupeSkippedReason, stageCounts, diag }),
     { headers: { "Content-Type": "application/json" } },
   );
 }
