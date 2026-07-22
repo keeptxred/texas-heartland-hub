@@ -861,11 +861,31 @@ async function handler() {
   // Mint a native Keep TX Red article for every freshly ingested feed item so
   // Happening Now only ever links to internal /news/{slug} URLs.
   let nativeMinted = 0;
+  const stageCounts = {
+    fresh: fresh.length,
+    rewriteAttempted: 0,
+    rewriteSucceeded: 0,
+    rewriteFailed: 0,
+    droppedBelowFloor: 0,
+    dedupedInBatch: 0,
+    dedupedVsRecent: 0,
+    articlesUpserted: 0,
+    internalSlugsLinked: 0,
+  };
   if (fresh.length > 0) {
     const lovableApiKey = process.env.LOVABLE_API_KEY;
+    // Concurrency-limited so the Worker request budget can absorb large
+    // ingestion bursts (Google News catch-up windows can produce 100+ fresh
+    // items). Empirically 4 parallel Gemini calls complete comfortably inside
+    // the request budget; unbounded Promise.all caused every fetch to abort.
+    stageCounts.rewriteAttempted = lovableApiKey ? fresh.length : 0;
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await Promise.all(fresh.map((it) => rewriteItemWithRetry(it, lovableApiKey)))
+      ? await mapWithConcurrency(fresh, 4, (it) => rewriteItemWithRetry(it, lovableApiKey))
       : fresh.map(() => null);
+    for (const r of rewrites) {
+      if (r) stageCounts.rewriteSucceeded++;
+      else stageCounts.rewriteFailed++;
+    }
     // Skip items whose AI rewrite failed — never publish empty stub articles.
     const paired = fresh
       .map((it, i) => ({ it, rw: rewrites[i] }))
@@ -882,6 +902,7 @@ async function handler() {
             words,
             target,
           });
+          stageCounts.droppedBelowFloor++;
           return false;
         }
         return true;
@@ -889,8 +910,9 @@ async function handler() {
     const articleRows = pairedRows.map(({ row }) => row);
     const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
     if (articleRows.length === 0) {
+      console.log("[ingest-feeds] batch produced 0 articles", stageCounts);
       return new Response(
-        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length }),
+        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, stageCounts }),
         { headers: { "Content-Type": "application/json" } },
       );
     }
