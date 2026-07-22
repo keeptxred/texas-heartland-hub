@@ -4,6 +4,13 @@ const PROPERTY_LOOKUP_API_URL = "/api/public/property-address-lookup";
 
 export type LookupConfidence = "high" | "medium";
 
+export type PropertyAddressInput = {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+};
+
 export type PropertyLookupResult = {
   matchedAddress: string;
   countyName: string;
@@ -30,6 +37,7 @@ type CensusResponse = {
   result?: {
     addressMatches?: CensusAddressMatch[];
   };
+  error?: string;
 };
 
 export class PropertyLookupError extends Error {
@@ -82,18 +90,22 @@ function findSchoolDistrict(
 }
 
 export async function lookupTexasProperty(
-  address: string,
+  input: PropertyAddressInput,
   signal?: AbortSignal,
 ): Promise<PropertyLookupResult> {
-  const query = address.trim();
-  if (query.length < 8) {
+  const street = input.street.trim();
+  const city = input.city.trim();
+  const state = input.state.trim().toUpperCase();
+  const zip = input.zip.trim();
+
+  if (street.length < 3 || city.length < 2 || state.length !== 2 || zip.length < 5) {
     throw new PropertyLookupError(
       "Enter a complete street address, city, state, and ZIP code.",
       "INVALID_ADDRESS",
     );
   }
 
-  const params = new URLSearchParams({ address: query });
+  const params = new URLSearchParams({ street, city, state, zip });
 
   let response: Response;
   try {
@@ -110,18 +122,19 @@ export async function lookupTexasProperty(
     );
   }
 
+  const payload = (await response.json().catch(() => ({}))) as CensusResponse;
+
   if (!response.ok) {
     throw new PropertyLookupError(
-      "The address service is temporarily unavailable. Continue manually or try again.",
-      "SERVICE_ERROR",
+      payload.error || "The address service is temporarily unavailable. Continue manually or try again.",
+      response.status === 400 ? "INVALID_ADDRESS" : "SERVICE_ERROR",
     );
   }
 
-  const payload = (await response.json()) as CensusResponse;
   const match = payload.result?.addressMatches?.[0];
   if (!match) {
     throw new PropertyLookupError(
-      "We could not verify that address. Check the spelling and ZIP code or continue manually.",
+      "We could not find this exact property in Census records. This is common for newer homes and recently developed neighborhoods. Continue manually to enter the county and school district rates.",
       "NOT_FOUND",
     );
   }
@@ -155,7 +168,8 @@ export async function lookupTexasProperty(
   if (!schoolDistrict?.rate) missingFields.push("schoolRate");
 
   return {
-    matchedAddress: match.matchedAddress?.trim() || query,
+    matchedAddress:
+      match.matchedAddress?.trim() || [street, city, state, zip].join(", "),
     countyName: county.name,
     countySlug: county.slug,
     cityName,
