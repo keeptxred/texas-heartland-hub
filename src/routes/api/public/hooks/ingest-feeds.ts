@@ -1182,6 +1182,27 @@ export async function publishSingleFeedItem(
     }
   }
 
+  // Deterministic preflight — refuse to spend AI rewrite credits when the
+  // extracted source clearly cannot produce a factual article.
+  const { assessRewritePreflight } = await import("@/lib/rewrite-preflight");
+  const preflight = assessRewritePreflight({
+    title: item.title,
+    description: item.description,
+    link: item.link,
+  });
+  console.log("[publishSingleFeedItem] preflight", {
+    feed_item_id: feedItemId,
+    rewriteable: preflight.rewriteable,
+    reason: preflight.reason,
+    source_word_count: preflight.sourceWordCount,
+  });
+  if (!preflight.rewriteable) {
+    return {
+      ok: false,
+      error: `Rewrite skipped before AI generation: ${preflight.message}`,
+    };
+  }
+
   const rw = await rewriteItemWithRetry(item, lovableApiKey);
   if (!rw) return { ok: false, error: "AI rewrite failed" };
 
