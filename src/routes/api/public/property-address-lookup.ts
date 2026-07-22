@@ -4,16 +4,43 @@ const STRUCTURED_GEOCODER_URL =
   "https://geocoding.geo.census.gov/geocoder/geographies/address";
 const ONELINE_GEOCODER_URL =
   "https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress";
+const COORDINATE_GEOGRAPHY_URL =
+  "https://geocoding.geo.census.gov/geocoder/geographies/coordinates";
+const ARCGIS_GEOCODER_URL =
+  "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates";
 
 type CensusPayload = {
   result?: {
     addressMatches?: unknown[];
+    geographies?: Record<string, unknown[]>;
   };
+};
+
+type ArcGisCandidate = {
+  address?: string;
+  score?: number;
+  location?: { x?: number; y?: number };
+  attributes?: {
+    Match_addr?: string;
+    City?: string;
+    RegionAbbr?: string;
+    Postal?: string;
+    CountryCode?: string;
+  };
+};
+
+type ArcGisPayload = {
+  candidates?: ArcGisCandidate[];
 };
 
 type LookupAttempt = {
   name: string;
   url: string;
+};
+
+type Diagnostic = {
+  attempt: string;
+  outcome: string;
 };
 
 function clean(value: string) {
@@ -66,8 +93,33 @@ function oneLineUrl(street: string, city: string, state: string, zip: string) {
   return `${ONELINE_GEOCODER_URL}?${params.toString()}`;
 }
 
-async function runAttempt(attempt: LookupAttempt) {
-  const response = await fetch(attempt.url, {
+function coordinateUrl(longitude: number, latitude: number) {
+  const params = new URLSearchParams({
+    x: String(longitude),
+    y: String(latitude),
+    benchmark: "Public_AR_Current",
+    vintage: "Current_Current",
+    format: "json",
+  });
+  return `${COORDINATE_GEOGRAPHY_URL}?${params.toString()}`;
+}
+
+function arcGisUrl(street: string, city: string, state: string, zip: string) {
+  const singleLine = [street, city, state, zip].filter(Boolean).join(", ");
+  const params = new URLSearchParams({
+    SingleLine: singleLine,
+    category: "Address",
+    sourceCountry: "USA",
+    outFields: "Match_addr,City,RegionAbbr,Postal,CountryCode",
+    maxLocations: "5",
+    forStorage: "false",
+    f: "json",
+  });
+  return `${ARCGIS_GEOCODER_URL}?${params.toString()}`;
+}
+
+async function fetchJson<T>(url: string): Promise<T> {
+  const response = await fetch(url, {
     headers: {
       Accept: "application/json",
       "User-Agent": "KeepTXRedPropertyTaxCalculator/1.0 (+https://www.keeptxred.com)",
@@ -76,10 +128,74 @@ async function runAttempt(attempt: LookupAttempt) {
   });
 
   if (!response.ok) {
-    throw new Error(`Census returned ${response.status}`);
+    throw new Error(`Lookup service returned ${response.status}`);
   }
 
-  return (await response.json()) as CensusPayload;
+  return (await response.json()) as T;
+}
+
+function isTexasCandidate(candidate: ArcGisCandidate, requestedZip: string) {
+  const attributes = candidate.attributes;
+  const region = clean(attributes?.RegionAbbr ?? "").toUpperCase();
+  const country = clean(attributes?.CountryCode ?? "").toUpperCase();
+  const postal = clean(attributes?.Postal ?? "");
+  const score = Number(candidate.score ?? 0);
+  const longitude = Number(candidate.location?.x);
+  const latitude = Number(candidate.location?.y);
+
+  if (score < 80 || region !== "TX") return false;
+  if (country && country !== "USA" && country !== "US") return false;
+  if (requestedZip && postal && postal.slice(0, 5) !== requestedZip.slice(0, 5)) return false;
+  return Number.isFinite(longitude) && Number.isFinite(latitude);
+}
+
+async function runCoordinateFallback(
+  street: string,
+  city: string,
+  state: string,
+  zip: string,
+  diagnostics: Diagnostic[],
+): Promise<CensusPayload | null> {
+  try {
+    const geocode = await fetchJson<ArcGisPayload>(arcGisUrl(street, city, state, zip));
+    const candidate = (geocode.candidates ?? []).find((item) => isTexasCandidate(item, zip));
+
+    if (!candidate) {
+      diagnostics.push({ attempt: "arcgis-address", outcome: "no-qualified-match" });
+      return null;
+    }
+
+    diagnostics.push({ attempt: "arcgis-address", outcome: `matched-${Math.round(candidate.score ?? 0)}` });
+    const longitude = Number(candidate.location?.x);
+    const latitude = Number(candidate.location?.y);
+    const geography = await fetchJson<CensusPayload>(coordinateUrl(longitude, latitude));
+    const geographies = geography.result?.geographies;
+
+    if (!geographies || Object.keys(geographies).length === 0) {
+      diagnostics.push({ attempt: "census-coordinate-geography", outcome: "no-geographies" });
+      return null;
+    }
+
+    diagnostics.push({ attempt: "census-coordinate-geography", outcome: "matched" });
+    return {
+      result: {
+        addressMatches: [
+          {
+            matchedAddress:
+              candidate.attributes?.Match_addr ?? candidate.address ?? [street, city, state, zip].filter(Boolean).join(", "),
+            coordinates: { x: longitude, y: latitude },
+            geographies,
+          },
+        ],
+      },
+    };
+  } catch (error) {
+    diagnostics.push({ attempt: "coordinate-fallback", outcome: "service-error" });
+    console.error("[property-address-lookup] coordinate fallback failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
 }
 
 export const Route = createFileRoute("/api/public/property-address-lookup")({
@@ -125,12 +241,12 @@ export const Route = createFileRoute("/api/public/property-address-lookup")({
           },
         );
 
-        const diagnostics: Array<{ attempt: string; outcome: string }> = [];
+        const diagnostics: Diagnostic[] = [];
         let serviceFailures = 0;
 
         for (const attempt of attempts) {
           try {
-            const payload = await runAttempt(attempt);
+            const payload = await fetchJson<CensusPayload>(attempt.url);
             const matches = payload.result?.addressMatches ?? [];
             if (matches.length > 0) {
               diagnostics.push({ attempt: attempt.name, outcome: "matched" });
@@ -159,6 +275,33 @@ export const Route = createFileRoute("/api/public/property-address-lookup")({
           }
         }
 
+        const fallbackPayload = await runCoordinateFallback(
+          normalizedStreet,
+          city,
+          state,
+          zip,
+          diagnostics,
+        );
+
+        if ((fallbackPayload?.result?.addressMatches ?? []).length > 0) {
+          console.info("[property-address-lookup] matched through coordinate fallback", {
+            city,
+            state,
+            zip,
+            diagnostics,
+          });
+          return Response.json(
+            {
+              ...fallbackPayload,
+              lookupMeta: { matchedAttempt: "arcgis-plus-census-coordinates", diagnostics },
+            },
+            {
+              status: 200,
+              headers: { "Cache-Control": "private, max-age=300" },
+            },
+          );
+        }
+
         if (serviceFailures === attempts.length) {
           return Response.json(
             { error: "Address lookup service unavailable.", lookupMeta: { diagnostics } },
@@ -166,7 +309,7 @@ export const Route = createFileRoute("/api/public/property-address-lookup")({
           );
         }
 
-        console.info("[property-address-lookup] no Census match", {
+        console.info("[property-address-lookup] no address match", {
           city,
           state,
           zip,
