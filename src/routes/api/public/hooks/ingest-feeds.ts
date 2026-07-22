@@ -1172,7 +1172,7 @@ async function handler() {
   }
 
   return new Response(
-    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, dedupeSkippedReason, diag }),
+    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, dedupeSkippedReason, stageCounts, diag }),
     { headers: { "Content-Type": "application/json" } },
   );
 }
