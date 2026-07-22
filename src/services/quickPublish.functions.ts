@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { assessImageUrl, verifyImageIsReachable } from "@/lib/facebook-image-readiness";
 
 function authOk(token: string): boolean {
   const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
@@ -294,6 +295,29 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     // 3. Persist a lightweight content package (no AI).
     const rawCaption = data.caption?.trim() || buildDefaultCaption(data.headline, data.source);
     const caption = sanitizeCaption(rawCaption);
+
+    // HARD GATE: dashboard-triggered Facebook posts REQUIRE a verified image.
+    // No text-only or link-only fallback is allowed.
+    const staticCheck = assessImageUrl(resolvedAssetUrl, "stored_featured_image");
+    console.log("[quickPublish:server] facebook_image_check_started", {
+      static_reason: staticCheck.reason,
+      static_ready: staticCheck.ready,
+    });
+    if (!staticCheck.ready) {
+      console.log("[quickPublish:server] facebook_publish_blocked_no_image", { reason: staticCheck.reason });
+      return { ok: false, error: staticCheck.message };
+    }
+    const remoteCheck = await verifyImageIsReachable(staticCheck.imageUrl!);
+    console.log("[quickPublish:server] facebook_image_check_result", {
+      reason: remoteCheck.reason,
+      ready: remoteCheck.ready,
+    });
+    if (!remoteCheck.ready) {
+      console.log("[quickPublish:server] facebook_publish_blocked_no_image", { reason: remoteCheck.reason });
+      return { ok: false, error: remoteCheck.message };
+    }
+    resolvedAssetUrl = staticCheck.imageUrl;
+
     const { data: pkg, error: pkgErr } = await supabaseAdmin
       .from("content_packages")
       .insert({
@@ -325,18 +349,13 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       let endpoint: string;
       const body = new URLSearchParams();
       body.set("access_token", pageToken);
-      if (resolvedAssetUrl) {
-        endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/photos`;
-        body.set("url", resolvedAssetUrl);
-        // Graph /photos ignores `link`; append the article URL to the caption.
-        body.set("caption", `${caption}\n\n${link}`);
-      } else {
-        endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/feed`;
-        body.set("message", caption);
-        body.set("link", link);
-      }
+      // Hard-gated above: resolvedAssetUrl is guaranteed present and image-verified.
+      endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/photos`;
+      body.set("url", resolvedAssetUrl!);
+      // Graph /photos ignores `link`; append the article URL to the caption.
+      body.set("caption", `${caption}\n\n${link}`);
       console.log("[quickPublish:server] publish mode", {
-        mode: resolvedAssetUrl ? "PHOTO" : "LINK",
+        mode: "PHOTO",
         asset_source: assetSource,
       });
       console.log("[quickPublish] Graph API request", {
