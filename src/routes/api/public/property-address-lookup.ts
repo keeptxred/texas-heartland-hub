@@ -7,7 +7,7 @@ const ONELINE_GEOCODER_URL =
 const COORDINATE_GEOGRAPHY_URL =
   "https://geocoding.geo.census.gov/geocoder/geographies/coordinates";
 const ARCGIS_GEOCODER_URL =
-  "https://geocode-api.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates";
+  "https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/findAddressCandidates";
 
 type CensusPayload = {
   result?: {
@@ -158,10 +158,14 @@ async function runCoordinateFallback(
 ): Promise<CensusPayload | null> {
   try {
     const geocode = await fetchJson<ArcGisPayload>(arcGisUrl(street, city, state, zip));
-    const candidate = (geocode.candidates ?? []).find((item) => isTexasCandidate(item, zip));
+    const candidates = geocode.candidates ?? [];
+    const candidate = candidates.find((item) => isTexasCandidate(item, zip));
 
     if (!candidate) {
-      diagnostics.push({ attempt: "arcgis-address", outcome: "no-qualified-match" });
+      diagnostics.push({
+        attempt: "arcgis-address",
+        outcome: candidates.length === 0 ? "no-candidates" : "no-qualified-match",
+      });
       return null;
     }
 
