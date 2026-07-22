@@ -89,10 +89,27 @@ function findSchoolDistrict(
   });
 }
 
+function parseAddressInput(input: PropertyAddressInput | string): PropertyAddressInput {
+  if (typeof input !== "string") return input;
+
+  const parts = input
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  return {
+    street: parts[0] ?? "",
+    city: parts[1] ?? "",
+    state: parts[2] ?? "",
+    zip: parts[3] ?? "",
+  };
+}
+
 export async function lookupTexasProperty(
-  input: PropertyAddressInput,
+  rawInput: PropertyAddressInput | string,
   signal?: AbortSignal,
 ): Promise<PropertyLookupResult> {
+  const input = parseAddressInput(rawInput);
   const street = input.street.trim();
   const city = input.city.trim();
   const state = input.state.trim().toUpperCase();
