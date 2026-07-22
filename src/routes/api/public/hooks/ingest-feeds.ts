@@ -1125,7 +1125,7 @@ export async function publishSingleFeedItem(
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: row, error: rowErr } = await supabaseAdmin
     .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date,internal_slug")
+    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,preflight_json")
     .eq("id", feedItemId)
     .maybeSingle();
   if (rowErr || !row) {
@@ -1148,10 +1148,23 @@ export async function publishSingleFeedItem(
     description: row.description ?? "",
   };
 
-  // Reddit RSS descriptions rarely contain the post body — pull selftext from
-  // the public JSON endpoint so the AI rewrite has real source material.
-  // Refuse to publish headline-only Reddit posts rather than fabricating facts.
-  if (isRedditLink(item.link)) {
+  // ------------------------------------------------------------------
+  // FULL SOURCE EXTRACTION FIRST — the preflight must see the real body,
+  // not the ~40-word RSS summary. Reuse a previously stored extracted body
+  // when we already paid to fetch it. Otherwise run extraction exactly once,
+  // cache it, and hand it to the preflight assessor.
+  // ------------------------------------------------------------------
+  const cachedBody =
+    typeof (row as { extracted_body?: string | null }).extracted_body === "string"
+      ? ((row as { extracted_body?: string | null }).extracted_body ?? "").trim()
+      : "";
+  let extractedBody: string = cachedBody;
+  let extractionFailureStage: "extraction" | "preflight" | "none" = "none";
+
+  if (isRedditLink(item.link) && !extractedBody) {
+    // Reddit RSS descriptions rarely contain the post body — pull selftext from
+    // the public JSON endpoint so the AI rewrite has real source material.
+    // Refuse to publish headline-only Reddit posts rather than fabricating facts.
     const { selftext, externalUrl } = await fetchRedditPostData(item.link);
     const selftextMeaningful = !!selftext && wordCount(selftext) >= 40;
     let linkedText: string | null = null;
@@ -1164,6 +1177,14 @@ export async function publishSingleFeedItem(
       }
     }
     if (!selftextMeaningful && !linkedText) {
+      extractionFailureStage = "extraction";
+      const { assessRewritePreflight: preflightAssess, toPersistedSnapshot } =
+        await import("@/lib/rewrite-preflight");
+      const blocked = preflightAssess({ title: item.title, description: "", link: item.link });
+      await supabaseAdmin
+        .from("texas_news_feed")
+        .update({ preflight_json: toPersistedSnapshot(blocked, extractionFailureStage) } as never)
+        .eq("id", feedItemId);
       return {
         ok: false,
         error:
@@ -1175,19 +1196,39 @@ export async function publishSingleFeedItem(
     if (base) parts.push(base);
     if (selftextMeaningful) parts.push(`REDDIT SELFTEXT:\n${selftext}`);
     if (linkedText) parts.push(`LINKED SOURCE (${linkedFrom}):\n${linkedText}`);
-    item.description = parts.join("\n\n");
-    if (linkedFrom && (!item.link || isRedditLink(item.link))) {
-      // Keep the original Reddit link untouched on the feed row; only surface
-      // the linked source in-prompt so the AI cites the underlying article.
+    extractedBody = parts.join("\n\n");
+  } else if (!extractedBody) {
+    // Non-Reddit path: if the stored RSS description is short, run the same
+    // linked-article extraction we already use for Reddit link posts so a
+    // 40-word RSS summary is never treated as the full source.
+    const rssBody = item.description?.trim() ?? "";
+    const rssWords = wordCount(rssBody);
+    if (rssWords < 400 && item.link && /^https?:\/\//i.test(item.link)) {
+      const fetched = await fetchLinkedArticleText(item.link);
+      if (fetched && wordCount(fetched) > rssWords) {
+        extractedBody = rssBody ? `${rssBody}\n\n${fetched}` : fetched;
+      } else {
+        extractedBody = rssBody;
+      }
+    } else {
+      extractedBody = rssBody;
     }
   }
 
+  // The AI rewrite prompt now sees the full extracted body, not the RSS blurb.
+  if (extractedBody) item.description = extractedBody;
+
   // Deterministic preflight — refuse to spend AI rewrite credits when the
   // extracted source clearly cannot produce a factual article.
-  const { assessRewritePreflight } = await import("@/lib/rewrite-preflight");
+  const {
+    assessRewritePreflight,
+    assertRewriteableOrThrow,
+    toPersistedSnapshot,
+    PreflightBlockedError,
+  } = await import("@/lib/rewrite-preflight");
   const preflight = assessRewritePreflight({
     title: item.title,
-    description: item.description,
+    description: extractedBody, // ALWAYS the full extracted body, never the RSS blurb alone
     link: item.link,
   });
   console.log("[publishSingleFeedItem] preflight", {
@@ -1195,7 +1236,23 @@ export async function publishSingleFeedItem(
     rewriteable: preflight.rewriteable,
     reason: preflight.reason,
     source_word_count: preflight.sourceWordCount,
+    used_cached_extraction: cachedBody.length > 0,
+    extracted_body_words: wordCount(extractedBody),
   });
+
+  // Persist the extraction + preflight snapshot so page loads and admin
+  // dashboards can render the reason without recomputing.
+  await supabaseAdmin
+    .from("texas_news_feed")
+    .update({
+      extracted_body: extractedBody || null,
+      preflight_json: toPersistedSnapshot(
+        preflight,
+        preflight.rewriteable ? "none" : "preflight",
+      ),
+    } as never)
+    .eq("id", feedItemId);
+
   if (!preflight.rewriteable) {
     return {
       ok: false,
@@ -1203,8 +1260,14 @@ export async function publishSingleFeedItem(
     };
   }
 
+  // Hard guard — no matter how we got here, refuse to call the paid rewrite
+  // function when preflight is not ok. Throws PreflightBlockedError so tests
+  // can prove the rewrite mock is never reached.
+  assertRewriteableOrThrow(preflight);
+
   const rw = await rewriteItemWithRetry(item, lovableApiKey);
   if (!rw) return { ok: false, error: "AI rewrite failed" };
+  void PreflightBlockedError; // keep type import referenced for downstream callers
 
   const articleRow = buildArticleRow(item, rw);
   const target = minWordsForItem(item, rw);

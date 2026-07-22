@@ -8,6 +8,19 @@ import {
 } from "@/lib/viral-score";
 import { quickPublishToFacebook } from "@/services/quickPublish";
 import { publishFeedItem } from "@/services/publishArticle";
+import {
+  assessRewritePreflight,
+  preflightStatusLabel,
+  type RewritePreflightResult,
+} from "@/lib/rewrite-preflight";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
 
 type Row = {
   id: number;
@@ -16,6 +29,8 @@ type Row = {
   pub_date: string;
   created_at: string | null;
   internal_slug: string | null;
+  link: string | null;
+  description: string | null;
   viral_score: number | null;
   classification_confidence: number | null;
   viral_signals: { reasons?: string[]; category?: string; has_video?: boolean; source_reputation_reason?: string } | null;
@@ -28,7 +43,7 @@ type Row = {
   ready_for_rewrite: boolean | null;
 };
 
-type ArticleMeta = { slug: string; featured_image_url: string | null };
+type ArticleMeta = { slug: string; title: string | null; featured_image_url: string | null };
 
 type FilterKey = "all" | "score" | "texas" | "video" | "reel" | "fb" | "seo" | "ready";
 
@@ -71,13 +86,15 @@ export function ViralRadarPanel() {
   const [articleMsg, setArticleMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
   const [filter, setFilter] = useState<FilterKey>("all");
   const [ignored, setIgnored] = useState<Set<number>>(() => loadIgnored());
+  const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});
+  const [previewId, setPreviewId] = useState<number | null>(null);
 
   async function load() {
     setLoading(true);
     const cutoffIso = new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000).toISOString();
     const { data } = await supabase
       .from("texas_news_feed")
-      .select("id,title,source,pub_date,created_at,internal_slug,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite")
+      .select("id,title,source,pub_date,created_at,internal_slug,link,description,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite")
       .gte("pub_date", cutoffIso)
       .order("pub_date", { ascending: false })
       .order("viral_score", { ascending: false })
@@ -88,7 +105,7 @@ export function ViralRadarPanel() {
     if (slugs.length > 0) {
       const { data: arts } = await supabase
         .from("daily_articles")
-        .select("slug,featured_image_url")
+        .select("slug,title,featured_image_url")
         .in("slug", slugs);
       const map: Record<string, ArticleMeta> = {};
       (arts ?? []).forEach((a) => { map[a.slug] = a as ArticleMeta; });
@@ -170,6 +187,50 @@ export function ViralRadarPanel() {
     }
   }
 
+  async function generateImageAndPost(r: Row) {
+    const slug = r.internal_slug;
+    if (!slug) {
+      setPublishMsg((s) => ({
+        ...s,
+        [r.id]: { ok: false, text: "Publish to Keep Texas Red first — image generation needs an article slug." },
+      }));
+      return;
+    }
+    setImageWorking((s) => ({ ...s, [r.id]: true }));
+    setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: "Generating image…" } }));
+    try {
+      const token =
+        (typeof window !== "undefined" && sessionStorage.getItem("ktr-admin-passcode")) ||
+        (import.meta.env.VITE_ADMIN_PASSCODE as string) ||
+        "keeptxred";
+      const genRes = await regenerateFeaturedImage({ data: { slug, token } });
+      if (!genRes.ok) {
+        setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: `Image generation failed: ${genRes.error}` } }));
+        return;
+      }
+      setPublishMsg((s) => ({ ...s, [r.id]: { ok: true, text: "Image ready. Posting…" } }));
+      const postRes = await quickPublishToFacebook({
+        headline: r.title,
+        source: r.source,
+        feed_item_id: r.id,
+        slug,
+        asset_url: genRes.url,
+      });
+      setPublishMsg((s) => ({
+        ...s,
+        [r.id]: { ok: postRes.ok, text: postRes.ok ? "Published to Facebook" : postRes.error },
+      }));
+      if (postRes.ok) await load();
+    } catch (e) {
+      setPublishMsg((s) => ({
+        ...s,
+        [r.id]: { ok: false, text: e instanceof Error ? e.message : "Generate & post failed" },
+      }));
+    } finally {
+      setImageWorking((s) => ({ ...s, [r.id]: false }));
+    }
+  }
+
   async function publishToKtr(r: Row) {
     setArticleWorking((s) => ({ ...s, [r.id]: true }));
     setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: "" } }));
@@ -232,6 +293,23 @@ export function ViralRadarPanel() {
         return arr;
     }
   }, [recentRows, filter]);
+
+  const preflightById = useMemo(() => {
+    const m: Record<number, RewritePreflightResult> = {};
+    recentRows.forEach((r) => {
+      m[r.id] = assessRewritePreflight({
+        title: r.title,
+        description: r.description,
+        link: r.link,
+      });
+    });
+    return m;
+  }, [recentRows]);
+
+  const previewRow = useMemo(
+    () => (previewId == null ? null : recentRows.find((r) => r.id === previewId) ?? null),
+    [previewId, recentRows],
+  );
 
   return (
     <div className="border-2 border-foreground/10 bg-card p-5">
@@ -338,7 +416,15 @@ export function ViralRadarPanel() {
                   <tr key={r.id} className="border-b border-border/50 align-top">
                     <td className="py-2 pr-2 max-w-[24rem]">
                       <div className="flex items-center gap-2">
-                        <div className="font-medium leading-snug truncate">{r.title}</div>
+                        <button
+                          type="button"
+                          title={r.title}
+                          onClick={() => setPreviewId(r.id)}
+                          className="font-medium leading-snug truncate text-left hover:underline focus:outline-none focus:ring-1 focus:ring-primary"
+                          aria-label={`Preview: ${r.title}`}
+                        >
+                          {r.title}
+                        </button>
                         {rewritten ? (
                           <span title="Rewritten" className="text-emerald-600 shrink-0">
                             <FileText size={14} />
@@ -365,6 +451,21 @@ export function ViralRadarPanel() {
                         {(r.source_count ?? 1) > 1 ? ` · ${r.source_count} sources` : ""}
                         {r.trend_velocity ? ` · v${r.trend_velocity.toFixed(0)}` : ""}
                       </div>
+                      {(() => {
+                        const pf = preflightById[r.id];
+                        if (!pf) return null;
+                        const tone = rewritten
+                          ? "text-emerald-600"
+                          : pf.rewriteable
+                          ? "text-emerald-600"
+                          : pf.reason === "PENDING_EXTRACTION"
+                          ? "text-muted-foreground"
+                          : "text-red-600";
+                        const label = rewritten
+                          ? "Published to Keep Texas Red"
+                          : preflightStatusLabel(pf);
+                        return <div className={`text-[10px] ${tone}`}>{label}</div>;
+                      })()}
                       {displayDateLabel ? (
                         <div className="text-[11px] text-muted-foreground">
                           {displayDatePrefix}: {displayDateLabel}
@@ -393,8 +494,16 @@ export function ViralRadarPanel() {
                         <div className="flex flex-wrap gap-2">
                           <button
                             type="button"
-                            disabled={!!articleWorking[r.id]}
+                            disabled={
+                              !!articleWorking[r.id] ||
+                              (!rewritten && !preflightById[r.id]?.rewriteable)
+                            }
                             onClick={() => void publishToKtr(r)}
+                            title={
+                              !rewritten && !preflightById[r.id]?.rewriteable
+                                ? preflightById[r.id]?.message
+                                : undefined
+                            }
                             className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
                           >
                             {articleWorking[r.id]
@@ -403,19 +512,34 @@ export function ViralRadarPanel() {
                               ? "Republish"
                               : "Publish to Keep Texas Red"}
                           </button>
-                          <button
-                            type="button"
-                            disabled={!!publishing[r.id] || !canPostToFacebook}
-                            onClick={() => void post(r)}
-                            title={
-                              canPostToFacebook
-                                ? undefined
-                                : "Publish to Keep Texas Red first — Facebook posts require a KeepTXRed article URL."
-                            }
-                            className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
-                          >
-                            {publishing[r.id] ? "Posting…" : "Post to Facebook"}
-                          </button>
+                          {canPostToFacebook && hasImage ? (
+                            <button
+                              type="button"
+                              disabled={!!publishing[r.id]}
+                              onClick={() => void post(r)}
+                              className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                            >
+                              {publishing[r.id] ? "Posting…" : "Post to Facebook"}
+                            </button>
+                          ) : canPostToFacebook ? (
+                            <button
+                              type="button"
+                              disabled={!!imageWorking[r.id] || !!publishing[r.id]}
+                              onClick={() => void generateImageAndPost(r)}
+                              className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                            >
+                              {imageWorking[r.id] ? "Generating…" : "Generate Image & Post"}
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              disabled
+                              title="Publish to Keep Texas Red first — Facebook posts require a KeepTXRed article URL."
+                              className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest opacity-60 cursor-not-allowed"
+                            >
+                              Post to Facebook
+                            </button>
+                          )}
                           <button
                             type="button"
                             onClick={() => ignoreRow(r.id)}
@@ -446,6 +570,146 @@ export function ViralRadarPanel() {
           </table>
         </div>
       )}
+
+      <Dialog open={previewRow != null} onOpenChange={(o) => !o && setPreviewId(null)}>
+        <DialogContent className="max-w-2xl">
+          {previewRow ? (() => {
+            const art = previewRow.internal_slug ? articles[previewRow.internal_slug] : undefined;
+            const pf = preflightById[previewRow.id];
+            const rewritten = !!art;
+            const hasImage = !!art?.featured_image_url;
+            const canPostToFacebook = !!previewRow.internal_slug && rewritten;
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-base leading-snug">Viral opportunity preview</DialogTitle>
+                  <DialogDescription>
+                    Full headlines, readiness, and image status for this signal.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 text-sm">
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      Source headline
+                    </div>
+                    <div className="font-medium">{previewRow.title}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                      Keep Texas Red headline
+                    </div>
+                    <div className="font-medium">
+                      {art?.title ?? (
+                        <span className="text-muted-foreground italic">
+                          Not generated yet — publishing will rewrite this headline.
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  {previewRow.link ? (
+                    <a
+                      href={previewRow.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[11px] underline text-primary break-all"
+                    >
+                      Open source article ↗
+                    </a>
+                  ) : null}
+                  {pf ? (
+                    <div className="text-[11px]">
+                      <div className="text-muted-foreground uppercase tracking-widest text-[10px] font-bold">
+                        Rewrite readiness
+                      </div>
+                      <div className={pf.rewriteable ? "text-emerald-600" : "text-red-600"}>
+                        {preflightStatusLabel(pf)}
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="text-[11px]">
+                    <div className="text-muted-foreground uppercase tracking-widest text-[10px] font-bold">
+                      Facebook image
+                    </div>
+                    <div>
+                      {hasImage ? (
+                        <span className="text-emerald-600">
+                          Image stored · will be verified before Facebook posting
+                        </span>
+                      ) : (
+                        <span className="text-amber-600">
+                          No image stored · Facebook posting will require Generate Image &amp; Post
+                        </span>
+                      )}
+                    </div>
+                    {art?.featured_image_url && hasImage ? (
+                      <img
+                        src={art.featured_image_url}
+                        alt=""
+                        className="mt-2 max-h-40 rounded border border-border"
+                        loading="lazy"
+                      />
+                    ) : null}
+                  </div>
+                  {previewRow.description ? (
+                    <div className="text-[11px]">
+                      <div className="text-muted-foreground uppercase tracking-widest text-[10px] font-bold">
+                        Source summary
+                      </div>
+                      <div className="max-h-40 overflow-y-auto whitespace-pre-wrap text-muted-foreground">
+                        {previewRow.description.slice(0, 1200)}
+                      </div>
+                    </div>
+                  ) : null}
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    <button
+                      type="button"
+                      disabled={
+                        !!articleWorking[previewRow.id] ||
+                        (!rewritten && !pf?.rewriteable)
+                      }
+                      onClick={() => void publishToKtr(previewRow)}
+                      className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                    >
+                      {rewritten ? "Republish" : "Publish to Keep Texas Red"}
+                    </button>
+                    {canPostToFacebook ? (
+                      hasImage ? (
+                        <button
+                          type="button"
+                          disabled={!!publishing[previewRow.id]}
+                          onClick={() => void post(previewRow)}
+                          className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                        >
+                          Post to Facebook
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          disabled={!!imageWorking[previewRow.id]}
+                          onClick={() => void generateImageAndPost(previewRow)}
+                          className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                        >
+                          Generate Image &amp; Post
+                        </button>
+                      )
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        ignoreRow(previewRow.id);
+                        setPreviewId(null);
+                      }}
+                      className="px-3 py-1 border border-border text-[11px] font-bold uppercase tracking-widest hover:bg-muted"
+                    >
+                      Ignore
+                    </button>
+                  </div>
+                </div>
+              </>
+            );
+          })() : null}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
