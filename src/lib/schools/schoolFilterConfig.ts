@@ -1,0 +1,1 @@
+export const schoolFilterConfig=[{key:"county",label:"County",type:"text" as const},{key:"city",label:"City",type:"text" as const},{key:"zipCode",label:"ZIP code",type:"text" as const},{key:"minimumRating",label:"Minimum rating",type:"select" as const,options:["A","B","C","D","F"]}];
