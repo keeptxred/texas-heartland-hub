@@ -994,6 +994,7 @@ async function handler() {
     // (2) drop anything whose title matches an article published in the
     // last 7 days. Same story, different wording must never appear twice.
     const withinBatch = dedupeByTitle(articleRows as Array<{ title: string; slug: string }>);
+    stageCounts.dedupedInBatch = articleRows.length - withinBatch.length;
     const sinceIso = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const { data: recent } = await supabaseAdmin
       .from("daily_articles")
@@ -1005,10 +1006,12 @@ async function handler() {
         .filter((r) => !recentTitles.some((t) => isDuplicateTitle(t, r.title)))
         .map((r) => r.slug),
     );
+    stageCounts.dedupedVsRecent = withinBatch.length - dedupedSlugs.size;
     const uniqueArticleRows = articleRows.filter((r) => dedupedSlugs.has(r.slug));
     if (uniqueArticleRows.length === 0) {
+      console.log("[ingest-feeds] all articles deduped", stageCounts);
       return new Response(
-        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, dedupedAll: true }),
+        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, dedupedAll: true, stageCounts }),
         { headers: { "Content-Type": "application/json" } },
       );
     }
@@ -1016,23 +1019,34 @@ async function handler() {
     const { error: artErr, count: artCount } = await supabaseAdmin
       .from("daily_articles")
       .upsert(uniqueArticleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
+    if (artErr) {
+      console.error("[ingest-feeds] daily_articles upsert failed", { message: artErr.message, count: uniqueArticleRows.length });
+    }
     if (!artErr) {
       nativeMinted = artCount ?? uniqueArticleRows.length;
+      stageCounts.articlesUpserted = nativeMinted;
       await Promise.allSettled(
         uniqueArticleRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
       );
       // Write the internal slug back onto the feed row so cards can link to it.
-      await Promise.all(
+      const linkResults = await Promise.all(
         uniqueArticleRows.map((row: { slug: string }) => {
           const src = articleSourceBySlug.get(row.slug);
-          if (!src) return Promise.resolve();
+          if (!src) return Promise.resolve({ ok: false });
           return supabaseAdmin
             .from("texas_news_feed")
             .update({ internal_slug: row.slug })
-            .eq("link", src.link);
+            .eq("link", src.link)
+            .then((r) => ({ ok: !r.error, error: r.error?.message }));
         }),
       );
+      stageCounts.internalSlugsLinked = linkResults.filter((r) => (r as { ok?: boolean }).ok).length;
+      const linkErrors = linkResults.filter((r) => (r as { ok?: boolean }).ok === false && (r as { error?: string }).error);
+      if (linkErrors.length > 0) {
+        console.error("[ingest-feeds] internal_slug writeback errors", { count: linkErrors.length, sample: linkErrors.slice(0, 3) });
+      }
     }
+    console.log("[ingest-feeds] batch complete", stageCounts);
   }
 
   // Backfill internal_slug for any older feed rows that don't have one yet.
@@ -1051,8 +1065,13 @@ async function handler() {
       description: row.description ?? "",
     }));
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await Promise.all(items.map((it) => rewriteItemWithRetry(it, lovableApiKey)))
+      ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, lovableApiKey))
       : items.map(() => null);
+    console.log("[ingest-feeds] orphan backfill", {
+      candidates: items.length,
+      rewriteSucceeded: rewrites.filter(Boolean).length,
+      rewriteFailed: rewrites.filter((r) => !r).length,
+    });
     // Only mint articles for orphans whose rewrite succeeded.
     const paired = items
       .map((it, i) => ({ it, rw: rewrites[i] }))
