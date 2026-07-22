@@ -1,0 +1,11 @@
+import type {TexasSalaryResult} from "@/types/income/TexasSalaryCalculator";
+export const formatSalaryCurrency=(value:number)=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(value);
+export const explainGrossIncome=(r:TexasSalaryResult)=>`Your gross annual salary is ${formatSalaryCurrency(r.input.annualSalary)} before taxes and deductions.`;
+export const explainTaxes=(r:TexasSalaryResult)=>`Your estimated total tax burden is approximately ${Math.round(r.taxes.effectiveTaxRate*100)}% including federal income tax and payroll taxes.`;
+export const explainTexasTaxAdvantage=()=>"Texas does not collect a state income tax, which can increase take-home pay compared with many other states.";
+export const explainTakeHomePay=(r:TexasSalaryResult)=>`Your estimated take-home pay is ${formatSalaryCurrency(r.paycheck.monthlyTakeHomePay)} per month after taxes and deductions.`;
+export const explainHousingAffordability=(r:TexasSalaryResult)=>`A recommended housing budget is approximately ${formatSalaryCurrency(r.affordability.recommendedHousingBudget)} per month.`;
+export const explainSavingsTarget=(r:TexasSalaryResult)=>`A suggested monthly savings target is approximately ${formatSalaryCurrency(r.affordability.recommendedSavings)}.`;
+export const explainLifestyleScore=(r:TexasSalaryResult)=>r.affordability.lifestyleScore>=85?"This salary supports strong financial flexibility.":r.affordability.lifestyleScore>=65?"This salary supports a comfortable lifestyle with reasonable budgeting.":"This salary may require careful budgeting.";
+export const generateSalarySummary=(r:TexasSalaryResult)=>`A ${formatSalaryCurrency(r.input.annualSalary)} salary produces estimated monthly take-home pay of ${formatSalaryCurrency(r.paycheck.monthlyTakeHomePay)}.`;
+export const generateSalarySEODescription=(location="Texas")=>`Use this ${location} salary calculator to estimate take-home pay, taxes, paycheck amounts, and income needed for your lifestyle.`;
