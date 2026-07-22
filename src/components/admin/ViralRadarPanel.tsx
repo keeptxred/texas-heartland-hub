@@ -8,6 +8,19 @@ import {
 } from "@/lib/viral-score";
 import { quickPublishToFacebook } from "@/services/quickPublish";
 import { publishFeedItem } from "@/services/publishArticle";
+import {
+  assessRewritePreflight,
+  preflightStatusLabel,
+  type RewritePreflightResult,
+} from "@/lib/rewrite-preflight";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
 
 type Row = {
   id: number;
@@ -16,6 +29,8 @@ type Row = {
   pub_date: string;
   created_at: string | null;
   internal_slug: string | null;
+  link: string | null;
+  description: string | null;
   viral_score: number | null;
   classification_confidence: number | null;
   viral_signals: { reasons?: string[]; category?: string; has_video?: boolean; source_reputation_reason?: string } | null;
@@ -28,7 +43,7 @@ type Row = {
   ready_for_rewrite: boolean | null;
 };
 
-type ArticleMeta = { slug: string; featured_image_url: string | null };
+type ArticleMeta = { slug: string; title: string | null; featured_image_url: string | null };
 
 type FilterKey = "all" | "score" | "texas" | "video" | "reel" | "fb" | "seo" | "ready";
 
@@ -71,13 +86,15 @@ export function ViralRadarPanel() {
   const [articleMsg, setArticleMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
   const [filter, setFilter] = useState<FilterKey>("all");
   const [ignored, setIgnored] = useState<Set<number>>(() => loadIgnored());
+  const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});
+  const [previewId, setPreviewId] = useState<number | null>(null);
 
   async function load() {
     setLoading(true);
     const cutoffIso = new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000).toISOString();
     const { data } = await supabase
       .from("texas_news_feed")
-      .select("id,title,source,pub_date,created_at,internal_slug,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite")
+      .select("id,title,source,pub_date,created_at,internal_slug,link,description,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite")
       .gte("pub_date", cutoffIso)
       .order("pub_date", { ascending: false })
       .order("viral_score", { ascending: false })
@@ -88,7 +105,7 @@ export function ViralRadarPanel() {
     if (slugs.length > 0) {
       const { data: arts } = await supabase
         .from("daily_articles")
-        .select("slug,featured_image_url")
+        .select("slug,title,featured_image_url")
         .in("slug", slugs);
       const map: Record<string, ArticleMeta> = {};
       (arts ?? []).forEach((a) => { map[a.slug] = a as ArticleMeta; });
@@ -170,6 +187,50 @@ export function ViralRadarPanel() {
     }
   }
 
+  async function generateImageAndPost(r: Row) {
+    const slug = r.internal_slug;
+    if (!slug) {
+      setPublishMsg((s) => ({
+        ...s,
+        [r.id]: { ok: false, text: "Publish to Keep Texas Red first — image generation needs an article slug." },
+      }));
+      return;
+    }
+    setImageWorking((s) => ({ ...s, [r.id]: true }));
+    setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: "Generating image…" } }));
+    try {
+      const token =
+        (typeof window !== "undefined" && sessionStorage.getItem("ktr-admin-passcode")) ||
+        (import.meta.env.VITE_ADMIN_PASSCODE as string) ||
+        "keeptxred";
+      const genRes = await regenerateFeaturedImage({ data: { slug, token } });
+      if (!genRes.ok) {
+        setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: `Image generation failed: ${genRes.error}` } }));
+        return;
+      }
+      setPublishMsg((s) => ({ ...s, [r.id]: { ok: true, text: "Image ready. Posting…" } }));
+      const postRes = await quickPublishToFacebook({
+        headline: r.title,
+        source: r.source,
+        feed_item_id: r.id,
+        slug,
+        asset_url: genRes.url,
+      });
+      setPublishMsg((s) => ({
+        ...s,
+        [r.id]: { ok: postRes.ok, text: postRes.ok ? "Published to Facebook" : postRes.error },
+      }));
+      if (postRes.ok) await load();
+    } catch (e) {
+      setPublishMsg((s) => ({
+        ...s,
+        [r.id]: { ok: false, text: e instanceof Error ? e.message : "Generate & post failed" },
+      }));
+    } finally {
+      setImageWorking((s) => ({ ...s, [r.id]: false }));
+    }
+  }
+
   async function publishToKtr(r: Row) {
     setArticleWorking((s) => ({ ...s, [r.id]: true }));
     setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: "" } }));
@@ -232,6 +293,23 @@ export function ViralRadarPanel() {
         return arr;
     }
   }, [recentRows, filter]);
+
+  const preflightById = useMemo(() => {
+    const m: Record<number, RewritePreflightResult> = {};
+    recentRows.forEach((r) => {
+      m[r.id] = assessRewritePreflight({
+        title: r.title,
+        description: r.description,
+        link: r.link,
+      });
+    });
+    return m;
+  }, [recentRows]);
+
+  const previewRow = useMemo(
+    () => (previewId == null ? null : recentRows.find((r) => r.id === previewId) ?? null),
+    [previewId, recentRows],
+  );
 
   return (
     <div className="border-2 border-foreground/10 bg-card p-5">
