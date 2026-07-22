@@ -2,7 +2,12 @@ import { useMemo, useState } from "react";
 import { COUNTIES, TAX_RATE_DATASET } from "@/data/counties";
 
 const money = (value: number) =>
-  value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  });
+
 const rateLabel = (value: number) => `${value.toFixed(4)} per $100`;
 const safeMoney = (value: number) =>
   Number.isFinite(value) ? Math.max(0, Math.min(value, 100_000_000)) : 0;
@@ -28,16 +33,22 @@ function veteranExemption(value: number, rating: Exemptions["veteran"]) {
   return 0;
 }
 
+function selectZeroOnFocus(event: React.FocusEvent<HTMLInputElement>) {
+  if (Number(event.currentTarget.value) === 0) {
+    event.currentTarget.select();
+  }
+}
+
 export function TaxCalculator() {
   const first = COUNTIES[0];
-  const firstHasKnownIsd = first.schoolDistricts.some((district) => district.rate > 0);
+  const firstKnownDistricts = first.schoolDistricts.filter((district) => district.rate > 0);
   const [countySlug, setCountySlug] = useState(first.slug);
-  const [isdName, setIsdName] = useState(firstHasKnownIsd ? first.schoolDistricts[0].name : "");
+  const [isdName, setIsdName] = useState(firstKnownDistricts[0]?.name ?? "");
   const [value, setValue] = useState(400_000);
   const [priorValue, setPriorValue] = useState(365_000);
   const [cityRate, setCityRate] = useState(first.cityAvgRate);
   const [countyRate, setCountyRate] = useState(first.countyRate);
-  const [schoolRate, setSchoolRate] = useState(first.schoolDistricts[0].rate);
+  const [schoolRate, setSchoolRate] = useState(firstKnownDistricts[0]?.rate ?? 0);
   const [selectedSpecialNames, setSelectedSpecialNames] = useState<string[]>([]);
   const [manualMudRate, setManualMudRate] = useState(0);
   const [manualOtherRate, setManualOtherRate] = useState(first.specialDistrictRate);
@@ -52,7 +63,7 @@ export function TaxCalculator() {
   const county = COUNTIES.find((item) => item.slug === countySlug) ?? first;
   const knownSchoolDistricts = county.schoolDistricts.filter((district) => district.rate > 0);
   const hasKnownSchoolDistricts = knownSchoolDistricts.length > 0;
-  const schoolDistrictLabel = isdName.trim() || "School district";
+  const schoolDistrictLabel = isdName || "School district";
 
   const selectedSpecials = county.specialDistricts.filter((district) =>
     selectedSpecialNames.includes(district.name),
@@ -73,8 +84,8 @@ export function TaxCalculator() {
       vetExemption;
     const schoolTaxable = Math.max(0, cappedValue - schoolExemption);
     const per100 = (rate: number, taxable: number) => (taxable / 100) * safeRate(rate);
-
     const specialRate = selectedSpecials.reduce((sum, district) => sum + district.rate, 0);
+
     const lines = [
       {
         label: county.name,
@@ -132,13 +143,11 @@ export function TaxCalculator() {
       safeRate(manualOtherRate);
 
     return {
-      marketValue,
       cappedValue,
       generalTaxable,
       schoolTaxable,
       schoolExemption,
       lines,
-      adValoremTotal,
       pid,
       annualTotal,
       monthly: annualTotal / 12,
@@ -164,12 +173,13 @@ export function TaxCalculator() {
   function changeCounty(slug: string) {
     const next = COUNTIES.find((item) => item.slug === slug) ?? first;
     const nextKnownDistricts = next.schoolDistricts.filter((district) => district.rate > 0);
-    const nextIsd = nextKnownDistricts[0] ?? next.schoolDistricts[0];
+    const nextIsd = nextKnownDistricts[0];
+
     setCountySlug(next.slug);
-    setIsdName(nextKnownDistricts.length > 0 ? nextIsd.name : "");
+    setIsdName(nextIsd?.name ?? "");
     setCountyRate(next.countyRate);
     setCityRate(next.cityAvgRate);
-    setSchoolRate(nextIsd.rate);
+    setSchoolRate(nextIsd?.rate ?? 0);
     setManualOtherRate(next.specialDistrictRate);
     setSelectedSpecialNames([]);
   }
@@ -183,12 +193,12 @@ export function TaxCalculator() {
 
   function reset() {
     setCountySlug(first.slug);
-    setIsdName(firstHasKnownIsd ? first.schoolDistricts[0].name : "");
+    setIsdName(firstKnownDistricts[0]?.name ?? "");
     setValue(400_000);
     setPriorValue(365_000);
     setCountyRate(first.countyRate);
     setCityRate(first.cityAvgRate);
-    setSchoolRate(first.schoolDistricts[0].rate);
+    setSchoolRate(firstKnownDistricts[0]?.rate ?? 0);
     setSelectedSpecialNames([]);
     setManualMudRate(0);
     setManualOtherRate(first.specialDistrictRate);
@@ -204,12 +214,18 @@ export function TaxCalculator() {
             <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
               All 254 Texas Counties
             </p>
-            <h2 className="mt-1 font-display text-3xl tracking-tight">Texas Property Tax Calculator</h2>
+            <h2 className="mt-1 font-display text-3xl tracking-tight">
+              Texas Property Tax Calculator
+            </h2>
             <p className="mt-2 text-xs text-muted-foreground">
               Dataset year {TAX_RATE_DATASET.taxYear} • refreshed {TAX_RATE_DATASET.lastUpdated}
             </p>
           </div>
-          <button type="button" onClick={reset} className="border border-border px-3 py-2 text-xs font-bold uppercase tracking-wider">
+          <button
+            type="button"
+            onClick={reset}
+            className="border border-border px-3 py-2 text-xs font-bold uppercase tracking-wider"
+          >
             Reset
           </button>
         </div>
@@ -221,46 +237,104 @@ export function TaxCalculator() {
             <legend className="mb-4 font-display text-xl">Property and jurisdictions</legend>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="County" id="tax-county">
-                <select id="tax-county" value={countySlug} onChange={(event) => changeCounty(event.target.value)} className="tax-input">
-                  {COUNTIES.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
+                <select
+                  id="tax-county"
+                  value={countySlug}
+                  onChange={(event) => changeCounty(event.target.value)}
+                  className="tax-input"
+                >
+                  {COUNTIES.map((item) => (
+                    <option key={item.slug} value={item.slug}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </Field>
 
               {hasKnownSchoolDistricts ? (
                 <Field label="School district" id="tax-isd">
-                  <select id="tax-isd" value={isdName} onChange={(event) => changeIsd(event.target.value)} className="tax-input">
+                  <select
+                    id="tax-isd"
+                    value={isdName}
+                    onChange={(event) => changeIsd(event.target.value)}
+                    className="tax-input"
+                  >
                     {knownSchoolDistricts.map((item) => (
-                      <option key={item.name} value={item.name}>{item.name} ({item.rate.toFixed(4)})</option>
+                      <option key={item.name} value={item.name}>
+                        {item.name} ({item.rate.toFixed(4)})
+                      </option>
                     ))}
                   </select>
                 </Field>
               ) : (
-                <Field label="School district name" id="tax-isd-name">
-                  <input
-                    id="tax-isd-name"
-                    type="text"
-                    value={isdName}
-                    onChange={(event) => setIsdName(event.target.value)}
-                    placeholder="Enter your school district"
-                    className="tax-input"
-                  />
-                </Field>
+                <div className="tax-notice">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                    School district
+                  </p>
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    District data is not yet available for this county. Enter the school district
+                    tax rate below from your tax statement.
+                  </p>
+                </div>
               )}
 
-              <MoneyField id="tax-value" label="Current appraised value" value={value} onChange={setValue} />
-              <MoneyField id="tax-prior" label="Prior-year appraised value" value={priorValue} onChange={setPriorValue} />
+              <MoneyField
+                id="tax-value"
+                label="Current appraised value"
+                value={value}
+                onChange={setValue}
+              />
+              <MoneyField
+                id="tax-prior"
+                label="Prior-year appraised value"
+                value={priorValue}
+                onChange={setPriorValue}
+              />
             </div>
           </fieldset>
 
           <fieldset className="border-t border-border pt-6">
             <legend className="mb-4 font-display text-xl">Exemptions</legend>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Check checked={exemptions.homestead} onChange={(checked) => setExemptions((current) => ({ ...current, homestead: checked }))} title="Residence homestead" />
-              <Check checked={exemptions.over65} onChange={(checked) => setExemptions((current) => ({ ...current, over65: checked }))} title="Age 65 or older" />
-              <Check checked={exemptions.disabled} onChange={(checked) => setExemptions((current) => ({ ...current, disabled: checked }))} title="Disabled homeowner" />
+              <Check
+                checked={exemptions.homestead}
+                onChange={(checked) =>
+                  setExemptions((current) => ({ ...current, homestead: checked }))
+                }
+                title="Residence homestead"
+              />
+              <Check
+                checked={exemptions.over65}
+                onChange={(checked) =>
+                  setExemptions((current) => ({ ...current, over65: checked }))
+                }
+                title="Age 65 or older"
+              />
+              <Check
+                checked={exemptions.disabled}
+                onChange={(checked) =>
+                  setExemptions((current) => ({ ...current, disabled: checked }))
+                }
+                title="Disabled homeowner"
+              />
               <Field label="Disabled-veteran rating" id="tax-veteran">
-                <select id="tax-veteran" value={exemptions.veteran} onChange={(event) => setExemptions((current) => ({ ...current, veteran: Number(event.target.value) as Exemptions["veteran"] }))} className="tax-input">
-                  <option value={0}>Not selected</option><option value={10}>10%–29%</option><option value={30}>30%–49%</option><option value={50}>50%–69%</option><option value={70}>70%–99%</option><option value={100}>100%</option>
+                <select
+                  id="tax-veteran"
+                  value={exemptions.veteran}
+                  onChange={(event) =>
+                    setExemptions((current) => ({
+                      ...current,
+                      veteran: Number(event.target.value) as Exemptions["veteran"],
+                    }))
+                  }
+                  className="tax-input"
+                >
+                  <option value={0}>Not selected</option>
+                  <option value={10}>10%–29%</option>
+                  <option value={30}>30%–49%</option>
+                  <option value={50}>50%–69%</option>
+                  <option value={70}>70%–99%</option>
+                  <option value={100}>100%</option>
                 </select>
               </Field>
             </div>
@@ -269,15 +343,38 @@ export function TaxCalculator() {
           <fieldset className="border-t border-border pt-6">
             <legend className="mb-4 font-display text-xl">Exact tax rates</legend>
             <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
-              Statewide rates are prefilled when available. Enter the exact figures from your appraisal-district or tax statement for address-level precision.
+              Statewide rates are prefilled when available. Enter the exact figures from your
+              appraisal-district or tax statement for address-level precision.
             </p>
-            <div className="grid gap-4 sm:grid-cols-2">
+
+            <div className="grid items-end gap-4 sm:grid-cols-2">
               <RateField id="county-rate" label="County rate" value={countyRate} onChange={setCountyRate} />
               <RateField id="city-rate" label="City rate" value={cityRate} onChange={setCityRate} />
-              <RateField id="school-rate" label="School district tax rate" value={schoolRate} onChange={setSchoolRate} />
-              <RateField id="mud-rate" label="MUD / water-district rate" value={manualMudRate} onChange={setManualMudRate} />
-              <RateField id="other-rate" label="Other special-district rate" value={manualOtherRate} onChange={setManualOtherRate} />
-              <MoneyField id="pid-assessment" label="Annual PID assessment" value={pidAnnualAssessment} onChange={setPidAnnualAssessment} step={100} />
+              <RateField
+                id="school-rate"
+                label="School district tax rate"
+                value={schoolRate}
+                onChange={setSchoolRate}
+              />
+              <RateField
+                id="mud-rate"
+                label="MUD / water-district rate"
+                value={manualMudRate}
+                onChange={setManualMudRate}
+              />
+              <RateField
+                id="other-rate"
+                label="Other special-district rate"
+                value={manualOtherRate}
+                onChange={setManualOtherRate}
+              />
+              <MoneyField
+                id="pid-assessment"
+                label="Annual PID assessment"
+                value={pidAnnualAssessment}
+                onChange={setPidAnnualAssessment}
+                step={100}
+              />
             </div>
 
             {county.specialDistricts.length > 0 && (
@@ -286,11 +383,17 @@ export function TaxCalculator() {
                   id="tax-specials"
                   multiple
                   value={selectedSpecialNames}
-                  onChange={(event) => setSelectedSpecialNames(Array.from(event.target.selectedOptions, (option) => option.value))}
+                  onChange={(event) =>
+                    setSelectedSpecialNames(
+                      Array.from(event.target.selectedOptions, (option) => option.value),
+                    )
+                  }
                   className="tax-input min-h-32"
                 >
                   {county.specialDistricts.map((district) => (
-                    <option key={district.name} value={district.name}>{district.name} — {district.rate.toFixed(4)}</option>
+                    <option key={district.name} value={district.name}>
+                      {district.name} — {district.rate.toFixed(4)}
+                    </option>
                   ))}
                 </select>
               </Field>
@@ -300,8 +403,12 @@ export function TaxCalculator() {
 
         <div>
           <div className="bg-secondary p-6 text-secondary-foreground">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/75">Estimated annual total</p>
-            <div className="mt-2 font-display text-5xl leading-none text-primary tabular-nums">{money(calculation.annualTotal)}</div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/75">
+              Estimated annual total
+            </p>
+            <div className="mt-2 font-display text-5xl leading-none text-primary tabular-nums">
+              {money(calculation.annualTotal)}
+            </div>
             <div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/15 pt-5 text-sm">
               <Metric label="Monthly equivalent" value={money(calculation.monthly)} />
               <Metric label="Effective burden" value={`${calculation.effectiveRate.toFixed(2)}%`} />
@@ -316,7 +423,9 @@ export function TaxCalculator() {
                 <div className="flex justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold">{line.label}</p>
-                    <p className="text-[10px] text-muted-foreground">{rateLabel(line.rate)} on {money(line.taxable)}</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      {rateLabel(line.rate)} on {money(line.taxable)}
+                    </p>
                     <p className="text-[10px] text-muted-foreground">{line.note}</p>
                   </div>
                   <strong className="tabular-nums">{money(line.amount)}</strong>
@@ -326,7 +435,12 @@ export function TaxCalculator() {
             {calculation.pid > 0 && (
               <div className="py-4">
                 <div className="flex justify-between gap-4">
-                  <div><p className="text-sm font-semibold">PID annual assessment</p><p className="text-[10px] text-muted-foreground">Flat assessment, not an ad valorem rate</p></div>
+                  <div>
+                    <p className="text-sm font-semibold">PID annual assessment</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Flat assessment, not an ad valorem rate
+                    </p>
+                  </div>
                   <strong className="tabular-nums">{money(calculation.pid)}</strong>
                 </div>
               </div>
@@ -343,10 +457,30 @@ export function TaxCalculator() {
       </div>
 
       <footer className="border-t border-border p-6 text-xs leading-relaxed text-muted-foreground">
-        Rates are cached from Texas Comptroller statewide files and may change after publication. MUD, PID, emergency-service, hospital, college, road, and other districts are address-specific. Confirm the exact taxing entities and assessment amounts shown on the property’s local tax statement.
+        Rates are cached from Texas Comptroller statewide files and may change after publication.
+        MUD, PID, emergency-service, hospital, college, road, and other districts are
+        address-specific. Confirm the exact taxing entities and assessment amounts shown on the
+        property’s local tax statement.
       </footer>
 
       <style>{`
+        .tax-field {
+          display: flex;
+          min-width: 0;
+          flex-direction: column;
+        }
+        .tax-field-label {
+          display: flex;
+          min-height: 2.15rem;
+          align-items: flex-end;
+          margin-bottom: .375rem;
+          font-size: .625rem;
+          font-weight: 700;
+          line-height: 1.25;
+          letter-spacing: .1em;
+          text-transform: uppercase;
+          color: var(--color-muted-foreground);
+        }
         .tax-input {
           width: 100%;
           min-height: 44px;
@@ -404,20 +538,55 @@ export function TaxCalculator() {
           appearance: textfield;
           -moz-appearance: textfield;
         }
+        .tax-notice {
+          min-height: 44px;
+          border: 1px dashed var(--color-border);
+          background: var(--color-muted);
+          padding: .75rem;
+        }
       `}</style>
     </section>
   );
 }
 
-function Field({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
-  return <div><label htmlFor={id} className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</label>{children}</div>;
+function Field({
+  label,
+  id,
+  children,
+}: {
+  label: string;
+  id: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="tax-field">
+      <label htmlFor={id} className="tax-field-label">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
 }
 
-function MoneyField({ id, label, value, onChange, step = 5000 }: { id: string; label: string; value: number; onChange: (value: number) => void; step?: number }) {
+function MoneyField({
+  id,
+  label,
+  value,
+  onChange,
+  step = 5000,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  step?: number;
+}) {
   return (
     <Field label={label} id={id}>
       <div className="tax-affix-control">
-        <span className="tax-affix tax-affix-prefix" aria-hidden="true">$</span>
+        <span className="tax-affix tax-affix-prefix" aria-hidden="true">
+          $
+        </span>
         <input
           id={id}
           type="number"
@@ -426,6 +595,7 @@ function MoneyField({ id, label, value, onChange, step = 5000 }: { id: string; l
           max={100000000}
           step={step}
           value={value}
+          onFocus={selectZeroOnFocus}
           onChange={(event) => onChange(safeMoney(Number(event.target.value)))}
           className="tax-affix-input"
         />
@@ -434,7 +604,17 @@ function MoneyField({ id, label, value, onChange, step = 5000 }: { id: string; l
   );
 }
 
-function RateField({ id, label, value, onChange }: { id: string; label: string; value: number; onChange: (value: number) => void }) {
+function RateField({
+  id,
+  label,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+}) {
   return (
     <Field label={label} id={id}>
       <div className="tax-affix-control">
@@ -446,23 +626,58 @@ function RateField({ id, label, value, onChange }: { id: string; label: string; 
           max={20}
           step={0.0001}
           value={value}
+          onFocus={selectZeroOnFocus}
           onChange={(event) => onChange(safeRate(Number(event.target.value)))}
           className="tax-affix-input"
         />
-        <span className="tax-affix tax-affix-suffix" aria-hidden="true">per $100</span>
+        <span className="tax-affix tax-affix-suffix" aria-hidden="true">
+          per $100
+        </span>
       </div>
     </Field>
   );
 }
 
-function Check({ checked, onChange, title }: { checked: boolean; onChange: (checked: boolean) => void; title: string }) {
-  return <label className={`flex items-center gap-3 border p-3 ${checked ? "border-primary bg-primary/5" : "border-border bg-muted"}`}><input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="size-4 accent-primary" /><span className="text-sm font-semibold">{title}</span></label>;
+function Check({
+  checked,
+  onChange,
+  title,
+}: {
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+  title: string;
+}) {
+  return (
+    <label
+      className={`flex items-center gap-3 border p-3 ${
+        checked ? "border-primary bg-primary/5" : "border-border bg-muted"
+      }`}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+        className="size-4 accent-primary"
+      />
+      <span className="text-sm font-semibold">{title}</span>
+    </label>
+  );
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
-  return <div><p className="text-[9px] font-bold uppercase tracking-widest text-white/65">{label}</p><p className="mt-1 font-semibold text-white tabular-nums">{value}</p></div>;
+  return (
+    <div>
+      <p className="text-[9px] font-bold uppercase tracking-widest text-white/65">{label}</p>
+      <p className="mt-1 font-semibold text-white tabular-nums">{value}</p>
+    </div>
+  );
 }
 
 function Card({ label, value }: { label: string; value: string }) {
-  return <div className="border border-border p-3"><p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p><p className="mt-1 font-semibold tabular-nums">{value}</p></div>;
+  return (
+    <div className="border border-border p-3">
+      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p>
+      <p className="mt-1 font-semibold tabular-nums">{value}</p>
+    </div>
+  );
 }
