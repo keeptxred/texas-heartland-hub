@@ -1183,7 +1183,7 @@ export async function publishSingleFeedItem(
       const blocked = preflightAssess({ title: item.title, description: "", link: item.link });
       await supabaseAdmin
         .from("texas_news_feed")
-        .update({ preflight_json: toPersistedSnapshot(blocked, extractionFailureStage) })
+        .update({ preflight_json: toPersistedSnapshot(blocked, extractionFailureStage) } as never)
         .eq("id", feedItemId);
       return {
         ok: false,
@@ -1250,7 +1250,7 @@ export async function publishSingleFeedItem(
         preflight,
         preflight.rewriteable ? "none" : "preflight",
       ),
-    })
+    } as never)
     .eq("id", feedItemId);
 
   if (!preflight.rewriteable) {
