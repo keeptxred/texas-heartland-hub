@@ -61,14 +61,24 @@ function firstGeographyName(
   return "";
 }
 
+function stripTexasSuffix(name: string) {
+  return name
+    .replace(/,\s*(Texas|TX)\s*$/i, "")
+    .replace(/\s+(Texas|TX)\s*$/i, "")
+    .trim();
+}
+
 function normalizeCountyName(name: string) {
-  return name.replace(/\s+County$/i, "").trim();
+  return stripTexasSuffix(name)
+    .replace(/\s+County$/i, "")
+    .trim();
 }
 
 function normalizeDistrictName(name: string) {
-  return name
+  return stripTexasSuffix(name)
     .replace(/\s+Unified School District$/i, " ISD")
     .replace(/\s+Independent School District$/i, " ISD")
+    .replace(/\s+School District$/i, " ISD")
     .trim();
 }
 
@@ -163,16 +173,22 @@ export async function lookupTexasProperty(
   );
 
   if (!county) {
+    console.warn("[property-address-lookup] unmatched county geography", {
+      rawCountyName: countyFromCensus,
+      normalizedCountyName: countyName,
+      state,
+      zip,
+    });
     throw new PropertyLookupError(
-      "This calculator currently supports Texas properties only.",
-      "OUTSIDE_TEXAS",
+      "We found the address but could not match its Texas county. Continue manually or try again.",
+      "SERVICE_ERROR",
     );
   }
 
-  const cityName = firstGeographyName(match.geographies, [
+  const cityName = stripTexasSuffix(firstGeographyName(match.geographies, [
     "Incorporated Places",
     "Census Designated Places",
-  ]);
+  ]));
   const censusDistrictName = firstGeographyName(match.geographies, [
     "Unified School Districts",
     "Secondary School Districts",
