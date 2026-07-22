@@ -1,6 +1,18 @@
 import { useMemo, useState } from "react";
 import { COUNTIES, TAX_RATE_DATASET } from "@/data/counties";
 
+type Exemptions = {
+  homestead: boolean;
+  over65: boolean;
+  disabled: boolean;
+  veteran: 0 | 10 | 30 | 50 | 70 | 100;
+};
+
+type StartMode = "choice" | "address" | "manual";
+
+const SENIOR_DISABLED_ISD_EXEMPTION = 10_000;
+const HOMESTEAD_CAP = 0.1;
+
 const money = (value: number) =>
   value.toLocaleString("en-US", {
     style: "currency",
@@ -14,16 +26,6 @@ const safeMoney = (value: number) =>
 const safeRate = (value: number) =>
   Number.isFinite(value) ? Math.max(0, Math.min(value, 20)) : 0;
 
-type Exemptions = {
-  homestead: boolean;
-  over65: boolean;
-  disabled: boolean;
-  veteran: 0 | 10 | 30 | 50 | 70 | 100;
-};
-
-const SENIOR_DISABLED_ISD_EXEMPTION = 10_000;
-const HOMESTEAD_CAP = 0.1;
-
 function veteranExemption(value: number, rating: Exemptions["veteran"]) {
   if (rating === 100) return value;
   if (rating >= 70) return 12_000;
@@ -34,14 +36,14 @@ function veteranExemption(value: number, rating: Exemptions["veteran"]) {
 }
 
 function selectZeroOnFocus(event: React.FocusEvent<HTMLInputElement>) {
-  if (Number(event.currentTarget.value) === 0) {
-    event.currentTarget.select();
-  }
+  if (Number(event.currentTarget.value) === 0) event.currentTarget.select();
 }
 
 export function TaxCalculator() {
   const first = COUNTIES[0];
   const firstKnownDistricts = first.schoolDistricts.filter((district) => district.rate > 0);
+  const [startMode, setStartMode] = useState<StartMode>("choice");
+  const [address, setAddress] = useState("");
   const [countySlug, setCountySlug] = useState(first.slug);
   const [isdName, setIsdName] = useState(firstKnownDistricts[0]?.name ?? "");
   const [value, setValue] = useState(400_000);
@@ -64,7 +66,6 @@ export function TaxCalculator() {
   const knownSchoolDistricts = county.schoolDistricts.filter((district) => district.rate > 0);
   const hasKnownSchoolDistricts = knownSchoolDistricts.length > 0;
   const schoolDistrictLabel = isdName || "School district";
-
   const selectedSpecials = county.specialDistricts.filter((district) =>
     selectedSpecialNames.includes(district.name),
   );
@@ -72,10 +73,9 @@ export function TaxCalculator() {
   const calculation = useMemo(() => {
     const marketValue = safeMoney(value);
     const previous = safeMoney(priorValue);
-    const cappedValue =
-      exemptions.homestead && previous > 0
-        ? Math.min(marketValue, previous * (1 + HOMESTEAD_CAP))
-        : marketValue;
+    const cappedValue = exemptions.homestead && previous > 0
+      ? Math.min(marketValue, previous * (1 + HOMESTEAD_CAP))
+      : marketValue;
     const vetExemption = veteranExemption(cappedValue, exemptions.veteran);
     const generalTaxable = Math.max(0, cappedValue - vetExemption);
     const schoolExemption =
@@ -87,60 +87,17 @@ export function TaxCalculator() {
     const specialRate = selectedSpecials.reduce((sum, district) => sum + district.rate, 0);
 
     const lines = [
-      {
-        label: county.name,
-        rate: countyRate,
-        taxable: generalTaxable,
-        amount: per100(countyRate, generalTaxable),
-        note: "County rate",
-      },
-      {
-        label: "City / municipality",
-        rate: cityRate,
-        taxable: generalTaxable,
-        amount: per100(cityRate, generalTaxable),
-        note: cityRate === 0 ? "Enter your city rate if applicable" : "Selected or entered city rate",
-      },
-      {
-        label: schoolDistrictLabel,
-        rate: schoolRate,
-        taxable: schoolTaxable,
-        amount: per100(schoolRate, schoolTaxable),
-        note: "School district rate after eligible ISD exemptions",
-      },
-      ...selectedSpecials.map((district) => ({
-        label: district.name,
-        rate: district.rate,
-        taxable: generalTaxable,
-        amount: per100(district.rate, generalTaxable),
-        note: district.kind,
-      })),
-      {
-        label: "Manual MUD / water district",
-        rate: manualMudRate,
-        taxable: generalTaxable,
-        amount: per100(manualMudRate, generalTaxable),
-        note: "Use the exact rate from your tax statement",
-      },
-      {
-        label: "Other special districts",
-        rate: manualOtherRate,
-        taxable: generalTaxable,
-        amount: per100(manualOtherRate, generalTaxable),
-        note: "Hospital, ESD, college, road, or other local district",
-      },
+      { label: county.name, rate: countyRate, taxable: generalTaxable, amount: per100(countyRate, generalTaxable), note: "County rate" },
+      { label: "City / municipality", rate: cityRate, taxable: generalTaxable, amount: per100(cityRate, generalTaxable), note: cityRate === 0 ? "Enter your city rate if applicable" : "Selected or entered city rate" },
+      { label: schoolDistrictLabel, rate: schoolRate, taxable: schoolTaxable, amount: per100(schoolRate, schoolTaxable), note: "School district rate after eligible ISD exemptions" },
+      ...selectedSpecials.map((district) => ({ label: district.name, rate: district.rate, taxable: generalTaxable, amount: per100(district.rate, generalTaxable), note: district.kind })),
+      { label: "Manual MUD / water district", rate: manualMudRate, taxable: generalTaxable, amount: per100(manualMudRate, generalTaxable), note: "Use the exact rate from your tax statement" },
+      { label: "Other special districts", rate: manualOtherRate, taxable: generalTaxable, amount: per100(manualOtherRate, generalTaxable), note: "Hospital, ESD, college, road, or other local district" },
     ].filter((line) => line.rate > 0);
 
-    const adValoremTotal = lines.reduce((sum, line) => sum + line.amount, 0);
     const pid = safeMoney(pidAnnualAssessment);
-    const annualTotal = adValoremTotal + pid;
-    const listedRate =
-      safeRate(countyRate) +
-      safeRate(cityRate) +
-      safeRate(schoolRate) +
-      specialRate +
-      safeRate(manualMudRate) +
-      safeRate(manualOtherRate);
+    const annualTotal = lines.reduce((sum, line) => sum + line.amount, 0) + pid;
+    const listedRate = safeRate(countyRate) + safeRate(cityRate) + safeRate(schoolRate) + specialRate + safeRate(manualMudRate) + safeRate(manualOtherRate);
 
     return {
       cappedValue,
@@ -154,27 +111,11 @@ export function TaxCalculator() {
       effectiveRate: marketValue > 0 ? (annualTotal / marketValue) * 100 : 0,
       listedRate,
     };
-  }, [
-    cityRate,
-    county.homesteadExemption,
-    county.name,
-    countyRate,
-    exemptions,
-    manualMudRate,
-    manualOtherRate,
-    pidAnnualAssessment,
-    priorValue,
-    schoolDistrictLabel,
-    schoolRate,
-    selectedSpecials,
-    value,
-  ]);
+  }, [cityRate, county.homesteadExemption, county.name, countyRate, exemptions, manualMudRate, manualOtherRate, pidAnnualAssessment, priorValue, schoolDistrictLabel, schoolRate, selectedSpecials, value]);
 
   function changeCounty(slug: string) {
     const next = COUNTIES.find((item) => item.slug === slug) ?? first;
-    const nextKnownDistricts = next.schoolDistricts.filter((district) => district.rate > 0);
-    const nextIsd = nextKnownDistricts[0];
-
+    const nextIsd = next.schoolDistricts.find((district) => district.rate > 0);
     setCountySlug(next.slug);
     setIsdName(nextIsd?.name ?? "");
     setCountyRate(next.countyRate);
@@ -206,28 +147,63 @@ export function TaxCalculator() {
     setExemptions({ homestead: true, over65: false, disabled: false, veteran: 0 });
   }
 
+  if (startMode === "choice") {
+    return (
+      <section className="border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--color-foreground)]">
+        <header className="border-b-2 border-foreground p-6 text-center md:p-8">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">All 254 Texas Counties</p>
+          <h2 className="mt-2 font-display text-3xl tracking-tight">Texas Property Tax Calculator</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">Choose the easiest way to begin. An address will never be required.</p>
+        </header>
+        <div className="grid gap-5 p-6 md:grid-cols-2 md:p-8">
+          <button type="button" onClick={() => setStartMode("address")} className="group flex min-h-56 flex-col border-2 border-primary bg-primary/5 p-6 text-left transition hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--color-primary)] focus:outline-none focus:ring-2 focus:ring-primary">
+            <span className="w-fit bg-primary px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">Recommended</span>
+            <span className="mt-5 font-display text-2xl">Find rates by address</span>
+            <span className="mt-3 text-sm leading-relaxed text-muted-foreground">Enter a Texas property address and we’ll identify available local taxing information.</span>
+            <span className="mt-auto pt-5 text-xs font-bold uppercase tracking-widest text-primary">Use my address →</span>
+          </button>
+          <button type="button" onClick={() => setStartMode("manual")} className="group flex min-h-56 flex-col border-2 border-foreground bg-card p-6 text-left transition hover:-translate-y-0.5 hover:shadow-[4px_4px_0_0_var(--color-foreground)] focus:outline-none focus:ring-2 focus:ring-primary">
+            <span className="font-display text-2xl">Enter details manually</span>
+            <span className="mt-3 text-sm leading-relaxed text-muted-foreground">Skip the address and use the county, district, and tax-rate fields directly.</span>
+            <span className="mt-auto pt-5 text-xs font-bold uppercase tracking-widest">Continue manually →</span>
+          </button>
+        </div>
+        <footer className="border-t border-border p-4 text-center text-xs text-muted-foreground">No account required. Address lookup is optional.</footer>
+      </section>
+    );
+  }
+
+  if (startMode === "address") {
+    return (
+      <section className="border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--color-foreground)]">
+        <header className="border-b-2 border-foreground p-6 md:p-8">
+          <button type="button" onClick={() => setStartMode("choice")} className="text-xs font-bold uppercase tracking-widest text-primary">← Back</button>
+          <h2 className="mt-5 font-display text-3xl">Find rates by address</h2>
+          <p className="mt-2 text-sm text-muted-foreground">Address matching will be connected in the next pull request.</p>
+        </header>
+        <div className="p-6 md:p-8">
+          <Field label="Texas property address" id="tax-address">
+            <input id="tax-address" type="text" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="123 Main St, Katy, TX 77493" autoComplete="street-address" className="tax-input" />
+          </Field>
+          <button type="button" disabled className="mt-4 w-full cursor-not-allowed bg-primary px-5 py-3 text-sm font-bold uppercase tracking-widest text-primary-foreground opacity-50">Find my property — coming next</button>
+          <button type="button" onClick={() => setStartMode("manual")} className="mt-4 w-full border border-border px-5 py-3 text-sm font-bold uppercase tracking-widest">Prefer not to enter an address? Continue manually</button>
+          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">The future lookup will use the address only to identify taxing jurisdictions. Storage behavior will be documented before lookup is enabled.</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="border-2 border-foreground bg-card shadow-[6px_6px_0_0_var(--color-foreground)]">
       <header className="border-b-2 border-foreground p-6 md:p-8">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">
-              All 254 Texas Counties
-            </p>
-            <h2 className="mt-1 font-display text-3xl tracking-tight">
-              Texas Property Tax Calculator
-            </h2>
-            <p className="mt-2 text-xs text-muted-foreground">
-              Dataset year {TAX_RATE_DATASET.taxYear} • refreshed {TAX_RATE_DATASET.lastUpdated}
-            </p>
+            <button type="button" onClick={() => setStartMode("choice")} className="mb-4 text-xs font-bold uppercase tracking-widest text-primary">← Change start method</button>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">All 254 Texas Counties</p>
+            <h2 className="mt-1 font-display text-3xl tracking-tight">Texas Property Tax Calculator</h2>
+            <p className="mt-2 text-xs text-muted-foreground">Dataset year {TAX_RATE_DATASET.taxYear} • refreshed {TAX_RATE_DATASET.lastUpdated}</p>
           </div>
-          <button
-            type="button"
-            onClick={reset}
-            className="border border-border px-3 py-2 text-xs font-bold uppercase tracking-wider"
-          >
-            Reset
-          </button>
+          <button type="button" onClick={reset} className="border border-border px-3 py-2 text-xs font-bold uppercase tracking-wider">Reset</button>
         </div>
       </header>
 
@@ -237,447 +213,91 @@ export function TaxCalculator() {
             <legend className="mb-4 font-display text-xl">Property and jurisdictions</legend>
             <div className="grid gap-4 sm:grid-cols-2">
               <Field label="County" id="tax-county">
-                <select
-                  id="tax-county"
-                  value={countySlug}
-                  onChange={(event) => changeCounty(event.target.value)}
-                  className="tax-input"
-                >
-                  {COUNTIES.map((item) => (
-                    <option key={item.slug} value={item.slug}>
-                      {item.name}
-                    </option>
-                  ))}
+                <select id="tax-county" value={countySlug} onChange={(event) => changeCounty(event.target.value)} className="tax-input">
+                  {COUNTIES.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
                 </select>
               </Field>
-
               {hasKnownSchoolDistricts ? (
                 <Field label="School district" id="tax-isd">
-                  <select
-                    id="tax-isd"
-                    value={isdName}
-                    onChange={(event) => changeIsd(event.target.value)}
-                    className="tax-input"
-                  >
-                    {knownSchoolDistricts.map((item) => (
-                      <option key={item.name} value={item.name}>
-                        {item.name} ({item.rate.toFixed(4)})
-                      </option>
-                    ))}
+                  <select id="tax-isd" value={isdName} onChange={(event) => changeIsd(event.target.value)} className="tax-input">
+                    {knownSchoolDistricts.map((item) => <option key={item.name} value={item.name}>{item.name} ({item.rate.toFixed(4)})</option>)}
                   </select>
                 </Field>
               ) : (
-                <div className="tax-notice">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                    School district
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    District data is not yet available for this county. Enter the school district
-                    tax rate below from your tax statement.
-                  </p>
-                </div>
+                <div className="tax-notice"><p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">School district</p><p className="mt-1 text-xs leading-relaxed text-muted-foreground">District data is not yet available for this county. Enter the school district tax rate below from your tax statement.</p></div>
               )}
-
-              <MoneyField
-                id="tax-value"
-                label="Current appraised value"
-                value={value}
-                onChange={setValue}
-              />
-              <MoneyField
-                id="tax-prior"
-                label="Prior-year appraised value"
-                value={priorValue}
-                onChange={setPriorValue}
-              />
+              <MoneyField id="tax-value" label="Current appraised value" value={value} onChange={setValue} />
+              <MoneyField id="tax-prior" label="Prior-year appraised value" value={priorValue} onChange={setPriorValue} />
             </div>
           </fieldset>
 
           <fieldset className="border-t border-border pt-6">
             <legend className="mb-4 font-display text-xl">Exemptions</legend>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Check
-                checked={exemptions.homestead}
-                onChange={(checked) =>
-                  setExemptions((current) => ({ ...current, homestead: checked }))
-                }
-                title="Residence homestead"
-              />
-              <Check
-                checked={exemptions.over65}
-                onChange={(checked) =>
-                  setExemptions((current) => ({ ...current, over65: checked }))
-                }
-                title="Age 65 or older"
-              />
-              <Check
-                checked={exemptions.disabled}
-                onChange={(checked) =>
-                  setExemptions((current) => ({ ...current, disabled: checked }))
-                }
-                title="Disabled homeowner"
-              />
-              <Field label="Disabled-veteran rating" id="tax-veteran">
-                <select
-                  id="tax-veteran"
-                  value={exemptions.veteran}
-                  onChange={(event) =>
-                    setExemptions((current) => ({
-                      ...current,
-                      veteran: Number(event.target.value) as Exemptions["veteran"],
-                    }))
-                  }
-                  className="tax-input"
-                >
-                  <option value={0}>Not selected</option>
-                  <option value={10}>10%–29%</option>
-                  <option value={30}>30%–49%</option>
-                  <option value={50}>50%–69%</option>
-                  <option value={70}>70%–99%</option>
-                  <option value={100}>100%</option>
-                </select>
-              </Field>
+              <Check checked={exemptions.homestead} onChange={(checked) => setExemptions((current) => ({ ...current, homestead: checked }))} title="Residence homestead" />
+              <Check checked={exemptions.over65} onChange={(checked) => setExemptions((current) => ({ ...current, over65: checked }))} title="Age 65 or older" />
+              <Check checked={exemptions.disabled} onChange={(checked) => setExemptions((current) => ({ ...current, disabled: checked }))} title="Disabled homeowner" />
+              <Field label="Disabled-veteran rating" id="tax-veteran"><select id="tax-veteran" value={exemptions.veteran} onChange={(event) => setExemptions((current) => ({ ...current, veteran: Number(event.target.value) as Exemptions["veteran"] }))} className="tax-input"><option value={0}>Not selected</option><option value={10}>10%–29%</option><option value={30}>30%–49%</option><option value={50}>50%–69%</option><option value={70}>70%–99%</option><option value={100}>100%</option></select></Field>
             </div>
           </fieldset>
 
           <fieldset className="border-t border-border pt-6">
             <legend className="mb-4 font-display text-xl">Exact tax rates</legend>
-            <p className="mb-4 text-xs leading-relaxed text-muted-foreground">
-              Statewide rates are prefilled when available. Enter the exact figures from your
-              appraisal-district or tax statement for address-level precision.
-            </p>
-
+            <p className="mb-4 text-xs leading-relaxed text-muted-foreground">Statewide rates are prefilled when available. Enter the exact figures from your appraisal-district or tax statement for address-level precision.</p>
             <div className="grid items-end gap-4 sm:grid-cols-2">
               <RateField id="county-rate" label="County rate" value={countyRate} onChange={setCountyRate} />
               <RateField id="city-rate" label="City rate" value={cityRate} onChange={setCityRate} />
-              <RateField
-                id="school-rate"
-                label="School district tax rate"
-                value={schoolRate}
-                onChange={setSchoolRate}
-              />
-              <RateField
-                id="mud-rate"
-                label="MUD / water-district rate"
-                value={manualMudRate}
-                onChange={setManualMudRate}
-              />
-              <RateField
-                id="other-rate"
-                label="Other special-district rate"
-                value={manualOtherRate}
-                onChange={setManualOtherRate}
-              />
-              <MoneyField
-                id="pid-assessment"
-                label="Annual PID assessment"
-                value={pidAnnualAssessment}
-                onChange={setPidAnnualAssessment}
-                step={100}
-              />
+              <RateField id="school-rate" label="School district tax rate" value={schoolRate} onChange={setSchoolRate} />
+              <RateField id="mud-rate" label="MUD / water-district rate" value={manualMudRate} onChange={setManualMudRate} />
+              <RateField id="other-rate" label="Other special-district rate" value={manualOtherRate} onChange={setManualOtherRate} />
+              <MoneyField id="pid-assessment" label="Annual PID assessment" value={pidAnnualAssessment} onChange={setPidAnnualAssessment} step={100} />
             </div>
-
             {county.specialDistricts.length > 0 && (
-              <Field label="Known special districts (select any that apply)" id="tax-specials">
-                <select
-                  id="tax-specials"
-                  multiple
-                  value={selectedSpecialNames}
-                  onChange={(event) =>
-                    setSelectedSpecialNames(
-                      Array.from(event.target.selectedOptions, (option) => option.value),
-                    )
-                  }
-                  className="tax-input min-h-32"
-                >
-                  {county.specialDistricts.map((district) => (
-                    <option key={district.name} value={district.name}>
-                      {district.name} — {district.rate.toFixed(4)}
-                    </option>
-                  ))}
-                </select>
-              </Field>
+              <Field label="Known special districts (select any that apply)" id="tax-specials"><select id="tax-specials" multiple value={selectedSpecialNames} onChange={(event) => setSelectedSpecialNames(Array.from(event.target.selectedOptions, (option) => option.value))} className="tax-input min-h-32">{county.specialDistricts.map((district) => <option key={district.name} value={district.name}>{district.name} — {district.rate.toFixed(4)}</option>)}</select></Field>
             )}
           </fieldset>
         </div>
 
         <div>
           <div className="bg-secondary p-6 text-secondary-foreground">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/75">
-              Estimated annual total
-            </p>
-            <div className="mt-2 font-display text-5xl leading-none text-primary tabular-nums">
-              {money(calculation.annualTotal)}
-            </div>
-            <div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/15 pt-5 text-sm">
-              <Metric label="Monthly equivalent" value={money(calculation.monthly)} />
-              <Metric label="Effective burden" value={`${calculation.effectiveRate.toFixed(2)}%`} />
-              <Metric label="Listed tax rate" value={`${calculation.listedRate.toFixed(4)}%`} />
-              <Metric label="PID assessment" value={money(calculation.pid)} />
-            </div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/75">Estimated annual total</p>
+            <div className="mt-2 font-display text-5xl leading-none text-primary tabular-nums">{money(calculation.annualTotal)}</div>
+            <div className="mt-6 grid grid-cols-2 gap-4 border-t border-white/15 pt-5 text-sm"><Metric label="Monthly equivalent" value={money(calculation.monthly)} /><Metric label="Effective burden" value={`${calculation.effectiveRate.toFixed(2)}%`} /><Metric label="Listed tax rate" value={`${calculation.listedRate.toFixed(4)}%`} /><Metric label="PID assessment" value={money(calculation.pid)} /></div>
           </div>
-
           <div className="mt-5 divide-y divide-border border-y border-border">
-            {calculation.lines.map((line) => (
-              <div key={line.label} className="py-4">
-                <div className="flex justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-semibold">{line.label}</p>
-                    <p className="text-[10px] text-muted-foreground">
-                      {rateLabel(line.rate)} on {money(line.taxable)}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">{line.note}</p>
-                  </div>
-                  <strong className="tabular-nums">{money(line.amount)}</strong>
-                </div>
-              </div>
-            ))}
-            {calculation.pid > 0 && (
-              <div className="py-4">
-                <div className="flex justify-between gap-4">
-                  <div>
-                    <p className="text-sm font-semibold">PID annual assessment</p>
-                    <p className="text-[10px] text-muted-foreground">
-                      Flat assessment, not an ad valorem rate
-                    </p>
-                  </div>
-                  <strong className="tabular-nums">{money(calculation.pid)}</strong>
-                </div>
-              </div>
-            )}
+            {calculation.lines.map((line) => <div key={line.label} className="py-4"><div className="flex justify-between gap-4"><div><p className="text-sm font-semibold">{line.label}</p><p className="text-[10px] text-muted-foreground">{rateLabel(line.rate)} on {money(line.taxable)}</p><p className="text-[10px] text-muted-foreground">{line.note}</p></div><strong className="tabular-nums">{money(line.amount)}</strong></div></div>)}
+            {calculation.pid > 0 && <div className="py-4"><div className="flex justify-between gap-4"><div><p className="text-sm font-semibold">PID annual assessment</p><p className="text-[10px] text-muted-foreground">Flat assessment, not an ad valorem rate</p></div><strong className="tabular-nums">{money(calculation.pid)}</strong></div></div>}
           </div>
-
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <Card label="Capped appraised value" value={money(calculation.cappedValue)} />
-            <Card label="ISD taxable value" value={money(calculation.schoolTaxable)} />
-            <Card label="Other taxable value" value={money(calculation.generalTaxable)} />
-            <Card label="ISD exemptions" value={money(calculation.schoolExemption)} />
-          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2"><Card label="Capped appraised value" value={money(calculation.cappedValue)} /><Card label="ISD taxable value" value={money(calculation.schoolTaxable)} /><Card label="Other taxable value" value={money(calculation.generalTaxable)} /><Card label="ISD exemptions" value={money(calculation.schoolExemption)} /></div>
         </div>
       </div>
 
-      <footer className="border-t border-border p-6 text-xs leading-relaxed text-muted-foreground">
-        Rates are cached from Texas Comptroller statewide files and may change after publication.
-        MUD, PID, emergency-service, hospital, college, road, and other districts are
-        address-specific. Confirm the exact taxing entities and assessment amounts shown on the
-        property’s local tax statement.
-      </footer>
-
-      <style>{`
-        .tax-field {
-          display: flex;
-          min-width: 0;
-          flex-direction: column;
-        }
-        .tax-field-label {
-          display: flex;
-          min-height: 2.15rem;
-          align-items: flex-end;
-          margin-bottom: .375rem;
-          font-size: .625rem;
-          font-weight: 700;
-          line-height: 1.25;
-          letter-spacing: .1em;
-          text-transform: uppercase;
-          color: var(--color-muted-foreground);
-        }
-        .tax-input {
-          width: 100%;
-          min-height: 44px;
-          border: 1px solid var(--color-border);
-          background: var(--color-muted);
-          padding: .75rem;
-          font-size: .875rem;
-          font-weight: 500;
-          outline: none;
-        }
-        .tax-input:focus,
-        .tax-affix-control:focus-within {
-          box-shadow: 0 0 0 2px var(--color-primary);
-        }
-        .tax-affix-control {
-          display: flex;
-          min-height: 44px;
-          overflow: hidden;
-          border: 1px solid var(--color-border);
-          background: var(--color-muted);
-        }
-        .tax-affix {
-          display: flex;
-          flex: 0 0 auto;
-          align-items: center;
-          padding: 0 .75rem;
-          font-size: .75rem;
-          font-weight: 700;
-          color: var(--color-muted-foreground);
-          white-space: nowrap;
-        }
-        .tax-affix-prefix {
-          border-right: 1px solid var(--color-border);
-        }
-        .tax-affix-suffix {
-          border-left: 1px solid var(--color-border);
-          text-transform: uppercase;
-        }
-        .tax-affix-input {
-          min-width: 0;
-          width: 100%;
-          border: 0;
-          background: transparent;
-          padding: .75rem;
-          font-size: .875rem;
-          font-weight: 500;
-          outline: none;
-        }
-        .tax-affix-input::-webkit-inner-spin-button,
-        .tax-affix-input::-webkit-outer-spin-button {
-          margin: 0;
-          -webkit-appearance: none;
-        }
-        .tax-affix-input[type="number"] {
-          appearance: textfield;
-          -moz-appearance: textfield;
-        }
-        .tax-notice {
-          min-height: 44px;
-          border: 1px dashed var(--color-border);
-          background: var(--color-muted);
-          padding: .75rem;
-        }
-      `}</style>
+      <footer className="border-t border-border p-6 text-xs leading-relaxed text-muted-foreground">Rates are cached from Texas Comptroller statewide files and may change after publication. MUD, PID, emergency-service, hospital, college, road, and other districts are address-specific. Confirm the exact taxing entities and assessment amounts shown on the property’s local tax statement.</footer>
+      <style>{`.tax-field{display:flex;min-width:0;flex-direction:column}.tax-field-label{display:flex;min-height:2.15rem;align-items:flex-end;margin-bottom:.375rem;font-size:.625rem;font-weight:700;line-height:1.25;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted-foreground)}.tax-input{width:100%;min-height:44px;border:1px solid var(--color-border);background:var(--color-muted);padding:.75rem;font-size:.875rem;font-weight:500;outline:none}.tax-input:focus,.tax-affix-control:focus-within{box-shadow:0 0 0 2px var(--color-primary)}.tax-affix-control{display:flex;min-height:44px;overflow:hidden;border:1px solid var(--color-border);background:var(--color-muted)}.tax-affix{display:flex;flex:0 0 auto;align-items:center;padding:0 .75rem;font-size:.75rem;font-weight:700;color:var(--color-muted-foreground);white-space:nowrap}.tax-affix-prefix{border-right:1px solid var(--color-border)}.tax-affix-suffix{border-left:1px solid var(--color-border);text-transform:uppercase}.tax-affix-input{min-width:0;width:100%;border:0;background:transparent;padding:.75rem;font-size:.875rem;font-weight:500;outline:none}.tax-affix-input::-webkit-inner-spin-button,.tax-affix-input::-webkit-outer-spin-button{margin:0;-webkit-appearance:none}.tax-affix-input[type=number]{appearance:textfield;-moz-appearance:textfield}.tax-notice{min-height:44px;border:1px dashed var(--color-border);background:var(--color-muted);padding:.75rem}`}</style>
     </section>
   );
 }
 
-function Field({
-  label,
-  id,
-  children,
-}: {
-  label: string;
-  id: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="tax-field">
-      <label htmlFor={id} className="tax-field-label">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
+function Field({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
+  return <div className="tax-field"><label htmlFor={id} className="tax-field-label">{label}</label>{children}</div>;
 }
 
-function MoneyField({
-  id,
-  label,
-  value,
-  onChange,
-  step = 5000,
-}: {
-  id: string;
-  label: string;
-  value: number;
-  onChange: (value: number) => void;
-  step?: number;
-}) {
-  return (
-    <Field label={label} id={id}>
-      <div className="tax-affix-control">
-        <span className="tax-affix tax-affix-prefix" aria-hidden="true">
-          $
-        </span>
-        <input
-          id={id}
-          type="number"
-          inputMode="decimal"
-          min={0}
-          max={100000000}
-          step={step}
-          value={value}
-          onFocus={selectZeroOnFocus}
-          onChange={(event) => onChange(safeMoney(Number(event.target.value)))}
-          className="tax-affix-input"
-        />
-      </div>
-    </Field>
-  );
+function MoneyField({ id, label, value, onChange, step = 5000 }: { id: string; label: string; value: number; onChange: (value: number) => void; step?: number }) {
+  return <Field label={label} id={id}><div className="tax-affix-control"><span className="tax-affix tax-affix-prefix" aria-hidden="true">$</span><input id={id} type="number" inputMode="decimal" min={0} max={100000000} step={step} value={value} onFocus={selectZeroOnFocus} onChange={(event) => onChange(safeMoney(Number(event.target.value)))} className="tax-affix-input" /></div></Field>;
 }
 
-function RateField({
-  id,
-  label,
-  value,
-  onChange,
-}: {
-  id: string;
-  label: string;
-  value: number;
-  onChange: (value: number) => void;
-}) {
-  return (
-    <Field label={label} id={id}>
-      <div className="tax-affix-control">
-        <input
-          id={id}
-          type="number"
-          inputMode="decimal"
-          min={0}
-          max={20}
-          step={0.0001}
-          value={value}
-          onFocus={selectZeroOnFocus}
-          onChange={(event) => onChange(safeRate(Number(event.target.value)))}
-          className="tax-affix-input"
-        />
-        <span className="tax-affix tax-affix-suffix" aria-hidden="true">
-          per $100
-        </span>
-      </div>
-    </Field>
-  );
+function RateField({ id, label, value, onChange }: { id: string; label: string; value: number; onChange: (value: number) => void }) {
+  return <Field label={label} id={id}><div className="tax-affix-control"><input id={id} type="number" inputMode="decimal" min={0} max={20} step={0.0001} value={value} onFocus={selectZeroOnFocus} onChange={(event) => onChange(safeRate(Number(event.target.value)))} className="tax-affix-input" /><span className="tax-affix tax-affix-suffix" aria-hidden="true">per $100</span></div></Field>;
 }
 
-function Check({
-  checked,
-  onChange,
-  title,
-}: {
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-  title: string;
-}) {
-  return (
-    <label
-      className={`flex items-center gap-3 border p-3 ${
-        checked ? "border-primary bg-primary/5" : "border-border bg-muted"
-      }`}
-    >
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(event) => onChange(event.target.checked)}
-        className="size-4 accent-primary"
-      />
-      <span className="text-sm font-semibold">{title}</span>
-    </label>
-  );
+function Check({ checked, onChange, title }: { checked: boolean; onChange: (checked: boolean) => void; title: string }) {
+  return <label className={`flex items-center gap-3 border p-3 ${checked ? "border-primary bg-primary/5" : "border-border bg-muted"}`}><input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="size-4 accent-primary" /><span className="text-sm font-semibold">{title}</span></label>;
 }
 
 function Metric({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-[9px] font-bold uppercase tracking-widest text-white/65">{label}</p>
-      <p className="mt-1 font-semibold text-white tabular-nums">{value}</p>
-    </div>
-  );
+  return <div><p className="text-[9px] font-bold uppercase tracking-widest text-white/65">{label}</p><p className="mt-1 font-semibold text-white tabular-nums">{value}</p></div>;
 }
 
 function Card({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border border-border p-3">
-      <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p>
-      <p className="mt-1 font-semibold tabular-nums">{value}</p>
-    </div>
-  );
+  return <div className="border border-border p-3"><p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p><p className="mt-1 font-semibold tabular-nums">{value}</p></div>;
 }
