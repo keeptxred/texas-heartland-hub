@@ -341,6 +341,30 @@ function wordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
+// Small concurrency limiter used by the batch rewrite path. Cloudflare Workers
+// have a fixed wall-clock budget per request; firing `Promise.all` over
+// hundreds of 15–90s AI fetches was killing the whole invocation, which
+// showed up in logs as every rewrite ending in `no_response` (the fetch was
+// aborted before it ever reached the AI gateway). Capping concurrency lets
+// each rewrite complete and lets us log per-item outcomes.
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T, index: number) => Promise<R>,
+): Promise<R[]> {
+  const out: R[] = new Array(items.length);
+  let cursor = 0;
+  const workers = Array.from({ length: Math.max(1, Math.min(limit, items.length)) }, async () => {
+    while (true) {
+      const i = cursor++;
+      if (i >= items.length) return;
+      out[i] = await fn(items[i], i);
+    }
+  });
+  await Promise.all(workers);
+  return out;
+}
+
 function articleBodyText(body: GeneratedArticleBody): string {
   const parts: string[] = [];
   (body.intro ?? []).forEach((p) => parts.push(p));
