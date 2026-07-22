@@ -1,5 +1,11 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTIES, TAX_RATE_DATASET } from "@/data/counties";
+import {
+  buildShareableCalculationUrl,
+  lookupTexasProperty,
+  PropertyLookupError,
+  type PropertyLookupResult,
+} from "@/lib/property-address-lookup";
 
 type Exemptions = {
   homestead: boolean;
@@ -9,6 +15,7 @@ type Exemptions = {
 };
 
 type StartMode = "choice" | "address" | "manual";
+type LookupStatus = "idle" | "loading" | "error";
 
 const SENIOR_DISABLED_ISD_EXEMPTION = 10_000;
 const HOMESTEAD_CAP = 0.1;
@@ -42,8 +49,16 @@ function selectZeroOnFocus(event: React.FocusEvent<HTMLInputElement>) {
 export function TaxCalculator() {
   const first = COUNTIES[0];
   const firstKnownDistricts = first.schoolDistricts.filter((district) => district.rate > 0);
+  const lookupController = useRef<AbortController | null>(null);
   const [startMode, setStartMode] = useState<StartMode>("choice");
-  const [address, setAddress] = useState("");
+  const [streetAddress, setStreetAddress] = useState("");
+  const [addressCity, setAddressCity] = useState("");
+  const [addressState, setAddressState] = useState("TX");
+  const [addressZip, setAddressZip] = useState("");
+  const [lookupStatus, setLookupStatus] = useState<LookupStatus>("idle");
+  const [lookupError, setLookupError] = useState("");
+  const [lookupResult, setLookupResult] = useState<PropertyLookupResult | null>(null);
+  const [shareMessage, setShareMessage] = useState("");
   const [countySlug, setCountySlug] = useState(first.slug);
   const [isdName, setIsdName] = useState(firstKnownDistricts[0]?.name ?? "");
   const [value, setValue] = useState(400_000);
@@ -69,6 +84,34 @@ export function TaxCalculator() {
   const selectedSpecials = county.specialDistricts.filter((district) =>
     selectedSpecialNames.includes(district.name),
   );
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const sharedCounty = params.get("county");
+    if (!sharedCounty) return;
+    const sharedCountyData = COUNTIES.find((item) => item.slug === sharedCounty);
+    if (!sharedCountyData) return;
+
+    const parsedRate = (key: string, fallback: number) => {
+      const parsed = Number(params.get(key));
+      return Number.isFinite(parsed) ? safeRate(parsed) : fallback;
+    };
+    const parsedMoney = (key: string, fallback: number) => {
+      const parsed = Number(params.get(key));
+      return Number.isFinite(parsed) ? safeMoney(parsed) : fallback;
+    };
+
+    setCountySlug(sharedCountyData.slug);
+    setIsdName(params.get("isd") ?? sharedCountyData.schoolDistricts.find((item) => item.rate > 0)?.name ?? "");
+    setCountyRate(parsedRate("countyRate", sharedCountyData.countyRate));
+    setCityRate(parsedRate("cityRate", sharedCountyData.cityAvgRate));
+    setSchoolRate(parsedRate("schoolRate", 0));
+    setValue(parsedMoney("value", 400_000));
+    setPriorValue(parsedMoney("prior", 365_000));
+    setManualOtherRate(sharedCountyData.specialDistrictRate);
+    setStartMode("manual");
+  }, []);
 
   const calculation = useMemo(() => {
     const marketValue = safeMoney(value);
@@ -123,6 +166,7 @@ export function TaxCalculator() {
     setSchoolRate(nextIsd?.rate ?? 0);
     setManualOtherRate(next.specialDistrictRate);
     setSelectedSpecialNames([]);
+    setLookupResult(null);
   }
 
   function changeIsd(name: string) {
@@ -130,6 +174,66 @@ export function TaxCalculator() {
     if (!next) return;
     setIsdName(next.name);
     setSchoolRate(next.rate);
+  }
+
+  function applyLookupResult(result: PropertyLookupResult) {
+    const matchedCounty = COUNTIES.find((item) => item.slug === result.countySlug) ?? first;
+    setCountySlug(result.countySlug);
+    setIsdName(result.schoolDistrictName);
+    setCountyRate(result.countyRate);
+    setCityRate(result.cityRate);
+    setSchoolRate(result.schoolRate);
+    setManualOtherRate(matchedCounty.specialDistrictRate);
+    setSelectedSpecialNames([]);
+    setLookupResult(result);
+    setStartMode("manual");
+  }
+
+  async function findProperty(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    lookupController.current?.abort();
+    const controller = new AbortController();
+    lookupController.current = controller;
+    setLookupStatus("loading");
+    setLookupError("");
+
+    const completeAddress = [streetAddress, addressCity, addressState, addressZip]
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .join(", ");
+
+    try {
+      const result = await lookupTexasProperty(completeAddress, controller.signal);
+      applyLookupResult(result);
+      setLookupStatus("idle");
+    } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") return;
+      setLookupStatus("error");
+      setLookupError(
+        error instanceof PropertyLookupError
+          ? error.message
+          : "We could not complete the lookup. Continue manually or try again.",
+      );
+    }
+  }
+
+  async function copyShareLink() {
+    const shareUrl = buildShareableCalculationUrl({
+      countySlug,
+      schoolDistrictName: isdName,
+      countyRate,
+      cityRate,
+      schoolRate,
+      currentValue: value,
+      priorValue,
+    });
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setShareMessage("Link copied. Your street address was not included.");
+    } catch {
+      setShareMessage("Copy was blocked by the browser. Use the current page URL after opening the shared link.");
+    }
   }
 
   function reset() {
@@ -144,6 +248,8 @@ export function TaxCalculator() {
     setManualMudRate(0);
     setManualOtherRate(first.specialDistrictRate);
     setPidAnnualAssessment(0);
+    setLookupResult(null);
+    setShareMessage("");
     setExemptions({ homestead: true, over65: false, disabled: false, veteran: 0 });
   }
 
@@ -179,16 +285,54 @@ export function TaxCalculator() {
         <header className="border-b-2 border-foreground p-6 md:p-8">
           <button type="button" onClick={() => setStartMode("choice")} className="text-xs font-bold uppercase tracking-widest text-primary">← Back</button>
           <h2 className="mt-5 font-display text-3xl">Find rates by address</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Address matching will be connected in the next pull request.</p>
+          <p className="mt-2 text-sm text-muted-foreground">We’ll use public Census geography data to identify the county, city, and school district.</p>
         </header>
-        <div className="p-6 md:p-8">
-          <Field label="Texas property address" id="tax-address">
-            <input id="tax-address" type="text" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="123 Main St, Katy, TX 77493" autoComplete="street-address" className="tax-input" />
-          </Field>
-          <button type="button" disabled className="mt-4 w-full cursor-not-allowed bg-primary px-5 py-3 text-sm font-bold uppercase tracking-widest text-primary-foreground opacity-50">Find my property — coming next</button>
-          <button type="button" onClick={() => setStartMode("manual")} className="mt-4 w-full border border-border px-5 py-3 text-sm font-bold uppercase tracking-widest">Prefer not to enter an address? Continue manually</button>
-          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">The future lookup will use the address only to identify taxing jurisdictions. Storage behavior will be documented before lookup is enabled.</p>
-        </div>
+        <form onSubmit={findProperty} className="p-6 md:p-8">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="sm:col-span-2">
+              <Field label="Street address" id="tax-address">
+                <input id="tax-address" type="text" value={streetAddress} onChange={(event) => setStreetAddress(event.target.value)} placeholder="123 Main St" autoComplete="street-address" className="tax-input" required />
+              </Field>
+            </div>
+            <Field label="City" id="tax-address-city">
+              <input id="tax-address-city" type="text" value={addressCity} onChange={(event) => setAddressCity(event.target.value)} placeholder="Katy" autoComplete="address-level2" className="tax-input" required />
+            </Field>
+            <div className="grid grid-cols-[.65fr_1fr] gap-4">
+              <Field label="State" id="tax-address-state">
+                <input id="tax-address-state" type="text" value={addressState} onChange={(event) => setAddressState(event.target.value.toUpperCase().slice(0, 2))} autoComplete="address-level1" className="tax-input" required />
+              </Field>
+              <Field label="ZIP" id="tax-address-zip">
+                <input id="tax-address-zip" type="text" inputMode="numeric" value={addressZip} onChange={(event) => setAddressZip(event.target.value.replace(/[^0-9-]/g, "").slice(0, 10))} placeholder="77493" autoComplete="postal-code" className="tax-input" required />
+              </Field>
+            </div>
+          </div>
+
+          {lookupStatus === "loading" && (
+            <div className="mt-5 border border-primary bg-primary/5 p-5" role="status" aria-live="polite">
+              <p className="font-display text-xl">Finding property…</p>
+              <div className="mt-4 grid gap-2 text-sm">
+                <p>◌ Verifying address</p>
+                <p>◌ Finding county and city</p>
+                <p>◌ Finding school district</p>
+                <p>◌ Matching available tax rates</p>
+              </div>
+            </div>
+          )}
+
+          {lookupStatus === "error" && (
+            <div className="mt-5 border border-destructive bg-destructive/5 p-5" role="alert">
+              <p className="font-semibold">We couldn’t verify this address.</p>
+              <p className="mt-2 text-sm text-muted-foreground">{lookupError}</p>
+              <p className="mt-3 text-xs text-muted-foreground">Check the spelling, include the ZIP code, or continue manually.</p>
+            </div>
+          )}
+
+          <button type="submit" disabled={lookupStatus === "loading"} className="mt-5 w-full bg-primary px-5 py-3 text-sm font-bold uppercase tracking-widest text-primary-foreground disabled:cursor-wait disabled:opacity-60">
+            {lookupStatus === "loading" ? "Finding property…" : "Find my property"}
+          </button>
+          <button type="button" onClick={() => setStartMode("manual")} className="mt-4 w-full border border-border px-5 py-3 text-sm font-bold uppercase tracking-widest">Continue manually</button>
+          <p className="mt-4 text-xs leading-relaxed text-muted-foreground">Your address is sent directly to the U.S. Census geocoder only to identify local jurisdictions. It is not saved by this calculator and is never included in a shared link.</p>
+        </form>
       </section>
     );
   }
@@ -207,6 +351,40 @@ export function TaxCalculator() {
         </div>
       </header>
 
+      {lookupResult && (
+        <div className="border-b-2 border-foreground bg-muted p-6 md:p-8">
+          <div className="flex flex-wrap items-start justify-between gap-5">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Property information</p>
+              <p className="mt-2 font-display text-2xl">{lookupResult.matchedAddress}</p>
+              <div className="mt-4 grid gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
+                <p><strong>County:</strong> {lookupResult.countyName}</p>
+                <p><strong>School district:</strong> {lookupResult.schoolDistrictName || "Not identified"}</p>
+                <p><strong>City:</strong> {lookupResult.cityName || "Unincorporated / not identified"}</p>
+              </div>
+            </div>
+            <span className={`border px-3 py-2 text-xs font-bold uppercase tracking-widest ${lookupResult.confidence === "high" ? "border-green-700 bg-green-50 text-green-800" : "border-amber-700 bg-amber-50 text-amber-900"}`}>
+              {lookupResult.confidence === "high" ? "● High confidence" : "● Medium confidence"}
+            </span>
+          </div>
+
+          {lookupResult.missingFields.length > 0 && (
+            <div className="mt-5 border-l-4 border-amber-600 bg-card p-4 text-sm">
+              <p className="font-semibold">Complete the highlighted rate fields for a better estimate.</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-muted-foreground">
+                {lookupResult.missingFields.includes("cityRate") && <li>Enter the city tax rate if the property is inside city limits.</li>}
+                {lookupResult.missingFields.includes("schoolRate") && <li>Enter the school district tax rate from the property tax statement.</li>}
+              </ul>
+            </div>
+          )}
+
+          <div className="mt-5 border-l-4 border-primary bg-card p-4 text-sm">
+            <p className="font-semibold">Additional address-specific districts may still apply.</p>
+            <p className="mt-1 text-muted-foreground">Compare this estimate with the property’s tax statement for MUD, PID, emergency-services, hospital, college, road, and other special districts.</p>
+          </div>
+        </div>
+      )}
+
       <div className="grid gap-8 p-6 md:p-8 lg:grid-cols-[1.05fr_.95fr]">
         <div className="space-y-7">
           <fieldset>
@@ -220,6 +398,7 @@ export function TaxCalculator() {
               {hasKnownSchoolDistricts ? (
                 <Field label="School district" id="tax-isd">
                   <select id="tax-isd" value={isdName} onChange={(event) => changeIsd(event.target.value)} className="tax-input">
+                    {!knownSchoolDistricts.some((item) => item.name === isdName) && isdName && <option value={isdName}>{isdName} — enter rate below</option>}
                     {knownSchoolDistricts.map((item) => <option key={item.name} value={item.name}>{item.name} ({item.rate.toFixed(4)})</option>)}
                   </select>
                 </Field>
@@ -246,8 +425,8 @@ export function TaxCalculator() {
             <p className="mb-4 text-xs leading-relaxed text-muted-foreground">Statewide rates are prefilled when available. Enter the exact figures from your appraisal-district or tax statement for address-level precision.</p>
             <div className="grid items-end gap-4 sm:grid-cols-2">
               <RateField id="county-rate" label="County rate" value={countyRate} onChange={setCountyRate} />
-              <RateField id="city-rate" label="City rate" value={cityRate} onChange={setCityRate} />
-              <RateField id="school-rate" label="School district tax rate" value={schoolRate} onChange={setSchoolRate} />
+              <RateField id="city-rate" label="City rate" value={cityRate} onChange={setCityRate} attention={lookupResult?.missingFields.includes("cityRate")} />
+              <RateField id="school-rate" label="School district tax rate" value={schoolRate} onChange={setSchoolRate} attention={lookupResult?.missingFields.includes("schoolRate")} />
               <RateField id="mud-rate" label="MUD / water-district rate" value={manualMudRate} onChange={setManualMudRate} />
               <RateField id="other-rate" label="Other special-district rate" value={manualOtherRate} onChange={setManualOtherRate} />
               <MoneyField id="pid-assessment" label="Annual PID assessment" value={pidAnnualAssessment} onChange={setPidAnnualAssessment} step={100} />
@@ -269,11 +448,17 @@ export function TaxCalculator() {
             {calculation.pid > 0 && <div className="py-4"><div className="flex justify-between gap-4"><div><p className="text-sm font-semibold">PID annual assessment</p><p className="text-[10px] text-muted-foreground">Flat assessment, not an ad valorem rate</p></div><strong className="tabular-nums">{money(calculation.pid)}</strong></div></div>}
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2"><Card label="Capped appraised value" value={money(calculation.cappedValue)} /><Card label="ISD taxable value" value={money(calculation.schoolTaxable)} /><Card label="Other taxable value" value={money(calculation.generalTaxable)} /><Card label="ISD exemptions" value={money(calculation.schoolExemption)} /></div>
+          <div className="mt-5 border border-border p-4">
+            <p className="font-display text-xl">Share this calculation</p>
+            <p className="mt-1 text-xs text-muted-foreground">The link includes the selected jurisdictions, rates, and values. It does not include the property’s street address.</p>
+            <button type="button" onClick={copyShareLink} className="mt-3 w-full border-2 border-foreground px-4 py-3 text-xs font-bold uppercase tracking-widest">Copy link</button>
+            {shareMessage && <p className="mt-2 text-xs text-muted-foreground" aria-live="polite">{shareMessage}</p>}
+          </div>
         </div>
       </div>
 
       <footer className="border-t border-border p-6 text-xs leading-relaxed text-muted-foreground">Rates are cached from Texas Comptroller statewide files and may change after publication. MUD, PID, emergency-service, hospital, college, road, and other districts are address-specific. Confirm the exact taxing entities and assessment amounts shown on the property’s local tax statement.</footer>
-      <style>{`.tax-field{display:flex;min-width:0;flex-direction:column}.tax-field-label{display:flex;min-height:2.15rem;align-items:flex-end;margin-bottom:.375rem;font-size:.625rem;font-weight:700;line-height:1.25;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted-foreground)}.tax-input{width:100%;min-height:44px;border:1px solid var(--color-border);background:var(--color-muted);padding:.75rem;font-size:.875rem;font-weight:500;outline:none}.tax-input:focus,.tax-affix-control:focus-within{box-shadow:0 0 0 2px var(--color-primary)}.tax-affix-control{display:flex;min-height:44px;overflow:hidden;border:1px solid var(--color-border);background:var(--color-muted)}.tax-affix{display:flex;flex:0 0 auto;align-items:center;padding:0 .75rem;font-size:.75rem;font-weight:700;color:var(--color-muted-foreground);white-space:nowrap}.tax-affix-prefix{border-right:1px solid var(--color-border)}.tax-affix-suffix{border-left:1px solid var(--color-border);text-transform:uppercase}.tax-affix-input{min-width:0;width:100%;border:0;background:transparent;padding:.75rem;font-size:.875rem;font-weight:500;outline:none}.tax-affix-input::-webkit-inner-spin-button,.tax-affix-input::-webkit-outer-spin-button{margin:0;-webkit-appearance:none}.tax-affix-input[type=number]{appearance:textfield;-moz-appearance:textfield}.tax-notice{min-height:44px;border:1px dashed var(--color-border);background:var(--color-muted);padding:.75rem}`}</style>
+      <style>{`.tax-field{display:flex;min-width:0;flex-direction:column}.tax-field-label{display:flex;min-height:2.15rem;align-items:flex-end;margin-bottom:.375rem;font-size:.625rem;font-weight:700;line-height:1.25;letter-spacing:.1em;text-transform:uppercase;color:var(--color-muted-foreground)}.tax-input{width:100%;min-height:44px;border:1px solid var(--color-border);background:var(--color-muted);padding:.75rem;font-size:.875rem;font-weight:500;outline:none}.tax-input:focus,.tax-affix-control:focus-within{box-shadow:0 0 0 2px var(--color-primary)}.tax-affix-control{display:flex;min-height:44px;overflow:hidden;border:1px solid var(--color-border);background:var(--color-muted)}.tax-affix-control-attention{border-color:#b45309;box-shadow:0 0 0 1px #b45309}.tax-affix{display:flex;flex:0 0 auto;align-items:center;padding:0 .75rem;font-size:.75rem;font-weight:700;color:var(--color-muted-foreground);white-space:nowrap}.tax-affix-prefix{border-right:1px solid var(--color-border)}.tax-affix-suffix{border-left:1px solid var(--color-border);text-transform:uppercase}.tax-affix-input{min-width:0;width:100%;border:0;background:transparent;padding:.75rem;font-size:.875rem;font-weight:500;outline:none}.tax-affix-input::-webkit-inner-spin-button,.tax-affix-input::-webkit-outer-spin-button{margin:0;-webkit-appearance:none}.tax-affix-input[type=number]{appearance:textfield;-moz-appearance:textfield}.tax-notice{min-height:44px;border:1px dashed var(--color-border);background:var(--color-muted);padding:.75rem}`}</style>
     </section>
   );
 }
@@ -286,8 +471,8 @@ function MoneyField({ id, label, value, onChange, step = 5000 }: { id: string; l
   return <Field label={label} id={id}><div className="tax-affix-control"><span className="tax-affix tax-affix-prefix" aria-hidden="true">$</span><input id={id} type="number" inputMode="decimal" min={0} max={100000000} step={step} value={value} onFocus={selectZeroOnFocus} onChange={(event) => onChange(safeMoney(Number(event.target.value)))} className="tax-affix-input" /></div></Field>;
 }
 
-function RateField({ id, label, value, onChange }: { id: string; label: string; value: number; onChange: (value: number) => void }) {
-  return <Field label={label} id={id}><div className="tax-affix-control"><input id={id} type="number" inputMode="decimal" min={0} max={20} step={0.0001} value={value} onFocus={selectZeroOnFocus} onChange={(event) => onChange(safeRate(Number(event.target.value)))} className="tax-affix-input" /><span className="tax-affix tax-affix-suffix" aria-hidden="true">per $100</span></div></Field>;
+function RateField({ id, label, value, onChange, attention = false }: { id: string; label: string; value: number; onChange: (value: number) => void; attention?: boolean }) {
+  return <Field label={label} id={id}><div className={`tax-affix-control ${attention ? "tax-affix-control-attention" : ""}`}><input id={id} type="number" inputMode="decimal" min={0} max={20} step={0.0001} value={value} onFocus={selectZeroOnFocus} onChange={(event) => onChange(safeRate(Number(event.target.value)))} className="tax-affix-input" /><span className="tax-affix tax-affix-suffix" aria-hidden="true">per $100</span></div></Field>;
 }
 
 function Check({ checked, onChange, title }: { checked: boolean; onChange: (checked: boolean) => void; title: string }) {
