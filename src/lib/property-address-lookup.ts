@@ -1,7 +1,6 @@
 import { COUNTIES } from "@/data/counties";
 
-const CENSUS_GEOCODER_URL =
-  "https://geocoding.geo.census.gov/geocoder/geographies/onelineaddress";
+const PROPERTY_LOOKUP_API_URL = "/api/public/property-address-lookup";
 
 export type LookupConfidence = "high" | "medium";
 
@@ -94,16 +93,11 @@ export async function lookupTexasProperty(
     );
   }
 
-  const params = new URLSearchParams({
-    address: query,
-    benchmark: "Public_AR_Current",
-    vintage: "Current_Current",
-    format: "json",
-  });
+  const params = new URLSearchParams({ address: query });
 
   let response: Response;
   try {
-    response = await fetch(`${CENSUS_GEOCODER_URL}?${params.toString()}`, {
+    response = await fetch(`${PROPERTY_LOOKUP_API_URL}?${params.toString()}`, {
       method: "GET",
       headers: { Accept: "application/json" },
       signal,
