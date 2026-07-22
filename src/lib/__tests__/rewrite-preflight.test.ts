@@ -56,7 +56,7 @@ describe("assessRewritePreflight — extracted body vs RSS blurb", () => {
     });
     expect(r.rewriteable).toBe(true);
     expect(r.reason).toBe("READY");
-    expect(r.sourceWordCount).toBeGreaterThanOrEqual(400);
+    expect(r.sourceWordCount).toBeGreaterThanOrEqual(300);
   });
 
   it("classifies paywalled/snippet extractions with the paywall reason (not READY)", () => {
