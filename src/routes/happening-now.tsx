@@ -134,6 +134,13 @@ function DashboardPage() {
     let active = true;
     async function load() {
       const sinceIso = new Date(Date.now() - ONE_DAY_MS).toISOString();
+      // Linked-article lookup: we join feed rows in the last 24h against
+      // daily_articles by slug. The article itself may have been rewritten a
+      // few hours before the feed row was ingested, so a strict 24h article
+      // window drops valid pairings. Broaden this join window to 7 days —
+      // the user-visible 24h freshness gate is still applied downstream in
+      // `filtered` against the feed row's own pub_date.
+      const linkedSinceIso = new Date(Date.now() - 7 * ONE_DAY_MS).toISOString();
       const [{ data }, { data: demoted }, { data: linkedArticles }] = await Promise.all([
         supabase
         .from("texas_news_feed")
@@ -143,16 +150,15 @@ function DashboardPage() {
         supabase
           .from("daily_articles")
           .select("id,slug,title,category,dek,source_url,published_at,kind,body_json")
-          .eq("is_breaking", true)
           .gte("published_at", sinceIso)
           .order("published_at", { ascending: false })
           .limit(40),
         supabase
           .from("daily_articles")
           .select("slug,published_at")
-          .gte("published_at", sinceIso)
+          .gte("published_at", linkedSinceIso)
           .order("published_at", { ascending: false })
-          .limit(200),
+          .limit(500),
       ]);
       if (!active) return;
       // Live Feed gates on "a rewritten native article exists" — NOT the
@@ -161,12 +167,20 @@ function DashboardPage() {
       const validArticleSlugs = new Set(
         ((linkedArticles ?? []) as { slug: string }[]).map((r) => r.slug),
       );
-      const feedRows: Row[] = ((data ?? []) as { id: number; title: string; source: string; internal_slug: string | null; description: string | null; pub_date: string; link: string }[])
+      const rawFeed = ((data ?? []) as { id: number; title: string; source: string; internal_slug: string | null; description: string | null; pub_date: string; link: string }[]);
+      // Diagnostic: reason each feed row was excluded (temporary, safe to keep behind the console).
+      const drops = { no_slug: 0, slug_not_in_articles: 0, kept: 0 };
+      const feedRows: Row[] = rawFeed
         // RULE: never link out to the original source. Feed items must be
         // rewritten into a native /news/{slug} article before they surface
         // here. Rows without a rewritten article are hidden until the
         // ingest pipeline mints one.
-        .filter((r) => Boolean(r.internal_slug) && validArticleSlugs.has(r.internal_slug as string))
+        .filter((r) => {
+          if (!r.internal_slug) { drops.no_slug += 1; return false; }
+          if (!validArticleSlugs.has(r.internal_slug)) { drops.slug_not_in_articles += 1; return false; }
+          drops.kept += 1;
+          return true;
+        })
         .map((r) => ({
           id: r.id,
           title: r.title,
@@ -190,6 +204,19 @@ function DashboardPage() {
       const merged = [...feedRows, ...demotedRows].sort(
         (a, b) => Date.parse(b.pub_date) - Date.parse(a.pub_date),
       );
+      if (typeof window !== "undefined") {
+        // Temporary diagnostics — remove once feed density stabilizes.
+        // eslint-disable-next-line no-console
+        console.info("[happening-now] load", {
+          feed_raw: rawFeed.length,
+          feed_no_slug: drops.no_slug,
+          feed_slug_missing_article: drops.slug_not_in_articles,
+          feed_kept: drops.kept,
+          daily_last_24h: demoted?.length ?? 0,
+          linked_articles_window: linkedArticles?.length ?? 0,
+          merged: merged.length,
+        });
+      }
       setItems(merged);
       setFetchedAt(new Date().toISOString());
       setLoading(false);
@@ -205,18 +232,26 @@ function DashboardPage() {
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     const cutoff = Date.now() - ONE_DAY_MS;
-    return items.filter((it) => {
+    const stats = { total: items.length, dropped_stale: 0, dropped_low_value: 0, dropped_source: 0, dropped_needle: 0, kept: 0 };
+    const out = items.filter((it) => {
       const ts = Date.parse(it.pub_date);
-      if (!isNaN(ts) && ts < cutoff) return false;
-      if (isLowValueTitle(it.title)) return false;
-      if (src !== "All" && !it.source.toLowerCase().includes(src.toLowerCase())) return false;
-      if (!needle) return true;
-      return (
+      if (!isNaN(ts) && ts < cutoff) { stats.dropped_stale += 1; return false; }
+      if (isLowValueTitle(it.title)) { stats.dropped_low_value += 1; return false; }
+      if (src !== "All" && !it.source.toLowerCase().includes(src.toLowerCase())) { stats.dropped_source += 1; return false; }
+      if (!needle) { stats.kept += 1; return true; }
+      const match =
         it.title.toLowerCase().includes(needle) ||
         (it.description ?? "").toLowerCase().includes(needle) ||
-        it.source.toLowerCase().includes(needle)
-      );
+        it.source.toLowerCase().includes(needle);
+      if (!match) stats.dropped_needle += 1;
+      else stats.kept += 1;
+      return match;
     });
+    if (typeof window !== "undefined") {
+      // eslint-disable-next-line no-console
+      console.info("[happening-now] filter", stats);
+    }
+    return out;
   }, [items, q, src]);
 
   const QUICK = ["Tax", "Border", "Primary", "Paxton", "Election", "School"];
