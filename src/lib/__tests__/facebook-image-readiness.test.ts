@@ -18,7 +18,7 @@ describe("assessImageUrl — deterministic image gate", () => {
   });
 
   it("blocks Facebook posts when the URL is not a valid public URL", () => {
-    expect(assessImageUrl("data:image/png;base64,AAAA").reason).toBe("MISSING_IMAGE");
+    expect(assessImageUrl("data:image/png;base64,AAAA").reason).toBe("INVALID_URL");
     expect(assessImageUrl("http://localhost:3000/foo.png").reason).toBe("INVALID_URL");
     expect(assessImageUrl("http://192.168.1.10/foo.png").reason).toBe("INVALID_URL");
     expect(assessImageUrl("not a url").reason).toBe("INVALID_URL");
