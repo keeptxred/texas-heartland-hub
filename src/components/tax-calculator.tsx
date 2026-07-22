@@ -30,8 +30,9 @@ function veteranExemption(value: number, rating: Exemptions["veteran"]) {
 
 export function TaxCalculator() {
   const first = COUNTIES[0];
+  const firstHasKnownIsd = first.schoolDistricts.some((district) => district.rate > 0);
   const [countySlug, setCountySlug] = useState(first.slug);
-  const [isdName, setIsdName] = useState(first.schoolDistricts[0].name);
+  const [isdName, setIsdName] = useState(firstHasKnownIsd ? first.schoolDistricts[0].name : "");
   const [value, setValue] = useState(400_000);
   const [priorValue, setPriorValue] = useState(365_000);
   const [cityRate, setCityRate] = useState(first.cityAvgRate);
@@ -49,9 +50,9 @@ export function TaxCalculator() {
   });
 
   const county = COUNTIES.find((item) => item.slug === countySlug) ?? first;
-  const isd =
-    county.schoolDistricts.find((item) => item.name === isdName) ??
-    county.schoolDistricts[0];
+  const knownSchoolDistricts = county.schoolDistricts.filter((district) => district.rate > 0);
+  const hasKnownSchoolDistricts = knownSchoolDistricts.length > 0;
+  const schoolDistrictLabel = isdName.trim() || "School district";
 
   const selectedSpecials = county.specialDistricts.filter((district) =>
     selectedSpecialNames.includes(district.name),
@@ -90,7 +91,7 @@ export function TaxCalculator() {
         note: cityRate === 0 ? "Enter your city rate if applicable" : "Selected or entered city rate",
       },
       {
-        label: isd.name,
+        label: schoolDistrictLabel,
         rate: schoolRate,
         taxable: schoolTaxable,
         amount: per100(schoolRate, schoolTaxable),
@@ -150,11 +151,11 @@ export function TaxCalculator() {
     county.name,
     countyRate,
     exemptions,
-    isd.name,
     manualMudRate,
     manualOtherRate,
     pidAnnualAssessment,
     priorValue,
+    schoolDistrictLabel,
     schoolRate,
     selectedSpecials,
     value,
@@ -162,9 +163,10 @@ export function TaxCalculator() {
 
   function changeCounty(slug: string) {
     const next = COUNTIES.find((item) => item.slug === slug) ?? first;
-    const nextIsd = next.schoolDistricts[0];
+    const nextKnownDistricts = next.schoolDistricts.filter((district) => district.rate > 0);
+    const nextIsd = nextKnownDistricts[0] ?? next.schoolDistricts[0];
     setCountySlug(next.slug);
-    setIsdName(nextIsd.name);
+    setIsdName(nextKnownDistricts.length > 0 ? nextIsd.name : "");
     setCountyRate(next.countyRate);
     setCityRate(next.cityAvgRate);
     setSchoolRate(nextIsd.rate);
@@ -173,14 +175,15 @@ export function TaxCalculator() {
   }
 
   function changeIsd(name: string) {
-    const next = county.schoolDistricts.find((item) => item.name === name) ?? county.schoolDistricts[0];
+    const next = knownSchoolDistricts.find((item) => item.name === name);
+    if (!next) return;
     setIsdName(next.name);
     setSchoolRate(next.rate);
   }
 
   function reset() {
     setCountySlug(first.slug);
-    setIsdName(first.schoolDistricts[0].name);
+    setIsdName(firstHasKnownIsd ? first.schoolDistricts[0].name : "");
     setValue(400_000);
     setPriorValue(365_000);
     setCountyRate(first.countyRate);
@@ -222,11 +225,28 @@ export function TaxCalculator() {
                   {COUNTIES.map((item) => <option key={item.slug} value={item.slug}>{item.name}</option>)}
                 </select>
               </Field>
-              <Field label="School district" id="tax-isd">
-                <select id="tax-isd" value={isdName} onChange={(event) => changeIsd(event.target.value)} className="tax-input">
-                  {county.schoolDistricts.map((item) => <option key={item.name} value={item.name}>{item.name} ({item.rate.toFixed(4)})</option>)}
-                </select>
-              </Field>
+
+              {hasKnownSchoolDistricts ? (
+                <Field label="School district" id="tax-isd">
+                  <select id="tax-isd" value={isdName} onChange={(event) => changeIsd(event.target.value)} className="tax-input">
+                    {knownSchoolDistricts.map((item) => (
+                      <option key={item.name} value={item.name}>{item.name} ({item.rate.toFixed(4)})</option>
+                    ))}
+                  </select>
+                </Field>
+              ) : (
+                <Field label="School district name" id="tax-isd-name">
+                  <input
+                    id="tax-isd-name"
+                    type="text"
+                    value={isdName}
+                    onChange={(event) => setIsdName(event.target.value)}
+                    placeholder="Enter your school district"
+                    className="tax-input"
+                  />
+                </Field>
+              )}
+
               <MoneyField id="tax-value" label="Current appraised value" value={value} onChange={setValue} />
               <MoneyField id="tax-prior" label="Prior-year appraised value" value={priorValue} onChange={setPriorValue} />
             </div>
@@ -254,7 +274,7 @@ export function TaxCalculator() {
             <div className="grid gap-4 sm:grid-cols-2">
               <RateField id="county-rate" label="County rate" value={countyRate} onChange={setCountyRate} />
               <RateField id="city-rate" label="City rate" value={cityRate} onChange={setCityRate} />
-              <RateField id="school-rate" label="ISD rate" value={schoolRate} onChange={setSchoolRate} />
+              <RateField id="school-rate" label="School district tax rate" value={schoolRate} onChange={setSchoolRate} />
               <RateField id="mud-rate" label="MUD / water-district rate" value={manualMudRate} onChange={setManualMudRate} />
               <RateField id="other-rate" label="Other special-district rate" value={manualOtherRate} onChange={setManualOtherRate} />
               <MoneyField id="pid-assessment" label="Annual PID assessment" value={pidAnnualAssessment} onChange={setPidAnnualAssessment} step={100} />
@@ -326,7 +346,65 @@ export function TaxCalculator() {
         Rates are cached from Texas Comptroller statewide files and may change after publication. MUD, PID, emergency-service, hospital, college, road, and other districts are address-specific. Confirm the exact taxing entities and assessment amounts shown on the property’s local tax statement.
       </footer>
 
-      <style>{`.tax-input{width:100%;border:1px solid var(--color-border);background:var(--color-muted);padding:.75rem;font-size:.875rem;font-weight:500;outline:none}.tax-input:focus{box-shadow:0 0 0 2px var(--color-primary)}`}</style>
+      <style>{`
+        .tax-input {
+          width: 100%;
+          min-height: 44px;
+          border: 1px solid var(--color-border);
+          background: var(--color-muted);
+          padding: .75rem;
+          font-size: .875rem;
+          font-weight: 500;
+          outline: none;
+        }
+        .tax-input:focus,
+        .tax-affix-control:focus-within {
+          box-shadow: 0 0 0 2px var(--color-primary);
+        }
+        .tax-affix-control {
+          display: flex;
+          min-height: 44px;
+          overflow: hidden;
+          border: 1px solid var(--color-border);
+          background: var(--color-muted);
+        }
+        .tax-affix {
+          display: flex;
+          flex: 0 0 auto;
+          align-items: center;
+          padding: 0 .75rem;
+          font-size: .75rem;
+          font-weight: 700;
+          color: var(--color-muted-foreground);
+          white-space: nowrap;
+        }
+        .tax-affix-prefix {
+          border-right: 1px solid var(--color-border);
+        }
+        .tax-affix-suffix {
+          border-left: 1px solid var(--color-border);
+          text-transform: uppercase;
+        }
+        .tax-affix-input {
+          min-width: 0;
+          width: 100%;
+          border: 0;
+          background: transparent;
+          padding: .75rem;
+          font-size: .875rem;
+          font-weight: 500;
+          outline: none;
+        }
+        .tax-affix-input::-webkit-inner-spin-button,
+        .tax-affix-input::-webkit-outer-spin-button {
+          margin: 0;
+          -webkit-appearance: none;
+        }
+        .tax-affix-input[type="number"] {
+          appearance: textfield;
+          -moz-appearance: textfield;
+        }
+      `}</style>
     </section>
   );
 }
@@ -334,18 +412,57 @@ export function TaxCalculator() {
 function Field({ label, id, children }: { label: string; id: string; children: React.ReactNode }) {
   return <div><label htmlFor={id} className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</label>{children}</div>;
 }
+
 function MoneyField({ id, label, value, onChange, step = 5000 }: { id: string; label: string; value: number; onChange: (value: number) => void; step?: number }) {
-  return <Field label={label} id={id}><div className="relative"><span className="absolute left-3 top-1/2 -translate-y-1/2 font-bold text-muted-foreground">$</span><input id={id} type="number" min={0} max={100000000} step={step} value={value} onChange={(event) => onChange(safeMoney(Number(event.target.value)))} className="tax-input pl-7" /></div></Field>;
+  return (
+    <Field label={label} id={id}>
+      <div className="tax-affix-control">
+        <span className="tax-affix tax-affix-prefix" aria-hidden="true">$</span>
+        <input
+          id={id}
+          type="number"
+          inputMode="decimal"
+          min={0}
+          max={100000000}
+          step={step}
+          value={value}
+          onChange={(event) => onChange(safeMoney(Number(event.target.value)))}
+          className="tax-affix-input"
+        />
+      </div>
+    </Field>
+  );
 }
+
 function RateField({ id, label, value, onChange }: { id: string; label: string; value: number; onChange: (value: number) => void }) {
-  return <Field label={label} id={id}><div className="relative"><input id={id} type="number" min={0} max={20} step={0.0001} value={value} onChange={(event) => onChange(safeRate(Number(event.target.value)))} className="tax-input pr-20" /><span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase text-muted-foreground">per $100</span></div></Field>;
+  return (
+    <Field label={label} id={id}>
+      <div className="tax-affix-control">
+        <input
+          id={id}
+          type="number"
+          inputMode="decimal"
+          min={0}
+          max={20}
+          step={0.0001}
+          value={value}
+          onChange={(event) => onChange(safeRate(Number(event.target.value)))}
+          className="tax-affix-input"
+        />
+        <span className="tax-affix tax-affix-suffix" aria-hidden="true">per $100</span>
+      </div>
+    </Field>
+  );
 }
+
 function Check({ checked, onChange, title }: { checked: boolean; onChange: (checked: boolean) => void; title: string }) {
   return <label className={`flex items-center gap-3 border p-3 ${checked ? "border-primary bg-primary/5" : "border-border bg-muted"}`}><input type="checkbox" checked={checked} onChange={(event) => onChange(event.target.checked)} className="size-4 accent-primary" /><span className="text-sm font-semibold">{title}</span></label>;
 }
+
 function Metric({ label, value }: { label: string; value: string }) {
   return <div><p className="text-[9px] font-bold uppercase tracking-widest text-white/65">{label}</p><p className="mt-1 font-semibold text-white tabular-nums">{value}</p></div>;
 }
+
 function Card({ label, value }: { label: string; value: string }) {
   return <div className="border border-border p-3"><p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground">{label}</p><p className="mt-1 font-semibold tabular-nums">{value}</p></div>;
 }
