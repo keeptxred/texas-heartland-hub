@@ -6,8 +6,18 @@ import CalculatorResultsGrid from "@/components/calculators/CalculatorResultsGri
 import CalculatorSEOContent from "@/components/calculators/CalculatorSEOContent";
 import { getAdditionalCalculatorDefinition } from "@/lib/calculators/additionalCalculatorSuite";
 
-export default function AdditionalCalculator({ calculatorKey }: { calculatorKey: string }) {
+interface AdditionalCalculatorProps {
+  calculatorKey: string;
+  title?: string;
+  description?: string;
+  slug?: string;
+}
+
+export default function AdditionalCalculator({ calculatorKey, title, description, slug }: AdditionalCalculatorProps) {
   const definition = getAdditionalCalculatorDefinition(calculatorKey);
+  const displayTitle = title ?? definition.title;
+  const displayDescription = description ?? definition.description;
+  const displaySlug = slug ?? definition.slug;
   const [inputs, setInputs] = useState<Record<string, number>>(() =>
     Object.fromEntries(definition.fields.map((item) => [item.key, item.defaultValue])),
   );
@@ -15,12 +25,12 @@ export default function AdditionalCalculator({ calculatorKey }: { calculatorKey:
 
   return (
     <CalculatorPageTemplate
-      title={definition.title}
-      description={definition.description}
+      title={displayTitle}
+      description={displayDescription}
       category={definition.category}
-      slug={definition.slug}
+      slug={displaySlug}
       lastUpdated="July 2026"
-      shareText={`Estimate results with the ${definition.title}.`}
+      shareText={`Estimate results with the ${displayTitle}.`}
       faqs={definition.faq}
       relatedCategory={definition.category}
     >
@@ -44,7 +54,7 @@ export default function AdditionalCalculator({ calculatorKey }: { calculatorKey:
       <CalculatorSEOContent
         sections={[
           {
-            heading: `How to use the ${definition.title}`,
+            heading: `How to use the ${displayTitle}`,
             content:
               "Enter values that reflect your situation. Results update immediately and use the assumptions shown in the form. Review the estimate alongside official quotes, tax records, program rules, and provider information before making a financial decision.",
           },
