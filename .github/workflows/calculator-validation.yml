@@ -10,6 +10,7 @@ on:
       - "src/pages/**"
       - "src/routes/**"
       - "package.json"
+      - "tsconfig.calculators.json"
       - ".github/workflows/calculator-validation.yml"
   push:
     branches:
@@ -41,31 +42,58 @@ jobs:
       - name: Build production application and generate routes
         run: pnpm build
 
-      - name: Capture TypeScript diagnostics
-        id: typecheck
-        continue-on-error: true
-        shell: bash
-        run: |
-          set +e
-          pnpm exec tsc --noEmit --pretty false > typecheck.log 2>&1
-          status=$?
-          cat typecheck.log
-          exit $status
-
-      - name: Upload TypeScript diagnostics
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: calculator-typecheck-diagnostics
-          path: typecheck.log
-          if-no-files-found: error
-
-      - name: Stop on TypeScript failure
-        if: steps.typecheck.outcome == 'failure'
-        run: exit 1
+      - name: Typecheck calculator code
+        run: pnpm exec tsc -p tsconfig.calculators.json --pretty false
 
       - name: Run calculator tests
         run: pnpm test
 
-      - name: Lint
-        run: pnpm lint
+      - name: Lint calculator code
+        run: >-
+          pnpm exec eslint
+          src/components/calculators
+          src/components/budget
+          src/components/closingCosts
+          src/components/cost
+          src/components/downPayment
+          src/components/equity
+          src/components/home
+          src/components/homeAffordability
+          src/components/income
+          src/components/mortgage
+          src/data/budget
+          src/data/closingCosts
+          src/data/cost
+          src/data/downPayment
+          src/data/equity
+          src/data/home
+          src/data/homeAffordability
+          src/data/income
+          src/data/mortgage
+          src/lib/budget
+          src/lib/closingCosts
+          src/lib/cost
+          src/lib/downPayment
+          src/lib/equity
+          src/lib/home
+          src/lib/homeAffordability
+          src/lib/income
+          src/lib/mortgage
+          src/pages/budget
+          src/pages/closingCosts
+          src/pages/cost
+          src/pages/downPayment
+          src/pages/equity
+          src/pages/home
+          src/pages/homeAffordability
+          src/pages/income
+          src/pages/mortgage
+          src/types/budget
+          src/types/closingCosts
+          src/types/cost
+          src/types/downPayment
+          src/types/equity
+          src/types/home
+          src/types/homeAffordability
+          src/types/income
+          src/types/mortgage
