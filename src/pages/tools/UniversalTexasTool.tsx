@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { calculateRemainingTool, RemainingTexasTool } from "@/data/remainingTexasTools";
-import { trackCalculationCompleted, trackCalculatorOpened, trackResultsShared } from "@/lib/analytics/calculatorAnalytics";
+import { trackCalculationCompleted, trackCalculatorOpened, trackResultsShared, trackValidationError } from "@/lib/analytics/calculatorAnalytics";
 
 const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
@@ -14,6 +14,7 @@ export default function UniversalTexasTool({ tool }: { tool: RemainingTexasTool 
   const [a, setA] = useState(() => readInput("a", tool.defaults[0]));
   const [b, setB] = useState(() => readInput("b", tool.defaults[1]));
   const [c, setC] = useState(() => readInput("c", tool.defaults[2]));
+  const [shareStatus, setShareStatus] = useState("");
   const result = useMemo(() => calculateRemainingTool(tool, a, b, c), [tool, a, b, c]);
   const formatted = tool.unit === "currency" ? money.format(result) : tool.unit === "years" ? `${result.toFixed(1)} years` : `${result.toFixed(1)}${tool.unit === "score" ? "/100" : ""}`;
 
@@ -30,8 +31,14 @@ export default function UniversalTexasTool({ tool }: { tool: RemainingTexasTool 
     url.searchParams.set("a", String(a));
     url.searchParams.set("b", String(b));
     url.searchParams.set("c", String(c));
-    await navigator.clipboard.writeText(url.toString());
-    trackResultsShared(tool.id);
+    try {
+      await navigator.clipboard.writeText(url.toString());
+      setShareStatus("Link copied");
+      trackResultsShared(tool.id);
+    } catch {
+      setShareStatus("Copy the URL from your browser address bar");
+      trackValidationError(tool.id, ["clipboard_unavailable"]);
+    }
   };
 
   return (
@@ -67,9 +74,10 @@ export default function UniversalTexasTool({ tool }: { tool: RemainingTexasTool 
         <h2 className="font-semibold text-gray-900">Data and assumptions</h2>
         <p className="mt-2">Formula version {tool.formulaVersion}. Source status: {tool.sourceStatus === "official-data" ? "official data" : "editable planning assumptions"}. Last formula review: {tool.reviewedOn}.</p>
         <p className="mt-2">Replace statewide assumptions with current local figures before making a financial decision. Authoritative county, city, ISD, utility, toll, flood, and market datasets are maintained separately.</p>
-        <div className="mt-4 flex flex-wrap gap-3">
+        <div className="mt-4 flex flex-wrap items-center gap-3">
           <button type="button" onClick={() => window.print()} className="rounded-md border px-4 py-2 font-medium text-gray-900">Print or save results</button>
           <button type="button" onClick={shareResults} className="rounded-md border px-4 py-2 font-medium text-gray-900">Copy shareable link</button>
+          {shareStatus && <span role="status" className="text-gray-700">{shareStatus}</span>}
         </div>
       </section>
     </main>
