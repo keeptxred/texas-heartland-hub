@@ -44,7 +44,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          pnpm typecheck -- --pretty false > typecheck.log 2>&1
+          pnpm exec tsc --noEmit --pretty false > typecheck.log 2>&1
           status=$?
           cat typecheck.log
           exit $status
