@@ -6,18 +6,12 @@ import { nextElectionHeadline } from "@/lib/election-calendar";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 
 const NAV = [
+  { to: "/", label: "Home" },
   { to: "/texas-news", label: "Texas News" },
-  { to: "/happening-now", label: "Happening Now" },
   { to: "/texas-politics", label: "Politics" },
-  { to: "/houston", label: "Houston" },
-  { to: "/texas-sports", label: "Sports" },
-  { to: "/texas-business", label: "Business" },
-  { to: "/news/non-political", label: "Non-Political" },
-  { to: "/laws", label: "Laws" },
-  { to: "/elections", label: "Elections" },
-  { to: "/tax-calculator", label: "Property Taxes" },
+  { to: "/moving-to-texas", label: "Moving to Texas" },
+  { to: "/living-in-texas", label: "Living in Texas" },
   { to: "/shop", label: "Shop" },
-  { to: "/about", label: "About" },
 ] as const;
 
 export function SiteHeader() {
@@ -29,14 +23,12 @@ export function SiteHeader() {
     queryFn: () => fetchDaily(),
     staleTime: 5 * 60 * 1000,
   });
-  // Reuse the already-validated daily article feed (word-count gated,
-  // dedupe'd, and guaranteed to resolve on /news/$slug). Breaking items
-  // lead, then newest, capped for a smooth marquee.
   const articles: DailyArticle[] = data?.articles ?? [];
   const validTicker = articles.filter((a) => a.slug && a.title);
   const breaking = validTicker.filter((a) => a.is_breaking);
   const rest = validTicker.filter((a) => !a.is_breaking);
   const tickerItems = [...breaking, ...rest].slice(0, 12);
+
   return (
     <header className="sticky top-0 z-50 bg-secondary text-secondary-foreground border-b border-white/10">
       <div className="overflow-hidden border-b border-white/10 bg-tx-ink/40">
@@ -48,12 +40,7 @@ export function SiteHeader() {
                 <div key={i} className="flex shrink-0 gap-10 px-5">
                   {tickerItems.length > 0 ? (
                     tickerItems.map((a) => (
-                      <Link
-                        key={`${i}-${a.slug}`}
-                        to="/news/$slug"
-                        params={{ slug: a.slug }}
-                        className="flex items-center gap-2 hover:text-primary transition-colors"
-                      >
+                      <Link key={`${i}-${a.slug}`} to="/news/$slug" params={{ slug: a.slug }} className="flex items-center gap-2 hover:text-primary transition-colors">
                         <span className={`size-1.5 rounded-full ${a.is_breaking ? "bg-primary" : "bg-accent"}`} />
                         {a.title}
                       </Link>
@@ -74,25 +61,21 @@ export function SiteHeader() {
         <Link to="/" className="font-display text-2xl leading-none tracking-tight flex items-baseline gap-1.5 shrink-0">
           Keep <span className="text-primary">TX</span> Red
         </Link>
-        <nav className="hidden md:flex items-center gap-5 lg:gap-6 xl:gap-7 text-sm font-medium">
+        <nav aria-label="Primary navigation" className="hidden md:flex items-center gap-5 lg:gap-6 xl:gap-7 text-sm font-medium">
           {NAV.map((n) => (
             <Link key={n.to} to={n.to} className="whitespace-nowrap hover:text-primary transition-colors" activeProps={{ className: "text-primary" }}>
               {n.label}
             </Link>
           ))}
         </nav>
-        <button
-          aria-label="Toggle menu"
-          className="md:hidden p-2 -mr-2"
-          onClick={() => setOpen((v) => !v)}
-        >
+        <button type="button" aria-label="Toggle menu" aria-expanded={open} className="md:hidden p-2 -mr-2" onClick={() => setOpen((v) => !v)}>
           <div className="w-6 h-0.5 bg-current mb-1.5" />
           <div className="w-6 h-0.5 bg-current mb-1.5" />
           <div className="w-4 h-0.5 bg-current ml-auto" />
         </button>
       </div>
       {open && (
-        <nav className="md:hidden border-t border-white/10 bg-secondary px-6 py-4 flex flex-col gap-3 text-sm font-medium">
+        <nav aria-label="Mobile navigation" className="md:hidden border-t border-white/10 bg-secondary px-6 py-4 flex flex-col gap-3 text-sm font-medium">
           {NAV.map((n) => (
             <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="py-1" activeProps={{ className: "text-primary" }}>
               {n.label}
