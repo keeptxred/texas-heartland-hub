@@ -2,9 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TexasBusinessView } from "@/components/texas-business-view";
 
 export const Route = createFileRoute("/texas-business")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    topic: typeof search.topic === "string" ? search.topic : "",
-  }),
+  validateSearch: (search: Record<string, unknown>): { topic?: string } =>
+    typeof search.topic === "string" && search.topic ? { topic: search.topic } : {},
   head: ({ match }) => {
     const topic = (match.search as { topic?: string } | undefined)?.topic ?? "";
     const canonical = "https://www.keeptxred.com/texas-business";

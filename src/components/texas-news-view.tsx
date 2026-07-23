@@ -207,13 +207,15 @@ export function TexasNewsView({
           {articles.length === 0 && liveOnly.length === 0 && (
             <div className="col-span-full border-2 border-dashed border-border p-8 text-center">
               <p className="text-sm text-muted-foreground">
-                No articles currently available in this topic. Browse related Texas coverage.
+                {topic === "sports-culture"
+                  ? "No sports articles are available in this feed yet. Browse Texas teams and league coverage."
+                  : "No articles currently available in this topic. Browse related Texas coverage."}
               </p>
               <Link
-                to="/texas-news"
+                to={topic === "sports-culture" ? "/texas-sports" : "/texas-news"}
                 className="mt-3 inline-block text-sm text-primary hover:underline"
               >
-                ← Back to all Texas news
+                {topic === "sports-culture" ? "Browse Texas Sports →" : "← Back to all Texas news"}
               </Link>
             </div>
           )}
@@ -288,17 +290,29 @@ export function TexasNewsView({
           </p>
           <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
             <li>
-              <Link to="/texas/no-state-income-tax-2026" className="text-primary hover:underline">
+              <Link
+                to="/texas/$slug"
+                params={{ slug: "no-state-income-tax-2026" }}
+                className="text-primary hover:underline"
+              >
                 Why Texas Has No State Income Tax →
               </Link>
             </li>
             <li>
-              <Link to="/texas/property-taxes-2026" className="text-primary hover:underline">
+              <Link
+                to="/texas/$slug"
+                params={{ slug: "property-taxes-2026" }}
+                className="text-primary hover:underline"
+              >
                 Texas Property Taxes in 2026 →
               </Link>
             </li>
             <li>
-              <Link to="/texas/moving-to-texas-2026" className="text-primary hover:underline">
+              <Link
+                to="/texas/$slug"
+                params={{ slug: "moving-to-texas-2026" }}
+                className="text-primary hover:underline"
+              >
                 Moving to Texas in 2026 →
               </Link>
             </li>

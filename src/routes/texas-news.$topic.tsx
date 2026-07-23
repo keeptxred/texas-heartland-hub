@@ -4,12 +4,27 @@ import { CATEGORY_SLUG_TO_NAME, isCategorySlug } from "@/lib/articles-by-categor
 import { getArticlesByCategory } from "@/lib/category-feed.functions";
 
 const VALID = new Set(TEXAS_NEWS_SECTIONS.map((s) => s.id));
+const SPORTS_CULTURE_KINDS = [
+  "sports-nfl",
+  "sports-mlb",
+  "sports-nba",
+  "sports-cfb",
+] as const;
 
 export const Route = createFileRoute("/texas-news/$topic")({
   beforeLoad: ({ params }) => {
     if (!VALID.has(params.topic)) throw notFound();
   },
   loader: ({ params }) => {
+    if (params.topic === "sports-culture") {
+      return getArticlesByCategory({
+        data: {
+          kind: [...SPORTS_CULTURE_KINDS],
+          limit: 24,
+          order: "newest",
+        },
+      });
+    }
     if (!isCategorySlug(params.topic)) return [];
     return getArticlesByCategory({
       data: {
