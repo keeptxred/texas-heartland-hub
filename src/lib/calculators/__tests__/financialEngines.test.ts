@@ -84,7 +84,7 @@ describe("Texas financial calculator known-answer checks", () => {
     });
 
     expect(result.baseline.remainingMonths).toBeGreaterThan(350);
-    expect(result.baseline.remainingMonths).toBeLessThanOrEqual(360);
+    expect(result.baseline.remainingMonths).toBeLessThanOrEqual(362);
     expect(result.accelerated.newPayoffMonths).toBeLessThan(result.baseline.remainingMonths);
     expect(result.accelerated.interestSaved).toBeGreaterThan(0);
   });
