@@ -23,6 +23,7 @@ export type County = {
 
 export const TAX_RATE_DATASET = {
   planningTaxYear: 2024,
+  taxYear: 2024,
   lastUpdated: "2026-07-22",
   nextReviewOn: "2026-10-01",
   sourceUrl: "https://comptroller.texas.gov/taxes/property-tax/rates/",
