@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { TaxCalculator } from "@/components/tax-calculator";
-import { MANUAL_ENTRY_COUNTIES, SEEDED_COUNTIES, TAX_RATE_DATASET } from "@/data/counties";
+import { MANUAL_ENTRY_COUNTIES, TAX_RATE_DATASET } from "@/data/counties";
 
 const FAQS = [
   {
     q: "How do I calculate property taxes in Texas?",
-    a: "Add the tax rates from the property's county, city, independent school district (ISD), and any special districts such as a hospital district, MUD, PID, college district, or ESD. Multiply each rate by the taxable value that applies to that taxing unit. This calculator provides seeded planning rates for selected counties and manual entry for exact local rates.",
+    a: "Add the tax rates from the property's county, city, independent school district (ISD), and any special districts such as a hospital district, MUD, PID, college district, or ESD. Multiply each rate by the taxable value that applies to that taxing unit. This calculator supports all 254 counties through exact local-rate entry or available address lookup.",
   },
   {
     q: "Does Texas have a homestead exemption?",
@@ -20,8 +20,8 @@ const FAQS = [
     a: "Texas homeowners age 65 or older may qualify for an additional school-district exemption and a school-tax ceiling. Counties, cities, and other taxing units may offer additional local exemptions. Confirm eligibility and amounts with the appraisal district.",
   },
   {
-    q: "Are all 254 counties preloaded with exact rates?",
-    a: `No. ${TAX_RATE_DATASET.seededCountyCount} counties currently contain seeded planning snapshots. The remaining ${TAX_RATE_DATASET.countyCount - TAX_RATE_DATASET.seededCountyCount} counties are available through manual entry so the calculator does not present zero-value placeholders as authoritative rates.`,
+    q: "Are all 254 counties supported?",
+    a: "Yes. Every Texas county is selectable. The calculator intentionally does not preload local tax rates because county, city, ISD, MUD/PID, hospital, college, ESD, and other taxing units vary by exact property and effective year.",
   },
 ];
 
@@ -29,10 +29,10 @@ export const Route = createFileRoute("/tax-calculator")({
   head: () => ({
     meta: [
       { title: "Texas Property Tax Calculator 2026 | County & ISD Estimate" },
-      { name: "description", content: "Estimate Texas property taxes using county, city, ISD, special-district, and homestead inputs. Seeded planning rates are clearly distinguished from manual local-rate entry." },
+      { name: "description", content: "Estimate Texas property taxes using exact county, city, ISD, special-district, and homestead inputs for any of Texas's 254 counties." },
       { name: "keywords", content: "Texas property tax calculator, Texas homestead exemption calculator, county property tax estimate, Texas ISD tax calculator" },
       { property: "og:title", content: "Texas Property Tax Calculator — County, ISD & Homestead Estimate" },
-      { property: "og:description", content: "Estimate Texas property taxes with transparent rate-year, coverage, and source limitations." },
+      { property: "og:description", content: "Estimate Texas property taxes using exact local rates with transparent assumptions and official source guidance." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://www.keeptxred.com/tax-calculator" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -47,7 +47,7 @@ export const Route = createFileRoute("/tax-calculator")({
           "@context": "https://schema.org",
           "@type": "WebApplication",
           name: "Texas Property Tax Calculator",
-          description: "Estimate Texas property taxes by county, city, ISD, special districts, and exemptions.",
+          description: "Estimate Texas property taxes by county, city, ISD, special districts, and exemptions using exact local rates.",
           url: "https://www.keeptxred.com/tax-calculator",
           applicationCategory: "FinanceApplication",
           operatingSystem: "Web",
@@ -85,8 +85,6 @@ export const Route = createFileRoute("/tax-calculator")({
 });
 
 function TaxPage() {
-  const manualCount = MANUAL_ENTRY_COUNTIES.length;
-
   return (
     <>
       <section className="bg-secondary text-secondary-foreground">
@@ -97,7 +95,7 @@ function TaxPage() {
             <span className="text-primary">TAX CALCULATOR</span>
           </h1>
           <p className="mt-5 max-w-2xl text-white/70">
-            Estimate county, city, ISD, and special-district taxes. Seeded rates are planning snapshots, and every value remains editable so you can use the exact rates from your appraisal district or tax statement.
+            Estimate county, city, ISD, and special-district taxes using exact rates from your appraisal district, tax statement, or available address lookup.
           </p>
         </div>
       </section>
@@ -109,7 +107,7 @@ function TaxPage() {
           <Link to="/texas/$slug" params={{ slug: "why-texas-has-no-income-tax" }} className="text-primary underline">
             state individual income tax
           </Link>
-          , so property-tax planning matters. This tool distinguishes seeded planning data from counties that require manual local-rate entry.
+          , so property-tax planning matters. This tool avoids stale statewide averages and lets you use the taxing units that actually apply to the property.
         </p>
       </section>
 
@@ -118,24 +116,13 @@ function TaxPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground pb-3 mb-6">Seeded Planning-Rate Counties</h2>
+        <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground pb-3 mb-6">All 254 Texas Counties Supported</h2>
         <p className="mb-6 max-w-3xl text-sm leading-relaxed text-muted-foreground">
-          These {SEEDED_COUNTIES.length} counties include editable county, city-average, and selected ISD planning snapshots for tax year {TAX_RATE_DATASET.planningTaxYear}. They are not parcel-specific or complete taxing-unit totals.
+          Every Texas county is selectable. Rates begin at zero until supplied by address lookup or entered from the property's current tax records, preventing old planning snapshots from being mistaken for official rates.
         </p>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {SEEDED_COUNTIES.map((county) => (
-            <div key={county.slug} className="border border-border bg-card p-4">
-              <div className="font-semibold">{county.name}</div>
-              <div className="text-[11px] text-muted-foreground">Planning snapshot • Tax year {county.taxYear}</div>
-              <div className="mt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-                {county.schoolDistricts.length} selected ISDs • County {county.countyRate.toFixed(4)} per $100
-              </div>
-            </div>
-          ))}
-        </div>
 
-        <div className="mt-6 border border-border bg-muted p-5 text-sm text-muted-foreground">
-          The other {manualCount} Texas counties remain selectable with manual rate entry. This avoids displaying zero placeholders as actual county or ISD rates.
+        <div className="border border-border bg-muted p-5 text-sm text-muted-foreground">
+          {MANUAL_ENTRY_COUNTIES.length} counties use exact local-rate entry. Confirm the effective year and include every taxing unit shown on the property's appraisal or tax statement.
         </div>
 
         <div className="mt-10 bg-muted border-l-4 border-primary p-6">
@@ -182,7 +169,7 @@ function TaxPage() {
             <li><a className="text-primary underline" href={TAX_RATE_DATASET.sourceUrl} target="_blank" rel="noreferrer">Texas Comptroller property-tax rate resources</a></li>
             <li><a className="text-primary underline" href={TAX_RATE_DATASET.exemptionSourceUrl} target="_blank" rel="noreferrer">Texas Comptroller property-tax exemption guidance</a></li>
           </ul>
-          <p className="mt-3 text-xs text-muted-foreground">Dataset reviewed {TAX_RATE_DATASET.lastUpdated}; next review {TAX_RATE_DATASET.nextReviewOn}.</p>
+          <p className="mt-3 text-xs text-muted-foreground">Guidance reviewed {TAX_RATE_DATASET.lastUpdated}; next review {TAX_RATE_DATASET.nextReviewOn}.</p>
         </div>
 
         <div className="mt-12">
