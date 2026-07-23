@@ -5,6 +5,7 @@ import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness"
 import { TEAMS } from "@/lib/texas-teams";
 import { calculators } from "@/data/calculators";
 import { LAUNCH_COUNTIES, LAUNCH_GUIDES, RELOCATION_LAUNCH_PATH } from "@/data/relocationLaunch";
+import { CITY_COMPARISON_PATH, CITY_RELOCATION_PATH, RELOCATION_CITIES } from "@/data/relocationCities";
 
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
@@ -58,6 +59,8 @@ const STATIC_PATHS: string[] = [
   "/texas/property-taxes-2026",
   "/texas/moving-to-texas-2026",
   RELOCATION_LAUNCH_PATH,
+  CITY_RELOCATION_PATH,
+  CITY_COMPARISON_PATH,
 ];
 
 export const Route = createFileRoute("/sitemap-pages.xml")({
@@ -71,12 +74,16 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
         const relocationGuidePaths = LAUNCH_GUIDES.map(
           (guide) => `${RELOCATION_LAUNCH_PATH}/guides/${guide.slug}`,
         );
+        const relocationCityPaths = RELOCATION_CITIES.map(
+          (city) => `${CITY_RELOCATION_PATH}/${city.slug}`,
+        );
         const paths = [
           ...new Set([
             ...STATIC_PATHS,
             ...calculators.map((calculator) => calculator.slug),
             ...relocationCountyPaths,
             ...relocationGuidePaths,
+            ...relocationCityPaths,
           ]),
         ];
 
