@@ -12,8 +12,15 @@ const tools = [
   ["Texas Home Equity Calculator", "/texas-home-equity-calculator", "Estimate current equity and available borrowing room."],
   ["Texas Rent vs Buy Calculator", "/texas-rent-vs-buy-calculator", "Compare renting and buying over time."],
   ["Texas Cost of Living Calculator", "/texas-cost-of-living-calculator", "Compare household costs across Texas cities."],
-  ["Texas Salary Calculator", "/texas-salary-calculator", "Estimate take-home pay and compare salaries across Texas."],
+  ["Texas Salary Calculator", "/texas-salary-calculator", "Estimate Texas take-home pay and household affordability."],
   ["Texas Budget Planner", "/texas-budget-planner", "Build a monthly household budget and financial-health score."],
+  ["Texas Home Insurance Calculator", "/texas-home-insurance-calculator", "Estimate annual and monthly homeowners insurance costs."],
+  ["Texas Utility Cost Calculator", "/texas-utility-cost-calculator", "Estimate electricity, water, gas, internet, and trash costs."],
+  ["Texas Moving Cost Calculator", "/texas-moving-cost-calculator", "Estimate transportation, labor, travel, packing, and setup costs."],
+  ["Texas Property Tax Impact Calculator", "/texas-property-tax-impact-calculator", "Compare appraisal and tax-rate changes without duplicating the county tax calculator."],
+  ["Texas Mortgage Payment Impact Calculator", "/texas-mortgage-payment-impact-calculator", "Compare mortgage payments at different interest rates."],
+  ["Texas Down Payment Assistance Calculator", "/texas-down-payment-assistance-calculator", "Estimate potential assistance and remaining cash needs."],
+  ["Texas Salary Comparison Calculator", "/texas-salary-comparison-calculator", "Compare purchasing power and state income-tax differences when moving to Texas."],
 ] as const;
 
 function TexasFinancialToolsPage() {
@@ -36,7 +43,7 @@ function TexasFinancialToolsPage() {
         ))}
       </section>
       <p className="mt-10 text-sm text-muted-foreground">
-        Estimates are educational and may not reflect lender, tax, insurance, appraisal, or local-district requirements.
+        Estimates are educational and may not reflect lender, tax, insurance, appraisal, program, provider, or local-district requirements.
       </p>
     </main>
   );
