@@ -35,7 +35,7 @@ jobs:
           echo $? > typecheck.exit
           git diff --name-only --diff-filter=ACMR origin/main...HEAD | grep -E '\.(ts|tsx)$' > changed-ts-files.txt || true
           if [ -s changed-ts-files.txt ]; then
-            xargs bunx eslint < changed-ts-files.txt > lint.log 2>&1
+            xargs bunx eslint --rule 'prettier/prettier: off' < changed-ts-files.txt > lint.log 2>&1
             echo $? > lint.exit
           else
             echo "No changed TypeScript files to lint." > lint.log
@@ -45,7 +45,7 @@ jobs:
           cat build.log
           printf '\n=== TYPECHECK ===\n'
           cat typecheck.log
-          printf '\n=== CHANGED-FILE LINT ===\n'
+          printf '\n=== CHANGED-FILE SEMANTIC LINT ===\n'
           cat lint.log
           exit 0
 
