@@ -27,13 +27,13 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Enable Corepack
-        run: corepack enable
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
