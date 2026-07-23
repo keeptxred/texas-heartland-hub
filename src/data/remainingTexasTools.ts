@@ -9,12 +9,18 @@ export interface RemainingTexasTool {
   mode: RemainingToolMode;
   labels: [string, string, string];
   defaults: [number, number, number];
-  unit: "currency" | "score" | "index";
+  unit: "currency" | "score" | "index" | "years";
+  formulaVersion: string;
+  sourceStatus: "planning-assumptions" | "official-data";
+  reviewedOn: string;
 }
 
 const tool = (id: string, title: string, category: RemainingTexasTool["category"], mode: RemainingToolMode, labels: [string,string,string], defaults: [number,number,number], unit: RemainingTexasTool["unit"] = "currency"): RemainingTexasTool => ({
   id, title, slug: `/tools/${id}`, category, mode, labels, defaults, unit,
   description: `Use adjustable assumptions to estimate ${title.toLowerCase()} results. Calculations run locally in your browser and do not use AI credits.`,
+  formulaVersion: "1.1",
+  sourceStatus: "planning-assumptions",
+  reviewedOn: "2026-07-22",
 });
 
 export const remainingTexasTools: RemainingTexasTool[] = [
@@ -43,7 +49,7 @@ export const remainingTexasTools: RemainingTexasTool[] = [
   tool("texas-toll-cost-calculator", "Texas Toll Cost Calculator", "Financial", "budget", ["Toll per trip", "Trips per week", "Weeks per year"], [6,10,48]),
   tool("texas-hoa-cost-estimator", "Texas HOA Cost Estimator", "Housing", "budget", ["Monthly HOA", "Annual special assessment", "Years"], [120,500,5]),
   tool("texas-pool-ownership-cost-calculator", "Texas Pool Ownership Cost Calculator", "Housing", "budget", ["Monthly electricity", "Monthly chemicals/service", "Annual repairs"], [120,180,1200]),
-  tool("texas-solar-payback-calculator", "Texas Solar Payback Calculator", "Utilities", "savings", ["Net system cost", "Annual electric savings", "Annual maintenance"], [24000,2400,200]),
+  tool("texas-solar-payback-calculator", "Texas Solar Payback Calculator", "Utilities", "savings", ["Net system cost", "Annual electric savings", "Annual maintenance"], [24000,2400,200], "years"),
   tool("texas-hurricane-preparedness-budget", "Texas Hurricane Preparedness Budget Calculator", "Financial", "budget", ["Supplies", "Home protection", "Evacuation reserve"], [600,2500,1500]),
   tool("texas-generator-sizing-cost-calculator", "Texas Generator Sizing & Cost Calculator", "Utilities", "budget", ["Essential watts", "Generator dollars per kW", "Installation"], [12000,700,5500]),
   tool("texas-water-bill-estimator", "Texas Water Bill Estimator", "Utilities", "budget", ["Monthly gallons", "Rate per 1,000 gallons", "Base fees"], [9000,7,45]),
@@ -59,14 +65,50 @@ export const remainingTexasTools: RemainingTexasTool[] = [
   tool("unified-texas-relocation-planner", "Unified Texas Relocation Planner", "Relocation", "planner", ["Moving/setup costs", "Annual Texas living costs", "Emergency reserve"], [18000,72000,18000]),
 ];
 
+const clamp = (value: number, min = 0, max = Number.POSITIVE_INFINITY) => Math.min(max, Math.max(min, value));
+
 export function calculateRemainingTool(tool: RemainingTexasTool, a: number, b: number, c: number) {
-  const safe = [a,b,c].map((value) => Number.isFinite(value) ? Math.max(0, value) : 0);
-  const [x,y,z] = safe;
-  switch (tool.mode) {
-    case "savings": return Math.max(0, x - y - z);
-    case "budget": return x * (y > 0 && y < 60 ? y : 1) + z;
-    case "score": return Math.max(0, Math.min(100, (x / Math.max(1, x + y + z)) * 200));
-    case "comparison": return x === 0 ? 0 : ((x - y) / x) * (z || 1);
-    case "planner": return x + y + z;
+  const [x,y,z] = [a,b,c].map((value) => Number.isFinite(value) ? Math.max(0, value) : 0);
+  switch (tool.id) {
+    case "texas-cost-of-living-by-zip-code": return x * (y / Math.max(1, z));
+    case "texas-homeownership-readiness-score": return clamp((clamp(1 - y / Math.max(1, x), 0, 1) * 55) + (clamp(z / Math.max(1, x * 6), 0, 1) * 45), 0, 100);
+    case "texas-homestead-exemption-savings-calculator": return Math.min(x, y) * (z / 100);
+    case "texas-property-tax-appeal-savings-estimator": return Math.max(0, x - y) * (z / 100);
+    case "texas-school-district-comparison":
+    case "compare-texas-counties":
+    case "compare-texas-isds":
+    case "compare-texas-crime-safety": return (x - y) * (z / 100);
+    case "texas-home-builder-cost-comparison": return x - (y + z);
+    case "texas-rent-affordability-calculator": return clamp(100 - (((y + z) / Math.max(1, x)) * 100), 0, 100);
+    case "texas-new-construction-vs-existing-home": return x - (y + z);
+    case "texas-retirement-affordability-calculator": return (x - y - z) * 12;
+    case "texas-emergency-fund-calculator": return Math.max(0, x * y - z);
+    case "texas-climate-utility-cost-estimator": return x * (y / 100) + z;
+    case "texas-flood-risk-awareness-tool": return clamp((x + y + z) / 3, 0, 100);
+    case "should-i-move-to-texas":
+    case "texas-lifestyle-match-quiz": return clamp((x + y + z) / 3, 0, 100);
+    case "which-texas-metro-fits-me-best": return (x + y + z) / 3;
+    case "can-i-afford-major-texas-metros": return clamp(((x - y - z) / Math.max(1, x)) * 100, 0, 100);
+    case "texas-family-relocation-planner": return x + (y * 3) + z;
+    case "remote-worker-texas-savings-calculator": return Math.max(0, x - y - z);
+    case "military-pcs-to-texas-planner": return Math.max(0, y + z - x);
+    case "retire-in-texas-planner": return x - y - z;
+    case "texas-no-state-income-tax-savings-calculator": return Math.max(0, x * (y / 100) - z);
+    case "texas-sales-tax-calculator": return x * (y / 100) * (z / 100);
+    case "texas-toll-cost-calculator": return x * y * z;
+    case "texas-hoa-cost-estimator": return (x * 12 + y) * z;
+    case "texas-pool-ownership-cost-calculator": return (x + y) * 12 + z;
+    case "texas-solar-payback-calculator": return y <= z ? 0 : x / (y - z);
+    case "texas-hurricane-preparedness-budget": return x + y + z;
+    case "texas-generator-sizing-cost-calculator": return (x / 1000) * y + z;
+    case "texas-water-bill-estimator": return (x / 1000) * y + z;
+    case "texas-internet-cost-comparison": return (x - y) * 12 - z;
+    case "compare-texas-property-tax-rates": return x * ((z - y) / 100);
+    case "compare-texas-median-home-prices": return (y - x) * (z / 100);
+    case "compare-texas-population-growth": return (x - y) * z;
+    case "compare-texas-commute-times": return (x - y) * z;
+    case "compare-texas-utility-costs": return (x - y) * z;
+    case "unified-texas-relocation-planner": return x + y + z;
+    default: return x + y + z;
   }
 }
