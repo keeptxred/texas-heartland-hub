@@ -68,52 +68,71 @@ jobs:
         if: steps.tests.outcome == 'failure'
         run: exit 1
 
-      - name: Lint calculator code
-        run: >-
-          pnpm exec eslint
-          src/components/calculators
-          src/components/budget
-          src/components/closingCosts
-          src/components/cost
-          src/components/downPayment
-          src/components/equity
-          src/components/home
-          src/components/homeAffordability
-          src/components/income
-          src/components/mortgage
-          src/data/budget
-          src/data/closingCosts
-          src/data/cost
-          src/data/downPayment
-          src/data/equity
-          src/data/home
-          src/data/homeAffordability
-          src/data/income
-          src/data/mortgage
-          src/lib/budget
-          src/lib/closingCosts
-          src/lib/cost
-          src/lib/downPayment
-          src/lib/equity
-          src/lib/home
-          src/lib/homeAffordability
-          src/lib/income
-          src/lib/mortgage
-          src/pages/budget
-          src/pages/closingCosts
-          src/pages/cost
-          src/pages/downPayment
-          src/pages/equity
-          src/pages/home
-          src/pages/homeAffordability
-          src/pages/income
-          src/pages/mortgage
-          src/types/budget
-          src/types/closingCosts
-          src/types/cost
-          src/types/downPayment
-          src/types/equity
-          src/types/home
-          src/types/homeAffordability
-          src/types/income
-          src/types/mortgage
+      - name: Capture calculator lint output
+        id: lint
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          pnpm exec eslint \
+            src/components/calculators \
+            src/components/budget \
+            src/components/closingCosts \
+            src/components/cost \
+            src/components/downPayment \
+            src/components/equity \
+            src/components/home \
+            src/components/homeAffordability \
+            src/components/income \
+            src/components/mortgage \
+            src/data/budget \
+            src/data/closingCosts \
+            src/data/cost \
+            src/data/downPayment \
+            src/data/equity \
+            src/data/home \
+            src/data/homeAffordability \
+            src/data/income \
+            src/data/mortgage \
+            src/lib/budget \
+            src/lib/closingCosts \
+            src/lib/cost \
+            src/lib/downPayment \
+            src/lib/equity \
+            src/lib/home \
+            src/lib/homeAffordability \
+            src/lib/income \
+            src/lib/mortgage \
+            src/pages/budget \
+            src/pages/closingCosts \
+            src/pages/cost \
+            src/pages/downPayment \
+            src/pages/equity \
+            src/pages/home \
+            src/pages/homeAffordability \
+            src/pages/income \
+            src/pages/mortgage \
+            src/types/budget \
+            src/types/closingCosts \
+            src/types/cost \
+            src/types/downPayment \
+            src/types/equity \
+            src/types/home \
+            src/types/homeAffordability \
+            src/types/income \
+            src/types/mortgage > calculator-lint.log 2>&1
+          status=$?
+          cat calculator-lint.log
+          exit $status
+
+      - name: Upload calculator lint output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calculator-lint-diagnostics
+          path: calculator-lint.log
+          if-no-files-found: error
+
+      - name: Stop on calculator lint failure
+        if: steps.lint.outcome == 'failure'
+        run: exit 1
