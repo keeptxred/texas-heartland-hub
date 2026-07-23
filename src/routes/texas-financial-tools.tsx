@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 const tools = [
-  ["Texas Mortgage Calculator", "/texas-mortgage-calculator", "Estimate principal, interest, taxes, insurance, and PMI."],
+  ["Texas Mortgage Calculator", "/texas-mortgage-calculator", "Estimate monthly payments and compare interest-rate scenarios."],
   ["Texas Home Affordability Calculator", "/texas-home-affordability-calculator", "Estimate a comfortable Texas home-price range."],
   ["Texas Down Payment Calculator", "/texas-down-payment-calculator", "Compare down-payment targets and cash requirements."],
   ["Texas Closing Cost Calculator", "/texas-closing-cost-calculator", "Estimate buyer and seller closing costs."],
@@ -17,10 +17,9 @@ const tools = [
   ["Texas Home Insurance Calculator", "/texas-home-insurance-calculator", "Estimate annual and monthly homeowners insurance costs."],
   ["Texas Utility Cost Calculator", "/texas-utility-cost-calculator", "Estimate electricity, water, gas, internet, and trash costs."],
   ["Texas Moving Cost Calculator", "/texas-moving-cost-calculator", "Estimate transportation, labor, travel, packing, and setup costs."],
-  ["Texas Property Tax Impact Calculator", "/texas-property-tax-impact-calculator", "Compare appraisal and tax-rate changes without duplicating the county tax calculator."],
-  ["Texas Mortgage Payment Impact Calculator", "/texas-mortgage-payment-impact-calculator", "Compare mortgage payments at different interest rates."],
+  ["Texas Property Tax Increase Calculator", "/texas-property-tax-increase-calculator", "Estimate the effect of appraisal and combined tax-rate changes."],
   ["Texas Down Payment Assistance Calculator", "/texas-down-payment-assistance-calculator", "Estimate potential assistance and remaining cash needs."],
-  ["Texas Salary Comparison Calculator", "/texas-salary-comparison-calculator", "Compare purchasing power and state income-tax differences when moving to Texas."],
+  ["Texas Salary Comparison by City", "/texas-salary-comparison-by-city", "Compare cost-adjusted salary and purchasing power when moving to a Texas city."],
 ] as const;
 
 function TexasFinancialToolsPage() {
