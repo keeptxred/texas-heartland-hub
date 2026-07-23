@@ -29,10 +29,10 @@ jobs:
         shell: bash
         run: |
           set +e
-          bun run build > build.log 2>&1
-          echo $? > build.exit
           bun run typecheck > typecheck.log 2>&1
           echo $? > typecheck.exit
+          bun run build > build.log 2>&1
+          echo $? > build.exit
           git diff --name-only --diff-filter=ACMR origin/main...HEAD | grep -E '\.(ts|tsx)$' > changed-ts-files.txt || true
           if [ -s changed-ts-files.txt ]; then
             xargs bunx eslint --rule 'prettier/prettier: off' < changed-ts-files.txt > lint.log 2>&1
@@ -41,10 +41,10 @@ jobs:
             echo "No changed TypeScript files to lint." > lint.log
             echo 0 > lint.exit
           fi
-          printf '\n=== BUILD ===\n'
-          cat build.log
           printf '\n=== TYPECHECK ===\n'
           cat typecheck.log
+          printf '\n=== BUILD ===\n'
+          cat build.log
           printf '\n=== CHANGED-FILE SEMANTIC LINT ===\n'
           cat lint.log
           exit 0
@@ -55,10 +55,10 @@ jobs:
         with:
           name: calculator-suite-diagnostics
           path: |
-            build.log
-            build.exit
             typecheck.log
             typecheck.exit
+            build.log
+            build.exit
             lint.log
             lint.exit
             changed-ts-files.txt
@@ -68,6 +68,6 @@ jobs:
       - name: Enforce validation
         shell: bash
         run: |
-          test "$(cat build.exit)" -eq 0
           test "$(cat typecheck.exit)" -eq 0
+          test "$(cat build.exit)" -eq 0
           test "$(cat lint.exit)" -eq 0
