@@ -38,6 +38,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile --reporter=silent
 
+      - name: Build production application and generate routes
+        run: pnpm build
+
       - name: Capture TypeScript diagnostics
         id: typecheck
         continue-on-error: true
@@ -63,9 +66,6 @@ jobs:
 
       - name: Run calculator tests
         run: pnpm test
-
-      - name: Build production application
-        run: pnpm build
 
       - name: Lint
         run: pnpm lint
