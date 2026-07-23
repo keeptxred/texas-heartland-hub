@@ -1,0 +1,2 @@
+export interface HomeOwnershipCostEvent{action:string;homeValue?:number;monthlyCost?:number;propertyTaxCost?:number;insuranceCost?:number;affordabilityScore?:number;}
+export function trackHomeOwnershipCostEvent(event:HomeOwnershipCostEvent){if(typeof window==="undefined")return;const payload={tool:"texas_home_ownership_cost_calculator",...event};const gtag=(window as Window&{gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("homeownership_cost_event",{detail:payload}));}
