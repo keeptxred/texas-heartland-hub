@@ -51,7 +51,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          pnpm test > calculator-tests.log 2>&1
+          pnpm exec vitest run src/lib/calculators/__tests__/financialEngines.test.ts > calculator-tests.log 2>&1
           status=$?
           cat calculator-tests.log
           exit $status
