@@ -11,11 +11,12 @@ const TexasMonthlyLivingCostCalculator = lazy(() => import("@/pages/tools/TexasM
 const TexasCommuteCostCalculator = lazy(() => import("@/pages/tools/TexasCommuteCostCalculator"));
 const TexasVehicleFeesEstimator = lazy(() => import("@/pages/tools/TexasVehicleFeesEstimator"));
 const TexasRelocationChecklistGenerator = lazy(() => import("@/pages/tools/TexasRelocationChecklistGenerator"));
+const BestTexasCityFinder = lazy(() => import("@/pages/tools/BestTexasCityFinder"));
+const TexasSalaryRelocationCalculator = lazy(() => import("@/pages/tools/TexasSalaryRelocationCalculator"));
+const TexasCostOfLivingComparison = lazy(() => import("@/pages/tools/TexasCostOfLivingComparison"));
+const TexasElectricityPlanSavingsCalculator = lazy(() => import("@/pages/tools/TexasElectricityPlanSavingsCalculator"));
 
-function CalculatorLoader() {
-  return <div className="flex min-h-[300px] items-center justify-center"><div className="text-gray-600">Loading calculator...</div></div>;
-}
-
+function CalculatorLoader() { return <div className="flex min-h-[300px] items-center justify-center"><div className="text-gray-600">Loading calculator...</div></div>; }
 const withLoader = (element: React.ReactNode) => <Suspense fallback={<CalculatorLoader />}>{element}</Suspense>;
 
 export const calculatorRoutes = [
@@ -30,4 +31,8 @@ export const calculatorRoutes = [
   { path: "/tools/texas-commute-cost-calculator", element: withLoader(<TexasCommuteCostCalculator />) },
   { path: "/tools/texas-vehicle-fees-estimator", element: withLoader(<TexasVehicleFeesEstimator />) },
   { path: "/tools/texas-relocation-checklist-generator", element: withLoader(<TexasRelocationChecklistGenerator />) },
+  { path: "/tools/best-texas-city-finder", element: withLoader(<BestTexasCityFinder />) },
+  { path: "/tools/texas-salary-relocation-calculator", element: withLoader(<TexasSalaryRelocationCalculator />) },
+  { path: "/tools/texas-cost-of-living-comparison", element: withLoader(<TexasCostOfLivingComparison />) },
+  { path: "/tools/texas-electricity-plan-savings-calculator", element: withLoader(<TexasElectricityPlanSavingsCalculator />) },
 ];
