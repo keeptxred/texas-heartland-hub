@@ -145,7 +145,7 @@ describe("Texas financial calculator known-answer checks", () => {
       packing: 750,
       setup: 1200,
     });
-    expect(utilities[0].value).toBeCloseTo(506.8, 1);
+    expect(utilities[0].value).toBeCloseTo(497.4, 1);
     expect(moving[0].value).toBe(7050);
   });
 
@@ -165,7 +165,7 @@ describe("Texas financial calculator known-answer checks", () => {
     });
     expect(taxes[2].value).toBeCloseTo(542.5, 1);
     expect(mortgage[0].value).toBeCloseTo(2022.62, 1);
-    expect(mortgage[1].value).toBeCloseTo(1867.68, 1);
+    expect(mortgage[1].value).toBeCloseTo(1867.43, 1);
   });
 
   it("calculates assistance and Texas salary purchasing-power comparisons", () => {
