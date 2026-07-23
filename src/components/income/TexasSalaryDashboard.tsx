@@ -1,5 +1,63 @@
-import {useState} from "react";
-import {analyzeTexasSalary} from "@/lib/income/texasSalaryEngine";
-import {formatSalaryCurrency,explainLifestyleScore} from "@/lib/income/texasSalaryHelpers";
-import type {FilingStatus} from "@/types/income/TexasSalaryCalculator";
-export default function TexasSalaryDashboard(){const[salary,setSalary]=useState(100000),[filingStatus,setFilingStatus]=useState<FilingStatus>("married"),[dependents,setDependents]=useState(2),[retirement,setRetirement]=useState(.06),[insurance,setInsurance]=useState(500),[result,setResult]=useState<ReturnType<typeof analyzeTexasSalary>|null>(null);const calculate=()=>setResult(analyzeTexasSalary({annualSalary:salary,filingStatus,payFrequency:"monthly",dependents,401kContribution:retirement,healthInsurance:insurance,otherDeductions:0}));return <div className="space-y-8"><div className="grid gap-5 md:grid-cols-2"><label>Annual Salary<input type="number" value={salary} onChange={e=>setSalary(Number(e.target.value))} className="w-full rounded-lg border p-3"/></label><label>Filing Status<select value={filingStatus} onChange={e=>setFilingStatus(e.target.value as FilingStatus)} className="w-full rounded-lg border p-3"><option value="single">Single</option><option value="married">Married</option><option value="head_of_household">Head of Household</option></select></label><label>Dependents<input type="number" value={dependents} onChange={e=>setDependents(Number(e.target.value))} className="w-full rounded-lg border p-3"/></label><label>401k Contribution<input type="number" step="0.01" value={retirement} onChange={e=>setRetirement(Number(e.target.value))} className="w-full rounded-lg border p-3"/></label><label>Monthly Health Insurance<input type="number" value={insurance} onChange={e=>setInsurance(Number(e.target.value))} className="w-full rounded-lg border p-3"/></label></div><button onClick={calculate} className="rounded-lg px-6 py-3 font-semibold">Calculate Texas Take Home Pay</button>{result&&<div className="space-y-4 rounded-xl border p-6"><h2 className="text-2xl font-bold">Lifestyle Score: {result.affordability.lifestyleScore}/100</h2><p>{explainLifestyleScore(result)}</p><p>Monthly take home: <strong>{formatSalaryCurrency(result.paycheck.monthlyTakeHomePay)}</strong></p><p>Recommended housing: <strong>{formatSalaryCurrency(result.affordability.recommendedHousingBudget)}</strong></p></div>}</div>}
+import { useState } from "react";
+import { analyzeTexasSalary } from "@/lib/income/texasSalaryEngine";
+import { formatSalaryCurrency, explainLifestyleScore } from "@/lib/income/texasSalaryHelpers";
+import type { FilingStatus } from "@/types/income/TexasSalaryCalculator";
+
+export default function TexasSalaryDashboard() {
+  const [salary, setSalary] = useState(100000);
+  const [filingStatus, setFilingStatus] = useState<FilingStatus>("married");
+  const [dependents, setDependents] = useState(2);
+  const [retirement, setRetirement] = useState(0.06);
+  const [insurance, setInsurance] = useState(500);
+  const [result, setResult] = useState<ReturnType<typeof analyzeTexasSalary> | null>(null);
+
+  const calculate = () => setResult(analyzeTexasSalary({
+    annualSalary: salary,
+    filingStatus,
+    payFrequency: "monthly",
+    dependents,
+    retirementContribution: retirement,
+    healthInsurance: insurance,
+    otherDeductions: 0,
+  }));
+
+  return (
+    <div className="space-y-8">
+      <div className="grid gap-5 md:grid-cols-2">
+        <label>
+          Annual Salary
+          <input type="number" value={salary} onChange={(event) => setSalary(Number(event.target.value))} className="w-full rounded-lg border p-3" />
+        </label>
+        <label>
+          Filing Status
+          <select value={filingStatus} onChange={(event) => setFilingStatus(event.target.value as FilingStatus)} className="w-full rounded-lg border p-3">
+            <option value="single">Single</option>
+            <option value="married">Married</option>
+            <option value="head_of_household">Head of Household</option>
+          </select>
+        </label>
+        <label>
+          Dependents
+          <input type="number" value={dependents} onChange={(event) => setDependents(Number(event.target.value))} className="w-full rounded-lg border p-3" />
+        </label>
+        <label>
+          401(k) Contribution
+          <input type="number" step="0.01" value={retirement} onChange={(event) => setRetirement(Number(event.target.value))} className="w-full rounded-lg border p-3" />
+        </label>
+        <label>
+          Monthly Health Insurance
+          <input type="number" value={insurance} onChange={(event) => setInsurance(Number(event.target.value))} className="w-full rounded-lg border p-3" />
+        </label>
+      </div>
+      <button onClick={calculate} className="rounded-lg px-6 py-3 font-semibold">Calculate Texas Take Home Pay</button>
+      {result && (
+        <div className="space-y-4 rounded-xl border p-6">
+          <h2 className="text-2xl font-bold">Lifestyle Score: {result.affordability.lifestyleScore}/100</h2>
+          <p>{explainLifestyleScore(result)}</p>
+          <p>Monthly take home: <strong>{formatSalaryCurrency(result.paycheck.monthlyTakeHomePay)}</strong></p>
+          <p>Recommended housing: <strong>{formatSalaryCurrency(result.affordability.recommendedHousingBudget)}</strong></p>
+        </div>
+      )}
+    </div>
+  );
+}
