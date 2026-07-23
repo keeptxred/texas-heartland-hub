@@ -3,6 +3,7 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
+import { calculators } from "@/data/calculators";
 
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
@@ -62,7 +63,7 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
     handlers: {
       GET: async () => {
         const lastmod = toIsoDate(new Date());
-        const paths = [...STATIC_PATHS];
+        const paths = [...new Set([...STATIC_PATHS, ...calculators.map((calculator) => calculator.slug)])];
 
         // Only advertise sports section pages that meet the readiness
         // threshold — otherwise Google indexes thin/soft-404 shells.
