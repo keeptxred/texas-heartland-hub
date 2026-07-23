@@ -68,7 +68,7 @@ function CityRelocationHub() {
           <h2 className="font-display text-3xl tracking-tight">Plan the full monthly cost</h2>
           <p className="mt-3 leading-relaxed text-muted-foreground">A city name does not identify the exact taxing units, school assignment, utility provider, flood exposure, commute, or insurance cost for a property. Use these tools for comparisons, then verify the exact address.</p>
           <div className="mt-7 grid gap-4 sm:grid-cols-2">
-            {city.calculatorPaths.map((path) => {
+            {city.calculatorPaths.map((path: string) => {
               const calculator = getCalculatorBySlug(path);
               return (
                 <a key={path} href={path} className="border border-border bg-card p-5 hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
