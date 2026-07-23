@@ -26,7 +26,7 @@ const tool = (id: string, title: string, category: RemainingTexasTool["category"
 export const remainingTexasTools: RemainingTexasTool[] = [
   tool("texas-cost-of-living-by-zip-code", "Texas Cost of Living by ZIP Code", "Relocation", "comparison", ["Current monthly cost", "Texas ZIP index", "Current area index"], [5000,95,105]),
   tool("texas-homeownership-readiness-score", "Texas Homeownership Readiness Score", "Housing", "score", ["Monthly income", "Monthly debt", "Down payment savings"], [8000,1200,40000], "score"),
-  tool("texas-homestead-exemption-savings-calculator", "Texas Homestead Exemption Savings Calculator", "Taxes", "savings", ["Home value", "Exemption amount", "Tax rate %"], [350000,100000,2.2]),
+  tool("texas-homestead-exemption-savings-calculator", "Texas Homestead Exemption Savings Calculator", "Taxes", "savings", ["Home value", "Exemption amount", "Tax rate %"], [350000,140000,2.2]),
   tool("texas-property-tax-appeal-savings-estimator", "Texas Property Tax Appeal Savings Estimator", "Taxes", "savings", ["Current appraised value", "Target value", "Tax rate %"], [400000,360000,2.3]),
   tool("texas-school-district-comparison", "Texas School District Comparison Tool", "Relocation", "comparison", ["District A score", "District B score", "Priority weight"], [82,76,100], "index"),
   tool("texas-home-builder-cost-comparison", "Texas Home Builder Cost Comparison", "Housing", "comparison", ["Builder A price", "Builder B price", "Upgrade allowance"], [420000,400000,25000]),
