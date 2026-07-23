@@ -20,4 +20,3 @@ export function HubBreadcrumbs({ current }: { current: string }) {
     </nav>
   );
 }
-

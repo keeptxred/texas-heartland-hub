@@ -37,7 +37,7 @@ export function SiteFooter() {
               className="mb-5 grid size-12 place-items-center rounded-full border border-white/20"
               aria-hidden
             >
-              <span className="font-display text-2xl leading-none text-accent">â˜…</span>
+              <span className="font-display text-2xl leading-none text-accent">★</span>
             </div>
             <h2 className="font-display text-3xl tracking-tight">KEEP TEXAS RED</h2>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/80">
@@ -51,7 +51,7 @@ export function SiteFooter() {
         </div>
         <SocialLinks variant="footer" />
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-[10px] uppercase leading-relaxed tracking-[0.25em] text-white/75">
-          &copy; {new Date().getFullYear()} keeptxred.com â€” All rights reserved
+          &copy; {new Date().getFullYear()} keeptxred.com — All rights reserved
           <br />
           <span className="normal-case tracking-normal">
             Independent commentary. Not authorized by any candidate or candidate&apos;s committee.
@@ -86,4 +86,3 @@ function FooterColumn({
     </nav>
   );
 }
-

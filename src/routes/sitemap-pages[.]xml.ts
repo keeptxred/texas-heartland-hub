@@ -93,7 +93,7 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
         const paths = [...STATIC_PATHS];
 
         // Only advertise sports section pages that meet the readiness
-        // threshold â€” otherwise Google indexes thin/soft-404 shells.
+        // threshold — otherwise Google indexes thin/soft-404 shells.
         for (const league of ["nfl", "mlb", "nba"] as const) {
           if (await hasEnoughContent({ kind: `sports-${league}` }, MIN_ARTICLES_DEFAULT)) {
             paths.push(`/texas-sports/${league}`);
@@ -116,4 +116,3 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
     },
   },
 });
-
