@@ -1,0 +1,6 @@
+export type EquityDecision="access_equity"|"continue_building"|"limited_equity";
+export interface TexasHomeEquityInput{homeValue:number;mortgageBalance:number;originalPurchasePrice:number;annualAppreciationRate:number;yearsOwned:number;maximumLoanToValue:number;}
+export interface CurrentEquityAnalysis{totalEquity:number;equityPercentage:number;loanToValue:number;}
+export interface FutureEquityAnalysis{futureHomeValue:number;futureMortgageBalance:number;futureEquity:number;equityGrowth:number;}
+export interface EquityAccessAnalysis{maximumLoanAmount:number;availableEquity:number;estimatedHELOCLimit:number;}
+export interface TexasHomeEquityResult{input:TexasHomeEquityInput;currentEquity:CurrentEquityAnalysis;futureEquity:FutureEquityAnalysis;equityAccess:EquityAccessAnalysis;decisionScore:number;recommendation:string;}
