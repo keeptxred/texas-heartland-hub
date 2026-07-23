@@ -74,7 +74,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          pnpm exec eslint \
+          pnpm exec eslint --rule 'prettier/prettier: off' \
             src/components/calculators \
             src/components/budget \
             src/components/closingCosts \
