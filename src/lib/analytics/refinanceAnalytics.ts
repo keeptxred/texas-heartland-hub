@@ -1,0 +1,2 @@
+export interface RefinanceEvent{action:string;loanBalance?:number;currentRate?:number;newRate?:number;monthlySavings?:number;netSavings?:number;decisionScore?:number;}
+export function trackRefinanceEvent(event:RefinanceEvent){if(typeof window==="undefined")return;const payload={tool:"texas_refinance_calculator",...event};const gtag=(window as Window&{gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("refinance_event",{detail:payload}));}
