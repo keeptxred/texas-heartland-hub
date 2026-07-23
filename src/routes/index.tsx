@@ -201,9 +201,17 @@ function Index() {
               Latest Texas News
             </h2>
           </div>
-          <Link to="/texas-news" className="text-sm font-semibold text-primary hover:underline">
-            View all Texas news →
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/happening-now"
+              className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Happening Now
+            </Link>
+            <Link to="/texas-news" className="text-sm font-semibold text-primary hover:underline">
+              View all Texas news →
+            </Link>
+          </div>
         </div>
 
         {breaking.length > 0 && (
