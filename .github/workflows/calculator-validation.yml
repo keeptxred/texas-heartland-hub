@@ -45,8 +45,28 @@ jobs:
       - name: Typecheck calculator code
         run: pnpm exec tsc -p tsconfig.calculators.json --pretty false
 
-      - name: Run calculator tests
-        run: pnpm test
+      - name: Capture calculator test output
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          pnpm test > calculator-tests.log 2>&1
+          status=$?
+          cat calculator-tests.log
+          exit $status
+
+      - name: Upload calculator test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calculator-test-diagnostics
+          path: calculator-tests.log
+          if-no-files-found: error
+
+      - name: Stop on calculator test failure
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
 
       - name: Lint calculator code
         run: >-
