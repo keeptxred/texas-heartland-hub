@@ -1,0 +1,2 @@
+export const mortgagePayoffSitemap={url:"https://keeptxred.com/texas-mortgage-payoff-calculator",lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.95};
+export const generateMortgagePayoffLocationPages=(locations:string[])=>locations.map(location=>({url:`https://keeptxred.com/${location}-mortgage-payoff-calculator`,lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.85}));
