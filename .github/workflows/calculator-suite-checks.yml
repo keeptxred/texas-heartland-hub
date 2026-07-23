@@ -2,16 +2,6 @@ name: Calculator Suite Checks
 
 on:
   pull_request:
-    paths:
-      - "src/components/calculators/**"
-      - "src/data/calculators.ts"
-      - "src/data/remainingTexasTools.ts"
-      - "src/lib/calculators/**"
-      - "src/pages/tools/**"
-      - "src/routes/calculatorRoutes.tsx"
-      - "package.json"
-      - "bun.lock"
-      - ".github/workflows/calculator-suite-checks.yml"
   workflow_dispatch:
 
 permissions:
