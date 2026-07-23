@@ -1,44 +1,43 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { TaxCalculator } from "@/components/tax-calculator";
-import { COUNTIES } from "@/data/counties";
+import { MANUAL_ENTRY_COUNTIES, TAX_RATE_DATASET } from "@/data/counties";
 
 const FAQS = [
   {
     q: "How do I calculate property taxes in Texas?",
-    a: "Add together the tax rates from your county, city, independent school district (ISD), and any special districts (hospital, MUD, community college). Multiply that combined rate by your home's taxable value — appraised value minus any exemptions like the homestead exemption. Our Texas property tax calculator does this automatically once you pick your county and ISD.",
+    a: "Add the tax rates from the property's county, city, independent school district (ISD), and any special districts such as a hospital district, MUD, PID, college district, or ESD. Multiply each rate by the taxable value that applies to that taxing unit. This calculator supports all 254 counties through exact local-rate entry or available address lookup.",
   },
   {
     q: "Does Texas have a homestead exemption?",
-    a: "Yes. Texas offers a general residence homestead exemption for owner-occupied primary homes. As of the 2023 constitutional amendment, the ISD portion of the homestead exemption is $100,000 of appraised value, and counties, cities, and special districts may offer additional local homestead exemptions on top of that.",
+    a: "Yes. Texas offers a general residence homestead exemption for an owner-occupied primary home. The statewide school-district residence homestead exemption is $140,000. Counties, cities, and special districts may offer additional local exemptions.",
   },
   {
     q: "How much can a Texas homestead exemption save?",
-    a: "For most Texas homeowners, the $100,000 ISD homestead exemption alone saves roughly $1,000–$1,500 per year, depending on the local school district tax rate. Additional county, city, and over-65 or disabled exemptions can push total annual savings well past $2,000. Use the calculator above to see your specific homestead exemption savings.",
+    a: "Savings depend on the property's school-district rate and any additional local exemptions. The calculator applies the $140,000 statewide ISD homestead exemption when selected, but the result remains a planning estimate rather than an official tax bill.",
   },
   {
     q: "Do seniors get property tax relief in Texas?",
-    a: "Yes. Texas homeowners aged 65 or older qualify for an additional homestead exemption on their school district taxes and a school tax ceiling (freeze) that caps the ISD portion of their bill. Many counties and cities offer their own over-65 exemptions, and seniors can also defer property taxes on their homestead.",
+    a: "Texas homeowners age 65 or older may qualify for an additional school-district exemption and a school-tax ceiling. Counties, cities, and other taxing units may offer additional local exemptions. Confirm eligibility and amounts with the appraisal district.",
   },
   {
-    q: "Why are Texas property taxes higher than some states?",
-    a: "Texas has no state income tax, so local governments and school districts rely heavily on property taxes to fund services. That shifts more of the tax burden onto real estate, which is why effective property tax rates in Texas rank among the highest in the country even after recent relief packages.",
+    q: "Are all 254 counties supported?",
+    a: "Yes. Every Texas county is selectable. The calculator intentionally does not preload local tax rates because county, city, ISD, MUD/PID, hospital, college, ESD, and other taxing units vary by exact property and effective year.",
   },
 ];
 
 export const Route = createFileRoute("/tax-calculator")({
   head: () => ({
     meta: [
-      { title: "Texas Property Tax Relief Calculator 2026 | Estimate & Save" },
-      { name: "description", content: "Use our Texas Property Tax Calculator to estimate your 2026 property taxes, homestead exemption savings, and available Texas property tax relief programs." },
-      { name: "keywords", content: "Texas property tax calculator, Texas property tax relief calculator, Texas property tax savings calculator, Texas homestead exemption calculator, Texas property tax estimate 2026" },
-      { property: "og:title", content: "Texas Property Tax Relief Calculator 2026 — Estimate Your Tax Bill & Savings" },
-      { property: "og:description", content: "Estimate your 2026 Texas property taxes, homestead exemption savings, and property tax relief programs — free calculator by county and ISD." },
+      { title: "Texas Property Tax Calculator 2026 | County & ISD Estimate" },
+      { name: "description", content: "Estimate Texas property taxes using exact county, city, ISD, special-district, and homestead inputs for any of Texas's 254 counties." },
+      { name: "keywords", content: "Texas property tax calculator, Texas homestead exemption calculator, county property tax estimate, Texas ISD tax calculator" },
+      { property: "og:title", content: "Texas Property Tax Calculator — County, ISD & Homestead Estimate" },
+      { property: "og:description", content: "Estimate Texas property taxes using exact local rates with transparent assumptions and official source guidance." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://www.keeptxred.com/tax-calculator" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Texas Property Tax Relief Calculator 2026" },
-      { name: "twitter:description", content: "Estimate your 2026 Texas property taxes and homestead exemption savings." },
+      { name: "twitter:title", content: "Texas Property Tax Calculator" },
+      { name: "twitter:description", content: "Estimate county, city, ISD, and special-district property taxes with the Texas homestead exemption." },
     ],
     links: [{ rel: "canonical", href: "https://www.keeptxred.com/tax-calculator" }],
     scripts: [
@@ -47,12 +46,14 @@ export const Route = createFileRoute("/tax-calculator")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "WebApplication",
-          name: "Texas Property Tax Relief Calculator 2026",
-          description: "Estimate your 2026 Texas property taxes, homestead exemption savings, and property tax relief programs by county and ISD.",
+          name: "Texas Property Tax Calculator",
+          description: "Estimate Texas property taxes by county, city, ISD, special districts, and exemptions using exact local rates.",
           url: "https://www.keeptxred.com/tax-calculator",
           applicationCategory: "FinanceApplication",
           operatingSystem: "Web",
+          isAccessibleForFree: true,
           offers: { "@type": "Offer", price: "0" },
+          citation: [TAX_RATE_DATASET.sourceUrl, TAX_RATE_DATASET.exemptionSourceUrl],
         }),
       },
       {
@@ -60,10 +61,10 @@ export const Route = createFileRoute("/tax-calculator")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: FAQS.map((f) => ({
+          mainEntity: FAQS.map((faq) => ({
             "@type": "Question",
-            name: f.q,
-            acceptedAnswer: { "@type": "Answer", text: f.a },
+            name: faq.q,
+            acceptedAnswer: { "@type": "Answer", text: faq.a },
           })),
         }),
       },
@@ -94,7 +95,7 @@ function TaxPage() {
             <span className="text-primary">TAX CALCULATOR</span>
           </h1>
           <p className="mt-5 max-w-2xl text-white/70">
-            Pick your county and independent school district. We'll estimate your annual property tax bill — including the ISD line that usually dominates the total — with the homestead exemption applied.
+            Estimate county, city, ISD, and special-district taxes using exact rates from your appraisal district, tax statement, or available address lookup.
           </p>
         </div>
       </section>
@@ -102,11 +103,11 @@ function TaxPage() {
       <section className="mx-auto max-w-3xl px-4 pt-12">
         <h2 className="font-display text-3xl tracking-tight">Texas Property Tax Relief Calculator</h2>
         <p className="mt-3 text-muted-foreground leading-relaxed">
-          Estimate your Texas property tax bill and see how exemptions and relief programs may reduce your annual costs. Texas does not have a{" "}
+          Texas does not have a{" "}
           <Link to="/texas/$slug" params={{ slug: "why-texas-has-no-income-tax" }} className="text-primary underline">
-            state income tax
+            state individual income tax
           </Link>
-          , so understanding property taxes is important for homeowners.
+          , so property-tax planning matters. This tool avoids stale statewide averages and lets you use the taxing units that actually apply to the property.
         </p>
       </section>
 
@@ -115,23 +116,19 @@ function TaxPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground pb-3 mb-6">Counties Covered</h2>
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {COUNTIES.map((c) => (
-            <div key={c.slug} className="border border-border bg-card p-4">
-              <div className="font-semibold">{c.name}</div>
-              <div className="text-[11px] text-muted-foreground">{c.region}</div>
-              <div className="mt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-                {c.schoolDistricts.length} ISDs • County {c.countyRate.toFixed(4)}
-              </div>
-            </div>
-          ))}
+        <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground pb-3 mb-6">All 254 Texas Counties Supported</h2>
+        <p className="mb-6 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+          Every Texas county is selectable. Rates begin at zero until supplied by address lookup or entered from the property's current tax records, preventing old planning snapshots from being mistaken for official rates.
+        </p>
+
+        <div className="border border-border bg-muted p-5 text-sm text-muted-foreground">
+          {MANUAL_ENTRY_COUNTIES.length} counties use exact local-rate entry. Confirm the effective year and include every taxing unit shown on the property's appraisal or tax statement.
         </div>
 
         <div className="mt-10 bg-muted border-l-4 border-primary p-6">
           <h2 className="font-display text-2xl mb-2 tracking-tight">How Texas Property Taxes Work</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Texas has no state income tax — local governments fund themselves through property taxes. Your annual bill is the sum of levies from your county, city, school district (ISD), and any special districts (hospital, MUD, college). The school district line item is almost always the largest, and the 2023 homestead exemption raised the ISD exemption to $100,000 of appraised value for owner-occupied homes.
+            Your annual bill can include county, city, school-district, hospital, MUD, PID, community-college, ESD, and other taxing-unit charges. Each taxing unit can apply different exemptions and taxable values. The statewide school-district residence homestead exemption is currently ${TAX_RATE_DATASET.statewideSchoolHomesteadExemption.toLocaleString("en-US")}.
           </p>
         </div>
 
@@ -141,78 +138,50 @@ function TaxPage() {
             <div className="border border-border bg-card p-5">
               <h3 className="font-display text-xl mb-2">Texas Homestead Exemption</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                The general residence homestead exemption reduces the taxable value of your primary home. Since the 2023 constitutional amendment, the ISD homestead exemption is $100,000 of appraised value — the single biggest lever for lowering a Texas property tax bill.
+                The statewide school-district residence homestead exemption reduces the school-tax taxable value of an eligible primary residence by ${TAX_RATE_DATASET.statewideSchoolHomesteadExemption.toLocaleString("en-US")}. Local taxing units may adopt additional exemptions.
               </p>
             </div>
             <div className="border border-border bg-card p-5">
-              <h3 className="font-display text-xl mb-2">Senior Citizen Exemptions</h3>
+              <h3 className="font-display text-xl mb-2">Senior and Disabled Exemptions</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Texas homeowners 65 and older qualify for an additional $10,000 ISD homestead exemption and a school tax ceiling that freezes the ISD portion of the bill. Many counties and cities layer their own over-65 exemptions on top.
+                Eligible homeowners may qualify for additional exemptions and a school-tax ceiling. Confirm eligibility, application deadlines, and exact amounts with the appraisal district.
               </p>
             </div>
             <div className="border border-border bg-card p-5">
               <h3 className="font-display text-xl mb-2">Disabled Veteran Exemptions</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Disabled veterans receive exemptions scaled to their VA disability rating, up to a 100% property tax exemption on the homestead for veterans rated 100% disabled or unemployable. Surviving spouses may continue to qualify.
+                Texas provides exemption amounts based on qualifying disability status, including a potential full homestead exemption for certain 100% disabled veterans and eligible surviving spouses.
               </p>
             </div>
             <div className="border border-border bg-card p-5">
-              <h3 className="font-display text-xl mb-2">Local Property Tax Exemptions</h3>
+              <h3 className="font-display text-xl mb-2">Local Exemptions and Districts</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Counties, cities, and special districts can adopt optional local homestead exemptions — often a percentage of value or a flat dollar amount — that stack with the state ISD exemption to lower your combined bill.
-              </p>
-            </div>
-            <div className="border border-border bg-card p-5 md:col-span-2">
-              <h3 className="font-display text-xl mb-2">How Exemptions Reduce Taxable Value</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Each exemption is subtracted from your appraised value before the tax rate is applied. A $400,000 home with a $100,000 ISD exemption is taxed by the school district on $300,000. Because Texas tax rates are levied against taxable value, every dollar of exemption directly cuts your annual bill. See more on{" "}
-                <Link to="/texas/$slug" params={{ slug: "texas-governor-powers" }} className="text-primary underline">
-                  how Texas governor powers
-                </Link>{" "}
-                shape statewide tax policy and the{" "}
-                <Link to="/texas-economy" className="text-primary underline">
-                  Texas economy
-                </Link>
-                .
+                Cities, counties, and special districts may adopt optional exemptions. MUD, PID, hospital, college, road, and ESD charges vary by exact address and must be verified locally.
               </p>
             </div>
           </div>
+        </div>
+
+        <div className="mt-12 border border-border bg-card p-6">
+          <h2 className="font-display text-xl mb-2 tracking-tight">Data Scope and Sources</h2>
+          <p className="text-sm leading-relaxed text-muted-foreground">{TAX_RATE_DATASET.scopeNote}</p>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li><a className="text-primary underline" href={TAX_RATE_DATASET.sourceUrl} target="_blank" rel="noreferrer">Texas Comptroller property-tax rate resources</a></li>
+            <li><a className="text-primary underline" href={TAX_RATE_DATASET.exemptionSourceUrl} target="_blank" rel="noreferrer">Texas Comptroller property-tax exemption guidance</a></li>
+          </ul>
+          <p className="mt-3 text-xs text-muted-foreground">Guidance reviewed {TAX_RATE_DATASET.lastUpdated}; next review {TAX_RATE_DATASET.nextReviewOn}.</p>
         </div>
 
         <div className="mt-12">
           <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground pb-3 mb-6">Texas Property Tax Calculator FAQ</h2>
           <div className="space-y-6">
-            {FAQS.map((f) => (
-              <div key={f.q} className="border-b border-border pb-5 last:border-b-0">
-                <h3 className="font-display text-lg mb-2">{f.q}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{f.a}</p>
+            {FAQS.map((faq) => (
+              <div key={faq.q} className="border-b border-border pb-5 last:border-b-0">
+                <h3 className="font-display text-lg mb-2">{faq.q}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="mt-12 bg-muted border-l-4 border-primary p-6">
-          <h2 className="font-display text-xl mb-2 tracking-tight">Related Reading</h2>
-          <ul className="text-sm space-y-2">
-            <li>
-              <Link to="/texas/$slug" params={{ slug: "why-texas-has-no-income-tax" }} className="text-primary underline">
-                Why Texas Has No Income Tax
-              </Link>{" "}
-              — the trade-off behind higher property taxes.
-            </li>
-            <li>
-              <Link to="/texas/$slug" params={{ slug: "texas-governor-powers" }} className="text-primary underline">
-                Texas Governor Powers
-              </Link>{" "}
-              — how the governor's office shapes property tax relief legislation.
-            </li>
-            <li>
-              <Link to="/texas-economy" className="text-primary underline">
-                Texas Economy
-              </Link>{" "}
-              — how property taxes fit into the state's overall tax structure.
-            </li>
-          </ul>
         </div>
       </section>
     </>

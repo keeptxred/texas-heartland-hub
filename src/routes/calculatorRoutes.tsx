@@ -1,179 +1,51 @@
-import React, {
-  lazy,
-  Suspense,
-} from "react";
+import React, { lazy, Suspense } from "react";
+import UniversalTexasTool from "@/pages/tools/UniversalTexasTool";
+import { remainingTexasTools } from "@/data/remainingTexasTools";
 
-
-const MortgageCalculator =
-  lazy(
-    () =>
-      import(
-        "@/pages/tools/MortgageCalculator"
-      )
-  );
-
-
-const PropertyTaxCalculator =
-  lazy(
-    () =>
-      import(
-        "@/pages/tools/PropertyTaxCalculator"
-      )
-  );
-
-
-const HomeInsuranceCalculator =
-  lazy(
-    () =>
-      import(
-        "@/pages/tools/HomeInsuranceCalculator"
-      )
-  );
-
-
-const HomeAffordabilityCalculator =
-  lazy(
-    () =>
-      import(
-        "@/pages/tools/HomeAffordabilityCalculator"
-      )
-  );
-
-
-const ClosingCostCalculator =
-  lazy(
-    () =>
-      import(
-        "@/pages/tools/ClosingCostCalculator"
-      )
-  );
-
-
-const TexasUtilitiesCalculator =
-  lazy(
-    () =>
-      import(
-        "@/pages/tools/TexasUtilitiesCalculator"
-      )
-  );
-
-
+const MortgageCalculator = lazy(() => import("@/pages/tools/MortgageCalculator"));
+const PropertyTaxCalculator = lazy(() => import("@/pages/tools/PropertyTaxCalculator"));
+const HomeInsuranceCalculator = lazy(() => import("@/pages/tools/HomeInsuranceCalculator"));
+const HomeAffordabilityCalculator = lazy(() => import("@/pages/tools/HomeAffordabilityCalculator"));
+const ClosingCostCalculator = lazy(() => import("@/pages/tools/ClosingCostCalculator"));
+const TexasUtilitiesCalculator = lazy(() => import("@/pages/tools/TexasUtilitiesCalculator"));
+const TexasRelocationBudgetPlanner = lazy(() => import("@/pages/tools/TexasRelocationBudgetPlanner"));
+const TexasMonthlyLivingCostCalculator = lazy(() => import("@/pages/tools/TexasMonthlyLivingCostCalculator"));
+const TexasCommuteCostCalculator = lazy(() => import("@/pages/tools/TexasCommuteCostCalculator"));
+const TexasVehicleFeesEstimator = lazy(() => import("@/pages/tools/TexasVehicleFeesEstimator"));
+const TexasRelocationChecklistGenerator = lazy(() => import("@/pages/tools/TexasRelocationChecklistGenerator"));
+const BestTexasCityFinder = lazy(() => import("@/pages/tools/BestTexasCityFinder"));
+const TexasSalaryRelocationCalculator = lazy(() => import("@/pages/tools/TexasSalaryRelocationCalculator"));
+const TexasCostOfLivingComparison = lazy(() => import("@/pages/tools/TexasCostOfLivingComparison"));
+const TexasElectricityPlanSavingsCalculator = lazy(() => import("@/pages/tools/TexasElectricityPlanSavingsCalculator"));
 
 function CalculatorLoader() {
-
-  return (
-
-    <div className="flex min-h-[300px] items-center justify-center">
-
-      <div className="text-gray-600">
-
-        Loading calculator...
-
-      </div>
-
-    </div>
-
-  );
-
+  return <div className="flex min-h-[300px] items-center justify-center"><div className="text-gray-600">Loading calculator...</div></div>;
 }
 
+const withLoader = (element: React.ReactNode) => <Suspense fallback={<CalculatorLoader />}>{element}</Suspense>;
 
+const existingCalculatorRoutes = [
+  { path: "/tools/mortgage-calculator", element: withLoader(<MortgageCalculator />) },
+  { path: "/tools/property-tax-calculator", element: withLoader(<PropertyTaxCalculator />) },
+  { path: "/tools/home-insurance-calculator", element: withLoader(<HomeInsuranceCalculator />) },
+  { path: "/tools/home-affordability-calculator", element: withLoader(<HomeAffordabilityCalculator />) },
+  { path: "/tools/closing-cost-calculator", element: withLoader(<ClosingCostCalculator />) },
+  { path: "/tools/texas-utilities-calculator", element: withLoader(<TexasUtilitiesCalculator />) },
+  { path: "/tools/texas-relocation-budget-planner", element: withLoader(<TexasRelocationBudgetPlanner />) },
+  { path: "/tools/texas-monthly-living-cost-calculator", element: withLoader(<TexasMonthlyLivingCostCalculator />) },
+  { path: "/tools/texas-commute-cost-calculator", element: withLoader(<TexasCommuteCostCalculator />) },
+  { path: "/tools/texas-vehicle-fees-estimator", element: withLoader(<TexasVehicleFeesEstimator />) },
+  { path: "/tools/texas-relocation-checklist-generator", element: withLoader(<TexasRelocationChecklistGenerator />) },
+  { path: "/tools/best-texas-city-finder", element: withLoader(<BestTexasCityFinder />) },
+  { path: "/tools/texas-salary-relocation-calculator", element: withLoader(<TexasSalaryRelocationCalculator />) },
+  { path: "/tools/texas-cost-of-living-comparison", element: withLoader(<TexasCostOfLivingComparison />) },
+  { path: "/tools/texas-electricity-plan-savings-calculator", element: withLoader(<TexasElectricityPlanSavingsCalculator />) },
+];
 
 export const calculatorRoutes = [
-
-  {
-
-    path:
-      "/tools/mortgage-calculator",
-
-    element:
-
-      <Suspense fallback={<CalculatorLoader />}>
-
-        <MortgageCalculator />
-
-      </Suspense>,
-
-  },
-
-
-  {
-
-    path:
-      "/tools/property-tax-calculator",
-
-    element:
-
-      <Suspense fallback={<CalculatorLoader />}>
-
-        <PropertyTaxCalculator />
-
-      </Suspense>,
-
-  },
-
-
-  {
-
-    path:
-      "/tools/home-insurance-calculator",
-
-    element:
-
-      <Suspense fallback={<CalculatorLoader />}>
-
-        <HomeInsuranceCalculator />
-
-      </Suspense>,
-
-  },
-
-
-  {
-
-    path:
-      "/tools/home-affordability-calculator",
-
-    element:
-
-      <Suspense fallback={<CalculatorLoader />}>
-
-        <HomeAffordabilityCalculator />
-
-      </Suspense>,
-
-  },
-
-
-  {
-
-    path:
-      "/tools/closing-cost-calculator",
-
-    element:
-
-      <Suspense fallback={<CalculatorLoader />}>
-
-        <ClosingCostCalculator />
-
-      </Suspense>,
-
-  },
-
-
-  {
-
-    path:
-      "/tools/texas-utilities-calculator",
-
-    element:
-
-      <Suspense fallback={<CalculatorLoader />}>
-
-        <TexasUtilitiesCalculator />
-
-      </Suspense>,
-
-  },
-
+  ...existingCalculatorRoutes,
+  ...remainingTexasTools.map((tool) => ({
+    path: tool.slug,
+    element: <UniversalTexasTool tool={tool} />,
+  })),
 ];
