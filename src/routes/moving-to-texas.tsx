@@ -29,12 +29,14 @@ const sections = [
   },
   {
     title: "Cities and Communities",
+    description: "Explore individual Texas cities and communities before choosing where to settle.",
+    resources: [["Houston", "/houston"]],
+  },
+  {
+    title: "Texas Economy and News",
     description:
-      "Compare communities, salaries, local costs, and statewide developments before choosing where to settle.",
+      "Follow statewide business, economic, and community developments that may shape your move.",
     resources: [
-      ["Texas Cost of Living Calculator", "/texas-cost-of-living-calculator"],
-      ["Texas Salary Comparison by City", "/texas-salary-comparison-by-city"],
-      ["Houston", "/houston"],
       ["Texas Business and Economy", "/texas-business"],
       ["Latest Texas News", "/texas-news"],
     ],
@@ -126,16 +128,16 @@ function MovingToTexasPage() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {section.resources.map(([title, to]) => (
-                  <Link
+                  <a
                     key={to}
-                    to={to}
+                    href={to}
                     className="rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     {title}
                     <span className="mt-3 block text-sm font-medium text-primary">
                       Open resource →
                     </span>
-                  </Link>
+                  </a>
                 ))}
               </div>
             </section>

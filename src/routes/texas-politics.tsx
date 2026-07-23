@@ -19,9 +19,8 @@ const POLITICS_TOPICS = [
 ];
 
 export const Route = createFileRoute("/texas-politics")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    topic: typeof search.topic === "string" ? search.topic : "",
-  }),
+  validateSearch: (search: Record<string, unknown>): { topic?: string } =>
+    typeof search.topic === "string" && search.topic ? { topic: search.topic } : {},
   head: ({ match }) => {
     const topic = (match.search as { topic?: string } | undefined)?.topic ?? "";
     const canonical = "https://www.keeptxred.com/texas-politics";
