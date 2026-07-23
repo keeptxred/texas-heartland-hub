@@ -29,6 +29,8 @@ jobs:
         shell: bash
         run: |
           set +e
+          bun test src/data/__tests__/remainingTexasTools.test.ts > tests.log 2>&1
+          echo $? > tests.exit
           bun run typecheck > typecheck.log 2>&1
           echo $? > typecheck.exit
           bun run build > build.log 2>&1
@@ -41,6 +43,8 @@ jobs:
             echo "No changed TypeScript files to lint." > lint.log
             echo 0 > lint.exit
           fi
+          printf '\n=== REGRESSION TESTS ===\n'
+          cat tests.log
           printf '\n=== TYPECHECK ===\n'
           cat typecheck.log
           printf '\n=== BUILD ===\n'
@@ -55,6 +59,8 @@ jobs:
         with:
           name: calculator-suite-diagnostics
           path: |
+            tests.log
+            tests.exit
             typecheck.log
             typecheck.exit
             build.log
@@ -68,6 +74,7 @@ jobs:
       - name: Enforce validation
         shell: bash
         run: |
+          test "$(cat tests.exit)" -eq 0
           test "$(cat typecheck.exit)" -eq 0
           test "$(cat build.exit)" -eq 0
           test "$(cat lint.exit)" -eq 0
