@@ -47,6 +47,15 @@ const FAQS = [
 ];
 
 const SOURCE_FILTERS = ["All", "Governor", "Secretary of State", "Register"] as const;
+const OFFICIAL_SOURCE_NAMES = new Set([
+  "office of the governor",
+  "texas secretary of state",
+  "texas register",
+]);
+
+function isOfficialGovernmentSource(source: string) {
+  return OFFICIAL_SOURCE_NAMES.has(source.trim().toLowerCase());
+}
 
 function timeAgo(iso: string) {
   const t = Date.parse(iso);
@@ -134,8 +143,8 @@ type Row = {
   id: number;
   title: string;
   source: string;
-  link: string; // /news/{slug} for linked articles, external URL otherwise
-  external: boolean;
+  link: string | null; // /news/{slug} once a native article has been published
+  pendingArticle: boolean;
   description: string | null;
   pub_date: string;
 };
@@ -201,40 +210,56 @@ function DashboardPage() {
         return;
       }
 
-      // Live Feed gates on "a rewritten native article exists" — NOT the
-      // 2,000-word long-form floor (that gate applies to sitemaps and
-      // evergreen surfaces). Breaking news is intentionally shorter.
+      // Native articles remain the preferred destination. Official government
+      // updates are still visible while their native rewrite is pending so an
+      // AI-gateway failure cannot empty a page advertised as a real-time feed.
+      // Unlinked third-party rows stay hidden.
       const validArticleSlugs = new Set(
         ((linkedArticles ?? []) as { slug: string }[]).map((r) => r.slug),
       );
-      // Diagnostic: reason each feed row was excluded (temporary, safe to keep behind the console).
-      const drops = { no_slug: 0, slug_not_in_articles: 0, kept: 0 };
-      const feedRows: Row[] = rawFeed
-        // RULE: never link out to the original source. Feed items must be
-        // rewritten into a native /news/{slug} article before they surface
-        // here. Rows without a rewritten article are hidden until the
-        // ingest pipeline mints one.
-        .filter((r) => {
-          if (!r.internal_slug) {
-            drops.no_slug += 1;
-            return false;
-          }
-          if (!validArticleSlugs.has(r.internal_slug)) {
-            drops.slug_not_in_articles += 1;
-            return false;
-          }
+      // Diagnostic: reason each feed row was included or excluded.
+      const drops = {
+        unlinked_third_party: 0,
+        slug_not_in_articles: 0,
+        pending_official: 0,
+        kept: 0,
+      };
+      const feedRows = rawFeed.flatMap<Row>((r): Row[] => {
+        if (r.internal_slug && validArticleSlugs.has(r.internal_slug)) {
           drops.kept += 1;
-          return true;
-        })
-        .map((r) => ({
-          id: r.id,
-          title: r.title,
-          source: r.source,
-          link: `/news/${r.internal_slug}`,
-          external: false,
-          description: r.description,
-          pub_date: r.pub_date,
-        }));
+          return [
+            {
+              id: r.id,
+              title: r.title,
+              source: r.source,
+              link: `/news/${r.internal_slug}`,
+              pendingArticle: false,
+              description: r.description,
+              pub_date: r.pub_date,
+            },
+          ];
+        }
+        if (r.internal_slug) {
+          drops.slug_not_in_articles += 1;
+          return [];
+        }
+        if (!isOfficialGovernmentSource(r.source)) {
+          drops.unlinked_third_party += 1;
+          return [];
+        }
+        drops.pending_official += 1;
+        return [
+          {
+            id: r.id,
+            title: r.title,
+            source: r.source,
+            link: null,
+            pendingArticle: true,
+            description: r.description,
+            pub_date: r.pub_date,
+          },
+        ];
+      });
       const demotedRows: Row[] = (
         (demoted ?? []) as {
           id: string;
@@ -253,7 +278,7 @@ function DashboardPage() {
           title: d.title,
           source: d.category || "Newsroom",
           link: `/news/${d.slug}`,
-          external: false,
+          pendingArticle: false,
           description: d.dek,
           pub_date: d.published_at,
         }));
@@ -264,8 +289,9 @@ function DashboardPage() {
         // Temporary diagnostics — remove once feed density stabilizes.
         console.info("[happening-now] load", {
           feed_raw: rawFeed.length,
-          feed_no_slug: drops.no_slug,
+          feed_unlinked_third_party: drops.unlinked_third_party,
           feed_slug_missing_article: drops.slug_not_in_articles,
+          feed_pending_official: drops.pending_official,
           feed_kept: drops.kept,
           daily_last_24h: demoted?.length ?? 0,
           linked_articles_found: linkedArticles?.length ?? 0,
@@ -419,7 +445,7 @@ function DashboardPage() {
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filtered.map((it, i) => (
               <article
-                key={`${it.link}-${i}`}
+                key={`${it.link ?? `source-${it.id}`}-${i}`}
                 className="border-2 border-foreground/10 bg-card p-5 hover:border-primary transition-colors"
               >
                 {it.pub_date ? (
@@ -431,13 +457,13 @@ function DashboardPage() {
                   </time>
                 ) : null}
                 <h3 className="font-serif text-base font-bold leading-snug">
-                  <a
-                    href={it.link}
-                    className="hover:underline underline-offset-4"
-                    {...(it.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                  >
-                    {it.title}
-                  </a>
+                  {it.link ? (
+                    <a href={it.link} className="hover:underline underline-offset-4">
+                      {it.title}
+                    </a>
+                  ) : (
+                    it.title
+                  )}
                 </h3>
                 {it.description ? (
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">
@@ -447,6 +473,11 @@ function DashboardPage() {
                 <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-primary">
                   Source: {it.source}
                 </p>
+                {it.pendingArticle ? (
+                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+                    Full Keep TX Red article in progress
+                  </p>
+                ) : null}
               </article>
             ))}
           </div>
