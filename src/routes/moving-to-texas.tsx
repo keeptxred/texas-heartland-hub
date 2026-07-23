@@ -133,7 +133,7 @@ function MovingToTexasPage() {
                   >
                     {title}
                     <span className="mt-3 block text-sm font-medium text-primary">
-                      Open resource â†’
+                      Open resource →
                     </span>
                   </Link>
                 ))}
@@ -154,7 +154,7 @@ function MovingToTexasPage() {
             to="/living-in-texas"
             className="mt-5 inline-block font-semibold text-primary hover:underline"
           >
-            Explore Living in Texas â†’
+            Explore Living in Texas →
           </Link>
         </div>
       </section>
@@ -194,4 +194,3 @@ export const Route = createFileRoute("/moving-to-texas")({
   }),
   component: MovingToTexasPage,
 });
-

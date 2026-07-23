@@ -162,7 +162,7 @@ function TexasFinancialToolsPage() {
                 to={to}
                 className="rounded-xl border bg-white p-4 font-semibold text-red-700 transition hover:-translate-y-0.5 hover:shadow-sm"
               >
-                {label} â†’
+                {label} →
               </Link>
             ))}
           </div>
@@ -187,7 +187,7 @@ function TexasFinancialToolsPage() {
                   to={group.hub}
                   className="mt-3 inline-block text-sm font-semibold text-red-700"
                 >
-                  Visit the complete hub â†’
+                  Visit the complete hub →
                 </Link>
               </div>
               <div className="space-y-3">
@@ -200,7 +200,7 @@ function TexasFinancialToolsPage() {
                     <h3 className="text-lg font-semibold">{title}</h3>
                     <p className="mt-1 text-sm text-muted-foreground">{description}</p>
                     <span className="mt-3 inline-block text-sm font-semibold text-red-700">
-                      Open calculator â†’
+                      Open calculator →
                     </span>
                   </Link>
                 ))}
@@ -255,4 +255,3 @@ export const Route = createFileRoute("/texas-financial-tools")({
   }),
   component: TexasFinancialToolsPage,
 });
-
