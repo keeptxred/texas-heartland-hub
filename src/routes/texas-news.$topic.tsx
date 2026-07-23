@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { TexasNewsView, TEXAS_NEWS_SECTIONS } from "@/components/texas-news-view";
-import { getLiveArticlesByCategory } from "@/lib/articles-by-category.functions";
+import { CATEGORY_SLUG_TO_NAME, isCategorySlug } from "@/lib/articles-by-category";
+import { getArticlesByCategory } from "@/lib/category-feed.functions";
 
 const VALID = new Set(TEXAS_NEWS_SECTIONS.map((s) => s.id));
 
@@ -8,7 +9,16 @@ export const Route = createFileRoute("/texas-news/$topic")({
   beforeLoad: ({ params }) => {
     if (!VALID.has(params.topic)) throw notFound();
   },
-  loader: ({ params }) => getLiveArticlesByCategory({ data: { activeFilter: params.topic } }),
+  loader: ({ params }) => {
+    if (!isCategorySlug(params.topic)) return [];
+    return getArticlesByCategory({
+      data: {
+        category: CATEGORY_SLUG_TO_NAME[params.topic],
+        limit: 24,
+        order: "newest",
+      },
+    });
+  },
   head: ({ params }) => {
     const section = TEXAS_NEWS_SECTIONS.find((s) => s.id === params.topic);
     if (!section) {
