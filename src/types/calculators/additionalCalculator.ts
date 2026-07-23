@@ -5,6 +5,10 @@ export interface AdditionalCalculatorField {
   prefix?: string;
   suffix?: string;
   helpText?: string;
+  min?: number;
+  max?: number;
+  step?: number;
+  required?: boolean;
 }
 
 export interface AdditionalCalculatorResult {
@@ -15,6 +19,12 @@ export interface AdditionalCalculatorResult {
   decimals?: number;
 }
 
+export interface AdditionalCalculatorPreset {
+  label: string;
+  description: string;
+  values: Record<string, number>;
+}
+
 export interface AdditionalCalculatorDefinition {
   key: string;
   title: string;
@@ -23,5 +33,10 @@ export interface AdditionalCalculatorDefinition {
   category: "Housing" | "Taxes" | "Insurance" | "Utilities" | "Relocation" | "Financial";
   fields: AdditionalCalculatorField[];
   calculate: (inputs: Record<string, number>) => AdditionalCalculatorResult[];
+  validate?: (inputs: Record<string, number>) => Record<string, string>;
+  presets?: AdditionalCalculatorPreset[];
+  assumptions: string[];
+  resultMeaning: string;
+  disclaimer: string;
   faq: Array<{ question: string; answer: string }>;
 }
