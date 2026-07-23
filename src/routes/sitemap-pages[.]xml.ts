@@ -4,6 +4,7 @@ import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
 import { calculators } from "@/data/calculators";
+import { LAUNCH_COUNTIES, RELOCATION_LAUNCH_PATH } from "@/data/relocationLaunch";
 
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
@@ -56,6 +57,7 @@ const STATIC_PATHS: string[] = [
   "/texas/no-state-income-tax-2026",
   "/texas/property-taxes-2026",
   "/texas/moving-to-texas-2026",
+  RELOCATION_LAUNCH_PATH,
 ];
 
 export const Route = createFileRoute("/sitemap-pages.xml")({
@@ -63,7 +65,16 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
     handlers: {
       GET: async () => {
         const lastmod = toIsoDate(new Date());
-        const paths = [...new Set([...STATIC_PATHS, ...calculators.map((calculator) => calculator.slug)])];
+        const relocationCountyPaths = LAUNCH_COUNTIES.map(
+          (county) => `${RELOCATION_LAUNCH_PATH}/${county.slug}`,
+        );
+        const paths = [
+          ...new Set([
+            ...STATIC_PATHS,
+            ...calculators.map((calculator) => calculator.slug),
+            ...relocationCountyPaths,
+          ]),
+        ];
 
         // Only advertise sports section pages that meet the readiness
         // threshold — otherwise Google indexes thin/soft-404 shells.
