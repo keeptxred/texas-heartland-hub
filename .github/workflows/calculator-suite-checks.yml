@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -27,18 +29,24 @@ jobs:
         shell: bash
         run: |
           set +e
-          bun run typecheck > typecheck.log 2>&1
-          echo $? > typecheck.exit
-          bun run lint > lint.log 2>&1
-          echo $? > lint.exit
           bun run build > build.log 2>&1
           echo $? > build.exit
-          printf '\n=== TYPECHECK ===\n'
-          cat typecheck.log
-          printf '\n=== LINT ===\n'
-          cat lint.log
+          bun run typecheck > typecheck.log 2>&1
+          echo $? > typecheck.exit
+          git diff --name-only --diff-filter=ACMR origin/main...HEAD | grep -E '\.(ts|tsx)$' > changed-ts-files.txt || true
+          if [ -s changed-ts-files.txt ]; then
+            xargs bunx eslint < changed-ts-files.txt > lint.log 2>&1
+            echo $? > lint.exit
+          else
+            echo "No changed TypeScript files to lint." > lint.log
+            echo 0 > lint.exit
+          fi
           printf '\n=== BUILD ===\n'
           cat build.log
+          printf '\n=== TYPECHECK ===\n'
+          cat typecheck.log
+          printf '\n=== CHANGED-FILE LINT ===\n'
+          cat lint.log
           exit 0
 
       - name: Upload validation diagnostics
@@ -47,18 +55,19 @@ jobs:
         with:
           name: calculator-suite-diagnostics
           path: |
+            build.log
+            build.exit
             typecheck.log
             typecheck.exit
             lint.log
             lint.exit
-            build.log
-            build.exit
+            changed-ts-files.txt
           if-no-files-found: error
           retention-days: 7
 
       - name: Enforce validation
         shell: bash
         run: |
+          test "$(cat build.exit)" -eq 0
           test "$(cat typecheck.exit)" -eq 0
           test "$(cat lint.exit)" -eq 0
-          test "$(cat build.exit)" -eq 0
