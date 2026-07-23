@@ -4,7 +4,7 @@ import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
 import { calculators } from "@/data/calculators";
-import { LAUNCH_COUNTIES, RELOCATION_LAUNCH_PATH } from "@/data/relocationLaunch";
+import { LAUNCH_COUNTIES, LAUNCH_GUIDES, RELOCATION_LAUNCH_PATH } from "@/data/relocationLaunch";
 
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
@@ -68,11 +68,15 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
         const relocationCountyPaths = LAUNCH_COUNTIES.map(
           (county) => `${RELOCATION_LAUNCH_PATH}/${county.slug}`,
         );
+        const relocationGuidePaths = LAUNCH_GUIDES.map(
+          (guide) => `${RELOCATION_LAUNCH_PATH}/guides/${guide.slug}`,
+        );
         const paths = [
           ...new Set([
             ...STATIC_PATHS,
             ...calculators.map((calculator) => calculator.slug),
             ...relocationCountyPaths,
+            ...relocationGuidePaths,
           ]),
         ];
 
