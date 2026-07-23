@@ -1,0 +1,2 @@
+export const downPaymentSitemap={url:"https://keeptxred.com/texas-down-payment-calculator",lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.95};
+export const generateDownPaymentLocationPages=(locations:string[])=>locations.map(location=>({url:`https://keeptxred.com/${location}-down-payment-calculator`,lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.85}));
