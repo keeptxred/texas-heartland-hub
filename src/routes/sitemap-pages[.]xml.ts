@@ -1,6 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
+import {
+  BASE_URL,
+  renderUrlset,
+  xmlResponse,
+  toIsoDate,
+  type UrlEntry,
+} from "@/lib/sitemap-shared";
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
 
@@ -28,6 +34,8 @@ const STATIC_PATHS: string[] = [
   "/texas-business/policy",
   "/elections",
   "/tax-calculator",
+  "/moving-to-texas",
+  "/living-in-texas",
   "/texas-financial-tools",
   "/texas-mortgage-calculator",
   "/texas-home-affordability-calculator",
@@ -85,14 +93,16 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
         const paths = [...STATIC_PATHS];
 
         // Only advertise sports section pages that meet the readiness
-        // threshold — otherwise Google indexes thin/soft-404 shells.
+        // threshold â€” otherwise Google indexes thin/soft-404 shells.
         for (const league of ["nfl", "mlb", "nba"] as const) {
           if (await hasEnoughContent({ kind: `sports-${league}` }, MIN_ARTICLES_DEFAULT)) {
             paths.push(`/texas-sports/${league}`);
           }
         }
         for (const t of TEAMS) {
-          if (await hasEnoughContent({ teamSlug: t.slug, league: t.league }, MIN_ARTICLES_DEFAULT)) {
+          if (
+            await hasEnoughContent({ teamSlug: t.slug, league: t.league }, MIN_ARTICLES_DEFAULT)
+          ) {
             paths.push(`/texas-sports/team/${t.slug}`);
           }
         }
@@ -106,3 +116,4 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
     },
   },
 });
+
