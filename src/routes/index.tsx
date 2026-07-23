@@ -157,25 +157,37 @@ function Index() {
               </Link>
             </div>
           </div>
-          <div className="rounded-2xl border bg-card p-6 shadow-sm">
-            <p className="text-sm font-semibold text-foreground">Popular starting points</p>
-            <div className="mt-4 grid gap-3">
+          <aside
+            className="rounded-2xl border bg-card p-6 shadow-sm"
+            aria-labelledby="popular-starting-points"
+          >
+            <p id="popular-starting-points" className="text-sm font-semibold text-foreground">
+              Popular starting points
+            </p>
+            <ul className="mt-3 divide-y divide-border">
               {[
                 ["Compare Texas cities", "/texas-salary-comparison-by-city"],
                 ["Estimate a mortgage", "/texas-mortgage-calculator"],
                 ["Find your DMV", "/find-my-dmv"],
-                ["Read todayâ€™s Texas news", "/texas-news"],
+                ["Read today's Texas news", "/texas-news"],
               ].map(([label, to]) => (
-                <Link
-                  key={to}
-                  to={to}
-                  className="rounded-lg border bg-background px-4 py-3 text-sm font-semibold text-primary hover:bg-muted"
-                >
-                  {label} <span aria-hidden>â†’</span>
-                </Link>
+                <li key={to}>
+                  <Link
+                    to={to}
+                    className="group flex items-center justify-between gap-4 py-3.5 text-sm font-semibold text-foreground transition-colors hover:text-primary"
+                  >
+                    <span>{label}</span>
+                    <span
+                      aria-hidden="true"
+                      className="grid size-7 shrink-0 place-items-center rounded-full bg-muted text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
+                    >
+                      &rarr;
+                    </span>
+                  </Link>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          </aside>
         </div>
       </section>
 
@@ -189,9 +201,17 @@ function Index() {
               Latest Texas News
             </h2>
           </div>
-          <Link to="/texas-news" className="text-sm font-semibold text-primary hover:underline">
-            View all Texas news â†’
-          </Link>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/happening-now"
+              className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              Happening Now
+            </Link>
+            <Link to="/texas-news" className="text-sm font-semibold text-primary hover:underline">
+              View all Texas news →
+            </Link>
+          </div>
         </div>
 
         {breaking.length > 0 && (
@@ -277,7 +297,7 @@ function Index() {
             to="/texas-financial-tools"
             className="text-sm font-semibold text-primary hover:underline"
           >
-            Explore all Texas Tools â†’
+            Explore all Texas Tools →
           </Link>
         </div>
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -289,7 +309,7 @@ function Index() {
             >
               <h3 className="font-semibold">{title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
-              <span className="mt-4 block text-sm font-semibold text-primary">Open tool â†’</span>
+              <span className="mt-4 block text-sm font-semibold text-primary">Open tool →</span>
             </Link>
           ))}
         </div>
@@ -315,7 +335,7 @@ function Index() {
             </h2>
             <p className="mt-4 max-w-xl leading-relaxed text-white/75">
               Shop Texas patriotic shirts, hats, hoodies, stickers, and gifts. Purchases support
-              Keep TX Redâ€™s independent Texas coverage and resources.
+              Keep TX Red’s independent Texas coverage and resources.
             </p>
             <Link
               to="/shop"
@@ -366,7 +386,7 @@ function JourneySection({
               to={hub}
               className="mt-5 inline-block text-sm font-semibold text-primary hover:underline"
             >
-              Explore {title} â†’
+              Explore {title} →
             </Link>
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -376,7 +396,7 @@ function JourneySection({
                 to={to}
                 className="rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md"
               >
-                {label} <span className="mt-3 block text-sm text-primary">Open resource â†’</span>
+                {label} <span className="mt-3 block text-sm text-primary">Open resource →</span>
               </Link>
             ))}
           </div>
@@ -428,4 +448,3 @@ function DailyNewsLink({
     </a>
   );
 }
-
