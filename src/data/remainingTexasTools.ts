@@ -90,10 +90,10 @@ export function calculateRemainingTool(tool: RemainingTexasTool, a: number, b: n
     case "which-texas-metro-fits-me-best": return (x + y + z) / 3;
     case "can-i-afford-major-texas-metros": return clamp(((x - y - z) / Math.max(1, x)) * 100, 0, 100);
     case "texas-family-relocation-planner": return x + (y * 3) + z;
-    case "remote-worker-texas-savings-calculator": return Math.max(0, x - y - z);
-    case "military-pcs-to-texas-planner": return Math.max(0, y + z - x);
+    case "remote-worker-texas-savings-calculator": return x - y - z;
+    case "military-pcs-to-texas-planner": return y + z - x;
     case "retire-in-texas-planner": return x - y - z;
-    case "texas-no-state-income-tax-savings-calculator": return Math.max(0, x * (y / 100) - z);
+    case "texas-no-state-income-tax-savings-calculator": return x * (y / 100) - z;
     case "texas-sales-tax-calculator": return x * (y / 100) * (z / 100);
     case "texas-toll-cost-calculator": return x * y * z;
     case "texas-hoa-cost-estimator": return (x * 12 + y) * z;
