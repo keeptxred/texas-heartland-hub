@@ -7,39 +7,32 @@ import { BrandIdentity } from "@/components/brand-identity";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 
-// Compute the daily-rotated lead article the same way the component does, so
-// the LCP image can be preloaded with fetchpriority="high" during SSR head().
 function getLeadImage(): string | null {
-  const sorted = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
-  const centralToday = new Date().toLocaleDateString("en-US", {
-    timeZone: "America/Chicago",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const dayKey = Array.from(centralToday).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-  const poolSize = Math.min(sorted.length, 20);
-  const pool = sorted.slice(0, poolSize);
-  if (pool.length === 0) return null;
-  const offset = dayKey % pool.length;
-  return pool[offset]?.image ?? null;
+  const lead = ARTICLES.filter((article) => isPublished(article)).sort(sortByDateDesc)[0];
+  return lead?.image ?? null;
 }
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Keep Texas Red | Texas Relocation Tools, Calculators & Resources" },
-      { name: "description", content: "Keep Texas Red is the home for Texas relocation tools, Texas calculators, and Texas resources — plus daily news, politics, and analysis for people moving to and living in Texas." },
-      { property: "og:title", content: "Keep Texas Red | Texas Relocation Tools, Calculators & Resources" },
-      { property: "og:description", content: "Keep Texas Red is the home for Texas relocation tools, Texas calculators, and Texas resources — plus daily news, politics, and analysis for people moving to and living in Texas." },
+      { title: "Keep Texas Red | Texas Living, Relocation Tools & News" },
+      {
+        name: "description",
+        content:
+          "Keep TX Red helps people move to Texas, live well in Texas, use practical calculators, follow statewide news, and discover products made for proud Texans.",
+      },
+      { property: "og:title", content: "Keep Texas Red | Your Texas Living Platform" },
+      {
+        property: "og:description",
+        content:
+          "Texas relocation guides, resident resources, calculators, daily news, and the Keep TX Red shop in one place.",
+      },
       { property: "og:url", content: "/" },
       { property: "og:image", content: heroFlag },
       { name: "twitter:image", content: heroFlag },
     ],
     links: [
       { rel: "canonical", href: "/" },
-      // LCP element on this page is the lead featured story image (the
-      // hero-flag asset is used only for social og:image and never rendered).
       ...(getLeadImage()
         ? [{ rel: "preload", as: "image", href: getLeadImage() as string, fetchpriority: "high" }]
         : []),
@@ -52,10 +45,10 @@ export const Route = createFileRoute("/")({
           "@type": "WebSite",
           name: "Keep Texas Red",
           alternateName: ["Keep TX Red", "KeepTXRed"],
-          url: "https://keeptxred.com/",
+          url: "https://www.keeptxred.com/",
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://keeptxred.com/news?q={search_term_string}",
+            target: "https://www.keeptxred.com/news?q={search_term_string}",
             "query-input": "required name=search_term_string",
           },
         }),
@@ -67,74 +60,9 @@ export const Route = createFileRoute("/")({
           "@type": "Organization",
           name: "Keep Texas Red",
           alternateName: ["Keep TX Red", "KeepTXRed"],
-          url: "https://keeptxred.com/",
-          logo: "https://keeptxred.com/favicon.ico",
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "NewsMediaOrganization",
-          name: "Keep TX Red",
-          alternateName: "Keep Texas Red",
           url: "https://www.keeptxred.com/",
-          logo: { "@type": "ImageObject", url: "https://www.keeptxred.com/favicon.ico" },
-          sameAs: [],
-          masthead: "https://www.keeptxred.com/about",
-          ethicsPolicy: "https://www.keeptxred.com/editorial-standards",
-          publishingPrinciples: "https://www.keeptxred.com/editorial-standards",
-          diversityPolicy: "https://www.keeptxred.com/editorial-standards",
-          correctionsPolicy: "https://www.keeptxred.com/about",
-          contactPoint: {
-            "@type": "ContactPoint",
-            email: "contact@keeptxred.com",
-            contactType: "Editorial",
-          },
+          logo: "https://www.keeptxred.com/favicon.ico",
           areaServed: { "@type": "State", name: "Texas" },
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
-          ],
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: [
-            {
-              "@type": "Question",
-              name: "What is Keep Texas Red?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Keep Texas Red (KeepTXRed) is an independent Texas resource site offering relocation tools, calculators, and daily news to help people move to, live in, and understand Texas.",
-              },
-            },
-            {
-              "@type": "Question",
-              name: "What resources does Keep Texas Red provide?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Keep Texas Red publishes Texas relocation tools, a property-tax relief calculator, DMV and school-district finders, representative lookups, voter guides, and daily Texas news and analysis.",
-              },
-            },
-            {
-              "@type": "Question",
-              name: "Who is Keep Texas Red designed for?",
-              acceptedAnswer: {
-                "@type": "Answer",
-                text: "Keep Texas Red is designed for Texans, new residents relocating to Texas, and anyone researching Texas taxes, elections, government, and cost of living.",
-              },
-            },
-          ],
         }),
       },
     ],
@@ -143,269 +71,262 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const SECTION_CARDS = [
-  {
-    to: "/texas-news" as const,
-    eyebrow: "News",
-    title: "Texas News",
-    desc: "Statewide breaking news and daily updates from across Texas.",
-  },
-  {
-    to: "/texas-politics" as const,
-    eyebrow: "Politics",
-    title: "Texas Politics",
-    desc: "The Legislature, statewide offices, and how Texas government works.",
-  },
-  {
-    to: "/houston" as const,
-    eyebrow: "Local",
-    title: "Houston News",
-    desc: "Houston-area updates covering Katy, Sugar Land, Cypress, and the wider metro.",
-  },
-  {
-    to: "/texas-sports" as const,
-    eyebrow: "Sports",
-    title: "Texas Sports",
-    desc: "Texans, Cowboys, Astros, Rangers, Spurs, and Mavericks coverage and recaps.",
-  },
-  {
-    to: "/texas-business" as const,
-    eyebrow: "Business",
-    title: "Texas Business",
-    desc: "Texas economy, jobs, energy, and the companies reshaping the state.",
-  },
-  {
-    to: "/elections" as const,
-    eyebrow: "Elections",
-    title: "Texas Elections",
-    desc: "Voter guides, candidate information, and upcoming election dates.",
-  },
-  {
-    to: "/tax-calculator" as const,
-    eyebrow: "Taxes",
-    title: "Property Taxes",
-    desc: "Calculate your tax burden by county, including school district rates.",
-  },
-];
+const MOVING_LINKS = [
+  ["Plan your moving budget", "/texas-moving-cost-calculator"],
+  ["Compare Texas living costs", "/texas-cost-of-living-calculator"],
+  ["Decide whether to rent or buy", "/texas-rent-vs-buy-calculator"],
+  ["Find your school district", "/find-my-school-district"],
+] as const;
+
+const LIVING_LINKS = [
+  ["Estimate property taxes", "/tax-calculator"],
+  ["Plan household utility costs", "/texas-utility-cost-calculator"],
+  ["Understand Texas laws", "/laws"],
+  ["Find voting resources", "/elections"],
+] as const;
+
+const POPULAR_TOOLS = [
+  [
+    "Property Tax Calculator",
+    "/tax-calculator",
+    "Estimate taxes by supported county and school district.",
+  ],
+  [
+    "Cost of Living Calculator",
+    "/texas-cost-of-living-calculator",
+    "Compare common household costs across Texas cities.",
+  ],
+  [
+    "Home Affordability Calculator",
+    "/texas-home-affordability-calculator",
+    "Estimate a comfortable Texas home-price range.",
+  ],
+  ["Budget Planner", "/texas-budget-planner", "Build a practical monthly Texas household budget."],
+] as const;
 
 function Index() {
   const { articles: live } = Route.useLoaderData() as { articles: DailyArticle[] };
-  const breaking = live.filter((a: DailyArticle) => a.is_breaking).slice(0, 3);
+  const breaking = live.filter((article) => article.is_breaking).slice(0, 3);
   const trending = live
-    .filter((a: DailyArticle) => !a.is_breaking)
-    .sort((a: DailyArticle, b: DailyArticle) => (b.score ?? 0) - (a.score ?? 0))
+    .filter((article) => !article.is_breaking)
+    .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
     .slice(0, 5);
-
-  const sorted = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
-  // RULE: Featured Stories must rotate every day. We derive a daily offset from
-  // the current date in America/Chicago so the lead + 4 featured cards shift to
-  // a new set every 24 hours without requiring a DB write or rebuild.
-  const centralToday = new Date().toLocaleDateString("en-US", {
-    timeZone: "America/Chicago",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  });
-  const dayKey = Array.from(centralToday).reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
-  const featuredPoolSize = Math.min(sorted.length, 20);
-  const featuredPool = sorted.slice(0, featuredPoolSize);
-  const offset = featuredPool.length > 0 ? dayKey % featuredPool.length : 0;
-  const rotated = [...featuredPool.slice(offset), ...featuredPool.slice(0, offset)];
-  const lead = rotated[0];
-  const featured = rotated.slice(1, 5);
-  // Latest Updates keeps strict newest-first ordering and skips anything
-  // currently surfaced in Featured Stories so we don't duplicate cards.
-  const featuredSlugs = new Set([lead?.slug, ...featured.map((a) => a.slug)].filter(Boolean));
-  const latest = sorted.filter((a) => !featuredSlugs.has(a.slug)).slice(0, 8);
-
-  // RULE: no duplicate images on a single page. Dedupe across lead + featured
-  // + latest so every visible card carries a distinct image.
-  const heroImages = assignUniqueImages(
-    [lead, ...featured, ...latest].filter(Boolean) as { slug: string; image: string; category?: string }[],
-    (a) => a.slug,
-    (a) => a.image,
-    (a) => a.category ?? null,
+  const latest = ARTICLES.filter((article) => isPublished(article))
+    .sort(sortByDateDesc)
+    .slice(0, 6);
+  const images = assignUniqueImages(
+    latest,
+    (article) => article.slug,
+    (article) => article.image,
+    (article) => article.category ?? null,
   );
 
   return (
     <div className="bg-background">
-      {/* BREAKING NEWS — top of homepage when score >= 18 */}
-      {breaking.length > 0 ? (
-        <section className="bg-primary text-primary-foreground">
-          <div className="mx-auto max-w-[1200px] px-6 py-6">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="inline-flex items-center gap-2 rounded-sm bg-primary-foreground/15 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.25em]">
-                <span className="size-2 rounded-full bg-primary-foreground animate-pulse" />
-                Breaking
-              </span>
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              {breaking.map((a: DailyArticle) => (
-                <BreakingCard key={a.slug} article={a} />
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
-
-      {/* HERO */}
-      <section className="border-b border-border">
-        <div className="mx-auto max-w-[1200px] px-6 pt-20 pb-16">
-          <div className="max-w-[700px]">
-            <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight leading-[1.15] text-foreground">
-              Keep Texas Red — Texas Relocation Tools, Calculators & Resources
-            </h1>
-            <p className="mt-5 text-lg text-muted-foreground leading-relaxed">
-              Keep Texas Red (KeepTXRed) is your hub for Texas relocation resources, tax and cost-of-living calculators, and daily reporting on the issues shaping Texas.
+      <section className="border-b border-border bg-gradient-to-br from-background via-background to-muted/60">
+        <div className="mx-auto grid max-w-[1200px] gap-10 px-6 py-16 sm:py-20 lg:grid-cols-[1.25fr_0.75fr] lg:items-center">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-primary">
+              Move here. Live here. Know Texas.
             </p>
-            <p className="mt-4 text-sm text-muted-foreground">
-              <Link to="/about-keep-texas-red" className="text-primary hover:underline font-medium">About Keep Texas Red →</Link>
-              {" · "}
-              <Link to="/keep-texas-red" className="text-primary hover:underline font-medium">What "Keep Texas Red" means →</Link>
+            <h1 className="mt-4 max-w-4xl text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+              Your guide to moving to and living in Texas
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+              Keep TX Red brings together relocation guidance, everyday resident resources,
+              practical Texas calculators, daily statewide news, and products made for proud Texans.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/happening-now"
-                className="inline-flex items-center bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium rounded-md hover:bg-primary/90 transition-colors"
+                to="/moving-to-texas"
+                className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
               >
-                Latest Articles
+                Start your move
               </Link>
               <Link
-                to="/texas-politics"
-                className="inline-flex items-center border border-border px-5 py-2.5 text-sm font-medium rounded-md hover:bg-muted transition-colors text-foreground"
+                to="/living-in-texas"
+                className="rounded-md border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground hover:bg-muted"
               >
-                Texas Politics
+                Explore Texas living
+              </Link>
+              <Link
+                to="/texas-financial-tools"
+                className="rounded-md border border-border bg-background px-5 py-3 text-sm font-semibold text-foreground hover:bg-muted"
+              >
+                Use Texas tools
               </Link>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* TRENDING TODAY */}
-      {trending.length > 0 ? (
-        <section className="mx-auto max-w-[1200px] px-6 py-12 border-b border-border">
-          <div className="flex items-end justify-between mb-6">
-            <span className="text-xs font-medium uppercase tracking-wider text-primary">Trending Today</span>
-            <Link to="/news" className="text-sm font-medium text-primary hover:underline">View all news →</Link>
-          </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6">
-            {trending.map((a: DailyArticle) => (
-              <TrendingCard key={a.slug} article={a} />
-            ))}
-          </div>
-          <AdSlot placement="banner" />
-        </section>
-      ) : null}
-
-      {/* FEATURED STORIES */}
-      {lead && (
-        <section className="mx-auto max-w-[1200px] px-6 py-20">
-          <div className="mb-8">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Featured Stories</span>
-          </div>
-          <div className="grid lg:grid-cols-3 gap-10">
-            <Link to="/news/$slug" params={{ slug: lead.slug }} className="group block lg:col-span-2">
-              <div className="aspect-[16/9] overflow-hidden bg-muted mb-5 rounded-md">
-                <img
-                  src={heroImages.get(lead.slug) ?? lead.image}
-                  alt={lead.title}
-                  width={1200}
-                  height={675}
-                  fetchPriority="high"
-                  loading="eager"
-                  decoding="async"
-                  className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500"
-                />
-              </div>
-              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{lead.category}</span>
-              <h2 className="font-sans text-3xl md:text-4xl font-semibold tracking-tight mt-2 leading-[1.2] text-foreground group-hover:text-primary transition-colors">
-                {lead.title}
-              </h2>
-              {lead.dek && (
-                <p className="mt-3 text-base text-muted-foreground leading-relaxed line-clamp-2">{lead.dek}</p>
-              )}
-              <p className="mt-3 text-xs text-muted-foreground">{lead.author} • {lead.date}</p>
-            </Link>
-            <div className="flex flex-col divide-y divide-border">
-              {featured.map((a) => (
-                <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block py-5 first:pt-0 last:pb-0">
-                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
-                  <h3 className="font-sans text-lg font-semibold mt-1 leading-snug text-foreground group-hover:text-primary transition-colors">
-                    {a.title}
-                  </h3>
-                  <p className="mt-2 text-xs text-muted-foreground">{a.date}</p>
+          <div className="rounded-2xl border bg-card p-6 shadow-sm">
+            <p className="text-sm font-semibold text-foreground">Popular starting points</p>
+            <div className="mt-4 grid gap-3">
+              {[
+                ["Compare Texas cities", "/texas-salary-comparison-by-city"],
+                ["Estimate a mortgage", "/texas-mortgage-calculator"],
+                ["Find your DMV", "/find-my-dmv"],
+                ["Read todayâ€™s Texas news", "/texas-news"],
+              ].map(([label, to]) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="rounded-lg border bg-background px-4 py-3 text-sm font-semibold text-primary hover:bg-muted"
+                >
+                  {label} <span aria-hidden>â†’</span>
                 </Link>
               ))}
             </div>
           </div>
-        </section>
-      )}
-
-      {/* TOPIC HUBS */}
-      <section className="bg-muted/40 border-y border-border">
-        <div className="mx-auto max-w-[1200px] px-6 py-20">
-          <div className="mb-8">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Sections</span>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {SECTION_CARDS.map((h) => (
-              <Link
-                key={h.to}
-                to={h.to}
-                className="group flex flex-col bg-card p-7 rounded-md shadow-sm hover:shadow-md transition-shadow"
-              >
-                <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{h.eyebrow}</span>
-                <h3 className="font-sans text-xl font-semibold mt-2 text-foreground">{h.title}</h3>
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{h.desc}</p>
-                <span className="mt-5 text-sm font-medium text-primary group-hover:underline underline-offset-4">View Articles →</span>
-              </Link>
-            ))}
-          </div>
         </div>
       </section>
 
-      {/* LATEST UPDATES */}
-      <section className="mx-auto max-w-[1200px] px-6 py-20">
-        <div className="flex items-end justify-between mb-8">
-          <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Latest Updates</span>
-          <Link to="/news" className="text-sm font-medium text-primary hover:underline">View all →</Link>
+      <section aria-labelledby="latest-texas-news" className="mx-auto max-w-[1200px] px-6 py-16">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              Stay informed
+            </p>
+            <h2 id="latest-texas-news" className="mt-2 text-3xl font-semibold tracking-tight">
+              Latest Texas News
+            </h2>
+          </div>
+          <Link to="/texas-news" className="text-sm font-semibold text-primary hover:underline">
+            View all Texas news â†’
+          </Link>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-10">
-          {latest.map((a) => (
-            <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
-              <div className="aspect-[16/10] overflow-hidden bg-muted mb-4 rounded-md">
-                <img src={heroImages.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-[1.02] transition-transform duration-500" />
+
+        {breaking.length > 0 && (
+          <div className="mt-8 rounded-xl bg-primary p-5 text-primary-foreground">
+            <p className="text-xs font-bold uppercase tracking-[0.2em]">Breaking</p>
+            <div className="mt-3 grid gap-3 md:grid-cols-3">
+              {breaking.map((article) => (
+                <DailyNewsLink key={article.slug} article={article} inverted />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {trending.length > 0 && (
+          <div className="mt-8 grid gap-4 border-b pb-8 sm:grid-cols-2 lg:grid-cols-5">
+            {trending.map((article) => (
+              <DailyNewsLink key={article.slug} article={article} />
+            ))}
+          </div>
+        )}
+
+        <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          {latest.map((article, index) => (
+            <Link
+              key={article.slug}
+              to="/news/$slug"
+              params={{ slug: article.slug }}
+              className="group block"
+            >
+              <div className="aspect-[16/10] overflow-hidden rounded-lg bg-muted">
+                <img
+                  src={images.get(article.slug) ?? article.image}
+                  alt=""
+                  width={640}
+                  height={400}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "auto"}
+                  className="size-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                />
               </div>
-              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{a.category}</span>
-              <h3 className="font-sans text-base font-semibold mt-1.5 leading-snug text-foreground group-hover:text-primary transition-colors">{a.title}</h3>
-              {a.dek && (
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-2">{a.dek}</p>
-              )}
-              <p className="mt-2 text-xs text-muted-foreground">{a.date}</p>
+              <p className="mt-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {article.category}
+              </p>
+              <h3 className="mt-1 text-lg font-semibold leading-snug group-hover:text-primary">
+                {article.title}
+              </h3>
+            </Link>
+          ))}
+        </div>
+        <AdSlot placement="banner" />
+      </section>
+
+      <JourneySection
+        id="moving-to-texas"
+        eyebrow="Relocation"
+        title="Moving to Texas"
+        description="Make a confident move with guidance for budgeting, comparing communities, finding a home, choosing schools, and getting settled."
+        hub="/moving-to-texas"
+        links={MOVING_LINKS}
+      />
+
+      <JourneySection
+        id="living-in-texas"
+        eyebrow="Resident resources"
+        title="Living in Texas"
+        description="Navigate homeownership, property taxes, utilities, voting, state government, Texas laws, and everyday life."
+        hub="/living-in-texas"
+        links={LIVING_LINKS}
+        muted
+      />
+
+      <section aria-labelledby="popular-tools" className="mx-auto max-w-[1200px] px-6 py-16">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              Plan with confidence
+            </p>
+            <h2 id="popular-tools" className="mt-2 text-3xl font-semibold tracking-tight">
+              Popular Texas Tools
+            </h2>
+          </div>
+          <Link
+            to="/texas-financial-tools"
+            className="text-sm font-semibold text-primary hover:underline"
+          >
+            Explore all Texas Tools â†’
+          </Link>
+        </div>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {POPULAR_TOOLS.map(([title, to, description]) => (
+            <Link
+              key={to}
+              to={to}
+              className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <h3 className="font-semibold">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p>
+              <span className="mt-4 block text-sm font-semibold text-primary">Open tool â†’</span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* ABOUT STRIP */}
-      <section className="border-t border-border bg-muted/40">
-        <div className="mx-auto max-w-[1200px] px-6 py-16">
-          <div className="max-w-[700px]">
-            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">About</span>
-            <h2 className="font-sans text-2xl md:text-3xl font-semibold tracking-tight mt-2 text-foreground">
-              Independent Texas reporting.
-            </h2>
-            <p className="mt-4 text-base text-muted-foreground leading-relaxed">
-              Keep TX Red is an independent Texas-focused news and analysis platform covering politics, policy, economy, and statewide developments.
+      <section
+        aria-labelledby="featured-shop"
+        className="border-y bg-secondary text-secondary-foreground"
+      >
+        <div className="mx-auto grid max-w-[1200px] gap-8 px-6 py-14 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+          <img
+            src="/og/shop.jpg"
+            alt="Keep TX Red patriotic apparel and gifts"
+            className="aspect-[16/10] w-full rounded-xl object-cover"
+            loading="lazy"
+          />
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
+              Featured Shop
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/about" className="text-sm font-medium text-primary hover:underline">Our story →</Link>
-              <span className="text-muted-foreground/40">·</span>
-              <Link to="/contact" className="text-sm font-medium text-primary hover:underline">Contact the newsroom →</Link>
-            </div>
+            <h2 id="featured-shop" className="mt-2 text-3xl font-semibold tracking-tight">
+              Wear your Texas pride
+            </h2>
+            <p className="mt-4 max-w-xl leading-relaxed text-white/75">
+              Shop Texas patriotic shirts, hats, hoodies, stickers, and gifts. Purchases support
+              Keep TX Redâ€™s independent Texas coverage and resources.
+            </p>
+            <Link
+              to="/shop"
+              className="mt-6 inline-flex rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              Shop featured products
+            </Link>
           </div>
         </div>
       </section>
+
       <section className="mx-auto max-w-[1200px] px-6 py-14">
         <NewsletterSignup sourcePage="/" />
       </section>
@@ -414,41 +335,97 @@ function Index() {
   );
 }
 
-function articleHref(a: DailyArticle) {
-  if (a.kind === "evergreen") return `/news/${a.slug}`;
-  // Ingested live items already carry an internal /news/{slug} URL.
-  if (a.source_url && a.source_url.startsWith("/")) return a.source_url;
-  return `/news/${a.slug}`;
-}
-
-function BreakingCard({ article }: { article: DailyArticle }) {
-  const href = articleHref(article);
-  const inner = (
-    <>
-      <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80">{article.category}</span>
-      <h3 className="font-sans text-base md:text-lg font-semibold leading-snug mt-1">{article.title}</h3>
-    </>
-  );
+function JourneySection({
+  id,
+  eyebrow,
+  title,
+  description,
+  hub,
+  links,
+  muted = false,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  hub: "/moving-to-texas" | "/living-in-texas";
+  links: ReadonlyArray<readonly [string, string]>;
+  muted?: boolean;
+}) {
   return (
-    <a href={href} className="block rounded-md bg-primary-foreground/10 hover:bg-primary-foreground/15 transition-colors p-4">
-      {inner}
-    </a>
+    <section aria-labelledby={id} className={muted ? "border-y bg-muted/40" : "border-t"}>
+      <div className="mx-auto max-w-[1200px] px-6 py-16">
+        <div className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr]">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">{eyebrow}</p>
+            <h2 id={id} className="mt-2 text-3xl font-semibold tracking-tight">
+              {title}
+            </h2>
+            <p className="mt-4 leading-relaxed text-muted-foreground">{description}</p>
+            <Link
+              to={hub}
+              className="mt-5 inline-block text-sm font-semibold text-primary hover:underline"
+            >
+              Explore {title} â†’
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {links.map(([label, to]) => (
+              <Link
+                key={to}
+                to={to}
+                className="rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md"
+              >
+                {label} <span className="mt-3 block text-sm text-primary">Open resource â†’</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
-function TrendingCard({ article }: { article: DailyArticle }) {
-  const href = articleHref(article);
-  const inner = (
-    <>
-      <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{article.category}</span>
-      <h3 className="font-sans text-sm font-semibold mt-1 leading-snug text-foreground group-hover:text-primary transition-colors line-clamp-4">
+function articleHref(article: DailyArticle) {
+  if (article.source_url?.startsWith("/")) return article.source_url;
+  return `/news/${article.slug}`;
+}
+
+function DailyNewsLink({
+  article,
+  inverted = false,
+}: {
+  article: DailyArticle;
+  inverted?: boolean;
+}) {
+  return (
+    <a
+      href={articleHref(article)}
+      className={
+        inverted
+          ? "block rounded-lg bg-white/10 p-4 hover:bg-white/15"
+          : "group block rounded-lg border p-4 hover:bg-muted"
+      }
+    >
+      <span
+        className={
+          inverted
+            ? "text-[10px] font-bold uppercase tracking-wider text-white/75"
+            : "text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+        }
+      >
+        {article.category}
+      </span>
+      <h3
+        className={
+          inverted
+            ? "mt-1 font-semibold leading-snug"
+            : "mt-1 font-semibold leading-snug group-hover:text-primary"
+        }
+      >
         {article.title}
       </h3>
-    </>
-  );
-  return (
-    <a key={article.slug} href={href} className="group block">
-      {inner}
     </a>
   );
 }
+

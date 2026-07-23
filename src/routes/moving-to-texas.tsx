@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { HubBreadcrumbs } from "@/components/hub-breadcrumbs";
 
 const sections = [
   {
-    title: "Plan your Texas budget",
-    description: "Compare income, living costs, moving expenses, and the monthly budget you may need after relocating.",
+    title: "Financial Planning",
+    description:
+      "Compare income, living costs, moving expenses, and the monthly budget you may need after relocating.",
     resources: [
       ["Texas Moving Cost Calculator", "/texas-moving-cost-calculator"],
       ["Texas Cost of Living Calculator", "/texas-cost-of-living-calculator"],
@@ -13,8 +15,9 @@ const sections = [
     ],
   },
   {
-    title: "Rent or buy a home",
-    description: "Estimate affordability, compare renting with buying, and understand the cash required to purchase a Texas home.",
+    title: "Finding a Home",
+    description:
+      "Estimate affordability, compare renting with buying, and understand the cash required to purchase a Texas home.",
     resources: [
       ["Texas Rent vs Buy Calculator", "/texas-rent-vs-buy-calculator"],
       ["Texas Home Affordability Calculator", "/texas-home-affordability-calculator"],
@@ -25,14 +28,50 @@ const sections = [
     ],
   },
   {
-    title: "Understand Texas before you arrive",
-    description: "Use existing Keep TX Red guides while the next generation of city, school, utility, licensing, and registration resources is built.",
+    title: "Cities and Communities",
+    description:
+      "Compare communities, salaries, local costs, and statewide developments before choosing where to settle.",
     resources: [
-      ["Texas Property Taxes", "/tax-calculator"],
-      ["Texas Laws", "/laws"],
-      ["Texas Elections and Voting", "/elections"],
+      ["Texas Cost of Living Calculator", "/texas-cost-of-living-calculator"],
+      ["Texas Salary Comparison by City", "/texas-salary-comparison-by-city"],
+      ["Houston", "/houston"],
       ["Texas Business and Economy", "/texas-business"],
       ["Latest Texas News", "/texas-news"],
+    ],
+  },
+  {
+    title: "Schools",
+    description:
+      "Find the public school district that serves a Texas address and follow education coverage.",
+    resources: [
+      ["Find My School District", "/find-my-school-district"],
+      ["Texas Education News", "/texas-news/education"],
+    ],
+  },
+  {
+    title: "Utilities",
+    description:
+      "Estimate recurring electricity, water, gas, internet, and trash costs for a Texas household.",
+    resources: [
+      ["Texas Utility Cost Calculator", "/texas-utility-cost-calculator"],
+      ["Texas Budget Planner", "/texas-budget-planner"],
+    ],
+  },
+  {
+    title: "Driver License",
+    description:
+      "Use the existing DMV finder to locate the right nearby office as you get settled.",
+    resources: [["Find My DMV", "/find-my-dmv"]],
+  },
+  {
+    title: "Moving Checklist",
+    description:
+      "Use the existing relocation guide and civic resources to plan the practical steps around your move.",
+    resources: [
+      ["Moving to Texas Guide", "/texas/moving-to-texas-2026"],
+      ["Register to Vote", "/register-to-vote"],
+      ["Texas Laws", "/laws"],
+      ["Texas Elections and Voting", "/elections"],
     ],
   },
 ] as const;
@@ -40,16 +79,32 @@ const sections = [
 function MovingToTexasPage() {
   return (
     <main>
+      <HubBreadcrumbs current="Moving to Texas" />
       <section className="border-b bg-muted/30">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Texas relocation resource center</p>
-          <h1 className="mt-3 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl">Moving to Texas</h1>
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
+            Texas relocation resource center
+          </p>
+          <h1 className="mt-3 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl">
+            Moving to Texas
+          </h1>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-            Plan your move with practical calculators, Texas guides, and step-by-step resources for comparing costs, choosing a home, and getting settled.
+            Plan your move with practical calculators, Texas guides, and step-by-step resources for
+            comparing costs, choosing a home, and getting settled.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/texas-financial-tools" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">View all Texas tools</Link>
-            <Link to="/texas-moving-cost-calculator" className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted">Estimate moving costs</Link>
+            <Link
+              to="/texas-financial-tools"
+              className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              View all Texas tools
+            </Link>
+            <Link
+              to="/texas-moving-cost-calculator"
+              className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted"
+            >
+              Estimate moving costs
+            </Link>
           </div>
         </div>
       </section>
@@ -57,7 +112,10 @@ function MovingToTexasPage() {
       <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="mb-8 max-w-3xl">
           <h2 className="text-3xl font-bold">Start with where you are in the journey</h2>
-          <p className="mt-3 text-muted-foreground">Choose a section below instead of searching through every calculator and guide on the site.</p>
+          <p className="mt-3 text-muted-foreground">
+            Choose a section below instead of searching through every calculator and guide on the
+            site.
+          </p>
         </div>
         <div className="space-y-12">
           {sections.map((section) => (
@@ -68,9 +126,15 @@ function MovingToTexasPage() {
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {section.resources.map(([title, to]) => (
-                  <Link key={to} to={to} className="rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary">
+                  <Link
+                    key={to}
+                    to={to}
+                    className="rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
                     {title}
-                    <span className="mt-3 block text-sm font-medium text-primary">Open resource →</span>
+                    <span className="mt-3 block text-sm font-medium text-primary">
+                      Open resource â†’
+                    </span>
                   </Link>
                 ))}
               </div>
@@ -80,10 +144,18 @@ function MovingToTexasPage() {
       </section>
 
       <section className="border-y bg-muted/30">
-        <div className="mx-auto grid max-w-6xl gap-6 px-4 py-12 md:grid-cols-3">
-          <div><h2 className="font-bold">Coming next: choose a city</h2><p className="mt-2 text-sm text-muted-foreground">City finder, city comparisons, ZIP-level costs, schools, and commute resources.</p></div>
-          <div><h2 className="font-bold">Coming next: prepare to move</h2><p className="mt-2 text-sm text-muted-foreground">A personalized relocation budget and 90-, 60-, and 30-day moving checklist.</p></div>
-          <div><h2 className="font-bold">Coming next: get settled</h2><p className="mt-2 text-sm text-muted-foreground">Driver license, vehicle registration, utilities, healthcare, and voter-registration guides.</p></div>
+        <div className="mx-auto max-w-6xl px-4 py-12">
+          <h2 className="text-2xl font-bold">Continue your Texas journey</h2>
+          <p className="mt-3 max-w-3xl text-muted-foreground">
+            Already here? Find property-tax, homeownership, utility, government, voting, and
+            lifestyle resources in the resident hub.
+          </p>
+          <Link
+            to="/living-in-texas"
+            className="mt-5 inline-block font-semibold text-primary hover:underline"
+          >
+            Explore Living in Texas â†’
+          </Link>
         </div>
       </section>
     </main>
@@ -94,9 +166,32 @@ export const Route = createFileRoute("/moving-to-texas")({
   head: () => ({
     meta: [
       { title: "Moving to Texas: Calculators, Costs & Relocation Resources | Keep TX Red" },
-      { name: "description", content: "Plan a move to Texas with cost-of-living, salary, moving-cost, mortgage, affordability, down-payment, and closing-cost tools plus practical Texas guides." },
+      {
+        name: "description",
+        content:
+          "Plan a move to Texas with cost-of-living, salary, moving-cost, mortgage, affordability, down-payment, and closing-cost tools plus practical Texas guides.",
+      },
     ],
     links: [{ rel: "canonical", href: "/moving-to-texas" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "Moving to Texas",
+              item: "https://www.keeptxred.com/moving-to-texas",
+            },
+          ],
+        }),
+      },
+    ],
   }),
   component: MovingToTexasPage,
 });
+
