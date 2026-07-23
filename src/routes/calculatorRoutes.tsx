@@ -1,4 +1,6 @@
 import React, { lazy, Suspense } from "react";
+import UniversalTexasTool from "@/pages/tools/UniversalTexasTool";
+import { remainingTexasTools } from "@/data/remainingTexasTools";
 
 const MortgageCalculator = lazy(() => import("@/pages/tools/MortgageCalculator"));
 const PropertyTaxCalculator = lazy(() => import("@/pages/tools/PropertyTaxCalculator"));
@@ -16,10 +18,13 @@ const TexasSalaryRelocationCalculator = lazy(() => import("@/pages/tools/TexasSa
 const TexasCostOfLivingComparison = lazy(() => import("@/pages/tools/TexasCostOfLivingComparison"));
 const TexasElectricityPlanSavingsCalculator = lazy(() => import("@/pages/tools/TexasElectricityPlanSavingsCalculator"));
 
-function CalculatorLoader() { return <div className="flex min-h-[300px] items-center justify-center"><div className="text-gray-600">Loading calculator...</div></div>; }
+function CalculatorLoader() {
+  return <div className="flex min-h-[300px] items-center justify-center"><div className="text-gray-600">Loading calculator...</div></div>;
+}
+
 const withLoader = (element: React.ReactNode) => <Suspense fallback={<CalculatorLoader />}>{element}</Suspense>;
 
-export const calculatorRoutes = [
+const existingCalculatorRoutes = [
   { path: "/tools/mortgage-calculator", element: withLoader(<MortgageCalculator />) },
   { path: "/tools/property-tax-calculator", element: withLoader(<PropertyTaxCalculator />) },
   { path: "/tools/home-insurance-calculator", element: withLoader(<HomeInsuranceCalculator />) },
@@ -35,4 +40,12 @@ export const calculatorRoutes = [
   { path: "/tools/texas-salary-relocation-calculator", element: withLoader(<TexasSalaryRelocationCalculator />) },
   { path: "/tools/texas-cost-of-living-comparison", element: withLoader(<TexasCostOfLivingComparison />) },
   { path: "/tools/texas-electricity-plan-savings-calculator", element: withLoader(<TexasElectricityPlanSavingsCalculator />) },
+];
+
+export const calculatorRoutes = [
+  ...existingCalculatorRoutes,
+  ...remainingTexasTools.map((tool) => ({
+    path: tool.slug,
+    element: <UniversalTexasTool tool={tool} />,
+  })),
 ];
