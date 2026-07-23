@@ -1,0 +1,6 @@
+export type EquityProjectionType="conservative"|"moderate"|"aggressive";
+export interface TexasEquityGrowthInput{currentHomeValue:number;currentMortgageBalance:number;interestRate:number;remainingLoanYears:number;annualAppreciationRate:number;projectionYears:number;monthlyMortgagePayment:number;projectionType:EquityProjectionType;}
+export interface CurrentEquityAnalysis{homeValue:number;mortgageBalance:number;equityAmount:number;equityPercentage:number;}
+export interface FutureEquityProjection{futureHomeValue:number;remainingMortgageBalance:number;futureEquity:number;equityGrowth:number;}
+export interface EquityWealthAnalysis{annualEquityGrowth:number;totalEquityGrowth:number;appreciationGain:number;principalReduction:number;}
+export interface TexasEquityGrowthResult{input:TexasEquityGrowthInput;currentEquity:CurrentEquityAnalysis;futureProjection:FutureEquityProjection;wealthAnalysis:EquityWealthAnalysis;recommendation:string;}

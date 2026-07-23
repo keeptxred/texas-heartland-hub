@@ -1,0 +1,12 @@
+import type {TexasHomeOwnershipCostResult} from "@/types/home/TexasHomeOwnershipCost";
+export const formatOwnershipCurrency=(value:number)=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(value);
+export const explainTotalOwnershipCost=(r:TexasHomeOwnershipCostResult)=>`Your estimated true monthly ownership cost is ${formatOwnershipCurrency(r.monthlyCosts.totalMonthlyCost)}, including mortgage, taxes, insurance, maintenance, and other expenses.`;
+export const explainHiddenOwnershipCosts=(r:TexasHomeOwnershipCostResult)=>`Non-mortgage ownership expenses add approximately ${formatOwnershipCurrency(r.comparison.additionalOwnershipCost)} per month.`;
+export const explainPropertyTaxes=(r:TexasHomeOwnershipCostResult)=>`Estimated property taxes contribute approximately ${formatOwnershipCurrency(r.monthlyCosts.propertyTaxMonthly)} per month.`;
+export const explainMaintenanceCosts=(r:TexasHomeOwnershipCostResult)=>`A maintenance reserve of ${formatOwnershipCurrency(r.monthlyCosts.maintenanceMonthly)} per month helps prepare for repairs and upkeep.`;
+export const explainInsuranceCosts=(r:TexasHomeOwnershipCostResult)=>`Homeowners insurance is estimated at ${formatOwnershipCurrency(r.monthlyCosts.insuranceMonthly)} per month.`;
+export const calculateOwnershipCostScore=(r:TexasHomeOwnershipCostResult)=>Math.max(0,Math.min(100,Math.round(r.affordability.affordabilityScore+(r.comparison.additionalOwnershipCost<1000?5:0)-(r.comparison.additionalOwnershipCost>2500?15:0))));
+export const explainAffordabilityStatus=(r:TexasHomeOwnershipCostResult)=>`This home receives an affordability rating of ${r.affordability.affordabilityScore}/100 and is considered ${r.affordability.status.toLowerCase()}.`;
+export const generateOwnershipRecommendation=(r:TexasHomeOwnershipCostResult)=>calculateOwnershipCostScore(r)>=85?"This ownership profile appears financially comfortable.":calculateOwnershipCostScore(r)>=65?"This home may fit your budget, but plan carefully for ongoing costs.":"Consider reducing housing costs or increasing reserves before purchasing.";
+export const explainAnnualOwnershipCost=(r:TexasHomeOwnershipCostResult)=>`Your estimated annual ownership cost is ${formatOwnershipCurrency(r.annualCosts.totalAnnualCost)}.`;
+export const generateOwnershipCostSEODescription=(location="Texas")=>`Use this ${location} home ownership cost calculator to estimate mortgage payments, property taxes, insurance, maintenance, utilities, and repairs.`;

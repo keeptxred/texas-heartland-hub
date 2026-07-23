@@ -1,0 +1,10 @@
+import type {TexasMortgagePayoffResult} from "@/types/mortgage/TexasMortgagePayoff";
+export const formatMortgageCurrency=(value:number)=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(value);
+export const explainYearsSaved=(r:TexasMortgagePayoffResult)=>r.accelerated.yearsSaved<=0?"Your current payment schedule is already optimized based on the entered assumptions.":`Your additional payments could help you pay off your mortgage approximately ${r.accelerated.yearsSaved.toFixed(1)} years sooner.`;
+export const explainInterestSavings=(r:TexasMortgagePayoffResult)=>`This strategy could save approximately ${formatMortgageCurrency(r.accelerated.interestSaved)} in mortgage interest.`;
+export const explainPayoffTimeline=(r:TexasMortgagePayoffResult)=>`Your estimated mortgage payoff timeline changes from ${r.baseline.remainingYears.toFixed(1)} years to ${r.accelerated.newPayoffYears.toFixed(1)} years.`;
+export const explainPaymentImpact=(r:TexasMortgagePayoffResult)=>`Your monthly mortgage commitment increases by ${formatMortgageCurrency(r.paymentComparison.monthlyDifference)}.`;
+export function calculateMortgageFreedomScore(r:TexasMortgagePayoffResult){let score=50;if(r.accelerated.yearsSaved>=2)score+=15;if(r.accelerated.yearsSaved>=5)score+=15;if(r.accelerated.yearsSaved>=10)score+=10;if(r.accelerated.interestSaved>=50000)score+=10;return Math.min(100,score)}
+export const generateMortgagePayoffRecommendation=(r:TexasMortgagePayoffResult)=>calculateMortgageFreedomScore(r)>=85?"Excellent strategy with substantial acceleration and savings.":calculateMortgageFreedomScore(r)>=70?"Strong strategy with meaningful payoff improvement.":"Moderate improvement. Consider increasing extra payments if mortgage freedom is a priority.";
+export const explainEquityImpact=()=>"Accelerating mortgage payoff increases ownership by reducing the outstanding loan balance faster.";
+export const generateMortgagePayoffSEODescription=(location="Texas")=>`Use this ${location} mortgage payoff calculator to estimate how extra payments can shorten your loan term, reduce interest, and help you become mortgage-free faster.`;

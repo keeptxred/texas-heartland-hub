@@ -1,0 +1,2 @@
+export interface DownPaymentEvent{action:string;loanProgram?:string;homePrice?:number;downPaymentPercent?:number;readinessScore?:number;}
+export function trackDownPaymentEvent(event:DownPaymentEvent){if(typeof window==="undefined")return;const payload={tool:"texas_down_payment_calculator",...event};const gtag=(window as Window&{gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("down_payment_event",{detail:payload}));}

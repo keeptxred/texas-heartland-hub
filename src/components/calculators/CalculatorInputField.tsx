@@ -11,6 +11,10 @@ interface CalculatorInputFieldProps {
   placeholder?: string;
   helpText?: string;
   error?: string;
+  min?: number;
+  max?: number;
+  step?: number | "any";
+  required?: boolean;
 }
 
 export default function CalculatorInputField({
@@ -24,11 +28,15 @@ export default function CalculatorInputField({
   placeholder,
   helpText,
   error,
+  min,
+  max,
+  step = "any",
+  required = false,
 }: CalculatorInputFieldProps) {
   return (
     <div className="space-y-2">
       <label htmlFor={id} className="block text-sm font-medium text-gray-700">
-        {label}
+        {label}{required ? <span aria-hidden="true"> *</span> : null}
       </label>
 
       <div className="relative">
@@ -41,10 +49,14 @@ export default function CalculatorInputField({
         <input
           id={id}
           type={type === "text" ? "text" : "number"}
-          inputMode={type === "currency" || type === "number" ? "decimal" : "text"}
+          inputMode={type === "currency" || type === "number" || type === "percent" ? "decimal" : "text"}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           placeholder={placeholder}
+          min={min}
+          max={max}
+          step={step}
+          required={required}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : helpText ? `${id}-help` : undefined}
           className={`w-full rounded-lg border bg-white px-3 py-2.5 text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:ring-2 ${
@@ -64,7 +76,7 @@ export default function CalculatorInputField({
       </div>
 
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-red-600">
+        <p id={`${id}-error`} role="alert" className="text-sm text-red-600">
           {error}
         </p>
       ) : helpText ? (

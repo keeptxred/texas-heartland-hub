@@ -1,0 +1,2 @@
+export interface RentVsBuyEvent{action:string;monthlyRent?:number;homePrice?:number;wealthDifference?:number;winner?:string;decisionScore?:number;}
+export function trackRentVsBuyEvent(event:RentVsBuyEvent){if(typeof window==="undefined")return;const payload={tool:"texas_rent_vs_buy_calculator",...event};const gtag=(window as Window&{gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("rent_vs_buy_event",{detail:payload}));}

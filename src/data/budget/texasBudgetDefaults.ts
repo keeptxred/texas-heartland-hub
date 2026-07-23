@@ -1,0 +1,9 @@
+export const texasBudgetRatios={housing:.28,transportation:.15,debt:.1,savings:.2,lifestyle:.27};
+export const housingBudgetBenchmarks={excellent:.2,comfortable:.28,acceptable:.36,high:.45};
+export const debtRatioBenchmarks={excellent:.05,healthy:.1,moderate:.2,high:.3};
+export const savingsBenchmarks={minimum:.05,recommended:.15,strong:.2,excellent:.3};
+export const emergencyFundTargets={minimumMonths:3,recommendedMonths:6,aggressiveMonths:12};
+export const texasTransportationDefaults={singleVehicle:750,familyVehicles:1200,commuter:500};
+export const texasUtilityDefaults={electricity:180,water:70,internet:75,cellPhones:120,gas:80};
+export const texasLifestyleProfiles={minimal:{monthly:1500,description:"Focused savings lifestyle"},moderate:{monthly:2500,description:"Balanced household lifestyle"},comfortable:{monthly:4000,description:"Comfortable family lifestyle"},premium:{monthly:6000,description:"High discretionary spending lifestyle"}};
+export const budgetScoreWeights={housing:30,debt:20,savings:30,cashFlow:20};

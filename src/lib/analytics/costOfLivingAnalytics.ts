@@ -1,0 +1,2 @@
+export interface CostOfLivingEvent { action:string; city?:string; income?:number; monthlyCost?:number; affordabilityScore?:number; }
+export function trackCostOfLivingEvent(event:CostOfLivingEvent){if(typeof window==="undefined")return;const payload={tool:"texas_cost_of_living_calculator",...event};const gtag=(window as Window & {gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("cost_of_living_event",{detail:payload}));}
