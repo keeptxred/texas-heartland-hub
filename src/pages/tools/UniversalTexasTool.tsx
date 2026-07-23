@@ -1,14 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 import CalculatorLayout from "@/components/calculators/CalculatorLayout";
-import { calculateRemainingTool, RemainingTexasTool } from "@/data/remainingTexasTools";
+import { calculateRemainingTool, RemainingTexasTool, remainingTexasTools } from "@/data/remainingTexasTools";
 import { trackCalculationCompleted, trackCalculatorOpened, trackResultsShared, trackValidationError } from "@/lib/analytics/calculatorAnalytics";
 
 const money = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
 
 function readInput(name: string, fallback: number) {
   if (typeof window === "undefined") return fallback;
-  const value = Number(new URLSearchParams(window.location.search).get(name));
+  const raw = new URLSearchParams(window.location.search).get(name);
+  if (raw === null || raw.trim() === "") return fallback;
+  const value = Number(raw);
   return Number.isFinite(value) && value >= 0 ? value : fallback;
+}
+
+function disclaimerFor(tool: RemainingTexasTool) {
+  if (tool.id.includes("flood")) return "This awareness score is not a flood-zone determination, engineering report, insurance decision, or substitute for FEMA and local floodplain records.";
+  if (tool.id.includes("crime") || tool.id.includes("safety")) return "This comparison is not a prediction of personal safety. Verify current agency data and evaluate the specific neighborhood and address.";
+  if (tool.category === "Taxes") return "This estimate is not tax advice or an official appraisal, exemption, assessment, or tax-bill determination.";
+  if (tool.category === "Insurance") return "This estimate is not insurance advice, an underwriting decision, or a coverage quote.";
+  if (tool.category === "Housing") return "This estimate is not lending, appraisal, inspection, builder, or real-estate advice and is not an approval or quote.";
+  return "This planning estimate is not a quote, guarantee, legal opinion, or financial advice.";
 }
 
 export default function UniversalTexasTool({ tool }: { tool: RemainingTexasTool }) {
@@ -18,6 +29,8 @@ export default function UniversalTexasTool({ tool }: { tool: RemainingTexasTool 
   const [shareStatus, setShareStatus] = useState("");
   const result = useMemo(() => calculateRemainingTool(tool, a, b, c), [tool, a, b, c]);
   const formatted = tool.unit === "currency" ? money.format(result) : tool.unit === "years" ? `${result.toFixed(1)} years` : `${result.toFixed(1)}${tool.unit === "score" ? "/100" : ""}`;
+  const relatedTools = remainingTexasTools.filter((candidate) => candidate.category === tool.category && candidate.id !== tool.id).slice(0, 3);
+  const disclaimer = disclaimerFor(tool);
 
   useEffect(() => {
     trackCalculatorOpened(tool.id);
@@ -42,6 +55,29 @@ export default function UniversalTexasTool({ tool }: { tool: RemainingTexasTool 
     }
   };
 
+  const downloadReport = () => {
+    const report = [
+      tool.title,
+      "",
+      `${tool.labels[0]}: ${a}`,
+      `${tool.labels[1]}: ${b}`,
+      `${tool.labels[2]}: ${c}`,
+      `Estimated result: ${formatted}`,
+      `Formula version: ${tool.formulaVersion}`,
+      `Formula reviewed: ${tool.reviewedOn}`,
+      `Source status: ${tool.sourceStatus === "official-data" ? "official data" : "editable planning assumptions"}`,
+      "",
+      disclaimer,
+      "Verify current local figures before making a decision.",
+    ].join("\n");
+    const href = URL.createObjectURL(new Blob([report], { type: "text/plain;charset=utf-8" }));
+    const anchor = document.createElement("a");
+    anchor.href = href;
+    anchor.download = `${tool.id}-report.txt`;
+    anchor.click();
+    URL.revokeObjectURL(href);
+  };
+
   return (
     <CalculatorLayout
       title={tool.title}
@@ -50,42 +86,65 @@ export default function UniversalTexasTool({ tool }: { tool: RemainingTexasTool 
       lastUpdated="July 2026"
       schema={{
         "@context": "https://schema.org",
-        "@type": "WebApplication",
-        name: tool.title,
-        description: tool.description,
-        applicationCategory: "FinanceApplication",
-        operatingSystem: "All",
-        url: `https://keeptxred.com${tool.slug}`,
-        isAccessibleForFree: true,
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            name: tool.title,
+            description: tool.description,
+            applicationCategory: "FinanceApplication",
+            operatingSystem: "All",
+            url: `https://keeptxred.com${tool.slug}`,
+            isAccessibleForFree: true,
+          },
+          {
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "Is this an official Texas government estimate?",
+                acceptedAnswer: { "@type": "Answer", text: "No. Unless explicitly labeled otherwise, this tool uses editable planning assumptions and is not an official determination or quote." },
+              },
+              {
+                "@type": "Question",
+                name: "Does this calculator use AI credits?",
+                acceptedAnswer: { "@type": "Answer", text: "No. The calculation runs locally in the browser using deterministic formulas." },
+              },
+            ],
+          },
+        ],
       }}
     >
       <div className="space-y-8">
-        <section className="grid gap-6 md:grid-cols-2">
+        <section className="grid gap-6 md:grid-cols-2" aria-labelledby={`${tool.id}-inputs-heading`}>
           <div className="space-y-4">
+            <h2 id={`${tool.id}-inputs-heading`} className="text-lg font-semibold text-gray-900">Calculator inputs</h2>
             {tool.labels.map((label, index) => {
               const values = [a, b, c];
               const setters = [setA, setB, setC];
               const setter = setters[index];
+              const inputId = `${tool.id}-input-${index + 1}`;
               return (
-                <label className="block" key={label}>
-                  <span className="mb-1 block text-sm font-medium text-gray-800">{label}</span>
+                <div className="block" key={label}>
+                  <label htmlFor={inputId} className="mb-1 block text-sm font-medium text-gray-800">{label}</label>
                   <input
+                    id={inputId}
                     type="number"
+                    inputMode="decimal"
                     min="0"
                     step="any"
                     value={values[index]}
                     onChange={(event) => setter(Number(event.target.value))}
-                    className="w-full rounded-md border px-3 py-2"
+                    className="w-full rounded-md border px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                   />
-                </label>
+                </div>
               );
             })}
           </div>
 
-          <div className="rounded-lg bg-gray-950 p-6 text-white">
+          <div className="rounded-lg bg-gray-950 p-6 text-white" aria-live="polite" aria-atomic="true">
             <p className="text-sm uppercase tracking-wide text-gray-300">Estimated result</p>
-            <p className="mt-3 text-4xl font-bold">{formatted}</p>
-            <p className="mt-5 text-sm leading-6 text-gray-300">This planning estimate is not a quote, appraisal, tax determination, insurance decision, flood determination, legal opinion, or financial advice.</p>
+            <p className="mt-3 break-words text-4xl font-bold">{formatted}</p>
+            <p className="mt-5 text-sm leading-6 text-gray-300">{disclaimer}</p>
           </div>
         </section>
 
@@ -95,10 +154,26 @@ export default function UniversalTexasTool({ tool }: { tool: RemainingTexasTool 
           <p className="mt-2">Replace statewide assumptions with current local figures before making a financial decision. Authoritative county, city, ISD, utility, toll, flood, and market datasets are maintained separately.</p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <button type="button" onClick={() => window.print()} className="rounded-md border px-4 py-2 font-medium text-gray-900">Print or save results</button>
+            <button type="button" onClick={downloadReport} className="rounded-md border px-4 py-2 font-medium text-gray-900">Download report</button>
             <button type="button" onClick={shareResults} className="rounded-md border px-4 py-2 font-medium text-gray-900">Copy shareable link</button>
             {shareStatus && <span role="status" className="text-gray-700">{shareStatus}</span>}
           </div>
         </section>
+
+        {relatedTools.length > 0 && (
+          <nav aria-label="Related calculators" className="rounded-xl border p-5">
+            <h2 className="font-semibold text-gray-900">Related Texas tools</h2>
+            <ul className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedTools.map((related) => (
+                <li key={related.id}>
+                  <a href={related.slug} className="block rounded-md border p-3 font-medium text-red-700 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+                    {related.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </div>
     </CalculatorLayout>
   );
