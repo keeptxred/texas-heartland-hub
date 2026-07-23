@@ -1,0 +1,52 @@
+name: Calculator validation
+
+on:
+  pull_request:
+    paths:
+      - "src/lib/**"
+      - "src/types/**"
+      - "src/data/**"
+      - "src/components/**"
+      - "src/pages/**"
+      - "src/routes/**"
+      - "package.json"
+      - ".github/workflows/calculator-validation.yml"
+  push:
+    branches:
+      - agent/chat-calculators-through-tool-56
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Run calculator tests
+        run: pnpm test
+
+      - name: Build production application
+        run: pnpm build
+
+      - name: Lint
+        run: pnpm lint
