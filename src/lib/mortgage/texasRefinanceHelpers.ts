@@ -1,0 +1,11 @@
+import type {TexasRefinanceResult} from "@/types/mortgage/TexasRefinance";
+export const formatRefinanceCurrency=(value:number)=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(value);
+export const explainMonthlySavings=(r:TexasRefinanceResult)=>r.savings.monthlySavings>0?`Refinancing could reduce the mortgage payment by approximately ${formatRefinanceCurrency(r.savings.monthlySavings)} per month.`:"This refinance does not reduce the monthly mortgage payment.";
+export const explainAnnualSavings=(r:TexasRefinanceResult)=>`The estimated annual cash-flow improvement is ${formatRefinanceCurrency(r.savings.annualSavings)}.`;
+export const explainInterestSavings=(r:TexasRefinanceResult)=>r.savings.totalInterestSavings>0?`Refinancing may reduce interest costs by approximately ${formatRefinanceCurrency(r.savings.totalInterestSavings)}.`:"The refinance does not reduce total interest costs.";
+export const explainClosingCosts=(r:TexasRefinanceResult)=>`Estimated refinance costs are ${formatRefinanceCurrency(r.input.closingCosts)}.`;
+export const explainBreakEven=(r:TexasRefinanceResult)=>r.breakEven.message;
+export const explainRefinanceScore=(r:TexasRefinanceResult)=>r.decisionScore>=80?"Strong refinance opportunity.":r.decisionScore>=60?"Refinancing may be beneficial.":"The financial benefit is limited.";
+export const explainSavingsComparison=(r:TexasRefinanceResult)=>`Projected net savings after costs is approximately ${formatRefinanceCurrency(r.savings.netSavingsAfterCosts)}.`;
+export const generateRefinanceRecommendation=(r:TexasRefinanceResult)=>r.decisionScore>=80?"Refinancing appears to be a strong financial opportunity.":r.decisionScore>=60?"Refinancing may make sense if you keep the property long enough.":"Consider keeping your current mortgage.";
+export const generateRefinanceSEODescription=(location="Texas")=>`Use this ${location} refinance calculator to estimate mortgage savings, break-even timing, interest reduction, and whether refinancing makes financial sense.`;
