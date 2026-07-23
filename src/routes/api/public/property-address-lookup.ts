@@ -202,7 +202,8 @@ async function runCoordinateFallback(
   }
 }
 
-export const Route = createFileRoute("/api/public/property-address-lookup")({
+// This route can be added before routeTree.gen.ts is regenerated; the runtime path remains exact.
+export const Route = createFileRoute("/api/public/property-address-lookup" as any)({
   server: {
     handlers: {
       GET: async ({ request }) => {
