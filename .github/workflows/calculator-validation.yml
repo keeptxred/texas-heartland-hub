@@ -36,10 +36,30 @@ jobs:
         run: corepack enable && corepack prepare pnpm@10.12.1 --activate
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install --no-frozen-lockfile --reporter=silent
 
-      - name: Typecheck
-        run: pnpm typecheck
+      - name: Capture TypeScript diagnostics
+        id: typecheck
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          pnpm typecheck -- --pretty false > typecheck.log 2>&1
+          status=$?
+          cat typecheck.log
+          exit $status
+
+      - name: Upload TypeScript diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calculator-typecheck-diagnostics
+          path: typecheck.log
+          if-no-files-found: error
+
+      - name: Stop on TypeScript failure
+        if: steps.typecheck.outcome == 'failure'
+        run: exit 1
 
       - name: Run calculator tests
         run: pnpm test
