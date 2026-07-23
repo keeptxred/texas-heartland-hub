@@ -1,0 +1,7 @@
+export type MortgagePayoffStrategy="standard"|"monthly_extra"|"biweekly"|"annual_lump_sum"|"custom";
+export interface TexasMortgagePayoffInput{currentBalance:number;interestRate:number;currentMonthlyPayment:number;remainingYears:number;extraMonthlyPayment:number;annualExtraPayment:number;strategy:MortgagePayoffStrategy;}
+export interface MortgagePayoffBaseline{remainingMonths:number;remainingYears:number;totalRemainingPayments:number;remainingInterest:number;}
+export interface AcceleratedPayoffAnalysis{newPayoffMonths:number;newPayoffYears:number;monthsSaved:number;yearsSaved:number;newTotalPayments:number;interestSaved:number;}
+export interface MortgagePaymentComparison{currentPayment:number;acceleratedPayment:number;monthlyDifference:number;}
+export interface MortgageFreedomTimeline{currentPayoffYear:number;acceleratedPayoffYear:number;yearsUntilFreedom:number;}
+export interface TexasMortgagePayoffResult{input:TexasMortgagePayoffInput;baseline:MortgagePayoffBaseline;accelerated:AcceleratedPayoffAnalysis;paymentComparison:MortgagePaymentComparison;freedomTimeline:MortgageFreedomTimeline;recommendation:string;}
