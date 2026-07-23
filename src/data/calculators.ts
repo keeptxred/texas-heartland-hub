@@ -1,6 +1,8 @@
+import { remainingTexasTools } from "@/data/remainingTexasTools";
+
 export interface CalculatorDirectoryItem { id:string; title:string; slug:string; description:string; category:"Housing"|"Taxes"|"Insurance"|"Utilities"|"Relocation"|"Financial"; icon?:string; keywords:string[]; featured?:boolean; }
 
-export const calculators: CalculatorDirectoryItem[] = [
+const coreCalculators: CalculatorDirectoryItem[] = [
   { id:"mortgage-calculator", title:"Texas Mortgage Calculator", slug:"/tools/mortgage-calculator", description:"Estimate your Texas mortgage payment including principal, interest, property taxes, insurance, PMI, and HOA costs.", category:"Housing", icon:"Home", keywords:["texas mortgage calculator","home payment calculator","monthly mortgage payment texas","buying a house in texas"], featured:true },
   { id:"property-tax-calculator", title:"Texas Property Tax Calculator", slug:"/tools/property-tax-calculator", description:"Estimate Texas property taxes using home value, tax rates, and homestead exemptions.", category:"Taxes", icon:"Landmark", keywords:["texas property tax calculator","texas property taxes","homestead exemption texas","property tax estimate"], featured:true },
   { id:"home-insurance-calculator", title:"Texas Home Insurance Calculator", slug:"/tools/home-insurance-calculator", description:"Estimate homeowners insurance costs based on home value, coverage, deductibles, and Texas risk factors.", category:"Insurance", icon:"Shield", keywords:["texas homeowners insurance calculator","home insurance cost texas","texas insurance rates"], featured:true },
@@ -16,6 +18,19 @@ export const calculators: CalculatorDirectoryItem[] = [
   { id:"texas-salary-relocation-calculator", title:"Texas Salary Relocation Calculator", slug:"/tools/texas-salary-relocation-calculator", description:"Estimate the Texas salary needed to preserve your current purchasing power.", category:"Financial", icon:"CircleDollarSign", keywords:["texas salary calculator","salary needed to move to texas","salary cost of living comparison"] },
   { id:"texas-cost-of-living-comparison", title:"Texas Cost of Living Comparison", slug:"/tools/texas-cost-of-living-comparison", description:"Compare current monthly spending with an estimated Texas equivalent.", category:"Relocation", icon:"Scale", keywords:["texas cost of living comparison","cost of living calculator texas","moving to texas savings"] },
   { id:"texas-electricity-plan-savings-calculator", title:"Texas Electricity Plan Savings Calculator", slug:"/tools/texas-electricity-plan-savings-calculator", description:"Compare Texas electricity plans using monthly usage, rates, and recurring fees.", category:"Utilities", icon:"Bolt", keywords:["texas electricity plan calculator","compare texas electricity rates","electric bill savings texas"] },
+];
+
+export const calculators: CalculatorDirectoryItem[] = [
+  ...coreCalculators,
+  ...remainingTexasTools.map((tool) => ({
+    id: tool.id,
+    title: tool.title,
+    slug: tool.slug,
+    description: tool.description,
+    category: tool.category,
+    icon: tool.mode === "planner" ? "ClipboardList" : tool.mode === "comparison" ? "Scale" : "Calculator",
+    keywords: [tool.title.toLowerCase(), tool.id.replaceAll("-", " "), "texas calculator"],
+  })),
 ];
 
 export function getFeaturedCalculators(){return calculators.filter((calculator)=>calculator.featured)}
