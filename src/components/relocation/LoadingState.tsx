@@ -1,0 +1,1 @@
+export default function LoadingState({label="Loading results…"}:{label?:string}){return <div role="status" aria-live="polite" className="rounded-xl border p-8 text-center text-muted-foreground"><span className="inline-block size-5 animate-spin rounded-full border-2 border-current border-t-transparent"/> <span>{label}</span></div>}
