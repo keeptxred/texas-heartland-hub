@@ -59,6 +59,7 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
       "Price homeowners, wind, and flood coverage before finalizing a housing budget.",
     ],
     fallbackSlugs: [
+      "moving-to-houston-address-checklist",
       "texas-energy-economy-overview",
       "texas-grid-ercot-explained",
       ...RELOCATION_FALLBACKS,
@@ -96,7 +97,12 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
       "Compare county, city, ISD, and special-district rates for each property.",
       "Check fast-growth school-district boundaries before signing a lease or contract.",
     ],
-    fallbackSlugs: ["texas-voting-guide-2026", "texas-property-tax-guide", ...RELOCATION_FALLBACKS],
+    fallbackSlugs: [
+      "moving-to-dallas-fort-worth-guide",
+      "texas-voting-guide-2026",
+      "texas-property-tax-guide",
+      ...RELOCATION_FALLBACKS,
+    ],
   },
   "san-antonio": {
     slug: "/san-antonio",
@@ -131,6 +137,7 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
       "Verify school districts and utility providers at the street-address level.",
     ],
     fallbackSlugs: [
+      "moving-to-san-antonio-guide",
       "texas-water-rights-explained",
       "texas-school-finance-explained",
       ...RELOCATION_FALLBACKS,
@@ -175,6 +182,7 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
       "Confirm utility territory and school assignment for the exact address.",
     ],
     fallbackSlugs: [
+      "moving-to-austin-guide",
       "how-a-bill-becomes-texas-law",
       "texas-water-rights-explained",
       ...RELOCATION_FALLBACKS,
@@ -213,6 +221,7 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
       "Review school districts, water service, and property taxes for the exact address.",
     ],
     fallbackSlugs: [
+      "moving-to-el-paso-guide",
       "texas-border-geography-101",
       "texas-border-policy-full-guide",
       "texas-water-rights-explained",

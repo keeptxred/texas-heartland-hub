@@ -21,6 +21,469 @@ export type ArticleBody = {
 };
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
+  "moving-to-houston-address-checklist": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Verify property-specific conditions, boundaries, rates, and insurance with the responsible agencies and licensed professionals before making a decision.",
+    keyTakeaways: [
+      "In the Houston region, evaluate the exact address rather than relying on the city name in a listing.",
+      "Research flood exposure, drainage history, and insurance availability before signing a lease or purchase contract.",
+      "Add every taxing unit, utility provider, school district, toll, and insurance quote to the monthly budget.",
+      "Test the commute during the hours you will actually travel.",
+    ],
+    intro: [
+      'Houston offers major employment centers, established neighborhoods, master-planned suburbs, and nearly every style of housing. That variety is useful, but it also makes a broad label such as "Houston area" too imprecise for a relocation decision. Two homes with similar prices can have different flood exposure, school assignments, tax bills, utility providers, insurance costs, and commute times.',
+      "The best Houston search begins with a candidate street address. Use the checklist below before you compare finishes, incentives, or list price.",
+    ],
+    sections: [
+      {
+        heading: "1. Map the exact address",
+        paragraphs: [
+          "First confirm whether the property is inside Houston city limits, another municipality, or an unincorporated area. Then identify the county, school district, emergency-service districts, and any municipal utility district. A Houston mailing address does not answer those questions.",
+          "The [Houston Planning Department's map tools](https://www.houstontx.gov/planning/) provide layers for city limits, districts, neighborhoods, transportation, public safety, and flood hazards. County appraisal records can identify the parcel and its taxing units. Save the results for each address you seriously consider.",
+        ],
+        bullets: [
+          "City and county",
+          "Independent school district and assigned campuses",
+          "Municipal utility district or other special districts",
+          "Water, sewer, electric, gas, and trash providers",
+          "Nearest emergency services, hospitals, and evacuation routes",
+        ],
+      },
+      {
+        heading: "2. Complete flood and insurance research before price negotiations",
+        paragraphs: [
+          "A flood-zone label is only one part of the risk review. Use official maps, ask for the property's flood and drainage history, examine nearby bayous and detention areas, and request insurance quotes for the specific building. Renters should also ask how vehicles and ground-floor belongings are protected.",
+          "The City of Houston maintains an official [Floodplain Management Office portal](https://floodplain.houstontx.gov/). Federal maps, local drainage projects, prior claims information that is legally available, elevation, and the property's construction details can all affect the decision. Homeowners coverage generally does not substitute for a separate flood policy.",
+        ],
+      },
+      {
+        heading: "3. Calculate the complete housing payment",
+        paragraphs: [
+          "Do not compare Houston-area homes using principal and interest alone. Add the county, city, school district, community college, hospital district, and any special-district taxes shown for the parcel. Newer developments may carry substantial district debt or assessments.",
+          "Then add homeowners or renters insurance, any separate wind or flood coverage, homeowners association dues, utility estimates, tolls, and routine maintenance. Use our [Texas Property Tax Calculator](/tax-calculator) for a first estimate and read the [homestead exemption guide](/news/homestead-exemption-explained) before buying a primary residence.",
+        ],
+      },
+      {
+        heading: "4. Test the commute and utility territory",
+        paragraphs: [
+          "Houston's employment is spread among Downtown, the Texas Medical Center, the Energy Corridor, Uptown, Greenway Plaza, the Ship Channel, and suburban job centers. A short distance on a map can become a difficult peak-hour drive. Test a candidate route on the weekday and at the hours you expect to travel, including school drop-off or shift changes.",
+          "Electric service also depends on the address. Many residents can choose a retail electricity plan through the state's [Power to Choose](https://www.powertochoose.org/) marketplace, while some municipal and cooperative territories work differently. Confirm the delivery utility and available provider options rather than assuming the arrangement.",
+        ],
+      },
+      {
+        heading: "5. Use a 30-day arrival plan",
+        bullets: [
+          "Start or transfer utilities and confirm deposit, connection, and trash-service requirements.",
+          "Update your driver license and vehicle registration using the deadlines in the [interactive moving checklist](/moving-checklist).",
+          "Register eligible students with the address-assigned district and campus.",
+          "Update voter registration after a county move.",
+          "If you bought a primary residence, calendar the homestead exemption filing and appraisal-review dates.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Is a Houston mailing address always inside the City of Houston?",
+        a: "No. Postal city names do not reliably establish municipal boundaries, counties, school districts, or service providers. Verify each item using the street address.",
+      },
+      {
+        q: "Does being outside a mapped high-risk flood zone mean flood insurance is unnecessary?",
+        a: "Not necessarily. Maps are one input, and flooding can occur outside higher-risk zones. Review the property history and drainage context, then obtain property-specific advice and quotes.",
+      },
+      {
+        q: "Can I choose any electricity company?",
+        a: "It depends on the service territory. Many Houston-area addresses participate in the competitive retail market, while municipal utilities and cooperatives may not. Check the address before selecting a plan.",
+      },
+    ],
+    sources: [
+      {
+        label: "City of Houston relocation resources",
+        url: "https://www.houstontx.gov/abouthouston/relocation.html",
+      },
+      {
+        label: "Houston Planning Department maps and data",
+        url: "https://www.houstontx.gov/planning/",
+      },
+      {
+        label: "City of Houston Floodplain Management Office",
+        url: "https://floodplain.houstontx.gov/",
+      },
+      {
+        label: "Public Utility Commission of Texas - Power to Choose",
+        url: "https://www.powertochoose.org/",
+      },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+      "texas-grid-ercot-explained",
+    ],
+    cta: { label: "Explore the Houston city page", href: "/houston" },
+  },
+  "moving-to-dallas-fort-worth-guide": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Confirm current taxes, boundaries, transportation costs, and service providers for the exact address.",
+    keyTakeaways: [
+      "Treat Dallas-Fort Worth as one regional economy with many separate job centers and local governments.",
+      "Choose the likely commute first, then compare homes within a realistic travel area.",
+      "Price tolls, property taxes, insurance, utilities, and special districts alongside rent or mortgage.",
+      "Verify the county, municipality, school district, and utility providers for every address.",
+    ],
+    intro: [
+      "Dallas-Fort Worth is not a single-center metro where every commute points downtown. Employment is distributed across Dallas, Fort Worth, Arlington, Irving, Plano, Richardson, Frisco, the airport area, and other hubs. A house that looks centrally located on a regional map may be on the wrong side of the daily trip.",
+      "North Central Texas continued growing rapidly in 2025, with the regional planning agency estimating nearly nine million residents at the start of 2026. Growth creates opportunity, but it can also change road demand, school enrollment, construction patterns, and infrastructure needs. Use current address-level information rather than an old reputation for a suburb.",
+    ],
+    sections: [
+      {
+        heading: "Choose the work corridor before the neighborhood",
+        paragraphs: [
+          "Identify the workplace you expect to visit most often and any second location used by another member of the household. Test routes during actual commute hours and note toll roads, construction, school traffic, and alternatives when a freeway is disrupted.",
+          "If the job may change, compare access to several employment corridors instead of optimizing for one building. Proximity to a freeway entrance is not the same as a predictable commute; the direction and bottleneck matter.",
+        ],
+      },
+      {
+        heading: "Understand the local-government stack",
+        paragraphs: [
+          "The region crosses Dallas, Tarrant, Collin, Denton, and other counties, and contains dozens of municipalities and independent school districts. Each address can have a different combination of tax offices, local services, development rules, school assignments, and special districts.",
+          "Pull the current parcel record from the county appraisal district. List every taxing unit and compare the prior tax bill with an estimate based on the expected purchase price. For a primary home, learn how the [Texas homestead exemption](/news/homestead-exemption-explained) applies after the purchase.",
+        ],
+      },
+      {
+        heading: "Add transportation to the monthly budget",
+        paragraphs: [
+          "DFW households may combine driving, toll roads, commuter rail, light rail, and bus service. The region's systems are operated by different agencies. DART serves Dallas and participating cities, Trinity Metro serves Fort Worth and Tarrant County communities, and DCTA serves Denton County. The Trinity Railway Express links downtown Dallas and Fort Worth.",
+          "Check whether the home and workplace are both convenient to the same service, whether the schedule fits your hours, and how you will cover the first and last mile. For a driving commute, estimate tolls and parking over a full month rather than treating them as occasional costs.",
+        ],
+      },
+      {
+        heading: "Verify schools, utilities, and growth plans",
+        paragraphs: [
+          "A city name does not establish the school district or assigned campus. Use the exact address and confirm directly with the district, particularly near fast-growing attendance boundaries. Ask how new campuses, rezoning, or construction could affect the property.",
+          "Confirm electric, water, sewer, gas, trash, and internet providers before signing. City water rates and deposits vary, and some developments are served by districts or providers that do not match the mailing address. Review planned roads and nearby development using municipal and regional planning documents.",
+        ],
+      },
+      {
+        heading: "A practical DFW comparison sheet",
+        bullets: [
+          "Weekday commute time, tolls, parking, and backup route",
+          "County, city, school district, and every special taxing unit",
+          "Estimated tax bill at the likely purchase price",
+          "Insurance and utility quotes for the address",
+          "Assigned schools and current boundary information",
+          "Transit access, airport access, and expected construction",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Should Dallas and Fort Worth be considered separately?",
+        a: "They are part of one connected economy, but they remain separate cities with distinct job centers, services, and commuting patterns. Compare the whole region, then make an address-level decision.",
+      },
+      {
+        q: "Can I rely on mileage to estimate a DFW commute?",
+        a: "No. Direction, time of day, toll-road access, construction, and bottlenecks can matter more than distance. Test the trip at the hours you expect to travel.",
+      },
+      {
+        q: "Does every DFW address have rail access?",
+        a: "No. Transit service and frequency vary widely by city and corridor. Verify both ends of the trip with the relevant transit agency.",
+      },
+    ],
+    sources: [
+      {
+        label: "North Central Texas Council of Governments - regional population update",
+        url: "https://www.nctcog.org/executive-director/public-affairs/press-releases/north-central-texas-nears-9-million-residents-as-region-adds-more-than-200-000-people-in-one-year",
+      },
+      {
+        label: "NCTCOG public transportation services",
+        url: "https://www.nctcog.org/trans/plan/lumo/transit-management-and-planning/general-public-information/existing-services",
+      },
+      {
+        label: "DART transit services",
+        url: "https://dart.org/guide/transit-and-use/transit-services",
+      },
+      {
+        label: "City of Fort Worth water services",
+        url: "https://www.fortworthtexas.gov/departments/water/services",
+      },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-property-tax-guide",
+      "texas-school-finance-explained",
+      "what-local-governments-control",
+    ],
+    cta: { label: "Explore the Dallas-Fort Worth city page", href: "/dallas-fort-worth" },
+  },
+  "moving-to-san-antonio-guide": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Verify boundaries, utility service, rates, and school assignments for a specific address.",
+    keyTakeaways: [
+      "San Antonio-area decisions change across Bexar, Comal, and Guadalupe counties and across city boundaries.",
+      "Confirm whether CPS Energy and SAWS serve the address; the mailing city alone is not enough.",
+      "Test travel around Loop 1604, I-10, I-35, and US 281 during the hours you expect to use them.",
+      "Compare school boundaries, taxing units, water service, and special districts before choosing a home.",
+    ],
+    intro: [
+      "San Antonio combines a large central city with established inner suburbs, military communities, and fast-growing corridors toward Boerne, New Braunfels, Schertz, and Cibolo. The region can offer more space than some other Texas metros, but a lower list price does not replace address-level research.",
+      "Start with the likely job location, then identify the county, municipality, school district, utility territory, and full property-tax stack for each candidate address.",
+    ],
+    sections: [
+      {
+        heading: "Match the home to the daily travel pattern",
+        paragraphs: [
+          "Major destinations include Downtown, the South Texas Medical Center, Joint Base San Antonio locations, Port San Antonio, and employment corridors along I-10 and I-35. A household connected to more than one of these should test both trips.",
+          "Loop 1604, I-10, I-35, and US 281 are useful organizing lines, but construction and peak demand can change travel times. Drive the route on a normal weekday and identify a backup before deciding that a community is close enough.",
+        ],
+      },
+      {
+        heading: "Confirm the county, city, and school district",
+        paragraphs: [
+          "The broader region crosses Bexar, Comal, and Guadalupe counties, with multiple cities and independent school districts. A San Antonio-area mailing label does not determine municipal services or school assignment.",
+          "Use the county appraisal district to identify the parcel and taxing units, then verify the assigned campus directly with the school district. If buying, estimate taxes using the expected purchase price and review [homestead exemption filing guidance](/news/homestead-exemption-explained).",
+        ],
+      },
+      {
+        heading: "Know how public utilities work",
+        paragraphs: [
+          "The City of San Antonio owns CPS Energy and the San Antonio Water System. Those organizations provide important electric, gas, water, and wastewater service in their territories, with city oversight of rates. Addresses outside their service areas may use other utilities, cooperatives, or districts.",
+          "Before signing, check the actual provider, connection process, deposits, current rates, water restrictions, and average use for a similar property. Large lots, irrigation, older air-conditioning equipment, and pool ownership can materially change a monthly estimate.",
+        ],
+      },
+      {
+        heading: "Review water, development, and special districts",
+        paragraphs: [
+          "Fast-growing edges of the metro may have newer infrastructure, active construction, or special districts that affect taxes and utility costs. Ask who owns and maintains the roads, drainage, water, sewer, and emergency-service infrastructure.",
+          "Review current water rules with the serving utility and determine whether the property uses municipal service, a district, or a well. Do not assume that practices at one San Antonio-area address apply to another community.",
+        ],
+      },
+      {
+        heading: "Your San Antonio due-diligence list",
+        bullets: [
+          "Job-center commute at the real travel time",
+          "County, municipality, school district, and assigned campus",
+          "CPS Energy, SAWS, or alternative service providers",
+          "All property-taxing units and special-district obligations",
+          "Water rules, drainage context, insurance, and utility estimates",
+          "Vehicle, voter, school, and homestead tasks after arrival",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Do all San Antonio-area homes use CPS Energy and SAWS?",
+        a: "No. Service depends on the address and utility territory. Confirm electric, gas, water, and wastewater providers before signing.",
+      },
+      {
+        q: "Is a San Antonio mailing address always in Bexar County?",
+        a: "No. The wider market reaches neighboring counties, and postal labels do not establish county or city boundaries. Verify the parcel.",
+      },
+      {
+        q: "What is the most important commute check?",
+        a: "Test the actual home-to-work route on a typical weekday at the time you expect to travel, including any military gate, school, or construction delays relevant to the trip.",
+      },
+    ],
+    sources: [
+      {
+        label: "City of San Antonio Public Utilities Division",
+        url: "https://www.sa.gov/Directory/Departments/Finance/About/Divisions/Public-Utilities",
+      },
+      { label: "CPS Energy", url: "https://www.cpsenergy.com/" },
+      { label: "San Antonio Water System", url: "https://www.saws.org/" },
+      { label: "VIA Metropolitan Transit", url: "https://www.viainfo.net/" },
+      { label: "Bexar Appraisal District", url: "https://www.bcad.org/" },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-water-rights-explained",
+      "texas-property-tax-guide",
+      "texas-school-finance-explained",
+    ],
+    cta: { label: "Explore the San Antonio city page", href: "/san-antonio" },
+  },
+  "moving-to-austin-guide": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Verify current boundaries, taxes, utility service, school assignments, and transportation conditions for the exact address.",
+    keyTakeaways: [
+      "Compare Austin-area homes by total monthly cost, not rent or mortgage alone.",
+      "Verify whether an address is inside Austin city limits and which county, school district, and utility territory serves it.",
+      "Test the commute to the actual job corridor and include tolls, parking, and time in the budget.",
+      "Confirm water and electric service before assuming a City of Austin account applies.",
+    ],
+    intro: [
+      "The Austin market extends far beyond the central city into Travis, Williamson, and Hays counties. Round Rock, Cedar Park, Pflugerville, Georgetown, Buda, Kyle, and other communities connect to the same regional economy while operating under different local governments, tax structures, school districts, and utilities.",
+      "That makes an address-level budget essential. A less expensive home farther from work can become more costly after property taxes, tolls, utilities, insurance, and hours spent commuting.",
+    ],
+    sections: [
+      {
+        heading: "Build the full monthly cost",
+        paragraphs: [
+          "For buyers, estimate the property-tax bill from the expected purchase price and all taxing units, not only the seller's prior bill. Add homeowners insurance, homeowners association dues, utility estimates, maintenance, tolls, and parking. For renters, include utility setup, recurring fees, parking, insurance, and commute costs.",
+          "Use our [property-tax calculator](/tax-calculator) for an initial comparison and read the [homestead exemption guide](/news/homestead-exemption-explained) before purchasing a primary residence.",
+        ],
+      },
+      {
+        heading: "Locate the address within the region",
+        paragraphs: [
+          "Confirm the county, city limits, school district, and any special districts. Some addresses described as Austin may be outside the city limits or in an extraterritorial area, while nearby cities provide their own services and rules.",
+          "Pull the parcel from the relevant appraisal district and verify school assignment directly with the district. Review planned roads, development, and nearby infrastructure with the responsible city and county.",
+        ],
+      },
+      {
+        heading: "Verify utilities instead of assuming",
+        paragraphs: [
+          "A City of Austin utility bill can combine electric, water, wastewater, solid waste, drainage, and street-service charges, depending on the account and location. That does not mean every Austin-area property receives the same bundle or uses the same providers.",
+          "Ask for the serving electric utility, water and wastewater provider, trash provider, connection requirements, current rates, and prior usage where available. Austin Energy, electric cooperatives, municipal providers, retail electric arrangements in some territories, Austin Water, and other water systems may serve different parts of the region.",
+        ],
+      },
+      {
+        heading: "Test the job corridor and transportation choices",
+        paragraphs: [
+          "Employment destinations include Downtown and the Capitol area, the University of Texas, North Austin technology corridors, Round Rock, and growing southern and eastern areas. Test the exact route at the time you expect to travel rather than relying on a weekend map estimate.",
+          "Include tolls, parking, transit frequency, and a backup route. CapMetro operates regional bus and rail services, but usefulness depends on both ends of a specific trip. A nearby stop is valuable only if its route and schedule fit the household.",
+        ],
+      },
+      {
+        heading: "Complete the move in the right order",
+        bullets: [
+          "Confirm all utility providers before the move-in date.",
+          "Use the [interactive moving checklist](/moving-checklist) for license, vehicle, voter, and school tasks.",
+          "Record the county appraisal district and all taxing units.",
+          "If buying a primary home, prepare the homestead exemption filing.",
+          "Recheck school boundaries and transportation plans before enrollment.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Is every Austin mailing address inside Austin city limits?",
+        a: "No. Mailing addresses and real-estate descriptions can cover properties outside the city. Verify the municipal boundary, county, and service providers by address.",
+      },
+      {
+        q: "Will every Austin-area resident receive one City of Austin utility bill?",
+        a: "No. The billing arrangement and providers depend on the service territory. Confirm electricity, water, wastewater, trash, and other services separately.",
+      },
+      {
+        q: "Which Austin-area county is best?",
+        a: "There is no universal answer. Travis, Williamson, and Hays County addresses can differ in commute, taxes, services, schools, and housing. Compare those factors for the household's needs.",
+      },
+    ],
+    sources: [
+      {
+        label: "City of Austin utility billing",
+        url: "https://www.austintexas.gov/services/pay-utility-bill",
+      },
+      {
+        label: "Austin Water customer service",
+        url: "https://www.austintexas.gov/water/divisions/customer-service",
+      },
+      {
+        label: "Austin Transportation and Public Works",
+        url: "https://www.austintexas.gov/transportation-public-works",
+      },
+      { label: "CapMetro", url: "https://www.capmetro.org/" },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-property-tax-guide",
+      "texas-water-rights-explained",
+      "texas-grid-ercot-explained",
+    ],
+    cta: { label: "Explore the Austin city page", href: "/austin" },
+  },
+  "moving-to-el-paso-guide": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Verify current vehicle, utility, tax, school, and installation-access requirements before acting.",
+    keyTakeaways: [
+      "Choose among west, central, northeast, east, and lower-valley areas based on the real daily commute.",
+      "Vehicles registered in El Paso County remain subject to emissions requirements; check the current process before registration.",
+      "Budget for desert cooling, water use, insurance, taxes, and the serving utilities at the exact address.",
+      "Military households should verify Fort Bliss access and travel time from the chosen neighborhood.",
+    ],
+    intro: [
+      "El Paso is geographically and economically distinct from the larger Texas metros. Fort Bliss, international trade, logistics, health care, government, and cross-border family ties shape the region. Its mountain geography and long east-west travel corridors also make neighborhood choice especially practical: the right side of the city can simplify daily life.",
+      "Use the exact address to compare commute, county and city services, school boundaries, utilities, taxes, and vehicle requirements before you commit.",
+    ],
+    sections: [
+      {
+        heading: "Start with the daily destination",
+        paragraphs: [
+          "Map the likely route to Fort Bliss, Downtown, a port of entry, the airport, a hospital, school, or other workplace. Then test the trip at the actual travel time. Mountain crossings, freeway construction, military gates, and school traffic can make two addresses with similar mileage perform differently.",
+          "If the household regularly crosses the border, research the relevant port, operating conditions, documentation, and backup plans separately. Do not let an occasional trip outweigh the commute used every weekday.",
+        ],
+      },
+      {
+        heading: "Plan vehicle registration and emissions testing",
+        paragraphs: [
+          "The El Paso County Tax Assessor-Collector handles local vehicle title and registration services. The county states that vehicles registered in El Paso County remain subject to emissions inspections. Review the current inspection and registration instructions before the move so an out-of-state vehicle does not create a last-minute delay.",
+          "Use our [Find My DMV and vehicle registration guide](/find-my-dmv) to organize the process, then confirm office locations, documents, fees, and current emissions rules through the official county and Texas Department of Motor Vehicles pages.",
+        ],
+      },
+      {
+        heading: "Budget for a desert home",
+        paragraphs: [
+          "Ask for prior electric and water usage where available, identify the cooling system, and note insulation, window exposure, shade, landscaping, and irrigation. A home's size and equipment can matter as much as the neighborhood.",
+          "Confirm the water, wastewater, electric, gas, and trash providers for the address. Review current conservation rules with El Paso Water and ask how drainage, elevation, and the lot's construction affect the property. Desert conditions reduce some risks but do not eliminate property-specific drainage concerns.",
+        ],
+      },
+      {
+        heading: "Verify taxes, schools, and local services",
+        paragraphs: [
+          "Identify whether the home is in El Paso, Horizon City, Socorro, San Elizario, Anthony, or an unincorporated area, then verify the school district and assigned campus. Use the county appraisal record to list every taxing unit and estimate the bill at the likely purchase price.",
+          "Military households should also confirm school, health-care, and installation-access procedures through official Fort Bliss resources. Rules can change, and access assumptions should not rest on a listing description or an informal map.",
+        ],
+      },
+      {
+        heading: "El Paso arrival checklist",
+        bullets: [
+          "Verify the commute and any Fort Bliss gate or port-of-entry considerations.",
+          "Confirm emissions, title, registration, and driver-license requirements.",
+          "Start utilities and learn current water-conservation rules.",
+          "Verify school assignment and county or municipal services.",
+          "Update voter registration and, for buyers, prepare a homestead exemption filing.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Do El Paso County vehicles need an emissions inspection?",
+        a: "El Paso County states that vehicles registered in the county remain subject to emissions inspections. Check the current official requirements for your vehicle before registration.",
+      },
+      {
+        q: "Should I choose an El Paso neighborhood only by distance?",
+        a: "No. Mountain crossings, freeway access, construction, military gates, and the direction of travel affect the real commute. Test the route at the expected time.",
+      },
+      {
+        q: "What utility information should I request?",
+        a: "Confirm every serving provider, current rates and setup rules, and prior electric and water usage when available. Also inspect the cooling system, insulation, irrigation, and landscaping.",
+      },
+    ],
+    sources: [
+      {
+        label: "El Paso County Tax Assessor-Collector",
+        url: "https://www.epcounty.com/240/Tax-Assessor-Collector",
+      },
+      {
+        label: "Texas Department of Motor Vehicles - El Paso County offices",
+        url: "https://www.txdmv.gov/tax-assessor-collectors/county-tax-offices/elpaso",
+      },
+      { label: "El Paso Water", url: "https://www.epwater.org/" },
+      { label: "Sun Metro", url: "https://sunmetro.net/" },
+      { label: "Fort Bliss", url: "https://home.army.mil/bliss/" },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-border-geography-101",
+      "texas-property-tax-guide",
+      "texas-water-rights-explained",
+    ],
+    cta: { label: "Explore the El Paso city page", href: "/el-paso" },
+  },
   "moving-to-texas-guide": {
     updated: "2026-07-09",
     intro: [
