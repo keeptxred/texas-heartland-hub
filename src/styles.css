@@ -60,7 +60,7 @@
   --secondary: var(--tx-navy);
   --secondary-foreground: var(--tx-cream);
   --muted: oklch(0.94 0.012 80);
-  --muted-foreground: oklch(0.45 0.02 260);
+  --muted-foreground: oklch(0.38 0.025 260);
   --accent: var(--tx-gold);
   --accent-foreground: var(--tx-ink);
   --destructive: oklch(0.577 0.245 27.325);
