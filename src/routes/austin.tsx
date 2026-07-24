@@ -3,27 +3,27 @@ import { CityPage } from "@/components/city-page";
 import { TEXAS_CITIES } from "@/data/texas-cities";
 import { getArticlesByCategory } from "@/lib/category-feed.functions";
 
-const config = TEXAS_CITIES.houston;
+const config = TEXAS_CITIES.austin;
 
-export const Route = createFileRoute("/houston")({
+export const Route = createFileRoute("/austin")({
   loader: () =>
     getArticlesByCategory({
       data: { region: config.region, limit: 12, order: "newest" },
     }),
   head: () => ({
     meta: [
-      { title: "Moving to Houston: City Guide, Tools & Local News | Keep TX Red" },
+      { title: "Moving to Austin: City Guide, Tools & Local News | Keep TX Red" },
       {
         name: "description",
         content:
-          "Plan a move to Houston with guidance on communities, property taxes, schools, commutes, flood planning, vehicle registration, and current Houston-area coverage.",
+          "Plan a move to Austin with practical guidance on housing costs, technology jobs, commutes, property taxes, schools, utilities, and current Austin-area coverage.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/houston" }],
+    links: [{ rel: "canonical", href: "https://www.keeptxred.com/austin" }],
   }),
-  component: HoustonPage,
+  component: AustinPage,
 });
 
-function HoustonPage() {
+function AustinPage() {
   return <CityPage config={config} liveArticles={Route.useLoaderData()} />;
 }

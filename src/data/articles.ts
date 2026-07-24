@@ -1,6 +1,13 @@
 export type Article = {
   slug: string;
-  category: "Legislature" | "Border" | "Elections" | "Tax & Spending" | "Energy" | "Education" | "Non-Political";
+  category:
+    | "Legislature"
+    | "Border"
+    | "Elections"
+    | "Tax & Spending"
+    | "Energy"
+    | "Education"
+    | "Non-Political";
   title: string;
   dek: string;
   author: string;
@@ -83,7 +90,8 @@ export const ARTICLES: Article[] = [
   {
     slug: "moving-to-texas-guide",
     category: "Tax & Spending",
-    title: "Moving to Texas: The Complete Guide to Taxes, Schools, Voting, and Life in the Lone Star State",
+    title:
+      "Moving to Texas: The Complete Guide to Taxes, Schools, Voting, and Life in the Lone Star State",
     dek: "Everything a new Texan needs to know — property taxes and the homestead exemption, ISDs and school boards, the ERCOT grid, constitutional carry, and how to register your car, your kids, and your vote.",
     author: "Civics Desk",
     date: "Pillar guide",
@@ -158,7 +166,7 @@ export const ARTICLES: Article[] = [
     slug: "homestead-exemption-explained",
     category: "Tax & Spending",
     title: "The Texas Homestead Exemption Explained: What Every Homeowner Should Claim",
-    dek: "A plain-English walkthrough of the $100,000 school-district homestead exemption, over-65 freezes, and disabled-veteran reductions — and how to file with your county appraisal district.",
+    dek: "A plain-English walkthrough of the $140,000 school-district homestead exemption, over-65 and disabled relief, disabled-veteran reductions, and how to file with your county appraisal district.",
     author: "Taxpayer Desk",
     date: "1 week ago",
     publishedAt: "2026-06-19T12:00:00",
@@ -438,7 +446,8 @@ export const ARTICLES: Article[] = [
   {
     slug: "texas-energy-economy-overview",
     category: "Energy",
-    title: "The Texas Energy Economy: A Full Overview of Oil, Gas, ERCOT, and the Grid That Powers America",
+    title:
+      "The Texas Energy Economy: A Full Overview of Oil, Gas, ERCOT, and the Grid That Powers America",
     dek: "How Texas became the energy capital of North America — Permian crude, Eagle Ford gas, ERCOT reliability, the Railroad Commission, and what the Houston-led oil and gas industry means for the Texas economy.",
     author: "Energy Desk",
     date: "Pillar guide",
@@ -451,7 +460,8 @@ export const ARTICLES: Article[] = [
   {
     slug: "texas-voting-guide-2026",
     category: "Elections",
-    title: "The Texas Voting Guide for 2026: Primaries, Runoffs, ID Rules, and the Calendar That Actually Matters",
+    title:
+      "The Texas Voting Guide for 2026: Primaries, Runoffs, ID Rules, and the Calendar That Actually Matters",
     dek: "Everything a Texas voter needs for 2026 — registration deadlines, March primary, May runoff, November general, accepted photo ID, mail ballot rules, and how to find your polling place in Houston, Dallas, San Antonio, Austin, and beyond.",
     author: "Elections Desk",
     date: "Pillar guide",
@@ -540,5 +550,10 @@ export const ELECTION_RACES = [
   { office: "Attorney General", incumbent: "Republican Hold", margin: "+10.2", status: "Safe R" },
   { office: "TX-15 (RGV)", incumbent: "Republican Flip", margin: "+4.1", status: "Lean R" },
   { office: "TX-28 (South TX)", incumbent: "Democrat Held", margin: "+2.7", status: "Tossup" },
-  { office: "State Board of Education", incumbent: "Republican Majority", margin: "+8.0", status: "Safe R" },
+  {
+    office: "State Board of Education",
+    incumbent: "Republican Majority",
+    margin: "+8.0",
+    status: "Safe R",
+  },
 ];

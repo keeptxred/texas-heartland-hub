@@ -3,6 +3,23 @@ import { HubBreadcrumbs } from "@/components/hub-breadcrumbs";
 
 const sections = [
   {
+    title: "Moving Checklist",
+    description:
+      "Start with a personalized timeline for the steps that become urgent before and immediately after your move.",
+    resources: [
+      ["Interactive Moving Checklist", "/moving-to-texas-checklist"],
+      ["Moving to Texas Guide", "/texas/moving-to-texas-2026"],
+      ["Register to Vote", "/register-to-vote"],
+      ["Texas Laws", "/laws"],
+    ],
+  },
+  {
+    title: "Vehicle and Driver License",
+    description:
+      "Estimate registration costs, find your county office, open official forms, and track the 30-day and 90-day deadlines.",
+    resources: [["Vehicle Registration Estimator and Office Finder", "/find-my-dmv"]],
+  },
+  {
     title: "Financial Planning",
     description:
       "Compare income, living costs, moving expenses, and the monthly budget you may need after relocating.",
@@ -30,7 +47,13 @@ const sections = [
   {
     title: "Cities and Communities",
     description: "Explore individual Texas cities and communities before choosing where to settle.",
-    resources: [["Houston", "/houston"]],
+    resources: [
+      ["Houston", "/houston"],
+      ["Dallas–Fort Worth", "/dallas-fort-worth"],
+      ["San Antonio", "/san-antonio"],
+      ["Austin", "/austin"],
+      ["El Paso", "/el-paso"],
+    ],
   },
   {
     title: "Texas Economy and News",
@@ -57,23 +80,6 @@ const sections = [
     resources: [
       ["Texas Utility Cost Calculator", "/texas-utility-cost-calculator"],
       ["Texas Budget Planner", "/texas-budget-planner"],
-    ],
-  },
-  {
-    title: "Driver License",
-    description:
-      "Use the existing DMV finder to locate the right nearby office as you get settled.",
-    resources: [["Find My DMV", "/find-my-dmv"]],
-  },
-  {
-    title: "Moving Checklist",
-    description:
-      "Use the existing relocation guide and civic resources to plan the practical steps around your move.",
-    resources: [
-      ["Moving to Texas Guide", "/texas/moving-to-texas-2026"],
-      ["Register to Vote", "/register-to-vote"],
-      ["Texas Laws", "/laws"],
-      ["Texas Elections and Voting", "/elections"],
     ],
   },
 ] as const;

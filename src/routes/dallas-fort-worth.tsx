@@ -3,27 +3,27 @@ import { CityPage } from "@/components/city-page";
 import { TEXAS_CITIES } from "@/data/texas-cities";
 import { getArticlesByCategory } from "@/lib/category-feed.functions";
 
-const config = TEXAS_CITIES.houston;
+const config = TEXAS_CITIES.dfw;
 
-export const Route = createFileRoute("/houston")({
+export const Route = createFileRoute("/dallas-fort-worth")({
   loader: () =>
     getArticlesByCategory({
       data: { region: config.region, limit: 12, order: "newest" },
     }),
   head: () => ({
     meta: [
-      { title: "Moving to Houston: City Guide, Tools & Local News | Keep TX Red" },
+      { title: "Moving to Dallas–Fort Worth: DFW City Guide & Local News | Keep TX Red" },
       {
         name: "description",
         content:
-          "Plan a move to Houston with guidance on communities, property taxes, schools, commutes, flood planning, vehicle registration, and current Houston-area coverage.",
+          "Compare Dallas, Fort Worth, and major North Texas communities with practical guidance on jobs, commutes, property taxes, schools, and moving requirements.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/houston" }],
+    links: [{ rel: "canonical", href: "https://www.keeptxred.com/dallas-fort-worth" }],
   }),
-  component: HoustonPage,
+  component: DallasFortWorthPage,
 });
 
-function HoustonPage() {
+function DallasFortWorthPage() {
   return <CityPage config={config} liveArticles={Route.useLoaderData()} />;
 }

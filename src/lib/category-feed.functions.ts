@@ -32,15 +32,20 @@ export type CategoryFeedItem = {
   author: string;
   published_at: string;
   teams: string[] | null;
+  affected_regions: string[] | null;
 };
 
 const SELECT_COLS =
-  "slug,title,dek,category,kind,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,teams,body_json";
+  "slug,title,dek,category,kind,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,teams,affected_regions,body_json";
 
 const InputSchema = z.object({
   // Display category name as stored on daily_articles.category (e.g. "Economy",
   // "Non-Political", "Sports Culture"). Optional — omit to skip filter.
   category: z.string().min(1).max(64).optional(),
+  // Region tag added by the content-quality enrichment pass.
+  region: z
+    .enum(["statewide", "houston", "dfw", "austin", "san-antonio", "el-paso", "rural"])
+    .optional(),
   // `kind` filter (e.g. "evergreen", "ingested", "sports-nfl"). Optional.
   kind: z.union([z.string().min(1).max(32), z.array(z.string().min(1).max(32))]).optional(),
   limit: z.number().int().min(1).max(200).default(24),
@@ -72,6 +77,7 @@ export const getArticlesByCategory = createServerFn({ method: "GET" })
 
     let q = supabase.from("daily_articles").select(SELECT_COLS);
     if (data.category) q = q.eq("category", data.category);
+    if (data.region) q = q.contains("affected_regions", [data.region]);
     if (data.kind) {
       q = Array.isArray(data.kind) ? q.in("kind", data.kind) : q.eq("kind", data.kind);
     }

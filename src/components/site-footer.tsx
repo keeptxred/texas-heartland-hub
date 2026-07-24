@@ -19,6 +19,10 @@ const NEWS_LINKS = [
   { to: "/texas-business", label: "Business" },
   { to: "/texas-sports", label: "Sports" },
   { to: "/houston", label: "Houston" },
+  { to: "/dallas-fort-worth", label: "Dallas–Fort Worth" },
+  { to: "/san-antonio", label: "San Antonio" },
+  { to: "/austin", label: "Austin" },
+  { to: "/el-paso", label: "El Paso" },
 ] as const;
 
 const TRUST_LINKS = [
