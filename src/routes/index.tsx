@@ -323,8 +323,11 @@ function Index() {
           <img
             src="/og/shop.jpg"
             alt="Keep TX Red patriotic apparel and gifts"
+            width={800}
+            height={500}
             className="aspect-[16/10] w-full rounded-xl object-cover"
             loading="lazy"
+            decoding="async"
           />
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
