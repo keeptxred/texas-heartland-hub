@@ -415,7 +415,7 @@ export default function FindMyDMV() {
         </div>
       </div>
 
-      <p className="text-xs text-gray-400 mt-4">
+      <p className="text-xs text-muted-foreground mt-4">
         Office names and contacts sourced from the Texas Secretary of State's official Tax
         Assessor-Collector directory. These are elected positions and details can change —{" "}
         <a
