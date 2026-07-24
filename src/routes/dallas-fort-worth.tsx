@@ -5,7 +5,7 @@ import { getArticlesByCategory } from "@/lib/category-feed.functions";
 import { cityGuideHead } from "@/lib/city-seo";
 
 const config = TEXAS_CITIES.dfw;
-const title = "Moving to Dallas–Fort Worth: DFW City Guide & Local News | Keep TX Red";
+const title = "Moving to Dallas–Fort Worth | Keep TX Red";
 const description =
   "Compare Dallas, Fort Worth, and major North Texas communities with practical guidance on jobs, commutes, property taxes, schools, and moving requirements.";
 

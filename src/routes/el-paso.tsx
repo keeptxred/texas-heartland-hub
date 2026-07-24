@@ -5,7 +5,7 @@ import { getArticlesByCategory } from "@/lib/category-feed.functions";
 import { cityGuideHead } from "@/lib/city-seo";
 
 const config = TEXAS_CITIES["el-paso"];
-const title = "Moving to El Paso: City Guide, Tools & Local News | Keep TX Red";
+const title = "Moving to El Paso Guide | Keep TX Red";
 const description =
   "Plan a move to El Paso with guidance on the border economy, Fort Bliss, housing, property taxes, emissions testing, utilities, schools, and current local coverage.";
 
