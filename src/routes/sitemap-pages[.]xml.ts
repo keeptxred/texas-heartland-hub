@@ -39,6 +39,7 @@ const STATIC_PATHS: string[] = [
   "/elections",
   "/tax-calculator",
   "/texas-property-tax-protest-guide",
+  "/texas-first-time-homebuyer-programs",
   "/moving-to-texas",
   "/moving-to-texas-checklist",
   "/find-my-dmv",
