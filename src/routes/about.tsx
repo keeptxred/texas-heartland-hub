@@ -7,14 +7,17 @@ import { BrandIdentity } from "@/components/brand-identity";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Keep TX Red | Mission, Editorial Standards & AI Disclosure" },
+      { title: "About Keep TX Red | Texas News & Standards" },
       { name: "description", content: "About Keep TX Red — our mission, editorial standards, AI disclosure, corrections policy, and contact information for the Texas news and politics newsroom." },
-      { property: "og:title", content: "About Keep TX Red | Mission, Editorial Standards & AI Disclosure" },
+      { property: "og:title", content: "About Keep TX Red | Texas News & Standards" },
       { property: "og:description", content: "Mission, editorial standards, AI disclosure, corrections policy, and contact information for Keep TX Red." },
-      { property: "og:url", content: "/about" },
-      { property: "og:image", content: "https://www.keeptxred.com" + heroImg.url },
+      { property: "og:url", content: "https://keeptxred.com/about" },
+      { property: "og:image", content: "https://keeptxred.com" + heroImg.url },
     ],
-    links: [{ rel: "canonical", href: "/about" }],
+    links: [
+      { rel: "canonical", href: "https://keeptxred.com/about" },
+      { rel: "preload", as: "image", href: heroImg.url, fetchpriority: "high" },
+    ],
   }),
   component: AboutPage,
 });
@@ -29,7 +32,14 @@ function AboutPage() {
       </h1>
 
       <div className="aspect-video overflow-hidden my-10 bg-muted">
-        <img src={heroImg.url} alt="Keep Texas Red banner" loading="lazy" className="size-full object-cover" />
+        <img
+          src={heroImg.url}
+          alt="Keep Texas Red banner"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="size-full object-cover"
+        />
       </div>
 
       <div className="space-y-5 text-base leading-relaxed">
