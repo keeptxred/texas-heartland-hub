@@ -958,7 +958,7 @@ function Check({
 function Metric({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[9px] font-bold uppercase tracking-widest text-white/65">{label}</p>
+      <p className="text-[9px] font-bold uppercase tracking-widest text-white/85">{label}</p>
       <p className="mt-1 font-semibold text-white tabular-nums">{value}</p>
     </div>
   );

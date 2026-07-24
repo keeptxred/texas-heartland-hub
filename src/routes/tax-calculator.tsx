@@ -120,7 +120,7 @@ function TaxPage() {
             TEXAS PROPERTY <br />
             <span className="text-primary">TAX CALCULATOR</span>
           </h1>
-          <p className="mt-5 max-w-2xl text-white/70">
+          <p className="mt-5 max-w-2xl text-white/90">
             Pick your county and independent school district. We'll estimate your annual property
             tax bill — including the ISD line that usually dominates the total — with the homestead
             exemption applied.

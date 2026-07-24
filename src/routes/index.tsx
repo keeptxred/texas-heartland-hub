@@ -333,7 +333,7 @@ function Index() {
             <h2 id="featured-shop" className="mt-2 text-3xl font-semibold tracking-tight">
               Wear your Texas pride
             </h2>
-            <p className="mt-4 max-w-xl leading-relaxed text-white/75">
+            <p className="mt-4 max-w-xl leading-relaxed text-white/90">
               Shop Texas patriotic shirts, hats, hoodies, stickers, and gifts. Purchases support
               Keep TX Red’s independent Texas coverage and resources.
             </p>

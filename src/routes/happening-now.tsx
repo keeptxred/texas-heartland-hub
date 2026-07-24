@@ -368,13 +368,13 @@ function DashboardPage() {
             <br />
             <span className="text-primary">Texas Government</span>
           </h1>
-          <p className="mt-4 max-w-2xl text-base md:text-lg text-white/75">
+          <p className="mt-4 max-w-2xl text-base md:text-lg text-white/90">
             Real-time feeds from the Texas Legislature, the Governor's Office, and the Secretary of
             State. The live feed shows the last 24 hours — older updates automatically move to the
             matching section page (Elections, Texas Laws, or Texas Politics).
           </p>
           {fetchedAt ? (
-            <p className="mt-3 text-xs uppercase tracking-widest text-white/50">
+            <p className="mt-3 text-xs uppercase tracking-widest text-white/85">
               Last refreshed:{" "}
               {new Date(fetchedAt).toLocaleString("en-US", { timeZone: "America/Chicago" })} CT
             </p>
