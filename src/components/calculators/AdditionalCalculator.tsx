@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import CalculatorAuthorityContent from "@/components/calculators/CalculatorAuthorityContent";
 import CalculatorInputField from "@/components/calculators/CalculatorInputField";
 import CalculatorInputGrid from "@/components/calculators/CalculatorInputGrid";
 import CalculatorPageTemplate from "@/components/calculators/CalculatorPageTemplate";
 import CalculatorResultsGrid from "@/components/calculators/CalculatorResultsGrid";
 import CalculatorScenarioActions from "@/components/calculators/CalculatorScenarioActions";
-import CalculatorSEOContent from "@/components/calculators/CalculatorSEOContent";
 import { getAdditionalCalculatorDefinition } from "@/lib/calculators/additionalCalculatorSuite";
 
 interface AdditionalCalculatorProps {
@@ -130,10 +130,16 @@ export default function AdditionalCalculator({ calculatorKey, title, description
 
       <p className="mt-6 rounded-lg bg-amber-50 p-4 text-sm text-amber-900">{definition.disclaimer}</p>
 
-      <CalculatorSEOContent sections={[
-        { heading: `How to use the ${displayTitle}`, content: "Enter values that reflect your situation. Results appear after all fields pass validation. Use an example scenario to explore the tool, then replace every assumption with information that applies to you." },
-        { heading: "Privacy and educational use", content: "The estimate runs in your browser and does not require an account. Saved scenarios remain in local browser storage. Results are educational estimates, not tax, legal, insurance, lending, investment, or program-eligibility advice." },
-      ]} />
+      <CalculatorAuthorityContent
+        title={displayTitle}
+        description={displayDescription}
+        category={definition.category}
+        slug={displaySlug}
+        fields={definition.fields}
+        assumptions={definition.assumptions}
+        presets={definition.presets}
+        resultMeaning={definition.resultMeaning}
+      />
     </CalculatorPageTemplate>
   );
 }
