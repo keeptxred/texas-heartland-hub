@@ -4,6 +4,9 @@ import { PageExpansion } from "@/components/page-expansion";
 import { SocialLinks } from "@/components/social-links";
 import { BrandIdentity } from "@/components/brand-identity";
 
+const SITE_URL = "https://keeptxred.com";
+const PAGE_URL = `${SITE_URL}/about`;
+
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
@@ -11,12 +14,38 @@ export const Route = createFileRoute("/about")({
       { name: "description", content: "About Keep TX Red — our mission, editorial standards, AI disclosure, corrections policy, and contact information for the Texas news and politics newsroom." },
       { property: "og:title", content: "About Keep TX Red | Texas News & Standards" },
       { property: "og:description", content: "Mission, editorial standards, AI disclosure, corrections policy, and contact information for Keep TX Red." },
-      { property: "og:url", content: "https://keeptxred.com/about" },
-      { property: "og:image", content: "https://keeptxred.com" + heroImg.url },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: PAGE_URL },
+      { property: "og:image", content: SITE_URL + heroImg.url },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "About Keep TX Red | Texas News & Standards" },
+      { name: "twitter:description", content: "Learn about the Keep TX Red mission, editorial standards, corrections policy, and AI disclosure." },
+      { name: "twitter:image", content: SITE_URL + heroImg.url },
     ],
-    links: [
-      { rel: "canonical", href: "https://keeptxred.com/about" },
-      { rel: "preload", as: "image", href: heroImg.url, fetchpriority: "high" },
+    links: [{ rel: "canonical", href: PAGE_URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          name: "About Keep TX Red",
+          description: "Mission, editorial standards, AI disclosure, corrections policy, and contact information for Keep TX Red.",
+          url: PAGE_URL,
+          isPartOf: { "@type": "WebSite", name: "Keep TX Red", url: SITE_URL },
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
+            { "@type": "ListItem", position: 2, name: "About Keep TX Red", item: PAGE_URL },
+          ],
+        }),
+      },
     ],
   }),
   component: AboutPage,
@@ -31,25 +60,26 @@ function AboutPage() {
         <span className="text-primary">KEEP TX RED</span>
       </h1>
 
-      <div className="aspect-video overflow-hidden my-10 bg-muted">
-        <img
-          src={heroImg.url}
-          alt="Keep Texas Red banner"
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-          className="size-full object-cover"
-        />
-      </div>
-
       <div className="space-y-5 text-base leading-relaxed">
-        <h2 className="font-display text-3xl tracking-tight">Mission</h2>
+        <h2 className="font-display text-3xl tracking-tight mt-10">Mission</h2>
         <p className="text-lg">
           <strong>Keep Texas Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state.</strong>
         </p>
         <p className="text-muted-foreground">
           Keep TX Red is a news and media publication — not a political action committee, campaign, or candidate organization. We do not raise money for candidates or coordinate with campaigns. Our work is informational and explanatory: report the policy fights that matter, track the elections shaping the next decade of Texas, and give readers the data and context they need to follow their state government.
         </p>
+
+        <div className="aspect-video overflow-hidden my-10 bg-muted">
+          <img
+            src={heroImg.url}
+            alt="Keep Texas Red banner"
+            width="1200"
+            height="675"
+            loading="lazy"
+            decoding="async"
+            className="size-full object-cover"
+          />
+        </div>
 
         <h2 className="font-display text-3xl tracking-tight pt-4">What We Cover</h2>
         <ul className="list-disc pl-5 space-y-2 text-muted-foreground">
