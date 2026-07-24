@@ -1,103 +1,128 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { LegalPage } from "@/components/legal-page";
+import { SITE_URL } from "@/lib/seo";
+
+const title = "Privacy Policy | Keep TX Red";
+const description = "How KeepTXRed.com collects, uses, shares, and protects information from readers, calculator users, and shop customers.";
+const canonical = `${SITE_URL}/privacy`;
 
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy — Keep TX Red" },
-      { name: "description", content: "How keeptxred.com collects, uses, and protects your information." },
-      { property: "og:title", content: "Privacy Policy — Keep TX Red" },
-      { property: "og:description", content: "How keeptxred.com collects, uses, and protects your information." },
+      { title },
+      { name: "description", content: description },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: canonical },
+      { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
     ],
-    links: [{ rel: "canonical", href: "/privacy" }],
+    links: [{ rel: "canonical", href: canonical }],
   }),
   component: PrivacyPage,
 });
 
 function PrivacyPage() {
-  const updated = "January 2026";
   return (
-    <div className="mx-auto max-w-3xl px-4 py-14">
-      <div className="border-b-2 border-foreground pb-4 mb-10">
-        <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">★ Legal</span>
-        <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Privacy Policy</h1>
-        <p className="mt-3 text-sm text-muted-foreground">Last updated: {updated}</p>
-      </div>
+    <LegalPage title="Privacy Policy" description="This policy explains the information Keep TX Red handles when you read the site, use our tools, contact us, or place a shop order.">
+      <section>
+        <h2>Who We Are</h2>
+        <p>
+          Keep TX Red operates KeepTXRed.com, an independent Texas news, civic-tools, relocation, and e-commerce website. References to “we,” “us,” and “our” mean Keep TX Red.
+        </p>
+      </section>
 
-      <div className="prose-like space-y-8 font-serif text-base leading-relaxed text-foreground/90">
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Who We Are</h2>
-          <p>
-            Keep TX Red ("we," "us," or "our") operates keeptxred.com — an independent conservative news and civic-tools site for Texans. This page is maintained by the site owner to explain, in plain language, what information we collect and how we use it.
-          </p>
-        </section>
+      <section>
+        <h2>Information We Collect</h2>
+        <ul>
+          <li><strong>Information you provide:</strong> name, email address, message contents, order details, shipping and billing information, product selections, and other information submitted through checkout or contact forms.</li>
+          <li><strong>Transaction information:</strong> order number, products purchased, amount, payment status, refunds, shipping status, and related records. Complete payment-card details are handled by Stripe and are not stored by Keep TX Red.</li>
+          <li><strong>Technical and usage information:</strong> pages viewed, referring page, browser and device type, approximate location derived from IP address, timestamps, cookies, and similar diagnostic information.</li>
+          <li><strong>Calculator inputs:</strong> most public calculator values are processed in your browser or used only to generate the requested result. Do not enter sensitive personal information unless a tool specifically requests it.</li>
+        </ul>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Information We Collect</h2>
-          <p>We try to collect as little as possible. The categories are:</p>
-          <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li><strong>Usage data:</strong> pages visited, referring site, device type, and approximate location derived from IP address.</li>
-            <li><strong>Voluntary submissions:</strong> anything you type into the contact form, newsletter signup, or property-tax calculator (the calculator runs in your browser — values are not stored on our servers).</li>
-            <li><strong>Cookies:</strong> small files used to remember preferences and measure traffic. You can disable them in your browser.</li>
-          </ul>
-        </section>
+      <section>
+        <h2>How We Use Information</h2>
+        <ul>
+          <li>Process, fulfill, deliver, support, replace, and refund shop orders.</li>
+          <li>Respond to questions, news tips, corrections, and customer-service requests.</li>
+          <li>Operate, secure, troubleshoot, and improve the website and its tools.</li>
+          <li>Measure readership, product performance, and site effectiveness.</li>
+          <li>Prevent fraud, abuse, unauthorized transactions, and security incidents.</li>
+          <li>Comply with legal, tax, accounting, and regulatory obligations.</li>
+        </ul>
+        <p className="mt-3">We do not sell personal information for money.</p>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">How We Use It</h2>
-          <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>Operate, secure, and improve the site.</li>
-            <li>Respond to messages you send us.</li>
-            <li>Measure which articles and tools are useful.</li>
-          </ul>
-          <p className="mt-2">We do not sell your personal information.</p>
-        </section>
+      <section>
+        <h2>Service Providers</h2>
+        <p>
+          We share information only as reasonably needed with companies that provide hosting, analytics, advertising, payment processing, print-on-demand production, shipping, email, fraud prevention, and other operational services. This may include Stripe, Printify and its fulfillment partners, shipping carriers, hosting vendors, and analytics or advertising providers. Each provider handles information under its own terms and privacy practices.
+        </p>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Third-Party Services</h2>
-          <p>
-            We rely on standard hosting, analytics, and content-delivery providers to run the site. These providers process technical data on our behalf under their own privacy terms. News links on the site point to third-party publishers whose privacy policies govern your visit once you leave keeptxred.com.
-          </p>
-        </section>
+      <section>
+        <h2>Payments</h2>
+        <p>
+          Stripe processes card payments. Keep TX Red receives transaction status and limited payment-related details needed to manage the order, but does not receive or store your complete card number or security code.
+        </p>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Advertising & Google AdSense</h2>
-          <p>
-            Keep TX Red uses Google AdSense to display advertisements. Google and its partners may use cookies and device identifiers to serve ads based on your prior visits to this and other websites. You can opt out of personalized advertising by visiting <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" className="text-primary underline">Google Ads Settings</a> or <a href="https://www.aboutads.info/" target="_blank" rel="noopener noreferrer" className="text-primary underline">aboutads.info</a>. Third-party vendors, including Google, use cookies to serve ads based on a user's prior visits to our website.
-          </p>
-        </section>
+      <section>
+        <h2>Order Fulfillment and Shipping</h2>
+        <p>
+          We provide order and delivery information to print providers and carriers so merchandise can be produced and shipped. This generally includes the recipient&apos;s name, address, ordered items, and information needed to resolve fulfillment problems.
+        </p>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Cookies</h2>
-          <p>
-            We and our advertising partners (including Google) use cookies and similar technologies to measure traffic, remember preferences, and serve advertising. You can control or disable cookies through your browser settings; some site features may stop working if cookies are disabled.
-          </p>
-        </section>
+      <section>
+        <h2>Cookies, Analytics, and Advertising</h2>
+        <p>
+          We and our service providers may use cookies and similar technologies to remember preferences, measure traffic, secure checkout, understand site performance, and display advertising. Google and its partners may use cookies or device identifiers to provide and measure ads. Browser controls and available consent controls can be used to limit cookies, though some features may not work correctly when they are disabled.
+        </p>
+        <p className="mt-3">
+          Personalized Google advertising choices can be managed through <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.
+        </p>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Your Choices</h2>
-          <ul className="list-disc pl-6 space-y-1 mt-2">
-            <li>You may use the site without providing any personal information.</li>
-            <li>You may request that we delete a message you sent us by emailing the address below.</li>
-            <li>You may disable cookies in your browser; some features may stop working.</li>
-          </ul>
-        </section>
+      <section>
+        <h2>Legal Disclosures</h2>
+        <p>
+          We may disclose information when reasonably necessary to comply with law, enforce site policies, investigate fraud or security threats, protect rights and safety, or complete a business transfer. We may also disclose aggregated or de-identified information that does not reasonably identify an individual.
+        </p>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Children</h2>
-          <p>This site is intended for adults. We do not knowingly collect personal information from children under 13.</p>
-        </section>
+      <section>
+        <h2>Data Retention and Security</h2>
+        <p>
+          Information is retained for as long as reasonably needed for the purposes described above, including order support, accounting, fraud prevention, dispute resolution, and legal compliance. We use reasonable administrative and technical safeguards, but no online system can guarantee absolute security.
+        </p>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Changes</h2>
-          <p>We may update this policy from time to time. Material changes will be noted at the top of this page with a revised date.</p>
-        </section>
+      <section>
+        <h2>Your Choices</h2>
+        <p>
+          You may ask to access, correct, or delete personal information we control, subject to legal and operational exceptions. You may also disable cookies in your browser and unsubscribe from optional email communications using the instructions in those messages. Submit privacy requests through our <Link to="/contact">contact page</Link> and include enough information for us to verify and respond to the request.
+        </p>
+      </section>
 
-        <section>
-          <h2 className="font-display text-2xl tracking-tight mb-2 text-foreground">Contact</h2>
-          <p>
-            Questions about this policy? Reach us through the <a href="/contact" className="text-primary underline underline-offset-4">contact page</a>.
-          </p>
-        </section>
-      </div>
-    </div>
+      <section>
+        <h2>Children</h2>
+        <p>KeepTXRed.com is not directed to children under 13, and we do not knowingly collect personal information from children under 13.</p>
+      </section>
+
+      <section>
+        <h2>Changes to This Policy</h2>
+        <p>We may update this policy as our services or legal obligations change. The revised date will appear at the top of this page.</p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>Questions or privacy requests may be submitted through our <Link to="/contact">contact page</Link>.</p>
+      </section>
+    </LegalPage>
   );
 }
