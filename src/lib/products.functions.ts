@@ -62,14 +62,18 @@ const MOCK_PRODUCTS: Product[] = [
   },
 ];
 
-export const getProducts = createServerFn({ method: "GET" }).handler(async (): Promise<{
+type ProductsResult = {
   products: Product[];
   error?: string;
-}> => {
+  /** True only when the local demo catalog was returned because live data was unavailable. */
+  isFallback?: boolean;
+};
+
+export const getProducts = createServerFn({ method: "GET" }).handler(async (): Promise<ProductsResult> => {
   try {
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_PUBLISHABLE_KEY;
-    if (!url || !key) return { products: MOCK_PRODUCTS };
+    if (!url || !key) return { products: MOCK_PRODUCTS, isFallback: true };
 
     const { createClient } = await import("@supabase/supabase-js");
     const supabase = createClient(url, key, {
@@ -82,7 +86,11 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       .order("synced_at", { ascending: false })
       .limit(120);
     if (error || !data || (Array.isArray(data) && data.length === 0)) {
-      return { products: MOCK_PRODUCTS };
+      return {
+        products: MOCK_PRODUCTS,
+        error: error?.message ?? "No active products were returned.",
+        isFallback: true,
+      };
     }
     const products: Product[] = (data as Array<{
       id: string;
@@ -107,8 +115,12 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       colors: r.colors ?? [],
       variants: Array.isArray(r.variants) ? r.variants : [],
     }));
-    return { products };
-  } catch {
-    return { products: MOCK_PRODUCTS };
+    return { products, isFallback: false };
+  } catch (error) {
+    return {
+      products: MOCK_PRODUCTS,
+      error: error instanceof Error ? error.message : "Unable to load products.",
+      isFallback: true,
+    };
   }
 });
