@@ -5,7 +5,7 @@ import { getArticlesByCategory } from "@/lib/category-feed.functions";
 import { cityGuideHead } from "@/lib/city-seo";
 
 const config = TEXAS_CITIES.austin;
-const title = "Moving to Austin: City Guide, Tools & Local News | Keep TX Red";
+const title = "Moving to Austin Guide | Keep TX Red";
 const description =
   "Plan a move to Austin with practical guidance on housing costs, technology jobs, commutes, property taxes, schools, utilities, and current Austin-area coverage.";
 
