@@ -157,3 +157,124 @@ The homepage should remain useful to returning news readers while making the two
 - property-tax protest savings estimator
 - electricity plan comparison
 - resident checklists and interactive planners
+
+### Phase V-D: Texas recreation and heritage
+
+Goal: make Keep TX Red a practical trip-planning and discovery resource for Texas
+state parks, state historic sites, monuments, landmarks, and historical markers.
+The program should add original planning value instead of duplicating official
+agency directories.
+
+#### V-D1: Comprehensive Texas State Parks guide and finder
+
+- create a permanent `/texas-state-parks` hub
+- maintain a complete, current directory of Texas Parks and Wildlife Department
+  state parks, historic sites, and natural areas
+- use the official TPWD inventory as the factual source of record and retain an
+  official destination and reservation link for every location
+- add an interactive park finder with filters for:
+  - region and distance from Houston, Dallas-Fort Worth, San Antonio, Austin,
+    and El Paso
+  - day trip, weekend trip, or longer stay
+  - camping, cabins, RV sites, hiking, swimming, fishing, paddling, wildlife,
+    stargazing, and other major activities
+  - pet considerations and accessibility information
+  - reservation needs and day-use versus overnight availability
+- give each park a useful planning summary covering ideal trip length, major
+  activities, seasonal considerations, reservation guidance, nearby
+  destinations, and the best originating city
+- explain passes, day-use reservations, camping reservations, common park
+  rules, and how to verify closures, burn bans, weather, and capacity before
+  travel
+- consider a park-pass value calculator after the directory and finder are
+  stable
+
+#### V-D2: Comprehensive Texas State Historic Sites guide
+
+- create a permanent `/texas-historic-sites` hub
+- cover the complete current inventory of sites operated by the Texas
+  Historical Commission
+- organize sites by region and by historical theme:
+  - Texas Revolution and Republic
+  - military and frontier history
+  - Indigenous and cultural heritage
+  - ranching and agriculture
+  - commerce, government, and presidential history
+- support filters for proximity to the five city hubs, typical visit length,
+  indoor or outdoor experience, accessibility, and family suitability
+- include official hours, admission, event, and destination links while making
+  clear that visitors should verify current conditions with the site
+
+#### V-D3: Texas history and parks road trips
+
+- publish original itineraries that connect parks, historic sites, and nearby
+  communities rather than presenting isolated directory entries
+- include one-day, weekend, and multi-day options
+- show starting city, approximate drive sequence, suggested time at each stop,
+  overnight options, reservation needs, and nearby practical resources
+- prioritize routes from Houston, Dallas-Fort Worth, San Antonio, Austin, and
+  El Paso
+- develop thematic trips such as:
+  - Texas Revolution and Republic
+  - frontier forts
+  - presidential and political history
+  - missions and Spanish colonial history
+  - ranching and cattle history
+  - Gulf Coast, Hill Country, Piney Woods, Panhandle, and Far West Texas
+
+#### V-D4: Monuments, landmarks, and historical markers guide
+
+- create a permanent `/texas-monuments-and-markers` explainer and discovery hub
+- explain the differences among:
+  - Official Texas Historical Markers
+  - Recorded Texas Historic Landmarks
+  - State Antiquities Landmarks
+  - National Historic Landmarks
+  - National Register properties
+  - monuments, memorials, historic cemeteries, and museums
+- use the Texas Historical Commission's Historic Sites Atlas as the exhaustive
+  search resource and link visitors to it
+- curate significant monuments, markers, and thematic collections instead of
+  attempting thin individual pages for the state's many thousands of markers
+- build individual pages only when Keep TX Red can provide substantial original
+  history, visitor planning, photography, an itinerary, or other added value
+
+#### V-D5: Destination pages and city integration
+
+- add a "Parks and history near you" section to each of the five city pages
+- connect city guides to nearby parks, historic sites, and recommended road
+  trips
+- launch detailed individual destination pages in priority order, beginning
+  with the most visited, historically significant, and practically useful
+  locations
+- link destination pages back to the appropriate hub, city page, related
+  itinerary, and official agency page
+- surface seasonal or local articles on destination pages when relevant, while
+  preserving evergreen planning information
+
+#### Editorial, data, and SEO requirements
+
+- use TPWD, the Texas Historical Commission, the National Park Service, and
+  other responsible public agencies as primary factual sources
+- write original summaries and planning guidance; do not copy official
+  destination descriptions
+- store the official source URL and last-reviewed date with every directory
+  record
+- treat hours, prices, reservations, closures, weather, burn bans, and
+  accessibility as changeable information and direct users to confirm before
+  travel
+- keep the directory data separate from presentation so official inventories
+  can be updated without rewriting pages
+- use descriptive titles, canonical URLs, breadcrumbs, structured data,
+  internal links, and indexable server-rendered content
+- avoid mass-producing thin destination or marker pages solely to increase the
+  page count
+
+Recommended delivery order:
+
+1. State Parks hub, complete directory, and interactive finder
+2. State Historic Sites hub and complete directory
+3. Initial road-trip itineraries from the five city hubs
+4. Monuments, landmarks, and historical-markers explainer
+5. Priority individual destination pages
+6. City-page integration and ongoing regional content
