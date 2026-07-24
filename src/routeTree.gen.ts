@@ -17,6 +17,7 @@ import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-
 import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
 import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
 import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/texas-refinance-savings-calculator'
+import { Route as TexasPropertyTaxProtestGuideRouteImport } from './routes/texas-property-tax-protest-guide'
 import { Route as TexasPropertyTaxIncreaseCalculatorRouteImport } from './routes/texas-property-tax-increase-calculator'
 import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
 import { Route as TexasNewsRouteImport } from './routes/texas-news'
@@ -163,6 +164,12 @@ const TexasRefinanceSavingsCalculatorRoute =
   TexasRefinanceSavingsCalculatorRouteImport.update({
     id: '/texas-refinance-savings-calculator',
     path: '/texas-refinance-savings-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasPropertyTaxProtestGuideRoute =
+  TexasPropertyTaxProtestGuideRouteImport.update({
+    id: '/texas-property-tax-protest-guide',
+    path: '/texas-property-tax-protest-guide',
     getParentRoute: () => rootRouteImport,
   } as any)
 const TexasPropertyTaxIncreaseCalculatorRoute =
@@ -776,6 +783,7 @@ export interface FileRoutesByFullPath {
   '/texas-news': typeof TexasNewsRouteWithChildren
   '/texas-politics': typeof TexasPoliticsRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
@@ -885,6 +893,7 @@ export interface FileRoutesByTo {
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
   '/texas-politics': typeof TexasPoliticsRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
@@ -998,6 +1007,7 @@ export interface FileRoutesById {
   '/texas-news': typeof TexasNewsRouteWithChildren
   '/texas-politics': typeof TexasPoliticsRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
@@ -1113,6 +1123,7 @@ export interface FileRouteTypes {
     | '/texas-news'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
+    | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
@@ -1222,6 +1233,7 @@ export interface FileRouteTypes {
     | '/texas-moving-cost-calculator'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
+    | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
@@ -1334,6 +1346,7 @@ export interface FileRouteTypes {
     | '/texas-news'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
+    | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
@@ -1448,6 +1461,7 @@ export interface RootRouteChildren {
   TexasNewsRoute: typeof TexasNewsRouteWithChildren
   TexasPoliticsRoute: typeof TexasPoliticsRoute
   TexasPropertyTaxIncreaseCalculatorRoute: typeof TexasPropertyTaxIncreaseCalculatorRoute
+  TexasPropertyTaxProtestGuideRoute: typeof TexasPropertyTaxProtestGuideRoute
   TexasRefinanceSavingsCalculatorRoute: typeof TexasRefinanceSavingsCalculatorRoute
   TexasRentVsBuyCalculatorRoute: typeof TexasRentVsBuyCalculatorRoute
   TexasSalaryCalculatorRoute: typeof TexasSalaryCalculatorRoute
@@ -1537,6 +1551,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-refinance-savings-calculator'
       fullPath: '/texas-refinance-savings-calculator'
       preLoaderRoute: typeof TexasRefinanceSavingsCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-property-tax-protest-guide': {
+      id: '/texas-property-tax-protest-guide'
+      path: '/texas-property-tax-protest-guide'
+      fullPath: '/texas-property-tax-protest-guide'
+      preLoaderRoute: typeof TexasPropertyTaxProtestGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-property-tax-increase-calculator': {
@@ -2415,6 +2436,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasPoliticsRoute: TexasPoliticsRoute,
   TexasPropertyTaxIncreaseCalculatorRoute:
     TexasPropertyTaxIncreaseCalculatorRoute,
+  TexasPropertyTaxProtestGuideRoute: TexasPropertyTaxProtestGuideRoute,
   TexasRefinanceSavingsCalculatorRoute: TexasRefinanceSavingsCalculatorRoute,
   TexasRentVsBuyCalculatorRoute: TexasRentVsBuyCalculatorRoute,
   TexasSalaryCalculatorRoute: TexasSalaryCalculatorRoute,
