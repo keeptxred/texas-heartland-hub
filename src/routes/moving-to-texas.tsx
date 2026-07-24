@@ -173,14 +173,25 @@ function MovingToTexasPage() {
 export const Route = createFileRoute("/moving-to-texas")({
   head: () => ({
     meta: [
-      { title: "Moving to Texas: Calculators, Costs & Relocation Resources | Keep TX Red" },
+      { title: "Moving to Texas | Costs, Tools & Guide" },
       {
         name: "description",
         content:
-          "Plan a move to Texas with cost-of-living, salary, moving-cost, mortgage, affordability, down-payment, and closing-cost tools plus practical Texas guides.",
+          "Plan a Texas move with cost-of-living, salary, moving-cost, mortgage, affordability, down-payment, and closing-cost tools.",
+      },
+      { property: "og:title", content: "Moving to Texas | Costs, Tools & Guide" },
+      {
+        property: "og:description",
+        content: "Plan your Texas relocation with practical cost calculators, city guides, checklists, and resident resources.",
+      },
+      { property: "og:url", content: "https://keeptxred.com/moving-to-texas" },
+      { name: "twitter:title", content: "Moving to Texas | Costs, Tools & Guide" },
+      {
+        name: "twitter:description",
+        content: "Texas relocation calculators, city guides, checklists, and practical moving resources.",
       },
     ],
-    links: [{ rel: "canonical", href: "/moving-to-texas" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/moving-to-texas" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -188,12 +199,12 @@ export const Route = createFileRoute("/moving-to-texas")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
             {
               "@type": "ListItem",
               position: 2,
               name: "Moving to Texas",
-              item: "https://www.keeptxred.com/moving-to-texas",
+              item: "https://keeptxred.com/moving-to-texas",
             },
           ],
         }),
