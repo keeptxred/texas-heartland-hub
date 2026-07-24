@@ -1,7 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 
 import { supabase } from '@/integrations/supabase/client';
-import { NotFoundError } from '@/lib/explore/errors';
+import { ExploreNotFoundError } from '@/lib/explore/errors';
 import type {
   ExploreEntity,
   ExploreEntityCreateInput,
@@ -40,7 +40,7 @@ export class EntityRepository {
 
   async requireById(id: string): Promise<ExploreEntity> {
     const entity = await this.findById(id);
-    if (!entity) throw new NotFoundError('Explore entity', id);
+    if (!entity) throw new ExploreNotFoundError('Explore entity', id);
     return entity;
   }
 
@@ -129,7 +129,7 @@ export class EntityRepository {
       .maybeSingle();
 
     if (error) throw error;
-    if (!data) throw new NotFoundError('Explore entity', id);
+    if (!data) throw new ExploreNotFoundError('Explore entity', id);
     return mapExploreEntityRow(data as unknown as ExploreEntityRow);
   }
 
@@ -143,7 +143,7 @@ export class EntityRepository {
       .maybeSingle();
 
     if (error) throw error;
-    if (!data) throw new NotFoundError('Explore entity', id);
+    if (!data) throw new ExploreNotFoundError('Explore entity', id);
     return mapExploreEntityRow(data as unknown as ExploreEntityRow);
   }
 }
