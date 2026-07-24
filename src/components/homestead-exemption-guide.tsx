@@ -144,13 +144,13 @@ export function HomesteadExemptionGuide() {
                   homestead exemption.
                 </p>
                 <div className="mt-5 border-t border-white/15 pt-5">
-                  <p className="text-xs uppercase tracking-widest text-white/65">
+                  <p className="text-xs uppercase tracking-widest text-white/85">
                     Possible school-district exemption
                   </p>
                   <p className="mt-1 font-display text-4xl text-primary">
                     {dollars(result.estimatedIsdExemption)}
                   </p>
-                  <p className="mt-2 text-xs leading-relaxed text-white/65">
+                  <p className="mt-2 text-xs leading-relaxed text-white/85">
                     This is an exemption from taxable value, not a cash payment. Local exemptions
                     and actual savings depend on the taxing units and rates serving the property.
                   </p>

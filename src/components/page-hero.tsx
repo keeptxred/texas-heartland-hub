@@ -27,7 +27,7 @@ export function PageHero({
           ) : null}
         </h1>
         {description ? (
-          <p className="mt-5 max-w-2xl text-base md:text-lg text-white/70 leading-relaxed">{description}</p>
+          <p className="mt-5 max-w-2xl text-base md:text-lg text-white/90 leading-relaxed">{description}</p>
         ) : null}
         {children ? <div className="mt-6">{children}</div> : null}
       </div>

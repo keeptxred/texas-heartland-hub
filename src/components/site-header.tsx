@@ -34,11 +34,11 @@ export function SiteHeader() {
     <header className="sticky top-0 z-50 bg-secondary text-secondary-foreground border-b border-white/10">
       <div className="overflow-hidden border-b border-white/10 bg-tx-ink/40">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 py-1.5">
-          <span className="pl-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white/50 shrink-0">
+          <span className="pl-4 text-[10px] font-bold tracking-[0.2em] uppercase text-white/85 shrink-0">
             Latest Texas News:
           </span>
           <div className="flex-1 overflow-hidden">
-            <div className="flex gap-10 whitespace-nowrap animate-marquee text-[10px] font-medium tracking-[0.2em] uppercase text-white/70">
+            <div className="flex gap-10 whitespace-nowrap animate-marquee text-[10px] font-medium tracking-[0.2em] uppercase text-white/90">
               {Array.from({ length: 2 }).map((_, i) => (
                 <div key={i} className="flex shrink-0 gap-10 px-5">
                   {tickerItems.length > 0 ? (

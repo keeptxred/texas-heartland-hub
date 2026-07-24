@@ -138,7 +138,7 @@ function AdminDashboard() {
             <h1 className="font-display text-3xl md:text-5xl leading-[0.95] tracking-tight mt-2">
               Editorial <span className="text-primary">Dashboard</span>
             </h1>
-            <p className="mt-2 text-sm text-white/70">Feed ingestion, article pipeline, and system health.</p>
+            <p className="mt-2 text-sm text-white/90">Feed ingestion, article pipeline, and system health.</p>
           </div>
           <Button variant="outline" onClick={signOut}>Sign out</Button>
         </div>
