@@ -49,11 +49,13 @@ import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images
 import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
 import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SanAntonioRouteImport } from './routes/san-antonio'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as NewsRouteImport } from './routes/news'
+import { Route as MovingToTexasChecklistRouteImport } from './routes/moving-to-texas-checklist'
 import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
 import { Route as LivingInTexasRouteImport } from './routes/living-in-texas'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
@@ -68,11 +70,14 @@ import { Route as FindRepresentativeRouteImport } from './routes/find-representa
 import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-school-district'
 import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
 import { Route as ElectionsRouteImport } from './routes/elections'
+import { Route as ElPasoRouteImport } from './routes/el-paso'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
+import { Route as DallasFortWorthRouteImport } from './routes/dallas-fort-worth'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
+import { Route as AustinRouteImport } from './routes/austin'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
 import { Route as AboutRouteImport } from './routes/about'
@@ -332,6 +337,11 @@ const ShopRoute = ShopRouteImport.update({
   path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SanAntonioRoute = SanAntonioRouteImport.update({
+  id: '/san-antonio',
+  path: '/san-antonio',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
@@ -355,6 +365,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MovingToTexasChecklistRoute = MovingToTexasChecklistRouteImport.update({
+  id: '/moving-to-texas-checklist',
+  path: '/moving-to-texas-checklist',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MovingToTexasRoute = MovingToTexasRouteImport.update({
@@ -427,9 +442,19 @@ const ElectionsRoute = ElectionsRouteImport.update({
   path: '/elections',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ElPasoRoute = ElPasoRouteImport.update({
+  id: '/el-paso',
+  path: '/el-paso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
   id: '/editorial-standards',
   path: '/editorial-standards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DallasFortWorthRoute = DallasFortWorthRouteImport.update({
+  id: '/dallas-fort-worth',
+  path: '/dallas-fort-worth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CountyElectionsRoute = CountyElectionsRouteImport.update({
@@ -450,6 +475,11 @@ const ContactRoute = ContactRouteImport.update({
 const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
   id: '/candidate-guides',
   path: '/candidate-guides',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AustinRoute = AustinRouteImport.update({
+  id: '/austin',
+  path: '/austin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -685,11 +715,14 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRoute
+  '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
+  '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRoute
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
@@ -704,11 +737,13 @@ export interface FileRoutesByFullPath {
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
+  '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/san-antonio': typeof SanAntonioRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
@@ -793,11 +828,14 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRoute
+  '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
+  '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRoute
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
@@ -812,10 +850,12 @@ export interface FileRoutesByTo {
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
+  '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/san-antonio': typeof SanAntonioRoute
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
@@ -897,11 +937,14 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRoute
+  '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
+  '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRoute
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
@@ -916,11 +959,13 @@ export interface FileRoutesById {
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
+  '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/san-antonio': typeof SanAntonioRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
@@ -1007,11 +1052,14 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-keep-texas-red'
     | '/admin'
+    | '/austin'
     | '/candidate-guides'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/dallas-fort-worth'
     | '/editorial-standards'
+    | '/el-paso'
     | '/elections'
     | '/find-my-dmv'
     | '/find-my-school-district'
@@ -1026,11 +1074,13 @@ export interface FileRouteTypes {
     | '/legislative-updates'
     | '/living-in-texas'
     | '/moving-to-texas'
+    | '/moving-to-texas-checklist'
     | '/news'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
     | '/robots.txt'
+    | '/san-antonio'
     | '/shop'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
@@ -1115,11 +1165,14 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-keep-texas-red'
     | '/admin'
+    | '/austin'
     | '/candidate-guides'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/dallas-fort-worth'
     | '/editorial-standards'
+    | '/el-paso'
     | '/elections'
     | '/find-my-dmv'
     | '/find-my-school-district'
@@ -1134,10 +1187,12 @@ export interface FileRouteTypes {
     | '/legislative-updates'
     | '/living-in-texas'
     | '/moving-to-texas'
+    | '/moving-to-texas-checklist'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
     | '/robots.txt'
+    | '/san-antonio'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
     | '/sitemap-images.xml'
@@ -1218,11 +1273,14 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-keep-texas-red'
     | '/admin'
+    | '/austin'
     | '/candidate-guides'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/dallas-fort-worth'
     | '/editorial-standards'
+    | '/el-paso'
     | '/elections'
     | '/find-my-dmv'
     | '/find-my-school-district'
@@ -1237,11 +1295,13 @@ export interface FileRouteTypes {
     | '/legislative-updates'
     | '/living-in-texas'
     | '/moving-to-texas'
+    | '/moving-to-texas-checklist'
     | '/news'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
     | '/robots.txt'
+    | '/san-antonio'
     | '/shop'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
@@ -1327,11 +1387,14 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AboutKeepTexasRedRoute: typeof AboutKeepTexasRedRoute
   AdminRoute: typeof AdminRoute
+  AustinRoute: typeof AustinRoute
   CandidateGuidesRoute: typeof CandidateGuidesRoute
   ContactRoute: typeof ContactRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
+  DallasFortWorthRoute: typeof DallasFortWorthRoute
   EditorialStandardsRoute: typeof EditorialStandardsRoute
+  ElPasoRoute: typeof ElPasoRoute
   ElectionsRoute: typeof ElectionsRoute
   FindMyDmvRoute: typeof FindMyDmvRoute
   FindMySchoolDistrictRoute: typeof FindMySchoolDistrictRoute
@@ -1346,11 +1409,13 @@ export interface RootRouteChildren {
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
   LivingInTexasRoute: typeof LivingInTexasRoute
   MovingToTexasRoute: typeof MovingToTexasRoute
+  MovingToTexasChecklistRoute: typeof MovingToTexasChecklistRoute
   NewsRoute: typeof NewsRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SanAntonioRoute: typeof SanAntonioRoute
   ShopRoute: typeof ShopRouteWithChildren
   SitemapAuthorsDotxmlRoute: typeof SitemapAuthorsDotxmlRoute
   SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
@@ -1698,6 +1763,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/san-antonio': {
+      id: '/san-antonio'
+      path: '/san-antonio'
+      fullPath: '/san-antonio'
+      preLoaderRoute: typeof SanAntonioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/robots.txt': {
       id: '/robots.txt'
       path: '/robots.txt'
@@ -1731,6 +1803,13 @@ declare module '@tanstack/react-router' {
       path: '/news'
       fullPath: '/news'
       preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moving-to-texas-checklist': {
+      id: '/moving-to-texas-checklist'
+      path: '/moving-to-texas-checklist'
+      fullPath: '/moving-to-texas-checklist'
+      preLoaderRoute: typeof MovingToTexasChecklistRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/moving-to-texas': {
@@ -1831,11 +1910,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/el-paso': {
+      id: '/el-paso'
+      path: '/el-paso'
+      fullPath: '/el-paso'
+      preLoaderRoute: typeof ElPasoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/editorial-standards': {
       id: '/editorial-standards'
       path: '/editorial-standards'
       fullPath: '/editorial-standards'
       preLoaderRoute: typeof EditorialStandardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dallas-fort-worth': {
+      id: '/dallas-fort-worth'
+      path: '/dallas-fort-worth'
+      fullPath: '/dallas-fort-worth'
+      preLoaderRoute: typeof DallasFortWorthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/county-elections': {
@@ -1864,6 +1957,13 @@ declare module '@tanstack/react-router' {
       path: '/candidate-guides'
       fullPath: '/candidate-guides'
       preLoaderRoute: typeof CandidateGuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/austin': {
+      id: '/austin'
+      path: '/austin'
+      fullPath: '/austin'
+      preLoaderRoute: typeof AustinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -2252,11 +2352,14 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AboutKeepTexasRedRoute: AboutKeepTexasRedRoute,
   AdminRoute: AdminRoute,
+  AustinRoute: AustinRoute,
   CandidateGuidesRoute: CandidateGuidesRoute,
   ContactRoute: ContactRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
+  DallasFortWorthRoute: DallasFortWorthRoute,
   EditorialStandardsRoute: EditorialStandardsRoute,
+  ElPasoRoute: ElPasoRoute,
   ElectionsRoute: ElectionsRoute,
   FindMyDmvRoute: FindMyDmvRoute,
   FindMySchoolDistrictRoute: FindMySchoolDistrictRoute,
@@ -2271,11 +2374,13 @@ const rootRouteChildren: RootRouteChildren = {
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
   LivingInTexasRoute: LivingInTexasRoute,
   MovingToTexasRoute: MovingToTexasRoute,
+  MovingToTexasChecklistRoute: MovingToTexasChecklistRoute,
   NewsRoute: NewsRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SanAntonioRoute: SanAntonioRoute,
   ShopRoute: ShopRouteWithChildren,
   SitemapAuthorsDotxmlRoute: SitemapAuthorsDotxmlRoute,
   SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,

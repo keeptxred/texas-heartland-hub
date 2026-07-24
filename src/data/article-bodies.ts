@@ -115,7 +115,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         heading: "A Practical First-90-Days Checklist",
         paragraphs: [
           "1. Register your vehicle within 30 days and get a Texas driver's license within 90 days — use [Find My DMV](/find-my-dmv) to locate both offices.",
-          "2. File your homestead exemption the moment you close on a home — most counties tie the deadline to January 1 of the following tax year.",
+          "2. File your homestead exemption with the county appraisal district after you acquire and occupy the home. The general application deadline is before May 1, and late-filing rules may apply.",
           "3. Register to vote and mark your calendar for the March primary, not just the November general.",
           "4. Shop your electricity plan if you're in ERCOT territory.",
           "5. Look up your county appraisal district and set a reminder for protest season, typically April–May.",
@@ -148,7 +148,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "TxDMV: New to Texas", url: "https://www.txdmv.gov/motorists/new-to-texas" },
-      { label: "Texas DPS: Moving to Texas", url: "https://www.dps.texas.gov/section/driver-license/moving-texas" },
+      {
+        label: "Texas DPS: Moving to Texas",
+        url: "https://www.dps.texas.gov/section/driver-license/moving-texas",
+      },
       {
         label: "Texas Comptroller: Homestead Exemption Form 50-114",
         url: "https://comptroller.texas.gov/forms/50-114.pdf",
@@ -191,7 +194,9 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sections: [
       {
         heading: "The Three-Step Formula",
-        paragraphs: ["Every Texas property tax bill follows the same arithmetic, no matter which county you live in:"],
+        paragraphs: [
+          "Every Texas property tax bill follows the same arithmetic, no matter which county you live in:",
+        ],
         bullets: [
           "Step 1 — Appraised value: your County Appraisal District (CAD) sets a market value as of January 1.",
           "Step 2 — Taxable value: subtract exemptions (homestead, over-65, disabled veteran) to get the value actually taxed.",
@@ -233,13 +238,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Comptroller — Property Tax Basics", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      {
+        label: "Texas Comptroller — Property Tax Basics",
+        url: "https://comptroller.texas.gov/taxes/property-tax/",
+      },
       {
         label: "Texas Tax Code Chapter 11 (Exemptions)",
         url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.11.htm",
       },
     ],
-    related: ["homestead-exemption-explained", "appraisal-protest-playbook", "county-appraisal-districts-explained"],
+    related: [
+      "homestead-exemption-explained",
+      "appraisal-protest-playbook",
+      "county-appraisal-districts-explained",
+    ],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
   },
 
@@ -247,14 +259,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     updated: "2026-06-10",
     editorNote: "Updated June 2026 by the Keep TX Red editorial team.",
     intro: [
-      "If you own and occupy your home in Texas as of January 1, you are leaving money on the table every year you do not file a homestead exemption. The $100,000 school-district exemption alone is worth roughly $1,000 a year for most homeowners — and filing is free.",
+      "If you own and occupy a Texas home as your principal residence, you may be leaving money on the table every year you do not file a homestead exemption. The $140,000 school-district exemption can produce meaningful annual savings, depending on the local school tax rate, and filing with the county appraisal district is free.",
       "Here is exactly what the exemption does, who qualifies, and how to file with your County Appraisal District.",
     ],
     sections: [
       {
         heading: "What the Exemption Actually Does",
         bullets: [
-          "Removes $100,000 from the value taxed by your school district (the largest line on your bill).",
+          "Removes $140,000 from the value taxed by your school district (the largest line on many Texas property-tax bills).",
           "Removes $3,000 from county road-and-bridge value (in counties that levy it).",
           "Caps annual taxable-value growth at 10% per year, even when market values surge.",
         ],
@@ -262,7 +274,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         heading: "Extra Exemptions Most People Miss",
         bullets: [
-          "Over-65 or disabled: additional $10,000 school exemption plus a ceiling that freezes the school-tax dollar amount.",
+          "Age 65 or older or disabled: an additional $60,000 school exemption plus a school-tax ceiling for qualifying homeowners.",
           "100% disabled veteran: full exemption on the homestead.",
           "Surviving spouse of a first responder killed in the line of duty: full exemption.",
         ],
@@ -289,13 +301,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Form 50-114 — Residence Homestead Application", url: "https://comptroller.texas.gov/forms/50-114.pdf" },
+      {
+        label: "Form 50-114 — Residence Homestead Application",
+        url: "https://comptroller.texas.gov/forms/50-114.pdf",
+      },
       {
         label: "Texas Comptroller — Homestead Exemptions",
         url: "https://comptroller.texas.gov/taxes/property-tax/exemptions/residence-homestead.php",
       },
     ],
-    related: ["texas-property-tax-guide", "appraisal-protest-playbook", "county-appraisal-districts-explained"],
+    related: [
+      "texas-property-tax-guide",
+      "appraisal-protest-playbook",
+      "county-appraisal-districts-explained",
+    ],
     cta: { label: "Calculate Your Savings", href: "/tax-calculator" },
   },
 
@@ -343,9 +362,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
-      { label: "Texas Constitution Article III", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm" },
+      {
+        label: "Texas Constitution Article III",
+        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm",
+      },
     ],
-    related: ["texas-political-terminology", "texas-constitutional-amendments-guide", "speaker-special-session"],
+    related: [
+      "texas-political-terminology",
+      "texas-constitutional-amendments-guide",
+      "speaker-special-session",
+    ],
     cta: { label: "Find Your Representative", href: "/find-representative" },
   },
 
@@ -394,7 +420,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.172.htm",
       },
     ],
-    related: ["beginners-guide-texas-elections", "texas-voter-registration-guide", "voter-id-surge"],
+    related: [
+      "beginners-guide-texas-elections",
+      "texas-voter-registration-guide",
+      "voter-id-surge",
+    ],
     cta: { label: "Find Your Polling Place", href: "/voting-locations" },
   },
 
@@ -424,7 +454,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         q: "Why are there so many May elections?",
         a: "Texas law lets local governments (ISDs, cities, MUDs) hold elections on uniform May or November dates. Most pick May to depress turnout and let core voters decide.",
       },
-      { q: "When do I vote on judges?", a: "Texas elects most judges in partisan November elections." },
+      {
+        q: "When do I vote on judges?",
+        a: "Texas elects most judges in partisan November elections.",
+      },
     ],
     sources: [
       {
@@ -432,7 +465,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
       },
     ],
-    related: ["primary-vs-general-election", "texas-voter-registration-guide", "texas-school-board-powers"],
+    related: [
+      "primary-vs-general-election",
+      "texas-voter-registration-guide",
+      "texas-school-board-powers",
+    ],
     cta: { label: "Check County Election Pages", href: "/county-elections" },
   },
 
@@ -478,7 +515,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Vote Texas — Register to Vote", url: "https://www.votetexas.gov/register-to-vote/" },
+      {
+        label: "Vote Texas — Register to Vote",
+        url: "https://www.votetexas.gov/register-to-vote/",
+      },
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/elections/" },
     ],
     related: ["primary-vs-general-election", "beginners-guide-texas-elections", "voter-id-surge"],
@@ -525,7 +565,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.11.htm",
       },
     ],
-    related: ["school-board-elections", "texas-school-finance-explained", "school-choice-esa-guide"],
+    related: [
+      "school-board-elections",
+      "texas-school-finance-explained",
+      "school-choice-esa-guide",
+    ],
     cta: { label: "Find Your School Board Race", href: "/county-elections" },
   },
 
@@ -611,9 +655,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         label: "Texas Comptroller — Appraisal Districts",
         url: "https://comptroller.texas.gov/taxes/property-tax/cad/",
       },
-      { label: "Tax Code Chapter 41 (Local Review)", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm" },
+      {
+        label: "Tax Code Chapter 41 (Local Review)",
+        url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm",
+      },
     ],
-    related: ["appraisal-protest-playbook", "texas-property-tax-guide", "homestead-exemption-explained"],
+    related: [
+      "appraisal-protest-playbook",
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+    ],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
   },
 
@@ -631,7 +682,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
             ["County", "Sheriff, jail, district courts, roads", "Property tax"],
             ["City", "Police, fire, zoning, water", "Property + sales tax"],
             ["ISD", "K-12 education", "Property tax (largest share)"],
-            ["MUD", "Water and sewer in unincorporated growth areas", "Property tax + utility fees"],
+            [
+              "MUD",
+              "Water and sewer in unincorporated growth areas",
+              "Property tax + utility fees",
+            ],
             ["Special District", "Hospitals, EMS, community college", "Property tax"],
           ],
         },
@@ -649,9 +704,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Texas Association of Counties", url: "https://www.county.org/" },
-      { label: "Texas Comptroller — Local Government", url: "https://comptroller.texas.gov/economy/local/" },
+      {
+        label: "Texas Comptroller — Local Government",
+        url: "https://comptroller.texas.gov/economy/local/",
+      },
     ],
-    related: ["how-texas-counties-spend", "texas-property-tax-guide", "county-appraisal-districts-explained"],
+    related: [
+      "how-texas-counties-spend",
+      "texas-property-tax-guide",
+      "county-appraisal-districts-explained",
+    ],
     cta: { label: "See What Your County Charges", href: "/tax-calculator" },
   },
 
@@ -729,8 +791,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "TEA — School Finance", url: "https://tea.texas.gov/finance-and-grants/state-funding" },
-      { label: "Education Code Chapter 48", url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.48.htm" },
+      {
+        label: "TEA — School Finance",
+        url: "https://tea.texas.gov/finance-and-grants/state-funding",
+      },
+      {
+        label: "Education Code Chapter 48",
+        url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.48.htm",
+      },
     ],
     related: ["texas-school-board-powers", "school-choice-esa-guide", "isd-tax-burdens"],
     cta: { label: "See School Tax Burdens by County", href: "/tax-calculator" },
@@ -756,7 +824,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "What is 'chub'?", a: "House slang for talking a bill to death as a procedural deadline approaches." },
+      {
+        q: "What is 'chub'?",
+        a: "House slang for talking a bill to death as a procedural deadline approaches.",
+      },
       {
         q: "What is the 'Local & Consent Calendar'?",
         a: "The House calendar for non-controversial bills, debated under time-limited rules.",
@@ -766,7 +837,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       { label: "Texas House Rules", url: "https://capitol.texas.gov/" },
       { label: "Glossary of Legislative Terms", url: "https://www.tlc.texas.gov/" },
     ],
-    related: ["how-a-bill-becomes-texas-law", "texas-constitutional-amendments-guide", "speaker-special-session"],
+    related: [
+      "how-a-bill-becomes-texas-law",
+      "texas-constitutional-amendments-guide",
+      "speaker-special-session",
+    ],
     cta: { label: "Browse the Full Glossary", href: "/glossary" },
   },
 
@@ -806,7 +881,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         label: "Texas Association of Counties — Budgets",
         url: "https://www.county.org/Education-Training/County-Budgets",
       },
-      { label: "Texas Comptroller — Local Finances", url: "https://comptroller.texas.gov/transparency/local/" },
+      {
+        label: "Texas Comptroller — Local Finances",
+        url: "https://comptroller.texas.gov/transparency/local/",
+      },
     ],
     related: ["what-local-governments-control", "texas-property-tax-guide"],
     cta: { label: "Calculate Your County Tax", href: "/tax-calculator" },
@@ -880,7 +958,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Legislative Reference Library — Amendments", url: "https://lrl.texas.gov/legis/constAmends/" },
+      {
+        label: "Texas Legislative Reference Library — Amendments",
+        url: "https://lrl.texas.gov/legis/constAmends/",
+      },
       { label: "Texas Constitution", url: "https://statutes.capitol.texas.gov/?link=CN" },
     ],
     related: ["how-a-bill-becomes-texas-law", "texas-political-terminology"],
@@ -922,8 +1003,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           headers: ["Violation", "Remedy"],
           rows: [
             ["No 72-hour notice", "Action taken at the meeting is voidable in district court"],
-            ["Walking quorum (members meeting in groups to dodge OMA)", "Criminal misdemeanor under §551.143"],
-            ["Improperly withheld records", "Sue in district court for mandamus and attorney's fees"],
+            [
+              "Walking quorum (members meeting in groups to dodge OMA)",
+              "Criminal misdemeanor under §551.143",
+            ],
+            [
+              "Improperly withheld records",
+              "Sue in district court for mandamus and attorney's fees",
+            ],
           ],
         },
       },
@@ -951,9 +1038,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         label: "Texas Government Code Ch. 552 — Public Information",
         url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm",
       },
-      { label: "Attorney General — Open Government", url: "https://www.texasattorneygeneral.gov/open-government" },
+      {
+        label: "Attorney General — Open Government",
+        url: "https://www.texasattorneygeneral.gov/open-government",
+      },
     ],
-    related: ["how-a-bill-becomes-texas-law", "what-local-governments-control", "texas-school-board-powers"],
+    related: [
+      "how-a-bill-becomes-texas-law",
+      "what-local-governments-control",
+      "texas-school-board-powers",
+    ],
     cta: { label: "Find Your Local Officials", href: "/find-representative" },
   },
 
@@ -1015,9 +1109,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         label: "Texas Constitution Article 8 §24-a (Income Tax Prohibition)",
         url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm",
       },
-      { label: "Tax Foundation — State Tax Climate Index", url: "https://taxfoundation.org/research/state-tax/" },
+      {
+        label: "Tax Foundation — State Tax Climate Index",
+        url: "https://taxfoundation.org/research/state-tax/",
+      },
     ],
-    related: ["texas-property-tax-guide", "what-local-governments-control", "how-texas-counties-spend"],
+    related: [
+      "texas-property-tax-guide",
+      "what-local-governments-control",
+      "how-texas-counties-spend",
+    ],
     cta: { label: "Estimate Your Property Tax", href: "/tax-calculator" },
   },
   "texas-attorney-general-powers": {
@@ -1085,7 +1186,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Office of the Texas Attorney General", url: "https://www.texasattorneygeneral.gov/" },
+      {
+        label: "Office of the Texas Attorney General",
+        url: "https://www.texasattorneygeneral.gov/",
+      },
       {
         label: "Texas Constitution Article 4 (Executive Department)",
         url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm",
@@ -1095,7 +1199,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.402.htm",
       },
     ],
-    related: ["texas-governor-powers", "how-a-bill-becomes-texas-law", "texas-open-meetings-public-info"],
+    related: [
+      "texas-governor-powers",
+      "how-a-bill-becomes-texas-law",
+      "texas-open-meetings-public-info",
+    ],
     cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
   },
   "texas-governor-powers": {
@@ -1175,7 +1283,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://lrl.texas.gov/legeLeaders/governors/",
       },
     ],
-    related: ["texas-attorney-general-powers", "how-a-bill-becomes-texas-law", "texas-constitutional-amendments-guide"],
+    related: [
+      "texas-attorney-general-powers",
+      "how-a-bill-becomes-texas-law",
+      "texas-constitutional-amendments-guide",
+    ],
     cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
   },
 
@@ -1289,7 +1401,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
       { label: "Texas Department of Public Safety", url: "https://www.dps.texas.gov/" },
       { label: "Texas Military Department", url: "https://tmd.texas.gov/" },
-      { label: "Senate Bill 4 (88R)", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=88R&Bill=SB4" },
+      {
+        label: "Senate Bill 4 (88R)",
+        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=88R&Bill=SB4",
+      },
       {
         label: "U.S. Customs and Border Protection — Southwest Border Sectors",
         url: "https://www.cbp.gov/newsroom/stats/southwest-land-border-encounters",
@@ -1474,12 +1589,18 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         table: {
           headers: ["If you don't have an accepted ID", "What to do"],
           rows: [
-            ["Forgot it at home", "Cast a provisional ballot; bring ID to county registrar within 6 days."],
+            [
+              "Forgot it at home",
+              "Cast a provisional ballot; bring ID to county registrar within 6 days.",
+            ],
             [
               "Lost or stolen",
               "Sign a Reasonable Impediment Declaration and present a supporting document (utility bill, paycheck, bank statement).",
             ],
-            ["Never had one", "Apply for a free Election Identification Certificate at any DPS office."],
+            [
+              "Never had one",
+              "Apply for a free Election Identification Certificate at any DPS office.",
+            ],
           ],
         },
       },
@@ -1559,17 +1680,26 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Texas Secretary of State — VoteTexas.gov", url: "https://www.votetexas.gov/" },
-      { label: "Texas Secretary of State — My Voter Portal", url: "https://teamrv-mvp.sos.texas.gov/MVP/" },
-      { label: "Texas Election Code", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.toc.htm" },
+      {
+        label: "Texas Secretary of State — My Voter Portal",
+        url: "https://teamrv-mvp.sos.texas.gov/MVP/",
+      },
+      {
+        label: "Texas Election Code",
+        url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.toc.htm",
+      },
       {
         label: "DPS — Election Identification Certificate",
         url: "https://www.dps.texas.gov/section/driver-license/election-identification-certificate-eic",
       },
     ],
-    related: ["texas-voter-registration-guide", "primary-vs-general-election", "beginners-guide-texas-elections"],
+    related: [
+      "texas-voter-registration-guide",
+      "primary-vs-general-election",
+      "beginners-guide-texas-elections",
+    ],
     cta: { label: "Find Your Polling Place", href: "/voting-locations" },
   },
-
 
   "speaker-special-session": {
     updated: "2026-06-23",
@@ -1637,7 +1767,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
     ],
-    related: ["property-tax-relief-package", "texas-property-tax-guide", "how-a-bill-becomes-texas-law"],
+    related: [
+      "property-tax-relief-package",
+      "texas-property-tax-guide",
+      "how-a-bill-becomes-texas-law",
+    ],
     cta: { label: "Contact Your Legislator", href: "/contact-legislators" },
     keyTakeaways: [
       "A special session is increasingly likely if appraisal caps aren't paired with compression.",
@@ -1715,7 +1849,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://comptroller.texas.gov/taxes/property-tax/",
       },
     ],
-    related: ["texas-property-tax-guide", "homestead-exemption-explained", "speaker-special-session"],
+    related: [
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+      "speaker-special-session",
+    ],
     cta: { label: "Estimate Your Savings", href: "/tax-calculator" },
     keyTakeaways: [
       "Largest single tax cut in Texas history at $18 billion.",
@@ -1782,14 +1920,21 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/operationlonestar" },
+      {
+        label: "Texas Governor — Operation Lone Star",
+        url: "https://gov.texas.gov/operationlonestar",
+      },
       { label: "Texas DPS — Border Security", url: "https://www.dps.texas.gov/" },
       {
         label: "U.S. Constitution Article I, Section 10",
         url: "https://constitution.congress.gov/constitution/article-1/",
       },
     ],
-    related: ["border-security-state-role", "texas-political-terminology", "how-a-bill-becomes-texas-law"],
+    related: [
+      "border-security-state-role",
+      "texas-political-terminology",
+      "how-a-bill-becomes-texas-law",
+    ],
     cta: { label: "Read Our Border Coverage", href: "/news" },
     keyTakeaways: [
       "Operation Lone Star has expanded to 168 miles of barrier and 9,000+ personnel.",
@@ -1858,8 +2003,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Secretary of State — Elections", url: "https://www.sos.state.tx.us/elections/" },
-      { label: "Texas Election Code Chapter 13", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.13.htm" },
+      {
+        label: "Texas Secretary of State — Elections",
+        url: "https://www.sos.state.tx.us/elections/",
+      },
+      {
+        label: "Texas Election Code Chapter 13",
+        url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.13.htm",
+      },
     ],
     related: ["school-board-elections", "primary-vs-general-election", "how-to-register-and-vote"],
     cta: { label: "Register to Vote", href: "/register-to-vote" },
@@ -1933,7 +2084,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sources: [
       { label: "Texas Education Agency", url: "https://tea.texas.gov/" },
       { label: "Texas Association of School Boards", url: "https://www.tasb.org/" },
-      { label: "Texas Election Code Chapter 41", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.41.htm" },
+      {
+        label: "Texas Election Code Chapter 41",
+        url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.41.htm",
+      },
     ],
     related: ["school-choice-esa-guide", "voter-id-surge", "primary-vs-general-election"],
     cta: { label: "Find Your Ballot", href: "/voting-locations" },
@@ -2006,13 +2160,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Education Agency — Financial Data", url: "https://tea.texas.gov/finance-and-grants" },
+      {
+        label: "Texas Education Agency — Financial Data",
+        url: "https://tea.texas.gov/finance-and-grants",
+      },
       {
         label: "Texas Comptroller — School District Property Values",
         url: "https://comptroller.texas.gov/taxes/property-tax/",
       },
     ],
-    related: ["texas-property-tax-guide", "property-tax-relief-package", "appraisal-protest-playbook"],
+    related: [
+      "texas-property-tax-guide",
+      "property-tax-relief-package",
+      "appraisal-protest-playbook",
+    ],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
     keyTakeaways: [
       "Fast-growing suburban counties top the ISD tax burden list.",
@@ -2077,9 +2238,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sources: [
       { label: "Texas Railroad Commission", url: "https://www.rrc.texas.gov/" },
       { label: "EIA — Permian Basin Data", url: "https://www.eia.gov/petroleum/drilling/" },
-      { label: "Texas Comptroller — Severance Tax", url: "https://comptroller.texas.gov/economy/economic-data/" },
+      {
+        label: "Texas Comptroller — Severance Tax",
+        url: "https://comptroller.texas.gov/economy/economic-data/",
+      },
     ],
-    related: ["texas-grid-ercot-explained", "texas-property-tax-guide", "how-a-bill-becomes-texas-law"],
+    related: [
+      "texas-grid-ercot-explained",
+      "texas-property-tax-guide",
+      "how-a-bill-becomes-texas-law",
+    ],
     cta: { label: "Read Our Energy Coverage", href: "/news" },
     keyTakeaways: [
       "Permian output hit a record 6.1 million barrels per day.",
@@ -2150,10 +2318,17 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Penal Code Chapter 46", url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm" },
+      {
+        label: "Texas Penal Code Chapter 46",
+        url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm",
+      },
       { label: "Texas DPS — License to Carry", url: "https://www.dps.texas.gov/rsd/ltc/" },
     ],
-    related: ["how-a-bill-becomes-texas-law", "texas-political-terminology", "texas-constitutional-amendments-guide"],
+    related: [
+      "how-a-bill-becomes-texas-law",
+      "texas-political-terminology",
+      "texas-constitutional-amendments-guide",
+    ],
     cta: { label: "Explore Texas Laws", href: "/laws" },
     keyTakeaways: [
       "HB 1927 lets eligible adults 21+ carry without a state permit.",
@@ -2239,7 +2414,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       { label: "Texas Education Agency — School Choice", url: "https://tea.texas.gov/" },
       { label: "Texas Comptroller — Education Programs", url: "https://comptroller.texas.gov/" },
     ],
-    related: ["school-board-elections", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
+    related: [
+      "school-board-elections",
+      "how-a-bill-becomes-texas-law",
+      "texas-political-terminology",
+    ],
     cta: { label: "Read Our Education Coverage", href: "/news" },
     keyTakeaways: [
       "Largest school choice expansion in Texas history.",
@@ -2319,13 +2498,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Tax Code Chapter 41", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm" },
+      {
+        label: "Texas Tax Code Chapter 41",
+        url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm",
+      },
       {
         label: "Texas Comptroller — Property Tax Protests",
         url: "https://comptroller.texas.gov/taxes/property-tax/protests/",
       },
     ],
-    related: ["texas-property-tax-guide", "homestead-exemption-explained", "county-appraisal-districts-explained"],
+    related: [
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+      "county-appraisal-districts-explained",
+    ],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
     keyTakeaways: [
       "Protest deadline is May 15 or 30 days after your notice.",
@@ -2397,7 +2583,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sources: [
       { label: "ERCOT", url: "https://www.ercot.com/" },
       { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
-      { label: "Texas Energy Fund", url: "https://www.puc.texas.gov/agency/resources/reports/TEF.aspx" },
+      {
+        label: "Texas Energy Fund",
+        url: "https://www.puc.texas.gov/agency/resources/reports/TEF.aspx",
+      },
     ],
     related: ["permian-energy", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
     cta: { label: "Read Our Energy Coverage", href: "/news" },
@@ -2462,7 +2651,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/operationlonestar" },
+      {
+        label: "Texas Governor — Operation Lone Star",
+        url: "https://gov.texas.gov/operationlonestar",
+      },
       { label: "Texas DPS", url: "https://www.dps.texas.gov/" },
       {
         label: "U.S. Constitution Article I, Section 10",
@@ -2579,19 +2771,46 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Do I need any license to carry a handgun in Texas?", a: "If you are 21 or older, a legal U.S. resident, and not otherwise prohibited under state or federal law, you may lawfully carry a handgun in most public places without a permit under HB 1927. Location restrictions in Sections 46.03 and 46.035 still apply." },
-      { q: "Is the Texas License to Carry still worth getting after constitutional carry?", a: "Yes for most active carriers — the LTC provides reciprocity with 37 other states, exempts you from NICS on future purchases, gives you an affirmative defense to certain location prosecutions, and often reduces friction with law enforcement." },
-      { q: "Can I carry openly in Texas?", a: "Open carry of a holstered handgun by someone 21 or older is generally legal in most public places. Long-gun open carry has always been legal but can trigger disorderly conduct scrutiny if used to intimidate." },
-      { q: "Where can I never carry a firearm in Texas regardless of my license?", a: "Schools, courts, polling places during voting, secured airport areas, federal buildings, correctional facilities, and any private property that has posted effective notice under Sections 30.06 or 30.07." },
-      { q: "Do I have to tell an officer I have a firearm during a traffic stop?", a: "Texas law does not require automatic disclosure, but calm, prompt disclosure with your hands visible is the standard recommended practice and usually shortens the encounter." },
-      { q: "Can a Texas landlord prohibit firearms in a rented home?", a: "Landlords can include reasonable, non-discriminatory firearm provisions in a residential lease, though blanket bans in a private residence face more scrutiny than in commercial contexts." },
+      {
+        q: "Do I need any license to carry a handgun in Texas?",
+        a: "If you are 21 or older, a legal U.S. resident, and not otherwise prohibited under state or federal law, you may lawfully carry a handgun in most public places without a permit under HB 1927. Location restrictions in Sections 46.03 and 46.035 still apply.",
+      },
+      {
+        q: "Is the Texas License to Carry still worth getting after constitutional carry?",
+        a: "Yes for most active carriers — the LTC provides reciprocity with 37 other states, exempts you from NICS on future purchases, gives you an affirmative defense to certain location prosecutions, and often reduces friction with law enforcement.",
+      },
+      {
+        q: "Can I carry openly in Texas?",
+        a: "Open carry of a holstered handgun by someone 21 or older is generally legal in most public places. Long-gun open carry has always been legal but can trigger disorderly conduct scrutiny if used to intimidate.",
+      },
+      {
+        q: "Where can I never carry a firearm in Texas regardless of my license?",
+        a: "Schools, courts, polling places during voting, secured airport areas, federal buildings, correctional facilities, and any private property that has posted effective notice under Sections 30.06 or 30.07.",
+      },
+      {
+        q: "Do I have to tell an officer I have a firearm during a traffic stop?",
+        a: "Texas law does not require automatic disclosure, but calm, prompt disclosure with your hands visible is the standard recommended practice and usually shortens the encounter.",
+      },
+      {
+        q: "Can a Texas landlord prohibit firearms in a rented home?",
+        a: "Landlords can include reasonable, non-discriminatory firearm provisions in a residential lease, though blanket bans in a private residence face more scrutiny than in commercial contexts.",
+      },
     ],
     sources: [
-      { label: "Texas Penal Code Chapter 46", url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm" },
+      {
+        label: "Texas Penal Code Chapter 46",
+        url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm",
+      },
       { label: "Texas DPS License to Carry", url: "https://www.dps.texas.gov/rsd/ltc" },
-      { label: "HB 1927 (2021) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=87R&Bill=HB1927" },
+      {
+        label: "HB 1927 (2021) Bill Text",
+        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=87R&Bill=HB1927",
+      },
       { label: "ATF Firearms Verification", url: "https://www.atf.gov/firearms" },
-      { label: "Texas Constitution Article I, Section 23", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.1.htm" },
+      {
+        label: "Texas Constitution Article I, Section 23",
+        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.1.htm",
+      },
     ],
     related: [
       "constitutional-carry-one-year-later",
@@ -2635,7 +2854,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         heading: "The Homestead Exemption and Other Statutory Reductions",
         paragraphs: [
-          "The residence homestead exemption is the single largest reduction most Texans will ever qualify for. As of the November 2025 constitutional amendment, the school-district homestead exemption is $140,000, up from $100,000. Homeowners 65 or older or with a qualifying disability receive an additional $10,000 ($60,000 in some prior packages) plus a school-district tax freeze that caps school taxes at the level owed the year they qualified.",
+          "The residence homestead exemption is the single largest property-tax reduction many Texans will qualify for. Following the November 2025 constitutional amendments, the school-district homestead exemption is $140,000. Homeowners age 65 or older or with a qualifying disability receive an additional $60,000 school-district exemption plus a school-tax ceiling for qualifying homeowners.",
           "Optional local homestead exemptions of up to 20% of appraised value may be adopted by counties, cities, and other taxing units. Many major counties have adopted them. Disabled veterans qualify for exemptions ranging from $5,000 to a full exemption depending on VA disability rating; 100% disabled veterans and their surviving spouses pay no property tax on their homestead.",
           "The exemption is not automatic. It must be applied for at your county appraisal district using Form 50-114, ordinarily by April 30 of the tax year, though late filings back two years are commonly accepted. See [The Texas Homestead Exemption Explained](/news/homestead-exemption-explained) for the filing walkthrough.",
         ],
@@ -2702,19 +2921,49 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "How much is the Texas homestead exemption in 2026?", a: "The residence homestead exemption for school district purposes is $140,000 as of the November 2025 constitutional amendment. Homeowners 65 or older or with a qualifying disability receive an additional exemption plus a school-tax freeze." },
-      { q: "When is the deadline to protest my property appraisal?", a: "The standard deadline is May 15 or 30 days after the appraisal notice was mailed, whichever is later. File online with your county appraisal district as soon as the notice arrives." },
-      { q: "Who actually sets my property tax rate?", a: "Each taxing entity — school district, county, city, hospital district, MUD — sets its own rate every year. If the total exceeds the voter-approval rate, a rollback election is automatic in November." },
-      { q: "What is the appraisal cap and how does it work?", a: "The Texas Constitution caps growth of the taxable value on a homestead at 10% per year regardless of market value. A temporary 20% cap applies to non-homestead residential properties valued under $5 million through the 2026 tax year." },
-      { q: "Can I stop paying property tax when I turn 65?", a: "No, but you may qualify for a school-tax freeze, an additional exemption, and a full deferral of collection during your lifetime (interest continues to accrue). File with your CAD when you qualify." },
-      { q: "What happens if I do not pay my property tax bill?", a: "Delinquency triggers penalty and interest starting February 1, followed by potential lawsuit, lien, and eventually tax-lien foreclosure at courthouse auction." },
+      {
+        q: "How much is the Texas homestead exemption in 2026?",
+        a: "The residence homestead exemption for school district purposes is $140,000 as of the November 2025 constitutional amendment. Homeowners 65 or older or with a qualifying disability receive an additional exemption plus a school-tax freeze.",
+      },
+      {
+        q: "When is the deadline to protest my property appraisal?",
+        a: "The standard deadline is May 15 or 30 days after the appraisal notice was mailed, whichever is later. File online with your county appraisal district as soon as the notice arrives.",
+      },
+      {
+        q: "Who actually sets my property tax rate?",
+        a: "Each taxing entity — school district, county, city, hospital district, MUD — sets its own rate every year. If the total exceeds the voter-approval rate, a rollback election is automatic in November.",
+      },
+      {
+        q: "What is the appraisal cap and how does it work?",
+        a: "The Texas Constitution caps growth of the taxable value on a homestead at 10% per year regardless of market value. A temporary 20% cap applies to non-homestead residential properties valued under $5 million through the 2026 tax year.",
+      },
+      {
+        q: "Can I stop paying property tax when I turn 65?",
+        a: "No, but you may qualify for a school-tax freeze, an additional exemption, and a full deferral of collection during your lifetime (interest continues to accrue). File with your CAD when you qualify.",
+      },
+      {
+        q: "What happens if I do not pay my property tax bill?",
+        a: "Delinquency triggers penalty and interest starting February 1, followed by potential lawsuit, lien, and eventually tax-lien foreclosure at courthouse auction.",
+      },
     ],
     sources: [
-      { label: "Texas Property Tax Code (Title 1)", url: "https://statutes.capitol.texas.gov/?link=TX" },
-      { label: "Texas Comptroller — Property Tax Assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      {
+        label: "Texas Property Tax Code (Title 1)",
+        url: "https://statutes.capitol.texas.gov/?link=TX",
+      },
+      {
+        label: "Texas Comptroller — Property Tax Assistance",
+        url: "https://comptroller.texas.gov/taxes/property-tax/",
+      },
       { label: "Truth-in-Taxation Portal", url: "https://truth-in-taxation.com/" },
-      { label: "Constitutional Amendments Ballot History", url: "https://www.sos.state.tx.us/elections/historical/index.shtml" },
-      { label: "Senate Bill 2 (2019) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=86R&Bill=SB2" },
+      {
+        label: "Constitutional Amendments Ballot History",
+        url: "https://www.sos.state.tx.us/elections/historical/index.shtml",
+      },
+      {
+        label: "Senate Bill 2 (2019) Bill Text",
+        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=86R&Bill=SB2",
+      },
     ],
     related: [
       "texas-property-tax-guide",
@@ -2839,19 +3088,46 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "What is the deadline to register to vote in Texas?", a: "Registration must be received by your county voter registrar at least 30 days before the election. There is no same-day registration in Texas." },
-      { q: "What forms of ID does Texas accept at the polls?", a: "Texas driver license, Election ID Certificate, personal ID, License to Carry, military ID with photo, U.S. passport, or U.S. citizenship certificate with photo. Voters without ID can use a supporting document and sign a Reasonable Impediment Declaration." },
-      { q: "Can I vote by mail in Texas?", a: "Only if you are 65 or older, disabled, out of the county during the entire early voting period and election day, expecting to give birth, or confined in jail but eligible." },
-      { q: "When is early voting in Texas?", a: "Early voting is typically 17 to 12 days before a general election and 10 to 4 days before a primary. Most large counties allow countywide voting during early voting." },
-      { q: "What is an open primary and can I switch parties?", a: "Texas has open primaries — you choose which party's primary to vote in on primary day without registering by party. Your choice binds you to that party for the remainder of the primary cycle." },
-      { q: "What happens if I vote at the wrong precinct?", a: "In most large counties Texas allows countywide voting on election day, so any polling place counts. In smaller counties that still use precinct voting, you can cast a provisional ballot, which will be counted only for races you are eligible to vote in from your correct precinct." },
+      {
+        q: "What is the deadline to register to vote in Texas?",
+        a: "Registration must be received by your county voter registrar at least 30 days before the election. There is no same-day registration in Texas.",
+      },
+      {
+        q: "What forms of ID does Texas accept at the polls?",
+        a: "Texas driver license, Election ID Certificate, personal ID, License to Carry, military ID with photo, U.S. passport, or U.S. citizenship certificate with photo. Voters without ID can use a supporting document and sign a Reasonable Impediment Declaration.",
+      },
+      {
+        q: "Can I vote by mail in Texas?",
+        a: "Only if you are 65 or older, disabled, out of the county during the entire early voting period and election day, expecting to give birth, or confined in jail but eligible.",
+      },
+      {
+        q: "When is early voting in Texas?",
+        a: "Early voting is typically 17 to 12 days before a general election and 10 to 4 days before a primary. Most large counties allow countywide voting during early voting.",
+      },
+      {
+        q: "What is an open primary and can I switch parties?",
+        a: "Texas has open primaries — you choose which party's primary to vote in on primary day without registering by party. Your choice binds you to that party for the remainder of the primary cycle.",
+      },
+      {
+        q: "What happens if I vote at the wrong precinct?",
+        a: "In most large counties Texas allows countywide voting on election day, so any polling place counts. In smaller counties that still use precinct voting, you can cast a provisional ballot, which will be counted only for races you are eligible to vote in from your correct precinct.",
+      },
     ],
     sources: [
       { label: "Texas Election Code", url: "https://statutes.capitol.texas.gov/?link=EL" },
-      { label: "Texas Secretary of State — Voting", url: "https://www.sos.state.tx.us/elections/voter/" },
-      { label: "Senate Bill 1 (2021) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=872&Bill=SB1" },
+      {
+        label: "Texas Secretary of State — Voting",
+        url: "https://www.sos.state.tx.us/elections/voter/",
+      },
+      {
+        label: "Senate Bill 1 (2021) Bill Text",
+        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=872&Bill=SB1",
+      },
       { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
-      { label: "Federal Voting Rights Act Section 203", url: "https://www.justice.gov/crt/language-minority-provisions" },
+      {
+        label: "Federal Voting Rights Act Section 203",
+        url: "https://www.justice.gov/crt/language-minority-provisions",
+      },
     ],
     related: [
       "texas-voting-guide-2026",
@@ -2982,18 +3258,39 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "What was the biggest new Texas law for 2026?", a: "The constitutional amendment raising the residence homestead exemption to $140,000, combined with continued school-district rate compression — the largest ongoing property tax relief package in state history." },
-      { q: "When did the education savings account program actually start?", a: "The ESA program authorized by SB 2 in 2025 begins operating at scale in the 2026-27 school year, prioritizing low-income families, students with disabilities, and children in low-performing public schools." },
-      { q: "Did Texas pass any new gun laws in 2025?", a: "No major changes. Constitutional carry under HB 1927 remains the operative framework, with narrow clarifications on carry in state parks and expansions of the School Marshal program." },
-      { q: "How do I find out when a specific bill takes effect?", a: "Check the bill's caption on Texas Legislature Online — the effective date is stated in the final section of every enrolled bill. Default is September 1 after the regular session." },
-      { q: "What is the Texas Business Court and does it affect small businesses?", a: "The Business Court handles complex commercial disputes above a jurisdictional threshold — it primarily affects mid-size and larger enterprises, not typical small-business litigation." },
-      { q: "Are there major new laws taking effect in 2027?", a: "The Legislature will meet in regular session in early 2027; new statutes from that session typically take effect September 1, 2027, or January 1, 2028." },
+      {
+        q: "What was the biggest new Texas law for 2026?",
+        a: "The constitutional amendment raising the residence homestead exemption to $140,000, combined with continued school-district rate compression — the largest ongoing property tax relief package in state history.",
+      },
+      {
+        q: "When did the education savings account program actually start?",
+        a: "The ESA program authorized by SB 2 in 2025 begins operating at scale in the 2026-27 school year, prioritizing low-income families, students with disabilities, and children in low-performing public schools.",
+      },
+      {
+        q: "Did Texas pass any new gun laws in 2025?",
+        a: "No major changes. Constitutional carry under HB 1927 remains the operative framework, with narrow clarifications on carry in state parks and expansions of the School Marshal program.",
+      },
+      {
+        q: "How do I find out when a specific bill takes effect?",
+        a: "Check the bill's caption on Texas Legislature Online — the effective date is stated in the final section of every enrolled bill. Default is September 1 after the regular session.",
+      },
+      {
+        q: "What is the Texas Business Court and does it affect small businesses?",
+        a: "The Business Court handles complex commercial disputes above a jurisdictional threshold — it primarily affects mid-size and larger enterprises, not typical small-business litigation.",
+      },
+      {
+        q: "Are there major new laws taking effect in 2027?",
+        a: "The Legislature will meet in regular session in early 2027; new statutes from that session typically take effect September 1, 2027, or January 1, 2028.",
+      },
     ],
     sources: [
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
       { label: "Legislative Reference Library", url: "https://lrl.texas.gov/" },
       { label: "Texas Register", url: "https://www.sos.state.tx.us/texreg/" },
-      { label: "Texas Comptroller — Property Tax", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      {
+        label: "Texas Comptroller — Property Tax",
+        url: "https://comptroller.texas.gov/taxes/property-tax/",
+      },
       { label: "Texas Education Agency — ESA Program", url: "https://tea.texas.gov/" },
     ],
     related: [

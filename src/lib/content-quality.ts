@@ -28,8 +28,19 @@ export type QualityRow = {
 // Image quality scoring (0–100)
 // ─────────────────────────────────────────────────────────────
 const TEXAS_IMAGE_HINTS = [
-  "texas", "tx-", "-tx", "houston", "dallas", "austin", "san-antonio",
-  "fort-worth", "el-paso", "capitol", "alamo", "ercot", "border",
+  "texas",
+  "tx-",
+  "-tx",
+  "houston",
+  "dallas",
+  "austin",
+  "san-antonio",
+  "fort-worth",
+  "el-paso",
+  "capitol",
+  "alamo",
+  "ercot",
+  "border",
 ];
 const STOCK_PENALTY_HOSTS = [
   "images.unsplash.com/photo-placeholder",
@@ -38,8 +49,19 @@ const STOCK_PENALTY_HOSTS = [
   "picsum.photos",
 ];
 const RELEVANT_HINTS = [
-  "government", "capitol", "senate", "house", "election", "vote",
-  "oil", "energy", "grid", "school", "map", "chart", "stadium",
+  "government",
+  "capitol",
+  "senate",
+  "house",
+  "election",
+  "vote",
+  "oil",
+  "energy",
+  "grid",
+  "school",
+  "map",
+  "chart",
+  "stadium",
 ];
 
 export function scoreImage(input: {
@@ -55,7 +77,10 @@ export function scoreImage(input: {
   if (TEXAS_IMAGE_HINTS.some((h) => url.includes(h))) score += 25;
   if (RELEVANT_HINTS.some((h) => url.includes(h))) score += 15;
   const title = (input.title ?? "").toLowerCase();
-  if (title && TEXAS_IMAGE_HINTS.some((h) => url.includes(h) && title.includes(h.replace(/[-]/g, " ")))) {
+  if (
+    title &&
+    TEXAS_IMAGE_HINTS.some((h) => url.includes(h) && title.includes(h.replace(/[-]/g, " ")))
+  ) {
     score += 10;
   }
   // Local site-hosted images (own CDN) are trusted.
@@ -66,12 +91,20 @@ export function scoreImage(input: {
 // ─────────────────────────────────────────────────────────────
 // Internal link picker (max 5)
 // ─────────────────────────────────────────────────────────────
-export type InternalLink = { label: string; href: string; kind: "hub" | "resource" | "evergreen" | "glossary" };
+export type InternalLink = {
+  label: string;
+  href: string;
+  kind: "hub" | "resource" | "evergreen" | "glossary";
+};
 
 const CATEGORY_HUB: Record<string, InternalLink[]> = {
   "Tax & Spending": [
     { label: "Texas Property Tax Calculator", href: "/tax-calculator", kind: "resource" },
-    { label: "Property Taxes in Texas (2026)", href: "/texas/property-taxes-2026", kind: "evergreen" },
+    {
+      label: "Property Taxes in Texas (2026)",
+      href: "/texas/property-taxes-2026",
+      kind: "evergreen",
+    },
   ],
   Elections: [
     { label: "Register to Vote in Texas", href: "/register-to-vote", kind: "resource" },
@@ -82,9 +115,7 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
     { label: "Texas Politics", href: "/texas-politics", kind: "hub" },
     { label: "Legislative Updates", href: "/legislative-updates", kind: "resource" },
   ],
-  Border: [
-    { label: "Texas Politics", href: "/texas-politics", kind: "hub" },
-  ],
+  Border: [{ label: "Texas Politics", href: "/texas-politics", kind: "hub" }],
   Energy: [
     { label: "Texas Business", href: "/texas-business", kind: "hub" },
     { label: "Texas Economy", href: "/texas-economy", kind: "hub" },
@@ -93,34 +124,24 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
     { label: "Texas Business", href: "/texas-business", kind: "hub" },
     { label: "Texas Economy", href: "/texas-economy", kind: "hub" },
   ],
-  Economy: [
-    { label: "Texas Economy", href: "/texas-economy", kind: "hub" },
-  ],
+  Economy: [{ label: "Texas Economy", href: "/texas-economy", kind: "hub" }],
   Housing: [
     { label: "Moving to Texas (2026)", href: "/texas/moving-to-texas-2026", kind: "evergreen" },
   ],
   "Growth & Migration": [
     { label: "Moving to Texas (2026)", href: "/texas/moving-to-texas-2026", kind: "evergreen" },
   ],
-  Education: [
-    { label: "Laws to Know", href: "/laws-to-know", kind: "resource" },
-  ],
-  Politics: [
-    { label: "Texas Politics", href: "/texas-politics", kind: "hub" },
-  ],
+  Education: [{ label: "Laws to Know", href: "/laws-to-know", kind: "resource" }],
+  Politics: [{ label: "Texas Politics", href: "/texas-politics", kind: "hub" }],
   Laws: [
     { label: "Texas Laws", href: "/texas-laws", kind: "hub" },
     { label: "Laws to Know", href: "/laws-to-know", kind: "resource" },
   ],
-  Sports: [
-    { label: "Texas Sports", href: "/texas-sports", kind: "hub" },
-  ],
+  Sports: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
   NFL: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
   MLB: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
   NBA: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
-  "Non-Political": [
-    { label: "Texas News", href: "/texas-news", kind: "hub" },
-  ],
+  "Non-Political": [{ label: "Texas News", href: "/texas-news", kind: "hub" }],
 };
 
 const ALWAYS_AVAILABLE: InternalLink[] = [
@@ -147,13 +168,21 @@ export function pickInternalLinks(input: {
   const hay = `${input.title ?? ""} ${(input.keywords ?? []).join(" ")}`.toLowerCase();
   if (/property tax|appraisal|homestead/.test(hay)) {
     push({ label: "Texas Property Tax Calculator", href: "/tax-calculator", kind: "resource" });
-    push({ label: "Property Taxes in Texas (2026)", href: "/texas/property-taxes-2026", kind: "evergreen" });
+    push({
+      label: "Property Taxes in Texas (2026)",
+      href: "/texas/property-taxes-2026",
+      kind: "evergreen",
+    });
   }
   if (/vote|ballot|election|primary/.test(hay)) {
     push({ label: "Register to Vote in Texas", href: "/register-to-vote", kind: "resource" });
   }
   if (/moving|relocat|newcomer/.test(hay)) {
-    push({ label: "Moving to Texas (2026)", href: "/texas/moving-to-texas-2026", kind: "evergreen" });
+    push({
+      label: "Moving to Texas (2026)",
+      href: "/texas/moving-to-texas-2026",
+      kind: "evergreen",
+    });
   }
 
   ALWAYS_AVAILABLE.forEach(push);
@@ -163,7 +192,14 @@ export function pickInternalLinks(input: {
 // ─────────────────────────────────────────────────────────────
 // Texas-specific analysis layer
 // ─────────────────────────────────────────────────────────────
-export type Region = "statewide" | "houston" | "dfw" | "austin" | "san-antonio" | "rural";
+export type Region =
+  | "statewide"
+  | "houston"
+  | "dfw"
+  | "austin"
+  | "san-antonio"
+  | "el-paso"
+  | "rural";
 
 const REGION_KEYWORDS: Record<Region, RegExp> = {
   statewide: /\btexas|statewide|the state|austin capitol\b/i,
@@ -171,6 +207,7 @@ const REGION_KEYWORDS: Record<Region, RegExp> = {
   dfw: /\bdallas|fort worth|arlington|plano|tarrant|collin county|dfw\b/i,
   austin: /\baustin|travis county|round rock|hays county\b/i,
   "san-antonio": /\bsan antonio|bexar county\b/i,
+  "el-paso": /\bel paso|el paso county|sun city|fort bliss\b/i,
   rural: /\brural|small town|farm|ranch|county seat|permian\b/i,
 };
 
@@ -190,10 +227,12 @@ export function buildTexasImpactSummary(text: string, regions: Region[]): string
     dfw: "Dallas–Fort Worth",
     austin: "the Austin area",
     "san-antonio": "San Antonio",
+    "el-paso": "El Paso",
     rural: "rural Texas",
   };
   const names = regions.map((r) => readable[r]);
-  const list = names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+  const list =
+    names.length === 1 ? names[0] : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
   // Very light templated sentence; keeps schema populated without inventing facts.
   return `Impact is most direct across ${list}. Local officials and residents there are most likely to see effects in policy, cost, or day-to-day life.`;
 }
@@ -207,7 +246,10 @@ function bodyToText(row: QualityRow): string {
   if (typeof row.body === "string" && row.body.length > 0) return row.body;
   try {
     const b = row.body_json as
-      | { intro?: string[]; sections?: { heading?: string; paragraphs?: string[]; bullets?: string[] }[] }
+      | {
+          intro?: string[];
+          sections?: { heading?: string; paragraphs?: string[]; bullets?: string[] }[];
+        }
       | null
       | undefined;
     const parts: string[] = [];
@@ -227,15 +269,21 @@ export function scoreQuality(row: QualityRow): QualityResult {
   const flags: string[] = [];
   let score = 0;
   const text = bodyToText(row);
-  const wc = articleMainWordCount(row.body_json as never) || text.trim().split(/\s+/).filter(Boolean).length;
+  const wc =
+    articleMainWordCount(row.body_json as never) || text.trim().split(/\s+/).filter(Boolean).length;
   const requiredWords = requiredMainWordCountForKind(row.kind);
 
   // Structural fields
-  if (row.title && row.title.trim().length >= 20) score += 10; else flags.push("weak_title");
-  if (row.dek && row.dek.trim().length >= 80) score += 10; else flags.push("weak_dek");
-  if (row.author && row.author.trim().length > 0) score += 10; else flags.push("missing_author");
-  if (row.published_at) score += 5; else flags.push("missing_publish_date");
-  if (row.image_url) score += 10; else flags.push("missing_image");
+  if (row.title && row.title.trim().length >= 20) score += 10;
+  else flags.push("weak_title");
+  if (row.dek && row.dek.trim().length >= 80) score += 10;
+  else flags.push("weak_dek");
+  if (row.author && row.author.trim().length > 0) score += 10;
+  else flags.push("missing_author");
+  if (row.published_at) score += 5;
+  else flags.push("missing_publish_date");
+  if (row.image_url) score += 10;
+  else flags.push("missing_image");
 
   // Body substance
   if (wc >= Math.floor(requiredWords / 2)) score += 10;
@@ -244,7 +292,8 @@ export function scoreQuality(row: QualityRow): QualityResult {
 
   // Required editorial sections (heuristic match on rendered text)
   const has = (needle: RegExp) => needle.test(text);
-  if (has(/why this matters/i)) score += 8; else flags.push("missing_why_this_matters");
+  if (has(/why this matters/i)) score += 8;
+  else flags.push("missing_why_this_matters");
   if (has(/impact on texans|texas angle|for texans/i)) score += 8;
   if (has(/faq|frequently asked|reader question/i)) score += 4;
   if (has(/key takeaway|takeaways/i)) score += 5;
@@ -260,7 +309,14 @@ export function scoreQuality(row: QualityRow): QualityResult {
 // Affiliate opportunity tagging
 // ─────────────────────────────────────────────────────────────
 export type AffiliateCategory =
-  | "moving" | "homes" | "insurance" | "energy" | "business" | "travel" | "products" | "services";
+  | "moving"
+  | "homes"
+  | "insurance"
+  | "energy"
+  | "business"
+  | "travel"
+  | "products"
+  | "services";
 
 export function detectAffiliateCategory(text: string): AffiliateCategory | null {
   const t = text.toLowerCase();
