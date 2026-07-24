@@ -80,34 +80,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Keep Texas Red – Texas News, Politics & Local Updates" },
-      { name: "description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes." },
+      { title: "Keep TX Red | Texas News & Tools" },
+      { name: "description", content: "Texas news, relocation guides, calculators, property-tax resources, city information, and practical tools for living in Texas." },
       { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" },
-      { property: "og:title", content: "Keep Texas Red – Texas News, Politics & Local Updates" },
-      { property: "og:description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes." },
+      { property: "og:title", content: "Keep TX Red | Texas News & Tools" },
+      { property: "og:description", content: "Texas news, relocation guides, calculators, property-tax resources, and practical tools for living in Texas." },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Keep Texas Red" },
       { property: "og:locale", content: "en_US" },
-      { property: "og:image", content: "https://www.keeptxred.com/og/default.jpg" },
-      { property: "og:image:secure_url", content: "https://www.keeptxred.com/og/default.jpg" },
+      { property: "og:url", content: "https://keeptxred.com/" },
+      { property: "og:image", content: "https://keeptxred.com/og/default.jpg" },
+      { property: "og:image:secure_url", content: "https://keeptxred.com/og/default.jpg" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { property: "og:image:type", content: "image/jpeg" },
-      { property: "og:image:alt", content: "Keep TX Red — Texas News, Politics & Conservative Commentary" },
+      { property: "og:image:alt", content: "Keep TX Red — Texas News and Tools" },
       { name: "msvalidate.01", content: "74E5E79AEC351CF6D2577A6FC6A125DF" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@KeepTXRed" },
       { name: "twitter:creator", content: "@KeepTXRed" },
-      { name: "twitter:title", content: "Keep Texas Red – Texas News, Politics & Local Updates" },
-      { name: "twitter:description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes." },
-      { name: "twitter:image", content: "https://www.keeptxred.com/og/default.jpg" },
-      { name: "twitter:image:alt", content: "Keep TX Red — Texas News, Politics & Conservative Commentary" },
+      { name: "twitter:title", content: "Keep TX Red | Texas News & Tools" },
+      { name: "twitter:description", content: "Texas news, relocation guides, calculators, and practical tools for living in Texas." },
+      { name: "twitter:image", content: "https://keeptxred.com/og/default.jpg" },
+      { name: "twitter:image:alt", content: "Keep TX Red — Texas News and Tools" },
       { name: "google-site-verification", content: "58wEXUcyQN-Wcn4LaY6yS_mUwAWVh99ni3Z2SqJ_Bkk" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png" },
       { rel: "apple-touch-icon", href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png" },
+      { rel: "canonical", href: "https://keeptxred.com/" },
       { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       { rel: "dns-prefetch", href: "https://googleads.g.doubleclick.net" },
@@ -115,32 +117,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "dns-prefetch", href: "https://www.googletagservices.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      // Preload + load fonts. `display=swap` keeps text visible in a fallback while web fonts arrive,
-      // so this never causes invisible-text (FOIT) and avoids blocking LCP text rendering.
-      {
-        rel: "preload",
-        as: "style",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
-      },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
       },
     ],
     scripts: [
-      // Defer AdSense until after the window load event so the third-party
-      // script never competes with the LCP image/network on first paint.
       {
         children:
           "(function(){function l(){var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1891256141359926';document.head.appendChild(s);}if(document.readyState==='complete'){setTimeout(l,1500);}else{window.addEventListener('load',function(){setTimeout(l,1500);});}})();",
       },
       {
-        async: true,
-        src: "https://www.googletagmanager.com/gtag/js?id=G-R7QW1X96TW",
-      },
-      {
         children:
-          "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-R7QW1X96TW');",
+          "(function(){function l(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-R7QW1X96TW';document.head.appendChild(s);window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','G-R7QW1X96TW');}if(document.readyState==='complete'){setTimeout(l,500);}else{window.addEventListener('load',function(){setTimeout(l,500);});}})();",
       },
       {
         type: "application/ld+json",
