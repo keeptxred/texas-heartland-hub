@@ -36,6 +36,7 @@ const sections = [
     description:
       "Estimate affordability, compare renting with buying, and understand the cash required to purchase a Texas home.",
     resources: [
+      ["Texas First-Time Homebuyer Programs Guide", "/texas-first-time-homebuyer-programs"],
       ["Texas Rent vs Buy Calculator", "/texas-rent-vs-buy-calculator"],
       ["Texas Home Affordability Calculator", "/texas-home-affordability-calculator"],
       ["Texas Mortgage Calculator", "/texas-mortgage-calculator"],
