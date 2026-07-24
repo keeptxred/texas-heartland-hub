@@ -28,14 +28,22 @@ const NEWS_LINKS = [
 const TRUST_LINKS = [
   { to: "/about", label: "About" },
   { to: "/editorial-standards", label: "Editorial Standards" },
+  { to: "/contact", label: "Contact Us" },
+] as const;
+
+const SHOP_POLICY_LINKS = [
+  { to: "/return-refund-policy", label: "Returns & Refunds" },
+  { to: "/shipping-policy", label: "Shipping Policy" },
   { to: "/privacy", label: "Privacy Policy" },
+  { to: "/terms-of-service", label: "Terms of Service" },
+  { to: "/contact", label: "Order Support" },
 ] as const;
 
 export function SiteFooter() {
   return (
     <footer className="mt-16 bg-secondary text-secondary-foreground">
-      <div className="mx-auto max-w-6xl px-4 py-14">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="mx-auto max-w-7xl px-4 py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
           <div>
             <div
               className="mb-5 grid size-12 place-items-center rounded-full border border-white/20"
@@ -46,12 +54,13 @@ export function SiteFooter() {
             <h2 className="font-display text-3xl tracking-tight">KEEP TEXAS RED</h2>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/80">
               Practical guidance for moving to Texas, living in Texas, using trusted calculators,
-              and staying informed about the state.
+              staying informed about the state, and shopping Texas-made designs.
             </p>
           </div>
           <FooterColumn heading="Explore" links={PRIMARY_LINKS} />
           <FooterColumn heading="Texas News" links={NEWS_LINKS} />
           <FooterColumn heading="About" links={TRUST_LINKS} />
+          <FooterColumn heading="Shop Policies" links={SHOP_POLICY_LINKS} />
         </div>
         <SocialLinks variant="footer" />
         <div className="mt-10 border-t border-white/10 pt-6 text-center text-[10px] uppercase leading-relaxed tracking-[0.25em] text-white/75">
