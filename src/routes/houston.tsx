@@ -5,7 +5,7 @@ import { getArticlesByCategory } from "@/lib/category-feed.functions";
 import { cityGuideHead } from "@/lib/city-seo";
 
 const config = TEXAS_CITIES.houston;
-const title = "Moving to Houston: City Guide, Tools & Local News | Keep TX Red";
+const title = "Moving to Houston Guide | Keep TX Red";
 const description =
   "Plan a move to Houston with guidance on communities, property taxes, schools, commutes, flood planning, vehicle registration, and current Houston-area coverage.";
 
