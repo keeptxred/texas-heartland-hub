@@ -4,8 +4,13 @@ import { ExploreAdminShell } from '../components/ExploreAdminShell';
 import { ExploreDuplicateResolutionPanel } from '../components/ExploreDuplicateResolutionPanel';
 import { ExploreEntityEditorDialog } from '../components/ExploreEntityEditorDialog';
 import { ExploreEntityManagementPanel } from '../components/ExploreEntityManagementPanel';
+import { ExploreImportHealthPanel } from '../components/ExploreImportHealthPanel';
+import { ExploreRelationshipExplorerPanel } from '../components/ExploreRelationshipExplorerPanel';
 import { ExploreReviewQueuePanel } from '../components/ExploreReviewQueuePanel';
+import { ExploreSourceManagementPanel } from '../components/ExploreSourceManagementPanel';
 import { useExploreAdminPendingDuplicateCount } from '../hooks/useExploreAdminDuplicateCandidates';
+import { useExploreAdminEntities } from '../hooks/useExploreAdminEntities';
+import { useExploreAdminActiveImportCount } from '../hooks/useExploreAdminImportJobs';
 import { useExploreAdminReviewQueueCounts } from '../hooks/useExploreAdminReviewQueue';
 
 export type ExploreAdminSection =
@@ -27,17 +32,23 @@ interface DashboardMetrics {
 export function ExploreAdminDashboard() {
   const [section, setSection] = useState<ExploreAdminSection>('overview');
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
+  const entityCount = useExploreAdminEntities({ pagination: { page: 1, pageSize: 1 } });
   const reviewCounts = useExploreAdminReviewQueueCounts();
   const duplicateCount = useExploreAdminPendingDuplicateCount();
+  const activeImportCount = useExploreAdminActiveImportCount();
 
   const metrics: DashboardMetrics = {
-    entities: 0,
+    entities: entityCount.data?.total ?? 0,
     pendingReview: reviewCounts.total,
     duplicateCandidates: duplicateCount.data ?? 0,
-    activeImports: 0,
+    activeImports: activeImportCount.data ?? 0,
   };
 
-  const metricsLoading = reviewCounts.isLoading || duplicateCount.isLoading;
+  const metricsLoading =
+    entityCount.isLoading ||
+    reviewCounts.isLoading ||
+    duplicateCount.isLoading ||
+    activeImportCount.isLoading;
 
   function handleSectionChange(nextSection: ExploreAdminSection) {
     setSection(nextSection);
@@ -75,8 +86,12 @@ export function ExploreAdminDashboard() {
           <ExploreReviewQueuePanel onOpenEntity={setSelectedEntityId} />
         ) : section === 'duplicates' ? (
           <ExploreDuplicateResolutionPanel onOpenEntity={setSelectedEntityId} />
+        ) : section === 'relationships' ? (
+          <ExploreRelationshipExplorerPanel onOpenEntity={setSelectedEntityId} />
+        ) : section === 'sources' ? (
+          <ExploreSourceManagementPanel />
         ) : (
-          <SectionIntroduction section={section} />
+          <ExploreImportHealthPanel />
         )}
       </div>
 
@@ -104,6 +119,7 @@ function Overview({ metrics, metricsLoading, onOpenSection }: OverviewProps) {
         <DashboardCard
           title="Entities"
           value={metrics.entities}
+          loading={metricsLoading}
           onClick={() => onOpenSection('entities')}
         />
         <DashboardCard
@@ -121,6 +137,7 @@ function Overview({ metrics, metricsLoading, onOpenSection }: OverviewProps) {
         <DashboardCard
           title="Running Imports"
           value={metrics.activeImports}
+          loading={metricsLoading}
           onClick={() => onOpenSection('imports')}
         />
       </div>
@@ -156,45 +173,4 @@ function DashboardCard({ title, value, loading = false, onClick }: DashboardCard
       </div>
     </button>
   );
-}
-
-function SectionIntroduction({
-  section,
-}: {
-  section: Exclude<ExploreAdminSection, 'overview' | 'entities' | 'review' | 'duplicates'>;
-}) {
-  const descriptions: Record<typeof section, string> = {
-    relationships:
-      'Inspect how destinations, regions, activities, amenities, and editorial collections connect.',
-    sources:
-      'Manage source definitions, provenance, trust settings, and synchronization configuration.',
-    imports:
-      'Monitor import jobs, execution statistics, validation failures, warnings, and rollback state.',
-  };
-
-  return (
-    <section className="rounded-xl border bg-card p-6">
-      <h2 className="text-lg font-semibold">{sectionTitle(section)}</h2>
-      <p className="mt-2 max-w-3xl text-sm text-muted-foreground">{descriptions[section]}</p>
-    </section>
-  );
-}
-
-function sectionTitle(section: ExploreAdminSection): string {
-  switch (section) {
-    case 'overview':
-      return 'Overview';
-    case 'entities':
-      return 'Entity Management';
-    case 'relationships':
-      return 'Relationship Explorer';
-    case 'sources':
-      return 'Import Sources';
-    case 'duplicates':
-      return 'Duplicate Resolution';
-    case 'imports':
-      return 'Import Health';
-    case 'review':
-      return 'Review Queue';
-  }
 }
