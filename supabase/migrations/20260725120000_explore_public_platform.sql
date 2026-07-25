@@ -44,14 +44,27 @@ create table if not exists public.explore_entities (
   published_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  search_document tsvector generated always as (
-    setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(alternate_names, ' '), '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(summary, '')), 'B') ||
-    setweight(to_tsvector('english', coalesce(description, '')), 'C') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(tags || categories || activities, ' '), '')), 'B')
-  ) stored
+  search_document tsvector not null default ''::tsvector
 );
+
+create or replace function public.set_explore_entity_search_document()
+returns trigger language plpgsql set search_path = public as $$
+begin
+  new.search_document :=
+    setweight(to_tsvector('english', coalesce(new.name, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(array_to_string(new.alternate_names, ' '), '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(new.summary, '')), 'B') ||
+    setweight(to_tsvector('english', coalesce(new.description, '')), 'C') ||
+    setweight(to_tsvector('english', coalesce(array_to_string(new.tags || new.categories || new.activities, ' '), '')), 'B');
+  return new;
+end;
+$$;
+
+drop trigger if exists explore_entities_search_document on public.explore_entities;
+create trigger explore_entities_search_document
+before insert or update of name, alternate_names, summary, description, tags, categories, activities
+on public.explore_entities
+for each row execute function public.set_explore_entity_search_document();
 
 create table if not exists public.explore_entity_relationships (
   id uuid primary key default gen_random_uuid(),
