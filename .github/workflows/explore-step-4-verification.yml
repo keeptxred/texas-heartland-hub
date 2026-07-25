@@ -17,6 +17,10 @@ on:
     branches:
       - agent/texas-living-platform-phase-v
 
+concurrency:
+  group: explore-step-4-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
