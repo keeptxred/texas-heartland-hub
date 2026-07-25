@@ -21,6 +21,259 @@ export type ArticleBody = {
 };
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
+  "2026-07-11-unt-appoints-scholar-focused-on-race-and-neoliberalism-as-interim-provost": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at its original address from the surviving source record. This version uses university records and clearly attributes outside reporting.",
+    keyTakeaways: [
+      "Albert Bimper was selected to serve as the University of North Texas interim provost.",
+      "The provost is UNT's chief academic officer and oversees the university's academic mission.",
+      "Bimper's research has examined race, college athletics, identity, and neoliberalism.",
+      "He previously held administrative posts at UNT and Colorado State University.",
+    ],
+    intro: [
+      "The University of North Texas selected Albert Bimper to serve as interim provost, placing an experienced higher-education administrator in the university's top academic post.",
+      "The appointment followed the planned transition of Michael McPherson, whom UNT President Harrison Keller named senior adviser to the president in May. UNT said at the time that more information about an interim appointment would follow a Board of Regents meeting.",
+    ],
+    sections: [
+      {
+        heading: "Who is Albert Bimper?",
+        paragraphs: [
+          "Bimper joined UNT after holding a series of leadership roles at Colorado State University. His UNT biography lists experience as an interim school director, interim presidential chief of staff, associate dean, assistant vice provost for academic affairs, and assistant vice president for student affairs.",
+          "A native of Arlington and graduate of Bowie High School, Bimper played football at Colorado State and was part of the Indianapolis Colts organization during its 2006 Super Bowl season. He earned a doctorate in curriculum and instruction from the University of Texas at Austin, a master's degree from Purdue University, and a bachelor's degree from Colorado State.",
+        ],
+      },
+      {
+        heading: "His scholarship and the public debate",
+        paragraphs: [
+          "Bimper's academic work has addressed the intersection of race, identity, college athletics, and the economics and institutions surrounding higher education. Outside coverage of the appointment highlighted his published work on race and neoliberalism.",
+          "Those subjects have become politically sensitive in Texas higher education. Describing the research accurately matters: an academic's field of study does not by itself establish what policies the university will adopt. The interim provost's decisions, budgets, and academic initiatives provide the more concrete basis on which to evaluate the appointment.",
+        ],
+      },
+      {
+        heading: "What the provost controls",
+        paragraphs: [
+          "The provost serves as the university's chief academic officer. The office coordinates colleges and academic programs, faculty affairs, student success, accreditation, and academic planning. That makes the position consequential for curriculum, hiring priorities, and the university's broader academic strategy.",
+          "Because the appointment is interim, UNT can maintain continuity while determining its longer-term leadership plan. Students, faculty, and taxpayers can follow the provost office and Board of Regents agendas for specific decisions.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "What does a university provost do?", a: "The provost is generally the chief academic officer, overseeing academic programs, faculty affairs, planning, and student-success work." },
+      { q: "Is this a permanent appointment?", a: "No. Bimper was appointed interim provost while UNT manages its leadership transition." },
+      { q: "Where did Bimper study?", a: "He earned degrees from Colorado State University, Purdue University, and the University of Texas at Austin." },
+    ],
+    sources: [
+      { label: "UNT — Albert Bimper biography", url: "https://president.unt.edu/people/albert-bimper.html" },
+      { label: "UNT — Provost McPherson transition announcement", url: "https://www.unt.edu/announcements/2026/provost-mcpherson-stepping-down-named-senior-advisor-to-the-president.html" },
+      { label: "Texas Scorecard — Interim provost appointment coverage", url: "https://texasscorecard.com/state/unt-appoints-critical-race-theory-scholar-as-interim-provost/" },
+    ],
+    related: ["texas-education-laws-explained", "school-choice-esa-guide"],
+  },
+  "live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at the article's original address using the surviving Keep TX Red record and program information from Food Network and Texas reporting.",
+    keyTakeaways: [
+      "Food Network's “Pitmasters” premieres July 13 at 9 p.m. Eastern and Pacific.",
+      "Four competitors are tied to prominent Texas barbecue businesses.",
+      "Nine teams compete in live-fire and barbecue challenges for a $50,000 prize.",
+      "Episodes are scheduled to stream on HBO Max the following day.",
+    ],
+    intro: [
+      "Texas barbecue will have a large presence on Food Network's new competition series “Pitmasters,” with four Lone Star State competitors among the nine teams.",
+      "The program puts regional techniques, fire management, and the personalities behind American barbecue at the center of a national television competition.",
+    ],
+    sections: [
+      {
+        heading: "The Texas pitmasters in the competition",
+        paragraphs: [
+          "The Texas contingent includes Esaul Ramos and Grecia Ramos of 2M Smokehouse in San Antonio; live-fire cook Al Frugoni of Frugoni Open Fire Cooking in Boerne; and Ruben Santana, associated with Barbs-B-Q and Barb Barbecue in the Boerne area.",
+          "Their inclusion reflects several strands of contemporary Texas barbecue: Central Texas-style smoke, South Texas and Mexican American influences, and open-fire cooking that reaches beyond the traditional offset smoker.",
+        ],
+      },
+      {
+        heading: "How the series works",
+        paragraphs: [
+          "Food Network describes “Pitmasters” as a competition built around barbecue and live-fire challenges. Nine teams face tests of technique and creativity, with $50,000 at stake.",
+          "Andrew Zimmern hosts and judges alongside barbecue figures including Jess Pryles, Moe Cason, and Ernest Servantes. The premiere is scheduled for July 13 at 9 p.m. ET/PT, with streaming availability the next day.",
+        ],
+      },
+      {
+        heading: "Why it matters for Texas barbecue",
+        paragraphs: [
+          "Texas barbecue has become both a cultural calling card and a travel draw. National exposure can translate into longer lines and more visitors for featured restaurants, but it also gives viewers a closer look at the craft behind brisket, ribs, sausage, and live-fire cooking.",
+          "The strongest Texas barbecue traditions are not frozen in time. They combine exacting fire control with family histories, regional ingredients, and new ideas. The four Texas competitors give the series several different versions of that story.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "When does “Pitmasters” premiere?", a: "Food Network lists the premiere for July 13 at 9 p.m. ET/PT." },
+      { q: "How many teams compete?", a: "Nine teams compete for a $50,000 prize." },
+      { q: "Can the show be streamed?", a: "Food Network says episodes will be available on HBO Max the day after their television premiere." },
+    ],
+    sources: [
+      { label: "Food Network — Pitmasters", url: "https://www.foodnetwork.com/shows/pitmasters" },
+      { label: "Chron — Texas competitors in Food Network's Pitmasters", url: "https://www.chron.com/food/article/food-network-pitmasters-texas-20398404.php" },
+      { label: "San Antonio Report — San Antonio pitmasters join the competition", url: "https://sanantonioreport.org/san-antonio-pitmasters-food-network-competition/" },
+    ],
+    related: ["living-in-texas"],
+  },
+  "2026-07-06-rangers-texas-rangers-prospect-guide-the-next-stars-of-arlington": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at its exact original address. Prospect rankings and assignments change quickly; this guide reflects MLB Pipeline's 2026 list and club reporting.",
+    keyTakeaways: [
+      "Shortstop Sebastian Walcott remains the system's highest-upside prospect.",
+      "Pitchers Caden Scarborough, AJ Russell, Jose Corniell, and Winston Santos headline the next tier.",
+      "Texas has intriguing two-way and international talent deeper in the system.",
+      "Development timelines can change because of health, performance, and roster needs.",
+    ],
+    intro: [
+      "The Texas Rangers' farm system is built around one of baseball's most exciting young shortstops, but the next wave is broader than one name. A mix of power arms, recent draft selections, and young international hitters is working toward Arlington.",
+      "This guide focuses on the prospects most likely to shape the Rangers' next roster cycle and the development questions that matter most.",
+    ],
+    sections: [
+      {
+        heading: "Sebastian Walcott remains the headline",
+        paragraphs: [
+          "Walcott, signed out of the Bahamas in 2023, has paired elite bat speed and power projection with the ability to handle demanding infield positions. He played a full Double-A season as a teenager, hitting .255 with a .355 on-base percentage, 13 home runs, and 32 stolen bases.",
+          "His path was slowed by internal-brace surgery on his throwing elbow in February 2026. The recovery timetable matters, but it does not erase the rare combination of age, athleticism, and upper-level experience that made him MLB Pipeline's only Rangers prospect in the overall Top 100.",
+        ],
+      },
+      {
+        heading: "The arms behind him",
+        paragraphs: [
+          "Right-hander Caden Scarborough entered the season as MLB Pipeline's second-ranked Rangers prospect. AJ Russell, a 2025 second-round selection, brings another high-upside arm to the lower levels.",
+          "Jose Corniell and Winston Santos are closer to the majors. Corniell opened 2026 with Triple-A Round Rock, while Santos was assigned to Double-A Frisco. David Davalillo, Leandro Lopez, Emiliano Teodo, and Gavin Collyer add different combinations of velocity, breaking stuff, and relief or rotation possibilities.",
+        ],
+      },
+      {
+        heading: "Position players to track",
+        paragraphs: [
+          "Josh Owens offers an unusual shortstop-and-pitcher profile. Yolfran Castillo and Elian Rosario represent younger international upside, while outfielder Dylan Dreiling and versatile infielder Cameron Cauley have reached the upper minors.",
+          "The important distinction is proximity. Upper-level players can become injury replacements or trade pieces quickly; teenagers in rookie ball may carry more upside but require years of development. A healthy system needs both groups.",
+        ],
+      },
+      {
+        heading: "What could change the rankings",
+        paragraphs: [
+          "Prospect lists are snapshots, not guarantees. Health, command, swing decisions, defensive position, and performance against older competition can move a player rapidly. Trades and major-league graduations also reshape the list.",
+          "For Rangers fans, the best checkpoints are Walcott's rehabilitation, the upper-minors pitchers' strike-throwing, and whether the 2025 draft class converts raw stuff into durable professional innings.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Who is the Rangers' top prospect?", a: "MLB Pipeline ranks shortstop Sebastian Walcott first in the Texas system." },
+      { q: "Which prospects are closest to the majors?", a: "Players assigned to Triple-A or Double-A, including Jose Corniell, Cameron Cauley, and Winston Santos, are generally closer, though performance and roster needs determine call-ups." },
+      { q: "Are prospect rankings permanent?", a: "No. Rankings change with health, performance, new draft classes, trades, and major-league graduations." },
+    ],
+    sources: [
+      { label: "MLB Pipeline — Rangers 2026 Top 30", url: "https://www.mlb.com/rangers/news/rangers-top-30-prospects-list-2026-preseason" },
+      { label: "MLB — Rangers prospect assignments", url: "https://www.mlb.com/rangers/news/rangers-prospects-team-assignments-to-open-2026" },
+      { label: "MLB — Rangers prospect statistics", url: "https://www.mlb.com/rangers/prospects/stats/top-prospects" },
+    ],
+    related: ["texas-sports"],
+  },
+  "live-2026-07-02-secretary-of-state-releases-july-3-texas-register-detailing-new-state--m0th5w": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at its original address from the surviving Keep TX Red record and the official July 3 Texas Register issue.",
+    keyTakeaways: [
+      "The Texas Register is the state's official journal for executive-branch rulemaking.",
+      "The July 3 issue contains proposed and adopted rules, public notices, and other agency actions.",
+      "Proposed rules include deadlines and instructions for public participation.",
+      "The Secretary of State publishes the Register weekly.",
+    ],
+    intro: [
+      "The Texas Secretary of State released the July 3 edition of the Texas Register, the weekly publication that records state-agency rulemaking and other official notices.",
+      "The issue gives residents, businesses, local governments, and advocacy groups a central place to see proposed rules before they are adopted, review final rules, and find opportunities for public comment.",
+    ],
+    sections: [
+      {
+        heading: "What appears in the Texas Register",
+        paragraphs: [
+          "The Register is the official journal of Texas state-agency rulemaking. Editions can include proposed rules, adopted rules, emergency rules, withdrawals, reviews of existing rules, attorney general opinions, gubernatorial appointments, and notices from state agencies.",
+          "A proposed rule typically identifies the legal authority for the proposal, explains its expected effects, and tells the public where and when comments may be submitted. An adopted-rule notice records the final text and its effective date.",
+        ],
+      },
+      {
+        heading: "Why the July 3 edition matters",
+        paragraphs: [
+          "Many important state policies do not arrive as stand-alone bills. The Legislature authorizes programs in statute, then agencies write the detailed rules that determine how those programs operate. Those details can affect professional licenses, health and safety standards, environmental permits, insurance, education, and public benefits.",
+          "Reading the Register during the proposal stage gives affected Texans a chance to respond before a rule becomes final. Readers should confirm the comment deadline and submission method in the individual notice.",
+        ],
+      },
+      {
+        heading: "How to follow a rule",
+        paragraphs: [
+          "Start with the table of contents in the July 3 issue, then locate the agency and rule chapter. Record the Texas Register citation, agency contact, comment deadline, and any scheduled hearing.",
+          "Later editions will show whether the proposal was adopted, changed, withdrawn, or allowed to lapse. The Secretary of State also maintains an archive of past issues and access to the Texas Administrative Code, where effective rules are compiled.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "What is the Texas Register?", a: "It is the official state publication for executive-branch rulemaking, notices, and related government actions." },
+      { q: "Can the public comment on proposed rules?", a: "Yes. Proposed-rule notices provide the deadline and instructions for submitting comments; some also announce public hearings." },
+      { q: "How often is it published?", a: "The Secretary of State publishes the Texas Register weekly." },
+    ],
+    sources: [
+      { label: "Texas Secretary of State — July 3, 2026 Texas Register", url: "https://www.sos.state.tx.us/texreg/pdf/backview/0703/0703is.pdf" },
+      { label: "Texas Secretary of State — Texas Register", url: "https://www.sos.state.tx.us/texreg/index.shtml" },
+      { label: "Texas Administrative Code", url: "https://texreg.sos.state.tx.us/public/readtac$ext.ViewTAC" },
+    ],
+    related: ["texas-new-laws-2026", "legislative-updates"],
+  },
+  "live-2026-06-29-the-history-behind-the-texas-stock-tank-name-bxkvg7": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at its exact original address from the retained source record. This article independently summarizes the history and meaning of the term without reproducing the source publication.",
+    keyTakeaways: [
+      "A stock tank is a tank or artificial pond used to water livestock.",
+      "In Texas, “tank” commonly describes an excavated or dammed ranch pond as well as a manufactured trough.",
+      "The term reflects the water needs of cattle country and the practical purpose of the feature.",
+      "Modern stock tanks may also support wildlife, fishing, fire protection, or backyard swimming.",
+    ],
+    intro: [
+      "A newcomer may see a small pond in a Texas pasture. A rancher may call the same body of water a stock tank. The difference is not simply a bit of Lone Star slang: the name describes why many of those ponds were built.",
+      "“Stock” means livestock, and a stock tank is a tank or artificial pond used to supply animals with water. In Texas ranch country, the label expanded naturally to include earthen ponds created by excavation or by damming runoff.",
+    ],
+    sections: [
+      {
+        heading: "From livestock water to landscape vocabulary",
+        paragraphs: [
+          "Reliable water has always limited where livestock can graze in a large, drought-prone state. Ranchers built watering points where streams were absent or seasonal. Some were metal, wood, or concrete vessels filled by wells and windmills. Others were excavated basins or small impoundments that captured rain.",
+          "Because both served the same practical purpose—watering stock—the word “tank” could refer to either form. Dictionaries still define a stock tank broadly enough to include an artificial pond, and Texas agricultural publications have long used “stock tank” and “farm pond” side by side.",
+        ],
+      },
+      {
+        heading: "Why Texans say “tank” when others say “pond”",
+        paragraphs: [
+          "Regional vocabulary follows work and landscape. In ranching areas, a small body of water was often identified by its job rather than by a strict engineering category. Calling it a stock tank immediately told a landowner or ranch hand what it was for.",
+          "The wording is especially useful because the feature may not be natural. A creek, spring, or pond can exist without human construction; many stock tanks were deliberately dug, bermed, or supplied to hold water where cattle needed it.",
+        ],
+      },
+      {
+        heading: "The term keeps evolving",
+        paragraphs: [
+          "Today, an earthen stock tank may water cattle, provide wildlife habitat, hold fish, or serve as an emergency water source. The galvanized stock tank has also moved from the feed store to urban backyards, where people convert it into a compact pool.",
+          "Those newer uses can blur the meaning, but the ranching origin remains visible in the name. What sounds like a Texas nickname is really a concise piece of working-land history.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Is a stock tank the same as a pond?", a: "It can be. In Texas usage, “stock tank” often means an artificial or improved pond used to provide water for livestock." },
+      { q: "Are all stock tanks made of metal?", a: "No. The term can describe a manufactured trough or an earthen pond, depending on context." },
+      { q: "Why is it called “stock”?", a: "“Stock” is short for livestock—the cattle, horses, sheep, or other animals the water source was built to serve." },
+    ],
+    sources: [
+      { label: "Texas Monthly — Origins of the phrase “stock tank”", url: "https://www.texasmonthly.com/culture/origins-of-the-phrase-stock-tank/" },
+      { label: "Merriam-Webster — Stock tank definition", url: "https://www.merriam-webster.com/dictionary/stock%20tank" },
+      { label: "Texas Water Resources Institute — Texas Water archive", url: "https://twri.tamu.edu/media/3967/volume-8-january-february-1982.pdf" },
+      { label: "Texas Parks and Wildlife — Wildlife management practices", url: "https://tpwd.texas.gov/publications/pwdpubs/media/pwd_bk_w7000_0790.pdf" },
+    ],
+    related: ["living-in-texas"],
+  },
   "moving-to-houston-address-checklist": {
     updated: "2026-07-23",
     editorNote:
