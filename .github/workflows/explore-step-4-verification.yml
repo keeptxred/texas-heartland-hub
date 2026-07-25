@@ -1,0 +1,176 @@
+name: Explore Texas Step 4 verification
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "src/features/explore/**"
+      - "src/services/explore/**"
+      - "supabase/functions/explore-*/**"
+      - "supabase/migrations/**"
+      - "supabase/config.toml"
+      - "src/integrations/supabase/types.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/explore-step-4-verification.yml"
+  push:
+    branches:
+      - agent/texas-living-platform-phase-v
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Set up Deno
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Start local Supabase
+        run: supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor
+
+      - name: Apply migrations to a clean database
+        run: supabase db reset --local --no-seed
+
+      - name: Verify generated Supabase types are current
+        shell: bash
+        run: |
+          supabase gen types typescript --local > /tmp/supabase-types.ts
+          if ! diff -u src/integrations/supabase/types.ts /tmp/supabase-types.ts; then
+            echo "Supabase types are stale. Regenerate src/integrations/supabase/types.ts." >&2
+            exit 1
+          fi
+
+      - name: Type-check Explore Edge Functions
+        run: |
+          deno check supabase/functions/explore-import/index.ts
+          deno check supabase/functions/explore-sync/index.ts
+          deno check supabase/functions/explore-review/index.ts
+
+      - name: Run dry-run import smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          eval "$(supabase status -o env | sed 's/^/export /')"
+
+          mkdir -p /tmp/explore-fixture
+          cat > /tmp/explore-fixture/entities.json <<'JSON'
+          {
+            "records": [
+              {
+                "id": "step-4-verification-entity",
+                "name": "Step 4 Verification Entity",
+                "latitude": 30.2672,
+                "longitude": -97.7431,
+                "description": "Deterministic local verification fixture"
+              }
+            ]
+          }
+          JSON
+
+          python3 -m http.server 8765 --directory /tmp/explore-fixture >/tmp/explore-fixture-server.log 2>&1 &
+          fixture_pid=$!
+
+          source_id=$(docker exec supabase_db_${SUPABASE_PROJECT_ID} psql -U postgres -d postgres -Atc "
+            insert into public.explore_import_sources
+              (name, source_type, endpoint, enabled, headers, query, auth_config, cursor_config, timeout_ms, retry_config)
+            values
+              ('Step 4 verification source', 'custom', 'http://host.docker.internal:8765/entities.json', true, '{}'::jsonb, '{}'::jsonb, '{\"type\":\"none\"}'::jsonb, '{}'::jsonb, 10000, '{\"attempts\":1}'::jsonb)
+            returning id;
+          ")
+
+          SUPABASE_URL="$API_URL" \
+          SUPABASE_SERVICE_ROLE_KEY="$SERVICE_ROLE_KEY" \
+          EXPLORE_IMPORT_SECRET="step-4-verification" \
+          supabase functions serve explore-import --no-verify-jwt >/tmp/explore-import.log 2>&1 &
+          function_pid=$!
+
+          cleanup() {
+            kill "$fixture_pid" "$function_pid" 2>/dev/null || true
+          }
+          trap cleanup EXIT
+
+          for attempt in {1..30}; do
+            if curl --silent --fail --output /dev/null --request OPTIONS http://127.0.0.1:54321/functions/v1/explore-import; then
+              break
+            fi
+            sleep 1
+          done
+
+          response=$(curl --silent --show-error --fail \
+            --request POST \
+            --header "Content-Type: application/json" \
+            --header "x-import-secret: step-4-verification" \
+            --data "{\"sourceId\":\"${source_id}\",\"executionMode\":\"dry-run\"}" \
+            http://127.0.0.1:54321/functions/v1/explore-import)
+
+          echo "$response" | tee /tmp/explore-dry-run-response.json
+          job_id=$(echo "$response" | jq -r '.jobId')
+          test -n "$job_id"
+          test "$(echo "$response" | jq -r '.statistics.parsed')" = "1"
+          test "$(echo "$response" | jq -r '.statistics.normalized')" = "1"
+          test "$(echo "$response" | jq -r '.statistics.inserted')" = "1"
+
+          docker exec supabase_db_${SUPABASE_PROJECT_ID} psql -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc "
+            select case when execution_mode = 'dry-run' then 1 else 0 end
+            from public.explore_import_jobs
+            where id = '${job_id}';
+          " | grep -qx 1
+
+          docker exec supabase_db_${SUPABASE_PROJECT_ID} psql -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc "
+            select case
+              when action = 'insert'
+               and review_status = 'pending'
+               and normalized_payload->>'externalId' = 'step-4-verification-entity'
+               and jsonb_array_length(validation_issues) = 0
+              then 1 else 0 end
+            from public.explore_import_records
+            where job_id = '${job_id}';
+          " | grep -qx 1
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Run TypeScript typecheck
+        run: pnpm typecheck
+
+      - name: Run lint
+        run: pnpm lint
+
+      - name: Build production application
+        run: pnpm build
+
+      - name: Upload verification diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: explore-step-4-verification-diagnostics
+          path: |
+            /tmp/explore-import.log
+            /tmp/explore-fixture-server.log
+            /tmp/explore-dry-run-response.json
+          if-no-files-found: ignore
