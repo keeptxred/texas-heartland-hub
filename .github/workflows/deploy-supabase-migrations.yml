@@ -1,0 +1,66 @@
+name: Deploy Supabase migrations
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: Type DEPLOY to apply pending migrations to the linked Supabase project
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-production-migrations
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Apply pending Supabase migrations
+    if: ${{ github.event.inputs.confirmation == 'DEPLOY' && github.ref == 'refs/heads/agent/explore-texas-admin-cms' }}
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 15
+
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Validate required secrets
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in SUPABASE_ACCESS_TOKEN SUPABASE_DB_PASSWORD SUPABASE_PROJECT_REF; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::$name is not configured as a GitHub Actions secret."
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - name: Link Supabase project
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
+
+      - name: Show migration status before deployment
+        run: supabase migration list
+
+      - name: Preview pending migrations
+        run: supabase db push --dry-run
+
+      - name: Apply pending migrations
+        run: supabase db push --yes
+
+      - name: Verify migration status after deployment
+        run: supabase migration list
