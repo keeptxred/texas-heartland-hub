@@ -21,8 +21,18 @@ describe("ImportPostProcessor", () => {
   it("runs steps in order", async () => {
     const calls: string[] = [];
     const steps: ImportPostProcessStep[] = [
-      { name: "taxonomy", execute: vi.fn(async () => { calls.push("taxonomy"); }) },
-      { name: "media", execute: vi.fn(async () => { calls.push("media"); }) },
+      {
+        name: "taxonomy",
+        execute: vi.fn(async () => {
+          calls.push("taxonomy");
+        }),
+      },
+      {
+        name: "media",
+        execute: vi.fn(async () => {
+          calls.push("media");
+        }),
+      },
     ];
 
     const result = await new ImportPostProcessor(steps).process(context);
@@ -33,7 +43,12 @@ describe("ImportPostProcessor", () => {
 
   it("continues after an isolated step failure", async () => {
     const steps: ImportPostProcessStep[] = [
-      { name: "taxonomy", execute: async () => { throw new Error("taxonomy unavailable"); } },
+      {
+        name: "taxonomy",
+        execute: async () => {
+          throw new Error("taxonomy unavailable");
+        },
+      },
       { name: "search", execute: vi.fn(async () => undefined) },
     ];
 

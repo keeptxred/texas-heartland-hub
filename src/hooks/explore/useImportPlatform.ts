@@ -13,8 +13,10 @@ export function useImportSources() {
   return useQuery({
     queryKey: keys.sources,
     queryFn: async () => {
-      const { data, error } = await supabase.from("explore_import_sources" as never)
-        .select("*").order("name");
+      const { data, error } = await supabase
+        .from("explore_import_sources" as never)
+        .select("*")
+        .order("name");
       if (error) throw error;
       return data as unknown as Array<Record<string, unknown>>;
     },
@@ -25,9 +27,11 @@ export function useImportJobs() {
   return useQuery({
     queryKey: keys.jobs,
     queryFn: async () => {
-      const { data, error } = await supabase.from("explore_import_jobs" as never)
+      const { data, error } = await supabase
+        .from("explore_import_jobs" as never)
         .select("*,explore_import_sources(name,source_type)")
-        .order("created_at", { ascending: false }).limit(200);
+        .order("created_at", { ascending: false })
+        .limit(200);
       if (error) throw error;
       return data as unknown as Array<Record<string, unknown>>;
     },
@@ -39,9 +43,12 @@ export function useImportReviewQueue() {
   return useQuery({
     queryKey: keys.records,
     queryFn: async () => {
-      const { data, error } = await supabase.from("explore_import_records" as never)
-        .select("*").eq("review_status", "pending")
-        .order("created_at", { ascending: false }).limit(200);
+      const { data, error } = await supabase
+        .from("explore_import_records" as never)
+        .select("*")
+        .eq("review_status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(200);
       if (error) throw error;
       return data as unknown as Array<Record<string, unknown>>;
     },
@@ -52,8 +59,11 @@ export function useImportRollbacks() {
   return useQuery({
     queryKey: keys.rollbacks,
     queryFn: async () => {
-      const { data, error } = await supabase.from("explore_import_rollbacks" as never)
-        .select("*").order("created_at", { ascending: false }).limit(100);
+      const { data, error } = await supabase
+        .from("explore_import_rollbacks" as never)
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
       if (error) throw error;
       return data as unknown as Array<Record<string, unknown>>;
     },
@@ -63,15 +73,25 @@ export function useImportRollbacks() {
 export function useEnqueueImport() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ sourceId, executionMode }: { sourceId: string; executionMode: ImportExecutionMode }) => {
+    mutationFn: async ({
+      sourceId,
+      executionMode,
+    }: {
+      sourceId: string;
+      executionMode: ImportExecutionMode;
+    }) => {
       const { data: userData } = await supabase.auth.getUser();
-      const { data, error } = await supabase.from("explore_import_jobs" as never).insert({
-        source_id: sourceId,
-        mode: "manual",
-        execution_mode: executionMode,
-        status: "queued",
-        requested_by: userData.user?.id ?? null,
-      } as never).select("id").single();
+      const { data, error } = await supabase
+        .from("explore_import_jobs" as never)
+        .insert({
+          source_id: sourceId,
+          mode: "manual",
+          execution_mode: executionMode,
+          status: "queued",
+          requested_by: userData.user?.id ?? null,
+        } as never)
+        .select("id")
+        .single();
       if (error) throw error;
       return data as unknown as { id: string };
     },
@@ -82,13 +102,22 @@ export function useEnqueueImport() {
 export function useReviewImportRecord() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: "approved" | "rejected" | "merged" }) => {
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: "approved" | "rejected" | "merged";
+    }) => {
       const { data: userData } = await supabase.auth.getUser();
-      const { error } = await supabase.from("explore_import_records" as never).update({
-        review_status: status,
-        reviewed_by: userData.user?.id ?? null,
-        reviewed_at: new Date().toISOString(),
-      } as never).eq("id", id);
+      const { error } = await supabase
+        .from("explore_import_records" as never)
+        .update({
+          review_status: status,
+          reviewed_by: userData.user?.id ?? null,
+          reviewed_at: new Date().toISOString(),
+        } as never)
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: keys.records }),

@@ -36,9 +36,10 @@ describe("ConnectorRegistry", () => {
         type: sourceType,
         enabled: true,
         endpoint: "https://example.test/data",
-        metadata: sourceType === "custom"
-          ? { entityType: "place", idFields: ["id"], nameFields: ["name"] }
-          : {},
+        metadata:
+          sourceType === "custom"
+            ? { entityType: "place", idFields: ["id"], nameFields: ["name"] }
+            : {},
       };
       expect(registry.create(config).sourceType).toBe(sourceType);
     }

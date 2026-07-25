@@ -16,16 +16,30 @@ export class DuplicateResolver {
       .limit(20);
     if (error) throw error;
 
-    return ((data ?? []) as Array<{ id: string; name: string; latitude?: number | null; longitude?: number | null }>)
+    return (
+      (data ?? []) as Array<{
+        id: string;
+        name: string;
+        latitude?: number | null;
+        longitude?: number | null;
+      }>
+    )
       .map((candidate) => {
         const reasons: string[] = [];
         let score = this.nameSimilarity(normalizedName, candidate.name.trim().toLowerCase());
         if (score >= 0.9) reasons.push("near-exact name match");
         if (
-          record.latitude != null && record.longitude != null &&
-          candidate.latitude != null && candidate.longitude != null
+          record.latitude != null &&
+          record.longitude != null &&
+          candidate.latitude != null &&
+          candidate.longitude != null
         ) {
-          const distance = this.distanceMiles(record.latitude, record.longitude, candidate.latitude, candidate.longitude);
+          const distance = this.distanceMiles(
+            record.latitude,
+            record.longitude,
+            candidate.latitude,
+            candidate.longitude,
+          );
           if (distance <= 0.1) {
             score = Math.min(1, score + 0.25);
             reasons.push("within 0.1 miles");
@@ -51,10 +65,12 @@ export class DuplicateResolver {
 
   private distanceMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const radius = 3958.8;
-    const toRadians = (value: number) => value * Math.PI / 180;
+    const toRadians = (value: number) => (value * Math.PI) / 180;
     const dLat = toRadians(lat2 - lat1);
     const dLon = toRadians(lon2 - lon1);
-    const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) ** 2;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) ** 2;
     return 2 * radius * Math.asin(Math.sqrt(a));
   }
 }

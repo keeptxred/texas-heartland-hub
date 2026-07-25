@@ -30,7 +30,11 @@ describe("CustomImporter", () => {
     };
     const importer = new CustomImporter(source);
     const draft = await importer.normalize(
-      { partner_id: "abc-123", display_name: "Texas Discovery Center", summary: "A public attraction." },
+      {
+        partner_id: "abc-123",
+        display_name: "Texas Discovery Center",
+        summary: "A public attraction.",
+      },
       context(source),
     );
 
