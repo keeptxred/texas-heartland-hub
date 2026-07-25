@@ -50,12 +50,11 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         const authorCount = AUTHORS.length;
         const imageCount =
-          localArticles.length +
-          cloudArticles.filter((a) => !!a.image_url).length +
-          productCount;
+          localArticles.length + cloudArticles.filter((a) => !!a.image_url).length + productCount;
 
         const included = [
           { file: "sitemap-pages.xml", count: 1 },
+          { file: "sitemap-explore.xml", count: 1 },
           { file: "sitemap-news.xml", count: newsCount },
           { file: "sitemap-evergreen.xml", count: evergreenCount },
           { file: "sitemap-products.xml", count: productCount },

@@ -1,16 +1,21 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { ExternalLink, Printer, Route as RouteIcon } from "lucide-react";
 import { EntityGrid } from "@/components/explore/EntityGrid";
 import { ExploreMap } from "@/components/explore/ExploreMap";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { getExploreEntity } from "@/services/explore/public.functions";
+import { getExploreEntity, getExploreSlugTarget } from "@/services/explore/public.functions";
 import { buildSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/explore/$slug")({
   loader: async ({ params }) => {
     const entity = await getExploreEntity({ data: { slug: params.slug } });
-    if (!entity) throw notFound();
+    if (!entity) {
+      const target = await getExploreSlugTarget({ data: { slug: params.slug } });
+      if (target)
+        throw redirect({ to: "/explore/$slug", params: { slug: target }, statusCode: 301 });
+      throw notFound();
+    }
     return entity;
   },
   head: ({ loaderData }) => {

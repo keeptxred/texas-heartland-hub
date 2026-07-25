@@ -41,6 +41,7 @@ import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
 import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
+import { Route as SitemapExploreDotxmlRouteImport } from './routes/sitemap-explore[.]xml'
 import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
@@ -100,11 +101,15 @@ import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$le
 import { Route as TexasIndexRouteImport } from './routes/texas.index'
 import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
+import { Route as ExploreTripTokenRouteImport } from './routes/explore.trip.$token'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as ApiPublicArticleImageFilenameRouteImport } from './routes/api/public/article-image.$filename'
+import { Route as ApiPublicExploreAutocompleteRouteImport } from './routes/api/public/explore/autocomplete'
 import { Route as ApiPublicExploreEntitiesRouteImport } from './routes/api/public/explore/entities'
+import { Route as ApiPublicExploreMapRouteImport } from './routes/api/public/explore/map'
+import { Route as ApiPublicExploreRecommendationsRouteImport } from './routes/api/public/explore/recommendations'
 import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
 import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
@@ -281,6 +286,11 @@ const SitemapAuthorsDotxmlRoute = SitemapAuthorsDotxmlRouteImport.update({
 const SitemapEvergreenDotxmlRoute = SitemapEvergreenDotxmlRouteImport.update({
   id: '/sitemap-evergreen.xml',
   path: '/sitemap-evergreen.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapExploreDotxmlRoute = SitemapExploreDotxmlRouteImport.update({
+  id: '/sitemap-explore.xml',
+  path: '/sitemap-explore.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
@@ -595,6 +605,11 @@ const ApiPublicPropertyAddressLookupRoute =
     path: '/api/public/property-address-lookup',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ExploreTripTokenRoute = ExploreTripTokenRouteImport.update({
+  id: '/trip/$token',
+  path: '/trip/$token',
+  getParentRoute: () => ExploreRoute,
+} as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -617,10 +632,27 @@ const ApiPublicArticleImageFilenameRoute =
     path: '/api/public/article-image/$filename',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicExploreAutocompleteRoute =
+  ApiPublicExploreAutocompleteRouteImport.update({
+    id: '/api/public/explore/autocomplete',
+    path: '/api/public/explore/autocomplete',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicExploreEntitiesRoute =
   ApiPublicExploreEntitiesRouteImport.update({
     id: '/api/public/explore/entities',
     path: '/api/public/explore/entities',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicExploreMapRoute = ApiPublicExploreMapRouteImport.update({
+  id: '/api/public/explore/map',
+  path: '/api/public/explore/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicExploreRecommendationsRoute =
+  ApiPublicExploreRecommendationsRouteImport.update({
+    id: '/api/public/explore/recommendations',
+    path: '/api/public/explore/recommendations',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksBackfillFeaturedImagesRoute =
@@ -757,6 +789,7 @@ export interface FileRoutesByFullPath {
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -816,10 +849,14 @@ export interface FileRoutesByFullPath {
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
+  '/api/public/explore/map': typeof ApiPublicExploreMapRoute
+  '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -869,6 +906,7 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -925,10 +963,14 @@ export interface FileRoutesByTo {
   '/texas-sports': typeof TexasSportsIndexRoute
   '/texas': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
+  '/api/public/explore/map': typeof ApiPublicExploreMapRoute
+  '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -982,6 +1024,7 @@ export interface FileRoutesById {
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -1041,10 +1084,14 @@ export interface FileRoutesById {
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
+  '/api/public/explore/map': typeof ApiPublicExploreMapRoute
+  '/api/public/explore/recommendations': typeof ApiPublicExploreRecommendationsRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -1099,6 +1146,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
+    | '/sitemap-explore.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
@@ -1158,10 +1206,14 @@ export interface FileRouteTypes {
     | '/texas-sports/'
     | '/texas/'
     | '/api/public/property-address-lookup'
+    | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/api/public/article-image/$filename'
+    | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
+    | '/api/public/explore/map'
+    | '/api/public/explore/recommendations'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -1211,6 +1263,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
+    | '/sitemap-explore.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
@@ -1267,10 +1320,14 @@ export interface FileRouteTypes {
     | '/texas-sports'
     | '/texas'
     | '/api/public/property-address-lookup'
+    | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/api/public/article-image/$filename'
+    | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
+    | '/api/public/explore/map'
+    | '/api/public/explore/recommendations'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -1323,6 +1380,7 @@ export interface FileRouteTypes {
     | '/shop'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
+    | '/sitemap-explore.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
@@ -1382,10 +1440,14 @@ export interface FileRouteTypes {
     | '/texas-sports/'
     | '/texas/'
     | '/api/public/property-address-lookup'
+    | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/api/public/article-image/$filename'
+    | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
+    | '/api/public/explore/map'
+    | '/api/public/explore/recommendations'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -1439,6 +1501,7 @@ export interface RootRouteChildren {
   ShopRoute: typeof ShopRouteWithChildren
   SitemapAuthorsDotxmlRoute: typeof SitemapAuthorsDotxmlRoute
   SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
+  SitemapExploreDotxmlRoute: typeof SitemapExploreDotxmlRoute
   SitemapImagesDotxmlRoute: typeof SitemapImagesDotxmlRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
@@ -1482,7 +1545,10 @@ export interface RootRouteChildren {
   ApiPublicPropertyAddressLookupRoute: typeof ApiPublicPropertyAddressLookupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
+  ApiPublicExploreAutocompleteRoute: typeof ApiPublicExploreAutocompleteRoute
   ApiPublicExploreEntitiesRoute: typeof ApiPublicExploreEntitiesRoute
+  ApiPublicExploreMapRoute: typeof ApiPublicExploreMapRoute
+  ApiPublicExploreRecommendationsRoute: typeof ApiPublicExploreRecommendationsRoute
   ApiPublicHooksBackfillFeaturedImagesRoute: typeof ApiPublicHooksBackfillFeaturedImagesRoute
   ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
@@ -1726,6 +1792,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-evergreen.xml'
       fullPath: '/sitemap-evergreen.xml'
       preLoaderRoute: typeof SitemapEvergreenDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-explore.xml': {
+      id: '/sitemap-explore.xml'
+      path: '/sitemap-explore.xml'
+      fullPath: '/sitemap-explore.xml'
+      preLoaderRoute: typeof SitemapExploreDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-images.xml': {
@@ -2141,6 +2214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPropertyAddressLookupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/trip/$token': {
+      id: '/explore/trip/$token'
+      path: '/trip/$token'
+      fullPath: '/explore/trip/$token'
+      preLoaderRoute: typeof ExploreTripTokenRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
       path: '/lovable/email/suppression'
@@ -2169,11 +2249,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicArticleImageFilenameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/explore/autocomplete': {
+      id: '/api/public/explore/autocomplete'
+      path: '/api/public/explore/autocomplete'
+      fullPath: '/api/public/explore/autocomplete'
+      preLoaderRoute: typeof ApiPublicExploreAutocompleteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/explore/entities': {
       id: '/api/public/explore/entities'
       path: '/api/public/explore/entities'
       fullPath: '/api/public/explore/entities'
       preLoaderRoute: typeof ApiPublicExploreEntitiesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/explore/map': {
+      id: '/api/public/explore/map'
+      path: '/api/public/explore/map'
+      fullPath: '/api/public/explore/map'
+      preLoaderRoute: typeof ApiPublicExploreMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/explore/recommendations': {
+      id: '/api/public/explore/recommendations'
+      path: '/api/public/explore/recommendations'
+      fullPath: '/api/public/explore/recommendations'
+      preLoaderRoute: typeof ApiPublicExploreRecommendationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/backfill-featured-images': {
@@ -2313,6 +2414,7 @@ interface ExploreRouteChildren {
   ExploreSearchRoute: typeof ExploreSearchRoute
   ExploreTripPlannerRoute: typeof ExploreTripPlannerRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
+  ExploreTripTokenRoute: typeof ExploreTripTokenRoute
 }
 
 const ExploreRouteChildren: ExploreRouteChildren = {
@@ -2320,6 +2422,7 @@ const ExploreRouteChildren: ExploreRouteChildren = {
   ExploreSearchRoute: ExploreSearchRoute,
   ExploreTripPlannerRoute: ExploreTripPlannerRoute,
   ExploreIndexRoute: ExploreIndexRoute,
+  ExploreTripTokenRoute: ExploreTripTokenRoute,
 }
 
 const ExploreRouteWithChildren =
@@ -2442,6 +2545,7 @@ const rootRouteChildren: RootRouteChildren = {
   ShopRoute: ShopRouteWithChildren,
   SitemapAuthorsDotxmlRoute: SitemapAuthorsDotxmlRoute,
   SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
+  SitemapExploreDotxmlRoute: SitemapExploreDotxmlRoute,
   SitemapImagesDotxmlRoute: SitemapImagesDotxmlRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
@@ -2487,7 +2591,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPropertyAddressLookupRoute: ApiPublicPropertyAddressLookupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
+  ApiPublicExploreAutocompleteRoute: ApiPublicExploreAutocompleteRoute,
   ApiPublicExploreEntitiesRoute: ApiPublicExploreEntitiesRoute,
+  ApiPublicExploreMapRoute: ApiPublicExploreMapRoute,
+  ApiPublicExploreRecommendationsRoute: ApiPublicExploreRecommendationsRoute,
   ApiPublicHooksBackfillFeaturedImagesRoute:
     ApiPublicHooksBackfillFeaturedImagesRoute,
   ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,

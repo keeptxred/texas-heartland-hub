@@ -9,7 +9,8 @@ Phase II Steps 5–7 extend the existing import platform with a public, RLS-prot
 - `/explore` loads query-backed featured and typed collections on the server.
 - `/explore/search` validates URL search parameters and provides paginated, faceted results.
 - `/explore/$slug` only resolves published entities and composes profile, observation, relationship, nearby, source, map, and structured-data sections when data exists.
-- `/explore/trip-planner` generates and edits itineraries and persists the current draft in the browser.
+- `/explore/trip-planner` generates and edits itineraries, persists a draft in the browser, and supports authenticated owner-only cloud saves.
+- `/explore/trip/$token` renders explicitly shared trips without exposing owner information.
 - `/api/public/explore/entities` exposes the validated public search result shape.
 
 All public reads use the publishable Supabase key and Row Level Security. Components do not issue direct Supabase queries.
@@ -30,13 +31,13 @@ The public API validates all input with Zod, returns structured errors and reque
 
 Scoring is centralized in `public.functions.ts`. It rewards exact activity matches and applicable family, pet, accessibility, RV, and regional fields. Tie-breaking is stable by entity name. Every stop receives explanations derived from those same structured fields. Generated schedules use up to three stops per day and label any fee or policy uncertainty for official-source verification.
 
-The itinerary editor supports removal and keyboard-operable reordering controls. Drafts persist in versioned local storage. It deliberately does not claim live travel times, hours, availability, prices, or reservation status.
+The itinerary editor supports removal, alternative replacement, cross-day moves, duration and note editing, and keyboard-operable route reordering. Drafts persist in versioned local storage. Signed-in owners can save through RLS, enable a non-guessable share token, copy a public link, and revoke sharing by clearing the token and public state. It deliberately does not claim live travel times, hours, availability, prices, or reservation status.
 
 ## SEO, sitemap, and print
 
 Landing and planner pages have canonical metadata. Search pages are `noindex,follow` to avoid filtered-URL duplication. Entity pages derive titles, descriptions, images, canonical URLs, and Schema.org place types from published data.
 
-The static sitemap includes the Explore landing and planner. Dynamic entity sitemap generation should be enabled after the migration is deployed and the production publishable-key environment is available to the sitemap worker.
+The static sitemap includes the Explore landing and planner. `sitemap-explore.xml` queries only published entities and supplies canonical entity URLs, update timestamps, and approved hero images.
 
 Print uses browser print and “Save as PDF,” avoiding a deployment-sensitive browser dependency. Print CSS removes controls and navigation, sets letter margins, and avoids splitting day blocks.
 

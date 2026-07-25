@@ -1,9 +1,10 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EntityGrid } from "@/components/explore/EntityGrid";
 import { Button } from "@/components/ui/button";
 import { exploreSearchSchema } from "@/schemas/explore/public.schema";
-import { searchExplore } from "@/services/explore/public.functions";
+import { autocompleteExplore, searchExplore } from "@/services/explore/public.functions";
+import type { ExploreAutocompleteItem } from "@/types/explore/public";
 import { buildSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/explore/search")({
@@ -31,6 +32,19 @@ function ExploreSearch() {
   const result = Route.useLoaderData();
   const navigate = useNavigate({ from: Route.fullPath });
   const [query, setQuery] = useState(search.q ?? "");
+  const [suggestions, setSuggestions] = useState<ExploreAutocompleteItem[]>([]);
+  useEffect(() => {
+    if (query.trim().length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    const timeout = window.setTimeout(() => {
+      void autocompleteExplore({ data: { q: query.trim(), limit: 8 } })
+        .then(setSuggestions)
+        .catch(() => setSuggestions([]));
+    }, 180);
+    return () => window.clearTimeout(timeout);
+  }, [query]);
   const setFilter = (key: "types" | "regions" | "activities", value: string) => {
     const current = search[key] ?? [];
     const next = current.includes(value)
@@ -57,7 +71,7 @@ function ExploreSearch() {
         </Button>
       </div>
       <form
-        className="mt-8 flex gap-2"
+        className="relative mt-8 flex gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           void navigate({ search: (old) => ({ ...old, q: query || undefined, page: 1 }) });
@@ -70,10 +84,38 @@ function ExploreSearch() {
           id="directory-search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={suggestions.length > 0}
+          aria-controls="explore-suggestions"
           className="h-11 flex-1 rounded-md border px-4"
           placeholder="Name, alternate name, activity, or place"
         />
         <Button type="submit">Search</Button>
+        {suggestions.length > 0 && (
+          <ul
+            id="explore-suggestions"
+            role="listbox"
+            className="absolute left-0 right-24 top-12 z-20 overflow-hidden rounded-md border bg-popover shadow-lg"
+          >
+            {suggestions.map((item) => (
+              <li key={item.slug} role="option" aria-selected="false">
+                <Link
+                  to="/explore/$slug"
+                  params={{ slug: item.slug }}
+                  className="flex items-center justify-between gap-4 px-4 py-3 text-sm hover:bg-muted focus:bg-muted"
+                >
+                  <span className="font-medium">{item.name}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {[item.entityType.replaceAll("_", " "), item.region]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </form>
       <div className="mt-8 grid gap-8 lg:grid-cols-[260px_1fr]">
         <aside aria-label="Search filters" className="space-y-6">

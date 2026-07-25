@@ -1,13 +1,34 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowDown, ArrowUp, Printer, Trash2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  Printer,
+  RefreshCw,
+  Save,
+  Share2,
+  Trash2,
+} from "lucide-react";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { generateExploreTrip } from "@/services/explore/public.functions";
 import type { GeneratedTrip, TripPreferences } from "@/types/explore/public";
+import type { SavedTrip } from "@/types/explore/public";
+import { createClientOnlyFn } from "@tanstack/react-start";
 import { buildSeo } from "@/lib/seo";
+import { orderStopsForRoute } from "@/lib/explore/geography";
 
 const STORAGE_KEY = "keeptxred.explore.trip.v1";
+const saveTrip = createClientOnlyFn(async (trip: GeneratedTrip, existingId?: string) => {
+  const { saveExploreTrip } = await import("@/services/explore/trip.client");
+  return saveExploreTrip(trip, existingId);
+});
+const shareTrip = createClientOnlyFn(async (id: string, enabled: boolean) => {
+  const { setExploreTripSharing } = await import("@/services/explore/trip.client");
+  return setExploreTripSharing(id, enabled);
+});
 const interests = [
   "fishing",
   "boating",
@@ -41,6 +62,7 @@ function TripPlanner() {
   const [trip, setTrip] = useState<GeneratedTrip | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  const [savedTrip, setSavedTrip] = useState<SavedTrip | null>(null);
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);
     if (!stored) return;
@@ -93,6 +115,136 @@ function TripPlanner() {
       ];
       return { ...current, days };
     });
+  }
+
+  function moveDay(dayIndex: number, stopIndex: number, offset: -1 | 1) {
+    setTrip((current) => {
+      if (!current) return current;
+      const targetDay = dayIndex + offset;
+      if (targetDay < 0 || targetDay >= current.days.length) return current;
+      const days = current.days.map((day) => ({ ...day, stops: [...day.stops] }));
+      const [stop] = days[dayIndex].stops.splice(stopIndex, 1);
+      days[targetDay].stops.push(stop);
+      return { ...current, days };
+    });
+  }
+
+  function updateStop(
+    dayIndex: number,
+    stopIndex: number,
+    values: { durationMinutes?: number; note?: string },
+  ) {
+    setTrip((current) => {
+      if (!current) return current;
+      return {
+        ...current,
+        days: current.days.map((day, currentDay) =>
+          currentDay !== dayIndex
+            ? day
+            : {
+                ...day,
+                stops: day.stops.map((stop, currentStop) =>
+                  currentStop !== stopIndex
+                    ? stop
+                    : {
+                        ...stop,
+                        durationMinutes: values.durationMinutes ?? stop.durationMinutes,
+                        notes:
+                          values.note != null
+                            ? [values.note, ...stop.notes.slice(1)].filter(Boolean)
+                            : stop.notes,
+                      },
+                ),
+              },
+        ),
+      };
+    });
+  }
+
+  async function persist() {
+    if (!trip) return;
+    setPending(true);
+    setError("");
+    try {
+      setSavedTrip(await saveTrip(trip, savedTrip?.id));
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "The trip could not be saved.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function share() {
+    if (!trip) return;
+    setPending(true);
+    setError("");
+    try {
+      const saved = savedTrip ?? (await saveTrip(trip));
+      const shared = await shareTrip(saved.id, !saved.shareToken);
+      setSavedTrip(shared);
+      if (shared.shareToken) {
+        const url = `${window.location.origin}/explore/trip/${shared.shareToken}`;
+        await navigator.clipboard.writeText(url);
+      }
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "The sharing link could not be created.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  async function replaceStop(dayIndex: number, stopIndex: number) {
+    if (!trip) return;
+    setPending(true);
+    setError("");
+    try {
+      const alternatives = await generateExploreTrip({ data: trip.preferences });
+      const used = new Set(trip.days.flatMap((day) => day.stops.map((stop) => stop.entity.id)));
+      const replacement = alternatives.days
+        .flatMap((day) => day.stops)
+        .find((stop) => !used.has(stop.entity.id));
+      if (!replacement)
+        throw new Error("No unused published alternative matches these preferences.");
+      setTrip((current) =>
+        current
+          ? {
+              ...current,
+              days: current.days.map((day, currentDay) =>
+                currentDay === dayIndex
+                  ? {
+                      ...day,
+                      stops: day.stops.map((stop, currentStop) =>
+                        currentStop === stopIndex ? replacement : stop,
+                      ),
+                    }
+                  : day,
+              ),
+            }
+          : current,
+      );
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "No replacement could be found.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  function recalculateRoute() {
+    setTrip((current) =>
+      current
+        ? {
+            ...current,
+            days: current.days.map((day) => {
+              const entities = orderStopsForRoute(day.stops.map((stop) => stop.entity));
+              const byId = new Map(day.stops.map((stop) => [stop.entity.id, stop]));
+              return {
+                ...day,
+                stops: entities.map((entity) => byId.get(entity.id)!).filter(Boolean),
+              };
+            }),
+          }
+        : current,
+    );
   }
 
   return (
@@ -206,6 +358,18 @@ function TripPlanner() {
                   </p>
                 </div>
                 <div className="flex gap-2 print:hidden">
+                  <Button variant="outline" onClick={persist} disabled={pending}>
+                    <Save />
+                    {savedTrip ? "Saved" : "Save"}
+                  </Button>
+                  <Button variant="outline" onClick={share} disabled={pending}>
+                    <Share2 />
+                    {savedTrip?.shareToken ? "Disable sharing" : "Share"}
+                  </Button>
+                  <Button variant="outline" onClick={recalculateRoute}>
+                    <RefreshCw />
+                    Reorder route
+                  </Button>
                   <Button variant="outline" onClick={() => window.print()}>
                     <Printer />
                     Print
@@ -266,6 +430,24 @@ function TripPlanner() {
                                 <Button
                                   size="icon"
                                   variant="ghost"
+                                  aria-label={`Move ${stop.entity.name} to previous day`}
+                                  disabled={dayIndex === 0}
+                                  onClick={() => moveDay(dayIndex, stopIndex, -1)}
+                                >
+                                  <ArrowLeft />
+                                </Button>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  aria-label={`Move ${stop.entity.name} to next day`}
+                                  disabled={dayIndex === trip.days.length - 1}
+                                  onClick={() => moveDay(dayIndex, stopIndex, 1)}
+                                >
+                                  <ArrowRight />
+                                </Button>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
                                   aria-label={`Move ${stop.entity.name} earlier`}
                                   onClick={() => move(dayIndex, stopIndex, -1)}
                                 >
@@ -305,7 +487,50 @@ function TripPlanner() {
                                 >
                                   <Trash2 />
                                 </Button>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  aria-label={`Replace ${stop.entity.name} with another recommendation`}
+                                  disabled={pending}
+                                  onClick={() => void replaceStop(dayIndex, stopIndex)}
+                                >
+                                  <RefreshCw />
+                                </Button>
                               </div>
+                            </div>
+                            <div className="mt-4 grid gap-3 sm:grid-cols-[180px_1fr] print:hidden">
+                              <label className="text-sm font-medium">
+                                Visit duration
+                                <select
+                                  value={stop.durationMinutes}
+                                  onChange={(event) =>
+                                    updateStop(dayIndex, stopIndex, {
+                                      durationMinutes: Number(event.target.value),
+                                    })
+                                  }
+                                  className="mt-1 h-9 w-full rounded-md border bg-background px-2"
+                                >
+                                  {[60, 90, 120, 180, 240, 360].map((minutes) => (
+                                    <option key={minutes} value={minutes}>
+                                      {minutes < 120
+                                        ? `${minutes} minutes`
+                                        : `${minutes / 60} hours`}
+                                    </option>
+                                  ))}
+                                </select>
+                              </label>
+                              <label className="text-sm font-medium">
+                                Personal note
+                                <input
+                                  value={stop.notes[0] ?? ""}
+                                  maxLength={500}
+                                  onChange={(event) =>
+                                    updateStop(dayIndex, stopIndex, { note: event.target.value })
+                                  }
+                                  className="mt-1 h-9 w-full rounded-md border px-3 font-normal"
+                                  placeholder="Add a private planning note"
+                                />
+                              </label>
                             </div>
                             <ul className="mt-3 list-disc pl-5 text-sm">
                               {stop.reasons.map((reason) => (
