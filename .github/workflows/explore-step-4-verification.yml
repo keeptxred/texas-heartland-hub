@@ -33,6 +33,21 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
+      - name: Verify checked-out revision and cron migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "GitHub SHA: ${GITHUB_SHA}"
+          git rev-parse HEAD
+          migration="supabase/migrations/20260627133555_f934a17f-5d3a-432f-95b6-47ef8fcaba77.sql"
+          test -f "$migration"
+          sed -n '1,24p' "$migration"
+          if grep -Fqx "SELECT cron.unschedule('generate-evergreen-daily');" "$migration"; then
+            echo "Unsafe direct cron.unschedule call is still present in the checked-out migration." >&2
+            exit 1
+          fi
+          grep -Fq "WHERE jobname = 'generate-evergreen-daily'" "$migration"
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
