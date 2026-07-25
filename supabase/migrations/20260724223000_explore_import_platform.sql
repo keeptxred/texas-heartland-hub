@@ -91,11 +91,27 @@ alter table public.explore_import_records enable row level security;
 alter table public.explore_import_revisions enable row level security;
 alter table public.explore_import_rollbacks enable row level security;
 
-create policy "Admins manage explore import sources" on public.explore_import_sources for all to authenticated using (public.has_role(auth.uid(), 'admin')) with check (public.has_role(auth.uid(), 'admin'));
-create policy "Admins manage explore import jobs" on public.explore_import_jobs for all to authenticated using (public.has_role(auth.uid(), 'admin')) with check (public.has_role(auth.uid(), 'admin'));
-create policy "Admins manage explore import records" on public.explore_import_records for all to authenticated using (public.has_role(auth.uid(), 'admin')) with check (public.has_role(auth.uid(), 'admin'));
-create policy "Admins manage explore import revisions" on public.explore_import_revisions for all to authenticated using (public.has_role(auth.uid(), 'admin')) with check (public.has_role(auth.uid(), 'admin'));
-create policy "Admins manage explore import rollbacks" on public.explore_import_rollbacks for all to authenticated using (public.has_role(auth.uid(), 'admin')) with check (public.has_role(auth.uid(), 'admin'));
+-- Some deployments provide a shared two-argument public.has_role helper, while
+-- clean databases do not. Create authenticated-admin policies only when that
+-- helper is available. Service-role operations continue to bypass RLS.
+do $$
+begin
+  if exists (
+    select 1
+    from pg_proc p
+    join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'public'
+      and p.proname = 'has_role'
+      and p.pronargs = 2
+  ) then
+    execute 'create policy "Admins manage explore import sources" on public.explore_import_sources for all to authenticated using (public.has_role(auth.uid(), ''admin'')) with check (public.has_role(auth.uid(), ''admin''))';
+    execute 'create policy "Admins manage explore import jobs" on public.explore_import_jobs for all to authenticated using (public.has_role(auth.uid(), ''admin'')) with check (public.has_role(auth.uid(), ''admin''))';
+    execute 'create policy "Admins manage explore import records" on public.explore_import_records for all to authenticated using (public.has_role(auth.uid(), ''admin'')) with check (public.has_role(auth.uid(), ''admin''))';
+    execute 'create policy "Admins manage explore import revisions" on public.explore_import_revisions for all to authenticated using (public.has_role(auth.uid(), ''admin'')) with check (public.has_role(auth.uid(), ''admin''))';
+    execute 'create policy "Admins manage explore import rollbacks" on public.explore_import_rollbacks for all to authenticated using (public.has_role(auth.uid(), ''admin'')) with check (public.has_role(auth.uid(), ''admin''))';
+  end if;
+end
+$$;
 
 create or replace function public.claim_explore_import_job()
 returns public.explore_import_jobs
