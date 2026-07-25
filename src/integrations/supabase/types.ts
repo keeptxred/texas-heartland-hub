@@ -2794,6 +2794,48 @@ export type Database = {
         }
         Relationships: []
       }
+      publishing_alerts: {
+        Row: {
+          created_at: string
+          id: string
+          incident_key: string
+          latest_published_at: string | null
+          message: string
+          notification_sent_at: string | null
+          opened_at: string
+          reserve_slug: string | null
+          resolved_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          incident_key: string
+          latest_published_at?: string | null
+          message: string
+          notification_sent_at?: string | null
+          opened_at?: string
+          reserve_slug?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          incident_key?: string
+          latest_published_at?: string | null
+          message?: string
+          notification_sent_at?: string | null
+          opened_at?: string
+          reserve_slug?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       publishing_queue: {
         Row: {
           content_package_id: string
@@ -2871,6 +2913,27 @@ export type Database = {
           status?: string
           title?: string | null
           topic?: string | null
+        }
+        Relationships: []
+      }
+      reserve_article_publications: {
+        Row: {
+          created_at: string
+          published_at: string
+          reserve_key: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          published_at?: string
+          reserve_key: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          published_at?: string
+          reserve_key?: string
+          slug?: string
         }
         Relationships: []
       }
