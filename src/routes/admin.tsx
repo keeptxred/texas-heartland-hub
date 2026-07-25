@@ -12,6 +12,7 @@ import { ContentSourceManager } from "@/components/admin/ContentSourceManager";
 import { PublishingQueuePanel } from "@/components/admin/PublishingQueuePanel";
 import { MetaConnectionManager } from "@/components/admin/MetaConnectionManager";
 import { ViralRadarPanel } from "@/components/admin/ViralRadarPanel";
+import { ExploreDuplicatePanel } from "@/components/admin/ExploreDuplicatePanel";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -198,6 +199,10 @@ function AdminDashboard() {
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <ViralRadarPanel />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <ExploreDuplicatePanel />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
