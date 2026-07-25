@@ -109,9 +109,10 @@ export class EntityRepository {
   }
 
   async create(input: ExploreEntityCreateInput & { slug: string }): Promise<ExploreEntity> {
+    const values = mapExploreEntityCreateInput(input);
     const { data, error } = await this.client
       .from('explore_entities')
-      .insert(mapExploreEntityCreateInput(input))
+      .insert(values as never)
       .select(ENTITY_SELECT)
       .single();
 
@@ -123,7 +124,7 @@ export class EntityRepository {
     const values = mapExploreEntityUpdateInput(input);
     const { data, error } = await this.client
       .from('explore_entities')
-      .update(values)
+      .update(values as never)
       .eq('id', id)
       .select(ENTITY_SELECT)
       .maybeSingle();
@@ -137,7 +138,7 @@ export class EntityRepository {
     const now = new Date().toISOString();
     const { data, error } = await this.client
       .from('explore_entities')
-      .update({ status: 'archived', visibility: 'internal', archived_at: now })
+      .update({ status: 'archived', visibility: 'internal', archived_at: now } as never)
       .eq('id', id)
       .select(ENTITY_SELECT)
       .maybeSingle();
