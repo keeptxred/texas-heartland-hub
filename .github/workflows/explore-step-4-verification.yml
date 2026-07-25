@@ -189,6 +189,7 @@ jobs:
         with:
           name: explore-step-4-verification-diagnostics
           path: |
+            /tmp/supabase-types.ts
             /tmp/explore-import.log
             /tmp/explore-fixture-server.log
             /tmp/explore-dry-run-response.json
