@@ -128,6 +128,7 @@ import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
 import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
 import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
+import { Route as ApiPublicHooksPublishingSafetyNetRouteImport } from './routes/api/public/hooks/publishing-safety-net'
 import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
 import { Route as ApiPublicHooksScoreViralBackfillRouteImport } from './routes/api/public/hooks/score-viral-backfill'
 import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
@@ -764,6 +765,12 @@ const ApiPublicHooksListShopsRoute = ApiPublicHooksListShopsRouteImport.update({
   path: '/api/public/hooks/list-shops',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicHooksPublishingSafetyNetRoute =
+  ApiPublicHooksPublishingSafetyNetRouteImport.update({
+    id: '/api/public/hooks/publishing-safety-net',
+    path: '/api/public/hooks/publishing-safety-net',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicHooksScoreViralRoute =
   ApiPublicHooksScoreViralRouteImport.update({
     id: '/api/public/hooks/score-viral',
@@ -944,6 +951,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
@@ -1069,6 +1077,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
@@ -1201,6 +1210,7 @@ export interface FileRoutesById {
   '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
   '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
   '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/publishing-safety-net': typeof ApiPublicHooksPublishingSafetyNetRoute
   '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
   '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
   '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
@@ -1334,6 +1344,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/publishing-safety-net'
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
@@ -1459,6 +1470,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/publishing-safety-net'
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
@@ -1590,6 +1602,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/health'
     | '/api/public/hooks/ingest-feeds'
     | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/publishing-safety-net'
     | '/api/public/hooks/score-viral'
     | '/api/public/hooks/score-viral-backfill'
     | '/api/public/hooks/sync-printify'
@@ -1702,6 +1715,7 @@ export interface RootRouteChildren {
   ApiPublicHooksHealthRoute: typeof ApiPublicHooksHealthRoute
   ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
   ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
+  ApiPublicHooksPublishingSafetyNetRoute: typeof ApiPublicHooksPublishingSafetyNetRoute
   ApiPublicHooksScoreViralRoute: typeof ApiPublicHooksScoreViralRoute
   ApiPublicHooksScoreViralBackfillRoute: typeof ApiPublicHooksScoreViralBackfillRoute
   ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
@@ -2549,6 +2563,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksListShopsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/publishing-safety-net': {
+      id: '/api/public/hooks/publishing-safety-net'
+      path: '/api/public/hooks/publishing-safety-net'
+      fullPath: '/api/public/hooks/publishing-safety-net'
+      preLoaderRoute: typeof ApiPublicHooksPublishingSafetyNetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/score-viral': {
       id: '/api/public/hooks/score-viral'
       path: '/api/public/hooks/score-viral'
@@ -2837,6 +2858,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksHealthRoute: ApiPublicHooksHealthRoute,
   ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
   ApiPublicHooksListShopsRoute: ApiPublicHooksListShopsRoute,
+  ApiPublicHooksPublishingSafetyNetRoute:
+    ApiPublicHooksPublishingSafetyNetRoute,
   ApiPublicHooksScoreViralRoute: ApiPublicHooksScoreViralRoute,
   ApiPublicHooksScoreViralBackfillRoute: ApiPublicHooksScoreViralBackfillRoute,
   ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
