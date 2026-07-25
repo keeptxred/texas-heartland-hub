@@ -125,3 +125,21 @@ export interface GeneratedTrip {
   days: TripDay[];
   verificationReminder: string;
 }
+
+export interface SavedTrip {
+  id: string;
+  shareToken: string | null;
+  isPublic: boolean;
+  title: string;
+  startsOn: string | null;
+  endsOn: string | null;
+  trip: GeneratedTrip;
+  updatedAt: string;
+}
+
+export interface ExploreAutocompleteItem {
+  name: string;
+  slug: string;
+  entityType: string;
+  region: string | null;
+}

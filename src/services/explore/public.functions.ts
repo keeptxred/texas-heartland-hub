@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { exploreSearchSchema, tripPreferencesSchema } from "@/schemas/explore/public.schema";
+import { orderStopsForRoute } from "@/lib/explore/geography";
 import type {
   ExploreEntity,
   ExploreEntityCard,
@@ -10,6 +11,8 @@ import type {
   ExploreSearchResult,
   GeneratedTrip,
   ExploreJson,
+  ExploreAutocompleteItem,
+  SavedTrip,
   TripPreferences,
 } from "@/types/explore/public";
 
@@ -274,6 +277,87 @@ export const getExploreEntity = createServerFn({ method: "GET" })
     };
   });
 
+export const getExploreSlugTarget = createServerFn({ method: "GET" })
+  .inputValidator((value) => z.object({ slug: z.string().min(1).max(240) }).parse(value))
+  .handler(async ({ data }): Promise<string | null> => {
+    const client = publicClient();
+    if (!client) return null;
+    const alias = await client
+      .from("explore_entity_slugs")
+      .select("entity_id")
+      .eq("slug", data.slug)
+      .maybeSingle();
+    if (!alias.data) return null;
+    const entity = await client
+      .from("explore_entities")
+      .select("slug")
+      .eq("id", (alias.data as Row).entity_id)
+      .eq("status", "published")
+      .maybeSingle();
+    return entity.data ? String((entity.data as Row).slug) : null;
+  });
+
+export const autocompleteExplore = createServerFn({ method: "GET" })
+  .inputValidator((value) =>
+    z
+      .object({
+        q: z.string().trim().min(2).max(80),
+        limit: z.number().int().min(1).max(12).default(8),
+      })
+      .parse(value),
+  )
+  .handler(async ({ data }): Promise<ExploreAutocompleteItem[]> => {
+    const client = publicClient();
+    if (!client) return [];
+    const result = await client.rpc("autocomplete_explore_entities", {
+      search_query: data.q,
+      result_limit: data.limit,
+    });
+    if (result.error) throw new Error(`Explore autocomplete failed: ${result.error.message}`);
+    return ((result.data ?? []) as Row[]).map((row) => ({
+      name: String(row.name),
+      slug: String(row.slug),
+      entityType: String(row.entity_type),
+      region: nullableString(row.region),
+    }));
+  });
+
+export const getSharedExploreTrip = createServerFn({ method: "GET" })
+  .inputValidator((value) => z.object({ token: z.string().min(24).max(128) }).parse(value))
+  .handler(async ({ data }): Promise<SavedTrip | null> => {
+    const client = publicClient();
+    if (!client) return null;
+    const result = await client
+      .from("explore_trips")
+      .select("id,share_token,is_public,title,starts_on,ends_on,preferences,itinerary,updated_at")
+      .eq("share_token", data.token)
+      .eq("is_public", true)
+      .maybeSingle();
+    if (result.error) throw new Error(`Shared trip lookup failed: ${result.error.message}`);
+    if (!result.data) return null;
+    const row = result.data as Row;
+    const itinerary = json(row.itinerary) as { [key: string]: ExploreJson };
+    const preferences = json(row.preferences) as { [key: string]: ExploreJson };
+    return {
+      id: String(row.id),
+      shareToken: nullableString(row.share_token),
+      isPublic: true,
+      title: String(row.title),
+      startsOn: nullableString(row.starts_on),
+      endsOn: nullableString(row.ends_on),
+      updatedAt: String(row.updated_at),
+      trip: {
+        title: String(row.title),
+        preferences: preferences as unknown as TripPreferences,
+        days: (itinerary.days ?? []) as unknown as GeneratedTrip["days"],
+        verificationReminder: String(
+          itinerary.verificationReminder ??
+            "Verify hours, fees, conditions, reservations, and regulations with official sources.",
+        ),
+      },
+    };
+  });
+
 export function recommendationReasons(
   entity: ExploreEntityCard,
   preferences: TripPreferences,
@@ -319,6 +403,11 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
       }))
       .sort((a, b) => b.score - a.score || a.entity.name.localeCompare(b.entity.name));
     const start = data.startDate ? new Date(`${data.startDate}T12:00:00`) : null;
+    const routeOrdered = orderStopsForRoute(ranked.map(({ entity }) => entity));
+    const rankedById = new Map(ranked.map((item) => [item.entity.id, item]));
+    const orderedRecommendations = routeOrdered
+      .map((entity) => rankedById.get(entity.id)!)
+      .filter(Boolean);
     const days = Array.from({ length: data.days }, (_, index) => {
       const date = start
         ? new Date(start.getTime() + index * 86_400_000).toISOString().slice(0, 10)
@@ -326,20 +415,22 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
       return {
         day: index + 1,
         date,
-        stops: ranked.slice(index * 3, index * 3 + 3).map(({ entity }, stopIndex) => ({
-          entity,
-          period: (["morning", "afternoon", "evening"] as const)[stopIndex],
-          durationMinutes: stopIndex === 1 ? 180 : 120,
-          reasons: recommendationReasons(entity, data),
-          notes: [
-            entity.feeRequired
-              ? "Fees may apply; verify current pricing with the official source."
-              : "",
-            data.pets && !entity.isPetFriendly
-              ? "Verify the current pet policy before visiting."
-              : "",
-          ].filter(Boolean),
-        })),
+        stops: orderedRecommendations
+          .slice(index * 3, index * 3 + 3)
+          .map(({ entity }, stopIndex) => ({
+            entity,
+            period: (["morning", "afternoon", "evening"] as const)[stopIndex],
+            durationMinutes: stopIndex === 1 ? 180 : 120,
+            reasons: recommendationReasons(entity, data),
+            notes: [
+              entity.feeRequired
+                ? "Fees may apply; verify current pricing with the official source."
+                : "",
+              data.pets && !entity.isPetFriendly
+                ? "Verify the current pet policy before visiting."
+                : "",
+            ].filter(Boolean),
+          })),
       };
     });
     return {
