@@ -139,9 +139,9 @@ jobs:
 
           source_id=$(docker exec "$db_container" psql -U postgres -d postgres -Atc "
             insert into public.explore_import_sources
-              (name, source_type, endpoint, enabled, headers, query, auth_config, cursor_config, timeout_ms, retry_config)
+              (name, source_type, endpoint, enabled, configuration, cursor)
             values
-              ('Step 4 verification source', 'custom', 'http://host.docker.internal:8765/entities.json', true, '{}'::jsonb, '{}'::jsonb, '{\"type\":\"none\"}'::jsonb, '{}'::jsonb, 10000, '{\"attempts\":1}'::jsonb)
+              ('Step 4 verification source', 'custom', 'http://host.docker.internal:8765/entities.json', true, '{}'::jsonb, '{}'::jsonb)
             returning id;
           ")
 
