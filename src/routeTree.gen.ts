@@ -9,244 +9,329 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
-import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
-import { Route as TexasUtilityCostCalculatorRouteImport } from './routes/texas-utility-cost-calculator'
-import { Route as TexasSportsRouteImport } from './routes/texas-sports'
-import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-salary-comparison-by-city'
-import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
-import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
-import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/texas-refinance-savings-calculator'
-import { Route as TexasPropertyTaxIncreaseCalculatorRouteImport } from './routes/texas-property-tax-increase-calculator'
-import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
-import { Route as TexasNewsRouteImport } from './routes/texas-news'
-import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-moving-cost-calculator'
-import { Route as TexasMortgagePayoffCalculatorRouteImport } from './routes/texas-mortgage-payoff-calculator'
-import { Route as TexasMortgageCalculatorRouteImport } from './routes/texas-mortgage-calculator'
-import { Route as TexasLawsRouteImport } from './routes/texas-laws'
-import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
-import { Route as TexasHomeownershipCostCalculatorRouteImport } from './routes/texas-homeownership-cost-calculator'
-import { Route as TexasHomeInsuranceCalculatorRouteImport } from './routes/texas-home-insurance-calculator'
-import { Route as TexasHomeEquityGrowthCalculatorRouteImport } from './routes/texas-home-equity-growth-calculator'
-import { Route as TexasHomeEquityCalculatorRouteImport } from './routes/texas-home-equity-calculator'
-import { Route as TexasHomeAffordabilityCalculatorRouteImport } from './routes/texas-home-affordability-calculator'
-import { Route as TexasFinancialToolsRouteImport } from './routes/texas-financial-tools'
-import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
-import { Route as TexasDownPaymentCalculatorRouteImport } from './routes/texas-down-payment-calculator'
-import { Route as TexasDownPaymentAssistanceCalculatorRouteImport } from './routes/texas-down-payment-assistance-calculator'
-import { Route as TexasCostOfLivingCalculatorRouteImport } from './routes/texas-cost-of-living-calculator'
-import { Route as TexasClosingCostCalculatorRouteImport } from './routes/texas-closing-cost-calculator'
-import { Route as TexasBusinessRouteImport } from './routes/texas-business'
-import { Route as TexasBudgetPlannerRouteImport } from './routes/texas-budget-planner'
-import { Route as TexasRouteImport } from './routes/texas'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-products[.]xml'
-import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
-import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
-import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
-import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
-import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
-import { Route as ShopRouteImport } from './routes/shop'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as RepresentativesRouteImport } from './routes/representatives'
-import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as NewsRouteImport } from './routes/news'
-import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
-import { Route as LivingInTexasRouteImport } from './routes/living-in-texas'
-import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
-import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
-import { Route as LawsRouteImport } from './routes/laws'
-import { Route as KeepTexasRedRouteImport } from './routes/keep-texas-red'
-import { Route as HoustonRouteImport } from './routes/houston'
-import { Route as HappeningNowRouteImport } from './routes/happening-now'
-import { Route as GlossaryRouteImport } from './routes/glossary'
-import { Route as GetInvolvedRouteImport } from './routes/get-involved'
-import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
-import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-school-district'
-import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
-import { Route as ElectionsRouteImport } from './routes/elections'
-import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
-import { Route as CountyElectionsRouteImport } from './routes/county-elections'
-import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TexasIndexRouteImport } from './routes/texas.index'
-import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
-import { Route as TexasNewsIndexRouteImport } from './routes/texas-news.index'
-import { Route as ShopIndexRouteImport } from './routes/shop.index'
-import { Route as NewsIndexRouteImport } from './routes/news.index'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
+import { Route as CountyElectionsRouteImport } from './routes/county-elections'
+import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
+import { Route as ElectionsRouteImport } from './routes/elections'
+import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
+import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-school-district'
+import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
+import { Route as GetInvolvedRouteImport } from './routes/get-involved'
+import { Route as GlossaryRouteImport } from './routes/glossary'
+import { Route as HappeningNowRouteImport } from './routes/happening-now'
+import { Route as HoustonRouteImport } from './routes/houston'
+import { Route as KeepTexasRedRouteImport } from './routes/keep-texas-red'
+import { Route as LawsRouteImport } from './routes/laws'
+import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
+import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
+import { Route as LivingInTexasRouteImport } from './routes/living-in-texas'
+import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
+import { Route as NewsRouteImport } from './routes/news'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
+import { Route as RepresentativesRouteImport } from './routes/representatives'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
+import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
+import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
+import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
+import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
+import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-products[.]xml'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TexasRouteImport } from './routes/texas'
+import { Route as TexasBudgetPlannerRouteImport } from './routes/texas-budget-planner'
+import { Route as TexasBusinessRouteImport } from './routes/texas-business'
+import { Route as TexasClosingCostCalculatorRouteImport } from './routes/texas-closing-cost-calculator'
+import { Route as TexasCostOfLivingCalculatorRouteImport } from './routes/texas-cost-of-living-calculator'
+import { Route as TexasDownPaymentAssistanceCalculatorRouteImport } from './routes/texas-down-payment-assistance-calculator'
+import { Route as TexasDownPaymentCalculatorRouteImport } from './routes/texas-down-payment-calculator'
+import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
+import { Route as TexasFinancialToolsRouteImport } from './routes/texas-financial-tools'
+import { Route as TexasHomeAffordabilityCalculatorRouteImport } from './routes/texas-home-affordability-calculator'
+import { Route as TexasHomeEquityCalculatorRouteImport } from './routes/texas-home-equity-calculator'
+import { Route as TexasHomeEquityGrowthCalculatorRouteImport } from './routes/texas-home-equity-growth-calculator'
+import { Route as TexasHomeInsuranceCalculatorRouteImport } from './routes/texas-home-insurance-calculator'
+import { Route as TexasHomeownershipCostCalculatorRouteImport } from './routes/texas-homeownership-cost-calculator'
+import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
+import { Route as TexasLawsRouteImport } from './routes/texas-laws'
+import { Route as TexasMortgageCalculatorRouteImport } from './routes/texas-mortgage-calculator'
+import { Route as TexasMortgagePayoffCalculatorRouteImport } from './routes/texas-mortgage-payoff-calculator'
+import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-moving-cost-calculator'
+import { Route as TexasNewsRouteImport } from './routes/texas-news'
+import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
+import { Route as TexasPropertyTaxIncreaseCalculatorRouteImport } from './routes/texas-property-tax-increase-calculator'
+import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/texas-refinance-savings-calculator'
+import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
+import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
+import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-salary-comparison-by-city'
+import { Route as TexasSportsRouteImport } from './routes/texas-sports'
+import { Route as TexasUtilityCostCalculatorRouteImport } from './routes/texas-utility-cost-calculator'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
 import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
-import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
-import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
-import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
-import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
-import { Route as ShopCheckoutReturnRouteImport } from './routes/shop.checkout-return'
-import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
-import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
-import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
-import { Route as NewsSlugRouteImport } from './routes/news.$slug'
-import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
-import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
-import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as NewsIndexRouteImport } from './routes/news.index'
+import { Route as NewsSlugRouteImport } from './routes/news.$slug'
+import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
+import { Route as ShopIndexRouteImport } from './routes/shop.index'
+import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
+import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
+import { Route as ShopCheckoutReturnRouteImport } from './routes/shop.checkout-return'
+import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
+import { Route as TexasNewsIndexRouteImport } from './routes/texas-news.index'
+import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
+import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
+import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
+import { Route as TexasIndexRouteImport } from './routes/texas.index'
+import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
-import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
-import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
-import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
-import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
-import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
-import { Route as ApiPublicHooksScoreViralBackfillRouteImport } from './routes/api/public/hooks/score-viral-backfill'
-import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
-import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
-import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
-import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
-import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
-import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
-import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
-import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
+import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as ApiPublicArticleImageFilenameRouteImport } from './routes/api/public/article-image.$filename'
-import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
+import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
+import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
+import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
+import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
+import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
+import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
+import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
+import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
+import { Route as ApiPublicHooksScoreViralBackfillRouteImport } from './routes/api/public/hooks/score-viral-backfill'
+import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
+import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as ApiPublicOauthFacebookCallbackRouteImport } from './routes/api/public/oauth/facebook/callback'
+import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
 
-const VotingLocationsRoute = VotingLocationsRouteImport.update({
-  id: '/voting-locations',
-  path: '/voting-locations',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UnsubscribeRoute = UnsubscribeRouteImport.update({
-  id: '/unsubscribe',
-  path: '/unsubscribe',
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasUtilityCostCalculatorRoute =
-  TexasUtilityCostCalculatorRouteImport.update({
-    id: '/texas-utility-cost-calculator',
-    path: '/texas-utility-cost-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasSportsRoute = TexasSportsRouteImport.update({
-  id: '/texas-sports',
-  path: '/texas-sports',
+const AboutKeepTexasRedRoute = AboutKeepTexasRedRouteImport.update({
+  id: '/about-keep-texas-red',
+  path: '/about-keep-texas-red',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasSalaryComparisonByCityRoute =
-  TexasSalaryComparisonByCityRouteImport.update({
-    id: '/texas-salary-comparison-by-city',
-    path: '/texas-salary-comparison-by-city',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasSalaryCalculatorRoute = TexasSalaryCalculatorRouteImport.update({
-  id: '/texas-salary-calculator',
-  path: '/texas-salary-calculator',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasRentVsBuyCalculatorRoute =
-  TexasRentVsBuyCalculatorRouteImport.update({
-    id: '/texas-rent-vs-buy-calculator',
-    path: '/texas-rent-vs-buy-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasRefinanceSavingsCalculatorRoute =
-  TexasRefinanceSavingsCalculatorRouteImport.update({
-    id: '/texas-refinance-savings-calculator',
-    path: '/texas-refinance-savings-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasPropertyTaxIncreaseCalculatorRoute =
-  TexasPropertyTaxIncreaseCalculatorRouteImport.update({
-    id: '/texas-property-tax-increase-calculator',
-    path: '/texas-property-tax-increase-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
-  id: '/texas-politics',
-  path: '/texas-politics',
+const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
+  id: '/candidate-guides',
+  path: '/candidate-guides',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasNewsRoute = TexasNewsRouteImport.update({
-  id: '/texas-news',
-  path: '/texas-news',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasMovingCostCalculatorRoute =
-  TexasMovingCostCalculatorRouteImport.update({
-    id: '/texas-moving-cost-calculator',
-    path: '/texas-moving-cost-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasMortgagePayoffCalculatorRoute =
-  TexasMortgagePayoffCalculatorRouteImport.update({
-    id: '/texas-mortgage-payoff-calculator',
-    path: '/texas-mortgage-payoff-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasMortgageCalculatorRoute = TexasMortgageCalculatorRouteImport.update({
-  id: '/texas-mortgage-calculator',
-  path: '/texas-mortgage-calculator',
+const ContactLegislatorsRoute = ContactLegislatorsRouteImport.update({
+  id: '/contact-legislators',
+  path: '/contact-legislators',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasLawsRoute = TexasLawsRouteImport.update({
-  id: '/texas-laws',
-  path: '/texas-laws',
+const CountyElectionsRoute = CountyElectionsRouteImport.update({
+  id: '/county-elections',
+  path: '/county-elections',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasLawPolicyRoute = TexasLawPolicyRouteImport.update({
-  id: '/texas-law-policy',
-  path: '/texas-law-policy',
+const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
+  id: '/editorial-standards',
+  path: '/editorial-standards',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasHomeownershipCostCalculatorRoute =
-  TexasHomeownershipCostCalculatorRouteImport.update({
-    id: '/texas-homeownership-cost-calculator',
-    path: '/texas-homeownership-cost-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasHomeInsuranceCalculatorRoute =
-  TexasHomeInsuranceCalculatorRouteImport.update({
-    id: '/texas-home-insurance-calculator',
-    path: '/texas-home-insurance-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasHomeEquityGrowthCalculatorRoute =
-  TexasHomeEquityGrowthCalculatorRouteImport.update({
-    id: '/texas-home-equity-growth-calculator',
-    path: '/texas-home-equity-growth-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasHomeEquityCalculatorRoute =
-  TexasHomeEquityCalculatorRouteImport.update({
-    id: '/texas-home-equity-calculator',
-    path: '/texas-home-equity-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasHomeAffordabilityCalculatorRoute =
-  TexasHomeAffordabilityCalculatorRouteImport.update({
-    id: '/texas-home-affordability-calculator',
-    path: '/texas-home-affordability-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasFinancialToolsRoute = TexasFinancialToolsRouteImport.update({
-  id: '/texas-financial-tools',
-  path: '/texas-financial-tools',
+const ElectionsRoute = ElectionsRouteImport.update({
+  id: '/elections',
+  path: '/elections',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasEconomyRoute = TexasEconomyRouteImport.update({
-  id: '/texas-economy',
-  path: '/texas-economy',
+const FindMyDmvRoute = FindMyDmvRouteImport.update({
+  id: '/find-my-dmv',
+  path: '/find-my-dmv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasDownPaymentCalculatorRoute =
-  TexasDownPaymentCalculatorRouteImport.update({
-    id: '/texas-down-payment-calculator',
-    path: '/texas-down-payment-calculator',
+const FindMySchoolDistrictRoute = FindMySchoolDistrictRouteImport.update({
+  id: '/find-my-school-district',
+  path: '/find-my-school-district',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FindRepresentativeRoute = FindRepresentativeRouteImport.update({
+  id: '/find-representative',
+  path: '/find-representative',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GetInvolvedRoute = GetInvolvedRouteImport.update({
+  id: '/get-involved',
+  path: '/get-involved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlossaryRoute = GlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HappeningNowRoute = HappeningNowRouteImport.update({
+  id: '/happening-now',
+  path: '/happening-now',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HoustonRoute = HoustonRouteImport.update({
+  id: '/houston',
+  path: '/houston',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KeepTexasRedRoute = KeepTexasRedRouteImport.update({
+  id: '/keep-texas-red',
+  path: '/keep-texas-red',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LawsRoute = LawsRouteImport.update({
+  id: '/laws',
+  path: '/laws',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LawsToKnowRoute = LawsToKnowRouteImport.update({
+  id: '/laws-to-know',
+  path: '/laws-to-know',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegislativeUpdatesRoute = LegislativeUpdatesRouteImport.update({
+  id: '/legislative-updates',
+  path: '/legislative-updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LivingInTexasRoute = LivingInTexasRouteImport.update({
+  id: '/living-in-texas',
+  path: '/living-in-texas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MovingToTexasRoute = MovingToTexasRouteImport.update({
+  id: '/moving-to-texas',
+  path: '/moving-to-texas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
+  id: '/register-to-vote',
+  path: '/register-to-vote',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RepresentativesRoute = RepresentativesRouteImport.update({
+  id: '/representatives',
+  path: '/representatives',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapAuthorsDotxmlRoute = SitemapAuthorsDotxmlRouteImport.update({
+  id: '/sitemap-authors.xml',
+  path: '/sitemap-authors.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapEvergreenDotxmlRoute = SitemapEvergreenDotxmlRouteImport.update({
+  id: '/sitemap-evergreen.xml',
+  path: '/sitemap-evergreen.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
+  id: '/sitemap-images.xml',
+  path: '/sitemap-images.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapNewsDotxmlRoute = SitemapNewsDotxmlRouteImport.update({
+  id: '/sitemap-news.xml',
+  path: '/sitemap-news.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
+  id: '/sitemap-pages.xml',
+  path: '/sitemap-pages.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapProductsDotxmlRoute = SitemapProductsDotxmlRouteImport.update({
+  id: '/sitemap-products.xml',
+  path: '/sitemap-products.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaxCalculatorRoute = TaxCalculatorRouteImport.update({
+  id: '/tax-calculator',
+  path: '/tax-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasRoute = TexasRouteImport.update({
+  id: '/texas',
+  path: '/texas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasBudgetPlannerRoute = TexasBudgetPlannerRouteImport.update({
+  id: '/texas-budget-planner',
+  path: '/texas-budget-planner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasBusinessRoute = TexasBusinessRouteImport.update({
+  id: '/texas-business',
+  path: '/texas-business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasClosingCostCalculatorRoute =
+  TexasClosingCostCalculatorRouteImport.update({
+    id: '/texas-closing-cost-calculator',
+    path: '/texas-closing-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasCostOfLivingCalculatorRoute =
+  TexasCostOfLivingCalculatorRouteImport.update({
+    id: '/texas-cost-of-living-calculator',
+    path: '/texas-cost-of-living-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
 const TexasDownPaymentAssistanceCalculatorRoute =
@@ -255,6 +340,2049 @@ const TexasDownPaymentAssistanceCalculatorRoute =
     path: '/texas-down-payment-assistance-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
-const TexasCostOfLivingCalculatorRoute =
-  TexasCostOfLivingCalculatorRouteImport.update({
-    id: 'ÛmxÒÚ$z{-®éÜj×çE&÷WFS¢G—Vöb6†÷&÷WFP¢Ð¢r÷6†÷òG&öGV7D–Bs¢°¢–C¢r÷6†÷òG&öGV7D–Bp¢Fƒ¢ròG&öGV7D–Bp¢gVÆÅFƒ¢r÷6†÷òG&öGV7D–Bp¢&TÆöFW%&÷WFS¢G—Vöb6†÷&öGV7D–E&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb6†÷&÷WFP¢Ð¢röæWw2öæöâ×öÆ—F–6Âs¢°¢–C¢röæWw2öæöâ×öÆ—F–6Âp¢Fƒ¢röæöâ×öÆ—F–6Âp¢gVÆÅFƒ¢röæWw2öæöâ×öÆ—F–6Âp¢&TÆöFW%&÷WFS¢G—VöbæWw4æöåöÆ—F–6Å&÷WFT–×÷'@¢&VçE&÷WFS¢G—VöbæWw5&÷WFP¢Ð¢röæWw2òG6ÇVrs¢°¢–C¢röæWw2òG6ÇVrp¢Fƒ¢ròG6ÇVrp¢gVÆÅFƒ¢röæWw2òG6ÇVrp¢&TÆöFW%&÷WFS¢G—VöbæWw56ÇVu&÷WFT–×÷'@¢&VçE&÷WFS¢G—VöbæWw5&÷WFP¢Ð¢röVÖ–Â÷Vç7V'67&–&Rs¢°¢–C¢röVÖ–Â÷Vç7V'67&–&Rp¢Fƒ¢röVÖ–Â÷Vç7V'67&–&Rp¢gVÆÅFƒ¢röVÖ–Â÷Vç7V'67&–&Rp¢&TÆöFW%&÷WFS¢G—VöbVÖ–ÅVç7V'67&–&U&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢röWF†÷'2òG6ÇVrs¢°¢–C¢röWF†÷'2òG6ÇVrp¢Fƒ¢röWF†÷'2òG6ÇVrp¢gVÆÅFƒ¢röWF†÷'2òG6ÇVrp¢&TÆöFW%&÷WFS¢G—VöbWF†÷'56ÇVu&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢r÷FW†2×7÷'G2÷FVÒòGFVÒs¢°¢–C¢r÷FW†2×7÷'G2÷FVÒòGFVÒp¢Fƒ¢r÷FVÒòGFVÒp¢gVÆÅFƒ¢r÷FW†2×7÷'G2÷FVÒòGFVÒp¢&TÆöFW%&÷WFS¢G—VöbFW†57÷'G5FVÕFVÕ&÷WFT–×÷'@¢&VçE&÷WFS¢G—VöbFW†57÷'G5&÷WFP¢Ð¢röÆ÷f&ÆRöVÖ–Â÷7W&W76–öâs¢°¢–C¢röÆ÷f&ÆRöVÖ–Â÷7W&W76–öâp¢Fƒ¢röÆ÷f&ÆRöVÖ–Â÷7W&W76–öâp¢gVÆÅFƒ¢röÆ÷f&ÆRöVÖ–Â÷7W&W76–öâp¢&TÆöFW%&÷WFS¢G—VöbÆ÷f&ÆTVÖ–Å7W&W76–öå&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2÷&÷W'G’ÖFG&W72ÖÆöö·Ws¢°¢–C¢rö’÷V&Æ–2÷&÷W'G’ÖFG&W72ÖÆöö·Wp¢Fƒ¢rö’÷V&Æ–2÷&÷W'G’ÖFG&W72ÖÆöö·Wp¢gVÆÅFƒ¢rö’÷V&Æ–2÷&÷W'G’ÖFG&W72ÖÆöö·Wp¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–5&÷W'G”FG&W74Æöö·W&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢röÆ÷f&ÆRöVÖ–Â÷G&ç67F–öæÂ÷6VæBs¢°¢–C¢röÆ÷f&ÆRöVÖ–Â÷G&ç67F–öæÂ÷6VæBp¢Fƒ¢röÆ÷f&ÆRöVÖ–Â÷G&ç67F–öæÂ÷6VæBp¢gVÆÅFƒ¢röÆ÷f&ÆRöVÖ–Â÷G&ç67F–öæÂ÷6VæBp¢&TÆöFW%&÷WFS¢G—VöbÆ÷f&ÆTVÖ–ÅG&ç67F–öæÅ6VæE&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢röÆ÷f&ÆRöVÖ–Â÷G&ç67F–öæÂ÷&Wf–Wrs¢°¢–C¢röÆ÷f&ÆRöVÖ–Â÷G&ç67F–öæÂ÷&Wf–Wrp¢Fƒ¢röÆ÷f&ÆRöVÖ–Â÷G&ç67F–öæÂ÷&Wf–Wrp¢gVÆÅFƒ¢röÆ÷f&ÆRöVÖ–Â÷G&ç67F–öæÂ÷&Wf–Wrp¢&TÆöFW%&÷WFS¢G—VöbÆ÷f&ÆTVÖ–ÅG&ç67F–öæÅ&Wf–Wu&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢röÆ÷f&ÆRöVÖ–Â÷VWVR÷&ö6W72s¢°¢–C¢röÆ÷f&ÆRöVÖ–Â÷VWVR÷&ö6W72p¢Fƒ¢röÆ÷f&ÆRöVÖ–Â÷VWVR÷&ö6W72p¢gVÆÅFƒ¢röÆ÷f&ÆRöVÖ–Â÷VWVR÷&ö6W72p¢&TÆöFW%&÷WFS¢G—VöbÆ÷f&ÆTVÖ–ÅVWVU&ö6W75&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2÷–ÖVçG2÷vV&†öö²s¢°¢–C¢rö’÷V&Æ–2÷–ÖVçG2÷vV&†öö²p¢Fƒ¢rö’÷V&Æ–2÷–ÖVçG2÷vV&†öö²p¢gVÆÅFƒ¢rö’÷V&Æ–2÷–ÖVçG2÷vV&†öö²p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–5–ÖVçG5vV&†ööµ&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2÷G&6²×f&–çBs¢°¢–C¢rö’÷V&Æ–2ö†öö·2÷G&6²×f&–çBp¢Fƒ¢rö’÷V&Æ–2ö†öö·2÷G&6²×f&–çBp¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2÷G&6²×f&–çBp¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·5G&6µf&–çE&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2÷7–æ2×&–çF–g’s¢°¢–C¢rö’÷V&Æ–2ö†öö·2÷7–æ2×&–çF–g’p¢Fƒ¢rö’÷V&Æ–2ö†öö·2÷7–æ2×&–çF–g’p¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2÷7–æ2×&–çF–g’p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·57–æ5&–çF–g•&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2÷66÷&R×f—&ÂÖ&6¶f–ÆÂs¢°¢–C¢rö’÷V&Æ–2ö†öö·2÷66÷&R×f—&ÂÖ&6¶f–ÆÂp¢Fƒ¢rö’÷V&Æ–2ö†öö·2÷66÷&R×f—&ÂÖ&6¶f–ÆÂp¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2÷66÷&R×f—&ÂÖ&6¶f–ÆÂp¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·566÷&Uf—&Ä&6¶f–ÆÅ&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2÷66÷&R×f—&Âs¢°¢–C¢rö’÷V&Æ–2ö†öö·2÷66÷&R×f—&Âp¢Fƒ¢rö’÷V&Æ–2ö†öö·2÷66÷&R×f—&Âp¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2÷66÷&R×f—&Âp¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·566÷&Uf—&Å&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2öÆ—7B×6†÷2s¢°¢–C¢rö’÷V&Æ–2ö†öö·2öÆ—7B×6†÷2p¢Fƒ¢rö’÷V&Æ–2ö†öö·2öÆ—7B×6†÷2p¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2öÆ—7B×6†÷2p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·4Æ—7E6†÷5&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2ö–ævW7BÖfVVG2s¢°¢–C¢rö’÷V&Æ–2ö†öö·2ö–ævW7BÖfVVG2p¢Fƒ¢rö’÷V&Æ–2ö†öö·2ö–ævW7BÖfVVG2p¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2ö–ævW7BÖfVVG2p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·4–ævW7DfVVG5&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2ö†VÇF‚s¢°¢–C¢rö’÷V&Æ–2ö†öö·2ö†VÇF‚p¢Fƒ¢rö’÷V&Æ–2ö†öö·2ö†VÇF‚p¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2ö†VÇF‚p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·4†VÇF…&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2övVæW&FR×7÷'G2s¢°¢–C¢rö’÷V&Æ–2ö†öö·2övVæW&FR×7÷'G2p¢Fƒ¢rö’÷V&Æ–2ö†öö·2övVæW&FR×7÷'G2p¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2övVæW&FR×7÷'G2p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·4vVæW&FU7÷'G5&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2övVæW&FRÖæWw2s¢°¢–C¢rö’÷V&Æ–2ö†öö·2övVæW&FRÖæWw2p¢Fƒ¢rö’÷V&Æ–2ö†öö·2övVæW&FRÖæWw2p¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2övVæW&FRÖæWw2p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·4vVæW&FTæWw5&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2övVæW&FRÖWfW&w&VVâs¢°¢–C¢rö’÷V&Æ–2ö†öö·2övVæW&FRÖWfW&w&VVâp¢Fƒ¢rö’÷V&Æ–2ö†öö·2övVæW&FRÖWfW&w&VVâp¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2övVæW&FRÖWfW&w&VVâp¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·4vVæW&FTWfW&w&VVå&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö†öö·2ö&6¶f–ÆÂÖfVGW&VBÖ–ÖvW2s¢°¢–C¢rö’÷V&Æ–2ö†öö·2ö&6¶f–ÆÂÖfVGW&VBÖ–ÖvW2p¢Fƒ¢rö’÷V&Æ–2ö†öö·2ö&6¶f–ÆÂÖfVGW&VBÖ–ÖvW2p¢gVÆÅFƒ¢rö’÷V&Æ–2ö†öö·2ö&6¶f–ÆÂÖfVGW&VBÖ–ÖvW2p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4†öö·4&6¶f–ÆÄfVGW&VD–ÖvW5&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ö'F–6ÆRÖ–ÖvRòFf–ÆVæÖRs¢°¢–C¢rö’÷V&Æ–2ö'F–6ÆRÖ–ÖvRòFf–ÆVæÖRp¢Fƒ¢rö’÷V&Æ–2ö'F–6ÆRÖ–ÖvRòFf–ÆVæÖRp¢gVÆÅFƒ¢rö’÷V&Æ–2ö'F–6ÆRÖ–ÖvRòFf–ÆVæÖRp¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4'F–6ÆT–ÖvTf–ÆVæÖU&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ööWF‚öf6V&öö²÷7F'Bs¢°¢–C¢rö’÷V&Æ–2ööWF‚öf6V&öö²÷7F'Bp¢Fƒ¢rö’÷V&Æ–2ööWF‚öf6V&öö²÷7F'Bp¢gVÆÅFƒ¢rö’÷V&Æ–2ööWF‚öf6V&öö²÷7F'Bp¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4öWF„f6V&ööµ7F'E&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢rö’÷V&Æ–2ööWF‚öf6V&öö²ö6ÆÆ&6²s¢°¢–C¢rö’÷V&Æ–2ööWF‚öf6V&öö²ö6ÆÆ&6²p¢Fƒ¢rö’÷V&Æ–2ööWF‚öf6V&öö²ö6ÆÆ&6²p¢gVÆÅFƒ¢rö’÷V&Æ–2ööWF‚öf6V&öö²ö6ÆÆ&6²p¢&TÆöFW%&÷WFS¢G—Vöb•V&Æ–4öWF„f6V&öö´6ÆÆ&6µ&÷WFT–×÷'@¢&VçE&÷WFS¢G—Vöb&ö÷E&÷WFT–×÷'@¢Ð¢Ð§Ð ¦–çFW&f6RæWw5&÷WFT6†–ÆG&Vâ°¢æWw56ÇVu&÷WFS¢G—VöbæWw56ÇVu&÷WFP¢æWw4æöåöÆ—F–6Å&÷WFS¢G—VöbæWw4æöåöÆ—F–6Å&÷WFP¢æWw4–æFW…&÷WFS¢G—VöbæWw4–æFW…&÷WFP§Ð ¦6öç7BæWw5&÷WFT6†–ÆG&Vã¢æWw5&÷WFT6†–ÆG&VâÒ°¢æWw56ÇVu&÷WFS¢æWw56ÇVu&÷WFRÀ¢æWw4æöåöÆ—F–6Å&÷WFS¢æWw4æöåöÆ—F–6Å&÷WFRÀ¢æWw4–æFW…&÷WFS¢æWw4–æFW…&÷WFRÀ§Ð ¦6öç7BæWw5&÷WFUv—F„6†–ÆG&VâÒæWw5&÷WFRåöFDf–ÆT6†–ÆG&Vâ„æWw5&÷WFT6†–ÆG&Vâ ¦–çFW&f6R6†÷&÷WFT6†–ÆG&Vâ°¢6†÷&öGV7D–E&÷WFS¢G—Vöb6†÷&öGV7D–E&÷WFP¢6†÷6†V6¶÷WE&÷WFS¢G—Vöb6†÷6†V6¶÷WE&÷WFP¢6†÷6†V6¶÷WE&WGW&å&÷WFS¢G—Vöb6†÷6†V6¶÷WE&WGW&å&÷WFP¢6†÷–æFW…&÷WFS¢G—Vöb6†÷–æFW…&÷WFP§Ð ¦6öç7B6†÷&÷WFT6†–ÆG&Vã¢6†÷&÷WFT6†–ÆG&VâÒ°¢6†÷&öGV7D–E&÷WFS¢6†÷&öGV7D–E&÷WFRÀ¢6†÷6†V6¶÷WE&÷WFS¢6†÷6†V6¶÷WE&÷WFRÀ¢6†÷6†V6¶÷WE&WGW&å&÷WFS¢6†÷6†V6¶÷WE&WGW&å&÷WFRÀ¢6†÷–æFW…&÷WFS¢6†÷–æFW…&÷WFRÀ§Ð ¦6öç7B6†÷&÷WFUv—F„6†–ÆG&VâÒ6†÷&÷WFRåöFDf–ÆT6†–ÆG&Vâ…6†÷&÷WFT6†–ÆG&Vâ ¦–çFW&f6RFW†5&÷WFT6†–ÆG&Vâ°¢FW†56ÇVu&÷WFS¢G—VöbFW†56ÇVu&÷WFP¢FW†4–æFW…&÷WFS¢G—VöbFW†4–æFW…&÷WFP§Ð ¦6öç7BFW†5&÷WFT6†–ÆG&Vã¢FW†5&÷WFT6†–ÆG&VâÒ°¢FW†56ÇVu&÷WFS¢FW†56ÇVu&÷WFRÀ¢FW†4–æFW…&÷WFS¢FW†4–æFW…&÷WFRÀ§Ð ¦6öç7BFW†5&÷WFUv—F„6†–ÆG&VâÒFW†5&÷WFRåöFDf–ÆT6†–ÆG&Vâ…FW†5&÷WFT6†–ÆG&Vâ ¦–çFW&f6RFW†4'W6–æW75&÷WFT6†–ÆG&Vâ°¢FW†4'W6–æW75F÷–5&÷WFS¢G—VöbFW†4'W6–æW75F÷–5&÷WFP§Ð ¦6öç7BFW†4'W6–æW75&÷WFT6†–ÆG&Vã¢FW†4'W6–æW75&÷WFT6†–ÆG&VâÒ°¢FW†4'W6–æW75F÷–5&÷WFS¢FW†4'W6–æW75F÷–5&÷WFRÀ§Ð ¦6öç7BFW†4'W6–æW75&÷WFUv—F„6†–ÆG&VâÒFW†4'W6–æW75&÷WFRåöFDf–ÆT6†–ÆG&Vâ€¢FW†4'W6–æW75&÷WFT6†–ÆG&VâÀ¢ ¦–çFW&f6RFW†4æWw5&÷WFT6†–ÆG&Vâ°¢FW†4æWw5F÷–5&÷WFS¢G—VöbFW†4æWw5F÷–5&÷WFP¢FW†4æWw4–æFW…&÷WFS¢G—VöbFW†4æWw4–æFW…&÷WFP§Ð ¦6öç7BFW†4æWw5&÷WFT6†–ÆG&Vã¢FW†4æWw5&÷WFT6†–ÆG&VâÒ°¢FW†4æWw5F÷–5&÷WFS¢FW†4æWw5F÷–5&÷WFRÀ¢FW†4æWw4–æFW…&÷WFS¢FW†4æWw4–æFW…&÷WFRÀ§Ð ¦6öç7BFW†4æWw5&÷WFUv—F„6†–ÆG&VâÒFW†4æWw5&÷WFRåöFDf–ÆT6†–ÆG&Vâ€¢FW†4æWw5&÷WFT6†–ÆG&VâÀ¢ ¦–çFW&f6RFW†57÷'G5&÷WFT6†–ÆG&Vâ°¢FW†57÷'G4ÆVwVU&÷WFS¢G—VöbFW†57÷'G4ÆVwVU&÷WFP¢FW†57÷'G4–æFW…&÷WFS¢G—VöbFW†57÷'G4–æFW…&÷WFP¢FW†57÷'G5FVÕFVÕ&÷WFS¢G—VöbFW†57÷'G5FVÕFVÕ&÷WFP§Ð ¦6öç7BFW†57÷'G5&÷WFT6†–ÆG&Vã¢FW†57÷'G5&÷WFT6†–ÆG&VâÒ°¢FW†57÷'G4ÆVwVU&÷WFS¢FW†57÷'G4ÆVwVU&÷WFRÀ¢FW†57÷'G4–æFW…&÷WFS¢FW†57÷'G4–æFW…&÷WFRÀ¢FW†57÷'G5FVÕFVÕ&÷WFS¢FW†57÷'G5FVÕFVÕ&÷WFRÀ§Ð ¦6öç7BFW†57÷'G5&÷WFUv—F„6†–ÆG&VâÒFW†57÷'G5&÷WFRåöFDf–ÆT6†–ÆG&Vâ€¢FW†57÷'G5&÷WFT6†–ÆG&VâÀ¢ ¦6öç7B&ö÷E&÷WFT6†–ÆG&Vã¢&ö÷E&÷WFT6†–ÆG&VâÒ°¢–æFW…&÷WFS¢–æFW…&÷WFRÀ¢&÷WE&÷WFS¢&÷WE&÷WFRÀ¢&÷WD¶VWFW†5&VE&÷WFS¢&÷WD¶VWFW†5&VE&÷WFRÀ¢FÖ–å&÷WFS¢FÖ–å&÷WFRÀ¢6æF–FFTwV–FW5&÷WFS¢6æF–FFTwV–FW5&÷WFRÀ¢6öçF7E&÷WFS¢6öçF7E&÷WFRÀ¢6öçF7DÆVv—6ÆF÷'5&÷WFS¢6öçF7DÆVv—6ÆF÷'5&÷WFRÀ¢6÷VçG”VÆV7F–öç5&÷WFS¢6÷VçG”VÆV7F–öç5&÷WFRÀ¢VF—F÷&–Å7FæF&G5&÷WFS¢VF—F÷&–Å7FæF&G5&÷WFRÀ¢VÆV7F–öç5&÷WFS¢VÆV7F–öç5&÷WFRÀ¢f–æD×”F×e&÷WFS¢f–æD×”F×e&÷WFRÀ¢f–æD×•66†ööÄF—7G&–7E&÷WFS¢f–æD×•66†ööÄF—7G&–7E&÷WFRÀ¢f–æE&W&W6VçFF—fU&÷WFS¢f–æE&W&W6VçFF—fU&÷WFRÀ¢vWD–çföÇfVE&÷WFS¢vWD–çföÇfVE&÷WFRÀ¢vÆ÷76'•&÷WFS¢vÆ÷76'•&÷WFRÀ¢†Væ–ætæ÷u&÷WFS¢†Væ–ætæ÷u&÷WFRÀ¢†÷W7Föå&÷WFS¢†÷W7Föå&÷WFRÀ¢¶VWFW†5&VE&÷WFS¢¶VWFW†5&VE&÷WFRÀ¢Æw5&÷WFS¢Æw5&÷WFRÀ¢Æw5Fô¶æ÷u&÷WFS¢Æw5Fô¶æ÷u&÷WFRÀ¢ÆVv—6ÆF—fUWFFW5&÷WFS¢ÆVv—6ÆF—fUWFFW5&÷WFRÀ¢Æ—f–æt–åFW†5&÷WFS¢Æ—f–æt–åFW†5&÷WFRÀ¢Ö÷f–æuFõFW†5&÷WFS¢Ö÷f–æuFõFW†5&÷WFRÀ¢æWw5&÷WFS¢æWw5&÷WFUv—F„6†–ÆG&VâÀ¢&—f7•&÷WFS¢&—f7•&÷WFRÀ¢&Vv—7FW%Fõf÷FU&÷WFS¢&Vv—7FW%Fõf÷FU&÷WFRÀ¢&W&W6VçFF—fW5&÷WFS¢&W&W6VçFF—fW5&÷WFRÀ¢&ö&÷G4F÷GG‡E&÷WFS¢&ö&÷G4F÷GG‡E&÷WFRÀ¢6†÷&÷WFS¢6†÷&÷WFUv—F„6†–ÆG&VâÀ¢6—FVÖWF†÷'4F÷G†ÖÅ&÷WFS¢6—FVÖWF†÷'4F÷G†ÖÅ&÷WFRÀ¢6—FVÖWfW&w&VVäF÷G†ÖÅ&÷WFS¢6—FVÖWfW&w&VVäF÷G†ÖÅ&÷WFRÀ¢6—FVÖ–ÖvW4F÷G†ÖÅ&÷WFS¢6—FVÖ–ÖvW4F÷G†ÖÅ&÷WFRÀ¢6—FVÖæWw4F÷G†ÖÅ&÷WFS¢6—FVÖæWw4F÷G†ÖÅ&÷WFRÀ¢6—FVÖvW4F÷G†ÖÅ&÷WFS¢6—FVÖvW4F÷G†ÖÅ&÷WFRÀ¢6—FVÖ&öGV7G4F÷G†ÖÅ&÷WFS¢6—FVÖ&öGV7G4F÷G†ÖÅ&÷WFRÀ¢6—FVÖF÷G†ÖÅ&÷WFS¢6—FVÖF÷G†ÖÅ&÷WFRÀ¢F„6Æ7VÆF÷%&÷WFS¢F„6Æ7VÆF÷%&÷WFRÀ¢FW&×5&÷WFS¢FW&×5&÷WFRÀ¢FW†5&÷WFS¢FW†5&÷WFUv—F„6†–ÆG&VâÀ¢FW†4'VFvWEÆææW%&÷WFS¢FW†4'VFvWEÆææW%&÷WFRÀ¢FW†4'W6–æW75&÷WFS¢FW†4'W6–æW75&÷WFUv—F„6†–ÆG&VâÀ¢FW†46Æ÷6–æt6÷7D6Æ7VÆF÷%&÷WFS¢FW†46Æ÷6–æt6÷7D6Æ7VÆF÷%&÷WFRÀ¢FW†46÷7DödÆ—f–æt6Æ7VÆF÷%&÷WFS¢FW†46÷7DödÆ—f–æt6Æ7VÆF÷%&÷WFRÀ¢FW†4F÷vå–ÖVçD76—7Fæ6T6Æ7VÆF÷%&÷WFS ¢FW†4F÷vå–ÖVçD76—7Fæ6T6Æ7VÆF÷%&÷WFRÀ¢FW†4F÷vå–ÖVçD6Æ7VÆF÷%&÷WFS¢FW†4F÷vå–ÖVçD6Æ7VÆF÷%&÷WFRÀ¢FW†4V6öæö×•&÷WFS¢FW†4V6öæö×•&÷WFRÀ¢FW†4f–ææ6–ÅFööÇ5&÷WFS¢FW†4f–ææ6–ÅFööÇ5&÷WFRÀ¢FW†4†öÖTff÷&F&–Æ—G”6Æ7VÆF÷%&÷WFS¢FW†4†öÖTff÷&F&–Æ—G”6Æ7VÆF÷%&÷WFRÀ¢FW†4†öÖTWV—G”6Æ7VÆF÷%&÷WFS¢FW†4†öÖTWV—G”6Æ7VÆF÷%&÷WFRÀ¢FW†4†öÖTWV—G”w&÷wF„6Æ7VÆF÷%&÷WFS¢FW†4†öÖTWV—G”w&÷wF„6Æ7VÆF÷%&÷WFRÀ¢FW†4†öÖT–ç7W&æ6T6Æ7VÆF÷%&÷WFS¢FW†4†öÖT–ç7W&æ6T6Æ7VÆF÷%&÷WFRÀ¢FW†4†öÖV÷væW'6†—6÷7D6Æ7VÆF÷%&÷WFS¢FW†4†öÖV÷væW'6†—6÷7D6Æ7VÆF÷%&÷WFRÀ¢FW†4ÆuöÆ–7•&÷WFS¢FW†4ÆuöÆ–7•&÷WFRÀ¢FW†4Æw5&÷WFS¢FW†4Æw5&÷WFRÀ¢FW†4Ö÷'FvvT6Æ7VÆF÷%&÷WFS¢FW†4Ö÷'FvvT6Æ7VÆF÷%&÷WFRÀ¢FW†4Ö÷'FvvU–öfd6Æ7VÆF÷%&÷WFS¢FW†4Ö÷'FvvU–öfd6Æ7VÆF÷%&÷WFRÀ¢FW†4Ö÷f–æt6÷7D6Æ7VÆF÷%&÷WFS¢FW†4Ö÷f–æt6÷7D6Æ7VÆF÷%&÷WFRÀ¢FW†4æWw5&÷WFS¢FW†4æWw5&÷WFUv—F„6†–ÆG&VâÀ¢FW†5öÆ—F–75&÷WFS¢FW†5öÆ—F–75&÷WFRÀ¢FW†5&÷W'G•F„–æ7&V6T6Æ7VÆF÷%&÷WFS ¢FW†5&÷W'G•F„–æ7&V6T6Æ7VÆF÷%&÷WFRÀ¢FW†5&Vf–ææ6U6f–æw46Æ7VÆF÷%&÷WFS¢FW†5&Vf–ææ6U6f–æw46Æ7VÆF÷%&÷WFRÀ¢FW†5&VçEg4'W”6Æ7VÆF÷%&÷WFS¢FW†5&VçEg4'W”6Æ7VÆF÷%&÷WFRÀ¢FW†56Æ'”6Æ7VÆF÷%&÷WFS¢FW†56Æ'”6Æ7VÆF÷%&÷WFRÀ¢FW†56Æ'”6ö×&—6öä'”6—G•&÷WFS¢FW†56Æ'”6ö×&—6öä'”6—G•&÷WFRÀ¢FW†57÷'G5&÷WFS¢FW†57÷'G5&÷WFUv—F„6†–ÆG&VâÀ¢FW†5WF–Æ—G”6÷7D6Æ7VÆF÷%&÷WFS¢FW†5WF–Æ—G”6÷7D6Æ7VÆF÷%&÷WFRÀ¢Vç7V'67&–&U&÷WFS¢Vç7V'67&–&U&÷WFRÀ¢f÷F–ætÆö6F–öç5&÷WFS¢f÷F–ætÆö6F–öç5&÷WFRÀ¢WF†÷'56ÇVu&÷WFS¢WF†÷'56ÇVu&÷WFRÀ¢VÖ–ÅVç7V'67&–&U&÷WFS¢VÖ–ÅVç7V'67&–&U&÷WFRÀ¢WF†÷'4–æFW…&÷WFS¢WF†÷'4–æFW…&÷WFRÀ¢•V&Æ–5&÷W'G”FG&W74Æöö·W&÷WFS¢•V&Æ–5&÷W'G”FG&W74Æöö·W&÷WFRÀ¢Æ÷f&ÆTVÖ–Å7W&W76–öå&÷WFS¢Æ÷f&ÆTVÖ–Å7W&W76–öå&÷WFRÀ¢•V&Æ–4'F–6ÆT–ÖvTf–ÆVæÖU&÷WFS¢•V&Æ–4'F–6ÆT–ÖvTf–ÆVæÖU&÷WFRÀ¢•V&Æ–4†öö·4&6¶f–ÆÄfVGW&VD–ÖvW5&÷WFS ¢•V&Æ–4†öö·4&6¶f–ÆÄfVGW&VD–ÖvW5&÷WFRÀ¢•V&Æ–4†öö·4vVæW&FTWfW&w&VVå&÷WFS¢•V&Æ–4†öö·4vVæW&FTWfW&w&VVå&÷WFRÀ¢•V&Æ–4†öö·4vVæW&FTæWw5&÷WFS¢•V&Æ–4†öö·4vVæW&FTæWw5&÷WFRÀ¢•V&Æ–4†öö·4vVæW&FU7÷'G5&÷WFS¢•V&Æ–4†öö·4vVæW&FU7÷'G5&÷WFRÀ¢•V&Æ–4†öö·4†VÇF…&÷WFS¢•V&Æ–4†öö·4†VÇF…&÷WFRÀ¢•V&Æ–4†öö·4–ævW7DfVVG5&÷WFS¢•V&Æ–4†öö·4–ævW7DfVVG5&÷WFRÀ¢•V&Æ–4†öö·4Æ—7E6†÷5&÷WFS¢•V&Æ–4†öö·4Æ—7E6†÷5&÷WFRÀ¢•V&Æ–4†öö·566÷&Uf—&Å&÷WFS¢•V&Æ–4†öö·566÷&Uf—&Å&÷WFRÀ¢•V&Æ–4†öö·566÷&Uf—&Ä&6¶f–ÆÅ&÷WFS¢•V&Æ–4†öö·566÷&Uf—&Ä&6¶f–ÆÅ&÷WFRÀ¢•V&Æ–4†öö·57–æ5&–çF–g•&÷WFS¢•V&Æ–4†öö·57–æ5&–çF–g•&÷WFRÀ¢•V&Æ–4†öö·5G&6µf&–çE&÷WFS¢•V&Æ–4†öö·5G&6µf&–çE&÷WFRÀ¢•V&Æ–5–ÖVçG5vV&†ööµ&÷WFS¢•V&Æ–5–ÖVçG5vV&†ööµ&÷WFRÀ¢Æ÷f&ÆTVÖ–ÅVWVU&ö6W75&÷WFS¢Æ÷f&ÆTVÖ–ÅVWVU&ö6W75&÷WFRÀ¢Æ÷f&ÆTVÖ–ÅG&ç67F–öæÅ&Wf–Wu&÷WFS¢Æ÷f&ÆTVÖ–ÅG&ç67F–öæÅ&Wf–Wu&÷WFRÀ¢Æ÷f&ÆTVÖ–ÅG&ç67F–öæÅ6VæE&÷WFS¢Æ÷f&ÆTVÖ–ÅG&ç67F–öæÅ6VæE&÷WFRÀ¢•V&Æ–4öWF„f6V&öö´6ÆÆ&6µ&÷WFS¢•V&Æ–4öWF„f6V&öö´6ÆÆ&6µ&÷WFRÀ¢•V&Æ–4öWF„f6V&ööµ7F'E&÷WFS¢•V&Æ–4öWF„f6V&ööµ7F'E&÷WFRÀ§Ð¦W‡÷'B6öç7B&÷WFUG&VRÒ&ö÷E&÷WFT–×÷'@¢åöFDf–ÆT6†–ÆG&Vâ‡&ö÷E&÷WFT6†–ÆG&Vâ¢åöFDf–ÆUG—W3Äf–ÆU&÷WFUG—W3â‚ 
+const TexasDownPaymentCalculatorRoute =
+  TexasDownPaymentCalculatorRouteImport.update({
+    id: '/texas-down-payment-calculator',
+    path: '/texas-down-payment-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasEconomyRoute = TexasEconomyRouteImport.update({
+  id: '/texas-economy',
+  path: '/texas-economy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasFinancialToolsRoute = TexasFinancialToolsRouteImport.update({
+  id: '/texas-financial-tools',
+  path: '/texas-financial-tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasHomeAffordabilityCalculatorRoute =
+  TexasHomeAffordabilityCalculatorRouteImport.update({
+    id: '/texas-home-affordability-calculator',
+    path: '/texas-home-affordability-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasHomeEquityCalculatorRoute =
+  TexasHomeEquityCalculatorRouteImport.update({
+    id: '/texas-home-equity-calculator',
+    path: '/texas-home-equity-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasHomeEquityGrowthCalculatorRoute =
+  TexasHomeEquityGrowthCalculatorRouteImport.update({
+    id: '/texas-home-equity-growth-calculator',
+    path: '/texas-home-equity-growth-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasHomeInsuranceCalculatorRoute =
+  TexasHomeInsuranceCalculatorRouteImport.update({
+    id: '/texas-home-insurance-calculator',
+    path: '/texas-home-insurance-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasHomeownershipCostCalculatorRoute =
+  TexasHomeownershipCostCalculatorRouteImport.update({
+    id: '/texas-homeownership-cost-calculator',
+    path: '/texas-homeownership-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasLawPolicyRoute = TexasLawPolicyRouteImport.update({
+  id: '/texas-law-policy',
+  path: '/texas-law-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLawsRoute = TexasLawsRouteImport.update({
+  id: '/texas-laws',
+  path: '/texas-laws',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasMortgageCalculatorRoute = TexasMortgageCalculatorRouteImport.update({
+  id: '/texas-mortgage-calculator',
+  path: '/texas-mortgage-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasMortgagePayoffCalculatorRoute =
+  TexasMortgagePayoffCalculatorRouteImport.update({
+    id: '/texas-mortgage-payoff-calculator',
+    path: '/texas-mortgage-payoff-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasMovingCostCalculatorRoute =
+  TexasMovingCostCalculatorRouteImport.update({
+    id: '/texas-moving-cost-calculator',
+    path: '/texas-moving-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasNewsRoute = TexasNewsRouteImport.update({
+  id: '/texas-news',
+  path: '/texas-news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
+  id: '/texas-politics',
+  path: '/texas-politics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasPropertyTaxIncreaseCalculatorRoute =
+  TexasPropertyTaxIncreaseCalculatorRouteImport.update({
+    id: '/texas-property-tax-increase-calculator',
+    path: '/texas-property-tax-increase-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasRefinanceSavingsCalculatorRoute =
+  TexasRefinanceSavingsCalculatorRouteImport.update({
+    id: '/texas-refinance-savings-calculator',
+    path: '/texas-refinance-savings-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasRentVsBuyCalculatorRoute =
+  TexasRentVsBuyCalculatorRouteImport.update({
+    id: '/texas-rent-vs-buy-calculator',
+    path: '/texas-rent-vs-buy-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasSalaryCalculatorRoute = TexasSalaryCalculatorRouteImport.update({
+  id: '/texas-salary-calculator',
+  path: '/texas-salary-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSalaryComparisonByCityRoute =
+  TexasSalaryComparisonByCityRouteImport.update({
+    id: '/texas-salary-comparison-by-city',
+    path: '/texas-salary-comparison-by-city',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasSportsRoute = TexasSportsRouteImport.update({
+  id: '/texas-sports',
+  path: '/texas-sports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasUtilityCostCalculatorRoute =
+  TexasUtilityCostCalculatorRouteImport.update({
+    id: '/texas-utility-cost-calculator',
+    path: '/texas-utility-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VotingLocationsRoute = VotingLocationsRouteImport.update({
+  id: '/voting-locations',
+  path: '/voting-locations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthorsIndexRoute = AuthorsIndexRouteImport.update({
+  id: '/authors/',
+  path: '/authors/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
+  id: '/authors/$slug',
+  path: '/authors/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsIndexRoute = NewsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NewsRoute,
+} as any)
+const NewsSlugRoute = NewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NewsRoute,
+} as any)
+const NewsNonPoliticalRoute = NewsNonPoliticalRouteImport.update({
+  id: '/non-political',
+  path: '/non-political',
+  getParentRoute: () => NewsRoute,
+} as any)
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopProductIdRoute = ShopProductIdRouteImport.update({
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopCheckoutRoute = ShopCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopCheckoutReturnRoute = ShopCheckoutReturnRouteImport.update({
+  id: '/checkout-return',
+  path: '/checkout-return',
+  getParentRoute: () => ShopRoute,
+} as any)
+const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
+  id: '/$topic',
+  path: '/$topic',
+  getParentRoute: () => TexasBusinessRoute,
+} as any)
+const TexasNewsIndexRoute = TexasNewsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasNewsRoute,
+} as any)
+const TexasNewsTopicRoute = TexasNewsTopicRouteImport.update({
+  id: '/$topic',
+  path: '/$topic',
+  getParentRoute: () => TexasNewsRoute,
+} as any)
+const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasSportsRoute,
+} as any)
+const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
+  id: '/$league',
+  path: '/$league',
+  getParentRoute: () => TexasSportsRoute,
+} as any)
+const TexasIndexRoute = TexasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasRoute,
+} as any)
+const TexasSlugRoute = TexasSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TexasRoute,
+} as any)
+const ApiPublicPropertyAddressLookupRoute =
+  ApiPublicPropertyAddressLookupRouteImport.update({
+    id: '/api/public/property-address-lookup',
+    path: '/api/public/property-address-lookup',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSportsTeamTeamRoute = TexasSportsTeamTeamRouteImport.update({
+  id: '/team/$team',
+  path: '/team/$team',
+  getParentRoute: () => TexasSportsRoute,
+} as any)
+const AdminExploreImportsIndexRoute =
+  AdminExploreImportsIndexRouteImport.update({
+    id: '/explore/imports/',
+    path: '/explore/imports/',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const ApiPublicArticleImageFilenameRoute =
+  ApiPublicArticleImageFilenameRouteImport.update({
+    id: '/api/public/article-image/$filename',
+    path: '/api/public/article-image/$filename',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksBackfillFeaturedImagesRoute =
+  ApiPublicHooksBackfillFeaturedImagesRouteImport.update({
+    id: '/api/public/hooks/backfill-featured-images',
+    path: '/api/public/hooks/backfill-featured-images',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateEvergreenRoute =
+  ApiPublicHooksGenerateEvergreenRouteImport.update({
+    id: '/api/public/hooks/generate-evergreen',
+    path: '/api/public/hooks/generate-evergreen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateNewsRoute =
+  ApiPublicHooksGenerateNewsRouteImport.update({
+    id: '/api/public/hooks/generate-news',
+    path: '/api/public/hooks/generate-news',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateSportsRoute =
+  ApiPublicHooksGenerateSportsRouteImport.update({
+    id: '/api/public/hooks/generate-sports',
+    path: '/api/public/hooks/generate-sports',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksHealthRoute = ApiPublicHooksHealthRouteImport.update({
+  id: '/api/public/hooks/health',
+  path: '/api/public/hooks/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksIngestFeedsRoute =
+  ApiPublicHooksIngestFeedsRouteImport.update({
+    id: '/api/public/hooks/ingest-feeds',
+    path: '/api/public/hooks/ingest-feeds',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksListShopsRoute = ApiPublicHooksListShopsRouteImport.update({
+  id: '/api/public/hooks/list-shops',
+  path: '/api/public/hooks/list-shops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksScoreViralRoute =
+  ApiPublicHooksScoreViralRouteImport.update({
+    id: '/api/public/hooks/score-viral',
+    path: '/api/public/hooks/score-viral',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksScoreViralBackfillRoute =
+  ApiPublicHooksScoreViralBackfillRouteImport.update({
+    id: '/api/public/hooks/score-viral-backfill',
+    path: '/api/public/hooks/score-viral-backfill',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSyncPrintifyRoute =
+  ApiPublicHooksSyncPrintifyRouteImport.update({
+    id: '/api/public/hooks/sync-printify',
+    path: '/api/public/hooks/sync-printify',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksTrackVariantRoute =
+  ApiPublicHooksTrackVariantRouteImport.update({
+    id: '/api/public/hooks/track-variant',
+    path: '/api/public/hooks/track-variant',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicOauthFacebookCallbackRoute =
+  ApiPublicOauthFacebookCallbackRouteImport.update({
+    id: '/api/public/oauth/facebook/callback',
+    path: '/api/public/oauth/facebook/callback',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicOauthFacebookStartRoute =
+  ApiPublicOauthFacebookStartRouteImport.update({
+    id: '/api/public/oauth/facebook/start',
+    path: '/api/public/oauth/facebook/start',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+
+export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact': typeof ContactRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
+  '/county-elections': typeof CountyElectionsRoute
+  '/editorial-standards': typeof EditorialStandardsRoute
+  '/elections': typeof ElectionsRoute
+  '/find-my-dmv': typeof FindMyDmvRoute
+  '/find-my-school-district': typeof FindMySchoolDistrictRoute
+  '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
+  '/happening-now': typeof HappeningNowRoute
+  '/houston': typeof HoustonRoute
+  '/keep-texas-red': typeof KeepTexasRedRoute
+  '/laws': typeof LawsRoute
+  '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
+  '/living-in-texas': typeof LivingInTexasRoute
+  '/moving-to-texas': typeof MovingToTexasRoute
+  '/news': typeof NewsRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
+  '/representatives': typeof RepresentativesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/shop': typeof ShopRouteWithChildren
+  '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tax-calculator': typeof TaxCalculatorRoute
+  '/terms': typeof TermsRoute
+  '/texas': typeof TexasRouteWithChildren
+  '/texas-budget-planner': typeof TexasBudgetPlannerRoute
+  '/texas-business': typeof TexasBusinessRouteWithChildren
+  '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
+  '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
+  '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
+  '/texas-economy': typeof TexasEconomyRoute
+  '/texas-financial-tools': typeof TexasFinancialToolsRoute
+  '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
+  '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
+  '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
+  '/texas-home-insurance-calculator': typeof TexasHomeInsuranceCalculatorRoute
+  '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
+  '/texas-law-policy': typeof TexasLawPolicyRoute
+  '/texas-laws': typeof TexasLawsRoute
+  '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
+  '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
+  '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
+  '/texas-news': typeof TexasNewsRouteWithChildren
+  '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
+  '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
+  '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
+  '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
+  '/texas-sports': typeof TexasSportsRouteWithChildren
+  '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
+  '/unsubscribe': typeof UnsubscribeRoute
+  '/voting-locations': typeof VotingLocationsRoute
+  '/authors/$slug': typeof AuthorsSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/news/$slug': typeof NewsSlugRoute
+  '/news/non-political': typeof NewsNonPoliticalRoute
+  '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/checkout': typeof ShopCheckoutRoute
+  '/shop/checkout-return': typeof ShopCheckoutReturnRoute
+  '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-news/$topic': typeof TexasNewsTopicRoute
+  '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/$slug': typeof TexasSlugRoute
+  '/authors/': typeof AuthorsIndexRoute
+  '/news/': typeof NewsIndexRoute
+  '/shop/': typeof ShopIndexRoute
+  '/texas-news/': typeof TexasNewsIndexRoute
+  '/texas-sports/': typeof TexasSportsIndexRoute
+  '/texas/': typeof TexasIndexRoute
+  '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
+  '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
+  '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
+  '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
+  '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
+  '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
+  '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/admin/explore/imports/': typeof AdminExploreImportsIndexRoute
+  '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
+  '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact': typeof ContactRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
+  '/county-elections': typeof CountyElectionsRoute
+  '/editorial-standards': typeof EditorialStandardsRoute
+  '/elections': typeof ElectionsRoute
+  '/find-my-dmv': typeof FindMyDmvRoute
+  '/find-my-school-district': typeof FindMySchoolDistrictRoute
+  '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
+  '/happening-now': typeof HappeningNowRoute
+  '/houston': typeof HoustonRoute
+  '/keep-texas-red': typeof KeepTexasRedRoute
+  '/laws': typeof LawsRoute
+  '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
+  '/living-in-texas': typeof LivingInTexasRoute
+  '/moving-to-texas': typeof MovingToTexasRoute
+  '/privacy': typeof PrivacyRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
+  '/representatives': typeof RepresentativesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tax-calculator': typeof TaxCalculatorRoute
+  '/terms': typeof TermsRoute
+  '/texas-budget-planner': typeof TexasBudgetPlannerRoute
+  '/texas-business': typeof TexasBusinessRouteWithChildren
+  '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
+  '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
+  '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
+  '/texas-economy': typeof TexasEconomyRoute
+  '/texas-financial-tools': typeof TexasFinancialToolsRoute
+  '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
+  '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
+  '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
+  '/texas-home-insurance-calculator': typeof TexasHomeInsuranceCalculatorRoute
+  '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
+  '/texas-law-policy': typeof TexasLawPolicyRoute
+  '/texas-laws': typeof TexasLawsRoute
+  '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
+  '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
+  '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
+  '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
+  '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
+  '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
+  '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
+  '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
+  '/unsubscribe': typeof UnsubscribeRoute
+  '/voting-locations': typeof VotingLocationsRoute
+  '/authors/$slug': typeof AuthorsSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/news/$slug': typeof NewsSlugRoute
+  '/news/non-political': typeof NewsNonPoliticalRoute
+  '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/checkout': typeof ShopCheckoutRoute
+  '/shop/checkout-return': typeof ShopCheckoutReturnRoute
+  '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-news/$topic': typeof TexasNewsTopicRoute
+  '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/$slug': typeof TexasSlugRoute
+  '/authors': typeof AuthorsIndexRoute
+  '/news': typeof NewsIndexRoute
+  '/shop': typeof ShopIndexRoute
+  '/texas-news': typeof TexasNewsIndexRoute
+  '/texas-sports': typeof TexasSportsIndexRoute
+  '/texas': typeof TexasIndexRoute
+  '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
+  '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
+  '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
+  '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
+  '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
+  '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
+  '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/admin/explore/imports': typeof AdminExploreImportsIndexRoute
+  '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
+  '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/candidate-guides': typeof CandidateGuidesRoute
+  '/contact': typeof ContactRoute
+  '/contact-legislators': typeof ContactLegislatorsRoute
+  '/county-elections': typeof CountyElectionsRoute
+  '/editorial-standards': typeof EditorialStandardsRoute
+  '/elections': typeof ElectionsRoute
+  '/find-my-dmv': typeof FindMyDmvRoute
+  '/find-my-school-district': typeof FindMySchoolDistrictRoute
+  '/find-representative': typeof FindRepresentativeRoute
+  '/get-involved': typeof GetInvolvedRoute
+  '/glossary': typeof GlossaryRoute
+  '/happening-now': typeof HappeningNowRoute
+  '/houston': typeof HoustonRoute
+  '/keep-texas-red': typeof KeepTexasRedRoute
+  '/laws': typeof LawsRoute
+  '/laws-to-know': typeof LawsToKnowRoute
+  '/legislative-updates': typeof LegislativeUpdatesRoute
+  '/living-in-texas': typeof LivingInTexasRoute
+  '/moving-to-texas': typeof MovingToTexasRoute
+  '/news': typeof NewsRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/register-to-vote': typeof RegisterToVoteRoute
+  '/representatives': typeof RepresentativesRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/shop': typeof ShopRouteWithChildren
+  '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
+  '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
+  '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tax-calculator': typeof TaxCalculatorRoute
+  '/terms': typeof TermsRoute
+  '/texas': typeof TexasRouteWithChildren
+  '/texas-budget-planner': typeof TexasBudgetPlannerRoute
+  '/texas-business': typeof TexasBusinessRouteWithChildren
+  '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
+  '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
+  '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
+  '/texas-economy': typeof TexasEconomyRoute
+  '/texas-financial-tools': typeof TexasFinancialToolsRoute
+  '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
+  '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
+  '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
+  '/texas-home-insurance-calculator': typeof TexasHomeInsuranceCalculatorRoute
+  '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
+  '/texas-law-policy': typeof TexasLawPolicyRoute
+  '/texas-laws': typeof TexasLawsRoute
+  '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
+  '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
+  '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
+  '/texas-news': typeof TexasNewsRouteWithChildren
+  '/texas-politics': typeof TexasPoliticsRoute
+  '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
+  '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
+  '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
+  '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
+  '/texas-sports': typeof TexasSportsRouteWithChildren
+  '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
+  '/unsubscribe': typeof UnsubscribeRoute
+  '/voting-locations': typeof VotingLocationsRoute
+  '/authors/$slug': typeof AuthorsSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/news/$slug': typeof NewsSlugRoute
+  '/news/non-political': typeof NewsNonPoliticalRoute
+  '/shop/$productId': typeof ShopProductIdRoute
+  '/shop/checkout': typeof ShopCheckoutRoute
+  '/shop/checkout-return': typeof ShopCheckoutReturnRoute
+  '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-news/$topic': typeof TexasNewsTopicRoute
+  '/texas-sports/$league': typeof TexasSportsLeagueRoute
+  '/texas/$slug': typeof TexasSlugRoute
+  '/authors/': typeof AuthorsIndexRoute
+  '/news/': typeof NewsIndexRoute
+  '/shop/': typeof ShopIndexRoute
+  '/texas-news/': typeof TexasNewsIndexRoute
+  '/texas-sports/': typeof TexasSportsIndexRoute
+  '/texas/': typeof TexasIndexRoute
+  '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
+  '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
+  '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
+  '/api/public/hooks/generate-sports': typeof ApiPublicHooksGenerateSportsRoute
+  '/api/public/hooks/health': typeof ApiPublicHooksHealthRoute
+  '/api/public/hooks/ingest-feeds': typeof ApiPublicHooksIngestFeedsRoute
+  '/api/public/hooks/list-shops': typeof ApiPublicHooksListShopsRoute
+  '/api/public/hooks/score-viral': typeof ApiPublicHooksScoreViralRoute
+  '/api/public/hooks/score-viral-backfill': typeof ApiPublicHooksScoreViralBackfillRoute
+  '/api/public/hooks/sync-printify': typeof ApiPublicHooksSyncPrintifyRoute
+  '/api/public/hooks/track-variant': typeof ApiPublicHooksTrackVariantRoute
+  '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
+  '/lovable/email/queue/process': typeof LovableEmailQueueProcessRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
+  '/admin/explore/imports/': typeof AdminExploreImportsIndexRoute
+  '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
+  '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/about-keep-texas-red'
+    | '/admin'
+    | '/candidate-guides'
+    | '/contact'
+    | '/contact-legislators'
+    | '/county-elections'
+    | '/editorial-standards'
+    | '/elections'
+    | '/find-my-dmv'
+    | '/find-my-school-district'
+    | '/find-representative'
+    | '/get-involved'
+    | '/glossary'
+    | '/happening-now'
+    | '/houston'
+    | '/keep-texas-red'
+    | '/laws'
+    | '/laws-to-know'
+    | '/legislative-updates'
+    | '/living-in-texas'
+    | '/moving-to-texas'
+    | '/news'
+    | '/privacy'
+    | '/register-to-vote'
+    | '/representatives'
+    | '/robots.txt'
+    | '/shop'
+    | '/sitemap-authors.xml'
+    | '/sitemap-evergreen.xml'
+    | '/sitemap-images.xml'
+    | '/sitemap-news.xml'
+    | '/sitemap-pages.xml'
+    | '/sitemap-products.xml'
+    | '/sitemap.xml'
+    | '/tax-calculator'
+    | '/terms'
+    | '/texas'
+    | '/texas-budget-planner'
+    | '/texas-business'
+    | '/texas-closing-cost-calculator'
+    | '/texas-cost-of-living-calculator'
+    | '/texas-down-payment-assistance-calculator'
+    | '/texas-down-payment-calculator'
+    | '/texas-economy'
+    | '/texas-financial-tools'
+    | '/texas-home-affordability-calculator'
+    | '/texas-home-equity-calculator'
+    | '/texas-home-equity-growth-calculator'
+    | '/texas-home-insurance-calculator'
+    | '/texas-homeownership-cost-calculator'
+    | '/texas-law-policy'
+    | '/texas-laws'
+    | '/texas-mortgage-calculator'
+    | '/texas-mortgage-payoff-calculator'
+    | '/texas-moving-cost-calculator'
+    | '/texas-news'
+    | '/texas-politics'
+    | '/texas-property-tax-increase-calculator'
+    | '/texas-refinance-savings-calculator'
+    | '/texas-rent-vs-buy-calculator'
+    | '/texas-salary-calculator'
+    | '/texas-salary-comparison-by-city'
+    | '/texas-sports'
+    | '/texas-utility-cost-calculator'
+    | '/unsubscribe'
+    | '/voting-locations'
+    | '/authors/$slug'
+    | '/email/unsubscribe'
+    | '/news/$slug'
+    | '/news/non-political'
+    | '/shop/$productId'
+    | '/shop/checkout'
+    | '/shop/checkout-return'
+    | '/texas-business/$topic'
+    | '/texas-news/$topic'
+    | '/texas-sports/$league'
+    | '/texas/$slug'
+    | '/authors/'
+    | '/news/'
+    | '/shop/'
+    | '/texas-news/'
+    | '/texas-sports/'
+    | '/texas/'
+    | '/api/public/property-address-lookup'
+    | '/lovable/email/suppression'
+    | '/texas-sports/team/$team'
+    | '/api/public/article-image/$filename'
+    | '/api/public/hooks/backfill-featured-images'
+    | '/api/public/hooks/generate-evergreen'
+    | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-sports'
+    | '/api/public/hooks/health'
+    | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/score-viral'
+    | '/api/public/hooks/score-viral-backfill'
+    | '/api/public/hooks/sync-printify'
+    | '/api/public/hooks/track-variant'
+    | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
+    | '/admin/explore/imports/'
+    | '/api/public/oauth/facebook/callback'
+    | '/api/public/oauth/facebook/start'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/about'
+    | '/about-keep-texas-red'
+    | '/admin'
+    | '/candidate-guides'
+    | '/contact'
+    | '/contact-legislators'
+    | '/county-elections'
+    | '/editorial-standards'
+    | '/elections'
+    | '/find-my-dmv'
+    | '/find-my-school-district'
+    | '/find-representative'
+    | '/get-involved'
+    | '/glossary'
+    | '/happening-now'
+    | '/houston'
+    | '/keep-texas-red'
+    | '/laws'
+    | '/laws-to-know'
+    | '/legislative-updates'
+    | '/living-in-texas'
+    | '/moving-to-texas'
+    | '/privacy'
+    | '/register-to-vote'
+    | '/representatives'
+    | '/robots.txt'
+    | '/sitemap-authors.xml'
+    | '/sitemap-evergreen.xml'
+    | '/sitemap-images.xml'
+    | '/sitemap-news.xml'
+    | '/sitemap-pages.xml'
+    | '/sitemap-products.xml'
+    | '/sitemap.xml'
+    | '/tax-calculator'
+    | '/terms'
+    | '/texas-budget-planner'
+    | '/texas-business'
+    | '/texas-closing-cost-calculator'
+    | '/texas-cost-of-living-calculator'
+    | '/texas-down-payment-assistance-calculator'
+    | '/texas-down-payment-calculator'
+    | '/texas-economy'
+    | '/texas-financial-tools'
+    | '/texas-home-affordability-calculator'
+    | '/texas-home-equity-calculator'
+    | '/texas-home-equity-growth-calculator'
+    | '/texas-home-insurance-calculator'
+    | '/texas-homeownership-cost-calculator'
+    | '/texas-law-policy'
+    | '/texas-laws'
+    | '/texas-mortgage-calculator'
+    | '/texas-mortgage-payoff-calculator'
+    | '/texas-moving-cost-calculator'
+    | '/texas-politics'
+    | '/texas-property-tax-increase-calculator'
+    | '/texas-refinance-savings-calculator'
+    | '/texas-rent-vs-buy-calculator'
+    | '/texas-salary-calculator'
+    | '/texas-salary-comparison-by-city'
+    | '/texas-utility-cost-calculator'
+    | '/unsubscribe'
+    | '/voting-locations'
+    | '/authors/$slug'
+    | '/email/unsubscribe'
+    | '/news/$slug'
+    | '/news/non-political'
+    | '/shop/$productId'
+    | '/shop/checkout'
+    | '/shop/checkout-return'
+    | '/texas-business/$topic'
+    | '/texas-news/$topic'
+    | '/texas-sports/$league'
+    | '/texas/$slug'
+    | '/authors'
+    | '/news'
+    | '/shop'
+    | '/texas-news'
+    | '/texas-sports'
+    | '/texas'
+    | '/api/public/property-address-lookup'
+    | '/lovable/email/suppression'
+    | '/texas-sports/team/$team'
+    | '/api/public/article-image/$filename'
+    | '/api/public/hooks/backfill-featured-images'
+    | '/api/public/hooks/generate-evergreen'
+    | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-sports'
+    | '/api/public/hooks/health'
+    | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/score-viral'
+    | '/api/public/hooks/score-viral-backfill'
+    | '/api/public/hooks/sync-printify'
+    | '/api/public/hooks/track-variant'
+    | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
+    | '/admin/explore/imports'
+    | '/api/public/oauth/facebook/callback'
+    | '/api/public/oauth/facebook/start'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/about-keep-texas-red'
+    | '/admin'
+    | '/candidate-guides'
+    | '/contact'
+    | '/contact-legislators'
+    | '/county-elections'
+    | '/editorial-standards'
+    | '/elections'
+    | '/find-my-dmv'
+    | '/find-my-school-district'
+    | '/find-representative'
+    | '/get-involved'
+    | '/glossary'
+    | '/happening-now'
+    | '/houston'
+    | '/keep-texas-red'
+    | '/laws'
+    | '/laws-to-know'
+    | '/legislative-updates'
+    | '/living-in-texas'
+    | '/moving-to-texas'
+    | '/news'
+    | '/privacy'
+    | '/register-to-vote'
+    | '/representatives'
+    | '/robots.txt'
+    | '/shop'
+    | '/sitemap-authors.xml'
+    | '/sitemap-evergreen.xml'
+    | '/sitemap-images.xml'
+    | '/sitemap-news.xml'
+    | '/sitemap-pages.xml'
+    | '/sitemap-products.xml'
+    | '/sitemap.xml'
+    | '/tax-calculator'
+    | '/terms'
+    | '/texas'
+    | '/texas-budget-planner'
+    | '/texas-business'
+    | '/texas-closing-cost-calculator'
+    | '/texas-cost-of-living-calculator'
+    | '/texas-down-payment-assistance-calculator'
+    | '/texas-down-payment-calculator'
+    | '/texas-economy'
+    | '/texas-financial-tools'
+    | '/texas-home-affordability-calculator'
+    | '/texas-home-equity-calculator'
+    | '/texas-home-equity-growth-calculator'
+    | '/texas-home-insurance-calculator'
+    | '/texas-homeownership-cost-calculator'
+    | '/texas-law-policy'
+    | '/texas-laws'
+    | '/texas-mortgage-calculator'
+    | '/texas-mortgage-payoff-calculator'
+    | '/texas-moving-cost-calculator'
+    | '/texas-news'
+    | '/texas-politics'
+    | '/texas-property-tax-increase-calculator'
+    | '/texas-refinance-savings-calculator'
+    | '/texas-rent-vs-buy-calculator'
+    | '/texas-salary-calculator'
+    | '/texas-salary-comparison-by-city'
+    | '/texas-sports'
+    | '/texas-utility-cost-calculator'
+    | '/unsubscribe'
+    | '/voting-locations'
+    | '/authors/$slug'
+    | '/email/unsubscribe'
+    | '/news/$slug'
+    | '/news/non-political'
+    | '/shop/$productId'
+    | '/shop/checkout'
+    | '/shop/checkout-return'
+    | '/texas-business/$topic'
+    | '/texas-news/$topic'
+    | '/texas-sports/$league'
+    | '/texas/$slug'
+    | '/authors/'
+    | '/news/'
+    | '/shop/'
+    | '/texas-news/'
+    | '/texas-sports/'
+    | '/texas/'
+    | '/api/public/property-address-lookup'
+    | '/lovable/email/suppression'
+    | '/texas-sports/team/$team'
+    | '/api/public/article-image/$filename'
+    | '/api/public/hooks/backfill-featured-images'
+    | '/api/public/hooks/generate-evergreen'
+    | '/api/public/hooks/generate-news'
+    | '/api/public/hooks/generate-sports'
+    | '/api/public/hooks/health'
+    | '/api/public/hooks/ingest-feeds'
+    | '/api/public/hooks/list-shops'
+    | '/api/public/hooks/score-viral'
+    | '/api/public/hooks/score-viral-backfill'
+    | '/api/public/hooks/sync-printify'
+    | '/api/public/hooks/track-variant'
+    | '/api/public/payments/webhook'
+    | '/lovable/email/queue/process'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
+    | '/admin/explore/imports/'
+    | '/api/public/oauth/facebook/callback'
+    | '/api/public/oauth/facebook/start'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
+  AboutKeepTexasRedRoute: typeof AboutKeepTexasRedRoute
+  AdminRoute: typeof AdminRouteWithChildren
+  CandidateGuidesRoute: typeof CandidateGuidesRoute
+  ContactRoute: typeof ContactRoute
+  ContactLegislatorsRoute: typeof ContactLegislatorsRoute
+  CountyElectionsRoute: typeof CountyElectionsRoute
+  EditorialStandardsRoute: typeof EditorialStandardsRoute
+  ElectionsRoute: typeof ElectionsRoute
+  FindMyDmvRoute: typeof FindMyDmvRoute
+  FindMySchoolDistrictRoute: typeof FindMySchoolDistrictRoute
+  FindRepresentativeRoute: typeof FindRepresentativeRoute
+  GetInvolvedRoute: typeof GetInvolvedRoute
+  GlossaryRoute: typeof GlossaryRoute
+  HappeningNowRoute: typeof HappeningNowRoute
+  HoustonRoute: typeof HoustonRoute
+  KeepTexasRedRoute: typeof KeepTexasRedRoute
+  LawsRoute: typeof LawsRoute
+  LawsToKnowRoute: typeof LawsToKnowRoute
+  LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
+  LivingInTexasRoute: typeof LivingInTexasRoute
+  MovingToTexasRoute: typeof MovingToTexasRoute
+  NewsRoute: typeof NewsRouteWithChildren
+  PrivacyRoute: typeof PrivacyRoute
+  RegisterToVoteRoute: typeof RegisterToVoteRoute
+  RepresentativesRoute: typeof RepresentativesRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  ShopRoute: typeof ShopRouteWithChildren
+  SitemapAuthorsDotxmlRoute: typeof SitemapAuthorsDotxmlRoute
+  SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
+  SitemapImagesDotxmlRoute: typeof SitemapImagesDotxmlRoute
+  SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
+  SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
+  SitemapProductsDotxmlRoute: typeof SitemapProductsDotxmlRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TaxCalculatorRoute: typeof TaxCalculatorRoute
+  TermsRoute: typeof TermsRoute
+  TexasRoute: typeof TexasRouteWithChildren
+  TexasBudgetPlannerRoute: typeof TexasBudgetPlannerRoute
+  TexasBusinessRoute: typeof TexasBusinessRouteWithChildren
+  TexasClosingCostCalculatorRoute: typeof TexasClosingCostCalculatorRoute
+  TexasCostOfLivingCalculatorRoute: typeof TexasCostOfLivingCalculatorRoute
+  TexasDownPaymentAssistanceCalculatorRoute: typeof TexasDownPaymentAssistanceCalculatorRoute
+  TexasDownPaymentCalculatorRoute: typeof TexasDownPaymentCalculatorRoute
+  TexasEconomyRoute: typeof TexasEconomyRoute
+  TexasFinancialToolsRoute: typeof TexasFinancialToolsRoute
+  TexasHomeAffordabilityCalculatorRoute: typeof TexasHomeAffordabilityCalculatorRoute
+  TexasHomeEquityCalculatorRoute: typeof TexasHomeEquityCalculatorRoute
+  TexasHomeEquityGrowthCalculatorRoute: typeof TexasHomeEquityGrowthCalculatorRoute
+  TexasHomeInsuranceCalculatorRoute: typeof TexasHomeInsuranceCalculatorRoute
+  TexasHomeownershipCostCalculatorRoute: typeof TexasHomeownershipCostCalculatorRoute
+  TexasLawPolicyRoute: typeof TexasLawPolicyRoute
+  TexasLawsRoute: typeof TexasLawsRoute
+  TexasMortgageCalculatorRoute: typeof TexasMortgageCalculatorRoute
+  TexasMortgagePayoffCalculatorRoute: typeof TexasMortgagePayoffCalculatorRoute
+  TexasMovingCostCalculatorRoute: typeof TexasMovingCostCalculatorRoute
+  TexasNewsRoute: typeof TexasNewsRouteWithChildren
+  TexasPoliticsRoute: typeof TexasPoliticsRoute
+  TexasPropertyTaxIncreaseCalculatorRoute: typeof TexasPropertyTaxIncreaseCalculatorRoute
+  TexasRefinanceSavingsCalculatorRoute: typeof TexasRefinanceSavingsCalculatorRoute
+  TexasRentVsBuyCalculatorRoute: typeof TexasRentVsBuyCalculatorRoute
+  TexasSalaryCalculatorRoute: typeof TexasSalaryCalculatorRoute
+  TexasSalaryComparisonByCityRoute: typeof TexasSalaryComparisonByCityRoute
+  TexasSportsRoute: typeof TexasSportsRouteWithChildren
+  TexasUtilityCostCalculatorRoute: typeof TexasUtilityCostCalculatorRoute
+  UnsubscribeRoute: typeof UnsubscribeRoute
+  VotingLocationsRoute: typeof VotingLocationsRoute
+  AuthorsSlugRoute: typeof AuthorsSlugRoute
+  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  AuthorsIndexRoute: typeof AuthorsIndexRoute
+  ApiPublicPropertyAddressLookupRoute: typeof ApiPublicPropertyAddressLookupRoute
+  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
+  ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
+  ApiPublicHooksBackfillFeaturedImagesRoute: typeof ApiPublicHooksBackfillFeaturedImagesRoute
+  ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
+  ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
+  ApiPublicHooksGenerateSportsRoute: typeof ApiPublicHooksGenerateSportsRoute
+  ApiPublicHooksHealthRoute: typeof ApiPublicHooksHealthRoute
+  ApiPublicHooksIngestFeedsRoute: typeof ApiPublicHooksIngestFeedsRoute
+  ApiPublicHooksListShopsRoute: typeof ApiPublicHooksListShopsRoute
+  ApiPublicHooksScoreViralRoute: typeof ApiPublicHooksScoreViralRoute
+  ApiPublicHooksScoreViralBackfillRoute: typeof ApiPublicHooksScoreViralBackfillRoute
+  ApiPublicHooksSyncPrintifyRoute: typeof ApiPublicHooksSyncPrintifyRoute
+  ApiPublicHooksTrackVariantRoute: typeof ApiPublicHooksTrackVariantRoute
+  ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
+  LovableEmailQueueProcessRoute: typeof LovableEmailQueueProcessRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
+  ApiPublicOauthFacebookCallbackRoute: typeof ApiPublicOauthFacebookCallbackRoute
+  ApiPublicOauthFacebookStartRoute: typeof ApiPublicOauthFacebookStartRoute
+}
+
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about-keep-texas-red': {
+      id: '/about-keep-texas-red'
+      path: '/about-keep-texas-red'
+      fullPath: '/about-keep-texas-red'
+      preLoaderRoute: typeof AboutKeepTexasRedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/candidate-guides': {
+      id: '/candidate-guides'
+      path: '/candidate-guides'
+      fullPath: '/candidate-guides'
+      preLoaderRoute: typeof CandidateGuidesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact-legislators': {
+      id: '/contact-legislators'
+      path: '/contact-legislators'
+      fullPath: '/contact-legislators'
+      preLoaderRoute: typeof ContactLegislatorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/county-elections': {
+      id: '/county-elections'
+      path: '/county-elections'
+      fullPath: '/county-elections'
+      preLoaderRoute: typeof CountyElectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/editorial-standards': {
+      id: '/editorial-standards'
+      path: '/editorial-standards'
+      fullPath: '/editorial-standards'
+      preLoaderRoute: typeof EditorialStandardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/elections': {
+      id: '/elections'
+      path: '/elections'
+      fullPath: '/elections'
+      preLoaderRoute: typeof ElectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-my-dmv': {
+      id: '/find-my-dmv'
+      path: '/find-my-dmv'
+      fullPath: '/find-my-dmv'
+      preLoaderRoute: typeof FindMyDmvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-my-school-district': {
+      id: '/find-my-school-district'
+      path: '/find-my-school-district'
+      fullPath: '/find-my-school-district'
+      preLoaderRoute: typeof FindMySchoolDistrictRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/find-representative': {
+      id: '/find-representative'
+      path: '/find-representative'
+      fullPath: '/find-representative'
+      preLoaderRoute: typeof FindRepresentativeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/get-involved': {
+      id: '/get-involved'
+      path: '/get-involved'
+      fullPath: '/get-involved'
+      preLoaderRoute: typeof GetInvolvedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/glossary': {
+      id: '/glossary'
+      path: '/glossary'
+      fullPath: '/glossary'
+      preLoaderRoute: typeof GlossaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/happening-now': {
+      id: '/happening-now'
+      path: '/happening-now'
+      fullPath: '/happening-now'
+      preLoaderRoute: typeof HappeningNowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/houston': {
+      id: '/houston'
+      path: '/houston'
+      fullPath: '/houston'
+      preLoaderRoute: typeof HoustonRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/keep-texas-red': {
+      id: '/keep-texas-red'
+      path: '/keep-texas-red'
+      fullPath: '/keep-texas-red'
+      preLoaderRoute: typeof KeepTexasRedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/laws': {
+      id: '/laws'
+      path: '/laws'
+      fullPath: '/laws'
+      preLoaderRoute: typeof LawsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/laws-to-know': {
+      id: '/laws-to-know'
+      path: '/laws-to-know'
+      fullPath: '/laws-to-know'
+      preLoaderRoute: typeof LawsToKnowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legislative-updates': {
+      id: '/legislative-updates'
+      path: '/legislative-updates'
+      fullPath: '/legislative-updates'
+      preLoaderRoute: typeof LegislativeUpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/living-in-texas': {
+      id: '/living-in-texas'
+      path: '/living-in-texas'
+      fullPath: '/living-in-texas'
+      preLoaderRoute: typeof LivingInTexasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/moving-to-texas': {
+      id: '/moving-to-texas'
+      path: '/moving-to-texas'
+      fullPath: '/moving-to-texas'
+      preLoaderRoute: typeof MovingToTexasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register-to-vote': {
+      id: '/register-to-vote'
+      path: '/register-to-vote'
+      fullPath: '/register-to-vote'
+      preLoaderRoute: typeof RegisterToVoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/representatives': {
+      id: '/representatives'
+      path: '/representatives'
+      fullPath: '/representatives'
+      preLoaderRoute: typeof RepresentativesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-authors.xml': {
+      id: '/sitemap-authors.xml'
+      path: '/sitemap-authors.xml'
+      fullPath: '/sitemap-authors.xml'
+      preLoaderRoute: typeof SitemapAuthorsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-evergreen.xml': {
+      id: '/sitemap-evergreen.xml'
+      path: '/sitemap-evergreen.xml'
+      fullPath: '/sitemap-evergreen.xml'
+      preLoaderRoute: typeof SitemapEvergreenDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-images.xml': {
+      id: '/sitemap-images.xml'
+      path: '/sitemap-images.xml'
+      fullPath: '/sitemap-images.xml'
+      preLoaderRoute: typeof SitemapImagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-news.xml': {
+      id: '/sitemap-news.xml'
+      path: '/sitemap-news.xml'
+      fullPath: '/sitemap-news.xml'
+      preLoaderRoute: typeof SitemapNewsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages.xml': {
+      id: '/sitemap-pages.xml'
+      path: '/sitemap-pages.xml'
+      fullPath: '/sitemap-pages.xml'
+      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-products.xml': {
+      id: '/sitemap-products.xml'
+      path: '/sitemap-products.xml'
+      fullPath: '/sitemap-products.xml'
+      preLoaderRoute: typeof SitemapProductsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tax-calculator': {
+      id: '/tax-calculator'
+      path: '/tax-calculator'
+      fullPath: '/tax-calculator'
+      preLoaderRoute: typeof TaxCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas': {
+      id: '/texas'
+      path: '/texas'
+      fullPath: '/texas'
+      preLoaderRoute: typeof TexasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-budget-planner': {
+      id: '/texas-budget-planner'
+      path: '/texas-budget-planner'
+      fullPath: '/texas-budget-planner'
+      preLoaderRoute: typeof TexasBudgetPlannerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-business': {
+      id: '/texas-business'
+      path: '/texas-business'
+      fullPath: '/texas-business'
+      preLoaderRoute: typeof TexasBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-closing-cost-calculator': {
+      id: '/texas-closing-cost-calculator'
+      path: '/texas-closing-cost-calculator'
+      fullPath: '/texas-closing-cost-calculator'
+      preLoaderRoute: typeof TexasClosingCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-cost-of-living-calculator': {
+      id: '/texas-cost-of-living-calculator'
+      path: '/texas-cost-of-living-calculator'
+      fullPath: '/texas-cost-of-living-calculator'
+      preLoaderRoute: typeof TexasCostOfLivingCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-down-payment-assistance-calculator': {
+      id: '/texas-down-payment-assistance-calculator'
+      path: '/texas-down-payment-assistance-calculator'
+      fullPath: '/texas-down-payment-assistance-calculator'
+      preLoaderRoute: typeof TexasDownPaymentAssistanceCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-down-payment-calculator': {
+      id: '/texas-down-payment-calculator'
+      path: '/texas-down-payment-calculator'
+      fullPath: '/texas-down-payment-calculator'
+      preLoaderRoute: typeof TexasDownPaymentCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-economy': {
+      id: '/texas-economy'
+      path: '/texas-economy'
+      fullPath: '/texas-economy'
+      preLoaderRoute: typeof TexasEconomyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-financial-tools': {
+      id: '/texas-financial-tools'
+      path: '/texas-financial-tools'
+      fullPath: '/texas-financial-tools'
+      preLoaderRoute: typeof TexasFinancialToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-home-affordability-calculator': {
+      id: '/texas-home-affordability-calculator'
+      path: '/texas-home-affordability-calculator'
+      fullPath: '/texas-home-affordability-calculator'
+      preLoaderRoute: typeof TexasHomeAffordabilityCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-home-equity-calculator': {
+      id: '/texas-home-equity-calculator'
+      path: '/texas-home-equity-calculator'
+      fullPath: '/texas-home-equity-calculator'
+      preLoaderRoute: typeof TexasHomeEquityCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-home-equity-growth-calculator': {
+      id: '/texas-home-equity-growth-calculator'
+      path: '/texas-home-equity-growth-calculator'
+      fullPath: '/texas-home-equity-growth-calculator'
+      preLoaderRoute: typeof TexasHomeEquityGrowthCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-home-insurance-calculator': {
+      id: '/texas-home-insurance-calculator'
+      path: '/texas-home-insurance-calculator'
+      fullPath: '/texas-home-insurance-calculator'
+      preLoaderRoute: typeof TexasHomeInsuranceCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-homeownership-cost-calculator': {
+      id: '/texas-homeownership-cost-calculator'
+      path: '/texas-homeownership-cost-calculator'
+      fullPath: '/texas-homeownership-cost-calculator'
+      preLoaderRoute: typeof TexasHomeownershipCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-law-policy': {
+      id: '/texas-law-policy'
+      path: '/texas-law-policy'
+      fullPath: '/texas-law-policy'
+      preLoaderRoute: typeof TexasLawPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-laws': {
+      id: '/texas-laws'
+      path: '/texas-laws'
+      fullPath: '/texas-laws'
+      preLoaderRoute: typeof TexasLawsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-mortgage-calculator': {
+      id: '/texas-mortgage-calculator'
+      path: '/texas-mortgage-calculator'
+      fullPath: '/texas-mortgage-calculator'
+      preLoaderRoute: typeof TexasMortgageCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-mortgage-payoff-calculator': {
+      id: '/texas-mortgage-payoff-calculator'
+      path: '/texas-mortgage-payoff-calculator'
+      fullPath: '/texas-mortgage-payoff-calculator'
+      preLoaderRoute: typeof TexasMortgagePayoffCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-moving-cost-calculator': {
+      id: '/texas-moving-cost-calculator'
+      path: '/texas-moving-cost-calculator'
+      fullPath: '/texas-moving-cost-calculator'
+      preLoaderRoute: typeof TexasMovingCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-news': {
+      id: '/texas-news'
+      path: '/texas-news'
+      fullPath: '/texas-news'
+      preLoaderRoute: typeof TexasNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-politics': {
+      id: '/texas-politics'
+      path: '/texas-politics'
+      fullPath: '/texas-politics'
+      preLoaderRoute: typeof TexasPoliticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-property-tax-increase-calculator': {
+      id: '/texas-property-tax-increase-calculator'
+      path: '/texas-property-tax-increase-calculator'
+      fullPath: '/texas-property-tax-increase-calculator'
+      preLoaderRoute: typeof TexasPropertyTaxIncreaseCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-refinance-savings-calculator': {
+      id: '/texas-refinance-savings-calculator'
+      path: '/texas-refinance-savings-calculator'
+      fullPath: '/texas-refinance-savings-calculator'
+      preLoaderRoute: typeof TexasRefinanceSavingsCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-rent-vs-buy-calculator': {
+      id: '/texas-rent-vs-buy-calculator'
+      path: '/texas-rent-vs-buy-calculator'
+      fullPath: '/texas-rent-vs-buy-calculator'
+      preLoaderRoute: typeof TexasRentVsBuyCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-salary-calculator': {
+      id: '/texas-salary-calculator'
+      path: '/texas-salary-calculator'
+      fullPath: '/texas-salary-calculator'
+      preLoaderRoute: typeof TexasSalaryCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-salary-comparison-by-city': {
+      id: '/texas-salary-comparison-by-city'
+      path: '/texas-salary-comparison-by-city'
+      fullPath: '/texas-salary-comparison-by-city'
+      preLoaderRoute: typeof TexasSalaryComparisonByCityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-sports': {
+      id: '/texas-sports'
+      path: '/texas-sports'
+      fullPath: '/texas-sports'
+      preLoaderRoute: typeof TexasSportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-utility-cost-calculator': {
+      id: '/texas-utility-cost-calculator'
+      path: '/texas-utility-cost-calculator'
+      fullPath: '/texas-utility-cost-calculator'
+      preLoaderRoute: typeof TexasUtilityCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/voting-locations': {
+      id: '/voting-locations'
+      path: '/voting-locations'
+      fullPath: '/voting-locations'
+      preLoaderRoute: typeof VotingLocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/authors/': {
+      id: '/authors/'
+      path: '/authors'
+      fullPath: '/authors/'
+      preLoaderRoute: typeof AuthorsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/authors/$slug': {
+      id: '/authors/$slug'
+      path: '/authors/$slug'
+      fullPath: '/authors/$slug'
+      preLoaderRoute: typeof AuthorsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news/': {
+      id: '/news/'
+      path: '/'
+      fullPath: '/news/'
+      preLoaderRoute: typeof NewsIndexRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/$slug': {
+      id: '/news/$slug'
+      path: '/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof NewsSlugRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/non-political': {
+      id: '/news/non-political'
+      path: '/non-political'
+      fullPath: '/news/non-political'
+      preLoaderRoute: typeof NewsNonPoliticalRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/shop/': {
+      id: '/shop/'
+      path: '/'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/$productId': {
+      id: '/shop/$productId'
+      path: '/$productId'
+      fullPath: '/shop/$productId'
+      preLoaderRoute: typeof ShopProductIdRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/checkout': {
+      id: '/shop/checkout'
+      path: '/checkout'
+      fullPath: '/shop/checkout'
+      preLoaderRoute: typeof ShopCheckoutRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/checkout-return': {
+      id: '/shop/checkout-return'
+      path: '/checkout-return'
+      fullPath: '/shop/checkout-return'
+      preLoaderRoute: typeof ShopCheckoutReturnRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/texas-business/$topic': {
+      id: '/texas-business/$topic'
+      path: '/$topic'
+      fullPath: '/texas-business/$topic'
+      preLoaderRoute: typeof TexasBusinessTopicRouteImport
+      parentRoute: typeof TexasBusinessRoute
+    }
+    '/texas-news/': {
+      id: '/texas-news/'
+      path: '/'
+      fullPath: '/texas-news/'
+      preLoaderRoute: typeof TexasNewsIndexRouteImport
+      parentRoute: typeof TexasNewsRoute
+    }
+    '/texas-news/$topic': {
+      id: '/texas-news/$topic'
+      path: '/$topic'
+      fullPath: '/texas-news/$topic'
+      preLoaderRoute: typeof TexasNewsTopicRouteImport
+      parentRoute: typeof TexasNewsRoute
+    }
+    '/texas-sports/': {
+      id: '/texas-sports/'
+      path: '/'
+      fullPath: '/texas-sports/'
+      preLoaderRoute: typeof TexasSportsIndexRouteImport
+      parentRoute: typeof TexasSportsRoute
+    }
+    '/texas-sports/$league': {
+      id: '/texas-sports/$league'
+      path: '/$league'
+      fullPath: '/texas-sports/$league'
+      preLoaderRoute: typeof TexasSportsLeagueRouteImport
+      parentRoute: typeof TexasSportsRoute
+    }
+    '/texas/': {
+      id: '/texas/'
+      path: '/'
+      fullPath: '/texas/'
+      preLoaderRoute: typeof TexasIndexRouteImport
+      parentRoute: typeof TexasRoute
+    }
+    '/texas/$slug': {
+      id: '/texas/$slug'
+      path: '/$slug'
+      fullPath: '/texas/$slug'
+      preLoaderRoute: typeof TexasSlugRouteImport
+      parentRoute: typeof TexasRoute
+    }
+    '/api/public/property-address-lookup': {
+      id: '/api/public/property-address-lookup'
+      path: '/api/public/property-address-lookup'
+      fullPath: '/api/public/property-address-lookup'
+      preLoaderRoute: typeof ApiPublicPropertyAddressLookupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-sports/team/$team': {
+      id: '/texas-sports/team/$team'
+      path: '/team/$team'
+      fullPath: '/texas-sports/team/$team'
+      preLoaderRoute: typeof TexasSportsTeamTeamRouteImport
+      parentRoute: typeof TexasSportsRoute
+    }
+    '/admin/explore/imports/': {
+      id: '/admin/explore/imports/'
+      path: '/explore/imports'
+      fullPath: '/admin/explore/imports/'
+      preLoaderRoute: typeof AdminExploreImportsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/public/article-image/$filename': {
+      id: '/api/public/article-image/$filename'
+      path: '/api/public/article-image/$filename'
+      fullPath: '/api/public/article-image/$filename'
+      preLoaderRoute: typeof ApiPublicArticleImageFilenameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/backfill-featured-images': {
+      id: '/api/public/hooks/backfill-featured-images'
+      path: '/api/public/hooks/backfill-featured-images'
+      fullPath: '/api/public/hooks/backfill-featured-images'
+      preLoaderRoute: typeof ApiPublicHooksBackfillFeaturedImagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-evergreen': {
+      id: '/api/public/hooks/generate-evergreen'
+      path: '/api/public/hooks/generate-evergreen'
+      fullPath: '/api/public/hooks/generate-evergreen'
+      preLoaderRoute: typeof ApiPublicHooksGenerateEvergreenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-news': {
+      id: '/api/public/hooks/generate-news'
+      path: '/api/public/hooks/generate-news'
+      fullPath: '/api/public/hooks/generate-news'
+      preLoaderRoute: typeof ApiPublicHooksGenerateNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-sports': {
+      id: '/api/public/hooks/generate-sports'
+      path: '/api/public/hooks/generate-sports'
+      fullPath: '/api/public/hooks/generate-sports'
+      preLoaderRoute: typeof ApiPublicHooksGenerateSportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/health': {
+      id: '/api/public/hooks/health'
+      path: '/api/public/hooks/health'
+      fullPath: '/api/public/hooks/health'
+      preLoaderRoute: typeof ApiPublicHooksHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/ingest-feeds': {
+      id: '/api/public/hooks/ingest-feeds'
+      path: '/api/public/hooks/ingest-feeds'
+      fullPath: '/api/public/hooks/ingest-feeds'
+      preLoaderRoute: typeof ApiPublicHooksIngestFeedsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/list-shops': {
+      id: '/api/public/hooks/list-shops'
+      path: '/api/public/hooks/list-shops'
+      fullPath: '/api/public/hooks/list-shops'
+      preLoaderRoute: typeof ApiPublicHooksListShopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/score-viral': {
+      id: '/api/public/hooks/score-viral'
+      path: '/api/public/hooks/score-viral'
+      fullPath: '/api/public/hooks/score-viral'
+      preLoaderRoute: typeof ApiPublicHooksScoreViralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/score-viral-backfill': {
+      id: '/api/public/hooks/score-viral-backfill'
+      path: '/api/public/hooks/score-viral-backfill'
+      fullPath: '/api/public/hooks/score-viral-backfill'
+      preLoaderRoute: typeof ApiPublicHooksScoreViralBackfillRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/sync-printify': {
+      id: '/api/public/hooks/sync-printify'
+      path: '/api/public/hooks/sync-printify'
+      fullPath: '/api/public/hooks/sync-printify'
+      preLoaderRoute: typeof ApiPublicHooksSyncPrintifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/track-variant': {
+      id: '/api/public/hooks/track-variant'
+      path: '/api/public/hooks/track-variant'
+      fullPath: '/api/public/hooks/track-variant'
+      preLoaderRoute: typeof ApiPublicHooksTrackVariantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/oauth/facebook/callback': {
+      id: '/api/public/oauth/facebook/callback'
+      path: '/api/public/oauth/facebook/callback'
+      fullPath: '/api/public/oauth/facebook/callback'
+      preLoaderRoute: typeof ApiPublicOauthFacebookCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/oauth/facebook/start': {
+      id: '/api/public/oauth/facebook/start'
+      path: '/api/public/oauth/facebook/start'
+      fullPath: '/api/public/oauth/facebook/start'
+      preLoaderRoute: typeof ApiPublicOauthFacebookStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+  }
+}
+
+interface AdminRouteChildren {
+  AdminExploreImportsIndexRoute: typeof AdminExploreImportsIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminExploreImportsIndexRoute: AdminExploreImportsIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface NewsRouteChildren {
+  NewsSlugRoute: typeof NewsSlugRoute
+  NewsNonPoliticalRoute: typeof NewsNonPoliticalRoute
+  NewsIndexRoute: typeof NewsIndexRoute
+}
+
+const NewsRouteChildren: NewsRouteChildren = {
+  NewsSlugRoute: NewsSlugRoute,
+  NewsNonPoliticalRoute: NewsNonPoliticalRoute,
+  NewsIndexRoute: NewsIndexRoute,
+}
+
+const NewsRouteWithChildren = NewsRoute._addFileChildren(NewsRouteChildren)
+
+interface ShopRouteChildren {
+  ShopProductIdRoute: typeof ShopProductIdRoute
+  ShopCheckoutRoute: typeof ShopCheckoutRoute
+  ShopCheckoutReturnRoute: typeof ShopCheckoutReturnRoute
+  ShopIndexRoute: typeof ShopIndexRoute
+}
+
+const ShopRouteChildren: ShopRouteChildren = {
+  ShopProductIdRoute: ShopProductIdRoute,
+  ShopCheckoutRoute: ShopCheckoutRoute,
+  ShopCheckoutReturnRoute: ShopCheckoutReturnRoute,
+  ShopIndexRoute: ShopIndexRoute,
+}
+
+const ShopRouteWithChildren = ShopRoute._addFileChildren(ShopRouteChildren)
+
+interface TexasRouteChildren {
+  TexasSlugRoute: typeof TexasSlugRoute
+  TexasIndexRoute: typeof TexasIndexRoute
+}
+
+const TexasRouteChildren: TexasRouteChildren = {
+  TexasSlugRoute: TexasSlugRoute,
+  TexasIndexRoute: TexasIndexRoute,
+}
+
+const TexasRouteWithChildren = TexasRoute._addFileChildren(TexasRouteChildren)
+
+interface TexasBusinessRouteChildren {
+  TexasBusinessTopicRoute: typeof TexasBusinessTopicRoute
+}
+
+const TexasBusinessRouteChildren: TexasBusinessRouteChildren = {
+  TexasBusinessTopicRoute: TexasBusinessTopicRoute,
+}
+
+const TexasBusinessRouteWithChildren = TexasBusinessRoute._addFileChildren(
+  TexasBusinessRouteChildren,
+)
+
+interface TexasNewsRouteChildren {
+  TexasNewsTopicRoute: typeof TexasNewsTopicRoute
+  TexasNewsIndexRoute: typeof TexasNewsIndexRoute
+}
+
+const TexasNewsRouteChildren: TexasNewsRouteChildren = {
+  TexasNewsTopicRoute: TexasNewsTopicRoute,
+  TexasNewsIndexRoute: TexasNewsIndexRoute,
+}
+
+const TexasNewsRouteWithChildren = TexasNewsRoute._addFileChildren(
+  TexasNewsRouteChildren,
+)
+
+interface TexasSportsRouteChildren {
+  TexasSportsLeagueRoute: typeof TexasSportsLeagueRoute
+  TexasSportsIndexRoute: typeof TexasSportsIndexRoute
+  TexasSportsTeamTeamRoute: typeof TexasSportsTeamTeamRoute
+}
+
+const TexasSportsRouteChildren: TexasSportsRouteChildren = {
+  TexasSportsLeagueRoute: TexasSportsLeagueRoute,
+  TexasSportsIndexRoute: TexasSportsIndexRoute,
+  TexasSportsTeamTeamRoute: TexasSportsTeamTeamRoute,
+}
+
+const TexasSportsRouteWithChildren = TexasSportsRoute._addFileChildren(
+  TexasSportsRouteChildren,
+)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
+  AboutKeepTexasRedRoute: AboutKeepTexasRedRoute,
+  AdminRoute: AdminRouteWithChildren,
+  CandidateGuidesRoute: CandidateGuidesRoute,
+  ContactRoute: ContactRoute,
+  ContactLegislatorsRoute: ContactLegislatorsRoute,
+  CountyElectionsRoute: CountyElectionsRoute,
+  EditorialStandardsRoute: EditorialStandardsRoute,
+  ElectionsRoute: ElectionsRoute,
+  FindMyDmvRoute: FindMyDmvRoute,
+  FindMySchoolDistrictRoute: FindMySchoolDistrictRoute,
+  FindRepresentativeRoute: FindRepresentativeRoute,
+  GetInvolvedRoute: GetInvolvedRoute,
+  GlossaryRoute: GlossaryRoute,
+  HappeningNowRoute: HappeningNowRoute,
+  HoustonRoute: HoustonRoute,
+  KeepTexasRedRoute: KeepTexasRedRoute,
+  LawsRoute: LawsRoute,
+  LawsToKnowRoute: LawsToKnowRoute,
+  LegislativeUpdatesRoute: LegislativeUpdatesRoute,
+  LivingInTexasRoute: LivingInTexasRoute,
+  MovingToTexasRoute: MovingToTexasRoute,
+  NewsRoute: NewsRouteWithChildren,
+  PrivacyRoute: PrivacyRoute,
+  RegisterToVoteRoute: RegisterToVoteRoute,
+  RepresentativesRoute: RepresentativesRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  ShopRoute: ShopRouteWithChildren,
+  SitemapAuthorsDotxmlRoute: SitemapAuthorsDotxmlRoute,
+  SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
+  SitemapImagesDotxmlRoute: SitemapImagesDotxmlRoute,
+  SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
+  SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
+  SitemapProductsDotxmlRoute: SitemapProductsDotxmlRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TaxCalculatorRoute: TaxCalculatorRoute,
+  TermsRoute: TermsRoute,
+  TexasRoute: TexasRouteWithChildren,
+  TexasBudgetPlannerRoute: TexasBudgetPlannerRoute,
+  TexasBusinessRoute: TexasBusinessRouteWithChildren,
+  TexasClosingCostCalculatorRoute: TexasClosingCostCalculatorRoute,
+  TexasCostOfLivingCalculatorRoute: TexasCostOfLivingCalculatorRoute,
+  TexasDownPaymentAssistanceCalculatorRoute:
+    TexasDownPaymentAssistanceCalculatorRoute,
+  TexasDownPaymentCalculatorRoute: TexasDownPaymentCalculatorRoute,
+  TexasEconomyRoute: TexasEconomyRoute,
+  TexasFinancialToolsRoute: TexasFinancialToolsRoute,
+  TexasHomeAffordabilityCalculatorRoute: TexasHomeAffordabilityCalculatorRoute,
+  TexasHomeEquityCalculatorRoute: TexasHomeEquityCalculatorRoute,
+  TexasHomeEquityGrowthCalculatorRoute: TexasHomeEquityGrowthCalculatorRoute,
+  TexasHomeInsuranceCalculatorRoute: TexasHomeInsuranceCalculatorRoute,
+  TexasHomeownershipCostCalculatorRoute: TexasHomeownershipCostCalculatorRoute,
+  TexasLawPolicyRoute: TexasLawPolicyRoute,
+  TexasLawsRoute: TexasLawsRoute,
+  TexasMortgageCalculatorRoute: TexasMortgageCalculatorRoute,
+  TexasMortgagePayoffCalculatorRoute: TexasMortgagePayoffCalculatorRoute,
+  TexasMovingCostCalculatorRoute: TexasMovingCostCalculatorRoute,
+  TexasNewsRoute: TexasNewsRouteWithChildren,
+  TexasPoliticsRoute: TexasPoliticsRoute,
+  TexasPropertyTaxIncreaseCalculatorRoute:
+    TexasPropertyTaxIncreaseCalculatorRoute,
+  TexasRefinanceSavingsCalculatorRoute: TexasRefinanceSavingsCalculatorRoute,
+  TexasRentVsBuyCalculatorRoute: TexasRentVsBuyCalculatorRoute,
+  TexasSalaryCalculatorRoute: TexasSalaryCalculatorRoute,
+  TexasSalaryComparisonByCityRoute: TexasSalaryComparisonByCityRoute,
+  TexasSportsRoute: TexasSportsRouteWithChildren,
+  TexasUtilityCostCalculatorRoute: TexasUtilityCostCalculatorRoute,
+  UnsubscribeRoute: UnsubscribeRoute,
+  VotingLocationsRoute: VotingLocationsRoute,
+  AuthorsSlugRoute: AuthorsSlugRoute,
+  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  AuthorsIndexRoute: AuthorsIndexRoute,
+  ApiPublicPropertyAddressLookupRoute: ApiPublicPropertyAddressLookupRoute,
+  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
+  ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
+  ApiPublicHooksBackfillFeaturedImagesRoute:
+    ApiPublicHooksBackfillFeaturedImagesRoute,
+  ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
+  ApiPublicHooksGenerateNewsRoute: ApiPublicHooksGenerateNewsRoute,
+  ApiPublicHooksGenerateSportsRoute: ApiPublicHooksGenerateSportsRoute,
+  ApiPublicHooksHealthRoute: ApiPublicHooksHealthRoute,
+  ApiPublicHooksIngestFeedsRoute: ApiPublicHooksIngestFeedsRoute,
+  ApiPublicHooksListShopsRoute: ApiPublicHooksListShopsRoute,
+  ApiPublicHooksScoreViralRoute: ApiPublicHooksScoreViralRoute,
+  ApiPublicHooksScoreViralBackfillRoute: ApiPublicHooksScoreViralBackfillRoute,
+  ApiPublicHooksSyncPrintifyRoute: ApiPublicHooksSyncPrintifyRoute,
+  ApiPublicHooksTrackVariantRoute: ApiPublicHooksTrackVariantRoute,
+  ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
+  LovableEmailQueueProcessRoute: LovableEmailQueueProcessRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
+  ApiPublicOauthFacebookCallbackRoute: ApiPublicOauthFacebookCallbackRoute,
+  ApiPublicOauthFacebookStartRoute: ApiPublicOauthFacebookStartRoute,
+}
+export const routeTree = rootRouteImport
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

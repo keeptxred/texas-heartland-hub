@@ -11,8 +11,8 @@ const HOUSTON_TOPICS = [
 ];
 
 export const Route = createFileRoute("/houston")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    topic: typeof search.topic === "string" ? search.topic : "",
+  validateSearch: (search: Record<string, unknown>): { topic?: string } => ({
+    topic: typeof search.topic === "string" ? search.topic : undefined,
   }),
   head: ({ match }) => {
     const topic = (match.search as { topic?: string } | undefined)?.topic ?? "";

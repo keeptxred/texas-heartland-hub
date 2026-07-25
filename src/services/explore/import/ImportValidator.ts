@@ -14,6 +14,6 @@ export class ImportValidator {
   }
 
   assert(record: ImportEntityDraft): ImportEntityDraft {
-    return importEntityDraftSchema.parse(record);
+    return importEntityDraftSchema.parse(record) as ImportEntityDraft;
   }
 }

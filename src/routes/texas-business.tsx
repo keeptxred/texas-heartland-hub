@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { TexasBusinessView } from "@/components/texas-business-view";
 
 export const Route = createFileRoute("/texas-business")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    topic: typeof search.topic === "string" ? search.topic : "",
+  validateSearch: (search: Record<string, unknown>): { topic?: string } => ({
+    topic: typeof search.topic === "string" ? search.topic : undefined,
   }),
   head: ({ match }) => {
     const topic = (match.search as { topic?: string } | undefined)?.topic ?? "";

@@ -201,9 +201,9 @@ export function TexasNewsView({
             The evergreen references we recommend to every new and longtime Texan.
           </p>
           <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-            <li><Link to="/texas/no-state-income-tax-2026" className="text-primary hover:underline">Why Texas Has No State Income Tax →</Link></li>
-            <li><Link to="/texas/property-taxes-2026" className="text-primary hover:underline">Texas Property Taxes in 2026 →</Link></li>
-            <li><Link to="/texas/moving-to-texas-2026" className="text-primary hover:underline">Moving to Texas in 2026 →</Link></li>
+            <li><Link to="/texas/$slug" params={{ slug: "no-state-income-tax-2026" }} className="text-primary hover:underline">Why Texas Has No State Income Tax →</Link></li>
+            <li><Link to="/texas/$slug" params={{ slug: "property-taxes-2026" }} className="text-primary hover:underline">Texas Property Taxes in 2026 →</Link></li>
+            <li><Link to="/texas/$slug" params={{ slug: "moving-to-texas-2026" }} className="text-primary hover:underline">Moving to Texas in 2026 →</Link></li>
           </ul>
         </section>
       )}

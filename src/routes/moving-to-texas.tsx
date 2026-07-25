@@ -125,18 +125,25 @@ function MovingToTexasPage() {
                 <p className="mt-2 text-muted-foreground">{section.description}</p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {section.resources.map(([title, to]) => (
-                  <Link
-                    key={to}
-                    to={to}
-                    className="rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  >
-                    {title}
-                    <span className="mt-3 block text-sm font-medium text-primary">
-                      Open resource →
-                    </span>
-                  </Link>
-                ))}
+                {section.resources.map(([title, to]) => {
+                  const className =
+                    "rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary";
+                  const content = (
+                    <>
+                      {title}
+                      <span className="mt-3 block text-sm font-medium text-primary">
+                        Open resource →
+                      </span>
+                    </>
+                  );
+                  if (to === "/texas-news/education") {
+                    return <Link key={to} to="/texas-news/$topic" params={{ topic: "education" }} className={className}>{content}</Link>;
+                  }
+                  if (to === "/texas/moving-to-texas-2026") {
+                    return <Link key={to} to="/texas/$slug" params={{ slug: "moving-to-texas-2026" }} className={className}>{content}</Link>;
+                  }
+                  return <Link key={to} to={to} className={className}>{content}</Link>;
+                })}
               </div>
             </section>
           ))}

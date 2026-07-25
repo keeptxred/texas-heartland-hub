@@ -249,7 +249,7 @@ function KeepTexasRedPage() {
         </div>
         <div>
           <dt className="font-semibold text-foreground mb-1">What is Operation Lone Star?</dt>
-          <dd className="text-muted-foreground leading-relaxed">Operation Lone Star is the state-led border security mission launched in 2021 that deployed Texas DPS troopers and the Texas National Guard to the southern border. It has reshaped the political map of South Texas. Read our full <Link to="/news/operation-lone-star" className="text-primary underline">Operation Lone Star</Link> coverage.</dd>
+          <dd className="text-muted-foreground leading-relaxed">Operation Lone Star is the state-led border security mission launched in 2021 that deployed Texas DPS troopers and the Texas National Guard to the southern border. It has reshaped the political map of South Texas. Read our full <Link to="/news/$slug" params={{ slug: "operation-lone-star" }} className="text-primary underline">Operation Lone Star</Link> coverage.</dd>
         </div>
         <div>
           <dt className="font-semibold text-foreground mb-1">How do I check my Texas voter registration?</dt>
