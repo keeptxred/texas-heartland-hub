@@ -22,7 +22,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   verify:
@@ -75,14 +75,29 @@ jobs:
       - name: Apply migrations to a clean database
         run: supabase db reset --local --no-seed
 
-      - name: Verify generated Supabase types are current
+      - name: Synchronize generated Supabase types
         shell: bash
         run: |
+          set -euo pipefail
           supabase gen types typescript --local > /tmp/supabase-types.ts
-          if ! diff -u src/integrations/supabase/types.ts /tmp/supabase-types.ts; then
-            echo "Supabase types are stale. Regenerate src/integrations/supabase/types.ts." >&2
+
+          if diff -q src/integrations/supabase/types.ts /tmp/supabase-types.ts >/dev/null; then
+            echo "Supabase types are current."
+            exit 0
+          fi
+
+          if [[ "${GITHUB_EVENT_NAME}" != "push" ]]; then
+            diff -u src/integrations/supabase/types.ts /tmp/supabase-types.ts || true
+            echo "Supabase types are stale and cannot be committed from this event." >&2
             exit 1
           fi
+
+          cp /tmp/supabase-types.ts src/integrations/supabase/types.ts
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/integrations/supabase/types.ts
+          git commit -m "chore: regenerate Supabase types"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Type-check Explore Edge Functions
         run: |
@@ -189,8 +204,8 @@ jobs:
         with:
           name: explore-step-4-verification-diagnostics
           path: |
-            /tmp/supabase-types.ts
             /tmp/explore-import.log
             /tmp/explore-fixture-server.log
             /tmp/explore-dry-run-response.json
+            /tmp/supabase-types.ts
           if-no-files-found: ignore
