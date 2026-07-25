@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ExternalLink,
   Loader2,
+  Merge,
   RefreshCw,
 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -27,6 +28,7 @@ import type {
 
 import {
   useExploreAdminDuplicateCandidates,
+  useMergeExploreAdminDuplicateCandidate,
   useResolveExploreAdminDuplicateCandidate,
 } from '../hooks/useExploreAdminDuplicateCandidates';
 
@@ -46,6 +48,7 @@ export function ExploreDuplicateResolutionPanel({
   const [minimumSimilarity, setMinimumSimilarity] = useState<number>(0.7);
   const [selectedCandidate, setSelectedCandidate] =
     useState<ExploreDuplicateCandidate | null>(null);
+  const [survivorEntityId, setSurvivorEntityId] = useState<string | null>(null);
   const [resolutionNotes, setResolutionNotes] = useState('');
 
   const candidatesQuery = useExploreAdminDuplicateCandidates({
@@ -53,6 +56,8 @@ export function ExploreDuplicateResolutionPanel({
     pagination: { page, pageSize: PAGE_SIZE },
   });
   const resolveMutation = useResolveExploreAdminDuplicateCandidate();
+  const mergeMutation = useMergeExploreAdminDuplicateCandidate();
+  const mutationPending = resolveMutation.isPending || mergeMutation.isPending;
 
   const result = candidatesQuery.data;
   const candidates = result?.items ?? [];
@@ -72,8 +77,7 @@ export function ExploreDuplicateResolutionPanel({
       selectedCandidate &&
       !candidates.some((candidate) => candidate.id === selectedCandidate.id)
     ) {
-      setSelectedCandidate(null);
-      setResolutionNotes('');
+      clearSelection();
     }
   }, [candidates, selectedCandidate]);
 
@@ -85,15 +89,35 @@ export function ExploreDuplicateResolutionPanel({
       : 'No matching fields were recorded.';
   }, [selectedCandidate]);
 
+  const survivorEntity = selectedCandidate
+    ? selectedCandidate.entityA.id === survivorEntityId
+      ? selectedCandidate.entityA
+      : selectedCandidate.entityB.id === survivorEntityId
+        ? selectedCandidate.entityB
+        : null
+    : null;
+
+  const mergedEntity = selectedCandidate && survivorEntity
+    ? selectedCandidate.entityA.id === survivorEntity.id
+      ? selectedCandidate.entityB
+      : selectedCandidate.entityA
+    : null;
+
+  function clearSelection() {
+    setSelectedCandidate(null);
+    setSurvivorEntityId(null);
+    setResolutionNotes('');
+  }
+
   function changeMinimumSimilarity(value: number) {
     setMinimumSimilarity(value);
     setPage(1);
-    setSelectedCandidate(null);
-    setResolutionNotes('');
+    clearSelection();
   }
 
   function selectCandidate(candidate: ExploreDuplicateCandidate) {
     setSelectedCandidate(candidate);
+    setSurvivorEntityId(null);
     setResolutionNotes(candidate.resolutionNotes ?? '');
   }
 
@@ -108,16 +132,40 @@ export function ExploreDuplicateResolutionPanel({
           resolutionNotes: resolutionNotes.trim() || null,
         },
       });
-
       toast.success(
         status === 'not_duplicate'
           ? 'Candidate marked as not a duplicate.'
           : 'Candidate deferred for later review.',
       );
-      setSelectedCandidate(null);
-      setResolutionNotes('');
+      clearSelection();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Unable to resolve duplicate candidate.');
+    }
+  }
+
+  async function mergeSelectedCandidate() {
+    if (!selectedCandidate || !survivorEntity || !mergedEntity) return;
+
+    const confirmed = window.confirm(
+      `Merge “${mergedEntity.name}” into “${survivorEntity.name}”?\n\n` +
+        'The surviving record will keep its URL. The other record will be archived, and its relationships, sources, media, categories, tags, observations, and reviews will be transferred. This operation is transactional.',
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await mergeMutation.mutateAsync({
+        candidateId: selectedCandidate.id,
+        input: {
+          survivorEntityId: survivorEntity.id,
+          mergedEntityId: mergedEntity.id,
+          resolutionNotes: resolutionNotes.trim() || null,
+        },
+      });
+      toast.success(`Merged ${mergedEntity.name} into ${survivorEntity.name}.`);
+      clearSelection();
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to merge duplicate entities.');
     }
   }
 
@@ -129,8 +177,8 @@ export function ExploreDuplicateResolutionPanel({
             Duplicate Resolution
           </h2>
           <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-            Compare similarity candidates before dismissing or deferring them. Entity merges require
-            the dedicated merge service so relationships and source attribution remain intact.
+            Compare candidates, choose the canonical record, and merge duplicate data in a single
+            database transaction.
           </p>
         </div>
 
@@ -138,7 +186,7 @@ export function ExploreDuplicateResolutionPanel({
           type="button"
           variant="outline"
           onClick={() => candidatesQuery.refetch()}
-          disabled={candidatesQuery.isFetching}
+          disabled={candidatesQuery.isFetching || mutationPending}
         >
           {candidatesQuery.isFetching ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
@@ -157,13 +205,14 @@ export function ExploreDuplicateResolutionPanel({
             size="sm"
             variant={minimumSimilarity === option ? 'default' : 'outline'}
             onClick={() => changeMinimumSimilarity(option)}
+            disabled={mutationPending}
           >
             {Math.round(option * 100)}%+
           </Button>
         ))}
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_460px]">
         <div className="overflow-hidden rounded-xl border bg-card">
           {candidatesQuery.isLoading ? (
             <PanelMessage>
@@ -183,7 +232,8 @@ export function ExploreDuplicateResolutionPanel({
                   key={candidate.id}
                   type="button"
                   onClick={() => selectCandidate(candidate)}
-                  className={`w-full p-4 text-left transition-colors hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring ${
+                  disabled={mutationPending}
+                  className={`w-full p-4 text-left transition-colors hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-60 ${
                     selectedCandidate?.id === candidate.id ? 'bg-muted/50' : ''
                   }`}
                 >
@@ -218,7 +268,7 @@ export function ExploreDuplicateResolutionPanel({
                 variant="outline"
                 size="sm"
                 onClick={() => setPage((current) => Math.max(1, current - 1))}
-                disabled={page <= 1 || candidatesQuery.isFetching}
+                disabled={page <= 1 || candidatesQuery.isFetching || mutationPending}
               >
                 <ChevronLeft className="mr-1 h-4 w-4" aria-hidden="true" />
                 Previous
@@ -231,7 +281,7 @@ export function ExploreDuplicateResolutionPanel({
                 variant="outline"
                 size="sm"
                 onClick={() => setPage((current) => current + 1)}
-                disabled={page >= totalPages || candidatesQuery.isFetching}
+                disabled={page >= totalPages || candidatesQuery.isFetching || mutationPending}
               >
                 Next
                 <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
@@ -257,12 +307,18 @@ export function ExploreDuplicateResolutionPanel({
                 <EntityComparisonCard
                   label="Record A"
                   entity={selectedCandidate.entityA}
+                  selected={survivorEntityId === selectedCandidate.entityA.id}
+                  onSelectSurvivor={setSurvivorEntityId}
                   onOpenEntity={onOpenEntity}
+                  disabled={mutationPending}
                 />
                 <EntityComparisonCard
                   label="Record B"
                   entity={selectedCandidate.entityB}
+                  selected={survivorEntityId === selectedCandidate.entityB.id}
+                  onSelectSurvivor={setSurvivorEntityId}
                   onOpenEntity={onOpenEntity}
+                  disabled={mutationPending}
                 />
               </div>
 
@@ -272,11 +328,11 @@ export function ExploreDuplicateResolutionPanel({
                 </label>
                 <Textarea
                   id="duplicate-resolution-notes"
-                  className="mt-2 min-h-28"
+                  className="mt-2 min-h-24"
                   value={resolutionNotes}
                   onChange={(event) => setResolutionNotes(event.target.value)}
                   placeholder="Record the reason for this decision."
-                  disabled={resolveMutation.isPending}
+                  disabled={mutationPending}
                 />
               </div>
 
@@ -284,27 +340,41 @@ export function ExploreDuplicateResolutionPanel({
                 <div className="flex gap-2">
                   <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
                   <p>
-                    Do not mark records as merged here. A merge must transfer relationships,
-                    sources, media, observations, aliases, and slug history atomically.
+                    Choose the record that should keep its name and URL. The other record is archived
+                    for audit history after its connected data is transferred.
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 sm:flex-row">
+              <Button
+                type="button"
+                variant="destructive"
+                className="w-full"
+                onClick={mergeSelectedCandidate}
+                disabled={!survivorEntity || mutationPending}
+              >
+                {mergeMutation.isPending ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Merge className="mr-2 h-4 w-4" aria-hidden="true" />
+                )}
+                {survivorEntity ? `Merge into ${survivorEntity.name}` : 'Select the surviving record'}
+              </Button>
+
+              <div className="grid grid-cols-2 gap-2">
                 <Button
                   type="button"
                   variant="outline"
-                  className="flex-1"
                   onClick={() => resolve('deferred')}
-                  disabled={resolveMutation.isPending}
+                  disabled={mutationPending}
                 >
                   Defer
                 </Button>
                 <Button
                   type="button"
-                  className="flex-1"
+                  variant="outline"
                   onClick={() => resolve('not_duplicate')}
-                  disabled={resolveMutation.isPending}
+                  disabled={mutationPending}
                 >
                   {resolveMutation.isPending ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
@@ -343,14 +413,20 @@ function SimilarityBadge({ score }: { score: number }) {
 function EntityComparisonCard({
   label,
   entity,
+  selected,
+  onSelectSurvivor,
   onOpenEntity,
+  disabled,
 }: {
   label: string;
   entity: ExploreEntity;
+  selected: boolean;
+  onSelectSurvivor: (entityId: string) => void;
   onOpenEntity: (entityId: string) => void;
+  disabled: boolean;
 }) {
   return (
-    <div className="rounded-lg border p-4">
+    <div className={`rounded-lg border p-4 ${selected ? 'border-primary ring-1 ring-primary' : ''}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
@@ -362,6 +438,7 @@ function EntityComparisonCard({
           variant="ghost"
           size="sm"
           onClick={() => onOpenEntity(entity.id)}
+          disabled={disabled}
           aria-label={`Open ${entity.name}`}
         >
           <ExternalLink className="h-4 w-4" aria-hidden="true" />
@@ -370,15 +447,22 @@ function EntityComparisonCard({
       <dl className="mt-4 grid grid-cols-2 gap-3 text-xs">
         <ComparisonValue label="Status" value={entity.status} />
         <ComparisonValue label="Visibility" value={entity.visibility} />
-        <ComparisonValue
-          label="Confidence"
-          value={`${Math.round(entity.sourceConfidence * 100)}%`}
-        />
+        <ComparisonValue label="Confidence" value={`${Math.round(entity.sourceConfidence)}%`} />
         <ComparisonValue label="Updated" value={formatDate(entity.updatedAt)} />
       </dl>
       <p className="mt-4 line-clamp-4 text-sm text-muted-foreground">
         {entity.shortDescription || entity.summary || 'No description available.'}
       </p>
+      <Button
+        type="button"
+        size="sm"
+        variant={selected ? 'default' : 'outline'}
+        className="mt-4 w-full"
+        onClick={() => onSelectSurvivor(entity.id)}
+        disabled={disabled}
+      >
+        {selected ? 'Surviving record selected' : 'Keep this record'}
+      </Button>
     </div>
   );
 }
