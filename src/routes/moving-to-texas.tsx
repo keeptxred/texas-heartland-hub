@@ -3,6 +3,23 @@ import { HubBreadcrumbs } from "@/components/hub-breadcrumbs";
 
 const sections = [
   {
+    title: "Moving Checklist",
+    description:
+      "Start with a personalized timeline for the steps that become urgent before and immediately after your move.",
+    resources: [
+      ["Interactive Moving Checklist", "/moving-to-texas-checklist"],
+      ["Moving to Texas Guide", "/texas/moving-to-texas-2026"],
+      ["Register to Vote", "/register-to-vote"],
+      ["Texas Laws", "/laws"],
+    ],
+  },
+  {
+    title: "Vehicle and Driver License",
+    description:
+      "Estimate registration costs, find your county office, open official forms, and track the 30-day and 90-day deadlines.",
+    resources: [["Vehicle Registration Estimator and Office Finder", "/find-my-dmv"]],
+  },
+  {
     title: "Financial Planning",
     description:
       "Compare income, living costs, moving expenses, and the monthly budget you may need after relocating.",
@@ -19,6 +36,7 @@ const sections = [
     description:
       "Estimate affordability, compare renting with buying, and understand the cash required to purchase a Texas home.",
     resources: [
+      ["Texas First-Time Homebuyer Programs Guide", "/texas-first-time-homebuyer-programs"],
       ["Texas Rent vs Buy Calculator", "/texas-rent-vs-buy-calculator"],
       ["Texas Home Affordability Calculator", "/texas-home-affordability-calculator"],
       ["Texas Mortgage Calculator", "/texas-mortgage-calculator"],
@@ -29,12 +47,20 @@ const sections = [
   },
   {
     title: "Cities and Communities",
-    description:
-      "Compare communities, salaries, local costs, and statewide developments before choosing where to settle.",
+    description: "Explore individual Texas cities and communities before choosing where to settle.",
     resources: [
-      ["Texas Cost of Living Calculator", "/texas-cost-of-living-calculator"],
-      ["Texas Salary Comparison by City", "/texas-salary-comparison-by-city"],
       ["Houston", "/houston"],
+      ["Dallas–Fort Worth", "/dallas-fort-worth"],
+      ["San Antonio", "/san-antonio"],
+      ["Austin", "/austin"],
+      ["El Paso", "/el-paso"],
+    ],
+  },
+  {
+    title: "Texas Economy and News",
+    description:
+      "Follow statewide business, economic, and community developments that may shape your move.",
+    resources: [
       ["Texas Business and Economy", "/texas-business"],
       ["Latest Texas News", "/texas-news"],
     ],
@@ -55,23 +81,6 @@ const sections = [
     resources: [
       ["Texas Utility Cost Calculator", "/texas-utility-cost-calculator"],
       ["Texas Budget Planner", "/texas-budget-planner"],
-    ],
-  },
-  {
-    title: "Driver License",
-    description:
-      "Use the existing DMV finder to locate the right nearby office as you get settled.",
-    resources: [["Find My DMV", "/find-my-dmv"]],
-  },
-  {
-    title: "Moving Checklist",
-    description:
-      "Use the existing relocation guide and civic resources to plan the practical steps around your move.",
-    resources: [
-      ["Moving to Texas Guide", "/texas/moving-to-texas-2026"],
-      ["Register to Vote", "/register-to-vote"],
-      ["Texas Laws", "/laws"],
-      ["Texas Elections and Voting", "/elections"],
     ],
   },
 ] as const;
@@ -125,25 +134,18 @@ function MovingToTexasPage() {
                 <p className="mt-2 text-muted-foreground">{section.description}</p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {section.resources.map(([title, to]) => {
-                  const className =
-                    "rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary";
-                  const content = (
-                    <>
-                      {title}
-                      <span className="mt-3 block text-sm font-medium text-primary">
-                        Open resource →
-                      </span>
-                    </>
-                  );
-                  if (to === "/texas-news/education") {
-                    return <Link key={to} to="/texas-news/$topic" params={{ topic: "education" }} className={className}>{content}</Link>;
-                  }
-                  if (to === "/texas/moving-to-texas-2026") {
-                    return <Link key={to} to="/texas/$slug" params={{ slug: "moving-to-texas-2026" }} className={className}>{content}</Link>;
-                  }
-                  return <Link key={to} to={to} className={className}>{content}</Link>;
-                })}
+                {section.resources.map(([title, to]) => (
+                  <a
+                    key={to}
+                    href={to}
+                    className="rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    {title}
+                    <span className="mt-3 block text-sm font-medium text-primary">
+                      Open resource →
+                    </span>
+                  </a>
+                ))}
               </div>
             </section>
           ))}
@@ -172,14 +174,25 @@ function MovingToTexasPage() {
 export const Route = createFileRoute("/moving-to-texas")({
   head: () => ({
     meta: [
-      { title: "Moving to Texas: Calculators, Costs & Relocation Resources | Keep TX Red" },
+      { title: "Moving to Texas | Costs, Tools & Guide" },
       {
         name: "description",
         content:
-          "Plan a move to Texas with cost-of-living, salary, moving-cost, mortgage, affordability, down-payment, and closing-cost tools plus practical Texas guides.",
+          "Plan a Texas move with cost-of-living, salary, moving-cost, mortgage, affordability, down-payment, and closing-cost tools.",
+      },
+      { property: "og:title", content: "Moving to Texas | Costs, Tools & Guide" },
+      {
+        property: "og:description",
+        content: "Plan your Texas relocation with practical cost calculators, city guides, checklists, and resident resources.",
+      },
+      { property: "og:url", content: "https://keeptxred.com/moving-to-texas" },
+      { name: "twitter:title", content: "Moving to Texas | Costs, Tools & Guide" },
+      {
+        name: "twitter:description",
+        content: "Texas relocation calculators, city guides, checklists, and practical moving resources.",
       },
     ],
-    links: [{ rel: "canonical", href: "/moving-to-texas" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/moving-to-texas" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -187,12 +200,12 @@ export const Route = createFileRoute("/moving-to-texas")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
             {
               "@type": "ListItem",
               position: 2,
               name: "Moving to Texas",
-              item: "https://www.keeptxred.com/moving-to-texas",
+              item: "https://keeptxred.com/moving-to-texas",
             },
           ],
         }),

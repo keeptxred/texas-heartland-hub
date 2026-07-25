@@ -59,7 +59,7 @@ export default function CalculatorInputField({
           required={required}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : helpText ? `${id}-help` : undefined}
-          className={`w-full rounded-lg border bg-white px-3 py-2.5 text-gray-900 shadow-sm outline-none transition placeholder:text-gray-400 focus:ring-2 ${
+          className={`w-full rounded-lg border bg-white px-3 py-2.5 text-gray-900 shadow-sm outline-none transition placeholder:text-gray-500 focus:ring-2 ${
             prefix ? "pl-8" : ""
           } ${suffix ? "pr-12" : ""} ${
             error

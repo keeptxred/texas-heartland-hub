@@ -13,11 +13,14 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AustinRouteImport } from './routes/austin'
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
+import { Route as DallasFortWorthRouteImport } from './routes/dallas-fort-worth'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
+import { Route as ElPasoRouteImport } from './routes/el-paso'
 import { Route as ElectionsRouteImport } from './routes/elections'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
@@ -25,6 +28,7 @@ import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-schoo
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
 import { Route as GetInvolvedRouteImport } from './routes/get-involved'
 import { Route as GlossaryRouteImport } from './routes/glossary'
+import { Route as GoogleMerchantFeedDotxmlRouteImport } from './routes/google-merchant-feed[.]xml'
 import { Route as HappeningNowRouteImport } from './routes/happening-now'
 import { Route as HoustonRouteImport } from './routes/houston'
 import { Route as KeepTexasRedRouteImport } from './routes/keep-texas-red'
@@ -33,11 +37,15 @@ import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
 import { Route as LivingInTexasRouteImport } from './routes/living-in-texas'
 import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
+import { Route as MovingToTexasChecklistRouteImport } from './routes/moving-to-texas-checklist'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as RepresentativesRouteImport } from './routes/representatives'
+import { Route as ReturnRefundPolicyRouteImport } from './routes/return-refund-policy'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SanAntonioRouteImport } from './routes/san-antonio'
+import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
 import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
@@ -49,6 +57,7 @@ import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-prod
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as TexasRouteImport } from './routes/texas'
 import { Route as TexasBudgetPlannerRouteImport } from './routes/texas-budget-planner'
 import { Route as TexasBusinessRouteImport } from './routes/texas-business'
@@ -58,6 +67,7 @@ import { Route as TexasDownPaymentAssistanceCalculatorRouteImport } from './rout
 import { Route as TexasDownPaymentCalculatorRouteImport } from './routes/texas-down-payment-calculator'
 import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
 import { Route as TexasFinancialToolsRouteImport } from './routes/texas-financial-tools'
+import { Route as TexasFirstTimeHomebuyerProgramsRouteImport } from './routes/texas-first-time-homebuyer-programs'
 import { Route as TexasHomeAffordabilityCalculatorRouteImport } from './routes/texas-home-affordability-calculator'
 import { Route as TexasHomeEquityCalculatorRouteImport } from './routes/texas-home-equity-calculator'
 import { Route as TexasHomeEquityGrowthCalculatorRouteImport } from './routes/texas-home-equity-growth-calculator'
@@ -71,6 +81,7 @@ import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-mo
 import { Route as TexasNewsRouteImport } from './routes/texas-news'
 import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
 import { Route as TexasPropertyTaxIncreaseCalculatorRouteImport } from './routes/texas-property-tax-increase-calculator'
+import { Route as TexasPropertyTaxProtestGuideRouteImport } from './routes/texas-property-tax-protest-guide'
 import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/texas-refinance-savings-calculator'
 import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
 import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
@@ -148,6 +159,11 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AustinRoute = AustinRouteImport.update({
+  id: '/austin',
+  path: '/austin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
   id: '/candidate-guides',
   path: '/candidate-guides',
@@ -168,9 +184,19 @@ const CountyElectionsRoute = CountyElectionsRouteImport.update({
   path: '/county-elections',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DallasFortWorthRoute = DallasFortWorthRouteImport.update({
+  id: '/dallas-fort-worth',
+  path: '/dallas-fort-worth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
   id: '/editorial-standards',
   path: '/editorial-standards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ElPasoRoute = ElPasoRouteImport.update({
+  id: '/el-paso',
+  path: '/el-paso',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ElectionsRoute = ElectionsRouteImport.update({
@@ -208,6 +234,12 @@ const GlossaryRoute = GlossaryRouteImport.update({
   path: '/glossary',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GoogleMerchantFeedDotxmlRoute =
+  GoogleMerchantFeedDotxmlRouteImport.update({
+    id: '/google-merchant-feed.xml',
+    path: '/google-merchant-feed.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const HappeningNowRoute = HappeningNowRouteImport.update({
   id: '/happening-now',
   path: '/happening-now',
@@ -248,6 +280,11 @@ const MovingToTexasRoute = MovingToTexasRouteImport.update({
   path: '/moving-to-texas',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MovingToTexasChecklistRoute = MovingToTexasChecklistRouteImport.update({
+  id: '/moving-to-texas-checklist',
+  path: '/moving-to-texas-checklist',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NewsRoute = NewsRouteImport.update({
   id: '/news',
   path: '/news',
@@ -268,9 +305,24 @@ const RepresentativesRoute = RepresentativesRouteImport.update({
   path: '/representatives',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReturnRefundPolicyRoute = ReturnRefundPolicyRouteImport.update({
+  id: '/return-refund-policy',
+  path: '/return-refund-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SanAntonioRoute = SanAntonioRouteImport.update({
+  id: '/san-antonio',
+  path: '/san-antonio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
+  id: '/shipping-policy',
+  path: '/shipping-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -328,6 +380,11 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasRoute = TexasRouteImport.update({
   id: '/texas',
   path: '/texas',
@@ -377,6 +434,12 @@ const TexasFinancialToolsRoute = TexasFinancialToolsRouteImport.update({
   path: '/texas-financial-tools',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TexasFirstTimeHomebuyerProgramsRoute =
+  TexasFirstTimeHomebuyerProgramsRouteImport.update({
+    id: '/texas-first-time-homebuyer-programs',
+    path: '/texas-first-time-homebuyer-programs',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const TexasHomeAffordabilityCalculatorRoute =
   TexasHomeAffordabilityCalculatorRouteImport.update({
     id: '/texas-home-affordability-calculator',
@@ -448,6 +511,12 @@ const TexasPropertyTaxIncreaseCalculatorRoute =
   TexasPropertyTaxIncreaseCalculatorRouteImport.update({
     id: '/texas-property-tax-increase-calculator',
     path: '/texas-property-tax-increase-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasPropertyTaxProtestGuideRoute =
+  TexasPropertyTaxProtestGuideRouteImport.update({
+    id: '/texas-property-tax-protest-guide',
+    path: '/texas-property-tax-protest-guide',
     getParentRoute: () => rootRouteImport,
   } as any)
 const TexasRefinanceSavingsCalculatorRoute =
@@ -761,11 +830,14 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRouteWithChildren
+  '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
+  '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRoute
   '/explore': typeof ExploreRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
@@ -773,6 +845,7 @@ export interface FileRoutesByFullPath {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/google-merchant-feed.xml': typeof GoogleMerchantFeedDotxmlRoute
   '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
@@ -781,11 +854,15 @@ export interface FileRoutesByFullPath {
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
+  '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
+  '/return-refund-policy': typeof ReturnRefundPolicyRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/san-antonio': typeof SanAntonioRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
@@ -797,6 +874,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/texas': typeof TexasRouteWithChildren
   '/texas-budget-planner': typeof TexasBudgetPlannerRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
@@ -806,6 +884,7 @@ export interface FileRoutesByFullPath {
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
+  '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
@@ -819,6 +898,7 @@ export interface FileRoutesByFullPath {
   '/texas-news': typeof TexasNewsRouteWithChildren
   '/texas-politics': typeof TexasPoliticsRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
@@ -881,17 +961,21 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRouteWithChildren
+  '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
+  '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRoute
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/google-merchant-feed.xml': typeof GoogleMerchantFeedDotxmlRoute
   '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
@@ -900,10 +984,14 @@ export interface FileRoutesByTo {
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
+  '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
+  '/return-refund-policy': typeof ReturnRefundPolicyRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/san-antonio': typeof SanAntonioRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
@@ -914,6 +1002,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/texas-budget-planner': typeof TexasBudgetPlannerRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
@@ -922,6 +1011,7 @@ export interface FileRoutesByTo {
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
+  '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
@@ -934,6 +1024,7 @@ export interface FileRoutesByTo {
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
   '/texas-politics': typeof TexasPoliticsRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
@@ -996,11 +1087,14 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRouteWithChildren
+  '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
+  '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
+  '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRoute
   '/explore': typeof ExploreRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
@@ -1008,6 +1102,7 @@ export interface FileRoutesById {
   '/find-representative': typeof FindRepresentativeRoute
   '/get-involved': typeof GetInvolvedRoute
   '/glossary': typeof GlossaryRoute
+  '/google-merchant-feed.xml': typeof GoogleMerchantFeedDotxmlRoute
   '/happening-now': typeof HappeningNowRoute
   '/houston': typeof HoustonRoute
   '/keep-texas-red': typeof KeepTexasRedRoute
@@ -1016,11 +1111,15 @@ export interface FileRoutesById {
   '/legislative-updates': typeof LegislativeUpdatesRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
+  '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
+  '/return-refund-policy': typeof ReturnRefundPolicyRoute
   '/robots.txt': typeof RobotsDottxtRoute
+  '/san-antonio': typeof SanAntonioRoute
+  '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
@@ -1032,6 +1131,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
+  '/terms-of-service': typeof TermsOfServiceRoute
   '/texas': typeof TexasRouteWithChildren
   '/texas-budget-planner': typeof TexasBudgetPlannerRoute
   '/texas-business': typeof TexasBusinessRouteWithChildren
@@ -1041,6 +1141,7 @@ export interface FileRoutesById {
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
+  '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
@@ -1054,6 +1155,7 @@ export interface FileRoutesById {
   '/texas-news': typeof TexasNewsRouteWithChildren
   '/texas-politics': typeof TexasPoliticsRoute
   '/texas-property-tax-increase-calculator': typeof TexasPropertyTaxIncreaseCalculatorRoute
+  '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
@@ -1118,11 +1220,14 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-keep-texas-red'
     | '/admin'
+    | '/austin'
     | '/candidate-guides'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/dallas-fort-worth'
     | '/editorial-standards'
+    | '/el-paso'
     | '/elections'
     | '/explore'
     | '/find-my-dmv'
@@ -1130,6 +1235,7 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/google-merchant-feed.xml'
     | '/happening-now'
     | '/houston'
     | '/keep-texas-red'
@@ -1138,11 +1244,15 @@ export interface FileRouteTypes {
     | '/legislative-updates'
     | '/living-in-texas'
     | '/moving-to-texas'
+    | '/moving-to-texas-checklist'
     | '/news'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
+    | '/return-refund-policy'
     | '/robots.txt'
+    | '/san-antonio'
+    | '/shipping-policy'
     | '/shop'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
@@ -1154,6 +1264,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/terms-of-service'
     | '/texas'
     | '/texas-budget-planner'
     | '/texas-business'
@@ -1163,6 +1274,7 @@ export interface FileRouteTypes {
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-financial-tools'
+    | '/texas-first-time-homebuyer-programs'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
@@ -1176,6 +1288,7 @@ export interface FileRouteTypes {
     | '/texas-news'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
+    | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
@@ -1238,17 +1351,21 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-keep-texas-red'
     | '/admin'
+    | '/austin'
     | '/candidate-guides'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/dallas-fort-worth'
     | '/editorial-standards'
+    | '/el-paso'
     | '/elections'
     | '/find-my-dmv'
     | '/find-my-school-district'
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/google-merchant-feed.xml'
     | '/happening-now'
     | '/houston'
     | '/keep-texas-red'
@@ -1257,10 +1374,14 @@ export interface FileRouteTypes {
     | '/legislative-updates'
     | '/living-in-texas'
     | '/moving-to-texas'
+    | '/moving-to-texas-checklist'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
+    | '/return-refund-policy'
     | '/robots.txt'
+    | '/san-antonio'
+    | '/shipping-policy'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore.xml'
@@ -1271,6 +1392,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/terms-of-service'
     | '/texas-budget-planner'
     | '/texas-business'
     | '/texas-closing-cost-calculator'
@@ -1279,6 +1401,7 @@ export interface FileRouteTypes {
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-financial-tools'
+    | '/texas-first-time-homebuyer-programs'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
@@ -1291,6 +1414,7 @@ export interface FileRouteTypes {
     | '/texas-moving-cost-calculator'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
+    | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
@@ -1352,11 +1476,14 @@ export interface FileRouteTypes {
     | '/about'
     | '/about-keep-texas-red'
     | '/admin'
+    | '/austin'
     | '/candidate-guides'
     | '/contact'
     | '/contact-legislators'
     | '/county-elections'
+    | '/dallas-fort-worth'
     | '/editorial-standards'
+    | '/el-paso'
     | '/elections'
     | '/explore'
     | '/find-my-dmv'
@@ -1364,6 +1491,7 @@ export interface FileRouteTypes {
     | '/find-representative'
     | '/get-involved'
     | '/glossary'
+    | '/google-merchant-feed.xml'
     | '/happening-now'
     | '/houston'
     | '/keep-texas-red'
@@ -1372,11 +1500,15 @@ export interface FileRouteTypes {
     | '/legislative-updates'
     | '/living-in-texas'
     | '/moving-to-texas'
+    | '/moving-to-texas-checklist'
     | '/news'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
+    | '/return-refund-policy'
     | '/robots.txt'
+    | '/san-antonio'
+    | '/shipping-policy'
     | '/shop'
     | '/sitemap-authors.xml'
     | '/sitemap-evergreen.xml'
@@ -1388,6 +1520,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
+    | '/terms-of-service'
     | '/texas'
     | '/texas-budget-planner'
     | '/texas-business'
@@ -1397,6 +1530,7 @@ export interface FileRouteTypes {
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-financial-tools'
+    | '/texas-first-time-homebuyer-programs'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
@@ -1410,6 +1544,7 @@ export interface FileRouteTypes {
     | '/texas-news'
     | '/texas-politics'
     | '/texas-property-tax-increase-calculator'
+    | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
@@ -1473,11 +1608,14 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AboutKeepTexasRedRoute: typeof AboutKeepTexasRedRoute
   AdminRoute: typeof AdminRouteWithChildren
+  AustinRoute: typeof AustinRoute
   CandidateGuidesRoute: typeof CandidateGuidesRoute
   ContactRoute: typeof ContactRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
+  DallasFortWorthRoute: typeof DallasFortWorthRoute
   EditorialStandardsRoute: typeof EditorialStandardsRoute
+  ElPasoRoute: typeof ElPasoRoute
   ElectionsRoute: typeof ElectionsRoute
   ExploreRoute: typeof ExploreRouteWithChildren
   FindMyDmvRoute: typeof FindMyDmvRoute
@@ -1485,6 +1623,7 @@ export interface RootRouteChildren {
   FindRepresentativeRoute: typeof FindRepresentativeRoute
   GetInvolvedRoute: typeof GetInvolvedRoute
   GlossaryRoute: typeof GlossaryRoute
+  GoogleMerchantFeedDotxmlRoute: typeof GoogleMerchantFeedDotxmlRoute
   HappeningNowRoute: typeof HappeningNowRoute
   HoustonRoute: typeof HoustonRoute
   KeepTexasRedRoute: typeof KeepTexasRedRoute
@@ -1493,11 +1632,15 @@ export interface RootRouteChildren {
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
   LivingInTexasRoute: typeof LivingInTexasRoute
   MovingToTexasRoute: typeof MovingToTexasRoute
+  MovingToTexasChecklistRoute: typeof MovingToTexasChecklistRoute
   NewsRoute: typeof NewsRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
+  ReturnRefundPolicyRoute: typeof ReturnRefundPolicyRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SanAntonioRoute: typeof SanAntonioRoute
+  ShippingPolicyRoute: typeof ShippingPolicyRoute
   ShopRoute: typeof ShopRouteWithChildren
   SitemapAuthorsDotxmlRoute: typeof SitemapAuthorsDotxmlRoute
   SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
@@ -1509,6 +1652,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
+  TermsOfServiceRoute: typeof TermsOfServiceRoute
   TexasRoute: typeof TexasRouteWithChildren
   TexasBudgetPlannerRoute: typeof TexasBudgetPlannerRoute
   TexasBusinessRoute: typeof TexasBusinessRouteWithChildren
@@ -1518,6 +1662,7 @@ export interface RootRouteChildren {
   TexasDownPaymentCalculatorRoute: typeof TexasDownPaymentCalculatorRoute
   TexasEconomyRoute: typeof TexasEconomyRoute
   TexasFinancialToolsRoute: typeof TexasFinancialToolsRoute
+  TexasFirstTimeHomebuyerProgramsRoute: typeof TexasFirstTimeHomebuyerProgramsRoute
   TexasHomeAffordabilityCalculatorRoute: typeof TexasHomeAffordabilityCalculatorRoute
   TexasHomeEquityCalculatorRoute: typeof TexasHomeEquityCalculatorRoute
   TexasHomeEquityGrowthCalculatorRoute: typeof TexasHomeEquityGrowthCalculatorRoute
@@ -1531,6 +1676,7 @@ export interface RootRouteChildren {
   TexasNewsRoute: typeof TexasNewsRouteWithChildren
   TexasPoliticsRoute: typeof TexasPoliticsRoute
   TexasPropertyTaxIncreaseCalculatorRoute: typeof TexasPropertyTaxIncreaseCalculatorRoute
+  TexasPropertyTaxProtestGuideRoute: typeof TexasPropertyTaxProtestGuideRoute
   TexasRefinanceSavingsCalculatorRoute: typeof TexasRefinanceSavingsCalculatorRoute
   TexasRentVsBuyCalculatorRoute: typeof TexasRentVsBuyCalculatorRoute
   TexasSalaryCalculatorRoute: typeof TexasSalaryCalculatorRoute
@@ -1598,6 +1744,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/austin': {
+      id: '/austin'
+      path: '/austin'
+      fullPath: '/austin'
+      preLoaderRoute: typeof AustinRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/candidate-guides': {
       id: '/candidate-guides'
       path: '/candidate-guides'
@@ -1626,11 +1779,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountyElectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dallas-fort-worth': {
+      id: '/dallas-fort-worth'
+      path: '/dallas-fort-worth'
+      fullPath: '/dallas-fort-worth'
+      preLoaderRoute: typeof DallasFortWorthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/editorial-standards': {
       id: '/editorial-standards'
       path: '/editorial-standards'
       fullPath: '/editorial-standards'
       preLoaderRoute: typeof EditorialStandardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/el-paso': {
+      id: '/el-paso'
+      path: '/el-paso'
+      fullPath: '/el-paso'
+      preLoaderRoute: typeof ElPasoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/elections': {
@@ -1680,6 +1847,13 @@ declare module '@tanstack/react-router' {
       path: '/glossary'
       fullPath: '/glossary'
       preLoaderRoute: typeof GlossaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/google-merchant-feed.xml': {
+      id: '/google-merchant-feed.xml'
+      path: '/google-merchant-feed.xml'
+      fullPath: '/google-merchant-feed.xml'
+      preLoaderRoute: typeof GoogleMerchantFeedDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/happening-now': {
@@ -1738,6 +1912,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MovingToTexasRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/moving-to-texas-checklist': {
+      id: '/moving-to-texas-checklist'
+      path: '/moving-to-texas-checklist'
+      fullPath: '/moving-to-texas-checklist'
+      preLoaderRoute: typeof MovingToTexasChecklistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/news': {
       id: '/news'
       path: '/news'
@@ -1766,11 +1947,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RepresentativesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/return-refund-policy': {
+      id: '/return-refund-policy'
+      path: '/return-refund-policy'
+      fullPath: '/return-refund-policy'
+      preLoaderRoute: typeof ReturnRefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/robots.txt': {
       id: '/robots.txt'
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/san-antonio': {
+      id: '/san-antonio'
+      path: '/san-antonio'
+      fullPath: '/san-antonio'
+      preLoaderRoute: typeof SanAntonioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shipping-policy': {
+      id: '/shipping-policy'
+      path: '/shipping-policy'
+      fullPath: '/shipping-policy'
+      preLoaderRoute: typeof ShippingPolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -1850,6 +2052,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas': {
       id: '/texas'
       path: '/texas'
@@ -1911,6 +2120,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-financial-tools'
       fullPath: '/texas-financial-tools'
       preLoaderRoute: typeof TexasFinancialToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-first-time-homebuyer-programs': {
+      id: '/texas-first-time-homebuyer-programs'
+      path: '/texas-first-time-homebuyer-programs'
+      fullPath: '/texas-first-time-homebuyer-programs'
+      preLoaderRoute: typeof TexasFirstTimeHomebuyerProgramsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-home-affordability-calculator': {
@@ -2002,6 +2218,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-property-tax-increase-calculator'
       fullPath: '/texas-property-tax-increase-calculator'
       preLoaderRoute: typeof TexasPropertyTaxIncreaseCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-property-tax-protest-guide': {
+      id: '/texas-property-tax-protest-guide'
+      path: '/texas-property-tax-protest-guide'
+      fullPath: '/texas-property-tax-protest-guide'
+      preLoaderRoute: typeof TexasPropertyTaxProtestGuideRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-refinance-savings-calculator': {
@@ -2517,11 +2740,14 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AboutKeepTexasRedRoute: AboutKeepTexasRedRoute,
   AdminRoute: AdminRouteWithChildren,
+  AustinRoute: AustinRoute,
   CandidateGuidesRoute: CandidateGuidesRoute,
   ContactRoute: ContactRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
+  DallasFortWorthRoute: DallasFortWorthRoute,
   EditorialStandardsRoute: EditorialStandardsRoute,
+  ElPasoRoute: ElPasoRoute,
   ElectionsRoute: ElectionsRoute,
   ExploreRoute: ExploreRouteWithChildren,
   FindMyDmvRoute: FindMyDmvRoute,
@@ -2529,6 +2755,7 @@ const rootRouteChildren: RootRouteChildren = {
   FindRepresentativeRoute: FindRepresentativeRoute,
   GetInvolvedRoute: GetInvolvedRoute,
   GlossaryRoute: GlossaryRoute,
+  GoogleMerchantFeedDotxmlRoute: GoogleMerchantFeedDotxmlRoute,
   HappeningNowRoute: HappeningNowRoute,
   HoustonRoute: HoustonRoute,
   KeepTexasRedRoute: KeepTexasRedRoute,
@@ -2537,11 +2764,15 @@ const rootRouteChildren: RootRouteChildren = {
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
   LivingInTexasRoute: LivingInTexasRoute,
   MovingToTexasRoute: MovingToTexasRoute,
+  MovingToTexasChecklistRoute: MovingToTexasChecklistRoute,
   NewsRoute: NewsRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
+  ReturnRefundPolicyRoute: ReturnRefundPolicyRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
+  SanAntonioRoute: SanAntonioRoute,
+  ShippingPolicyRoute: ShippingPolicyRoute,
   ShopRoute: ShopRouteWithChildren,
   SitemapAuthorsDotxmlRoute: SitemapAuthorsDotxmlRoute,
   SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
@@ -2553,6 +2784,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
+  TermsOfServiceRoute: TermsOfServiceRoute,
   TexasRoute: TexasRouteWithChildren,
   TexasBudgetPlannerRoute: TexasBudgetPlannerRoute,
   TexasBusinessRoute: TexasBusinessRouteWithChildren,
@@ -2563,6 +2795,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasDownPaymentCalculatorRoute: TexasDownPaymentCalculatorRoute,
   TexasEconomyRoute: TexasEconomyRoute,
   TexasFinancialToolsRoute: TexasFinancialToolsRoute,
+  TexasFirstTimeHomebuyerProgramsRoute: TexasFirstTimeHomebuyerProgramsRoute,
   TexasHomeAffordabilityCalculatorRoute: TexasHomeAffordabilityCalculatorRoute,
   TexasHomeEquityCalculatorRoute: TexasHomeEquityCalculatorRoute,
   TexasHomeEquityGrowthCalculatorRoute: TexasHomeEquityGrowthCalculatorRoute,
@@ -2577,6 +2810,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasPoliticsRoute: TexasPoliticsRoute,
   TexasPropertyTaxIncreaseCalculatorRoute:
     TexasPropertyTaxIncreaseCalculatorRoute,
+  TexasPropertyTaxProtestGuideRoute: TexasPropertyTaxProtestGuideRoute,
   TexasRefinanceSavingsCalculatorRoute: TexasRefinanceSavingsCalculatorRoute,
   TexasRentVsBuyCalculatorRoute: TexasRentVsBuyCalculatorRoute,
   TexasSalaryCalculatorRoute: TexasSalaryCalculatorRoute,

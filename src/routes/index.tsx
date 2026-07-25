@@ -323,8 +323,11 @@ function Index() {
           <img
             src="/og/shop.jpg"
             alt="Keep TX Red patriotic apparel and gifts"
+            width={800}
+            height={500}
             className="aspect-[16/10] w-full rounded-xl object-cover"
             loading="lazy"
+            decoding="async"
           />
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">
@@ -333,7 +336,7 @@ function Index() {
             <h2 id="featured-shop" className="mt-2 text-3xl font-semibold tracking-tight">
               Wear your Texas pride
             </h2>
-            <p className="mt-4 max-w-xl leading-relaxed text-white/75">
+            <p className="mt-4 max-w-xl leading-relaxed text-white/90">
               Shop Texas patriotic shirts, hats, hoodies, stickers, and gifts. Purchases support
               Keep TX Red’s independent Texas coverage and resources.
             </p>

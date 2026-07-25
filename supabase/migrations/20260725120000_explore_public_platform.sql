@@ -1,96 +1,6 @@
 create extension if not exists pg_trgm;
 
-do $$ begin
-  create type public.explore_publication_status as enum ('draft', 'review', 'published', 'archived', 'rejected');
-exception when duplicate_object then null; end $$;
-
-create table if not exists public.explore_entities (
-  id uuid primary key default gen_random_uuid(),
-  entity_type text not null check (char_length(entity_type) between 2 and 80),
-  name text not null check (char_length(name) between 1 and 240),
-  slug text not null unique,
-  alternate_names text[] not null default '{}',
-  summary text,
-  description text,
-  status public.explore_publication_status not null default 'draft',
-  is_featured boolean not null default false,
-  is_family_friendly boolean,
-  is_pet_friendly boolean,
-  is_accessible boolean,
-  fee_required boolean,
-  official_url text,
-  phone text,
-  email text,
-  address jsonb,
-  city text,
-  county text,
-  region text,
-  latitude double precision check (latitude between -90 and 90),
-  longitude double precision check (longitude between -180 and 180),
-  hero_image_url text,
-  hero_image_alt text,
-  profile jsonb not null default '{}',
-  hours jsonb,
-  fees jsonb,
-  regulations jsonb,
-  seasonal_guidance jsonb,
-  amenities text[] not null default '{}',
-  activities text[] not null default '{}',
-  categories text[] not null default '{}',
-  tags text[] not null default '{}',
-  source_url text,
-  source_name text,
-  source_updated_at timestamptz,
-  published_at timestamptz,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  search_document tsvector not null default ''::tsvector
-);
-
-create or replace function public.set_explore_entity_search_document()
-returns trigger language plpgsql set search_path = public as $$
-begin
-  new.search_document :=
-    setweight(to_tsvector('english', coalesce(new.name, '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(new.alternate_names, ' '), '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(new.summary, '')), 'B') ||
-    setweight(to_tsvector('english', coalesce(new.description, '')), 'C') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(new.tags || new.categories || new.activities, ' '), '')), 'B');
-  return new;
-end;
-$$;
-
-drop trigger if exists explore_entities_search_document on public.explore_entities;
-create trigger explore_entities_search_document
-before insert or update of name, alternate_names, summary, description, tags, categories, activities
-on public.explore_entities
-for each row execute function public.set_explore_entity_search_document();
-
-create table if not exists public.explore_entity_relationships (
-  id uuid primary key default gen_random_uuid(),
-  source_entity_id uuid not null references public.explore_entities(id) on delete cascade,
-  target_entity_id uuid not null references public.explore_entities(id) on delete cascade,
-  relationship_type text not null,
-  strength smallint not null default 50 check (strength between 0 and 100),
-  created_at timestamptz not null default now(),
-  unique (source_entity_id, target_entity_id, relationship_type)
-);
-
-create table if not exists public.explore_observations (
-  id uuid primary key default gen_random_uuid(),
-  entity_id uuid not null references public.explore_entities(id) on delete cascade,
-  observation_type text not null,
-  title text not null,
-  description text,
-  severity text check (severity in ('info', 'advisory', 'warning', 'closure')),
-  starts_at timestamptz,
-  ends_at timestamptz,
-  source_url text,
-  is_public boolean not null default false,
-  created_at timestamptz not null default now()
-);
-
-create table if not exists public.explore_trips (
+create table public.explore_trips (
   id uuid primary key default gen_random_uuid(),
   owner_id uuid references auth.users(id) on delete cascade,
   share_token text unique,
@@ -98,59 +8,188 @@ create table if not exists public.explore_trips (
   title text not null check (char_length(title) between 1 and 160),
   starts_on date,
   ends_on date,
-  preferences jsonb not null default '{}',
-  itinerary jsonb not null default '{"days":[]}',
+  preferences jsonb not null default '{}'::jsonb,
+  itinerary jsonb not null default '{"days":[]}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
-create index if not exists explore_entities_public_idx on public.explore_entities(status, entity_type, region, county);
-create index if not exists explore_entities_search_idx on public.explore_entities using gin(search_document);
-create index if not exists explore_entities_name_trgm_idx on public.explore_entities using gin(name gin_trgm_ops);
-create index if not exists explore_entities_amenities_idx on public.explore_entities using gin(amenities);
-create index if not exists explore_entities_activities_idx on public.explore_entities using gin(activities);
-create index if not exists explore_observations_public_idx on public.explore_observations(entity_id, is_public, starts_at desc);
-create index if not exists explore_trips_owner_idx on public.explore_trips(owner_id, updated_at desc);
-
-alter table public.explore_entities enable row level security;
-alter table public.explore_entity_relationships enable row level security;
-alter table public.explore_observations enable row level security;
+create index explore_trips_owner_idx on public.explore_trips(owner_id, updated_at desc);
 alter table public.explore_trips enable row level security;
 
-drop policy if exists "Published Explore entities are public" on public.explore_entities;
-create policy "Published Explore entities are public" on public.explore_entities
-  for select using (status = 'published');
-
-drop policy if exists "Published Explore relationships are public" on public.explore_entity_relationships;
-create policy "Published Explore relationships are public" on public.explore_entity_relationships
-  for select using (
-    exists (select 1 from public.explore_entities e where e.id = source_entity_id and e.status = 'published')
-    and exists (select 1 from public.explore_entities e where e.id = target_entity_id and e.status = 'published')
-  );
-
-drop policy if exists "Public Explore observations are readable" on public.explore_observations;
-create policy "Public Explore observations are readable" on public.explore_observations
-  for select using (
-    is_public
-    and (ends_at is null or ends_at >= now())
-    and exists (select 1 from public.explore_entities e where e.id = entity_id and e.status = 'published')
-  );
-
-drop policy if exists "Owners manage Explore trips" on public.explore_trips;
 create policy "Owners manage Explore trips" on public.explore_trips
   for all to authenticated using (owner_id = auth.uid()) with check (owner_id = auth.uid());
-
-drop policy if exists "Shared Explore trips are readable" on public.explore_trips;
 create policy "Shared Explore trips are readable" on public.explore_trips
   for select using (is_public and share_token is not null);
 
-do $$ begin
-  if to_regprocedure('public.has_role(uuid,public.app_role)') is not null then
-    execute 'create policy "Admins manage Explore entities" on public.explore_entities for all to authenticated using (public.has_role(auth.uid(), ''admin'')) with check (public.has_role(auth.uid(), ''admin''))';
-    execute 'create policy "Admins manage Explore relationships" on public.explore_entity_relationships for all to authenticated using (public.has_role(auth.uid(), ''admin'')) with check (public.has_role(auth.uid(), ''admin''))';
-    execute 'create policy "Admins manage Explore observations" on public.explore_observations for all to authenticated using (public.has_role(auth.uid(), ''admin'')) with check (public.has_role(auth.uid(), ''admin''))';
-  end if;
-exception when duplicate_object then null; end $$;
+create policy "Public Explore entities are readable" on public.explore_entities
+  for select to anon, authenticated
+  using (visibility = 'public' and status in ('published', 'verified'));
+create policy "Public Explore entity types are readable" on public.explore_entity_types
+  for select to anon, authenticated using (is_active);
+create policy "Public Explore locations are readable" on public.explore_locations
+  for select to anon, authenticated using (
+    exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Public Explore media are readable" on public.explore_media
+  for select to anon, authenticated using (is_active);
+create policy "Public Explore entity media are readable" on public.explore_entity_media
+  for select to anon, authenticated using (
+    exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Public Explore amenities are readable" on public.explore_amenities
+  for select to anon, authenticated using (is_active);
+create policy "Public Explore entity amenities are readable" on public.explore_entity_amenities
+  for select to anon, authenticated using (
+    exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Public Explore activities are readable" on public.explore_activities
+  for select to anon, authenticated using (is_active);
+create policy "Public Explore entity activities are readable" on public.explore_entity_activities
+  for select to anon, authenticated using (
+    exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Public Explore categories are readable" on public.explore_categories
+  for select to anon, authenticated using (is_active);
+create policy "Public Explore entity categories are readable" on public.explore_entity_categories
+  for select to anon, authenticated using (
+    exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Public Explore tags are readable" on public.explore_tags
+  for select to anon, authenticated using (is_active);
+create policy "Public Explore entity tags are readable" on public.explore_entity_tags
+  for select to anon, authenticated using (
+    exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Public Explore relationships are readable" on public.explore_entity_relationships
+  for select to anon, authenticated using (
+    is_active
+    and exists (select 1 from public.explore_entities e where e.id = source_entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+    and exists (select 1 from public.explore_entities e where e.id = target_entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Validated Explore observations are readable" on public.explore_observations
+  for select to anon, authenticated using (
+    review_status = 'validated'
+    and (expires_at is null or expires_at >= now())
+    and exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Public Explore sources are readable" on public.explore_sources
+  for select to anon, authenticated using (is_active);
+create policy "Public Explore entity sources are readable" on public.explore_entity_sources
+  for select to anon, authenticated using (
+    exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+create policy "Public Explore slug history is readable" on public.explore_entity_slug_history
+  for select to anon, authenticated using (
+    exists (select 1 from public.explore_entities e where e.id = entity_id and e.visibility = 'public' and e.status in ('published','verified'))
+  );
+
+create view public.explore_public_entities
+with (security_invoker = true)
+as
+select
+  e.id,
+  et.key as entity_type,
+  e.name,
+  e.slug,
+  e.alternate_names,
+  e.summary,
+  e.long_description as description,
+  l.city,
+  l.county,
+  l.map_metadata ->> 'region' as region,
+  l.latitude::double precision as latitude,
+  l.longitude::double precision as longitude,
+  hero.external_url as hero_image_url,
+  hero.alt_text as hero_image_alt,
+  coalesce(am.amenities, '{}'::text[]) as amenities,
+  coalesce(ac.activities, '{}'::text[]) as activities,
+  null::boolean as is_family_friendly,
+  null::boolean as is_pet_friendly,
+  null::boolean as is_accessible,
+  coalesce(am.fee_required, ac.fee_required) as fee_required,
+  src.source_url as official_url,
+  null::text as phone,
+  null::text as email,
+  jsonb_strip_nulls(jsonb_build_object(
+    'line1', l.address_line_1, 'line2', l.address_line_2, 'city', l.city,
+    'county', l.county, 'state', l.state_code, 'postalCode', l.postal_code
+  )) as address,
+  '{}'::jsonb as profile,
+  null::jsonb as hours,
+  null::jsonb as fees,
+  null::jsonb as regulations,
+  null::jsonb as seasonal_guidance,
+  coalesce(cat.categories, '{}'::text[]) as categories,
+  coalesce(tg.tags, '{}'::text[]) as tags,
+  src.source_url,
+  src.source_name,
+  src.source_updated_at,
+  e.featured as is_featured,
+  e.popularity_score,
+  e.status,
+  e.visibility,
+  e.updated_at
+from public.explore_entities e
+join public.explore_entity_types et on et.id = e.entity_type_id
+left join public.explore_locations l on l.entity_id = e.id
+left join lateral (
+  select m.external_url, m.alt_text
+  from public.explore_entity_media em
+  join public.explore_media m on m.id = em.media_id
+  where em.entity_id = e.id and em.role = 'hero' and m.is_active
+  order by em.is_primary desc, em.sort_order, em.created_at
+  limit 1
+) hero on true
+left join lateral (
+  select array_agg(a.key order by a.sort_order, a.key) as amenities,
+         bool_or(ea.fee_required) filter (where ea.fee_required is not null) as fee_required
+  from public.explore_entity_amenities ea
+  join public.explore_amenities a on a.id = ea.amenity_id
+  where ea.entity_id = e.id and a.is_active and ea.availability <> 'unavailable'
+) am on true
+left join lateral (
+  select array_agg(a.key order by a.sort_order, a.key) as activities,
+         bool_or(ea.fee_required) filter (where ea.fee_required is not null) as fee_required
+  from public.explore_entity_activities ea
+  join public.explore_activities a on a.id = ea.activity_id
+  where ea.entity_id = e.id and a.is_active and ea.suitability <> 'not_allowed'
+) ac on true
+left join lateral (
+  select array_agg(c.key order by c.sort_order, c.key) as categories
+  from public.explore_entity_categories ec
+  join public.explore_categories c on c.id = ec.category_id
+  where ec.entity_id = e.id and c.is_active
+) cat on true
+left join lateral (
+  select array_agg(t.key order by t.key) as tags
+  from public.explore_entity_tags etg
+  join public.explore_tags t on t.id = etg.tag_id
+  where etg.entity_id = e.id and t.is_active
+) tg on true
+left join lateral (
+  select es.source_url, s.name as source_name, es.retrieved_at as source_updated_at
+  from public.explore_entity_sources es
+  join public.explore_sources s on s.id = es.source_id
+  where es.entity_id = e.id
+  order by s.is_authoritative desc, es.confidence desc, es.updated_at desc
+  limit 1
+) src on true
+where e.visibility = 'public' and e.status in ('published', 'verified');
+
+grant select on public.explore_public_entities to anon, authenticated;
+
+create view public.explore_public_observations
+with (security_invoker = true)
+as
+select id, entity_id, observation_type, coalesce(title, initcap(replace(observation_type, '_', ' '))) as title,
+  coalesce(value_text, payload ->> 'description') as description,
+  case when payload ->> 'severity' in ('info','advisory','warning','closure') then payload ->> 'severity' end as severity,
+  observed_at as starts_at, expires_at as ends_at, source_url
+from public.explore_observations
+where review_status = 'validated' and (expires_at is null or expires_at >= now());
+
+grant select on public.explore_public_observations to anon, authenticated;
 
 create or replace function public.search_explore_entities(
   search_query text default null,
@@ -173,18 +212,18 @@ create or replace function public.search_explore_entities(
   with matched as (
     select e.*,
       case when nullif(trim(search_query), '') is null then 0::real
-        else ts_rank_cd(e.search_document, websearch_to_tsquery('english', search_query)) end as text_rank,
+        else greatest(similarity(e.name, search_query), similarity(coalesce(e.summary, ''), search_query))::real end as text_rank,
       case when near_lat is null or near_lng is null or e.latitude is null or e.longitude is null then null
         else 6371 * 2 * asin(sqrt(
           power(sin(radians(e.latitude - near_lat) / 2), 2) +
           cos(radians(near_lat)) * cos(radians(e.latitude)) *
           power(sin(radians(e.longitude - near_lng) / 2), 2)
         )) end as calculated_distance
-    from public.explore_entities e
-    where e.status = 'published'
-      and (nullif(trim(search_query), '') is null
-        or e.search_document @@ websearch_to_tsquery('english', search_query)
-        or e.name % search_query)
+    from public.explore_public_entities e
+    where (nullif(trim(search_query), '') is null
+        or e.name ilike '%' || search_query || '%'
+        or e.summary ilike '%' || search_query || '%'
+        or search_query % e.name)
       and (entity_types is null or e.entity_type = any(entity_types))
       and (regions is null or e.region = any(regions))
       and (counties is null or e.county = any(counties))

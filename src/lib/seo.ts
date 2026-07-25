@@ -2,7 +2,7 @@
 // Every shareable page should call buildSeo({...}) and spread the returned
 // `meta`, `links`, and `scripts` arrays into its TanStack `head()` return.
 
-export const SITE_URL = "https://www.keeptxred.com";
+export const SITE_URL = "https://keeptxred.com";
 export const SITE_NAME = "Keep TX Red";
 export const TWITTER_HANDLE = "@KeepTXRed";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/default.jpg`;

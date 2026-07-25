@@ -160,7 +160,7 @@ export default function FindMySchoolDistrict() {
         </div>
       )}
 
-      <p className="text-xs text-gray-400 mt-4">
+      <p className="text-xs text-muted-foreground mt-4">
         Powered by the free U.S. Census Bureau Geocoder. District boundaries can differ slightly
         from attendance zones — contact your district directly to confirm which specific school
         your address feeds into.

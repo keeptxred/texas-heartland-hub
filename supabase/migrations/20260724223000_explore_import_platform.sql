@@ -19,24 +19,24 @@ create table public.explore_import_sources (
   unique (source_type, name)
 );
 
-create table public.explore_import_jobs (
-  id uuid primary key default gen_random_uuid(),
-  source_id uuid not null references public.explore_import_sources(id) on delete restrict,
-  status public.explore_import_job_status not null default 'queued',
-  mode text not null default 'manual',
-  execution_mode public.explore_import_execution_mode not null default 'live',
-  requested_by uuid references auth.users(id) on delete set null,
-  started_at timestamptz,
-  completed_at timestamptz,
-  heartbeat_at timestamptz,
-  statistics jsonb not null default '{}'::jsonb,
-  warnings jsonb not null default '[]'::jsonb,
-  error jsonb,
-  cursor_before jsonb,
-  cursor_after jsonb,
-  parent_job_id uuid references public.explore_import_jobs(id) on delete set null,
-  created_at timestamptz not null default now()
-);
+alter table public.explore_import_jobs rename column source_id to entity_source_id;
+alter table public.explore_import_jobs alter column connector_key drop not null;
+alter table public.explore_import_jobs drop constraint if exists explore_import_jobs_status_check;
+alter table public.explore_import_jobs
+  add constraint explore_import_jobs_status_check
+  check (status in ('queued','running','completed','completed_with_warnings','failed','cancelled','rolled_back'));
+alter table public.explore_import_jobs
+  add column source_id uuid references public.explore_import_sources(id) on delete restrict,
+  add column mode text not null default 'manual',
+  add column execution_mode public.explore_import_execution_mode not null default 'live',
+  add column requested_by uuid references auth.users(id) on delete set null,
+  add column heartbeat_at timestamptz,
+  add column statistics jsonb not null default '{}'::jsonb,
+  add column warnings jsonb not null default '[]'::jsonb,
+  add column error jsonb,
+  add column cursor_before jsonb,
+  add column cursor_after jsonb,
+  add column parent_job_id uuid references public.explore_import_jobs(id) on delete set null;
 
 create table public.explore_import_records (
   id uuid primary key default gen_random_uuid(),

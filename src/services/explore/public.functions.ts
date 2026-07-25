@@ -136,9 +136,8 @@ async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
   const items = rows.map(card);
 
   const { data: facetRows } = await client
-    .from("explore_entities")
+    .from("explore_public_entities")
     .select("entity_type,region,county,activities,amenities")
-    .eq("status", "published")
     .limit(1000);
   const facets = collectFacets((facetRows ?? []) as Row[]);
   return {
@@ -196,26 +195,24 @@ export const getExploreEntity = createServerFn({ method: "GET" })
     const client = publicClient();
     if (!client) return null;
     const result = await client
-      .from("explore_entities")
+      .from("explore_public_entities")
       .select("*")
       .eq("slug", data.slug)
-      .eq("status", "published")
       .maybeSingle();
     if (result.error) throw new Error(`Explore entity lookup failed: ${result.error.message}`);
     if (!result.data) return null;
     const row = result.data as Row;
     const [observationsResult, relationshipsResult, nearbyResult] = await Promise.all([
       client
-        .from("explore_observations")
+        .from("explore_public_observations")
         .select("*")
         .eq("entity_id", row.id)
-        .eq("is_public", true)
         .limit(20),
       client
         .from("explore_entity_relationships")
         .select("target_entity_id")
         .eq("source_entity_id", row.id)
-        .order("strength", { ascending: false })
+        .order("weight", { ascending: false })
         .limit(8),
       row.latitude != null && row.longitude != null
         ? client.rpc("search_explore_entities", {
@@ -238,10 +235,9 @@ export const getExploreEntity = createServerFn({ method: "GET" })
     );
     const relatedResult = targetIds.length
       ? await client
-          .from("explore_entities")
+          .from("explore_public_entities")
           .select("*")
           .in("id", targetIds)
-          .eq("status", "published")
       : { data: [], error: null };
     return {
       ...card(row),
@@ -283,16 +279,15 @@ export const getExploreSlugTarget = createServerFn({ method: "GET" })
     const client = publicClient();
     if (!client) return null;
     const alias = await client
-      .from("explore_entity_slugs")
+      .from("explore_entity_slug_history")
       .select("entity_id")
       .eq("slug", data.slug)
       .maybeSingle();
     if (!alias.data) return null;
     const entity = await client
-      .from("explore_entities")
+      .from("explore_public_entities")
       .select("slug")
       .eq("id", (alias.data as Row).entity_id)
-      .eq("status", "published")
       .maybeSingle();
     return entity.data ? String((entity.data as Row).slug) : null;
   });

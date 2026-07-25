@@ -40,7 +40,7 @@ function ElectionsPage() {
             EVERY RACE. <br />
             <span className="text-primary">EVERY VOTE.</span>
           </h1>
-          <p className="mt-5 max-w-2xl text-white/70">
+          <p className="mt-5 max-w-2xl text-white/90">
             Statewide and district-by-district analysis of the Texas elections shaping the next decade. Polls, ratings, and a complete voter guide.
           </p>
           <div className="grid sm:grid-cols-3 gap-4 mt-10">
