@@ -1,9 +1,13 @@
 import type { ImportSourceConfig, ImportSourceType } from "@/types/explore/import";
 import { BaseImporter } from "./BaseImporter";
+import { CountyGISImporter } from "./CountyGISImporter";
+import { CustomImporter } from "./CustomImporter";
 import { HistoricalCommissionImporter } from "./HistoricalCommissionImporter";
+import { MunicipalityImporter } from "./MunicipalityImporter";
 import { NOAAImporter } from "./NOAAImporter";
 import { NPSImporter } from "./NPSImporter";
 import { OSMImporter } from "./OSMImporter";
+import { TourismImporter } from "./TourismImporter";
 import { TPWDImporter } from "./TPWDImporter";
 import { TWDBImporter } from "./TWDBImporter";
 import { USACEImporter } from "./USACEImporter";
@@ -25,6 +29,10 @@ export class ConnectorRegistry {
     this.register("noaa", (config) => new NOAAImporter(config));
     this.register("twdb", (config) => new TWDBImporter(config));
     this.register("osm", (config) => new OSMImporter(config));
+    this.register("county_gis", (config) => new CountyGISImporter(config));
+    this.register("municipality", (config) => new MunicipalityImporter(config));
+    this.register("tourism", (config) => new TourismImporter(config));
+    this.register("custom", (config) => new CustomImporter(config));
   }
 
   register(type: ImportSourceType, factory: ImporterFactory): void {
