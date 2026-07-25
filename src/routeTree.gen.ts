@@ -19,6 +19,7 @@ import { Route as ContactLegislatorsRouteImport } from './routes/contact-legisla
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
 import { Route as ElectionsRouteImport } from './routes/elections'
+import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
 import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-school-district'
 import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
@@ -80,6 +81,10 @@ import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
 import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as ExploreIndexRouteImport } from './routes/explore.index'
+import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
+import { Route as ExploreSearchRouteImport } from './routes/explore.search'
+import { Route as ExploreTripPlannerRouteImport } from './routes/explore.trip-planner'
 import { Route as NewsIndexRouteImport } from './routes/news.index'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
@@ -99,6 +104,7 @@ import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/em
 import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as ApiPublicArticleImageFilenameRouteImport } from './routes/api/public/article-image.$filename'
+import { Route as ApiPublicExploreEntitiesRouteImport } from './routes/api/public/explore/entities'
 import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
 import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
 import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
@@ -165,6 +171,11 @@ const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
 const ElectionsRoute = ElectionsRouteImport.update({
   id: '/elections',
   path: '/elections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FindMyDmvRoute = FindMyDmvRouteImport.update({
@@ -488,6 +499,26 @@ const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   path: '/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ExploreIndexRoute = ExploreIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreSlugRoute = ExploreSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreSearchRoute = ExploreSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreTripPlannerRoute = ExploreTripPlannerRouteImport.update({
+  id: '/trip-planner',
+  path: '/trip-planner',
+  getParentRoute: () => ExploreRoute,
+} as any)
 const NewsIndexRoute = NewsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -584,6 +615,12 @@ const ApiPublicArticleImageFilenameRoute =
   ApiPublicArticleImageFilenameRouteImport.update({
     id: '/api/public/article-image/$filename',
     path: '/api/public/article-image/$filename',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicExploreEntitiesRoute =
+  ApiPublicExploreEntitiesRouteImport.update({
+    id: '/api/public/explore/entities',
+    path: '/api/public/explore/entities',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicHooksBackfillFeaturedImagesRoute =
@@ -698,6 +735,7 @@ export interface FileRoutesByFullPath {
   '/county-elections': typeof CountyElectionsRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
+  '/explore': typeof ExploreRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
@@ -758,6 +796,9 @@ export interface FileRoutesByFullPath {
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/search': typeof ExploreSearchRoute
+  '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -768,6 +809,7 @@ export interface FileRoutesByFullPath {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
   '/authors/': typeof AuthorsIndexRoute
+  '/explore/': typeof ExploreIndexRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
@@ -777,6 +819,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -862,6 +905,9 @@ export interface FileRoutesByTo {
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/search': typeof ExploreSearchRoute
+  '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -872,6 +918,7 @@ export interface FileRoutesByTo {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
   '/authors': typeof AuthorsIndexRoute
+  '/explore': typeof ExploreIndexRoute
   '/news': typeof NewsIndexRoute
   '/shop': typeof ShopIndexRoute
   '/texas-news': typeof TexasNewsIndexRoute
@@ -881,6 +928,7 @@ export interface FileRoutesByTo {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -912,6 +960,7 @@ export interface FileRoutesById {
   '/county-elections': typeof CountyElectionsRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/elections': typeof ElectionsRoute
+  '/explore': typeof ExploreRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
@@ -972,6 +1021,9 @@ export interface FileRoutesById {
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/search': typeof ExploreSearchRoute
+  '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -982,6 +1034,7 @@ export interface FileRoutesById {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
   '/authors/': typeof AuthorsIndexRoute
+  '/explore/': typeof ExploreIndexRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
@@ -991,6 +1044,7 @@ export interface FileRoutesById {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
+  '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
   '/api/public/hooks/backfill-featured-images': typeof ApiPublicHooksBackfillFeaturedImagesRoute
   '/api/public/hooks/generate-evergreen': typeof ApiPublicHooksGenerateEvergreenRoute
   '/api/public/hooks/generate-news': typeof ApiPublicHooksGenerateNewsRoute
@@ -1023,6 +1077,7 @@ export interface FileRouteTypes {
     | '/county-elections'
     | '/editorial-standards'
     | '/elections'
+    | '/explore'
     | '/find-my-dmv'
     | '/find-my-school-district'
     | '/find-representative'
@@ -1083,6 +1138,9 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/authors/$slug'
     | '/email/unsubscribe'
+    | '/explore/$slug'
+    | '/explore/search'
+    | '/explore/trip-planner'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -1093,6 +1151,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/texas/$slug'
     | '/authors/'
+    | '/explore/'
     | '/news/'
     | '/shop/'
     | '/texas-news/'
@@ -1102,6 +1161,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/api/public/article-image/$filename'
+    | '/api/public/explore/entities'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -1187,6 +1247,9 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/authors/$slug'
     | '/email/unsubscribe'
+    | '/explore/$slug'
+    | '/explore/search'
+    | '/explore/trip-planner'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -1197,6 +1260,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/texas/$slug'
     | '/authors'
+    | '/explore'
     | '/news'
     | '/shop'
     | '/texas-news'
@@ -1206,6 +1270,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/api/public/article-image/$filename'
+    | '/api/public/explore/entities'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -1236,6 +1301,7 @@ export interface FileRouteTypes {
     | '/county-elections'
     | '/editorial-standards'
     | '/elections'
+    | '/explore'
     | '/find-my-dmv'
     | '/find-my-school-district'
     | '/find-representative'
@@ -1296,6 +1362,9 @@ export interface FileRouteTypes {
     | '/voting-locations'
     | '/authors/$slug'
     | '/email/unsubscribe'
+    | '/explore/$slug'
+    | '/explore/search'
+    | '/explore/trip-planner'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -1306,6 +1375,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/texas/$slug'
     | '/authors/'
+    | '/explore/'
     | '/news/'
     | '/shop/'
     | '/texas-news/'
@@ -1315,6 +1385,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/api/public/article-image/$filename'
+    | '/api/public/explore/entities'
     | '/api/public/hooks/backfill-featured-images'
     | '/api/public/hooks/generate-evergreen'
     | '/api/public/hooks/generate-news'
@@ -1346,6 +1417,7 @@ export interface RootRouteChildren {
   CountyElectionsRoute: typeof CountyElectionsRoute
   EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElectionsRoute: typeof ElectionsRoute
+  ExploreRoute: typeof ExploreRouteWithChildren
   FindMyDmvRoute: typeof FindMyDmvRoute
   FindMySchoolDistrictRoute: typeof FindMySchoolDistrictRoute
   FindRepresentativeRoute: typeof FindRepresentativeRoute
@@ -1410,6 +1482,7 @@ export interface RootRouteChildren {
   ApiPublicPropertyAddressLookupRoute: typeof ApiPublicPropertyAddressLookupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
+  ApiPublicExploreEntitiesRoute: typeof ApiPublicExploreEntitiesRoute
   ApiPublicHooksBackfillFeaturedImagesRoute: typeof ApiPublicHooksBackfillFeaturedImagesRoute
   ApiPublicHooksGenerateEvergreenRoute: typeof ApiPublicHooksGenerateEvergreenRoute
   ApiPublicHooksGenerateNewsRoute: typeof ApiPublicHooksGenerateNewsRoute
@@ -1499,6 +1572,13 @@ declare module '@tanstack/react-router' {
       path: '/elections'
       fullPath: '/elections'
       preLoaderRoute: typeof ElectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/find-my-dmv': {
@@ -1928,6 +2008,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/explore/': {
+      id: '/explore/'
+      path: '/'
+      fullPath: '/explore/'
+      preLoaderRoute: typeof ExploreIndexRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/$slug': {
+      id: '/explore/$slug'
+      path: '/$slug'
+      fullPath: '/explore/$slug'
+      preLoaderRoute: typeof ExploreSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/search': {
+      id: '/explore/search'
+      path: '/search'
+      fullPath: '/explore/search'
+      preLoaderRoute: typeof ExploreSearchRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/trip-planner': {
+      id: '/explore/trip-planner'
+      path: '/trip-planner'
+      fullPath: '/explore/trip-planner'
+      preLoaderRoute: typeof ExploreTripPlannerRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/news/': {
       id: '/news/'
       path: '/'
@@ -2059,6 +2167,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/article-image/$filename'
       fullPath: '/api/public/article-image/$filename'
       preLoaderRoute: typeof ApiPublicArticleImageFilenameRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/explore/entities': {
+      id: '/api/public/explore/entities'
+      path: '/api/public/explore/entities'
+      fullPath: '/api/public/explore/entities'
+      preLoaderRoute: typeof ApiPublicExploreEntitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/backfill-featured-images': {
@@ -2193,6 +2308,23 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ExploreRouteChildren {
+  ExploreSlugRoute: typeof ExploreSlugRoute
+  ExploreSearchRoute: typeof ExploreSearchRoute
+  ExploreTripPlannerRoute: typeof ExploreTripPlannerRoute
+  ExploreIndexRoute: typeof ExploreIndexRoute
+}
+
+const ExploreRouteChildren: ExploreRouteChildren = {
+  ExploreSlugRoute: ExploreSlugRoute,
+  ExploreSearchRoute: ExploreSearchRoute,
+  ExploreTripPlannerRoute: ExploreTripPlannerRoute,
+  ExploreIndexRoute: ExploreIndexRoute,
+}
+
+const ExploreRouteWithChildren =
+  ExploreRoute._addFileChildren(ExploreRouteChildren)
+
 interface NewsRouteChildren {
   NewsSlugRoute: typeof NewsSlugRoute
   NewsNonPoliticalRoute: typeof NewsNonPoliticalRoute
@@ -2288,6 +2420,7 @@ const rootRouteChildren: RootRouteChildren = {
   CountyElectionsRoute: CountyElectionsRoute,
   EditorialStandardsRoute: EditorialStandardsRoute,
   ElectionsRoute: ElectionsRoute,
+  ExploreRoute: ExploreRouteWithChildren,
   FindMyDmvRoute: FindMyDmvRoute,
   FindMySchoolDistrictRoute: FindMySchoolDistrictRoute,
   FindRepresentativeRoute: FindRepresentativeRoute,
@@ -2354,6 +2487,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicPropertyAddressLookupRoute: ApiPublicPropertyAddressLookupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
+  ApiPublicExploreEntitiesRoute: ApiPublicExploreEntitiesRoute,
   ApiPublicHooksBackfillFeaturedImagesRoute:
     ApiPublicHooksBackfillFeaturedImagesRoute,
   ApiPublicHooksGenerateEvergreenRoute: ApiPublicHooksGenerateEvergreenRoute,
