@@ -1,9 +1,11 @@
 import { useState } from 'react';
 
 import { ExploreAdminShell } from '../components/ExploreAdminShell';
+import { ExploreDuplicateResolutionPanel } from '../components/ExploreDuplicateResolutionPanel';
 import { ExploreEntityEditorDialog } from '../components/ExploreEntityEditorDialog';
 import { ExploreEntityManagementPanel } from '../components/ExploreEntityManagementPanel';
 import { ExploreReviewQueuePanel } from '../components/ExploreReviewQueuePanel';
+import { useExploreAdminPendingDuplicateCount } from '../hooks/useExploreAdminDuplicateCandidates';
 import { useExploreAdminReviewQueueCounts } from '../hooks/useExploreAdminReviewQueue';
 
 export type ExploreAdminSection =
@@ -26,13 +28,16 @@ export function ExploreAdminDashboard() {
   const [section, setSection] = useState<ExploreAdminSection>('overview');
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
   const reviewCounts = useExploreAdminReviewQueueCounts();
+  const duplicateCount = useExploreAdminPendingDuplicateCount();
 
   const metrics: DashboardMetrics = {
     entities: 0,
     pendingReview: reviewCounts.total,
-    duplicateCandidates: 0,
+    duplicateCandidates: duplicateCount.data ?? 0,
     activeImports: 0,
   };
+
+  const metricsLoading = reviewCounts.isLoading || duplicateCount.isLoading;
 
   function handleSectionChange(nextSection: ExploreAdminSection) {
     setSection(nextSection);
@@ -61,13 +66,15 @@ export function ExploreAdminDashboard() {
         {section === 'overview' ? (
           <Overview
             metrics={metrics}
-            metricsLoading={reviewCounts.isLoading}
+            metricsLoading={metricsLoading}
             onOpenSection={handleSectionChange}
           />
         ) : section === 'entities' ? (
           <ExploreEntityManagementPanel onOpenEntity={setSelectedEntityId} />
         ) : section === 'review' ? (
           <ExploreReviewQueuePanel onOpenEntity={setSelectedEntityId} />
+        ) : section === 'duplicates' ? (
+          <ExploreDuplicateResolutionPanel onOpenEntity={setSelectedEntityId} />
         ) : (
           <SectionIntroduction section={section} />
         )}
@@ -108,6 +115,7 @@ function Overview({ metrics, metricsLoading, onOpenSection }: OverviewProps) {
         <DashboardCard
           title="Duplicate Candidates"
           value={metrics.duplicateCandidates}
+          loading={metricsLoading}
           onClick={() => onOpenSection('duplicates')}
         />
         <DashboardCard
@@ -150,14 +158,16 @@ function DashboardCard({ title, value, loading = false, onClick }: DashboardCard
   );
 }
 
-function SectionIntroduction({ section }: { section: Exclude<ExploreAdminSection, 'overview' | 'entities' | 'review'> }) {
+function SectionIntroduction({
+  section,
+}: {
+  section: Exclude<ExploreAdminSection, 'overview' | 'entities' | 'review' | 'duplicates'>;
+}) {
   const descriptions: Record<typeof section, string> = {
     relationships:
       'Inspect how destinations, regions, activities, amenities, and editorial collections connect.',
     sources:
       'Manage source definitions, provenance, trust settings, and synchronization configuration.',
-    duplicates:
-      'Review similarity candidates and merge records without losing source attribution.',
     imports:
       'Monitor import jobs, execution statistics, validation failures, warnings, and rollback state.',
   };
