@@ -5,8 +5,8 @@ import {
   keepPreviousData,
   type UseMutationResult,
   type UseQueryResult,
-} from '@tanstack/react-query';
-import { useServerFn } from '@tanstack/react-start';
+} from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 
 import {
   listExploreDuplicateCandidatesFn,
@@ -17,20 +17,20 @@ import {
   type GetDuplicateResult,
   type MergeCandidateResult,
   type ResolveCandidateResult,
-} from '@/services/explore/duplicateMerge.functions';
+} from "@/services/explore/duplicateMerge.functions";
 import type {
   ExploreDuplicateCandidate,
   ExploreDuplicateCandidateWithEntities,
   ExploreDuplicateStatus,
   ExploreMergeResult,
-} from '@/types/explore/duplicates';
+} from "@/types/explore/duplicates";
 
 export const exploreDuplicateKeys = {
-  all: ['explore', 'duplicates'] as const,
-  lists: () => [...exploreDuplicateKeys.all, 'list'] as const,
+  all: ["explore", "duplicates"] as const,
+  lists: () => [...exploreDuplicateKeys.all, "list"] as const,
   list: (params: { status: ExploreDuplicateStatus; page: number; pageSize: number }) =>
     [...exploreDuplicateKeys.lists(), params] as const,
-  details: () => [...exploreDuplicateKeys.all, 'detail'] as const,
+  details: () => [...exploreDuplicateKeys.all, "detail"] as const,
   detail: (id: string) => [...exploreDuplicateKeys.details(), id] as const,
 };
 
@@ -41,9 +41,11 @@ export type DuplicateListData = {
   pageSize: number;
 };
 
-function unwrap<T>(result: { ok: true; data: T } | { ok: false; error: { code: string; message: string } }): T {
+function unwrap<T>(
+  result: { ok: true; data: T } | { ok: false; error: { code: string; message: string } },
+): T {
   if (result.ok) return result.data;
-  throw new Error(result.error.message || 'Request failed');
+  throw new Error(result.error.message || "Request failed");
 }
 
 export function useDuplicateCandidatesList(params: {
@@ -82,7 +84,7 @@ export function useDuplicateCandidateDetail(params: {
   candidateId: string | null | undefined;
 }): UseQueryResult<ExploreDuplicateCandidateWithEntities, Error> {
   const fn = useServerFn(getExploreDuplicateCandidateFn);
-  const id = params.candidateId ?? '';
+  const id = params.candidateId ?? "";
   return useQuery({
     queryKey: exploreDuplicateKeys.detail(id),
     queryFn: async () => {
@@ -123,17 +125,17 @@ export function useMergeDuplicateCandidate(
       qc.invalidateQueries({ queryKey: exploreDuplicateKeys.lists() });
       qc.invalidateQueries({ queryKey: exploreDuplicateKeys.detail(result.candidateId) });
       // Broadly refresh any explore entity/search caches that may exist.
-      qc.invalidateQueries({ queryKey: ['explore', 'entities'] });
-      qc.invalidateQueries({ queryKey: ['explore', 'entity', result.survivorId] });
-      qc.invalidateQueries({ queryKey: ['explore', 'entity', result.loserId] });
-      qc.invalidateQueries({ queryKey: ['explore', 'search'] });
+      qc.invalidateQueries({ queryKey: ["explore", "entities"] });
+      qc.invalidateQueries({ queryKey: ["explore", "entity", result.survivorId] });
+      qc.invalidateQueries({ queryKey: ["explore", "entity", result.loserId] });
+      qc.invalidateQueries({ queryKey: ["explore", "search"] });
     },
   });
 }
 
 export type ResolveInput = {
   candidateId: string;
-  status: Extract<ExploreDuplicateStatus, 'not_duplicate' | 'deferred'>;
+  status: Extract<ExploreDuplicateStatus, "not_duplicate" | "deferred">;
   reason?: string;
 };
 
@@ -144,8 +146,8 @@ export function useResolveDuplicateCandidate(
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: ResolveInput) => {
-      if (input.status !== 'not_duplicate' && input.status !== 'deferred') {
-        throw new Error('Invalid resolution status');
+      if (input.status !== "not_duplicate" && input.status !== "deferred") {
+        throw new Error("Invalid resolution status");
       }
       const res: ResolveCandidateResult = await fn({
         data: {

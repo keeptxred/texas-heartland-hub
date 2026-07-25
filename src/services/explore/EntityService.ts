@@ -1,21 +1,15 @@
-import {
-  ExploreDuplicateEntityError,
-  ExploreValidationError,
-} from '@/lib/explore/errors';
-import { ensureExploreSlug } from '@/lib/explore/slug';
+import { ExploreDuplicateEntityError, ExploreValidationError } from "@/lib/explore/errors";
+import { ensureExploreSlug } from "@/lib/explore/slug";
 import {
   exploreEntityCreateSchema,
   exploreEntityUpdateSchema,
-} from '@/schemas/explore/entity.schema';
-import {
-  entityRepository,
-  type EntityRepository,
-} from '@/repositories/explore/EntityRepository';
+} from "@/schemas/explore/entity.schema";
+import { entityRepository, type EntityRepository } from "@/repositories/explore/EntityRepository";
 import type {
   ExploreEntity,
   ExploreEntityCreateInput,
   ExploreEntityUpdateInput,
-} from '@/types/explore';
+} from "@/types/explore";
 
 export class EntityService {
   constructor(private readonly repository: EntityRepository = entityRepository) {}
@@ -23,7 +17,7 @@ export class EntityService {
   async create(input: ExploreEntityCreateInput): Promise<ExploreEntity> {
     const parsed = exploreEntityCreateSchema.safeParse(input);
     if (!parsed.success) {
-      throw new ExploreValidationError('Explore entity validation failed.', {
+      throw new ExploreValidationError("Explore entity validation failed.", {
         issues: parsed.error.flatten(),
       });
     }
@@ -43,7 +37,7 @@ export class EntityService {
   async update(id: string, input: ExploreEntityUpdateInput): Promise<ExploreEntity> {
     const parsed = exploreEntityUpdateSchema.safeParse(input);
     if (!parsed.success) {
-      throw new ExploreValidationError('Explore entity validation failed.', {
+      throw new ExploreValidationError("Explore entity validation failed.", {
         issues: parsed.error.flatten(),
       });
     }
@@ -63,23 +57,23 @@ export class EntityService {
 
   async publish(id: string): Promise<ExploreEntity> {
     return this.repository.update(id, {
-      status: 'published',
-      visibility: 'public',
+      status: "published",
+      visibility: "public",
     });
   }
 
   async verify(id: string): Promise<ExploreEntity> {
     const entity = await this.repository.requireById(id);
-    if (entity.status !== 'published' && entity.status !== 'verified') {
-      throw new ExploreValidationError('Only published entities can be verified.', {
+    if (entity.status !== "published" && entity.status !== "verified") {
+      throw new ExploreValidationError("Only published entities can be verified.", {
         entityId: id,
         status: entity.status,
       });
     }
 
     return this.repository.update(id, {
-      status: 'verified',
-      visibility: 'public',
+      status: "verified",
+      visibility: "public",
     });
   }
 

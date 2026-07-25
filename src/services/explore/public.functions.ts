@@ -203,11 +203,7 @@ export const getExploreEntity = createServerFn({ method: "GET" })
     if (!result.data) return null;
     const row = result.data as Row;
     const [observationsResult, relationshipsResult, nearbyResult] = await Promise.all([
-      client
-        .from("explore_public_observations")
-        .select("*")
-        .eq("entity_id", row.id)
-        .limit(20),
+      client.from("explore_public_observations").select("*").eq("entity_id", row.id).limit(20),
       client
         .from("explore_entity_relationships")
         .select("target_entity_id")
@@ -234,10 +230,7 @@ export const getExploreEntity = createServerFn({ method: "GET" })
       String(item.target_entity_id),
     );
     const relatedResult = targetIds.length
-      ? await client
-          .from("explore_public_entities")
-          .select("*")
-          .in("id", targetIds)
+      ? await client.from("explore_public_entities").select("*").in("id", targetIds)
       : { data: [], error: null };
     return {
       ...card(row),
