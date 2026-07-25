@@ -111,6 +111,14 @@ jobs:
           set -euo pipefail
           eval "$(supabase status -o env | sed 's/^/export /')"
 
+          db_container=$(docker ps --format '{{.Names}}' | grep '^supabase_db_' | head -n 1)
+          if [[ -z "$db_container" ]]; then
+            echo "Unable to locate the local Supabase database container." >&2
+            docker ps --format 'table {{.Names}}\t{{.Status}}'
+            exit 1
+          fi
+          echo "Using database container: $db_container"
+
           mkdir -p /tmp/explore-fixture
           cat > /tmp/explore-fixture/entities.json <<'JSON'
           {
@@ -129,7 +137,7 @@ jobs:
           python3 -m http.server 8765 --directory /tmp/explore-fixture >/tmp/explore-fixture-server.log 2>&1 &
           fixture_pid=$!
 
-          source_id=$(docker exec supabase_db_${SUPABASE_PROJECT_ID} psql -U postgres -d postgres -Atc "
+          source_id=$(docker exec "$db_container" psql -U postgres -d postgres -Atc "
             insert into public.explore_import_sources
               (name, source_type, endpoint, enabled, headers, query, auth_config, cursor_config, timeout_ms, retry_config)
             values
@@ -169,13 +177,13 @@ jobs:
           test "$(echo "$response" | jq -r '.statistics.normalized')" = "1"
           test "$(echo "$response" | jq -r '.statistics.inserted')" = "1"
 
-          docker exec supabase_db_${SUPABASE_PROJECT_ID} psql -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc "
+          docker exec "$db_container" psql -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc "
             select case when execution_mode = 'dry-run' then 1 else 0 end
             from public.explore_import_jobs
             where id = '${job_id}';
           " | grep -qx 1
 
-          docker exec supabase_db_${SUPABASE_PROJECT_ID} psql -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc "
+          docker exec "$db_container" psql -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc "
             select case
               when action = 'insert'
                and review_status = 'pending'
