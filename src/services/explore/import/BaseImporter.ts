@@ -16,34 +16,22 @@ export abstract class BaseImporter<TRaw = unknown> implements ImportConnector<TR
 
   async download(context: ImportContext): Promise<unknown> {
     const url = new URL(this.config.endpoint);
-    for (const [key, value] of Object.entries(this.config.query ?? {})) {
-      url.searchParams.set(key, value);
-    }
-    if (this.config.cursor?.value) {
-      url.searchParams.set(this.config.cursor.field, this.config.cursor.value);
-    }
+    for (const [key, value] of Object.entries(this.config.query ?? {})) url.searchParams.set(key, value);
+    if (this.config.cursor?.value) url.searchParams.set(this.config.cursor.field, this.config.cursor.value);
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.config.timeoutMs ?? 30_000);
-    const signal = context.signal
-      ? AbortSignal.any([context.signal, controller.signal])
-      : controller.signal;
+    const signal = context.signal ? AbortSignal.any([context.signal, controller.signal]) : controller.signal;
 
     try {
       const response = await this.withRetry(async () => {
-        const result = await fetch(url, {
-          headers: await this.buildHeaders(),
-          signal,
-        });
+        const result = await fetch(url, { headers: await this.buildHeaders(), signal });
         if (!result.ok) {
           const body = await result.text().catch(() => "");
-          throw new Error(
-            `Import download failed (${result.status} ${result.statusText})${body ? `: ${body.slice(0, 500)}` : ""}`,
-          );
+          throw new Error(`Import download failed (${result.status} ${result.statusText})${body ? `: ${body.slice(0, 500)}` : ""}`);
         }
         return result;
       });
-
       const contentType = response.headers.get("content-type") ?? "";
       return contentType.includes("json") ? response.json() : response.text();
     } finally {
@@ -86,11 +74,9 @@ export abstract class BaseImporter<TRaw = unknown> implements ImportConnector<TR
   protected async buildHeaders(): Promise<HeadersInit> {
     const headers = new Headers(this.config.headers);
     headers.set("accept", headers.get("accept") ?? "application/json");
-
     const auth = this.config.auth;
     if (!auth || auth.type === "none") return headers;
     if (!auth.secretName) throw new Error(`Missing secretName for ${auth.type} authentication`);
-
     const secret = this.readSecret(auth.secretName);
     if (auth.type === "bearer") headers.set("authorization", `Bearer ${secret}`);
     if (auth.type === "api-key") headers.set("x-api-key", secret);
@@ -99,11 +85,11 @@ export abstract class BaseImporter<TRaw = unknown> implements ImportConnector<TR
   }
 
   protected readSecret(name: string): string {
-    const value = typeof Deno !== "undefined"
-      ? Deno.env.get(name)
-      : typeof process !== "undefined"
-        ? process.env[name]
-        : undefined;
+    const runtime = globalThis as typeof globalThis & {
+      Deno?: { env?: { get?: (key: string) => string | undefined } };
+      process?: { env?: Record<string, string | undefined> };
+    };
+    const value = runtime.Deno?.env?.get?.(name) ?? runtime.process?.env?.[name];
     if (!value) throw new Error(`Required import secret ${name} is not configured`);
     return value;
   }
