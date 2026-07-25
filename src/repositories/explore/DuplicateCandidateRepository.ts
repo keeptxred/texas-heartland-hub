@@ -48,6 +48,21 @@ export interface ResolveExploreDuplicateCandidateInput {
   resolvedByUserId?: string | null;
 }
 
+export interface MergeExploreDuplicateCandidateInput {
+  survivorEntityId: string;
+  mergedEntityId: string;
+  resolutionNotes?: string | null;
+  resolvedByUserId?: string | null;
+}
+
+export interface ExploreEntityMergeResult {
+  candidateId: string;
+  survivorEntityId: string;
+  mergedEntityId: string;
+  archivedSlug: string;
+  mergedAt: string;
+}
+
 interface DuplicateCandidateRow {
   id: string;
   entity_a_id: string;
@@ -176,6 +191,35 @@ export class DuplicateCandidateRepository {
     }
 
     return mapDuplicateCandidateRow(data as unknown as DuplicateCandidateRow);
+  }
+
+  async merge(
+    candidateId: string,
+    input: MergeExploreDuplicateCandidateInput,
+  ): Promise<ExploreEntityMergeResult> {
+    const { data, error } = await this.client.rpc('explore_merge_duplicate_candidate', {
+      p_candidate_id: candidateId,
+      p_survivor_entity_id: input.survivorEntityId,
+      p_merged_entity_id: input.mergedEntityId,
+      p_resolution_notes: input.resolutionNotes?.trim() || null,
+      p_resolved_by_user_id: input.resolvedByUserId ?? null,
+    });
+
+    if (error) throw error;
+
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      throw new Error('Explore entity merge completed without a valid result payload.');
+    }
+
+    const result = data as Record<string, unknown>;
+
+    return {
+      candidateId: String(result.candidateId),
+      survivorEntityId: String(result.survivorEntityId),
+      mergedEntityId: String(result.mergedEntityId),
+      archivedSlug: String(result.archivedSlug),
+      mergedAt: String(result.mergedAt),
+    };
   }
 }
 
