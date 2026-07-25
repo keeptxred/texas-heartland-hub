@@ -49,142 +49,6 @@ function minWordsForItem(it: Item, rw: Rewrite | null): number {
 // Image-bucket taxonomy. Kept in sync with CATEGORY_IMAGE_POOLS in
 // src/lib/fallback-images.ts. AI batch classifier tags each new article with
 // one of these so the render layer can pick a matching free stock photo.
-const IMAGE_BUCKETS = ["food", "sports", "politics", "business", "weather", "technology", "default"] as const;
-type ImageBucket = (typeof IMAGE_BUCKETS)[number];
-
-/**
- * ONE Gemini call per ingestion batch. Sends only {id, title, dek} — never the
- * full body — and asks for a JSON map of id -> image bucket. Cached in
- * daily_articles.image_category so we never re-classify the same article.
- */
-async function classifyImageBuckets(
-  rows: { slug: string; title: string; dek: string }[],
-  lovableApiKey: string,
-): Promise<Record<string, ImageBucket>> {
-  if (rows.length === 0) return {};
-  const payload = rows.map((r) => ({ id: r.slug, title: r.title.slice(0, 180), summary: (r.dek || "").slice(0, 200) }));
-  try {
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content:
-              "Classify each article into ONE image category: food, sports, politics, business, weather, technology, default. Use 'default' when nothing fits. Return JSON object mapping id -> category. No prose.",
-          },
-          { role: "user", content: JSON.stringify(payload) },
-        ],
-        response_format: { type: "json_object" },
-      }),
-      signal: AbortSignal.timeout(20000),
-    });
-    if (!r.ok) return {};
-    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Record<string, string>;
-    const out: Record<string, ImageBucket> = {};
-    for (const [id, cat] of Object.entries(parsed)) {
-      const c = String(cat).toLowerCase().trim() as ImageBucket;
-      if ((IMAGE_BUCKETS as readonly string[]).includes(c)) out[id] = c;
-    }
-    return out;
-  } catch {
-    return {};
-  }
-}
-
-/**
- * ONE Gemini call per ingestion batch. Sends ONLY {id, title} — never the
- * body — and asks for SEO-optimized Google Discover headlines. Cached in
- * daily_articles.seo_headline so the frontend never reprocesses.
- */
-async function rewriteHeadlinesBatch(
-  rows: { slug: string; title: string }[],
-  lovableApiKey: string,
-): Promise<Record<string, string>> {
-  if (rows.length === 0) return {};
-  const payload = rows.map((r) => ({ id: r.slug, title: r.title.slice(0, 200) }));
-  try {
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content:
-              "Rewrite each headline to be SEO-friendly and optimized for Google Discover. Rules: no clickbait, keep factual accuracy, improve clarity and search relevance, front-load the key topic (Texas, Houston, BBQ, Election, etc.), active voice, 50-90 characters preferred. Return JSON object mapping id -> rewritten_headline. No prose.",
-          },
-          { role: "user", content: JSON.stringify(payload) },
-        ],
-        response_format: { type: "json_object" },
-      }),
-      signal: AbortSignal.timeout(20000),
-    });
-    if (!r.ok) return {};
-    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Record<string, unknown>;
-    const out: Record<string, string> = {};
-    for (const [id, headline] of Object.entries(parsed)) {
-      const h = String(headline ?? "").trim();
-      if (h.length >= 15 && h.length <= 140) out[id] = h;
-    }
-    return out;
-  } catch {
-    return {};
-  }
-}
-
-/**
- * ONE Gemini call per ingestion batch. Generates 2 factual headline variants
- * (A = SEO-focused, B = direct) for cheap A/B testing at render time. Never
- * called per-request; result cached in daily_articles.headline_variants.
- */
-async function generateHeadlineVariantsBatch(
-  rows: { slug: string; title: string }[],
-  lovableApiKey: string,
-): Promise<Record<string, HeadlineVariants>> {
-  if (rows.length === 0) return {};
-  const payload = rows.map((r) => ({ id: r.slug, title: r.title.slice(0, 200) }));
-  try {
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
-      body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
-        messages: [
-          {
-            role: "system",
-            content:
-              "Create 2 headline versions for each article optimized for Google Discover CTR. Rules: both must be factual (no clickbait exaggeration); variant 'a' is slightly more SEO-focused (front-loads key entity/topic, 50-90 chars); variant 'b' is more direct and conversational (shorter, punchier). Return JSON object: { id: { a: '...', b: '...' } }. No prose.",
-          },
-          { role: "user", content: JSON.stringify(payload) },
-        ],
-        response_format: { type: "json_object" },
-      }),
-      signal: AbortSignal.timeout(20000),
-    });
-    if (!r.ok) return {};
-    const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-    const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Record<string, unknown>;
-    const out: Record<string, HeadlineVariants> = {};
-    for (const [id, v] of Object.entries(parsed)) {
-      const obj = v as { a?: unknown; b?: unknown };
-      const a = String(obj?.a ?? "").trim();
-      const b = String(obj?.b ?? "").trim();
-      if (a.length >= 15 && a.length <= 140 && b.length >= 15 && b.length <= 140) {
-        out[id] = { a, b };
-      }
-    }
-    return out;
-  } catch {
-    return {};
-  }
-}
-
 // Hard-coded official Texas RSS feeds. Preserved as a fallback (and always
 // merged with enabled content_sources rows) so ingestion keeps working even
 // if the Source Library is empty or the DB read fails.
@@ -193,7 +57,11 @@ const HARDCODED_SOURCES: { name: string; url: string; category?: string }[] = [
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml" },
   { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml" },
   // Non-Political feed group: human-interest, culture, parks, lifestyle, viral.
-  { name: "Texas Parks & Wildlife", url: "https://tpwd.texas.gov/newsmedia/releases/rss/", category: "Non-Political" },
+  {
+    name: "Texas Parks & Wildlife",
+    url: "https://tpwd.texas.gov/newsmedia/releases/rss/",
+    category: "Non-Political",
+  },
   { name: "Texas Monthly", url: "https://www.texasmonthly.com/feed/", category: "Non-Political" },
   { name: "Texas Standard", url: "https://www.texasstandard.org/feed/", category: "Non-Political" },
 ];
@@ -203,9 +71,22 @@ type IngestSource = { name: string; url: string; category?: string };
 // Merge hard-coded official sources with any enabled content_sources rows that
 // declare an rss_url. Dedupe by feed URL (case-insensitive). The Source Library
 // is additive — it never removes an official feed.
-async function loadSources(
-  supabaseAdmin: { from: (t: string) => { select: (c: string) => { eq: (col: string, val: unknown) => { not: (col: string, op: string, val: unknown) => Promise<{ data: unknown; error: { message: string } | null }> } } } },
-): Promise<{ sources: IngestSource[]; enabledDbCount: number }> {
+async function loadSources(supabaseAdmin: {
+  from: (t: string) => {
+    select: (c: string) => {
+      eq: (
+        col: string,
+        val: unknown,
+      ) => {
+        not: (
+          col: string,
+          op: string,
+          val: unknown,
+        ) => Promise<{ data: unknown; error: { message: string } | null }>;
+      };
+    };
+  };
+}): Promise<{ sources: IngestSource[]; enabledDbCount: number }> {
   const list: IngestSource[] = [...HARDCODED_SOURCES];
   const seen = new Set(list.map((s) => s.url.toLowerCase()));
   let enabledDbCount = 0;
@@ -218,7 +99,11 @@ async function loadSources(
     if (error) {
       console.warn("[ingest-feeds] content_sources load failed:", error.message);
     } else if (Array.isArray(data)) {
-      const rows = data as { source_name: string; rss_url: string | null; category: string | null }[];
+      const rows = data as {
+        source_name: string;
+        rss_url: string | null;
+        category: string | null;
+      }[];
       enabledDbCount = rows.length;
       for (const r of rows) {
         const url = (r.rss_url ?? "").trim();
@@ -260,7 +145,14 @@ function pick(block: string, tag: string): string {
   return m ? decode(m[1]) : "";
 }
 
-type Item = { title: string; link: string; pub_date: string; source: string; description: string; category?: string };
+type Item = {
+  title: string;
+  link: string;
+  pub_date: string;
+  source: string;
+  description: string;
+  category?: string;
+};
 
 function slugify(s: string): string {
   return s
@@ -297,6 +189,55 @@ function hashStr(s: string): string {
   return Math.abs(h).toString(36).slice(0, 6);
 }
 
+type ImageBucket =
+  "food" | "sports" | "politics" | "business" | "weather" | "technology" | "default";
+
+function deterministicImageBucket(title: string, dek: string): ImageBucket {
+  const text = `${title} ${dek}`.toLowerCase();
+  if (/\b(food|restaurant|recipe|barbecue|bbq)\b/.test(text)) return "food";
+  if (/\b(sport|football|baseball|basketball|soccer|team|game)\b/.test(text)) return "sports";
+  if (/\b(election|governor|legislature|senate|house|campaign|politic)\b/.test(text))
+    return "politics";
+  if (/\b(business|company|economy|jobs|market|tax)\b/.test(text)) return "business";
+  if (/\b(weather|storm|hurricane|tornado|flood|heat)\b/.test(text)) return "weather";
+  if (/\b(technology|tech|software|ai|energy|ercot|grid)\b/.test(text)) return "technology";
+  return "default";
+}
+
+async function classifyImageBuckets(
+  rows: { slug: string; title: string; dek: string }[],
+  _lovableApiKey: string,
+): Promise<Record<string, ImageBucket>> {
+  return Object.fromEntries(
+    rows.map((row) => [row.slug, deterministicImageBucket(row.title, row.dek)]),
+  );
+}
+
+async function rewriteHeadlinesBatch(
+  rows: { slug: string; title: string }[],
+  _lovableApiKey: string,
+): Promise<Record<string, string>> {
+  return Object.fromEntries(rows.map((row) => [row.slug, neutralizeFirstPersonTitle(row.title)]));
+}
+
+async function generateHeadlineVariantsBatch(
+  rows: { slug: string; title: string }[],
+  _lovableApiKey: string,
+): Promise<Record<string, HeadlineVariants>> {
+  return Object.fromEntries(rows.map((row) => [row.slug, { a: row.title, b: row.title }]));
+}
+
+async function contentFingerprint(it: Item): Promise<string> {
+  const normalized = [
+    it.link.trim().toLowerCase(),
+    it.title.trim().replace(/\s+/g, " ").toLowerCase(),
+    it.pub_date.slice(0, 10),
+    it.description.trim().replace(/\s+/g, " "),
+  ].join("\n");
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(normalized));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
 const ALLOWED_CATEGORIES = [
   "Politics",
   "Elections",
@@ -313,7 +254,8 @@ function categoryFor(source: string): string {
   if (s.includes("governor")) return "Politics";
   if (s.includes("secretary")) return "Elections";
   if (s.includes("register")) return "Laws";
-  if (s.includes("parks") || s.includes("monthly") || s.includes("standard")) return "Non-Political";
+  if (s.includes("parks") || s.includes("monthly") || s.includes("standard"))
+    return "Non-Political";
   return "Legislature";
 }
 
@@ -420,7 +362,9 @@ async function fetchRedditSelftext(link: string): Promise<string | null> {
       signal: AbortSignal.timeout(8000),
     });
     if (!r.ok) return null;
-    const data = (await r.json()) as Array<{ data?: { children?: Array<{ data?: { selftext?: string } }> } }>;
+    const data = (await r.json()) as Array<{
+      data?: { children?: Array<{ data?: { selftext?: string } }> };
+    }>;
     const selftext = data?.[0]?.data?.children?.[0]?.data?.selftext ?? "";
     const cleaned = selftext.replace(/\s+/g, " ").trim();
     return cleaned.length > 0 ? cleaned : null;
@@ -601,7 +545,11 @@ function rewriteMainProseWordCount(rw: Rewrite): number {
 // like TPWD press releases are 100–200 words, so a single-shot rewrite rarely
 // clears the 2,000-word non-evergreen floor. This pass grows the draft
 // section-by-section using the same source facts.
-async function expandRewrite(it: Item, prior: Rewrite, lovableApiKey: string): Promise<Rewrite | null> {
+async function expandRewrite(
+  it: Item,
+  prior: Rewrite,
+  lovableApiKey: string,
+): Promise<Rewrite | null> {
   const currentWords = rewriteMainProseWordCount(prior);
   const need = NON_EVERGREEN_MIN_MAIN_WORDS - currentWords;
   if (need <= 0) return prior;
@@ -628,7 +576,9 @@ async function expandRewrite(it: Item, prior: Rewrite, lovableApiKey: string): P
     const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as Rewrite;
     if (!parsed?.title || !parsed?.summary || !parsed?.dek || !parsed?.relevance) return null;
     parsed.dek = parsed.dek.slice(0, 155);
-    parsed.keywords = (parsed.keywords ?? prior.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
+    parsed.keywords = (parsed.keywords ?? prior.keywords ?? [])
+      .slice(0, 10)
+      .map((k) => String(k).toLowerCase());
     parsed.keyTakeaways = (parsed.keyTakeaways ?? prior.keyTakeaways ?? []).slice(0, 5);
     parsed.sections = (parsed.sections ?? [])
       .filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0)
@@ -639,28 +589,21 @@ async function expandRewrite(it: Item, prior: Rewrite, lovableApiKey: string): P
   }
 }
 
-// Rewrite pipeline: first pass drafts, then up to two expansion passes grow
-// the article until it clears the non-evergreen minimum word count.
-// Transient AI-gateway failures also get one retry on the initial draft.
+// One draft and, only when needed, one expansion. A failed paid call is left
+// for a deliberate manual retry instead of being multiplied automatically.
 async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
   let draft = await rewriteItem(it, lovableApiKey);
   if (!draft) {
-    await new Promise((res) => setTimeout(res, 600));
-    draft = await rewriteItem(it, lovableApiKey);
-  }
-  if (!draft) {
-    console.warn("[ingest-feeds] rewrite failed after retry", { source: it.source, link: it.link });
+    console.warn("[publishSingleFeedItem] rewrite failed", { source: it.source, link: it.link });
     return null;
   }
   const target = minWordsForItem(it, draft);
   // Only expand when the first pass is short AND we can add real Texas
   // value. Expansion is skipped once the draft clears the tiered minimum,
   // avoiding filler paragraphs written solely to hit a word count.
-  for (let pass = 0; pass < 2; pass++) {
-    if (rewriteMainProseWordCount(draft) >= target) return draft;
+  if (rewriteMainProseWordCount(draft) < target) {
     const expanded = await expandRewrite(it, draft, lovableApiKey);
-    if (!expanded) break;
-    draft = expanded;
+    if (expanded) draft = expanded;
   }
   const finalWords = rewriteMainProseWordCount(draft);
   if (finalWords < target) {
@@ -682,12 +625,17 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
   const baseTitle = rw?.title ?? it.title;
   const slug = `live-${datePrefix}-${slugify(baseTitle)}-${hashStr(it.link)}`;
   const aiCat =
-    rw?.category && (ALLOWED_CATEGORIES as readonly string[]).includes(rw.category) ? rw.category : null;
+    rw?.category && (ALLOWED_CATEGORIES as readonly string[]).includes(rw.category)
+      ? rw.category
+      : null;
   const cat = aiCat ?? it.category ?? categoryFor(it.source);
   const sections: { heading: string; paragraphs: string[] }[] = [
     {
       heading: "Texas relevance",
-      paragraphs: [rw?.relevance ?? `This update from the ${it.source} affects Texans and is being tracked by the Keep TX Red newsroom.`],
+      paragraphs: [
+        rw?.relevance ??
+          `This update from the ${it.source} affects Texans and is being tracked by the Keep TX Red newsroom.`,
+      ],
     },
   ];
   for (const section of rw?.sections ?? []) {
@@ -821,11 +769,20 @@ async function handler() {
   const all = allRaw.filter(isTexasRelevantItem);
   const droppedNonTexas = preRelevanceCount - all.length;
   if (droppedNonTexas > 0) {
-    console.log(`[ingest-feeds] dropped ${droppedNonTexas} non-Texas items (relevance < ${TEXAS_RELEVANCE_MIN})`);
+    console.log(
+      `[ingest-feeds] dropped ${droppedNonTexas} non-Texas items (relevance < ${TEXAS_RELEVANCE_MIN})`,
+    );
   }
   const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
-  const okSources = results.filter((r) => (r as { status?: number }).status && (r as { status: number }).status >= 200 && (r as { status: number }).status < 300).length;
-  console.log(`[ingest-feeds] fetched ${all.length} items from ${okSources}/${SOURCES.length} sources`);
+  const okSources = results.filter(
+    (r) =>
+      (r as { status?: number }).status &&
+      (r as { status: number }).status >= 200 &&
+      (r as { status: number }).status < 300,
+  ).length;
+  console.log(
+    `[ingest-feeds] fetched ${all.length} items from ${okSources}/${SOURCES.length} sources`,
+  );
   if (all.length === 0) {
     return new Response(JSON.stringify({ ok: true, inserted: 0, fetched: 0, diag }), {
       headers: { "Content-Type": "application/json" },
@@ -856,7 +813,32 @@ async function handler() {
     }
     inserted = count ?? fresh.length;
   }
-  console.log(`[ingest-feeds] imported ${inserted} new items into texas_news_feed (fresh=${fresh.length})`);
+  console.log(
+    `[ingest-feeds] imported ${inserted} new items into texas_news_feed (fresh=${fresh.length})`,
+  );
+
+  // Ingestion is intentionally storage-only. AI generation is reserved for
+  // publishSingleFeedItem(), which is called by the explicit admin publish
+  // action after extraction and preflight. Do not add orphan/backfill rewrite
+  // work below this boundary: cron frequency must never determine AI spend.
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      fetched: all.length,
+      candidates: fresh.length,
+      inserted,
+      nativeMinted: 0,
+      aiCalls: 0,
+      diag,
+    }),
+    { headers: { "Content-Type": "application/json" } },
+  );
+
+  /*
+   * Legacy automatic minting remains below temporarily for history clarity,
+   * but is unreachable by design. It will be deleted after the storage-only
+   * behavior has been deployed and observed.
+   */
 
   // Mint a native Keep TX Red article for every freshly ingested feed item so
   // Happening Now only ever links to internal /news/{slug} URLs.
@@ -880,7 +862,7 @@ async function handler() {
     // the request budget; unbounded Promise.all caused every fetch to abort.
     stageCounts.rewriteAttempted = lovableApiKey ? fresh.length : 0;
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await mapWithConcurrency(fresh, 4, (it) => rewriteItemWithRetry(it, lovableApiKey))
+      ? await mapWithConcurrency(fresh, 4, (it) => rewriteItemWithRetry(it, lovableApiKey!))
       : fresh.map(() => null);
     for (const r of rewrites) {
       if (r) stageCounts.rewriteSucceeded++;
@@ -921,14 +903,14 @@ async function handler() {
     const imageMap = lovableApiKey
       ? await classifyImageBuckets(
           articleRows.map((r) => ({ slug: r.slug, title: r.title, dek: r.dek })),
-          lovableApiKey,
+          lovableApiKey!,
         )
       : {};
     // ONE AI call rewrites the batch's headlines for SEO/Discover (cached in DB).
     const seoMap = lovableApiKey
       ? await rewriteHeadlinesBatch(
           articleRows.map((r) => ({ slug: r.slug, title: r.title })),
-          lovableApiKey,
+          lovableApiKey!,
         )
       : {};
     for (const row of articleRows) {
@@ -949,7 +931,7 @@ async function handler() {
             slug: r.slug,
             title: (r as { seo_headline?: string | null }).seo_headline ?? r.title,
           })),
-          lovableApiKey,
+          lovableApiKey!,
         )
       : {};
 
@@ -1011,7 +993,14 @@ async function handler() {
     if (uniqueArticleRows.length === 0) {
       console.log("[ingest-feeds] all articles deduped", stageCounts);
       return new Response(
-        JSON.stringify({ ok: true, inserted, nativeMinted: 0, skipped: fresh.length, dedupedAll: true, stageCounts }),
+        JSON.stringify({
+          ok: true,
+          inserted,
+          nativeMinted: 0,
+          skipped: fresh.length,
+          dedupedAll: true,
+          stageCounts,
+        }),
         { headers: { "Content-Type": "application/json" } },
       );
     }
@@ -1020,13 +1009,18 @@ async function handler() {
       .from("daily_articles")
       .upsert(uniqueArticleRows, { onConflict: "slug", ignoreDuplicates: true, count: "exact" });
     if (artErr) {
-      console.error("[ingest-feeds] daily_articles upsert failed", { message: artErr.message, count: uniqueArticleRows.length });
+      console.error("[ingest-feeds] daily_articles upsert failed", {
+        message: artErr?.message,
+        count: uniqueArticleRows.length,
+      });
     }
     if (!artErr) {
       nativeMinted = artCount ?? uniqueArticleRows.length;
       stageCounts.articlesUpserted = nativeMinted;
       await Promise.allSettled(
-        uniqueArticleRows.map((row: { slug: string }) => generateFeaturedImageForSlugDirect(row.slug, true)),
+        uniqueArticleRows.map((row: { slug: string }) =>
+          generateFeaturedImageForSlugDirect(row.slug, true),
+        ),
       );
       // Write the internal slug back onto the feed row so cards can link to it.
       const linkResults = await Promise.all(
@@ -1040,10 +1034,17 @@ async function handler() {
             .then((r) => ({ ok: !r.error, error: r.error?.message }));
         }),
       );
-      stageCounts.internalSlugsLinked = linkResults.filter((r) => (r as { ok?: boolean }).ok).length;
-      const linkErrors = linkResults.filter((r) => (r as { ok?: boolean }).ok === false && (r as { error?: string }).error);
+      stageCounts.internalSlugsLinked = linkResults.filter(
+        (r) => (r as { ok?: boolean }).ok,
+      ).length;
+      const linkErrors = linkResults.filter(
+        (r) => (r as { ok?: boolean }).ok === false && (r as { error?: string }).error,
+      );
       if (linkErrors.length > 0) {
-        console.error("[ingest-feeds] internal_slug writeback errors", { count: linkErrors.length, sample: linkErrors.slice(0, 3) });
+        console.error("[ingest-feeds] internal_slug writeback errors", {
+          count: linkErrors.length,
+          sample: linkErrors.slice(0, 3),
+        });
       }
     }
     console.log("[ingest-feeds] batch complete", stageCounts);
@@ -1055,9 +1056,9 @@ async function handler() {
     .select("id,title,link,source,description,pub_date")
     .is("internal_slug", null)
     .limit(25);
-  if (orphans && orphans.length > 0) {
+  if (orphans?.length) {
     const lovableApiKey = process.env.LOVABLE_API_KEY;
-    const items: Item[] = orphans.map((row) => ({
+    const items: Item[] = orphans!.map((row) => ({
       title: row.title,
       link: row.link,
       source: row.source,
@@ -1065,7 +1066,7 @@ async function handler() {
       description: row.description ?? "",
     }));
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, lovableApiKey))
+      ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, lovableApiKey!))
       : items.map(() => null);
     console.log("[ingest-feeds] orphan backfill", {
       candidates: items.length,
@@ -1103,7 +1104,10 @@ async function handler() {
       );
       await Promise.all(
         backPaired.map(({ it, row }) =>
-          supabaseAdmin.from("texas_news_feed").update({ internal_slug: row.slug }).eq("link", it.link),
+          supabaseAdmin
+            .from("texas_news_feed")
+            .update({ internal_slug: row.slug })
+            .eq("link", it.link),
         ),
       );
     }
@@ -1136,17 +1140,17 @@ async function handler() {
         .not("source_url", "is", null)
         .order("published_at", { ascending: false, nullsFirst: false })
         .limit(1000);
-      if (dupes && dupes.length > 0) {
+      if (dupes?.length) {
         // Group by canonical source_url; keep the newest (list is already
         // sorted desc by published_at), mark strictly older siblings for
         // deletion. Rows without a source_url were excluded above.
         const seen = new Set<string>();
         const toDelete: string[] = [];
-        for (const row of dupes as { id: string; slug: string; source_url: string | null }[]) {
+        for (const row of dupes! as { id: string; slug: string; source_url: string | null }[]) {
           const key = row.source_url;
           if (!key) continue;
-          if (seen.has(key)) toDelete.push(row.id);
-          else seen.add(key);
+          if (seen.has(key!)) toDelete.push(row.id);
+          else seen.add(key!);
         }
         if (toDelete.length > 0) {
           // Safety rule 2: never delete more than 10% of daily_articles in a
@@ -1172,7 +1176,17 @@ async function handler() {
   }
 
   return new Response(
-    JSON.stringify({ ok: true, fetched: all.length, candidates: fresh.length, inserted, nativeMinted, dedupedCanonical, dedupeSkippedReason, stageCounts, diag }),
+    JSON.stringify({
+      ok: true,
+      fetched: all.length,
+      candidates: fresh.length,
+      inserted,
+      nativeMinted,
+      dedupedCanonical,
+      dedupeSkippedReason,
+      stageCounts,
+      diag,
+    }),
     { headers: { "Content-Type": "application/json" } },
   );
 }
@@ -1311,10 +1325,7 @@ export async function publishSingleFeedItem(
     .from("texas_news_feed")
     .update({
       extracted_body: extractedBody || null,
-      preflight_json: toPersistedSnapshot(
-        preflight,
-        preflight.rewriteable ? "none" : "preflight",
-      ),
+      preflight_json: toPersistedSnapshot(preflight, preflight.rewriteable ? "none" : "preflight"),
     } as never)
     .eq("id", feedItemId);
 
@@ -1330,7 +1341,79 @@ export async function publishSingleFeedItem(
   // can prove the rewrite mock is never reached.
   assertRewriteableOrThrow(preflight);
 
-  const rw = await rewriteItemWithRetry(item, lovableApiKey);
+  const fingerprint = await contentFingerprint(item);
+  // Generated database types are refreshed after the migration is applied.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cacheClient = supabaseAdmin as any;
+  const { data: cachedRow } = await cacheClient
+    .from("ai_rewrite_cache")
+    .select("result_json,status")
+    .eq("content_fingerprint", fingerprint)
+    .maybeSingle();
+  const cached = cachedRow as unknown as { result_json?: Rewrite | null; status?: string } | null;
+  let rw = cached?.status === "completed" && cached.result_json ? cached.result_json : null;
+
+  if (!rw) {
+    const configuredLimit = Number.parseInt(process.env.DAILY_AI_REWRITE_LIMIT ?? "8", 10);
+    const dailyLimit = Number.isFinite(configuredLimit)
+      ? Math.min(50, Math.max(1, configuredLimit))
+      : 8;
+    const { data: claimData, error: claimError } = await supabaseAdmin.rpc(
+      "claim_ai_rewrite_slot" as never,
+      {
+        p_content_fingerprint: fingerprint,
+        p_feed_item_id: feedItemId,
+        p_daily_limit: dailyLimit,
+      } as never,
+    );
+    if (claimError) {
+      return { ok: false, error: `Could not reserve AI rewrite budget: ${claimError.message}` };
+    }
+    const claim = claimData as unknown as string;
+    if (claim === "budget_exhausted") {
+      return {
+        ok: false,
+        error: `Daily AI rewrite budget reached (${dailyLimit}). Try again after midnight UTC.`,
+      };
+    }
+    if (claim === "in_progress") {
+      return {
+        ok: false,
+        error: "This source is already being rewritten. Try again in a few minutes.",
+      };
+    }
+    if (claim === "cached") {
+      const { data: refreshedRow } = await cacheClient
+        .from("ai_rewrite_cache")
+        .select("result_json")
+        .eq("content_fingerprint", fingerprint)
+        .maybeSingle();
+      rw =
+        (refreshedRow as unknown as { result_json?: Rewrite | null } | null)?.result_json ?? null;
+    } else {
+      rw = await rewriteItemWithRetry(item, lovableApiKey);
+      const cacheUpdate = rw
+        ? {
+            status: "completed",
+            result_json: rw,
+            failure_reason: null,
+            completed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          }
+        : {
+            status: "failed",
+            result_json: null,
+            failure_reason: "AI rewrite failed",
+            completed_at: null,
+            updated_at: new Date().toISOString(),
+          };
+      await cacheClient
+        .from("ai_rewrite_cache")
+        .update(cacheUpdate as never)
+        .eq("content_fingerprint", fingerprint);
+    }
+  }
+
   if (!rw) return { ok: false, error: "AI rewrite failed" };
   void PreflightBlockedError; // keep type import referenced for downstream callers
 
@@ -1338,7 +1421,10 @@ export async function publishSingleFeedItem(
   const target = minWordsForItem(item, rw);
   const words = articleMainWordCount(articleRow.body_json);
   if (words < target) {
-    return { ok: false, error: `Rewrite below tiered minimum (${words}/${target} words). Try again.` };
+    return {
+      ok: false,
+      error: `Rewrite below tiered minimum (${words}/${target} words). Try again.`,
+    };
   }
   enrichArticleRow(articleRow);
 
