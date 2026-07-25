@@ -16,19 +16,25 @@ export abstract class BaseImporter<TRaw = unknown> implements ImportConnector<TR
 
   async download(context: ImportContext): Promise<unknown> {
     const url = new URL(this.config.endpoint);
-    for (const [key, value] of Object.entries(this.config.query ?? {})) url.searchParams.set(key, value);
-    if (this.config.cursor?.value) url.searchParams.set(this.config.cursor.field, this.config.cursor.value);
+    for (const [key, value] of Object.entries(this.config.query ?? {}))
+      url.searchParams.set(key, value);
+    if (this.config.cursor?.value)
+      url.searchParams.set(this.config.cursor.field, this.config.cursor.value);
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.config.timeoutMs ?? 30_000);
-    const signal = context.signal ? AbortSignal.any([context.signal, controller.signal]) : controller.signal;
+    const signal = context.signal
+      ? AbortSignal.any([context.signal, controller.signal])
+      : controller.signal;
 
     try {
       const response = await this.withRetry(async () => {
         const result = await fetch(url, { headers: await this.buildHeaders(), signal });
         if (!result.ok) {
           const body = await result.text().catch(() => "");
-          throw new Error(`Import download failed (${result.status} ${result.statusText})${body ? `: ${body.slice(0, 500)}` : ""}`);
+          throw new Error(
+            `Import download failed (${result.status} ${result.statusText})${body ? `: ${body.slice(0, 500)}` : ""}`,
+          );
         }
         return result;
       });
@@ -54,21 +60,25 @@ export abstract class BaseImporter<TRaw = unknown> implements ImportConnector<TR
   }
 
   checksum(record: ImportEntityDraft): string {
-    return createHash("sha256").update(this.stableStringify({
-      externalId: record.externalId,
-      entityType: record.entityType,
-      name: record.name,
-      description: record.description ?? null,
-      latitude: record.latitude ?? null,
-      longitude: record.longitude ?? null,
-      address: record.address ?? null,
-      taxonomy: [...(record.taxonomy ?? [])].sort(),
-      relationships: record.relationships ?? [],
-      media: record.media ?? [],
-      sourceUpdatedAt: record.sourceUpdatedAt ?? null,
-      sourceUrl: record.sourceUrl ?? null,
-      metadata: record.metadata ?? {},
-    })).digest("hex");
+    return createHash("sha256")
+      .update(
+        this.stableStringify({
+          externalId: record.externalId,
+          entityType: record.entityType,
+          name: record.name,
+          description: record.description ?? null,
+          latitude: record.latitude ?? null,
+          longitude: record.longitude ?? null,
+          address: record.address ?? null,
+          taxonomy: [...(record.taxonomy ?? [])].sort(),
+          relationships: record.relationships ?? [],
+          media: record.media ?? [],
+          sourceUpdatedAt: record.sourceUpdatedAt ?? null,
+          sourceUrl: record.sourceUrl ?? null,
+          metadata: record.metadata ?? {},
+        }),
+      )
+      .digest("hex");
   }
 
   protected async buildHeaders(): Promise<HeadersInit> {
@@ -104,14 +114,17 @@ export abstract class BaseImporter<TRaw = unknown> implements ImportConnector<TR
         lastError = error;
         if (attempt === retry.attempts) break;
         const delay = Math.min(retry.maxDelayMs, retry.baseDelayMs * 2 ** (attempt - 1));
-        await new Promise((resolve) => setTimeout(resolve, delay + Math.floor(Math.random() * 250)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, delay + Math.floor(Math.random() * 250)),
+        );
       }
     }
     throw lastError instanceof Error ? lastError : new Error(String(lastError));
   }
 
   private stableStringify(value: unknown): string {
-    if (Array.isArray(value)) return `[${value.map((item) => this.stableStringify(item)).join(",")}]`;
+    if (Array.isArray(value))
+      return `[${value.map((item) => this.stableStringify(item)).join(",")}]`;
     if (value && typeof value === "object") {
       return `{${Object.entries(value as Record<string, unknown>)
         .sort(([left], [right]) => left.localeCompare(right))

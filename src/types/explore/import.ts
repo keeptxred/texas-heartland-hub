@@ -1,20 +1,37 @@
 import type { Database } from "@/integrations/supabase/types";
 
-export type Json = Database["public"]["Tables"] extends Record<string, never>
-  ? unknown
-  : Database["public"]["Tables"][keyof Database["public"]["Tables"]] extends { Row: infer Row }
-    ? Row extends { metadata?: infer Metadata }
-      ? Metadata
-      : unknown
-    : unknown;
+export type Json =
+  Database["public"]["Tables"] extends Record<string, never>
+    ? unknown
+    : Database["public"]["Tables"][keyof Database["public"]["Tables"]] extends { Row: infer Row }
+      ? Row extends { metadata?: infer Metadata }
+        ? Metadata
+        : unknown
+      : unknown;
 
 export type ImportSourceType =
-  | "tpwd" | "nps" | "usace" | "usfs" | "thc" | "usgs" | "noaa"
-  | "twdb" | "osm" | "county_gis" | "municipality" | "tourism" | "custom";
+  | "tpwd"
+  | "nps"
+  | "usace"
+  | "usfs"
+  | "thc"
+  | "usgs"
+  | "noaa"
+  | "twdb"
+  | "osm"
+  | "county_gis"
+  | "municipality"
+  | "tourism"
+  | "custom";
 
 export type ImportJobStatus =
-  | "queued" | "running" | "completed" | "completed_with_warnings"
-  | "failed" | "cancelled" | "rolled_back";
+  | "queued"
+  | "running"
+  | "completed"
+  | "completed_with_warnings"
+  | "failed"
+  | "cancelled"
+  | "rolled_back";
 
 export type ImportMode = "scheduled" | "manual" | "bulk";
 export type ImportExecutionMode = "live" | "dry-run" | "preview";

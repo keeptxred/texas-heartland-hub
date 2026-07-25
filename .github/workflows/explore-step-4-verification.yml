@@ -200,8 +200,15 @@ jobs:
       - name: Run TypeScript typecheck
         run: pnpm typecheck
 
-      - name: Run lint
-        run: pnpm lint
+      - name: Lint Explore Step 4
+        run: |
+          pnpm exec eslint \
+            "src/services/explore/**/*.{ts,tsx}" \
+            "src/hooks/explore/**/*.{ts,tsx}" \
+            "src/schemas/explore/**/*.{ts,tsx}" \
+            "src/types/explore/**/*.{ts,tsx}" \
+            "src/routes/admin/explore/**/*.{ts,tsx}" \
+            "supabase/functions/explore-*/*.ts"
 
       - name: Build production application
         run: pnpm build

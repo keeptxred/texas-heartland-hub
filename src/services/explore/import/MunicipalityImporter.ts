@@ -1,5 +1,9 @@
 import { BaseImporter } from "./BaseImporter";
-import { extractRecords, normalizeFeature, type JsonRecord } from "@/lib/explore/import/json-feature";
+import {
+  extractRecords,
+  normalizeFeature,
+  type JsonRecord,
+} from "@/lib/explore/import/json-feature";
 import type { ImportContext, ImportEntityDraft, ImportSourceConfig } from "@/types/explore/import";
 
 export class MunicipalityImporter extends BaseImporter<JsonRecord> {
@@ -19,17 +23,25 @@ export class MunicipalityImporter extends BaseImporter<JsonRecord> {
       entityType: typeof metadata.entityType === "string" ? metadata.entityType : "place",
       sourceUrl: context.source.endpoint,
       idFields: stringArray(metadata.idFields, ["id", "facility_id", "location_id", "OBJECTID"]),
-      nameFields: stringArray(metadata.nameFields, ["name", "facility_name", "location_name", "title"]),
-      descriptionFields: stringArray(metadata.descriptionFields, ["description", "summary", "details", "notes"]),
+      nameFields: stringArray(metadata.nameFields, [
+        "name",
+        "facility_name",
+        "location_name",
+        "title",
+      ]),
+      descriptionFields: stringArray(metadata.descriptionFields, [
+        "description",
+        "summary",
+        "details",
+        "notes",
+      ]),
       taxonomy: uniqueStrings(["municipal", ...stringArray(metadata.taxonomy, [])]),
     });
   }
 }
 
 function stringArray(value: unknown, fallback: string[]): string[] {
-  return Array.isArray(value) && value.every((item) => typeof item === "string")
-    ? value
-    : fallback;
+  return Array.isArray(value) && value.every((item) => typeof item === "string") ? value : fallback;
 }
 
 function uniqueStrings(values: string[]): string[] {

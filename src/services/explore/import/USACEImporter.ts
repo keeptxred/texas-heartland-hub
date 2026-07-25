@@ -1,5 +1,9 @@
 import { BaseImporter } from "./BaseImporter";
-import { extractRecords, normalizeFeature, type JsonRecord } from "@/lib/explore/import/json-feature";
+import {
+  extractRecords,
+  normalizeFeature,
+  type JsonRecord,
+} from "@/lib/explore/import/json-feature";
 import type { ImportContext, ImportEntityDraft, ImportSourceConfig } from "@/types/explore/import";
 
 export class USACEImporter extends BaseImporter<JsonRecord> {

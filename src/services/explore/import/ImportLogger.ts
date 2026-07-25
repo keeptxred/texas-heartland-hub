@@ -22,17 +22,28 @@ export class ImportLogger {
     this.write("warn", message, context);
   }
 
-  error(message: string, error: unknown, context?: Omit<ImportLogEntry, "level" | "message" | "timestamp">): void {
+  error(
+    message: string,
+    error: unknown,
+    context?: Omit<ImportLogEntry, "level" | "message" | "timestamp">,
+  ): void {
     this.write("error", message, {
       ...context,
       context: {
         ...context?.context,
-        error: error instanceof Error ? { name: error.name, message: error.message, stack: error.stack } : String(error),
+        error:
+          error instanceof Error
+            ? { name: error.name, message: error.message, stack: error.stack }
+            : String(error),
       },
     });
   }
 
-  private write(level: ImportLogEntry["level"], message: string, context?: Omit<ImportLogEntry, "level" | "message" | "timestamp">): void {
+  private write(
+    level: ImportLogEntry["level"],
+    message: string,
+    context?: Omit<ImportLogEntry, "level" | "message" | "timestamp">,
+  ): void {
     this.sink({ level, message, timestamp: new Date().toISOString(), ...context });
   }
 }

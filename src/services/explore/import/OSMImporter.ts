@@ -12,10 +12,16 @@ type OSMElement = {
 
 export class OSMImporter extends BaseImporter<OSMElement> {
   readonly sourceType = "osm" as const;
-  constructor(config: ImportSourceConfig) { super(config); }
+  constructor(config: ImportSourceConfig) {
+    super(config);
+  }
 
   async parse(payload: unknown): Promise<OSMElement[]> {
-    if (!payload || typeof payload !== "object" || !Array.isArray((payload as { elements?: unknown }).elements)) {
+    if (
+      !payload ||
+      typeof payload !== "object" ||
+      !Array.isArray((payload as { elements?: unknown }).elements)
+    ) {
       throw new Error("Invalid Overpass API response");
     }
     return (payload as { elements: OSMElement[] }).elements.filter((element) => element.tags?.name);
@@ -25,7 +31,8 @@ export class OSMImporter extends BaseImporter<OSMElement> {
     const tags = record.tags ?? {};
     const latitude = record.lat ?? record.center?.lat ?? null;
     const longitude = record.lon ?? record.center?.lon ?? null;
-    const entityType = tags.leisure === "park" ? "park" : tags.tourism ?? tags.historic ?? "point_of_interest";
+    const entityType =
+      tags.leisure === "park" ? "park" : (tags.tourism ?? tags.historic ?? "point_of_interest");
     return {
       externalId: `${record.type}/${record.id}`,
       entityType,
@@ -34,8 +41,11 @@ export class OSMImporter extends BaseImporter<OSMElement> {
       latitude,
       longitude,
       address: {
-        street: tags["addr:street"], houseNumber: tags["addr:housenumber"],
-        city: tags["addr:city"], state: tags["addr:state"], postcode: tags["addr:postcode"],
+        street: tags["addr:street"],
+        houseNumber: tags["addr:housenumber"],
+        city: tags["addr:city"],
+        state: tags["addr:state"],
+        postcode: tags["addr:postcode"],
       },
       taxonomy: ["openstreetmap", entityType],
       relationships: [],
