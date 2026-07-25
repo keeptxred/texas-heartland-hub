@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { TaxCalculator } from "@/components/tax-calculator";
 import { HomesteadExemptionGuide } from "@/components/homestead-exemption-guide";
 import { COUNTIES } from "@/data/counties";
+import FinancialTrustPanel from "@/components/calculators/FinancialTrustPanel";
 
 const FAQS = [
   {
@@ -289,6 +290,7 @@ function TaxPage() {
           </ul>
         </div>
       </section>
+      <FinancialTrustPanel calculatorName="Texas Property Tax Calculator" propertyTaxRelated />
     </>
   );
 }
