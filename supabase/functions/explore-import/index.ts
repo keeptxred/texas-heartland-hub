@@ -17,12 +17,14 @@ interface SourceRow {
   source_type: string;
   endpoint: string;
   enabled: boolean;
-  headers: Record<string, string> | null;
-  query: Record<string, string> | null;
-  auth_config: { type?: string; secret_name?: string } | null;
-  cursor_config: { field?: string; value?: string } | null;
-  timeout_ms: number | null;
-  retry_config: { attempts?: number; baseDelayMs?: number; maxDelayMs?: number } | null;
+  configuration: {
+    headers?: Record<string, string>;
+    query?: Record<string, string>;
+    auth?: { type?: string; secretName?: string };
+    timeoutMs?: number;
+    retry?: { attempts?: number; baseDelayMs?: number; maxDelayMs?: number };
+  } | null;
+  cursor: { field?: string; value?: string } | null;
 }
 
 function json(body: unknown, status = 200): Response {
@@ -127,17 +129,18 @@ function validate(record: Record<string, unknown>): Array<{ code: string; messag
 }
 
 async function fetchWithRetry(source: SourceRow): Promise<unknown> {
+  const configuration = source.configuration ?? {};
   const url = new URL(source.endpoint);
-  for (const [key, value] of Object.entries(source.query ?? {})) url.searchParams.set(key, String(value));
-  if (source.cursor_config?.field && source.cursor_config.value) {
-    url.searchParams.set(source.cursor_config.field, source.cursor_config.value);
+  for (const [key, value] of Object.entries(configuration.query ?? {})) url.searchParams.set(key, String(value));
+  if (source.cursor?.field && source.cursor.value) {
+    url.searchParams.set(source.cursor.field, source.cursor.value);
   }
 
-  const headers = new Headers(source.headers ?? {});
+  const headers = new Headers(configuration.headers ?? {});
   headers.set("accept", headers.get("accept") ?? "application/json");
-  const auth = source.auth_config;
+  const auth = configuration.auth;
   if (auth?.type && auth.type !== "none") {
-    const secretName = auth.secret_name;
+    const secretName = auth.secretName;
     const secret = secretName ? Deno.env.get(secretName) : undefined;
     if (!secret) throw new Error(`Missing configured secret ${secretName ?? "unknown"}`);
     if (auth.type === "bearer") headers.set("authorization", `Bearer ${secret}`);
@@ -145,7 +148,7 @@ async function fetchWithRetry(source: SourceRow): Promise<unknown> {
     if (auth.type === "basic") headers.set("authorization", `Basic ${btoa(secret)}`);
   }
 
-  const retry = source.retry_config ?? {};
+  const retry = configuration.retry ?? {};
   const attempts = Math.max(1, Number(retry.attempts ?? 3));
   const baseDelay = Math.max(100, Number(retry.baseDelayMs ?? 500));
   const maxDelay = Math.max(baseDelay, Number(retry.maxDelayMs ?? 10_000));
@@ -153,7 +156,7 @@ async function fetchWithRetry(source: SourceRow): Promise<unknown> {
 
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), source.timeout_ms ?? 30_000);
+    const timer = setTimeout(() => controller.abort(), configuration.timeoutMs ?? 30_000);
     try {
       const response = await fetch(url, { headers, signal: controller.signal });
       if (!response.ok) throw new Error(`Source returned ${response.status} ${response.statusText}`);
