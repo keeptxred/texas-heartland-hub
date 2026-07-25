@@ -9,9 +9,9 @@ export const Route = createFileRoute("/authors/")({
       { property: "og:title", content: "Authors & Desks — Keep TX Red" },
       { property: "og:description", content: "Meet the Keep TX Red newsroom — our desks and bureaus covering Texas politics, energy, the border, elections, education, and taxpayers." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://www.keeptxred.com/authors" },
+      { property: "og:url", content: "https://keeptxred.com/authors" },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/authors" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/authors" }],
   }),
   component: AuthorsIndex,
 });

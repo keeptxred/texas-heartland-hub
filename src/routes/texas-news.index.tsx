@@ -4,7 +4,7 @@ import { TexasNewsView } from "@/components/texas-news-view";
 export const Route = createFileRoute("/texas-news/")({
   head: ({ match }) => {
     const topic = (match.search as { topic?: string } | undefined)?.topic ?? "";
-    const canonical = "https://www.keeptxred.com/texas-news";
+    const canonical = "https://keeptxred.com/texas-news";
     return {
       meta: [
         { title: "Texas News & Insights (Culture, Economy, Lifestyle Updates)" },

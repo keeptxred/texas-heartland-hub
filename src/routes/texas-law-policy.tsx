@@ -17,10 +17,10 @@ export const Route = createFileRoute("/texas-law-policy")({
       { name: "description", content: "Texas laws, regulations, public safety, and policy changes — explained for the people who live under them." },
       { property: "og:title", content: "Texas Law & Policy — Keep TX Red" },
       { property: "og:description", content: "Texas laws, regulations, public safety, and policy changes." },
-      { property: "og:url", content: "https://www.keeptxred.com/texas-law-policy" },
+      { property: "og:url", content: "https://keeptxred.com/texas-law-policy" },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/texas-law-policy" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-law-policy" }],
   }),
   component: TexasLawPolicyPage,
 });

@@ -51,7 +51,7 @@ export const Route = createFileRoute("/tax-calculator")({
           "Estimate your 2026 Texas property taxes, homestead exemption savings, and property tax relief programs — free calculator by county and ISD.",
       },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://www.keeptxred.com/tax-calculator" },
+      { property: "og:url", content: "https://keeptxred.com/tax-calculator" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Texas Property Tax Relief Calculator 2026" },
       {
@@ -59,7 +59,7 @@ export const Route = createFileRoute("/tax-calculator")({
         content: "Estimate your 2026 Texas property taxes and homestead exemption savings.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/tax-calculator" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/tax-calculator" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -69,7 +69,7 @@ export const Route = createFileRoute("/tax-calculator")({
           name: "Texas Property Tax Relief Calculator 2026",
           description:
             "Estimate your 2026 Texas property taxes, homestead exemption savings, and property tax relief programs by county and ISD.",
-          url: "https://www.keeptxred.com/tax-calculator",
+          url: "https://keeptxred.com/tax-calculator",
           applicationCategory: "FinanceApplication",
           operatingSystem: "Web",
           offers: { "@type": "Offer", price: "0" },
@@ -93,12 +93,12 @@ export const Route = createFileRoute("/tax-calculator")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
             {
               "@type": "ListItem",
               position: 2,
               name: "Texas Property Tax Calculator",
-              item: "https://www.keeptxred.com/tax-calculator",
+              item: "https://keeptxred.com/tax-calculator",
             },
           ],
         }),

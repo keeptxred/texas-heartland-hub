@@ -23,7 +23,7 @@ export const Route = createFileRoute("/texas-politics")({
     typeof search.topic === "string" && search.topic ? { topic: search.topic } : {},
   head: ({ match }) => {
     const topic = (match.search as { topic?: string } | undefined)?.topic ?? "";
-    const canonical = "https://www.keeptxred.com/texas-politics";
+    const canonical = "https://keeptxred.com/texas-politics";
     return {
       meta: [
         { title: "Texas Politics — Elections, Legislature & Government News" },

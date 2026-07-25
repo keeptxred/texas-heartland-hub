@@ -73,7 +73,7 @@ function ExploreEntityPage() {
     name: entity.name,
     description: entity.summary || undefined,
     image: entity.heroImageUrl || undefined,
-    url: `https://www.keeptxred.com/explore/${entity.slug}`,
+    url: `https://keeptxred.com/explore/${entity.slug}`,
     geo:
       entity.latitude != null && entity.longitude != null
         ? {

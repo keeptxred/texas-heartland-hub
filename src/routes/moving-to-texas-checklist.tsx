@@ -14,7 +14,7 @@ export const Route = createFileRoute("/moving-to-texas-checklist")({
     links: [
       {
         rel: "canonical",
-        href: "https://www.keeptxred.com/moving-to-texas-checklist",
+        href: "https://keeptxred.com/moving-to-texas-checklist",
       },
     ],
   }),

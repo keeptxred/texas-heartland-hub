@@ -6,7 +6,7 @@ export const Route = createFileRoute("/texas-business")({
     typeof search.topic === "string" && search.topic ? { topic: search.topic } : {},
   head: ({ match }) => {
     const topic = (match.search as { topic?: string } | undefined)?.topic ?? "";
-    const canonical = "https://www.keeptxred.com/texas-business";
+    const canonical = "https://keeptxred.com/texas-business";
     return {
       meta: [
         { title: "Texas Business News – Economy, Jobs & Growth Updates" },
