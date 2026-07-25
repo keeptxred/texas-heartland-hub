@@ -1,10 +1,10 @@
-import type { ExploreEntity } from './index';
+import type { ExploreEntity } from "./index";
 
 export const EXPLORE_DUPLICATE_STATUSES = [
-  'pending',
-  'merged',
-  'not_duplicate',
-  'deferred',
+  "pending",
+  "merged",
+  "not_duplicate",
+  "deferred",
 ] as const;
 
 export type ExploreDuplicateStatus = (typeof EXPLORE_DUPLICATE_STATUSES)[number];
@@ -13,8 +13,8 @@ export interface ExploreDuplicateEntitySummary {
   id: string;
   name: string;
   slug: string;
-  status: ExploreEntity['status'];
-  visibility: ExploreEntity['visibility'];
+  status: ExploreEntity["status"];
+  visibility: ExploreEntity["visibility"];
   entityTypeId: string;
   entityTypeKey: string | null;
   entityTypeName: string | null;
@@ -91,15 +91,15 @@ export interface ExploreMergeResult {
 }
 
 export type ExploreMergeErrorCode =
-  | 'unauthenticated'
-  | 'unauthorized'
-  | 'validation'
-  | 'not_found'
-  | 'already_resolved'
-  | 'archived_entity'
-  | 'invalid_survivor'
-  | 'conflict'
-  | 'server_error';
+  | "unauthenticated"
+  | "unauthorized"
+  | "validation"
+  | "not_found"
+  | "already_resolved"
+  | "archived_entity"
+  | "invalid_survivor"
+  | "conflict"
+  | "server_error";
 
 export interface ExploreMergeErrorShape {
   code: ExploreMergeErrorCode;

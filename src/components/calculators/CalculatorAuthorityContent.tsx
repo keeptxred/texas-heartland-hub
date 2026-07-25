@@ -158,7 +158,7 @@ export default function CalculatorAuthorityContent({
             <h3 className="font-semibold">Popular county calculations</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {counties.map(([name, county]) => (
-                <Link key={county} to={`/tax-calculator?county=${county}`} className="rounded-full border px-3 py-2 text-sm font-medium hover:border-primary hover:text-primary">
+                <Link key={county} to="/tax-calculator" search={{ county }} className="rounded-full border px-3 py-2 text-sm font-medium hover:border-primary hover:text-primary">
                   {name}
                 </Link>
               ))}
@@ -168,7 +168,7 @@ export default function CalculatorAuthorityContent({
             <h3 className="font-semibold">Popular Texas city comparisons</h3>
             <div className="mt-3 flex flex-wrap gap-2">
               {cities.map((city) => (
-                <Link key={city} to={`/texas-cost-of-living-calculator?city=${encodeURIComponent(city)}`} className="rounded-full border px-3 py-2 text-sm font-medium hover:border-primary hover:text-primary">
+                <Link key={city} to="/texas-cost-of-living-calculator" search={{ city }} className="rounded-full border px-3 py-2 text-sm font-medium hover:border-primary hover:text-primary">
                   {city}
                 </Link>
               ))}

@@ -1,4 +1,4 @@
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, vi } from "vitest";
 import {
   assessRewritePreflight,
   assertRewriteableOrThrow,
@@ -89,7 +89,7 @@ will receive 42% of the initial 500,000 dollar disbursement.`;
 
 describe("assertRewriteableOrThrow — hard guard before the paid AI call", () => {
   it("throws PreflightBlockedError when preflight is not rewriteable, and never calls the rewrite mock", () => {
-    const rewriteMock = mock(() => Promise.resolve({ ok: true }));
+    const rewriteMock = vi.fn(() => Promise.resolve({ ok: true }));
     const blocked = assessRewritePreflight({
       title: "Short",
       description: SHORT_RSS,

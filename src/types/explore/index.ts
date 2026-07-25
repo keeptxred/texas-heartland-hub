@@ -1,37 +1,37 @@
 export const EXPLORE_ENTITY_STATUSES = [
-  'draft',
-  'imported',
-  'validated',
-  'reviewed',
-  'published',
-  'verified',
-  'archived',
+  "draft",
+  "imported",
+  "validated",
+  "reviewed",
+  "published",
+  "verified",
+  "archived",
 ] as const;
 
-export const EXPLORE_VISIBILITIES = ['internal', 'unlisted', 'public'] as const;
+export const EXPLORE_VISIBILITIES = ["internal", "unlisted", "public"] as const;
 
 export const EXPLORE_ENTITY_TYPE_KEYS = [
-  'state',
-  'region',
-  'county',
-  'city',
-  'lake',
-  'river',
-  'state_park',
-  'national_park',
-  'campground',
-  'historic_site',
-  'trail',
-  'fish',
-  'bird',
-  'wildflower',
-  'tree',
-  'animal',
-  'business',
-  'restaurant',
-  'hotel',
-  'event',
-  'law',
+  "state",
+  "region",
+  "county",
+  "city",
+  "lake",
+  "river",
+  "state_park",
+  "national_park",
+  "campground",
+  "historic_site",
+  "trail",
+  "fish",
+  "bird",
+  "wildflower",
+  "tree",
+  "animal",
+  "business",
+  "restaurant",
+  "hotel",
+  "event",
+  "law",
 ] as const;
 
 export type ExploreEntityStatus = (typeof EXPLORE_ENTITY_STATUSES)[number];
@@ -103,7 +103,7 @@ export interface ExploreRelationship {
   sourceEntityId: string;
   targetEntityId: string;
   weight: number;
-  priority: 'primary' | 'secondary' | 'nearby' | 'regional' | 'suggested';
+  priority: "primary" | "secondary" | "nearby" | "regional" | "suggested";
   metadata: Record<string, unknown>;
   effectiveFrom: string | null;
   effectiveUntil: string | null;
@@ -151,8 +151,6 @@ export interface ExploreEntityCreateInput {
   ownerUserId?: string | null;
 }
 
-export type ExploreEntityUpdateInput = Partial<
-  Omit<ExploreEntityCreateInput, 'entityTypeId'>
-> & {
+export type ExploreEntityUpdateInput = Partial<Omit<ExploreEntityCreateInput, "entityTypeId">> & {
   entityTypeId?: string;
 };

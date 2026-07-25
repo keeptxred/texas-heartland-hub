@@ -153,14 +153,7 @@ CREATE TABLE public.explore_search_index (
   tag_names text[] NOT NULL DEFAULT '{}',
   location_text text,
   searchable_text text NOT NULL DEFAULT '',
-  document tsvector GENERATED ALWAYS AS (
-    setweight(to_tsvector('english', coalesce(name, '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(alternate_names, ' '), '')), 'A') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(category_names, ' '), '')), 'B') ||
-    setweight(to_tsvector('english', coalesce(array_to_string(tag_names, ' '), '')), 'B') ||
-    setweight(to_tsvector('english', coalesce(location_text, '')), 'B') ||
-    setweight(to_tsvector('english', coalesce(searchable_text, '')), 'C')
-  ) STORED,
+  document tsvector NOT NULL DEFAULT ''::tsvector,
   popularity_score numeric(10,4) NOT NULL DEFAULT 0,
   source_confidence smallint NOT NULL DEFAULT 0 CHECK (source_confidence BETWEEN 0 AND 100),
   visibility text NOT NULL DEFAULT 'internal' CHECK (visibility IN ('internal','unlisted','public')),
@@ -187,6 +180,28 @@ CREATE INDEX idx_explore_synonyms_synonym ON public.explore_search_synonyms (syn
 CREATE INDEX idx_explore_search_document ON public.explore_search_index USING gin (document);
 CREATE INDEX idx_explore_search_type_status ON public.explore_search_index (entity_type_key, visibility, status);
 CREATE INDEX idx_explore_search_popularity ON public.explore_search_index (popularity_score DESC, source_confidence DESC);
+
+CREATE OR REPLACE FUNCTION public.explore_search_index_document_refresh()
+RETURNS trigger
+LANGUAGE plpgsql
+SET search_path = public
+AS $$
+BEGIN
+  NEW.document :=
+    setweight(to_tsvector('english', coalesce(NEW.name, '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(array_to_string(NEW.alternate_names, ' '), '')), 'A') ||
+    setweight(to_tsvector('english', coalesce(array_to_string(NEW.category_names, ' '), '')), 'B') ||
+    setweight(to_tsvector('english', coalesce(array_to_string(NEW.tag_names, ' '), '')), 'B') ||
+    setweight(to_tsvector('english', coalesce(NEW.location_text, '')), 'B') ||
+    setweight(to_tsvector('english', coalesce(NEW.searchable_text, '')), 'C');
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_explore_search_index_document
+BEFORE INSERT OR UPDATE OF name, alternate_names, category_names, tag_names, location_text, searchable_text
+ON public.explore_search_index
+FOR EACH ROW EXECUTE FUNCTION public.explore_search_index_document_refresh();
 
 CREATE TRIGGER trg_explore_categories_updated_at
 BEFORE UPDATE ON public.explore_categories

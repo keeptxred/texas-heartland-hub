@@ -1,4 +1,19 @@
-SELECT cron.unschedule('generate-evergreen-daily');
+DO $$
+DECLARE
+  existing_job_id bigint;
+BEGIN
+  SELECT jobid
+  INTO existing_job_id
+  FROM cron.job
+  WHERE jobname = 'generate-evergreen-daily'
+  LIMIT 1;
+
+  IF existing_job_id IS NOT NULL THEN
+    PERFORM cron.unschedule(existing_job_id);
+  END IF;
+END
+$$;
+
 SELECT cron.schedule(
   'generate-evergreen-am',
   '30 8 * * *',
@@ -8,6 +23,7 @@ SELECT cron.schedule(
     body := '{}'::jsonb
   );$$
 );
+
 SELECT cron.schedule(
   'generate-evergreen-pm',
   '0 18 * * *',

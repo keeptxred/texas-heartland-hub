@@ -119,3 +119,28 @@
   to { transform: translateX(-50%); }
 }
 .animate-marquee { animation: marquee 35s linear infinite; }
+
+@media print {
+  header,
+  nav,
+  aside,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .trip-print {
+    color: #111 !important;
+    background: #fff !important;
+    font-size: 11pt;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @page {
+    size: letter;
+    margin: 0.65in;
+  }
+}
