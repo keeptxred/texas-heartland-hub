@@ -400,6 +400,203 @@ export type Database = {
         }
         Relationships: []
       }
+      explore_entities: {
+        Row: {
+          activities: string[]
+          address: Json | null
+          alternate_names: string[]
+          amenities: string[]
+          categories: string[]
+          city: string | null
+          county: string | null
+          created_at: string
+          description: string | null
+          email: string | null
+          entity_type: string
+          fee_required: boolean | null
+          fees: Json | null
+          hero_image_alt: string | null
+          hero_image_url: string | null
+          hours: Json | null
+          id: string
+          is_accessible: boolean | null
+          is_family_friendly: boolean | null
+          is_featured: boolean
+          is_pet_friendly: boolean | null
+          latitude: number | null
+          longitude: number | null
+          name: string
+          official_url: string | null
+          phone: string | null
+          profile: Json
+          published_at: string | null
+          region: string | null
+          regulations: Json | null
+          search_document: unknown
+          seasonal_guidance: Json | null
+          slug: string
+          source_name: string | null
+          source_updated_at: string | null
+          source_url: string | null
+          status: Database["public"]["Enums"]["explore_publication_status"]
+          summary: string | null
+          tags: string[]
+          updated_at: string
+        }
+        Insert: {
+          activities?: string[]
+          address?: Json | null
+          alternate_names?: string[]
+          amenities?: string[]
+          categories?: string[]
+          city?: string | null
+          county?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          entity_type: string
+          fee_required?: boolean | null
+          fees?: Json | null
+          hero_image_alt?: string | null
+          hero_image_url?: string | null
+          hours?: Json | null
+          id?: string
+          is_accessible?: boolean | null
+          is_family_friendly?: boolean | null
+          is_featured?: boolean
+          is_pet_friendly?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          official_url?: string | null
+          phone?: string | null
+          profile?: Json
+          published_at?: string | null
+          region?: string | null
+          regulations?: Json | null
+          search_document?: unknown
+          seasonal_guidance?: Json | null
+          slug: string
+          source_name?: string | null
+          source_updated_at?: string | null
+          source_url?: string | null
+          status?: Database["public"]["Enums"]["explore_publication_status"]
+          summary?: string | null
+          tags?: string[]
+          updated_at?: string
+        }
+        Update: {
+          activities?: string[]
+          address?: Json | null
+          alternate_names?: string[]
+          amenities?: string[]
+          categories?: string[]
+          city?: string | null
+          county?: string | null
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          entity_type?: string
+          fee_required?: boolean | null
+          fees?: Json | null
+          hero_image_alt?: string | null
+          hero_image_url?: string | null
+          hours?: Json | null
+          id?: string
+          is_accessible?: boolean | null
+          is_family_friendly?: boolean | null
+          is_featured?: boolean
+          is_pet_friendly?: boolean | null
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          official_url?: string | null
+          phone?: string | null
+          profile?: Json
+          published_at?: string | null
+          region?: string | null
+          regulations?: Json | null
+          search_document?: unknown
+          seasonal_guidance?: Json | null
+          slug?: string
+          source_name?: string | null
+          source_updated_at?: string | null
+          source_url?: string | null
+          status?: Database["public"]["Enums"]["explore_publication_status"]
+          summary?: string | null
+          tags?: string[]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_entity_relationships: {
+        Row: {
+          created_at: string
+          id: string
+          relationship_type: string
+          source_entity_id: string
+          strength: number
+          target_entity_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          relationship_type: string
+          source_entity_id: string
+          strength?: number
+          target_entity_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          relationship_type?: string
+          source_entity_id?: string
+          strength?: number
+          target_entity_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_relationships_source_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_relationships_target_entity_id_fkey"
+            columns: ["target_entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_slugs: {
+        Row: {
+          created_at: string
+          entity_id: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_slugs_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       explore_import_jobs: {
         Row: {
           completed_at: string | null
@@ -670,6 +867,98 @@ export type Database = {
           name?: string
           schedule?: string | null
           source_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_observations: {
+        Row: {
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          entity_id: string
+          id: string
+          is_public: boolean
+          observation_type: string
+          severity: string | null
+          source_url: string | null
+          starts_at: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          entity_id: string
+          id?: string
+          is_public?: boolean
+          observation_type: string
+          severity?: string | null
+          source_url?: string | null
+          starts_at?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          entity_id?: string
+          id?: string
+          is_public?: boolean
+          observation_type?: string
+          severity?: string | null
+          source_url?: string | null
+          starts_at?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_observations_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_trips: {
+        Row: {
+          created_at: string
+          ends_on: string | null
+          id: string
+          is_public: boolean
+          itinerary: Json
+          owner_id: string | null
+          preferences: Json
+          share_token: string | null
+          starts_on: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          is_public?: boolean
+          itinerary?: Json
+          owner_id?: string | null
+          preferences?: Json
+          share_token?: string | null
+          starts_on?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          is_public?: boolean
+          itinerary?: Json
+          owner_id?: string | null
+          preferences?: Json
+          share_token?: string | null
+          starts_on?: string | null
+          title?: string
           updated_at?: string
         }
         Relationships: []
@@ -1029,6 +1318,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      autocomplete_explore_entities: {
+        Args: { result_limit?: number; search_query: string }
+        Returns: {
+          entity_type: string
+          name: string
+          region: string
+          slug: string
+        }[]
+      }
       claim_explore_import_job: {
         Args: never
         Returns: {
@@ -1085,6 +1383,46 @@ export type Database = {
           read_ct: number
         }[]
       }
+      search_explore_entities: {
+        Args: {
+          counties?: string[]
+          entity_types?: string[]
+          near_lat?: number
+          near_lng?: number
+          radius_km?: number
+          regions?: string[]
+          required_activities?: string[]
+          required_amenities?: string[]
+          result_limit?: number
+          result_offset?: number
+          search_query?: string
+        }
+        Returns: {
+          activities: string[]
+          amenities: string[]
+          city: string
+          county: string
+          distance_km: number
+          entity_type: string
+          fee_required: boolean
+          hero_image_alt: string
+          hero_image_url: string
+          id: string
+          is_accessible: boolean
+          is_family_friendly: boolean
+          is_pet_friendly: boolean
+          latitude: number
+          longitude: number
+          name: string
+          rank: number
+          region: string
+          slug: string
+          summary: string
+          total_count: number
+        }[]
+      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       explore_import_execution_mode: "live" | "dry-run" | "preview"
@@ -1102,6 +1440,12 @@ export type Database = {
         | "unchanged"
         | "duplicate"
         | "reject"
+      explore_publication_status:
+        | "draft"
+        | "review"
+        | "published"
+        | "archived"
+        | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1248,6 +1592,13 @@ export const Constants = {
         "unchanged",
         "duplicate",
         "reject",
+      ],
+      explore_publication_status: [
+        "draft",
+        "review",
+        "published",
+        "archived",
+        "rejected",
       ],
     },
   },
