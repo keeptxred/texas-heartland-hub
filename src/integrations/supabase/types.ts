@@ -34,6 +34,76 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_rewrite_cache: {
+        Row: {
+          claimed_at: string
+          completed_at: string | null
+          content_fingerprint: string
+          failure_reason: string | null
+          feed_item_id: number | null
+          result_json: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          claimed_at?: string
+          completed_at?: string | null
+          content_fingerprint: string
+          failure_reason?: string | null
+          feed_item_id?: number | null
+          result_json?: Json | null
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          claimed_at?: string
+          completed_at?: string | null
+          content_fingerprint?: string
+          failure_reason?: string | null
+          feed_item_id?: number | null
+          result_json?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_rewrite_cache_feed_item_id_fkey"
+            columns: ["feed_item_id"]
+            isOneToOne: false
+            referencedRelation: "texas_news_feed"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_rewrite_usage: {
+        Row: {
+          claimed_at: string
+          content_fingerprint: string
+          feed_item_id: number | null
+          id: number
+        }
+        Insert: {
+          claimed_at?: string
+          content_fingerprint: string
+          feed_item_id?: number | null
+          id?: number
+        }
+        Update: {
+          claimed_at?: string
+          content_fingerprint?: string
+          feed_item_id?: number | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_rewrite_usage_feed_item_id_fkey"
+            columns: ["feed_item_id"]
+            isOneToOne: false
+            referencedRelation: "texas_news_feed"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_packages: {
         Row: {
           asset_notes: string | null
@@ -3043,6 +3113,14 @@ export type Database = {
           region: string
           slug: string
         }[]
+      }
+      claim_ai_rewrite_slot: {
+        Args: {
+          p_content_fingerprint: string
+          p_daily_limit?: number
+          p_feed_item_id: number
+        }
+        Returns: string
       }
       claim_explore_import_job: {
         Args: never
