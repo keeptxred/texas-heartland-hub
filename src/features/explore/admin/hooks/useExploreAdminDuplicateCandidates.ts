@@ -12,6 +12,8 @@ import {
   duplicateCandidateRepository,
   type ExploreDuplicateCandidate,
   type ExploreDuplicateCandidateFilters,
+  type ExploreEntityMergeResult,
+  type MergeExploreDuplicateCandidateInput,
   type ResolveExploreDuplicateCandidateInput,
 } from '@/repositories/explore/DuplicateCandidateRepository';
 import type { ExplorePaginatedResult, ExplorePagination } from '@/types/explore';
@@ -29,6 +31,11 @@ export interface UseExploreAdminDuplicateCandidatesOptions {
 export interface ResolveExploreAdminDuplicateCandidateVariables {
   candidateId: string;
   input: ResolveExploreDuplicateCandidateInput;
+}
+
+export interface MergeExploreAdminDuplicateCandidateVariables {
+  candidateId: string;
+  input: MergeExploreDuplicateCandidateInput;
 }
 
 export const exploreAdminDuplicateCandidateKeys = {
@@ -114,6 +121,22 @@ export function useResolveExploreAdminDuplicateCandidate() {
           queryKey: exploreAdminDuplicateCandidateKeys.pendingCount(),
         }),
       ]);
+    },
+  });
+}
+
+export function useMergeExploreAdminDuplicateCandidate() {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    ExploreEntityMergeResult,
+    Error,
+    MergeExploreAdminDuplicateCandidateVariables
+  >({
+    mutationFn: ({ candidateId, input }) =>
+      duplicateCandidateRepository.merge(candidateId, input),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['explore-admin'] });
     },
   });
 }
