@@ -9,7 +9,7 @@ export const Route = createFileRoute("/county-elections")({
       { name: "description", content: "Local election information for major Texas counties — Harris, Dallas, Tarrant, Bexar, Travis, Collin, Denton, Williamson, Fort Bend, El Paso." },
       { property: "og:title", content: "County Election Pages" },
     ],
-    links: [{ rel: "canonical", href: "/county-elections" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/county-elections" }],
   }),
   component: CountyElectionsPage,
 });

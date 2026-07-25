@@ -179,7 +179,7 @@ export const Route = createFileRoute("/living-in-texas")({
           "Texas resident resources for property taxes, homeownership, insurance, utilities, household budgeting, state laws, elections, and everyday life.",
       },
     ],
-    links: [{ rel: "canonical", href: "/living-in-texas" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/living-in-texas" }],
     scripts: [
       {
         type: "application/ld+json",

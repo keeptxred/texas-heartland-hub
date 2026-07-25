@@ -9,7 +9,7 @@ export const Route = createFileRoute("/candidate-guides")({
       { name: "description", content: "Conservative candidate guides for Texas federal, state, and local races. Positions, endorsements, and voting records." },
       { property: "og:title", content: "Texas Candidate Guides" },
     ],
-    links: [{ rel: "canonical", href: "/candidate-guides" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/candidate-guides" }],
   }),
   component: CandidateGuidesPage,
 });

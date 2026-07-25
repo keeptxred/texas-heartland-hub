@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: heroFlag },
     ],
     links: [
-      { rel: "canonical", href: "/" },
+      { rel: "canonical", href: "https://keeptxred.com/" },
       ...(getLeadImage()
         ? [{ rel: "preload", as: "image", href: getLeadImage() as string, fetchpriority: "high" }]
         : []),
