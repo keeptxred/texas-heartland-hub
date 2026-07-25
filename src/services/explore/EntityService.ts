@@ -2,7 +2,7 @@ import {
   ExploreDuplicateEntityError,
   ExploreValidationError,
 } from '@/lib/explore/errors';
-import { createExploreSlug } from '@/lib/explore/slug';
+import { ensureExploreSlug } from '@/lib/explore/slug';
 import {
   exploreEntityCreateSchema,
   exploreEntityUpdateSchema,
@@ -28,7 +28,7 @@ export class EntityService {
       });
     }
 
-    const slug = parsed.data.slug ?? createExploreSlug(parsed.data.name);
+    const slug = parsed.data.slug ?? ensureExploreSlug(parsed.data.name);
     const existing = await this.repository.findBySlug(slug);
     if (existing) {
       throw new ExploreDuplicateEntityError(`An Explore entity already uses the slug "${slug}".`, {

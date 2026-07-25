@@ -17,8 +17,7 @@ export const exploreSlugSchema = z
   .max(180, 'Slug must be 180 characters or fewer.')
   .regex(slugPattern, 'Slug must use lowercase letters, numbers, and hyphens only.');
 
-export const exploreEntityCreateSchema = z
-  .object({
+const exploreEntityBaseSchema = z.object({
     entityTypeId: z.string().uuid(),
     name: z.string().trim().min(2).max(180),
     slug: exploreSlugSchema.optional(),
@@ -32,7 +31,9 @@ export const exploreEntityCreateSchema = z
     featured: z.boolean().default(false),
     popularityScore: z.number().min(0).default(0),
     ownerUserId: z.string().uuid().nullable().optional(),
-  })
+  });
+
+export const exploreEntityCreateSchema = exploreEntityBaseSchema
   .superRefine((value, context) => {
     if (
       value.visibility === 'public' &&
@@ -47,7 +48,7 @@ export const exploreEntityCreateSchema = z
     }
   });
 
-export const exploreEntityUpdateSchema = exploreEntityCreateSchema
+export const exploreEntityUpdateSchema = exploreEntityBaseSchema
   .partial()
   .superRefine((value, context) => {
     if (

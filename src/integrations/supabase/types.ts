@@ -2492,6 +2492,24 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      explore_merge_duplicate_candidate: {
+        Args: {
+          p_candidate_id: string
+          p_notes?: string
+          p_resolved_by?: string
+          p_survivor_id: string
+        }
+        Returns: Json
+      }
+      explore_merge_entities: {
+        Args: {
+          p_loser_id: string
+          p_notes?: string
+          p_resolved_by?: string
+          p_survivor_id: string
+        }
+        Returns: Json
+      }
       increment_variant_metric: {
         Args: { _kind: string; _slug: string; _variant: string }
         Returns: undefined
