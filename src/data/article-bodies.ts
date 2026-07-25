@@ -21,6 +21,472 @@ export type ArticleBody = {
 };
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
+  "renting-vs-buying-in-texas": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen decision guide. Calculator results depend on assumptions about rent growth, home appreciation, financing, transaction costs, taxes, insurance, and the time the household remains in the home.",
+    keyTakeaways: [
+      "Buying is not automatically better than renting; the right choice depends heavily on time horizon, cash reserves, mobility, and total monthly cost.",
+      "Texas buyers must compare property taxes, insurance, HOA dues, utilities, and maintenance—not only rent against principal and interest.",
+      "Transaction costs make short ownership periods especially uncertain.",
+      "Run conservative, expected, and optimistic scenarios instead of relying on one forecast.",
+    ],
+    intro: [
+      "Deciding whether to rent or buy in Texas is not a contest between “throwing money away” and “building equity.” Rent purchases flexibility and transfers many repair risks to a landlord. Buying can provide stability and long-term equity, but it also concentrates money in one property and makes the household responsible for taxes, insurance, maintenance, and the cost of selling.",
+      "Start with the [Texas Rent vs. Buy Calculator](/texas-rent-vs-buy-calculator). The most useful result is not a universal winner; it is the point at which buying may pull ahead under assumptions you can defend.",
+    ],
+    sections: [
+      {
+        heading: "Compare complete monthly costs",
+        paragraphs: [
+          "The fair comparison is not rent versus principal and interest. A buyer’s recurring cost may include mortgage principal and interest, property taxes, homeowners insurance, mortgage insurance, HOA dues, utilities, maintenance, repairs, and special assessments. A renter may pay base rent, renters insurance, utilities, parking, amenity charges, pet fees, and predictable rent increases.",
+          "Use the [Texas Mortgage Calculator](/texas-mortgage-calculator) to calculate the full payment. Then estimate ongoing ownership with the [Texas Homeownership Cost Calculator](/texas-homeownership-cost-calculator), [Texas Property Tax Calculator](/tax-calculator), and [Texas Home Insurance Calculator](/texas-home-insurance-calculator).",
+        ],
+      },
+      {
+        heading: "Time horizon can change the answer",
+        paragraphs: [
+          "Buying and selling create transaction costs. A buyer pays loan and closing expenses at purchase and may face brokerage, title, repair, concession, moving, and other costs when selling. In the early years of an amortizing mortgage, a larger share of the payment generally goes to interest than later in the term.",
+          "That is why a household expecting a job transfer, military move, family change, or school change within a few years should model renting carefully. The Consumer Financial Protection Bureau warns that short ownership periods can be risky and expensive because those transaction costs have less time to be offset.",
+        ],
+      },
+      {
+        heading: "Equity is real, but appreciation is not guaranteed",
+        paragraphs: [
+          "Each principal payment increases ownership in the property, all else equal. Appreciation can add equity, while price declines can reduce it. Selling costs also reduce what an owner receives. A rent-versus-buy model should never assume that every Texas market appreciates at the same rate.",
+          "Run at least three appreciation assumptions, including a flat or mildly declining case. Use the same discipline for rent growth, investment returns on cash not used for a down payment, maintenance, and selling costs.",
+        ],
+      },
+      {
+        heading: "The Texas address matters",
+        paragraphs: [
+          "Two similarly priced homes can have different property-tax bills, insurance premiums, utility providers, HOA dues, flood exposure, and special-district charges. A buyer should investigate the parcel and service territory, not rely on a metro-wide average.",
+          "Renters should also read the full lease and fee schedule. A lower advertised rent can be offset by mandatory parking, trash, technology, pest, package, utility-administration, or amenity charges. Compare the amount that leaves the bank account each month.",
+        ],
+      },
+      {
+        heading: "When renting may be the stronger choice",
+        bullets: [
+          "You expect to move within a relatively short or uncertain period.",
+          "Income is unstable or the emergency fund would be depleted by closing.",
+          "The homes you would buy require a payment that crowds out retirement or other priorities.",
+          "You want the landlord to carry major repair and market-value risk.",
+          "You are new to a Texas city and want time to learn commutes, flood patterns, schools, and neighborhoods.",
+        ],
+      },
+      {
+        heading: "When buying may fit",
+        bullets: [
+          "You expect to stay long enough to absorb buying and eventual selling costs.",
+          "Income, credit, reserves, and the complete monthly payment are stable.",
+          "You want control over the property and accept responsibility for repairs.",
+          "The address works for likely future needs, not only today’s situation.",
+          "Conservative assumptions still leave room in the household budget.",
+        ],
+      },
+      {
+        heading: "A practical Texas rent-or-buy test",
+        paragraphs: [
+          "First, collect an actual lease quote and an actual home scenario in the same area. Second, calculate the full payment, cash to close, ownership costs, and likely selling costs. Third, test several time horizons. Fourth, place both options inside a monthly budget. Finally, decide how much flexibility and repair risk are worth to you.",
+          "If the model declares buying the winner only under aggressive appreciation or unusually low maintenance, the result is fragile. A sound decision should survive ordinary surprises.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Is it cheaper to rent or buy in Texas?",
+        a: "It depends on the address, rent, home price, financing, taxes, insurance, maintenance, transaction costs, and how long you stay. Calculate both complete costs over multiple time horizons.",
+      },
+      {
+        q: "How long should I stay in a Texas home for buying to make sense?",
+        a: "There is no universal number. The break-even period changes with purchase and selling costs, appreciation, rent growth, mortgage terms, and maintenance.",
+      },
+      {
+        q: "Does rent build equity?",
+        a: "No ownership equity is created for the renter, but renting can preserve liquidity and flexibility. Those benefits should be valued rather than ignored.",
+      },
+      {
+        q: "Should I buy immediately after moving to Texas?",
+        a: "Not necessarily. Renting first can provide time to learn neighborhoods, commuting patterns, insurance risks, utility territories, and local tax structures.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Consider whether it is the right time to buy", url: "https://www.consumerfinance.gov/owning-a-home/prepare/consider-whether-its-the-right-time-for-you-to-buy/" },
+      { label: "Consumer Financial Protection Bureau — Financial considerations of buying", url: "https://www.consumerfinance.gov/ask-cfpb/what-are-some-of-the-financial-considerations-of-buying-a-home-en-119/" },
+      { label: "Consumer Financial Protection Bureau — Ready to buy a home?", url: "https://www.consumerfinance.gov/consumer-tools/mortgages/ready-to-buy-a-home/" },
+    ],
+    related: ["texas-mortgage-payment-guide", "salary-needed-to-buy-a-house-in-texas", "true-cost-of-owning-a-home-in-texas", "moving-to-texas-guide"],
+    cta: { label: "Compare Renting and Buying in Texas", href: "/texas-rent-vs-buy-calculator" },
+  },
+  "texas-house-down-payment-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen educational guide. Loan eligibility, minimum investment, assistance, mortgage insurance, funding fees, rates, and underwriting depend on the program, lender, property, occupancy, and borrower.",
+    keyTakeaways: [
+      "Twenty percent is not a universal minimum down payment.",
+      "A smaller down payment can preserve reserves but may increase the payment, mortgage insurance, or other program costs.",
+      "Closing costs and emergency savings are separate from the down payment.",
+      "Texas assistance programs have current eligibility, income, purchase-price, education, lender, and repayment rules that must be verified before relying on funds.",
+    ],
+    intro: [
+      "The down payment needed for a Texas house depends on the mortgage program, borrower, property, price, appraisal, and source of funds. Twenty percent can reduce the loan balance and may avoid conventional private mortgage insurance, but it is not the entry price for every mortgage.",
+      "Use the [Texas Down Payment Calculator](/texas-down-payment-calculator) to compare cash and payment scenarios. Then confirm actual eligibility and required funds with approved lenders before signing a contract.",
+    ],
+    sections: [
+      {
+        heading: "Down payment is only one part of cash to close",
+        paragraphs: [
+          "Cash to close can include the down payment, loan and settlement charges, prepaid interest, insurance, initial escrow deposits, and other costs, minus credits and deposits already applied. A household that saves exactly the down payment can still arrive short.",
+          "Run the [Texas Closing Cost Calculator](/texas-closing-cost-calculator) alongside the down-payment estimate. Keep moving expenses, utility deposits, immediate repairs, and emergency savings outside the amount committed at closing.",
+        ],
+      },
+      {
+        heading: "Conventional mortgages",
+        paragraphs: [
+          "Conventional loans are not insured or guaranteed by FHA or VA. Required down payments and private mortgage insurance depend on the specific loan product, occupancy, property type, credit, loan size, and underwriting. Some qualified borrowers may find low-down-payment options, while other transactions require more.",
+          "Do not assume the smallest permitted down payment is automatically best. Compare the interest rate, PMI, monthly payment, cash remaining, and time required to reach the equity level associated with cancellation rules.",
+        ],
+      },
+      {
+        heading: "FHA-insured mortgages",
+        paragraphs: [
+          "FHA-insured financing is commonly associated with a minimum required investment of 3.5 percent for qualifying borrowers under current program rules, while some credit profiles require a larger investment. FHA loans also include upfront and annual mortgage insurance governed by program rules.",
+          "Eligibility is not created by the down payment alone. The property, appraisal, occupancy, borrower, lender, loan limits, and underwriting must qualify. Ask an FHA-approved lender for the current handbook rules that apply to the transaction.",
+        ],
+      },
+      {
+        heading: "VA-backed purchase loans",
+        paragraphs: [
+          "Eligible veterans, service members, and certain surviving spouses may be able to use a VA-backed purchase loan with no down payment when the sales price does not exceed appraised value and other requirements are met. VA and lender eligibility still apply.",
+          "VA loans do not require monthly private mortgage insurance, but many borrowers pay a one-time funding fee unless exempt. A low-down-payment benefit does not remove closing costs, appraisal gaps, reserves, or the need for an affordable payment.",
+        ],
+      },
+      {
+        heading: "Texas down-payment assistance",
+        paragraphs: [
+          "The Texas Department of Housing and Community Affairs operates homebuyer programs through approved lenders. Current offerings may pair a mortgage with down-payment or closing-cost assistance and may require homebuyer education. Program structure, rates, income limits, purchase-price limits, geography, repayment, and availability can change.",
+          "Use the [Texas Down Payment Assistance Calculator](/texas-down-payment-assistance-calculator) only as an illustration, then verify current programs through TDHCA and an approved lender. Assistance can be valuable, but compare the complete first mortgage, assistance terms, and long-run cost.",
+        ],
+      },
+      {
+        heading: "Choose a down payment without draining reserves",
+        paragraphs: [
+          "Model several amounts in the [Texas Home Affordability Calculator](/texas-home-affordability-calculator). For each, compare monthly payment, mortgage insurance, interest, closing cash, and funds remaining after closing.",
+          "A larger down payment can lower the payment and risk, but a homeowner without reserves may rely on expensive debt when the HVAC, roof, vehicle, or job situation changes. The safer amount often balances lower borrowing with enough liquidity to own the home responsibly.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Do you need 20 percent down to buy a house in Texas?",
+        a: "No. Some mortgage programs permit qualified borrowers to put down less. The appropriate amount depends on eligibility, payment, mortgage insurance, closing costs, and reserves.",
+      },
+      {
+        q: "Can down-payment assistance cover all cash to close?",
+        a: "Do not assume it will. Programs have limits and rules, and buyers may still need earnest money, inspections, reserves, appraisal-gap funds, or other costs.",
+      },
+      {
+        q: "Can gift funds be used for a down payment?",
+        a: "Many programs allow certain documented gifts, but acceptable donors, documentation, borrower contribution, and transfer rules vary. Confirm them with the lender before moving money.",
+      },
+      {
+        q: "Is a larger down payment always better?",
+        a: "Not if it leaves the household unable to cover closing costs, repairs, or emergencies. Compare payment savings against the value of retained cash.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Your down payment decision", url: "https://www.consumerfinance.gov/owning-a-home/what-are-all-costs-buying-home/" },
+      { label: "HUD — FHA revised down-payment requirements", url: "https://www.hud.gov/sites/documents/DOC_19737.PDF" },
+      { label: "U.S. Department of Veterans Affairs — VA-backed purchase loan", url: "https://www.va.gov/housing-assistance/home-loans/loan-types/purchase-loan/" },
+      { label: "Texas Department of Housing and Community Affairs — Homebuyer programs", url: "https://welcomehome.tdhca.texas.gov/programs" },
+    ],
+    related: ["texas-closing-costs-guide", "salary-needed-to-buy-a-house-in-texas", "texas-mortgage-payment-guide", "renting-vs-buying-in-texas"],
+    cta: { label: "Compare Texas Down-Payment Options", href: "/texas-down-payment-calculator" },
+  },
+  "true-cost-of-owning-a-home-in-texas": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen budgeting guide. Service life, repair cost, taxes, insurance, HOA dues, utilities, and special-district charges vary by property and should be verified during due diligence.",
+    keyTakeaways: [
+      "The mortgage payment is only the starting point of a Texas homeownership budget.",
+      "Taxes, insurance, utilities, maintenance, repairs, HOA dues, and special-district charges must be modeled separately.",
+      "HVAC, roofs, foundations, plumbing, pools, and drainage create irregular costs that a monthly average can hide.",
+      "A maintenance reserve is cash-flow planning, not a prediction that every system will fail.",
+    ],
+    intro: [
+      "The true cost of owning a home in Texas includes every dollar required to finance, protect, operate, maintain, and eventually repair the property. A listing price or lender payment cannot reveal the whole obligation.",
+      "Begin with the [Texas Homeownership Cost Calculator](/texas-homeownership-cost-calculator). Then replace generic percentages with facts about the address, inspection, roof, HVAC, foundation, utilities, insurance, HOA, and taxing units.",
+    ],
+    sections: [
+      {
+        heading: "Start with fixed and predictable costs",
+        paragraphs: [
+          "Principal and interest are the loan core. Property taxes, insurance, HOA dues, and some utility base charges are recurring but can change. Mortgage insurance may apply depending on the program and equity. These items establish the minimum cost before maintenance.",
+          "Estimate taxes with the [Texas Property Tax Calculator](/tax-calculator) using the expected purchase price and applicable exemptions. Estimate coverage with the [Texas Home Insurance Calculator](/texas-home-insurance-calculator), then obtain an address-specific quote before committing.",
+        ],
+      },
+      {
+        heading: "Texas HVAC and energy costs",
+        paragraphs: [
+          "Cooling is essential across much of Texas, and a system failure during extreme heat can require urgent service. Record equipment age, capacity, efficiency, condition, service history, and warranty status. Budget for filters, tune-ups, minor repairs, and eventual replacement.",
+          "The utility impact depends on climate, insulation, ductwork, windows, shade, square footage, thermostat settings, and electric plan. Use the [Texas Utility Cost Calculator](/texas-utility-cost-calculator) with a high-summer scenario rather than an annual average alone.",
+        ],
+      },
+      {
+        heading: "Roofs, wind, hail, and insurance",
+        paragraphs: [
+          "Roof age and condition affect repair risk and may affect insurance pricing or eligibility. Ask the inspector to identify the roof covering, visible damage, flashing, drainage, penetrations, and remaining condition without treating a visual estimate as a warranty.",
+          "Convert percentage wind or hail deductibles into dollars. A maintenance reserve and an insurance deductible reserve solve different problems: insurance does not cover ordinary wear, excluded causes, or every cosmetic issue.",
+        ],
+      },
+      {
+        heading: "Foundations, soil, drainage, and plumbing",
+        paragraphs: [
+          "Texas has varied soils and climates, and no single foundation rule fits every region. Look for drainage toward the structure, plumbing leaks, grading problems, sticking openings, repaired cracks, and prior engineering or foundation records. If concerns arise, obtain qualified independent evaluation.",
+          "Foundation movement can also involve plumbing, masonry, flooring, drainage, and landscaping. Budget decisions should consider the full system rather than a single repair quote.",
+        ],
+      },
+      {
+        heading: "Pools, irrigation, lawns, and outdoor systems",
+        paragraphs: [
+          "A pool adds electricity, water, chemicals, cleaning, equipment service, insurance considerations, and eventual resurfacing or component replacement. Irrigation systems add water use, winterization or freeze risk in some regions, heads, valves, controllers, and leak exposure.",
+          "Large lawns, mature trees, fences, gates, septic systems, wells, and outbuildings all convert space into maintenance. Price these features before treating them as free benefits.",
+        ],
+      },
+      {
+        heading: "HOAs, MUDs, PIDs, and special districts",
+        paragraphs: [
+          "HOA dues may fund common areas and services but can rise, and special assessments can create one-time bills. Review governing documents, budgets, reserves, insurance, meeting records, pending litigation, violations, and recent assessments.",
+          "Municipal utility districts, public improvement districts, and other special districts can affect taxes or assessments. Pull the parcel record and identify every taxing unit. Do not assume the seller’s current bill represents the buyer’s future bill.",
+        ],
+      },
+      {
+        heading: "Build a reserve that works",
+        paragraphs: [
+          "List major systems, likely service windows, deductible exposure, and known projects. Convert the total into a monthly sinking-fund contribution, while keeping a separate emergency reserve for events that arrive early.",
+          "Put mortgage, taxes, insurance, utilities, HOA dues, maintenance savings, and replacement funds into the [Texas Budget Planner](/texas-budget-planner). If the purchase works only by assuming no repairs, it does not yet fit the budget.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much should Texas homeowners budget for maintenance?",
+        a: "There is no reliable statewide percentage for every property. Build the reserve from the home’s age, condition, systems, climate, inspection findings, deductibles, and planned work.",
+      },
+      {
+        q: "Are property taxes included in the mortgage?",
+        a: "They may be collected through escrow, but they remain a homeowner cost and can change. Without escrow, the owner pays taxing units directly.",
+      },
+      {
+        q: "Does homeowners insurance cover HVAC or foundation repairs?",
+        a: "Coverage depends on the policy and cause of loss. Ordinary wear, maintenance, and many forms of movement are commonly outside standard coverage; read the actual policy.",
+      },
+      {
+        q: "Are HOA dues the only neighborhood charge?",
+        a: "No. A property may also be affected by special taxing districts, public improvement assessments, utility districts, or other local charges.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Financial considerations of buying", url: "https://www.consumerfinance.gov/ask-cfpb/what-are-some-of-the-financial-considerations-of-buying-a-home-en-119/" },
+      { label: "Texas Comptroller — Property tax assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      { label: "Texas Department of Insurance — Home insurance", url: "https://www.tdi.texas.gov/consumer/home-insurance.html" },
+      { label: "U.S. Department of Energy — Energy Saver", url: "https://www.energy.gov/energysaver/energy-saver" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-utility-costs-guide", "texas-homeowners-insurance-guide", "renting-vs-buying-in-texas"],
+    cta: { label: "Estimate the Full Cost of Texas Homeownership", href: "/texas-homeownership-cost-calculator" },
+  },
+  "should-you-refinance-texas-mortgage": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen consumer guide. Refinance availability, pricing, appraisal, closing costs, taxes, insurance, loan terms, and qualification vary. This article does not recommend a loan.",
+    keyTakeaways: [
+      "A lower rate or payment does not prove a refinance saves money.",
+      "Break-even analysis should use real closing costs and monthly savings over the expected time the new loan will be kept.",
+      "Restarting a long loan term can lower the payment while increasing total interest or delaying payoff.",
+      "Cash-out refinancing converts equity into debt secured by the home and should be compared with home-equity alternatives.",
+    ],
+    intro: [
+      "Refinancing replaces an existing mortgage with a new loan. It may reduce the interest rate, change the payment, shorten or extend the term, remove or change mortgage insurance, switch rate structures, or provide cash from equity. Every benefit has to be measured against closing costs and the new loan’s full timeline.",
+      "Start with the [Texas Refinance Savings Calculator](/texas-refinance-savings-calculator), using an actual Loan Estimate when available rather than an advertised rate.",
+    ],
+    sections: [
+      {
+        heading: "Calculate the break-even point",
+        paragraphs: [
+          "A simple break-even estimate divides eligible upfront refinance costs by expected monthly savings. If costs are $6,000 and the comparable monthly savings are $200, the simple break-even is 30 months. That calculation is a starting point, not the complete answer.",
+          "Separate true costs from escrow transfers and prepaids, compare principal reduction, and account for points, lender credits, mortgage insurance, tax effects, and the likelihood of selling or refinancing again. If you will not keep the loan beyond break-even, the refinance may not recover its costs.",
+        ],
+      },
+      {
+        heading: "Do not compare payments with different clocks",
+        paragraphs: [
+          "A homeowner with 22 years remaining who refinances into a new 30-year loan may receive a lower payment partly because repayment is stretched across eight additional years. The rate may improve while the payoff date moves backward.",
+          "Compare the new loan at the same remaining term when possible, then compare alternative terms. Use the [Texas Mortgage Payoff Calculator](/texas-mortgage-payoff-calculator) to test whether applying the projected savings as extra principal preserves the payoff goal.",
+        ],
+      },
+      {
+        heading: "Refinance closing costs are still costs",
+        paragraphs: [
+          "Appraisal, origination, title, recording, credit, settlement, points, and other charges may apply. A “no-closing-cost” refinance generally means the costs are covered through a higher rate, lender credit, or increased loan balance—not that the services are free.",
+          "Compare multiple Loan Estimates on the same day with the same loan amount, term, lock period, and points. Review the five-year cost and cash-to-close sections, and ask why fees differ.",
+        ],
+      },
+      {
+        heading: "Rate-and-term refinance",
+        paragraphs: [
+          "A rate-and-term refinance primarily changes rate, payment, term, or loan structure without taking substantial cash out. It may make sense when savings are durable, costs are reasonable, and the expected holding period exceeds break-even.",
+          "Check whether the refinance affects mortgage insurance, escrow, prepayment terms, or protections associated with the old loan. Government-backed loans can have program-specific streamline options and rules; verify them with the responsible agency and qualified lenders.",
+        ],
+      },
+      {
+        heading: "Cash-out refinance",
+        paragraphs: [
+          "A cash-out refinance creates a larger first mortgage and gives the homeowner part of the difference. It can replace a favorable existing rate with a higher rate on the entire mortgage balance, not only the cash received.",
+          "Compare it with a home-equity loan or HELOC using the [Texas Home Equity Calculator](/texas-home-equity-calculator). Consolidating unsecured debt into mortgage debt can lower the stated rate while placing the home at risk and extending repayment.",
+        ],
+      },
+      {
+        heading: "A refinance decision checklist",
+        bullets: [
+          "State the goal: lower lifetime cost, lower required payment, shorter term, different rate structure, or cash access.",
+          "Record the current balance, rate, remaining term, payoff date, and mortgage insurance.",
+          "Compare written offers using the same assumptions.",
+          "Calculate break-even and total interest over the expected holding period.",
+          "Stress-test a job change, move, rate adjustment, or property-value change.",
+          "Keep enough reserves after closing and verify wiring instructions independently.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much lower should the rate be before refinancing?",
+        a: "There is no universal threshold. The decision depends on balance, costs, term, monthly savings, mortgage insurance, and how long the new loan will be kept.",
+      },
+      {
+        q: "What is a refinance break-even point?",
+        a: "It is the time required for expected savings to recover refinance costs. A complete comparison also considers term changes, principal, mortgage insurance, and future plans.",
+      },
+      {
+        q: "Is a no-closing-cost refinance free?",
+        a: "No. The lender generally covers costs through a higher rate, lender credit, or larger loan balance, which can increase cost over time.",
+      },
+      {
+        q: "Can refinancing delay mortgage payoff?",
+        a: "Yes. Starting a new longer term can move the payoff date later even when the monthly payment falls.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Should I refinance?", url: "https://files.consumerfinance.gov/f/documents/cfpb_should_i_refinance_handout.pdf" },
+      { label: "Consumer Financial Protection Bureau — Mortgage refinance key term", url: "https://www.consumerfinance.gov/consumer-tools/mortgages/answers/key-terms/" },
+      { label: "Consumer Financial Protection Bureau — No-closing-cost refinancing", url: "https://www.consumerfinance.gov/ask-cfpb/is-there-such-a-thing-as-a-no-cost-or-no-closing-loan-or-refinancing-en-141/" },
+      { label: "Consumer Financial Protection Bureau — Cash-out refinance report", url: "https://www.consumerfinance.gov/archive/newsroom/cfpb-report-finds-cash-out-mortgage-refinance-borrowers-improve-credit-scores/" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-home-equity-heloc-guide", "true-cost-of-owning-a-home-in-texas"],
+    cta: { label: "Calculate Texas Refinance Savings", href: "/texas-refinance-savings-calculator" },
+  },
+  "texas-home-equity-heloc-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen Texas consumer guide. Home-equity law, interpretations, disclosures, lender rules, rates, and tax treatment can change. Review current documents and obtain qualified legal, tax, or financial advice when needed.",
+    keyTakeaways: [
+      "Texas protects homesteads with state-specific constitutional conditions for home-equity borrowing.",
+      "Total debt secured by a Texas homestead generally may not exceed 80 percent of fair market value at closing under Section 50(a)(6).",
+      "A home-equity loan usually provides a lump sum; a HELOC provides a revolving line and commonly has a variable rate.",
+      "Failure to repay can put the home at risk, so available equity is not the same as affordable debt.",
+    ],
+    intro: [
+      "Home equity is the difference between a home’s current value and debts secured by it. Texas homeowners may be able to borrow against that equity through a home-equity loan or home-equity line of credit, but the Texas Constitution imposes protections and limits that differ from generic national summaries.",
+      "Use the [Texas Home Equity Calculator](/texas-home-equity-calculator) to estimate equity and borrowing room. Treat the result as planning information; appraisal, liens, constitutional rules, underwriting, and lender policy determine the actual transaction.",
+    ],
+    sections: [
+      {
+        heading: "Home-equity loan versus HELOC",
+        table: {
+          headers: ["Feature", "Home-equity loan", "HELOC"],
+          rows: [
+            ["Funding", "Lump sum at closing", "Revolving draws up to the available line"],
+            ["Rate", "Commonly fixed", "Commonly variable"],
+            ["Payment", "Scheduled principal and interest", "May change with balance, rate, draw period, and repayment period"],
+            ["Use", "Defined one-time need", "Staged or uncertain costs"],
+            ["Core risk", "Home secures the debt", "Home secures the debt and variable payments may rise"],
+          ],
+        },
+      },
+      {
+        heading: "Texas 80 percent homestead limit",
+        paragraphs: [
+          "Section 50(a)(6), Article XVI of the Texas Constitution generally limits the home-equity loan so that its principal, when added to other liens against the homestead, does not exceed 80 percent of fair market value at closing. This is a combined limit, not permission to borrow 80 percent in cash.",
+          "If a home is valued at $400,000 and the existing mortgage balance is $250,000, 80 percent of value is $320,000. The simple theoretical room is $70,000 before lender restrictions, closing economics, valuation differences, and other liens. Use the calculator, then verify every figure.",
+        ],
+      },
+      {
+        heading: "Texas closing protections and limits",
+        paragraphs: [
+          "Texas home-equity transactions include constitutionally required notices and waiting periods. The Office of Consumer Credit Commissioner explains that the 12-day period begins after the application is filed and the required disclosure is received. Texas law also contains conditions concerning consent, location, appraisal, fees, copies of documents, rescission, and foreclosure.",
+          "The Constitution generally limits certain fees and charges to 2 percent of the loan amount while excluding specified items such as a qualifying third-party appraisal, survey, title-insurance premium, and title examination report. Do not calculate compliance from a marketing quote; review the official disclosure and closing package.",
+        ],
+      },
+      {
+        heading: "One loan, timing, and refinance rules",
+        paragraphs: [
+          "Texas rules generally do not allow more than one home-equity loan against the same homestead at a time and restrict another home-equity closing before the first anniversary of the prior home-equity closing, subject to current law and exceptions. Refinancing an existing equity loan can also trigger specialized constitutional requirements.",
+          "Because classification matters, tell the lender and title company about every lien and prior home-equity transaction. Do not assume a product labeled “second mortgage” falls outside Texas home-equity law.",
+        ],
+      },
+      {
+        heading: "How a HELOC can change over time",
+        paragraphs: [
+          "A HELOC generally has a draw period followed by a repayment period. The rate is commonly variable, so minimum payments can change. Payments may rise when the draw period ends, the rate increases, or principal amortization begins.",
+          "The lender may limit additional advances under the contract and applicable law if value or financial circumstances change. Borrow only what the budget can repay under a higher-rate scenario, not the maximum line offered.",
+        ],
+      },
+      {
+        heading: "Responsible uses and dangerous assumptions",
+        paragraphs: [
+          "Home-equity borrowing may finance a planned repair, accessibility work, education, or another defined need, but purpose does not remove repayment risk. Using the home to pay unsecured debt can create a lower rate while converting debt into a lien that can threaten the homestead.",
+          "Avoid treating appreciation as income or a HELOC as an emergency fund. Maintain cash reserves, compare unsecured alternatives, and calculate the full payment. Project longer-term equity with the [Texas Home Equity Growth Calculator](/texas-home-equity-growth-calculator).",
+        ],
+      },
+      {
+        heading: "What to compare before signing",
+        bullets: [
+          "Fixed versus variable rate and the index, margin, caps, and floors.",
+          "Draw period, repayment period, minimum draws, annual fees, inactivity fees, and early-closure charges.",
+          "Loan amount, combined liens, appraisal, and 80 percent constitutional calculation.",
+          "Closing costs, excluded charges, lender credits, and whether costs are financed.",
+          "Payment under current, higher-rate, and full-balance scenarios.",
+          "Alternatives including savings, staged work, personal credit, a home-equity loan, HELOC, or cash-out refinance.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much equity can I borrow in Texas?",
+        a: "Texas generally limits total debt secured by the homestead to 80 percent of fair market value for a Section 50(a)(6) loan. Existing liens, appraisal, underwriting, and lender policy reduce actual availability.",
+      },
+      {
+        q: "Can I have two HELOCs on my Texas homestead?",
+        a: "Texas generally permits only one home-equity loan secured by the homestead at a time. Confirm current rules and lien classification with qualified professionals.",
+      },
+      {
+        q: "Is a HELOC rate fixed?",
+        a: "HELOC rates are commonly variable, although some products may allow fixed-rate conversions. Read the index, margin, caps, and conversion terms.",
+      },
+      {
+        q: "Can a Texas home-equity lender foreclose?",
+        a: "Yes. The home secures the debt. Texas provides special protections and generally requires a court order, but failure to meet the loan terms can still put the home at risk.",
+      },
+    ],
+    sources: [
+      { label: "Texas Constitution, Article XVI, Section 50", url: "https://statutes.capitol.texas.gov/SOTWDocs/CN/pdf/CN.16.pdf" },
+      { label: "Texas Office of Consumer Credit Commissioner — Home-equity disclosures", url: "https://occc.texas.gov/industry/regulated-lenders/bulletins/" },
+      { label: "Consumer Financial Protection Bureau — What is a HELOC?", url: "https://www.consumerfinance.gov/ask-cfpb/what-is-a-home-equity-line-of-credit-heloc-en-107/" },
+      { label: "Consumer Financial Protection Bureau — What is a home-equity loan?", url: "https://www.consumerfinance.gov/ask-cfpb/what-is-a-home-equity-loan-en-106/" },
+      { label: "Consumer Financial Protection Bureau — HELOC booklet", url: "https://files.consumerfinance.gov/f/documents/cfpb_heloc-brochure.pdf" },
+    ],
+    related: ["should-you-refinance-texas-mortgage", "true-cost-of-owning-a-home-in-texas", "texas-mortgage-payment-guide"],
+    cta: { label: "Estimate Your Texas Home Equity", href: "/texas-home-equity-calculator" },
+  },
   "texas-mortgage-payment-guide": {
     updated: "2026-07-25",
     editorNote:
