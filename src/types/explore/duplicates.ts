@@ -54,7 +54,8 @@ export interface ExploreDuplicateCandidate {
   entityBId: string;
   similarityScore: number;
   matchingFields: string[];
-  evidence: Record<string, unknown>;
+  /** JSON-serialized evidence blob; parse on the client if needed. */
+  evidenceJson: string;
   status: ExploreDuplicateStatus;
   resolutionNotes: string | null;
   resolvedByUserId: string | null;
@@ -87,7 +88,6 @@ export interface ExploreMergeResult {
   mergedAt: string;
   stats: ExploreMergeStats;
   warnings: string[];
-  raw: Record<string, unknown>;
 }
 
 export type ExploreMergeErrorCode =
@@ -104,7 +104,6 @@ export type ExploreMergeErrorCode =
 export interface ExploreMergeErrorShape {
   code: ExploreMergeErrorCode;
   message: string;
-  details?: Record<string, unknown>;
 }
 
 export interface ExploreDuplicateComparison {
