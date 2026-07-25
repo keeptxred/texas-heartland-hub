@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, mock } from "bun:test";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   assessImageUrl,
   normalizeImageUrl,
@@ -33,7 +33,7 @@ describe("assessImageUrl — deterministic image gate", () => {
 
 describe("verifyImageIsReachable — server-side content-type gate", () => {
   it("blocks when the URL returns non-image content", async () => {
-    globalThis.fetch = mock(async () =>
+    globalThis.fetch = vi.fn(async () =>
       new Response("<html></html>", {
         status: 200,
         headers: { "content-type": "text/html" },
@@ -45,7 +45,7 @@ describe("verifyImageIsReachable — server-side content-type gate", () => {
   });
 
   it("passes when the URL returns real image bytes", async () => {
-    globalThis.fetch = mock(async () =>
+    globalThis.fetch = vi.fn(async () =>
       new Response("", {
         status: 200,
         headers: { "content-type": "image/png" },
@@ -57,7 +57,7 @@ describe("verifyImageIsReachable — server-side content-type gate", () => {
   });
 
   it("blocks when the URL returns an HTTP error", async () => {
-    globalThis.fetch = mock(async () =>
+    globalThis.fetch = vi.fn(async () =>
       new Response("nope", { status: 404, headers: { "content-type": "text/plain" } }),
     ) as unknown as typeof fetch;
     const r = await verifyImageIsReachable("https://example.com/missing.png");
