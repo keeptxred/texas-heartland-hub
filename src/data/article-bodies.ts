@@ -21,6 +21,419 @@ export type ArticleBody = {
 };
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
+  "texas-mortgage-payment-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen consumer guide. Mortgage terms, tax estimates, insurance premiums, and loan pricing should be verified for the buyer’s property and loan.",
+    keyTakeaways: [
+      "A complete Texas house payment can include principal, interest, property taxes, homeowners insurance, mortgage insurance, and HOA dues.",
+      "Property taxes and insurance can materially change affordability even when two homes have the same price.",
+      "Escrow changes how taxes and insurance are collected; it does not make those costs disappear.",
+      "Buyers should compare homes by total monthly ownership cost, not principal and interest alone.",
+    ],
+    intro: [
+      "A Texas mortgage payment is rarely just principal and interest. The number that matters to a household budget is the complete monthly housing cost: loan payment, property taxes, homeowners insurance, any mortgage insurance, homeowners association dues, and a reserve for expenses the lender does not collect.",
+      "That distinction matters in Texas because local property-tax rates and insurance exposure can vary sharply from one address to another. Start with the [Texas Mortgage Calculator](/tools/mortgage-calculator), then use this guide to understand every line in the result.",
+    ],
+    sections: [
+      {
+        heading: "What is included in a Texas mortgage payment?",
+        paragraphs: [
+          "Principal reduces the amount you owe. Interest is the lender’s charge for financing the purchase. On a fixed-rate mortgage, the combined principal-and-interest payment normally stays level, although the share going to principal grows over time.",
+          "Taxes and insurance are different. They are commonly collected through an escrow account and can change each year. A payment that felt comfortable at closing can rise after the county updates the taxable value, a local taxing unit changes its rate, or the insurer renews the policy at a new premium.",
+        ],
+        bullets: [
+          "Principal: repayment of the borrowed balance.",
+          "Interest: the cost of borrowing at the note rate.",
+          "Property taxes: charges from school districts, counties, cities, and special districts.",
+          "Homeowners insurance: protection for the dwelling, belongings, liability, and covered loss of use.",
+          "Mortgage insurance: often required when the down payment or equity is below a program threshold.",
+          "HOA or special assessments: usually paid separately even when a lender includes them in affordability calculations.",
+        ],
+      },
+      {
+        heading: "Why the same-price Texas homes can have different payments",
+        paragraphs: [
+          "A home’s sales price does not reveal its full carrying cost. One address may sit inside a municipal utility district, a higher-rate school district, or an HOA. Another may have a newer roof, lower storm exposure, and a more favorable insurance quote. Those differences can outweigh a modest change in interest rate.",
+          "Use the [Texas Property Tax Calculator](/tools/property-tax-calculator) with the expected purchase price rather than relying only on the seller’s old bill. Then estimate coverage with the [Texas Home Insurance Calculator](/tools/home-insurance-calculator). For an apples-to-apples comparison, run both addresses with the same down payment and loan assumptions.",
+        ],
+      },
+      {
+        heading: "Escrow accounts: convenient, but not a discount",
+        paragraphs: [
+          "With escrow, the servicer adds one-twelfth of projected annual taxes and insurance to each payment and pays the bills when due. Federal servicing rules generally require an annual escrow statement showing collections, disbursements, shortages, and surpluses.",
+          "A shortage can increase the next year’s payment because the servicer may collect both the new projected amount and repayment of the prior shortfall. Review every escrow analysis, confirm that the homestead exemption is reflected where applicable, and contact the servicer promptly if a tax or insurance figure is wrong.",
+        ],
+      },
+      {
+        heading: "PMI, FHA mortgage insurance, and down-payment tradeoffs",
+        paragraphs: [
+          "Conventional private mortgage insurance and FHA mortgage insurance are not identical. Their pricing, cancellation rules, and duration depend on the loan program, down payment, credit profile, and origination date. A lower down payment can preserve cash but may create a larger monthly obligation.",
+          "Compare scenarios instead of treating 20 percent down as an automatic rule. A buyer may be better served by retaining an emergency reserve, but that choice should be tested against mortgage insurance, interest, and total cash needs. The [Texas Home Affordability Calculator](/tools/home-affordability-calculator) helps model the tradeoff.",
+        ],
+      },
+      {
+        heading: "Build the payment your budget can actually carry",
+        paragraphs: [
+          "After calculating the lender-facing payment, add the owner-facing costs: maintenance, repairs, pest control, lawn care, utilities, and replacements for major systems. A newer home is not maintenance-free, and an older home should not be judged by the mortgage payment alone.",
+          "Stress-test the budget with higher insurance and tax assumptions, one major repair, and a temporary income interruption. Then place the result inside the [Texas Budget Planner](/texas-budget-planner). The best purchase price is the one that leaves room for ordinary life after the keys are handed over.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Does a Texas mortgage payment include property taxes?",
+        a: "Often, but not always. If the loan has an escrow account, the servicer usually collects estimated taxes monthly. Without escrow, the homeowner pays taxing units directly.",
+      },
+      {
+        q: "Why did my mortgage payment go up if I have a fixed rate?",
+        a: "The principal-and-interest portion may be fixed while escrowed property taxes, insurance premiums, or a prior escrow shortage increase.",
+      },
+      {
+        q: "Are HOA dues included in escrow?",
+        a: "Usually no. A lender may count HOA dues when qualifying the borrower, but owners commonly pay the association separately.",
+      },
+      {
+        q: "What is the best way to compare two Texas homes?",
+        a: "Use the same financing assumptions and compare total monthly cost, including address-specific taxes, insurance, HOA dues, utilities, and a maintenance reserve.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Your mortgage payment", url: "https://www.consumerfinance.gov/ask-cfpb/what-is-included-in-a-mortgage-payment-en-194/" },
+      { label: "Consumer Financial Protection Bureau — Escrow accounts", url: "https://www.consumerfinance.gov/ask-cfpb/what-is-an-escrow-or-impound-account-en-140/" },
+      { label: "Texas Comptroller — Property tax assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      { label: "Texas Department of Insurance — Home insurance", url: "https://www.tdi.texas.gov/consumer/home-insurance.html" },
+    ],
+    related: ["texas-property-tax-guide", "homestead-exemption-explained", "texas-closing-costs-guide", "texas-homeowners-insurance-guide"],
+    cta: { label: "Calculate Your Texas Mortgage Payment", href: "/tools/mortgage-calculator" },
+  },
+  "texas-closing-costs-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen consumer guide. Actual charges vary by lender, title company, property, loan product, tax calendar, and negotiated contract.",
+    keyTakeaways: [
+      "Cash to close includes the down payment plus closing costs, prepaid items, and initial escrow deposits, minus credits and deposits already paid.",
+      "The Loan Estimate and Closing Disclosure are the best documents for comparing a specific mortgage’s costs.",
+      "Prepaid taxes and insurance are not duplicate fees; they fund obligations due soon after closing.",
+      "Texas buyers should keep a post-closing reserve rather than sending every available dollar to the settlement table.",
+    ],
+    intro: [
+      "Texas buyers often save for a down payment and then discover a second number: cash to close. That total combines the down payment with lender charges, title and settlement services, prepaid interest, insurance, tax-related deposits, and other transaction costs.",
+      "Use the [Texas Closing Cost Calculator](/tools/closing-cost-calculator) for an early estimate. Then replace assumptions with the lender’s Loan Estimate, the title company’s figures, and the final Closing Disclosure.",
+    ],
+    sections: [
+      {
+        heading: "Closing costs versus cash to close",
+        paragraphs: [
+          "Closing costs are the fees and prepaid amounts tied to originating and completing the transaction. Cash to close is the final amount the buyer must deliver after adding the down payment and subtracting earnest money, option money if credited, lender credits, seller credits, and other adjustments.",
+          "A quote that says “low closing costs” may still require substantial cash because the down payment is separate. Conversely, a loan with lender credits may reduce the upfront total while carrying a higher interest rate. Compare the complete transaction, not one advertised fee.",
+        ],
+      },
+      {
+        heading: "The major categories on a Texas buyer’s estimate",
+        table: {
+          headers: ["Category", "Common examples", "What to verify"],
+          rows: [
+            ["Loan charges", "Origination, underwriting, points, appraisal, credit report", "Whether the fee changes with rate or loan option"],
+            ["Title and settlement", "Title search, lender policy, escrow or settlement services", "Who selected the provider and whether the service is shoppable"],
+            ["Government and recording", "County recording and other required charges", "Final figures from the settlement agent"],
+            ["Prepaids", "Daily interest, first-year homeowners insurance", "Coverage date, premium, and closing date"],
+            ["Initial escrow", "Tax and insurance reserves", "Number of months collected and cushion assumptions"],
+            ["Other", "Survey, inspection, HOA transfer or resale documents", "Which party owes each charge under the contract"],
+          ],
+        },
+      },
+      {
+        heading: "Why prepaid items can move the total",
+        paragraphs: [
+          "A closing late in the month generally creates fewer days of prepaid mortgage interest than a closing early in the month, but the first regular payment date also shifts. Insurance is often paid for the first policy term at or before closing. Escrow reserves give the servicer enough funds to pay future tax and insurance bills when they come due.",
+          "Texas property-tax timing can make estimates look unfamiliar because taxes are assessed locally and bills are typically sent later in the year. Prorations between buyer and seller are contract and closing-date specific. Ask the settlement agent to explain the proration rather than assuming it is a fee.",
+        ],
+      },
+      {
+        heading: "Use the Loan Estimate and Closing Disclosure",
+        paragraphs: [
+          "For most covered mortgages, the lender provides a Loan Estimate after application and a Closing Disclosure before consummation. These forms separate loan costs, other costs, credits, and cash to close. The Consumer Financial Protection Bureau recommends comparing the documents and asking about changes.",
+          "Focus on interest rate, annual percentage rate, points, lender credits, origination charges, services you can shop for, and the projected payment. A lower headline rate is not automatically cheaper if it requires expensive points that take many years to recover.",
+        ],
+      },
+      {
+        heading: "A safer Texas cash-to-close plan",
+        paragraphs: [
+          "Run a base estimate, then add a buffer for inspection findings, moving expenses, utility deposits, immediate repairs, and differences between early quotes and final figures. Do not wire funds using instructions received only by an unexpected email; verify wiring instructions through a trusted phone number because real-estate wire fraud is a known risk.",
+          "After setting aside cash to close, keep an emergency reserve. Use the [Texas Moving Cost Calculator](/texas-moving-cost-calculator) and [Texas Budget Planner](/texas-budget-planner) to account for expenses that occur just before and after the transaction.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much are closing costs in Texas?",
+        a: "There is no single statewide percentage. Costs depend on the loan, price, service providers, insurance, tax timing, credits, and contract. Use an estimate early and the Loan Estimate and Closing Disclosure for the specific transaction.",
+      },
+      {
+        q: "Is the down payment included in closing costs?",
+        a: "No. The down payment is separate, but it is included when calculating the total cash to close.",
+      },
+      {
+        q: "Can a Texas seller pay buyer closing costs?",
+        a: "A contract may provide seller credits, subject to negotiation and the loan program’s limits. Credits reduce cash due but do not necessarily reduce the price or loan balance.",
+      },
+      {
+        q: "When should I receive the Closing Disclosure?",
+        a: "For most covered mortgages, federal rules require the consumer to receive it at least three business days before consummation, with limited exceptions.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Loan Estimate explainer", url: "https://www.consumerfinance.gov/owning-a-home/loan-estimate/" },
+      { label: "Consumer Financial Protection Bureau — Closing Disclosure explainer", url: "https://www.consumerfinance.gov/owning-a-home/closing-disclosure/" },
+      { label: "Consumer Financial Protection Bureau — Mortgage closing checklist", url: "https://www.consumerfinance.gov/owning-a-home/close/mortgage-closing-checklist/" },
+      { label: "Texas Department of Insurance — Title insurance", url: "https://www.tdi.texas.gov/title/index.html" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-homeowners-insurance-guide", "moving-to-texas-guide"],
+    cta: { label: "Estimate Texas Buyer Closing Costs", href: "/tools/closing-cost-calculator" },
+  },
+  "texas-utility-costs-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen budgeting guide. Utility availability, providers, rates, deposits, and municipal charges are address-specific and should be verified directly.",
+    keyTakeaways: [
+      "Texas utility costs depend on the exact address, home size, efficiency, weather, occupants, and provider territory.",
+      "Electricity usually has the largest seasonal swing, especially during hot summers.",
+      "A complete budget should include water, wastewater, gas, internet, trash, deposits, and optional pool or irrigation costs.",
+      "The best estimate combines prior bills for the property with conservative assumptions in a calculator.",
+    ],
+    intro: [
+      "A Texas utility budget is not one statewide average. A compact apartment in El Paso, an all-electric house near Dallas, and a coastal home with heavy air-conditioning demand can have very different monthly totals.",
+      "Use the [Texas Utilities Cost Calculator](/tools/texas-utilities-calculator) to build a household estimate. Before signing a lease or buying a home, confirm which services are available at the exact address and ask for historical usage when possible.",
+    ],
+    sections: [
+      {
+        heading: "The six bills most households should include",
+        bullets: [
+          "Electricity: energy use, delivery charges, plan terms, and seasonal cooling demand.",
+          "Water and wastewater: metered usage, base charges, sewer calculations, and drought-stage rates.",
+          "Natural gas or propane: space heating, water heating, cooking, and fuel delivery where applicable.",
+          "Internet: speed tier, equipment, installation, promotions, and post-promotion price.",
+          "Trash and recycling: municipal bill, utility-district charge, HOA arrangement, or private hauler.",
+          "Address-specific extras: pool pumps, irrigation, septic service, well equipment, or electric-vehicle charging.",
+        ],
+      },
+      {
+        heading: "Texas electricity markets are local",
+        paragraphs: [
+          "Many Texans in areas open to retail competition can choose among retail electric plans, while municipal utilities and electric cooperatives generally serve their own territories. The Public Utility Commission’s Power to Choose website is a state resource for residential plan shopping in eligible areas.",
+          "Compare more than the advertised cents per kilowatt-hour. Review the Electricity Facts Label, contract term, early termination fee, renewable content, price structure, and whether credits or minimum-usage rules make the effective price change at different usage levels.",
+        ],
+      },
+      {
+        heading: "Estimate summer electricity without fooling yourself",
+        paragraphs: [
+          "Air-conditioning demand rises with temperature, square footage, insulation, window exposure, thermostat setting, equipment efficiency, and occupancy. A spring bill is a poor stand-in for August. Ask for a full year of usage, not only one convenient month.",
+          "For a purchase, note the age and condition of the HVAC system during inspection. Compare kilowatt-hour usage rather than only dollar totals because the prior occupant’s rate plan may differ from the plan available to you.",
+        ],
+      },
+      {
+        heading: "Water, wastewater, and outdoor use",
+        paragraphs: [
+          "Water bills can include base service, volume tiers, wastewater, drainage, solid waste, and other local charges. Irrigation, pools, leaks, and summer landscaping can move the total quickly. Some wastewater charges are based on winter water use or another local formula.",
+          "Confirm the provider and rate schedule, then ask whether the property is inside a city, municipal utility district, or another service area. For a house with a pool or large irrigated lot, run a separate higher-use scenario rather than blending those costs into a generic average.",
+        ],
+      },
+      {
+        heading: "Deposits, connection fees, and the first month",
+        paragraphs: [
+          "A move-in budget may need utility deposits, connection charges, equipment fees, and overlapping service at the old and new homes. Some providers waive or adjust deposits based on credit or payment history, but policies differ.",
+          "Place these one-time costs in the [Texas Moving Cost Calculator](/texas-moving-cost-calculator), then move ongoing charges into the [Texas Budget Planner](/texas-budget-planner). If you are comparing cities, the [Texas Cost of Living Calculator](/texas-cost-of-living-calculator) provides the broader context beyond utilities.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "What is the average utility bill in Texas?",
+        a: "A single average can be misleading. The useful estimate is address- and household-specific, with separate assumptions for electricity, water, gas, internet, trash, and optional loads.",
+      },
+      {
+        q: "Can every Texan choose an electricity company?",
+        a: "No. Choice depends on the service territory. Municipal utilities and cooperatives generally operate differently from areas open to retail electric competition.",
+      },
+      {
+        q: "What should I ask before renting a Texas home?",
+        a: "Ask which utilities the tenant pays, provider names, average monthly usage across a full year, deposit requirements, and whether water, trash, internet, or amenity charges are bundled.",
+      },
+      {
+        q: "How can I lower a Texas summer electric bill?",
+        a: "Start with HVAC maintenance, thermostat strategy, air sealing, shade, filter replacement, and an electric plan suited to actual usage. Avoid changes that compromise health or indoor safety.",
+      },
+    ],
+    sources: [
+      { label: "Public Utility Commission of Texas — Power to Choose", url: "https://www.powertochoose.org/" },
+      { label: "Public Utility Commission of Texas — Consumer resources", url: "https://www.puc.texas.gov/consumer/" },
+      { label: "Texas Commission on Environmental Quality — Water conservation", url: "https://www.tceq.texas.gov/drinkingwater/homeland_security/security_pdw/water-conservation" },
+      { label: "U.S. Department of Energy — Energy Saver", url: "https://www.energy.gov/energysaver/energy-saver" },
+    ],
+    related: ["moving-to-texas-guide", "texas-grid-ercot-explained", "texas-energy-economy-overview"],
+    cta: { label: "Estimate Your Texas Utility Costs", href: "/tools/texas-utilities-calculator" },
+  },
+  "texas-homeowners-insurance-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen insurance guide. Coverage, exclusions, deductibles, eligibility, and premiums vary by company and policy; consumers should read the policy and declarations page.",
+    keyTakeaways: [
+      "Texas home policies are not standardized across every company, so buyers must compare coverage as well as price.",
+      "Wind and hail deductibles may be percentage-based, creating a larger out-of-pocket exposure than a flat deductible.",
+      "Flood damage is generally not covered by a standard homeowners policy.",
+      "The dwelling limit should reflect rebuilding cost, not simply market value or the mortgage balance.",
+    ],
+    intro: [
+      "Homeowners insurance is one of the largest address-specific costs in a Texas housing budget. Roof age, construction, location, claim history, coverage limits, deductibles, and exposure to wind, hail, wildfire, or coastal weather can all affect price and availability.",
+      "Run an initial scenario with the [Texas Home Insurance Calculator](/tools/home-insurance-calculator), but treat it as a planning figure. The real decision comes from comparable written quotes for the exact property.",
+    ],
+    sections: [
+      {
+        heading: "What a home policy commonly protects",
+        paragraphs: [
+          "A homeowners policy commonly includes dwelling coverage, other structures, personal property, additional living expenses after a covered loss, personal liability, and medical payments. The causes of loss covered—and the exclusions—depend on the policy form and endorsements.",
+          "The declarations page summarizes major limits and deductibles, but it is not the entire contract. Read the exclusions and endorsements. Ask the agent to identify whether coverage is replacement cost or actual cash value for the roof, personal property, and other major components.",
+        ],
+      },
+      {
+        heading: "Texas deductibles can be the real surprise",
+        paragraphs: [
+          "A policy may have one deductible for many losses and separate deductibles for wind, hail, named storms, or hurricanes. Percentage deductibles are generally applied to the insured dwelling limit, not the repair invoice. On a high-value home, that can create a substantial out-of-pocket amount.",
+          "Compare the deductible in dollars. A cheaper premium may simply transfer more risk to the homeowner. Keep enough liquid savings to cover the largest plausible deductible, and include that reserve when using the [Texas Home Affordability Calculator](/tools/home-affordability-calculator).",
+        ],
+      },
+      {
+        heading: "Flood, wind, and coastal coverage",
+        paragraphs: [
+          "Standard homeowners insurance generally does not cover flooding. A separate flood policy may be available through the National Flood Insurance Program or a private insurer. Lenders may require flood insurance for certain properties, but a property outside a mapped high-risk zone is not free from flood risk.",
+          "Along parts of the Texas coast, homeowners may face limited wind coverage in the private market and may need to investigate the Texas Windstorm Insurance Association. Coverage arrangements are property-specific, so obtain insurance information before the option period or other important contract deadlines expire.",
+        ],
+      },
+      {
+        heading: "How to compare Texas home insurance quotes",
+        bullets: [
+          "Use the same dwelling, other-structures, personal-property, liability, and loss-of-use limits.",
+          "Convert every percentage deductible to a dollar amount.",
+          "Compare roof settlement terms, water coverage, replacement-cost endorsements, and exclusions.",
+          "Confirm discounts and whether they depend on bundling, monitoring, roof age, or mitigation features.",
+          "Check the company and agent through the Texas Department of Insurance.",
+          "Ask what documentation is needed after a loss and whether matching or cosmetic damage is limited.",
+        ],
+      },
+      {
+        heading: "Put insurance inside the full housing budget",
+        paragraphs: [
+          "A lender’s early estimate may not match the premium quoted after underwriting the address. Obtain a realistic insurance quote before deciding what mortgage payment is affordable, especially for an older roof, coastal property, rural property, or home with prior losses.",
+          "Enter the updated premium in the [Texas Mortgage Calculator](/tools/mortgage-calculator). Then compare taxes with the [Texas Property Tax Calculator](/tools/property-tax-calculator). A home that looks cheaper on price alone may be more expensive after both address-specific costs are included.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Is homeowners insurance required by Texas law?",
+        a: "Texas law does not generally require a homeowner to buy it, but a mortgage lender usually requires adequate property coverage while the loan is outstanding.",
+      },
+      {
+        q: "Does Texas homeowners insurance cover flooding?",
+        a: "Standard homeowners policies generally exclude flooding. Flood coverage is usually purchased separately through the National Flood Insurance Program or a private insurer.",
+      },
+      {
+        q: "What does a 2 percent wind deductible mean?",
+        a: "It commonly means the homeowner pays an amount equal to 2 percent of the dwelling coverage limit before covered wind damage is paid, subject to the policy’s terms.",
+      },
+      {
+        q: "Should the dwelling limit equal the home’s market price?",
+        a: "Not necessarily. Dwelling coverage is intended to reflect the cost to rebuild the insured structure, which can differ from market value, land value, or the mortgage balance.",
+      },
+    ],
+    sources: [
+      { label: "Texas Department of Insurance — Home insurance guide", url: "https://www.tdi.texas.gov/consumer/home-insurance.html" },
+      { label: "Texas Department of Insurance — Help after a disaster", url: "https://www.tdi.texas.gov/consumer/storms.html" },
+      { label: "Texas Windstorm Insurance Association", url: "https://www.twia.org/" },
+      { label: "FEMA — National Flood Insurance Program", url: "https://www.floodsmart.gov/" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-closing-costs-guide", "moving-to-houston-address-checklist"],
+    cta: { label: "Estimate Texas Home Insurance", href: "/tools/home-insurance-calculator" },
+  },
+  "salary-needed-to-buy-a-house-in-texas": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen affordability guide. Lender qualification is not a promise of household comfort; rates, taxes, insurance, debts, and underwriting standards vary.",
+    keyTakeaways: [
+      "There is no single salary required to buy a Texas home because the answer changes with price, down payment, debts, rate, taxes, insurance, and HOA dues.",
+      "Debt-to-income ratio is a lender measure, not a complete household budget.",
+      "Buyers should calculate both the maximum approval and a lower comfortable payment.",
+      "Emergency savings, closing cash, utilities, maintenance, and future priorities belong in the decision.",
+    ],
+    intro: [
+      "The salary needed to buy a house in Texas cannot be reduced to one statewide number. A buyer with little debt and a larger down payment may support the same home price on less income than a buyer with car loans, student debt, and a smaller cash reserve.",
+      "The practical method is to work backward from the complete monthly cost. Use the [Texas Home Affordability Calculator](/tools/home-affordability-calculator), then test the result against a real household budget.",
+    ],
+    sections: [
+      {
+        heading: "Start with the all-in monthly housing cost",
+        paragraphs: [
+          "Calculate principal and interest, property taxes, homeowners insurance, mortgage insurance, and HOA dues. Then add maintenance and utilities for the household budget even if the lender does not place them in the mortgage payment.",
+          "The [Texas Mortgage Calculator](/tools/mortgage-calculator) models the loan payment. Use the [Texas Property Tax Calculator](/tools/property-tax-calculator) and [Texas Home Insurance Calculator](/tools/home-insurance-calculator) to replace generic assumptions with Texas-specific estimates.",
+        ],
+      },
+      {
+        heading: "Understand debt-to-income without treating it as a target",
+        paragraphs: [
+          "Debt-to-income ratio compares monthly debt obligations with gross monthly income. Lenders may consider a housing ratio and a total ratio that includes obligations such as car loans, student loans, credit cards, and other recurring debts. Acceptable limits vary by loan program and underwriting.",
+          "A household can qualify and still feel stretched because groceries, child care, health care, utilities, savings, and commuting are not fully represented in DTI. Treat approval as a ceiling set by underwriting, not proof that the payment fits your life.",
+        ],
+      },
+      {
+        heading: "A simple way to estimate the salary needed",
+        paragraphs: [
+          "First, choose a monthly housing payment that leaves room for savings and variable expenses. Second, add recurring monthly debts. Third, divide that combined amount by a conservative total debt ratio expressed as a decimal. Multiply the result by 12 to create a rough gross annual income target.",
+          "For example, if a household selects a $2,400 housing payment and has $600 in other monthly debts, the combined obligation is $3,000. Dividing by 0.36 produces about $8,333 in gross monthly income, or about $100,000 annually. This is only an illustration; underwriting and comfort can point to different numbers.",
+        ],
+      },
+      {
+        heading: "Down payment changes more than the loan balance",
+        paragraphs: [
+          "A larger down payment reduces the amount borrowed and may reduce or remove mortgage insurance, but using all available cash can leave the buyer vulnerable to repairs or income shocks. A smaller down payment preserves liquidity but can increase payment and total interest.",
+          "Model at least three scenarios. Keep the home price constant while changing the down payment, then compare monthly payment, cash to close, mortgage insurance, and remaining reserves. Use the [Texas Closing Cost Calculator](/tools/closing-cost-calculator) so transaction expenses are not mistaken for down payment.",
+        ],
+      },
+      {
+        heading: "Build a comfortable number, not only a qualifying number",
+        paragraphs: [
+          "Place the proposed housing payment into the [Texas Budget Planner](/texas-budget-planner). Add utilities, transportation, child care, food, health costs, giving, travel, retirement contributions, and irregular expenses. If the budget works only when every category is perfect, the price is too aggressive.",
+          "Finally, stress-test taxes, insurance, and repairs. Compare the purchase with renting through the [Texas Rent vs. Buy Calculator](/texas-rent-vs-buy-calculator). Buying can build stability and equity, but flexibility and adequate reserves also have value.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much income do I need for a $300,000 house in Texas?",
+        a: "It depends on the down payment, interest rate, taxes, insurance, mortgage insurance, HOA dues, and monthly debts. Calculate the all-in payment first, then test it with your debts and budget.",
+      },
+      {
+        q: "Do lenders use gross or take-home income?",
+        a: "Debt-to-income calculations generally use gross monthly income, while households should also evaluate the payment against take-home pay and real expenses.",
+      },
+      {
+        q: "Does Texas having no individual state income tax make homes more affordable?",
+        a: "It can affect take-home pay, but housing affordability also depends on property taxes, insurance, utilities, local costs, and the household’s federal taxes and deductions.",
+      },
+      {
+        q: "Should I buy the maximum home a lender approves?",
+        a: "Not automatically. A lender’s approval focuses on repayment standards; a comfortable price should also preserve emergency savings and room for the household’s other goals.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Decide how much to spend on a home", url: "https://www.consumerfinance.gov/owning-a-home/prepare/decide-how-much-you-want-to-spend/" },
+      { label: "Consumer Financial Protection Bureau — Explore interest rates", url: "https://www.consumerfinance.gov/owning-a-home/explore-rates/" },
+      { label: "U.S. Department of Housing and Urban Development — Buying a home", url: "https://www.hud.gov/helping-americans/buying-a-home" },
+      { label: "Texas Comptroller — Property tax assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-closing-costs-guide", "why-texas-has-no-income-tax", "texas-property-tax-guide"],
+    cta: { label: "Calculate How Much Texas Home You Can Afford", href: "/tools/home-affordability-calculator" },
+  },
   "2026-07-11-unt-appoints-scholar-focused-on-race-and-neoliberalism-as-interim-provost": {
     updated: "2026-07-25",
     editorNote:
