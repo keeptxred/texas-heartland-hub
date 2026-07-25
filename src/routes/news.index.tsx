@@ -23,7 +23,7 @@ export const Route = createFileRoute("/news/")({
       { property: "og:description", content: "Conservative reporting on Texas politics, legislation, and policy." },
       { property: "og:url", content: "/news" },
     ],
-    links: [{ rel: "canonical", href: "/news" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/news" }],
   }),
   loader: () => getDailyArticles(),
   component: NewsPage,

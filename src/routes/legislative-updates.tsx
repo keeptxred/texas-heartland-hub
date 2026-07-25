@@ -9,7 +9,7 @@ export const Route = createFileRoute("/legislative-updates")({
       { name: "description", content: "Live tracking of bills moving through the Texas Legislature — property tax, border, education, energy, and election integrity." },
       { property: "og:title", content: "Texas Legislative Updates" },
     ],
-    links: [{ rel: "canonical", href: "/legislative-updates" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/legislative-updates" }],
   }),
   component: LegislativeUpdatesPage,
 });

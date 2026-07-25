@@ -8,7 +8,7 @@ export const Route = createFileRoute("/terms")({
       { property: "og:title", content: "Terms of Service — Keep TX Red" },
       { property: "og:description", content: "Terms governing use of keeptxred.com." },
     ],
-    links: [{ rel: "canonical", href: "/terms" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/terms" }],
   }),
   component: TermsPage,
 });

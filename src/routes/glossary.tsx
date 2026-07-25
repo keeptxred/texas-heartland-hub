@@ -156,7 +156,7 @@ export const Route = createFileRoute("/glossary")({
       },
       { property: "og:url", content: "/glossary" },
     ],
-    links: [{ rel: "canonical", href: "/glossary" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/glossary" }],
     scripts: [
       {
         type: "application/ld+json",
