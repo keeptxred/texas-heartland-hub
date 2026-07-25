@@ -1,8 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
+import { ExploreAdminShell } from '../components/ExploreAdminShell';
 import { ExploreEntityEditorDialog } from '../components/ExploreEntityEditorDialog';
 import { ExploreEntityManagementPanel } from '../components/ExploreEntityManagementPanel';
-import { ExploreAdminShell } from '../components/ExploreAdminShell';
+import { ExploreReviewQueuePanel } from '../components/ExploreReviewQueuePanel';
+import { useExploreAdminReviewQueueCounts } from '../hooks/useExploreAdminReviewQueue';
 
 export type ExploreAdminSection =
   | 'overview'
@@ -23,16 +25,14 @@ interface DashboardMetrics {
 export function ExploreAdminDashboard() {
   const [section, setSection] = useState<ExploreAdminSection>('overview');
   const [selectedEntityId, setSelectedEntityId] = useState<string | null>(null);
+  const reviewCounts = useExploreAdminReviewQueueCounts();
 
-  const metrics = useMemo<DashboardMetrics>(
-    () => ({
-      entities: 0,
-      pendingReview: 0,
-      duplicateCandidates: 0,
-      activeImports: 0,
-    }),
-    [],
-  );
+  const metrics: DashboardMetrics = {
+    entities: 0,
+    pendingReview: reviewCounts.total,
+    duplicateCandidates: 0,
+    activeImports: 0,
+  };
 
   function handleSectionChange(nextSection: ExploreAdminSection) {
     setSection(nextSection);
@@ -59,9 +59,15 @@ export function ExploreAdminDashboard() {
         </header>
 
         {section === 'overview' ? (
-          <Overview metrics={metrics} onOpenSection={handleSectionChange} />
+          <Overview
+            metrics={metrics}
+            metricsLoading={reviewCounts.isLoading}
+            onOpenSection={handleSectionChange}
+          />
         ) : section === 'entities' ? (
           <ExploreEntityManagementPanel onOpenEntity={setSelectedEntityId} />
+        ) : section === 'review' ? (
+          <ExploreReviewQueuePanel onOpenEntity={setSelectedEntityId} />
         ) : (
           <SectionIntroduction section={section} />
         )}
@@ -80,10 +86,11 @@ export function ExploreAdminDashboard() {
 
 interface OverviewProps {
   metrics: DashboardMetrics;
+  metricsLoading: boolean;
   onOpenSection: (section: ExploreAdminSection) => void;
 }
 
-function Overview({ metrics, onOpenSection }: OverviewProps) {
+function Overview({ metrics, metricsLoading, onOpenSection }: OverviewProps) {
   return (
     <>
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
@@ -95,6 +102,7 @@ function Overview({ metrics, onOpenSection }: OverviewProps) {
         <DashboardCard
           title="Pending Review"
           value={metrics.pendingReview}
+          loading={metricsLoading}
           onClick={() => onOpenSection('review')}
         />
         <DashboardCard
@@ -123,10 +131,11 @@ function Overview({ metrics, onOpenSection }: OverviewProps) {
 interface DashboardCardProps {
   title: string;
   value: number;
+  loading?: boolean;
   onClick: () => void;
 }
 
-function DashboardCard({ title, value, onClick }: DashboardCardProps) {
+function DashboardCard({ title, value, loading = false, onClick }: DashboardCardProps) {
   return (
     <button
       type="button"
@@ -134,12 +143,14 @@ function DashboardCard({ title, value, onClick }: DashboardCardProps) {
       className="rounded-xl border bg-card p-6 text-left transition-colors hover:bg-muted/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
     >
       <div className="text-sm text-muted-foreground">{title}</div>
-      <div className="mt-3 text-3xl font-bold">{value.toLocaleString()}</div>
+      <div className="mt-3 text-3xl font-bold" aria-busy={loading}>
+        {loading ? '—' : value.toLocaleString()}
+      </div>
     </button>
   );
 }
 
-function SectionIntroduction({ section }: { section: Exclude<ExploreAdminSection, 'overview' | 'entities'> }) {
+function SectionIntroduction({ section }: { section: Exclude<ExploreAdminSection, 'overview' | 'entities' | 'review'> }) {
   const descriptions: Record<typeof section, string> = {
     relationships:
       'Inspect how destinations, regions, activities, amenities, and editorial collections connect.',
@@ -149,8 +160,6 @@ function SectionIntroduction({ section }: { section: Exclude<ExploreAdminSection
       'Review similarity candidates and merge records without losing source attribution.',
     imports:
       'Monitor import jobs, execution statistics, validation failures, warnings, and rollback state.',
-    review:
-      'Review imported and changed records before they become publicly visible.',
   };
 
   return (
