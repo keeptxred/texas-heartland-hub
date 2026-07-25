@@ -241,12 +241,12 @@ export const Route = createFileRoute("/texas-financial-tools")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
             {
               "@type": "ListItem",
               position: 2,
               name: "Texas Tools",
-              item: "https://www.keeptxred.com/texas-financial-tools",
+              item: "https://keeptxred.com/texas-financial-tools",
             },
           ],
         }),

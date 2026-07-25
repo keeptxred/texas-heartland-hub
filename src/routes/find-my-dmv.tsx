@@ -13,7 +13,7 @@ export const Route = createFileRoute("/find-my-dmv")({
           "Estimate Texas new-resident vehicle registration fees, review the 30-day registration and 90-day license deadlines, open official forms, and find your county tax office.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/find-my-dmv" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/find-my-dmv" }],
   }),
   component: VehicleRegistrationGuide,
 });

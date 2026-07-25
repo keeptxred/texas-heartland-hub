@@ -26,7 +26,7 @@ describe("assessImageUrl — deterministic image gate", () => {
 
   it("normalizes site-relative URLs to the public https URL", () => {
     const url = normalizeImageUrl("/api/public/article-image/foo.png");
-    expect(url).toMatch(/^https:\/\/www\.keeptxred\.com\/api\/public\/article-image\/foo\.png$/);
+    expect(url).toMatch(/^https:\/\/keeptxred\.com\/api\/public\/article-image\/foo\.png$/);
     expect(assessImageUrl("/api/public/article-image/foo.png").ready).toBe(true);
   });
 });

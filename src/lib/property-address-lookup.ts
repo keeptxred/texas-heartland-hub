@@ -226,7 +226,7 @@ export function buildShareableCalculationUrl(
     currentValue: number;
     priorValue: number;
   },
-  locationHref = typeof window === "undefined" ? "https://www.keeptxred.com/tax-calculator" : window.location.href,
+  locationHref = typeof window === "undefined" ? "https://keeptxred.com/tax-calculator" : window.location.href,
 ) {
   const url = new URL(locationHref);
   url.search = "";

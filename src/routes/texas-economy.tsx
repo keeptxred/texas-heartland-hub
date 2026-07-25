@@ -18,10 +18,10 @@ export const Route = createFileRoute("/texas-economy")({
       { name: "description", content: "Analysis of Texas economic trends, energy, business growth, taxes, and employment across the Lone Star State." },
       { property: "og:title", content: "Texas Economy — Keep TX Red" },
       { property: "og:description", content: "Analysis of Texas economic trends, energy, business growth, taxes, and employment." },
-      { property: "og:url", content: "https://www.keeptxred.com/texas-economy" },
+      { property: "og:url", content: "https://keeptxred.com/texas-economy" },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/texas-economy" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-economy" }],
   }),
   component: TexasEconomyPage,
 });
