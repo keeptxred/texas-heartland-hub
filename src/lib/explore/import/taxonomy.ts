@@ -20,6 +20,7 @@ const ENTITY_TAGS: Record<string, readonly string[]> = {
   trail: ["trails", "outdoors"],
   lake: ["lakes", "water-recreation"],
   river: ["rivers", "water-recreation"],
+  river_access: ["rivers", "river-access", "water-recreation"],
   historic_site: ["historic-sites", "history"],
   campground: ["camping", "outdoors"],
   wildlife_area: ["wildlife", "outdoors"],

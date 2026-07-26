@@ -3,12 +3,18 @@ import { exploreDestinations as curatedDestinations } from "./destinations";
 import { destinations as coreDestinations } from "./catalog.core";
 import { destinations as waterDestinations } from "./catalog.water";
 import { destinations as additionalDestinations } from "./catalog.additional";
+import { destinations as eastTexasRefugeDestinations } from "./catalog.wildlife-refuges-east-texas";
 import { commercialCavernCatalog } from "./catalog.caverns";
+import { gormanCaveDestination } from "./catalog.gorman-cave";
+import { federalHikingTrailDestinations } from "./catalog.hiking-federal";
+import { stateParkHikingUnitDestinations } from "./catalog.hiking-state-park-units";
+import { applyHikingRelationships } from "./relationships.hiking";
 import { getTpwdCavernDestinationEnrichment } from "./catalog.tpwd-caverns";
 import {
   getMajorSpringDestinationEnrichment,
   majorSpringDestinations,
 } from "./catalog.major-springs.entities";
+import { texasLighthouseDestinations } from "./catalog.lighthouses.entities";
 import { privateNaturalLandmarkDestinations } from "./catalog.private-natural-landmarks.entities";
 import { privateCulturalLandmarkDestinations } from "./catalog.private-cultural-landmarks.entities";
 import { destinations as thcDestinations } from "./catalog.thc";
@@ -42,6 +48,7 @@ const ENTITY_TYPE_ALIASES: Record<string, string> = {
   "historic site": "historic_site",
   historic_site: "historic_site",
   lake: "lake",
+  lighthouse: "lighthouse",
   natural_area: "natural_area",
   "natural area": "natural_area",
   park: "park",
@@ -153,10 +160,16 @@ function normalizeSlug(value: string): string {
 }
 
 function normalizeList(values: string[], aliases: Record<string, string>): string[] {
-  return [...new Set(values.map((value) => {
-    const clean = normalizeWhitespace(value).toLowerCase();
-    return aliases[clean] ?? aliases[clean.replaceAll(" ", "-")] ?? clean;
-  }).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+  return [
+    ...new Set(
+      values
+        .map((value) => {
+          const clean = normalizeWhitespace(value).toLowerCase();
+          return aliases[clean] ?? aliases[clean.replaceAll(" ", "-")] ?? clean;
+        })
+        .filter(Boolean),
+    ),
+  ].sort((a, b) => a.localeCompare(b));
 }
 
 function validLatitude(value: number | null): value is number {
@@ -191,7 +204,9 @@ const cavernDestinations: ExploreEntity[] = commercialCavernCatalog.map((cavern)
   activities: cavern.activities,
   isFamilyFriendly: cavern.family_friendly,
   isPetFriendly: /pets? (?:are )?permitted|leashed pets/i.test(cavern.pet_policy),
-  isAccessible: !/not wheelchair|no wheelchair|does not permit wheelchairs/i.test(cavern.accessibility),
+  isAccessible: !/not wheelchair|no wheelchair|does not permit wheelchairs/i.test(
+    cavern.accessibility,
+  ),
   feeRequired: cavern.admission_required,
   alternateNames: cavernAlternateNames(cavern.name),
   description: cavern.geology,
@@ -290,9 +305,12 @@ function applyMajorSpringEnrichment(destination: ExploreEntity): ExploreEntity {
     alternateNames: [...new Set([...destination.alternateNames, ...enrichment.alternateNames])],
     description: [destination.description, enrichment.description].filter(Boolean).join(" "),
     profile: { ...destination.profile, spring: enrichment.profile },
-    fees: { ...destination.fees, ...enrichment.fees },
-    regulations: { ...destination.regulations, spring: enrichment.regulations },
-    seasonalGuidance: { ...destination.seasonalGuidance, spring: enrichment.seasonalGuidance },
+    fees: { ...(destination.fees ?? {}), ...enrichment.fees },
+    regulations: { ...(destination.regulations ?? {}), spring: enrichment.regulations },
+    seasonalGuidance: {
+      ...(destination.seasonalGuidance ?? {}),
+      spring: enrichment.seasonalGuidance,
+    },
     categories: [...new Set([...destination.categories, ...enrichment.categories])],
     tags: [...new Set([...destination.tags, ...enrichment.tags])],
     sourceUrl: enrichment.sourceUrl,
@@ -332,21 +350,35 @@ function normalizeDestination(rawDestination: ExploreEntity): ExploreEntity {
     longitude: validLongitude(longitude) ? longitude : null,
     officialUrl,
     sourceUrl: enrichedDestination.sourceUrl?.trim() || officialUrl,
-    sourceName: isTpwdDestination ? "Texas Parks and Wildlife Department" : enrichedDestination.sourceName,
+    sourceName: isTpwdDestination
+      ? "Texas Parks and Wildlife Department"
+      : enrichedDestination.sourceName,
     activities: normalizeList(enrichedDestination.activities, ACTIVITY_ALIASES),
     amenities: normalizeList(enrichedDestination.amenities, AMENITY_ALIASES),
-    alternateNames: [...new Set(enrichedDestination.alternateNames.map(normalizeWhitespace).filter(Boolean))],
-    categories: [...new Set([
-      normalizedType.replaceAll("_", " "),
-      normalizedRegion?.toLowerCase(),
-      ...enrichedDestination.categories.map((value) => normalizeWhitespace(value).toLowerCase()),
-    ].filter((value): value is string => Boolean(value)))],
-    tags: [...new Set([
-      ...normalizeList(enrichedDestination.tags, ACTIVITY_ALIASES),
-      ...normalizeList(enrichedDestination.activities, ACTIVITY_ALIASES),
-      enrichedDestination.city?.toLowerCase(),
-      enrichedDestination.county?.toLowerCase(),
-    ].filter((value): value is string => Boolean(value)))],
+    alternateNames: [
+      ...new Set(enrichedDestination.alternateNames.map(normalizeWhitespace).filter(Boolean)),
+    ],
+    categories: [
+      ...new Set(
+        [
+          normalizedType.replaceAll("_", " "),
+          normalizedRegion?.toLowerCase(),
+          ...enrichedDestination.categories.map((value) =>
+            normalizeWhitespace(value).toLowerCase(),
+          ),
+        ].filter((value): value is string => Boolean(value)),
+      ),
+    ],
+    tags: [
+      ...new Set(
+        [
+          ...normalizeList(enrichedDestination.tags, ACTIVITY_ALIASES),
+          ...normalizeList(enrichedDestination.activities, ACTIVITY_ALIASES),
+          enrichedDestination.city?.toLowerCase(),
+          enrichedDestination.county?.toLowerCase(),
+        ].filter((value): value is string => Boolean(value)),
+      ),
+    ],
   };
 }
 
@@ -365,8 +397,10 @@ function qualityScore(destination: ExploreEntity): number {
 }
 
 function isCanonicalTpwdDestination(destination: ExploreEntity): boolean {
-  return destination.sourceName === "Texas Parks and Wildlife Department" &&
-    (destination.officialUrl?.includes("tpwd.texas.gov/state-parks/") ?? false);
+  return (
+    destination.sourceName === "Texas Parks and Wildlife Department" &&
+    (destination.officialUrl?.includes("tpwd.texas.gov/state-parks/") ?? false)
+  );
 }
 
 const destinationBySlug = new Map<string, ExploreEntity>();
@@ -379,8 +413,13 @@ for (const rawDestination of [
   ...nonThcCoreDestinations,
   ...waterDestinations,
   ...additionalDestinations,
+  ...eastTexasRefugeDestinations,
   ...cavernDestinations,
+  gormanCaveDestination,
+  ...federalHikingTrailDestinations,
+  ...stateParkHikingUnitDestinations,
   ...majorSpringDestinations,
+  ...texasLighthouseDestinations,
   ...privateNaturalLandmarkDestinations,
   ...privateCulturalLandmarkDestinations,
   ...thcDestinations,
@@ -391,14 +430,15 @@ for (const rawDestination of [
   if (
     !existing ||
     (!isCanonicalTpwdDestination(existing) &&
-      (isCanonicalTpwdDestination(destination) || qualityScore(destination) > qualityScore(existing)))
+      (isCanonicalTpwdDestination(destination) ||
+        qualityScore(destination) > qualityScore(existing)))
   ) {
     destinationBySlug.set(destination.slug, destination);
   }
 }
 
-export const exploreDestinations = [...destinationBySlug.values()].sort((a, b) =>
-  a.name.localeCompare(b.name),
+export const exploreDestinations = applyHikingRelationships(
+  [...destinationBySlug.values()].sort((a, b) => a.name.localeCompare(b.name)),
 );
 
 export const exploreDestinationCount = exploreDestinations.length;

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HubBreadcrumbs } from "@/components/hub-breadcrumbs";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
 const groups = [
   {
@@ -135,8 +136,39 @@ const starts = [
 ] as const;
 
 function TexasFinancialToolsPage() {
+  const tools = groups.reduce<Array<readonly [name: string, path: string, description: string]>>(
+    (items, group) => {
+      for (const tool of group.tools) items.push(tool);
+      return items;
+    },
+    [],
+  );
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Texas Financial Tools",
+    url: `${SITE_URL}/texas-financial-tools`,
+    description:
+      "Free Texas calculators for relocation, housing, property taxes, utilities, insurance, salaries, and household budgets.",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: tools.length,
+      itemListElement: tools.map(([name, path], index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name,
+        url: `${SITE_URL}${path}`,
+      })),
+    },
+  };
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(collectionSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <HubBreadcrumbs current="Texas Tools" />
       <div className="mx-auto max-w-6xl px-4 py-12">
         <header className="mb-10 max-w-3xl">
@@ -224,34 +256,38 @@ function TexasFinancialToolsPage() {
 }
 
 export const Route = createFileRoute("/texas-financial-tools")({
-  head: () => ({
-    meta: [
-      { title: "Texas Tools for Moving to and Living in Texas | Keep TX Red" },
-      {
-        name: "description",
-        content:
-          "Explore Texas calculators for moving costs, cost of living, salary, mortgages, affordability, property taxes, insurance, utilities, equity, refinancing, and household budgets.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-financial-tools" }],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: "Texas Tools",
-              item: "https://keeptxred.com/texas-financial-tools",
-            },
-          ],
-        }),
-      },
-    ],
-  }),
+  head: () => {
+    const seo = buildSeo({
+      title: "Texas Financial Tools & Calculators",
+      description:
+        "Explore Texas calculators for moving costs, cost of living, salary, mortgages, affordability, property taxes, insurance, utilities, and budgets.",
+      path: "/texas-financial-tools",
+      type: "website",
+      keywords:
+        "Texas calculators, Texas financial tools, Texas property tax calculator, Texas cost of living calculator, Texas mortgage calculator",
+    });
+    return {
+      meta: seo.meta,
+      links: seo.links,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Texas Tools",
+                item: "https://keeptxred.com/texas-financial-tools",
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: TexasFinancialToolsPage,
 });

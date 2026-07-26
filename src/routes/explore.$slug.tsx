@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getExploreEntity, getExploreSlugTarget } from "@/services/explore/public.functions";
 import { buildSeo } from "@/lib/seo";
+import { geographyPath } from "@/lib/explore/geography-pages";
 import type { ExploreEntity } from "@/types/explore/public";
 
 export const Route = createFileRoute("/explore/$slug")({
@@ -90,7 +91,10 @@ function cavernStructuredProperties(entity: ExploreEntity) {
   const tour = profileSection(entity, "tour_information");
   const access = profileSection(entity, "visitor_access");
   const properties = [
-    ["Guided tours", tour.guided_tours === true ? "Yes" : tour.guided_tours === false ? "No" : null],
+    [
+      "Guided tours",
+      tour.guided_tours === true ? "Yes" : tour.guided_tours === false ? "No" : null,
+    ],
     [
       "Reservations recommended",
       tour.reservations_recommended === true
@@ -138,6 +142,23 @@ function ExploreEntityPage() {
             addressCountry: "US",
           }
         : undefined,
+    containedInPlace: [
+      entity.county
+        ? {
+            "@type": "AdministrativeArea",
+            name: `${entity.county} County, Texas`,
+            url: `https://keeptxred.com${geographyPath("county", entity.county)}`,
+          }
+        : null,
+      entity.region
+        ? {
+            "@type": "Place",
+            name: `${entity.region}, Texas`,
+            url: `https://keeptxred.com${geographyPath("region", entity.region)}`,
+          }
+        : null,
+    ].filter(Boolean),
+    dateModified: entity.updatedAt,
     touristType: entity.activities.length ? entity.activities : undefined,
     publicAccess: true,
     isAccessibleForFree: entity.feeRequired === false,
@@ -159,7 +180,7 @@ function ExploreEntityPage() {
         position: 2,
         name: entity.region || "Texas destinations",
         item: entity.region
-          ? `https://keeptxred.com/explore/search?regions=${encodeURIComponent(entity.region)}`
+          ? `https://keeptxred.com${geographyPath("region", entity.region)}`
           : "https://keeptxred.com/explore/search",
       },
       {
@@ -193,7 +214,10 @@ function ExploreEntityPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify([placeSchema, breadcrumbSchema, faqSchema]).replace(/</g, "\\u003c"),
+          __html: JSON.stringify([placeSchema, breadcrumbSchema, faqSchema]).replace(
+            /</g,
+            "\\u003c",
+          ),
         }}
       />
       {entity.heroImageUrl && (
@@ -212,11 +236,7 @@ function ExploreEntityPage() {
           </Link>
           <span>/</span>
           {entity.region ? (
-            <Link
-              to="/explore/search"
-              search={{ ...searchDefaults, regions: [entity.region] }}
-              className="hover:underline"
-            >
+            <Link to={geographyPath("region", entity.region)} className="hover:underline">
               {entity.region}
             </Link>
           ) : (
@@ -236,8 +256,7 @@ function ExploreEntityPage() {
                 {entity.city && <span>{entity.city}</span>}
                 {entity.county && (
                   <Link
-                    to="/explore/search"
-                    search={{ ...searchDefaults, counties: [entity.county] }}
+                    to={geographyPath("county", entity.county)}
                     className="hover:text-primary hover:underline"
                   >
                     {entity.county} County
@@ -245,8 +264,7 @@ function ExploreEntityPage() {
                 )}
                 {entity.region && (
                   <Link
-                    to="/explore/search"
-                    search={{ ...searchDefaults, regions: [entity.region] }}
+                    to={geographyPath("region", entity.region)}
                     className="hover:text-primary hover:underline"
                   >
                     {entity.region}
@@ -288,8 +306,8 @@ function ExploreEntityPage() {
                   Things to do at {entity.name}
                 </h2>
                 <p className="mt-3 leading-7 text-muted-foreground">
-                  Use these activities to plan your visit or discover more Texas destinations offering
-                  the same experience.
+                  Use these activities to plan your visit or discover more Texas destinations
+                  offering the same experience.
                 </p>
                 <div className="mt-5 grid gap-3 sm:grid-cols-2">
                   {entity.activities.map((activity) => (
@@ -299,13 +317,24 @@ function ExploreEntityPage() {
                       search={{ ...searchDefaults, activities: [activity] }}
                       className="group rounded-lg border p-4 transition-colors hover:border-primary hover:bg-primary/5"
                     >
-                      <span className="font-semibold capitalize group-hover:text-primary">{activity}</span>
+                      <span className="font-semibold capitalize group-hover:text-primary">
+                        {activity}
+                      </span>
                       <span className="mt-1 block text-sm text-muted-foreground">
                         Find more places for {activity} in Texas
                       </span>
                     </Link>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {buildHistory(entity) && (
+              <section className="mt-10" aria-labelledby="destination-history">
+                <h2 id="destination-history" className="font-display text-3xl">
+                  History and significance
+                </h2>
+                <p className="mt-4 font-serif text-lg leading-8">{buildHistory(entity)}</p>
               </section>
             )}
 
@@ -380,9 +409,9 @@ function ExploreEntityPage() {
               <div className="mt-4 space-y-4 leading-7 text-muted-foreground">
                 <p>{buildPlanningGuidance(entity)}</p>
                 <p>
-                  Conditions, closures, reservations, fees, and operating hours can change. Confirm the
-                  latest information with the official destination before traveling, especially for
-                  overnight stays, water activities, guided access, or remote areas.
+                  Conditions, closures, reservations, fees, and operating hours can change. Confirm
+                  the latest information with the official destination before traveling, especially
+                  for overnight stays, water activities, guided access, or remote areas.
                 </p>
               </div>
             </section>
@@ -432,8 +461,7 @@ function ExploreEntityPage() {
               <div className="mt-3 grid gap-2 text-sm">
                 {entity.region && (
                   <Link
-                    to="/explore/search"
-                    search={{ ...searchDefaults, regions: [entity.region] }}
+                    to={geographyPath("region", entity.region)}
                     className="rounded-md px-3 py-2 hover:bg-muted hover:text-primary"
                   >
                     More destinations in {entity.region}
@@ -441,8 +469,7 @@ function ExploreEntityPage() {
                 )}
                 {entity.county && (
                   <Link
-                    to="/explore/search"
-                    search={{ ...searchDefaults, counties: [entity.county] }}
+                    to={geographyPath("county", entity.county)}
                     className="rounded-md px-3 py-2 hover:bg-muted hover:text-primary"
                   >
                     Explore {entity.county} County
@@ -490,8 +517,10 @@ function ExploreEntityPage() {
         </div>
 
         {entity.nearby.length > 0 && (
-          <section className="mt-16">
-            <h2 className="mb-2 font-display text-4xl">Nearby destinations</h2>
+          <section className="mt-16" aria-labelledby="nearby-attractions">
+            <h2 id="nearby-attractions" className="mb-2 font-display text-4xl">
+              Nearby attractions
+            </h2>
             <p className="mb-6 text-muted-foreground">
               Continue exploring with destinations closest to {entity.name}.
             </p>
@@ -597,6 +626,23 @@ function buildPlanningGuidance(entity: ExploreEntity): string {
     ? "The destination lists accessibility features; contact the operator for route-specific or facility-specific details."
     : "Visitors with accessibility needs should contact the destination for current information about trails, buildings, parking, and services.";
   return `Build your itinerary around ${activityText || "the experiences available on site"}. ${facilityText ? `Available facilities may include ${facilityText}.` : "Facility information is limited, so prepare before leaving."} ${petText} ${accessText}`;
+}
+
+function buildHistory(entity: ExploreEntity): string | null {
+  const profile = entity.profile as Record<string, unknown>;
+  for (const key of ["history", "historical_significance", "significance", "geology"]) {
+    const value = profile[key];
+    if (typeof value === "string" && value.trim().length > 40) return value;
+    if (value && typeof value === "object" && !Array.isArray(value)) {
+      const text = Object.values(value as Record<string, unknown>)
+        .filter((item): item is string => typeof item === "string" && item.trim().length > 20)
+        .join(" ");
+      if (text) return text;
+    }
+  }
+  return entity.description && entity.description.length > 300
+    ? `${entity.name} is included in the Explore Texas directory for its natural, recreational, or cultural significance. The detailed description above summarizes the available historical and place context from the destination’s published source.`
+    : null;
 }
 
 function buildFaqItems(entity: ExploreEntity): Array<{ question: string; answer: string }> {

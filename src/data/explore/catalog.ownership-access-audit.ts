@@ -100,7 +100,7 @@ const naturalLandmarkRecords: UnifiedOwnershipAccessAuditRecord[] =
     reservationsRequiredOrRecommended: record.reservationsRequired,
     guidedAccess:
       record.accessModel === "reservation-guided-access" ||
-      record.accessModel === "scheduled-program-access",
+      record.accessModel === "scheduled-public-program-access",
     overnightAccess: record.overnightAccess,
     accessSummary: record.accessSummary,
     sourceUrl: record.sourceUrl,

@@ -4,10 +4,12 @@ import { z } from "zod";
 import { exploreDestinations } from "@/data/explore/all-destinations";
 import { exploreSearchSchema, tripPreferencesSchema } from "@/schemas/explore/public.schema";
 import { orderStopsForRoute } from "@/lib/explore/geography";
+import { geographySlug } from "@/lib/explore/geography-pages";
 import type {
   ExploreAutocompleteItem,
   ExploreEntity,
   ExploreEntityCard,
+  ExploreGeographyPage,
   ExploreJson,
   ExploreSearchInput,
   ExploreSearchResult,
@@ -180,7 +182,8 @@ function sharedCount(left: string[], right: string[]): number {
 function relatedScore(entity: ExploreEntity, candidate: ExploreEntity): number {
   let score = 0;
 
-  if (candidate.entityType === entity.entityType) score += entity.entityType === "cavern" ? 100 : 60;
+  if (candidate.entityType === entity.entityType)
+    score += entity.entityType === "cavern" ? 100 : 60;
   if (candidate.region && candidate.region === entity.region) score += 20;
   if (candidate.county && candidate.county === entity.county) score += 12;
   if (candidate.isFamilyFriendly === entity.isFamilyFriendly) score += 6;
@@ -251,13 +254,21 @@ async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
   if (parsed.types?.length)
     items = items.filter((entity) => parsed.types!.includes(entity.entityType));
   if (parsed.regions?.length)
-    items = items.filter((entity) => entity.region != null && parsed.regions!.includes(entity.region));
+    items = items.filter(
+      (entity) => entity.region != null && parsed.regions!.includes(entity.region),
+    );
   if (parsed.counties?.length)
-    items = items.filter((entity) => entity.county != null && parsed.counties!.includes(entity.county));
+    items = items.filter(
+      (entity) => entity.county != null && parsed.counties!.includes(entity.county),
+    );
   if (parsed.activities?.length)
-    items = items.filter((entity) => parsed.activities!.every((value) => entity.activities.includes(value)));
+    items = items.filter((entity) =>
+      parsed.activities!.every((value) => entity.activities.includes(value)),
+    );
   if (parsed.amenities?.length)
-    items = items.filter((entity) => parsed.amenities!.every((value) => entity.amenities.includes(value)));
+    items = items.filter((entity) =>
+      parsed.amenities!.every((value) => entity.amenities.includes(value)),
+    );
   if (parsed.familyFriendly != null)
     items = items.filter((entity) => entity.isFamilyFriendly === parsed.familyFriendly);
   if (parsed.petFriendly != null)
@@ -275,15 +286,16 @@ async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
         distanceKm: distanceKm(parsed.lat!, parsed.lng!, entity.latitude!, entity.longitude!),
       }));
     if (parsed.radiusKm != null)
-      items = items.filter((entity) => (entity.distanceKm ?? Number.POSITIVE_INFINITY) <= parsed.radiusKm!);
+      items = items.filter(
+        (entity) => (entity.distanceKm ?? Number.POSITIVE_INFINITY) <= parsed.radiusKm!,
+      );
   }
 
   if (parsed.sort === "name") items.sort((a, b) => a.name.localeCompare(b.name));
   if (parsed.sort === "distance")
     items.sort(
       (a, b) =>
-        (a.distanceKm ?? Number.POSITIVE_INFINITY) -
-        (b.distanceKm ?? Number.POSITIVE_INFINITY),
+        (a.distanceKm ?? Number.POSITIVE_INFINITY) - (b.distanceKm ?? Number.POSITIVE_INFINITY),
     );
 
   const total = items.length;
@@ -312,6 +324,60 @@ export const getExploreLanding = createServerFn({ method: "GET" }).handler(async
   ]);
   return { featured, lakes, parks, camping, family, seasonal };
 });
+
+export const getExploreGeography = createServerFn({ method: "GET" })
+  .inputValidator((value) =>
+    z
+      .object({
+        kind: z.enum(["county", "region"]),
+        slug: z.string().min(1).max(120),
+      })
+      .parse(value),
+  )
+  .handler(async ({ data }): Promise<ExploreGeographyPage | null> => {
+    const key = data.kind;
+    const match = exploreDestinations.find(
+      (item) => item[key] && geographySlug(item[key]!) === data.slug,
+    );
+    const name = match?.[key];
+    if (!name) return null;
+
+    const matching = exploreDestinations.filter((item) => item[key] === name);
+    const typeCounts = [...new Set(matching.map((item) => item.entityType))]
+      .map((type) => ({
+        type,
+        count: matching.filter((item) => item.entityType === type).length,
+      }))
+      .sort((left, right) => right.count - left.count || left.type.localeCompare(right.type));
+    const activityCounts = new Map<string, number>();
+    for (const item of matching) {
+      for (const activity of item.activities) {
+        activityCounts.set(activity, (activityCounts.get(activity) ?? 0) + 1);
+      }
+    }
+    const otherKey = data.kind === "county" ? "region" : "county";
+    const geographyCounts = new Map<string, number>();
+    for (const item of matching) {
+      const value = item[otherKey];
+      if (value) geographyCounts.set(value, (geographyCounts.get(value) ?? 0) + 1);
+    }
+
+    return {
+      kind: data.kind,
+      name,
+      items: matching.slice(0, 48).map(card),
+      total: matching.length,
+      typeCounts,
+      activities: [...activityCounts.entries()]
+        .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+        .slice(0, 12)
+        .map(([activity]) => activity),
+      nearbyGeographies: [...geographyCounts.entries()]
+        .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0]))
+        .slice(0, 12)
+        .map(([geographyName, count]) => ({ name: geographyName, count })),
+    };
+  });
 
 export const getExploreEntity = createServerFn({ method: "GET" })
   .inputValidator((value) => z.object({ slug: z.string().min(1).max(240) }).parse(value))
@@ -345,7 +411,10 @@ export const getExploreSlugTarget = createServerFn({ method: "GET" })
 export const autocompleteExplore = createServerFn({ method: "GET" })
   .inputValidator((value) =>
     z
-      .object({ q: z.string().trim().min(2).max(80), limit: z.number().int().min(1).max(12).default(8) })
+      .object({
+        q: z.string().trim().min(2).max(80),
+        limit: z.number().int().min(1).max(12).default(8),
+      })
       .parse(value),
   )
   .handler(async ({ data }): Promise<ExploreAutocompleteItem[]> => {
@@ -439,7 +508,9 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
     const candidates = result.items.filter((item) =>
       data.interests.length
         ? item.activities.some((activity) =>
-            data.interests.some((interest) => activity.toLowerCase().includes(interest.toLowerCase())),
+            data.interests.some((interest) =>
+              activity.toLowerCase().includes(interest.toLowerCase()),
+            ),
           )
         : true,
     );
@@ -455,10 +526,9 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
       }));
       return {
         day: index + 1,
-        date:
-          data.startDate
-            ? new Date(`${data.startDate}T12:00:00Z`).toISOString().slice(0, 10)
-            : undefined,
+        date: data.startDate
+          ? new Date(`${data.startDate}T12:00:00Z`).toISOString().slice(0, 10)
+          : undefined,
         stops,
       };
     }).filter((day) => day.stops.length > 0);

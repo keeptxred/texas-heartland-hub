@@ -80,10 +80,10 @@ describe("Explore Texas major spring discovery collections", () => {
     expect(destinations.map((destination) => destination.slug)).toEqual(expectedSwimmingSlugs);
 
     for (const destination of destinations) {
-      const springRegulations = destination.regulations.spring as
+      const springRegulations = destination.regulations?.spring as
         | { swimmingStatus?: string }
         | undefined;
-      expect(destination.regulations.swimmingStatus ?? springRegulations?.swimmingStatus).toBe(
+      expect(destination.regulations?.swimmingStatus ?? springRegulations?.swimmingStatus).toBe(
         "permitted",
       );
     }

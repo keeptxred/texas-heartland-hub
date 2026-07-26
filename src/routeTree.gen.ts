@@ -108,12 +108,15 @@ import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-politica
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as ExploreTripPlannerRouteImport } from './routes/explore.trip-planner'
 import { Route as ExploreSearchRouteImport } from './routes/explore.search'
+import { Route as ExploreCavernsRouteImport } from './routes/explore.caverns'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ExploreTripTokenRouteImport } from './routes/explore.trip.$token'
+import { Route as ExploreRegionRegionRouteImport } from './routes/explore.region.$region'
+import { Route as ExploreCountyCountyRouteImport } from './routes/explore.county.$county'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
@@ -654,6 +657,11 @@ const ExploreSearchRoute = ExploreSearchRouteImport.update({
   path: '/search',
   getParentRoute: () => ExploreRoute,
 } as any)
+const ExploreCavernsRoute = ExploreCavernsRouteImport.update({
+  id: '/caverns',
+  path: '/caverns',
+  getParentRoute: () => ExploreRoute,
+} as any)
 const ExploreSlugRoute = ExploreSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -682,6 +690,16 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
 const ExploreTripTokenRoute = ExploreTripTokenRouteImport.update({
   id: '/trip/$token',
   path: '/trip/$token',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreRegionRegionRoute = ExploreRegionRegionRouteImport.update({
+  id: '/region/$region',
+  path: '/region/$region',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreCountyCountyRoute = ExploreCountyCountyRouteImport.update({
+  id: '/county/$county',
+  path: '/county/$county',
   getParentRoute: () => ExploreRoute,
 } as any)
 const ApiPublicPropertyAddressLookupRoute =
@@ -917,6 +935,7 @@ export interface FileRoutesByFullPath {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/caverns': typeof ExploreCavernsRoute
   '/explore/search': typeof ExploreSearchRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -936,6 +955,8 @@ export interface FileRoutesByFullPath {
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/region/$region': typeof ExploreRegionRegionRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
@@ -1043,6 +1064,7 @@ export interface FileRoutesByTo {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/caverns': typeof ExploreCavernsRoute
   '/explore/search': typeof ExploreSearchRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -1062,6 +1084,8 @@ export interface FileRoutesByTo {
   '/texas-sports': typeof TexasSportsIndexRoute
   '/texas': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/region/$region': typeof ExploreRegionRegionRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
@@ -1176,6 +1200,7 @@ export interface FileRoutesById {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/caverns': typeof ExploreCavernsRoute
   '/explore/search': typeof ExploreSearchRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -1195,6 +1220,8 @@ export interface FileRoutesById {
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/region/$region': typeof ExploreRegionRegionRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
@@ -1310,6 +1337,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
+    | '/explore/caverns'
     | '/explore/search'
     | '/explore/trip-planner'
     | '/news/$slug'
@@ -1329,6 +1357,8 @@ export interface FileRouteTypes {
     | '/texas-sports/'
     | '/texas/'
     | '/api/public/property-address-lookup'
+    | '/explore/county/$county'
+    | '/explore/region/$region'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
@@ -1436,6 +1466,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
+    | '/explore/caverns'
     | '/explore/search'
     | '/explore/trip-planner'
     | '/news/$slug'
@@ -1455,6 +1486,8 @@ export interface FileRouteTypes {
     | '/texas-sports'
     | '/texas'
     | '/api/public/property-address-lookup'
+    | '/explore/county/$county'
+    | '/explore/region/$region'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
@@ -1568,6 +1601,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
+    | '/explore/caverns'
     | '/explore/search'
     | '/explore/trip-planner'
     | '/news/$slug'
@@ -1587,6 +1621,8 @@ export interface FileRouteTypes {
     | '/texas-sports/'
     | '/texas/'
     | '/api/public/property-address-lookup'
+    | '/explore/county/$county'
+    | '/explore/region/$region'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
@@ -2423,6 +2459,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreSearchRouteImport
       parentRoute: typeof ExploreRoute
     }
+    '/explore/caverns': {
+      id: '/explore/caverns'
+      path: '/caverns'
+      fullPath: '/explore/caverns'
+      preLoaderRoute: typeof ExploreCavernsRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/explore/$slug': {
       id: '/explore/$slug'
       path: '/$slug'
@@ -2463,6 +2506,20 @@ declare module '@tanstack/react-router' {
       path: '/trip/$token'
       fullPath: '/explore/trip/$token'
       preLoaderRoute: typeof ExploreTripTokenRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/region/$region': {
+      id: '/explore/region/$region'
+      path: '/region/$region'
+      fullPath: '/explore/region/$region'
+      preLoaderRoute: typeof ExploreRegionRegionRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/county/$county': {
+      id: '/explore/county/$county'
+      path: '/county/$county'
+      fullPath: '/explore/county/$county'
+      preLoaderRoute: typeof ExploreCountyCountyRouteImport
       parentRoute: typeof ExploreRoute
     }
     '/api/public/property-address-lookup': {
@@ -2655,17 +2712,23 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ExploreRouteChildren {
   ExploreSlugRoute: typeof ExploreSlugRoute
+  ExploreCavernsRoute: typeof ExploreCavernsRoute
   ExploreSearchRoute: typeof ExploreSearchRoute
   ExploreTripPlannerRoute: typeof ExploreTripPlannerRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
+  ExploreCountyCountyRoute: typeof ExploreCountyCountyRoute
+  ExploreRegionRegionRoute: typeof ExploreRegionRegionRoute
   ExploreTripTokenRoute: typeof ExploreTripTokenRoute
 }
 
 const ExploreRouteChildren: ExploreRouteChildren = {
   ExploreSlugRoute: ExploreSlugRoute,
+  ExploreCavernsRoute: ExploreCavernsRoute,
   ExploreSearchRoute: ExploreSearchRoute,
   ExploreTripPlannerRoute: ExploreTripPlannerRoute,
   ExploreIndexRoute: ExploreIndexRoute,
+  ExploreCountyCountyRoute: ExploreCountyCountyRoute,
+  ExploreRegionRegionRoute: ExploreRegionRegionRoute,
   ExploreTripTokenRoute: ExploreTripTokenRoute,
 }
 
@@ -2874,3 +2937,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

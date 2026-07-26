@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HubBreadcrumbs } from "@/components/hub-breadcrumbs";
+import { buildSeo } from "@/lib/seo";
 
 const sections = [
   {
@@ -172,45 +173,38 @@ function MovingToTexasPage() {
 }
 
 export const Route = createFileRoute("/moving-to-texas")({
-  head: () => ({
-    meta: [
-      { title: "Moving to Texas | Costs, Tools & Guide" },
-      {
-        name: "description",
-        content:
-          "Plan a Texas move with cost-of-living, salary, moving-cost, mortgage, affordability, down-payment, and closing-cost tools.",
-      },
-      { property: "og:title", content: "Moving to Texas | Costs, Tools & Guide" },
-      {
-        property: "og:description",
-        content: "Plan your Texas relocation with practical cost calculators, city guides, checklists, and resident resources.",
-      },
-      { property: "og:url", content: "https://keeptxred.com/moving-to-texas" },
-      { name: "twitter:title", content: "Moving to Texas | Costs, Tools & Guide" },
-      {
-        name: "twitter:description",
-        content: "Texas relocation calculators, city guides, checklists, and practical moving resources.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/moving-to-texas" }],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: "Moving to Texas",
-              item: "https://keeptxred.com/moving-to-texas",
-            },
-          ],
-        }),
-      },
-    ],
-  }),
+  head: () => {
+    const seo = buildSeo({
+      title: "Moving to Texas: Costs, Cities, Checklist & Tools",
+      description:
+        "Plan a Texas move with cost-of-living, salary, moving-cost, mortgage, affordability, down-payment, closing-cost, city, and checklist resources.",
+      path: "/moving-to-texas",
+      type: "website",
+      keywords:
+        "moving to Texas, Texas relocation guide, cost of living in Texas, moving to Texas checklist, best Texas cities",
+    });
+    return {
+      meta: seo.meta,
+      links: seo.links,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Moving to Texas",
+                item: "https://keeptxred.com/moving-to-texas",
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: MovingToTexasPage,
 });

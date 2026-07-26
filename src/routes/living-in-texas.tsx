@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HubBreadcrumbs } from "@/components/hub-breadcrumbs";
+import { buildSeo, SITE_URL } from "@/lib/seo";
 
 const sections = [
   {
@@ -83,8 +84,29 @@ const sections = [
 ] as const;
 
 function LivingInTexasPage() {
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Living in Texas",
+    url: `${SITE_URL}/living-in-texas`,
+    description:
+      "A practical resource center for Texas property taxes, homeownership, utilities, laws, elections, and everyday life.",
+    hasPart: sections.flatMap((section) =>
+      section.resources.map(([name, path]) => ({
+        "@type": "WebPage",
+        name,
+        url: `${SITE_URL}${path}`,
+      })),
+    ),
+  };
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(collectionSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <HubBreadcrumbs current="Living in Texas" />
       <section className="border-b bg-muted/30">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:py-20">
@@ -110,6 +132,12 @@ function LivingInTexasPage() {
               className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted"
             >
               View all Texas tools
+            </Link>
+            <Link
+              to="/explore"
+              className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted"
+            >
+              Explore Texas destinations
             </Link>
           </div>
         </div>
@@ -168,36 +196,38 @@ function LivingInTexasPage() {
 }
 
 export const Route = createFileRoute("/living-in-texas")({
-  head: () => ({
-    meta: [
-      {
-        title: "Living in Texas: Property Taxes, Homeownership & Resident Resources | Keep TX Red",
-      },
-      {
-        name: "description",
-        content:
-          "Texas resident resources for property taxes, homeownership, insurance, utilities, household budgeting, state laws, elections, and everyday life.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/living-in-texas" }],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "BreadcrumbList",
-          itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
-            {
-              "@type": "ListItem",
-              position: 2,
-              name: "Living in Texas",
-              item: "https://keeptxred.com/living-in-texas",
-            },
-          ],
-        }),
-      },
-    ],
-  }),
+  head: () => {
+    const seo = buildSeo({
+      title: "Living in Texas: Costs, Laws & Resident Resources",
+      description:
+        "Texas resident resources for property taxes, homeownership, insurance, utilities, household budgeting, state laws, elections, and everyday life.",
+      path: "/living-in-texas",
+      type: "website",
+      keywords:
+        "living in Texas, Texas property taxes, Texas homeownership, Texas utilities, Texas resident resources",
+    });
+    return {
+      meta: seo.meta,
+      links: seo.links,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Living in Texas",
+                item: "https://keeptxred.com/living-in-texas",
+              },
+            ],
+          }),
+        },
+      ],
+    };
+  },
   component: LivingInTexasPage,
 });

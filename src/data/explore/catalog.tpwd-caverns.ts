@@ -1,4 +1,4 @@
-import type { ExploreJson } from "@/types/explore/public";
+import type { ExploreJson, ExploreJsonObject } from "@/types/explore/public";
 
 export type TpwdCavernDestinationEnrichment = {
   destinationId: "longhorn-cavern-state-park" | "kickapoo-cavern-state-park";
@@ -6,12 +6,12 @@ export type TpwdCavernDestinationEnrichment = {
   description: string;
   phone: string;
   email: string | null;
-  address: { [key: string]: ExploreJson };
-  profile: { [key: string]: ExploreJson };
+  address: ExploreJsonObject;
+  profile: ExploreJsonObject;
   hours: ExploreJson;
-  fees: ExploreJson;
-  regulations: ExploreJson;
-  seasonalGuidance: ExploreJson;
+  fees: ExploreJsonObject;
+  regulations: ExploreJsonObject;
+  seasonalGuidance: ExploreJsonObject;
   categories: string[];
   tags: string[];
   sourceUrl: string;
