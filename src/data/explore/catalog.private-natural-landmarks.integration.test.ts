@@ -91,7 +91,7 @@ describe("private natural landmark unified catalog integration", () => {
         overnightAccess: false,
       },
     });
-    expect(bamberger?.activities).toContain("environmental education");
+    expect(bamberger?.activities).toContain("land stewardship education");
     expect(bamberger?.tags).toContain("private natural landmark");
   });
 
