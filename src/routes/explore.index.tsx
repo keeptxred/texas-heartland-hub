@@ -38,7 +38,7 @@ function ExploreLanding() {
     {
       title: "Texas caverns and caves",
       items: data.caverns.items,
-      search: { types: ["cavern"], page: 1, pageSize: 24, sort: "relevance" as const },
+      href: "/explore/caverns" as const,
     },
     {
       title: "Popular lakes",
@@ -108,20 +108,26 @@ function ExploreLanding() {
       </section>
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-14">
         {sections.map(
-          ({ title, items, search }) =>
+          ({ title, items, search, href }) =>
             items.length > 0 && (
               <section key={title} aria-labelledby={title.replaceAll(" ", "-")}>
                 <div className="mb-6 flex items-end justify-between gap-4">
                   <h2 id={title.replaceAll(" ", "-")} className="font-display text-3xl md:text-4xl">
                     {title}
                   </h2>
-                  <Link
-                    to="/explore/search"
-                    search={search}
-                    className="text-sm font-semibold text-primary hover:underline"
-                  >
-                    View all
-                  </Link>
+                  {href ? (
+                    <Link to={href} className="text-sm font-semibold text-primary hover:underline">
+                      Explore the guide
+                    </Link>
+                  ) : (
+                    <Link
+                      to="/explore/search"
+                      search={search!}
+                      className="text-sm font-semibold text-primary hover:underline"
+                    >
+                      View all
+                    </Link>
+                  )}
                 </div>
                 <EntityGrid items={items} />
               </section>
