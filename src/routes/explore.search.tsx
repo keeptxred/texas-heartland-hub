@@ -201,10 +201,24 @@ function ExploreSearch() {
           </Button>
         </aside>
         <div>
-          <EntityGrid
-            items={result.items}
-            empty="No published destinations match this search. Try removing a filter or using a broader term."
-          />
+          {(() => {
+            const hasFilters = Boolean(
+              (search.q && search.q.trim()) ||
+                (search.types && search.types.length) ||
+                (search.regions && search.regions.length) ||
+                (search.counties && search.counties.length) ||
+                (search.activities && search.activities.length) ||
+                (search.amenities && search.amenities.length) ||
+                search.familyFriendly ||
+                search.petFriendly ||
+                search.accessible,
+            );
+            const emptyMessage =
+              result.total === 0 && !hasFilters
+                ? "Destination records are being prepared. Published Explore Texas destinations will appear here automatically after editorial review."
+                : "No published destinations match this search. Try removing a filter or using a broader term.";
+            return <EntityGrid items={result.items} empty={emptyMessage} />;
+          })()}
           {result.total > result.pageSize && (
             <nav aria-label="Search results pages" className="mt-8 flex justify-center gap-3">
               <Button
