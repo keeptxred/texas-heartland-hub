@@ -22,6 +22,12 @@ function cloneRecord(
   };
 }
 
+const commercialCavernSlugs = new Set(commercialCavernCatalog.map((cavern) => cavern.slug));
+
+function getUnifiedCommercialCaverns() {
+  return exploreDestinations.filter((destination) => commercialCavernSlugs.has(destination.slug));
+}
+
 describe("commercial cavern catalog", () => {
   it("passes production catalog validation", () => {
     expect(() => validateCommercialCavernCatalog(commercialCavernCatalog)).not.toThrow();
@@ -50,9 +56,7 @@ describe("commercial cavern catalog", () => {
   });
 
   it("maps every catalog cavern into the unified destination collection exactly once", () => {
-    const unifiedCaverns = exploreDestinations.filter(
-      (destination) => destination.entityType === "cavern",
-    );
+    const unifiedCaverns = getUnifiedCommercialCaverns();
     const unifiedSlugs = unifiedCaverns.map((destination) => destination.slug);
 
     expect(new Set(unifiedSlugs).size).toBe(unifiedSlugs.length);
@@ -63,20 +67,18 @@ describe("commercial cavern catalog", () => {
       expect(matches, `${cavern.name} must exist exactly once`).toHaveLength(1);
 
       const profile = matches[0].profile as Record<string, unknown>;
-      const tour = profile.tour_information as Record<string, unknown>;
-      expect(tour.guided_tours).toBe(cavern.guided_tours);
-      expect(tour.reservations_recommended).toBe(cavern.reservations_recommended);
+      const tour = profile.tourInformation as Record<string, unknown>;
+      expect(tour.guidedTours).toBe(cavern.guided_tours);
+      expect(tour.reservationsRecommended).toBe(cavern.reservations_recommended);
     }
   });
 
   it("keeps landing-page totals and reservation counts aligned with catalog metadata", () => {
-    const unifiedCaverns = exploreDestinations.filter(
-      (destination) => destination.entityType === "cavern",
-    );
+    const unifiedCaverns = getUnifiedCommercialCaverns();
     const reservationRecommendedCount = unifiedCaverns.filter((destination) => {
       const profile = destination.profile as Record<string, unknown>;
-      const tour = profile.tour_information as Record<string, unknown> | undefined;
-      return tour?.reservations_recommended === true;
+      const tour = profile.tourInformation as Record<string, unknown> | undefined;
+      return tour?.reservationsRecommended === true;
     }).length;
 
     expect(unifiedCaverns).toHaveLength(commercialCavernCatalog.length);
@@ -87,15 +89,18 @@ describe("commercial cavern catalog", () => {
 });
 
 describe("cavern sitemap fallback", () => {
-  it("includes the cavern hub and every cavern canonical URL once", () => {
+  it("includes the cavern hub and every unified cavern canonical URL once", () => {
     const entries = getCavernSitemapEntries(new Date("2026-07-26T12:00:00.000Z"));
     const locations = entries.map((entry) => entry.loc);
+    const unifiedCaverns = exploreDestinations.filter(
+      (destination) => destination.entityType === "cavern",
+    );
 
     expect(locations[0]).toBe(`${BASE_URL}/explore/caverns`);
     expect(new Set(locations).size).toBe(locations.length);
-    expect(entries).toHaveLength(commercialCavernCatalog.length + 1);
+    expect(entries).toHaveLength(unifiedCaverns.length + 1);
 
-    for (const cavern of commercialCavernCatalog) {
+    for (const cavern of unifiedCaverns) {
       expect(locations).toContain(`${BASE_URL}/explore/${cavern.slug}`);
     }
   });
