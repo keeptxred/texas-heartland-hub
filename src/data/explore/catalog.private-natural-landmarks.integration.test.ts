@@ -77,6 +77,23 @@ describe("private natural landmark unified catalog integration", () => {
     expect(chalkBluff?.amenities).toContain("camping");
   });
 
+  it("keeps Bamberger Ranch limited to scheduled conservation programs", () => {
+    const bamberger = getUnifiedDestination("selah-bamberger-ranch-preserve");
+
+    expect(bamberger).toBeDefined();
+    expect(bamberger?.profile).toMatchObject({
+      ownershipClassification: "private-nonprofit-preserve",
+      accessType: "scheduled-program-access",
+      visitorAccess: {
+        reservationsRequired: true,
+        swimmingStatus: "not-permitted",
+        overnightAccess: false,
+      },
+    });
+    expect(bamberger?.activities).toContain("environmental education");
+    expect(bamberger?.tags).toContain("private natural landmark");
+  });
+
   it("keeps unified destination ids and slugs duplicate-free", () => {
     const ids = exploreDestinations.map((destination) => destination.id);
     const slugs = exploreDestinations.map((destination) => destination.slug);
