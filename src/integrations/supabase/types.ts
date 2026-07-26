@@ -7,103 +7,13 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
-      ai_rewrite_cache: {
-        Row: {
-          claimed_at: string
-          completed_at: string | null
-          content_fingerprint: string
-          failure_reason: string | null
-          feed_item_id: number | null
-          result_json: Json | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          claimed_at?: string
-          completed_at?: string | null
-          content_fingerprint: string
-          failure_reason?: string | null
-          feed_item_id?: number | null
-          result_json?: Json | null
-          status: string
-          updated_at?: string
-        }
-        Update: {
-          claimed_at?: string
-          completed_at?: string | null
-          content_fingerprint?: string
-          failure_reason?: string | null
-          feed_item_id?: number | null
-          result_json?: Json | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ai_rewrite_cache_feed_item_id_fkey"
-            columns: ["feed_item_id"]
-            isOneToOne: false
-            referencedRelation: "texas_news_feed"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      ai_rewrite_usage: {
-        Row: {
-          claimed_at: string
-          content_fingerprint: string
-          feed_item_id: number | null
-          id: number
-        }
-        Insert: {
-          claimed_at?: string
-          content_fingerprint: string
-          feed_item_id?: number | null
-          id?: number
-        }
-        Update: {
-          claimed_at?: string
-          content_fingerprint?: string
-          feed_item_id?: number | null
-          id?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ai_rewrite_usage_feed_item_id_fkey"
-            columns: ["feed_item_id"]
-            isOneToOne: false
-            referencedRelation: "texas_news_feed"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       content_packages: {
         Row: {
           asset_notes: string | null
@@ -605,13 +515,6 @@ export type Database = {
             referencedRelation: "explore_entities"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_business_profiles_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: true
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
         ]
       }
       explore_campground_profiles: {
@@ -705,13 +608,6 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: true
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_campground_profiles_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: true
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -818,24 +714,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "explore_duplicate_candidates_entity_a_id_fkey"
-            columns: ["entity_a_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "explore_duplicate_candidates_entity_b_id_fkey"
             columns: ["entity_b_id"]
             isOneToOne: false
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_duplicate_candidates_entity_b_id_fkey"
-            columns: ["entity_b_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -978,13 +860,6 @@ export type Database = {
             referencedRelation: "explore_entities"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_entity_activities_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
         ]
       }
       explore_entity_amenities: {
@@ -1042,13 +917,6 @@ export type Database = {
             referencedRelation: "explore_entities"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_entity_amenities_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
         ]
       }
       explore_entity_categories: {
@@ -1086,13 +954,6 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_entity_categories_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -1137,13 +998,6 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_entity_media_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
           {
@@ -1214,24 +1068,10 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "explore_entity_relationships_source_entity_id_fkey"
-            columns: ["source_entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "explore_entity_relationships_target_entity_id_fkey"
             columns: ["target_entity_id"]
             isOneToOne: false
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_entity_relationships_target_entity_id_fkey"
-            columns: ["target_entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -1290,13 +1130,6 @@ export type Database = {
             referencedRelation: "explore_entities"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_entity_reviews_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
         ]
       }
       explore_entity_slug_history: {
@@ -1330,13 +1163,6 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_entity_slug_history_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -1396,13 +1222,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "explore_entity_sources_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "explore_entity_sources_source_id_fkey"
             columns: ["source_id"]
             isOneToOne: false
@@ -1439,13 +1258,6 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: false
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_entity_tags_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
           {
@@ -1535,331 +1347,75 @@ export type Database = {
             referencedRelation: "explore_entities"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_entity_versions_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
         ]
       }
       explore_import_jobs: {
         Row: {
           completed_at: string | null
-          connector_key: string | null
+          connector_key: string
           created_at: string
-          cursor_after: Json | null
-          cursor_before: Json | null
           cursor_state: Json
           entities_created: number
           entities_unchanged: number
           entities_updated: number
-          entity_source_id: string | null
-          error: Json | null
           error_details: Json
           errors_count: number
-          execution_mode: Database["public"]["Enums"]["explore_import_execution_mode"]
-          heartbeat_at: string | null
           id: string
-          mode: string
-          parent_job_id: string | null
           records_received: number
-          requested_by: string | null
           source_id: string | null
           started_at: string | null
-          statistics: Json
           status: string
           summary: Json
           updated_at: string
-          warnings: Json
           warnings_count: number
         }
         Insert: {
           completed_at?: string | null
-          connector_key?: string | null
+          connector_key: string
           created_at?: string
-          cursor_after?: Json | null
-          cursor_before?: Json | null
           cursor_state?: Json
           entities_created?: number
           entities_unchanged?: number
           entities_updated?: number
-          entity_source_id?: string | null
-          error?: Json | null
           error_details?: Json
           errors_count?: number
-          execution_mode?: Database["public"]["Enums"]["explore_import_execution_mode"]
-          heartbeat_at?: string | null
           id?: string
-          mode?: string
-          parent_job_id?: string | null
           records_received?: number
-          requested_by?: string | null
           source_id?: string | null
           started_at?: string | null
-          statistics?: Json
           status?: string
           summary?: Json
           updated_at?: string
-          warnings?: Json
           warnings_count?: number
         }
         Update: {
           completed_at?: string | null
-          connector_key?: string | null
+          connector_key?: string
           created_at?: string
-          cursor_after?: Json | null
-          cursor_before?: Json | null
           cursor_state?: Json
           entities_created?: number
           entities_unchanged?: number
           entities_updated?: number
-          entity_source_id?: string | null
-          error?: Json | null
           error_details?: Json
           errors_count?: number
-          execution_mode?: Database["public"]["Enums"]["explore_import_execution_mode"]
-          heartbeat_at?: string | null
           id?: string
-          mode?: string
-          parent_job_id?: string | null
           records_received?: number
-          requested_by?: string | null
           source_id?: string | null
           started_at?: string | null
-          statistics?: Json
           status?: string
           summary?: Json
           updated_at?: string
-          warnings?: Json
           warnings_count?: number
         }
         Relationships: [
           {
-            foreignKeyName: "explore_import_jobs_parent_job_id_fkey"
-            columns: ["parent_job_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_jobs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "explore_import_jobs_source_id_fkey"
-            columns: ["entity_source_id"]
+            columns: ["source_id"]
             isOneToOne: false
             referencedRelation: "explore_sources"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_import_jobs_source_id_fkey1"
-            columns: ["source_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_sources"
-            referencedColumns: ["id"]
-          },
         ]
-      }
-      explore_import_records: {
-        Row: {
-          action: Database["public"]["Enums"]["explore_import_record_action"]
-          checksum: string
-          created_at: string
-          duplicate_candidates: Json
-          entity_id: string | null
-          external_id: string
-          id: string
-          job_id: string
-          normalized_payload: Json
-          previous_checksum: string | null
-          raw_payload: Json | null
-          review_status: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          source_id: string
-          validation_issues: Json
-        }
-        Insert: {
-          action: Database["public"]["Enums"]["explore_import_record_action"]
-          checksum: string
-          created_at?: string
-          duplicate_candidates?: Json
-          entity_id?: string | null
-          external_id: string
-          id?: string
-          job_id: string
-          normalized_payload: Json
-          previous_checksum?: string | null
-          raw_payload?: Json | null
-          review_status?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          source_id: string
-          validation_issues?: Json
-        }
-        Update: {
-          action?: Database["public"]["Enums"]["explore_import_record_action"]
-          checksum?: string
-          created_at?: string
-          duplicate_candidates?: Json
-          entity_id?: string | null
-          external_id?: string
-          id?: string
-          job_id?: string
-          normalized_payload?: Json
-          previous_checksum?: string | null
-          raw_payload?: Json | null
-          review_status?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          source_id?: string
-          validation_issues?: Json
-        }
-        Relationships: [
-          {
-            foreignKeyName: "explore_import_records_job_id_fkey"
-            columns: ["job_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_jobs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_import_records_source_id_fkey"
-            columns: ["source_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_sources"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      explore_import_revisions: {
-        Row: {
-          after_payload: Json | null
-          before_payload: Json | null
-          created_at: string
-          entity_id: string | null
-          id: string
-          import_record_id: string
-          operation: string
-        }
-        Insert: {
-          after_payload?: Json | null
-          before_payload?: Json | null
-          created_at?: string
-          entity_id?: string | null
-          id?: string
-          import_record_id: string
-          operation: string
-        }
-        Update: {
-          after_payload?: Json | null
-          before_payload?: Json | null
-          created_at?: string
-          entity_id?: string | null
-          id?: string
-          import_record_id?: string
-          operation?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "explore_import_revisions_import_record_id_fkey"
-            columns: ["import_record_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_records"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      explore_import_rollbacks: {
-        Row: {
-          completed_at: string | null
-          created_at: string
-          error: Json | null
-          id: string
-          job_id: string
-          requested_by: string | null
-          started_at: string | null
-          statistics: Json
-          status: string
-        }
-        Insert: {
-          completed_at?: string | null
-          created_at?: string
-          error?: Json | null
-          id?: string
-          job_id: string
-          requested_by?: string | null
-          started_at?: string | null
-          statistics?: Json
-          status?: string
-        }
-        Update: {
-          completed_at?: string | null
-          created_at?: string
-          error?: Json | null
-          id?: string
-          job_id?: string
-          requested_by?: string | null
-          started_at?: string | null
-          statistics?: Json
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "explore_import_rollbacks_job_id_fkey"
-            columns: ["job_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_jobs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      explore_import_sources: {
-        Row: {
-          configuration: Json
-          consecutive_failures: number
-          created_at: string
-          cursor: Json
-          enabled: boolean
-          endpoint: string
-          id: string
-          last_failure_at: string | null
-          last_success_at: string | null
-          name: string
-          schedule: string | null
-          source_type: string
-          updated_at: string
-        }
-        Insert: {
-          configuration?: Json
-          consecutive_failures?: number
-          created_at?: string
-          cursor?: Json
-          enabled?: boolean
-          endpoint: string
-          id?: string
-          last_failure_at?: string | null
-          last_success_at?: string | null
-          name: string
-          schedule?: string | null
-          source_type: string
-          updated_at?: string
-        }
-        Update: {
-          configuration?: Json
-          consecutive_failures?: number
-          created_at?: string
-          cursor?: Json
-          enabled?: boolean
-          endpoint?: string
-          id?: string
-          last_failure_at?: string | null
-          last_success_at?: string | null
-          name?: string
-          schedule?: string | null
-          source_type?: string
-          updated_at?: string
-        }
-        Relationships: []
       }
       explore_lake_profiles: {
         Row: {
@@ -1927,13 +1483,6 @@ export type Database = {
             referencedRelation: "explore_entities"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_lake_profiles_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: true
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
         ]
       }
       explore_locations: {
@@ -1997,13 +1546,6 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: true
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_locations_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: true
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -2161,13 +1703,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "explore_observations_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "explore_observations_source_id_fkey"
             columns: ["source_id"]
             isOneToOne: false
@@ -2246,13 +1781,6 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: true
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_park_profiles_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: true
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -2393,13 +1921,6 @@ export type Database = {
             columns: ["entity_id"]
             isOneToOne: true
             referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_search_index_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: true
-            referencedRelation: "explore_public_entities"
             referencedColumns: ["id"]
           },
         ]
@@ -2569,13 +2090,6 @@ export type Database = {
             referencedRelation: "explore_entities"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_species_profiles_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: true
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
         ]
       }
       explore_tags: {
@@ -2610,48 +2124,6 @@ export type Database = {
           name?: string
           slug?: string
           tag_group?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      explore_trips: {
-        Row: {
-          created_at: string
-          ends_on: string | null
-          id: string
-          is_public: boolean
-          itinerary: Json
-          owner_id: string | null
-          preferences: Json
-          share_token: string | null
-          starts_on: string | null
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          ends_on?: string | null
-          id?: string
-          is_public?: boolean
-          itinerary?: Json
-          owner_id?: string | null
-          preferences?: Json
-          share_token?: string | null
-          starts_on?: string | null
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          ends_on?: string | null
-          id?: string
-          is_public?: boolean
-          itinerary?: Json
-          owner_id?: string | null
-          preferences?: Json
-          share_token?: string | null
-          starts_on?: string | null
-          title?: string
           updated_at?: string
         }
         Relationships: []
@@ -2794,48 +2266,6 @@ export type Database = {
         }
         Relationships: []
       }
-      publishing_alerts: {
-        Row: {
-          created_at: string
-          id: string
-          incident_key: string
-          latest_published_at: string | null
-          message: string
-          notification_sent_at: string | null
-          opened_at: string
-          reserve_slug: string | null
-          resolved_at: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          incident_key: string
-          latest_published_at?: string | null
-          message: string
-          notification_sent_at?: string | null
-          opened_at?: string
-          reserve_slug?: string | null
-          resolved_at?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          incident_key?: string
-          latest_published_at?: string | null
-          message?: string
-          notification_sent_at?: string | null
-          opened_at?: string
-          reserve_slug?: string | null
-          resolved_at?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       publishing_queue: {
         Row: {
           content_package_id: string
@@ -2913,27 +2343,6 @@ export type Database = {
           status?: string
           title?: string | null
           topic?: string | null
-        }
-        Relationships: []
-      }
-      reserve_article_publications: {
-        Row: {
-          created_at: string
-          published_at: string
-          reserve_key: string
-          slug: string
-        }
-        Insert: {
-          created_at?: string
-          published_at?: string
-          reserve_key: string
-          slug: string
-        }
-        Update: {
-          created_at?: string
-          published_at?: string
-          reserve_key?: string
-          slug?: string
         }
         Relationships: []
       }
@@ -3071,163 +2480,14 @@ export type Database = {
       }
     }
     Views: {
-      explore_public_entities: {
-        Row: {
-          activities: string[] | null
-          address: Json | null
-          alternate_names: string[] | null
-          amenities: string[] | null
-          categories: string[] | null
-          city: string | null
-          county: string | null
-          description: string | null
-          email: string | null
-          entity_type: string | null
-          fee_required: boolean | null
-          fees: Json | null
-          hero_image_alt: string | null
-          hero_image_url: string | null
-          hours: Json | null
-          id: string | null
-          is_accessible: boolean | null
-          is_family_friendly: boolean | null
-          is_featured: boolean | null
-          is_pet_friendly: boolean | null
-          latitude: number | null
-          longitude: number | null
-          name: string | null
-          official_url: string | null
-          phone: string | null
-          popularity_score: number | null
-          profile: Json | null
-          region: string | null
-          regulations: Json | null
-          seasonal_guidance: Json | null
-          slug: string | null
-          source_name: string | null
-          source_updated_at: string | null
-          source_url: string | null
-          status: string | null
-          summary: string | null
-          tags: string[] | null
-          updated_at: string | null
-          visibility: string | null
-        }
-        Relationships: []
-      }
-      explore_public_observations: {
-        Row: {
-          description: string | null
-          ends_at: string | null
-          entity_id: string | null
-          id: string | null
-          observation_type: string | null
-          severity: string | null
-          source_url: string | null
-          starts_at: string | null
-          title: string | null
-        }
-        Insert: {
-          description?: never
-          ends_at?: string | null
-          entity_id?: string | null
-          id?: string | null
-          observation_type?: string | null
-          severity?: never
-          source_url?: string | null
-          starts_at?: string | null
-          title?: never
-        }
-        Update: {
-          description?: never
-          ends_at?: string | null
-          entity_id?: string | null
-          id?: string | null
-          observation_type?: string | null
-          severity?: never
-          source_url?: string | null
-          starts_at?: string | null
-          title?: never
-        }
-        Relationships: [
-          {
-            foreignKeyName: "explore_observations_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_entities"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_observations_entity_id_fkey"
-            columns: ["entity_id"]
-            isOneToOne: false
-            referencedRelation: "explore_public_entities"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
-      autocomplete_explore_entities: {
-        Args: { result_limit?: number; search_query: string }
-        Returns: {
-          entity_type: string
-          name: string
-          region: string
-          slug: string
-        }[]
-      }
-      claim_ai_rewrite_slot: {
-        Args: {
-          p_content_fingerprint: string
-          p_daily_limit?: number
-          p_feed_item_id: number
-        }
-        Returns: string
-      }
-      claim_explore_import_job: {
-        Args: never
-        Returns: {
-          completed_at: string | null
-          connector_key: string | null
-          created_at: string
-          cursor_after: Json | null
-          cursor_before: Json | null
-          cursor_state: Json
-          entities_created: number
-          entities_unchanged: number
-          entities_updated: number
-          entity_source_id: string | null
-          error: Json | null
-          error_details: Json
-          errors_count: number
-          execution_mode: Database["public"]["Enums"]["explore_import_execution_mode"]
-          heartbeat_at: string | null
-          id: string
-          mode: string
-          parent_job_id: string | null
-          records_received: number
-          requested_by: string | null
-          source_id: string | null
-          started_at: string | null
-          statistics: Json
-          status: string
-          summary: Json
-          updated_at: string
-          warnings: Json
-          warnings_count: number
-        }
-        SetofOptions: {
-          from: "*"
-          to: "explore_import_jobs"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -3271,63 +2531,9 @@ export type Database = {
           read_ct: number
         }[]
       }
-      search_explore_entities: {
-        Args: {
-          counties?: string[]
-          entity_types?: string[]
-          near_lat?: number
-          near_lng?: number
-          radius_km?: number
-          regions?: string[]
-          required_activities?: string[]
-          required_amenities?: string[]
-          result_limit?: number
-          result_offset?: number
-          search_query?: string
-        }
-        Returns: {
-          activities: string[]
-          amenities: string[]
-          city: string
-          county: string
-          distance_km: number
-          entity_type: string
-          fee_required: boolean
-          hero_image_alt: string
-          hero_image_url: string
-          id: string
-          is_accessible: boolean
-          is_family_friendly: boolean
-          is_pet_friendly: boolean
-          latitude: number
-          longitude: number
-          name: string
-          rank: number
-          region: string
-          slug: string
-          summary: string
-          total_count: number
-        }[]
-      }
-      show_limit: { Args: never; Returns: number }
-      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
-      explore_import_execution_mode: "live" | "dry-run" | "preview"
-      explore_import_job_status:
-        | "queued"
-        | "running"
-        | "completed"
-        | "completed_with_warnings"
-        | "failed"
-        | "cancelled"
-        | "rolled_back"
-      explore_import_record_action:
-        | "insert"
-        | "update"
-        | "unchanged"
-        | "duplicate"
-        | "reject"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3453,29 +2659,7 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
+  public: {
     Enums: {},
   },
-  public: {
-    Enums: {
-      explore_import_execution_mode: ["live", "dry-run", "preview"],
-      explore_import_job_status: [
-        "queued",
-        "running",
-        "completed",
-        "completed_with_warnings",
-        "failed",
-        "cancelled",
-        "rolled_back",
-      ],
-      explore_import_record_action: [
-        "insert",
-        "update",
-        "unchanged",
-        "duplicate",
-        "reject",
-      ],
-    },
-  },
 } as const
-
