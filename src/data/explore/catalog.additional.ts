@@ -90,14 +90,90 @@ const forestServiceDestinations: ForestServiceDestination[] = [
   },
 ];
 
-const genericSeeds: CatalogSeed[] = additionalDestinations.map((name) => ({
-  name,
-  entityType: "attraction",
-  collection: "Texas attractions, towns, scenic drives, caves, springs, and wildlife destinations",
-  sourceUrl: "https://www.traveltexas.com/",
-  sourceName: "Travel Texas",
-  categories: ["texas attraction"],
-}));
+type WildlifeRefugeDestination = {
+  name: string;
+  alternateNames: string[];
+  officialUrl: string;
+  city: string;
+  county: string;
+  latitude: number;
+  longitude: number;
+  summary: string;
+  activities: string[];
+  amenities: string[];
+  publicAccess: boolean;
+  accessNotes: string;
+};
+
+const upperGulfCoastRefuges: WildlifeRefugeDestination[] = [
+  {
+    name: "Jocelyn Nungaray National Wildlife Refuge",
+    alternateNames: ["Anahuac National Wildlife Refuge"],
+    officialUrl: "https://www.fws.gov/refuge/jocelyn-nungaray",
+    city: "Anahuac",
+    county: "Chambers County",
+    latitude: 29.6119092,
+    longitude: -94.5350045,
+    summary: "Explore coastal marshes, freshwater wetlands, bayous, birding trails, wildlife drives, fishing access, and major migratory-bird habitat at the refuge formerly known as Anahuac National Wildlife Refuge.",
+    activities: ["birding", "wildlife", "wildlife photography", "hiking", "fishing", "crabbing", "boating", "auto tour", "hunting", "nature study"],
+    amenities: ["visitor center", "trails", "boardwalk", "boat ramp", "wildlife drive", "observation areas", "restrooms", "parking"],
+    publicAccess: true,
+    accessNotes: "Open daily during posted refuge hours; some areas and activities are seasonal or permit-controlled.",
+  },
+  {
+    name: "McFaddin National Wildlife Refuge",
+    alternateNames: [],
+    officialUrl: "https://www.fws.gov/refuge/mcfaddin",
+    city: "Sabine Pass",
+    county: "Jefferson County",
+    latitude: 29.668442,
+    longitude: -94.073883,
+    summary: "Visit one of the Texas coast's largest remaining freshwater marsh landscapes for birding, wildlife watching, fishing, crabbing, waterfowl hunting, coastal scenery, and beach access.",
+    activities: ["birding", "wildlife", "wildlife photography", "fishing", "crabbing", "auto tour", "hunting", "beachcombing", "nature study"],
+    amenities: ["observation areas", "fishing access", "beach access", "restrooms", "information kiosk", "parking"],
+    publicAccess: true,
+    accessNotes: "Open free of charge during posted daylight hours; hunting and some recreation are seasonal and regulated.",
+  },
+  {
+    name: "Texas Point National Wildlife Refuge",
+    alternateNames: [],
+    officialUrl: "https://www.fws.gov/refuge/texas-point",
+    city: "Sabine Pass",
+    county: "Jefferson County",
+    latitude: 29.6897,
+    longitude: -93.9568,
+    summary: "Discover coastal marshes and chenier habitat near Sabine Pass, with opportunities for birding, fishing, hiking, wildlife observation, photography, and regulated waterfowl hunting.",
+    activities: ["birding", "wildlife", "wildlife photography", "hiking", "fishing", "hunting", "nature study"],
+    amenities: ["trails", "fishing access", "observation areas", "information kiosk", "parking"],
+    publicAccess: true,
+    accessNotes: "Public access and individual recreation areas follow posted refuge hours, closures, and seasonal regulations.",
+  },
+  {
+    name: "Moody National Wildlife Refuge",
+    alternateNames: [],
+    officialUrl: "https://www.fws.gov/refuge/moody",
+    city: "Anahuac",
+    county: "Chambers County",
+    latitude: 29.706,
+    longitude: -94.714,
+    summary: "Learn about a privately owned coastal-wetland conservation easement protected as part of the National Wildlife Refuge System for resident, migratory, and wintering birds and other Gulf Coast wildlife.",
+    activities: [],
+    amenities: [],
+    publicAccess: false,
+    accessNotes: "Closed to public access. The refuge is privately owned and protected through a conservation easement managed for wildlife and habitat.",
+  },
+];
+
+const genericSeeds: CatalogSeed[] = additionalDestinations
+  .filter((name) => name !== "Anahuac National Wildlife Refuge")
+  .map((name) => ({
+    name,
+    entityType: "attraction",
+    collection: "Texas attractions, towns, scenic drives, caves, springs, and wildlife destinations",
+    sourceUrl: "https://www.traveltexas.com/",
+    sourceName: "Travel Texas",
+    categories: ["texas attraction"],
+  }));
 
 const forestDestinations = forestServiceDestinations.map((site) => {
   const seed: CatalogSeed = {
@@ -139,7 +215,52 @@ const forestDestinations = forestServiceDestinations.map((site) => {
   };
 });
 
+const wildlifeRefugeDestinations = upperGulfCoastRefuges.map((refuge) => {
+  const seed: CatalogSeed = {
+    name: refuge.name,
+    entityType: "wildlife_area",
+    collection: "National Wildlife Refuges in Texas",
+    sourceUrl: refuge.officialUrl,
+    sourceName: "U.S. Fish and Wildlife Service",
+    categories: ["national wildlife refuge", "federal public land", "wildlife", "birding", "Gulf Coast"],
+  };
+  const destination = catalogDestination(seed);
+
+  return {
+    ...destination,
+    alternateNames: refuge.alternateNames,
+    officialUrl: refuge.officialUrl,
+    sourceUrl: refuge.officialUrl,
+    sourceName: "U.S. Fish and Wildlife Service",
+    summary: refuge.summary,
+    description: `${refuge.summary} ${refuge.accessNotes} Confirm current hours, road and trail conditions, weather closures, hunting seasons, permits, and refuge-specific regulations with the U.S. Fish and Wildlife Service before traveling.`,
+    city: refuge.city,
+    county: refuge.county,
+    region: "Gulf Coast",
+    latitude: refuge.latitude,
+    longitude: refuge.longitude,
+    activities: refuge.activities,
+    amenities: refuge.amenities,
+    isFamilyFriendly: refuge.publicAccess,
+    isPetFriendly: false,
+    isAccessible: refuge.publicAccess ? null : false,
+    feeRequired: false,
+    profile: {
+      collection: "National Wildlife Refuges in Texas",
+      ownership: refuge.name === "Moody National Wildlife Refuge" ? "Private conservation easement" : "Federal",
+      managingOrganization: "U.S. Fish and Wildlife Service",
+      parentUnit: "Texas Chenier Plain National Wildlife Refuge Complex",
+      designation: "National Wildlife Refuge",
+      publicAccess: refuge.publicAccess,
+      accessNotes: refuge.accessNotes,
+    },
+    categories: ["national wildlife refuge", "federal public land", "u.s. fish and wildlife service", "wildlife", "birding", "Gulf Coast"],
+    tags: [...refuge.activities, ...refuge.alternateNames.map((name) => name.toLowerCase()), "coastal wetlands", "migratory birds", "wildlife refuge", refuge.city.toLowerCase()],
+  };
+});
+
 export const destinations = [
   ...genericSeeds.map(catalogDestination),
   ...forestDestinations,
+  ...wildlifeRefugeDestinations,
 ];
