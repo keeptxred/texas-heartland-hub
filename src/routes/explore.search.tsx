@@ -211,8 +211,7 @@ function ExploreSearch() {
                 (search.amenities && search.amenities.length) ||
                 search.familyFriendly ||
                 search.petFriendly ||
-                search.accessible ||
-                search.near,
+                search.accessible,
             );
             const emptyMessage =
               result.total === 0 && !hasFilters
