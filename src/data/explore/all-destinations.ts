@@ -213,7 +213,6 @@ for (const rawDestination of [
   ...additionalDestinations,
   ...thcDestinations,
 ]) {
-]) {
   const destination = normalizeDestination(rawDestination);
   const existing = destinationBySlug.get(destination.slug);
 
