@@ -9,6 +9,7 @@ import {
   getMajorSpringDestinationEnrichment,
   majorSpringDestinations,
 } from "./catalog.major-springs.entities";
+import { texasLighthouseDestinations } from "./catalog.lighthouses.entities";
 import { privateNaturalLandmarkDestinations } from "./catalog.private-natural-landmarks.entities";
 import { privateCulturalLandmarkDestinations } from "./catalog.private-cultural-landmarks.entities";
 import { destinations as thcDestinations } from "./catalog.thc";
@@ -42,6 +43,7 @@ const ENTITY_TYPE_ALIASES: Record<string, string> = {
   "historic site": "historic_site",
   historic_site: "historic_site",
   lake: "lake",
+  lighthouse: "lighthouse",
   natural_area: "natural_area",
   "natural area": "natural_area",
   park: "park",
@@ -384,6 +386,7 @@ for (const rawDestination of [
   ...additionalDestinations,
   ...cavernDestinations,
   ...majorSpringDestinations,
+  ...texasLighthouseDestinations,
   ...privateNaturalLandmarkDestinations,
   ...privateCulturalLandmarkDestinations,
   ...thcDestinations,
