@@ -110,21 +110,22 @@ async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
       facets: emptyFacets(),
     };
 
-  const { data, error } = await client.rpc("search_explore_entities", {
-    search_query: parsed.q || null,
-    entity_types: parsed.types ?? null,
-    regions: parsed.regions ?? null,
-    counties: parsed.counties ?? null,
-    required_activities: parsed.activities ?? null,
-    required_amenities: parsed.amenities ?? null,
-    near_lat: parsed.lat ?? null,
-    near_lng: parsed.lng ?? null,
-    radius_km: parsed.radiusKm ?? null,
-    result_limit: parsed.pageSize,
-    result_offset: (parsed.page - 1) * parsed.pageSize,
-  });
-  if (error) throw new Error(`Explore search failed: ${error.message}`);
-  let rows = (data ?? []) as Row[];
+  try {
+    const { data, error } = await client.rpc("search_explore_entities", {
+      search_query: parsed.q || null,
+      entity_types: parsed.types ?? null,
+      regions: parsed.regions ?? null,
+      counties: parsed.counties ?? null,
+      required_activities: parsed.activities ?? null,
+      required_amenities: parsed.amenities ?? null,
+      near_lat: parsed.lat ?? null,
+      near_lng: parsed.lng ?? null,
+      radius_km: parsed.radiusKm ?? null,
+      result_limit: parsed.pageSize,
+      result_offset: (parsed.page - 1) * parsed.pageSize,
+    });
+    if (error) throw new Error(error.message);
+    let rows = (data ?? []) as Row[];
   if (parsed.familyFriendly != null)
     rows = rows.filter((row) => row.is_family_friendly === parsed.familyFriendly);
   if (parsed.petFriendly != null)
@@ -135,18 +136,31 @@ async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
   if (parsed.sort === "name") rows.sort((a, b) => String(a.name).localeCompare(String(b.name)));
   const items = rows.map(card);
 
-  const { data: facetRows } = await client
-    .from("explore_public_entities")
-    .select("entity_type,region,county,activities,amenities")
-    .limit(1000);
-  const facets = collectFacets((facetRows ?? []) as Row[]);
-  return {
-    items,
-    total: Number(rows[0]?.total_count ?? 0),
-    page: parsed.page,
-    pageSize: parsed.pageSize,
-    facets,
-  };
+    const { data: facetRows } = await client
+      .from("explore_public_entities")
+      .select("entity_type,region,county,activities,amenities")
+      .limit(1000);
+    const facets = collectFacets((facetRows ?? []) as Row[]);
+    return {
+      items,
+      total: Number(rows[0]?.total_count ?? 0),
+      page: parsed.page,
+      pageSize: parsed.pageSize,
+      facets,
+    };
+  } catch (error) {
+    console.error("[explore] search failed", {
+      message: error instanceof Error ? error.message : String(error),
+      input: parsed,
+    });
+    return {
+      items: [],
+      total: 0,
+      page: parsed.page,
+      pageSize: parsed.pageSize,
+      facets: emptyFacets(),
+    };
+  }
 }
 
 function emptyFacets() {
