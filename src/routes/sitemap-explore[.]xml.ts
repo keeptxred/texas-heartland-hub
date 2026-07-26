@@ -35,6 +35,13 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
           { loc: `${BASE_URL}/explore/caverns`, lastmod: catalogLastmod },
           { loc: `${BASE_URL}/explore/lighthouses`, lastmod: catalogLastmod },
           { loc: `${BASE_URL}/explore/scenic-rivers`, lastmod: catalogLastmod },
+          { loc: `${BASE_URL}/explore/major-springs`, lastmod: catalogLastmod },
+          { loc: `${BASE_URL}/explore/spring-fed-swimming`, lastmod: catalogLastmod },
+          { loc: `${BASE_URL}/explore/hill-country-springs`, lastmod: catalogLastmod },
+          {
+            loc: `${BASE_URL}/explore/spring-conservation-and-education`,
+            lastmod: catalogLastmod,
+          },
           ...[...new Set(exploreDestinations.map((item) => item.county).filter(Boolean))].map(
             (county) => ({
               loc: `${BASE_URL}${geographyPath("county", county!)}`,
