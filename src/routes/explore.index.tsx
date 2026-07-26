@@ -23,6 +23,7 @@ export const Route = createFileRoute("/explore/")({
 
 function ExploreLanding() {
   const data = Route.useLoaderData();
+  const destinationCount = data.featured.total;
   const sections = [
     ["Featured destinations", data.featured.items],
     ["Popular lakes", data.lakes.items],
@@ -41,8 +42,8 @@ function ExploreLanding() {
             Find your next Texas adventure.
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
-            Search verified destination records, compare places, explore nearby options, and build a
-            day trip or multi-day itinerary.
+            Search {destinationCount.toLocaleString("en-US")} verified destination records, compare
+            places, explore nearby options, and build a day trip or multi-day itinerary.
           </p>
           <form action="/explore/search" className="mt-8 flex max-w-2xl gap-2" role="search">
             <label htmlFor="explore-home-search" className="sr-only">
@@ -62,7 +63,7 @@ function ExploreLanding() {
             <Button asChild variant="outline">
               <Link to="/explore/search" search={{ page: 1, pageSize: 24, sort: "relevance" }}>
                 <MapPinned />
-                Browse all
+                Browse all {destinationCount.toLocaleString("en-US")}
               </Link>
             </Button>
             <Button asChild>
