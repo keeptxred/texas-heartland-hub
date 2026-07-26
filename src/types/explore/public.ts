@@ -90,6 +90,7 @@ export interface TripPreferences {
   accessible: boolean;
   interests: string[];
   maxDrivingKm: number;
+  stopsPerDay?: number;
 }
 
 export interface TripStop {
@@ -109,9 +110,7 @@ export interface TripDay {
 export interface GeneratedTrip {
   title: string;
   preferences: TripPreferences;
-  // Older saved trips and the current generator are normalized by the trip UI.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  days: any[];
+  days: TripDay[];
   verificationReminder: string;
 }
 
