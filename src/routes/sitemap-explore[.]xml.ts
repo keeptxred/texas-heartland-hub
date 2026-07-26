@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { exploreDestinations } from "@/data/explore/all-destinations";
+import { getCavernSitemapEntries } from "@/lib/explore/cavern-sitemap";
 import {
   BASE_URL,
   renderUrlset,
@@ -17,32 +17,11 @@ type SitemapEntity = {
   name: string;
 };
 
-function catalogEntries(): UrlEntry[] {
-  const now = toIsoDate(new Date());
-  const cavernEntries = exploreDestinations
-    .filter((entity) => entity.entityType === "cavern")
-    .map((entity) => ({
-      loc: `${BASE_URL}/explore/${entity.slug}`,
-      lastmod: toIsoDate(entity.sourceUpdatedAt ?? now),
-      image: entity.heroImageUrl
-        ? { loc: entity.heroImageUrl, title: entity.name }
-        : undefined,
-    }));
-
-  return [
-    {
-      loc: `${BASE_URL}/explore/caverns`,
-      lastmod: now,
-    },
-    ...cavernEntries,
-  ];
-}
-
 export const Route = createFileRoute("/sitemap-explore.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const fallbackEntries = catalogEntries();
+        const fallbackEntries = getCavernSitemapEntries();
         const url = process.env.SUPABASE_URL;
         const key = process.env.SUPABASE_PUBLISHABLE_KEY;
 
