@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { exploreDestinations } from "@/data/explore/destinations";
+import { exploreDestinations } from "@/data/explore/all-destinations";
 import { exploreSearchSchema, tripPreferencesSchema } from "@/schemas/explore/public.schema";
 import { orderStopsForRoute } from "@/lib/explore/geography";
 import type {
@@ -332,48 +332,30 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
       familyFriendly: data.children > 0 || undefined,
       petFriendly: data.pets || undefined,
       accessible: data.accessible || undefined,
-      pageSize: Math.min(42, data.days * 5),
+      pageSize: 100,
+      sort: "relevance",
     });
-    const ranked = result.items
-      .map((entity) => ({
-        entity,
-        score:
-          entity.activities.filter((activity) =>
+    const candidates = result.items.filter((item) =>
+      data.interests.length
+        ? item.activities.some((activity) =>
             data.interests.some((interest) => activity.toLowerCase().includes(interest.toLowerCase())),
-          ).length * 20 +
-          (data.children > 0 && entity.isFamilyFriendly ? 10 : 0) +
-          (data.pets && entity.isPetFriendly ? 10 : 0) +
-          (data.accessible && entity.isAccessible ? 15 : 0) +
-          (data.rv && entity.amenities.some((value) => /rv|hookup/i.test(value)) ? 10 : 0),
-      }))
-      .sort((a, b) => b.score - a.score || a.entity.name.localeCompare(b.entity.name));
-    const start = data.startDate ? new Date(`${data.startDate}T12:00:00`) : null;
-    const routeOrdered = orderStopsForRoute(ranked.map(({ entity }) => entity));
-    const rankedById = new Map(ranked.map((item) => [item.entity.id, item]));
-    const orderedRecommendations = routeOrdered
-      .map((entity) => rankedById.get(entity.id)!)
-      .filter(Boolean);
-    const days = Array.from({ length: data.days }, (_, index) => ({
-      day: index + 1,
-      date: start
-        ? new Date(start.getTime() + index * 86_400_000).toISOString().slice(0, 10)
-        : undefined,
-      stops: orderedRecommendations.slice(index * 3, index * 3 + 3).map(({ entity }, stopIndex) => ({
-        entity,
-        period: (["morning", "afternoon", "evening"] as const)[stopIndex],
-        durationMinutes: stopIndex === 1 ? 180 : 120,
-        reasons: recommendationReasons(entity, data),
-        notes: [
-          entity.feeRequired ? "Fees may apply; verify current pricing with the official source." : "",
-          data.pets && !entity.isPetFriendly ? "Verify the current pet policy before visiting." : "",
-        ].filter(Boolean),
-      })),
-    }));
+          )
+        : true,
+    );
+    const ordered = orderStopsForRoute(candidates);
+    const days = Array.from({ length: data.days }, (_, index) => {
+      const items = ordered.slice(index * data.stopsPerDay, (index + 1) * data.stopsPerDay);
+      return {
+        day: index + 1,
+        title: `Day ${index + 1}`,
+        items: items.map((item) => ({ entity: item, reasons: recommendationReasons(item, data) })),
+      };
+    }).filter((day) => day.items.length > 0);
     return {
-      title: data.title,
+      title: data.title || "Explore Texas Trip",
       preferences: data,
       days,
       verificationReminder:
-        "Hours, fees, conditions, reservations, and regulations can change. Verify time-sensitive details with each official source before departure.",
+        "Verify current hours, fees, reservations, weather, access conditions, and regulations with official sources before traveling.",
     };
   });
