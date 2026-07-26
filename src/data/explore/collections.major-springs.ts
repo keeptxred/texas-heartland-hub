@@ -23,12 +23,18 @@ const statewideSpringSlugs = [
   "san-marcos-springs-spring-lake",
   "jacobs-well-natural-area",
   "hancock-springs-park",
+  "blue-hole-regional-park",
+  "krause-springs",
+  "las-moras-springs-fort-clark",
 ] as const;
 
 const springFedSwimmingSlugs = [
   "balmorhea-state-park",
   "barton-springs-pool",
   "hancock-springs-park",
+  "blue-hole-regional-park",
+  "krause-springs",
+  "las-moras-springs-fort-clark",
 ] as const;
 
 const hillCountrySpringSlugs = [
@@ -36,6 +42,8 @@ const hillCountrySpringSlugs = [
   "san-marcos-springs-spring-lake",
   "jacobs-well-natural-area",
   "hancock-springs-park",
+  "blue-hole-regional-park",
+  "krause-springs",
 ] as const;
 
 const conservationAndEducationSlugs = [
@@ -43,6 +51,8 @@ const conservationAndEducationSlugs = [
   "barton-springs-pool",
   "san-marcos-springs-spring-lake",
   "jacobs-well-natural-area",
+  "blue-hole-regional-park",
+  "las-moras-springs-fort-clark",
 ] as const;
 
 export const majorSpringDiscoveryCollections: readonly MajorSpringDiscoveryCollection[] = [
@@ -51,7 +61,7 @@ export const majorSpringDiscoveryCollections: readonly MajorSpringDiscoveryColle
     slug: "major-texas-springs",
     title: "Major Springs Across Texas",
     description:
-      "Discover significant Texas spring systems, spring-fed pools, protected headwaters, and public natural areas from West Texas to the Hill Country.",
+      "Discover significant Texas spring systems, spring-fed pools, protected headwaters, and natural recreation destinations from West Texas to the Hill Country and South Texas.",
     destinationSlugs: statewideSpringSlugs,
     searchTerms: ["texas springs", "spring-fed destinations", "natural springs", "freshwater springs"],
     region: null,
@@ -62,7 +72,7 @@ export const majorSpringDiscoveryCollections: readonly MajorSpringDiscoveryColle
     slug: "spring-fed-swimming",
     title: "Spring-Fed Swimming in Texas",
     description:
-      "Find established public destinations where visitors can swim in clear, naturally spring-fed water, subject to current operating conditions and admission rules.",
+      "Find established Texas destinations where visitors can swim in naturally spring-fed water, subject to current operating conditions, admission rules, and seasonal access requirements.",
     destinationSlugs: springFedSwimmingSlugs,
     searchTerms: ["spring-fed swimming", "natural swimming pool", "texas swimming holes", "clear water swimming"],
     region: null,
@@ -73,7 +83,7 @@ export const majorSpringDiscoveryCollections: readonly MajorSpringDiscoveryColle
     slug: "hill-country-springs",
     title: "Hill Country Springs",
     description:
-      "Explore aquifer-fed pools, river headwaters, municipal parks, and protected spring systems across Central Texas and the Hill Country.",
+      "Explore aquifer-fed pools, creek swimming areas, river headwaters, municipal parks, and privately managed spring destinations across Central Texas and the Hill Country.",
     destinationSlugs: hillCountrySpringSlugs,
     searchTerms: ["hill country springs", "edwards aquifer", "central texas springs", "spring-fed pools"],
     region: "Hill Country",
@@ -84,7 +94,7 @@ export const majorSpringDiscoveryCollections: readonly MajorSpringDiscoveryColle
     slug: "spring-conservation-and-education",
     title: "Spring Conservation and Education",
     description:
-      "Visit Texas destinations that interpret sensitive spring ecosystems, protected species, aquifers, and freshwater conservation through public programs and managed access.",
+      "Visit Texas destinations that interpret sensitive spring ecosystems, protected species, aquifers, historic water resources, and freshwater conservation through public programs and managed access.",
     destinationSlugs: conservationAndEducationSlugs,
     searchTerms: ["spring conservation", "aquifer education", "freshwater ecology", "protected spring habitat"],
     region: null,
