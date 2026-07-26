@@ -105,6 +105,7 @@ type WildlifeRefugeDestination = {
   accessNotes: string;
   parentUnit: string;
   ownership?: string;
+  region?: string;
 };
 
 const upperGulfCoastRefuges: WildlifeRefugeDestination[] = [
@@ -235,13 +236,89 @@ const centralGulfCoastRefuges: WildlifeRefugeDestination[] = [
   },
 ];
 
+const southTexasRefuges: WildlifeRefugeDestination[] = [
+  {
+    name: "Laguna Atascosa National Wildlife Refuge",
+    alternateNames: [],
+    officialUrl: "https://www.fws.gov/refuge/laguna-atascosa",
+    city: "Los Fresnos",
+    county: "Cameron County",
+    latitude: 26.2293,
+    longitude: -97.3483,
+    summary: "Explore one of South Texas's premier wildlife refuges, protecting coastal prairie, thornscrub, wetlands, tidal flats, and critical habitat for ocelots, aplomado falcons, waterfowl, and hundreds of bird species.",
+    activities: ["birding", "wildlife", "wildlife photography", "hiking", "biking", "fishing", "paddling", "auto tour", "hunting", "nature study"],
+    amenities: ["visitor center", "trails", "wildlife drive", "observation areas", "boat ramp", "restrooms", "parking"],
+    publicAccess: true,
+    accessNotes: "Public-use areas follow posted refuge hours. Wildlife drives, roads, trails, fishing access, and hunting units may close seasonally or because of weather and habitat-management work.",
+    parentUnit: "South Texas National Wildlife Refuge Complex",
+    region: "South Texas",
+  },
+  {
+    name: "Lower Rio Grande Valley National Wildlife Refuge",
+    alternateNames: ["Lower Rio Grande Valley NWR"],
+    officialUrl: "https://www.fws.gov/refuge/lower-rio-grande-valley",
+    city: "Alamo",
+    county: "Cameron, Hidalgo, Starr, and Willacy Counties",
+    latitude: 26.1858,
+    longitude: -98.1067,
+    summary: "Discover a connected network of South Texas tracts protecting Rio Grande floodplain forest, Tamaulipan thornscrub, wetlands, resacas, and wildlife corridors used by rare birds, butterflies, ocelots, and other borderlands species.",
+    activities: ["birding", "wildlife", "wildlife photography", "hiking", "butterfly viewing", "nature study", "environmental education", "hunting"],
+    amenities: ["trails", "observation areas", "information kiosks", "parking"],
+    publicAccess: true,
+    accessNotes: "The refuge is made up of many separate tracts. Public access, trails, parking, hunting opportunities, and operating hours vary by unit, and some conservation tracts are closed to general visitation.",
+    parentUnit: "South Texas National Wildlife Refuge Complex",
+    region: "South Texas",
+  },
+  {
+    name: "Santa Ana National Wildlife Refuge",
+    alternateNames: [],
+    officialUrl: "https://www.fws.gov/refuge/santa-ana",
+    city: "Alamo",
+    county: "Hidalgo County",
+    latitude: 26.0858,
+    longitude: -98.1346,
+    summary: "Visit a celebrated Lower Rio Grande Valley birding destination where subtropical thorn forest, resacas, wetlands, and Rio Grande floodplain habitat support green jays, chachalacas, raptors, butterflies, and diverse borderlands wildlife.",
+    activities: ["birding", "wildlife", "wildlife photography", "hiking", "butterfly viewing", "nature study", "environmental education"],
+    amenities: ["visitor center", "trails", "observation tower", "observation deck", "restrooms", "parking"],
+    publicAccess: true,
+    accessNotes: "Open during posted refuge hours. Trails, tram service, observation facilities, and visitor-center operations may vary seasonally or close temporarily for weather and maintenance.",
+    parentUnit: "South Texas National Wildlife Refuge Complex",
+    region: "South Texas",
+  },
+  {
+    name: "Aransas National Wildlife Refuge",
+    alternateNames: ["Aransas NWR"],
+    officialUrl: "https://www.fws.gov/refuge/aransas",
+    city: "Austwell",
+    county: "Aransas and Refugio Counties",
+    latitude: 28.3135,
+    longitude: -96.8044,
+    summary: "Experience coastal prairie, live-oak woodlands, tidal marshes, bays, wildlife drives, trails, and observation areas at the principal wintering grounds of the endangered whooping crane.",
+    activities: ["birding", "wildlife", "wildlife photography", "hiking", "auto tour", "fishing", "boating", "hunting", "nature study"],
+    amenities: ["visitor contact station", "wildlife drive", "trails", "observation tower", "observation areas", "fishing access", "restrooms", "parking"],
+    publicAccess: true,
+    accessNotes: "Public-use areas follow posted refuge hours. Roads, trails, fishing areas, hunting units, and facilities may be seasonal or temporarily closed because of weather, prescribed fire, and habitat-management work.",
+    parentUnit: "Aransas National Wildlife Refuge Complex",
+    region: "Gulf Coast",
+  },
+];
+
 const wildlifeRefuges = [
   ...upperGulfCoastRefuges,
   ...centralGulfCoastRefuges,
+  ...southTexasRefuges,
+];
+
+const structuredWildlifeRefugeNames = [
+  "Anahuac National Wildlife Refuge",
+  "Aransas National Wildlife Refuge",
+  "Brazoria National Wildlife Refuge",
+  "Laguna Atascosa National Wildlife Refuge",
+  "Santa Ana National Wildlife Refuge",
 ];
 
 const genericSeeds: CatalogSeed[] = additionalDestinations
-  .filter((name) => !["Anahuac National Wildlife Refuge", "Brazoria National Wildlife Refuge"].includes(name))
+  .filter((name) => !structuredWildlifeRefugeNames.includes(name))
   .map((name) => ({
     name,
     entityType: "attraction",
@@ -292,13 +369,14 @@ const forestDestinations = forestServiceDestinations.map((site) => {
 });
 
 const wildlifeRefugeDestinations = wildlifeRefuges.map((refuge) => {
+  const region = refuge.region ?? "Gulf Coast";
   const seed: CatalogSeed = {
     name: refuge.name,
     entityType: "wildlife_area",
     collection: "National Wildlife Refuges in Texas",
     sourceUrl: refuge.officialUrl,
     sourceName: "U.S. Fish and Wildlife Service",
-    categories: ["national wildlife refuge", "federal public land", "wildlife", "birding", "Gulf Coast"],
+    categories: ["national wildlife refuge", "federal public land", "wildlife", "birding", region],
   };
   const destination = catalogDestination(seed);
 
@@ -312,7 +390,7 @@ const wildlifeRefugeDestinations = wildlifeRefuges.map((refuge) => {
     description: `${refuge.summary} ${refuge.accessNotes} Confirm current hours, road and trail conditions, weather closures, hunting seasons, permits, and refuge-specific regulations with the U.S. Fish and Wildlife Service before traveling.`,
     city: refuge.city,
     county: refuge.county,
-    region: "Gulf Coast",
+    region,
     latitude: refuge.latitude,
     longitude: refuge.longitude,
     activities: refuge.activities,
@@ -330,8 +408,8 @@ const wildlifeRefugeDestinations = wildlifeRefuges.map((refuge) => {
       publicAccess: refuge.publicAccess,
       accessNotes: refuge.accessNotes,
     },
-    categories: ["national wildlife refuge", "federal public land", "u.s. fish and wildlife service", "wildlife", "birding", "Gulf Coast"],
-    tags: [...refuge.activities, ...refuge.alternateNames.map((name) => name.toLowerCase()), "coastal wetlands", "migratory birds", "wildlife refuge", refuge.city.toLowerCase()],
+    categories: ["national wildlife refuge", "federal public land", "u.s. fish and wildlife service", "wildlife", "birding", region],
+    tags: [...refuge.activities, ...refuge.alternateNames.map((name) => name.toLowerCase()), "migratory birds", "wildlife refuge", region.toLowerCase(), refuge.city.toLowerCase()],
   };
 });
 
