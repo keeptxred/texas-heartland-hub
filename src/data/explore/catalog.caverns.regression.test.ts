@@ -28,7 +28,11 @@ const expectUniqueNormalizedTerms = (terms: string[]) => {
   }
 };
 
-function expectJsonObject(value: ExploreJson, label: string): { [key: string]: ExploreJson } {
+function expectJsonObject(
+  value: ExploreJson | undefined,
+  label: string,
+): { [key: string]: ExploreJson } {
+  expect(value, label).toBeDefined();
   expect(value, label).not.toBeNull();
   expect(Array.isArray(value), label).toBe(false);
   expect(typeof value, label).toBe("object");
