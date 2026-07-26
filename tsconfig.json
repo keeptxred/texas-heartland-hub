@@ -22,6 +22,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
+      "@/data/explore/destinations": ["./src/data/explore/all-destinations.ts"],
       "@/*": ["./src/*"]
     }
   }
