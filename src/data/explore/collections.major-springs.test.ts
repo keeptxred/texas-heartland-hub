@@ -18,6 +18,18 @@ const expectedStatewideSlugs = [
   "san-marcos-springs-spring-lake",
   "jacobs-well-natural-area",
   "hancock-springs-park",
+  "blue-hole-regional-park",
+  "krause-springs",
+  "las-moras-springs-fort-clark",
+] as const;
+
+const expectedSwimmingSlugs = [
+  "balmorhea-state-park",
+  "barton-springs-pool",
+  "hancock-springs-park",
+  "blue-hole-regional-park",
+  "krause-springs",
+  "las-moras-springs-fort-clark",
 ] as const;
 
 describe("Explore Texas major spring discovery collections", () => {
@@ -65,11 +77,7 @@ describe("Explore Texas major spring discovery collections", () => {
   it("limits the swimming collection to destinations with permitted public swimming", () => {
     const destinations = getMajorSpringCollectionDestinations("spring-fed-swimming");
 
-    expect(destinations.map((destination) => destination.slug)).toEqual([
-      "balmorhea-state-park",
-      "barton-springs-pool",
-      "hancock-springs-park",
-    ]);
+    expect(destinations.map((destination) => destination.slug)).toEqual(expectedSwimmingSlugs);
 
     for (const destination of destinations) {
       expect(destination.regulations.swimmingStatus).toBe("permitted");
@@ -83,6 +91,20 @@ describe("Explore Texas major spring discovery collections", () => {
 
     expect(swimmingSlugs).not.toContain("san-marcos-springs-spring-lake");
     expect(swimmingSlugs).not.toContain("jacobs-well-natural-area");
+  });
+
+  it("includes the expanded Hill Country swimming destinations", () => {
+    const hillCountrySlugs = getMajorSpringCollectionDestinations("hill-country-springs").map(
+      (destination) => destination.slug,
+    );
+
+    expect(hillCountrySlugs).toEqual(
+      expect.arrayContaining([
+        "blue-hole-regional-park",
+        "krause-springs",
+      ]),
+    );
+    expect(hillCountrySlugs).not.toContain("las-moras-springs-fort-clark");
   });
 
   it("returns an empty result for unknown collections", () => {
