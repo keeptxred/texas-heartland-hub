@@ -4,6 +4,7 @@ export type PrivateNaturalLandmarkOwnership =
 
 export type PrivateNaturalLandmarkAccessModel =
   | "reservation-guided-access"
+  | "scheduled-public-program-access"
   | "ticketed-day-use-and-overnight-access";
 
 export type PrivateNaturalLandmarkRecord = {
@@ -155,6 +156,67 @@ export const privateNaturalLandmarkCatalog: readonly PrivateNaturalLandmarkRecor
       "Public access is available through paid day-use admission or overnight reservations. Seasonal closures, river conditions, and property guidelines should be confirmed before travel.",
     conservationNotes:
       "The property preserves a long-established recreation landscape along a spring-fed reach of the Nueces River and its prominent limestone bluff.",
+    verificationStatus: "official-source-reviewed",
+    lastReviewed: "2026-07-26",
+  },
+  {
+    id: "private-natural-landmark-selah-bamberger-ranch-preserve",
+    slug: "selah-bamberger-ranch-preserve",
+    name: "Selah, Bamberger Ranch Preserve",
+    city: "Johnson City",
+    county: "Blanco County",
+    region: "Hill Country",
+    latitude: 30.1872,
+    longitude: -98.4761,
+    officialUrl: "https://www.bambergerranch.org/",
+    sourceName: "Selah, Bamberger Ranch Preserve",
+    summary:
+      "A 5,500-acre privately protected Hill Country ranch restored from degraded land into native grassland, woodland, spring, lake, and wildlife habitat used for conservation education and research.",
+    operator: "Selah, Bamberger Ranch Preserve",
+    ownershipClassification: "private-nonprofit-preserve",
+    ownershipLabel: "Private nonprofit ranch preserve",
+    publicAccess: true,
+    accessModel: "scheduled-public-program-access",
+    admissionRequired: true,
+    reservationsRequired: true,
+    swimmingStatus: "not-permitted",
+    overnightAccess: false,
+    activities: [
+      "Guided ranch tours",
+      "Birding",
+      "Wildlife observation",
+      "Land stewardship education",
+      "Nature photography",
+      "Bat watching",
+      "Fossil interpretation",
+    ],
+    amenities: [
+      "Research and education center",
+      "Nature trails",
+      "Madrone Lake",
+      "Chiroptorium bat habitat",
+      "Restrooms",
+      "Parking",
+    ],
+    categories: [
+      "Private natural landmark",
+      "Ranch preserve",
+      "Habitat restoration",
+      "Conservation education destination",
+    ],
+    tags: [
+      "Bamberger Ranch Preserve",
+      "Selah",
+      "Johnson City",
+      "land restoration",
+      "Hill Country conservation",
+      "Chiroptorium",
+      "Madrone Lake",
+    ],
+    accessNotes:
+      "The preserve is not open for unscheduled individual visitation. Public access is limited to ticketed scheduled tours, workshops, family events, educational programs, or advance-arranged group visits.",
+    conservationNotes:
+      "The preserve demonstrates more than five decades of watershed repair, habitat restoration, biodiversity research, and practical land-stewardship education across 5,500 protected acres.",
     verificationStatus: "official-source-reviewed",
     lastReviewed: "2026-07-26",
   },
