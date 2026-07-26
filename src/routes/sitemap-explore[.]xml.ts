@@ -33,6 +33,7 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
         const geographyEntries: UrlEntry[] = [
           { loc: `${BASE_URL}/explore`, lastmod: catalogLastmod },
           { loc: `${BASE_URL}/explore/caverns`, lastmod: catalogLastmod },
+          { loc: `${BASE_URL}/explore/lighthouses`, lastmod: catalogLastmod },
           { loc: `${BASE_URL}/explore/scenic-rivers`, lastmod: catalogLastmod },
           ...[...new Set(exploreDestinations.map((item) => item.county).filter(Boolean))].map(
             (county) => ({
