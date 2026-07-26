@@ -45,8 +45,43 @@ const upperGulfCoastLocations: ExpectedLocation[] = [
   },
 ];
 
-describe("Explore Texas upper Gulf Coast refuge locations", () => {
-  it.each(upperGulfCoastLocations)(
+const centralGulfCoastLocations: ExpectedLocation[] = [
+  {
+    name: "Brazoria National Wildlife Refuge",
+    city: "Freeport",
+    county: "Brazoria County",
+    region: "Gulf Coast",
+    latitude: 29.0474,
+    longitude: -95.3208,
+  },
+  {
+    name: "San Bernard National Wildlife Refuge",
+    city: "Brazoria",
+    county: "Brazoria County",
+    region: "Gulf Coast",
+    latitude: 28.8669,
+    longitude: -95.5705,
+  },
+  {
+    name: "Big Boggy National Wildlife Refuge",
+    city: "Wadsworth",
+    county: "Matagorda County",
+    region: "Gulf Coast",
+    latitude: 28.7572,
+    longitude: -95.8086,
+  },
+  {
+    name: "Matagorda Island National Wildlife Refuge",
+    city: "Port O'Connor",
+    county: "Calhoun County",
+    region: "Gulf Coast",
+    latitude: 28.2255,
+    longitude: -96.6417,
+  },
+];
+
+const assertAuditedLocations = (locations: ExpectedLocation[]) => {
+  it.each(locations)(
     "keeps verified location metadata for $name",
     ({ name, city, county, region, latitude, longitude }) => {
       const destination = destinations.find((item) => item.name === name);
@@ -64,8 +99,16 @@ describe("Explore Texas upper Gulf Coast refuge locations", () => {
   );
 
   it("contains each audited refuge exactly once", () => {
-    for (const { name } of upperGulfCoastLocations) {
+    for (const { name } of locations) {
       expect(destinations.filter((item) => item.name === name)).toHaveLength(1);
     }
   });
+};
+
+describe("Explore Texas upper Gulf Coast refuge locations", () => {
+  assertAuditedLocations(upperGulfCoastLocations);
+});
+
+describe("Explore Texas central Gulf Coast refuge locations", () => {
+  assertAuditedLocations(centralGulfCoastLocations);
 });
