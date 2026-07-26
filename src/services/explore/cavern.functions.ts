@@ -1,6 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { exploreDestinations } from "@/data/explore/all-destinations";
+import { commercialCavernCatalog } from "@/data/explore/catalog.caverns";
+import { validateCommercialCavernCatalog } from "@/data/explore/catalog.caverns.validation";
 import type { ExploreEntity, ExploreEntityCard } from "@/types/explore/public";
+
+validateCommercialCavernCatalog(commercialCavernCatalog);
 
 function toEntityCard(entity: ExploreEntity): ExploreEntityCard {
   return {
