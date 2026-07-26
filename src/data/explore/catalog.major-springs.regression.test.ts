@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { ExploreJson, ExploreJsonObject } from "@/types/explore/public";
 import { exploreDestinations } from "./all-destinations";
 import { majorSpringCatalog } from "./catalog.major-springs";
 import { majorSpringDestinations } from "./catalog.major-springs.entities";
@@ -7,6 +8,13 @@ const getUnifiedDestination = (slug: string) => {
   const matches = exploreDestinations.filter((destination) => destination.slug === slug);
   expect(matches, `${slug} must exist exactly once in the unified catalog`).toHaveLength(1);
   return matches[0];
+};
+
+const asJsonObject = (value: ExploreJson | undefined): ExploreJsonObject => {
+  expect(value).not.toBeNull();
+  expect(typeof value).toBe("object");
+  expect(Array.isArray(value)).toBe(false);
+  return value as ExploreJsonObject;
 };
 
 const expectUniqueNormalizedTerms = (terms: string[]) => {
@@ -29,6 +37,7 @@ describe("Explore Texas major spring catalog regression coverage", () => {
       (record) => record.integrationMode === "create",
     )) {
       const destination = getUnifiedDestination(spring.slug);
+      const springExperience = asJsonObject(destination.profile.springExperience);
 
       expect(destination.id).toBe(spring.slug);
       expect(destination.name).toBe(spring.name);
@@ -38,8 +47,8 @@ describe("Explore Texas major spring catalog regression coverage", () => {
       expect(destination.sourceName).toBe(spring.sourceName);
       expect(destination.feeRequired).toBe(spring.feeRequired);
       expect(destination.profile.operator).toBe(spring.managingOrganization);
-      expect(destination.profile.springExperience.swimmingStatus).toBe(spring.swimmingStatus);
-      expect(destination.profile.springExperience.publicAccess).toBe(spring.publicAccess);
+      expect(springExperience.swimmingStatus).toBe(spring.swimmingStatus);
+      expect(springExperience.publicAccess).toBe(spring.publicAccess);
       expect(destination.categories).toContain("major texas spring");
       expect(destination.tags).toEqual(expect.arrayContaining(["spring", "springs", "freshwater"]));
 
@@ -76,14 +85,18 @@ describe("Explore Texas major spring catalog regression coverage", () => {
   it("preserves access restrictions for sensitive spring destinations", () => {
     const jacobsWell = getUnifiedDestination("jacobs-well-natural-area");
     const springLake = getUnifiedDestination("san-marcos-springs-spring-lake");
+    const jacobsWellExperience = asJsonObject(jacobsWell.profile.springExperience);
+    const jacobsWellRegulations = asJsonObject(jacobsWell.regulations ?? undefined);
+    const springLakeExperience = asJsonObject(springLake.profile.springExperience);
+    const springLakeRegulations = asJsonObject(springLake.regulations ?? undefined);
 
-    expect(jacobsWell.profile.springExperience.swimmingStatus).toBe("not-permitted");
+    expect(jacobsWellExperience.swimmingStatus).toBe("not-permitted");
     expect(jacobsWell.profile.accessType).toBe("open-no-swimming");
-    expect(jacobsWell.regulations.swimmingStatus).toBe("not-permitted");
+    expect(jacobsWellRegulations.swimmingStatus).toBe("not-permitted");
 
-    expect(springLake.profile.springExperience.swimmingStatus).toBe("program-only");
+    expect(springLakeExperience.swimmingStatus).toBe("program-only");
     expect(springLake.profile.accessType).toBe("open-limited-program-access");
-    expect(springLake.regulations.swimmingStatus).toBe("program-only");
+    expect(springLakeRegulations.swimmingStatus).toBe("program-only");
   });
 
   it("keeps spring slugs, IDs, and official URLs unique", () => {
