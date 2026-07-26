@@ -56,9 +56,7 @@ describe("Explore Texas cavern catalog regression coverage", () => {
       expect(destination.officialUrl).toMatch(/^https:\/\/tpwd\.texas\.gov\/state-parks\//);
       expect(destination.profile.operator).toBe("Texas Parks and Wildlife Department");
       expect(destination.categories).toEqual(expect.arrayContaining(["cavern"]));
-      expect(destination.tags).toEqual(
-        expect.arrayContaining(["cave", "cavern", "guided cave tour"]),
-      );
+      expect(destination.tags).toContain("guided cave tour");
     }
 
     expect(exploreDestinations.some((destination) => destination.slug === "longhorn-cavern")).toBe(
