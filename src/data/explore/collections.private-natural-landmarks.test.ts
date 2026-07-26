@@ -72,8 +72,8 @@ describe("private natural landmark discovery collections", () => {
     ]);
 
     for (const destination of destinations) {
-      expect(destination.regulations.swimmingStatus).toBe("not-permitted");
-      expect(destination.regulations.overnightAccess).toBe(false);
+      expect(destination.regulations?.swimmingStatus).toBe("not-permitted");
+      expect(destination.regulations?.overnightAccess).toBe(false);
     }
   });
 
@@ -85,8 +85,8 @@ describe("private natural landmark discovery collections", () => {
     expect(destinations.map((destination) => destination.slug)).toEqual([
       "chalk-bluff-river-resort",
     ]);
-    expect(destinations[0]?.regulations.swimmingStatus).toBe("permitted");
-    expect(destinations[0]?.regulations.overnightAccess).toBe(true);
+    expect(destinations[0]?.regulations?.swimmingStatus).toBe("permitted");
+    expect(destinations[0]?.regulations?.overnightAccess).toBe(true);
   });
 
   it("returns empty results for unknown collections", () => {
