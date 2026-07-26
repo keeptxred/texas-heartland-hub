@@ -1,22 +1,20 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { exploreDestinations } from "@/data/explore/destinations";
 import { exploreSearchSchema, tripPreferencesSchema } from "@/schemas/explore/public.schema";
 import { orderStopsForRoute } from "@/lib/explore/geography";
 import type {
+  ExploreAutocompleteItem,
   ExploreEntity,
   ExploreEntityCard,
-  ExploreObservation,
+  ExploreJson,
   ExploreSearchInput,
   ExploreSearchResult,
   GeneratedTrip,
-  ExploreJson,
-  ExploreAutocompleteItem,
   SavedTrip,
   TripPreferences,
 } from "@/types/explore/public";
-
-type Row = Record<string, unknown>;
 
 function publicClient() {
   const url = process.env.SUPABASE_URL;
@@ -25,22 +23,8 @@ function publicClient() {
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 
-function strings(value: unknown): string[] {
-  return Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === "string")
-    : [];
-}
-
 function nullableString(value: unknown): string | null {
   return typeof value === "string" && value.length > 0 ? value : null;
-}
-
-function nullableNumber(value: unknown): number | null {
-  return typeof value === "number" && Number.isFinite(value) ? value : null;
-}
-
-function nullableBoolean(value: unknown): boolean | null {
-  return typeof value === "boolean" ? value : null;
 }
 
 function json(value: unknown): ExploreJson {
@@ -54,120 +38,44 @@ function json(value: unknown): ExploreJson {
     return value;
   if (Array.isArray(value)) return value.map(json);
   if (typeof value === "object")
-    return Object.fromEntries(Object.entries(value as Row).map(([key, item]) => [key, json(item)]));
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, item]) => [key, json(item)]),
+    );
   return String(value);
 }
 
-function card(row: Row): ExploreEntityCard {
-  return {
-    id: String(row.id),
-    entityType: String(row.entity_type),
-    name: String(row.name),
-    slug: String(row.slug),
-    summary: nullableString(row.summary),
-    city: nullableString(row.city),
-    county: nullableString(row.county),
-    region: nullableString(row.region),
-    latitude: nullableNumber(row.latitude),
-    longitude: nullableNumber(row.longitude),
-    heroImageUrl: nullableString(row.hero_image_url),
-    heroImageAlt: nullableString(row.hero_image_alt),
-    amenities: strings(row.amenities),
-    activities: strings(row.activities),
-    isFamilyFriendly: nullableBoolean(row.is_family_friendly),
-    isPetFriendly: nullableBoolean(row.is_pet_friendly),
-    isAccessible: nullableBoolean(row.is_accessible),
-    feeRequired: nullableBoolean(row.fee_required),
-    distanceKm: nullableNumber(row.distance_km),
-  };
+function card(entity: ExploreEntity): ExploreEntityCard {
+  const {
+    alternateNames: _alternateNames,
+    description: _description,
+    officialUrl: _officialUrl,
+    phone: _phone,
+    email: _email,
+    address: _address,
+    profile: _profile,
+    hours: _hours,
+    fees: _fees,
+    regulations: _regulations,
+    seasonalGuidance: _seasonalGuidance,
+    categories: _categories,
+    tags: _tags,
+    sourceUrl: _sourceUrl,
+    sourceName: _sourceName,
+    sourceUpdatedAt: _sourceUpdatedAt,
+    updatedAt: _updatedAt,
+    observations: _observations,
+    related: _related,
+    nearby: _nearby,
+    ...result
+  } = entity;
+  return result;
 }
 
-function observation(row: Row): ExploreObservation {
-  const severity = ["info", "advisory", "warning", "closure"].includes(String(row.severity))
-    ? (row.severity as ExploreObservation["severity"])
-    : null;
-  return {
-    id: String(row.id),
-    observationType: String(row.observation_type),
-    title: String(row.title),
-    description: nullableString(row.description),
-    severity,
-    startsAt: nullableString(row.starts_at),
-    endsAt: nullableString(row.ends_at),
-    sourceUrl: nullableString(row.source_url),
-  };
-}
-
-async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
-  const parsed = exploreSearchSchema.parse(input);
-  const client = publicClient();
-  if (!client)
-    return {
-      items: [],
-      total: 0,
-      page: parsed.page,
-      pageSize: parsed.pageSize,
-      facets: emptyFacets(),
-    };
-
-  try {
-    const { data, error } = await client.rpc("search_explore_entities", {
-      search_query: parsed.q || null,
-      entity_types: parsed.types ?? null,
-      regions: parsed.regions ?? null,
-      counties: parsed.counties ?? null,
-      required_activities: parsed.activities ?? null,
-      required_amenities: parsed.amenities ?? null,
-      near_lat: parsed.lat ?? null,
-      near_lng: parsed.lng ?? null,
-      radius_km: parsed.radiusKm ?? null,
-      result_limit: parsed.pageSize,
-      result_offset: (parsed.page - 1) * parsed.pageSize,
-    });
-    if (error) throw new Error(error.message);
-    let rows = (data ?? []) as Row[];
-  if (parsed.familyFriendly != null)
-    rows = rows.filter((row) => row.is_family_friendly === parsed.familyFriendly);
-  if (parsed.petFriendly != null)
-    rows = rows.filter((row) => row.is_pet_friendly === parsed.petFriendly);
-  if (parsed.accessible != null)
-    rows = rows.filter((row) => row.is_accessible === parsed.accessible);
-  if (parsed.fee) rows = rows.filter((row) => row.fee_required === (parsed.fee === "required"));
-  if (parsed.sort === "name") rows.sort((a, b) => String(a.name).localeCompare(String(b.name)));
-  const items = rows.map(card);
-
-    const { data: facetRows } = await client
-      .from("explore_public_entities")
-      .select("entity_type,region,county,activities,amenities")
-      .limit(1000);
-    const facets = collectFacets((facetRows ?? []) as Row[]);
-    return {
-      items,
-      total: Number(rows[0]?.total_count ?? 0),
-      page: parsed.page,
-      pageSize: parsed.pageSize,
-      facets,
-    };
-  } catch (error) {
-    console.error("[explore] search failed", {
-      message: error instanceof Error ? error.message : String(error),
-      input: parsed,
-    });
-    return {
-      items: [],
-      total: 0,
-      page: parsed.page,
-      pageSize: parsed.pageSize,
-      facets: emptyFacets(),
-    };
-  }
-}
-
-function emptyFacets() {
+function emptyFacets(): ExploreSearchResult["facets"] {
   return { entityTypes: [], regions: [], counties: [], activities: [], amenities: [] };
 }
 
-function collectFacets(rows: Row[]) {
+function collectFacets(items: ExploreEntity[]): ExploreSearchResult["facets"] {
   const values = {
     entityTypes: new Set<string>(),
     regions: new Set<string>(),
@@ -175,16 +83,111 @@ function collectFacets(rows: Row[]) {
     activities: new Set<string>(),
     amenities: new Set<string>(),
   };
-  for (const row of rows) {
-    if (row.entity_type) values.entityTypes.add(String(row.entity_type));
-    if (row.region) values.regions.add(String(row.region));
-    if (row.county) values.counties.add(String(row.county));
-    strings(row.activities).forEach((value) => values.activities.add(value));
-    strings(row.amenities).forEach((value) => values.amenities.add(value));
+  for (const item of items) {
+    values.entityTypes.add(item.entityType);
+    if (item.region) values.regions.add(item.region);
+    if (item.county) values.counties.add(item.county);
+    item.activities.forEach((value) => values.activities.add(value));
+    item.amenities.forEach((value) => values.amenities.add(value));
   }
-  return Object.fromEntries(
-    Object.entries(values).map(([key, set]) => [key, [...set].sort()]),
-  ) as ExploreSearchResult["facets"];
+  return {
+    entityTypes: [...values.entityTypes].sort(),
+    regions: [...values.regions].sort(),
+    counties: [...values.counties].sort(),
+    activities: [...values.activities].sort(),
+    amenities: [...values.amenities].sort(),
+  };
+}
+
+function distanceKm(
+  latitude: number,
+  longitude: number,
+  targetLatitude: number,
+  targetLongitude: number,
+): number {
+  const radians = (degrees: number) => (degrees * Math.PI) / 180;
+  const earthRadiusKm = 6371;
+  const latitudeDelta = radians(targetLatitude - latitude);
+  const longitudeDelta = radians(targetLongitude - longitude);
+  const a =
+    Math.sin(latitudeDelta / 2) ** 2 +
+    Math.cos(radians(latitude)) *
+      Math.cos(radians(targetLatitude)) *
+      Math.sin(longitudeDelta / 2) ** 2;
+  return earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
+  const parsed = exploreSearchSchema.parse(input);
+  const query = parsed.q?.trim().toLowerCase();
+  let items = exploreDestinations.map((entity) => ({ ...entity }));
+
+  if (query) {
+    items = items.filter((entity) =>
+      [
+        entity.name,
+        ...entity.alternateNames,
+        entity.summary,
+        entity.description,
+        entity.city,
+        entity.county,
+        entity.region,
+        ...entity.activities,
+        ...entity.amenities,
+        ...entity.categories,
+        ...entity.tags,
+      ]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(query)),
+    );
+  }
+  if (parsed.types?.length)
+    items = items.filter((entity) => parsed.types!.includes(entity.entityType));
+  if (parsed.regions?.length)
+    items = items.filter((entity) => entity.region != null && parsed.regions!.includes(entity.region));
+  if (parsed.counties?.length)
+    items = items.filter((entity) => entity.county != null && parsed.counties!.includes(entity.county));
+  if (parsed.activities?.length)
+    items = items.filter((entity) => parsed.activities!.every((value) => entity.activities.includes(value)));
+  if (parsed.amenities?.length)
+    items = items.filter((entity) => parsed.amenities!.every((value) => entity.amenities.includes(value)));
+  if (parsed.familyFriendly != null)
+    items = items.filter((entity) => entity.isFamilyFriendly === parsed.familyFriendly);
+  if (parsed.petFriendly != null)
+    items = items.filter((entity) => entity.isPetFriendly === parsed.petFriendly);
+  if (parsed.accessible != null)
+    items = items.filter((entity) => entity.isAccessible === parsed.accessible);
+  if (parsed.fee)
+    items = items.filter((entity) => entity.feeRequired === (parsed.fee === "required"));
+
+  if (parsed.lat != null && parsed.lng != null) {
+    items = items
+      .filter((entity) => entity.latitude != null && entity.longitude != null)
+      .map((entity) => ({
+        ...entity,
+        distanceKm: distanceKm(parsed.lat!, parsed.lng!, entity.latitude!, entity.longitude!),
+      }));
+    if (parsed.radiusKm != null)
+      items = items.filter((entity) => (entity.distanceKm ?? Number.POSITIVE_INFINITY) <= parsed.radiusKm!);
+  }
+
+  if (parsed.sort === "name") items.sort((a, b) => a.name.localeCompare(b.name));
+  if (parsed.sort === "distance")
+    items.sort(
+      (a, b) =>
+        (a.distanceKm ?? Number.POSITIVE_INFINITY) -
+        (b.distanceKm ?? Number.POSITIVE_INFINITY),
+    );
+
+  const total = items.length;
+  const start = (parsed.page - 1) * parsed.pageSize;
+  return {
+    items: items.slice(start, start + parsed.pageSize).map(card),
+    total,
+    page: parsed.page,
+    pageSize: parsed.pageSize,
+    facets: exploreDestinations.length ? collectFacets(exploreDestinations) : emptyFacets(),
+  };
 }
 
 export const searchExplore = createServerFn({ method: "GET" })
@@ -196,7 +199,7 @@ export const getExploreLanding = createServerFn({ method: "GET" }).handler(async
     search({ pageSize: 6 }),
     search({ types: ["lake"], pageSize: 4 }),
     search({ types: ["park"], pageSize: 4 }),
-    search({ types: ["campground"], pageSize: 4 }),
+    search({ activities: ["camping"], pageSize: 4 }),
     search({ familyFriendly: true, pageSize: 4 }),
     search({ pageSize: 4, sort: "relevance" }),
   ]);
@@ -206,122 +209,61 @@ export const getExploreLanding = createServerFn({ method: "GET" }).handler(async
 export const getExploreEntity = createServerFn({ method: "GET" })
   .inputValidator((value) => z.object({ slug: z.string().min(1).max(240) }).parse(value))
   .handler(async ({ data }): Promise<ExploreEntity | null> => {
-    const client = publicClient();
-    if (!client) return null;
-    const result = await client
-      .from("explore_public_entities")
-      .select("*")
-      .eq("slug", data.slug)
-      .maybeSingle();
-    if (result.error) throw new Error(`Explore entity lookup failed: ${result.error.message}`);
-    if (!result.data) return null;
-    const row = result.data as Row;
-    const [observationsResult, relationshipsResult, nearbyResult] = await Promise.all([
-      client.from("explore_public_observations").select("*").eq("entity_id", row.id).limit(20),
-      client
-        .from("explore_entity_relationships")
-        .select("target_entity_id")
-        .eq("source_entity_id", row.id)
-        .order("weight", { ascending: false })
-        .limit(8),
-      row.latitude != null && row.longitude != null
-        ? client.rpc("search_explore_entities", {
-            near_lat: row.latitude,
-            near_lng: row.longitude,
-            radius_km: 80,
-            result_limit: 9,
-            result_offset: 0,
-            search_query: null,
-            entity_types: null,
-            regions: null,
-            counties: null,
-            required_activities: null,
-            required_amenities: null,
-          })
-        : Promise.resolve({ data: [], error: null }),
-    ]);
-    const targetIds = ((relationshipsResult.data ?? []) as Row[]).map((item) =>
-      String(item.target_entity_id),
-    );
-    const relatedResult = targetIds.length
-      ? await client.from("explore_public_entities").select("*").in("id", targetIds)
-      : { data: [], error: null };
-    return {
-      ...card(row),
-      alternateNames: strings(row.alternate_names),
-      description: nullableString(row.description),
-      officialUrl: nullableString(row.official_url),
-      phone: nullableString(row.phone),
-      email: nullableString(row.email),
-      address:
-        row.address && typeof row.address === "object"
-          ? (json(row.address) as { [key: string]: ExploreJson })
-          : null,
-      profile:
-        row.profile && typeof row.profile === "object"
-          ? (json(row.profile) as { [key: string]: ExploreJson })
-          : {},
-      hours: json(row.hours),
-      fees: json(row.fees),
-      regulations: json(row.regulations),
-      seasonalGuidance: json(row.seasonal_guidance),
-      categories: strings(row.categories),
-      tags: strings(row.tags),
-      sourceUrl: nullableString(row.source_url),
-      sourceName: nullableString(row.source_name),
-      sourceUpdatedAt: nullableString(row.source_updated_at),
-      updatedAt: String(row.updated_at),
-      observations: ((observationsResult.data ?? []) as Row[]).map(observation),
-      related: ((relatedResult.data ?? []) as Row[]).map(card),
-      nearby: ((nearbyResult.data ?? []) as Row[])
-        .filter((item) => item.id !== row.id)
-        .slice(0, 8)
-        .map(card),
-    };
+    const entity = exploreDestinations.find((item) => item.slug === data.slug);
+    if (!entity) return null;
+    const nearby = exploreDestinations
+      .filter(
+        (item) =>
+          item.id !== entity.id &&
+          entity.latitude != null &&
+          entity.longitude != null &&
+          item.latitude != null &&
+          item.longitude != null,
+      )
+      .map((item) => ({
+        item,
+        distance: distanceKm(entity.latitude!, entity.longitude!, item.latitude!, item.longitude!),
+      }))
+      .sort((a, b) => a.distance - b.distance)
+      .slice(0, 4)
+      .map(({ item }) => card(item));
+    const related = exploreDestinations
+      .filter(
+        (item) =>
+          item.id !== entity.id &&
+          (item.entityType === entity.entityType ||
+            item.categories.some((category) => entity.categories.includes(category))),
+      )
+      .slice(0, 4)
+      .map(card);
+    return { ...entity, nearby, related };
   });
 
 export const getExploreSlugTarget = createServerFn({ method: "GET" })
   .inputValidator((value) => z.object({ slug: z.string().min(1).max(240) }).parse(value))
-  .handler(async ({ data }): Promise<string | null> => {
-    const client = publicClient();
-    if (!client) return null;
-    const alias = await client
-      .from("explore_entity_slug_history")
-      .select("entity_id")
-      .eq("slug", data.slug)
-      .maybeSingle();
-    if (!alias.data) return null;
-    const entity = await client
-      .from("explore_public_entities")
-      .select("slug")
-      .eq("id", (alias.data as Row).entity_id)
-      .maybeSingle();
-    return entity.data ? String((entity.data as Row).slug) : null;
-  });
+  .handler(async (): Promise<string | null> => null);
 
 export const autocompleteExplore = createServerFn({ method: "GET" })
   .inputValidator((value) =>
     z
-      .object({
-        q: z.string().trim().min(2).max(80),
-        limit: z.number().int().min(1).max(12).default(8),
-      })
+      .object({ q: z.string().trim().min(2).max(80), limit: z.number().int().min(1).max(12).default(8) })
       .parse(value),
   )
   .handler(async ({ data }): Promise<ExploreAutocompleteItem[]> => {
-    const client = publicClient();
-    if (!client) return [];
-    const result = await client.rpc("autocomplete_explore_entities", {
-      search_query: data.q,
-      result_limit: data.limit,
-    });
-    if (result.error) throw new Error(`Explore autocomplete failed: ${result.error.message}`);
-    return ((result.data ?? []) as Row[]).map((row) => ({
-      name: String(row.name),
-      slug: String(row.slug),
-      entityType: String(row.entity_type),
-      region: nullableString(row.region),
-    }));
+    const query = data.q.toLowerCase();
+    return exploreDestinations
+      .filter((entity) =>
+        [entity.name, ...entity.alternateNames, entity.city, entity.region]
+          .filter(Boolean)
+          .some((value) => String(value).toLowerCase().includes(query)),
+      )
+      .slice(0, data.limit)
+      .map((entity) => ({
+        name: entity.name,
+        slug: entity.slug,
+        entityType: entity.entityType,
+        region: entity.region,
+      }));
   });
 
 export const getSharedExploreTrip = createServerFn({ method: "GET" })
@@ -337,7 +279,7 @@ export const getSharedExploreTrip = createServerFn({ method: "GET" })
       .maybeSingle();
     if (result.error) throw new Error(`Shared trip lookup failed: ${result.error.message}`);
     if (!result.data) return null;
-    const row = result.data as Row;
+    const row = result.data as Record<string, unknown>;
     const itinerary = json(row.itinerary) as { [key: string]: ExploreJson };
     const preferences = json(row.preferences) as { [key: string]: ExploreJson };
     return {
@@ -387,7 +329,6 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<GeneratedTrip> => {
     const result = await search({
       regions: data.region ? [data.region] : undefined,
-      activities: data.interests.length === 1 ? data.interests : undefined,
       familyFriendly: data.children > 0 || undefined,
       petFriendly: data.pets || undefined,
       accessible: data.accessible || undefined,
@@ -397,7 +338,9 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
       .map((entity) => ({
         entity,
         score:
-          entity.activities.filter((activity) => data.interests.includes(activity)).length * 20 +
+          entity.activities.filter((activity) =>
+            data.interests.some((interest) => activity.toLowerCase().includes(interest.toLowerCase())),
+          ).length * 20 +
           (data.children > 0 && entity.isFamilyFriendly ? 10 : 0) +
           (data.pets && entity.isPetFriendly ? 10 : 0) +
           (data.accessible && entity.isAccessible ? 15 : 0) +
@@ -410,31 +353,22 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
     const orderedRecommendations = routeOrdered
       .map((entity) => rankedById.get(entity.id)!)
       .filter(Boolean);
-    const days = Array.from({ length: data.days }, (_, index) => {
-      const date = start
+    const days = Array.from({ length: data.days }, (_, index) => ({
+      day: index + 1,
+      date: start
         ? new Date(start.getTime() + index * 86_400_000).toISOString().slice(0, 10)
-        : undefined;
-      return {
-        day: index + 1,
-        date,
-        stops: orderedRecommendations
-          .slice(index * 3, index * 3 + 3)
-          .map(({ entity }, stopIndex) => ({
-            entity,
-            period: (["morning", "afternoon", "evening"] as const)[stopIndex],
-            durationMinutes: stopIndex === 1 ? 180 : 120,
-            reasons: recommendationReasons(entity, data),
-            notes: [
-              entity.feeRequired
-                ? "Fees may apply; verify current pricing with the official source."
-                : "",
-              data.pets && !entity.isPetFriendly
-                ? "Verify the current pet policy before visiting."
-                : "",
-            ].filter(Boolean),
-          })),
-      };
-    });
+        : undefined,
+      stops: orderedRecommendations.slice(index * 3, index * 3 + 3).map(({ entity }, stopIndex) => ({
+        entity,
+        period: (["morning", "afternoon", "evening"] as const)[stopIndex],
+        durationMinutes: stopIndex === 1 ? 180 : 120,
+        reasons: recommendationReasons(entity, data),
+        notes: [
+          entity.feeRequired ? "Fees may apply; verify current pricing with the official source." : "",
+          data.pets && !entity.isPetFriendly ? "Verify the current pet policy before visiting." : "",
+        ].filter(Boolean),
+      })),
+    }));
     return {
       title: data.title,
       preferences: data,
