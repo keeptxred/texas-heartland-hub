@@ -9,7 +9,9 @@ export type MajorSpringOwnershipClassification =
   | "public-state-managed"
   | "public-municipal-managed"
   | "public-county-managed"
-  | "public-university-managed";
+  | "public-university-managed"
+  | "private-family-operated"
+  | "private-association-managed";
 
 export type MajorSpringVisitorAccessModel =
   | "ticketed-public-swimming"
@@ -68,6 +70,21 @@ const SPRING_AUDIT_CLASSIFICATIONS: Record<string, SpringAuditClassification> = 
   "hancock-springs-park": {
     ownershipClassification: "public-municipal-managed",
     ownershipLabel: "Municipally managed spring-fed park and swimming facility",
+    visitorAccessModel: "ticketed-public-swimming",
+  },
+  "blue-hole-regional-park": {
+    ownershipClassification: "public-municipal-managed",
+    ownershipLabel: "Municipally managed regional park and seasonal spring-fed swimming area",
+    visitorAccessModel: "ticketed-public-swimming",
+  },
+  "krause-springs": {
+    ownershipClassification: "private-family-operated",
+    ownershipLabel: "Privately owned and family-operated natural swimming and camping destination",
+    visitorAccessModel: "ticketed-public-swimming",
+  },
+  "las-moras-springs-fort-clark": {
+    ownershipClassification: "private-association-managed",
+    ownershipLabel: "Privately managed historic community spring and visitor recreation facility",
     visitorAccessModel: "ticketed-public-swimming",
   },
 };
