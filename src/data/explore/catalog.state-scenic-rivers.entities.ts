@@ -5,12 +5,12 @@ type ScenicRiverRecord = {
   name: string;
   summary: string;
   description: string;
+  segmentBoundary: string;
   counties: string[];
   region: string;
   latitude: number;
   longitude: number;
   sourceUrl: string;
-  sourceName: string;
   accessNotes: string;
   ecologicalNotes: string;
   activities: string[];
@@ -18,192 +18,404 @@ type ScenicRiverRecord = {
 };
 
 const LAST_REVIEWED = "2026-07-26";
+const SOURCE_NAME = "Texas Parks and Wildlife Department";
 
 const scenicRiverCatalog: readonly ScenicRiverRecord[] = [
   {
-    slug: "devils-river-scenic-corridor",
-    name: "Devils River Scenic Corridor",
+    slug: "brazos-river-scenic-segment-bosque-hood",
+    name: "Brazos River Scenic Segment — Bosque to Hood",
     summary:
-      "A remote, spring-fed West Texas river corridor known for exceptionally clear water, rugged limestone canyons, primitive conditions, and demanding multi-day paddling.",
+      "A nationally inventoried Brazos River reach with outstanding wildlife, scenery, and recreation values below DeCordova Bend Dam.",
     description:
-      "The Devils River is one of Texas' most intact and least-developed river systems. Public recreation is concentrated at Devils River State Natural Area and a limited network of authorized access and paddler camps. Extended trips require advanced planning, strong paddling skills, confirmed take-out arrangements, and a Devils River Access Permit when TPWD-managed lands are used.",
-    counties: ["Sutton County", "Val Verde County"],
-    region: "West Texas",
-    latitude: 29.939694,
-    longitude: -100.970206,
-    sourceUrl: "https://tpwd.texas.gov/state-parks/devils-river/river-trips",
-    sourceName: "Texas Parks and Wildlife Department",
+      "TPWD identifies this discrete Brazos River reach as an ecologically significant Texas Natural Rivers System nominee rather than as part of a generalized North Texas corridor.",
+    segmentBoundary:
+      "From immediately upstream of the Camp Creek confluence in Bosque and Johnson counties upstream to DeCordova Bend Dam in Hood County.",
+    counties: ["Bosque County", "Johnson County", "Hood County"],
+    region: "North Texas",
+    latitude: 32.342,
+    longitude: -97.708,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regiong.phtml",
     accessNotes:
-      "Public access is limited. Reservations are required for state natural area access, and a Devils River Access Permit is required when an extended river trip uses TPWD-managed access points or paddler camps.",
+      "Use established ramps, parks, leased access, or lawful public crossings. Confirm reservoir releases, streamflow, weather, and take-out access before launching.",
     ecologicalNotes:
-      "Spring flow, limited development, no main-stem impoundments, and restricted access support an ecologically intact river with sensitive native fish and riparian habitats.",
+      "TPWD cites outstanding wildlife value and ranks the reach among the leading scenic and recreational rivers in northern Texas.",
+    activities: ["paddling", "fishing", "boating", "wildlife", "photography"],
+    relatedDestinationSlugs: ["lake-granbury"],
+  },
+  {
+    slug: "brazos-river-scenic-segment-parker-palo-pinto",
+    name: "Brazos River Scenic Segment — Parker to Palo Pinto",
+    summary:
+      "A scenic Brazos River reach below Possum Kingdom Lake with limestone bluffs, wildlife habitat, fishing, and demanding paddling conditions.",
+    description:
+      "This record joins the adjoining TPWD Region C and Region G descriptions into one continuous authoritative reach while retaining the published endpoints.",
+    segmentBoundary:
+      "From 330 feet upstream of FM 2580 in Parker County upstream to Morris Sheppard Dam in Palo Pinto County.",
+    counties: ["Parker County", "Palo Pinto County"],
+    region: "North Texas",
+    latitude: 32.785,
+    longitude: -98.105,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionc.phtml",
+    accessNotes:
+      "Use designated access and verify dam releases, flow, portage requirements, hazards, and private-bank restrictions.",
+    ecologicalNotes:
+      "The reach is a Texas Natural Rivers System nominee with outstanding wildlife and scenic values and habitat for rare endemic freshwater mussels.",
+    activities: ["paddling", "fishing", "boating", "wildlife", "camping"],
+    relatedDestinationSlugs: ["possum-kingdom-lake"],
+  },
+  {
+    slug: "colorado-river-scenic-segment-upper-west-central",
+    name: "Colorado River Scenic Segment — Upper West-Central Texas",
+    summary:
+      "A long upper Colorado River reach recognized for fish, wildlife, and exceptional scenic value across West-Central Texas.",
+    description:
+      "This authoritative segment replaces the former generalized Central Texas Colorado River corridor and preserves TPWD's upstream and downstream limits.",
+    segmentBoundary:
+      "From the Brown, San Saba, and Mills county area upstream to Robert Lee Dam in Coke County, excluding O.H. Ivie Reservoir.",
+    counties: ["Brown County", "San Saba County", "Mills County", "McCulloch County", "Coke County"],
+    region: "West-Central Texas",
+    latitude: 31.42,
+    longitude: -99.47,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionf.phtml",
+    accessNotes:
+      "Access is limited and conditions vary around impoundments and private lands. Use lawful access and verify flows and reservoir operations.",
+    ecologicalNotes:
+      "TPWD identifies the reach as a Texas Natural Rivers System nominee for outstanding fish and wildlife values and exceptional aesthetics.",
+    activities: ["paddling", "fishing", "boating", "wildlife", "photography"],
+    relatedDestinationSlugs: [],
+  },
+  {
+    slug: "colorado-river-scenic-segment-colorado-bend",
+    name: "Colorado River Scenic Segment — Colorado Bend",
+    summary:
+      "A rugged Colorado River reach associated with Colorado Bend State Park, rare mussels, native wildlife, and limestone canyon scenery.",
+    description:
+      "This record combines adjoining TPWD Region K and Region G descriptions into a single continuous segment with explicit endpoints.",
+    segmentBoundary:
+      "From immediately upstream of the Yancey Creek confluence in the Burnet, San Saba, and Lampasas county area upstream to the Brown, Mills, San Saba, and McCulloch county area.",
+    counties: ["Burnet County", "Lampasas County", "San Saba County", "Mills County", "Brown County", "McCulloch County"],
+    region: "Central Texas",
+    latitude: 31.03,
+    longitude: -98.45,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionk.phtml",
+    accessNotes:
+      "Use state-park or other lawful access. Check river levels, weather, route difficulty, closures, and private-property boundaries.",
+    ecologicalNotes:
+      "The reach is a Texas Natural Rivers System nominee with exceptional aesthetics, conservation lands, and habitat for rare endemic mussels.",
+    activities: ["paddling", "fishing", "camping", "hiking", "wildlife"],
+    relatedDestinationSlugs: ["colorado-bend-state-park", "colorado-river-at-colorado-bend-state-park"],
+  },
+  {
+    slug: "pecos-river-scenic-segment-trans-pecos",
+    name: "Pecos River Scenic Segment — Trans-Pecos",
+    summary:
+      "A remote Pecos River reach crossing arid West Texas landscapes with significant native fish, wildlife, and scenic values.",
+    description:
+      "This segment consolidates adjoining TPWD Region E and Region F descriptions while keeping the official outer endpoints.",
+    segmentBoundary:
+      "From the Val Verde and Terrell county area upstream to the FM 11 bridge on the Pecos and Crane county line.",
+    counties: ["Val Verde County", "Terrell County", "Crockett County", "Pecos County", "Crane County"],
+    region: "West Texas",
+    latitude: 30.61,
+    longitude: -102.16,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regione.phtml",
+    accessNotes:
+      "Public access is sparse. Remote travel requires confirmed entry and exit permission, adequate water, navigation planning, and weather awareness.",
+    ecologicalNotes:
+      "TPWD identifies the reach as a Texas Natural Rivers System nominee for fish, wildlife, and exceptional aesthetic values, including sensitive native fishes.",
+    activities: ["paddling", "fishing", "wildlife", "photography", "camping"],
+    relatedDestinationSlugs: [],
+  },
+  {
+    slug: "pecos-river-scenic-segment-lower",
+    name: "Pecos River Scenic Segment — Lower Pecos",
+    summary:
+      "A dramatic Lower Pecos canyon reach above Lake Amistad with desert scenery, native aquatic life, and major cultural landscapes.",
+    description:
+      "This record narrows the former broad Lower Pecos corridor to the exact TPWD Region J segment.",
+    segmentBoundary:
+      "From 0.4 mile downstream of the Painted Canyon confluence in Val Verde County upstream to the Val Verde and Crockett county line.",
+    counties: ["Val Verde County", "Crockett County"],
+    region: "West Texas",
+    latitude: 29.73,
+    longitude: -101.36,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionj.phtml",
+    accessNotes:
+      "Access and rescue options are limited. Confirm lawful access, take-out logistics, weather, flow, skill requirements, and reservoir conditions.",
+    ecologicalNotes:
+      "TPWD cites outstanding fish and wildlife values, exceptional aesthetics, diverse aquatic life, and sensitive native fishes.",
+    activities: ["paddling", "fishing", "photography", "wildlife", "history"],
+    relatedDestinationSlugs: ["pecos-river-high-bridge-overlook", "seminole-canyon-state-park", "lake-amistad"],
+  },
+  {
+    slug: "pedernales-river-scenic-segment-kimble",
+    name: "Pedernales River Scenic Segment — Kimble County",
+    summary:
+      "A lightly developed upper Pedernales reach recognized nationally for natural areas, wildlife, and exceptional Hill Country scenery.",
+    description:
+      "TPWD identifies this Kimble County reach as a National Wild and Scenic Rivers System nominee and an ecologically significant segment.",
+    segmentBoundary:
+      "From the Kimble and Gillespie county line upstream to FM 385 in Kimble County.",
+    counties: ["Kimble County", "Gillespie County"],
+    region: "Hill Country",
+    latitude: 30.35,
+    longitude: -99.22,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionf.phtml",
+    accessNotes:
+      "Much of the corridor is bordered by private property. Use lawful crossings or authorized access and verify whether flows support recreation.",
+    ecologicalNotes:
+      "The segment is recognized for significant natural areas, wildlife value, and exceptional aesthetics.",
+    activities: ["paddling", "fishing", "wildlife", "photography", "nature study"],
+    relatedDestinationSlugs: [],
+  },
+  {
+    slug: "devils-river-scenic-corridor",
+    name: "Devils River Scenic Segment",
+    summary:
+      "A remote, spring-fed West Texas river segment known for clear water, rugged canyons, primitive conditions, and exceptional aquatic habitat.",
+    description:
+      "The record now follows TPWD's published ecologically significant segment rather than describing the entire Devils River as one corridor.",
+    segmentBoundary:
+      "From 0.4 mile downstream of the Little Satan Creek confluence in Val Verde County upstream to the Val Verde and Sutton county line.",
+    counties: ["Val Verde County", "Sutton County"],
+    region: "West Texas",
+    latitude: 29.94,
+    longitude: -100.97,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionj.phtml",
+    accessNotes:
+      "Reservations and a Devils River Access Permit may be required for TPWD-managed access or paddler camps. Confirm every access and take-out before travel.",
+    ecologicalNotes:
+      "The segment is a National Wild and Scenic Rivers System nominee with high water quality, exceptional aquatic life, conservation lands, and rare species.",
     activities: ["paddling", "fishing", "swimming", "wildlife", "photography"],
-    relatedDestinationSlugs: [
-      "devils-river-state-natural-area",
-      "devils-river-state-natural-area-del-norte-unit",
-      "devils-river-at-bakers-crossing",
-      "lake-amistad",
-    ],
+    relatedDestinationSlugs: ["devils-river-state-natural-area", "devils-river-state-natural-area-del-norte-unit", "devils-river-at-bakers-crossing", "lake-amistad"],
   },
   {
     slug: "frio-river-scenic-corridor",
-    name: "Frio River Scenic Corridor",
+    name: "Upper Frio River Scenic Segment",
     summary:
-      "A clear, spring-influenced Hill Country river corridor flowing through limestone canyons, cypress-lined recreation areas, Garner State Park, and the communities around Concan.",
+      "A spring-influenced Hill Country segment linking Garner State Park, limestone canyons, cypress-lined banks, and exceptional aquatic habitat.",
     description:
-      "The upper Frio River is recognized for exceptional scenery, aquatic life, groundwater connections, and high recreational value. Access is provided through public parks, road crossings, and private outfitters, while many riverbanks remain privately owned.",
-    counties: ["Real County", "Uvalde County"],
+      "This record combines the adjoining Region L and Region J portions of the same TPWD-recognized upper Frio segment.",
+    segmentBoundary:
+      "From 110 yards upstream of US 90 in Uvalde County upstream to the confluence of the West Frio and East Frio rivers in Real County.",
+    counties: ["Uvalde County", "Real County"],
     region: "Hill Country",
-    latitude: 29.5947,
-    longitude: -99.7392,
-    sourceUrl: "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionj.phtml",
-    sourceName: "Texas Parks and Wildlife Department",
+    latitude: 29.59,
+    longitude: -99.74,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionl.phtml",
     accessNotes:
-      "Use established public access points or authorized private facilities. River conditions, parking, fees, capacity limits, and floatability vary seasonally.",
+      "Use established public access or authorized private facilities. Verify flow, parking, fees, capacity limits, and private-bank boundaries.",
     ecologicalNotes:
-      "The corridor contributes to Edwards Aquifer recharge and supports high water quality, exceptional aquatic life, and scenic riparian habitat.",
+      "The segment is a Texas Natural Rivers System nominee supporting Edwards Aquifer recharge, high water quality, exceptional aquatic life, and scenic habitat.",
     activities: ["paddling", "tubing", "swimming", "fishing", "camping", "wildlife"],
     relatedDestinationSlugs: ["garner-state-park", "frio-river-at-garner-state-park", "frio-river-at-concan"],
   },
   {
     slug: "guadalupe-river-scenic-corridor",
-    name: "Upper Guadalupe River Scenic Corridor",
+    name: "Upper Guadalupe River Scenic Segment",
     summary:
-      "A cypress-lined Hill Country river corridor with clear pools, limestone banks, public park access, paddling, fishing, and important freshwater habitat.",
+      "A cypress-lined Hill Country segment with clear pools, limestone banks, groundwater connections, and exceptional aquatic life.",
     description:
-      "The upper Guadalupe River and its forks cross a scenic Hill Country landscape upstream of Canyon Lake. TPWD planning resources identify portions of the river for exceptional aquatic life, aesthetic value, groundwater functions, and rare freshwater-mussel habitat.",
-    counties: ["Kerr County", "Kendall County", "Comal County"],
+      "The record is limited to TPWD's published upper Guadalupe segment rather than extending downstream through Canyon Lake and Gruene.",
+    segmentBoundary:
+      "From the Kerr and Kendall county line upstream to the confluence of the North Fork and South Fork Guadalupe River in Kerr County.",
+    counties: ["Kerr County", "Kendall County"],
     region: "Hill Country",
-    latitude: 30.0036,
-    longitude: -98.2701,
-    sourceUrl: "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionj.phtml",
-    sourceName: "Texas Parks and Wildlife Department",
+    latitude: 30.05,
+    longitude: -99.15,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionj.phtml",
     accessNotes:
-      "Public entry is available at designated parks, crossings, and leased-access locations. Visitors must avoid trespassing on private banks and verify releases, flood conditions, and local rules.",
+      "Use designated parks, crossings, or authorized access. Verify floods, flow, private-property boundaries, and local rules.",
     ecologicalNotes:
-      "The corridor supports groundwater recharge and discharge, exceptional aquatic life, riparian conservation areas, and remnant populations of endemic freshwater mussels.",
-    activities: ["paddling", "tubing", "fishing", "swimming", "camping", "wildlife"],
-    relatedDestinationSlugs: [
-      "guadalupe-river-state-park",
-      "guadalupe-river-at-guadalupe-river-state-park",
-      "guadalupe-river-at-canyon-lake",
-      "guadalupe-river-at-gruene",
-      "canyon-lake",
-    ],
+      "TPWD cites groundwater recharge and discharge, exceptional aquatic life, high scenic ranking, and rare endemic freshwater mussels.",
+    activities: ["paddling", "fishing", "swimming", "camping", "wildlife"],
+    relatedDestinationSlugs: ["guadalupe-river-at-guadalupe-river-state-park"],
   },
   {
     slug: "nueces-river-scenic-corridor",
-    name: "Upper Nueces River Scenic Corridor",
+    name: "Upper Nueces River Scenic Segment",
     summary:
-      "A remote, spring-fed river corridor of clear pools, limestone shelves, rugged ranch country, and exceptional Hill Country scenery.",
+      "A remote, spring-fed Hill Country segment of clear pools, limestone shelves, rugged ranch country, and native wildlife habitat.",
     description:
-      "The upper Nueces River is identified in state water-planning resources for outstanding fish and wildlife values, Edwards Aquifer recharge, and exceptional aesthetic value. Recreation depends on lawful access because much of the surrounding land is private.",
-    counties: ["Edwards County", "Real County", "Uvalde County"],
+      "This record combines the adjoining Region L and Region J portions of the same TPWD-recognized upper Nueces segment.",
+    segmentBoundary:
+      "From US 90 in Uvalde County upstream to the confluence of the East Prong Nueces River and Hackberry Creek in Edwards County.",
+    counties: ["Uvalde County", "Real County", "Edwards County"],
     region: "Hill Country",
-    latitude: 29.5127,
-    longitude: -100.0034,
-    sourceUrl: "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionj.phtml",
-    sourceName: "Texas Parks and Wildlife Department",
+    latitude: 29.51,
+    longitude: -100.0,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionl.phtml",
     accessNotes:
-      "Use established public crossings, parks, or authorized private access. Confirm flow, road conditions, fire restrictions, and local property rules before travel.",
+      "Use lawful crossings, parks, or authorized private access. Confirm water levels, road conditions, and private-property rules.",
     ecologicalNotes:
-      "The river supports aquifer recharge, high-quality aquatic habitat, scenic canyon reaches, and native fish and wildlife communities.",
+      "The segment is a Texas Natural Rivers System nominee with aquifer-recharge value, outstanding fish and wildlife habitat, and exceptional scenery.",
     activities: ["paddling", "fishing", "swimming", "camping", "wildlife", "photography"],
     relatedDestinationSlugs: ["nueces-river-at-uvalde", "nueces-river-at-chalk-bluff-park"],
   },
   {
     slug: "sabinal-river-scenic-corridor",
-    name: "Sabinal River Scenic Corridor",
+    name: "Upper Sabinal River Scenic Segment",
     summary:
-      "A spring-influenced Hill Country river corridor passing through wooded canyons and the protected landscapes surrounding Lost Maples State Natural Area.",
+      "A spring-influenced Hill Country segment passing through wooded canyons and protected landscapes around Lost Maples.",
     description:
-      "The upper Sabinal River is recognized in TPWD planning resources for exceptional aesthetic value, aquatic habitat, and its relationship to protected riparian lands and native Guadalupe bass genetics.",
-    counties: ["Bandera County", "Uvalde County"],
+      "This record combines the adjoining Region L and Region J portions of the same TPWD-recognized upper Sabinal segment.",
+    segmentBoundary:
+      "From the US 90 crossing in Sabinal upstream to the most upstream crossing of Ranch Road 187 in Bandera County.",
+    counties: ["Uvalde County", "Bandera County"],
     region: "Hill Country",
-    latitude: 29.808,
-    longitude: -99.5707,
-    sourceUrl: "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionj.phtml",
-    sourceName: "Texas Parks and Wildlife Department",
+    latitude: 29.81,
+    longitude: -99.57,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionl.phtml",
     accessNotes:
-      "Public access is concentrated at Lost Maples State Natural Area and lawful road crossings. Water levels can be intermittent, and adjacent land is largely private.",
+      "Public access is concentrated at Lost Maples and lawful crossings. Water can be intermittent and adjacent property is largely private.",
     ecologicalNotes:
-      "The corridor includes high-value riparian habitat, aquifer-connected flows, scenic limestone terrain, and a genetic refuge for native Guadalupe bass.",
+      "The segment is a Texas Natural Rivers System nominee with aquifer functions, exceptional scenery, protected riparian land, and native Guadalupe bass genetics.",
     activities: ["hiking", "fishing", "wildlife", "photography", "nature study"],
     relatedDestinationSlugs: ["lost-maples-state-natural-area", "sabinal-river-at-lost-maples"],
   },
   {
-    slug: "brazos-river-scenic-corridor-north-texas",
-    name: "Brazos River Scenic Corridor of North Texas",
+    slug: "big-sandy-creek-scenic-segment-east-texas",
+    name: "Big Sandy Creek Scenic Segment — East Texas",
     summary:
-      "A broad North Texas river corridor with limestone bluffs, wooded bottoms, paddling reaches, fishing access, and nationally recognized scenic and recreational value.",
+      "A forested East Texas stream segment with exceptional scenery, fish and wildlife habitat, and Big Thicket conservation connections.",
     description:
-      "Selected Brazos River reaches in Hood, Johnson, Bosque, Palo Pinto, and Parker counties are identified in TPWD planning resources as Texas Natural Rivers System nominees with outstanding wildlife, scenic, and recreational values.",
-    counties: ["Bosque County", "Hood County", "Johnson County", "Palo Pinto County", "Parker County"],
-    region: "North Texas",
-    latitude: 32.5306,
-    longitude: -97.8505,
-    sourceUrl: "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regiong.phtml",
-    sourceName: "Texas Parks and Wildlife Department",
+      "TPWD identifies Big Sandy Creek as a Texas Natural Rivers System nominee; it was entirely absent from the original eight-record catalog.",
+    segmentBoundary:
+      "From the confluence with Village Creek in northern Hardin County upstream to the Polk and Trinity county line.",
+    counties: ["Hardin County", "Polk County", "Trinity County"],
+    region: "East Texas",
+    latitude: 30.62,
+    longitude: -94.55,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regioni.phtml",
     accessNotes:
-      "Use public parks, boat ramps, leased access, and authorized crossings. Flows and hazards vary significantly below reservoirs and during storms.",
+      "Use only lawful public or authorized access. Expect remote forest conditions, variable flow, fallen timber, and limited services.",
     ecologicalNotes:
-      "The corridor contains bottomland habitat, important wildlife values, and habitat for rare endemic freshwater mussels.",
-    activities: ["paddling", "fishing", "boating", "wildlife", "camping", "photography"],
-    relatedDestinationSlugs: [
-      "brazos-river-at-stephen-f-austin-state-park",
-      "brazos-river-at-washington-on-the-brazos",
-      "brazos-river-at-waco-riverwalk",
-      "possum-kingdom-lake",
-      "lake-granbury",
-    ],
+      "The segment is recognized for outstanding fish and wildlife values, exceptional aesthetics, and conservation lands in the Big Thicket region.",
+    activities: ["paddling", "fishing", "wildlife", "photography", "nature study"],
+    relatedDestinationSlugs: [],
   },
   {
-    slug: "pecos-river-scenic-corridor",
-    name: "Lower Pecos River Scenic Corridor",
+    slug: "neches-river-scenic-segment-middle",
+    name: "Neches River Scenic Segment — Middle Neches",
     summary:
-      "A dramatic West Texas river corridor of desert canyons, clear tributary springs, archeological landscapes, high bridges, and remote paddling reaches above Lake Amistad.",
+      "A major forested East Texas river segment with bottomland hardwoods, wilderness character, rare species, and extensive conservation lands.",
     description:
-      "The lower Pecos River is recognized in TPWD planning resources for exceptional aesthetic value, fish and wildlife importance, and sensitive native aquatic species. Access is sparse and conditions can be severe.",
-    counties: ["Crockett County", "Val Verde County"],
-    region: "West Texas",
-    latitude: 29.7049,
-    longitude: -101.3514,
-    sourceUrl: "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regionj.phtml",
-    sourceName: "Texas Parks and Wildlife Department",
+      "TPWD identifies this specific middle Neches reach as a Texas Natural Rivers System nominee; downstream Neches reaches are separate ecological segments but are not described as system nominees.",
+    segmentBoundary:
+      "From immediately upstream of the Hopson Mill Creek confluence in Jasper and Tyler counties upstream to Blackburn Crossing Dam in Anderson and Cherokee counties.",
+    counties: ["Jasper County", "Tyler County", "Anderson County", "Cherokee County"],
+    region: "East Texas",
+    latitude: 31.2,
+    longitude: -94.35,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regioni.phtml",
     accessNotes:
-      "Public access is limited to established crossings, overlooks, parks, and reservoir approaches. Remote travel requires careful logistics, weather awareness, and respect for private property.",
+      "Use established public access and confirm route length, take-out, flow, navigation hazards, and boundaries of adjacent public and private lands.",
     ecologicalNotes:
-      "The corridor supports desert-river habitat, diverse aquatic communities, sensitive native fishes, and Lower Pecos cultural resources.",
-    activities: ["paddling", "fishing", "boating", "photography", "wildlife", "history"],
-    relatedDestinationSlugs: ["pecos-river-high-bridge-overlook", "seminole-canyon-state-park", "lake-amistad"],
+      "The segment includes priority bottomland habitat, national forests, Big Thicket lands, exceptional aesthetics, rare fishes, mussels, plants, and extensive natural communities.",
+    activities: ["paddling", "fishing", "wildlife", "camping", "photography"],
+    relatedDestinationSlugs: [],
   },
   {
-    slug: "colorado-river-scenic-corridor-central-texas",
-    name: "Central Texas Colorado River Scenic Corridor",
+    slug: "sabine-river-scenic-segment-lower",
+    name: "Sabine River Scenic Segment — Lower Sabine",
     summary:
-      "A varied Central Texas river corridor linking limestone canyons, state parks, wooded floodplains, paddling routes, reservoirs, and historic communities.",
+      "A broad lower Sabine River segment below Toledo Bend with outstanding wildlife values and exceptional East Texas scenery.",
     description:
-      "Central Texas reaches of the Colorado River provide scenic and recreational connections among Colorado Bend State Park, the Highland Lakes, Bastrop, McKinney Roughs, and downstream paddling access. TPWD planning resources identify upstream reaches for exceptional aesthetic and wildlife values.",
-    counties: ["Burnet County", "Lampasas County", "Travis County", "Bastrop County"],
-    region: "Central Texas",
-    latitude: 30.3508,
-    longitude: -97.3039,
-    sourceUrl: "https://tpwd.texas.gov/landwater/water/habitats/rivers/",
-    sourceName: "Texas Parks and Wildlife Department",
+      "This is the TPWD Region I Texas Natural Rivers System nominee reach between Interstate 10 and Toledo Bend Dam.",
+    segmentBoundary:
+      "From the Interstate 10 crossing in Orange County upstream to Toledo Bend Dam in Newton County.",
+    counties: ["Orange County", "Newton County"],
+    region: "East Texas",
+    latitude: 30.65,
+    longitude: -93.74,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regioni.phtml",
     accessNotes:
-      "Access is available through parks, reservoirs, designated paddling routes, and public ramps. Conditions depend on dam releases, rainfall, flood risk, and local restrictions.",
+      "Use designated ramps or lawful access and account for long distances, current, commercial traffic near the lower river, and reservoir operations.",
     ecologicalNotes:
-      "The corridor links aquatic and riparian habitats across multiple ecoregions and supports migratory wildlife, native fish, and floodplain forests.",
-    activities: ["paddling", "fishing", "boating", "camping", "hiking", "wildlife"],
-    relatedDestinationSlugs: [
-      "colorado-bend-state-park",
-      "colorado-river-at-colorado-bend-state-park",
-      "colorado-river-at-mckinney-roughs",
-      "colorado-river-at-bastrop",
-      "colorado-river-at-lady-bird-lake",
-      "lake-travis",
-      "lady-bird-lake",
-    ],
+      "TPWD recognizes the reach for outstanding wildlife value and exceptional aesthetics.",
+    activities: ["boating", "fishing", "paddling", "wildlife", "photography"],
+    relatedDestinationSlugs: [],
+  },
+  {
+    slug: "sabine-river-scenic-segment-upper-toledo-bend",
+    name: "Sabine River Scenic Segment — Upper Toledo Bend Reach",
+    summary:
+      "An upper Sabine reach above Toledo Bend Reservoir with bottomland forests, native fish and wildlife, and exceptional scenic value.",
+    description:
+      "TPWD identifies this Panola County reach as a separate Texas Natural Rivers System nominee rather than merging it with the lower Sabine.",
+    segmentBoundary:
+      "From the headwaters of Toledo Bend Reservoir in Panola County upstream to the Panola and Rusk county line.",
+    counties: ["Panola County", "Rusk County"],
+    region: "East Texas",
+    latitude: 32.0,
+    longitude: -94.1,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regioni.phtml",
+    accessNotes:
+      "Use lawful access and confirm reservoir backwater, streamflow, route length, timber hazards, and take-out logistics.",
+    ecologicalNotes:
+      "The reach supports outstanding fish and wildlife values, priority bottomland hardwoods, exceptional aesthetics, and paddlefish habitat.",
+    activities: ["boating", "fishing", "paddling", "wildlife", "photography"],
+    relatedDestinationSlugs: [],
+  },
+  {
+    slug: "sabine-river-scenic-segment-harrison-rusk",
+    name: "Sabine River Scenic Segment — Harrison and Rusk",
+    summary:
+      "A scenic Northeast Texas Sabine River reach with hardwood forests, wetlands, significant natural areas, and paddlefish habitat.",
+    description:
+      "TPWD Region D identifies this separate Sabine reach as a Texas Natural Rivers System nominee.",
+    segmentBoundary:
+      "From US 59 in southern Harrison County upstream to Easton on the Rusk and Harrison county line.",
+    counties: ["Harrison County", "Rusk County"],
+    region: "Northeast Texas",
+    latitude: 32.33,
+    longitude: -94.47,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regiond.phtml",
+    accessNotes:
+      "Use designated public access or permission-based entry. Verify flows, woody hazards, route length, and take-out access.",
+    ecologicalNotes:
+      "The reach has diverse riparian hardwood and wetland habitat, exceptional aesthetic value, significant natural areas, and paddlefish habitat.",
+    activities: ["paddling", "fishing", "wildlife", "photography", "nature study"],
+    relatedDestinationSlugs: [],
+  },
+  {
+    slug: "village-creek-scenic-segment",
+    name: "Village Creek Scenic Segment",
+    summary:
+      "An East Texas blackwater stream segment flowing through Big Thicket landscapes and recognized as the region's leading scenic river.",
+    description:
+      "TPWD identifies Village Creek as a Texas Natural Rivers System nominee with conservation, recreation, and unusually extensive natural-community values.",
+    segmentBoundary:
+      "From the confluence with the Neches River in Hardin County upstream to Lake Kimble Dam in Hardin County.",
+    counties: ["Hardin County"],
+    region: "East Texas",
+    latitude: 30.36,
+    longitude: -94.3,
+    sourceUrl:
+      "https://tpwd.texas.gov/landwater/water/conservation/water_resources/water_quantity/sigsegs/regioni.phtml",
+    accessNotes:
+      "Use designated access and verify flow, fallen timber, weather, park conditions, and take-out arrangements.",
+    ecologicalNotes:
+      "The segment includes Big Thicket conservation lands, outstanding fish and wildlife values, exceptional aesthetics, and exemplary natural communities.",
+    activities: ["paddling", "fishing", "camping", "wildlife", "photography"],
+    relatedDestinationSlugs: ["village-creek-state-park"],
   },
 ];
 
@@ -218,7 +430,7 @@ function toScenicRiverDestination(river: ScenicRiverRecord): ExploreEntity {
     name: river.name,
     slug: river.slug,
     summary: river.summary,
-    description: river.description,
+    description: `${river.description} Segment boundaries: ${river.segmentBoundary}`,
     city: null,
     county: river.counties.join(", "),
     region: river.region,
@@ -232,17 +444,19 @@ function toScenicRiverDestination(river: ScenicRiverRecord): ExploreEntity {
     isPetFriendly: null,
     isAccessible: null,
     feeRequired: null,
-    alternateNames: [river.name.replace(" Scenic Corridor", " River"), "Texas scenic river"],
+    alternateNames: [river.name.replace(" Scenic Segment", " River"), "Texas scenic river segment"],
     officialUrl: river.sourceUrl,
     phone: null,
     email: null,
     address: null,
     profile: {
-      collection: "Texas state scenic rivers",
-      designation: "Texas Natural Rivers System scenic corridor",
+      collection: "Texas scenic river segments",
+      designation: "TPWD ecologically significant scenic river segment",
+      selectionBasis: "Texas or National Wild and Scenic Rivers System nominee documented by TPWD",
       managingOrganization: "Texas Parks and Wildlife Department",
-      accessType: "Multiple public and private access points",
+      accessType: "Multiple public and private access conditions",
       counties: toJsonArray(river.counties),
+      segmentBoundary: river.segmentBoundary,
       accessNotes: river.accessNotes,
       ecologicalNotes: river.ecologicalNotes,
       relatedDestinationSlugs: toJsonArray(river.relatedDestinationSlugs),
@@ -263,7 +477,7 @@ function toScenicRiverDestination(river: ScenicRiverRecord): ExploreEntity {
     },
     categories: [
       "state scenic river",
-      "texas natural rivers system",
+      "ecologically significant stream segment",
       "river corridor",
       "paddling",
       "freshwater",
@@ -275,11 +489,12 @@ function toScenicRiverDestination(river: ScenicRiverRecord): ExploreEntity {
       "river",
       "rivers",
       "scenic river",
+      "stream segment",
       "waterway",
       "riparian habitat",
     ],
     sourceUrl: river.sourceUrl,
-    sourceName: river.sourceName,
+    sourceName: SOURCE_NAME,
     sourceUpdatedAt: LAST_REVIEWED,
     updatedAt: `${LAST_REVIEWED}T00:00:00.000Z`,
     observations: [],
