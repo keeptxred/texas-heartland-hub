@@ -67,12 +67,37 @@ describe("major spring ownership and visitor access audit", () => {
     expect(jacobsWell?.accessStatus).toBe("open-no-swimming");
   });
 
-  it("uses public ownership classifications for every audited spring", () => {
+  it("supports public and verified private visitor-access ownership models", () => {
+    const ownershipClassifications = new Set(
+      majorSpringOwnershipAccessAudit.map((audit) => audit.ownershipClassification),
+    );
+
+    expect(ownershipClassifications).toEqual(
+      expect.objectContaining({
+        size: 6,
+      }),
+    );
+    expect(ownershipClassifications).toContain("private-family-operated");
+    expect(ownershipClassifications).toContain("private-association-managed");
+
     for (const audit of majorSpringOwnershipAccessAudit) {
-      expect(audit.ownershipClassification).toMatch(/^public-/);
+      expect(audit.ownershipClassification).toMatch(/^(public|private)-/);
       expect(audit.ownershipLabel.trim().length).toBeGreaterThan(0);
       expect(audit.operator.trim().length).toBeGreaterThan(0);
       expect(audit.sourceUrl).toMatch(/^https:\/\//);
     }
+  });
+
+  it("classifies Krause Springs and Las Moras Springs without inferring public ownership", () => {
+    expect(getMajorSpringOwnershipAccessAudit("krause-springs")).toMatchObject({
+      ownershipClassification: "private-family-operated",
+      visitorAccessModel: "ticketed-public-swimming",
+      swimmingPermitted: true,
+    });
+    expect(getMajorSpringOwnershipAccessAudit("las-moras-springs-fort-clark")).toMatchObject({
+      ownershipClassification: "private-association-managed",
+      visitorAccessModel: "ticketed-public-swimming",
+      swimmingPermitted: true,
+    });
   });
 });
