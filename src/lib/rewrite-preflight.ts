@@ -36,8 +36,12 @@ export type RewritePreflightInput = {
   isBreaking?: boolean;
 };
 
-// Practical thresholds. Government releases and other high-signal short
-// factual sources bypass BODY_TOO_SHORT via the factual-signal count.
+// Practical thresholds. No source below the absolute floor may enter the
+// rewrite-ready queue, even when it contains several factual signals. This
+// prevents very short Reddit posts and snippets from being expanded into
+// articles. Government releases and other high-signal sources between the
+// absolute floor and the normal target may still use the factual-signal bypass.
+export const ABSOLUTE_MIN_SOURCE_WORDS = 150;
 const BREAKING_MIN_WORDS = 250;
 const STANDARD_MIN_WORDS = 400;
 const FACTUAL_SIGNALS_MIN = 4;
@@ -185,11 +189,13 @@ export function assessRewritePreflight(input: RewritePreflightInput): RewritePre
   if (detectBoilerplateHeavy(body)) {
     return finalize("BOILERPLATE_CONTENT");
   }
+  if (words < ABSOLUTE_MIN_SOURCE_WORDS) {
+    return finalize("BODY_TOO_SHORT");
+  }
 
   const min = input.isBreaking ? BREAKING_MIN_WORDS : STANDARD_MIN_WORDS;
   if (words < min) {
-    // Allow short but fact-dense sources (government releases, arrests,
-    // election results, court orders, weather alerts).
+    // Allow fact-dense sources only after they clear the absolute 150-word floor.
     if (factual >= FACTUAL_SIGNALS_FOR_SHORT_RELEASES) {
       return finalize("READY");
     }
