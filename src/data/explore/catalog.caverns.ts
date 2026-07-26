@@ -23,7 +23,7 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     longitude: -98.3425,
     officialUrl: "https://naturalbridgecaverns.com/",
     summary:
-      "A family-owned show-cave destination near San Antonio featuring extensive limestone passages and guided underground tours.",
+      "Explore Texas' largest commercial cavern system, known for active limestone formations, expansive underground chambers, and guided tours beneath the Hill Country.",
   },
   {
     id: "commercial-cavern-inner-space-cavern",
@@ -36,7 +36,7 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     longitude: -97.6895,
     officialUrl: "https://innerspacecavern.com/",
     summary:
-      "A preserved limestone cavern beneath Georgetown offering guided tours through rooms filled with formations and prehistoric discoveries.",
+      "Tour a well-preserved limestone cavern discovered during Interstate 35 construction, featuring large rooms, growing formations, and prehistoric animal remains.",
   },
   {
     id: "commercial-cavern-caverns-of-sonora",
@@ -49,7 +49,7 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     longitude: -100.812217,
     officialUrl: "https://www.cavernsofsonora.com/",
     summary:
-      "A renowned West Texas show cave known for dense, actively growing calcite formations and intimate guided tours.",
+      "Discover an internationally recognized West Texas show cave celebrated for exceptionally dense crystal formations and intimate guided underground tours.",
   },
   {
     id: "commercial-cavern-cave-without-a-name",
@@ -62,7 +62,7 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     longitude: -98.630531,
     officialUrl: "https://www.cavewithoutaname.com/",
     summary:
-      "A living limestone cavern northeast of Boerne featuring six major rooms, guided tours, and a natural underground concert venue.",
+      "Visit a living Hill Country cavern with six major rooms, abundant stalactites and flowstone, and a renowned underground chamber used for special events.",
   },
   {
     id: "commercial-cavern-cascade-caverns",
@@ -75,7 +75,7 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     longitude: -98.67889,
     officialUrl: "https://www.cascadecaverns.com/",
     summary:
-      "A historic show cave south of Boerne with guided tours through a living limestone system shaped by water and underground wildlife habitat.",
+      "Explore one of Texas' oldest touring caves, where guided routes descend through limestone passages, historic rooms, and an active underground ecosystem.",
   },
   {
     id: "commercial-cavern-wonder-world-cave-adventure-park",
@@ -88,6 +88,6 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     longitude: -97.9569,
     officialUrl: "https://www.wonderworldpark.com/",
     summary:
-      "A long-running San Marcos attraction centered on guided tours of a dry-formed earthquake cave within a family adventure park.",
+      "Tour a Balcones Fault cave in San Marcos and learn how geological forces exposed its chambers, fossils, rock layers, and distinctive dry-cave formations.",
   },
 ];
