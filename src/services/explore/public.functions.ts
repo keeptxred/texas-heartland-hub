@@ -111,7 +111,7 @@ function cavernVisitorProfile(entity: ExploreEntity): ExploreEntity["profile"] {
       photography: photographyPolicy,
     },
     frequently_asked_questions: {
-      is_a_guided_tour_required: guidedTours
+      is_a_guideded_tour_required: guidedTours
         ? "Yes. The listed public cavern experience uses guided tours, and visitors should remain with their assigned group."
         : "Tour format varies. Confirm the current access rules directly with the operator.",
       should_tickets_be_reserved: reservationsRecommended
@@ -170,6 +170,58 @@ function distanceKm(
       Math.cos(radians(targetLatitude)) *
       Math.sin(longitudeDelta / 2) ** 2;
   return earthRadiusKm * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function sharedCount(left: string[], right: string[]): number {
+  const rightValues = new Set(right.map((value) => value.toLowerCase()));
+  return left.filter((value) => rightValues.has(value.toLowerCase())).length;
+}
+
+function relatedScore(entity: ExploreEntity, candidate: ExploreEntity): number {
+  let score = 0;
+
+  if (candidate.entityType === entity.entityType) score += entity.entityType === "cavern" ? 100 : 60;
+  if (candidate.region && candidate.region === entity.region) score += 20;
+  if (candidate.county && candidate.county === entity.county) score += 12;
+  if (candidate.isFamilyFriendly === entity.isFamilyFriendly) score += 6;
+
+  score += sharedCount(entity.activities, candidate.activities) * 12;
+  score += sharedCount(entity.categories, candidate.categories) * 8;
+  score += Math.min(sharedCount(entity.tags, candidate.tags), 5) * 3;
+
+  if (
+    entity.latitude != null &&
+    entity.longitude != null &&
+    candidate.latitude != null &&
+    candidate.longitude != null
+  ) {
+    const distance = distanceKm(
+      entity.latitude,
+      entity.longitude,
+      candidate.latitude,
+      candidate.longitude,
+    );
+    if (distance <= 50) score += 18;
+    else if (distance <= 150) score += 10;
+    else if (distance <= 300) score += 4;
+  }
+
+  return score;
+}
+
+function relatedDestinations(entity: ExploreEntity): ExploreEntityCard[] {
+  const minimumScore = entity.entityType === "cavern" ? 16 : 8;
+
+  return exploreDestinations
+    .filter((candidate) => candidate.id !== entity.id)
+    .map((candidate) => ({ candidate, score: relatedScore(entity, candidate) }))
+    .filter(({ score }) => score >= minimumScore)
+    .sort(
+      (left, right) =>
+        right.score - left.score || left.candidate.name.localeCompare(right.candidate.name),
+    )
+    .slice(0, 4)
+    .map(({ candidate }) => card(candidate));
 }
 
 async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
@@ -282,15 +334,7 @@ export const getExploreEntity = createServerFn({ method: "GET" })
       .sort((a, b) => a.distance - b.distance)
       .slice(0, 4)
       .map(({ item }) => card(item));
-    const related = exploreDestinations
-      .filter(
-        (item) =>
-          item.id !== entity.id &&
-          (item.entityType === entity.entityType ||
-            item.categories.some((category) => entity.categories.includes(category))),
-      )
-      .slice(0, 4)
-      .map(card);
+    const related = relatedDestinations(entity);
     return { ...entity, profile: cavernVisitorProfile(entity), nearby, related };
   });
 
