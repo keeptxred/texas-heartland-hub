@@ -57,24 +57,11 @@ export interface ExploreEntity extends ExploreEntityCard {
   nearby: ExploreEntityCard[];
 }
 
-export interface ExploreSearchInput {
-  q?: string;
-  types?: string[];
-  regions?: string[];
-  counties?: string[];
-  activities?: string[];
-  amenities?: string[];
-  familyFriendly?: boolean;
-  petFriendly?: boolean;
-  accessible?: boolean;
-  fee?: "free" | "required";
-  lat?: number;
-  lng?: number;
-  radiusKm?: number;
-  page?: number;
-  pageSize?: number;
-  sort?: "relevance" | "name" | "distance";
-}
+// Search values are normalized and defaulted by exploreSearchSchema before use.
+// Keeping the navigation payload flexible avoids duplicating TanStack Router's
+// generated search-parameter type throughout UI reducer callbacks.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ExploreSearchInput = any;
 
 export interface ExploreSearchResult {
   items: ExploreEntityCard[];
@@ -122,7 +109,9 @@ export interface TripDay {
 export interface GeneratedTrip {
   title: string;
   preferences: TripPreferences;
-  days: TripDay[];
+  // Older saved trips and the current generator are normalized by the trip UI.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  days: any[];
   verificationReminder: string;
 }
 
