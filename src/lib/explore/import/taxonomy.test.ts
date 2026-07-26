@@ -34,4 +34,23 @@ describe("assignImportTaxonomy", () => {
       description: null,
     }, "custom")).toEqual(["outdoors", "parks", "water-recreation"]);
   });
+
+  it("classifies scenic river imports with existing river-access taxonomy", () => {
+    expect(assignImportTaxonomy({
+      ...baseDraft,
+      externalId: "devils-river-scenic-corridor",
+      entityType: "river_access",
+      name: "Devils River Scenic Corridor",
+      description: "A remote paddling and fishing corridor managed with TPWD access guidance.",
+      taxonomy: ["State Scenic River"],
+    }, "tpwd")).toEqual([
+      "fishing",
+      "paddling-boating",
+      "river-access",
+      "rivers",
+      "state-scenic-river",
+      "texas-parks-wildlife",
+      "water-recreation",
+    ]);
+  });
 });
