@@ -10,6 +10,7 @@ import {
   majorSpringDestinations,
 } from "./catalog.major-springs.entities";
 import { privateNaturalLandmarkDestinations } from "./catalog.private-natural-landmarks.entities";
+import { privateCulturalLandmarkDestinations } from "./catalog.private-cultural-landmarks.entities";
 import { destinations as thcDestinations } from "./catalog.thc";
 
 const REGION_ALIASES: Record<string, string> = {
@@ -359,6 +360,7 @@ for (const rawDestination of [
   ...cavernDestinations,
   ...majorSpringDestinations,
   ...privateNaturalLandmarkDestinations,
+  ...privateCulturalLandmarkDestinations,
   ...thcDestinations,
 ]) {
   const destination = normalizeDestination(rawDestination);
