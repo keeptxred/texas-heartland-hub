@@ -1,22 +1,25 @@
 import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import type { ExploreEntityCard as Entity } from "@/types/explore/public";
 
 export function ExploreEntityCard({ entity }: { entity: Entity }) {
   return (
-    <Card className="overflow-hidden h-full">
+    <Card className="group h-full overflow-hidden transition-shadow hover:shadow-md">
       {entity.heroImageUrl && (
-        <img
-          src={entity.heroImageUrl}
-          alt={entity.heroImageAlt || entity.name}
-          width={640}
-          height={400}
-          loading="lazy"
-          className="aspect-[8/5] w-full object-cover"
-        />
+        <Link to="/explore/$slug" params={{ slug: entity.slug }} tabIndex={-1} aria-hidden="true">
+          <img
+            src={entity.heroImageUrl}
+            alt={entity.heroImageAlt || entity.name}
+            width={640}
+            height={400}
+            loading="lazy"
+            className="aspect-[8/5] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+          />
+        </Link>
       )}
-      <CardContent className="p-5">
+      <CardContent className="flex h-full flex-col p-5">
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary">{entity.entityType.replaceAll("_", " ")}</Badge>
           {entity.distanceKm != null && (
@@ -40,7 +43,7 @@ export function ExploreEntityCard({ entity }: { entity: Entity }) {
           </p>
         )}
         {entity.summary && (
-          <p className="mt-3 text-sm leading-6 text-muted-foreground line-clamp-3">
+          <p className="mt-3 line-clamp-3 text-sm leading-6 text-muted-foreground">
             {entity.summary}
           </p>
         )}
@@ -51,6 +54,14 @@ export function ExploreEntityCard({ entity }: { entity: Entity }) {
             </Badge>
           ))}
         </div>
+        <Link
+          to="/explore/$slug"
+          params={{ slug: entity.slug }}
+          className="mt-5 inline-flex items-center gap-2 self-start font-semibold text-primary hover:underline"
+          aria-label={`View visitor guide for ${entity.name}`}
+        >
+          View destination guide <ArrowRight className="size-4" aria-hidden="true" />
+        </Link>
       </CardContent>
     </Card>
   );
