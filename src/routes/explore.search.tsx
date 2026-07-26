@@ -4,7 +4,11 @@ import { EntityGrid } from "@/components/explore/EntityGrid";
 import { Button } from "@/components/ui/button";
 import { exploreSearchSchema } from "@/schemas/explore/public.schema";
 import { autocompleteExplore, searchExplore } from "@/services/explore/public.functions";
-import type { ExploreAutocompleteItem } from "@/types/explore/public";
+import type {
+  ExploreAutocompleteItem,
+  ExploreSearchInput,
+  ExploreSearchResult,
+} from "@/types/explore/public";
 import { buildSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/explore/search")({
@@ -28,8 +32,12 @@ export const Route = createFileRoute("/explore/search")({
 });
 
 function ExploreSearch() {
-  const search = Route.useSearch();
-  const result = Route.useLoaderData();
+  const search = Route.useSearch() as ExploreSearchInput & {
+    page: number;
+    pageSize: number;
+    sort: "relevance" | "name" | "distance";
+  };
+  const result = Route.useLoaderData() as ExploreSearchResult;
   const navigate = useNavigate({ from: Route.fullPath });
   const [query, setQuery] = useState(search.q ?? "");
   const [suggestions, setSuggestions] = useState<ExploreAutocompleteItem[]>([]);
@@ -46,12 +54,17 @@ function ExploreSearch() {
     return () => window.clearTimeout(timeout);
   }, [query]);
   const setFilter = (key: "types" | "regions" | "activities", value: string) => {
-    const current = search[key] ?? [];
+    const current = (search[key] ?? []) as string[];
     const next = current.includes(value)
-      ? current.filter((item) => item !== value)
+      ? current.filter((item: string) => item !== value)
       : [...current, value];
     void navigate({
-      search: (old) => ({ ...old, [key]: next.length ? next : undefined, page: 1 }),
+      to: ".",
+      search: (old: ExploreSearchInput) => ({
+        ...old,
+        [key]: next.length ? next : undefined,
+        page: 1,
+      }),
     });
   };
   return (
@@ -74,7 +87,10 @@ function ExploreSearch() {
         className="relative mt-8 flex gap-2"
         onSubmit={(event) => {
           event.preventDefault();
-          void navigate({ search: (old) => ({ ...old, q: query || undefined, page: 1 }) });
+          void navigate({
+            to: ".",
+            search: (old: ExploreSearchInput) => ({ ...old, q: query || undefined, page: 1 }),
+          });
         }}
       >
         <label htmlFor="directory-search" className="sr-only">
@@ -131,7 +147,7 @@ function ExploreSearch() {
                 <fieldset key={key}>
                   <legend className="font-semibold">{label}</legend>
                   <div className="mt-2 max-h-52 space-y-2 overflow-auto">
-                    {options.map((option) => (
+                    {options.map((option: string) => (
                       <label key={option} className="flex items-center gap-2 text-sm">
                         <input
                           type="checkbox"
@@ -161,7 +177,12 @@ function ExploreSearch() {
                     checked={search[key] === true}
                     onChange={() =>
                       void navigate({
-                        search: (old) => ({ ...old, [key]: old[key] ? undefined : true, page: 1 }),
+                        to: ".",
+                        search: (old: ExploreSearchInput) => ({
+                          ...old,
+                          [key]: old[key] ? undefined : true,
+                          page: 1,
+                        }),
                       })
                     }
                   />
@@ -172,22 +193,46 @@ function ExploreSearch() {
           </fieldset>
           <Button
             variant="outline"
-            onClick={() => void navigate({ search: { page: 1, pageSize: 24, sort: "relevance" } })}
+            onClick={() =>
+              void navigate({ to: ".", search: { page: 1, pageSize: 24, sort: "relevance" } })
+            }
           >
             Clear filters
           </Button>
         </aside>
         <div>
-          <EntityGrid
-            items={result.items}
-            empty="No published destinations match this search. Try removing a filter or using a broader term."
-          />
+          {(() => {
+            const hasFilters = Boolean(
+              (search.q && search.q.trim()) ||
+                (search.types && search.types.length) ||
+                (search.regions && search.regions.length) ||
+                (search.counties && search.counties.length) ||
+                (search.activities && search.activities.length) ||
+                (search.amenities && search.amenities.length) ||
+                search.familyFriendly ||
+                search.petFriendly ||
+                search.accessible,
+            );
+            const emptyMessage =
+              result.total === 0 && !hasFilters
+                ? "Destination records are being prepared. Published Explore Texas destinations will appear here automatically after editorial review."
+                : "No published destinations match this search. Try removing a filter or using a broader term.";
+            return <EntityGrid items={result.items} empty={emptyMessage} />;
+          })()}
           {result.total > result.pageSize && (
             <nav aria-label="Search results pages" className="mt-8 flex justify-center gap-3">
               <Button
                 variant="outline"
                 disabled={search.page <= 1}
-                onClick={() => void navigate({ search: (old) => ({ ...old, page: old.page - 1 }) })}
+                onClick={() =>
+                  void navigate({
+                    to: ".",
+                    search: (old: ExploreSearchInput & { page: number }) => ({
+                      ...old,
+                      page: old.page - 1,
+                    }),
+                  })
+                }
               >
                 Previous
               </Button>
@@ -197,7 +242,15 @@ function ExploreSearch() {
               <Button
                 variant="outline"
                 disabled={search.page * result.pageSize >= result.total}
-                onClick={() => void navigate({ search: (old) => ({ ...old, page: old.page + 1 }) })}
+                onClick={() =>
+                  void navigate({
+                    to: ".",
+                    search: (old: ExploreSearchInput & { page: number }) => ({
+                      ...old,
+                      page: old.page + 1,
+                    }),
+                  })
+                }
               >
                 Next
               </Button>

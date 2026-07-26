@@ -8,7 +8,7 @@ export const Route = createFileRoute("/laws-to-know")({
       { name: "description", content: "Everyday Texas laws — carry permits, traffic stops, open carry, alcohol, knives, and more. What every Texan should know." },
       { property: "og:title", content: "Texas Laws You Should Know" },
     ],
-    links: [{ rel: "canonical", href: "/laws-to-know" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/laws-to-know" }],
   }),
   component: LawsToKnowPage,
 });

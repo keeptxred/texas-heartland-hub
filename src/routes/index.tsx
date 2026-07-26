@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: heroFlag },
     ],
     links: [
-      { rel: "canonical", href: "/" },
+      { rel: "canonical", href: "https://keeptxred.com/" },
       ...(getLeadImage()
         ? [{ rel: "preload", as: "image", href: getLeadImage() as string, fetchpriority: "high" }]
         : []),
@@ -45,10 +45,10 @@ export const Route = createFileRoute("/")({
           "@type": "WebSite",
           name: "Keep Texas Red",
           alternateName: ["Keep TX Red", "KeepTXRed"],
-          url: "https://www.keeptxred.com/",
+          url: "https://keeptxred.com/",
           potentialAction: {
             "@type": "SearchAction",
-            target: "https://www.keeptxred.com/news?q={search_term_string}",
+            target: "https://keeptxred.com/news?q={search_term_string}",
             "query-input": "required name=search_term_string",
           },
         }),
@@ -60,8 +60,8 @@ export const Route = createFileRoute("/")({
           "@type": "Organization",
           name: "Keep Texas Red",
           alternateName: ["Keep TX Red", "KeepTXRed"],
-          url: "https://www.keeptxred.com/",
-          logo: "https://www.keeptxred.com/favicon.ico",
+          url: "https://keeptxred.com/",
+          logo: "https://keeptxred.com/favicon.ico",
           areaServed: { "@type": "State", name: "Texas" },
         }),
       },

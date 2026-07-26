@@ -8,7 +8,7 @@ export const Route = createFileRoute("/register-to-vote")({
       { name: "description", content: "Step-by-step instructions to register to vote in Texas, including ID requirements, deadlines, and how to check your registration status." },
       { property: "og:title", content: "Register to Vote in Texas" },
     ],
-    links: [{ rel: "canonical", href: "/register-to-vote" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/register-to-vote" }],
   }),
   component: RegisterPage,
 });

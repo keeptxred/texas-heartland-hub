@@ -19,7 +19,7 @@ export const Route = createFileRoute("/texas-business/$topic")({
     }
     const title = section ? `${section.title} — Texas Business` : "Texas Business";
     const desc = section?.description ?? "Texas business coverage.";
-    const canonical = "https://www.keeptxred.com/texas-business";
+    const canonical = "https://keeptxred.com/texas-business";
     return {
       meta: [
         { title: `${title} | Keep Texas Red` },

@@ -16,7 +16,7 @@ export const Route = createFileRoute("/elections")({
       { property: "og:url", content: "/elections" },
       { property: "og:image", content: ballot },
     ],
-    links: [{ rel: "canonical", href: "/elections" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/elections" }],
   }),
   component: ElectionsPage,
 });

@@ -47,6 +47,17 @@ export function calculatorRouteSeo({
             name: "Keep TX Red",
             url: SITE_URL,
           },
+          author: {
+            "@type": "Organization",
+            name: "Keep TX Red Data Desk",
+            url: `${SITE_URL}/authors/data-desk`,
+          },
+          reviewedBy: {
+            "@type": "Organization",
+            name: "Keep TX Red Taxpayer Desk",
+            url: `${SITE_URL}/authors/taxpayer-desk`,
+          },
+          dateModified: "2026-07-25",
         }),
       },
       {

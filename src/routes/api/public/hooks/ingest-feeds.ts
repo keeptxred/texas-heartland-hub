@@ -358,7 +358,7 @@ async function fetchRedditSelftext(link: string): Promise<string | null> {
     const u = new URL(link);
     const jsonUrl = `https://www.reddit.com${u.pathname.replace(/\/?$/, "")}.json`;
     const r = await fetch(jsonUrl, {
-      headers: { "User-Agent": "KeepTXRed/1.0 (+https://www.keeptxred.com)" },
+      headers: { "User-Agent": "KeepTXRed/1.0 (+https://keeptxred.com)" },
       signal: AbortSignal.timeout(8000),
     });
     if (!r.ok) return null;
@@ -385,7 +385,7 @@ async function fetchRedditPostData(link: string): Promise<RedditPostData> {
     const u = new URL(link);
     const jsonUrl = `https://www.reddit.com${u.pathname.replace(/\/?$/, "")}.json`;
     const r = await fetch(jsonUrl, {
-      headers: { "User-Agent": "KeepTXRed/1.0 (+https://www.keeptxred.com)" },
+      headers: { "User-Agent": "KeepTXRed/1.0 (+https://keeptxred.com)" },
       signal: AbortSignal.timeout(8000),
     });
     if (!r.ok) return { selftext: null, externalUrl: null };
@@ -431,7 +431,7 @@ async function fetchLinkedArticleText(url: string): Promise<string | null> {
   try {
     const r = await fetch(url, {
       headers: {
-        "User-Agent": "KeepTXRed/1.0 (+https://www.keeptxred.com)",
+        "User-Agent": "KeepTXRed/1.0 (+https://keeptxred.com)",
         Accept: "text/html,application/xhtml+xml",
       },
       redirect: "follow",
@@ -748,7 +748,7 @@ async function handler() {
       try {
         const res = await fetch(s.url, {
           headers: {
-            "User-Agent": "KeepTXRedBot/1.0 (+https://www.keeptxred.com)",
+            "User-Agent": "KeepTXRedBot/1.0 (+https://keeptxred.com)",
             Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*",
           },
           signal: AbortSignal.timeout(15000),
@@ -1153,21 +1153,15 @@ async function handler() {
           else seen.add(key!);
         }
         if (toDelete.length > 0) {
-          // Safety rule 2: never delete more than 10% of daily_articles in a
-          // single cleanup pass. If the candidate set exceeds that cap, abort
-          // so a bad dedupe signature can't wipe the archive.
-          const cap = Math.max(1, Math.floor(totalCount * 0.1));
-          if (toDelete.length > cap) {
-            dedupeSkippedReason = `refused to delete ${toDelete.length} rows (>10% of ${totalCount})`;
-            console.warn("[ingest-feeds] canonical dedupe aborted", {
-              candidates: toDelete.length,
-              total: totalCount,
-              cap,
-            });
-          } else {
-            await supabaseAdmin.from("daily_articles").delete().in("id", toDelete);
-            dedupedCanonical = toDelete.length;
-          }
+          // Never delete a published URL during ingestion. Older rows may
+          // already be indexed or linked externally; deleting them creates
+          // avoidable 404s. Source-level dedupe should happen before a new slug
+          // is published, or via an explicit persisted redirect.
+          dedupeSkippedReason = `preserved ${toDelete.length} published duplicate-source URL(s)`;
+          console.warn("[ingest-feeds] canonical dedupe preserved published URLs", {
+            candidates: toDelete.length,
+            total: totalCount,
+          });
         }
       }
     }

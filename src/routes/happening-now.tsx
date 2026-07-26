@@ -92,9 +92,9 @@ export const Route = createFileRoute("/happening-now")({
         property: "og:description",
         content: "Real-time Texas political and legislative updates aggregated from official state sources.",
       },
-      { property: "og:url", content: "https://www.keeptxred.com/happening-now" },
+      { property: "og:url", content: "https://keeptxred.com/happening-now" },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/happening-now" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/happening-now" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -103,10 +103,10 @@ export const Route = createFileRoute("/happening-now")({
           "@graph": [
             {
               "@type": "NewsMediaOrganization",
-              "@id": "https://www.keeptxred.com/#org",
+              "@id": "https://keeptxred.com/#org",
               name: "Keep TX Red",
-              url: "https://www.keeptxred.com",
-              logo: "https://www.keeptxred.com/favicon.ico",
+              url: "https://keeptxred.com",
+              logo: "https://keeptxred.com/favicon.ico",
               sameAs: [],
               knowsAbout: [
                 "Texas Legislative Tracking",
@@ -119,12 +119,17 @@ export const Route = createFileRoute("/happening-now")({
             },
             {
               "@type": "CollectionPage",
-              "@id": "https://www.keeptxred.com/happening-now#page",
-              url: "https://www.keeptxred.com/happening-now",
+              "@id": "https://keeptxred.com/happening-now#page",
+              url: "https://keeptxred.com/happening-now",
               name: "Statewide Conservative News Dashboard",
               description:
                 "Live aggregated feeds from official Texas government sources: Legislature bills filed, Governor press releases, and Secretary of State updates.",
-              isPartOf: { "@id": "https://www.keeptxred.com/#org" },
+isPartOf: { "@id": "https://www.keeptxred.com/#org" },
+about: [
+  { "@type": "Thing", name: "Texas Legislative Tracking" },
+  { "@type": "Thing", name: "Conservative Policy News" },
+  { "@type": "Thing", name: "Texas Primary Elections" },
+],
               mainEntity: {
                 "@type": "FAQPage",
                 mainEntity: FAQS.map((faq) => ({

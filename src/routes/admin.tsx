@@ -42,6 +42,7 @@ type ArticleRow = {
   category: string;
   is_breaking: boolean | null;
   published_at: string;
+  source_name?: string | null;
   featured_image_url?: string | null;
   image_generation_status?: string | null;
 };
@@ -110,7 +111,7 @@ function AdminDashboard() {
           .limit(50),
         supabase
           .from("daily_articles")
-        .select("id,slug,title,category,is_breaking,published_at,featured_image_url,image_generation_status")
+        .select("id,slug,title,category,is_breaking,published_at,source_name,featured_image_url,image_generation_status")
           .order("published_at", { ascending: false })
           .limit(50),
       ]);
@@ -124,6 +125,12 @@ function AdminDashboard() {
 
   const missingSlug = feed.filter((r) => !r.internal_slug).length;
   const breaking = articles.filter((a) => a.is_breaking).length;
+  const latestNormalArticle = articles.find(
+    (article) => article.source_name !== "Keep TX Red Reserve Desk",
+  );
+  const publishingStalled =
+    !latestNormalArticle ||
+    Date.now() - Date.parse(latestNormalArticle.published_at) >= 24 * 60 * 60 * 1000;
 
   function signOut() {
     sessionStorage.removeItem(STORAGE_KEY);
@@ -151,6 +158,35 @@ function AdminDashboard() {
         <Stat label="Articles (last 50)" value={articles.length} />
         <Stat label="Currently breaking" value={breaking} />
       </section>
+
+      {publishingStalled ? (
+        <section className="mx-auto max-w-6xl px-4 pb-8">
+          <div role="alert" className="border-2 border-amber-500 bg-amber-50 p-4 text-amber-950">
+            <div className="text-xs font-bold uppercase tracking-widest">Publishing safety net active</div>
+            <p className="mt-1 text-sm">
+              No normal newsroom article has published for at least 24 hours.
+              The reserve queue will release one prewritten article per 24-hour gap until normal publishing resumes.
+            </p>
+            {latestNormalArticle ? (
+              <p className="mt-1 text-xs">
+                Latest normal publication:{" "}
+                {new Date(latestNormalArticle.published_at).toLocaleString("en-US", {
+                  timeZone: "America/Chicago",
+                })}
+              </p>
+            ) : null}
+          </div>
+        </section>
+      ) : (
+        <section className="mx-auto max-w-6xl px-4 pb-8">
+          <div className="border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900">
+            Publishing monitor healthy. Latest normal article:{" "}
+            {new Date(latestNormalArticle.published_at).toLocaleString("en-US", {
+              timeZone: "America/Chicago",
+            })}
+          </div>
+        </section>
+      )}
 
       <section className="mx-auto max-w-6xl px-4 pb-16 grid gap-8 lg:grid-cols-2">
         <Panel title="Latest RSS Ingest">

@@ -233,7 +233,7 @@ export const Route = createFileRoute("/texas-financial-tools")({
           "Explore Texas calculators for moving costs, cost of living, salary, mortgages, affordability, property taxes, insurance, utilities, equity, refinancing, and household budgets.",
       },
     ],
-    links: [{ rel: "canonical", href: "/texas-financial-tools" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-financial-tools" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -241,12 +241,12 @@ export const Route = createFileRoute("/texas-financial-tools")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
             {
               "@type": "ListItem",
               position: 2,
               name: "Texas Tools",
-              item: "https://www.keeptxred.com/texas-financial-tools",
+              item: "https://keeptxred.com/texas-financial-tools",
             },
           ],
         }),

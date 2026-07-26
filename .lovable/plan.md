@@ -1,119 +1,66 @@
-# Texas Viral Content Engine — Integration Audit
+## Root cause
 
-Read-only audit. No code changed. Below is the current system and exactly where a "Viral Content Engine" plugs in without duplicating infrastructure.
+Production database is missing the Explore public read layer. The base `explore_*` tables exist (31 tables), but these objects were **never applied**:
 
-## 1. Current Article Pipeline
+- View `public.explore_public_entities`
+- View `public.explore_public_observations`
+- RPC `public.search_explore_entities`
+- RPC `public.autocomplete_explore_entities`
+- Table `public.explore_trips` (+ related trip sharing objects)
+- Import-platform grants
 
-Producer → Queue → Rewriter → Renderer.
+The three migrations that create them exist in the repo but never ran on production:
 
-```text
-RSS sources ──► ingest-feeds ──► texas_news_feed  (raw feed rows)
-                                     │
-                                     ▼
-                     daily_articles (is_ingested=false, kind='ingested')
-                                     │
-                          ┌──────────┼───────────────┐
-                          ▼          ▼               ▼
-                  generate-news  generate-      generate-sports
-                                 evergreen
-                                     │
-                                     ▼
-                  daily_articles (is_ingested=true, body_json filled)
-                                     │
-                                     ▼
-                  featured-image.functions  → article-images bucket
-                                     │
-                                     ▼
-                  news.$slug / texas-*/ homepage feeds (daily-news.functions)
-```
+- `20260725120000_explore_public_platform.sql`
+- `20260725143000_grant_explore_import_access.sql`
+- `20260725160000_explore_aliases_and_trip_sharing.sql`
 
-Key files: `src/routes/api/public/hooks/{ingest-feeds,generate-news,generate-evergreen,generate-sports}.ts`, `src/lib/{ingest-and-normalize,daily-news,featured-image,content-quality,article-length,title-similarity,sports-lifecycle}.functions.ts`.
+`getExploreLanding()` calls `client.rpc('search_explore_entities', …)` six times in parallel. Every call throws `Explore search failed: Could not find the function public.search_explore_entities`, the loader rejects, and TanStack renders the root error boundary — hence the "This page didn't load" screen at `/explore`. `/explore/search` and `/explore/trip-planner` share the same service and fail for the same reason.
 
-Quality gates: `daily_articles_require_body` DB trigger; word-count tiers (Breaking 800 / Analysis 1,200 / Sports 1,200 / News 2,000 / Evergreen 1,800–2,000+); puzzle-title filter; near-duplicate title guard; category-scoped fallback images.
+## Fix
 
-## 2. RSS / Import System
+Two changes only — no redesign, no new files beyond one migration.
 
-- `content_sources` table (platform, source_name, source_url, category) — admin-editable via `ContentSourceManager`.
-- `ingest-feeds.ts` pulls, dedupes by canonical URL + title similarity, upserts `texas_news_feed` and stub `daily_articles` rows.
-- `ingestStory` server fn (`ingest-and-normalize.functions.ts`) is the programmatic single-story entry point (`RawStorySchema` → NLP classify → upsert).
+### 1. Re-apply the three missing migrations as a single new migration
 
-## 3. Categories
+Create one migration whose body is the concatenation of the three unapplied SQL files, in their original order. Same SQL, same object names, same grants, same RLS. No edits to their semantics.
 
-Stored on `daily_articles.category` + `discover_category`; taxonomy helpers in `src/lib/article-filters.ts`, `src/data/articles.ts`. Surfaces: Texas News, Texas Business, Politics, Houston, Elections, Laws, Economy, Sports (per-league + per-team), Non-political.
+This restores:
 
-## 4. Tags
+- The `explore_public_entities` and `explore_public_observations` views (with the anon/authenticated grants and RLS the originals defined).
+- The `search_explore_entities` and `autocomplete_explore_entities` SQL functions.
+- The `explore_entity_slug_history` grants and the `explore_trips` table + share-token policies.
+- The import-platform grants from the middle migration.
 
-Two arrays on `daily_articles`: `keywords` (entity extraction from `nlp.ts`) and `seo_keywords`. Sports uses `teams[]`. Regional enrichment: `affected_regions[]` + `texas_impact_summary` via `content-quality.enrichArticleRow`. No dedicated `tags` table.
+### 2. Harden the public Explore service so a query failure renders the empty state instead of crashing the page
 
-## 5. Publishing Queue
+File: `src/services/explore/public.functions.ts`
 
-`publishing_queue` table + `src/services/publishingQueue.{functions,ts}` + `PublishingQueuePanel`. Statuses: DRAFT → ASSET_READY → READY_TO_POST → PUBLISHED (mirrored on `content_packages.workflow_status`). Linked to `content_packages` via `content_package_id`; stores platform, notes, external post id/url after publish.
+- Wrap the RPC call and facet query inside `search()` in a `try/catch`. On failure, `console.error` the underlying Supabase error with request context and return the empty fallback:
 
-## 6. Facebook Publishing Flow
+  ```
+  { items: [], total: 0, page, pageSize, facets: { entityTypes: [], regions: [], counties: [], activities: [], amenities: [] } }
+  ```
 
-1. OAuth: `/api/public/oauth/facebook/{start,callback}` (Login for Business, `config_id=1430025278935088`) → writes Page + token to `social_connections`.
-2. Quick path: `ContentOpportunityPanel` "Post to Facebook" → `quickPublishToFacebook` (`quickPublish.functions.ts`).
-3. Asset resolution: `feed_item_id` → `texas_news_feed.internal_slug` → `daily_articles.featured_image_url`, normalized to absolute https, validated (ext + content-type + reachable).
-4. Graph API: `/photos` when image valid, else `/feed`. Records `publishing_queue` row with FB post id/url only on real success.
-5. Full-package path: `SavedPackagesPanel` → `metaPublisher.functions.ts` for approved packages.
+  (same shape `search()` already returns when `publicClient()` is null — reuse `emptyFacets()`).
 
-## 7. Database Tables (public)
+- `getExploreLanding` needs no further change; because each `search()` call now resolves to the fallback instead of throwing, `Promise.all` succeeds and `ExploreLanding` renders its existing "Destination records are being prepared" empty state.
 
-Content: `daily_articles`, `texas_news_feed`, `content_sources`, `content_packages`, `publishing_queue`, `reel_candidates`, `social_connections`, `newsletter_signups`.
-Commerce/system: `products`, `orders`, `email_send_log`, `email_send_state`, `email_unsubscribe_tokens`, `suppressed_emails`.
-Storage bucket: `article-images` (private, signed via `/api/public/article-image/$filename`).
+- Leave `getExploreEntity`, `getExploreSlugTarget`, `autocompleteExplore`, `getSharedExploreTrip`, and `generateExploreTrip` untouched — the request is explicit that fallbacks only apply to the landing experience, and those endpoints should keep surfacing errors.
 
-## 8. Admin Pages
+### Out of scope (already correct)
 
-Single `/admin` shell (`src/routes/admin.tsx`) composing:
-`ContentOpportunityPanel`, `ContentPackagePreview`, `SavedPackagesPanel`, `PublishingQueuePanel`, `MediaPackageBuilder`, `ReelRadarPanel`, `ContentSourceManager`, `MetaConnectionManager`, `BrandSettings`. Passcode-gated (`ktr-admin-passcode`).
+- `SUPABASE_URL` / `SUPABASE_PUBLISHABLE_KEY` env vars — verified populated (the service correctly built a `publicClient`; failure was inside the RPC, not client construction).
+- The Explore route files, components, schemas, and types — no changes.
+- Existing Explore migrations that already applied — untouched.
 
----
+## Verification
 
-## Where the Viral Content Engine Plugs In
+- `bunx tsgo --noEmit`
+- `bunx vitest run src/services/explore src/schemas/explore` (existing Explore tests)
+- After the migration is approved and runs, hit `/explore`, `/explore/search`, and `/explore/trip-planner` in the preview to confirm they render (empty state acceptable if no published entities exist yet).
 
-Do not build a parallel pipeline. The engine is a **scoring + selection layer** on top of what exists, plus one new admin panel.
+## Deliverables
 
-### Ingestion (reuse, do not replace)
-- Reuse `ingest-feeds.ts` + `content_sources`. Add "viral" candidate sources (X/Reddit/YouTube/TikTok trending) as new `content_sources.platform` values; `ingest-feeds` learns to fan out per platform, still writing to `texas_news_feed`.
-
-### Scoring (new, small)
-- New `src/lib/viral-score.ts` — pure function: `(feedRow, signals) → { viralScore, texasRelevance, breakoutVelocity, reasons[] }`. Reuses existing `nlp.ts`, `title-similarity.ts`, `content-quality.ts`.
-- Optional new columns on `texas_news_feed`: `viral_score int`, `viral_signals jsonb`, `trend_source text`. One migration.
-
-### Selection & Rewrite (reuse)
-- Feeds with `viral_score ≥ threshold` still flow through `generate-news` / `generate-evergreen`. Add a prompt variant "viral angle" in existing generators — no new hook route.
-- Word-count tiers in `article-length.ts` already cover the range; add a `kind='viral'` tier only if needed.
-
-### Publishing (reuse entirely)
-- Quick path (`quickPublishToFacebook`) and full-package path (`metaPublisher`) already handle FB image/text/link. Viral items get the same "Post to Facebook" button. No new publisher.
-- IG Reels: `reel_candidates` + `ReelRadarPanel` already exist; extend, don't duplicate.
-
-### Admin (one new panel)
-- New `src/components/admin/ViralRadarPanel.tsx` mounted in `/admin`. Reads `texas_news_feed` ordered by `viral_score`, shows badges (Rewritten / Image Ready / Reel Ready — reuse `OpportunityStatusBadges`), one-click "Rewrite Now" (calls `generate-news`) + "Post to Facebook" (reuses `quickPublishToFacebook`).
-
-### New surface area (minimum)
-1. Migration: `texas_news_feed` add `viral_score`, `viral_signals`, `trend_source` (+ GRANTs).
-2. `src/lib/viral-score.ts` (pure).
-3. Optional scheduled hook `src/routes/api/public/hooks/score-viral.ts` — refreshes `viral_score` from external trend APIs; pg_cron every 15 min.
-4. `ViralRadarPanel.tsx` + one entry in `admin.tsx`.
-5. Prompt tweak inside `generate-news.ts` when `feed.trend_source` is set.
-
-### Explicitly do NOT create
-- New articles/queue/packages/publisher tables.
-- A second Facebook flow or OAuth path.
-- A second admin route.
-- A separate storage bucket or image pipeline.
-
-## Additional Constraints (approved)
-
-- No new categories. Classifier maps to existing `daily_articles.category` values only.
-- `discover_category` behavior untouched.
-- Reuse existing `keywords` + `seo_keywords` fields — no new tag columns.
-- Require classification confidence ≥ threshold before auto-invoking `generate-news`; low-confidence items stay in the panel for manual review.
-- `viral_score` alone never triggers publish. Publishing still requires the human "Post to Facebook" click (or the existing package approval flow).
-- Respect existing breaking-news aging (`daily-news.functions` 6h/24h demote) and sports lifecycle windows.
-- Reuse existing image validation + `quickPublishToFacebook` end-to-end.
-- SEO, sitemap, canonical, and indexing rules unchanged.
-
-Confirm this integration shape and I'll implement in one focused change set.
+- 1 new SQL migration file (concatenation of the three missing ones).
+- Edits scoped to `search()` in `src/services/explore/public.functions.ts`.

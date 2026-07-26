@@ -63,7 +63,7 @@ export const getStatewideFeeds = createServerFn({ method: "GET" }).handler(async
       try {
         const res = await fetch(s.url, {
           headers: {
-            "User-Agent": "KeepTXRedBot/1.0 (+https://www.keeptxred.com)",
+            "User-Agent": "KeepTXRedBot/1.0 (+https://keeptxred.com)",
             Accept: "application/rss+xml, application/atom+xml, application/xml, text/xml, */*",
           },
           signal: AbortSignal.timeout(8000),

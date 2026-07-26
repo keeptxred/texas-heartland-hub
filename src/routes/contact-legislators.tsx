@@ -10,7 +10,7 @@ export const Route = createFileRoute("/contact-legislators")({
       { name: "description", content: "Phone scripts, email templates, and direct numbers to reach your Texas legislators on the bills that matter." },
       { property: "og:title", content: "Contact Your Legislators" },
     ],
-    links: [{ rel: "canonical", href: "/contact-legislators" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/contact-legislators" }],
   }),
   component: ContactPage,
 });

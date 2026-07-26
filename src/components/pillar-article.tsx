@@ -54,8 +54,8 @@ export function buildPillarHead(p: PillarArticleProps) {
           publisher: {
             "@type": "NewsMediaOrganization",
             name: "Keep TX Red",
-            url: "https://www.keeptxred.com/",
-            logo: { "@type": "ImageObject", url: "https://www.keeptxred.com/favicon.ico" },
+            url: "https://keeptxred.com/",
+            logo: { "@type": "ImageObject", url: "https://keeptxred.com/favicon.ico" },
           },
           mainEntityOfPage: { "@type": "WebPage", "@id": seo.url },
           keywords: p.focusKeyword,
@@ -67,8 +67,8 @@ export function buildPillarHead(p: PillarArticleProps) {
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
-            { "@type": "ListItem", position: 2, name: "Texas Pillar Hub", item: "https://www.keeptxred.com/texas" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
+            { "@type": "ListItem", position: 2, name: "Texas Pillar Hub", item: "https://keeptxred.com/texas" },
             { "@type": "ListItem", position: 3, name: p.title, item: seo.url },
           ],
         }),

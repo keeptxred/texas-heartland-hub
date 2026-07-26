@@ -179,7 +179,7 @@ export const Route = createFileRoute("/living-in-texas")({
           "Texas resident resources for property taxes, homeownership, insurance, utilities, household budgeting, state laws, elections, and everyday life.",
       },
     ],
-    links: [{ rel: "canonical", href: "/living-in-texas" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/living-in-texas" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -187,12 +187,12 @@ export const Route = createFileRoute("/living-in-texas")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
             {
               "@type": "ListItem",
               position: 2,
               name: "Living in Texas",
-              item: "https://www.keeptxred.com/living-in-texas",
+              item: "https://keeptxred.com/living-in-texas",
             },
           ],
         }),

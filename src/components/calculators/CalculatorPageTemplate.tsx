@@ -5,6 +5,7 @@ import CalculatorFAQ, { FAQItem } from "@/components/calculators/CalculatorFAQ";
 import RelatedTools from "@/components/calculators/RelatedTools";
 import CalculatorDisclaimer from "@/components/calculators/CalculatorDisclaimer";
 import CalculatorShareCard from "@/components/calculators/CalculatorShareCard";
+import FinancialTrustPanel from "@/components/calculators/FinancialTrustPanel";
 
 interface CalculatorPageTemplateProps {
   title: string;
@@ -65,6 +66,7 @@ export default function CalculatorPageTemplate({
       )}
 
       <CalculatorDisclaimer />
+      <FinancialTrustPanel calculatorName={title} />
     </main>
   );
 }

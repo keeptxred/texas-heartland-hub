@@ -1,11 +1,22 @@
 import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
-import { ExternalLink, Printer, Route as RouteIcon } from "lucide-react";
+import {
+  Accessibility,
+  Compass,
+  ExternalLink,
+  MapPin,
+  PawPrint,
+  Printer,
+  Route as RouteIcon,
+  Ticket,
+  Users,
+} from "lucide-react";
 import { EntityGrid } from "@/components/explore/EntityGrid";
 import { ExploreMap } from "@/components/explore/ExploreMap";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getExploreEntity, getExploreSlugTarget } from "@/services/explore/public.functions";
 import { buildSeo } from "@/lib/seo";
+import type { ExploreEntity } from "@/types/explore/public";
 
 export const Route = createFileRoute("/explore/$slug")({
   loader: async ({ params }) => {
@@ -21,10 +32,10 @@ export const Route = createFileRoute("/explore/$slug")({
   head: ({ loaderData }) => {
     if (!loaderData) return {};
     const seo = buildSeo({
-      title: `${loaderData.name} | Explore Texas`,
+      title: `${loaderData.name} Visitor Guide | Explore Texas`,
       description:
         loaderData.summary ||
-        `Visitor information, activities, amenities, map, and official sources for ${loaderData.name}, Texas.`,
+        `Plan a visit to ${loaderData.name} with activities, amenities, nearby destinations, maps, and official visitor information.`,
       path: `/explore/${loaderData.slug}`,
       image: loaderData.heroImageUrl || undefined,
       imageAlt: loaderData.heroImageAlt || loaderData.name,
@@ -34,6 +45,8 @@ export const Route = createFileRoute("/explore/$slug")({
   },
   component: ExploreEntityPage,
 });
+
+const searchDefaults = { page: 1, pageSize: 24, sort: "relevance" as const };
 
 function JsonValue({ value }: { value: unknown }) {
   if (value == null) return null;
@@ -66,14 +79,14 @@ function JsonValue({ value }: { value: unknown }) {
 }
 
 function ExploreEntityPage() {
-  const entity = Route.useLoaderData();
+  const entity = Route.useLoaderData() as ExploreEntity;
   const placeSchema = {
     "@context": "https://schema.org",
     "@type": schemaType(entity.entityType),
     name: entity.name,
     description: entity.summary || undefined,
     image: entity.heroImageUrl || undefined,
-    url: `https://www.keeptxred.com/explore/${entity.slug}`,
+    url: `https://keeptxred.com/explore/${entity.slug}`,
     geo:
       entity.latitude != null && entity.longitude != null
         ? {
@@ -82,7 +95,54 @@ function ExploreEntityPage() {
             longitude: entity.longitude,
           }
         : undefined,
+    address:
+      entity.city || entity.county
+        ? {
+            "@type": "PostalAddress",
+            addressLocality: entity.city || undefined,
+            addressRegion: "TX",
+            addressCountry: "US",
+          }
+        : undefined,
+    touristType: entity.activities.length ? entity.activities : undefined,
+    publicAccess: true,
     sameAs: entity.officialUrl ? [entity.officialUrl] : undefined,
+  };
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Explore Texas",
+        item: "https://keeptxred.com/explore",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: entity.region || "Texas destinations",
+        item: entity.region
+          ? `https://keeptxred.com/explore/search?regions=${encodeURIComponent(entity.region)}`
+          : "https://keeptxred.com/explore/search",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: entity.name,
+        item: `https://keeptxred.com/explore/${entity.slug}`,
+      },
+    ],
+  };
+  const faqItems = buildFaqItems(entity);
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
   };
   const details = [
     ["Hours", entity.hours],
@@ -90,11 +150,15 @@ function ExploreEntityPage() {
     ["Regulations", entity.regulations],
     ["Seasonal guidance", entity.seasonalGuidance],
   ] as const;
+  const highlights = buildHighlights(entity);
+
   return (
     <main>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema).replace(/</g, "\\u003c") }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([placeSchema, breadcrumbSchema, faqSchema]).replace(/</g, "\\u003c"),
+        }}
       />
       {entity.heroImageUrl && (
         <img
@@ -106,29 +170,109 @@ function ExploreEntityPage() {
         />
       )}
       <article className="mx-auto max-w-6xl px-4 py-12">
-        <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap gap-1 text-sm text-muted-foreground">
           <Link to="/explore" className="hover:underline">
             Explore Texas
-          </Link>{" "}
-          / {entity.entityType.replaceAll("_", " ")} / {entity.name}
+          </Link>
+          <span>/</span>
+          {entity.region ? (
+            <Link
+              to="/explore/search"
+              search={{ ...searchDefaults, regions: [entity.region] }}
+              className="hover:underline"
+            >
+              {entity.region}
+            </Link>
+          ) : (
+            <span>{entity.entityType.replaceAll("_", " ")}</span>
+          )}
+          <span>/</span>
+          <span>{entity.name}</span>
         </nav>
+
         <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_340px]">
           <div>
             <Badge>{entity.entityType.replaceAll("_", " ")}</Badge>
             <h1 className="mt-3 font-display text-5xl leading-none md:text-7xl">{entity.name}</h1>
             {(entity.city || entity.county || entity.region) && (
-              <p className="mt-3 text-lg text-muted-foreground">
-                {[entity.city, entity.county && `${entity.county} County`, entity.region]
-                  .filter(Boolean)
-                  .join(" · ")}
+              <p className="mt-3 flex flex-wrap items-center gap-x-2 text-lg text-muted-foreground">
+                <MapPin className="size-5" aria-hidden="true" />
+                {entity.city && <span>{entity.city}</span>}
+                {entity.county && (
+                  <Link
+                    to="/explore/search"
+                    search={{ ...searchDefaults, counties: [entity.county] }}
+                    className="hover:text-primary hover:underline"
+                  >
+                    {entity.county} County
+                  </Link>
+                )}
+                {entity.region && (
+                  <Link
+                    to="/explore/search"
+                    search={{ ...searchDefaults, regions: [entity.region] }}
+                    className="hover:text-primary hover:underline"
+                  >
+                    {entity.region}
+                  </Link>
+                )}
               </p>
             )}
             {entity.summary && <p className="mt-6 text-xl leading-8">{entity.summary}</p>}
-            {entity.description && (
-              <div className="mt-8 whitespace-pre-line font-serif text-lg leading-8">
-                {entity.description}
+
+            <section className="mt-8 grid gap-3 sm:grid-cols-2" aria-label="Destination highlights">
+              {highlights.map(({ label, value, icon: Icon }) => (
+                <div key={label} className="flex gap-3 rounded-lg border bg-muted/20 p-4">
+                  <Icon className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                      {label}
+                    </p>
+                    <p className="mt-1 font-medium">{value}</p>
+                  </div>
+                </div>
+              ))}
+            </section>
+
+            <section className="mt-10" aria-labelledby="about-destination">
+              <h2 id="about-destination" className="font-display text-3xl">
+                About {entity.name}
+              </h2>
+              <div className="mt-4 space-y-4 font-serif text-lg leading-8">
+                <p>{buildOverview(entity)}</p>
+                {entity.description && entity.description !== entity.summary && (
+                  <p className="whitespace-pre-line">{entity.description}</p>
+                )}
               </div>
+            </section>
+
+            {entity.activities.length > 0 && (
+              <section className="mt-10" aria-labelledby="things-to-do">
+                <h2 id="things-to-do" className="font-display text-3xl">
+                  Things to do at {entity.name}
+                </h2>
+                <p className="mt-3 leading-7 text-muted-foreground">
+                  Use these activities to plan your visit or discover more Texas destinations offering
+                  the same experience.
+                </p>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {entity.activities.map((activity) => (
+                    <Link
+                      key={activity}
+                      to="/explore/search"
+                      search={{ ...searchDefaults, activities: [activity] }}
+                      className="group rounded-lg border p-4 transition-colors hover:border-primary hover:bg-primary/5"
+                    >
+                      <span className="font-semibold capitalize group-hover:text-primary">{activity}</span>
+                      <span className="mt-1 block text-sm text-muted-foreground">
+                        Find more places for {activity} in Texas
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
             )}
+
             {entity.observations.length > 0 && (
               <section className="mt-10" aria-labelledby="current-conditions">
                 <h2 id="current-conditions" className="font-display text-3xl">
@@ -158,6 +302,7 @@ function ExploreEntityPage() {
                 </div>
               </section>
             )}
+
             {Object.keys(entity.profile).length > 0 && (
               <section className="mt-10">
                 <h2 className="font-display text-3xl">Visitor details</h2>
@@ -166,6 +311,7 @@ function ExploreEntityPage() {
                 </div>
               </section>
             )}
+
             {details.map(
               ([title, value]) =>
                 value != null && (
@@ -177,35 +323,49 @@ function ExploreEntityPage() {
                   </section>
                 ),
             )}
-            {(entity.activities.length > 0 || entity.amenities.length > 0) && (
-              <section className="mt-10 grid gap-8 sm:grid-cols-2">
-                {entity.activities.length > 0 && (
-                  <div>
-                    <h2 className="font-display text-3xl">Activities</h2>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {entity.activities.map((item) => (
-                        <Badge key={item} variant="secondary">
-                          {item}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-                {entity.amenities.length > 0 && (
-                  <div>
-                    <h2 className="font-display text-3xl">Amenities</h2>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {entity.amenities.map((item) => (
-                        <Badge key={item} variant="secondary">
-                          {item}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
+
+            {entity.amenities.length > 0 && (
+              <section className="mt-10">
+                <h2 className="font-display text-3xl">Amenities and facilities</h2>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {entity.amenities.map((item) => (
+                    <Badge key={item} variant="secondary" className="px-3 py-1.5 capitalize">
+                      {item}
+                    </Badge>
+                  ))}
+                </div>
               </section>
             )}
+
+            <section className="mt-10" aria-labelledby="plan-your-visit-guide">
+              <h2 id="plan-your-visit-guide" className="font-display text-3xl">
+                Plan your visit
+              </h2>
+              <div className="mt-4 space-y-4 leading-7 text-muted-foreground">
+                <p>{buildPlanningGuidance(entity)}</p>
+                <p>
+                  Conditions, closures, reservations, fees, and operating hours can change. Confirm the
+                  latest information with the official destination before traveling, especially for
+                  overnight stays, water activities, guided access, or remote areas.
+                </p>
+              </div>
+            </section>
+
+            <section className="mt-10" aria-labelledby="destination-faq">
+              <h2 id="destination-faq" className="font-display text-3xl">
+                Frequently asked questions
+              </h2>
+              <div className="mt-5 divide-y rounded-lg border">
+                {faqItems.map((item) => (
+                  <div key={item.question} className="p-5">
+                    <h3 className="font-semibold">{item.question}</h3>
+                    <p className="mt-2 leading-7 text-muted-foreground">{item.answer}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
+
           <aside className="space-y-5">
             <ExploreMap entity={entity} />
             <div className="rounded-lg border p-5">
@@ -219,7 +379,7 @@ function ExploreEntityPage() {
                 </Button>
                 <Button variant="outline" onClick={() => window.print()}>
                   <Printer />
-                  Print
+                  Print guide
                 </Button>
                 {entity.officialUrl && (
                   <Button asChild variant="outline">
@@ -230,6 +390,45 @@ function ExploreEntityPage() {
                 )}
               </div>
             </div>
+
+            <div className="rounded-lg border p-5">
+              <h2 className="font-semibold">Explore more</h2>
+              <div className="mt-3 grid gap-2 text-sm">
+                {entity.region && (
+                  <Link
+                    to="/explore/search"
+                    search={{ ...searchDefaults, regions: [entity.region] }}
+                    className="rounded-md px-3 py-2 hover:bg-muted hover:text-primary"
+                  >
+                    More destinations in {entity.region}
+                  </Link>
+                )}
+                {entity.county && (
+                  <Link
+                    to="/explore/search"
+                    search={{ ...searchDefaults, counties: [entity.county] }}
+                    className="rounded-md px-3 py-2 hover:bg-muted hover:text-primary"
+                  >
+                    Explore {entity.county} County
+                  </Link>
+                )}
+                <Link
+                  to="/explore/search"
+                  search={{ ...searchDefaults, types: [entity.entityType] }}
+                  className="rounded-md px-3 py-2 capitalize hover:bg-muted hover:text-primary"
+                >
+                  More Texas {pluralType(entity.entityType)}
+                </Link>
+                <Link
+                  to="/explore/search"
+                  search={searchDefaults}
+                  className="rounded-md px-3 py-2 hover:bg-muted hover:text-primary"
+                >
+                  Browse all Texas destinations
+                </Link>
+              </div>
+            </div>
+
             {(entity.sourceName || entity.sourceUrl || entity.sourceUpdatedAt) && (
               <div className="rounded-lg border p-5 text-sm">
                 <h2 className="font-semibold">Source and freshness</h2>
@@ -253,21 +452,126 @@ function ExploreEntityPage() {
             )}
           </aside>
         </div>
+
         {entity.nearby.length > 0 && (
           <section className="mt-16">
-            <h2 className="mb-6 font-display text-4xl">Nearby destinations</h2>
+            <h2 className="mb-2 font-display text-4xl">Nearby destinations</h2>
+            <p className="mb-6 text-muted-foreground">
+              Continue exploring with destinations closest to {entity.name}.
+            </p>
             <EntityGrid items={entity.nearby} />
           </section>
         )}
         {entity.related.length > 0 && (
           <section className="mt-16">
-            <h2 className="mb-6 font-display text-4xl">Related destinations</h2>
+            <h2 className="mb-2 font-display text-4xl">Related destinations</h2>
+            <p className="mb-6 text-muted-foreground">
+              Similar Texas places selected by destination type and shared interests.
+            </p>
             <EntityGrid items={entity.related} />
           </section>
         )}
       </article>
     </main>
   );
+}
+
+function buildHighlights(entity: ExploreEntity) {
+  return [
+    {
+      label: "Best for",
+      value: entity.activities.slice(0, 3).join(", ") || "Texas sightseeing",
+      icon: Compass,
+    },
+    {
+      label: "Location",
+      value: [entity.city, entity.region].filter(Boolean).join(", ") || "Texas",
+      icon: MapPin,
+    },
+    {
+      label: "Family friendly",
+      value: entity.isFamilyFriendly ? "Yes" : "Check destination guidance",
+      icon: Users,
+    },
+    {
+      label: "Admission",
+      value: entity.feeRequired ? "A fee may be required" : "No standard fee listed",
+      icon: Ticket,
+    },
+    ...(entity.isPetFriendly
+      ? [{ label: "Pets", value: "Pet-friendly areas available", icon: PawPrint }]
+      : []),
+    ...(entity.isAccessible
+      ? [{ label: "Accessibility", value: "Accessibility features listed", icon: Accessibility }]
+      : []),
+  ];
+}
+
+function buildOverview(entity: ExploreEntity): string {
+  const location = [entity.city, entity.county ? `${entity.county} County` : null, entity.region]
+    .filter(Boolean)
+    .join(", ");
+  const activities = naturalList(entity.activities.slice(0, 5));
+  const amenities = naturalList(entity.amenities.slice(0, 5));
+  return `${entity.name} is a ${entity.entityType.replaceAll("_", " ")} in ${location || "Texas"}. ${entity.summary || "It is part of the Explore Texas destination directory."}${activities ? ` Visitors commonly come for ${activities}.` : ""}${amenities ? ` Listed facilities include ${amenities}.` : ""}`;
+}
+
+function buildPlanningGuidance(entity: ExploreEntity): string {
+  const activityText = naturalList(entity.activities.slice(0, 4));
+  const facilityText = naturalList(entity.amenities.slice(0, 4));
+  const petText = entity.isPetFriendly
+    ? "Pet-friendly access is listed, but leash rules and restricted areas should be confirmed before arrival."
+    : "Travelers bringing pets should verify whether animals are permitted and which areas may be restricted.";
+  const accessText = entity.isAccessible
+    ? "The destination lists accessibility features; contact the operator for route-specific or facility-specific details."
+    : "Visitors with accessibility needs should contact the destination for current information about trails, buildings, parking, and services.";
+  return `Build your itinerary around ${activityText || "the experiences available on site"}. ${facilityText ? `Available facilities may include ${facilityText}.` : "Facility information is limited, so prepare before leaving."} ${petText} ${accessText}`;
+}
+
+function buildFaqItems(entity: ExploreEntity): Array<{ question: string; answer: string }> {
+  const location = [entity.city, entity.county ? `${entity.county} County` : null, entity.region]
+    .filter(Boolean)
+    .join(", ");
+  const activities = naturalList(entity.activities.slice(0, 6));
+  const amenities = naturalList(entity.amenities.slice(0, 6));
+  return [
+    {
+      question: `Where is ${entity.name}?`,
+      answer: `${entity.name} is located in ${location || "Texas"}. Use the map on this page and verify directions with the official destination before departure.`,
+    },
+    {
+      question: `What can you do at ${entity.name}?`,
+      answer: activities
+        ? `Popular listed activities include ${activities}. Availability may vary by season, weather, water level, closures, or reservation requirements.`
+        : "Available activities can change by season and operating conditions. Review the official destination information before your visit.",
+    },
+    {
+      question: `What amenities are available at ${entity.name}?`,
+      answer: amenities
+        ? `Listed amenities include ${amenities}. Confirm current availability, accessibility, and operating status before traveling.`
+        : "The dataset does not yet list detailed amenities for this destination. Check the official website for current facilities and services.",
+    },
+    {
+      question: `Does ${entity.name} charge an admission fee?`,
+      answer: entity.feeRequired
+        ? "A fee is listed as required or potentially required. Rates, passes, reservations, and additional activity fees can change, so verify current pricing with the destination."
+        : "No standard admission fee is listed in this directory, but parking, camping, tours, permits, or special activities may still have charges.",
+    },
+  ];
+}
+
+function naturalList(items: string[]): string {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0];
+  if (items.length === 2) return `${items[0]} and ${items[1]}`;
+  return `${items.slice(0, -1).join(", ")}, and ${items.at(-1)}`;
+}
+
+function pluralType(type: string): string {
+  const normalized = type.replaceAll("_", " ");
+  if (normalized.endsWith("s")) return normalized;
+  if (normalized.endsWith("y")) return `${normalized.slice(0, -1)}ies`;
+  return `${normalized}s`;
 }
 
 function schemaType(type: string): string {

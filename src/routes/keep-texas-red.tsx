@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroFlag from "@/assets/hero-flag.jpg";
 
-const URL = "https://www.keeptxred.com/keep-texas-red";
+const URL = "https://keeptxred.com/keep-texas-red";
 const TITLE = "Keep Texas Red | What It Means and Why Texans Support It";
 const DESC =
   "An in-depth, evergreen guide to what Keep Texas Red means — covering Texas history, economy, border, energy, constitutional rights, education, elections, business, agriculture, military, and infrastructure.";
@@ -36,8 +36,8 @@ export const Route = createFileRoute("/keep-texas-red")({
           publisher: {
             "@type": "NewsMediaOrganization",
             name: "Keep TX Red",
-            url: "https://www.keeptxred.com/",
-            logo: { "@type": "ImageObject", url: "https://www.keeptxred.com/favicon.ico" },
+            url: "https://keeptxred.com/",
+            logo: { "@type": "ImageObject", url: "https://keeptxred.com/favicon.ico" },
           },
           mainEntityOfPage: { "@type": "WebPage", "@id": URL },
         }),
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/keep-texas-red")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
             { "@type": "ListItem", position: 2, name: "Keep Texas Red", item: URL },
           ],
         }),

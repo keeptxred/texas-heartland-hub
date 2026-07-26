@@ -373,11 +373,11 @@ export function ContentOpportunityPanel() {
           source: a.source_name || a.category || "KeepTXRed",
           pub_date: a.published_at,
           internal_slug: a.slug,
-          link: `https://www.keeptxred.com/news/${a.slug}`,
+          link: `https://keeptxred.com/news/${a.slug}`,
           description: null,
           article_slug: a.slug,
           article_asset_url: a.featured_image_url,
-          article_url: `https://www.keeptxred.com/news/${a.slug}`,
+          article_url: `https://keeptxred.com/news/${a.slug}`,
           article_title: a.title,
         }));
 
