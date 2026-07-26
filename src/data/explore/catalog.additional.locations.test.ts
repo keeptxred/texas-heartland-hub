@@ -115,6 +115,41 @@ const southTexasLocations: ExpectedLocation[] = [
   },
 ];
 
+const centralAndNorthTexasLocations: ExpectedLocation[] = [
+  {
+    name: "Hagerman National Wildlife Refuge",
+    city: "Sherman",
+    county: "Grayson County",
+    region: "North Texas",
+    latitude: 33.7342,
+    longitude: -96.7805,
+  },
+  {
+    name: "Attwater Prairie Chicken National Wildlife Refuge",
+    city: "Eagle Lake",
+    county: "Colorado County",
+    region: "Gulf Coast Prairie",
+    latitude: 29.6685,
+    longitude: -96.2696,
+  },
+  {
+    name: "Balcones Canyonlands National Wildlife Refuge",
+    city: "Marble Falls",
+    county: "Burnet, Travis, and Williamson Counties",
+    region: "Hill Country",
+    latitude: 30.5824,
+    longitude: -98.0267,
+  },
+  {
+    name: "Caddo Lake National Wildlife Refuge",
+    city: "Karnack",
+    county: "Harrison County",
+    region: "East Texas",
+    latitude: 32.6757,
+    longitude: -94.1363,
+  },
+];
+
 const assertAuditedLocations = (locations: ExpectedLocation[]) => {
   it.each(locations)(
     "keeps verified location metadata for $name",
@@ -150,4 +185,8 @@ describe("Explore Texas central Gulf Coast refuge locations", () => {
 
 describe("Explore Texas South Texas refuge locations", () => {
   assertAuditedLocations(southTexasLocations);
+});
+
+describe("Explore Texas central and north Texas refuge locations", () => {
+  assertAuditedLocations(centralAndNorthTexasLocations);
 });
