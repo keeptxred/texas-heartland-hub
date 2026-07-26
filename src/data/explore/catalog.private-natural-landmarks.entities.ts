@@ -1,4 +1,4 @@
-import type { ExploreEntity } from "@/types/explore/public";
+import type { ExploreEntity, ExploreJsonObject } from "@/types/explore/public";
 import {
   privateNaturalLandmarkCatalog,
   type PrivateNaturalLandmarkRecord,
@@ -23,7 +23,7 @@ function landmarkAlternateNames(landmark: PrivateNaturalLandmarkRecord): string[
   return [...aliases];
 }
 
-function landmarkProfile(landmark: PrivateNaturalLandmarkRecord): Record<string, unknown> {
+function landmarkProfile(landmark: PrivateNaturalLandmarkRecord): ExploreJsonObject {
   return {
     ownership: landmark.ownershipLabel,
     ownershipClassification: landmark.ownershipClassification,
@@ -44,14 +44,14 @@ function landmarkProfile(landmark: PrivateNaturalLandmarkRecord): Record<string,
   };
 }
 
-function landmarkFees(landmark: PrivateNaturalLandmarkRecord): Record<string, unknown> {
+function landmarkFees(landmark: PrivateNaturalLandmarkRecord): ExploreJsonObject {
   return {
     admissionRequired: landmark.admissionRequired,
     reservationsRequired: landmark.reservationsRequired,
   };
 }
 
-function landmarkRegulations(landmark: PrivateNaturalLandmarkRecord): Record<string, unknown> {
+function landmarkRegulations(landmark: PrivateNaturalLandmarkRecord): ExploreJsonObject {
   return {
     swimmingStatus: landmark.swimmingStatus,
     overnightAccess: landmark.overnightAccess,
@@ -62,7 +62,7 @@ function landmarkRegulations(landmark: PrivateNaturalLandmarkRecord): Record<str
 
 function landmarkSeasonalGuidance(
   landmark: PrivateNaturalLandmarkRecord,
-): Record<string, unknown> {
+): ExploreJsonObject {
   return {
     confirmBeforeTravel: true,
     reservationsRequired: landmark.reservationsRequired,
