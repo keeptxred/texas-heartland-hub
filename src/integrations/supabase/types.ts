@@ -7,30 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -1547,319 +1527,70 @@ export type Database = {
       explore_import_jobs: {
         Row: {
           completed_at: string | null
-          connector_key: string | null
+          connector_key: string
           created_at: string
-          cursor_after: Json | null
-          cursor_before: Json | null
           cursor_state: Json
           entities_created: number
           entities_unchanged: number
           entities_updated: number
-          entity_source_id: string | null
-          error: Json | null
           error_details: Json
           errors_count: number
-          execution_mode: Database["public"]["Enums"]["explore_import_execution_mode"]
-          heartbeat_at: string | null
           id: string
-          mode: string
-          parent_job_id: string | null
           records_received: number
-          requested_by: string | null
           source_id: string | null
           started_at: string | null
-          statistics: Json
           status: string
           summary: Json
           updated_at: string
-          warnings: Json
           warnings_count: number
         }
         Insert: {
           completed_at?: string | null
-          connector_key?: string | null
+          connector_key: string
           created_at?: string
-          cursor_after?: Json | null
-          cursor_before?: Json | null
           cursor_state?: Json
           entities_created?: number
           entities_unchanged?: number
           entities_updated?: number
-          entity_source_id?: string | null
-          error?: Json | null
           error_details?: Json
           errors_count?: number
-          execution_mode?: Database["public"]["Enums"]["explore_import_execution_mode"]
-          heartbeat_at?: string | null
           id?: string
-          mode?: string
-          parent_job_id?: string | null
           records_received?: number
-          requested_by?: string | null
           source_id?: string | null
           started_at?: string | null
-          statistics?: Json
           status?: string
           summary?: Json
           updated_at?: string
-          warnings?: Json
           warnings_count?: number
         }
         Update: {
           completed_at?: string | null
-          connector_key?: string | null
+          connector_key?: string
           created_at?: string
-          cursor_after?: Json | null
-          cursor_before?: Json | null
           cursor_state?: Json
           entities_created?: number
           entities_unchanged?: number
           entities_updated?: number
-          entity_source_id?: string | null
-          error?: Json | null
           error_details?: Json
           errors_count?: number
-          execution_mode?: Database["public"]["Enums"]["explore_import_execution_mode"]
-          heartbeat_at?: string | null
           id?: string
-          mode?: string
-          parent_job_id?: string | null
           records_received?: number
-          requested_by?: string | null
           source_id?: string | null
           started_at?: string | null
-          statistics?: Json
           status?: string
           summary?: Json
           updated_at?: string
-          warnings?: Json
           warnings_count?: number
         }
         Relationships: [
           {
-            foreignKeyName: "explore_import_jobs_parent_job_id_fkey"
-            columns: ["parent_job_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_jobs"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "explore_import_jobs_source_id_fkey"
-            columns: ["entity_source_id"]
+            columns: ["source_id"]
             isOneToOne: false
             referencedRelation: "explore_sources"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "explore_import_jobs_source_id_fkey1"
-            columns: ["source_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_sources"
-            referencedColumns: ["id"]
-          },
         ]
-      }
-      explore_import_records: {
-        Row: {
-          action: Database["public"]["Enums"]["explore_import_record_action"]
-          checksum: string
-          created_at: string
-          duplicate_candidates: Json
-          entity_id: string | null
-          external_id: string
-          id: string
-          job_id: string
-          normalized_payload: Json
-          previous_checksum: string | null
-          raw_payload: Json | null
-          review_status: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          source_id: string
-          validation_issues: Json
-        }
-        Insert: {
-          action: Database["public"]["Enums"]["explore_import_record_action"]
-          checksum: string
-          created_at?: string
-          duplicate_candidates?: Json
-          entity_id?: string | null
-          external_id: string
-          id?: string
-          job_id: string
-          normalized_payload: Json
-          previous_checksum?: string | null
-          raw_payload?: Json | null
-          review_status?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          source_id: string
-          validation_issues?: Json
-        }
-        Update: {
-          action?: Database["public"]["Enums"]["explore_import_record_action"]
-          checksum?: string
-          created_at?: string
-          duplicate_candidates?: Json
-          entity_id?: string | null
-          external_id?: string
-          id?: string
-          job_id?: string
-          normalized_payload?: Json
-          previous_checksum?: string | null
-          raw_payload?: Json | null
-          review_status?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          source_id?: string
-          validation_issues?: Json
-        }
-        Relationships: [
-          {
-            foreignKeyName: "explore_import_records_job_id_fkey"
-            columns: ["job_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_jobs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "explore_import_records_source_id_fkey"
-            columns: ["source_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_sources"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      explore_import_revisions: {
-        Row: {
-          after_payload: Json | null
-          before_payload: Json | null
-          created_at: string
-          entity_id: string | null
-          id: string
-          import_record_id: string
-          operation: string
-        }
-        Insert: {
-          after_payload?: Json | null
-          before_payload?: Json | null
-          created_at?: string
-          entity_id?: string | null
-          id?: string
-          import_record_id: string
-          operation: string
-        }
-        Update: {
-          after_payload?: Json | null
-          before_payload?: Json | null
-          created_at?: string
-          entity_id?: string | null
-          id?: string
-          import_record_id?: string
-          operation?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "explore_import_revisions_import_record_id_fkey"
-            columns: ["import_record_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_records"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      explore_import_rollbacks: {
-        Row: {
-          completed_at: string | null
-          created_at: string
-          error: Json | null
-          id: string
-          job_id: string
-          requested_by: string | null
-          started_at: string | null
-          statistics: Json
-          status: string
-        }
-        Insert: {
-          completed_at?: string | null
-          created_at?: string
-          error?: Json | null
-          id?: string
-          job_id: string
-          requested_by?: string | null
-          started_at?: string | null
-          statistics?: Json
-          status?: string
-        }
-        Update: {
-          completed_at?: string | null
-          created_at?: string
-          error?: Json | null
-          id?: string
-          job_id?: string
-          requested_by?: string | null
-          started_at?: string | null
-          statistics?: Json
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "explore_import_rollbacks_job_id_fkey"
-            columns: ["job_id"]
-            isOneToOne: false
-            referencedRelation: "explore_import_jobs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      explore_import_sources: {
-        Row: {
-          configuration: Json
-          consecutive_failures: number
-          created_at: string
-          cursor: Json
-          enabled: boolean
-          endpoint: string
-          id: string
-          last_failure_at: string | null
-          last_success_at: string | null
-          name: string
-          schedule: string | null
-          source_type: string
-          updated_at: string
-        }
-        Insert: {
-          configuration?: Json
-          consecutive_failures?: number
-          created_at?: string
-          cursor?: Json
-          enabled?: boolean
-          endpoint: string
-          id?: string
-          last_failure_at?: string | null
-          last_success_at?: string | null
-          name: string
-          schedule?: string | null
-          source_type: string
-          updated_at?: string
-        }
-        Update: {
-          configuration?: Json
-          consecutive_failures?: number
-          created_at?: string
-          cursor?: Json
-          enabled?: boolean
-          endpoint?: string
-          id?: string
-          last_failure_at?: string | null
-          last_success_at?: string | null
-          name?: string
-          schedule?: string | null
-          source_type?: string
-          updated_at?: string
-        }
-        Relationships: []
       }
       explore_lake_profiles: {
         Row: {
@@ -2794,48 +2525,6 @@ export type Database = {
         }
         Relationships: []
       }
-      publishing_alerts: {
-        Row: {
-          created_at: string
-          id: string
-          incident_key: string
-          latest_published_at: string | null
-          message: string
-          notification_sent_at: string | null
-          opened_at: string
-          reserve_slug: string | null
-          resolved_at: string | null
-          status: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          incident_key: string
-          latest_published_at?: string | null
-          message: string
-          notification_sent_at?: string | null
-          opened_at?: string
-          reserve_slug?: string | null
-          resolved_at?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          incident_key?: string
-          latest_published_at?: string | null
-          message?: string
-          notification_sent_at?: string | null
-          opened_at?: string
-          reserve_slug?: string | null
-          resolved_at?: string | null
-          status?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       publishing_queue: {
         Row: {
           content_package_id: string
@@ -2913,27 +2602,6 @@ export type Database = {
           status?: string
           title?: string | null
           topic?: string | null
-        }
-        Relationships: []
-      }
-      reserve_article_publications: {
-        Row: {
-          created_at: string
-          published_at: string
-          reserve_key: string
-          slug: string
-        }
-        Insert: {
-          created_at?: string
-          published_at?: string
-          reserve_key: string
-          slug: string
-        }
-        Update: {
-          created_at?: string
-          published_at?: string
-          reserve_key?: string
-          slug?: string
         }
         Relationships: []
       }
@@ -3185,49 +2853,11 @@ export type Database = {
         }
         Returns: string
       }
-      claim_explore_import_job: {
-        Args: never
-        Returns: {
-          completed_at: string | null
-          connector_key: string | null
-          created_at: string
-          cursor_after: Json | null
-          cursor_before: Json | null
-          cursor_state: Json
-          entities_created: number
-          entities_unchanged: number
-          entities_updated: number
-          entity_source_id: string | null
-          error: Json | null
-          error_details: Json
-          errors_count: number
-          execution_mode: Database["public"]["Enums"]["explore_import_execution_mode"]
-          heartbeat_at: string | null
-          id: string
-          mode: string
-          parent_job_id: string | null
-          records_received: number
-          requested_by: string | null
-          source_id: string | null
-          started_at: string | null
-          statistics: Json
-          status: string
-          summary: Json
-          updated_at: string
-          warnings: Json
-          warnings_count: number
-        }
-        SetofOptions: {
-          from: "*"
-          to: "explore_import_jobs"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
+      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -3313,21 +2943,7 @@ export type Database = {
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
-      explore_import_execution_mode: "live" | "dry-run" | "preview"
-      explore_import_job_status:
-        | "queued"
-        | "running"
-        | "completed"
-        | "completed_with_warnings"
-        | "failed"
-        | "cancelled"
-        | "rolled_back"
-      explore_import_record_action:
-        | "insert"
-        | "update"
-        | "unchanged"
-        | "duplicate"
-        | "reject"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3453,29 +3069,7 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
+  public: {
     Enums: {},
   },
-  public: {
-    Enums: {
-      explore_import_execution_mode: ["live", "dry-run", "preview"],
-      explore_import_job_status: [
-        "queued",
-        "running",
-        "completed",
-        "completed_with_warnings",
-        "failed",
-        "cancelled",
-        "rolled_back",
-      ],
-      explore_import_record_action: [
-        "insert",
-        "update",
-        "unchanged",
-        "duplicate",
-        "reject",
-      ],
-    },
-  },
 } as const
-
