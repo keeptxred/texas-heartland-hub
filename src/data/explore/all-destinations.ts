@@ -5,6 +5,10 @@ import { destinations as waterDestinations } from "./catalog.water";
 import { destinations as additionalDestinations } from "./catalog.additional";
 import { commercialCavernCatalog } from "./catalog.caverns";
 import { getTpwdCavernDestinationEnrichment } from "./catalog.tpwd-caverns";
+import {
+  getMajorSpringDestinationEnrichment,
+  majorSpringDestinations,
+} from "./catalog.major-springs.entities";
 import { destinations as thcDestinations } from "./catalog.thc";
 
 const REGION_ALIASES: Record<string, string> = {
@@ -264,8 +268,29 @@ function applyTpwdCavernEnrichment(destination: ExploreEntity): ExploreEntity {
   };
 }
 
+function applyMajorSpringEnrichment(destination: ExploreEntity): ExploreEntity {
+  const destinationSlug = normalizeSlug(destination.slug || destination.name);
+  const enrichment = getMajorSpringDestinationEnrichment(destinationSlug);
+  if (!enrichment) return destination;
+
+  return {
+    ...destination,
+    alternateNames: [...new Set([...destination.alternateNames, ...enrichment.alternateNames])],
+    description: [destination.description, enrichment.description].filter(Boolean).join(" "),
+    profile: { ...destination.profile, spring: enrichment.profile },
+    fees: { ...destination.fees, ...enrichment.fees },
+    regulations: { ...destination.regulations, spring: enrichment.regulations },
+    seasonalGuidance: { ...destination.seasonalGuidance, spring: enrichment.seasonalGuidance },
+    categories: [...new Set([...destination.categories, ...enrichment.categories])],
+    tags: [...new Set([...destination.tags, ...enrichment.tags])],
+    sourceUpdatedAt: enrichment.sourceUpdatedAt,
+    updatedAt: `${enrichment.sourceUpdatedAt}T00:00:00.000Z`,
+  };
+}
+
 function normalizeDestination(rawDestination: ExploreEntity): ExploreEntity {
-  const enrichedDestination = applyTpwdCavernEnrichment(rawDestination);
+  const cavernEnrichedDestination = applyTpwdCavernEnrichment(rawDestination);
+  const enrichedDestination = applyMajorSpringEnrichment(cavernEnrichedDestination);
   const canonicalSlug = normalizeSlug(enrichedDestination.slug || enrichedDestination.name);
   const regionKey = enrichedDestination.region?.trim().toLowerCase() ?? "";
   const typeKey = enrichedDestination.entityType.trim().toLowerCase();
@@ -331,6 +356,7 @@ for (const rawDestination of [
   ...waterDestinations,
   ...additionalDestinations,
   ...cavernDestinations,
+  ...majorSpringDestinations,
   ...thcDestinations,
 ]) {
   const destination = normalizeDestination(rawDestination);
