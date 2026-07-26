@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getExploreEntity, getExploreSlugTarget } from "@/services/explore/public.functions";
 import { buildSeo } from "@/lib/seo";
+import type { ExploreEntity } from "@/types/explore/public";
 
 export const Route = createFileRoute("/explore/$slug")({
   loader: async ({ params }) => {
@@ -66,7 +67,7 @@ function JsonValue({ value }: { value: unknown }) {
 }
 
 function ExploreEntityPage() {
-  const entity = Route.useLoaderData();
+  const entity = Route.useLoaderData() as ExploreEntity;
   const placeSchema = {
     "@context": "https://schema.org",
     "@type": schemaType(entity.entityType),
