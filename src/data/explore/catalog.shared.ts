@@ -54,7 +54,13 @@ const TPWD_CAVERN_OVERRIDES: Record<string, CatalogOverride> = {
     alternateNames: ["Longhorn Cavern", "Longhorn Cave"],
     officialUrl: "https://tpwd.texas.gov/state-parks/longhorn-cavern",
     phone: "512-715-9000",
-    address: "6211 Park Road 4 S., Burnet, TX 78611",
+    address: {
+      street: "6211 Park Road 4 S",
+      city: "Burnet",
+      state: "TX",
+      postalCode: "78611",
+      country: "US",
+    },
     profile: {
       collection: "Texas state parks and natural areas",
       ownership: "State",
@@ -155,7 +161,13 @@ const TPWD_CAVERN_OVERRIDES: Record<string, CatalogOverride> = {
     officialUrl: "https://tpwd.texas.gov/state-parks/kickapoo-cavern",
     phone: "830-563-2342",
     email: "KickapooCavernSP@tpwd.texas.gov",
-    address: "20939 RR 674, Brackettville, TX 78832",
+    address: {
+      street: "20939 RR 674",
+      city: "Brackettville",
+      state: "TX",
+      postalCode: "78832",
+      country: "US",
+    },
     profile: {
       collection: "Texas state parks and natural areas",
       ownership: "State",
