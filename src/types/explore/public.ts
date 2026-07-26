@@ -32,12 +32,7 @@ export interface ExploreObservation {
 }
 
 export type ExploreJson =
-  | string
-  | number
-  | boolean
-  | null
-  | ExploreJson[]
-  | { [key: string]: ExploreJson };
+  string | number | boolean | null | ExploreJson[] | { [key: string]: ExploreJson };
 
 export type ExploreJsonObject = { [key: string]: ExploreJson };
 
