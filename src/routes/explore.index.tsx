@@ -2,19 +2,24 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Search, MapPinned, Route as RouteIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EntityGrid } from "@/components/explore/EntityGrid";
+import { getFeaturedCaverns } from "@/services/explore/cavern.functions";
 import { getExploreLanding } from "@/services/explore/public.functions";
 import { buildSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/explore/")({
-  loader: () => getExploreLanding(),
+  loader: async () => {
+    const [landing, caverns] = await Promise.all([getExploreLanding(), getFeaturedCaverns()]);
+    return { ...landing, caverns };
+  },
   head: () => {
     const seo = buildSeo({
-      title: "Explore Texas | Parks, Lakes, Trails & Historic Places",
+      title: "Explore Texas | Parks, Lakes, Caverns, Trails & Historic Places",
       description:
-        "Discover published Texas parks, lakes, campgrounds, trails, wildlife areas, historic sites, and communities, then build a practical trip.",
+        "Discover published Texas parks, lakes, caverns, campgrounds, trails, wildlife areas, historic sites, and communities, then build a practical trip.",
       path: "/explore",
       type: "website",
-      keywords: "Explore Texas, Texas parks, Texas lakes, Texas camping, Texas trip planner",
+      keywords:
+        "Explore Texas, Texas parks, Texas lakes, Texas caverns, Texas caves, Texas camping, Texas trip planner",
     });
     return { meta: seo.meta, links: seo.links };
   },
@@ -25,12 +30,38 @@ function ExploreLanding() {
   const data = Route.useLoaderData();
   const destinationCount = data.featured.total;
   const sections = [
-    ["Featured destinations", data.featured.items],
-    ["Popular lakes", data.lakes.items],
-    ["Texas parks", data.parks.items],
-    ["Camping destinations", data.camping.items],
-    ["Family-friendly Texas", data.family.items],
-  ] as const;
+    {
+      title: "Featured destinations",
+      items: data.featured.items,
+      search: { page: 1, pageSize: 24, sort: "relevance" as const },
+    },
+    {
+      title: "Texas caverns and caves",
+      items: data.caverns.items,
+      search: { types: ["cavern"], page: 1, pageSize: 24, sort: "relevance" as const },
+    },
+    {
+      title: "Popular lakes",
+      items: data.lakes.items,
+      search: { types: ["lake"], page: 1, pageSize: 24, sort: "relevance" as const },
+    },
+    {
+      title: "Texas parks",
+      items: data.parks.items,
+      search: { types: ["park"], page: 1, pageSize: 24, sort: "relevance" as const },
+    },
+    {
+      title: "Camping destinations",
+      items: data.camping.items,
+      search: { activities: ["camping"], page: 1, pageSize: 24, sort: "relevance" as const },
+    },
+    {
+      title: "Family-friendly Texas",
+      items: data.family.items,
+      search: { familyFriendly: true, page: 1, pageSize: 24, sort: "relevance" as const },
+    },
+  ];
+
   return (
     <main>
       <section className="border-b bg-muted/30">
@@ -53,7 +84,7 @@ function ExploreLanding() {
               id="explore-home-search"
               name="q"
               className="h-12 flex-1 rounded-md border bg-background px-4"
-              placeholder="Search lakes, parks, trails, cities…"
+              placeholder="Search lakes, parks, caverns, trails, cities…"
             />
             <Button type="submit" size="lg">
               <Search aria-hidden="true" /> Search
@@ -77,7 +108,7 @@ function ExploreLanding() {
       </section>
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-14">
         {sections.map(
-          ([title, items]) =>
+          ({ title, items, search }) =>
             items.length > 0 && (
               <section key={title} aria-labelledby={title.replaceAll(" ", "-")}>
                 <div className="mb-6 flex items-end justify-between gap-4">
@@ -86,7 +117,7 @@ function ExploreLanding() {
                   </h2>
                   <Link
                     to="/explore/search"
-                    search={{ page: 1, pageSize: 24, sort: "relevance" }}
+                    search={search}
                     className="text-sm font-semibold text-primary hover:underline"
                   >
                     View all
