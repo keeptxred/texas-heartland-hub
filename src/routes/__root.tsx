@@ -17,6 +17,10 @@ import { SiteFooter } from "../components/site-footer";
 import { organizationJsonLd } from "../lib/seo";
 import { exploreDestinations } from "../data/explore/all-destinations";
 import { relatedCaverns } from "../lib/explore/cavern-discovery";
+import {
+  buildCavernBreadcrumbSchema,
+  buildRelatedCavernItemListSchema,
+} from "../lib/explore/cavern-structured-data";
 
 function NotFoundComponent() {
   return (
@@ -149,54 +153,55 @@ function CavernGuideTrail() {
   if (!cavern) return null;
 
   const recommendations = relatedCaverns(cavern, exploreDestinations, 3);
+  const breadcrumbSchema = buildCavernBreadcrumbSchema(cavern);
+  const relatedSchema = buildRelatedCavernItemListSchema(cavern, recommendations);
+  const structuredData = [breadcrumbSchema, relatedSchema].filter(Boolean);
 
   return (
-    <aside className="border-y bg-muted/30" aria-label="Related Texas cavern guides">
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
-              Continue exploring underground Texas
-            </p>
-            <h2 className="mt-2 font-display text-2xl md:text-3xl">
-              More cavern guides{cavern.region ? ` near ${cavern.region}` : ""}
-            </h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">
-              Compare guided tours, visitor policies, reservation guidance, and underground attractions
-              before building your itinerary.
-            </p>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+        }}
+      />
+      <aside className="border-y bg-muted/30" aria-label="Texas cavern guide navigation">
+        <div className="mx-auto max-w-6xl px-4 py-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas caverns</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Compare this destination with other guided cave tours, visitor policies, and underground attractions across Texas.
+              </p>
+            </div>
+            <Link
+              to="/explore/caverns"
+              className="shrink-0 text-sm font-semibold text-primary hover:underline"
+            >
+              Explore all Texas caverns and caves
+            </Link>
           </div>
-          <Link
-            to="/explore/caverns"
-            className="shrink-0 text-sm font-semibold text-primary hover:underline"
-          >
-            Explore all Texas caverns and caves
-          </Link>
-        </div>
 
-        {recommendations.length > 0 && (
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {recommendations.map((related) => (
-              <Link
-                key={related.slug}
-                to="/explore/$slug"
-                params={{ slug: related.slug }}
-                className="rounded-lg border bg-background p-5 transition-colors hover:border-primary hover:bg-primary/5"
-              >
-                <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-                  {related.region ?? "Texas cavern"}
-                </p>
-                <h3 className="mt-2 font-display text-xl">{related.name}</h3>
-                <p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">
-                  {related.summary}
-                </p>
-                <p className="mt-4 text-sm font-semibold text-primary">Open visitor guide</p>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </aside>
+          {recommendations.length > 0 && (
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              {recommendations.map((related) => (
+                <Link
+                  key={related.slug}
+                  to="/explore/$slug"
+                  params={{ slug: related.slug }}
+                  className="rounded-lg border bg-background p-4 transition-colors hover:border-primary hover:bg-primary/5"
+                >
+                  <span className="block font-semibold">{related.name}</span>
+                  <span className="mt-1 block text-sm text-muted-foreground">
+                    {[related.city, related.region].filter(Boolean).join(", ")}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }
 
