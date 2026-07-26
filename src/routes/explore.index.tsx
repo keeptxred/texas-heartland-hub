@@ -5,6 +5,7 @@ import { EntityGrid } from "@/components/explore/EntityGrid";
 import { getFeaturedCaverns } from "@/services/explore/cavern.functions";
 import { getExploreLanding } from "@/services/explore/public.functions";
 import { buildSeo } from "@/lib/seo";
+import { geographyPath } from "@/lib/explore/geography-pages";
 
 export const Route = createFileRoute("/explore/")({
   loader: async () => {
@@ -61,9 +62,35 @@ function ExploreLanding() {
       search: { familyFriendly: true, page: 1, pageSize: 24, sort: "relevance" as const },
     },
   ];
+  const regions = data.featured.facets.regions.slice(0, 12);
+  const counties = data.featured.facets.counties.slice(0, 18);
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Explore Texas",
+    url: "https://keeptxred.com/explore",
+    description:
+      "Texas destination guides for parks, lakes, caverns, trails, wildlife areas, historic places, and communities.",
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: destinationCount,
+      itemListElement: data.featured.items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.name,
+        url: `https://keeptxred.com/explore/${item.slug}`,
+      })),
+    },
+  };
 
   return (
     <main>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(collectionSchema).replace(/</g, "\\u003c"),
+        }}
+      />
       <section className="border-b bg-muted/30">
         <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
           <p className="text-xs font-bold uppercase tracking-[0.25em] text-primary">
@@ -107,6 +134,86 @@ function ExploreLanding() {
         </div>
       </section>
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-14">
+        <section aria-labelledby="plan-texas-adventure" className="grid gap-8 lg:grid-cols-2">
+          <div>
+            <h2 id="plan-texas-adventure" className="font-display text-3xl md:text-4xl">
+              Plan a Texas trip by place and experience
+            </h2>
+            <div className="mt-4 space-y-4 font-serif text-lg leading-8">
+              <p>
+                Texas stretches from Gulf Coast beaches and Piney Woods forests to Hill Country
+                rivers, Panhandle canyons, and the mountains of Big Bend. Explore Texas connects
+                those landscapes through destination guides that make it easier to compare
+                activities, amenities, access, and nearby stops before you travel.
+              </p>
+              <p>
+                Browse by region for a multi-day route, use county guides to find places near a
+                specific community, or start with an experience such as camping, hiking, paddling,
+                wildlife watching, cavern tours, and Texas history. Always confirm current hours,
+                fees, reservations, closures, and weather with the destination’s official source.
+              </p>
+            </div>
+          </div>
+          <div className="rounded-lg border bg-muted/20 p-6">
+            <h2 className="font-display text-2xl">Build a better itinerary</h2>
+            <ol className="mt-4 space-y-4 text-sm leading-6 text-muted-foreground">
+              <li>
+                <strong className="text-foreground">1. Choose an anchor.</strong> Start with a park,
+                lake, cavern, historic place, or community.
+              </li>
+              <li>
+                <strong className="text-foreground">2. Follow geographic links.</strong> Open its
+                county and region guides to find compatible stops.
+              </li>
+              <li>
+                <strong className="text-foreground">3. Verify conditions.</strong> Check official
+                access, reservations, weather, water levels, and seasonal rules.
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        {regions.length > 0 && (
+          <section aria-labelledby="explore-regions">
+            <h2 id="explore-regions" className="font-display text-3xl md:text-4xl">
+              Explore Texas by region
+            </h2>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {regions.map((region) => (
+                <Link
+                  key={region}
+                  to={geographyPath("region", region)}
+                  className="rounded-lg border p-4 font-semibold transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary"
+                >
+                  {region}
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {counties.length > 0 && (
+          <section aria-labelledby="explore-counties">
+            <h2 id="explore-counties" className="font-display text-3xl md:text-4xl">
+              Explore Texas by county
+            </h2>
+            <p className="mt-2 text-muted-foreground">
+              Find parks, waterways, heritage sites, and attractions across Texas counties.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {counties.map((county) => (
+                <Link
+                  key={county}
+                  to={geographyPath("county", county)}
+                  className="rounded-full border px-4 py-2 text-sm hover:border-primary hover:text-primary"
+                >
+                  {county} County
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+
         {sections.map(
           ({ title, items, search, href }) =>
             items.length > 0 && (

@@ -32,7 +32,12 @@ export interface ExploreObservation {
 }
 
 export type ExploreJson =
-  string | number | boolean | null | ExploreJson[] | { [key: string]: ExploreJson };
+  | string
+  | number
+  | boolean
+  | null
+  | ExploreJson[]
+  | { [key: string]: ExploreJson };
 
 export type ExploreJsonObject = { [key: string]: ExploreJson };
 
@@ -77,6 +82,16 @@ export interface ExploreSearchResult {
     activities: string[];
     amenities: string[];
   };
+}
+
+export interface ExploreGeographyPage {
+  kind: "county" | "region";
+  name: string;
+  items: ExploreEntityCard[];
+  total: number;
+  typeCounts: Array<{ type: string; count: number }>;
+  activities: string[];
+  nearbyGeographies: Array<{ name: string; count: number }>;
 }
 
 export interface TripPreferences {

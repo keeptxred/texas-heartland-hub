@@ -115,6 +115,8 @@ import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ExploreTripTokenRouteImport } from './routes/explore.trip.$token'
+import { Route as ExploreRegionRegionRouteImport } from './routes/explore.region.$region'
+import { Route as ExploreCountyCountyRouteImport } from './routes/explore.county.$county'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
@@ -690,6 +692,16 @@ const ExploreTripTokenRoute = ExploreTripTokenRouteImport.update({
   path: '/trip/$token',
   getParentRoute: () => ExploreRoute,
 } as any)
+const ExploreRegionRegionRoute = ExploreRegionRegionRouteImport.update({
+  id: '/region/$region',
+  path: '/region/$region',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreCountyCountyRoute = ExploreCountyCountyRouteImport.update({
+  id: '/county/$county',
+  path: '/county/$county',
+  getParentRoute: () => ExploreRoute,
+} as any)
 const ApiPublicPropertyAddressLookupRoute =
   ApiPublicPropertyAddressLookupRouteImport.update({
     id: '/api/public/property-address-lookup',
@@ -943,6 +955,8 @@ export interface FileRoutesByFullPath {
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/region/$region': typeof ExploreRegionRegionRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
@@ -1070,6 +1084,8 @@ export interface FileRoutesByTo {
   '/texas-sports': typeof TexasSportsIndexRoute
   '/texas': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/region/$region': typeof ExploreRegionRegionRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
@@ -1204,6 +1220,8 @@ export interface FileRoutesById {
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/region/$region': typeof ExploreRegionRegionRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
@@ -1339,6 +1357,8 @@ export interface FileRouteTypes {
     | '/texas-sports/'
     | '/texas/'
     | '/api/public/property-address-lookup'
+    | '/explore/county/$county'
+    | '/explore/region/$region'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
@@ -1466,6 +1486,8 @@ export interface FileRouteTypes {
     | '/texas-sports'
     | '/texas'
     | '/api/public/property-address-lookup'
+    | '/explore/county/$county'
+    | '/explore/region/$region'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
@@ -1599,6 +1621,8 @@ export interface FileRouteTypes {
     | '/texas-sports/'
     | '/texas/'
     | '/api/public/property-address-lookup'
+    | '/explore/county/$county'
+    | '/explore/region/$region'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
@@ -2484,6 +2508,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreTripTokenRouteImport
       parentRoute: typeof ExploreRoute
     }
+    '/explore/region/$region': {
+      id: '/explore/region/$region'
+      path: '/region/$region'
+      fullPath: '/explore/region/$region'
+      preLoaderRoute: typeof ExploreRegionRegionRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/county/$county': {
+      id: '/explore/county/$county'
+      path: '/county/$county'
+      fullPath: '/explore/county/$county'
+      preLoaderRoute: typeof ExploreCountyCountyRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/api/public/property-address-lookup': {
       id: '/api/public/property-address-lookup'
       path: '/api/public/property-address-lookup'
@@ -2678,6 +2716,8 @@ interface ExploreRouteChildren {
   ExploreSearchRoute: typeof ExploreSearchRoute
   ExploreTripPlannerRoute: typeof ExploreTripPlannerRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
+  ExploreCountyCountyRoute: typeof ExploreCountyCountyRoute
+  ExploreRegionRegionRoute: typeof ExploreRegionRegionRoute
   ExploreTripTokenRoute: typeof ExploreTripTokenRoute
 }
 
@@ -2687,6 +2727,8 @@ const ExploreRouteChildren: ExploreRouteChildren = {
   ExploreSearchRoute: ExploreSearchRoute,
   ExploreTripPlannerRoute: ExploreTripPlannerRoute,
   ExploreIndexRoute: ExploreIndexRoute,
+  ExploreCountyCountyRoute: ExploreCountyCountyRoute,
+  ExploreRegionRegionRoute: ExploreRegionRegionRoute,
   ExploreTripTokenRoute: ExploreTripTokenRoute,
 }
 

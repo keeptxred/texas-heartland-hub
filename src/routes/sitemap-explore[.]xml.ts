@@ -2,6 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { getCavernSitemapEntries } from "@/lib/explore/cavern-sitemap";
+import { exploreDestinations } from "@/data/explore/all-destinations";
+import { geographyPath } from "@/lib/explore/geography-pages";
 import {
   BASE_URL,
   renderUrlset,
@@ -22,11 +24,35 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
     handlers: {
       GET: async () => {
         const fallbackEntries = getCavernSitemapEntries();
+        const catalogLastmod = toIsoDate(
+          exploreDestinations
+            .map((item) => item.updatedAt)
+            .sort()
+            .at(-1),
+        );
+        const geographyEntries: UrlEntry[] = [
+          { loc: `${BASE_URL}/explore`, lastmod: catalogLastmod },
+          { loc: `${BASE_URL}/explore/caverns`, lastmod: catalogLastmod },
+          ...[...new Set(exploreDestinations.map((item) => item.county).filter(Boolean))].map(
+            (county) => ({
+              loc: `${BASE_URL}${geographyPath("county", county!)}`,
+              lastmod: catalogLastmod,
+            }),
+          ),
+          ...[...new Set(exploreDestinations.map((item) => item.region).filter(Boolean))].map(
+            (region) => ({
+              loc: `${BASE_URL}${geographyPath("region", region!)}`,
+              lastmod: catalogLastmod,
+            }),
+          ),
+        ];
         const url = process.env.SUPABASE_URL;
         const key = process.env.SUPABASE_PUBLISHABLE_KEY;
 
         if (!url || !key) {
-          return xmlResponse(renderUrlset(fallbackEntries, { image: true }));
+          return xmlResponse(
+            renderUrlset([...geographyEntries, ...fallbackEntries], { image: true }),
+          );
         }
 
         const client = createClient(url, key, {
@@ -43,7 +69,9 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
           console.error("[explore-sitemap] published entity query failed", {
             message: result.error.message,
           });
-          return xmlResponse(renderUrlset(fallbackEntries, { image: true }));
+          return xmlResponse(
+            renderUrlset([...geographyEntries, ...fallbackEntries], { image: true }),
+          );
         }
 
         const databaseEntries: UrlEntry[] = ((result.data ?? []) as SitemapEntity[]).map(
@@ -56,7 +84,11 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
           }),
         );
 
-        return xmlResponse(renderUrlset([...fallbackEntries, ...databaseEntries], { image: true }));
+        const entries = [...geographyEntries, ...fallbackEntries, ...databaseEntries].filter(
+          (entry, index, all) =>
+            all.findIndex((candidate) => candidate.loc === entry.loc) === index,
+        );
+        return xmlResponse(renderUrlset(entries, { image: true }));
       },
     },
   },

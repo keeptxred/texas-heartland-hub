@@ -4,6 +4,7 @@ import { EntityGrid } from "@/components/explore/EntityGrid";
 import { Button } from "@/components/ui/button";
 import { getCavernLanding } from "@/services/explore/cavern.functions";
 import { buildSeo } from "@/lib/seo";
+import { geographyPath } from "@/lib/explore/geography-pages";
 
 export const Route = createFileRoute("/explore/caverns")({
   loader: () => getCavernLanding(),
@@ -110,9 +111,9 @@ function TexasCavernsPage() {
             Texas caverns and caves
           </h1>
           <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">
-            Compare {data.total.toLocaleString("en-US")} published cavern destinations, review guided-tour
-            requirements, check reservation guidance, and plan an underground Texas day trip with nearby
-            attractions.
+            Compare {data.total.toLocaleString("en-US")} published cavern destinations, review
+            guided-tour requirements, check reservation guidance, and plan an underground Texas day
+            trip with nearby attractions.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild>
@@ -136,24 +137,25 @@ function TexasCavernsPage() {
               <Ticket className="size-6 text-primary" aria-hidden="true" />
               <h2 className="mt-3 font-display text-2xl">Reserve ahead</h2>
               <p className="mt-2 leading-7 text-muted-foreground">
-                {data.reservationRecommendedCount.toLocaleString("en-US")} listed destinations recommend
-                advance reservations. Weekend, holiday, and school-break tours can fill quickly.
+                {data.reservationRecommendedCount.toLocaleString("en-US")} listed destinations
+                recommend advance reservations. Weekend, holiday, and school-break tours can fill
+                quickly.
               </p>
             </div>
             <div className="rounded-lg border p-5">
               <Compass className="size-6 text-primary" aria-hidden="true" />
               <h2 className="mt-3 font-display text-2xl">Prepare for cave conditions</h2>
               <p className="mt-2 leading-7 text-muted-foreground">
-                Wear closed-toe shoes with dependable traction. Underground routes may include stairs,
-                slopes, narrow passages, damp surfaces, and cooler temperatures.
+                Wear closed-toe shoes with dependable traction. Underground routes may include
+                stairs, slopes, narrow passages, damp surfaces, and cooler temperatures.
               </p>
             </div>
             <div className="rounded-lg border p-5">
               <MapPinned className="size-6 text-primary" aria-hidden="true" />
               <h2 className="mt-3 font-display text-2xl">Check access details</h2>
               <p className="mt-2 leading-7 text-muted-foreground">
-                Accessibility, pet, service-animal, and photography policies vary by cavern. Review each
-                visitor guide and confirm current rules with the operator before traveling.
+                Accessibility, pet, service-animal, and photography policies vary by cavern. Review
+                each visitor guide and confirm current rules with the operator before traveling.
               </p>
             </div>
           </div>
@@ -166,8 +168,8 @@ function TexasCavernsPage() {
                 Explore caverns by Texas region
               </h2>
               <p className="mt-2 max-w-3xl leading-7 text-muted-foreground">
-                Build a regional underground itinerary, compare nearby tours, and combine cavern visits
-                with parks, historic sites, and other Explore Texas destinations.
+                Build a regional underground itinerary, compare nearby tours, and combine cavern
+                visits with parks, historic sites, and other Explore Texas destinations.
               </p>
             </div>
 
@@ -182,8 +184,7 @@ function TexasCavernsPage() {
                     </p>
                   </div>
                   <Link
-                    to="/explore/search"
-                    search={{ ...searchDefaults, types: ["cavern"], regions: [group.region] }}
+                    to={geographyPath("region", group.region)}
                     className="text-sm font-semibold text-primary hover:underline"
                   >
                     View all {group.region} cavern results
@@ -222,8 +223,8 @@ function TexasCavernsPage() {
             Texas cavern visitor questions
           </h2>
           <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">
-            Use these statewide planning answers as a starting point, then review the individual cavern
-            guide and official operator information for destination-specific requirements.
+            Use these statewide planning answers as a starting point, then review the individual
+            cavern guide and official operator information for destination-specific requirements.
           </p>
           <div className="mt-6 divide-y rounded-lg border">
             {cavernFaqItems.map((item) => (
