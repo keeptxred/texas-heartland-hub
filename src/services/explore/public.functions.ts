@@ -14,6 +14,7 @@ import type {
   GeneratedTrip,
   SavedTrip,
   TripPreferences,
+  TripStop,
 } from "@/types/explore/public";
 
 function publicClient() {
@@ -324,6 +325,8 @@ export function recommendationReasons(
   return reasons;
 }
 
+const periods: TripStop["period"][] = ["morning", "afternoon", "evening"];
+
 export const generateExploreTrip = createServerFn({ method: "POST" })
   .inputValidator((value) => tripPreferencesSchema.parse(value))
   .handler(async ({ data }): Promise<GeneratedTrip> => {
@@ -345,12 +348,22 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
     const ordered = orderStopsForRoute(candidates);
     const days = Array.from({ length: data.days }, (_, index) => {
       const items = ordered.slice(index * data.stopsPerDay, (index + 1) * data.stopsPerDay);
+      const stops: TripStop[] = items.map((item, stopIndex) => ({
+        entity: item,
+        period: periods[Math.min(stopIndex, periods.length - 1)],
+        durationMinutes: 120,
+        reasons: recommendationReasons(item, data),
+        notes: [],
+      }));
       return {
         day: index + 1,
-        title: `Day ${index + 1}`,
-        items: items.map((item) => ({ entity: item, reasons: recommendationReasons(item, data) })),
+        date:
+          data.startDate
+            ? new Date(`${data.startDate}T12:00:00Z`,).toISOString().slice(0, 10)
+            : undefined,
+        stops,
       };
-    }).filter((day) => day.items.length > 0);
+    }).filter((day) => day.stops.length > 0);
     return {
       title: data.title || "Explore Texas Trip",
       preferences: data,
