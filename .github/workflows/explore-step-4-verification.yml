@@ -100,10 +100,28 @@ jobs:
           git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Type-check Explore Edge Functions
+        shell: bash
         run: |
-          deno check supabase/functions/explore-import/index.ts
-          deno check supabase/functions/explore-sync/index.ts
-          deno check supabase/functions/explore-review/index.ts
+          set -euo pipefail
+
+          check_with_retry() {
+            local file="$1"
+            local attempt
+            for attempt in 1 2 3 4; do
+              echo "Deno check attempt ${attempt}/4: ${file}"
+              if deno check "$file"; then
+                return 0
+              fi
+              if [[ "$attempt" -lt 4 ]]; then
+                sleep $((attempt * 10))
+              fi
+            done
+            return 1
+          }
+
+          check_with_retry supabase/functions/explore-import/index.ts
+          check_with_retry supabase/functions/explore-sync/index.ts
+          check_with_retry supabase/functions/explore-review/index.ts
 
       - name: Run dry-run import smoke test
         shell: bash
