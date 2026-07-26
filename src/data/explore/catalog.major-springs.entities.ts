@@ -1,17 +1,19 @@
-import type { ExploreEntity } from "@/types/explore/public";
+import type { ExploreEntity, ExploreJson } from "@/types/explore/public";
 import {
   majorSpringCatalog,
   type MajorSpringCatalogRecord,
 } from "./catalog.major-springs";
 
+type ExploreJsonObject = { [key: string]: ExploreJson };
+
 export type MajorSpringDestinationEnrichment = {
   destinationSlug: string;
   alternateNames: string[];
   description: string;
-  profile: Record<string, unknown>;
-  fees: Record<string, unknown>;
-  regulations: Record<string, unknown>;
-  seasonalGuidance: Record<string, unknown>;
+  profile: ExploreJsonObject;
+  fees: ExploreJsonObject;
+  regulations: ExploreJsonObject;
+  seasonalGuidance: ExploreJsonObject;
   categories: string[];
   tags: string[];
   sourceUrl: string;
@@ -30,7 +32,7 @@ function springAlternateNames(spring: MajorSpringCatalogRecord): string[] {
   ])].filter((name) => name !== spring.name);
 }
 
-function springProfile(spring: MajorSpringCatalogRecord): Record<string, unknown> {
+function springProfile(spring: MajorSpringCatalogRecord): ExploreJsonObject {
   return {
     ownership: spring.ownership,
     operator: spring.managingOrganization,
@@ -44,21 +46,21 @@ function springProfile(spring: MajorSpringCatalogRecord): Record<string, unknown
   };
 }
 
-function springFees(spring: MajorSpringCatalogRecord): Record<string, unknown> {
+function springFees(spring: MajorSpringCatalogRecord): ExploreJsonObject {
   return {
     admissionRequired: spring.feeRequired,
     reservationsRecommended: spring.reservationsRecommended,
   };
 }
 
-function springRegulations(spring: MajorSpringCatalogRecord): Record<string, unknown> {
+function springRegulations(spring: MajorSpringCatalogRecord): ExploreJsonObject {
   return {
     swimmingStatus: spring.swimmingStatus,
     accessNotes: spring.accessNotes,
   };
 }
 
-function springSeasonalGuidance(spring: MajorSpringCatalogRecord): Record<string, unknown> {
+function springSeasonalGuidance(spring: MajorSpringCatalogRecord): ExploreJsonObject {
   return {
     reservationsRecommended: spring.reservationsRecommended,
     accessStatus: spring.accessStatus,
