@@ -18,6 +18,15 @@ export type CommercialCavernCatalogRecord = {
   pet_policy: string;
   operating_season: string;
   operator: string;
+  activities: string[];
+  amenities: string[];
+  categories: string[];
+  tags: string[];
+  experience_type: string;
+  geology: string;
+  family_friendly: boolean;
+  photography: string;
+  educational: boolean;
 };
 
 export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
@@ -44,6 +53,37 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
       "Leashed pets are permitted on outdoor park grounds; only ADA-recognized service animals are permitted on cavern tours or inside buildings.",
     operating_season: "Year-round, with tour schedules and park hours varying by date",
     operator: "Natural Bridge Caverns",
+    activities: [
+      "Guided cavern tours",
+      "Canopy and ropes-course adventures",
+      "Gem and mineral mining",
+      "Outdoor maze",
+      "Seasonal bat-viewing experiences",
+    ],
+    amenities: [
+      "Visitor center",
+      "Food service",
+      "Gift shop",
+      "Restrooms",
+      "On-site parking",
+      "Picnic areas",
+    ],
+    categories: ["Commercial cavern", "Geological attraction", "Family attraction"],
+    tags: [
+      "limestone cavern",
+      "show cave",
+      "underground tour",
+      "formations",
+      "family adventure",
+      "Hill Country",
+    ],
+    experience_type: "Large-scale guided show-cave and outdoor adventure attraction",
+    geology:
+      "Active limestone cave system with large chambers, stalactites, stalagmites, flowstone, columns, and other calcite formations.",
+    family_friendly: true,
+    photography:
+      "Personal photography is generally suitable on standard tours, subject to guide instructions, lighting limits, and restrictions on equipment or flash.",
+    educational: true,
   },
   {
     id: "commercial-cavern-inner-space-cavern",
@@ -68,6 +108,35 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     operating_season:
       "Year-round except Thanksgiving, Christmas Eve, Christmas Day, and Easter Day",
     operator: "Inner Space Cavern",
+    activities: [
+      "Guided cavern tours",
+      "Geology interpretation",
+      "Fossil and prehistoric-life interpretation",
+      "Gem and mineral mining",
+    ],
+    amenities: [
+      "Visitor center",
+      "Gift shop",
+      "Snack service",
+      "Restrooms",
+      "On-site parking",
+    ],
+    categories: ["Commercial cavern", "Geological attraction", "Educational attraction"],
+    tags: [
+      "limestone cavern",
+      "show cave",
+      "prehistoric fossils",
+      "living formations",
+      "underground tour",
+      "Georgetown",
+    ],
+    experience_type: "Guided show-cave tour with geology and paleontology interpretation",
+    geology:
+      "Limestone cave with active calcite formations, broad chambers, flowstone, stalactites, stalagmites, and preserved prehistoric animal remains.",
+    family_friendly: true,
+    photography:
+      "Personal handheld photography is generally appropriate on public tours when it does not delay the group; visitors should follow guide instructions.",
+    educational: true,
   },
   {
     id: "commercial-cavern-caverns-of-sonora",
@@ -92,6 +161,37 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
       "Animals are not permitted in the cave; free on-site kennels are available.",
     operating_season: "Open daily year-round except Christmas Day",
     operator: "Caverns of Sonora",
+    activities: [
+      "Guided cavern tours",
+      "Formation photography",
+      "Geology interpretation",
+      "Camping",
+      "Wildlife observation on the grounds",
+    ],
+    amenities: [
+      "Visitor center",
+      "Gift shop",
+      "Restrooms",
+      "On-site parking",
+      "Tent and RV camping",
+      "Pet kennels",
+    ],
+    categories: ["Commercial cavern", "Geological attraction", "West Texas destination"],
+    tags: [
+      "crystal formations",
+      "show cave",
+      "calcite",
+      "underground tour",
+      "camping",
+      "West Texas",
+    ],
+    experience_type: "Intimate guided crystal-cavern tour with extensive stair travel",
+    geology:
+      "Highly decorated limestone cave known for dense calcite crystal formations, helictites, soda straws, flowstone, and delicate speleothems.",
+    family_friendly: true,
+    photography:
+      "Personal photography is a notable part of the visitor experience, but tripods, large equipment, and activities that delay the tour may be restricted.",
+    educational: true,
   },
   {
     id: "commercial-cavern-cave-without-a-name",
@@ -117,6 +217,35 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     operating_season:
       "Year-round, with additional tour times from Memorial Day through Labor Day",
     operator: "Cave Without a Name",
+    activities: [
+      "Guided cavern tours",
+      "Underground concerts and special events",
+      "Geology interpretation",
+      "Nature exploration",
+    ],
+    amenities: [
+      "Visitor center",
+      "Gift shop",
+      "Restrooms",
+      "On-site parking",
+      "Outdoor gathering areas",
+    ],
+    categories: ["Commercial cavern", "Geological attraction", "Underground event venue"],
+    tags: [
+      "living cave",
+      "underground concert",
+      "stalactites",
+      "flowstone",
+      "show cave",
+      "Boerne",
+    ],
+    experience_type: "Guided living-cave tour and underground cultural-event venue",
+    geology:
+      "Living limestone cavern with six principal rooms containing stalactites, stalagmites, flowstone, rimstone dams, columns, and drapery formations.",
+    family_friendly: true,
+    photography:
+      "Personal photography is generally compatible with public tours and events, subject to guide, performer, flash, and equipment restrictions.",
+    educational: true,
   },
   {
     id: "commercial-cavern-cascade-caverns",
@@ -142,6 +271,37 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     operating_season:
       "Open daily year-round, subject to flooding, capacity, and other cave conditions",
     operator: "Cascade Caverns",
+    activities: [
+      "Guided cavern tours",
+      "Geology interpretation",
+      "Camping",
+      "Picnicking",
+      "Nature observation",
+    ],
+    amenities: [
+      "Visitor center",
+      "Gift shop",
+      "Restrooms",
+      "On-site parking",
+      "Campground",
+      "Picnic areas",
+    ],
+    categories: ["Commercial cavern", "Geological attraction", "Campground destination"],
+    tags: [
+      "historic show cave",
+      "limestone cavern",
+      "underground ecosystem",
+      "camping",
+      "guided tour",
+      "Boerne",
+    ],
+    experience_type: "Historic guided show-cave tour with campground access",
+    geology:
+      "Limestone cavern shaped by groundwater dissolution, with passageways, chambers, calcite formations, and a seasonally active underground environment.",
+    family_friendly: true,
+    photography:
+      "Personal handheld photography may be possible during tours when conditions allow; visitors must follow guide and cave-protection instructions.",
+    educational: true,
   },
   {
     id: "commercial-cavern-wonder-world-cave-adventure-park",
@@ -167,5 +327,35 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
       "Only small service dogs are permitted in the cave and anti-gravity house; no pets are permitted on the wildlife-park train.",
     operating_season: "Open daily year-round, with hours varying by season",
     operator: "Wonder World Cave & Adventure Park",
+    activities: [
+      "Guided cave tours",
+      "Anti-gravity house experience",
+      "Wildlife-park train ride",
+      "Observation-tower visit",
+      "Geology and fossil interpretation",
+    ],
+    amenities: [
+      "Visitor center",
+      "Gift shop",
+      "Restrooms",
+      "On-site parking",
+      "Combination attraction tickets",
+    ],
+    categories: ["Commercial cavern", "Family attraction", "Adventure park"],
+    tags: [
+      "Balcones Fault",
+      "dry cave",
+      "fossils",
+      "wildlife park",
+      "observation tower",
+      "San Marcos",
+    ],
+    experience_type: "Multi-attraction guided cave and family adventure-park experience",
+    geology:
+      "Dry fault-zone cave associated with the Balcones Fault, exposing tilted rock layers, fossils, fracture features, and evidence of regional uplift and movement.",
+    family_friendly: true,
+    photography:
+      "Personal photography is generally suitable across the attraction, subject to staff directions and safety restrictions in the cave and moving attractions.",
+    educational: true,
   },
 ];
