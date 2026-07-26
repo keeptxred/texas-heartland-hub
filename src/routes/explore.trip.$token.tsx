@@ -3,6 +3,7 @@ import { Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getSharedExploreTrip } from "@/services/explore/public.functions";
 import { buildSeo } from "@/lib/seo";
+import type { SavedTrip } from "@/types/explore/public";
 
 export const Route = createFileRoute("/explore/trip/$token")({
   loader: async ({ params }) => {
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/explore/trip/$token")({
 });
 
 function SharedTrip() {
-  const saved = Route.useLoaderData();
+  const saved = Route.useLoaderData() as SavedTrip;
   return (
     <main className="mx-auto max-w-4xl px-4 py-12 trip-print">
       <div className="flex items-start justify-between gap-4">
