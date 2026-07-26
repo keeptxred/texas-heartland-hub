@@ -3,8 +3,12 @@ import { exploreDestinations as curatedDestinations } from "./destinations";
 import { destinations as coreDestinations } from "./catalog.core";
 import { destinations as waterDestinations } from "./catalog.water";
 import { destinations as additionalDestinations } from "./catalog.additional";
+import { destinations as eastTexasRefugeDestinations } from "./catalog.wildlife-refuges-east-texas";
 import { commercialCavernCatalog } from "./catalog.caverns";
 import { gormanCaveDestination } from "./catalog.gorman-cave";
+import { federalHikingTrailDestinations } from "./catalog.hiking-federal";
+import { stateParkHikingUnitDestinations } from "./catalog.hiking-state-park-units";
+import { applyHikingRelationships } from "./relationships.hiking";
 import { getTpwdCavernDestinationEnrichment } from "./catalog.tpwd-caverns";
 import {
   getMajorSpringDestinationEnrichment,
@@ -409,8 +413,11 @@ for (const rawDestination of [
   ...nonThcCoreDestinations,
   ...waterDestinations,
   ...additionalDestinations,
+  ...eastTexasRefugeDestinations,
   ...cavernDestinations,
   gormanCaveDestination,
+  ...federalHikingTrailDestinations,
+  ...stateParkHikingUnitDestinations,
   ...majorSpringDestinations,
   ...texasLighthouseDestinations,
   ...privateNaturalLandmarkDestinations,
@@ -430,8 +437,8 @@ for (const rawDestination of [
   }
 }
 
-export const exploreDestinations = [...destinationBySlug.values()].sort((a, b) =>
-  a.name.localeCompare(b.name),
+export const exploreDestinations = applyHikingRelationships(
+  [...destinationBySlug.values()].sort((a, b) => a.name.localeCompare(b.name)),
 );
 
 export const exploreDestinationCount = exploreDestinations.length;
