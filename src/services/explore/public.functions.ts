@@ -310,7 +310,7 @@ async function search(input: ExploreSearchInput): Promise<ExploreSearchResult> {
 }
 
 export const searchExplore = createServerFn({ method: "GET" })
-  .inputValidator((value) => exploreSearchSchema.parse(value))
+  .validator((value) => exploreSearchSchema.parse(value))
   .handler(({ data }) => search(data));
 
 export const getExploreLanding = createServerFn({ method: "GET" }).handler(async () => {
@@ -326,7 +326,7 @@ export const getExploreLanding = createServerFn({ method: "GET" }).handler(async
 });
 
 export const getExploreGeography = createServerFn({ method: "GET" })
-  .inputValidator((value) =>
+  .validator((value) =>
     z
       .object({
         kind: z.enum(["county", "region"]),
@@ -380,7 +380,7 @@ export const getExploreGeography = createServerFn({ method: "GET" })
   });
 
 export const getExploreEntity = createServerFn({ method: "GET" })
-  .inputValidator((value) => z.object({ slug: z.string().min(1).max(240) }).parse(value))
+  .validator((value) => z.object({ slug: z.string().min(1).max(240) }).parse(value))
   .handler(async ({ data }): Promise<ExploreEntity | null> => {
     const entity = exploreDestinations.find((item) => item.slug === data.slug);
     if (!entity) return null;
@@ -405,11 +405,11 @@ export const getExploreEntity = createServerFn({ method: "GET" })
   });
 
 export const getExploreSlugTarget = createServerFn({ method: "GET" })
-  .inputValidator((value) => z.object({ slug: z.string().min(1).max(240) }).parse(value))
+  .validator((value) => z.object({ slug: z.string().min(1).max(240) }).parse(value))
   .handler(async (): Promise<string | null> => null);
 
 export const autocompleteExplore = createServerFn({ method: "GET" })
-  .inputValidator((value) =>
+  .validator((value) =>
     z
       .object({
         q: z.string().trim().min(2).max(80),
@@ -435,7 +435,7 @@ export const autocompleteExplore = createServerFn({ method: "GET" })
   });
 
 export const getSharedExploreTrip = createServerFn({ method: "GET" })
-  .inputValidator((value) => z.object({ token: z.string().min(24).max(128) }).parse(value))
+  .validator((value) => z.object({ token: z.string().min(24).max(128) }).parse(value))
   .handler(async ({ data }): Promise<SavedTrip | null> => {
     const client = publicClient();
     if (!client) return null;
@@ -495,7 +495,7 @@ export function recommendationReasons(
 const periods: TripStop["period"][] = ["morning", "afternoon", "evening"];
 
 export const generateExploreTrip = createServerFn({ method: "POST" })
-  .inputValidator((value) => tripPreferencesSchema.parse(value))
+  .validator((value) => tripPreferencesSchema.parse(value))
   .handler(async ({ data }): Promise<GeneratedTrip> => {
     const result = await search({
       regions: data.region ? [data.region] : undefined,

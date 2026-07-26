@@ -29,7 +29,10 @@ const ENTITY_TAGS: Record<string, readonly string[]> = {
   beach: ["beaches", "water-recreation"],
 };
 
-export function assignImportTaxonomy(draft: ImportEntityDraft, sourceType: ImportSourceType): string[] {
+export function assignImportTaxonomy(
+  draft: ImportEntityDraft,
+  sourceType: ImportSourceType,
+): string[] {
   const values = new Set<string>();
   for (const value of draft.taxonomy ?? []) add(values, value);
   for (const value of SOURCE_TAGS[sourceType] ?? []) add(values, value);
@@ -39,7 +42,8 @@ export function assignImportTaxonomy(draft: ImportEntityDraft, sourceType: Impor
   if (/\b(fishing|fishery|angler)\b/.test(searchable)) add(values, "fishing");
   if (/\b(hike|hiking|trailhead)\b/.test(searchable)) add(values, "hiking");
   if (/\b(camp|campground|campsite)\b/.test(searchable)) add(values, "camping");
-  if (/\b(kayak|canoe|paddl|boat ramp)\b/.test(searchable)) add(values, "paddling-boating");
+  if (/\b(kayak\w*|canoe\w*|paddl\w*|boat ramps?)\b/.test(searchable))
+    add(values, "paddling-boating");
   if (/\b(bird|birding|ornitholog)\b/.test(searchable)) add(values, "birding");
   if (/\b(historic|historical|heritage|landmark)\b/.test(searchable)) add(values, "history");
   if (/\b(accessible|ada|wheelchair)\b/.test(searchable)) add(values, "accessible");
@@ -47,6 +51,10 @@ export function assignImportTaxonomy(draft: ImportEntityDraft, sourceType: Impor
 }
 
 function add(values: Set<string>, raw: string): void {
-  const normalized = raw.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  const normalized = raw
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
   if (normalized) values.add(normalized);
 }
