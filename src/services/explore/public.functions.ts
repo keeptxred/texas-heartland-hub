@@ -72,6 +72,60 @@ function card(entity: ExploreEntity): ExploreEntityCard {
   return result;
 }
 
+function cavernVisitorProfile(entity: ExploreEntity): ExploreEntity["profile"] {
+  if (entity.entityType !== "cavern") return entity.profile;
+
+  const profile = entity.profile as Record<string, ExploreJson>;
+  const tourInformation = (profile.tour_information ?? {}) as Record<string, ExploreJson>;
+  const visitorAccess = (profile.visitor_access ?? {}) as Record<string, ExploreJson>;
+  const guidedTours = tourInformation.guided_tours === true;
+  const reservationsRecommended = tourInformation.reservations_recommended === true;
+  const duration = String(tourInformation.typical_duration ?? "Varies by tour");
+  const accessibility = String(
+    visitorAccess.accessibility ??
+      "Underground routes may include stairs, slopes, narrow passages, and uneven or wet surfaces.",
+  );
+  const petPolicy = String(
+    visitorAccess.pet_policy ??
+      "Pet and service-animal policies vary by operator and may differ between surface grounds and underground tours.",
+  );
+  const photographyPolicy = String(
+    visitorAccess.photography_policy ??
+      "Photography rules vary by tour, equipment, lighting, and cave-protection requirements.",
+  );
+
+  return {
+    ...entity.profile,
+    visit_planning: {
+      guided_access: guidedTours
+        ? "Public cavern access is provided through a guided tour. Arrive before the scheduled departure time for check-in and safety instructions."
+        : "Confirm whether guided access is required and which portions of the cavern are open to the public.",
+      reservations: reservationsRecommended
+        ? "Advance reservations are recommended because tour capacity and departure times can sell out."
+        : "Reservations may not be required for every visit, but checking current capacity and tour times before departure is recommended.",
+      expected_time: duration,
+      clothing_and_footwear:
+        "Wear closed-toe shoes with dependable traction. Cave surfaces can be damp or uneven, and underground temperatures are usually cooler than outdoor Texas conditions, so a light layer may be useful.",
+      accessibility,
+      pets: petPolicy,
+      photography: photographyPolicy,
+    },
+    frequently_asked_questions: {
+      is_a_guided_tour_required: guidedTours
+        ? "Yes. The listed public cavern experience uses guided tours, and visitors should remain with their assigned group."
+        : "Tour format varies. Confirm the current access rules directly with the operator.",
+      should_tickets_be_reserved: reservationsRecommended
+        ? "Yes. Reserving ahead is recommended, especially on weekends, holidays, school breaks, and during peak travel seasons."
+        : "Advance booking may not always be required, but visitors should verify the day's tour schedule and availability.",
+      what_should_visitors_wear:
+        "Closed-toe walking shoes are the safest choice. Bring a light layer for the cooler underground environment and avoid clothing or equipment that could interfere with stairs or narrow passages.",
+      is_the_cavern_accessible: accessibility,
+      are_pets_allowed: petPolicy,
+      is_photography_allowed: photographyPolicy,
+    },
+  };
+}
+
 function emptyFacets(): ExploreSearchResult["facets"] {
   return { entityTypes: [], regions: [], counties: [], activities: [], amenities: [] };
 }
@@ -237,7 +291,7 @@ export const getExploreEntity = createServerFn({ method: "GET" })
       )
       .slice(0, 4)
       .map(card);
-    return { ...entity, nearby, related };
+    return { ...entity, profile: cavernVisitorProfile(entity), nearby, related };
   });
 
 export const getExploreSlugTarget = createServerFn({ method: "GET" })
@@ -359,7 +413,7 @@ export const generateExploreTrip = createServerFn({ method: "POST" })
         day: index + 1,
         date:
           data.startDate
-            ? new Date(`${data.startDate}T12:00:00Z`,).toISOString().slice(0, 10)
+            ? new Date(`${data.startDate}T12:00:00Z`).toISOString().slice(0, 10)
             : undefined,
         stops,
       };
