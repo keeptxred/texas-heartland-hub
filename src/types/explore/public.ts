@@ -34,18 +34,20 @@ export interface ExploreObservation {
 export type ExploreJson =
   string | number | boolean | null | ExploreJson[] | { [key: string]: ExploreJson };
 
+export type ExploreJsonObject = { [key: string]: ExploreJson };
+
 export interface ExploreEntity extends ExploreEntityCard {
   alternateNames: string[];
   description: string | null;
   officialUrl: string | null;
   phone: string | null;
   email: string | null;
-  address: { [key: string]: ExploreJson } | null;
-  profile: { [key: string]: ExploreJson };
+  address: ExploreJsonObject | null;
+  profile: ExploreJsonObject;
   hours: ExploreJson;
-  fees: ExploreJson;
-  regulations: ExploreJson;
-  seasonalGuidance: ExploreJson;
+  fees: ExploreJsonObject | null;
+  regulations: ExploreJsonObject | null;
+  seasonalGuidance: ExploreJsonObject | null;
   categories: string[];
   tags: string[];
   sourceUrl: string | null;
