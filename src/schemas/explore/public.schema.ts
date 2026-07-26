@@ -41,4 +41,5 @@ export const tripPreferencesSchema = z.object({
   accessible: z.coerce.boolean(),
   interests: z.array(z.string().trim().min(1).max(80)).min(1).max(12),
   maxDrivingKm: z.coerce.number().int().min(10).max(800),
+  stopsPerDay: z.coerce.number().int().min(1).max(6).default(3),
 });

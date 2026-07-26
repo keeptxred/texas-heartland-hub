@@ -3,6 +3,7 @@ import { exploreDestinations as curatedDestinations } from "./destinations";
 import { destinations as coreDestinations } from "./catalog.core";
 import { destinations as waterDestinations } from "./catalog.water";
 import { destinations as additionalDestinations } from "./catalog.additional";
+import { destinations as thcDestinations } from "./catalog.thc";
 
 const REGION_ALIASES: Record<string, string> = {
   central: "Central Texas",
@@ -201,12 +202,16 @@ function qualityScore(destination: ExploreEntity): number {
 }
 
 const destinationBySlug = new Map<string, ExploreEntity>();
+const nonThcCoreDestinations = coreDestinations.filter(
+  (destination) => destination.sourceName !== "Texas Historical Commission",
+);
 
 for (const rawDestination of [
   ...curatedDestinations,
-  ...coreDestinations,
+  ...nonThcCoreDestinations,
   ...waterDestinations,
   ...additionalDestinations,
+  ...thcDestinations,
 ]) {
   const destination = normalizeDestination(rawDestination);
   const existing = destinationBySlug.get(destination.slug);

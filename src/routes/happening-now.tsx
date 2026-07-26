@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Accordion,
+  AccordionContent,
   AccordionItem,
   AccordionTrigger,
-  AccordionContent,
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
@@ -47,27 +47,36 @@ const FAQS = [
 ];
 
 const SOURCE_FILTERS = ["All", "Governor", "Secretary of State", "Register"] as const;
-const OFFICIAL_SOURCE_NAMES = new Set([
+const PRIMARY_WINDOW_MS = 24 * 60 * 60 * 1000;
+const FALLBACK_WINDOW_MS = 7 * PRIMARY_WINDOW_MS;
+
+const OFFICIAL_SOURCE_PATTERNS = [
   "office of the governor",
+  "governor of texas",
+  "gov.texas.gov",
   "texas secretary of state",
+  "secretary of state",
+  "sos.state.tx.us",
   "texas register",
-]);
+  "texreg.sos.state.tx.us",
+  "texas legislature",
+  "capitol.texas.gov",
+] as const;
 
 function isOfficialGovernmentSource(source: string) {
-  return OFFICIAL_SOURCE_NAMES.has(source.trim().toLowerCase());
+  const normalized = source.trim().toLowerCase();
+  return OFFICIAL_SOURCE_PATTERNS.some((pattern) => normalized.includes(pattern));
 }
 
 function timeAgo(iso: string) {
-  const t = Date.parse(iso);
-  if (!t) return "";
-  const diff = Date.now() - t;
-  const h = Math.floor(diff / 3_600_000);
-  if (h < 1) return `${Math.max(1, Math.floor(diff / 60_000))} min ago`;
-  if (h < 24) return `${h}h ago`;
-  return `${Math.floor(h / 24)}d ago`;
+  const timestamp = Date.parse(iso);
+  if (!Number.isFinite(timestamp)) return "";
+  const diff = Math.max(0, Date.now() - timestamp);
+  const hours = Math.floor(diff / 3_600_000);
+  if (hours < 1) return `${Math.max(1, Math.floor(diff / 60_000))} min ago`;
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
 }
-
-const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 export const Route = createFileRoute("/happening-now")({
   head: () => ({
@@ -81,8 +90,7 @@ export const Route = createFileRoute("/happening-now")({
       { property: "og:title", content: "Happening Now — Keep TX Red" },
       {
         property: "og:description",
-        content:
-          "Real-time Texas political and legislative updates aggregated from official state sources.",
+        content: "Real-time Texas political and legislative updates aggregated from official state sources.",
       },
       { property: "og:url", content: "https://keeptxred.com/happening-now" },
     ],
@@ -116,18 +124,18 @@ export const Route = createFileRoute("/happening-now")({
               name: "Statewide Conservative News Dashboard",
               description:
                 "Live aggregated feeds from official Texas government sources: Legislature bills filed, Governor press releases, and Secretary of State updates.",
-              isPartOf: { "@id": "https://keeptxred.com/#org" },
-              about: [
-                { "@type": "Thing", name: "Texas Legislative Tracking" },
-                { "@type": "Thing", name: "Conservative Policy News" },
-                { "@type": "Thing", name: "Texas Primary Elections" },
-              ],
+isPartOf: { "@id": "https://www.keeptxred.com/#org" },
+about: [
+  { "@type": "Thing", name: "Texas Legislative Tracking" },
+  { "@type": "Thing", name: "Conservative Policy News" },
+  { "@type": "Thing", name: "Texas Primary Elections" },
+],
               mainEntity: {
                 "@type": "FAQPage",
-                mainEntity: FAQS.map((f) => ({
+                mainEntity: FAQS.map((faq) => ({
                   "@type": "Question",
-                  name: f.q,
-                  acceptedAnswer: { "@type": "Answer", text: f.a },
+                  name: faq.q,
+                  acceptedAnswer: { "@type": "Answer", text: faq.a },
                 })),
               },
             },
@@ -143,39 +151,51 @@ type Row = {
   id: number;
   title: string;
   source: string;
-  link: string | null; // /news/{slug} once a native article has been published
+  link: string | null;
   pendingArticle: boolean;
+  description: string | null;
+  pub_date: string;
+};
+
+type FeedRow = {
+  id: number;
+  title: string;
+  source: string;
+  internal_slug: string | null;
   description: string | null;
   pub_date: string;
 };
 
 function DashboardPage() {
   const [items, setItems] = useState<Row[]>([]);
-  const [fetchedAt, setFetchedAt] = useState<string>("");
+  const [fetchedAt, setFetchedAt] = useState("");
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const [q, setQ] = useState("");
-  const [src, setSrc] = useState<(typeof SOURCE_FILTERS)[number]>("All");
+  const [query, setQuery] = useState("");
+  const [sourceFilter, setSourceFilter] =
+    useState<(typeof SOURCE_FILTERS)[number]>("All");
 
   useEffect(() => {
     let active = true;
+
     async function load() {
-      const sinceIso = new Date(Date.now() - ONE_DAY_MS).toISOString();
-      const [{ data, error: feedError }, { data: demoted, error: articleError }] =
+      const sinceIso = new Date(Date.now() - FALLBACK_WINDOW_MS).toISOString();
+      const [{ data: feedData, error: feedError }, { data: articleData, error: articleError }] =
         await Promise.all([
           supabase
             .from("texas_news_feed")
-            .select("id,title,source,internal_slug,description,pub_date,link")
+            .select("id,title,source,internal_slug,description,pub_date")
             .gte("pub_date", sinceIso)
             .order("pub_date", { ascending: false })
-            .limit(120),
+            .limit(240),
           supabase
             .from("daily_articles")
-            .select("id,slug,title,category,dek,source_url,published_at,kind,body_json")
+            .select("id,slug,title,category,dek,published_at,kind")
             .gte("published_at", sinceIso)
             .order("published_at", { ascending: false })
-            .limit(40),
+            .limit(120),
         ]);
+
       if (!active) return;
       if (feedError || articleError) {
         console.error("[happening-now] load failed", {
@@ -187,21 +207,14 @@ function DashboardPage() {
         return;
       }
 
-      const rawFeed = (data ?? []) as {
-        id: number;
-        title: string;
-        source: string;
-        internal_slug: string | null;
-        description: string | null;
-        pub_date: string;
-        link: string;
-      }[];
+      const rawFeed = (feedData ?? []) as FeedRow[];
       const candidateSlugs = Array.from(
         new Set(rawFeed.flatMap((row) => (row.internal_slug ? [row.internal_slug] : []))),
       );
       const { data: linkedArticles, error: linkedArticleError } = candidateSlugs.length
         ? await supabase.from("daily_articles").select("slug").in("slug", candidateSlugs)
         : { data: [], error: null };
+
       if (!active) return;
       if (linkedArticleError) {
         console.error("[happening-now] linked article lookup failed", linkedArticleError.message);
@@ -210,151 +223,110 @@ function DashboardPage() {
         return;
       }
 
-      // Native articles remain the preferred destination. Official government
-      // updates are still visible while their native rewrite is pending so an
-      // AI-gateway failure cannot empty a page advertised as a real-time feed.
-      // Unlinked third-party rows stay hidden.
       const validArticleSlugs = new Set(
-        ((linkedArticles ?? []) as { slug: string }[]).map((r) => r.slug),
+        ((linkedArticles ?? []) as { slug: string }[]).map((article) => article.slug),
       );
-      // Diagnostic: reason each feed row was included or excluded.
-      const drops = {
-        unlinked_third_party: 0,
-        slug_not_in_articles: 0,
-        pending_official: 0,
-        kept: 0,
-      };
-      const feedRows = rawFeed.flatMap<Row>((r): Row[] => {
-        if (r.internal_slug && validArticleSlugs.has(r.internal_slug)) {
-          drops.kept += 1;
-          return [
-            {
-              id: r.id,
-              title: r.title,
-              source: r.source,
-              link: `/news/${r.internal_slug}`,
-              pendingArticle: false,
-              description: r.description,
-              pub_date: r.pub_date,
-            },
-          ];
-        }
-        if (r.internal_slug) {
-          drops.slug_not_in_articles += 1;
-          return [];
-        }
-        if (!isOfficialGovernmentSource(r.source)) {
-          drops.unlinked_third_party += 1;
-          return [];
-        }
-        drops.pending_official += 1;
+
+      const feedRows = rawFeed.flatMap<Row>((row) => {
+        const hasNativeArticle =
+          Boolean(row.internal_slug) && validArticleSlugs.has(row.internal_slug as string);
+        const officialSource = isOfficialGovernmentSource(row.source);
+
+        if (!hasNativeArticle && !officialSource) return [];
+
         return [
           {
-            id: r.id,
-            title: r.title,
-            source: r.source,
-            link: null,
-            pendingArticle: true,
-            description: r.description,
-            pub_date: r.pub_date,
+            id: row.id,
+            title: row.title,
+            source: row.source,
+            link: hasNativeArticle ? `/news/${row.internal_slug}` : null,
+            pendingArticle: !hasNativeArticle,
+            description: row.description,
+            pub_date: row.pub_date,
           },
         ];
       });
-      const demotedRows: Row[] = (
-        (demoted ?? []) as {
+
+      const nativeRows: Row[] = (
+        (articleData ?? []) as {
           id: string;
           slug: string;
           title: string;
           category: string;
           dek: string | null;
-          source_url: string | null;
           published_at: string;
           kind?: string | null;
         }[]
       )
-        .filter((d) => shouldDisplayBreakingSports(d.kind, d.published_at, "happening-now"))
-        .map((d, i) => ({
-          id: -1 - i,
-          title: d.title,
-          source: d.category || "Newsroom",
-          link: `/news/${d.slug}`,
+        .filter((article) =>
+          shouldDisplayBreakingSports(article.kind, article.published_at, "happening-now"),
+        )
+        .map((article, index) => ({
+          id: -1 - index,
+          title: article.title,
+          source: article.category || "Newsroom",
+          link: `/news/${article.slug}`,
           pendingArticle: false,
-          description: d.dek,
-          pub_date: d.published_at,
+          description: article.dek,
+          pub_date: article.published_at,
         }));
-      const merged = [...feedRows, ...demotedRows].sort(
-        (a, b) => Date.parse(b.pub_date) - Date.parse(a.pub_date),
-      );
-      if (typeof window !== "undefined") {
-        // Temporary diagnostics — remove once feed density stabilizes.
-        console.info("[happening-now] load", {
-          feed_raw: rawFeed.length,
-          feed_unlinked_third_party: drops.unlinked_third_party,
-          feed_slug_missing_article: drops.slug_not_in_articles,
-          feed_pending_official: drops.pending_official,
-          feed_kept: drops.kept,
-          daily_last_24h: demoted?.length ?? 0,
-          linked_articles_found: linkedArticles?.length ?? 0,
-          merged: merged.length,
+
+      const deduplicated = new Map<string, Row>();
+      [...feedRows, ...nativeRows]
+        .sort((a, b) => Date.parse(b.pub_date) - Date.parse(a.pub_date))
+        .forEach((row) => {
+          const key = row.link ?? `${row.source.toLowerCase()}::${row.title.toLowerCase()}`;
+          if (!deduplicated.has(key)) deduplicated.set(key, row);
         });
-      }
-      setItems(merged);
+
+      setItems(Array.from(deduplicated.values()));
       setFetchedAt(new Date().toISOString());
       setLoadError(false);
       setLoading(false);
     }
-    load();
-    const t = setInterval(load, 60_000);
+
+    void load();
+    const timer = window.setInterval(() => void load(), 60_000);
     return () => {
       active = false;
-      clearInterval(t);
+      window.clearInterval(timer);
     };
   }, []);
 
-  const filtered = useMemo(() => {
-    const needle = q.trim().toLowerCase();
-    const cutoff = Date.now() - ONE_DAY_MS;
-    const stats = {
-      total: items.length,
-      dropped_stale: 0,
-      dropped_low_value: 0,
-      dropped_source: 0,
-      dropped_needle: 0,
-      kept: 0,
-    };
-    const out = items.filter((it) => {
-      const ts = Date.parse(it.pub_date);
-      if (!isNaN(ts) && ts < cutoff) {
-        stats.dropped_stale += 1;
-        return false;
-      }
-      if (isLowValueTitle(it.title)) {
-        stats.dropped_low_value += 1;
-        return false;
-      }
-      if (src !== "All" && !it.source.toLowerCase().includes(src.toLowerCase())) {
-        stats.dropped_source += 1;
-        return false;
-      }
-      if (!needle) {
-        stats.kept += 1;
-        return true;
-      }
-      const match =
-        it.title.toLowerCase().includes(needle) ||
-        (it.description ?? "").toLowerCase().includes(needle) ||
-        it.source.toLowerCase().includes(needle);
-      if (!match) stats.dropped_needle += 1;
-      else stats.kept += 1;
-      return match;
+  const displayWindowMs = useMemo(() => {
+    const primaryCutoff = Date.now() - PRIMARY_WINDOW_MS;
+    const hasPrimaryItems = items.some((item) => {
+      const timestamp = Date.parse(item.pub_date);
+      return Number.isFinite(timestamp) && timestamp >= primaryCutoff && !isLowValueTitle(item.title);
     });
-    if (typeof window !== "undefined") {
-      console.info("[happening-now] filter", stats);
-    }
-    return out;
-  }, [items, q, src]);
+    return hasPrimaryItems ? PRIMARY_WINDOW_MS : FALLBACK_WINDOW_MS;
+  }, [items]);
 
-  const QUICK = ["Tax", "Border", "Primary", "Paxton", "Election", "School"];
+  const filtered = useMemo(() => {
+    const needle = query.trim().toLowerCase();
+    const cutoff = Date.now() - displayWindowMs;
+
+    return items.filter((item) => {
+      const timestamp = Date.parse(item.pub_date);
+      if (Number.isFinite(timestamp) && timestamp < cutoff) return false;
+      if (isLowValueTitle(item.title)) return false;
+      if (
+        sourceFilter !== "All" &&
+        !item.source.toLowerCase().includes(sourceFilter.toLowerCase())
+      ) {
+        return false;
+      }
+      if (!needle) return true;
+      return (
+        item.title.toLowerCase().includes(needle) ||
+        (item.description ?? "").toLowerCase().includes(needle) ||
+        item.source.toLowerCase().includes(needle)
+      );
+    });
+  }, [displayWindowMs, items, query, sourceFilter]);
+
+  const isFallbackWindow = displayWindowMs === FALLBACK_WINDOW_MS;
+  const quickFilters = ["Tax", "Border", "Primary", "Paxton", "Election", "School"];
 
   return (
     <div className="bg-white">
@@ -369,14 +341,16 @@ function DashboardPage() {
             <span className="text-primary">Texas Government</span>
           </h1>
           <p className="mt-4 max-w-2xl text-base md:text-lg text-white/90">
-            Real-time feeds from the Texas Legislature, the Governor's Office, and the Secretary of
-            State. The live feed shows the last 24 hours — older updates automatically move to the
-            matching section page (Elections, Texas Laws, or Texas Politics).
+            Current feeds from the Texas Legislature, the Governor&apos;s Office, and the Secretary of
+            State. The newest 24 hours are shown when available; during quiet periods, the feed keeps
+            the latest seven days visible.
           </p>
           {fetchedAt ? (
             <p className="mt-3 text-xs uppercase tracking-widest text-white/85">
-              Last refreshed:{" "}
-              {new Date(fetchedAt).toLocaleString("en-US", { timeZone: "America/Chicago" })} CT
+              Last refreshed: {new Date(fetchedAt).toLocaleString("en-US", {
+                timeZone: "America/Chicago",
+              })}{" "}
+              CT
             </p>
           ) : null}
         </div>
@@ -388,36 +362,36 @@ function DashboardPage() {
             <Input
               type="search"
               placeholder="Filter by keyword: Tax, Border, Paxton..."
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
               className="border-2 border-foreground/20"
             />
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {QUICK.map((k) => (
+              {quickFilters.map((filter) => (
                 <button
-                  key={k}
+                  key={filter}
                   type="button"
-                  onClick={() => setQ(k)}
+                  onClick={() => setQuery(filter)}
                   className="text-[10px] font-bold uppercase tracking-widest px-2 py-1 border border-border hover:border-primary hover:text-primary"
                 >
-                  {k}
+                  {filter}
                 </button>
               ))}
             </div>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {SOURCE_FILTERS.map((s) => (
+            {SOURCE_FILTERS.map((filter) => (
               <button
-                key={s}
+                key={filter}
                 type="button"
-                onClick={() => setSrc(s)}
+                onClick={() => setSourceFilter(filter)}
                 className={`text-[11px] font-semibold uppercase tracking-widest px-3 py-1.5 border ${
-                  s === src
+                  filter === sourceFilter
                     ? "bg-foreground text-background border-foreground"
                     : "border-border hover:border-primary hover:text-primary"
                 }`}
               >
-                {s}
+                {filter}
               </button>
             ))}
           </div>
@@ -425,12 +399,20 @@ function DashboardPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-10">
-        <div className="flex items-baseline justify-between mb-6">
+        <div className="flex items-baseline justify-between gap-4 mb-6">
           <h2 className="font-display text-2xl md:text-3xl tracking-tight">
-            Live Feed · Last 24 Hours
+            Live Feed · {isFallbackWindow ? "Latest 7 Days" : "Last 24 Hours"}
           </h2>
-          <span className="text-xs text-muted-foreground">{filtered.length} updates</span>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">
+            {filtered.length} updates
+          </span>
         </div>
+        {isFallbackWindow && filtered.length > 0 ? (
+          <p className="mb-5 text-sm text-muted-foreground">
+            No qualifying update was published in the last 24 hours, so the most recent Texas updates
+            remain visible.
+          </p>
+        ) : null}
         {filtered.length === 0 ? (
           <div className="border-2 border-dashed border-border p-10 text-center text-muted-foreground">
             {loading
@@ -438,42 +420,40 @@ function DashboardPage() {
               : loadError
                 ? "The live feed is temporarily unavailable. Please try again shortly."
                 : items.length === 0
-                  ? "No Texas political updates in the last 24 hours. Check back soon — the feed refreshes every few minutes."
+                  ? "No recent Texas political updates are available. The feed refreshes automatically."
                   : "No items match your filters."}
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((it, i) => (
+            {filtered.map((item) => (
               <article
-                key={`${it.link ?? `source-${it.id}`}-${i}`}
+                key={item.link ?? `source-${item.id}`}
                 className="border-2 border-foreground/10 bg-card p-5 hover:border-primary transition-colors"
               >
-                {it.pub_date ? (
-                  <time
-                    className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-2"
-                    dateTime={it.pub_date}
-                  >
-                    {timeAgo(it.pub_date)}
-                  </time>
-                ) : null}
+                <time
+                  className="block text-[10px] uppercase tracking-widest text-muted-foreground mb-2"
+                  dateTime={item.pub_date}
+                >
+                  {timeAgo(item.pub_date)}
+                </time>
                 <h3 className="font-serif text-base font-bold leading-snug">
-                  {it.link ? (
-                    <a href={it.link} className="hover:underline underline-offset-4">
-                      {it.title}
+                  {item.link ? (
+                    <a href={item.link} className="hover:underline underline-offset-4">
+                      {item.title}
                     </a>
                   ) : (
-                    it.title
+                    item.title
                   )}
                 </h3>
-                {it.description ? (
+                {item.description ? (
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">
-                    {it.description}
+                    {item.description}
                   </p>
                 ) : null}
                 <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-primary">
-                  Source: {it.source}
+                  Source: {item.source}
                 </p>
-                {it.pendingArticle ? (
+                {item.pendingArticle ? (
                   <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                     Full Keep TX Red article in progress
                   </p>
@@ -498,21 +478,21 @@ function DashboardPage() {
           </p>
           <div className="mt-8 bg-white border-2 border-foreground/10 px-6">
             <Accordion type="single" collapsible className="w-full">
-              {FAQS.map((f, i) => (
-                <AccordionItem key={i} value={`faq-${i}`}>
+              {FAQS.map((faq, index) => (
+                <AccordionItem key={faq.q} value={`faq-${index}`}>
                   <AccordionTrigger className="font-serif text-base md:text-lg font-bold">
-                    {f.q}
+                    {faq.q}
                   </AccordionTrigger>
                   <AccordionContent>
-                    <p className="text-sm md:text-base text-foreground/80 leading-relaxed">{f.a}</p>
-                    {"sourceUrl" in f ? (
+                    <p className="text-sm md:text-base text-foreground/80 leading-relaxed">{faq.a}</p>
+                    {"sourceUrl" in faq ? (
                       <a
-                        href={f.sourceUrl}
+                        href={faq.sourceUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="mt-3 inline-block text-sm font-semibold text-primary underline underline-offset-4"
                       >
-                        {f.sourceLabel}
+                        {faq.sourceLabel}
                       </a>
                     ) : null}
                   </AccordionContent>
