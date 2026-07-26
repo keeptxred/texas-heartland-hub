@@ -7,10 +7,11 @@ import {
 const expectedSlugs = [
   "westcave-preserve",
   "chalk-bluff-river-resort",
+  "selah-bamberger-ranch-preserve",
 ] as const;
 
 describe("private natural landmarks catalog", () => {
-  it("publishes the initial verified landmark set exactly once", () => {
+  it("publishes the verified landmark set exactly once", () => {
     expect(privateNaturalLandmarkCatalog.map((landmark) => landmark.slug)).toEqual(
       expectedSlugs,
     );
@@ -54,6 +55,17 @@ describe("private natural landmarks catalog", () => {
     expect(chalkBluff?.accessModel).toBe("ticketed-day-use-and-overnight-access");
     expect(chalkBluff?.swimmingStatus).toBe("permitted");
     expect(chalkBluff?.overnightAccess).toBe(true);
+  });
+
+  it("preserves Bamberger Ranch's scheduled conservation-program access", () => {
+    const bamberger = getPrivateNaturalLandmarkBySlug("selah-bamberger-ranch-preserve");
+
+    expect(bamberger?.ownershipClassification).toBe("private-nonprofit-preserve");
+    expect(bamberger?.accessModel).toBe("scheduled-public-program-access");
+    expect(bamberger?.reservationsRequired).toBe(true);
+    expect(bamberger?.swimmingStatus).toBe("not-permitted");
+    expect(bamberger?.overnightAccess).toBe(false);
+    expect(bamberger?.activities).toContain("Land stewardship education");
   });
 
   it("keeps required visitor and conservation metadata complete", () => {
