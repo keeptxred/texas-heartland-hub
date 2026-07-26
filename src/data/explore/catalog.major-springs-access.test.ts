@@ -72,11 +72,7 @@ describe("major spring ownership and visitor access audit", () => {
       majorSpringOwnershipAccessAudit.map((audit) => audit.ownershipClassification),
     );
 
-    expect(ownershipClassifications).toEqual(
-      expect.objectContaining({
-        size: 6,
-      }),
-    );
+    expect(ownershipClassifications.size).toBe(6);
     expect(ownershipClassifications).toContain("private-family-operated");
     expect(ownershipClassifications).toContain("private-association-managed");
 
