@@ -1,3 +1,13 @@
+export type CommercialCavernVerificationStatus =
+  | "official-source-reviewed"
+  | "needs-review"
+  | "unverified";
+
+export type CommercialCavernMediaStatus =
+  | "awaiting-approved-asset"
+  | "approved"
+  | "not-required";
+
 export type CommercialCavernCatalogRecord = {
   id: string;
   slug: string;
@@ -27,6 +37,15 @@ export type CommercialCavernCatalogRecord = {
   family_friendly: boolean;
   photography: string;
   educational: boolean;
+  image_url: string | null;
+  image_alt: string;
+  image_credit: string | null;
+  image_source_url: string | null;
+  image_license: string | null;
+  media_status: CommercialCavernMediaStatus;
+  source_attribution: string;
+  verification_status: CommercialCavernVerificationStatus;
+  last_reviewed: string;
 };
 
 export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
@@ -84,6 +103,16 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     photography:
       "Personal photography is generally suitable on standard tours, subject to guide instructions, lighting limits, and restrictions on equipment or flash.",
     educational: true,
+    image_url: null,
+    image_alt:
+      "Illuminated limestone formations and a large underground chamber at Natural Bridge Caverns near San Antonio, Texas.",
+    image_credit: null,
+    image_source_url: null,
+    image_license: null,
+    media_status: "awaiting-approved-asset",
+    source_attribution: "Natural Bridge Caverns official website",
+    verification_status: "official-source-reviewed",
+    last_reviewed: "2026-07-26",
   },
   {
     id: "commercial-cavern-inner-space-cavern",
@@ -137,6 +166,16 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     photography:
       "Personal handheld photography is generally appropriate on public tours when it does not delay the group; visitors should follow guide instructions.",
     educational: true,
+    image_url: null,
+    image_alt:
+      "Calcite formations and a guided passage inside Inner Space Cavern in Georgetown, Texas.",
+    image_credit: null,
+    image_source_url: null,
+    image_license: null,
+    media_status: "awaiting-approved-asset",
+    source_attribution: "Inner Space Cavern official website",
+    verification_status: "official-source-reviewed",
+    last_reviewed: "2026-07-26",
   },
   {
     id: "commercial-cavern-caverns-of-sonora",
@@ -192,6 +231,16 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     photography:
       "Personal photography is a notable part of the visitor experience, but tripods, large equipment, and activities that delay the tour may be restricted.",
     educational: true,
+    image_url: null,
+    image_alt:
+      "Dense white calcite crystals and delicate cave formations inside the Caverns of Sonora in West Texas.",
+    image_credit: null,
+    image_source_url: null,
+    image_license: null,
+    media_status: "awaiting-approved-asset",
+    source_attribution: "Caverns of Sonora official website",
+    verification_status: "official-source-reviewed",
+    last_reviewed: "2026-07-26",
   },
   {
     id: "commercial-cavern-cave-without-a-name",
@@ -246,6 +295,16 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     photography:
       "Personal photography is generally compatible with public tours and events, subject to guide, performer, flash, and equipment restrictions.",
     educational: true,
+    image_url: null,
+    image_alt:
+      "Stalactites, flowstone, and a spacious underground chamber inside Cave Without a Name near Boerne, Texas.",
+    image_credit: null,
+    image_source_url: null,
+    image_license: null,
+    media_status: "awaiting-approved-asset",
+    source_attribution: "Cave Without a Name official website",
+    verification_status: "official-source-reviewed",
+    last_reviewed: "2026-07-26",
   },
   {
     id: "commercial-cavern-cascade-caverns",
@@ -302,6 +361,16 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     photography:
       "Personal handheld photography may be possible during tours when conditions allow; visitors must follow guide and cave-protection instructions.",
     educational: true,
+    image_url: null,
+    image_alt:
+      "A guided limestone passage and natural cave formations inside Cascade Caverns near Boerne, Texas.",
+    image_credit: null,
+    image_source_url: null,
+    image_license: null,
+    media_status: "awaiting-approved-asset",
+    source_attribution: "Cascade Caverns official website",
+    verification_status: "official-source-reviewed",
+    last_reviewed: "2026-07-26",
   },
   {
     id: "commercial-cavern-wonder-world-cave-adventure-park",
@@ -357,5 +426,15 @@ export const commercialCavernCatalog: CommercialCavernCatalogRecord[] = [
     photography:
       "Personal photography is generally suitable across the attraction, subject to staff directions and safety restrictions in the cave and moving attractions.",
     educational: true,
+    image_url: null,
+    image_alt:
+      "Exposed rock layers and a dry fault cave passage at Wonder World Cave & Adventure Park in San Marcos, Texas.",
+    image_credit: null,
+    image_source_url: null,
+    image_license: null,
+    media_status: "awaiting-approved-asset",
+    source_attribution: "Wonder World Cave & Adventure Park official website",
+    verification_status: "official-source-reviewed",
+    last_reviewed: "2026-07-26",
   },
 ];
