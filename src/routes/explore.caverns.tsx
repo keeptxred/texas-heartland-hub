@@ -159,23 +159,39 @@ function TexasCavernsPage() {
           </div>
         </section>
 
-        {data.regions.length > 0 && (
-          <section aria-labelledby="cavern-regions">
-            <h2 id="cavern-regions" className="font-display text-3xl md:text-4xl">
-              Explore caverns by Texas region
-            </h2>
-            <div className="mt-5 flex flex-wrap gap-3">
-              {data.regions.map((region) => (
-                <Link
-                  key={region}
-                  to="/explore/search"
-                  search={{ ...searchDefaults, types: ["cavern"], regions: [region] }}
-                  className="rounded-full border px-4 py-2 text-sm font-semibold transition-colors hover:border-primary hover:bg-primary/5 hover:text-primary"
-                >
-                  {region} caverns
-                </Link>
-              ))}
+        {data.regionalGroups.length > 0 && (
+          <section aria-labelledby="cavern-regions" className="space-y-10">
+            <div>
+              <h2 id="cavern-regions" className="font-display text-3xl md:text-4xl">
+                Explore caverns by Texas region
+              </h2>
+              <p className="mt-2 max-w-3xl leading-7 text-muted-foreground">
+                Build a regional underground itinerary, compare nearby tours, and combine cavern visits
+                with parks, historic sites, and other Explore Texas destinations.
+              </p>
             </div>
+
+            {data.regionalGroups.map((group) => (
+              <div key={group.region} className="border-t pt-8">
+                <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+                  <div>
+                    <h3 className="font-display text-2xl md:text-3xl">{group.region} caverns</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {group.items.length.toLocaleString("en-US")} destination
+                      {group.items.length === 1 ? "" : "s"} in this regional collection.
+                    </p>
+                  </div>
+                  <Link
+                    to="/explore/search"
+                    search={{ ...searchDefaults, types: ["cavern"], regions: [group.region] }}
+                    className="text-sm font-semibold text-primary hover:underline"
+                  >
+                    View all {group.region} cavern results
+                  </Link>
+                </div>
+                <EntityGrid items={group.items.slice(0, 4)} />
+              </div>
+            ))}
           </section>
         )}
 
