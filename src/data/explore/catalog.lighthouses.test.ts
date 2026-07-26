@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { ExploreJsonObject } from "@/types/explore/public";
 import { texasLighthouseCatalog } from "./catalog.lighthouses";
 import { texasLighthouseDestinations } from "./catalog.lighthouses.entities";
 import { exploreDestinations } from "./all-destinations";
@@ -54,10 +55,11 @@ describe("Texas lighthouse catalog", () => {
     const matagorda = texasLighthouseDestinations.find(
       (destination) => destination.slug === "matagorda-island-lighthouse",
     );
+    const matagordaGuidance = matagorda?.seasonalGuidance as ExploreJsonObject | null | undefined;
 
     expect(bolivar?.profile.accessModel).toBe("view-only");
     expect(bolivar?.profile.towerAccess).toBe(false);
     expect(matagorda?.profile.accessModel).toBe("remote-restricted");
-    expect(matagorda?.seasonalGuidance?.confirmBeforeTravel).toBe(true);
+    expect(matagordaGuidance?.confirmBeforeTravel).toBe(true);
   });
 });
