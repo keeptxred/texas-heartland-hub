@@ -78,6 +78,40 @@ function JsonValue({ value }: { value: unknown }) {
   return null;
 }
 
+function profileSection(entity: ExploreEntity, key: string): Record<string, unknown> {
+  const value = (entity.profile as Record<string, unknown>)[key];
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function cavernStructuredProperties(entity: ExploreEntity) {
+  if (entity.entityType !== "cavern") return undefined;
+  const tour = profileSection(entity, "tour_information");
+  const access = profileSection(entity, "visitor_access");
+  const properties = [
+    ["Guided tours", tour.guided_tours === true ? "Yes" : tour.guided_tours === false ? "No" : null],
+    [
+      "Reservations recommended",
+      tour.reservations_recommended === true
+        ? "Yes"
+        : tour.reservations_recommended === false
+          ? "No"
+          : null,
+    ],
+    ["Typical visit duration", tour.typical_duration],
+    ["Accessibility", access.accessibility],
+    ["Pet policy", access.pet_policy],
+    ["Photography policy", access.photography_policy],
+  ].filter((item): item is [string, string | number | boolean] => item[1] != null);
+
+  return properties.map(([name, value]) => ({
+    "@type": "PropertyValue",
+    name,
+    value,
+  }));
+}
+
 function ExploreEntityPage() {
   const entity = Route.useLoaderData() as ExploreEntity;
   const placeSchema = {
@@ -106,6 +140,8 @@ function ExploreEntityPage() {
         : undefined,
     touristType: entity.activities.length ? entity.activities : undefined,
     publicAccess: true,
+    isAccessibleForFree: entity.feeRequired === false,
+    additionalProperty: cavernStructuredProperties(entity),
     sameAs: entity.officialUrl ? [entity.officialUrl] : undefined,
   };
   const breadcrumbSchema = {
@@ -477,6 +513,41 @@ function ExploreEntityPage() {
 }
 
 function buildHighlights(entity: ExploreEntity) {
+  if (entity.entityType === "cavern") {
+    const tour = profileSection(entity, "tour_information");
+    const access = profileSection(entity, "visitor_access");
+    return [
+      {
+        label: "Guided access",
+        value: tour.guided_tours === true ? "Guided cavern tour" : "Confirm current tour format",
+        icon: Compass,
+      },
+      {
+        label: "Tour length",
+        value: String(tour.typical_duration ?? "Varies by tour"),
+        icon: Users,
+      },
+      {
+        label: "Reservations",
+        value:
+          tour.reservations_recommended === true
+            ? "Advance booking recommended"
+            : "Check current availability",
+        icon: Ticket,
+      },
+      {
+        label: "Admission",
+        value: entity.feeRequired ? "Paid admission required" : "No standard fee listed",
+        icon: Ticket,
+      },
+      {
+        label: "Accessibility",
+        value: String(access.accessibility ?? "Contact the operator for route details"),
+        icon: Accessibility,
+      },
+    ];
+  }
+
   return [
     {
       label: "Best for",
