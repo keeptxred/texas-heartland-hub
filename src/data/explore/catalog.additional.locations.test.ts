@@ -150,6 +150,25 @@ const centralAndNorthTexasLocations: ExpectedLocation[] = [
   },
 ];
 
+const panhandleLocations: ExpectedLocation[] = [
+  {
+    name: "Muleshoe National Wildlife Refuge",
+    city: "Muleshoe",
+    county: "Bailey County",
+    region: "High Plains",
+    latitude: 33.9515,
+    longitude: -102.7423,
+  },
+  {
+    name: "Buffalo Lake National Wildlife Refuge",
+    city: "Umbarger",
+    county: "Randall County",
+    region: "High Plains",
+    latitude: 34.9012,
+    longitude: -102.1211,
+  },
+];
+
 const assertAuditedLocations = (locations: ExpectedLocation[]) => {
   it.each(locations)(
     "keeps verified location metadata for $name",
@@ -189,4 +208,8 @@ describe("Explore Texas South Texas refuge locations", () => {
 
 describe("Explore Texas central and north Texas refuge locations", () => {
   assertAuditedLocations(centralAndNorthTexasLocations);
+});
+
+describe("Explore Texas Panhandle refuge locations", () => {
+  assertAuditedLocations(panhandleLocations);
 });
