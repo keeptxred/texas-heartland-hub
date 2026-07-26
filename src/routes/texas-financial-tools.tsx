@@ -136,7 +136,13 @@ const starts = [
 ] as const;
 
 function TexasFinancialToolsPage() {
-  const tools = groups.flatMap((group) => group.tools);
+  const tools = groups.reduce<Array<readonly [name: string, path: string, description: string]>>(
+    (items, group) => {
+      for (const tool of group.tools) items.push(tool);
+      return items;
+    },
+    [],
+  );
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
