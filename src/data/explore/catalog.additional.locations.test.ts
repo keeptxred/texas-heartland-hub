@@ -80,6 +80,41 @@ const centralGulfCoastLocations: ExpectedLocation[] = [
   },
 ];
 
+const southTexasLocations: ExpectedLocation[] = [
+  {
+    name: "Laguna Atascosa National Wildlife Refuge",
+    city: "Los Fresnos",
+    county: "Cameron County",
+    region: "South Texas",
+    latitude: 26.2293,
+    longitude: -97.3483,
+  },
+  {
+    name: "Lower Rio Grande Valley National Wildlife Refuge",
+    city: "Alamo",
+    county: "Cameron, Hidalgo, Starr, and Willacy Counties",
+    region: "South Texas",
+    latitude: 26.1858,
+    longitude: -98.1067,
+  },
+  {
+    name: "Santa Ana National Wildlife Refuge",
+    city: "Alamo",
+    county: "Hidalgo County",
+    region: "South Texas",
+    latitude: 26.0858,
+    longitude: -98.1346,
+  },
+  {
+    name: "Aransas National Wildlife Refuge",
+    city: "Austwell",
+    county: "Aransas and Refugio Counties",
+    region: "Gulf Coast",
+    latitude: 28.3135,
+    longitude: -96.8044,
+  },
+];
+
 const assertAuditedLocations = (locations: ExpectedLocation[]) => {
   it.each(locations)(
     "keeps verified location metadata for $name",
@@ -111,4 +146,8 @@ describe("Explore Texas upper Gulf Coast refuge locations", () => {
 
 describe("Explore Texas central Gulf Coast refuge locations", () => {
   assertAuditedLocations(centralGulfCoastLocations);
+});
+
+describe("Explore Texas South Texas refuge locations", () => {
+  assertAuditedLocations(southTexasLocations);
 });
