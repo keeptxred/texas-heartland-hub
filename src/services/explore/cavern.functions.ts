@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { exploreDestinations } from "@/data/explore/all-destinations";
 import { commercialCavernCatalog } from "@/data/explore/catalog.caverns";
 import { validateCommercialCavernCatalog } from "@/data/explore/catalog.caverns.validation";
+import { groupCavernsByRegion, sortCaverns } from "@/lib/explore/cavern-discovery";
 import type { ExploreEntity, ExploreEntityCard } from "@/types/explore/public";
 
 validateCommercialCavernCatalog(commercialCavernCatalog);
@@ -29,18 +30,8 @@ function toEntityCard(entity: ExploreEntity): ExploreEntityCard {
   };
 }
 
-function sortedCaverns(): ExploreEntity[] {
-  return exploreDestinations
-    .filter((destination) => destination.entityType === "cavern")
-    .sort((a, b) => {
-      const familyPriority = Number(b.isFamilyFriendly === true) - Number(a.isFamilyFriendly === true);
-      if (familyPriority !== 0) return familyPriority;
-      return a.name.localeCompare(b.name);
-    });
-}
-
 export const getFeaturedCaverns = createServerFn({ method: "GET" }).handler(async () => {
-  const caverns = sortedCaverns();
+  const caverns = sortCaverns(exploreDestinations);
   return {
     items: caverns.slice(0, 6).map(toEntityCard),
     total: caverns.length,
@@ -48,13 +39,17 @@ export const getFeaturedCaverns = createServerFn({ method: "GET" }).handler(asyn
 });
 
 export const getCavernLanding = createServerFn({ method: "GET" }).handler(async () => {
-  const caverns = sortedCaverns();
-  const regions = [...new Set(caverns.map((cavern) => cavern.region).filter(Boolean))].sort();
+  const caverns = sortCaverns(exploreDestinations);
+  const regionalGroups = groupCavernsByRegion(caverns).map((group) => ({
+    region: group.region,
+    items: group.items.map(toEntityCard),
+  }));
 
   return {
     items: caverns.map(toEntityCard),
     total: caverns.length,
-    regions,
+    regions: regionalGroups.map((group) => group.region),
+    regionalGroups,
     reservationRecommendedCount: caverns.filter((cavern) => {
       const profile = cavern.profile as Record<string, unknown>;
       const tour = profile.tour_information as Record<string, unknown> | undefined;
