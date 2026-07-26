@@ -31,13 +31,7 @@ export interface ExploreObservation {
   sourceUrl: string | null;
 }
 
-export type ExploreJson =
-  | string
-  | number
-  | boolean
-  | null
-  | ExploreJson[]
-  | { [key: string]: ExploreJson };
+export type ExploreJson = string | number | boolean | null | ExploreJson[] | { [key: string]: ExploreJson };
 
 export type ExploreJsonObject = { [key: string]: ExploreJson };
 
