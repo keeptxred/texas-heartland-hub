@@ -108,6 +108,7 @@ import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-politica
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as ExploreTripPlannerRouteImport } from './routes/explore.trip-planner'
 import { Route as ExploreSearchRouteImport } from './routes/explore.search'
+import { Route as ExploreCavernsRouteImport } from './routes/explore.caverns'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
@@ -654,6 +655,11 @@ const ExploreSearchRoute = ExploreSearchRouteImport.update({
   path: '/search',
   getParentRoute: () => ExploreRoute,
 } as any)
+const ExploreCavernsRoute = ExploreCavernsRouteImport.update({
+  id: '/caverns',
+  path: '/caverns',
+  getParentRoute: () => ExploreRoute,
+} as any)
 const ExploreSlugRoute = ExploreSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -917,6 +923,7 @@ export interface FileRoutesByFullPath {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/caverns': typeof ExploreCavernsRoute
   '/explore/search': typeof ExploreSearchRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -1043,6 +1050,7 @@ export interface FileRoutesByTo {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/caverns': typeof ExploreCavernsRoute
   '/explore/search': typeof ExploreSearchRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -1176,6 +1184,7 @@ export interface FileRoutesById {
   '/authors/$slug': typeof AuthorsSlugRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
+  '/explore/caverns': typeof ExploreCavernsRoute
   '/explore/search': typeof ExploreSearchRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -1310,6 +1319,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
+    | '/explore/caverns'
     | '/explore/search'
     | '/explore/trip-planner'
     | '/news/$slug'
@@ -1436,6 +1446,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
+    | '/explore/caverns'
     | '/explore/search'
     | '/explore/trip-planner'
     | '/news/$slug'
@@ -1568,6 +1579,7 @@ export interface FileRouteTypes {
     | '/authors/$slug'
     | '/email/unsubscribe'
     | '/explore/$slug'
+    | '/explore/caverns'
     | '/explore/search'
     | '/explore/trip-planner'
     | '/news/$slug'
@@ -2423,6 +2435,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreSearchRouteImport
       parentRoute: typeof ExploreRoute
     }
+    '/explore/caverns': {
+      id: '/explore/caverns'
+      path: '/caverns'
+      fullPath: '/explore/caverns'
+      preLoaderRoute: typeof ExploreCavernsRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/explore/$slug': {
       id: '/explore/$slug'
       path: '/$slug'
@@ -2655,6 +2674,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface ExploreRouteChildren {
   ExploreSlugRoute: typeof ExploreSlugRoute
+  ExploreCavernsRoute: typeof ExploreCavernsRoute
   ExploreSearchRoute: typeof ExploreSearchRoute
   ExploreTripPlannerRoute: typeof ExploreTripPlannerRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
@@ -2663,6 +2683,7 @@ interface ExploreRouteChildren {
 
 const ExploreRouteChildren: ExploreRouteChildren = {
   ExploreSlugRoute: ExploreSlugRoute,
+  ExploreCavernsRoute: ExploreCavernsRoute,
   ExploreSearchRoute: ExploreSearchRoute,
   ExploreTripPlannerRoute: ExploreTripPlannerRoute,
   ExploreIndexRoute: ExploreIndexRoute,
@@ -2874,3 +2895,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

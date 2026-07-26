@@ -5,20 +5,29 @@ export type CavernRegionGroup = {
   items: ExploreEntity[];
 };
 
-export function sortCaverns(destinations: readonly ExploreEntity[]): ExploreEntity[] {
-  return destinations
-    .filter((destination) => destination.entityType === "cavern")
-    .sort((a, b) => {
-      const familyPriority =
-        Number(b.isFamilyFriendly === true) - Number(a.isFamilyFriendly === true);
-      if (familyPriority !== 0) return familyPriority;
-      return a.name.localeCompare(b.name);
-    });
+const PUBLIC_CAVERN_DESTINATION_SLUGS = new Set([
+  "longhorn-cavern-state-park",
+  "kickapoo-cavern-state-park",
+  "devils-sinkhole-state-natural-area",
+  "westcave-preserve",
+]);
+
+export function isPublicCavernDestination(destination: ExploreEntity): boolean {
+  return (
+    destination.entityType === "cavern" || PUBLIC_CAVERN_DESTINATION_SLUGS.has(destination.slug)
+  );
 }
 
-export function groupCavernsByRegion(
-  destinations: readonly ExploreEntity[],
-): CavernRegionGroup[] {
+export function sortCaverns(destinations: readonly ExploreEntity[]): ExploreEntity[] {
+  return destinations.filter(isPublicCavernDestination).sort((a, b) => {
+    const familyPriority =
+      Number(b.isFamilyFriendly === true) - Number(a.isFamilyFriendly === true);
+    if (familyPriority !== 0) return familyPriority;
+    return a.name.localeCompare(b.name);
+  });
+}
+
+export function groupCavernsByRegion(destinations: readonly ExploreEntity[]): CavernRegionGroup[] {
   const groups = new Map<string, ExploreEntity[]>();
 
   for (const cavern of sortCaverns(destinations)) {
@@ -41,7 +50,7 @@ export function relatedCaverns(
   destinations: readonly ExploreEntity[],
   limit = 3,
 ): ExploreEntity[] {
-  if (destination.entityType !== "cavern" || limit <= 0) return [];
+  if (!isPublicCavernDestination(destination) || limit <= 0) return [];
 
   const candidates = sortCaverns(destinations).filter(
     (candidate) => candidate.slug !== destination.slug,

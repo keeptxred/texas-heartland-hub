@@ -16,7 +16,7 @@ import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { organizationJsonLd } from "../lib/seo";
 import { exploreDestinations } from "../data/explore/all-destinations";
-import { relatedCaverns } from "../lib/explore/cavern-discovery";
+import { isPublicCavernDestination, relatedCaverns } from "../lib/explore/cavern-discovery";
 import {
   buildCavernBreadcrumbSchema,
   buildRelatedCavernItemListSchema,
@@ -87,14 +87,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" },
+      {
+        name: "robots",
+        content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+      },
       { name: "msvalidate.01", content: "74E5E79AEC351CF6D2577A6FC6A125DF" },
       { name: "google-site-verification", content: "58wEXUcyQN-Wcn4LaY6yS_mUwAWVh99ni3Z2SqJ_Bkk" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png" },
-      { rel: "apple-touch-icon", href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png" },
+      {
+        rel: "icon",
+        type: "image/png",
+        href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
+      },
       { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       { rel: "dns-prefetch", href: "https://googleads.g.doubleclick.net" },
@@ -148,7 +158,7 @@ function CavernGuideTrail() {
   if (!slug || slug === "caverns" || slug === "search" || slug === "trip-planner") return null;
 
   const cavern = exploreDestinations.find(
-    (destination) => destination.slug === slug && destination.entityType === "cavern",
+    (destination) => destination.slug === slug && isPublicCavernDestination(destination),
   );
   if (!cavern) return null;
 
@@ -169,9 +179,12 @@ function CavernGuideTrail() {
         <div className="mx-auto max-w-6xl px-4 py-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas caverns</p>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                Texas caverns
+              </p>
               <p className="mt-1 text-sm text-muted-foreground">
-                Compare this destination with other guided cave tours, visitor policies, and underground attractions across Texas.
+                Compare this destination with other guided cave tours, visitor policies, and
+                underground attractions across Texas.
               </p>
             </div>
             <Link

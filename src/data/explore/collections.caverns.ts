@@ -30,7 +30,11 @@ const commercialCavernSlugs = [
 const tpwdCavernSlugs = [
   "longhorn-cavern-state-park",
   "kickapoo-cavern-state-park",
+  "gorman-cave",
+  "devils-sinkhole-state-natural-area",
 ] as const;
+
+const guidedPreserveCavernSlugs = ["westcave-preserve"] as const;
 
 const hillCountryCavernSlugs = [
   "natural-bridge-caverns",
@@ -48,7 +52,7 @@ export const cavernDiscoveryCollections: readonly CavernDiscoveryCollection[] = 
     title: "Caverns and Caves Across Texas",
     description:
       "Discover guided show caves, crystal-filled caverns, fault caves, and state-park underground tours across Texas.",
-    destinationSlugs: [...commercialCavernSlugs, ...tpwdCavernSlugs],
+    destinationSlugs: [...commercialCavernSlugs, ...tpwdCavernSlugs, ...guidedPreserveCavernSlugs],
     searchTerms: ["cavern", "cave", "guided cave tour", "underground tour"],
     region: null,
     audience: "all-visitors",
@@ -104,12 +108,12 @@ const destinationBySlug = new Map(
   exploreDestinations.map((destination) => [destination.slug, destination]),
 );
 
-export function getCavernDiscoveryCollection(
-  idOrSlug: string,
-): CavernDiscoveryCollection | null {
-  return cavernCollectionById.get(idOrSlug as CavernDiscoveryCollectionId) ??
+export function getCavernDiscoveryCollection(idOrSlug: string): CavernDiscoveryCollection | null {
+  return (
+    cavernCollectionById.get(idOrSlug as CavernDiscoveryCollectionId) ??
     cavernCollectionBySlug.get(idOrSlug) ??
-    null;
+    null
+  );
 }
 
 export function getCavernCollectionDestinations(idOrSlug: string) {

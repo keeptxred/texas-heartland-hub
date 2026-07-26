@@ -1,11 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { getCavernSitemapEntries } from "@/lib/explore/cavern-sitemap";
+import { sortCaverns } from "@/lib/explore/cavern-discovery";
 import { BASE_URL, renderUrlset } from "@/lib/sitemap-shared";
 import { exploreDestinations } from "./all-destinations";
-import {
-  commercialCavernCatalog,
-  type CommercialCavernCatalogRecord,
-} from "./catalog.caverns";
+import { commercialCavernCatalog, type CommercialCavernCatalogRecord } from "./catalog.caverns";
 import { validateCommercialCavernCatalog } from "./catalog.caverns.validation";
 
 function cloneRecord(
@@ -92,9 +90,7 @@ describe("cavern sitemap fallback", () => {
   it("includes the cavern hub and every unified cavern canonical URL once", () => {
     const entries = getCavernSitemapEntries(new Date("2026-07-26T12:00:00.000Z"));
     const locations = entries.map((entry) => entry.loc);
-    const unifiedCaverns = exploreDestinations.filter(
-      (destination) => destination.entityType === "cavern",
-    );
+    const unifiedCaverns = sortCaverns(exploreDestinations);
 
     expect(locations[0]).toBe(`${BASE_URL}/explore/caverns`);
     expect(new Set(locations).size).toBe(locations.length);
@@ -112,5 +108,38 @@ describe("cavern sitemap fallback", () => {
     const canonicalLocation = entries[1].loc.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
     expect(xml.match(new RegExp(`<loc>${canonicalLocation}</loc>`, "g"))).toHaveLength(1);
+  });
+});
+
+describe("complete public cavern destination set", () => {
+  it("publishes the 11 verified public cave and cavern destinations", () => {
+    expect(
+      sortCaverns(exploreDestinations)
+        .map((destination) => destination.slug)
+        .sort(),
+    ).toEqual([
+      "cascade-caverns",
+      "cave-without-a-name",
+      "caverns-of-sonora",
+      "devils-sinkhole-state-natural-area",
+      "gorman-cave",
+      "inner-space-cavern",
+      "kickapoo-cavern-state-park",
+      "longhorn-cavern-state-park",
+      "natural-bridge-caverns",
+      "westcave-preserve",
+      "wonder-world-cave-adventure-park",
+    ]);
+  });
+
+  it("does not misrepresent restricted cave interiors as public entry", () => {
+    const gorman = exploreDestinations.find((destination) => destination.slug === "gorman-cave");
+    const sinkhole = exploreDestinations.find(
+      (destination) => destination.slug === "devils-sinkhole-state-natural-area",
+    );
+
+    expect(gorman?.description).toMatch(/entry is closed/i);
+    expect(gorman?.profile.accessType).toBe("Public trail viewpoint; no public cave entry");
+    expect(sinkhole?.summary).toMatch(/guided tours|bat-flight/i);
   });
 });

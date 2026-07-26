@@ -35,17 +35,20 @@ describe("Explore Texas cavern discovery collections", () => {
     expect(collection?.searchTerms.length).toBeGreaterThan(0);
   });
 
-  it.each(expectedCollectionIds)("contains only resolvable, unique destinations in %s", (collectionId) => {
-    const collection = getCavernDiscoveryCollection(collectionId);
-    const destinations = getCavernCollectionDestinations(collectionId);
+  it.each(expectedCollectionIds)(
+    "contains only resolvable, unique destinations in %s",
+    (collectionId) => {
+      const collection = getCavernDiscoveryCollection(collectionId);
+      const destinations = getCavernCollectionDestinations(collectionId);
 
-    expect(collection).not.toBeNull();
-    expect(destinations).toHaveLength(collection?.destinationSlugs.length ?? 0);
-    expect(new Set(collection?.destinationSlugs).size).toBe(collection?.destinationSlugs.length);
-    expect(new Set(destinations.map((destination) => destination.slug)).size).toBe(
-      destinations.length,
-    );
-  });
+      expect(collection).not.toBeNull();
+      expect(destinations).toHaveLength(collection?.destinationSlugs.length ?? 0);
+      expect(new Set(collection?.destinationSlugs).size).toBe(collection?.destinationSlugs.length);
+      expect(new Set(destinations.map((destination) => destination.slug)).size).toBe(
+        destinations.length,
+      );
+    },
+  );
 
   it("keeps the statewide collection complete", () => {
     const destinations = getCavernCollectionDestinations("texas-caverns");
@@ -59,13 +62,16 @@ describe("Explore Texas cavern discovery collections", () => {
       "wonder-world-cave-adventure-park",
       "longhorn-cavern-state-park",
       "kickapoo-cavern-state-park",
+      "gorman-cave",
+      "devils-sinkhole-state-natural-area",
+      "westcave-preserve",
     ]);
   });
 
   it("keeps the state-park collection limited to TPWD destinations", () => {
     const destinations = getCavernCollectionDestinations("texas-state-park-caverns");
 
-    expect(destinations).toHaveLength(2);
+    expect(destinations).toHaveLength(4);
     for (const destination of destinations) {
       expect(destination.sourceName).toBe("Texas Parks and Wildlife Department");
       expect(destination.officialUrl).toMatch(/^https:\/\/tpwd\.texas\.gov\/state-parks\//);
