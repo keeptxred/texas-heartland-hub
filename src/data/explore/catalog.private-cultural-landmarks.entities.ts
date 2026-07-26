@@ -1,4 +1,4 @@
-import type { ExploreEntity } from "@/types/explore/public";
+import type { ExploreEntity, ExploreJsonObject } from "@/types/explore/public";
 import {
   privateCulturalLandmarkCatalog,
   type PrivateCulturalLandmarkRecord,
@@ -28,7 +28,7 @@ function culturalLandmarkAlternateNames(
 
 function culturalLandmarkProfile(
   landmark: PrivateCulturalLandmarkRecord,
-): Record<string, unknown> {
+): ExploreJsonObject {
   return {
     ownership: landmark.ownershipLabel,
     ownershipClassification: landmark.ownershipClassification,
@@ -52,7 +52,7 @@ function culturalLandmarkProfile(
 
 function culturalLandmarkFees(
   landmark: PrivateCulturalLandmarkRecord,
-): Record<string, unknown> {
+): ExploreJsonObject {
   return {
     admissionRequired: landmark.admissionRequired,
     reservationsRequired: landmark.reservationsRequired,
@@ -61,7 +61,7 @@ function culturalLandmarkFees(
 
 function culturalLandmarkRegulations(
   landmark: PrivateCulturalLandmarkRecord,
-): Record<string, unknown> {
+): ExploreJsonObject {
   return {
     accessModel: landmark.accessModel,
     reservationsRequired: landmark.reservationsRequired,
@@ -73,7 +73,7 @@ function culturalLandmarkRegulations(
 
 function culturalLandmarkSeasonalGuidance(
   landmark: PrivateCulturalLandmarkRecord,
-): Record<string, unknown> {
+): ExploreJsonObject {
   return {
     confirmBeforeTravel: landmark.reservationsRequired,
     reservationsRequired: landmark.reservationsRequired,
