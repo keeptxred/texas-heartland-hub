@@ -67,6 +67,12 @@ ray-roberts-lake-state-park|Ray Roberts Lake State Park|lake|Pilot Point|Denton|
 eisenhower-state-park|Eisenhower State Park|lake|Denison|Grayson|North Texas|33.819|-96.599|Lake Texoma cliffs, swimming, fishing, trails, and camping near Denison.|https://tpwd.texas.gov/state-parks/eisenhower|fishing,swimming,hiking,camping,boating|camping,cabins,boat ramp,restrooms|1|1|1|1
 bentsen-rio-grande-valley-state-park|Bentsen-Rio Grande Valley State Park|park|Mission|Hidalgo|South Texas|26.186|-98.381|A premier Lower Rio Grande Valley birding destination and World Birding Center site.|https://tpwd.texas.gov/state-parks/bentsen-rio-grande-valley|birding,wildlife,walking,biking,family|visitor center,tram,restrooms,trails|1|0|1|1
 resaca-de-la-palma-state-park|Resaca de la Palma State Park|park|Brownsville|Cameron|South Texas|25.995|-97.582|Resaca wetlands, tropical woodland, trails, and exceptional Valley birding.|https://tpwd.texas.gov/state-parks/resaca-de-la-palma|birding,wildlife,walking,biking,family|visitor center,tram,restrooms,trails|1|0|1|1
+abilene-state-park|Abilene State Park|park|Tuscola|Taylor|West Texas|32.240731|-99.879139|Shaded Elm Creek recreation with historic CCC structures, trails, camping, fishing, and a seasonal swimming pool.|https://tpwd.texas.gov/state-parks/abilene/|hiking,camping,fishing,birding,biking,swimming|camping,yurts,screened shelters,restrooms,trails,pool|1|1|1|1
+albert-bessie-kronkosky-state-natural-area|Albert & Bessie Kronkosky State Natural Area|natural_area|Boerne|Bandera|Hill Country|29.77|-98.82|A protected Hill Country landscape preserving springs, canyons, grasslands, and diverse wildlife while public-use planning continues.|https://tpwd.texas.gov/state-parks/albert-bessie-kronkosky|wildlife,conservation,nature study,scenic|protected habitat|0|0|0|0
+atlanta-state-park|Atlanta State Park|lake|Atlanta|Cass|East Texas|33.230731|-94.249693|A peaceful pine-and-hardwood retreat on Wright Patman Lake for fishing, boating, swimming, camping, and birding.|https://tpwd.texas.gov/state-parks/atlanta|fishing,boating,swimming,camping,birding,hiking|camping,boat ramp,swim area,restrooms,trails|1|1|1|1
+bastrop-state-park|Bastrop State Park|park|Bastrop|Bastrop|Central Texas|30.111|-97.286|Lost Pines scenery, CCC architecture, trails, camping, cabins, and a scenic drive connecting to Buescher State Park.|https://tpwd.texas.gov/state-parks/bastrop|hiking,camping,biking,swimming,golf,wildlife|camping,cabins,pool,restrooms,trails,golf course|1|1|1|1
+big-bend-ranch-state-park|Big Bend Ranch State Park|park|Presidio|Presidio|West Texas|29.47|-103.92|Texas's largest state park, with rugged Chihuahuan Desert mountains, Rio Grande access, primitive camping, and remote backcountry trails.|https://tpwd.texas.gov/state-parks/big-bend-ranch|hiking,camping,biking,paddling,horseback riding,scenic,wildlife|primitive camping,visitor center,restrooms,trails,river access|0|1|0|1
+big-spring-state-park|Big Spring State Park|park|Big Spring|Howard|West Texas|32.232288|-101.490728|A day-use park atop Scenic Mountain with panoramic views, CCC-built structures, picnicking, playgrounds, and a loop road.|https://tpwd.texas.gov/state-parks/big-spring|scenic,walking,biking,picnicking,history,family|pavilion,picnic areas,playground,restrooms,interpretive center|1|1|1|0
 `.trim().split("\n");
 
 function sourceName(url: string): string {
@@ -85,6 +91,7 @@ export const exploreDestinations: ExploreEntity[] = records.map((record) => {
     id, name, entityType, city, county, region, latitude, longitude, summary, officialUrl,
     activities, amenities, familyFriendly, petFriendly, accessible, feeRequired,
   ] = record.split("|");
+
   return {
     id,
     name,
