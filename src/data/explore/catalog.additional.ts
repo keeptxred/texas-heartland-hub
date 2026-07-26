@@ -476,13 +476,14 @@ const forestDestinations = forestServiceDestinations.map((site) => {
 
 const wildlifeRefugeDestinations = wildlifeRefuges.map((refuge) => {
   const region = refuge.region ?? "Gulf Coast";
+const regionTaxonomy = region.trim().toLowerCase();
   const seed: CatalogSeed = {
     name: refuge.name,
     entityType: "wildlife_area",
     collection: "National Wildlife Refuges in Texas",
     sourceUrl: refuge.officialUrl,
     sourceName: "U.S. Fish and Wildlife Service",
-    categories: ["national wildlife refuge", "federal public land", "wildlife", "birding", region],
+    categories: ["national wildlife refuge", "federal public land", "wildlife", "birding", regionTaxonomy],
   };
   const destination = catalogDestination(seed);
 
@@ -514,7 +515,7 @@ const wildlifeRefugeDestinations = wildlifeRefuges.map((refuge) => {
       publicAccess: refuge.publicAccess,
       accessNotes: refuge.accessNotes,
     },
-    categories: ["national wildlife refuge", "federal public land", "u.s. fish and wildlife service", "wildlife", "birding", region],
+    categories: ["national wildlife refuge", "federal public land", "u.s. fish and wildlife service", "wildlife", "birding", regionTaxonomy],
     tags: [...refuge.activities, ...refuge.alternateNames.map((name) => name.toLowerCase()), "migratory birds", "wildlife refuge", region.toLowerCase(), refuge.city.toLowerCase()],
   };
 });
