@@ -3,6 +3,7 @@ import { exploreDestinations as curatedDestinations } from "./destinations";
 import { destinations as coreDestinations } from "./catalog.core";
 import { destinations as waterDestinations } from "./catalog.water";
 import { destinations as additionalDestinations } from "./catalog.additional";
+import { commercialCavernCatalog } from "./catalog.caverns";
 import { destinations as thcDestinations } from "./catalog.thc";
 
 const REGION_ALIASES: Record<string, string> = {
@@ -26,6 +27,7 @@ const REGION_ALIASES: Record<string, string> = {
 
 const ENTITY_TYPE_ALIASES: Record<string, string> = {
   campground: "park",
+  cavern: "cavern",
   historic: "historic_site",
   "historic site": "historic_site",
   historic_site: "historic_site",
@@ -145,6 +147,76 @@ function validLongitude(value: number | null): value is number {
   return value != null && Number.isFinite(value) && value >= -107 && value <= -93;
 }
 
+const cavernDestinations: ExploreEntity[] = commercialCavernCatalog.map((cavern) => ({
+  id: cavern.id,
+  entityType: "cavern",
+  name: cavern.name,
+  slug: cavern.slug,
+  summary: cavern.summary,
+  city: cavern.city,
+  county: cavern.county,
+  region: cavern.region,
+  latitude: cavern.latitude,
+  longitude: cavern.longitude,
+  heroImageUrl: cavern.image_url,
+  heroImageAlt: cavern.image_alt,
+  amenities: cavern.amenities,
+  activities: cavern.activities,
+  isFamilyFriendly: cavern.family_friendly,
+  isPetFriendly: /pets? (?:are )?permitted|leashed pets/i.test(cavern.pet_policy),
+  isAccessible: !/not wheelchair|no wheelchair|does not permit wheelchairs/i.test(
+    cavern.accessibility,
+  ),
+  feeRequired: cavern.admission_required,
+  alternateNames: [],
+  description: cavern.geology,
+  officialUrl: cavern.officialUrl,
+  phone: null,
+  email: null,
+  address: null,
+  profile: {
+    operator: cavern.operator,
+    experienceType: cavern.experience_type,
+    guidedTours: cavern.guided_tours,
+    reservationsRecommended: cavern.reservations_recommended,
+    duration: cavern.duration,
+    accessibility: cavern.accessibility,
+    minimumAge: cavern.minimum_age,
+    petPolicy: cavern.pet_policy,
+    geology: cavern.geology,
+    photography: cavern.photography,
+    educational: cavern.educational,
+    mediaStatus: cavern.media_status,
+    imageCredit: cavern.image_credit,
+    imageLicense: cavern.image_license,
+    verificationStatus: cavern.verification_status,
+  },
+  hours: {
+    operatingSeason: cavern.operating_season,
+  },
+  fees: {
+    admissionRequired: cavern.admission_required,
+  },
+  regulations: {
+    petPolicy: cavern.pet_policy,
+    accessibility: cavern.accessibility,
+    photography: cavern.photography,
+  },
+  seasonalGuidance: {
+    operatingSeason: cavern.operating_season,
+    reservationsRecommended: cavern.reservations_recommended,
+  },
+  categories: cavern.categories,
+  tags: cavern.tags,
+  sourceUrl: cavern.officialUrl,
+  sourceName: cavern.source_attribution,
+  sourceUpdatedAt: cavern.last_reviewed,
+  updatedAt: `${cavern.last_reviewed}T00:00:00.000Z`,
+  observations: [],
+  related: [],
+  nearby: [],
+}));
+
 function normalizeDestination(destination: ExploreEntity): ExploreEntity {
   const canonicalSlug = normalizeSlug(destination.slug || destination.name);
   const regionKey = destination.region?.trim().toLowerCase() ?? "";
@@ -211,6 +283,7 @@ for (const rawDestination of [
   ...nonThcCoreDestinations,
   ...waterDestinations,
   ...additionalDestinations,
+  ...cavernDestinations,
   ...thcDestinations,
 ]) {
   const destination = normalizeDestination(rawDestination);
