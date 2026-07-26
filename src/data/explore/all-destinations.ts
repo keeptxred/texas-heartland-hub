@@ -27,7 +27,10 @@ const REGION_ALIASES: Record<string, string> = {
 
 const ENTITY_TYPE_ALIASES: Record<string, string> = {
   campground: "park",
+  cave: "cavern",
   cavern: "cavern",
+  "commercial cave": "cavern",
+  "show cave": "cavern",
   historic: "historic_site",
   "historic site": "historic_site",
   historic_site: "historic_site",
@@ -41,6 +44,7 @@ const ENTITY_TYPE_ALIASES: Record<string, string> = {
 };
 
 const ACTIVITY_ALIASES: Record<string, string> = {
+  "anti-gravity house experience": "family attractions",
   "bat-viewing": "bat viewing",
   beachcombing: "beachcombing",
   bicycling: "biking",
@@ -50,20 +54,35 @@ const ACTIVITY_ALIASES: Record<string, string> = {
   climbing: "climbing",
   cycling: "biking",
   fishing: "fishing",
+  "formation photography": "photography",
+  "fossil and prehistoric-life interpretation": "fossil interpretation",
+  "gem and mineral mining": "gem mining",
+  "geology and fossil interpretation": "geology interpretation",
+  "geology interpretation": "geology interpretation",
   golf: "golf",
+  "guided cave tours": "caving",
+  "guided cavern tours": "caving",
   hiking: "hiking",
   horseback: "horseback riding",
   "horseback-riding": "horseback riding",
   kayaking: "paddling",
   nature: "nature study",
+  "nature exploration": "nature study",
+  "nature observation": "nature study",
+  "observation-tower visit": "scenic viewpoints",
+  "outdoor maze": "family attractions",
   paddling: "paddling",
   picnicking: "picnicking",
   scuba: "scuba diving",
   "scuba-diving": "scuba diving",
+  "seasonal bat-viewing experiences": "bat viewing",
   stargazing: "stargazing",
   swimming: "swimming",
+  "underground concerts and special events": "special events",
   walking: "walking",
   wildlife: "wildlife",
+  "wildlife observation on the grounds": "wildlife",
+  "wildlife-park train ride": "wildlife",
 };
 
 const AMENITY_ALIASES: Record<string, string> = {
@@ -72,12 +91,21 @@ const AMENITY_ALIASES: Record<string, string> = {
   campground: "camping",
   campsites: "camping",
   cabins: "cabins",
+  "combination attraction tickets": "combination tickets",
+  "food service": "food service",
+  "gift shop": "gift shop",
+  "on-site parking": "parking",
   parking: "parking",
+  "pet kennels": "pet kennels",
+  "picnic areas": "picnic areas",
   restroom: "restrooms",
   restrooms: "restrooms",
+  "snack service": "food service",
   showers: "showers",
+  "tent and rv camping": "camping",
   trails: "trails",
   "visitor centre": "visitor center",
+  "visitor center": "visitor center",
 };
 
 const TPWD_COORDINATE_OVERRIDES: Record<string, readonly [number, number]> = {
@@ -147,6 +175,13 @@ function validLongitude(value: number | null): value is number {
   return value != null && Number.isFinite(value) && value >= -107 && value <= -93;
 }
 
+function cavernAlternateNames(name: string): string[] {
+  const aliases = new Set(["Texas caves", "Texas caverns", "commercial cave", "show cave"]);
+  if (/caverns/i.test(name)) aliases.add(name.replace(/caverns/i, "Caves"));
+  if (/cavern/i.test(name)) aliases.add(name.replace(/cavern/i, "Cave"));
+  return [...aliases];
+}
+
 const cavernDestinations: ExploreEntity[] = commercialCavernCatalog.map((cavern) => ({
   id: cavern.id,
   entityType: "cavern",
@@ -168,7 +203,7 @@ const cavernDestinations: ExploreEntity[] = commercialCavernCatalog.map((cavern)
     cavern.accessibility,
   ),
   feeRequired: cavern.admission_required,
-  alternateNames: [],
+  alternateNames: cavernAlternateNames(cavern.name),
   description: cavern.geology,
   officialUrl: cavern.officialUrl,
   phone: null,
@@ -207,7 +242,7 @@ const cavernDestinations: ExploreEntity[] = commercialCavernCatalog.map((cavern)
     reservationsRecommended: cavern.reservations_recommended,
   },
   categories: cavern.categories,
-  tags: cavern.tags,
+  tags: [...cavern.tags, "cave", "caves", "cavern", "caverns", "show cave", "underground"],
   sourceUrl: cavern.officialUrl,
   sourceName: cavern.source_attribution,
   sourceUpdatedAt: cavern.last_reviewed,
