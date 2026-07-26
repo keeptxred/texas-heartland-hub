@@ -3,6 +3,7 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
+  useLocation,
   useRouter,
   HeadContent,
   Scripts,
@@ -14,6 +15,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { organizationJsonLd } from "../lib/seo";
+import { exploreDestinations } from "../data/explore/all-destinations";
 
 function NotFoundComponent() {
   return (
@@ -135,6 +137,36 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function CavernGuideTrail() {
+  const location = useLocation();
+  const slug = location.pathname.match(/^\/explore\/([^/]+)\/?$/)?.[1];
+  if (!slug || slug === "caverns" || slug === "search" || slug === "trip-planner") return null;
+
+  const cavern = exploreDestinations.find(
+    (destination) => destination.slug === slug && destination.entityType === "cavern",
+  );
+  if (!cavern) return null;
+
+  return (
+    <aside className="border-y bg-muted/30" aria-label="Texas cavern guide navigation">
+      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas caverns</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Compare this destination with other guided cave tours, visitor policies, and underground attractions across Texas.
+          </p>
+        </div>
+        <Link
+          to="/explore/caverns"
+          className="shrink-0 text-sm font-semibold text-primary hover:underline"
+        >
+          Explore all Texas caverns and caves
+        </Link>
+      </div>
+    </aside>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -144,6 +176,7 @@ function RootComponent() {
         <SiteHeader />
         <main className="flex-1">
           <Outlet />
+          <CavernGuideTrail />
         </main>
         <SiteFooter />
       </div>
