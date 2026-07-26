@@ -92,6 +92,7 @@ const AMENITY_ALIASES: Record<string, string> = {
 };
 
 const TPWD_COORDINATE_OVERRIDES: Record<string, readonly [number, number]> = {
+  "balmorhea-state-park": [30.945036, -103.786663],
   "big-bend-ranch-state-park": [29.470458, -103.957922],
   "caprock-canyons-state-park": [34.410296, -101.053264],
   "choke-canyon-state-park": [28.465773, -98.354195],
@@ -131,6 +132,7 @@ const TPWD_COORDINATE_OVERRIDES: Record<string, readonly [number, number]> = {
 const CANONICAL_SLUG_ALIASES: Record<string, string> = {
   "longhorn-cavern": "longhorn-cavern-state-park",
   "kickapoo-cavern": "kickapoo-cavern-state-park",
+  "san-solomon-springs": "balmorhea-state-park",
   "wonder-world-cave-and-adventure-park": "wonder-world-cave-adventure-park",
 };
 
@@ -246,17 +248,25 @@ const cavernDestinations: ExploreEntity[] = commercialCavernCatalog.map((cavern)
 }));
 
 function applyTpwdCavernEnrichment(destination: ExploreEntity): ExploreEntity {
-  const enrichment = getTpwdCavernDestinationEnrichment(destination.id);
+  const canonicalSlug = normalizeSlug(destination.slug || destination.id || destination.name);
+  const enrichment = getTpwdCavernDestinationEnrichment(canonicalSlug);
   if (!enrichment) return destination;
 
   return {
     ...destination,
+    id: canonicalSlug,
+    slug: canonicalSlug,
     alternateNames: [...new Set([...destination.alternateNames, ...enrichment.alternateNames])],
     description: enrichment.description,
+    officialUrl: enrichment.sourceUrl,
     phone: enrichment.phone,
     email: enrichment.email,
     address: enrichment.address,
-    profile: { ...destination.profile, ...enrichment.profile },
+    profile: {
+      ...destination.profile,
+      ...enrichment.profile,
+      operator: enrichment.sourceName,
+    },
     hours: enrichment.hours,
     fees: enrichment.fees,
     regulations: enrichment.regulations,
@@ -285,6 +295,8 @@ function applyMajorSpringEnrichment(destination: ExploreEntity): ExploreEntity {
     seasonalGuidance: { ...destination.seasonalGuidance, spring: enrichment.seasonalGuidance },
     categories: [...new Set([...destination.categories, ...enrichment.categories])],
     tags: [...new Set([...destination.tags, ...enrichment.tags])],
+    sourceUrl: enrichment.sourceUrl,
+    sourceName: enrichment.sourceName,
     sourceUpdatedAt: enrichment.sourceUpdatedAt,
     updatedAt: `${enrichment.sourceUpdatedAt}T00:00:00.000Z`,
   };
@@ -295,9 +307,14 @@ function normalizeDestination(rawDestination: ExploreEntity): ExploreEntity {
   const enrichedDestination = applyMajorSpringEnrichment(cavernEnrichedDestination);
   const canonicalSlug = normalizeSlug(enrichedDestination.slug || enrichedDestination.name);
   const regionKey = enrichedDestination.region?.trim().toLowerCase() ?? "";
+  const normalizedRegion = REGION_ALIASES[regionKey] ?? enrichedDestination.region ?? null;
   const typeKey = enrichedDestination.entityType.trim().toLowerCase();
+  const normalizedType = ENTITY_TYPE_ALIASES[typeKey] ?? typeKey.replaceAll(" ", "_");
   const officialUrl = enrichedDestination.officialUrl?.trim() ?? null;
-  const isTpwdDestination = officialUrl?.includes("tpwd.texas.gov/state-parks/") ?? false;
+  const isTpwdDestination =
+    officialUrl?.includes("tpwd.texas.gov/state-parks/") ||
+    enrichedDestination.sourceUrl?.includes("tpwd.texas.gov/state-parks/") ||
+    enrichedDestination.sourceName === "Texas Parks and Wildlife Department";
   const coordinateOverride = TPWD_COORDINATE_OVERRIDES[canonicalSlug];
   const latitude = coordinateOverride?.[0] ?? enrichedDestination.latitude;
   const longitude = coordinateOverride?.[1] ?? enrichedDestination.longitude;
@@ -307,10 +324,10 @@ function normalizeDestination(rawDestination: ExploreEntity): ExploreEntity {
     id: canonicalSlug,
     slug: canonicalSlug,
     name: normalizeWhitespace(enrichedDestination.name),
-    entityType: ENTITY_TYPE_ALIASES[typeKey] ?? typeKey.replaceAll(" ", "_"),
+    entityType: normalizedType,
     city: enrichedDestination.city ? normalizeWhitespace(enrichedDestination.city) : null,
     county: enrichedDestination.county ? normalizeWhitespace(enrichedDestination.county) : null,
-    region: REGION_ALIASES[regionKey] ?? enrichedDestination.region ?? null,
+    region: normalizedRegion,
     latitude: validLatitude(latitude) ? latitude : null,
     longitude: validLongitude(longitude) ? longitude : null,
     officialUrl,
@@ -320,8 +337,8 @@ function normalizeDestination(rawDestination: ExploreEntity): ExploreEntity {
     amenities: normalizeList(enrichedDestination.amenities, AMENITY_ALIASES),
     alternateNames: [...new Set(enrichedDestination.alternateNames.map(normalizeWhitespace).filter(Boolean))],
     categories: [...new Set([
-      (ENTITY_TYPE_ALIASES[typeKey] ?? typeKey.replaceAll(" ", "_")).replaceAll("_", " "),
-      REGION_ALIASES[regionKey] ?? enrichedDestination.region,
+      normalizedType.replaceAll("_", " "),
+      normalizedRegion?.toLowerCase(),
       ...enrichedDestination.categories.map((value) => normalizeWhitespace(value).toLowerCase()),
     ].filter((value): value is string => Boolean(value)))],
     tags: [...new Set([
@@ -347,6 +364,11 @@ function qualityScore(destination: ExploreEntity): number {
   ].filter(Boolean).length;
 }
 
+function isCanonicalTpwdDestination(destination: ExploreEntity): boolean {
+  return destination.sourceName === "Texas Parks and Wildlife Department" &&
+    (destination.officialUrl?.includes("tpwd.texas.gov/state-parks/") ?? false);
+}
+
 const destinationBySlug = new Map<string, ExploreEntity>();
 const nonThcCoreDestinations = coreDestinations.filter(
   (destination) => destination.sourceName !== "Texas Historical Commission",
@@ -366,7 +388,11 @@ for (const rawDestination of [
   const destination = normalizeDestination(rawDestination);
   const existing = destinationBySlug.get(destination.slug);
 
-  if (!existing || qualityScore(destination) > qualityScore(existing)) {
+  if (
+    !existing ||
+    (!isCanonicalTpwdDestination(existing) &&
+      (isCanonicalTpwdDestination(destination) || qualityScore(destination) > qualityScore(existing)))
+  ) {
     destinationBySlug.set(destination.slug, destination);
   }
 }

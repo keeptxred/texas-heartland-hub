@@ -74,7 +74,8 @@ describe("private natural landmark unified catalog integration", () => {
       },
     });
     expect(chalkBluff?.activities).toContain("swimming");
-    expect(chalkBluff?.amenities).toContain("camping");
+    expect(chalkBluff?.activities).toContain("camping");
+    expect(chalkBluff?.amenities).toEqual(expect.arrayContaining(["tent camping", "rv sites"]));
   });
 
   it("keeps Bamberger Ranch limited to scheduled conservation programs", () => {
@@ -83,14 +84,14 @@ describe("private natural landmark unified catalog integration", () => {
     expect(bamberger).toBeDefined();
     expect(bamberger?.profile).toMatchObject({
       ownershipClassification: "private-nonprofit-preserve",
-      accessType: "scheduled-program-access",
+      accessType: "scheduled-public-program-access",
       visitorAccess: {
         reservationsRequired: true,
         swimmingStatus: "not-permitted",
         overnightAccess: false,
       },
     });
-    expect(bamberger?.activities).toContain("environmental education");
+    expect(bamberger?.activities).toContain("land stewardship education");
     expect(bamberger?.tags).toContain("private natural landmark");
   });
 

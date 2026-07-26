@@ -36,7 +36,7 @@ export const crossCatalogDiscoveryCollections: readonly CrossCatalogDiscoveryCol
       "natural-bridge-caverns",
       "caverns-of-sonora",
       "barton-springs-pool",
-      "san-solomon-springs",
+      "balmorhea-state-park",
       "westcave-preserve",
       "selah-bamberger-ranch-preserve",
       "chalk-bluff-river-resort",
@@ -81,7 +81,7 @@ export const crossCatalogDiscoveryCollections: readonly CrossCatalogDiscoveryCol
     description:
       "Find clear spring-fed pools, river swimming destinations, historic spring parks, and protected spring landscapes for cooling off or exploring Texas water ecology.",
     destinationSlugs: [
-      "san-solomon-springs",
+      "balmorhea-state-park",
       "barton-springs-pool",
       "hancock-springs-park",
       "blue-hole-regional-park",

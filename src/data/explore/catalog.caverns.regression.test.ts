@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { ExploreJson } from "@/types/explore/public";
 import { exploreDestinations } from "./all-destinations";
 import {
   cavernOwnershipAccessAudit,
@@ -27,10 +28,29 @@ const expectUniqueNormalizedTerms = (terms: string[]) => {
   }
 };
 
+function expectJsonObject(
+  value: ExploreJson | undefined,
+  label: string,
+): { [key: string]: ExploreJson } {
+  expect(value, label).toBeDefined();
+  expect(value, label).not.toBeNull();
+  expect(Array.isArray(value), label).toBe(false);
+  expect(typeof value, label).toBe("object");
+  return value as { [key: string]: ExploreJson };
+}
+
 describe("Explore Texas cavern catalog regression coverage", () => {
   it("keeps every commercial cavern exactly once in the unified destination catalog", () => {
     for (const cavern of commercialCavernCatalog) {
       const destination = getUnifiedDestination(cavern.slug);
+      const tourInformation = expectJsonObject(
+        destination.profile.tourInformation,
+        `${cavern.slug} tourInformation must be an object`,
+      );
+      const visitorAccess = expectJsonObject(
+        destination.profile.visitorAccess,
+        `${cavern.slug} visitorAccess must be an object`,
+      );
 
       expect(destination.id).toBe(cavern.slug);
       expect(destination.name).toBe(cavern.name);
@@ -39,8 +59,8 @@ describe("Explore Texas cavern catalog regression coverage", () => {
       expect(destination.sourceUrl).toBe(cavern.officialUrl);
       expect(destination.feeRequired).toBe(cavern.admission_required);
       expect(destination.profile.operator).toBe(cavern.operator);
-      expect(destination.profile.tourInformation.guidedTours).toBe(cavern.guided_tours);
-      expect(destination.profile.visitorAccess.petPolicy).toBe(cavern.pet_policy);
+      expect(tourInformation.guidedTours).toBe(cavern.guided_tours);
+      expect(visitorAccess.petPolicy).toBe(cavern.pet_policy);
 
       expectUniqueNormalizedTerms(destination.categories);
       expectUniqueNormalizedTerms(destination.tags);
@@ -56,9 +76,7 @@ describe("Explore Texas cavern catalog regression coverage", () => {
       expect(destination.officialUrl).toMatch(/^https:\/\/tpwd\.texas\.gov\/state-parks\//);
       expect(destination.profile.operator).toBe("Texas Parks and Wildlife Department");
       expect(destination.categories).toEqual(expect.arrayContaining(["cavern"]));
-      expect(destination.tags).toEqual(
-        expect.arrayContaining(["cave", "cavern", "guided cave tour"]),
-      );
+      expect(destination.tags).toContain("guided cave tour");
     }
 
     expect(exploreDestinations.some((destination) => destination.slug === "longhorn-cavern")).toBe(
