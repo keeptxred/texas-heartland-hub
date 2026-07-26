@@ -24,14 +24,46 @@ export const Route = createFileRoute("/explore/caverns")({
 
 const searchDefaults = { page: 1, pageSize: 24, sort: "relevance" as const };
 
+const cavernFaqItems = [
+  {
+    question: "What is the difference between a cave and a cavern?",
+    answer:
+      "Cave is the broad geological term for a natural underground void. Cavern is commonly used for a cave with large chambers or for a developed public attraction offering guided tours. Texas destinations may use either term in their official names.",
+  },
+  {
+    question: "Do Texas caverns require guided tours?",
+    answer:
+      "Most developed public caverns control underground access through scheduled guided tours for visitor safety and resource protection. Check the individual destination guide and official operator information before traveling.",
+  },
+  {
+    question: "Should cavern tickets be reserved in advance?",
+    answer:
+      "Advance reservations are strongly recommended when a destination lists limited tour capacity, especially on weekends, holidays, school breaks, and during peak travel seasons. Walk-up availability is not guaranteed.",
+  },
+  {
+    question: "What should visitors wear inside a Texas cavern?",
+    answer:
+      "Closed-toe walking shoes with dependable traction are the safest choice. Underground routes can include stairs, slopes, damp surfaces, and cooler temperatures, so a light layer may also be useful.",
+  },
+  {
+    question: "Are Texas cavern tours accessible?",
+    answer:
+      "Accessibility varies significantly by cavern and tour route. Some attractions offer elevators, paved paths, or limited-access tours, while others include stairs and uneven passages. Contact the operator for route-specific guidance.",
+  },
+  {
+    question: "Are pets or service animals allowed in caverns?",
+    answer:
+      "Pet and service-animal policies vary because underground environments may involve narrow routes, wildlife protections, and safety restrictions. Review the destination guide and confirm the current policy directly with the operator.",
+  },
+];
+
 function TexasCavernsPage() {
   const data = Route.useLoaderData();
   const collectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Texas Caverns and Caves",
-    description:
-      "Visitor guides for commercial caverns and public cave attractions across Texas.",
+    description: "Visitor guides for commercial caverns and public cave attractions across Texas.",
     url: "https://keeptxred.com/explore/caverns",
     mainEntity: {
       "@type": "ItemList",
@@ -44,13 +76,22 @@ function TexasCavernsPage() {
       })),
     },
   };
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: cavernFaqItems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
 
   return (
     <main>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(collectionSchema).replace(/</g, "\\u003c"),
+          __html: JSON.stringify([collectionSchema, faqSchema]).replace(/</g, "\\u003c"),
         }}
       />
 
@@ -75,10 +116,7 @@ function TexasCavernsPage() {
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Button asChild>
-              <Link
-                to="/explore/search"
-                search={{ ...searchDefaults, types: ["cavern"] }}
-              >
+              <Link to="/explore/search" search={{ ...searchDefaults, types: ["cavern"] }}>
                 <MapPinned /> Browse cavern results
               </Link>
             </Button>
@@ -161,6 +199,24 @@ function TexasCavernsPage() {
             </Link>
           </div>
           <EntityGrid items={data.items} />
+        </section>
+
+        <section aria-labelledby="texas-cavern-faq">
+          <h2 id="texas-cavern-faq" className="font-display text-3xl md:text-4xl">
+            Texas cavern visitor questions
+          </h2>
+          <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">
+            Use these statewide planning answers as a starting point, then review the individual cavern
+            guide and official operator information for destination-specific requirements.
+          </p>
+          <div className="mt-6 divide-y rounded-lg border">
+            {cavernFaqItems.map((item) => (
+              <div key={item.question} className="p-5 md:p-6">
+                <h3 className="font-semibold">{item.question}</h3>
+                <p className="mt-2 leading-7 text-muted-foreground">{item.answer}</p>
+              </div>
+            ))}
+          </div>
         </section>
       </div>
     </main>
