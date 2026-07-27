@@ -7,6 +7,7 @@ export * from "./domain";
 export * from "./forecast";
 export * from "./forecastClassifications";
 export * from "./forecastProjections";
+export * from "./forecastRepository";
 export * from "./identifiers";
 export * from "./metadata";
 export * from "./poll";
