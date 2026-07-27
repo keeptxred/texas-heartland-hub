@@ -35,6 +35,7 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
           { loc: `${BASE_URL}/explore/texas-state-parks-guide`, lastmod: "2026-07-26" },
           { loc: `${BASE_URL}/explore/texas-wildflower-seasons`, lastmod: "2026-07-26" },
           { loc: `${BASE_URL}/explore/texas-scenic-drives`, lastmod: "2026-07-26" },
+          { loc: `${BASE_URL}/explore/texas-dark-sky-stargazing`, lastmod: "2026-07-26" },
           { loc: `${BASE_URL}/explore/caverns`, lastmod: catalogLastmod },
           { loc: `${BASE_URL}/explore/lighthouses`, lastmod: catalogLastmod },
           { loc: `${BASE_URL}/explore/scenic-rivers`, lastmod: catalogLastmod },
