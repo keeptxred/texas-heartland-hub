@@ -1,2 +1,1 @@
-// Election type exports.
-export {};
+export * from "./domain";
