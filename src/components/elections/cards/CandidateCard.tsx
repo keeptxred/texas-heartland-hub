@@ -1,9 +1,4 @@
-import type { CandidateParty } from "@/types/elections";
-
-export interface CandidateCardLink {
-  label: string;
-  href: string;
-}
+import type { CandidateParty, ElectionResourceLink } from "@/types/elections";
 
 export interface CandidateCardProps {
   name: string;
@@ -19,7 +14,7 @@ export interface CandidateCardProps {
   hometown?: string | null;
   profileHref: string;
   raceHref?: string;
-  relatedLinks?: readonly CandidateCardLink[];
+  relatedLinks?: readonly ElectionResourceLink[];
   className?: string;
 }
 
