@@ -1,3 +1,4 @@
+export * from "./config";
 export * from "./constants";
 export * from "./featureFlags";
 export * from "./internalLinkPolicy";
