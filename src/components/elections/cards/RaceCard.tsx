@@ -1,4 +1,4 @@
-import type { ElectionStatus, RaceRating } from "@/types/elections";
+import type { ElectionResourceLink, ElectionStatus, RaceRating } from "@/types/elections";
 
 export interface RaceCardCandidate {
   id: string;
@@ -6,12 +6,6 @@ export interface RaceCardCandidate {
   partyLabel?: string;
   candidateHref?: string;
   incumbent?: boolean;
-}
-
-export interface RaceCardLink {
-  label: string;
-  href: string;
-  relevance?: string;
 }
 
 export interface RaceCardProps {
@@ -26,7 +20,7 @@ export interface RaceCardProps {
   raceHref: string;
   summary?: string;
   competitive?: boolean;
-  relatedLinks?: readonly RaceCardLink[];
+  relatedLinks?: readonly ElectionResourceLink[];
   className?: string;
 }
 
