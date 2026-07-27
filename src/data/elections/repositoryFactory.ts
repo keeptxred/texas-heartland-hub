@@ -1,9 +1,9 @@
 import type {
   CandidateRepository,
   ElectionCycleRepository,
+  ElectionForecastRepository,
+  ElectionPollRepository,
   ElectionResultRepository,
-  ForecastRepository,
-  PollRepository,
   RaceRepository,
 } from "@/types/elections";
 import {
@@ -15,13 +15,21 @@ export interface ElectionRepositories {
   mode: ElectionRepositoryMode;
   races: RaceRepository;
   candidates: CandidateRepository;
-  polls: PollRepository;
-  forecasts: ForecastRepository;
+  polls: ElectionPollRepository;
+  forecasts: ElectionForecastRepository;
   results: ElectionResultRepository;
   cycles: ElectionCycleRepository;
 }
 
-const READ_METHOD_PREFIXES = ["find", "get", "list", "search", "count", "exists"];
+const EMPTY_PAGE = {
+  items: [],
+  page: 1,
+  pageSize: 0,
+  totalItems: 0,
+  totalPages: 0,
+  hasNextPage: false,
+  hasPreviousPage: false,
+} as const;
 
 function createEmptyMockRepository<T extends object>(name: string): T {
   return new Proxy(
@@ -31,15 +39,17 @@ function createEmptyMockRepository<T extends object>(name: string): T {
         if (typeof property !== "string") return undefined;
 
         if (property === "count") return async () => 0;
-        if (property === "exists") return async () => false;
+        if (property === "exists" || property === "delete") {
+          return async () => false;
+        }
+        if (property === "list" || property === "listCore") {
+          return async () => EMPTY_PAGE;
+        }
         if (property.startsWith("list") || property.startsWith("search")) {
-          return async () => ({ items: [], total: 0, page: 1, pageSize: 0, totalPages: 0 });
+          return async () => [];
         }
         if (property.startsWith("find") || property.startsWith("get")) {
           return async () => null;
-        }
-        if (READ_METHOD_PREFIXES.some((prefix) => property.startsWith(prefix))) {
-          return async () => [];
         }
 
         return async () => {
@@ -57,8 +67,9 @@ function createMockElectionRepositories(): ElectionRepositories {
     mode: "mock",
     races: createEmptyMockRepository<RaceRepository>("races"),
     candidates: createEmptyMockRepository<CandidateRepository>("candidates"),
-    polls: createEmptyMockRepository<PollRepository>("polls"),
-    forecasts: createEmptyMockRepository<ForecastRepository>("forecasts"),
+    polls: createEmptyMockRepository<ElectionPollRepository>("polls"),
+    forecasts:
+      createEmptyMockRepository<ElectionForecastRepository>("forecasts"),
     results: createEmptyMockRepository<ElectionResultRepository>("results"),
     cycles: createEmptyMockRepository<ElectionCycleRepository>("cycles"),
   };
