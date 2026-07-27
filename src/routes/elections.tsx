@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ElectionRepositoryProvider } from "@/data/elections";
 import { ElectionHomePage } from "@/pages/elections";
 
 export const Route = createFileRoute("/elections")({
@@ -25,5 +26,13 @@ export const Route = createFileRoute("/elections")({
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/elections" }],
   }),
-  component: ElectionHomePage,
+  component: ElectionCentralRoute,
 });
+
+function ElectionCentralRoute() {
+  return (
+    <ElectionRepositoryProvider>
+      <ElectionHomePage />
+    </ElectionRepositoryProvider>
+  );
+}
