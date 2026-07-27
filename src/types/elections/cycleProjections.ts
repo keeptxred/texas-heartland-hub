@@ -9,7 +9,7 @@ import type {
   IsoDateString,
   IsoDateTimeString,
 } from "./metadata";
-import type { ElectionCycle } from "./cycle";
+import type { ElectionCycleRecord } from "./cycle";
 
 export interface ElectionCycleSummary {
   id: ElectionCycleId;
@@ -30,7 +30,7 @@ export interface ElectionCycleSummary {
   updatedAt: IsoDateTimeString;
 }
 
-export interface ElectionCycleDetail extends ElectionCycle {
+export interface ElectionCycleDetail extends ElectionCycleRecord {
   raceCount: number;
   candidateCount: number;
   pollCount: number;
