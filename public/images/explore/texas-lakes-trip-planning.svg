@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" role="img" aria-labelledby="title desc">
+  <title id="title">Texas lake trip planning checklist</title>
+  <desc id="desc">An illustrated checklist covering weather, water levels, reservations, safety, and activities.</desc>
+  <rect width="1400" height="900" fill="#f5efe3"/>
+  <rect x="70" y="70" width="1260" height="760" rx="28" fill="#fffdf8" stroke="#234b5a" stroke-width="6"/>
+  <text x="120" y="155" font-family="Georgia,serif" font-size="58" font-weight="700" fill="#173847">Plan Before You Go</text>
+  <text x="120" y="205" font-family="Arial,sans-serif" font-size="27" fill="#58717a">Five checks for a better Texas lake trip</text>
+  <g font-family="Arial,sans-serif" font-size="31" fill="#173847">
+    <g transform="translate(125 285)">
+      <rect width="48" height="48" rx="8" fill="#d7ebef" stroke="#2d6d7d" stroke-width="4"/>
+      <path d="M10 25 l10 11 20-25" fill="none" stroke="#2d6d7d" stroke-width="6"/>
+      <text x="75" y="35" font-weight="700">Weather and wind</text>
+      <text x="75" y="75" font-size="22" fill="#58717a">Heat, storms, gusts, and lightning risk</text>
+    </g>
+    <g transform="translate(125 405)">
+      <rect width="48" height="48" rx="8" fill="#d7ebef" stroke="#2d6d7d" stroke-width="4"/>
+      <path d="M10 25 l10 11 20-25" fill="none" stroke="#2d6d7d" stroke-width="6"/>
+      <text x="75" y="35" font-weight="700">Water level and access</text>
+      <text x="75" y="75" font-size="22" fill="#58717a">Ramps, swimming areas, closures, and advisories</text>
+    </g>
+    <g transform="translate(125 525)">
+      <rect width="48" height="48" rx="8" fill="#d7ebef" stroke="#2d6d7d" stroke-width="4"/>
+      <path d="M10 25 l10 11 20-25" fill="none" stroke="#2d6d7d" stroke-width="6"/>
+      <text x="75" y="35" font-weight="700">Reservations and rules</text>
+      <text x="75" y="75" font-size="22" fill="#58717a">Camping, rentals, permits, and check-in times</text>
+    </g>
+    <g transform="translate(725 285)">
+      <rect width="48" height="48" rx="8" fill="#f2dfbd" stroke="#9b6424" stroke-width="4"/>
+      <path d="M10 25 l10 11 20-25" fill="none" stroke="#9b6424" stroke-width="6"/>
+      <text x="75" y="35" font-weight="700">Safety equipment</text>
+      <text x="75" y="75" font-size="22" fill="#58717a">Life jackets, water, sun protection, and first aid</text>
+    </g>
+    <g transform="translate(725 405)">
+      <rect width="48" height="48" rx="8" fill="#f2dfbd" stroke="#9b6424" stroke-width="4"/>
+      <path d="M10 25 l10 11 20-25" fill="none" stroke="#9b6424" stroke-width="6"/>
+      <text x="75" y="35" font-weight="700">Primary and backup plans</text>
+      <text x="75" y="75" font-size="22" fill="#58717a">Water activity plus a nearby land-based stop</text>
+    </g>
+  </g>
+  <path d="M710 650 C820 590 930 645 1035 600 C1140 555 1220 600 1300 565 L1300 770 L710 770 Z" fill="#5a8794"/>
+  <path d="M710 700 C850 675 990 725 1130 690 C1200 673 1260 680 1300 670" fill="none" stroke="#d8eff2" stroke-width="7" opacity=".65"/>
+  <path d="M820 650 q80 35 160 0 q-80 80-160 0z" fill="#c96f2c"/>
+  <circle cx="900" cy="620" r="15" fill="#46372f"/>
+</svg>
