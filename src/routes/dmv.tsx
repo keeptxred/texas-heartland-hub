@@ -16,9 +16,10 @@ const serviceGroups = [
     title: "Driver licenses and identification",
     description: "Texas DPS manages driver licenses, identification cards, REAL ID, driving tests, CDL services, and license status matters.",
     resources: [
-      ["Texas Driver License Guide", "/dmv/driver-license"],
-      ["Texas Driver License Renewal", "/dmv/driver-license-renewal"],
+      ["Complete Texas Driver License Guide", "/dmv/driver-license"],
+      ["Documents Required for a Texas Driver License", "/dmv/driver-license-documents"],
       ["Texas REAL ID Guide", "/dmv/real-id"],
+      ["Texas Driver License Renewal", "/dmv/driver-license-renewal"],
       ["Texas DPS Appointment Guide", "/dmv/dps-appointments"],
       ["Check Texas Driver License Status", "/dmv/license-status"],
       ["Texas CDL Guide", "/dmv/cdl"],
@@ -40,6 +41,7 @@ const serviceGroups = [
     title: "New Texas residents",
     description: "Coordinate the separate deadlines for registering a vehicle and transferring an out-of-state driver license.",
     resources: [
+      ["Complete Texas Driver License Guide", "/dmv/driver-license"],
       ["Moving to Texas Resource Center", "/moving-to-texas"],
       ["Interactive Moving Checklist", "/moving-to-texas-checklist"],
       ["Texas Moving Cost Calculator", "/texas-moving-cost-calculator"],
@@ -47,6 +49,18 @@ const serviceGroups = [
     ],
   },
 ] as const;
+
+const availableRoutes = new Set([
+  "/dmv/texas-dmv-vs-dps",
+  "/dmv/driver-license",
+  "/dmv/driver-license-documents",
+  "/dmv/real-id",
+  "/find-my-dmv",
+  "/moving-to-texas",
+  "/moving-to-texas-checklist",
+  "/texas-moving-cost-calculator",
+  "/laws",
+]);
 
 const faq = [
   {
@@ -83,6 +97,9 @@ function DmvHubPage() {
             <a href="/dmv/texas-dmv-vs-dps" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">
               Find the right agency
             </a>
+            <a href="/dmv/driver-license" className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted">
+              Get a Texas driver license
+            </a>
             <a href="/find-my-dmv" className="rounded-md border px-5 py-3 text-sm font-semibold hover:bg-muted">
               Find an office and estimate fees
             </a>
@@ -106,17 +123,8 @@ function DmvHubPage() {
                 <p className="mt-2 text-muted-foreground">{group.description}</p>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {group.resources.map(([title, href]) => {
-                  const isAvailable = [
-                    "/dmv/texas-dmv-vs-dps",
-                    "/find-my-dmv",
-                    "/moving-to-texas",
-                    "/moving-to-texas-checklist",
-                    "/texas-moving-cost-calculator",
-                    "/laws",
-                  ].includes(href);
-
-                  return isAvailable ? (
+                {group.resources.map(([title, href]) =>
+                  availableRoutes.has(href) ? (
                     <a key={href} href={href} className="rounded-xl border bg-card p-5 font-semibold transition hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-primary">
                       {title}
                       <span className="mt-3 block text-sm font-medium text-primary">Open guide →</span>
@@ -126,8 +134,8 @@ function DmvHubPage() {
                       <span className="font-semibold">{title}</span>
                       <span className="mt-3 block text-sm text-muted-foreground">Guide in development</span>
                     </div>
-                  );
-                })}
+                  ),
+                )}
               </div>
             </section>
           ))}
@@ -177,9 +185,7 @@ function DmvHubPage() {
 
       <section className="border-t bg-muted/20">
         <div className="mx-auto max-w-4xl px-4 py-10 text-sm text-muted-foreground">
-          <p>
-            Official requirements can change. Confirm forms, fees, eligibility, office hours, and appointment rules with the relevant Texas agency or county office before traveling.
-          </p>
+          <p>Official requirements can change. Confirm forms, fees, eligibility, office hours, and appointment rules with the relevant Texas agency or county office before traveling.</p>
         </div>
       </section>
     </main>
