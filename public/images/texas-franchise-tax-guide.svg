@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+  <title id="title">Texas franchise tax business filing illustration</title>
+  <desc id="desc">A Texas-shaped business scene with a report, calculator, office building, and compliance checkmark.</desc>
+  <rect width="1200" height="800" fill="#f4efe5"/>
+  <rect x="48" y="48" width="1104" height="704" rx="22" fill="#fffdf8" stroke="#171717" stroke-width="8"/>
+  <path d="M179 194l76-37 76 28 70-45 65 24 41-28 68 12 43 69 62 18 49 62-22 66 45 77-44 39-14 92-75 17-53 65-79-13-77 35-62-55-92-2-24-82-62-47 25-83-30-62 59-51z" fill="#b3262d" opacity=".95"/>
+  <path d="M219 244l45-22 53 20 51-31 47 17 47-20 35 8 31 48 45 13 34 42-18 47 30 55-31 26-11 65-51 12-39 46-55-9-52 24-43-38-65-2-17-57-43-33 18-58-22-44 41-35z" fill="#f7f2e8"/>
+  <rect x="598" y="154" width="394" height="494" rx="18" fill="#ffffff" stroke="#171717" stroke-width="8"/>
+  <rect x="644" y="202" width="302" height="58" rx="8" fill="#153b67"/>
+  <text x="795" y="240" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#ffffff">FRANCHISE TAX REPORT</text>
+  <line x1="651" y1="313" x2="932" y2="313" stroke="#171717" stroke-width="7"/>
+  <line x1="651" y1="365" x2="872" y2="365" stroke="#171717" stroke-width="7"/>
+  <line x1="651" y1="417" x2="918" y2="417" stroke="#171717" stroke-width="7"/>
+  <rect x="650" y="470" width="150" height="116" rx="12" fill="#efe7d7" stroke="#171717" stroke-width="6"/>
+  <rect x="674" y="490" width="102" height="27" rx="4" fill="#ffffff" stroke="#171717" stroke-width="4"/>
+  <g fill="#153b67">
+    <rect x="675" y="531" width="22" height="18" rx="3"/><rect x="710" y="531" width="22" height="18" rx="3"/><rect x="745" y="531" width="22" height="18" rx="3"/>
+    <rect x="675" y="558" width="22" height="18" rx="3"/><rect x="710" y="558" width="22" height="18" rx="3"/><rect x="745" y="558" width="22" height="18" rx="3"/>
+  </g>
+  <circle cx="882" cy="528" r="69" fill="#f4efe5" stroke="#171717" stroke-width="7"/>
+  <path d="M844 529l25 25 51-59" fill="none" stroke="#2d6a3f" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="187" y="520" width="277" height="114" fill="#153b67" stroke="#171717" stroke-width="7"/>
+  <rect x="218" y="474" width="215" height="46" fill="#ffffff" stroke="#171717" stroke-width="7"/>
+  <g fill="#f4efe5">
+    <rect x="220" y="549" width="40" height="58"/><rect x="283" y="549" width="40" height="58"/><rect x="346" y="549" width="40" height="58"/>
+  </g>
+  <text x="600" y="716" text-anchor="middle" font-family="Georgia, serif" font-size="42" font-weight="700" fill="#171717">TEXAS BUSINESS COMPLIANCE</text>
+</svg>
