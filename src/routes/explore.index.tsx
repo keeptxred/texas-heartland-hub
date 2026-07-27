@@ -173,6 +173,43 @@ function ExploreLanding() {
           </div>
         </section>
 
+        <section aria-labelledby="seasonal-guides" className="grid gap-6 md:grid-cols-2">
+          <Link
+            to="/explore/texas-wildflower-seasons"
+            className="group overflow-hidden rounded-xl border bg-background transition-colors hover:border-primary"
+          >
+            <img
+              src="/images/explore/texas-wildflower-guide-hero.svg"
+              alt="Texas hills, bluebonnets, Indian paintbrush, and a spring road"
+              className="aspect-[16/9] w-full object-cover"
+              width="1600"
+              height="900"
+              loading="lazy"
+            />
+            <div className="p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Seasonal guide</p>
+              <h2 id="seasonal-guides" className="mt-2 font-display text-3xl group-hover:text-primary">
+                Texas wildflower seasons
+              </h2>
+              <p className="mt-3 leading-7 text-muted-foreground">
+                Plan around bluebonnet timing, regional bloom windows, scenic drives, photography,
+                and responsible wildflower viewing.
+              </p>
+            </div>
+          </Link>
+          <Link
+            to="/explore/texas-state-parks-guide"
+            className="group rounded-xl border bg-muted/20 p-7 transition-colors hover:border-primary"
+          >
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Planning guide</p>
+            <h2 className="mt-2 font-display text-3xl group-hover:text-primary">Texas state parks</h2>
+            <p className="mt-3 leading-7 text-muted-foreground">
+              Compare regions, seasons, camping styles, reservation needs, and nearby Explore Texas
+              destinations.
+            </p>
+          </Link>
+        </section>
+
         {regions.length > 0 && (
           <section aria-labelledby="explore-regions">
             <h2 id="explore-regions" className="font-display text-3xl md:text-4xl">
