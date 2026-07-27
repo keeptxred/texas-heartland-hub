@@ -86,6 +86,7 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           <div className="shrink-0 lg:max-w-xs">
             <h2 className="font-sans text-lg font-semibold tracking-tight text-foreground">Related Tools</h2>
             <ul className="mt-3 space-y-2 text-sm">
+              <li><Link to="/texas-business-licenses-permits-guide" className="text-primary hover:underline">Texas business licenses and permits →</Link></li>
               <li><Link to="/texas-franchise-tax-guide" className="text-primary hover:underline">Texas franchise tax guide →</Link></li>
               <li><Link to="/tax-calculator" className="text-primary hover:underline">Property tax calculator by county →</Link></li>
               <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economy section →</Link></li>
@@ -96,18 +97,29 @@ export function TexasBusinessView({ topic }: { topic: string }) {
         </div>
       </header>
 
-      <section className="mb-10 border-2 border-foreground bg-secondary/10 p-6 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8">
-        <div>
-          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Evergreen Business Guide</span>
+      <section className="mb-10 grid gap-5 md:grid-cols-2">
+        <article className="border-2 border-foreground bg-secondary/10 p-6">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">New Evergreen Business Guide</span>
+          <h2 className="mt-2 font-display text-3xl tracking-tight">Texas Business Licenses and Permits</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+            Find out which state registrations, tax permits, professional licenses, local approvals, inspections,
+            and renewal records a Texas business may need before opening.
+          </p>
+          <Link to="/texas-business-licenses-permits-guide" className="mt-5 inline-flex border-2 border-foreground bg-primary px-5 py-3 text-sm font-bold text-primary-foreground hover:opacity-90">
+            Read the permits guide →
+          </Link>
+        </article>
+        <article className="border-2 border-foreground bg-card p-6">
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Evergreen Tax Guide</span>
           <h2 className="mt-2 font-display text-3xl tracking-tight">Texas Franchise Tax Explained</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
             Learn which LLCs and corporations file, how taxable margin works, why no-tax-due can still require a report,
             and how missed filings can affect a company&apos;s right to do business in Texas.
           </p>
-        </div>
-        <Link to="/texas-franchise-tax-guide" className="mt-5 inline-flex border-2 border-foreground bg-primary px-5 py-3 text-sm font-bold text-primary-foreground hover:opacity-90 md:mt-0">
-          Read the guide →
-        </Link>
+          <Link to="/texas-franchise-tax-guide" className="mt-5 inline-flex border-2 border-foreground px-5 py-3 text-sm font-bold hover:bg-secondary/20">
+            Read the tax guide →
+          </Link>
+        </article>
       </section>
 
       <section className="mb-10">
