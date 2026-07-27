@@ -1,2 +1,1 @@
-// Election navigation component exports.
-export {};
+export * from "./ElectionNavigation";
