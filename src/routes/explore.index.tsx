@@ -173,7 +173,7 @@ function ExploreLanding() {
           </div>
         </section>
 
-        <section aria-labelledby="seasonal-guides" className="grid gap-6 md:grid-cols-2">
+        <section aria-labelledby="seasonal-guides" className="grid gap-6 md:grid-cols-3">
           <Link
             to="/explore/texas-wildflower-seasons"
             className="group overflow-hidden rounded-xl border bg-background transition-colors hover:border-primary"
@@ -207,6 +207,27 @@ function ExploreLanding() {
               Compare regions, seasons, camping styles, reservation needs, and nearby Explore Texas
               destinations.
             </p>
+          </Link>
+          <Link
+            to="/explore/texas-scenic-drives"
+            className="group overflow-hidden rounded-xl border bg-background transition-colors hover:border-primary"
+          >
+            <img
+              src="/images/explore/texas-scenic-drives-hero.svg"
+              alt="Texas highway through wildflowers, hills, and desert scenery"
+              className="aspect-[16/9] w-full object-cover"
+              width="1600"
+              height="1000"
+              loading="lazy"
+            />
+            <div className="p-6">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Road-trip guide</p>
+              <h2 className="mt-2 font-display text-3xl group-hover:text-primary">Texas scenic drives</h2>
+              <p className="mt-3 leading-7 text-muted-foreground">
+                Build Hill Country, Big Bend, canyon, Piney Woods, and Gulf Coast road trips around
+                real destinations and the right season.
+              </p>
+            </div>
           </Link>
         </section>
 
