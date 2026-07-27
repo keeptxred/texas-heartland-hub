@@ -1,11 +1,11 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
 
 const HUB = HUBS.find((h) => h.slug === "texas-policy-law")!;
 const SECTIONS = [
   { title: "Border Policy", description: "Operation Lone Star, border security, and federal-state conflict.", href: "/news/texas-border-policy-full-guide" },
-  { title: "Education Policy", description: "School choice, ESAs, parental rights, and ISD governance.", href: "/news/school-choice-esa-guide" },
+  { title: "Education Policy", description: "School districts, school choice, parental rights, and ISD governance.", href: "/texas-school-districts-explained" },
   { title: "Public Safety", description: "DPS, criminal justice, constitutional carry, and policing.", href: "/news/constitutional-carry-one-year-later" },
   { title: "Legal Updates", description: "AG opinions, Texas Supreme Court rulings, and new statutes.", href: "/texas-laws" },
 ];
@@ -41,9 +41,12 @@ function TexasLawPolicyPage() {
           <p>
             The most consequential fights right now are at the border and in the classroom. Operation
             Lone Star put the state directly in the middle of what used to be a federal-only lane,
-            and the ongoing legal battle over SB 4 will define state authority for a generation.
-            Education Savings Accounts, parental rights, and school board governance are doing the
-            same on the K-12 side.
+            and education policy determines how more than a thousand local districts govern, tax,
+            spend, and answer to parents. Start with our guide to{" "}
+            <Link to="/texas-school-districts-explained" className="text-primary underline underline-offset-4">
+              how Texas school districts work
+            </Link>
+            .
           </p>
           <p>
             The guides below break these down statute by statute — what the law says, who enforces
