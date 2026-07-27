@@ -4,6 +4,8 @@ export interface VotingDateItem {
   date?: string | null;
   description?: string;
   status?: "upcoming" | "active" | "complete" | "pending";
+  actionLabel?: string;
+  actionHref?: string;
 }
 
 export interface VotingDatesProps {
@@ -57,6 +59,11 @@ export function VotingDates({
                 <p className="mt-3 text-lg font-bold text-red-700">{item.date || "To be announced"}</p>
                 {item.description && (
                   <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
+                )}
+                {item.actionLabel && item.actionHref && (
+                  <a href={item.actionHref} className="mt-3 inline-block text-sm font-semibold text-red-700 underline-offset-4 hover:underline">
+                    {item.actionLabel} →
+                  </a>
                 )}
               </li>
             );
