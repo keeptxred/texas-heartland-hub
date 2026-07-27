@@ -6,6 +6,7 @@ export * from "./candidateService";
 export * from "./domain";
 export * from "./identifiers";
 export * from "./metadata";
+export * from "./poll";
 export * from "./pollClassifications";
 export * from "./presentation";
 export * from "./race";
