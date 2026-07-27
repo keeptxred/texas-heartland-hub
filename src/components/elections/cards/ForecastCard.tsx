@@ -1,15 +1,11 @@
+import type { ElectionResourceLink } from "@/types/elections";
+
 export interface ForecastCandidateProbability {
   candidateId: string;
   candidateName: string;
   partyLabel?: string;
   probability: number;
   candidateHref?: string;
-}
-
-export interface ForecastCardResourceLink {
-  label: string;
-  href: string;
-  relevance: string;
 }
 
 export interface ForecastCardProps {
@@ -27,7 +23,7 @@ export interface ForecastCardProps {
   fundraisingWeight?: number;
   notes?: string | null;
   methodologyHref?: string;
-  relatedLinks?: readonly ForecastCardResourceLink[];
+  relatedLinks?: readonly ElectionResourceLink[];
   className?: string;
 }
 
