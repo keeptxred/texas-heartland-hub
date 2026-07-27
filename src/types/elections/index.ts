@@ -3,6 +3,7 @@ export * from "./candidateClassifications";
 export * from "./candidateProjections";
 export * from "./candidateRepository";
 export * from "./candidateService";
+export * from "./cycle";
 export * from "./domain";
 export * from "./forecast";
 export * from "./forecastClassifications";
