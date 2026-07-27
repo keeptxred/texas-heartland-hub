@@ -9,6 +9,7 @@ export * from "./metadata";
 export * from "./poll";
 export * from "./pollClassifications";
 export * from "./pollProjections";
+export * from "./pollRepository";
 export * from "./presentation";
 export * from "./race";
 export * from "./raceClassifications";
