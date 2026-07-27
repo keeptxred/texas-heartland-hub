@@ -31,6 +31,8 @@ export type ElectionAuthorityId = ElectionIdentifier<"ElectionAuthorityId">;
 export type ElectionAuthoritySlug = ElectionIdentifier<"ElectionAuthoritySlug">;
 export type SampleBallotId = ElectionIdentifier<"SampleBallotId">;
 export type SampleBallotSlug = ElectionIdentifier<"SampleBallotSlug">;
+export type VoterGuideId = ElectionIdentifier<"VoterGuideId">;
+export type VoterGuideSlug = ElectionIdentifier<"VoterGuideSlug">;
 export type RaceId = ElectionIdentifier<"RaceId">;
 export type RaceSlug = ElectionIdentifier<"RaceSlug">;
 export type CandidateId = ElectionIdentifier<"CandidateId">;
@@ -42,8 +44,8 @@ export type ForecastSlug = ElectionIdentifier<"ForecastSlug">;
 export type ElectionResultId = ElectionIdentifier<"ElectionResultId">;
 export type ElectionResultSlug = ElectionIdentifier<"ElectionResultSlug">;
 
-export type CoreElectionId = ElectionCycleId | OfficeId | DistrictId | CountyId | BallotMeasureId | ElectionEventId | EndorsementId | CampaignFinanceReportId | IssuePositionId | VotingLocationId | ElectionAuthorityId | SampleBallotId | RaceId | CandidateId | PollId | ForecastId | ElectionResultId;
-export type CoreElectionSlug = ElectionCycleSlug | OfficeSlug | DistrictSlug | CountySlug | BallotMeasureSlug | ElectionEventSlug | EndorsementSlug | CampaignFinanceReportSlug | IssuePositionSlug | VotingLocationSlug | ElectionAuthoritySlug | SampleBallotSlug | RaceSlug | CandidateSlug | PollSlug | ForecastSlug | ElectionResultSlug;
+export type CoreElectionId = ElectionCycleId | OfficeId | DistrictId | CountyId | BallotMeasureId | ElectionEventId | EndorsementId | CampaignFinanceReportId | IssuePositionId | VotingLocationId | ElectionAuthorityId | SampleBallotId | VoterGuideId | RaceId | CandidateId | PollId | ForecastId | ElectionResultId;
+export type CoreElectionSlug = ElectionCycleSlug | OfficeSlug | DistrictSlug | CountySlug | BallotMeasureSlug | ElectionEventSlug | EndorsementSlug | CampaignFinanceReportSlug | IssuePositionSlug | VotingLocationSlug | ElectionAuthoritySlug | SampleBallotSlug | VoterGuideSlug | RaceSlug | CandidateSlug | PollSlug | ForecastSlug | ElectionResultSlug;
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
@@ -82,6 +84,7 @@ export const electionIds = {
   votingLocation: (value: string) => toElectionIdentifier<"VotingLocationId">(value, "Voting location ID"),
   electionAuthority: (value: string) => toElectionIdentifier<"ElectionAuthorityId">(value, "Election authority ID"),
   sampleBallot: (value: string) => toElectionIdentifier<"SampleBallotId">(value, "Sample ballot ID"),
+  voterGuide: (value: string) => toElectionIdentifier<"VoterGuideId">(value, "Voter guide ID"),
   race: (value: string) => toElectionIdentifier<"RaceId">(value, "Race ID"),
   candidate: (value: string) => toElectionIdentifier<"CandidateId">(value, "Candidate ID"),
   poll: (value: string) => toElectionIdentifier<"PollId">(value, "Poll ID"),
@@ -102,6 +105,7 @@ export const electionSlugs = {
   votingLocation: (value: string) => toElectionSlug<"VotingLocationSlug">(value, "Voting location slug"),
   electionAuthority: (value: string) => toElectionSlug<"ElectionAuthoritySlug">(value, "Election authority slug"),
   sampleBallot: (value: string) => toElectionSlug<"SampleBallotSlug">(value, "Sample ballot slug"),
+  voterGuide: (value: string) => toElectionSlug<"VoterGuideSlug">(value, "Voter guide slug"),
   race: (value: string) => toElectionSlug<"RaceSlug">(value, "Race slug"),
   candidate: (value: string) => toElectionSlug<"CandidateSlug">(value, "Candidate slug"),
   poll: (value: string) => toElectionSlug<"PollSlug">(value, "Poll slug"),
