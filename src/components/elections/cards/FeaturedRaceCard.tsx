@@ -1,7 +1,4 @@
-export interface FeaturedRaceLink {
-  label: string;
-  href: string;
-}
+import type { ElectionResourceLink, ElectionStatus, RaceRating } from "@/types/elections";
 
 export interface FeaturedRaceCandidate {
   name: string;
@@ -14,13 +11,36 @@ export interface FeaturedRaceCardProps {
   district?: string;
   electionDate?: string;
   electionType?: string;
-  rating?: string;
-  status?: string;
+  rating?: RaceRating;
+  status?: ElectionStatus;
   candidates?: readonly FeaturedRaceCandidate[];
   raceHref: string;
-  contextualLinks?: readonly FeaturedRaceLink[];
+  contextualLinks?: readonly ElectionResourceLink[];
   className?: string;
 }
+
+const STATUS_LABELS: Record<ElectionStatus, string> = {
+  scheduled: "Scheduled",
+  early_voting: "Early voting",
+  polls_open: "Polls open",
+  polls_closed: "Polls closed",
+  counting: "Counting",
+  called: "Called",
+  certified: "Certified",
+  recount: "Recount",
+  cancelled: "Cancelled",
+};
+
+const RATING_LABELS: Record<RaceRating, string> = {
+  safe_republican: "Safe Republican",
+  likely_republican: "Likely Republican",
+  leans_republican: "Leans Republican",
+  toss_up: "Toss-up",
+  leans_democratic: "Leans Democratic",
+  likely_democratic: "Likely Democratic",
+  safe_democratic: "Safe Democratic",
+  unrated: "Unrated",
+};
 
 export function FeaturedRaceCard({
   office,
@@ -48,7 +68,7 @@ export function FeaturedRaceCard({
         </div>
         {rating && (
           <span className="shrink-0 rounded-full border border-slate-300 bg-slate-50 px-2.5 py-1 text-xs font-semibold text-slate-700">
-            {rating}
+            {RATING_LABELS[rating]}
           </span>
         )}
       </div>
@@ -57,7 +77,7 @@ export function FeaturedRaceCard({
         <dl className="mt-5 grid grid-cols-2 gap-3 text-sm">
           {electionDate && <RaceDetail label="Election date" value={electionDate} />}
           {electionType && <RaceDetail label="Election type" value={electionType} />}
-          {status && <RaceDetail label="Status" value={status} />}
+          {status && <RaceDetail label="Status" value={STATUS_LABELS[status]} />}
         </dl>
       )}
 
@@ -86,7 +106,7 @@ export function FeaturedRaceCard({
             <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
               {contextualLinks.map((link) => (
                 <li key={`${link.href}-${link.label}`}>
-                  <a href={link.href} className="font-medium text-slate-700 underline-offset-4 hover:text-red-700 hover:underline">
+                  <a href={link.href} title={link.relevance} className="font-medium text-slate-700 underline-offset-4 hover:text-red-700 hover:underline">
                     {link.label}
                   </a>
                 </li>
