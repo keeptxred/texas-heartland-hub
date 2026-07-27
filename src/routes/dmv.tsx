@@ -11,6 +11,7 @@ const serviceGroups = [
       ["Texas DPS Appointment Guide", "/dmv/dps-appointments"],
       ["Find a Texas DMV or County Tax Office", "/find-my-dmv"],
       ["Moving to Texas Resource Center", "/moving-to-texas"],
+      ["Frequently Used TxDMV Forms & Downloads", "/dmv/forms-downloads"],
     ],
   },
   {
@@ -44,6 +45,9 @@ const serviceGroups = [
       ["Vehicle Registration for New Texas Residents", "/vehicles/new-residents"],
       ["Disabled Parking Placards and License Plates", "/vehicles/disabled-parking"],
       ["Farm, Antique, Classic and Specialty Registration", "/vehicles/farm-antique-specialty"],
+      ["Liens, Duplicate Titles and Corrected Titles", "/vehicles/liens-duplicate-corrected-titles"],
+      ["Fleet, Commercial and Apportioned Registration", "/vehicles/commercial-fleet-irp"],
+      ["Frequently Used TxDMV Forms and Downloads", "/dmv/forms-downloads"],
       ["Texas Vehicle Registration Fees and Taxes", "/vehicles/registration-fees-taxes"],
       ["Buying or Selling a Vehicle in Texas", "/vehicles/buying-selling"],
       ["Texas Vehicle Inspections and Emissions", "/vehicles/inspections-emissions"],
@@ -80,7 +84,7 @@ const serviceGroups = [
 ] as const;
 
 const availableRoutes = new Set([
-  "/dmv/texas-dmv-vs-dps", "/dmv/driver-license", "/dmv/identification-card", "/dmv/cdl", "/dmv/driver-license-documents", "/dmv/real-id", "/dmv/driver-license-renewal", "/dmv/replace-lost-license", "/dmv/change-address", "/dmv/dps-appointments", "/dmv/license-status", "/vehicles/new-residents", "/vehicles/disabled-parking", "/vehicles/farm-antique-specialty", "/vehicles/registration-fees-taxes", "/vehicles/buying-selling", "/vehicles/inspections-emissions", "/vehicles/registration", "/vehicles/renewal", "/vehicles/title-transfer", "/vehicles/bonded-titles", "/vehicles/salvage-rebuilt-titles", "/vehicles/plates", "/vehicles/temporary-tags", "/find-my-dmv", "/moving-to-texas", "/moving-to-texas-checklist", "/texas-moving-cost-calculator",
+  "/dmv/texas-dmv-vs-dps", "/dmv/driver-license", "/dmv/identification-card", "/dmv/cdl", "/dmv/driver-license-documents", "/dmv/real-id", "/dmv/driver-license-renewal", "/dmv/replace-lost-license", "/dmv/change-address", "/dmv/dps-appointments", "/dmv/license-status", "/dmv/forms-downloads", "/vehicles/new-residents", "/vehicles/disabled-parking", "/vehicles/farm-antique-specialty", "/vehicles/liens-duplicate-corrected-titles", "/vehicles/commercial-fleet-irp", "/vehicles/registration-fees-taxes", "/vehicles/buying-selling", "/vehicles/inspections-emissions", "/vehicles/registration", "/vehicles/renewal", "/vehicles/title-transfer", "/vehicles/bonded-titles", "/vehicles/salvage-rebuilt-titles", "/vehicles/plates", "/vehicles/temporary-tags", "/find-my-dmv", "/moving-to-texas", "/moving-to-texas-checklist", "/texas-moving-cost-calculator",
 ]);
 
 const faq = [
