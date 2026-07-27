@@ -1,3 +1,4 @@
+export * from "./candidateClassifications";
 export * from "./domain";
 export * from "./identifiers";
 export * from "./metadata";
