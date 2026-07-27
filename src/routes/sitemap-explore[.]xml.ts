@@ -32,6 +32,7 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
         );
         const geographyEntries: UrlEntry[] = [
           { loc: `${BASE_URL}/explore`, lastmod: catalogLastmod },
+          { loc: `${BASE_URL}/explore/texas-state-parks-guide`, lastmod: "2026-07-26" },
           { loc: `${BASE_URL}/explore/caverns`, lastmod: catalogLastmod },
           { loc: `${BASE_URL}/explore/lighthouses`, lastmod: catalogLastmod },
           { loc: `${BASE_URL}/explore/scenic-rivers`, lastmod: catalogLastmod },
