@@ -6,6 +6,7 @@ export * from "./candidateService";
 export * from "./cycle";
 export * from "./cycleProjections";
 export * from "./cycleRepository";
+export * from "./cycleService";
 export * from "./domain";
 export * from "./forecast";
 export * from "./forecastClassifications";
