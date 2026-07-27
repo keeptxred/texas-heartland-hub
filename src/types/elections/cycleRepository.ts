@@ -10,8 +10,8 @@ import type {
   IsoDateString,
 } from "./metadata";
 import type {
-  ElectionCycle,
   ElectionCycleCreateInput,
+  ElectionCycleRecord,
   ElectionCycleUpdateInput,
 } from "./cycle";
 import type {
@@ -69,10 +69,10 @@ export interface ElectionCycleLookup {
 }
 
 export interface ElectionCycleRepository {
-  findById(id: ElectionCycleId): Promise<ElectionCycle | null>;
-  findBySlug(slug: ElectionCycleSlug): Promise<ElectionCycle | null>;
-  findByYear(year: number, stateCode?: string): Promise<ElectionCycle | null>;
-  findActive(stateCode?: string): Promise<ElectionCycle | null>;
+  findById(id: ElectionCycleId): Promise<ElectionCycleRecord | null>;
+  findBySlug(slug: ElectionCycleSlug): Promise<ElectionCycleRecord | null>;
+  findByYear(year: number, stateCode?: string): Promise<ElectionCycleRecord | null>;
+  findActive(stateCode?: string): Promise<ElectionCycleRecord | null>;
   findSummaryById(id: ElectionCycleId): Promise<ElectionCycleSummary | null>;
   findDetailById(id: ElectionCycleId): Promise<ElectionCycleDetail | null>;
 
@@ -81,7 +81,7 @@ export interface ElectionCycleRepository {
   ): Promise<RacePage<ElectionCycleSummary>>;
   listCore(
     query?: ElectionCycleListQuery,
-  ): Promise<RacePage<ElectionCycle>>;
+  ): Promise<RacePage<ElectionCycleRecord>>;
   listUpcoming(
     stateCode?: string,
     limit?: number,
@@ -90,11 +90,11 @@ export interface ElectionCycleRepository {
   count(filters?: ElectionCycleFilters): Promise<number>;
   exists(lookup: ElectionCycleLookup): Promise<boolean>;
 
-  create(input: ElectionCycleCreateInput): Promise<ElectionCycle>;
+  create(input: ElectionCycleCreateInput): Promise<ElectionCycleRecord>;
   update(
     id: ElectionCycleId,
     input: ElectionCycleUpdateInput,
-  ): Promise<ElectionCycle>;
+  ): Promise<ElectionCycleRecord>;
   delete(id: ElectionCycleId): Promise<boolean>;
 }
 
