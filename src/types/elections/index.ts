@@ -6,3 +6,4 @@ export * from "./race";
 export * from "./raceClassifications";
 export * from "./raceProjections";
 export * from "./raceRepository";
+export * from "./raceService";
