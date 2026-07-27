@@ -1,5 +1,6 @@
 export * from "./candidate";
 export * from "./candidateClassifications";
+export * from "./candidateProjections";
 export * from "./domain";
 export * from "./identifiers";
 export * from "./metadata";
