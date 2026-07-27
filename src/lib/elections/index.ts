@@ -4,3 +4,4 @@ export * from "./internalLinkPolicy";
 export * from "./internalLinks";
 export * from "./routes";
 export * from "./seo";
+export * from "./sitemap";
