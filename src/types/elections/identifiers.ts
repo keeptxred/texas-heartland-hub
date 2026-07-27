@@ -15,6 +15,9 @@ export type ElectionSlug = ElectionIdentifier<"ElectionSlug">;
 export type ElectionCycleId = ElectionIdentifier<"ElectionCycleId">;
 export type ElectionCycleSlug = ElectionIdentifier<"ElectionCycleSlug">;
 
+export type OfficeId = ElectionIdentifier<"OfficeId">;
+export type OfficeSlug = ElectionIdentifier<"OfficeSlug">;
+
 export type RaceId = ElectionIdentifier<"RaceId">;
 export type RaceSlug = ElectionIdentifier<"RaceSlug">;
 
@@ -32,6 +35,7 @@ export type ElectionResultSlug = ElectionIdentifier<"ElectionResultSlug">;
 
 export type CoreElectionId =
   | ElectionCycleId
+  | OfficeId
   | RaceId
   | CandidateId
   | PollId
@@ -40,6 +44,7 @@ export type CoreElectionId =
 
 export type CoreElectionSlug =
   | ElectionCycleSlug
+  | OfficeSlug
   | RaceSlug
   | CandidateSlug
   | PollSlug
@@ -87,6 +92,8 @@ export function toElectionSlug<Brand extends string>(
 export const electionIds = {
   cycle: (value: string) =>
     toElectionIdentifier<"ElectionCycleId">(value, "Election cycle ID"),
+  office: (value: string) =>
+    toElectionIdentifier<"OfficeId">(value, "Office ID"),
   race: (value: string) => toElectionIdentifier<"RaceId">(value, "Race ID"),
   candidate: (value: string) =>
     toElectionIdentifier<"CandidateId">(value, "Candidate ID"),
@@ -100,6 +107,8 @@ export const electionIds = {
 export const electionSlugs = {
   cycle: (value: string) =>
     toElectionSlug<"ElectionCycleSlug">(value, "Election cycle slug"),
+  office: (value: string) =>
+    toElectionSlug<"OfficeSlug">(value, "Office slug"),
   race: (value: string) => toElectionSlug<"RaceSlug">(value, "Race slug"),
   candidate: (value: string) =>
     toElectionSlug<"CandidateSlug">(value, "Candidate slug"),
