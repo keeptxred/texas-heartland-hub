@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Texas HOA laws guide</title>
+  <desc id="desc">A Texas neighborhood, HOA document, and balance scale illustration.</desc>
+  <rect width="1600" height="900" fill="#f5efe4"/>
+  <rect y="650" width="1600" height="250" fill="#d7c6a4"/>
+  <path d="M0 690 C240 610 380 730 610 660 S1010 620 1260 690 S1470 710 1600 660 V900 H0Z" fill="#b79a6a" opacity=".7"/>
+  <g fill="#8f1d2c">
+    <path d="M150 470 330 330 510 470V690H150Z"/>
+    <path d="M545 520 700 395 855 520V690H545Z"/>
+    <path d="M900 465 1085 315 1270 465V690H900Z"/>
+  </g>
+  <g fill="#fff8ec">
+    <rect x="215" y="505" width="75" height="185"/>
+    <rect x="345" y="520" width="95" height="80"/>
+    <rect x="610" y="540" width="70" height="150"/>
+    <rect x="720" y="540" width="80" height="70"/>
+    <rect x="970" y="500" width="80" height="190"/>
+    <rect x="1110" y="510" width="90" height="80"/>
+  </g>
+  <g transform="translate(1050 90)">
+    <rect width="390" height="480" rx="20" fill="#fff" stroke="#1f2937" stroke-width="10"/>
+    <text x="195" y="75" text-anchor="middle" font-family="Georgia,serif" font-size="48" font-weight="700" fill="#8f1d2c">HOA</text>
+    <text x="195" y="125" text-anchor="middle" font-family="Arial,sans-serif" font-size="26" fill="#1f2937">TEXAS HOMEOWNER GUIDE</text>
+    <g stroke="#6b7280" stroke-width="8">
+      <line x1="55" y1="185" x2="335" y2="185"/>
+      <line x1="55" y1="235" x2="335" y2="235"/>
+      <line x1="55" y1="285" x2="290" y2="285"/>
+      <line x1="55" y1="335" x2="315" y2="335"/>
+    </g>
+    <path d="M175 385h40v65h-40zM115 410h160" stroke="#8f1d2c" stroke-width="12" fill="none"/>
+    <path d="M115 410 65 455h100zM275 410l-50 45h100z" fill="#c79a3b" stroke="#8f1d2c" stroke-width="6"/>
+  </g>
+  <path d="M760 120 815 230l120 18-87 85 21 120-109-57-109 57 21-120-87-85 120-18z" fill="#1f4f8a" opacity=".9"/>
+  <text x="70" y="105" font-family="Georgia,serif" font-size="70" font-weight="700" fill="#1f2937">TEXAS HOA LAWS</text>
+  <text x="75" y="165" font-family="Arial,sans-serif" font-size="34" fill="#8f1d2c">RIGHTS • RECORDS • FINES • LIENS</text>
+</svg>
