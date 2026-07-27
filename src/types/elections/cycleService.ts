@@ -5,8 +5,8 @@ import type {
 } from "./identifiers";
 import type { IsoDateTimeString } from "./metadata";
 import type {
-  ElectionCycle,
   ElectionCycleCreateInput,
+  ElectionCycleRecord,
   ElectionCycleUpdateInput,
 } from "./cycle";
 import type {
@@ -77,7 +77,7 @@ export interface ElectionCycleStatusTransitionInput {
 }
 
 export interface ElectionCycleStatusTransitionResult {
-  cycle: ElectionCycle;
+  cycle: ElectionCycleRecord;
   previousStatus: ElectionStatus;
   currentStatus: ElectionStatus;
 }
@@ -91,17 +91,17 @@ export interface ElectionCycleActivationInput {
 export interface ElectionCycleService {
   getCycleById(
     id: ElectionCycleId,
-  ): Promise<ElectionCycleServiceResult<ElectionCycle>>;
+  ): Promise<ElectionCycleServiceResult<ElectionCycleRecord>>;
   getCycleBySlug(
     slug: ElectionCycleSlug,
-  ): Promise<ElectionCycleServiceResult<ElectionCycle>>;
+  ): Promise<ElectionCycleServiceResult<ElectionCycleRecord>>;
   getCycleByYear(
     year: number,
     stateCode?: string,
-  ): Promise<ElectionCycleServiceResult<ElectionCycle>>;
+  ): Promise<ElectionCycleServiceResult<ElectionCycleRecord>>;
   getActiveCycle(
     stateCode?: string,
-  ): Promise<ElectionCycleServiceResult<ElectionCycle>>;
+  ): Promise<ElectionCycleServiceResult<ElectionCycleRecord>>;
   getCycleSummary(
     id: ElectionCycleId,
   ): Promise<ElectionCycleServiceResult<ElectionCycleSummary>>;
@@ -133,18 +133,18 @@ export interface ElectionCycleService {
 
   createCycle(
     input: ElectionCycleCreateInput,
-  ): Promise<ElectionCycleServiceResult<ElectionCycle>>;
+  ): Promise<ElectionCycleServiceResult<ElectionCycleRecord>>;
   updateCycle(
     id: ElectionCycleId,
     input: ElectionCycleUpdateInput,
-  ): Promise<ElectionCycleServiceResult<ElectionCycle>>;
+  ): Promise<ElectionCycleServiceResult<ElectionCycleRecord>>;
   deleteCycle(
     id: ElectionCycleId,
   ): Promise<ElectionCycleServiceResult<boolean>>;
 
   activateCycle(
     input: ElectionCycleActivationInput,
-  ): Promise<ElectionCycleServiceResult<ElectionCycle>>;
+  ): Promise<ElectionCycleServiceResult<ElectionCycleRecord>>;
   transitionStatus(
     input: ElectionCycleStatusTransitionInput,
   ): Promise<ElectionCycleServiceResult<ElectionCycleStatusTransitionResult>>;
