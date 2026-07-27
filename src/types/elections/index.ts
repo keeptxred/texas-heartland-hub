@@ -16,3 +16,4 @@ export * from "./result";
 export * from "./resultClassifications";
 export * from "./resultProjections";
 export * from "./resultRepository";
+export * from "./resultService";
