@@ -6,7 +6,7 @@ const HUB = HUBS.find((h) => h.slug === "texas-policy-law")!;
 const SECTIONS = [
   { title: "Border Policy", description: "Operation Lone Star, border security, and federal-state conflict.", href: "/news/texas-border-policy-full-guide" },
   { title: "Education Policy", description: "School districts, school choice, parental rights, and ISD governance.", href: "/texas-school-districts-explained" },
-  { title: "Housing Law", description: "Leases, renter protections, deposits, repairs, notices, and eviction procedure.", href: "/texas-renters-rights-guide" },
+  { title: "Housing Law", description: "HOA authority, homeowner rights, leases, deposits, repairs, notices, and enforcement.", href: "/texas-hoa-laws-guide" },
   { title: "Public Safety", description: "DPS, criminal justice, constitutional carry, and policing.", href: "/news/constitutional-carry-one-year-later" },
   { title: "Legal Updates", description: "AG opinions, Texas Supreme Court rulings, and new statutes.", href: "/texas-laws" },
 ];
@@ -41,10 +41,14 @@ function TexasLawPolicyPage() {
           </p>
           <p>
             The most consequential rules are often the ones Texans meet at home: the school district that
-            taxes and educates a family, the lease that controls a rental, and the notice deadlines that
-            determine whether a dispute reaches court. Start with our guides to{" "}
+            taxes and educates a family, the association that governs a neighborhood, the lease that controls
+            a rental, and the notice deadlines that determine whether a dispute reaches court. Start with our guides to{" "}
             <Link to="/texas-school-districts-explained" className="text-primary underline underline-offset-4">
               how Texas school districts work
+            </Link>
+            ,{" "}
+            <Link to="/texas-hoa-laws-guide" className="text-primary underline underline-offset-4">
+              Texas HOA laws
             </Link>{" "}
             and{" "}
             <Link to="/texas-renters-rights-guide" className="text-primary underline underline-offset-4">
@@ -54,8 +58,8 @@ function TexasLawPolicyPage() {
           </p>
           <p>
             The guides below break these subjects down statute by statute — what the law says, who enforces
-            it, and what it actually means for the families, business owners, landlords, tenants, and local officials
-            who have to live under it.
+            it, and what it actually means for the families, business owners, landlords, tenants, homeowners,
+            and local officials who have to live under it.
           </p>
         </div>
       </section>
