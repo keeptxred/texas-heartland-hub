@@ -4,6 +4,7 @@ export * from "./candidateProjections";
 export * from "./candidateRepository";
 export * from "./candidateService";
 export * from "./cycle";
+export * from "./cycleProjections";
 export * from "./domain";
 export * from "./forecast";
 export * from "./forecastClassifications";
