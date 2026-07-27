@@ -1,0 +1,43 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { HubBreadcrumbs } from "@/components/hub-breadcrumbs";
+import { buildSeo, SITE_URL } from "@/lib/seo";
+
+const faq = [
+  { question: "Where do I get Texas license plates?", answer: "Most general-issue, replacement, transfer, disabled, military, and specialty-plate transactions begin with your county tax assessor-collector office. Some specialty and personalized plates are ordered through TxDMV or the state's specialty-plate vendor." },
+  { question: "How much do replacement Texas plates cost?", answer: "TxDMV lists a $6 replacement-plate fee plus a $0.50 automation fee. County or transaction-specific charges may also apply." },
+  { question: "Can Texas license plates be transferred to another vehicle?", answer: "TxDMV says eligible plates can generally be transferred to another vehicle you own when the registration record is updated through the county tax office or dealer." },
+  { question: "Do disabled veteran plates automatically allow disabled parking?", answer: "No. A disabled veteran plate must display the International Symbol of Access, or the person must display a qualifying disabled parking placard, to use an accessible parking space." },
+];
+
+const sections = [
+  ["General-issue Texas plates", "Passenger vehicles normally receive the current general-issue plate when titled and registered. Plate issuance is tied to the vehicle registration record, and most public-facing transactions are handled by the county tax assessor-collector."],
+  ["Specialty and personalized plates", "Texas offers organizational, collegiate, military, professional, charitable, and cause-related specialty plates. Some can be personalized. Availability, character limits, annual fees, eligibility documents, and renewal rules vary by design."],
+  ["Replacement plates", "Use Form VTR-60 to request replacement plates or a registration sticker. TxDMV lists a $6 plate fee plus a $0.50 automation fee. Report stolen plates to law enforcement and ask the county office whether a new plate number will be issued."],
+  ["Transferring plates", "Eligible Texas plates can generally move to another vehicle owned by the same person. Tell the dealer or county tax office before the transaction is finalized so the plate number is attached to the correct registration record."],
+  ["Disabled parking plates and placards", "Form VTR-214 is used for disabled parking placards and plates. A permanent disabled plate displays the International Symbol of Access. Temporary red placards generally expire in six months or less, while permanent blue placards are renewable every four years."],
+  ["Disabled veteran and military plates", "Military and disabled veteran plates require eligibility documentation. Disabled veteran plates without the International Symbol of Access do not authorize parking in accessible spaces. Form VTR-615 is used for disabled veteran plates and parking placards."],
+  ["Plate handling after a sale", "Texas sellers should remove their plates before giving the vehicle to the buyer unless a permitted exception applies. File a Vehicle Transfer Notification and coordinate plate transfer, surrender, or disposal with the county tax office."],
+];
+
+function PlatesPage() {
+  return <main>
+    <HubBreadcrumbs current="Texas License Plates" />
+    <section className="border-b bg-muted/30"><div className="mx-auto max-w-5xl px-4 py-16"><p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Texas vehicle services</p><h1 className="mt-3 text-4xl font-bold tracking-tight sm:text-5xl">Texas License Plates Guide</h1><p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">Understand general-issue, specialty, personalized, replacement, transferred, disabled, and military Texas license plates before visiting your county tax office.</p><div className="mt-8 flex flex-wrap gap-3"><a href="https://www.txdmv.gov/motorists/license-plates" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">View official TxDMV plate options</a><a href="/find-my-dmv" className="rounded-md border px-5 py-3 text-sm font-semibold">Find a county tax office</a><a href="/vehicles/title-transfer" className="rounded-md border px-5 py-3 text-sm font-semibold">Transfer a vehicle title</a></div></div></section>
+    <section className="mx-auto max-w-4xl px-4 py-14"><div className="rounded-xl border bg-card p-6"><h2 className="text-2xl font-bold">Before you order or replace plates</h2><ul className="mt-4 list-disc space-y-2 pl-5 text-muted-foreground"><li>Confirm the vehicle is titled and registered in the correct name.</li><li>Bring photo identification and the current registration record.</li><li>Bring eligibility documents for disabled, military, professional, or organizational plates.</li><li>Verify personalized-character availability and annual fees before ordering.</li><li>Report stolen plates and keep the police report number.</li></ul></div><div className="mt-12 space-y-10">{sections.map(([title, body]) => <section key={title}><h2 className="text-2xl font-bold">{title}</h2><p className="mt-3 leading-relaxed text-muted-foreground">{body}</p></section>)}</div></section>
+    <section className="border-y bg-muted/30"><div className="mx-auto max-w-4xl px-4 py-14"><h2 className="text-3xl font-bold">Common forms</h2><div className="mt-6 grid gap-4 sm:grid-cols-2"><a href="https://www.txdmv.gov/sites/default/files/form_files/VTR-60.pdf" className="rounded-xl border bg-card p-5 font-semibold">VTR-60 — Replacement plates or sticker</a><a href="https://www.txdmv.gov/sites/default/files/form_files/VTR-214.pdf" className="rounded-xl border bg-card p-5 font-semibold">VTR-214 — Disabled placard or plate</a><a href="https://www.txdmv.gov/sites/default/files/form_files/VTR-615.pdf" className="rounded-xl border bg-card p-5 font-semibold">VTR-615 — Disabled veteran plates</a><a href="https://www.txdmv.gov/forms" className="rounded-xl border bg-card p-5 font-semibold">TxDMV forms directory</a></div></div></section>
+    <section className="mx-auto max-w-4xl px-4 py-14"><h2 className="text-3xl font-bold">Frequently asked questions</h2><div className="mt-7 space-y-4">{faq.map((item) => <details key={item.question} className="rounded-xl border bg-card p-5"><summary className="cursor-pointer font-semibold">{item.question}</summary><p className="mt-3 leading-relaxed text-muted-foreground">{item.answer}</p></details>)}</div></section>
+    <section className="border-t bg-muted/20"><div className="mx-auto max-w-4xl px-4 py-10 text-sm text-muted-foreground">Plate designs, fees, eligibility, forms, parking privileges, and processing methods can change. Confirm current requirements with TxDMV and your county tax assessor-collector.</div></section>
+  </main>;
+}
+
+export const Route = createFileRoute("/vehicles/plates")({
+  head: () => {
+    const seo = buildSeo({ title: "Texas License Plates: Specialty, Personalized, Replacement & Disabled", description: "Texas license plate guide covering specialty and personalized plates, replacements, transfers, disabled parking plates, military plates, forms, and county offices.", path: "/vehicles/plates", type: "article", keywords: "Texas license plates, Texas specialty plates, personalized plates Texas, replacement license plates Texas, disabled veteran plates Texas" });
+    return { meta: seo.meta, links: seo.links, scripts: [
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: "Texas License Plates Guide", mainEntityOfPage: `${SITE_URL}/vehicles/plates`, publisher: { "@type": "Organization", name: "Keep TX Red" } }) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) }) },
+      { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` }, { "@type": "ListItem", position: 2, name: "Texas DMV & Driver Services", item: `${SITE_URL}/dmv` }, { "@type": "ListItem", position: 3, name: "Texas License Plates", item: `${SITE_URL}/vehicles/plates` }] }) },
+    ] };
+  },
+  component: PlatesPage,
+});
