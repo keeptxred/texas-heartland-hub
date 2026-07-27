@@ -10,6 +10,7 @@ export * from "./poll";
 export * from "./pollClassifications";
 export * from "./pollProjections";
 export * from "./pollRepository";
+export * from "./pollService";
 export * from "./presentation";
 export * from "./race";
 export * from "./raceClassifications";
