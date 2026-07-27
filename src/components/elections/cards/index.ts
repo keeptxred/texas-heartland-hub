@@ -1,2 +1,1 @@
-// Election card component exports.
-export {};
+export * from "./FeaturedRaceCard";
