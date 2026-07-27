@@ -4,6 +4,7 @@ import {
   ElectionCountdown,
   ElectionLayout,
   ElectionNavigation,
+  RelatedResources,
 } from "@/components/elections";
 import { ELECTION_RACES } from "@/data/articles";
 import { getArticlesByCategory } from "@/lib/articles-by-category";
@@ -36,6 +37,33 @@ const QUICK_LINKS = [
     title: "Prepare to vote",
     description: "Find registration, early-voting, ballot, identification, and election-day guidance.",
     href: ELECTION_ROUTES.voting,
+  },
+] as const;
+
+const VERIFIED_RESOURCES = [
+  {
+    title: "How to register to vote in Texas",
+    href: "/register-to-vote",
+    description: "Review eligibility, registration steps, deadlines, and official Texas voter resources.",
+    eyebrow: "Voting guide",
+  },
+  {
+    title: "Texas election laws explained",
+    href: "/laws",
+    description: "Understand the Texas laws and rules that govern voting and elections.",
+    eyebrow: "Texas laws",
+  },
+  {
+    title: "Contact your Texas legislators",
+    href: "/contact-legislators",
+    description: "Find the officials who represent you and learn how to contact their offices.",
+    eyebrow: "Civic action",
+  },
+  {
+    title: "Texas politics coverage",
+    href: "/texas-politics",
+    description: "Read the latest reporting and analysis on Texas government and political races.",
+    eyebrow: "Latest coverage",
   },
 ] as const;
 
@@ -86,10 +114,10 @@ export function ElectionHomePage() {
                   Explore races
                 </a>
                 <a
-                  href={ELECTION_ROUTES.voting}
+                  href="/register-to-vote"
                   className="rounded-md border border-white/20 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/10"
                 >
-                  Voting information
+                  Register to vote
                 </a>
               </div>
             </div>
@@ -99,9 +127,19 @@ export function ElectionHomePage() {
               electionName={nextElection?.name}
               electionDate={electionDate}
               electionType={electionType}
+              links={[
+                { label: "Register to vote", href: "/register-to-vote" },
+                { label: "Texas election laws", href: "/laws" },
+              ]}
             />
           </div>
         </section>
+
+        <RelatedResources
+          resources={VERIFIED_RESOURCES}
+          title="Popular Texas election resources"
+          description="Start with these existing KeepTXRed guides and hubs while the full Election Central platform is being built."
+        />
 
         <section aria-labelledby="election-central-start">
           <div className="flex flex-wrap items-end justify-between gap-4">
