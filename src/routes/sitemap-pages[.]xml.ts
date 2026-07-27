@@ -36,6 +36,7 @@ const STATIC_PATHS: string[] = [
   "/texas-business/relocations",
   "/texas-business/real-estate",
   "/texas-business/policy",
+  "/texas-franchise-tax-guide",
   "/elections",
   "/tax-calculator",
   "/texas-property-tax-protest-guide",
