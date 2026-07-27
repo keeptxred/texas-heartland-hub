@@ -147,6 +147,12 @@ function RootShell({ children }: { children: ReactNode }) {
       <body>
         {children}
         <Scripts />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "var infolinks_pid = 3446723; var infolinks_wsid = 0;",
+          }}
+        />
+        <script src="https://resources.infolinks.com/js/infolinks_main.js" />
       </body>
     </html>
   );
