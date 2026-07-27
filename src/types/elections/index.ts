@@ -4,6 +4,7 @@ export * from "./candidateProjections";
 export * from "./candidateRepository";
 export * from "./candidateService";
 export * from "./domain";
+export * from "./forecastClassifications";
 export * from "./identifiers";
 export * from "./metadata";
 export * from "./poll";
