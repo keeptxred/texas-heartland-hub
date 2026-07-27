@@ -51,8 +51,6 @@ export const BUSINESS_SECTIONS = [
 
 export function TexasBusinessView({ topic }: { topic: string }) {
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  // Prefer the curated per-topic slug lists (hand-picked evergreen coverage);
-  // fall back to the shared keyword filter so newly-tagged articles show up.
   const curated = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_BUSINESS_SLUGS;
   const curatedArticles = curated
     .map((s) => ARTICLES.find((a) => a.slug === s))
@@ -88,6 +86,7 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           <div className="shrink-0 lg:max-w-xs">
             <h2 className="font-sans text-lg font-semibold tracking-tight text-foreground">Related Tools</h2>
             <ul className="mt-3 space-y-2 text-sm">
+              <li><Link to="/texas-franchise-tax-guide" className="text-primary hover:underline">Texas franchise tax guide →</Link></li>
               <li><Link to="/tax-calculator" className="text-primary hover:underline">Property tax calculator by county →</Link></li>
               <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economy section →</Link></li>
               <li><Link to="/legislative-updates" className="text-primary hover:underline">Legislative updates →</Link></li>
@@ -96,6 +95,20 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           </div>
         </div>
       </header>
+
+      <section className="mb-10 border-2 border-foreground bg-secondary/10 p-6 md:grid md:grid-cols-[1fr_auto] md:items-center md:gap-8">
+        <div>
+          <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Evergreen Business Guide</span>
+          <h2 className="mt-2 font-display text-3xl tracking-tight">Texas Franchise Tax Explained</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            Learn which LLCs and corporations file, how taxable margin works, why no-tax-due can still require a report,
+            and how missed filings can affect a company&apos;s right to do business in Texas.
+          </p>
+        </div>
+        <Link to="/texas-franchise-tax-guide" className="mt-5 inline-flex border-2 border-foreground bg-primary px-5 py-3 text-sm font-bold text-primary-foreground hover:opacity-90 md:mt-0">
+          Read the guide →
+        </Link>
+      </section>
 
       <section className="mb-10">
         <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground mb-4">What we cover</h2>
