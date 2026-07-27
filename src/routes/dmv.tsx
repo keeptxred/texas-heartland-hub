@@ -42,6 +42,8 @@ const serviceGroups = [
     description: "TxDMV sets statewide vehicle rules, DPS oversees inspections, the Comptroller administers vehicle tax, and county tax offices complete most title and registration transactions.",
     resources: [
       ["Vehicle Registration for New Texas Residents", "/vehicles/new-residents"],
+      ["Disabled Parking Placards and License Plates", "/vehicles/disabled-parking"],
+      ["Farm, Antique, Classic and Specialty Registration", "/vehicles/farm-antique-specialty"],
       ["Texas Vehicle Registration Fees and Taxes", "/vehicles/registration-fees-taxes"],
       ["Buying or Selling a Vehicle in Texas", "/vehicles/buying-selling"],
       ["Texas Vehicle Inspections and Emissions", "/vehicles/inspections-emissions"],
@@ -78,7 +80,7 @@ const serviceGroups = [
 ] as const;
 
 const availableRoutes = new Set([
-  "/dmv/texas-dmv-vs-dps", "/dmv/driver-license", "/dmv/identification-card", "/dmv/cdl", "/dmv/driver-license-documents", "/dmv/real-id", "/dmv/driver-license-renewal", "/dmv/replace-lost-license", "/dmv/change-address", "/dmv/dps-appointments", "/dmv/license-status", "/vehicles/new-residents", "/vehicles/registration-fees-taxes", "/vehicles/buying-selling", "/vehicles/inspections-emissions", "/vehicles/registration", "/vehicles/renewal", "/vehicles/title-transfer", "/vehicles/bonded-titles", "/vehicles/salvage-rebuilt-titles", "/vehicles/plates", "/vehicles/temporary-tags", "/find-my-dmv", "/moving-to-texas", "/moving-to-texas-checklist", "/texas-moving-cost-calculator",
+  "/dmv/texas-dmv-vs-dps", "/dmv/driver-license", "/dmv/identification-card", "/dmv/cdl", "/dmv/driver-license-documents", "/dmv/real-id", "/dmv/driver-license-renewal", "/dmv/replace-lost-license", "/dmv/change-address", "/dmv/dps-appointments", "/dmv/license-status", "/vehicles/new-residents", "/vehicles/disabled-parking", "/vehicles/farm-antique-specialty", "/vehicles/registration-fees-taxes", "/vehicles/buying-selling", "/vehicles/inspections-emissions", "/vehicles/registration", "/vehicles/renewal", "/vehicles/title-transfer", "/vehicles/bonded-titles", "/vehicles/salvage-rebuilt-titles", "/vehicles/plates", "/vehicles/temporary-tags", "/find-my-dmv", "/moving-to-texas", "/moving-to-texas-checklist", "/texas-moving-cost-calculator",
 ]);
 
 const faq = [
