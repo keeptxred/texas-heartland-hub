@@ -1,0 +1,2 @@
+// Election type exports.
+export {};
