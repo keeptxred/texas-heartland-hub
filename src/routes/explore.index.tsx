@@ -49,7 +49,7 @@ function ExploreLanding() {
     {
       title: "Texas parks",
       items: data.parks.items,
-      search: { types: ["park"], page: 1, pageSize: 24, sort: "relevance" as const },
+      href: "/explore/texas-state-parks-guide" as const,
     },
     {
       title: "Camping destinations",
