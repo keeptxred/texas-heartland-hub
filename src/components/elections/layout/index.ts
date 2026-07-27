@@ -1,2 +1,1 @@
-// Election layout component exports.
-export {};
+export * from "./ElectionLayout";
