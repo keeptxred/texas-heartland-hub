@@ -21,7 +21,7 @@ export interface ElectionCycleMilestones {
   certificationDeadline: IsoDateString | null;
 }
 
-export interface ElectionCycle extends ElectionDataMetadata {
+export interface ElectionCycleRecord extends ElectionDataMetadata {
   id: ElectionCycleId;
   slug: ElectionCycleSlug;
   year: number;
@@ -36,12 +36,12 @@ export interface ElectionCycle extends ElectionDataMetadata {
 }
 
 export type ElectionCycleCreateInput = Omit<
-  ElectionCycle,
+  ElectionCycleRecord,
   "id" | "createdAt" | "updatedAt"
 >;
 
 export type ElectionCycleUpdateInput = Partial<
-  Omit<ElectionCycle, "id" | "createdAt">
+  Omit<ElectionCycleRecord, "id" | "createdAt">
 > & {
   updatedAt: IsoDateTimeString;
 };
