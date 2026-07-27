@@ -1,2 +1,1 @@
-// Election countdown component exports.
-export {};
+export * from "./ElectionCountdown";
