@@ -1,15 +1,11 @@
+import type { ElectionResourceLink } from "@/types/elections";
+
 export interface PollCardResult {
   candidateId: string;
   candidateName: string;
   partyLabel?: string;
   percentage: number;
   candidateHref?: string;
-}
-
-export interface PollCardResourceLink {
-  label: string;
-  href: string;
-  relevance: string;
 }
 
 export interface PollCardProps {
@@ -26,7 +22,7 @@ export interface PollCardProps {
   sponsor?: string | null;
   results: readonly PollCardResult[];
   sourceUrl?: string;
-  relatedLinks?: readonly PollCardResourceLink[];
+  relatedLinks?: readonly ElectionResourceLink[];
   className?: string;
 }
 
