@@ -1,5 +1,6 @@
 export * from "./queryDefaults";
 export * from "./queryKeys";
+export * from "./useActiveElectionResults";
 export * from "./useCandidatesByRace";
 export * from "./useElectionCandidate";
 export * from "./useElectionCandidates";
@@ -7,8 +8,10 @@ export * from "./useElectionForecasts";
 export * from "./useElectionPolls";
 export * from "./useElectionRace";
 export * from "./useElectionRaces";
+export * from "./useElectionResults";
 export * from "./useFeaturedElectionRaces";
 export * from "./useFeaturedForecasts";
 export * from "./useForecastByRace";
 export * from "./useLatestElectionPolls";
 export * from "./usePollsByRace";
+export * from "./useResultByRace";
