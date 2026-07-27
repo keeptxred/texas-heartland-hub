@@ -1,8 +1,14 @@
+export interface ElectionCountdownLink {
+  label: string;
+  href: string;
+}
+
 export interface ElectionCountdownProps {
   days: number | null;
   electionName?: string;
   electionDate?: string;
   electionType?: string;
+  links?: readonly ElectionCountdownLink[];
   className?: string;
 }
 
@@ -11,6 +17,7 @@ export function ElectionCountdown({
   electionName = "Next Texas election",
   electionDate = "To be announced",
   electionType = "Pending",
+  links = [],
   className = "",
 }: ElectionCountdownProps) {
   const dayValue = days === null ? "—" : String(Math.max(0, days));
@@ -24,6 +31,19 @@ export function ElectionCountdown({
       <CountdownStat value={dayValue} label={dayLabel} emphasis />
       <CountdownStat value={electionDate} label="Election date" />
       <CountdownStat value={electionType} label="Election type" />
+      {links.length > 0 && (
+        <nav aria-label="Election countdown resources" className="sm:col-span-3 lg:col-span-1">
+          <ul className="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+            {links.map((link) => (
+              <li key={`${link.href}-${link.label}`}>
+                <a href={link.href} className="font-semibold text-red-300 underline-offset-4 hover:text-white hover:underline">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )}
       <p className="sr-only">
         {days === null
           ? `The date for ${electionName} has not been announced.`
