@@ -1,11 +1,24 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { GeographyLanding } from "@/components/explore/GeographyLanding";
 import { geographyPath, geographySummary } from "@/lib/explore/geography-pages";
 import { buildSeo } from "@/lib/seo";
 import { getExploreGeography } from "@/services/explore/public.functions";
 
+const LEGACY_REGION_ALIASES: Record<string, string> = {
+  "piney-woods": "east-texas",
+};
+
 export const Route = createFileRoute("/explore/region/$region")({
   loader: async ({ params }) => {
+    const canonicalRegion = LEGACY_REGION_ALIASES[params.region];
+    if (canonicalRegion) {
+      throw redirect({
+        to: "/explore/region/$region",
+        params: { region: canonicalRegion },
+        statusCode: 301,
+      });
+    }
+
     const data = await getExploreGeography({ data: { kind: "region", slug: params.region } });
     if (!data) throw notFound();
     return data;
