@@ -70,3 +70,8 @@ export * from "./resultClassifications";
 export * from "./resultProjections";
 export * from "./resultRepository";
 export * from "./resultService";
+export * from "./votingLocation";
+export * from "./votingLocationClassifications";
+export * from "./votingLocationProjections";
+export * from "./votingLocationRepository";
+export * from "./votingLocationService";
