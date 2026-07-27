@@ -5,3 +5,4 @@ export * from "./presentation";
 export * from "./race";
 export * from "./raceClassifications";
 export * from "./raceProjections";
+export * from "./raceRepository";
