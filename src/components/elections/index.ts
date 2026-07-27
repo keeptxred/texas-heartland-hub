@@ -1,2 +1,1 @@
-// Shared Election Central component exports.
-export {};
+export * from "./layout";
