@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { AgedFeedSection } from "@/components/aged-feed-section";
-import { ElectionLayout, ElectionNavigation } from "@/components/elections";
+import {
+  ElectionCountdown,
+  ElectionLayout,
+  ElectionNavigation,
+} from "@/components/elections";
 import { ELECTION_RACES } from "@/data/articles";
 import { getArticlesByCategory } from "@/lib/articles-by-category";
 import { assignUniqueImages } from "@/lib/dedupe-images";
@@ -44,9 +48,7 @@ export function ElectionHomePage() {
     () => "elections",
   );
   const nextElection = getNextElection();
-
-  const countdownValue = nextElection ? String(daysUntil(nextElection)) : "—";
-  const countdownLabel = nextElection ? `Days to ${nextElection.name}` : "Next Texas election";
+  const electionDays = nextElection ? daysUntil(nextElection) : null;
   const electionDate = nextElection ? formatElectionDate(nextElection) : "To be announced";
   const electionType = nextElection ? electionTypeLabel(nextElection.type) : "Pending";
 
@@ -92,20 +94,19 @@ export function ElectionHomePage() {
               </div>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-              <ElectionStat value={countdownValue} label={countdownLabel} />
-              <ElectionStat value={electionDate} label="Election date" compact />
-              <ElectionStat value={electionType} label="Election type" compact />
-            </div>
+            <ElectionCountdown
+              days={electionDays}
+              electionName={nextElection?.name}
+              electionDate={electionDate}
+              electionType={electionType}
+            />
           </div>
         </section>
 
         <section aria-labelledby="election-central-start">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
-                Start here
-              </p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Start here</p>
               <h2 id="election-central-start" className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
                 Explore Election Central
               </h2>
@@ -129,9 +130,7 @@ export function ElectionHomePage() {
         <section aria-labelledby="featured-races">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
-                Race watch
-              </p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Race watch</p>
               <h2 id="featured-races" className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
                 Featured Texas races
               </h2>
@@ -173,9 +172,7 @@ export function ElectionHomePage() {
         <section aria-labelledby="election-news">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
-                Latest coverage
-              </p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Latest coverage</p>
               <h2 id="election-news" className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
                 Texas election news
               </h2>
@@ -226,27 +223,6 @@ export function ElectionHomePage() {
         />
       </div>
     </ElectionLayout>
-  );
-}
-
-function ElectionStat({
-  value,
-  label,
-  compact = false,
-}: {
-  value: string;
-  label: string;
-  compact?: boolean;
-}) {
-  return (
-    <div className="rounded-xl border border-white/15 bg-white/5 p-5">
-      <div className={compact ? "text-xl font-bold text-white" : "text-4xl font-bold text-red-400"}>
-        {value}
-      </div>
-      <div className="mt-2 text-xs font-semibold uppercase tracking-[0.16em] text-slate-300">
-        {label}
-      </div>
-    </div>
   );
 }
 
