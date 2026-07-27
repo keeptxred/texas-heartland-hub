@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ElectionAdminDashboard } from "@/components/admin/elections";
+import { ElectionRepositoryProvider } from "@/data/elections";
 
 export const Route = createFileRoute("/admin/elections/")({
   head: () => ({
@@ -32,22 +33,24 @@ function ElectionAdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50">
-      <header className="border-b-4 border-primary bg-secondary text-secondary-foreground">
-        <div className="mx-auto max-w-7xl px-4 py-8">
-          <Link to="/admin" className="text-xs font-bold uppercase tracking-widest text-accent">
-            ← Editorial Dashboard
-          </Link>
-          <h1 className="mt-2 font-display text-4xl">Election Central Administration</h1>
-          <p className="mt-2 max-w-3xl text-sm text-white/90">
-            Manage launch readiness, election data quality, publishing safeguards, and future election-night operations.
-          </p>
-        </div>
-      </header>
+    <ElectionRepositoryProvider>
+      <main className="min-h-screen bg-slate-50">
+        <header className="border-b-4 border-primary bg-secondary text-secondary-foreground">
+          <div className="mx-auto max-w-7xl px-4 py-8">
+            <Link to="/admin" className="text-xs font-bold uppercase tracking-widest text-accent">
+              ← Editorial Dashboard
+            </Link>
+            <h1 className="mt-2 font-display text-4xl">Election Central Administration</h1>
+            <p className="mt-2 max-w-3xl text-sm text-white/90">
+              Manage launch readiness, election data quality, publishing safeguards, and future election-night operations.
+            </p>
+          </div>
+        </header>
 
-      <div className="mx-auto max-w-7xl px-4 py-8">
-        <ElectionAdminDashboard />
-      </div>
-    </main>
+        <div className="mx-auto max-w-7xl px-4 py-8">
+          <ElectionAdminDashboard />
+        </div>
+      </main>
+    </ElectionRepositoryProvider>
   );
 }
