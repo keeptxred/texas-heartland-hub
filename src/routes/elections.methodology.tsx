@@ -4,7 +4,14 @@ import { ELECTION_ROUTES } from "@/lib/elections";
 
 export const Route = createFileRoute("/elections/methodology")({
   head: () => ({
-    meta: [{ title: "Election Central Methodology | KeepTXRed" }],
+    meta: [
+      { title: "Election Central Methodology | KeepTXRed" },
+      {
+        name: "description",
+        content:
+          "Learn how KeepTXRed sources, verifies, updates, and labels public Texas election information.",
+      },
+    ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/elections/methodology" }],
   }),
   component: Page,

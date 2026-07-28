@@ -4,7 +4,14 @@ import { ELECTION_ROUTES } from "@/lib/elections";
 
 export const Route = createFileRoute("/elections/voting")({
   head: () => ({
-    meta: [{ title: "Texas Voting Information | KeepTXRed Election Central" }],
+    meta: [
+      { title: "Texas Voting Information | KeepTXRed Election Central" },
+      {
+        name: "description",
+        content:
+          "Find public Texas voter registration and voting-location resources from KeepTXRed Election Central.",
+      },
+    ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/elections/voting" }],
   }),
   component: Page,
