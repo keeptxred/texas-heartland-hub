@@ -40,7 +40,7 @@ export const DEFAULT_ELECTION_ADMIN_MENU_ITEMS: readonly ElectionAdminMenuItem[]
     label: "Forecast",
     href: "/admin/elections/forecast",
     description: "Monitor model inputs, confidence, projected margins, and update history.",
-    status: "planned",
+    status: "ready",
   },
   {
     label: "Results",

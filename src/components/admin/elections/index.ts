@@ -3,3 +3,4 @@ export * from "./ElectionAdminMenu";
 export * from "./ElectionAdminRaceList";
 export * from "./ElectionAdminCandidateList";
 export * from "./ElectionAdminPollList";
+export * from "./ElectionAdminForecastList";
