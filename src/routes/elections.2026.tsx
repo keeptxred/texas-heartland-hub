@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionHomePage } from "@/pages/elections";
 
-export const Route = createFileRoute("/elections/2026")({
+export const Route = createFileRoute("/elections/2026" as never)({
   head: () => ({
     meta: [
       { title: "2026 Texas Election Central | Races, Candidates, Polls & Voting" },
