@@ -38,6 +38,7 @@ export function ElectionAdminResultList() {
             />
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
+                <caption className="sr-only">Election result review records</caption>
                 <thead>
                   <tr>
                     <th className="px-3 py-2">Race</th>

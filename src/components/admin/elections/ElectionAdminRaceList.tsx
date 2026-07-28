@@ -39,6 +39,7 @@ export function ElectionAdminRaceList() {
             />
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
+                <caption className="sr-only">Election race status records</caption>
                 <thead>
                   <tr className="text-slate-500">
                     <th className="px-3 py-2">Race</th>

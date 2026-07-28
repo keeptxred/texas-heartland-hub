@@ -32,6 +32,7 @@ export interface ResultListFiltersProps {
 export function ResultListFilters(props: ResultListFiltersProps) {
   return (
     <div
+      role="group"
       aria-label="Filter election results"
       className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2 xl:grid-cols-4"
     >

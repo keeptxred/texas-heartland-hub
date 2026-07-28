@@ -37,6 +37,7 @@ export function ForecastListFilters({
 }: ForecastListFiltersProps) {
   return (
     <div
+      role="group"
       aria-label="Filter election forecasts"
       className="grid gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-2 xl:grid-cols-4"
     >

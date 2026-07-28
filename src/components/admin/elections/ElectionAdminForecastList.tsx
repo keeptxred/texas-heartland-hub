@@ -36,6 +36,7 @@ export function ElectionAdminForecastList() {
             />
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
+                <caption className="sr-only">Election forecast review records</caption>
                 <thead>
                   <tr>
                     <th className="px-3 py-2">Source</th>

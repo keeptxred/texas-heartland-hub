@@ -80,6 +80,7 @@ export function ForecastDetailView({ forecast }: ForecastDetailViewProps) {
                 </div>
                 <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
                   <div
+                    aria-hidden="true"
                     className="h-full rounded-full bg-red-700"
                     style={{ width: `${probability}%` }}
                   />
