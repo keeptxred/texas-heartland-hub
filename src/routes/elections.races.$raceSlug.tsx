@@ -8,6 +8,7 @@ import {
   RaceDetailHeader,
   RaceForecastSection,
   RacePollingSection,
+  RaceResultsSection,
 } from "@/components/elections";
 import {
   useCandidatesByRace,
@@ -138,6 +139,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
         hasStaleData={polls.hasStaleData}
       />
       <RaceForecastSection forecast={forecastDetail.data ?? null} />
+      <RaceResultsSection result={result.data ?? null} isPreElection={result.isPreElection} />
     </div>
   );
 }
