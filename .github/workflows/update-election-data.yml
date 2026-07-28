@@ -30,6 +30,7 @@ on:
       - "scripts/elections/routes-qa.mjs"
       - "scripts/elections/sitemap-qa.mjs"
       - "scripts/elections/launch-readiness.mjs"
+      - "scripts/elections/apply-typecheck-fixes.mjs"
       - "scripts/elections/import/**"
       - "src/components/elections/**"
       - "src/lib/elections/**"
@@ -66,6 +67,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Apply strict Election Central source fixes
+        run: node scripts/elections/apply-typecheck-fixes.mjs
 
       - name: Install election-source browser
         run: pnpm exec playwright install --with-deps chromium
@@ -240,7 +244,12 @@ jobs:
             exit 0
           fi
           if [[ "$JOB_STATUS" != "success" ]]; then
-            git restore src/data/elections/2026 || true
+            git restore \
+              src/data/elections/2026 \
+              src/components/elections/navigation/ElectionNavigation.tsx \
+              src/lib/elections/repositories/static.ts \
+              src/routes/elections.tsx \
+              src/routes/elections.2026.tsx || true
           fi
           node --input-type=module <<'NODE'
           import fs from "node:fs";
@@ -273,14 +282,19 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [[ "$JOB_STATUS" == "success" ]]; then
-            git add src/data/elections/2026
+            git add \
+              src/data/elections/2026 \
+              src/components/elections/navigation/ElectionNavigation.tsx \
+              src/lib/elections/repositories/static.ts \
+              src/routes/elections.tsx \
+              src/routes/elections.2026.tsx
             message="Refresh verified 2026 election data"
           else
             git add src/data/elections/2026/workflow-status.json
             message="Record failed election data refresh"
           fi
           if git diff --cached --quiet; then
-            echo "No refresh status or election data changes to commit."
+            echo "No refresh status, source, or election data changes to commit."
             exit 0
           fi
           git commit -m "$message"
