@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: election-forecast-daily-update
@@ -15,29 +15,42 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    env:
-      FORECAST_UPDATE_URL: ${{ secrets.ELECTION_FORECAST_UPDATE_URL }}
-      FORECAST_UPDATE_TOKEN: ${{ secrets.ELECTION_FORECAST_UPDATE_TOKEN }}
+    timeout-minutes: 20
     steps:
-      - name: Require the configured forecast update service
-        shell: bash
-        run: |
-          if [[ -z "$FORECAST_UPDATE_URL" || -z "$FORECAST_UPDATE_TOKEN" ]]; then
-            echo "::error::Configure ELECTION_FORECAST_UPDATE_URL and ELECTION_FORECAST_UPDATE_TOKEN."
-            exit 1
-          fi
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
 
-      - name: Request one source-backed forecast update
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Recalculate forecasts
+        run: pnpm elections:forecast
+
+      - name: Validate election data
+        run: pnpm elections:validate
+
+      - name: Run election QA
+        run: pnpm elections:qa
+
+      - name: Commit changed forecast snapshots
         shell: bash
         run: |
-          curl \
-            --fail-with-body \
-            --silent \
-            --show-error \
-            --max-time 480 \
-            --request POST \
-            --header "Authorization: Bearer $FORECAST_UPDATE_TOKEN" \
-            --header "Content-Type: application/json" \
-            --data '{"trigger":"github-actions","scope":"published-texas-election-forecasts"}' \
-            "$FORECAST_UPDATE_URL"
+          if git diff --quiet -- src/data/elections/2026/forecasts.json; then
+            echo "No forecast changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/elections/2026/forecasts.json
+          git commit -m "Update daily election forecast snapshots"
+          git push origin HEAD:main
