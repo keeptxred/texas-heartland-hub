@@ -112,19 +112,10 @@ if (checkLinks) {
   for (const record of [...publicRaces, ...publicCandidates, ...publicPolls, ...publicForecasts, ...publicResults]) {
     collectUrls(record, urls);
   }
-  for (const url of urls) {
-    const response = await fetchWithTimeout(url, 10_000);
-    if (!response) {
-      errors.push(`External source timed out or could not be reached: ${url}.`);
-      continue;
-    }
-    if ([401, 403, 429].includes(response.status)) {
-      warnings.push(`External source is reachable but access-controlled or rate-limited: ${url} (${response.status}).`);
-    } else if ([404, 410].includes(response.status) || response.status >= 500) {
-      errors.push(`Broken external source: ${url} (${response.status}).`);
-    } else if (response.status >= 400) {
-      warnings.push(`External source returned ${response.status} and needs editorial review: ${url}.`);
-    }
+  const outcomes = await mapLimit([...urls], 10, checkExternalUrl);
+  for (const outcome of outcomes) {
+    if (outcome.kind === "broken") errors.push(outcome.message);
+    else if (outcome.kind === "warning") warnings.push(outcome.message);
   }
 }
 
@@ -175,18 +166,59 @@ function collectUrls(value, urls) {
   }
 }
 
+async function checkExternalUrl(url) {
+  const response = await fetchWithRetry(url, 2);
+  if (!response) {
+    return {
+      kind: "warning",
+      message: `External source could not be reached during this QA run and should be rechecked: ${url}.`,
+    };
+  }
+  if ([404, 410].includes(response.status)) {
+    return { kind: "broken", message: `Broken external source: ${url} (${response.status}).` };
+  }
+  if ([401, 403, 429].includes(response.status)) {
+    return {
+      kind: "warning",
+      message: `External source is reachable but access-controlled or rate-limited: ${url} (${response.status}).`,
+    };
+  }
+  if (response.status >= 500) {
+    return {
+      kind: "warning",
+      message: `External source returned a temporary server error: ${url} (${response.status}).`,
+    };
+  }
+  if (response.status >= 400) {
+    return {
+      kind: "warning",
+      message: `External source returned ${response.status} and needs editorial review: ${url}.`,
+    };
+  }
+  return { kind: "ok", message: "" };
+}
+
+async function fetchWithRetry(url, attempts) {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const response = await fetchWithTimeout(url, 8_000);
+    if (response || attempt === attempts) return response;
+    await new Promise((resolve) => setTimeout(resolve, 250 * attempt));
+  }
+  return null;
+}
+
 async function fetchWithTimeout(url, timeoutMs) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const response = await fetch(url, {
+    let response = await fetch(url, {
       method: "HEAD",
       redirect: "follow",
       signal: controller.signal,
       headers: { "user-agent": "KeepTXRed Election Central QA" },
     });
-    if (response.status === 405) {
-      return fetch(url, {
+    if ([405, 501].includes(response.status)) {
+      response = await fetch(url, {
         method: "GET",
         redirect: "follow",
         signal: controller.signal,
@@ -199,4 +231,18 @@ async function fetchWithTimeout(url, timeoutMs) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function mapLimit(items, limit, task) {
+  const output = new Array(items.length);
+  let index = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (index < items.length) {
+      const current = index;
+      index += 1;
+      output[current] = await task(items[current]);
+    }
+  });
+  await Promise.all(workers);
+  return output;
 }
