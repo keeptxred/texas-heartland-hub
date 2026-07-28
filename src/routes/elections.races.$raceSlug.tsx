@@ -6,6 +6,7 @@ import {
   ElectionNavigation,
   RaceCandidateSection,
   RaceDetailHeader,
+  RaceDetailSeo,
   RaceForecastSection,
   RaceInternalLinks,
   RacePollingSection,
@@ -137,6 +138,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
 
   return (
     <div className="space-y-10">
+      <RaceDetailSeo race={race.data} />
       <RaceDetailHeader race={race.data} />
       <RaceCandidateSection race={race.data} candidates={candidates.data ?? []} />
       <RacePollingSection
