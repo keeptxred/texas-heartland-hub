@@ -29,6 +29,7 @@ const records = Object.fromEntries(
 );
 const sources = new Map();
 const sourceIdByUrl = new Map();
+const primarySourceIds = new Set();
 
 for (const existingSource of existing) {
   const sourceUrl = existingSource.sourceUrl ?? existingSource.url;
@@ -63,6 +64,7 @@ for (const [collection, values] of Object.entries(records)) {
         notes:
           record.source.attributionText ??
           `${collection} source for ${record.id ?? record.slug ?? "an election record"}.`,
+        primary: true,
       });
     }
 
@@ -137,28 +139,39 @@ function addSource(input) {
   const requestedId = input.id || sourceId(input.name, sourceUrl);
   const id = sourceIdByUrl.get(sourceUrl) ?? requestedId;
   const previous = sources.get(id);
-  const sourceType = ALLOWED_TYPES.has(input.sourceType) ? input.sourceType : inferType(sourceUrl);
+  const incomingType = ALLOWED_TYPES.has(input.sourceType) ? input.sourceType : inferType(sourceUrl);
+  const preferIncoming = Boolean(input.primary) || !primarySourceIds.has(id);
+  const sourceType = preferIncoming ? incomingType : previous?.sourceType ?? incomingType;
   const source = {
     ...(previous ?? {}),
     id,
-    name: input.name || previous?.name || hostname(sourceUrl),
+    name: preferIncoming
+      ? input.name || previous?.name || hostname(sourceUrl)
+      : previous?.name || input.name || hostname(sourceUrl),
     sourceType,
     sourceUrl,
     type: sourceType,
     url: sourceUrl,
-    retrievedAt: input.retrievedAt || previous?.retrievedAt || new Date().toISOString(),
-    lastVerifiedAt:
-      input.lastVerifiedAt || previous?.lastVerifiedAt || input.retrievedAt || new Date().toISOString(),
-    notes: input.notes || previous?.notes || null,
+    retrievedAt: preferIncoming
+      ? input.retrievedAt || previous?.retrievedAt || new Date().toISOString()
+      : previous?.retrievedAt || input.retrievedAt || new Date().toISOString(),
+    lastVerifiedAt: preferIncoming
+      ? input.lastVerifiedAt || previous?.lastVerifiedAt || input.retrievedAt || new Date().toISOString()
+      : previous?.lastVerifiedAt || input.lastVerifiedAt || input.retrievedAt || new Date().toISOString(),
+    notes: preferIncoming
+      ? input.notes || previous?.notes || null
+      : previous?.notes || input.notes || null,
   };
   const conflicting = sources.get(id);
   if (conflicting && conflicting.sourceUrl !== sourceUrl) {
     const disambiguated = `${requestedId}-${shortHash(sourceUrl)}`;
     sources.set(disambiguated, { ...source, id: disambiguated });
     sourceIdByUrl.set(sourceUrl, disambiguated);
+    if (input.primary) primarySourceIds.add(disambiguated);
   } else {
     sources.set(id, source);
     sourceIdByUrl.set(sourceUrl, id);
+    if (input.primary) primarySourceIds.add(id);
   }
 }
 
@@ -190,8 +203,10 @@ function hostname(url) {
 
 function inferType(url) {
   const host = hostname(url);
+  if (/sos\.texas\.gov|sos\.state\.tx\.us|texas-election\.com|txelections\./.test(host)) {
+    return "official";
+  }
   if (/\.gov$|\.gov\./.test(host)) return "government";
-  if (/sos\.texas\.gov|texas-election\.com|txelections\./.test(host)) return "official";
   if (/utexas\.edu|\.edu$/.test(host)) return "academic";
   if (/fec\.gov|ethics\.state\.tx\.us/.test(host)) return "government";
   return "other";
