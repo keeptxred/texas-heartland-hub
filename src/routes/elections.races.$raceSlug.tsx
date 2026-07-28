@@ -4,6 +4,7 @@ import {
   ElectionLayout,
   ElectionLoading,
   ElectionNavigation,
+  RaceCandidateSection,
   RaceDetailHeader,
 } from "@/components/elections";
 import {
@@ -115,5 +116,10 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     );
   }
 
-  return <RaceDetailHeader race={race.data} />;
+  return (
+    <div className="space-y-10">
+      <RaceDetailHeader race={race.data} />
+      <RaceCandidateSection race={race.data} candidates={candidates.data ?? []} />
+    </div>
+  );
 }
