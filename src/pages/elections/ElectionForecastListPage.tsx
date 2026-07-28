@@ -6,7 +6,10 @@ import {
   ElectionLoading,
   ElectionNavigation,
 } from "@/components/elections";
-import { ELECTION_ROUTES } from "@/lib/elections";
+import { buildElectionCollectionSchema, ELECTION_ROUTES } from "@/lib/elections";
+
+const FORECAST_PAGE_DESCRIPTION =
+  "Review published Texas election forecasts with source, rating, probability, and methodology disclosures.";
 
 export interface ElectionForecastListPageProps {
   children?: ReactNode;
@@ -24,8 +27,14 @@ export function ElectionForecastListPage({
   return (
     <ElectionLayout
       title="Texas Election Forecasts"
-      description="Review published Texas election forecasts with source, rating, probability, and methodology disclosures."
+      description={FORECAST_PAGE_DESCRIPTION}
       canonicalUrl="https://keeptxred.com/elections/forecast"
+      schema={buildElectionCollectionSchema({
+        name: "Texas Election Forecasts",
+        description: FORECAST_PAGE_DESCRIPTION,
+        pathname: ELECTION_ROUTES.forecast,
+        itemType: "Dataset",
+      })}
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.forecast} />}
       fullWidth
     >

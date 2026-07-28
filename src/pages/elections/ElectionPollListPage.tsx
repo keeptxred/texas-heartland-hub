@@ -6,7 +6,10 @@ import {
   ElectionLoading,
   ElectionNavigation,
 } from "@/components/elections";
-import { ELECTION_ROUTES } from "@/lib/elections";
+import { buildElectionCollectionSchema, ELECTION_ROUTES } from "@/lib/elections";
+
+const POLL_PAGE_DESCRIPTION =
+  "Review published Texas election polls with field dates, samples, sponsors, and methodology disclosures.";
 
 export interface ElectionPollListPageProps {
   children?: ReactNode;
@@ -24,8 +27,14 @@ export function ElectionPollListPage({
   return (
     <ElectionLayout
       title="Texas Election Polls"
-      description="Review published Texas election polls with field dates, samples, sponsors, and methodology disclosures."
+      description={POLL_PAGE_DESCRIPTION}
       canonicalUrl="https://keeptxred.com/elections/polls"
+      schema={buildElectionCollectionSchema({
+        name: "Texas Election Polls",
+        description: POLL_PAGE_DESCRIPTION,
+        pathname: ELECTION_ROUTES.polls,
+        itemType: "Dataset",
+      })}
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.polls} />}
       fullWidth
     >

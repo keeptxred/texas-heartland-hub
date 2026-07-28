@@ -66,6 +66,14 @@ export interface ElectionWebPageSchemaInput {
   siteUrl?: string;
 }
 
+export interface ElectionCollectionSchemaInput {
+  name: string;
+  description: string;
+  pathname: string;
+  itemType: "Election" | "Person" | "Dataset" | "WebPage";
+  siteUrl?: string;
+}
+
 export function buildElectionSeo(input: ElectionSeoInput): ElectionSeoMetadata {
   const siteName = input.siteName?.trim() || DEFAULT_SITE_NAME;
   const siteUrl = normalizeSiteUrl(input.siteUrl || DEFAULT_SITE_URL);
@@ -132,6 +140,28 @@ export function buildElectionWebPageSchema(input: ElectionWebPageSchemaInput) {
           },
         }
       : {}),
+  };
+}
+
+export function buildElectionCollectionSchema(input: ElectionCollectionSchemaInput) {
+  const siteUrl = normalizeSiteUrl(input.siteUrl || DEFAULT_SITE_URL);
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: input.name,
+    description: normalizeDescription(input.description),
+    url: buildCanonicalUrl(input.pathname, siteUrl),
+    isPartOf: {
+      "@type": "WebSite",
+      name: DEFAULT_SITE_NAME,
+      url: siteUrl,
+    },
+    mainEntity: {
+      "@type": "ItemList",
+      itemListOrder: "https://schema.org/ItemListUnordered",
+      itemListElement: [],
+      additionalType: `https://schema.org/${input.itemType}`,
+    },
   };
 }
 
