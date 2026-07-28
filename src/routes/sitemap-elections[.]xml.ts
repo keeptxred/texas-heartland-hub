@@ -12,27 +12,23 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const entries = [
-          ...buildElectionSitemapEntries({
-            lastModified: newestElectionUpdate(),
-          }),
-          ...publicEntries(races, "/elections/races/", 0.8),
-          ...publicEntries(candidates, "/elections/candidates/", 0.7),
-          ...publicEntries(polls, "/elections/polls/", 0.6),
-          ...publicEntries(forecasts, "/elections/forecast/", 0.7),
-          ...publicEntries(results, "/elections/results/", 0.7),
-        ];
+        const entries = buildElectionSitemapEntries({
+          lastmod: newestElectionUpdate(),
+          races: publicRecords(races, "/elections/races/"),
+          candidates: publicRecords(candidates, "/elections/candidates/"),
+          additionalPages: [
+            ...publicRecords(polls, "/elections/polls/"),
+            ...publicRecords(forecasts, "/elections/forecast/"),
+            ...publicRecords(results, "/elections/results/"),
+          ],
+        });
         return xmlResponse(renderUrlset(entries));
       },
     },
   },
 });
 
-function publicEntries(
-  records: readonly Record<string, unknown>[],
-  prefix: string,
-  priority: number,
-) {
+function publicRecords(records: readonly Record<string, unknown>[], prefix: string) {
   return records
     .filter(
       (record) =>
@@ -41,10 +37,10 @@ function publicEntries(
         typeof record.slug === "string",
     )
     .map((record) => ({
-      loc: `https://keeptxred.com${prefix}${record.slug}`,
-      lastmod: dateOnly(String(record.updatedAt ?? record.dataAsOf ?? new Date().toISOString())),
-      changefreq: prefix.includes("results") ? "hourly" : "daily",
-      priority,
+      path: `${prefix}${record.slug}`,
+      canonicalPath: `${prefix}${record.slug}`,
+      updatedAt: String(record.updatedAt ?? record.dataAsOf ?? newestElectionUpdate()),
+      indexable: true,
     }));
 }
 
