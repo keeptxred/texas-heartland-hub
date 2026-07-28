@@ -25,6 +25,8 @@ import type { RaceDetail, RaceSummary } from "./raceProjections";
 
 export const RACE_SORT_FIELDS = [
   "election_date",
+  "office_level",
+  "competitive",
   "updated_at",
   "name",
   "rating",
@@ -102,7 +104,10 @@ export interface RaceRepository {
   list(query?: RaceListQuery): Promise<RacePage<RaceSummary>>;
   listCore(query?: RaceListQuery): Promise<RacePage<ElectionRace>>;
   listFeatured(electionCycleId: ElectionCycleId, limit?: number): Promise<readonly RaceSummary[]>;
-  listCompetitive(electionCycleId: ElectionCycleId, limit?: number): Promise<readonly RaceSummary[]>;
+  listCompetitive(
+    electionCycleId: ElectionCycleId,
+    limit?: number,
+  ): Promise<readonly RaceSummary[]>;
   listByCandidate(candidateId: CandidateId): Promise<readonly RaceSummary[]>;
 
   count(filters?: RaceFilters): Promise<number>;
