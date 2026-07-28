@@ -9,8 +9,16 @@ await patch("src/components/elections/navigation/ElectionNavigation.tsx", [
 
 await patch("src/lib/elections/repositories/static.ts", [
   [
+    `  ElectionCycleSummary,\n  ElectionForecast,`,
+    `  ElectionCycleSummary,\n  ElectionEntityId,\n  ElectionForecast,`,
+  ],
+  [
     `  ElectionPollSummary,\n  ElectionResult,`,
     `  ElectionPollSummary,\n  ElectionRace,\n  ElectionResult,`,
+  ],
+  [
+    `type ExtendedRace = ElectionRace & {\n  counties?: readonly { id: string; name: string; slug: string }[];`,
+    `type ExtendedRace = ElectionRace & {\n  counties?: readonly { id: ElectionEntityId; name: string; slug: string }[];`,
   ],
   [
     `  issuePositions?: readonly unknown[];\n  recentStatements?: readonly unknown[];\n  votingRecord?: readonly unknown[];`,
@@ -23,6 +31,10 @@ await patch("src/lib/elections/repositories/static.ts", [
   [
     `    incumbent: candidate.incumbencyType !== "none",\n    imageUrl: candidate.imageUrl,\n    status: candidate.status,`,
     `    incumbent:\n      candidate.incumbencyType === "incumbent" ||\n      candidate.incumbencyType === "appointed_incumbent",\n    imageUrl: candidate.imageUrl,\n    status: raceCandidateStatus(candidate.status),`,
+  ],
+  [
+    `          rating: forecast.rating,`,
+    `          rating: forecast.rating === "safe_other" ? "unrated" : forecast.rating,`,
   ],
 ]);
 
