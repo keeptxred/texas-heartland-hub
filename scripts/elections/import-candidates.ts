@@ -55,11 +55,16 @@ for (const candidate of output) {
     candidateIdsByRace.set(raceId, list);
   }
 }
-const updatedRaces = races.map((race) => ({
-  ...race,
-  candidateIds: [...new Set(candidateIdsByRace.get(race.id) ?? [])].sort(),
-  updatedAt: candidateIdsByRace.has(race.id) ? timestamp : race.updatedAt,
-}));
+const updatedRaces = races.map((race) => {
+  const candidateIds = [...new Set(candidateIdsByRace.get(race.id) ?? [])].sort();
+  const hasOfficialCandidates = candidateIdsByRace.has(race.id);
+  return {
+    ...race,
+    candidateIds,
+    uncontested: hasOfficialCandidates ? candidateIds.length === 1 : race.uncontested,
+    updatedAt: hasOfficialCandidates ? timestamp : race.updatedAt,
+  };
+});
 
 await Promise.all([
   writeFile(CANDIDATE_FILE, `${JSON.stringify(output, null, 2)}\n`),
@@ -362,6 +367,9 @@ function raceIdFromOffice(value) {
   if (match) return `race-2026-texas-house-${Number(match[1])}`;
   match = office.match(/STATE BOARD OF EDUCATION(?:,)? DISTRICT (\d+)/);
   if (match) return `race-2026-state-board-of-education-${Number(match[1])}`;
+  if (/^CHIEF JUSTICE,? SUPREME COURT$/.test(office)) {
+    return "race-2026-texas-supreme-court-place-1";
+  }
   match = office.match(/SUPREME COURT.*PLACE (\d+)/);
   if (match) return `race-2026-texas-supreme-court-place-${Number(match[1])}`;
   match = office.match(/COURT OF CRIMINAL APPEALS.*PLACE (\d+)/);

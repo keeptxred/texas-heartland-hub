@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-28T17:40:04.238Z",
+  "generatedAt": "2026-07-28T20:25:16.873Z",
   "ready": false,
   "homepageTakeoverEnabled": false,
   "counts": {
@@ -9,7 +9,7 @@
     "polls": 2,
     "forecasts": 0,
     "racesWithAtLeastOneCandidate": 33,
-    "launchCoveredRaces": 4,
+    "launchCoveredRaces": 33,
     "geographyRequiredRaces": 219,
     "geographyCoveredRaces": 219
   },
@@ -209,40 +209,10 @@
     "race-2026-state-board-of-education-13",
     "race-2026-state-board-of-education-14"
   ],
-  "partiallyCoveredRaceIds": [
-    "race-2026-us-senate",
-    "race-2026-lieutenant-governor",
-    "race-2026-railroad-commissioner",
-    "race-2026-court-of-criminal-appeals-place-3",
-    "race-2026-us-house-1",
-    "race-2026-us-house-5",
-    "race-2026-us-house-7",
-    "race-2026-us-house-9",
-    "race-2026-us-house-14",
-    "race-2026-us-house-16",
-    "race-2026-us-house-17",
-    "race-2026-us-house-18",
-    "race-2026-us-house-19",
-    "race-2026-us-house-24",
-    "race-2026-us-house-30",
-    "race-2026-us-house-37",
-    "race-2026-us-house-38",
-    "race-2026-texas-senate-19",
-    "race-2026-texas-house-37",
-    "race-2026-texas-house-40",
-    "race-2026-texas-house-49",
-    "race-2026-texas-house-97",
-    "race-2026-texas-house-100",
-    "race-2026-texas-house-125",
-    "race-2026-texas-house-126",
-    "race-2026-texas-house-131",
-    "race-2026-texas-house-149",
-    "race-2026-state-board-of-education-5",
-    "race-2026-state-board-of-education-7"
-  ],
+  "partiallyCoveredRaceIds": [],
   "missingGeographyRaceIds": [],
   "warnings": [
     "No forecasts are loaded; the published no-forecast state must remain visible."
   ],
-  "blockerCount": 224
+  "blockerCount": 195
 }

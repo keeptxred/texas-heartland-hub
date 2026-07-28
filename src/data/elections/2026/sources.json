@@ -1,13 +1,57 @@
 [
   {
+    "id": "source-federal-election-commission-00350917",
+    "name": "Federal Election Commission",
+    "sourceType": "government",
+    "sourceUrl": "https://www.fec.gov/data/candidate/H6TX14181/?election_full=true&cycle=2026",
+    "type": "government",
+    "url": "https://www.fec.gov/data/candidate/H6TX14181/?election_full=true&cycle=2026",
+    "retrievedAt": "2026-07-28T20:24:58.080Z",
+    "lastVerifiedAt": "2026-07-28T20:24:58.080Z",
+    "notes": "Campaign finance summary source for candidate-thurman-bill-bartie-democratic-race-2026-us-house-14."
+  },
+  {
+    "id": "source-federal-election-commission-0c046c80",
+    "name": "Federal Election Commission",
+    "sourceType": "government",
+    "sourceUrl": "https://www.fec.gov/data/candidate/H6TX19206/?election_full=true&cycle=2026",
+    "type": "government",
+    "url": "https://www.fec.gov/data/candidate/H6TX19206/?election_full=true&cycle=2026",
+    "retrievedAt": "2026-07-28T20:24:58.080Z",
+    "lastVerifiedAt": "2026-07-28T20:24:58.080Z",
+    "notes": "Campaign finance summary source for candidate-tom-sell-republican-race-2026-us-house-19."
+  },
+  {
+    "id": "source-federal-election-commission-408813a9",
+    "name": "Federal Election Commission",
+    "sourceType": "government",
+    "sourceUrl": "https://www.fec.gov/data/candidate/H6TX17168/?election_full=true&cycle=2026",
+    "type": "government",
+    "url": "https://www.fec.gov/data/candidate/H6TX17168/?election_full=true&cycle=2026",
+    "retrievedAt": "2026-07-28T20:24:58.080Z",
+    "lastVerifiedAt": "2026-07-28T20:24:58.080Z",
+    "notes": "Campaign finance summary source for candidate-casey-shepard-democratic-race-2026-us-house-17."
+  },
+  {
+    "id": "source-federal-election-commission-4d1a2b9f",
+    "name": "Federal Election Commission",
+    "sourceType": "government",
+    "sourceUrl": "https://www.fec.gov/data/candidate/H6TX24172/?election_full=true&cycle=2026",
+    "type": "government",
+    "url": "https://www.fec.gov/data/candidate/H6TX24172/?election_full=true&cycle=2026",
+    "retrievedAt": "2026-07-28T20:24:58.080Z",
+    "lastVerifiedAt": "2026-07-28T20:24:58.080Z",
+    "notes": "Campaign finance summary source for candidate-kevin-burge-democratic-race-2026-us-house-24."
+  },
+  {
     "id": "source-texas-secretary-of-state-2026-primary-runoff-results",
     "name": "Texas Secretary of State 2026 Primary Runoff Results",
     "sourceType": "official",
     "sourceUrl": "https://goelect.txelections.civixapps.com/ivis-enr-ui/races",
     "type": "official",
     "url": "https://goelect.txelections.civixapps.com/ivis-enr-ui/races",
-    "retrievedAt": "2026-07-28T17:39:48.396Z",
-    "lastVerifiedAt": "2026-07-28T17:39:48.396Z",
+    "retrievedAt": "2026-07-28T20:24:54.992Z",
+    "lastVerifiedAt": "2026-07-28T20:24:54.992Z",
     "notes": "candidates source for candidate-ken-paxton-republican-race-2026-us-senate."
   },
   {
@@ -17,8 +61,8 @@
     "sourceUrl": "https://www.sos.texas.gov/elections/voter/links.shtml",
     "type": "official",
     "url": "https://www.sos.texas.gov/elections/voter/links.shtml",
-    "retrievedAt": "2026-07-28T17:39:52.497Z",
-    "lastVerifiedAt": "2026-07-28T17:39:52.497Z",
+    "retrievedAt": "2026-07-28T20:25:00.799Z",
+    "lastVerifiedAt": "2026-07-28T20:25:00.799Z",
     "notes": "Official county election-link directory used by race-2026-texas-house-150."
   },
   {
@@ -26,8 +70,8 @@
     "name": "Texas Public Opinion Research",
     "sourceType": "pollster",
     "sourceUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
-    "retrievedAt": "2026-07-28T17:39:51.908Z",
-    "lastVerifiedAt": "2026-07-28T17:39:51.908Z",
+    "retrievedAt": "2026-07-28T20:25:00.207Z",
+    "lastVerifiedAt": "2026-07-28T20:25:00.207Z",
     "notes": "Texas Public Opinion Research, May 2026 general-election poll",
     "type": "pollster",
     "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken"
@@ -39,8 +83,8 @@
     "sourceUrl": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer/layers",
     "type": "government",
     "url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer/layers",
-    "retrievedAt": "2026-07-28T17:39:52.497Z",
-    "lastVerifiedAt": "2026-07-28T17:39:52.497Z",
+    "retrievedAt": "2026-07-28T20:25:00.799Z",
+    "lastVerifiedAt": "2026-07-28T20:25:00.799Z",
     "notes": "District and county geography source for race-2026-texas-house-150."
   },
   {
@@ -48,8 +92,8 @@
     "name": "University of Texas/Texas Politics Project Poll",
     "sourceType": "academic",
     "sourceUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
-    "retrievedAt": "2026-07-28T17:39:51.991Z",
-    "lastVerifiedAt": "2026-07-28T17:39:51.991Z",
+    "retrievedAt": "2026-07-28T20:25:00.293Z",
+    "lastVerifiedAt": "2026-07-28T20:25:00.293Z",
     "notes": "University of Texas/Texas Politics Project Poll, June 2026",
     "type": "academic",
     "url": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
@@ -72,8 +116,8 @@
     "sourceUrl": "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
     "type": "official",
     "url": "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
-    "retrievedAt": "2026-07-28T17:38:58.852Z",
-    "lastVerifiedAt": "2026-07-28T17:38:58.852Z",
+    "retrievedAt": "2026-07-28T20:24:21.181Z",
+    "lastVerifiedAt": "2026-07-28T20:24:21.181Z",
     "notes": "Texas Secretary of State offices up for election in 2026"
   }
 ]

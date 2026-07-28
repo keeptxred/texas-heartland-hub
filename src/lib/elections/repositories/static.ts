@@ -12,6 +12,7 @@ import type {
   ElectionCycleDetail,
   ElectionCycleRecord,
   ElectionCycleSummary,
+  ElectionEntityId,
   ElectionForecast,
   ElectionForecastDetail,
   ElectionForecastSnapshot,
@@ -47,7 +48,7 @@ type Query = {
 };
 
 type ExtendedRace = ElectionRace & {
-  counties?: readonly { id: string; name: string; slug: string }[];
+  counties?: readonly { id: ElectionEntityId; name: string; slug: string }[];
   zipCodes?: readonly string[];
 };
 type ExtendedCandidate = ElectionCandidate & {
@@ -365,7 +366,7 @@ function raceDetail(record: ExtendedRace): RaceDetail {
       ? {
           id: forecast.id,
           providerName: forecast.source.sourceName,
-          rating: forecast.rating,
+          rating: forecast.rating === "safe_other" ? "unrated" : forecast.rating,
           projectedMargin: forecast.projectedMargin,
           confidence: confidenceNumber(forecast.confidenceLevel),
           generatedAt: forecast.model.lastModelRunAt ?? forecast.updatedAt,
