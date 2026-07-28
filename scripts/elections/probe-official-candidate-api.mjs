@@ -84,8 +84,10 @@ try {
         endpoint: request.url(),
         method: request.method(),
         responseStatus: response.status(),
+        requestFilters: requestBody,
         requestSchema: describeSchema(requestBody),
         responseSchema: describeSchema(payload),
+        safeValueSamples: collectSafeValueSamples(payload),
       },
       null,
       2,
@@ -140,6 +142,45 @@ async function waitForButtonEnabled(button, timeoutMs = 20_000) {
     await new Promise((resolve) => setTimeout(resolve, 400));
   }
   throw new Error("The candidate portal search button remained disabled.");
+}
+
+function collectSafeValueSamples(payload) {
+  if (!Array.isArray(payload)) return null;
+  const fields = [
+    "cdStatus",
+    "cdParty",
+    "cdDeclarationStatus",
+    "cdFilingStatus",
+    "cdOfficeType",
+    "txOfficeTypeName",
+    "cdCandType",
+  ];
+  const samples = Object.fromEntries(fields.map((field) => [field, new Set()]));
+  const officeNames = new Set();
+  let activeCount = 0;
+  let inactiveCount = 0;
+
+  for (const record of payload) {
+    if (!record || typeof record !== "object") continue;
+    if (record.flActive === false) inactiveCount += 1;
+    else activeCount += 1;
+    for (const field of fields) {
+      const value = clean(record[field]);
+      if (value) samples[field].add(value);
+    }
+    const office = clean(record.txOfficeName);
+    if (office && officeNames.size < 100) officeNames.add(office);
+  }
+
+  return {
+    totalRecords: payload.length,
+    activeCount,
+    inactiveCount,
+    enums: Object.fromEntries(
+      Object.entries(samples).map(([field, values]) => [field, [...values].sort()]),
+    ),
+    officeNameExamples: [...officeNames].sort(),
+  };
 }
 
 function describeSchema(value, depth = 0, seen = new WeakSet()) {
