@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { ElectionEmptyState, PollCard } from "@/components/elections";
+import { ElectionEmptyState, PollCard, PollingTrendChart } from "@/components/elections";
 import { useElectionPolls, useElectionRaces } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
@@ -152,6 +152,7 @@ function ElectionPollsContent() {
           <ElectionEmptyState kind="filters" />
         ) : (
           <div className="space-y-6">
+            {raceId && polls.data ? <PollingTrendChart polls={polls.data.items} /> : null}
             {polls.data?.items.map((poll) => {
               const question = poll.primaryQuestion;
               const raceHref = poll.race ? ELECTION_ROUTES.race(poll.race.slug) : undefined;
