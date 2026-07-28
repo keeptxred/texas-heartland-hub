@@ -4,6 +4,7 @@ import {
   type ElectionRepositoryMode,
 } from "./config";
 import { createMockElectionRepositories } from "./mock";
+import { createStaticElectionRepositories } from "./static";
 import type { ElectionRepositories } from "./types";
 
 export class UnsupportedElectionRepositoryModeError extends Error {
@@ -26,6 +27,8 @@ export function createElectionRepositories(
   switch (config.mode) {
     case "mock":
       return createMockElectionRepositories();
+    case "static":
+      return createStaticElectionRepositories();
     case "supabase":
     case "api":
       throw new UnsupportedElectionRepositoryModeError(config.mode);
