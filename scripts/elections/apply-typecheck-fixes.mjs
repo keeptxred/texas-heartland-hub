@@ -52,7 +52,18 @@ await patch("src/routes/elections.tsx", [
   ],
 ]);
 
-console.log("Applied strict Election Central typecheck fixes.");
+await patch("scripts/elections/import-candidates.ts", [
+  [
+    `const updatedRaces = races.map((race) => ({\n  ...race,\n  candidateIds: [...new Set(candidateIdsByRace.get(race.id) ?? [])].sort(),\n  updatedAt: candidateIdsByRace.has(race.id) ? timestamp : race.updatedAt,\n}));`,
+    `const updatedRaces = races.map((race) => {\n  const candidateIds = [...new Set(candidateIdsByRace.get(race.id) ?? [])].sort();\n  const hasOfficialCandidates = candidateIdsByRace.has(race.id);\n  return {\n    ...race,\n    candidateIds,\n    uncontested: hasOfficialCandidates ? candidateIds.length === 1 : race.uncontested,\n    updatedAt: hasOfficialCandidates ? timestamp : race.updatedAt,\n  };\n});`,
+  ],
+  [
+    `  match = office.match(/SUPREME COURT.*PLACE (\\d+)/);`,
+    `  if (/^CHIEF JUSTICE,? SUPREME COURT$/.test(office)) {\n    return "race-2026-texas-supreme-court-place-1";\n  }\n  match = office.match(/SUPREME COURT.*PLACE (\\d+)/);`,
+  ],
+]);
+
+console.log("Applied strict Election Central source and type fixes.");
 
 async function patch(file, replacements) {
   let content = await readFile(file, "utf8");
