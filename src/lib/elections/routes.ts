@@ -7,6 +7,7 @@ export const ELECTION_ROUTES = {
   candidate: (slug: string) => `/elections/candidates/${slug}` as const,
   polls: "/elections/polls",
   forecast: "/elections/forecast",
+  forecastDetail: (slug: string) => `/elections/forecast/${slug}` as const,
   results: "/elections/results",
   methodology: "/elections/methodology",
   voting: "/elections/voting",
@@ -22,5 +23,4 @@ export const ELECTION_PRIMARY_NAV_ROUTES = [
   ELECTION_ROUTES.methodology,
 ] as const;
 
-export type ElectionStaticRoute =
-  (typeof ELECTION_PRIMARY_NAV_ROUTES)[number];
+export type ElectionStaticRoute = (typeof ELECTION_PRIMARY_NAV_ROUTES)[number];

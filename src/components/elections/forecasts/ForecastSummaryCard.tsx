@@ -19,7 +19,7 @@ export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
           </p>
           <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-950">
             <a
-              href={ELECTION_ROUTES.race(forecast.race.slug)}
+              href={ELECTION_ROUTES.forecastDetail(forecast.slug)}
               className="hover:text-red-700 hover:underline"
             >
               {forecast.race.name}

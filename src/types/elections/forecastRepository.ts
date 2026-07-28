@@ -89,6 +89,10 @@ export interface ElectionForecastRepository {
   findByRaceId(raceId: RaceId): Promise<ElectionForecast | null>;
   findSummaryById(id: ForecastId): Promise<ElectionForecastSummary | null>;
   findDetailById(id: ForecastId): Promise<ElectionForecastDetail | null>;
+  findDetailBySlug(
+    slug: ForecastSlug,
+    electionCycleId?: ElectionCycleId,
+  ): Promise<ElectionForecastDetail | null>;
   findDetailByRaceId(raceId: RaceId): Promise<ElectionForecastDetail | null>;
 
   list(query?: ElectionForecastListQuery): Promise<RacePage<ElectionForecastSummary>>;
@@ -116,6 +120,7 @@ export type ReadonlyElectionForecastRepository = Pick<
   | "findByRaceId"
   | "findSummaryById"
   | "findDetailById"
+  | "findDetailBySlug"
   | "findDetailByRaceId"
   | "list"
   | "listCore"

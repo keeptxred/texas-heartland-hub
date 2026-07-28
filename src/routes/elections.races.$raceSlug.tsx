@@ -81,7 +81,9 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
   const candidates = useCandidatesByRace(race.data?.id);
   const polls = usePollsByRace(race.data?.id);
   const forecast = useForecastByRace(race.data?.id);
-  const forecastDetail = useElectionForecast(forecast.data?.id);
+  const forecastDetail = useElectionForecast(
+    forecast.data?.id ? { id: forecast.data.id } : undefined,
+  );
   const result = useResultByRace(race.data?.id);
   const relatedRaces = useRelatedElectionRaces(race.data?.relatedRaceIds ?? []);
   const error =

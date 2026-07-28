@@ -9,6 +9,7 @@ import type {
   ElectionPollListQuery,
   ElectionResultListQuery,
   ForecastId,
+  ForecastSlug,
   PollId,
   PollSlug,
   RaceId,
@@ -79,6 +80,8 @@ export const electionQueryKeys = {
       [...electionQueryKeys.forecasts.lists(), query ?? {}] as const,
     details: () => [...electionQueryKeys.forecasts.all(), "detail"] as const,
     detail: (id: ForecastId) => [...electionQueryKeys.forecasts.details(), id] as const,
+    detailBySlug: (slug: ForecastSlug, electionCycleId?: ElectionCycleId) =>
+      [...electionQueryKeys.forecasts.details(), "slug", slug, electionCycleId ?? null] as const,
     byRace: (raceId: RaceId) => [...electionQueryKeys.forecasts.all(), "race", raceId] as const,
     featured: (electionCycleId: ElectionCycleId, limit?: number) =>
       [...electionQueryKeys.forecasts.all(), "featured", electionCycleId, limit ?? null] as const,
