@@ -6,6 +6,7 @@ import {
   ElectionNavigation,
   RaceCandidateSection,
   RaceDetailHeader,
+  RacePollingSection,
 } from "@/components/elections";
 import {
   useCandidatesByRace,
@@ -120,6 +121,11 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     <div className="space-y-10">
       <RaceDetailHeader race={race.data} />
       <RaceCandidateSection race={race.data} candidates={candidates.data ?? []} />
+      <RacePollingSection
+        race={race.data}
+        polls={polls.data?.items ?? []}
+        hasStaleData={polls.hasStaleData}
+      />
     </div>
   );
 }
