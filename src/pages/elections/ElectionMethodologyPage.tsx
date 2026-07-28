@@ -43,35 +43,35 @@ export function ElectionMethodologyPage() {
           <dl className="mt-5 grid gap-4 sm:grid-cols-2">
             <Factor
               term="Recency"
-              definition="Exponential decay with a 30-day half-life, measured from the poll’s field-end date. Future-dated polls receive no weight."
+              definition="Exponential decay with a 21-day half-life, measured from the poll’s field-end date. The factor is bounded from 0.12 to 1.00, and future-dated polls receive no weight."
             />
             <Factor
               term="Sample size"
-              definition="Square-root scaling around 600 respondents, bounded from 0.70 to 1.35."
+              definition="Square-root scaling relative to 600 respondents: √(sample size ÷ 600), bounded from 0.50 to 1.65."
             />
             <Factor
               term="Population"
-              definition="Likely voters receive the most weight, followed by primary voters, registered voters, adults, and less directly relevant populations."
+              definition="Likely and primary voters receive 1.00; registered voters 0.88; adults 0.68; and other or unknown populations receive lower disclosed factors."
             />
             <Factor
               term="Pollster quality"
-              definition="Published pollster grades range from 1.20 for A+ to 0.65 for F; unrated pollsters receive 0.85."
+              definition="Published pollster grades range from 1.20 for A+ to 0.45 for F. Unrated pollsters receive 0.80."
             />
             <Factor
               term="Independence"
-              definition="Independent public polls receive full weight. Partisan polls receive 0.80 and internal polls 0.65; an internal partisan poll receives both discounts."
+              definition="Independent public polls receive 1.00. Partisan polls receive 0.72 and internal polls receive 0.55."
             />
             <Factor
               term="Methodology"
-              definition="Live phone and mixed-mode polls receive the highest method factors. Online panels, automated phone, text, mail, in-person, other, and unknown modes receive disclosed lower factors."
+              definition="The collection-mode factor is adjusted for whether the poll discloses a methodology URL, margin of error, and weighting description. The combined methodology factor is bounded from 0.55 to 1.18."
             />
           </dl>
           <p className="mt-5">
             A candidate’s average is the weighted mean of only that candidate’s published responses.
             Missing responses are not treated as zero and are never imputed. The displayed margin is
-            the difference between the top two weighted averages. The uncertainty range combines
-            weighted poll dispersion with published margins of error and decreases as qualifying poll
-            count increases.
+            the difference between the top two weighted averages. The uncertainty range combines each
+            poll’s published margin of error—or a sample-size estimate when none is supplied—using the
+            same poll weights.
           </p>
           <p className="mt-3">
             Every polling average reports its poll count, field-date range, recalculation timestamp,
@@ -82,29 +82,52 @@ export function ElectionMethodologyPage() {
 
         <MethodSection title="Forecast model">
           <p>
-            Forecasts are deterministic daily snapshots, not reported poll results. The current model
-            version is <code>ktr-forecast-1.0.0</code>. It requires two published, verified candidates
-            and at least one source-backed model input.
+            Forecasts are deterministic snapshots, not reported poll results. The current model version
+            is <code>ktr-2026.2</code>. A forecast requires published, verified Republican and Democratic
+            candidates and at least one disclosed source. Other candidates remain visible in race and
+            polling records, but the probability model is explicitly a two-major-party comparison.
           </p>
           <p className="mt-4">
-            When credible polling averages exist for both candidates, the model begins with the
-            Republican-minus-Democratic polling margin. Without polling, it uses a fundamentals score:
+            When both candidates have a sourced weighted polling average and no sourced fundamentals
+            are configured, the model is labeled <strong>Polling</strong> and uses the weighted polling
+            margin directly:
+          </p>
+          <Formula>Republican polling average − Democratic polling average</Formula>
+          <p className="mt-4">
+            When both polling and sourced fundamentals are available, the model is labeled
+            <strong> Hybrid</strong>:
           </p>
           <Formula>
-            previous election margin × 0.45 + district partisan lean × 0.35 + election environment ×
-            0.20
+            polling margin × 0.65 + previous election margin × 0.12 + district partisan lean × 0.13 +
+            election environment × 0.10 + candidate adjustments
           </Formula>
           <p className="mt-4">
-            Candidate-specific incumbency, fundraising, and candidate-quality adjustments are then
-            added. The resulting margin is converted to a two-candidate expected vote share and a
-            rounded win probability using a logistic curve. Polling-based forecasts use a ±4.5-point
-            vote-share interval; fundamentals-only forecasts use ±7 points. Forecast confidence is
-            based on whether polling exists and how many fundamental inputs are present.
+            When no credible polling average is available, a forecast is generated only when sourced
+            fundamentals have been explicitly enabled. That model is labeled <strong>Fundamentals</strong>:
+          </p>
+          <Formula>
+            previous election margin × 0.35 + district partisan lean × 0.40 + election environment ×
+            0.25 + candidate adjustments
+          </Formula>
+          <p className="mt-4">
+            Candidate adjustments may include disclosed incumbency, fundraising, and candidate-quality
+            values. No missing adjustment is invented; an omitted adjustment contributes zero. The
+            expected margin is converted to two-party vote share and win probability with a logistic
+            curve. Polling-only forecasts use a ±6-point interval with one distinct source and ±4.5
+            points with multiple sources. Hybrid forecasts use ±4.5 points, and fundamentals-only
+            forecasts use ±7.5 points.
+          </p>
+          <p className="mt-3">
+            Polling-only confidence is Low with one distinct source and Medium with two or more. Hybrid
+            confidence is Medium unless at least three distinct sources support the model, when it is
+            High. Fundamentals confidence remains Low unless the model has sufficient disclosed history,
+            partisan lean, and source coverage.
           </p>
           <p className="mt-3">
             Each forecast discloses its model type, version, timestamp, expected margin, expected vote
             share, win probability, confidence level, source list, fundamentals-based flag, and change
-            from the previous published snapshot. Daily snapshots are retained rather than overwritten.
+            from the previous published snapshot. At most one snapshot per race is retained for each
+            calendar day.
           </p>
         </MethodSection>
 
