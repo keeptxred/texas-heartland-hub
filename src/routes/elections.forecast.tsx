@@ -1,12 +1,38 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ElectionEmptyState, ForecastSummaryCard } from "@/components/elections";
-import { useElectionForecasts } from "@/hooks/elections";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import {
+  ElectionEmptyState,
+  ForecastListFilters,
+  ForecastSummaryCard,
+} from "@/components/elections";
+import { useElectionCycles, useElectionForecasts } from "@/hooks/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionForecastListPage } from "@/pages/elections";
-import type { ForecastRating } from "@/types/elections/forecastClassifications";
-import { OFFICE_LEVELS, OFFICE_LEVEL_LABELS } from "@/types/elections/raceClassifications";
+import type { ElectionCycleId, ForecastRating, OfficeLevel } from "@/types/elections";
+import { isForecastRating } from "@/types/elections/forecastClassifications";
+import {
+  OFFICE_LEVELS,
+  OFFICE_LEVEL_LABELS,
+  isOfficeLevel,
+} from "@/types/elections/raceClassifications";
+
+interface ElectionForecastListSearch {
+  source?: string;
+  rating?: ForecastRating;
+  officeLevel?: OfficeLevel;
+  cycle?: string;
+}
+
+function parseForecastListSearch(search: Record<string, unknown>): ElectionForecastListSearch {
+  return {
+    source: typeof search.source === "string" && search.source ? search.source : undefined,
+    rating: isForecastRating(search.rating) ? search.rating : undefined,
+    officeLevel: isOfficeLevel(search.officeLevel) ? search.officeLevel : undefined,
+    cycle: typeof search.cycle === "string" && search.cycle ? search.cycle : undefined,
+  };
+}
 
 export const Route = createFileRoute("/elections/forecast")({
+  validateSearch: parseForecastListSearch,
   head: () => ({
     meta: [
       { title: "Texas Election Forecasts | KeepTXRed Election Central" },
@@ -54,51 +80,109 @@ const COMPETITIVENESS_ORDER: Record<ForecastRating, number> = {
 };
 
 function ElectionForecastContent() {
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const cycles = useElectionCycles({
+    filters: {
+      stateCodes: ["TX"],
+      publicationStatuses: ["published"],
+    },
+    sort: [{ field: "election_date", direction: "desc" }],
+  });
+  const electionCycleId = cycles.data?.items.find((cycle) => cycle.id === search.cycle)?.id ?? null;
   const forecasts = useElectionForecasts({
     filters: {
+      electionCycleIds: electionCycleId ? [electionCycleId] : undefined,
+      sourceIds: search.source ? [search.source] : undefined,
+      ratings: search.rating ? [search.rating] : undefined,
+      officeLevels: search.officeLevel ? [search.officeLevel] : undefined,
       statuses: ["active", "final"],
       publicationStatuses: ["published"],
     },
     pagination: { page: 1, pageSize: 100 },
     sort: [{ field: "updated_at", direction: "desc" }],
   });
+  const sourceOptions = Array.from(
+    new Map(
+      (forecasts.data?.items ?? [])
+        .filter(
+          (forecast): forecast is typeof forecast & { sourceId: string } =>
+            forecast.sourceId !== null,
+        )
+        .map((forecast) => [
+          forecast.sourceId,
+          { value: forecast.sourceId, label: forecast.sourceName },
+        ]),
+    ).values(),
+  ).sort((left, right) => left.label.localeCompare(right.label));
+  const cycleOptions =
+    cycles.data?.items.map((cycle) => ({ value: cycle.id, label: cycle.name })) ?? [];
+  const error = cycles.error ?? forecasts.error;
+
+  const updateSearch = (updates: Partial<ElectionForecastListSearch>) => {
+    void navigate({
+      search: (previous) => ({ ...previous, ...updates }),
+      replace: true,
+    });
+  };
+
+  const handleRetry = () => {
+    void cycles.refetch();
+    void forecasts.refetch();
+  };
 
   return (
     <ElectionForecastListPage
-      error={forecasts.error}
-      isLoading={forecasts.isLoading}
-      onRetry={() => void forecasts.refetch()}
+      error={error}
+      isLoading={cycles.isLoading || forecasts.isLoading}
+      onRetry={handleRetry}
     >
-      {forecasts.isEmpty ? (
-        <ElectionEmptyState kind="forecasts" />
-      ) : (
-        <div className="space-y-10">
-          {OFFICE_LEVELS.map((officeLevel) => {
-            const items = (forecasts.data?.items ?? [])
-              .filter((forecast) => forecast.race.officeLevel === officeLevel)
-              .sort(
-                (left, right) =>
-                  COMPETITIVENESS_ORDER[left.rating] - COMPETITIVENESS_ORDER[right.rating] ||
-                  right.updatedAt.localeCompare(left.updatedAt),
+      <div className="space-y-6">
+        <ForecastListFilters
+          sourceId={search.source ?? null}
+          rating={search.rating ?? null}
+          officeLevel={search.officeLevel ?? null}
+          electionCycleId={electionCycleId}
+          sources={sourceOptions}
+          electionCycles={cycleOptions}
+          onSourceChange={(source) => updateSearch({ source: source ?? undefined })}
+          onRatingChange={(rating) => updateSearch({ rating: rating ?? undefined })}
+          onOfficeLevelChange={(officeLevel) =>
+            updateSearch({ officeLevel: officeLevel ?? undefined })
+          }
+          onElectionCycleChange={(cycle) => updateSearch({ cycle: cycle ?? undefined })}
+        />
+        {forecasts.isEmpty ? (
+          <ElectionEmptyState kind="filters" />
+        ) : (
+          <div className="space-y-10">
+            {OFFICE_LEVELS.map((officeLevel) => {
+              const items = (forecasts.data?.items ?? [])
+                .filter((forecast) => forecast.race.officeLevel === officeLevel)
+                .sort(
+                  (left, right) =>
+                    COMPETITIVENESS_ORDER[left.rating] - COMPETITIVENESS_ORDER[right.rating] ||
+                    right.updatedAt.localeCompare(left.updatedAt),
+                );
+
+              if (items.length === 0) return null;
+
+              return (
+                <section key={officeLevel}>
+                  <h2 className="text-2xl font-bold tracking-tight text-slate-950">
+                    {OFFICE_LEVEL_LABELS[officeLevel]}
+                  </h2>
+                  <div className="mt-5 grid gap-6 lg:grid-cols-2">
+                    {items.map((forecast) => (
+                      <ForecastSummaryCard key={forecast.id} forecast={forecast} />
+                    ))}
+                  </div>
+                </section>
               );
-
-            if (items.length === 0) return null;
-
-            return (
-              <section key={officeLevel}>
-                <h2 className="text-2xl font-bold tracking-tight text-slate-950">
-                  {OFFICE_LEVEL_LABELS[officeLevel]}
-                </h2>
-                <div className="mt-5 grid gap-6 lg:grid-cols-2">
-                  {items.map((forecast) => (
-                    <ForecastSummaryCard key={forecast.id} forecast={forecast} />
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-        </div>
-      )}
+            })}
+          </div>
+        )}
+      </div>
     </ElectionForecastListPage>
   );
 }

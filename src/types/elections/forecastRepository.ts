@@ -16,6 +16,7 @@ import type {
   ForecastRating,
   ForecastStatus,
 } from "./forecastClassifications";
+import type { OfficeLevel } from "./raceClassifications";
 import type {
   ElectionForecastDetail,
   ElectionForecastSnapshot,
@@ -43,6 +44,7 @@ export interface ElectionForecastFilters {
   raceIds?: readonly RaceId[];
   candidateIds?: readonly CandidateId[];
   sourceIds?: readonly string[];
+  officeLevels?: readonly OfficeLevel[];
   statuses?: readonly ForecastStatus[];
   ratings?: readonly ForecastRating[];
   confidenceLevels?: readonly ForecastConfidenceLevel[];
