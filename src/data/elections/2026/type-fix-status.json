@@ -1,0 +1,7 @@
+{
+  "updatedAt": "2026-07-28T18:11:37.886Z",
+  "conclusion": "failure",
+  "runId": "30386291635",
+  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30386291635",
+  "summary": "file:///home/runner/work/texas-heartland-hub/texas-heartland-hub/scripts/elections/apply-typecheck-fixes.mjs:69\n    throw new Error(\n          ^\n\nError: src/lib/elections/repositories/static.ts: expected one unapplied or one already-applied target; found before=1, after=1.\n    at patch (file:///home/runner/work/texas-heartland-hub/texas-heartland-hub/scripts/elections/apply-typecheck-fixes.mjs:69:11)\n    at async file:///home/runner/work/texas-heartland-hub/texas-heartland-hub/scripts/elections/apply-typecheck-fixes.mjs:10:1\n\nNode.js v22.23.1"
+}
