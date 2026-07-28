@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const ROUTES = [
   "/elections/2026",
@@ -47,7 +47,7 @@ test("empty polling, forecast, and results pages remain honest", async ({ page }
   await expect(page.getByText(/remain unofficial until certified/i)).toBeVisible();
 });
 
-async function expectNoHorizontalOverflow(page: Parameters<typeof test>[0]["page"]) {
+async function expectNoHorizontalOverflow(page: Page) {
   const dimensions = await page.evaluate(() => ({
     viewport: window.innerWidth,
     document: document.documentElement.scrollWidth,
