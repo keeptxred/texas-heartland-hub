@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { CandidateCard, CandidateListFilters, ElectionEmptyState } from "@/components/elections";
 import { useElectionCandidates } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
@@ -11,6 +10,9 @@ import type {
   IncumbencyType,
   OfficeLevel,
 } from "@/types/elections";
+import { isCandidateStatus, isIncumbencyType } from "@/types/elections/candidateClassifications";
+import { CANDIDATE_PARTIES } from "@/types/elections/domain";
+import { isOfficeLevel } from "@/types/elections/raceClassifications";
 
 const CANDIDATE_SORT_OPTIONS = [
   { value: "last_name", label: "Last name" },
@@ -21,7 +23,32 @@ const CANDIDATE_SORT_OPTIONS = [
 
 type CandidateSortOption = (typeof CANDIDATE_SORT_OPTIONS)[number]["value"];
 
+interface ElectionCandidateListSearch {
+  party?: CandidateParty;
+  officeLevel?: OfficeLevel;
+  status?: CandidateStatus;
+  incumbency?: IncumbencyType;
+  sort?: CandidateSortOption;
+}
+
+function parseCandidateListSearch(search: Record<string, unknown>): ElectionCandidateListSearch {
+  return {
+    party:
+      typeof search.party === "string"
+        ? CANDIDATE_PARTIES.find((party) => party === search.party)
+        : undefined,
+    officeLevel:
+      typeof search.officeLevel === "string" && isOfficeLevel(search.officeLevel)
+        ? search.officeLevel
+        : undefined,
+    status: isCandidateStatus(search.status) ? search.status : undefined,
+    incumbency: isIncumbencyType(search.incumbency) ? search.incumbency : undefined,
+    sort: CANDIDATE_SORT_OPTIONS.find((option) => option.value === search.sort)?.value,
+  };
+}
+
 export const Route = createFileRoute("/elections/candidates")({
+  validateSearch: parseCandidateListSearch,
   head: () => ({
     meta: [
       {
@@ -64,23 +91,28 @@ function ElectionCandidatesRoute() {
 }
 
 function ElectionCandidatesContent() {
-  const [party, setParty] = useState<CandidateParty | null>(null);
-  const [officeLevel, setOfficeLevel] = useState<OfficeLevel | null>(null);
-  const [status, setStatus] = useState<CandidateStatus | null>(null);
-  const [incumbency, setIncumbency] = useState<IncumbencyType | null>(null);
-  const [sortBy, setSortBy] = useState<CandidateSortOption>("last_name");
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const sortBy = search.sort ?? "last_name";
   const candidates = useElectionCandidates({
     filters: {
       stateCodes: ["TX"],
-      parties: party ? [party] : undefined,
-      officeLevels: officeLevel ? [officeLevel] : undefined,
-      statuses: status ? [status] : undefined,
-      incumbencyTypes: incumbency ? [incumbency] : undefined,
+      parties: search.party ? [search.party] : undefined,
+      officeLevels: search.officeLevel ? [search.officeLevel] : undefined,
+      statuses: search.status ? [search.status] : undefined,
+      incumbencyTypes: search.incumbency ? [search.incumbency] : undefined,
       publicationStatuses: ["published"],
     },
     pagination: { page: 1, pageSize: 50 },
     sort: [{ field: sortBy, direction: "asc" }],
   });
+
+  const updateSearch = (updates: Partial<ElectionCandidateListSearch>) => {
+    void navigate({
+      search: (previous) => ({ ...previous, ...updates }),
+      replace: true,
+    });
+  };
 
   return (
     <ElectionCandidateListPage
@@ -99,7 +131,7 @@ function ElectionCandidatesContent() {
                 (item) => item.value === event.target.value,
               );
               if (option) {
-                setSortBy(option.value);
+                updateSearch({ sort: option.value });
               }
             }}
           >
@@ -111,14 +143,16 @@ function ElectionCandidatesContent() {
           </select>
         </label>
         <CandidateListFilters
-          party={party}
-          officeLevel={officeLevel}
-          status={status}
-          incumbency={incumbency}
-          onPartyChange={setParty}
-          onOfficeLevelChange={setOfficeLevel}
-          onStatusChange={setStatus}
-          onIncumbencyChange={setIncumbency}
+          party={search.party ?? null}
+          officeLevel={search.officeLevel ?? null}
+          status={search.status ?? null}
+          incumbency={search.incumbency ?? null}
+          onPartyChange={(party) => updateSearch({ party: party ?? undefined })}
+          onOfficeLevelChange={(officeLevel) =>
+            updateSearch({ officeLevel: officeLevel ?? undefined })
+          }
+          onStatusChange={(status) => updateSearch({ status: status ?? undefined })}
+          onIncumbencyChange={(incumbency) => updateSearch({ incumbency: incumbency ?? undefined })}
         />
         {candidates.isEmpty ? (
           <ElectionEmptyState kind="filters" />
