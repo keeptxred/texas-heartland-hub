@@ -3,7 +3,6 @@ import type {
   CandidateId,
   CandidateSlug,
   ElectionCycleId,
-  ElectionEntityId,
   ElectionResultId,
   ForecastId,
   PollId,
@@ -53,7 +52,8 @@ export interface RaceSummary {
   districtName: string | null;
   districtNumber: string | null;
   counties: readonly {
-    id: ElectionEntityId;
+    /** Stable public county identifier from authoritative geography imports. */
+    id: string;
     name: string;
     slug: string;
   }[];
@@ -90,7 +90,8 @@ export interface RacePollSummary {
 export interface RaceForecastSummary {
   id: ForecastId;
   providerName: string;
-  rating: RaceRating;
+  /** Forecasts may safely favor a non-major-party candidate even when editorial race ratings do not. */
+  rating: RaceRating | "safe_other";
   projectedMargin: number | null;
   confidence: number | null;
   generatedAt: IsoDateTimeString;
