@@ -7,6 +7,7 @@ import {
   RaceCandidateSection,
   RaceDetailHeader,
   RaceForecastSection,
+  RaceInternalLinks,
   RacePollingSection,
   RaceResultsSection,
 } from "@/components/elections";
@@ -16,6 +17,7 @@ import {
   useElectionRace,
   useForecastByRace,
   usePollsByRace,
+  useRelatedElectionRaces,
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
@@ -80,12 +82,14 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
   const forecast = useForecastByRace(race.data?.id);
   const forecastDetail = useElectionForecast(forecast.data?.id);
   const result = useResultByRace(race.data?.id);
+  const relatedRaces = useRelatedElectionRaces(race.data?.relatedRaceIds ?? []);
   const error =
     race.error ??
     candidates.error ??
     polls.error ??
     forecast.error ??
     forecastDetail.error ??
+    relatedRaces.error ??
     result.error;
   const isLoading =
     race.isLoading ||
@@ -93,6 +97,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     polls.isLoading ||
     forecast.isLoading ||
     forecastDetail.isLoading ||
+    relatedRaces.isLoading ||
     result.isLoading;
 
   const handleRetry = () => {
@@ -101,6 +106,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     void polls.refetch();
     void forecast.refetch();
     void forecastDetail.refetch();
+    void relatedRaces.refetch();
     void result.refetch();
   };
 
@@ -140,6 +146,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
       />
       <RaceForecastSection forecast={forecastDetail.data ?? null} />
       <RaceResultsSection result={result.data ?? null} isPreElection={result.isPreElection} />
+      <RaceInternalLinks candidates={candidates.data ?? []} relatedRaces={relatedRaces.data} />
     </div>
   );
 }
