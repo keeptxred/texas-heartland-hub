@@ -12,6 +12,15 @@ import type {
   OfficeLevel,
 } from "@/types/elections";
 
+const CANDIDATE_SORT_OPTIONS = [
+  { value: "last_name", label: "Last name" },
+  { value: "office", label: "Office" },
+  { value: "party", label: "Party" },
+  { value: "race_date", label: "Race date" },
+] as const;
+
+type CandidateSortOption = (typeof CANDIDATE_SORT_OPTIONS)[number]["value"];
+
 export const Route = createFileRoute("/elections/candidates")({
   head: () => ({
     meta: [
@@ -59,6 +68,7 @@ function ElectionCandidatesContent() {
   const [officeLevel, setOfficeLevel] = useState<OfficeLevel | null>(null);
   const [status, setStatus] = useState<CandidateStatus | null>(null);
   const [incumbency, setIncumbency] = useState<IncumbencyType | null>(null);
+  const [sortBy, setSortBy] = useState<CandidateSortOption>("last_name");
   const candidates = useElectionCandidates({
     filters: {
       stateCodes: ["TX"],
@@ -69,7 +79,7 @@ function ElectionCandidatesContent() {
       publicationStatuses: ["published"],
     },
     pagination: { page: 1, pageSize: 50 },
-    sort: [{ field: "last_name", direction: "asc" }],
+    sort: [{ field: sortBy, direction: "asc" }],
   });
 
   return (
@@ -79,6 +89,27 @@ function ElectionCandidatesContent() {
       onRetry={() => void candidates.refetch()}
     >
       <div className="space-y-6">
+        <label className="block max-w-xs text-sm font-semibold text-slate-900">
+          Sort candidates
+          <select
+            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+            value={sortBy}
+            onChange={(event) => {
+              const option = CANDIDATE_SORT_OPTIONS.find(
+                (item) => item.value === event.target.value,
+              );
+              if (option) {
+                setSortBy(option.value);
+              }
+            }}
+          >
+            {CANDIDATE_SORT_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
         <CandidateListFilters
           party={party}
           officeLevel={officeLevel}

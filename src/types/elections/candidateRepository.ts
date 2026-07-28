@@ -34,6 +34,8 @@ export const CANDIDATE_SORT_FIELDS = [
   "updated_at",
   "status",
   "party",
+  "office",
+  "race_date",
   "filing_date",
 ] as const;
 
