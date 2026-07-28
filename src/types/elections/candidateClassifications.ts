@@ -22,6 +22,7 @@ export const CANDIDATE_FILING_STATUSES = [
 ] as const;
 
 export const INCUMBENCY_TYPES = [
+  "none",
   "incumbent",
   "appointed_incumbent",
   "former_officeholder",
@@ -80,6 +81,7 @@ export const CANDIDATE_FILING_STATUS_LABELS: Record<CandidateFilingStatus, strin
 };
 
 export const INCUMBENCY_TYPE_LABELS: Record<IncumbencyType, string> = {
+  none: "Not an incumbent",
   incumbent: "Incumbent",
   appointed_incumbent: "Appointed incumbent",
   former_officeholder: "Former officeholder",
