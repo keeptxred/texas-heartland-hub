@@ -66,6 +66,17 @@ jobs:
           ELECTION_CANDIDATE_SCRAPE_OUTPUT: /tmp/texas-candidates.html
         run: pnpm elections:scrape:candidates
 
+      - name: Upload candidate extraction diagnostics
+        if: steps.candidate_scrape.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-candidate-extraction-diagnostics
+          path: |
+            /tmp/official-candidate-debug.html
+            /tmp/official-candidate-debug.png
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Refresh authoritative candidate records
         shell: bash
         run: |
