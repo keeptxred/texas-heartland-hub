@@ -1,8 +1,43 @@
+import type { ReactNode } from "react";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import type { CandidateSummary } from "@/types/elections";
 
+interface SourcedComparisonItem {
+  label?: string;
+  title?: string;
+  position?: string;
+  statement?: string;
+  organizationName?: string;
+  officeName?: string;
+  description?: string;
+  sourceUrl?: string | null;
+}
+
+export interface CandidateComparisonRecord extends CandidateSummary {
+  biography?: string | null;
+  experience?: readonly SourcedComparisonItem[];
+  issuePositions?: readonly SourcedComparisonItem[];
+  endorsements?: readonly SourcedComparisonItem[];
+  fundraising?: {
+    totalRaised: number | null;
+    totalSpent: number | null;
+    cashOnHand: number | null;
+    debtsOwed: number | null;
+    reportingPeriodEnd: string | null;
+    sourceUrl: string | null;
+  } | null;
+  polling?: readonly {
+    pollsterName: string;
+    percentage: number;
+    fieldEndDate: string;
+    sourceUrl: string;
+  }[];
+  recentStatements?: readonly SourcedComparisonItem[];
+  votingRecord?: readonly SourcedComparisonItem[];
+}
+
 export interface CandidateComparisonProps {
-  candidates: readonly CandidateSummary[];
+  candidates: readonly CandidateComparisonRecord[];
   onClear: () => void;
 }
 
@@ -20,7 +55,8 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
             Candidate comparison
           </h2>
           <p className="mt-1 text-sm text-slate-600">
-            Compare verified fields from the published candidate directory.
+            Compare documented, sourced fields from the published candidate directory. Missing
+            information is shown plainly and is never inferred.
           </p>
         </div>
         <button
@@ -41,7 +77,7 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
               {candidates.map((candidate) => (
                 <th
                   key={candidate.id}
-                  className="min-w-52 p-4 font-bold text-slate-950"
+                  className="min-w-64 p-4 font-bold text-slate-950"
                   scope="col"
                 >
                   <a
@@ -81,6 +117,48 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
               value={(candidate) => formatValue(candidate.incumbencyType)}
             />
             <ComparisonRow
+              label="Biography"
+              candidates={candidates}
+              value={(candidate) => candidate.biography || "No sourced biography available"}
+            />
+            <ComparisonRow
+              label="Experience"
+              candidates={candidates}
+              value={(candidate) => renderSourcedItems(candidate.experience, "No documented experience found")}
+            />
+            <ComparisonRow
+              label="Issue positions"
+              candidates={candidates}
+              value={(candidate) =>
+                renderSourcedItems(candidate.issuePositions, "No documented position found")
+              }
+            />
+            <ComparisonRow
+              label="Endorsements"
+              candidates={candidates}
+              value={(candidate) => renderSourcedItems(candidate.endorsements, "No sourced endorsements found")}
+            />
+            <ComparisonRow
+              label="Fundraising"
+              candidates={candidates}
+              value={(candidate) => renderFundraising(candidate.fundraising)}
+            />
+            <ComparisonRow
+              label="Polling"
+              candidates={candidates}
+              value={(candidate) => renderPolling(candidate.polling)}
+            />
+            <ComparisonRow
+              label="Recent statements"
+              candidates={candidates}
+              value={(candidate) => renderSourcedItems(candidate.recentStatements, "No sourced recent statement found")}
+            />
+            <ComparisonRow
+              label="Voting record"
+              candidates={candidates}
+              value={(candidate) => renderSourcedItems(candidate.votingRecord, "No applicable sourced voting record found")}
+            />
+            <ComparisonRow
               label="Candidate status"
               candidates={candidates}
               value={(candidate) => formatValue(candidate.status)}
@@ -103,20 +181,98 @@ function ComparisonRow({
   value,
 }: {
   label: string;
-  candidates: readonly CandidateSummary[];
-  value: (candidate: CandidateSummary) => string;
+  candidates: readonly CandidateComparisonRecord[];
+  value: (candidate: CandidateComparisonRecord) => ReactNode;
 }) {
   return (
-    <tr className="border-t border-slate-200">
+    <tr className="border-t border-slate-200 align-top">
       <th className="bg-slate-50 p-4 font-semibold text-slate-700" scope="row">
         {label}
       </th>
       {candidates.map((candidate) => (
-        <td key={candidate.id} className="p-4 text-slate-800">
+        <td key={candidate.id} className="p-4 leading-6 text-slate-800">
           {value(candidate)}
         </td>
       ))}
     </tr>
+  );
+}
+
+function renderSourcedItems(
+  items: readonly SourcedComparisonItem[] | undefined,
+  emptyLabel: string,
+) {
+  if (!items?.length) return <span className="text-slate-500">{emptyLabel}</span>;
+  return (
+    <ul className="space-y-2">
+      {items.map((item, index) => {
+        const text =
+          item.position ??
+          item.statement ??
+          item.organizationName ??
+          item.officeName ??
+          item.description ??
+          item.title ??
+          item.label ??
+          "Documented item";
+        return (
+          <li key={`${text}-${index}`}>
+            {item.sourceUrl ? (
+              <a
+                href={item.sourceUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="font-medium text-blue-800 underline-offset-4 hover:underline"
+              >
+                {text}
+              </a>
+            ) : (
+              text
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+function renderFundraising(candidate: CandidateComparisonRecord["fundraising"]) {
+  if (!candidate) return <span className="text-slate-500">No sourced finance summary found</span>;
+  const body = (
+    <div className="space-y-1">
+      <div>Raised: {formatMoney(candidate.totalRaised)}</div>
+      <div>Spent: {formatMoney(candidate.totalSpent)}</div>
+      <div>Cash on hand: {formatMoney(candidate.cashOnHand)}</div>
+      <div>Debt: {formatMoney(candidate.debtsOwed)}</div>
+      {candidate.reportingPeriodEnd ? <div>Through {formatDate(candidate.reportingPeriodEnd)}</div> : null}
+    </div>
+  );
+  return candidate.sourceUrl ? (
+    <a href={candidate.sourceUrl} target="_blank" rel="noreferrer" className="block hover:text-blue-800">
+      {body}
+    </a>
+  ) : (
+    body
+  );
+}
+
+function renderPolling(candidate: CandidateComparisonRecord["polling"]) {
+  if (!candidate?.length) return <span className="text-slate-500">No published poll result found</span>;
+  return (
+    <ul className="space-y-2">
+      {candidate.slice(0, 3).map((poll) => (
+        <li key={`${poll.pollsterName}-${poll.fieldEndDate}`}>
+          <a
+            href={poll.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium text-blue-800 underline-offset-4 hover:underline"
+          >
+            {poll.pollsterName}: {poll.percentage.toFixed(1)}% ({formatDate(poll.fieldEndDate)})
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -129,4 +285,14 @@ function formatValue(value: string) {
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(value));
+}
+
+function formatMoney(value: number | null) {
+  return value == null
+    ? "Not reported"
+    : new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 0,
+      }).format(value);
 }
