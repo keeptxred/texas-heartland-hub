@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/election-central-prepare-data.yml"
       - "scripts/elections/**"
+      - "package.json"
 
 permissions:
   contents: write
@@ -69,6 +70,9 @@ jobs:
 
       - name: Generate eligible forecast snapshots
         run: pnpm elections:forecast
+
+      - name: Generate canonical source registry
+        run: pnpm elections:sources
 
       - name: Validate generated data
         run: pnpm elections:validate
