@@ -5,6 +5,9 @@ const SOURCE_URL =
   process.env.ELECTION_CANDIDATE_LIST_URL ??
   "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information";
 const OUTPUT = process.env.ELECTION_CANDIDATE_API_OUTPUT ?? "/tmp/official-candidate-api-payload.json";
+const SUMMARY_OUTPUT =
+  process.env.ELECTION_CANDIDATE_API_SUMMARY_OUTPUT ??
+  "src/data/elections/2026/candidate-api-schema.json";
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
   locale: "en-US",
@@ -18,9 +21,13 @@ try {
   await page.goto(SOURCE_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
   await page.waitForTimeout(8_000);
 
-  const frame = page.frames().find((candidate) =>
-    candidate.locator('mat-select[formcontrolname="electionYear"]').count(),
-  );
+  let frame = null;
+  for (const candidate of page.frames()) {
+    if (await candidate.locator('mat-select[formcontrolname="electionYear"]').count()) {
+      frame = candidate;
+      break;
+    }
+  }
   if (!frame) throw new Error("Candidate portal election controls were not found.");
 
   await selectMatOption(frame, 'mat-select[formcontrolname="electionYear"]', /^2026$/i);
@@ -42,16 +49,19 @@ try {
   const response = await responsePromise;
   const request = response.request();
   const payload = await response.json();
+  const requestBody = request.postDataJSON?.() ?? request.postData();
+  const capturedAt = new Date().toISOString();
+
   await writeFile(
     OUTPUT,
     `${JSON.stringify(
       {
-        capturedAt: new Date().toISOString(),
+        capturedAt,
         request: {
           url: request.url(),
           method: request.method(),
           headers: redactHeaders(request.headers()),
-          postData: request.postDataJSON?.() ?? request.postData(),
+          postData: requestBody,
         },
         response: {
           status: response.status(),
@@ -63,7 +73,24 @@ try {
       2,
     )}\n`,
   );
-  console.log(`Captured official candidate API request and response to ${OUTPUT}.`);
+
+  await writeFile(
+    SUMMARY_OUTPUT,
+    `${JSON.stringify(
+      {
+        capturedAt,
+        sourceUrl: SOURCE_URL,
+        endpoint: request.url(),
+        method: request.method(),
+        responseStatus: response.status(),
+        requestSchema: describeSchema(requestBody),
+        responseSchema: describeSchema(payload),
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  console.log(`Captured official candidate API response and safe schema summary.`);
 } finally {
   await browser.close();
 }
@@ -97,6 +124,56 @@ async function waitForButtonEnabled(button, timeoutMs = 20_000) {
     await new Promise((resolve) => setTimeout(resolve, 400));
   }
   throw new Error("The candidate portal search button remained disabled.");
+}
+
+function describeSchema(value, depth = 0, seen = new WeakSet()) {
+  if (value == null) return { type: "null" };
+  if (Array.isArray(value)) {
+    const types = [...new Set(value.slice(0, 25).map(typeName))];
+    return {
+      type: "array",
+      length: value.length,
+      itemTypes: types,
+      itemSchema:
+        depth < 7 && value.length
+          ? mergeSchemas(value.slice(0, 25).map((item) => describeSchema(item, depth + 1, seen)))
+          : null,
+    };
+  }
+  if (typeof value !== "object") return { type: typeof value };
+  if (seen.has(value)) return { type: "object", circular: true };
+  seen.add(value);
+  const properties = {};
+  if (depth < 7) {
+    for (const [key, child] of Object.entries(value)) {
+      properties[key] = describeSchema(child, depth + 1, seen);
+    }
+  }
+  return { type: "object", properties };
+}
+
+function mergeSchemas(schemas) {
+  const meaningful = schemas.filter(Boolean);
+  if (!meaningful.length) return null;
+  const types = [...new Set(meaningful.map((schema) => schema.type))];
+  if (types.length !== 1) return { types };
+  if (types[0] !== "object") return meaningful[0];
+  const keys = [...new Set(meaningful.flatMap((schema) => Object.keys(schema.properties ?? {})))];
+  return {
+    type: "object",
+    properties: Object.fromEntries(
+      keys.map((key) => [
+        key,
+        mergeSchemas(meaningful.map((schema) => schema.properties?.[key]).filter(Boolean)),
+      ]),
+    ),
+  };
+}
+
+function typeName(value) {
+  if (value == null) return "null";
+  if (Array.isArray(value)) return "array";
+  return typeof value;
 }
 
 function redactHeaders(headers) {
