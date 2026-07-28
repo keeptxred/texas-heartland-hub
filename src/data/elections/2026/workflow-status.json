@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-28T17:15:04.201Z",
+  "updatedAt": "2026-07-28T17:16:49.506Z",
   "conclusion": "failure",
-  "runId": "30381946166",
+  "runId": "30382025989",
   "runAttempt": "1",
-  "triggerCommit": "210c1f67178bf47fa0736c8ae7f75ab8d906e338",
-  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30381946166",
-  "validationSummary": "> tanstack_start_ts@ elections:validate /home/runner/work/texas-heartland-hub/texas-heartland-hub\n> node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs && node scripts/elections/validate-sources.mjs\n\nElection enum validation passed.\nElection data validation passed (1 cycle, 227 races, 37 candidates, 2 polls, 0 forecasts, 0 results, 8 sources).\nElection source validation failed with 1 error(s):\n- Source URL https://electionresults.sos.state.tx.us/results.html is duplicated by source-texas-secretary-of-state-2026-primary-runoff-results and source-texas-secretary-of-state-2026-primary-runoff-results-ecf76735.\n ELIFECYCLE  Command failed with exit code 1."
+  "triggerCommit": "ccc19e19f6ee9394f3c5570bb38ab5baf9bff0e4",
+  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30382025989",
+  "validationSummary": "> tanstack_start_ts@ elections:validate /home/runner/work/texas-heartland-hub/texas-heartland-hub\n> node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs && node scripts/elections/validate-sources.mjs\n\nElection enum validation passed.\nElection data validation passed (1 cycle, 227 races, 37 candidates, 2 polls, 0 forecasts, 0 results, 7 sources).\nElection source validation passed: 7 canonical source(s)."
 }
