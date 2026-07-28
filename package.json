@@ -16,6 +16,7 @@
     "elections:normalize": "node scripts/elections/normalize-imports.mjs",
     "elections:validate": "node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs",
     "elections:import:races": "node --experimental-strip-types scripts/elections/import-races.ts",
+    "elections:scrape:candidates": "node --experimental-strip-types scripts/elections/scrape-official-candidates.ts",
     "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts",
     "elections:resolve:fec": "node --experimental-strip-types scripts/elections/resolve-fec-ids.ts",
     "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
