@@ -18,6 +18,24 @@ import type {
 } from "./forecastClassifications";
 import type { OfficeLevel } from "./raceClassifications";
 
+export const FORECAST_COVERAGE_CATEGORIES = [
+  "us_senate",
+  "statewide_executive",
+  "us_house",
+  "texas_senate",
+  "texas_house",
+] as const;
+
+export type ForecastCoverageCategory = (typeof FORECAST_COVERAGE_CATEGORIES)[number];
+
+export const FORECAST_COVERAGE_CATEGORY_LABELS: Record<ForecastCoverageCategory, string> = {
+  us_senate: "U.S. Senate",
+  statewide_executive: "Statewide executive",
+  us_house: "Competitive congressional",
+  texas_senate: "Competitive Texas Senate",
+  texas_house: "Competitive Texas House",
+};
+
 export interface ForecastCandidateSummary {
   candidateId: CandidateId;
   candidateSlug: CandidateSlug;
@@ -40,6 +58,8 @@ export interface ForecastRaceSummary {
   officeLevel: OfficeLevel;
   districtName: string | null;
   electionDate: string;
+  forecastCoverage: ForecastCoverageCategory;
+  competitive: boolean;
 }
 
 export interface ElectionForecastSummary {
@@ -83,4 +103,15 @@ export type ElectionForecastListItem = ElectionForecastSummary;
 
 export function isFundamentalsBasedForecast(forecast: Pick<ElectionForecast, "model">): boolean {
   return forecast.model.model === "fundamentals";
+}
+
+export function isForecastInLaunchCoverage(forecast: ElectionForecastSummary): boolean {
+  if (
+    forecast.race.forecastCoverage === "us_house" ||
+    forecast.race.forecastCoverage === "texas_senate" ||
+    forecast.race.forecastCoverage === "texas_house"
+  ) {
+    return forecast.race.competitive;
+  }
+  return true;
 }

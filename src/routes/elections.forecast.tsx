@@ -8,12 +8,13 @@ import { useElectionCycles, useElectionForecasts } from "@/hooks/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionForecastListPage } from "@/pages/elections";
 import type { ElectionCycleId, ForecastRating, OfficeLevel } from "@/types/elections";
-import { isForecastRating } from "@/types/elections/forecastClassifications";
 import {
-  OFFICE_LEVELS,
-  OFFICE_LEVEL_LABELS,
-  isOfficeLevel,
-} from "@/types/elections/raceClassifications";
+  FORECAST_COVERAGE_CATEGORIES,
+  FORECAST_COVERAGE_CATEGORY_LABELS,
+  isForecastInLaunchCoverage,
+} from "@/types/elections/forecastProjections";
+import { isForecastRating } from "@/types/elections/forecastClassifications";
+import { isOfficeLevel } from "@/types/elections/raceClassifications";
 
 interface ElectionForecastListSearch {
   source?: string;
@@ -118,6 +119,7 @@ function ElectionForecastContent() {
   const cycleOptions =
     cycles.data?.items.map((cycle) => ({ value: cycle.id, label: cycle.name })) ?? [];
   const error = cycles.error ?? forecasts.error;
+  const launchForecasts = (forecasts.data?.items ?? []).filter(isForecastInLaunchCoverage);
 
   const updateSearch = (updates: Partial<ElectionForecastListSearch>) => {
     void navigate({
@@ -152,13 +154,15 @@ function ElectionForecastContent() {
           }
           onElectionCycleChange={(cycle) => updateSearch({ cycle: cycle ?? undefined })}
         />
-        {forecasts.isEmpty ? (
-          <ElectionEmptyState kind="filters" />
+        {forecasts.isEmpty || launchForecasts.length === 0 ? (
+          <ElectionEmptyState
+            kind={search.rating || search.officeLevel ? "filters" : "forecasts"}
+          />
         ) : (
           <div className="space-y-10">
-            {OFFICE_LEVELS.map((officeLevel) => {
-              const items = (forecasts.data?.items ?? [])
-                .filter((forecast) => forecast.race.officeLevel === officeLevel)
+            {FORECAST_COVERAGE_CATEGORIES.map((coverage) => {
+              const items = launchForecasts
+                .filter((forecast) => forecast.race.forecastCoverage === coverage)
                 .sort(
                   (left, right) =>
                     COMPETITIVENESS_ORDER[left.rating] - COMPETITIVENESS_ORDER[right.rating] ||
@@ -168,9 +172,9 @@ function ElectionForecastContent() {
               if (items.length === 0) return null;
 
               return (
-                <section key={officeLevel}>
+                <section key={coverage}>
                   <h2 className="text-2xl font-bold tracking-tight text-slate-950">
-                    {OFFICE_LEVEL_LABELS[officeLevel]}
+                    {FORECAST_COVERAGE_CATEGORY_LABELS[coverage]}
                   </h2>
                   <div className="mt-5 grid gap-6 lg:grid-cols-2">
                     {items.map((forecast) => (
