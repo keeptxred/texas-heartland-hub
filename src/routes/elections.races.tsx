@@ -36,6 +36,9 @@ interface ElectionRaceListSearch {
   status?: RaceStatus;
   featured?: boolean;
   sort?: RaceSortOption;
+  q?: string;
+  browse?: "county" | "congressional_district" | "state_house_district" | "state_senate_district";
+  area?: string;
 }
 
 function parseRaceListSearch(search: Record<string, unknown>): ElectionRaceListSearch {
@@ -57,6 +60,15 @@ function parseRaceListSearch(search: Record<string, unknown>): ElectionRaceListS
       typeof search.status === "string" && isRaceStatus(search.status) ? search.status : undefined,
     featured: search.featured === true || search.featured === "true" ? true : undefined,
     sort: RACE_SORT_OPTIONS.find((option) => option.value === search.sort)?.value,
+    q: typeof search.q === "string" && search.q.trim() ? search.q.trim() : undefined,
+    browse:
+      search.browse === "county" ||
+      search.browse === "congressional_district" ||
+      search.browse === "state_house_district" ||
+      search.browse === "state_senate_district"
+        ? search.browse
+        : undefined,
+    area: typeof search.area === "string" && search.area ? search.area : undefined,
   };
 }
 
@@ -129,8 +141,9 @@ function ElectionRacesContent() {
       statuses: raceStatus ? [raceStatus] : undefined,
       featured: featuredOnly || undefined,
       publicationStatuses: ["published"],
+      search: search.q,
     },
-    pagination: { page: 1, pageSize: 50 },
+    pagination: { page: 1, pageSize: 500 },
     sort: [
       {
         field: sortBy,
@@ -139,6 +152,24 @@ function ElectionRacesContent() {
     ],
   });
   const error = activeCycle.error ?? cycles.error ?? races.error;
+  const browseOptions = Array.from(
+    new Set(
+      (races.data?.items ?? []).flatMap((race) => {
+        if (search.browse === "county") return race.counties.map((county) => county.name);
+        if (search.browse && race.jurisdictionType === search.browse && race.districtName) {
+          return [race.districtName];
+        }
+        return [];
+      }),
+    ),
+  ).sort();
+  const visibleRaces = (races.data?.items ?? []).filter((race) => {
+    if (!search.browse || !search.area) return true;
+    if (search.browse === "county") {
+      return race.counties.some((county) => county.name === search.area);
+    }
+    return race.jurisdictionType === search.browse && race.districtName === search.area;
+  });
 
   const updateSearch = (updates: Partial<ElectionRaceListSearch>) => {
     void navigate({
@@ -175,6 +206,54 @@ function ElectionRacesContent() {
       onRetry={handleRetry}
     >
       <div className="space-y-6">
+        <section
+          aria-labelledby="browse-ballot-heading"
+          className="rounded-xl border border-slate-200 bg-slate-50 p-4"
+        >
+          <h2 id="browse-ballot-heading" className="text-lg font-bold text-slate-950">
+            Browse races
+          </h2>
+          <div className="mt-4 grid gap-4 md:grid-cols-3">
+            <label className="text-sm font-semibold text-slate-900">
+              Candidate or office
+              <input
+                type="search"
+                value={search.q ?? ""}
+                onChange={(event) => updateSearch({ q: event.target.value || undefined })}
+                placeholder="Search candidate or office"
+                className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+              />
+            </label>
+            <RaceFilterSelect
+              label="Browse by"
+              value={search.browse ?? ""}
+              options={[
+                { value: "county", label: "County" },
+                { value: "congressional_district", label: "Congressional district" },
+                { value: "state_house_district", label: "Texas House district" },
+                { value: "state_senate_district", label: "Texas Senate district" },
+              ]}
+              onChange={(value) =>
+                updateSearch({
+                  browse:
+                    value === "county" ||
+                    value === "congressional_district" ||
+                    value === "state_house_district" ||
+                    value === "state_senate_district"
+                      ? value
+                      : undefined,
+                  area: undefined,
+                })
+              }
+            />
+            <RaceFilterSelect
+              label="County or district"
+              value={search.area ?? ""}
+              options={browseOptions.map((value) => ({ value, label: value }))}
+              onChange={(value) => updateSearch({ area: value || undefined })}
+            />
+          </div>
+        </section>
         <div className="grid max-w-2xl gap-4 sm:grid-cols-2">
           {cycles.data && cycles.data.items.length > 0 ? (
             <label className="block text-sm font-semibold text-slate-900">
@@ -282,11 +361,11 @@ function ElectionRacesContent() {
           </div>
         </div>
 
-        {!electionCycleId || races.isEmpty ? (
-          <ElectionEmptyState kind="races" />
+        {!electionCycleId || races.isEmpty || visibleRaces.length === 0 ? (
+          <ElectionEmptyState kind={search.q || search.area ? "search" : "races"} />
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
-            {races.data?.items.map((race) => (
+            {visibleRaces.map((race) => (
               <RaceCard
                 key={race.id}
                 name={race.name}

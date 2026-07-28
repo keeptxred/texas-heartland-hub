@@ -51,6 +51,11 @@ export interface RaceSummary {
   partyScope: PartyScope;
   districtName: string | null;
   districtNumber: string | null;
+  counties: readonly {
+    id: ElectionEntityId;
+    name: string;
+    slug: string;
+  }[];
   stateCode: string;
   electionDate: IsoDateString;
   status: RaceStatus;

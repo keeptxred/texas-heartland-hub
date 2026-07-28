@@ -35,6 +35,7 @@ interface ElectionCandidateListSearch {
   status?: CandidateStatus;
   incumbency?: IncumbencyType;
   sort?: CandidateSortOption;
+  q?: string;
 }
 
 function parseCandidateListSearch(search: Record<string, unknown>): ElectionCandidateListSearch {
@@ -50,6 +51,7 @@ function parseCandidateListSearch(search: Record<string, unknown>): ElectionCand
     status: isCandidateStatus(search.status) ? search.status : undefined,
     incumbency: isIncumbencyType(search.incumbency) ? search.incumbency : undefined,
     sort: CANDIDATE_SORT_OPTIONS.find((option) => option.value === search.sort)?.value,
+    q: typeof search.q === "string" && search.q.trim() ? search.q.trim() : undefined,
   };
 }
 
@@ -109,6 +111,7 @@ function ElectionCandidatesContent() {
       statuses: search.status ? [search.status] : undefined,
       incumbencyTypes: search.incumbency ? [search.incumbency] : undefined,
       publicationStatuses: ["published"],
+      search: search.q,
     },
     pagination: { page: 1, pageSize: 50 },
     sort: [{ field: sortBy, direction: "asc" }],
@@ -137,6 +140,16 @@ function ElectionCandidatesContent() {
         <aside className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
           Select two to four published candidates below to compare their verified directory fields.
         </aside>
+        <label className="block max-w-xl text-sm font-semibold text-slate-900">
+          Search by candidate name or office
+          <input
+            type="search"
+            value={search.q ?? ""}
+            onChange={(event) => updateSearch({ q: event.target.value || undefined })}
+            placeholder="Candidate or office"
+            className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
+          />
+        </label>
         <label className="block max-w-xs text-sm font-semibold text-slate-900">
           Sort candidates
           <select
