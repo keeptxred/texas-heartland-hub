@@ -41,7 +41,7 @@ function normalizeElectionPath(path: string): string | null {
       url.pathname.length > 1 && url.pathname.endsWith("/")
         ? url.pathname.slice(0, -1)
         : url.pathname;
-    return normalized === ELECTION_ROUTES.root || normalized.startsWith(`${ELECTION_ROUTES.root}/`)
+    return normalized === ELECTION_ROUTES.base || normalized.startsWith(`${ELECTION_ROUTES.base}/`)
       ? normalized
       : null;
   } catch {
@@ -58,6 +58,7 @@ function recordToEntry(
   const requestedPath = normalizeElectionPath(record.path);
   const canonicalPath = normalizeElectionPath(record.canonicalPath ?? record.path);
   if (!requestedPath || !canonicalPath || requestedPath !== canonicalPath) return null;
+  if (canonicalPath === ELECTION_ROUTES.legacyRoot) return null;
 
   return {
     loc: absUrl(canonicalPath),
@@ -78,13 +79,14 @@ export function buildElectionSitemapEntries(input: ElectionSitemapInput = {}): U
     ...(input.candidates ?? []),
     ...(input.additionalPages ?? []),
   ];
-
-  return [
+  const entries = [
     ...staticEntries,
     ...dynamicRecords
       .map((record) => recordToEntry(record, fallbackLastmod))
       .filter((entry): entry is UrlEntry => entry !== null),
   ];
+
+  return [...new Map(entries.map((entry) => [entry.loc, entry])).values()];
 }
 
 export const ELECTION_STATIC_SITEMAP_COUNT = STATIC_ELECTION_PATHS.length;
