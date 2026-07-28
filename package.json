@@ -27,7 +27,7 @@
     "elections:import:polls": "node --experimental-strip-types scripts/elections/import-tpor-may-poll.ts && node --experimental-strip-types scripts/elections/import-ut-june-poll.ts",
     "elections:generate:geography": "node --experimental-strip-types scripts/elections/generate-official-geography.ts",
     "elections:import:geography": "npm run elections:generate:geography && node --experimental-strip-types scripts/elections/import-geography.ts",
-    "elections:forecast": "node --experimental-strip-types scripts/elections/forecast.ts",
+    "elections:forecast": "node --experimental-strip-types scripts/elections/forecast.ts && npm run elections:sources",
     "elections:routes:qa": "node scripts/elections/routes-qa.mjs",
     "elections:sitemap:qa": "node scripts/elections/sitemap-qa.mjs",
     "elections:readiness": "node scripts/elections/launch-readiness.mjs",
