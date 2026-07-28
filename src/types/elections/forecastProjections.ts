@@ -16,6 +16,7 @@ import type {
   ForecastRating,
   ForecastStatus,
 } from "./forecastClassifications";
+import type { OfficeLevel } from "./raceClassifications";
 
 export interface ForecastCandidateSummary {
   candidateId: CandidateId;
@@ -34,6 +35,7 @@ export interface ForecastRaceSummary {
   slug: RaceSlug;
   name: string;
   officeName: string;
+  officeLevel: OfficeLevel;
   districtName: string | null;
   electionDate: string;
 }
