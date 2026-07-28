@@ -72,6 +72,9 @@ export const ELECTION_CENTRAL_CONFIG = {
       expiredAfterMs: 24 * 60 * 60_000,
     },
   } satisfies Record<string, ElectionFreshnessConfig>,
+  forecasts: {
+    primarySourceId: null as string | null,
+  },
   behavior: {
     showUnratedRaces: true,
     showThirdPartyCandidates: true,
@@ -122,7 +125,8 @@ export function isElectionDataStale(
   updatedAt: string | Date,
   now: Date = new Date(),
 ): boolean {
-  const updatedTime = updatedAt instanceof Date ? updatedAt.getTime() : new Date(updatedAt).getTime();
+  const updatedTime =
+    updatedAt instanceof Date ? updatedAt.getTime() : new Date(updatedAt).getTime();
   if (!Number.isFinite(updatedTime)) return true;
 
   return now.getTime() - updatedTime > ELECTION_CENTRAL_CONFIG.freshness[kind].staleAfterMs;
@@ -133,7 +137,8 @@ export function isElectionDataExpired(
   updatedAt: string | Date,
   now: Date = new Date(),
 ): boolean {
-  const updatedTime = updatedAt instanceof Date ? updatedAt.getTime() : new Date(updatedAt).getTime();
+  const updatedTime =
+    updatedAt instanceof Date ? updatedAt.getTime() : new Date(updatedAt).getTime();
   if (!Number.isFinite(updatedTime)) return true;
 
   return now.getTime() - updatedTime > ELECTION_CENTRAL_CONFIG.freshness[kind].expiredAfterMs;
