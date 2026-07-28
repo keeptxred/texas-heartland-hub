@@ -1,15 +1,17 @@
 {
-  "generatedAt": "2026-07-28T15:08:17.859Z",
+  "generatedAt": "2026-07-28T17:34:13.927Z",
   "ready": false,
   "homepageTakeoverEnabled": false,
   "counts": {
     "cycles": 1,
     "races": 227,
     "candidates": 37,
-    "polls": 0,
+    "polls": 2,
     "forecasts": 0,
     "racesWithAtLeastOneCandidate": 33,
-    "launchCoveredRaces": 4
+    "launchCoveredRaces": 4,
+    "geographyRequiredRaces": 219,
+    "geographyCoveredRaces": 219
   },
   "uncoveredRaceIds": [
     "race-2026-governor",
@@ -238,8 +240,8 @@
     "race-2026-state-board-of-education-5",
     "race-2026-state-board-of-education-7"
   ],
+  "missingGeographyRaceIds": [],
   "warnings": [
-    "No public polls are loaded; the published no-poll state must remain visible.",
     "No forecasts are loaded; the published no-forecast state must remain visible."
   ],
   "blockerCount": 224

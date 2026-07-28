@@ -1,1 +1,284 @@
-[]
+[
+  {
+    "id": "poll-tpor-may-2026-attorney-general",
+    "slug": "tpor-may-2026-attorney-general",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-attorney-general",
+    "jurisdictionId": "jurisdiction-texas",
+    "title": "May 2026 Texas attorney general general-election poll",
+    "status": "published",
+    "pollster": {
+      "name": "Texas Public Opinion Research",
+      "slug": "texas-public-opinion-research",
+      "websiteUrl": "https://texaspublicopinionresearch.substack.com/",
+      "grade": "unrated",
+      "transparencyScore": null,
+      "methodologyUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken"
+    },
+    "sponsors": [
+      {
+        "name": "Texas Public Opinion Research",
+        "type": "pollster",
+        "websiteUrl": "https://texaspublicopinionresearch.substack.com/",
+        "partisanAffiliation": null,
+        "notes": "The publisher describes the project as nonpartisan."
+      }
+    ],
+    "fieldStartDate": "2026-05-27",
+    "fieldEndDate": "2026-05-28",
+    "releaseDate": "2026-05-29",
+    "revisedAt": null,
+    "methodology": {
+      "population": "likely_voters",
+      "sampleSize": 1670,
+      "marginOfError": 2.8,
+      "confidenceLevel": null,
+      "mode": "unknown",
+      "languages": [],
+      "weightingDescription": null,
+      "samplingDescription": "Texas Public Opinion Research reported a survey of 1,670 likely Texas general-election voters.",
+      "likelyVoterModelDescription": null,
+      "questionOrderRandomized": null,
+      "includesCellPhones": null,
+      "responseRate": null,
+      "methodologyUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken"
+    },
+    "questions": [
+      {
+        "id": "tpor-may-2026-attorney-general-question",
+        "type": "head_to_head",
+        "prompt": "If the 2026 general election for Attorney General were held today, who would you vote for?",
+        "order": 1,
+        "sampleSize": 1670,
+        "population": "likely_voters",
+        "responses": [
+          {
+            "id": "tpor-may-2026-attorney-general-question-response-1",
+            "label": "Mayes Middleton",
+            "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+            "party": "republican",
+            "percentage": 44,
+            "respondentCount": null,
+            "marginFromLeader": 0,
+            "isLeader": true,
+            "isUndecided": false,
+            "isOther": false
+          },
+          {
+            "id": "tpor-may-2026-attorney-general-question-response-2",
+            "label": "Nathan Johnson",
+            "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+            "party": "democratic",
+            "percentage": 39,
+            "respondentCount": null,
+            "marginFromLeader": 5,
+            "isLeader": false,
+            "isUndecided": false,
+            "isOther": false
+          },
+          {
+            "id": "tpor-may-2026-attorney-general-question-response-3",
+            "label": "Undecided",
+            "candidateId": null,
+            "party": null,
+            "percentage": 13,
+            "respondentCount": null,
+            "marginFromLeader": 31,
+            "isLeader": false,
+            "isUndecided": true,
+            "isOther": false
+          }
+        ],
+        "notes": "Only percentages explicitly published in the original release are included; unreported remainder categories are not inferred."
+      }
+    ],
+    "primaryQuestionId": "tpor-may-2026-attorney-general-question",
+    "toplineUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+    "questionnaireUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+    "crosstabsUrl": null,
+    "archiveUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+    "internalPoll": false,
+    "partisanPoll": false,
+    "trackingPoll": false,
+    "supersededByPollId": null,
+    "notes": null,
+    "createdAt": "2026-05-29T12:00:00.000Z",
+    "updatedAt": "2026-07-28T17:34:05.721Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-07-28T17:34:05.721Z",
+    "verifiedBy": "Election poll import pipeline",
+    "verificationNotes": "Topline values, field dates, sample size, likely-voter population, and margin of error are published by the original pollster.",
+    "publicationStatus": "published",
+    "publishedAt": "2026-05-29T12:00:00.000Z",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "Election poll import pipeline",
+    "dataAsOf": "2026-05-28T23:59:59.000Z",
+    "lastCheckedAt": "2026-07-28T17:34:05.721Z",
+    "staleAfter": "2026-07-28T00:00:00.000Z",
+    "expiresAt": "2026-11-04T12:00:00.000Z",
+    "freshnessStatus": "aging",
+    "source": {
+      "sourceId": "source-tpor-may-2026-general-election",
+      "sourceName": "Texas Public Opinion Research",
+      "sourceType": "pollster",
+      "sourceUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+      "sourceRecordId": "tpor-may-2026-attorney-general",
+      "retrievedAt": "2026-07-28T17:34:05.721Z",
+      "attributionText": "Texas Public Opinion Research, May 2026 general-election poll"
+    }
+  },
+  {
+    "id": "poll-ut-texas-politics-project-june-2026-attorney-general",
+    "slug": "ut-texas-politics-project-june-2026-attorney-general",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-attorney-general",
+    "jurisdictionId": "jurisdiction-texas",
+    "title": "June 2026 Texas attorney general trial ballot",
+    "status": "published",
+    "pollster": {
+      "name": "University of Texas/Texas Politics Project Poll",
+      "slug": "ut-texas-politics-project",
+      "websiteUrl": "https://texaspolitics.utexas.edu/polling",
+      "grade": "unrated",
+      "transparencyScore": null,
+      "methodologyUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+    },
+    "sponsors": [
+      {
+        "name": "The University of Texas at Austin",
+        "type": "academic",
+        "websiteUrl": "https://www.utexas.edu/",
+        "partisanAffiliation": null,
+        "notes": null
+      }
+    ],
+    "fieldStartDate": "2026-06-05",
+    "fieldEndDate": "2026-06-12",
+    "releaseDate": "2026-06-22",
+    "revisedAt": null,
+    "methodology": {
+      "population": "registered_voters",
+      "sampleSize": 1200,
+      "marginOfError": 2.83,
+      "confidenceLevel": null,
+      "mode": "online_panel",
+      "languages": [],
+      "weightingDescription": "Texas Politics Project reported a weighting-adjusted margin of error of ±3.47 percentage points.",
+      "samplingDescription": "Survey of 1,200 self-reported registered Texas voters conducted online by YouGov.",
+      "likelyVoterModelDescription": null,
+      "questionOrderRandomized": null,
+      "includesCellPhones": null,
+      "responseRate": null,
+      "methodologyUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+    },
+    "questions": [
+      {
+        "id": "ut-texas-politics-project-june-2026-attorney-general-question",
+        "type": "multi_candidate",
+        "prompt": "If the 2026 election for Attorney General were held today, and the candidates were Mayes Middleton and Nathan Johnson, who would you vote for, or haven’t you thought enough about it to have an opinion?",
+        "order": 1,
+        "sampleSize": 1200,
+        "population": "registered_voters",
+        "responses": [
+          {
+            "id": "ut-texas-politics-project-june-2026-attorney-general-question-response-1",
+            "label": "Mayes Middleton",
+            "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+            "party": "republican",
+            "percentage": 41,
+            "respondentCount": null,
+            "marginFromLeader": 0,
+            "isLeader": true,
+            "isUndecided": false,
+            "isOther": false
+          },
+          {
+            "id": "ut-texas-politics-project-june-2026-attorney-general-question-response-2",
+            "label": "Nathan Johnson",
+            "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+            "party": "democratic",
+            "percentage": 36,
+            "respondentCount": null,
+            "marginFromLeader": 5,
+            "isLeader": false,
+            "isUndecided": false,
+            "isOther": false
+          },
+          {
+            "id": "ut-texas-politics-project-june-2026-attorney-general-question-response-3",
+            "label": "Tom Oxford",
+            "candidateId": null,
+            "party": "libertarian",
+            "percentage": 2,
+            "respondentCount": null,
+            "marginFromLeader": 39,
+            "isLeader": false,
+            "isUndecided": false,
+            "isOther": false
+          },
+          {
+            "id": "ut-texas-politics-project-june-2026-attorney-general-question-response-4",
+            "label": "Someone else",
+            "candidateId": null,
+            "party": null,
+            "percentage": 4,
+            "respondentCount": null,
+            "marginFromLeader": 37,
+            "isLeader": false,
+            "isUndecided": false,
+            "isOther": true
+          },
+          {
+            "id": "ut-texas-politics-project-june-2026-attorney-general-question-response-5",
+            "label": "No opinion",
+            "candidateId": null,
+            "party": null,
+            "percentage": 18,
+            "respondentCount": null,
+            "marginFromLeader": 23,
+            "isLeader": false,
+            "isUndecided": true,
+            "isOther": false
+          }
+        ],
+        "notes": "Percentages may total 99–101 because the source reports rounded whole numbers."
+      }
+    ],
+    "primaryQuestionId": "ut-texas-politics-project-june-2026-attorney-general-question",
+    "toplineUrl": "https://texaspolitics.utexas.edu/set/attorney-general-trial-ballot-june-2026",
+    "questionnaireUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
+    "crosstabsUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
+    "archiveUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
+    "internalPoll": false,
+    "partisanPoll": false,
+    "trackingPoll": false,
+    "supersededByPollId": null,
+    "notes": null,
+    "createdAt": "2026-06-22T12:00:00.000Z",
+    "updatedAt": "2026-07-28T17:34:05.806Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-07-28T17:34:05.806Z",
+    "verifiedBy": "Election poll import pipeline",
+    "verificationNotes": "Topline values, field dates, sample size, population, methodology, and margin of error are published by the original pollster.",
+    "publicationStatus": "published",
+    "publishedAt": "2026-06-22T12:00:00.000Z",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "Election poll import pipeline",
+    "dataAsOf": "2026-06-12T23:59:59.000Z",
+    "lastCheckedAt": "2026-07-28T17:34:05.806Z",
+    "staleAfter": "2026-08-12T00:00:00.000Z",
+    "expiresAt": "2026-11-04T12:00:00.000Z",
+    "freshnessStatus": "aging",
+    "source": {
+      "sourceId": "source-ut-texas-politics-project-june-2026",
+      "sourceName": "University of Texas/Texas Politics Project Poll",
+      "sourceType": "academic",
+      "sourceUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
+      "sourceRecordId": "ut-texas-politics-project-june-2026-attorney-general",
+      "retrievedAt": "2026-07-28T17:34:05.806Z",
+      "attributionText": "University of Texas/Texas Politics Project Poll, June 2026"
+    }
+  }
+]

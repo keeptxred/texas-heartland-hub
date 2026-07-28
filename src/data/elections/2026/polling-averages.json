@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "raceId": "race-2026-attorney-general",
+    "pollCount": 2,
+    "fieldDateFrom": "2026-05-28",
+    "fieldDateTo": "2026-06-12",
+    "recalculatedAt": "2026-07-28T17:34:11.791Z",
+    "weightedMargin": 5,
+    "uncertaintyRange": {
+      "low": 2.1,
+      "high": 7.9
+    },
+    "candidates": [
+      {
+        "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+        "candidateName": "MAYES MIDDLETON",
+        "averagePercentage": 42.1,
+        "pollCount": 2
+      },
+      {
+        "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+        "candidateName": "NATHAN JOHNSON",
+        "averagePercentage": 37.1,
+        "pollCount": 2
+      }
+    ],
+    "pollWeights": [
+      {
+        "pollId": "poll-tpor-may-2026-attorney-general",
+        "pollsterName": "Texas Public Opinion Research",
+        "fieldEndDate": "2026-05-28",
+        "finalWeight": 0.128,
+        "factors": {
+          "recency": 0.133,
+          "sampleSize": 1.65,
+          "population": 1,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 0.727
+        },
+        "explanation": [
+          "61 day(s) old",
+          "1,670 likely voters",
+          "pollster grade unrated",
+          "independent poll",
+          "unknown methodology"
+        ]
+      },
+      {
+        "pollId": "poll-ut-texas-politics-project-june-2026-attorney-general",
+        "pollsterName": "University of Texas/Texas Politics Project Poll",
+        "fieldEndDate": "2026-06-12",
+        "finalWeight": 0.236,
+        "factors": {
+          "recency": 0.217,
+          "sampleSize": 1.414,
+          "population": 0.88,
+          "pollsterQuality": 0.8,
+          "independence": 1,
+          "methodology": 1.093
+        },
+        "explanation": [
+          "46 day(s) old",
+          "1,200 registered voters",
+          "pollster grade unrated",
+          "independent poll",
+          "online panel methodology"
+        ]
+      }
+    ]
+  }
+]

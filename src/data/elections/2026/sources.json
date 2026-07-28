@@ -11,6 +11,61 @@
     "notes": "candidates source for candidate-ken-paxton-republican-race-2026-us-senate."
   },
   {
+    "id": "source-texas-secretary-of-state-2026-primary-runoff-results-dcebca96",
+    "name": "Texas Secretary of State 2026 Primary Runoff Results",
+    "sourceType": "official",
+    "sourceUrl": "https://goelect.txelections.civixapps.com/ivis-enr-ui/races",
+    "type": "official",
+    "url": "https://goelect.txelections.civixapps.com/ivis-enr-ui/races",
+    "retrievedAt": "2026-07-28T17:34:00.112Z",
+    "lastVerifiedAt": "2026-07-28T17:34:00.112Z",
+    "notes": "candidates source for candidate-ken-paxton-republican-race-2026-us-senate."
+  },
+  {
+    "id": "source-texas-secretary-of-state-county-sources-3bb3d6e2",
+    "name": "Texas Secretary of State County Sources",
+    "sourceType": "official",
+    "sourceUrl": "https://www.sos.texas.gov/elections/voter/links.shtml",
+    "type": "official",
+    "url": "https://www.sos.texas.gov/elections/voter/links.shtml",
+    "retrievedAt": "2026-07-28T17:34:06.325Z",
+    "lastVerifiedAt": "2026-07-28T17:34:06.325Z",
+    "notes": "Official county election-link directory used by race-2026-texas-house-150."
+  },
+  {
+    "id": "source-tpor-may-2026-general-election",
+    "name": "Texas Public Opinion Research",
+    "sourceType": "pollster",
+    "sourceUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+    "retrievedAt": "2026-07-28T17:34:05.721Z",
+    "lastVerifiedAt": "2026-07-28T17:34:05.721Z",
+    "notes": "Texas Public Opinion Research, May 2026 general-election poll",
+    "type": "pollster",
+    "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken"
+  },
+  {
+    "id": "source-u-s-census-bureau-tigerweb-857fc897",
+    "name": "U.S. Census Bureau TIGERweb",
+    "sourceType": "government",
+    "sourceUrl": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer/layers",
+    "type": "government",
+    "url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer/layers",
+    "retrievedAt": "2026-07-28T17:34:06.325Z",
+    "lastVerifiedAt": "2026-07-28T17:34:06.325Z",
+    "notes": "District and county geography source for race-2026-texas-house-150."
+  },
+  {
+    "id": "source-ut-texas-politics-project-june-2026",
+    "name": "University of Texas/Texas Politics Project Poll",
+    "sourceType": "academic",
+    "sourceUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
+    "retrievedAt": "2026-07-28T17:34:05.806Z",
+    "lastVerifiedAt": "2026-07-28T17:34:05.806Z",
+    "notes": "University of Texas/Texas Politics Project Poll, June 2026",
+    "type": "academic",
+    "url": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+  },
+  {
     "id": "tx-sos-2026-election-dates",
     "name": "Texas Secretary of State",
     "sourceType": "official",
@@ -28,8 +83,8 @@
     "sourceUrl": "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
     "type": "official",
     "url": "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
-    "retrievedAt": "2026-07-28T15:08:13.923Z",
-    "lastVerifiedAt": "2026-07-28T15:08:13.923Z",
+    "retrievedAt": "2026-07-28T17:33:37.442Z",
+    "lastVerifiedAt": "2026-07-28T17:33:37.442Z",
     "notes": "Texas Secretary of State offices up for election in 2026"
   }
 ]
