@@ -5,9 +5,16 @@ import {
   ElectionLoading,
   ElectionNavigation,
 } from "@/components/elections";
+import {
+  useCandidatesByRace,
+  useElectionRace,
+  useForecastByRace,
+  usePollsByRace,
+  useResultByRace,
+} from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
-import { isElectionSlug } from "@/types/elections";
+import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/races/$raceSlug")({
   head: ({ params }) => {
@@ -48,7 +55,7 @@ function ElectionRaceDetailRoute() {
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.races} />}
       >
         {validSlug ? (
-          <ElectionLoading variant="detail" label="Loading Texas election race details" />
+          <ElectionRaceDetailData raceSlug={raceSlug} />
         ) : (
           <ElectionErrorState
             title="Invalid election race URL"
@@ -57,5 +64,59 @@ function ElectionRaceDetailRoute() {
         )}
       </ElectionLayout>
     </ElectionRepositoryProvider>
+  );
+}
+
+function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
+  const race = useElectionRace({ slug: electionSlugs.race(raceSlug) });
+  const candidates = useCandidatesByRace(race.data?.id);
+  const polls = usePollsByRace(race.data?.id);
+  const forecast = useForecastByRace(race.data?.id);
+  const result = useResultByRace(race.data?.id);
+  const error = race.error ?? candidates.error ?? polls.error ?? forecast.error ?? result.error;
+  const isLoading =
+    race.isLoading ||
+    candidates.isLoading ||
+    polls.isLoading ||
+    forecast.isLoading ||
+    result.isLoading;
+
+  const handleRetry = () => {
+    void race.refetch();
+    void candidates.refetch();
+    void polls.refetch();
+    void forecast.refetch();
+    void result.refetch();
+  };
+
+  if (isLoading) {
+    return <ElectionLoading variant="detail" label="Loading Texas election race details" />;
+  }
+
+  if (error) {
+    return (
+      <ElectionErrorState
+        kind="service"
+        title="Election race details could not be loaded"
+        technicalMessage={error.message}
+        retryAction={{ label: "Try again", onClick: handleRetry }}
+      />
+    );
+  }
+
+  if (race.isMissing || !race.data) {
+    return (
+      <ElectionErrorState
+        kind="not_found"
+        title="Election race not found"
+        message="This race is not published or is no longer available."
+      />
+    );
+  }
+
+  return (
+    <div className="sr-only" aria-live="polite">
+      Race, candidate, polling, forecast, and result data loaded.
+    </div>
   );
 }
