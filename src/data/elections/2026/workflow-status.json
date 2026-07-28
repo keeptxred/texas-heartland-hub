@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-07-28T17:12:57.764Z",
+  "updatedAt": "2026-07-28T17:15:04.201Z",
   "conclusion": "failure",
-  "runId": "30381714632",
+  "runId": "30381946166",
   "runAttempt": "1",
-  "triggerCommit": "b1d4f95d37415eb7c882efd7ebdf7133f3ab0f6f",
-  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30381714632",
-  "validationSummary": "> tanstack_start_ts@ elections:validate /home/runner/work/texas-heartland-hub/texas-heartland-hub\n> node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs && node scripts/elections/validate-sources.mjs\n\nElection enum validation passed.\nElection data validation failed with 16 error(s):\n- sources[0].url must be a valid HTTPS URL.\n- sources[0].type is required.\n- sources[1].url must be a valid HTTPS URL.\n- sources[1].type is required.\n- sources[2].url must be a valid HTTPS URL.\n- sources[2].type is required.\n- sources[3].url must be a valid HTTPS URL.\n- sources[3].type is required.\n- sources[4].url must be a valid HTTPS URL.\n- sources[4].type is required.\n- sources[5].url must be a valid HTTPS URL.\n- sources[5].type is required.\n- sources[6].url must be a valid HTTPS URL.\n- sources[6].type is required.\n- sources[7].url must be a valid HTTPS URL.\n- sources[7].type is required.\n ELIFECYCLE  Command failed with exit code 1."
+  "triggerCommit": "210c1f67178bf47fa0736c8ae7f75ab8d906e338",
+  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30381946166",
+  "validationSummary": "> tanstack_start_ts@ elections:validate /home/runner/work/texas-heartland-hub/texas-heartland-hub\n> node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs && node scripts/elections/validate-sources.mjs\n\nElection enum validation passed.\nElection data validation passed (1 cycle, 227 races, 37 candidates, 2 polls, 0 forecasts, 0 results, 8 sources).\nElection source validation failed with 1 error(s):\n- Source URL https://electionresults.sos.state.tx.us/results.html is duplicated by source-texas-secretary-of-state-2026-primary-runoff-results and source-texas-secretary-of-state-2026-primary-runoff-results-ecf76735.\n ELIFECYCLE  Command failed with exit code 1."
 }
