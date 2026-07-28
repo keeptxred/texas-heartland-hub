@@ -1,5 +1,6 @@
 export * from "./CandidateBiographySection";
 export * from "./CandidateCampaignLinks";
+export * from "./CandidateComparison";
 export * from "./CandidateDetailSeo";
 export * from "./CandidateExpandedProfile";
 export * from "./CandidateInternalLinks";

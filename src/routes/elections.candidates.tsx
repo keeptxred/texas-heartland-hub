@@ -1,5 +1,11 @@
+import { useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { CandidateCard, CandidateListFilters, ElectionEmptyState } from "@/components/elections";
+import {
+  CandidateCard,
+  CandidateComparison,
+  CandidateListFilters,
+  ElectionEmptyState,
+} from "@/components/elections";
 import { useElectionCandidates } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
@@ -92,6 +98,7 @@ function ElectionCandidatesRoute() {
 
 function ElectionCandidatesContent() {
   const search = Route.useSearch();
+  const [comparisonIds, setComparisonIds] = useState<readonly string[]>([]);
   const navigate = useNavigate({ from: Route.fullPath });
   const sortBy = search.sort ?? "last_name";
   const candidates = useElectionCandidates({
@@ -113,6 +120,8 @@ function ElectionCandidatesContent() {
       replace: true,
     });
   };
+  const comparisonCandidates =
+    candidates.data?.items.filter((candidate) => comparisonIds.includes(candidate.id)) ?? [];
 
   return (
     <ElectionCandidateListPage
@@ -121,6 +130,13 @@ function ElectionCandidatesContent() {
       onRetry={() => void candidates.refetch()}
     >
       <div className="space-y-6">
+        <CandidateComparison
+          candidates={comparisonCandidates}
+          onClear={() => setComparisonIds([])}
+        />
+        <aside className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+          Select two to four published candidates below to compare their verified directory fields.
+        </aside>
         <label className="block max-w-xs text-sm font-semibold text-slate-900">
           Sort candidates
           <select
@@ -159,30 +175,46 @@ function ElectionCandidatesContent() {
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
             {candidates.data?.items.map((candidate) => (
-              <CandidateCard
-                key={candidate.id}
-                name={candidate.ballotName}
-                party={candidate.party}
-                partyLabel={candidate.partyLabel ?? undefined}
-                office={candidate.primaryRace?.officeName}
-                district={candidate.primaryRace?.districtName ?? undefined}
-                incumbent={
-                  candidate.incumbencyType === "incumbent" ||
-                  candidate.incumbencyType === "appointed_incumbent"
-                }
-                status={candidate.status}
-                photoUrl={
-                  candidate.imageRights?.usageStatus === "approved" ? candidate.imageUrl : null
-                }
-                occupation={candidate.occupation}
-                hometown={candidate.hometown}
-                profileHref={ELECTION_ROUTES.candidate(candidate.slug)}
-                raceHref={
-                  candidate.primaryRace
-                    ? ELECTION_ROUTES.race(candidate.primaryRace.slug)
-                    : undefined
-                }
-              />
+              <div key={candidate.id} className="space-y-2">
+                <label className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800">
+                  <input
+                    type="checkbox"
+                    checked={comparisonIds.includes(candidate.id)}
+                    disabled={!comparisonIds.includes(candidate.id) && comparisonIds.length >= 4}
+                    onChange={(event) =>
+                      setComparisonIds((current) =>
+                        event.target.checked
+                          ? [...current, candidate.id]
+                          : current.filter((id) => id !== candidate.id),
+                      )
+                    }
+                  />
+                  Compare {candidate.ballotName}
+                </label>
+                <CandidateCard
+                  name={candidate.ballotName}
+                  party={candidate.party}
+                  partyLabel={candidate.partyLabel ?? undefined}
+                  office={candidate.primaryRace?.officeName}
+                  district={candidate.primaryRace?.districtName ?? undefined}
+                  incumbent={
+                    candidate.incumbencyType === "incumbent" ||
+                    candidate.incumbencyType === "appointed_incumbent"
+                  }
+                  status={candidate.status}
+                  photoUrl={
+                    candidate.imageRights?.usageStatus === "approved" ? candidate.imageUrl : null
+                  }
+                  occupation={candidate.occupation}
+                  hometown={candidate.hometown}
+                  profileHref={ELECTION_ROUTES.candidate(candidate.slug)}
+                  raceHref={
+                    candidate.primaryRace
+                      ? ELECTION_ROUTES.race(candidate.primaryRace.slug)
+                      : undefined
+                  }
+                />
+              </div>
             ))}
           </div>
         )}
