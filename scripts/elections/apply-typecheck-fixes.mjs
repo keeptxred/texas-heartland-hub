@@ -71,12 +71,12 @@ async function patch(file, replacements) {
   for (const [before, after] of replacements) {
     const beforeMatches = content.split(before).length - 1;
     const afterMatches = content.split(after).length - 1;
-    if (beforeMatches === 1 && afterMatches === 0) {
+    if (afterMatches === 1) continue;
+    if (beforeMatches === 1) {
       content = content.replace(before, after);
       changed = true;
       continue;
     }
-    if (beforeMatches === 0 && afterMatches === 1) continue;
     throw new Error(
       `${file}: expected one unapplied or one already-applied target; found before=${beforeMatches}, after=${afterMatches}.`,
     );
