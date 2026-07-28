@@ -28,7 +28,7 @@ export const DEFAULT_ELECTION_ADMIN_MENU_ITEMS: readonly ElectionAdminMenuItem[]
     label: "Candidates",
     href: "/admin/elections/candidates",
     description: "Maintain candidate profiles, party details, biographies, and race assignments.",
-    status: "planned",
+    status: "ready",
   },
   {
     label: "Polls",
