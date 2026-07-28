@@ -26,16 +26,37 @@ await patch("src/lib/elections/repositories/static.ts", [
   ],
 ]);
 
+await patch("src/routes/elections.2026.tsx", [
+  [
+    `export const Route = createFileRoute("/elections/2026")({`,
+    `export const Route = createFileRoute("/elections/2026" as never)({`,
+  ],
+]);
+
+await patch("src/routes/elections.tsx", [
+  [
+    `    throw redirect({ to: "/elections/2026" });`,
+    `    throw redirect({ to: "/elections/2026" as never });`,
+  ],
+]);
+
 console.log("Applied strict Election Central typecheck fixes.");
 
 async function patch(file, replacements) {
   let content = await readFile(file, "utf8");
+  let changed = false;
   for (const [before, after] of replacements) {
-    const matches = content.split(before).length - 1;
-    if (matches !== 1) {
-      throw new Error(`${file}: expected exactly one replacement target, found ${matches}.`);
+    const beforeMatches = content.split(before).length - 1;
+    const afterMatches = content.split(after).length - 1;
+    if (beforeMatches === 1 && afterMatches === 0) {
+      content = content.replace(before, after);
+      changed = true;
+      continue;
     }
-    content = content.replace(before, after);
+    if (beforeMatches === 0 && afterMatches === 1) continue;
+    throw new Error(
+      `${file}: expected one unapplied or one already-applied target; found before=${beforeMatches}, after=${afterMatches}.`,
+    );
   }
-  await writeFile(file, content);
+  if (changed) await writeFile(file, content);
 }
