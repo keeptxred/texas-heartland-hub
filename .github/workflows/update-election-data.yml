@@ -12,6 +12,7 @@ on:
       - "scripts/elections/import-candidates.ts"
       - "scripts/elections/import-finance.ts"
       - "scripts/elections/import-geography.ts"
+      - "scripts/elections/normalize-imports.mjs"
       - "scripts/elections/import/**"
       - ".github/workflows/update-election-data.yml"
 
@@ -54,6 +55,9 @@ jobs:
 
       - name: Refresh authoritative geography records
         run: pnpm elections:import:geography
+
+      - name: Normalize imported records
+        run: pnpm elections:normalize
 
       - name: Recalculate eligible forecasts
         run: pnpm elections:forecast
