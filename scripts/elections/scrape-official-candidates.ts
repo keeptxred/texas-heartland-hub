@@ -1,5 +1,5 @@
 import { writeFile } from "node:fs/promises";
-import { chromium, type Frame, type Page } from "@playwright/test";
+import { chromium, type Frame, type Locator, type Page } from "@playwright/test";
 
 const SOURCE_URL =
   process.env.ELECTION_CANDIDATE_LIST_URL ??
@@ -7,6 +7,7 @@ const SOURCE_URL =
 const OUTPUT = process.env.ELECTION_CANDIDATE_SCRAPE_OUTPUT ?? "/tmp/texas-candidates.html";
 const DEBUG_HTML = "/tmp/official-candidate-debug.html";
 const DEBUG_SCREENSHOT = "/tmp/official-candidate-debug.png";
+const DEBUG_NETWORK = "/tmp/official-candidate-debug-network.json";
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
   locale: "en-US",
@@ -16,9 +17,17 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 const networkPayloads: unknown[] = [];
+const networkEvents: Record<string, unknown>[] = [];
 
 page.on("response", async (response) => {
   const contentType = response.headers()["content-type"] ?? "";
+  networkEvents.push({
+    kind: "response",
+    method: response.request().method(),
+    status: response.status(),
+    contentType,
+    url: response.url(),
+  });
   if (!contentType.includes("application/json")) return;
   if (!/candidate|election|office|ballot|civix|contest/i.test(response.url())) return;
   try {
@@ -26,6 +35,22 @@ page.on("response", async (response) => {
   } catch {
     // Some application endpoints identify JSON but return no body.
   }
+});
+page.on("requestfailed", (request) => {
+  networkEvents.push({
+    kind: "requestfailed",
+    method: request.method(),
+    url: request.url(),
+    errorText: request.failure()?.errorText ?? "unknown request failure",
+  });
+});
+page.on("console", (message) => {
+  if (message.type() !== "error" && message.type() !== "warning") return;
+  networkEvents.push({
+    kind: "console",
+    level: message.type(),
+    text: message.text(),
+  });
 });
 
 try {
@@ -39,17 +64,20 @@ try {
   await page.waitForTimeout(8_000);
   await select2026Election(page);
   await clickSearchControls(page);
-  await page.waitForLoadState("networkidle", { timeout: 30_000 }).catch(() => undefined);
-  await page.waitForTimeout(4_000);
+  await waitForCandidateResults(page);
 
   const rows = new Map<string, CandidateRow>();
   for (const row of findCandidateRows(networkPayloads)) rows.set(rowKey(row), row);
-  for (const frame of page.frames()) {
-    for (const row of await collectPaginatedCandidateRows(frame)) rows.set(rowKey(row), row);
+  for (const candidatePage of context.pages()) {
+    for (const frame of candidatePage.frames()) {
+      for (const row of await collectPaginatedCandidateRows(frame)) rows.set(rowKey(row), row);
+    }
   }
 
   if (rows.size === 0) {
-    throw new Error("The official candidate application loaded, but no candidate rows were found.");
+    throw new Error(
+      `The official candidate application completed loading, but no candidate rows were found in ${networkPayloads.length} captured JSON payload(s).`,
+    );
   }
 
   const html = candidateRowsToTable([...rows.values()]);
@@ -59,6 +87,19 @@ try {
   await Promise.allSettled([
     page.content().then((html) => writeFile(DEBUG_HTML, html)),
     page.screenshot({ path: DEBUG_SCREENSHOT, fullPage: true }),
+    writeFile(
+      DEBUG_NETWORK,
+      `${JSON.stringify(
+        {
+          capturedAt: new Date().toISOString(),
+          error: (error as Error).message,
+          events: networkEvents,
+          payloadCount: networkPayloads.length,
+        },
+        null,
+        2,
+      )}\n`,
+    ),
   ]);
   console.error(`Official candidate extraction failed: ${(error as Error).message}`);
   throw error;
@@ -81,8 +122,8 @@ async function select2026Election(page: Page) {
     if (!(await yearControl.count())) continue;
 
     await selectMatOption(frame, yearControl, /^2026$/i, "2026 election year");
-    await waitForEnabled(frame.locator('mat-select[formcontrolname="electionId"]').first(), 20_000);
     const electionControl = frame.locator('mat-select[formcontrolname="electionId"]').first();
+    await waitForEnabled(electionControl, 20_000);
     await selectMatOption(
       frame,
       electionControl,
@@ -99,7 +140,7 @@ async function select2026Election(page: Page) {
 
 async function selectMatOption(
   frame: Frame,
-  control: ReturnType<Frame["locator"]>,
+  control: Locator,
   optionPattern: RegExp,
   description: string,
 ) {
@@ -112,7 +153,7 @@ async function selectMatOption(
   const texts = await options.allTextContents();
   const index = texts.findIndex((text) => optionPattern.test(clean(text)));
   if (index < 0) {
-    await frame.keyboard.press("Escape").catch(() => undefined);
+    await control.press("Escape").catch(() => undefined);
     throw new Error(
       `The official candidate application did not offer ${description}. Available options: ${texts
         .map(clean)
@@ -124,7 +165,7 @@ async function selectMatOption(
   await frame.waitForTimeout(1_500);
 }
 
-async function waitForEnabled(locator: ReturnType<Frame["locator"]>, timeoutMs: number) {
+async function waitForEnabled(locator: Locator, timeoutMs: number) {
   const started = Date.now();
   while (Date.now() - started < timeoutMs) {
     if ((await locator.count()) && (await locator.getAttribute("aria-disabled")) !== "true") return;
@@ -139,7 +180,7 @@ async function clickSearchControls(page: Page) {
     if ((await preferred.count()) && (await preferred.isVisible())) {
       await waitForButtonEnabled(preferred, 20_000);
       await preferred.click({ timeout: 10_000 });
-      await frame.waitForTimeout(2_000);
+      await frame.waitForTimeout(1_000);
       return;
     }
 
@@ -151,7 +192,7 @@ async function clickSearchControls(page: Page) {
       if (/reset|clear/i.test(name ?? "")) continue;
       try {
         await button.click({ timeout: 5_000 });
-        await frame.waitForTimeout(2_000);
+        await frame.waitForTimeout(1_000);
         return;
       } catch {
         // Continue to another visible search control.
@@ -161,13 +202,25 @@ async function clickSearchControls(page: Page) {
   throw new Error("The official candidate application did not enable its search control.");
 }
 
-async function waitForButtonEnabled(button: ReturnType<Frame["getByRole"]>, timeoutMs: number) {
+async function waitForButtonEnabled(button: Locator, timeoutMs: number) {
   const started = Date.now();
   while (Date.now() - started < timeoutMs) {
     if (await button.isEnabled()) return;
     await new Promise((resolve) => setTimeout(resolve, 400));
   }
   throw new Error("The official candidate application search button remained disabled.");
+}
+
+async function waitForCandidateResults(page: Page) {
+  const spinner = page.locator("lib-loading-spinner").first();
+  await spinner.waitFor({ state: "visible", timeout: 10_000 }).catch(() => undefined);
+  if (await spinner.count()) {
+    await spinner.waitFor({ state: "hidden", timeout: 120_000 }).catch(() => {
+      throw new Error("The official candidate application loading dialog remained open for two minutes.");
+    });
+  }
+  await page.waitForLoadState("networkidle", { timeout: 30_000 }).catch(() => undefined);
+  await page.waitForTimeout(4_000);
 }
 
 async function collectPaginatedCandidateRows(frame: Frame) {
