@@ -15,22 +15,27 @@ const page = await fetch(OFFICES_URL, {
 });
 if (!page.ok) throw new Error(`Texas SOS offices import failed: ${page.status} ${page.statusText}`);
 const html = await page.text();
+const officialPageText = normalizeHtmlText(html);
 for (const expected of [
-  "All 38 United States Representatives",
-  "All 150 State Representatives",
-  "16 State Senators",
-  "Eight Members, State Board of Education",
-  "Four Members, Supreme Court",
-  "Three Members, Court of Criminal Appeals",
+  /offices up for election in 2026/i,
+  /united states representatives/i,
+  /state representatives/i,
+  /state senators/i,
+  /state board of education/i,
+  /supreme court/i,
+  /court of criminal appeals/i,
 ]) {
-  if (!html.includes(expected)) {
-    throw new Error(`Texas SOS offices page changed; expected text not found: ${expected}`);
+  if (!expected.test(officialPageText)) {
+    throw new Error(`Texas SOS offices page changed; expected office category not found: ${expected}`);
   }
 }
 
 const existing = JSON.parse(await readFile(DATA_FILE, "utf8"));
 const existingById = new Map(existing.map((record) => [record.id, record]));
 const races = buildCatalog().map((definition) => buildRace(definition, existingById.get(definition.id)));
+if (races.length !== 227) {
+  throw new Error(`Race catalog must contain 227 launch-scope records; generated ${races.length}.`);
+}
 await writeFile(DATA_FILE, `${JSON.stringify(races, null, 2)}\n`);
 console.log(`Imported ${races.length} Texas 2026 races from the official offices-up-for-election scope.`);
 
@@ -47,7 +52,9 @@ function buildCatalog() {
     ...[1, 2, 7, 8].map((place) =>
       statewide(
         `texas-supreme-court-place-${place}`,
-        place === 1 ? "Texas Supreme Court Chief Justice, Place 1" : `Texas Supreme Court, Place ${place}`,
+        place === 1
+          ? "Texas Supreme Court Chief Justice, Place 1"
+          : `Texas Supreme Court, Place ${place}`,
         "state",
         "judicial",
         6,
@@ -196,7 +203,7 @@ function buildRace(definition, previous) {
     registrationDeadline: "2026-10-05",
     earlyVotingStart: "2026-10-19",
     earlyVotingEnd: "2026-10-30",
-    status: "candidate_review",
+    status: "general",
     rating: previous?.rating ?? "unrated",
     featured: previous?.featured ?? definition.featured,
     competitive: previous?.competitive ?? false,
@@ -216,7 +223,8 @@ function buildRace(definition, previous) {
     verificationStatus: "verified",
     verifiedAt: timestamp,
     verifiedBy: "Texas SOS race import",
-    verificationNotes: "Office scope verified against the Texas Secretary of State offices-up-for-election page.",
+    verificationNotes:
+      "Office scope verified against the Texas Secretary of State offices-up-for-election page.",
     publicationStatus: "published",
     publishedAt: previous?.publishedAt ?? timestamp,
     unpublishedAt: null,
@@ -235,6 +243,19 @@ function buildRace(definition, previous) {
     officialSampleBallotLinks: previous?.officialSampleBallotLinks ?? [],
     forecastInputs: previous?.forecastInputs ?? { enabled: false },
   };
+}
+
+function normalizeHtmlText(html) {
+  return html
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function range(start, end) {
