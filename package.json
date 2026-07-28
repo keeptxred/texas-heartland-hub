@@ -13,7 +13,14 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "format": "prettier --write .",
-    "elections:validate": "node scripts/elections/validate.mjs"
+    "elections:validate": "node scripts/elections/validate.mjs",
+    "elections:import:races": "node --experimental-strip-types scripts/elections/import-races.ts",
+    "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts",
+    "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
+    "elections:import:geography": "node --experimental-strip-types scripts/elections/import-geography.ts",
+    "elections:forecast": "node --experimental-strip-types scripts/elections/forecast.ts",
+    "elections:qa": "node scripts/elections/qa.mjs",
+    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:import:finance && npm run elections:import:geography && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -89,7 +96,7 @@
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
-    "eslint-plugin-react-hooks": "^6.1.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
     "nitro": "3.0.260603-beta",
