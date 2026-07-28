@@ -3,6 +3,7 @@ import type {
   CandidateId,
   CandidateSlug,
   ElectionCycleId,
+  ElectionEntityId,
   ElectionResultId,
   ForecastId,
   PollId,
@@ -56,6 +57,8 @@ export interface RaceSummary {
     name: string;
     slug: string;
   }[];
+  /** Public ZIP coverage supplied by authoritative district/county geography data. */
+  zipCodes: readonly string[];
   stateCode: string;
   electionDate: IsoDateString;
   status: RaceStatus;
