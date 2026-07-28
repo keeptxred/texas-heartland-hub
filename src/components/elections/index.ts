@@ -6,6 +6,7 @@ export * from "./layout";
 export * from "./navigation";
 export * from "./polls";
 export * from "./races";
+export * from "./results";
 export * from "./resources";
 export * from "./states";
 export * from "./voting";
