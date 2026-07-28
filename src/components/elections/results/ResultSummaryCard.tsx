@@ -71,6 +71,9 @@ export function ResultSummaryCard({ result }: ResultSummaryCardProps) {
           </div>
         ))}
       </div>
+      <p className="mt-5 text-xs text-slate-500">
+        Updated {new Date(result.lastVoteUpdateAt ?? result.updatedAt).toLocaleString("en-US")}
+      </p>
     </article>
   );
 }
