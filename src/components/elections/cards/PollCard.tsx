@@ -10,8 +10,8 @@ export interface PollCardResult {
 
 export interface PollCardProps {
   pollster: string;
-  raceName: string;
-  raceHref: string;
+  raceName?: string;
+  raceHref?: string;
   fieldDates: string;
   publishedDate?: string;
   sampleSize: number;
@@ -49,14 +49,23 @@ export function PollCard({
   const spread = leader && runnerUp ? leader.percentage - runnerUp.percentage : null;
 
   return (
-    <article className={`rounded-xl border border-slate-200 bg-white p-6 shadow-sm ${className}`.trim()}>
+    <article
+      className={`rounded-xl border border-slate-200 bg-white p-6 shadow-sm ${className}`.trim()}
+    >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">Latest poll</p>
           <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-950">{pollster}</h3>
-          <a href={raceHref} className="mt-1 inline-block text-sm font-semibold text-red-700 underline-offset-4 hover:underline">
-            {raceName}
-          </a>
+          {raceName && raceHref ? (
+            <a
+              href={raceHref}
+              className="mt-1 inline-block text-sm font-semibold text-red-700 underline-offset-4 hover:underline"
+            >
+              {raceName}
+            </a>
+          ) : raceName ? (
+            <p className="mt-1 text-sm font-semibold text-slate-700">{raceName}</p>
+          ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
           {grade && (
@@ -74,9 +83,15 @@ export function PollCard({
 
       <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
         <PollDetail label="Field dates" value={fieldDates} />
-        <PollDetail label="Sample" value={`${sampleSize.toLocaleString("en-US")} ${populationLabel}`} />
+        <PollDetail
+          label="Sample"
+          value={`${sampleSize.toLocaleString("en-US")} ${populationLabel}`}
+        />
         <PollDetail label="Method" value={methodologyLabel} />
-        <PollDetail label="Margin of error" value={marginOfError == null ? "Not reported" : `±${marginOfError}%`} />
+        <PollDetail
+          label="Margin of error"
+          value={marginOfError == null ? "Not reported" : `±${marginOfError}%`}
+        />
         {publishedDate && <PollDetail label="Published" value={publishedDate} />}
         {sponsor && <PollDetail label="Sponsor" value={sponsor} />}
       </dl>
@@ -87,29 +102,49 @@ export function PollCard({
             <div className="flex items-center justify-between gap-3 text-sm">
               <div className="min-w-0">
                 {result.candidateHref ? (
-                  <a href={result.candidateHref} className="font-semibold text-slate-950 underline-offset-4 hover:text-red-700 hover:underline">
+                  <a
+                    href={result.candidateHref}
+                    className="font-semibold text-slate-950 underline-offset-4 hover:text-red-700 hover:underline"
+                  >
                     {result.candidateName}
                   </a>
                 ) : (
                   <span className="font-semibold text-slate-950">{result.candidateName}</span>
                 )}
-                {result.partyLabel && <span className="ml-2 text-slate-500">{result.partyLabel}</span>}
+                {result.partyLabel && (
+                  <span className="ml-2 text-slate-500">{result.partyLabel}</span>
+                )}
               </div>
-              <span className="shrink-0 font-mono font-bold text-slate-950">{result.percentage.toFixed(1)}%</span>
+              <span className="shrink-0 font-mono font-bold text-slate-950">
+                {result.percentage.toFixed(1)}%
+              </span>
             </div>
             <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-              <div className="h-full rounded-full bg-red-700" style={{ width: `${Math.min(100, Math.max(0, result.percentage))}%` }} />
+              <div
+                className="h-full rounded-full bg-red-700"
+                style={{ width: `${Math.min(100, Math.max(0, result.percentage))}%` }}
+              />
             </div>
           </div>
         ))}
       </div>
 
       <div className="mt-6 flex flex-wrap items-center gap-4 border-t border-slate-200 pt-5 text-sm">
-        <a href={raceHref} className="font-semibold text-red-700 underline-offset-4 hover:underline">
-          View race overview →
-        </a>
+        {raceHref ? (
+          <a
+            href={raceHref}
+            className="font-semibold text-red-700 underline-offset-4 hover:underline"
+          >
+            View race overview →
+          </a>
+        ) : null}
         {sourceUrl && (
-          <a href={sourceUrl} rel="noopener noreferrer" target="_blank" className="font-semibold text-slate-700 underline-offset-4 hover:text-red-700 hover:underline">
+          <a
+            href={sourceUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+            className="font-semibold text-slate-700 underline-offset-4 hover:text-red-700 hover:underline"
+          >
             View poll source ↗
           </a>
         )}
@@ -117,11 +152,17 @@ export function PollCard({
 
       {relatedLinks.length > 0 && (
         <nav aria-label="Related poll resources" className="mt-5 rounded-lg bg-slate-50 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">Related KeepTXRed resources</p>
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+            Related KeepTXRed resources
+          </p>
           <ul className="mt-3 space-y-2">
             {relatedLinks.map((link) => (
               <li key={`${link.href}-${link.label}`}>
-                <a href={link.href} title={link.relevance} className="text-sm font-semibold text-red-700 underline-offset-4 hover:underline">
+                <a
+                  href={link.href}
+                  title={link.relevance}
+                  className="text-sm font-semibold text-red-700 underline-offset-4 hover:underline"
+                >
                   {link.label} →
                 </a>
               </li>
