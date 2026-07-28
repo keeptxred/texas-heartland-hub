@@ -2,6 +2,7 @@ import { ElectionErrorState, ElectionLoading } from "@/components/elections";
 import { useAdminElectionForecasts } from "@/hooks/elections";
 import { FORECAST_RATING_LABELS } from "@/types/elections/forecastClassifications";
 import { ElectionAdminMenu } from "./ElectionAdminMenu";
+import { ElectionAdminDataNotice } from "./ElectionAdminDataNotice";
 
 export function ElectionAdminForecastList() {
   const forecasts = useAdminElectionForecasts();
@@ -23,29 +24,40 @@ export function ElectionAdminForecastList() {
             retryAction={{ label: "Try again", onClick: () => void forecasts.refetch() }}
           />
         ) : (
-          <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
-              <thead>
-                <tr>
-                  <th className="px-3 py-2">Source</th>
-                  <th className="px-3 py-2">Race</th>
-                  <th className="px-3 py-2">Rating</th>
-                  <th className="px-3 py-2">Updated</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {forecasts.data?.items.map((forecast) => (
-                  <tr key={forecast.id}>
-                    <td className="px-3 py-3 font-semibold">{forecast.sourceName}</td>
-                    <td className="px-3 py-3">{forecast.race.name}</td>
-                    <td className="px-3 py-3">{FORECAST_RATING_LABELS[forecast.rating]}</td>
-                    <td className="px-3 py-3">
-                      {new Date(forecast.updatedAt).toLocaleString("en-US")}
-                    </td>
+          <div className="mt-6 space-y-4">
+            <ElectionAdminDataNotice
+              isEmpty={!forecasts.data?.items.length}
+              hasStaleData={
+                forecasts.data?.items.some(
+                  (forecast) =>
+                    forecast.freshnessStatus === "stale" || forecast.freshnessStatus === "expired",
+                ) ?? false
+              }
+            />
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
+                <thead>
+                  <tr>
+                    <th className="px-3 py-2">Source</th>
+                    <th className="px-3 py-2">Race</th>
+                    <th className="px-3 py-2">Rating</th>
+                    <th className="px-3 py-2">Updated</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {forecasts.data?.items.map((forecast) => (
+                    <tr key={forecast.id}>
+                      <td className="px-3 py-3 font-semibold">{forecast.sourceName}</td>
+                      <td className="px-3 py-3">{forecast.race.name}</td>
+                      <td className="px-3 py-3">{FORECAST_RATING_LABELS[forecast.rating]}</td>
+                      <td className="px-3 py-3">
+                        {new Date(forecast.updatedAt).toLocaleString("en-US")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </section>

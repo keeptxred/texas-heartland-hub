@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ElectionAdminDashboard } from "@/components/admin/elections";
+import { ElectionErrorState, ElectionLoading } from "@/components/elections";
 import { useActiveElectionCycle, useElectionSummaryMetrics } from "@/hooks/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 
@@ -61,6 +62,25 @@ function ElectionAdminDashboardData() {
   const cycle = useActiveElectionCycle();
   const metrics = useElectionSummaryMetrics(cycle.data?.id);
   const values = metrics.data;
+  if (cycle.isLoading || metrics.isLoading) {
+    return <ElectionLoading variant="metrics" label="Loading election admin metrics" />;
+  }
+  const error = cycle.error ?? metrics.error;
+  if (error) {
+    return (
+      <ElectionErrorState
+        kind="admin_operation"
+        technicalMessage={error.message}
+        retryAction={{
+          label: "Try again",
+          onClick: () => {
+            void cycle.refetch();
+            void metrics.refetch();
+          },
+        }}
+      />
+    );
+  }
 
   return (
     <ElectionAdminDashboard

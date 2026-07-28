@@ -5,6 +5,7 @@ import {
   RESULT_REPORTING_STATUS_LABELS,
 } from "@/types/elections/resultClassifications";
 import { ElectionAdminMenu } from "./ElectionAdminMenu";
+import { ElectionAdminDataNotice } from "./ElectionAdminDataNotice";
 export function ElectionAdminResultList() {
   const results = useAdminElectionResults();
   return (
@@ -25,33 +26,44 @@ export function ElectionAdminResultList() {
             retryAction={{ label: "Try again", onClick: () => void results.refetch() }}
           />
         ) : (
-          <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
-              <thead>
-                <tr>
-                  <th className="px-3 py-2">Race</th>
-                  <th className="px-3 py-2">Reporting</th>
-                  <th className="px-3 py-2">Certification</th>
-                  <th className="px-3 py-2">Updated</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {results.data?.items.map((result) => (
-                  <tr key={result.id}>
-                    <td className="px-3 py-3 font-semibold">{result.race.name}</td>
-                    <td className="px-3 py-3">
-                      {RESULT_REPORTING_STATUS_LABELS[result.reportingStatus]}
-                    </td>
-                    <td className="px-3 py-3">
-                      {CERTIFICATION_STATUS_LABELS[result.certificationStatus]}
-                    </td>
-                    <td className="px-3 py-3">
-                      {new Date(result.updatedAt).toLocaleString("en-US")}
-                    </td>
+          <div className="mt-6 space-y-4">
+            <ElectionAdminDataNotice
+              isEmpty={!results.data?.items.length}
+              hasStaleData={
+                results.data?.items.some(
+                  (result) =>
+                    result.freshnessStatus === "stale" || result.freshnessStatus === "expired",
+                ) ?? false
+              }
+            />
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-slate-200 text-left text-sm">
+                <thead>
+                  <tr>
+                    <th className="px-3 py-2">Race</th>
+                    <th className="px-3 py-2">Reporting</th>
+                    <th className="px-3 py-2">Certification</th>
+                    <th className="px-3 py-2">Updated</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {results.data?.items.map((result) => (
+                    <tr key={result.id}>
+                      <td className="px-3 py-3 font-semibold">{result.race.name}</td>
+                      <td className="px-3 py-3">
+                        {RESULT_REPORTING_STATUS_LABELS[result.reportingStatus]}
+                      </td>
+                      <td className="px-3 py-3">
+                        {CERTIFICATION_STATUS_LABELS[result.certificationStatus]}
+                      </td>
+                      <td className="px-3 py-3">
+                        {new Date(result.updatedAt).toLocaleString("en-US")}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </section>
