@@ -17,6 +17,7 @@
     "elections:validate": "node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs",
     "elections:import:races": "node --experimental-strip-types scripts/elections/import-races.ts && npm run elections:normalize",
     "elections:scrape:candidates": "node --experimental-strip-types scripts/elections/scrape-official-candidates.ts",
+    "elections:scrape:primary-winners": "node --experimental-strip-types scripts/elections/scrape-official-primary-winners.ts",
     "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts && npm run elections:normalize",
     "elections:resolve:fec": "node --experimental-strip-types scripts/elections/resolve-fec-ids.ts",
     "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
@@ -91,7 +92,7 @@
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.2.1",
     "tw-animate-css": "^1.3.4",
-    "vaul": "^1.1.2",
+    "vaul": "^1.2.2",
     "vite-tsconfig-paths": "^6.0.2",
     "zod": "^3.24.2"
   },
