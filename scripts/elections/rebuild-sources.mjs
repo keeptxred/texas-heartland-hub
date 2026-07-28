@@ -19,6 +19,13 @@ const ALLOWED_TYPES = new Set([
 ]);
 
 const existing = JSON.parse(await readFile(path.join(DATA_DIR, "sources.json"), "utf8"));
+const existingById = new Map(existing.filter((source) => source?.id).map((source) => [source.id, source]));
+const existingByUrl = new Map();
+for (const source of existing) {
+  const url = source?.sourceUrl ?? source?.url;
+  if (String(url ?? "").startsWith("https://") && !existingByUrl.has(url)) existingByUrl.set(url, source);
+}
+
 const records = Object.fromEntries(
   await Promise.all(
     COLLECTIONS.map(async (name) => [
@@ -30,26 +37,6 @@ const records = Object.fromEntries(
 const sources = new Map();
 const sourceIdByUrl = new Map();
 const primarySourceIds = new Set();
-
-for (const existingSource of existing) {
-  const sourceUrl = existingSource.sourceUrl ?? existingSource.url;
-  if (!existingSource.id || !String(sourceUrl ?? "").startsWith("https://")) continue;
-  if (sourceIdByUrl.has(sourceUrl)) continue;
-  const sourceType = ALLOWED_TYPES.has(existingSource.sourceType)
-    ? existingSource.sourceType
-    : ALLOWED_TYPES.has(existingSource.type)
-      ? existingSource.type
-      : inferType(sourceUrl);
-  const normalized = {
-    ...existingSource,
-    sourceType,
-    sourceUrl,
-    type: sourceType,
-    url: sourceUrl,
-  };
-  sources.set(normalized.id, normalized);
-  sourceIdByUrl.set(sourceUrl, normalized.id);
-}
 
 for (const [collection, values] of Object.entries(records)) {
   for (const record of values) {
@@ -131,17 +118,27 @@ for (const [collection, values] of Object.entries(records)) {
 
 const output = [...sources.values()].sort((left, right) => String(left.id).localeCompare(String(right.id)));
 await writeFile(path.join(DATA_DIR, "sources.json"), `${JSON.stringify(output, null, 2)}\n`);
-console.log(`Rebuilt canonical election source catalog with ${output.length} source(s).`);
+console.log(`Rebuilt canonical election source catalog with ${output.length} referenced source(s).`);
 
 function addSource(input) {
   const sourceUrl = String(input.sourceUrl ?? "");
   if (!sourceUrl.startsWith("https://")) return;
+
   const requestedId = input.id || sourceId(input.name, sourceUrl);
-  const id = sourceIdByUrl.get(sourceUrl) ?? requestedId;
-  const previous = sources.get(id);
+  const currentIdForUrl = sourceIdByUrl.get(sourceUrl);
+  const id = input.primary && input.id ? input.id : currentIdForUrl ?? requestedId;
+  const current = currentIdForUrl ? sources.get(currentIdForUrl) : sources.get(id);
+  const historical = existingById.get(requestedId) ?? existingByUrl.get(sourceUrl);
+  const previous = current ?? historical;
+
+  if (input.primary && currentIdForUrl && currentIdForUrl !== id) {
+    sources.delete(currentIdForUrl);
+    primarySourceIds.delete(currentIdForUrl);
+  }
+
   const incomingType = ALLOWED_TYPES.has(input.sourceType) ? input.sourceType : inferType(sourceUrl);
   const preferIncoming = Boolean(input.primary) || !primarySourceIds.has(id);
-  const sourceType = preferIncoming ? incomingType : previous?.sourceType ?? incomingType;
+  const sourceType = preferIncoming ? incomingType : previous?.sourceType ?? previous?.type ?? incomingType;
   const source = {
     ...(previous ?? {}),
     id,
@@ -162,6 +159,7 @@ function addSource(input) {
       ? input.notes || previous?.notes || null
       : previous?.notes || input.notes || null,
   };
+
   const conflicting = sources.get(id);
   if (conflicting && conflicting.sourceUrl !== sourceUrl) {
     const disambiguated = `${requestedId}-${shortHash(sourceUrl)}`;
