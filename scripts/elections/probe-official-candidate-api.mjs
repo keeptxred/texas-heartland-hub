@@ -79,6 +79,7 @@ try {
     `${JSON.stringify(
       {
         capturedAt,
+        conclusion: "success",
         sourceUrl: SOURCE_URL,
         endpoint: request.url(),
         method: request.method(),
@@ -91,6 +92,21 @@ try {
     )}\n`,
   );
   console.log(`Captured official candidate API response and safe schema summary.`);
+} catch (error) {
+  await writeFile(
+    SUMMARY_OUTPUT,
+    `${JSON.stringify(
+      {
+        capturedAt: new Date().toISOString(),
+        conclusion: "failure",
+        sourceUrl: SOURCE_URL,
+        error: error instanceof Error ? error.message : String(error),
+      },
+      null,
+      2,
+    )}\n`,
+  );
+  throw error;
 } finally {
   await browser.close();
 }
