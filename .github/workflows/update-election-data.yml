@@ -10,7 +10,7 @@ on:
     paths:
       - "scripts/elections/import-races.ts"
       - "scripts/elections/scrape-official-candidates.ts"
-      - "scripts/elections/scrape-official-primary-winners.ts"
+      - "scripts/elections/scrape-official-primary-winners.mjs"
       - "scripts/elections/import-candidates.ts"
       - "scripts/elections/fec-candidate-resolver.ts"
       - "scripts/elections/resolve-fec-ids.ts"
