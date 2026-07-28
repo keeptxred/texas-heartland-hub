@@ -4,6 +4,7 @@ import {
   ElectionLayout,
   ElectionLoading,
   ElectionNavigation,
+  ResultDetailView,
 } from "@/components/elections";
 import { useElectionResult } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
@@ -84,9 +85,5 @@ function ElectionResultData({ resultSlug }: { resultSlug: string }) {
       />
     );
   }
-  return (
-    <section>
-      <h1 className="text-3xl font-bold text-slate-950">{result.data.race.name}</h1>
-    </section>
-  );
+  return <ResultDetailView result={result.data} />;
 }
