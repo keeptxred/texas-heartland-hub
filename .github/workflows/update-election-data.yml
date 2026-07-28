@@ -235,6 +235,10 @@ jobs:
           RUN_SHA: ${{ github.sha }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          if [[ "$JOB_STATUS" == "cancelled" ]]; then
+            echo "Superseded refresh cancelled; preserving the last completed workflow status."
+            exit 0
+          fi
           if [[ "$JOB_STATUS" != "success" ]]; then
             git restore src/data/elections/2026 || true
           fi
