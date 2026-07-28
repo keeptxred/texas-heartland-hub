@@ -10,6 +10,8 @@ on:
     paths:
       - "scripts/elections/import-races.ts"
       - "scripts/elections/import-candidates.ts"
+      - "scripts/elections/fec-candidate-resolver.ts"
+      - "scripts/elections/resolve-fec-ids.ts"
       - "scripts/elections/import-finance.ts"
       - "scripts/elections/import-geography.ts"
       - "scripts/elections/normalize-imports.mjs"
@@ -55,6 +57,9 @@ jobs:
 
       - name: Refresh authoritative candidate records
         run: pnpm elections:import:candidates
+
+      - name: Resolve federal candidate FEC identifiers
+        run: pnpm elections:resolve:fec
 
       - name: Refresh selective finance records
         run: pnpm elections:import:finance
