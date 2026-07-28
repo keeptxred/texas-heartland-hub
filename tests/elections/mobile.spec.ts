@@ -36,9 +36,9 @@ for (const route of ROUTES) {
   });
 }
 
-test("empty polling, forecast, and results pages remain honest", async ({ page }) => {
+test("polling is sourced while forecast and result states remain honest", async ({ page }) => {
   await page.goto("/elections/polls", { waitUntil: "domcontentloaded" });
-  await expect(page.getByText("No qualifying polls are available")).toBeVisible();
+  await expect(page.getByRole("link", { name: /view poll source/i }).first()).toBeVisible();
 
   await page.goto("/elections/forecast", { waitUntil: "domcontentloaded" });
   await expect(page.getByText("Forecasts are not available yet")).toBeVisible();
