@@ -20,6 +20,7 @@ on:
       - "scripts/elections/generate-official-geography.ts"
       - "scripts/elections/import-geography.ts"
       - "scripts/elections/normalize-imports.mjs"
+      - "scripts/elections/migrate-source-urls.mjs"
       - "scripts/elections/rebuild-sources.mjs"
       - "scripts/elections/validate-sources.mjs"
       - "scripts/elections/polling-averages.ts"
@@ -30,6 +31,7 @@ on:
       - "scripts/elections/sitemap-qa.mjs"
       - "scripts/elections/launch-readiness.mjs"
       - "scripts/elections/import/**"
+      - "package.json"
       - ".github/workflows/update-election-data.yml"
 
 permissions:
@@ -134,6 +136,9 @@ jobs:
 
       - name: Normalize imported records
         run: pnpm elections:normalize
+
+      - name: Migrate retired source URLs
+        run: pnpm elections:migrate-sources
 
       - name: Rebuild canonical source catalog
         run: pnpm elections:sources
