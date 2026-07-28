@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import {
   ElectionErrorState,
+  ForecastDetailView,
   ElectionLayout,
   ElectionLoading,
   ElectionNavigation,
@@ -94,14 +95,5 @@ function ElectionForecastDetailData({ forecastSlug }: { forecastSlug: string }) 
     );
   }
 
-  return (
-    <section aria-labelledby="forecast-title">
-      <p className="text-sm font-bold uppercase tracking-[0.18em] text-red-700">
-        {forecast.data.sourceName}
-      </p>
-      <h1 id="forecast-title" className="mt-2 text-3xl font-bold tracking-tight text-slate-950">
-        {forecast.data.title}
-      </h1>
-    </section>
-  );
+  return <ForecastDetailView forecast={forecast.data} />;
 }
