@@ -21,3 +21,4 @@ export * from "./useResultByRace";
 export * from "./useRelatedElectionRaces";
 export * from "./useElectionRace";
 export * from "./useElectionRaces";
+export * from "./useAdminElectionRaces";

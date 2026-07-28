@@ -22,7 +22,7 @@ export const DEFAULT_ELECTION_ADMIN_MENU_ITEMS: readonly ElectionAdminMenuItem[]
     label: "Races",
     href: "/admin/elections/races",
     description: "Manage race records, ratings, districts, dates, and publication state.",
-    status: "planned",
+    status: "ready",
   },
   {
     label: "Candidates",
@@ -62,10 +62,13 @@ export function ElectionAdminMenu({
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">Admin workspace</p>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+            Admin workspace
+          </p>
           <h2 className="mt-1 text-xl font-bold tracking-tight text-slate-950">Election Central</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-            Manage election data, publishing readiness, and Election Central updates from one workspace.
+            Manage election data, publishing readiness, and Election Central updates from one
+            workspace.
           </p>
         </div>
         <a
@@ -117,10 +120,16 @@ export function ElectionAdminMenu({
         <a href="/admin" className="font-semibold text-red-700 underline-offset-4 hover:underline">
           Editorial dashboard
         </a>
-        <a href="/elections/methodology" className="font-semibold text-red-700 underline-offset-4 hover:underline">
+        <a
+          href="/elections/methodology"
+          className="font-semibold text-red-700 underline-offset-4 hover:underline"
+        >
           Public methodology
         </a>
-        <a href="/register-to-vote" className="font-semibold text-red-700 underline-offset-4 hover:underline">
+        <a
+          href="/register-to-vote"
+          className="font-semibold text-red-700 underline-offset-4 hover:underline"
+        >
           Voter registration guide
         </a>
       </div>
