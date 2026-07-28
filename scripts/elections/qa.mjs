@@ -114,7 +114,17 @@ if (checkLinks) {
   }
   for (const url of urls) {
     const response = await fetchWithTimeout(url, 10_000);
-    if (!response || response.status >= 400) errors.push(`Broken external source: ${url} (${response?.status ?? "timeout"}).`);
+    if (!response) {
+      errors.push(`External source timed out or could not be reached: ${url}.`);
+      continue;
+    }
+    if ([401, 403, 429].includes(response.status)) {
+      warnings.push(`External source is reachable but access-controlled or rate-limited: ${url} (${response.status}).`);
+    } else if ([404, 410].includes(response.status) || response.status >= 500) {
+      errors.push(`Broken external source: ${url} (${response.status}).`);
+    } else if (response.status >= 400) {
+      warnings.push(`External source returned ${response.status} and needs editorial review: ${url}.`);
+    }
   }
 }
 
