@@ -8,13 +8,21 @@ import results from "@/data/elections/2026/results.json";
 import { buildElectionSitemapEntries } from "@/lib/elections/sitemap";
 import { renderUrlset, xmlResponse } from "@/lib/sitemap-shared";
 
+type ElectionJsonRecord = {
+  slug?: unknown;
+  updatedAt?: unknown;
+  dataAsOf?: unknown;
+  publicationStatus?: unknown;
+  verificationStatus?: unknown;
+};
+
 export const Route = createFileRoute("/sitemap-elections.xml")({
   server: {
     handlers: {
       GET: async () => {
         const entries = [
           ...buildElectionSitemapEntries({
-            lastModified: newestElectionUpdate(),
+            lastmod: newestElectionUpdate(),
           }),
           ...publicEntries(races, "/elections/races/", 0.8),
           ...publicEntries(candidates, "/elections/candidates/", 0.7),
@@ -28,12 +36,9 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
   },
 });
 
-function publicEntries(
-  records: readonly Record<string, unknown>[],
-  prefix: string,
-  priority: number,
-) {
+function publicEntries(records: readonly unknown[], prefix: string, priority: number) {
   return records
+    .map((record) => record as ElectionJsonRecord)
     .filter(
       (record) =>
         record.publicationStatus === "published" &&
@@ -49,7 +54,14 @@ function publicEntries(
 }
 
 function newestElectionUpdate() {
-  const dates = [...races, ...candidates, ...polls, ...forecasts, ...results]
+  const records: readonly ElectionJsonRecord[] = [
+    ...(races as readonly ElectionJsonRecord[]),
+    ...(candidates as readonly ElectionJsonRecord[]),
+    ...(polls as readonly ElectionJsonRecord[]),
+    ...(forecasts as readonly ElectionJsonRecord[]),
+    ...(results as readonly ElectionJsonRecord[]),
+  ];
+  const dates = records
     .map((record) => String(record.updatedAt ?? ""))
     .filter(Boolean)
     .sort();
