@@ -6,3 +6,4 @@ export * from "./internalLinks";
 export * from "./routes";
 export * from "./seo";
 export * from "./sitemap";
+export * from "./modelValidation";
