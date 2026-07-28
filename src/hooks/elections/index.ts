@@ -6,6 +6,7 @@ export * from "./useElectionCandidates";
 export * from "./useElectionForecasts";
 export * from "./useElectionPolls";
 export * from "./useElectionResults";
+export * from "./useElectionSummaryMetrics";
 export * from "./useForecastByRace";
 export * from "./useFeaturedForecasts";
 export * from "./useFeaturedElectionRaces";

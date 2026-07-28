@@ -14,6 +14,7 @@ import {
 import {
   useActiveElectionCycle,
   useActiveElectionResults,
+  useElectionSummaryMetrics,
   useFeaturedElectionRaces,
   useFeaturedForecasts,
   useLatestElectionPolls,
@@ -27,6 +28,7 @@ import {
   getNextElection,
 } from "@/lib/election-calendar";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { useElectionRepositoryMode } from "@/lib/elections/repositories";
 import {
   FORECAST_CONFIDENCE_LEVEL_LABELS,
   FORECAST_RATING_LABELS,
@@ -85,8 +87,10 @@ const VERIFIED_RESOURCES = [
 ] as const;
 
 export function ElectionHomePage() {
+  const repositoryMode = useElectionRepositoryMode();
   const activeCycle = useActiveElectionCycle();
   const activeResults = useActiveElectionResults(activeCycle.data?.id, 4);
+  const summaryMetrics = useElectionSummaryMetrics(activeCycle.data?.id);
   const featuredRaces = useFeaturedElectionRaces(activeCycle.data?.id, 6);
   const latestPolls = useLatestElectionPolls(activeCycle.data?.id, 3);
   const featuredForecasts = useFeaturedForecasts(activeCycle.data?.id, 3);
@@ -154,6 +158,71 @@ export function ElectionHomePage() {
                 { label: "Texas election laws", href: "/laws" },
               ]}
             />
+          </div>
+        </section>
+
+        <section aria-labelledby="election-summary-metrics">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+                Election Central data
+              </p>
+              <h2
+                id="election-summary-metrics"
+                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+              >
+                Active election overview
+              </h2>
+            </div>
+            {!import.meta.env.PROD && repositoryMode === "mock" ? (
+              <span className="rounded-full border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-amber-900">
+                Mock repository mode
+              </span>
+            ) : null}
+          </div>
+
+          <div className="mt-6">
+            {activeCycle.isPending || (activeCycle.data && summaryMetrics.isPending) ? (
+              <ElectionLoading
+                variant="metrics"
+                count={4}
+                label="Loading Election Central summary metrics"
+              />
+            ) : activeCycle.isError || summaryMetrics.isError ? (
+              <ElectionErrorState
+                compact
+                title="Election summary metrics could not be loaded"
+                retryAction={{
+                  label: "Try again",
+                  onClick: () => {
+                    void activeCycle.refetch();
+                    void summaryMetrics.refetch();
+                  },
+                }}
+                secondaryActions={[]}
+              />
+            ) : (
+              <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {[
+                  ["Races", summaryMetrics.data?.raceCount ?? 0],
+                  ["Candidates", summaryMetrics.data?.candidateCount ?? 0],
+                  ["Polls", summaryMetrics.data?.pollCount ?? 0],
+                  ["Active results", summaryMetrics.data?.activeResultCount ?? 0],
+                ].map(([label, value]) => (
+                  <div
+                    key={label}
+                    className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+                  >
+                    <dt className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+                      {label}
+                    </dt>
+                    <dd className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
+                      {Number(value).toLocaleString("en-US")}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )}
           </div>
         </section>
 
