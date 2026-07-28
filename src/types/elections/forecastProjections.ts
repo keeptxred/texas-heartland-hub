@@ -28,6 +28,8 @@ export interface ForecastCandidateSummary {
   projectedVoteShare: number | null;
   projectedVoteShareLow: number | null;
   projectedVoteShareHigh: number | null;
+  pollingAverage: number | null;
+  winProbabilityChange: number | null;
 }
 
 export interface ForecastRaceSummary {
@@ -78,3 +80,7 @@ export interface ElectionForecastSnapshot {
 }
 
 export type ElectionForecastListItem = ElectionForecastSummary;
+
+export function isFundamentalsBasedForecast(forecast: Pick<ElectionForecast, "model">): boolean {
+  return forecast.model.model === "fundamentals";
+}
