@@ -161,10 +161,23 @@ jobs:
           retention-days: 14
 
       - name: Run election launch QA and write readiness report
+        id: launch_qa
+        shell: bash
         env:
           ELECTION_WRITE_READINESS: "true"
           ELECTION_QA_CHECK_LINKS: "true"
-        run: pnpm elections:qa
+        run: |
+          set -o pipefail
+          pnpm elections:qa 2>&1 | tee /tmp/election-qa.log
+
+      - name: Upload election launch QA diagnostics
+        if: always() && steps.launch_qa.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: election-launch-qa-diagnostics
+          path: /tmp/election-qa.log
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Record refresh conclusion and publish safe changes
         if: always()
@@ -182,11 +195,10 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from "node:fs";
 
-          const validationPath = "/tmp/election-validation.log";
-          let validationSummary = null;
-          if (fs.existsSync(validationPath)) {
-            const lines = fs.readFileSync(validationPath, "utf8").trim().split(/\r?\n/);
-            validationSummary = lines.slice(-80).join("\n").slice(-12000) || null;
+          function compactLog(file) {
+            if (!fs.existsSync(file)) return null;
+            const lines = fs.readFileSync(file, "utf8").trim().split(/\r?\n/);
+            return lines.slice(-80).join("\n").slice(-12000) || null;
           }
 
           const status = {
@@ -196,7 +208,8 @@ jobs:
             runAttempt: process.env.RUN_ATTEMPT,
             triggerCommit: process.env.RUN_SHA,
             runUrl: process.env.RUN_URL,
-            validationSummary,
+            validationSummary: compactLog("/tmp/election-validation.log"),
+            qaSummary: compactLog("/tmp/election-qa.log"),
           };
 
           fs.writeFileSync(
