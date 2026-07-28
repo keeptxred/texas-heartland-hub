@@ -4,6 +4,7 @@ import {
   type ElectionRepositoryMode,
 } from "./config";
 import { createMockElectionRepositories } from "./mock";
+import { normalizeElectionRepositories } from "./normalize";
 import { createStaticElectionRepositories } from "./static";
 import type { ElectionRepositories } from "./types";
 
@@ -26,9 +27,9 @@ export function createElectionRepositories(
 ): ElectionRepositories {
   switch (config.mode) {
     case "mock":
-      return createMockElectionRepositories();
+      return normalizeElectionRepositories(createMockElectionRepositories());
     case "static":
-      return createStaticElectionRepositories();
+      return normalizeElectionRepositories(createStaticElectionRepositories());
     case "supabase":
     case "api":
       throw new UnsupportedElectionRepositoryModeError(config.mode);
