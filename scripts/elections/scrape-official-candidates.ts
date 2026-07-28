@@ -37,9 +37,10 @@ try {
     throw new Error(`Official candidate application returned HTTP ${response.status()}.`);
   }
   await page.waitForTimeout(8_000);
-  await select2026Options(page);
+  await select2026Election(page);
   await clickSearchControls(page);
-  await page.waitForTimeout(5_000);
+  await page.waitForLoadState("networkidle", { timeout: 30_000 }).catch(() => undefined);
+  await page.waitForTimeout(4_000);
 
   const rows = new Map<string, CandidateRow>();
   for (const row of findCandidateRows(networkPayloads)) rows.set(rowKey(row), row);
@@ -73,26 +74,75 @@ interface CandidateRow {
   sourceRecordId?: string;
 }
 
-async function select2026Options(page: Page) {
+async function select2026Election(page: Page) {
+  let selected = false;
   for (const frame of page.frames()) {
-    for (const select of await frame.locator("select").all()) {
-      const options = await select.locator("option").allTextContents();
-      const preferred =
-        options.find((option) => /nov(?:ember)?\s*3.*2026|2026.*general/i.test(option)) ??
-        options.find((option) => /2026/i.test(option));
-      if (!preferred) continue;
-      try {
-        await select.selectOption({ label: preferred.trim() });
-        await frame.waitForTimeout(1_000);
-      } catch {
-        // A select may be read-only or populated after another control.
-      }
-    }
+    const yearControl = frame.locator('mat-select[formcontrolname="electionYear"]').first();
+    if (!(await yearControl.count())) continue;
+
+    await selectMatOption(frame, yearControl, /^2026$/i, "2026 election year");
+    await waitForEnabled(frame.locator('mat-select[formcontrolname="electionId"]').first(), 20_000);
+    const electionControl = frame.locator('mat-select[formcontrolname="electionId"]').first();
+    await selectMatOption(
+      frame,
+      electionControl,
+      /(?:2026.*general|general.*2026|nov(?:ember)?\s*3.*2026)/i,
+      "2026 general election",
+    );
+    selected = true;
+    break;
   }
+  if (!selected) {
+    throw new Error("The official candidate application did not expose the electionYear control.");
+  }
+}
+
+async function selectMatOption(
+  frame: Frame,
+  control: ReturnType<Frame["locator"]>,
+  optionPattern: RegExp,
+  description: string,
+) {
+  await waitForEnabled(control, 20_000);
+  await control.scrollIntoViewIfNeeded();
+  await control.click({ timeout: 10_000 });
+
+  const options = frame.locator('mat-option, [role="option"]');
+  await options.first().waitFor({ state: "visible", timeout: 10_000 });
+  const texts = await options.allTextContents();
+  const index = texts.findIndex((text) => optionPattern.test(clean(text)));
+  if (index < 0) {
+    await frame.keyboard.press("Escape").catch(() => undefined);
+    throw new Error(
+      `The official candidate application did not offer ${description}. Available options: ${texts
+        .map(clean)
+        .filter(Boolean)
+        .join(" | ")}`,
+    );
+  }
+  await options.nth(index).click({ timeout: 10_000 });
+  await frame.waitForTimeout(1_500);
+}
+
+async function waitForEnabled(locator: ReturnType<Frame["locator"]>, timeoutMs: number) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    if ((await locator.count()) && (await locator.getAttribute("aria-disabled")) !== "true") return;
+    await new Promise((resolve) => setTimeout(resolve, 400));
+  }
+  throw new Error("A required official candidate application control remained disabled.");
 }
 
 async function clickSearchControls(page: Page) {
   for (const frame of page.frames()) {
+    const preferred = frame.getByRole("button", { name: /qualified candidates information/i }).first();
+    if ((await preferred.count()) && (await preferred.isVisible())) {
+      await waitForButtonEnabled(preferred, 20_000);
+      await preferred.click({ timeout: 10_000 });
+      await frame.waitForTimeout(2_000);
+      return;
+    }
+
     const candidates = frame.getByRole("button", { name: /search|view|apply|submit|load/i });
     for (let index = 0; index < (await candidates.count()); index += 1) {
       const button = candidates.nth(index);
@@ -108,6 +158,16 @@ async function clickSearchControls(page: Page) {
       }
     }
   }
+  throw new Error("The official candidate application did not enable its search control.");
+}
+
+async function waitForButtonEnabled(button: ReturnType<Frame["getByRole"]>, timeoutMs: number) {
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    if (await button.isEnabled()) return;
+    await new Promise((resolve) => setTimeout(resolve, 400));
+  }
+  throw new Error("The official candidate application search button remained disabled.");
 }
 
 async function collectPaginatedCandidateRows(frame: Frame) {
