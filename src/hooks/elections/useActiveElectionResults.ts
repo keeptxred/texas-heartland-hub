@@ -23,7 +23,7 @@ function getActiveResultsRefetchInterval(results: readonly ElectionResultSummary
 
 export function useActiveElectionResults(
   electionCycleId?: ElectionCycleId,
-  limit = ELECTION_CENTRAL_CONFIG.display.defaultRaceLimit,
+  limit: number = ELECTION_CENTRAL_CONFIG.display.defaultRaceLimit,
 ) {
   const { results } = useElectionRepositories();
   const resultLimit = Math.max(0, Math.floor(limit));

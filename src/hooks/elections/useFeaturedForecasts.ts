@@ -32,7 +32,7 @@ function sortByCompetitiveness(forecasts: readonly ElectionForecastSummary[]) {
 
 export function useFeaturedForecasts(
   electionCycleId?: ElectionCycleId,
-  limit = ELECTION_CENTRAL_CONFIG.display.defaultRaceLimit,
+  limit: number = ELECTION_CENTRAL_CONFIG.display.defaultRaceLimit,
 ) {
   const { forecasts, races } = useElectionRepositories();
   const resultLimit = Math.max(0, Math.floor(limit));

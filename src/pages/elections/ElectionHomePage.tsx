@@ -14,6 +14,7 @@ import {
 import {
   useActiveElectionCycle,
   useFeaturedElectionRaces,
+  useFeaturedForecasts,
   useLatestElectionPolls,
 } from "@/hooks/elections";
 import { getArticlesByCategory } from "@/lib/articles-by-category";
@@ -25,6 +26,10 @@ import {
   getNextElection,
 } from "@/lib/election-calendar";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import {
+  FORECAST_CONFIDENCE_LEVEL_LABELS,
+  FORECAST_RATING_LABELS,
+} from "@/types/elections/forecastClassifications";
 
 const QUICK_LINKS = [
   {
@@ -82,6 +87,7 @@ export function ElectionHomePage() {
   const activeCycle = useActiveElectionCycle();
   const featuredRaces = useFeaturedElectionRaces(activeCycle.data?.id, 6);
   const latestPolls = useLatestElectionPolls(activeCycle.data?.id, 3);
+  const featuredForecasts = useFeaturedForecasts(activeCycle.data?.id, 3);
   const electionNews = getArticlesByCategory("elections").slice(0, 6);
   const uniqueImages = assignUniqueImages(
     electionNews,
@@ -328,6 +334,121 @@ export function ElectionHomePage() {
                   ))}
                 </div>
               </>
+            )}
+          </div>
+        </section>
+
+        <section aria-labelledby="featured-forecasts">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Forecasts</p>
+              <h2
+                id="featured-forecasts"
+                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+              >
+                Featured race forecasts
+              </h2>
+            </div>
+            <a
+              href={ELECTION_ROUTES.methodology}
+              className="text-sm font-semibold text-red-700 hover:underline"
+            >
+              Review forecast methodology â†’
+            </a>
+          </div>
+
+          <div className="mt-6">
+            {activeCycle.isPending || (activeCycle.data && featuredForecasts.isPending) ? (
+              <ElectionLoading
+                variant="cards"
+                count={3}
+                label="Loading featured election forecasts"
+              />
+            ) : activeCycle.isError || featuredForecasts.isError ? (
+              <ElectionErrorState
+                compact
+                title="Featured forecasts could not be loaded"
+                retryAction={{
+                  label: "Try again",
+                  onClick: () => {
+                    void activeCycle.refetch();
+                    void featuredForecasts.refetch();
+                  },
+                }}
+                secondaryActions={[
+                  {
+                    label: "Forecast methodology",
+                    href: ELECTION_ROUTES.methodology,
+                  },
+                ]}
+              />
+            ) : !activeCycle.data || featuredForecasts.isEmpty ? (
+              <ElectionEmptyState kind="forecasts" />
+            ) : (
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {featuredForecasts.data?.map((forecast) => (
+                  <article
+                    key={forecast.id}
+                    className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+                  >
+                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+                      {forecast.sourceName}
+                    </p>
+                    <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-950">
+                      {forecast.race.name}
+                    </h3>
+                    <p className="mt-1 text-sm text-slate-600">Updated {forecast.updatedAt}</p>
+
+                    <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
+                      <div className="rounded-lg bg-slate-50 p-3">
+                        <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          Rating
+                        </dt>
+                        <dd className="mt-1 font-semibold text-slate-950">
+                          {FORECAST_RATING_LABELS[forecast.rating]}
+                        </dd>
+                      </div>
+                      <div className="rounded-lg bg-slate-50 p-3">
+                        <dt className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          Confidence
+                        </dt>
+                        <dd className="mt-1 font-semibold text-slate-950">
+                          {FORECAST_CONFIDENCE_LEVEL_LABELS[forecast.confidenceLevel]}
+                        </dd>
+                      </div>
+                    </dl>
+
+                    <div className="mt-5 space-y-2">
+                      {forecast.candidates
+                        .slice()
+                        .sort((left, right) => right.winProbability - left.winProbability)
+                        .slice(0, 3)
+                        .map((candidate) => (
+                          <div
+                            key={candidate.candidateId}
+                            className="flex items-center justify-between gap-3 text-sm"
+                          >
+                            <span className="font-semibold text-slate-800">
+                              {candidate.candidateName}
+                            </span>
+                            <span className="font-mono font-bold text-slate-950">
+                              {candidate.winProbability.toFixed(1)}%
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-6 border-t border-slate-200 pt-4">
+                      <a
+                        href={ELECTION_ROUTES.methodology}
+                        className="text-sm font-semibold text-red-700 hover:underline"
+                      >
+                        How this forecast works â†’
+                      </a>
+                    </div>
+                  </article>
+                ))}
+              </div>
             )}
           </div>
         </section>
