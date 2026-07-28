@@ -8,7 +8,7 @@ import type {
   RaceId,
   RaceSlug,
 } from "./identifiers";
-import type { IsoDateTimeString } from "./metadata";
+import type { ElectionFreshnessStatus, IsoDateTimeString } from "./metadata";
 import type { ElectionForecast } from "./forecast";
 import type {
   ForecastConfidenceLevel,
@@ -43,6 +43,8 @@ export interface ElectionForecastSummary {
   slug: ForecastSlug;
   electionCycleId: ElectionCycleId;
   race: ForecastRaceSummary;
+  sourceId: string | null;
+  sourceName: string;
   title: string;
   status: ForecastStatus;
   rating: ForecastRating;
@@ -51,6 +53,7 @@ export interface ElectionForecastSummary {
   projectedWinnerCandidateId: CandidateId | null;
   projectedMargin: number | null;
   candidates: readonly ForecastCandidateSummary[];
+  freshnessStatus: ElectionFreshnessStatus;
   publishedAt: IsoDateTimeString | null;
   updatedAt: IsoDateTimeString;
 }

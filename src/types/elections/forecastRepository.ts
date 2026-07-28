@@ -1,10 +1,4 @@
-import type {
-  CandidateId,
-  ElectionCycleId,
-  ForecastId,
-  ForecastSlug,
-  RaceId,
-} from "./identifiers";
+import type { CandidateId, ElectionCycleId, ForecastId, ForecastSlug, RaceId } from "./identifiers";
 import type {
   ElectionFreshnessStatus,
   ElectionPublicationStatus,
@@ -27,11 +21,7 @@ import type {
   ElectionForecastSnapshot,
   ElectionForecastSummary,
 } from "./forecastProjections";
-import type {
-  RacePage,
-  RacePagination,
-  SortDirection,
-} from "./raceRepository";
+import type { RacePage, RacePagination, SortDirection } from "./raceRepository";
 
 export const ELECTION_FORECAST_SORT_FIELDS = [
   "updated_at",
@@ -41,8 +31,7 @@ export const ELECTION_FORECAST_SORT_FIELDS = [
   "projected_margin",
 ] as const;
 
-export type ElectionForecastSortField =
-  (typeof ELECTION_FORECAST_SORT_FIELDS)[number];
+export type ElectionForecastSortField = (typeof ELECTION_FORECAST_SORT_FIELDS)[number];
 
 export interface ElectionForecastSort {
   field: ElectionForecastSortField;
@@ -53,6 +42,7 @@ export interface ElectionForecastFilters {
   electionCycleIds?: readonly ElectionCycleId[];
   raceIds?: readonly RaceId[];
   candidateIds?: readonly CandidateId[];
+  sourceIds?: readonly string[];
   statuses?: readonly ForecastStatus[];
   ratings?: readonly ForecastRating[];
   confidenceLevels?: readonly ForecastConfidenceLevel[];
@@ -99,31 +89,20 @@ export interface ElectionForecastRepository {
   findDetailById(id: ForecastId): Promise<ElectionForecastDetail | null>;
   findDetailByRaceId(raceId: RaceId): Promise<ElectionForecastDetail | null>;
 
-  list(
-    query?: ElectionForecastListQuery,
-  ): Promise<RacePage<ElectionForecastSummary>>;
-  listCore(
-    query?: ElectionForecastListQuery,
-  ): Promise<RacePage<ElectionForecast>>;
+  list(query?: ElectionForecastListQuery): Promise<RacePage<ElectionForecastSummary>>;
+  listCore(query?: ElectionForecastListQuery): Promise<RacePage<ElectionForecast>>;
   listActive(
     electionCycleId: ElectionCycleId,
     limit?: number,
   ): Promise<readonly ElectionForecastSummary[]>;
-  listByCandidate(
-    candidateId: CandidateId,
-  ): Promise<readonly ElectionForecastSummary[]>;
-  listSnapshots(
-    query: ElectionForecastSnapshotQuery,
-  ): Promise<readonly ElectionForecastSnapshot[]>;
+  listByCandidate(candidateId: CandidateId): Promise<readonly ElectionForecastSummary[]>;
+  listSnapshots(query: ElectionForecastSnapshotQuery): Promise<readonly ElectionForecastSnapshot[]>;
 
   count(filters?: ElectionForecastFilters): Promise<number>;
   exists(lookup: ElectionForecastLookup): Promise<boolean>;
 
   create(input: ElectionForecastCreateInput): Promise<ElectionForecast>;
-  update(
-    id: ForecastId,
-    input: ElectionForecastUpdateInput,
-  ): Promise<ElectionForecast>;
+  update(id: ForecastId, input: ElectionForecastUpdateInput): Promise<ElectionForecast>;
   saveSnapshot(snapshot: ElectionForecastSnapshot): Promise<ElectionForecastSnapshot>;
   delete(id: ForecastId): Promise<boolean>;
 }
