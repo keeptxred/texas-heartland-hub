@@ -1,5 +1,6 @@
 {
-  "capturedAt": "2026-07-28T17:49:34.191Z",
+  "capturedAt": "2026-07-28T17:52:23.663Z",
+  "conclusion": "success",
   "sourceUrl": "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information",
   "endpoint": "https://goelect.txelections.civixapps.com/api-ivis-cbp/api/cbp/findQualifiedCandidates",
   "method": "POST",
