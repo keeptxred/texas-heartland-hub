@@ -17,7 +17,7 @@
     "elections:validate": "node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs",
     "elections:import:races": "node --experimental-strip-types scripts/elections/import-races.ts && npm run elections:normalize",
     "elections:scrape:candidates": "node --experimental-strip-types scripts/elections/scrape-official-candidates.ts",
-    "elections:scrape:primary-winners": "node --experimental-strip-types scripts/elections/scrape-official-primary-winners.ts",
+    "elections:scrape:primary-winners": "node scripts/elections/scrape-official-primary-winners.mjs",
     "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts && npm run elections:normalize",
     "elections:resolve:fec": "node --experimental-strip-types scripts/elections/resolve-fec-ids.ts",
     "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
