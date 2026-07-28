@@ -23,6 +23,7 @@
     "elections:routes:qa": "node scripts/elections/routes-qa.mjs",
     "elections:sitemap:qa": "node scripts/elections/sitemap-qa.mjs",
     "elections:readiness": "node scripts/elections/launch-readiness.mjs",
+    "elections:test:mobile": "playwright test --config=playwright.elections.config.ts",
     "elections:qa": "node scripts/elections/qa.mjs && npm run elections:routes:qa && npm run elections:sitemap:qa && npm run elections:readiness",
     "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:import:finance && npm run elections:import:geography && npm run elections:normalize && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
   },
@@ -93,6 +94,7 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "2.7.7",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^22.16.5",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
