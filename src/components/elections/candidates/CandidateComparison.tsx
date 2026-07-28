@@ -1,28 +1,10 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ELECTION_ROUTES } from "@/lib/elections";
+import { calculatePollingAverage, ELECTION_ROUTES } from "@/lib/elections";
 import { useElectionRepositories } from "@/lib/elections/repositories";
 import type { CandidateDetail, CandidateSummary, ElectionPollSummary } from "@/types/elections";
 
-interface SourcedComparisonItem {
-  label?: string;
-  title?: string;
-  position?: string;
-  statement?: string;
-  organizationName?: string;
-  officeName?: string;
-  description?: string;
-  sourceUrl?: string | null;
-}
-
-interface CandidateComparisonExtras {
-  experience?: readonly SourcedComparisonItem[];
-  issuePositions?: readonly SourcedComparisonItem[];
-  recentStatements?: readonly SourcedComparisonItem[];
-  votingRecord?: readonly SourcedComparisonItem[];
-}
-
 interface LoadedComparisonData {
-  detail: (CandidateDetail & CandidateComparisonExtras) | null;
+  detail: CandidateDetail | null;
   polls: readonly ElectionPollSummary[];
 }
 
@@ -49,7 +31,7 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
           repositories.candidates.findDetailById(candidate.id),
           repositories.polls.listByCandidate(candidate.id, candidate.electionCycleId),
         ]);
-        return [candidate.id, { detail: detail as LoadedComparisonData["detail"], polls }] as const;
+        return [candidate.id, { detail, polls }] as const;
       }),
     ).then((entries) => {
       if (active) setLoaded(Object.fromEntries(entries));
@@ -146,31 +128,22 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
             <ComparisonRow
               label="Biography"
               candidates={comparisonCandidates}
-              value={({ detail }) => detail?.biography || "No sourced biography available"}
+              value={({ detail }) => detail?.biography || muted("No sourced biography available")}
             />
             <ComparisonRow
               label="Experience"
               candidates={comparisonCandidates}
-              value={({ detail }) =>
-                renderSourcedItems(
-                  detail?.experience ?? detail?.officeHistory,
-                  "No documented experience found",
-                )
-              }
+              value={({ detail }) => renderExperience(detail)}
             />
             <ComparisonRow
               label="Issue positions"
               candidates={comparisonCandidates}
-              value={({ detail }) =>
-                renderSourcedItems(detail?.issuePositions, "No documented position found")
-              }
+              value={({ detail }) => renderIssuePositions(detail)}
             />
             <ComparisonRow
               label="Endorsements"
               candidates={comparisonCandidates}
-              value={({ detail }) =>
-                renderSourcedItems(detail?.endorsements, "No sourced endorsements found")
-              }
+              value={({ detail }) => renderEndorsements(detail)}
             />
             <ComparisonRow
               label="Fundraising"
@@ -185,19 +158,12 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
             <ComparisonRow
               label="Recent statements"
               candidates={comparisonCandidates}
-              value={({ detail }) =>
-                renderSourcedItems(detail?.recentStatements, "No sourced recent statement found")
-              }
+              value={({ detail }) => renderRecentStatements(detail)}
             />
             <ComparisonRow
               label="Voting record"
               candidates={comparisonCandidates}
-              value={({ detail }) =>
-                renderSourcedItems(
-                  detail?.votingRecord,
-                  "No applicable sourced voting record found",
-                )
-              }
+              value={({ detail }) => renderVotingRecord(detail)}
             />
             <ComparisonRow
               label="Candidate status"
@@ -216,22 +182,20 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
   );
 }
 
+interface ComparisonCandidate {
+  summary: CandidateSummary;
+  detail: CandidateDetail | null;
+  polls: readonly ElectionPollSummary[];
+}
+
 function ComparisonRow({
   label,
   candidates,
   value,
 }: {
   label: string;
-  candidates: readonly {
-    summary: CandidateSummary;
-    detail: LoadedComparisonData["detail"];
-    polls: readonly ElectionPollSummary[];
-  }[];
-  value: (candidate: {
-    summary: CandidateSummary;
-    detail: LoadedComparisonData["detail"];
-    polls: readonly ElectionPollSummary[];
-  }) => ReactNode;
+  candidates: readonly ComparisonCandidate[];
+  value: (candidate: ComparisonCandidate) => ReactNode;
 }) {
   return (
     <tr className="border-t border-slate-200 align-top">
@@ -247,57 +211,64 @@ function ComparisonRow({
   );
 }
 
-function renderSourcedItems(
-  items: readonly SourcedComparisonItem[] | undefined,
-  emptyLabel: string,
-) {
-  if (!items?.length) return <span className="text-slate-500">{emptyLabel}</span>;
+function renderExperience(detail: CandidateDetail | null) {
+  if (!detail) return muted("Loading sourced experience…");
+  if (detail.officeHistory.length) {
+    return (
+      <ul className="space-y-2">
+        {detail.officeHistory.map((entry, index) => {
+          const text = `${entry.officeName}${entry.districtName ? ` — ${entry.districtName}` : ""}${entry.current ? " (current)" : ""}`;
+          return <li key={`${entry.officeName}-${index}`}>{sourceLink(text, entry.sourceUrl)}</li>;
+        })}
+      </ul>
+    );
+  }
+  const fallback = [detail.currentOfficeName, detail.occupation].filter(Boolean).join("; ");
+  return fallback || muted("No documented experience found");
+}
+
+function renderIssuePositions(detail: CandidateDetail | null) {
+  if (!detail) return muted("Loading documented positions…");
+  const positions = detail.issuePositions ?? [];
+  if (!positions.length) return muted("No documented position found");
+  return (
+    <ul className="space-y-3">
+      {positions.map((position) => (
+        <li key={position.id}>
+          {sourceLink(position.issueName, position.sourceUrl, true)}
+          <p className="mt-1">{position.positionSummary}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function renderEndorsements(detail: CandidateDetail | null) {
+  if (!detail) return muted("Loading sourced endorsements…");
+  if (!detail.endorsements.length) return muted("No sourced endorsements found");
   return (
     <ul className="space-y-2">
-      {items.map((item, index) => {
-        const text =
-          item.position ??
-          item.statement ??
-          item.organizationName ??
-          item.officeName ??
-          item.description ??
-          item.title ??
-          item.label ??
-          "Documented item";
-        return (
-          <li key={`${text}-${index}`}>
-            {item.sourceUrl ? (
-              <a
-                href={item.sourceUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="font-medium text-blue-800 underline-offset-4 hover:underline"
-              >
-                {text}
-              </a>
-            ) : (
-              text
-            )}
-          </li>
-        );
+      {detail.endorsements.map((endorsement, index) => {
+        const text = `${endorsement.organizationName}${endorsement.endorsementDate ? ` — ${formatDate(endorsement.endorsementDate)}` : ""}`;
+        return <li key={`${endorsement.organizationName}-${index}`}>{sourceLink(text, endorsement.sourceUrl)}</li>;
       })}
     </ul>
   );
 }
 
-function renderFundraising(candidate: CandidateDetail["fundraising"]) {
-  if (!candidate) return <span className="text-slate-500">No sourced finance summary found</span>;
+function renderFundraising(finance: CandidateDetail["fundraising"]) {
+  if (!finance) return muted("No sourced finance summary found");
   const body = (
     <div className="space-y-1">
-      <div>Raised: {formatMoney(candidate.totalRaised)}</div>
-      <div>Spent: {formatMoney(candidate.totalSpent)}</div>
-      <div>Cash on hand: {formatMoney(candidate.cashOnHand)}</div>
-      <div>Debt: {formatMoney(candidate.debtsOwed)}</div>
-      {candidate.reportingPeriodEnd ? <div>Through {formatDate(candidate.reportingPeriodEnd)}</div> : null}
+      <div>Raised: {formatMoney(finance.totalRaised)}</div>
+      <div>Spent: {formatMoney(finance.totalSpent)}</div>
+      <div>Cash on hand: {formatMoney(finance.cashOnHand)}</div>
+      <div>Debt: {formatMoney(finance.debtsOwed)}</div>
+      {finance.reportingPeriodEnd ? <div>Through {formatDate(finance.reportingPeriodEnd)}</div> : null}
     </div>
   );
-  return candidate.sourceUrl ? (
-    <a href={candidate.sourceUrl} target="_blank" rel="noreferrer" className="block hover:text-blue-800">
+  return finance.sourceUrl ? (
+    <a href={finance.sourceUrl} target="_blank" rel="noreferrer" className="block hover:text-blue-800">
       {body}
     </a>
   ) : (
@@ -306,38 +277,66 @@ function renderFundraising(candidate: CandidateDetail["fundraising"]) {
 }
 
 function renderPolling(candidateId: string, polls: readonly ElectionPollSummary[]) {
-  const entries = polls.flatMap((poll) => {
-    const response = poll.primaryQuestion?.responses.find(
-      (item) => item.candidateId === candidateId && item.percentage != null,
-    );
-    return response?.percentage == null
-      ? []
-      : [
-          {
-            pollsterName: poll.pollsterName,
-            percentage: response.percentage,
-            fieldEndDate: poll.fieldEndDate,
-            sourceUrl: poll.sourceUrl,
-          },
-        ];
-  });
-  if (!entries.length) return <span className="text-slate-500">No published poll result found</span>;
+  const average = calculatePollingAverage(polls);
+  const candidate = average?.candidates.find((item) => item.candidateId === candidateId);
+  if (!average || !candidate) return muted("No published poll result found");
+  const sourcePoll = polls.find((poll) =>
+    poll.primaryQuestion?.responses.some(
+      (response) => response.candidateId === candidateId && response.percentage != null,
+    ),
+  );
+  const text = `${candidate.averagePercentage.toFixed(1)}% weighted average across ${candidate.pollCount} poll${candidate.pollCount === 1 ? "" : "s"} (${formatDate(average.fieldDateFrom)}–${formatDate(average.fieldDateTo)})`;
+  return sourceLink(text, sourcePoll?.sourceUrl ?? null, true);
+}
+
+function renderRecentStatements(detail: CandidateDetail | null) {
+  if (!detail) return muted("Loading sourced statements…");
+  const statements = detail.recentStatements ?? [];
+  if (!statements.length) return muted("No sourced recent statement found");
   return (
-    <ul className="space-y-2">
-      {entries.slice(0, 3).map((poll) => (
-        <li key={`${poll.pollsterName}-${poll.fieldEndDate}`}>
-          <a
-            href={poll.sourceUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="font-medium text-blue-800 underline-offset-4 hover:underline"
-          >
-            {poll.pollsterName}: {poll.percentage.toFixed(1)}% ({formatDate(poll.fieldEndDate)})
-          </a>
+    <ul className="space-y-3">
+      {statements.map((statement, index) => (
+        <li key={`${statement.title}-${index}`}>
+          {sourceLink(statement.title, statement.sourceUrl, true)}
+          <p className="mt-1">{statement.summary}</p>
         </li>
       ))}
     </ul>
   );
+}
+
+function renderVotingRecord(detail: CandidateDetail | null) {
+  if (!detail) return muted("Loading sourced voting record…");
+  const records = detail.votingRecord ?? [];
+  if (!records.length) return muted("No applicable sourced voting record found");
+  return (
+    <ul className="space-y-3">
+      {records.map((record, index) => (
+        <li key={`${record.title}-${index}`}>
+          {sourceLink(record.title, record.sourceUrl, true)}
+          <p className="mt-1">{record.summary}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function sourceLink(text: string, sourceUrl?: string | null, strong = false) {
+  if (!sourceUrl) return <span className={strong ? "font-semibold" : undefined}>{text}</span>;
+  return (
+    <a
+      href={sourceUrl}
+      target="_blank"
+      rel="noreferrer"
+      className={`${strong ? "font-semibold " : "font-medium "}text-blue-800 underline-offset-4 hover:underline`}
+    >
+      {text}
+    </a>
+  );
+}
+
+function muted(text: string) {
+  return <span className="text-slate-500">{text}</span>;
 }
 
 function formatValue(value: string) {
@@ -348,7 +347,10 @@ function formatValue(value: string) {
 }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", { dateStyle: "medium" }).format(new Date(value));
+  return new Intl.DateTimeFormat("en-US", {
+    dateStyle: "medium",
+    timeZone: "America/Chicago",
+  }).format(new Date(value.includes("T") ? value : `${value}T12:00:00Z`));
 }
 
 function formatMoney(value: number | null) {
