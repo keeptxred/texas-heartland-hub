@@ -17,7 +17,7 @@ export function ResultSummaryCard({ result }: ResultSummaryCardProps) {
         <div>
           <h4 className="text-xl font-bold tracking-tight text-slate-950">
             <a
-              href={ELECTION_ROUTES.race(result.race.slug)}
+              href={ELECTION_ROUTES.result(result.slug)}
               className="hover:text-red-700 hover:underline"
             >
               {result.race.name}

@@ -9,6 +9,7 @@ export const ELECTION_ROUTES = {
   forecast: "/elections/forecast",
   forecastDetail: (slug: string) => `/elections/forecast/${slug}` as const,
   results: "/elections/results",
+  result: (slug: string) => `/elections/results/${slug}` as const,
   methodology: "/elections/methodology",
   voting: "/elections/voting",
 } as const;

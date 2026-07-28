@@ -104,6 +104,10 @@ export interface ElectionResultRepository {
   findByRaceId(raceId: RaceId): Promise<ElectionResult | null>;
   findSummaryById(id: ElectionResultId): Promise<ElectionResultSummary | null>;
   findDetailById(id: ElectionResultId): Promise<ElectionResultDetail | null>;
+  findDetailBySlug(
+    slug: ElectionResultSlug,
+    electionCycleId?: ElectionCycleId,
+  ): Promise<ElectionResultDetail | null>;
   findDetailByRaceId(raceId: RaceId): Promise<ElectionResultDetail | null>;
 
   list(query?: ElectionResultListQuery): Promise<RacePage<ElectionResultSummary>>;
@@ -139,6 +143,7 @@ export type ReadonlyElectionResultRepository = Pick<
   | "findByRaceId"
   | "findSummaryById"
   | "findDetailById"
+  | "findDetailBySlug"
   | "findDetailByRaceId"
   | "list"
   | "listCore"
