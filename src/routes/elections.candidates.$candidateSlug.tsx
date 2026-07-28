@@ -5,9 +5,15 @@ import {
   ElectionLoading,
   ElectionNavigation,
 } from "@/components/elections";
+import {
+  useElectionCandidate,
+  useElectionRace,
+  usePollsByCandidate,
+  useResultByRace,
+} from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
-import { isElectionSlug } from "@/types/elections";
+import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
   head: ({ params }) => {
@@ -50,7 +56,7 @@ function ElectionCandidateDetailRoute() {
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.candidates} />}
       >
         {validSlug ? (
-          <ElectionLoading variant="detail" label="Loading Texas election candidate details" />
+          <ElectionCandidateDetailData candidateSlug={candidateSlug} />
         ) : (
           <ElectionErrorState
             kind="not_found"
@@ -60,5 +66,54 @@ function ElectionCandidateDetailRoute() {
         )}
       </ElectionLayout>
     </ElectionRepositoryProvider>
+  );
+}
+
+function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string }) {
+  const candidate = useElectionCandidate({
+    slug: electionSlugs.candidate(candidateSlug),
+  });
+  const race = useElectionRace({ id: candidate.data?.primaryRaceId ?? undefined });
+  const polls = usePollsByCandidate(candidate.data?.id);
+  const result = useResultByRace(candidate.data?.primaryRaceId ?? undefined);
+  const error = candidate.error ?? race.error ?? polls.error ?? result.error;
+  const isLoading = candidate.isLoading || race.isLoading || polls.isLoading || result.isLoading;
+
+  const handleRetry = () => {
+    void candidate.refetch();
+    void race.refetch();
+    void polls.refetch();
+    void result.refetch();
+  };
+
+  if (isLoading) {
+    return <ElectionLoading variant="detail" label="Loading Texas election candidate details" />;
+  }
+
+  if (error) {
+    return (
+      <ElectionErrorState
+        kind="service"
+        title="Election candidate details could not be loaded"
+        technicalMessage={error.message}
+        retryAction={{ label: "Try again", onClick: handleRetry }}
+      />
+    );
+  }
+
+  if (candidate.isMissing || !candidate.data) {
+    return (
+      <ElectionErrorState
+        kind="not_found"
+        title="Election candidate not found"
+        message="This candidate is not published or is no longer available."
+      />
+    );
+  }
+
+  return (
+    <div className="sr-only" aria-live="polite">
+      Candidate, race, polling, and result data loaded.
+    </div>
   );
 }
