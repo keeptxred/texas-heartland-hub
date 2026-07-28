@@ -13,6 +13,7 @@ import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TexasUtilityCostCalculatorRouteImport } from './routes/texas-utility-cost-calculator'
 import { Route as TexasSportsRouteImport } from './routes/texas-sports'
+import { Route as TexasSalesTaxExplainedRouteImport } from './routes/texas-sales-tax-explained'
 import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-salary-comparison-by-city'
 import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
 import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
@@ -50,7 +51,9 @@ import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
 import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
 import { Route as SitemapExploreDotxmlRouteImport } from './routes/sitemap-explore[.]xml'
+import { Route as SitemapExploreLocationsDotxmlRouteImport } from './routes/sitemap-explore-locations[.]xml'
 import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
+import { Route as SitemapElectionsDotxmlRouteImport } from './routes/sitemap-elections[.]xml'
 import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
@@ -60,6 +63,7 @@ import { Route as ReturnRefundPolicyRouteImport } from './routes/return-refund-p
 import { Route as RepresentativesRouteImport } from './routes/representatives'
 import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as NewsSitemapDotxmlRouteImport } from './routes/news-sitemap[.]xml'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as MovingToTexasChecklistRouteImport } from './routes/moving-to-texas-checklist'
 import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
@@ -106,18 +110,58 @@ import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
+import { Route as ExploreWildlifeManagementAreasRouteImport } from './routes/explore.wildlife-management-areas'
 import { Route as ExploreTripPlannerRouteImport } from './routes/explore.trip-planner'
+import { Route as ExploreTexasWildflowerSeasonsRouteImport } from './routes/explore.texas-wildflower-seasons'
+import { Route as ExploreTexasStateParksGuideRouteImport } from './routes/explore.texas-state-parks-guide'
+import { Route as ExploreTexasScenicDrivesRouteImport } from './routes/explore.texas-scenic-drives'
+import { Route as ExploreTexasLakesGuideRouteImport } from './routes/explore.texas-lakes-guide'
+import { Route as ExploreTexasDarkSkyStargazingRouteImport } from './routes/explore.texas-dark-sky-stargazing'
+import { Route as ExploreTexasCampingGuideRouteImport } from './routes/explore.texas-camping-guide'
+import { Route as ExploreStateParksRouteImport } from './routes/explore.state-parks'
+import { Route as ExploreSpringFedSwimmingRouteImport } from './routes/explore.spring-fed-swimming'
+import { Route as ExploreSpringConservationAndEducationRouteImport } from './routes/explore.spring-conservation-and-education'
 import { Route as ExploreSearchRouteImport } from './routes/explore.search'
+import { Route as ExploreScenicRiversRouteImport } from './routes/explore.scenic-rivers'
+import { Route as ExploreNationalWildlifeRefugesRouteImport } from './routes/explore.national-wildlife-refuges'
+import { Route as ExploreNationalParksRouteImport } from './routes/explore.national-parks'
+import { Route as ExploreMajorSpringsRouteImport } from './routes/explore.major-springs'
+import { Route as ExploreLighthousesRouteImport } from './routes/explore.lighthouses'
+import { Route as ExploreHistoricSitesRouteImport } from './routes/explore.historic-sites'
+import { Route as ExploreHillCountrySpringsRouteImport } from './routes/explore.hill-country-springs'
 import { Route as ExploreCavernsRouteImport } from './routes/explore.caverns'
 import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as ElectionsVotingRouteImport } from './routes/elections.voting'
+import { Route as ElectionsResultsRouteImport } from './routes/elections.results'
+import { Route as ElectionsRacesRouteImport } from './routes/elections.races'
+import { Route as ElectionsPollsRouteImport } from './routes/elections.polls'
+import { Route as ElectionsMethodologyRouteImport } from './routes/elections.methodology'
+import { Route as ElectionsForecastRouteImport } from './routes/elections.forecast'
+import { Route as ElectionsCorrectionsRouteImport } from './routes/elections.corrections'
+import { Route as ElectionsCandidatesRouteImport } from './routes/elections.candidates'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as AdminElectionsIndexRouteImport } from './routes/admin/elections/index'
 import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ExploreTripTokenRouteImport } from './routes/explore.trip.$token'
+import { Route as ExploreStateParkSlugRouteImport } from './routes/explore.state-park.$slug'
+import { Route as ExploreRiverSlugRouteImport } from './routes/explore.river.$slug'
 import { Route as ExploreRegionRegionRouteImport } from './routes/explore.region.$region'
+import { Route as ExploreLakeSlugRouteImport } from './routes/explore.lake.$slug'
 import { Route as ExploreCountyCountyRouteImport } from './routes/explore.county.$county'
+import { Route as ExploreCavernSlugRouteImport } from './routes/explore.cavern.$slug'
+import { Route as ElectionsResultsResultSlugRouteImport } from './routes/elections.results.$resultSlug'
+import { Route as ElectionsRacesRaceSlugRouteImport } from './routes/elections.races.$raceSlug'
+import { Route as ElectionsPollsPollSlugRouteImport } from './routes/elections.polls.$pollSlug'
+import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elections.forecast.$forecastSlug'
+import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates.$candidateSlug'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
+import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
+import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
+import { Route as AdminElectionsPollsRouteImport } from './routes/admin/elections/polls'
+import { Route as AdminElectionsForecastRouteImport } from './routes/admin/elections/forecast'
+import { Route as AdminElectionsCandidatesRouteImport } from './routes/admin/elections/candidates'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -162,6 +206,11 @@ const TexasUtilityCostCalculatorRoute =
 const TexasSportsRoute = TexasSportsRouteImport.update({
   id: '/texas-sports',
   path: '/texas-sports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSalesTaxExplainedRoute = TexasSalesTaxExplainedRouteImport.update({
+  id: '/texas-sales-tax-explained',
+  path: '/texas-sales-tax-explained',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasSalaryComparisonByCityRoute =
@@ -366,9 +415,20 @@ const SitemapExploreDotxmlRoute = SitemapExploreDotxmlRouteImport.update({
   path: '/sitemap-explore.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapExploreLocationsDotxmlRoute =
+  SitemapExploreLocationsDotxmlRouteImport.update({
+    id: '/sitemap-explore-locations.xml',
+    path: '/sitemap-explore-locations.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SitemapEvergreenDotxmlRoute = SitemapEvergreenDotxmlRouteImport.update({
   id: '/sitemap-evergreen.xml',
   path: '/sitemap-evergreen.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapElectionsDotxmlRoute = SitemapElectionsDotxmlRouteImport.update({
+  id: '/sitemap-elections.xml',
+  path: '/sitemap-elections.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapAuthorsDotxmlRoute = SitemapAuthorsDotxmlRouteImport.update({
@@ -414,6 +474,11 @@ const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsSitemapDotxmlRoute = NewsSitemapDotxmlRouteImport.update({
+  id: '/news-sitemap.xml',
+  path: '/news-sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsRoute = NewsRouteImport.update({
@@ -647,16 +712,111 @@ const NewsSlugRoute = NewsSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => NewsRoute,
 } as any)
+const ExploreWildlifeManagementAreasRoute =
+  ExploreWildlifeManagementAreasRouteImport.update({
+    id: '/wildlife-management-areas',
+    path: '/wildlife-management-areas',
+    getParentRoute: () => ExploreRoute,
+  } as any)
 const ExploreTripPlannerRoute = ExploreTripPlannerRouteImport.update({
   id: '/trip-planner',
   path: '/trip-planner',
   getParentRoute: () => ExploreRoute,
 } as any)
+const ExploreTexasWildflowerSeasonsRoute =
+  ExploreTexasWildflowerSeasonsRouteImport.update({
+    id: '/texas-wildflower-seasons',
+    path: '/texas-wildflower-seasons',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTexasStateParksGuideRoute =
+  ExploreTexasStateParksGuideRouteImport.update({
+    id: '/texas-state-parks-guide',
+    path: '/texas-state-parks-guide',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTexasScenicDrivesRoute =
+  ExploreTexasScenicDrivesRouteImport.update({
+    id: '/texas-scenic-drives',
+    path: '/texas-scenic-drives',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTexasLakesGuideRoute = ExploreTexasLakesGuideRouteImport.update({
+  id: '/texas-lakes-guide',
+  path: '/texas-lakes-guide',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreTexasDarkSkyStargazingRoute =
+  ExploreTexasDarkSkyStargazingRouteImport.update({
+    id: '/texas-dark-sky-stargazing',
+    path: '/texas-dark-sky-stargazing',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTexasCampingGuideRoute =
+  ExploreTexasCampingGuideRouteImport.update({
+    id: '/texas-camping-guide',
+    path: '/texas-camping-guide',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreStateParksRoute = ExploreStateParksRouteImport.update({
+  id: '/state-parks',
+  path: '/state-parks',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreSpringFedSwimmingRoute =
+  ExploreSpringFedSwimmingRouteImport.update({
+    id: '/spring-fed-swimming',
+    path: '/spring-fed-swimming',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreSpringConservationAndEducationRoute =
+  ExploreSpringConservationAndEducationRouteImport.update({
+    id: '/spring-conservation-and-education',
+    path: '/spring-conservation-and-education',
+    getParentRoute: () => ExploreRoute,
+  } as any)
 const ExploreSearchRoute = ExploreSearchRouteImport.update({
   id: '/search',
   path: '/search',
   getParentRoute: () => ExploreRoute,
 } as any)
+const ExploreScenicRiversRoute = ExploreScenicRiversRouteImport.update({
+  id: '/scenic-rivers',
+  path: '/scenic-rivers',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreNationalWildlifeRefugesRoute =
+  ExploreNationalWildlifeRefugesRouteImport.update({
+    id: '/national-wildlife-refuges',
+    path: '/national-wildlife-refuges',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreNationalParksRoute = ExploreNationalParksRouteImport.update({
+  id: '/national-parks',
+  path: '/national-parks',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreMajorSpringsRoute = ExploreMajorSpringsRouteImport.update({
+  id: '/major-springs',
+  path: '/major-springs',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreLighthousesRoute = ExploreLighthousesRouteImport.update({
+  id: '/lighthouses',
+  path: '/lighthouses',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreHistoricSitesRoute = ExploreHistoricSitesRouteImport.update({
+  id: '/historic-sites',
+  path: '/historic-sites',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreHillCountrySpringsRoute =
+  ExploreHillCountrySpringsRouteImport.update({
+    id: '/hill-country-springs',
+    path: '/hill-country-springs',
+    getParentRoute: () => ExploreRoute,
+  } as any)
 const ExploreCavernsRoute = ExploreCavernsRouteImport.update({
   id: '/caverns',
   path: '/caverns',
@@ -672,10 +832,55 @@ const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   path: '/email/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ElectionsVotingRoute = ElectionsVotingRouteImport.update({
+  id: '/voting',
+  path: '/voting',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsResultsRoute = ElectionsResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsRacesRoute = ElectionsRacesRouteImport.update({
+  id: '/races',
+  path: '/races',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsPollsRoute = ElectionsPollsRouteImport.update({
+  id: '/polls',
+  path: '/polls',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsMethodologyRoute = ElectionsMethodologyRouteImport.update({
+  id: '/methodology',
+  path: '/methodology',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsForecastRoute = ElectionsForecastRouteImport.update({
+  id: '/forecast',
+  path: '/forecast',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsCorrectionsRoute = ElectionsCorrectionsRouteImport.update({
+  id: '/corrections',
+  path: '/corrections',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsCandidatesRoute = ElectionsCandidatesRouteImport.update({
+  id: '/candidates',
+  path: '/candidates',
+  getParentRoute: () => ElectionsRoute,
+} as any)
 const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   id: '/authors/$slug',
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminElectionsIndexRoute = AdminElectionsIndexRouteImport.update({
+  id: '/elections/',
+  path: '/elections/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const TexasSportsTeamTeamRoute = TexasSportsTeamTeamRouteImport.update({
   id: '/team/$team',
@@ -692,9 +897,24 @@ const ExploreTripTokenRoute = ExploreTripTokenRouteImport.update({
   path: '/trip/$token',
   getParentRoute: () => ExploreRoute,
 } as any)
+const ExploreStateParkSlugRoute = ExploreStateParkSlugRouteImport.update({
+  id: '/state-park/$slug',
+  path: '/state-park/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreRiverSlugRoute = ExploreRiverSlugRouteImport.update({
+  id: '/river/$slug',
+  path: '/river/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
 const ExploreRegionRegionRoute = ExploreRegionRegionRouteImport.update({
   id: '/region/$region',
   path: '/region/$region',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreLakeSlugRoute = ExploreLakeSlugRouteImport.update({
+  id: '/lake/$slug',
+  path: '/lake/$slug',
   getParentRoute: () => ExploreRoute,
 } as any)
 const ExploreCountyCountyRoute = ExploreCountyCountyRouteImport.update({
@@ -702,11 +922,70 @@ const ExploreCountyCountyRoute = ExploreCountyCountyRouteImport.update({
   path: '/county/$county',
   getParentRoute: () => ExploreRoute,
 } as any)
+const ExploreCavernSlugRoute = ExploreCavernSlugRouteImport.update({
+  id: '/cavern/$slug',
+  path: '/cavern/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ElectionsResultsResultSlugRoute =
+  ElectionsResultsResultSlugRouteImport.update({
+    id: '/$resultSlug',
+    path: '/$resultSlug',
+    getParentRoute: () => ElectionsResultsRoute,
+  } as any)
+const ElectionsRacesRaceSlugRoute = ElectionsRacesRaceSlugRouteImport.update({
+  id: '/$raceSlug',
+  path: '/$raceSlug',
+  getParentRoute: () => ElectionsRacesRoute,
+} as any)
+const ElectionsPollsPollSlugRoute = ElectionsPollsPollSlugRouteImport.update({
+  id: '/$pollSlug',
+  path: '/$pollSlug',
+  getParentRoute: () => ElectionsPollsRoute,
+} as any)
+const ElectionsForecastForecastSlugRoute =
+  ElectionsForecastForecastSlugRouteImport.update({
+    id: '/$forecastSlug',
+    path: '/$forecastSlug',
+    getParentRoute: () => ElectionsForecastRoute,
+  } as any)
+const ElectionsCandidatesCandidateSlugRoute =
+  ElectionsCandidatesCandidateSlugRouteImport.update({
+    id: '/$candidateSlug',
+    path: '/$candidateSlug',
+    getParentRoute: () => ElectionsCandidatesRoute,
+  } as any)
 const ApiPublicPropertyAddressLookupRoute =
   ApiPublicPropertyAddressLookupRouteImport.update({
     id: '/api/public/property-address-lookup',
     path: '/api/public/property-address-lookup',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminElectionsResultsRoute = AdminElectionsResultsRouteImport.update({
+  id: '/elections/results',
+  path: '/elections/results',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminElectionsRacesRoute = AdminElectionsRacesRouteImport.update({
+  id: '/elections/races',
+  path: '/elections/races',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminElectionsPollsRoute = AdminElectionsPollsRouteImport.update({
+  id: '/elections/polls',
+  path: '/elections/polls',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminElectionsForecastRoute = AdminElectionsForecastRouteImport.update({
+  id: '/elections/forecast',
+  path: '/elections/forecast',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminElectionsCandidatesRoute =
+  AdminElectionsCandidatesRouteImport.update({
+    id: '/elections/candidates',
+    path: '/elections/candidates',
+    getParentRoute: () => AdminRoute,
   } as any)
 const AdminExploreImportsIndexRoute =
   AdminExploreImportsIndexRouteImport.update({
@@ -863,7 +1142,7 @@ export interface FileRoutesByFullPath {
   '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
-  '/elections': typeof ElectionsRoute
+  '/elections': typeof ElectionsRouteWithChildren
   '/explore': typeof ExploreRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
@@ -881,6 +1160,7 @@ export interface FileRoutesByFullPath {
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
+  '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -890,7 +1170,9 @@ export interface FileRoutesByFullPath {
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
@@ -928,16 +1210,42 @@ export interface FileRoutesByFullPath {
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
+  '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
   '/texas-sports': typeof TexasSportsRouteWithChildren
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/corrections': typeof ElectionsCorrectionsRoute
+  '/elections/forecast': typeof ElectionsForecastRouteWithChildren
+  '/elections/methodology': typeof ElectionsMethodologyRoute
+  '/elections/polls': typeof ElectionsPollsRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/results': typeof ElectionsResultsRouteWithChildren
+  '/elections/voting': typeof ElectionsVotingRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/explore/caverns': typeof ExploreCavernsRoute
+  '/explore/hill-country-springs': typeof ExploreHillCountrySpringsRoute
+  '/explore/historic-sites': typeof ExploreHistoricSitesRoute
+  '/explore/lighthouses': typeof ExploreLighthousesRoute
+  '/explore/major-springs': typeof ExploreMajorSpringsRoute
+  '/explore/national-parks': typeof ExploreNationalParksRoute
+  '/explore/national-wildlife-refuges': typeof ExploreNationalWildlifeRefugesRoute
+  '/explore/scenic-rivers': typeof ExploreScenicRiversRoute
   '/explore/search': typeof ExploreSearchRoute
+  '/explore/spring-conservation-and-education': typeof ExploreSpringConservationAndEducationRoute
+  '/explore/spring-fed-swimming': typeof ExploreSpringFedSwimmingRoute
+  '/explore/state-parks': typeof ExploreStateParksRoute
+  '/explore/texas-camping-guide': typeof ExploreTexasCampingGuideRoute
+  '/explore/texas-dark-sky-stargazing': typeof ExploreTexasDarkSkyStargazingRoute
+  '/explore/texas-lakes-guide': typeof ExploreTexasLakesGuideRoute
+  '/explore/texas-scenic-drives': typeof ExploreTexasScenicDrivesRoute
+  '/explore/texas-state-parks-guide': typeof ExploreTexasStateParksGuideRoute
+  '/explore/texas-wildflower-seasons': typeof ExploreTexasWildflowerSeasonsRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
+  '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -954,12 +1262,27 @@ export interface FileRoutesByFullPath {
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
+  '/admin/elections/candidates': typeof AdminElectionsCandidatesRoute
+  '/admin/elections/forecast': typeof AdminElectionsForecastRoute
+  '/admin/elections/polls': typeof AdminElectionsPollsRoute
+  '/admin/elections/races': typeof AdminElectionsRacesRoute
+  '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
+  '/elections/forecast/$forecastSlug': typeof ElectionsForecastForecastSlugRoute
+  '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
+  '/elections/races/$raceSlug': typeof ElectionsRacesRaceSlugRoute
+  '/elections/results/$resultSlug': typeof ElectionsResultsResultSlugRoute
+  '/explore/cavern/$slug': typeof ExploreCavernSlugRoute
   '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/lake/$slug': typeof ExploreLakeSlugRoute
   '/explore/region/$region': typeof ExploreRegionRegionRoute
+  '/explore/river/$slug': typeof ExploreRiverSlugRoute
+  '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/admin/elections/': typeof AdminElectionsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -998,7 +1321,7 @@ export interface FileRoutesByTo {
   '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
-  '/elections': typeof ElectionsRoute
+  '/elections': typeof ElectionsRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
@@ -1014,6 +1337,7 @@ export interface FileRoutesByTo {
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
+  '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -1022,7 +1346,9 @@ export interface FileRoutesByTo {
   '/san-antonio': typeof SanAntonioRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
@@ -1058,15 +1384,41 @@ export interface FileRoutesByTo {
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
+  '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/corrections': typeof ElectionsCorrectionsRoute
+  '/elections/forecast': typeof ElectionsForecastRouteWithChildren
+  '/elections/methodology': typeof ElectionsMethodologyRoute
+  '/elections/polls': typeof ElectionsPollsRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/results': typeof ElectionsResultsRouteWithChildren
+  '/elections/voting': typeof ElectionsVotingRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/explore/caverns': typeof ExploreCavernsRoute
+  '/explore/hill-country-springs': typeof ExploreHillCountrySpringsRoute
+  '/explore/historic-sites': typeof ExploreHistoricSitesRoute
+  '/explore/lighthouses': typeof ExploreLighthousesRoute
+  '/explore/major-springs': typeof ExploreMajorSpringsRoute
+  '/explore/national-parks': typeof ExploreNationalParksRoute
+  '/explore/national-wildlife-refuges': typeof ExploreNationalWildlifeRefugesRoute
+  '/explore/scenic-rivers': typeof ExploreScenicRiversRoute
   '/explore/search': typeof ExploreSearchRoute
+  '/explore/spring-conservation-and-education': typeof ExploreSpringConservationAndEducationRoute
+  '/explore/spring-fed-swimming': typeof ExploreSpringFedSwimmingRoute
+  '/explore/state-parks': typeof ExploreStateParksRoute
+  '/explore/texas-camping-guide': typeof ExploreTexasCampingGuideRoute
+  '/explore/texas-dark-sky-stargazing': typeof ExploreTexasDarkSkyStargazingRoute
+  '/explore/texas-lakes-guide': typeof ExploreTexasLakesGuideRoute
+  '/explore/texas-scenic-drives': typeof ExploreTexasScenicDrivesRoute
+  '/explore/texas-state-parks-guide': typeof ExploreTexasStateParksGuideRoute
+  '/explore/texas-wildflower-seasons': typeof ExploreTexasWildflowerSeasonsRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
+  '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -1083,12 +1435,27 @@ export interface FileRoutesByTo {
   '/texas-news': typeof TexasNewsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
   '/texas': typeof TexasIndexRoute
+  '/admin/elections/candidates': typeof AdminElectionsCandidatesRoute
+  '/admin/elections/forecast': typeof AdminElectionsForecastRoute
+  '/admin/elections/polls': typeof AdminElectionsPollsRoute
+  '/admin/elections/races': typeof AdminElectionsRacesRoute
+  '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
+  '/elections/forecast/$forecastSlug': typeof ElectionsForecastForecastSlugRoute
+  '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
+  '/elections/races/$raceSlug': typeof ElectionsRacesRaceSlugRoute
+  '/elections/results/$resultSlug': typeof ElectionsResultsResultSlugRoute
+  '/explore/cavern/$slug': typeof ExploreCavernSlugRoute
   '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/lake/$slug': typeof ExploreLakeSlugRoute
   '/explore/region/$region': typeof ExploreRegionRegionRoute
+  '/explore/river/$slug': typeof ExploreRiverSlugRoute
+  '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/admin/elections': typeof AdminElectionsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -1128,7 +1495,7 @@ export interface FileRoutesById {
   '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
-  '/elections': typeof ElectionsRoute
+  '/elections': typeof ElectionsRouteWithChildren
   '/explore': typeof ExploreRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
@@ -1146,6 +1513,7 @@ export interface FileRoutesById {
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
   '/news': typeof NewsRouteWithChildren
+  '/news-sitemap.xml': typeof NewsSitemapDotxmlRoute
   '/privacy': typeof PrivacyRoute
   '/register-to-vote': typeof RegisterToVoteRoute
   '/representatives': typeof RepresentativesRoute
@@ -1155,7 +1523,9 @@ export interface FileRoutesById {
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
+  '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
@@ -1193,16 +1563,42 @@ export interface FileRoutesById {
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
+  '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
   '/texas-sports': typeof TexasSportsRouteWithChildren
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/corrections': typeof ElectionsCorrectionsRoute
+  '/elections/forecast': typeof ElectionsForecastRouteWithChildren
+  '/elections/methodology': typeof ElectionsMethodologyRoute
+  '/elections/polls': typeof ElectionsPollsRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/results': typeof ElectionsResultsRouteWithChildren
+  '/elections/voting': typeof ElectionsVotingRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
   '/explore/caverns': typeof ExploreCavernsRoute
+  '/explore/hill-country-springs': typeof ExploreHillCountrySpringsRoute
+  '/explore/historic-sites': typeof ExploreHistoricSitesRoute
+  '/explore/lighthouses': typeof ExploreLighthousesRoute
+  '/explore/major-springs': typeof ExploreMajorSpringsRoute
+  '/explore/national-parks': typeof ExploreNationalParksRoute
+  '/explore/national-wildlife-refuges': typeof ExploreNationalWildlifeRefugesRoute
+  '/explore/scenic-rivers': typeof ExploreScenicRiversRoute
   '/explore/search': typeof ExploreSearchRoute
+  '/explore/spring-conservation-and-education': typeof ExploreSpringConservationAndEducationRoute
+  '/explore/spring-fed-swimming': typeof ExploreSpringFedSwimmingRoute
+  '/explore/state-parks': typeof ExploreStateParksRoute
+  '/explore/texas-camping-guide': typeof ExploreTexasCampingGuideRoute
+  '/explore/texas-dark-sky-stargazing': typeof ExploreTexasDarkSkyStargazingRoute
+  '/explore/texas-lakes-guide': typeof ExploreTexasLakesGuideRoute
+  '/explore/texas-scenic-drives': typeof ExploreTexasScenicDrivesRoute
+  '/explore/texas-state-parks-guide': typeof ExploreTexasStateParksGuideRoute
+  '/explore/texas-wildflower-seasons': typeof ExploreTexasWildflowerSeasonsRoute
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
+  '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/news/$slug': typeof NewsSlugRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -1219,12 +1615,27 @@ export interface FileRoutesById {
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
+  '/admin/elections/candidates': typeof AdminElectionsCandidatesRoute
+  '/admin/elections/forecast': typeof AdminElectionsForecastRoute
+  '/admin/elections/polls': typeof AdminElectionsPollsRoute
+  '/admin/elections/races': typeof AdminElectionsRacesRoute
+  '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
+  '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
+  '/elections/forecast/$forecastSlug': typeof ElectionsForecastForecastSlugRoute
+  '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
+  '/elections/races/$raceSlug': typeof ElectionsRacesRaceSlugRoute
+  '/elections/results/$resultSlug': typeof ElectionsResultsResultSlugRoute
+  '/explore/cavern/$slug': typeof ExploreCavernSlugRoute
   '/explore/county/$county': typeof ExploreCountyCountyRoute
+  '/explore/lake/$slug': typeof ExploreLakeSlugRoute
   '/explore/region/$region': typeof ExploreRegionRegionRoute
+  '/explore/river/$slug': typeof ExploreRiverSlugRoute
+  '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
+  '/admin/elections/': typeof AdminElectionsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -1283,6 +1694,7 @@ export interface FileRouteTypes {
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
     | '/news'
+    | '/news-sitemap.xml'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
@@ -1292,7 +1704,9 @@ export interface FileRouteTypes {
     | '/shipping-policy'
     | '/shop'
     | '/sitemap-authors.xml'
+    | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
+    | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
@@ -1330,16 +1744,42 @@ export interface FileRouteTypes {
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
+    | '/texas-sales-tax-explained'
     | '/texas-sports'
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/elections/candidates'
+    | '/elections/corrections'
+    | '/elections/forecast'
+    | '/elections/methodology'
+    | '/elections/polls'
+    | '/elections/races'
+    | '/elections/results'
+    | '/elections/voting'
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/explore/caverns'
+    | '/explore/hill-country-springs'
+    | '/explore/historic-sites'
+    | '/explore/lighthouses'
+    | '/explore/major-springs'
+    | '/explore/national-parks'
+    | '/explore/national-wildlife-refuges'
+    | '/explore/scenic-rivers'
     | '/explore/search'
+    | '/explore/spring-conservation-and-education'
+    | '/explore/spring-fed-swimming'
+    | '/explore/state-parks'
+    | '/explore/texas-camping-guide'
+    | '/explore/texas-dark-sky-stargazing'
+    | '/explore/texas-lakes-guide'
+    | '/explore/texas-scenic-drives'
+    | '/explore/texas-state-parks-guide'
+    | '/explore/texas-wildflower-seasons'
     | '/explore/trip-planner'
+    | '/explore/wildlife-management-areas'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -1356,12 +1796,27 @@ export interface FileRouteTypes {
     | '/texas-news/'
     | '/texas-sports/'
     | '/texas/'
+    | '/admin/elections/candidates'
+    | '/admin/elections/forecast'
+    | '/admin/elections/polls'
+    | '/admin/elections/races'
+    | '/admin/elections/results'
     | '/api/public/property-address-lookup'
+    | '/elections/candidates/$candidateSlug'
+    | '/elections/forecast/$forecastSlug'
+    | '/elections/polls/$pollSlug'
+    | '/elections/races/$raceSlug'
+    | '/elections/results/$resultSlug'
+    | '/explore/cavern/$slug'
     | '/explore/county/$county'
+    | '/explore/lake/$slug'
     | '/explore/region/$region'
+    | '/explore/river/$slug'
+    | '/explore/state-park/$slug'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
+    | '/admin/elections/'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -1416,6 +1871,7 @@ export interface FileRouteTypes {
     | '/living-in-texas'
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
+    | '/news-sitemap.xml'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
@@ -1424,7 +1880,9 @@ export interface FileRouteTypes {
     | '/san-antonio'
     | '/shipping-policy'
     | '/sitemap-authors.xml'
+    | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
+    | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
@@ -1460,15 +1918,41 @@ export interface FileRouteTypes {
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
+    | '/texas-sales-tax-explained'
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/elections/candidates'
+    | '/elections/corrections'
+    | '/elections/forecast'
+    | '/elections/methodology'
+    | '/elections/polls'
+    | '/elections/races'
+    | '/elections/results'
+    | '/elections/voting'
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/explore/caverns'
+    | '/explore/hill-country-springs'
+    | '/explore/historic-sites'
+    | '/explore/lighthouses'
+    | '/explore/major-springs'
+    | '/explore/national-parks'
+    | '/explore/national-wildlife-refuges'
+    | '/explore/scenic-rivers'
     | '/explore/search'
+    | '/explore/spring-conservation-and-education'
+    | '/explore/spring-fed-swimming'
+    | '/explore/state-parks'
+    | '/explore/texas-camping-guide'
+    | '/explore/texas-dark-sky-stargazing'
+    | '/explore/texas-lakes-guide'
+    | '/explore/texas-scenic-drives'
+    | '/explore/texas-state-parks-guide'
+    | '/explore/texas-wildflower-seasons'
     | '/explore/trip-planner'
+    | '/explore/wildlife-management-areas'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -1485,12 +1969,27 @@ export interface FileRouteTypes {
     | '/texas-news'
     | '/texas-sports'
     | '/texas'
+    | '/admin/elections/candidates'
+    | '/admin/elections/forecast'
+    | '/admin/elections/polls'
+    | '/admin/elections/races'
+    | '/admin/elections/results'
     | '/api/public/property-address-lookup'
+    | '/elections/candidates/$candidateSlug'
+    | '/elections/forecast/$forecastSlug'
+    | '/elections/polls/$pollSlug'
+    | '/elections/races/$raceSlug'
+    | '/elections/results/$resultSlug'
+    | '/explore/cavern/$slug'
     | '/explore/county/$county'
+    | '/explore/lake/$slug'
     | '/explore/region/$region'
+    | '/explore/river/$slug'
+    | '/explore/state-park/$slug'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
+    | '/admin/elections'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -1547,6 +2046,7 @@ export interface FileRouteTypes {
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
     | '/news'
+    | '/news-sitemap.xml'
     | '/privacy'
     | '/register-to-vote'
     | '/representatives'
@@ -1556,7 +2056,9 @@ export interface FileRouteTypes {
     | '/shipping-policy'
     | '/shop'
     | '/sitemap-authors.xml'
+    | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
+    | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
@@ -1594,16 +2096,42 @@ export interface FileRouteTypes {
     | '/texas-rent-vs-buy-calculator'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
+    | '/texas-sales-tax-explained'
     | '/texas-sports'
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/elections/candidates'
+    | '/elections/corrections'
+    | '/elections/forecast'
+    | '/elections/methodology'
+    | '/elections/polls'
+    | '/elections/races'
+    | '/elections/results'
+    | '/elections/voting'
     | '/email/unsubscribe'
     | '/explore/$slug'
     | '/explore/caverns'
+    | '/explore/hill-country-springs'
+    | '/explore/historic-sites'
+    | '/explore/lighthouses'
+    | '/explore/major-springs'
+    | '/explore/national-parks'
+    | '/explore/national-wildlife-refuges'
+    | '/explore/scenic-rivers'
     | '/explore/search'
+    | '/explore/spring-conservation-and-education'
+    | '/explore/spring-fed-swimming'
+    | '/explore/state-parks'
+    | '/explore/texas-camping-guide'
+    | '/explore/texas-dark-sky-stargazing'
+    | '/explore/texas-lakes-guide'
+    | '/explore/texas-scenic-drives'
+    | '/explore/texas-state-parks-guide'
+    | '/explore/texas-wildflower-seasons'
     | '/explore/trip-planner'
+    | '/explore/wildlife-management-areas'
     | '/news/$slug'
     | '/news/non-political'
     | '/shop/$productId'
@@ -1620,12 +2148,27 @@ export interface FileRouteTypes {
     | '/texas-news/'
     | '/texas-sports/'
     | '/texas/'
+    | '/admin/elections/candidates'
+    | '/admin/elections/forecast'
+    | '/admin/elections/polls'
+    | '/admin/elections/races'
+    | '/admin/elections/results'
     | '/api/public/property-address-lookup'
+    | '/elections/candidates/$candidateSlug'
+    | '/elections/forecast/$forecastSlug'
+    | '/elections/polls/$pollSlug'
+    | '/elections/races/$raceSlug'
+    | '/elections/results/$resultSlug'
+    | '/explore/cavern/$slug'
     | '/explore/county/$county'
+    | '/explore/lake/$slug'
     | '/explore/region/$region'
+    | '/explore/river/$slug'
+    | '/explore/state-park/$slug'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
+    | '/admin/elections/'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -1665,7 +2208,7 @@ export interface RootRouteChildren {
   DallasFortWorthRoute: typeof DallasFortWorthRoute
   EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElPasoRoute: typeof ElPasoRoute
-  ElectionsRoute: typeof ElectionsRoute
+  ElectionsRoute: typeof ElectionsRouteWithChildren
   ExploreRoute: typeof ExploreRouteWithChildren
   FindMyDmvRoute: typeof FindMyDmvRoute
   FindMySchoolDistrictRoute: typeof FindMySchoolDistrictRoute
@@ -1683,6 +2226,7 @@ export interface RootRouteChildren {
   MovingToTexasRoute: typeof MovingToTexasRoute
   MovingToTexasChecklistRoute: typeof MovingToTexasChecklistRoute
   NewsRoute: typeof NewsRouteWithChildren
+  NewsSitemapDotxmlRoute: typeof NewsSitemapDotxmlRoute
   PrivacyRoute: typeof PrivacyRoute
   RegisterToVoteRoute: typeof RegisterToVoteRoute
   RepresentativesRoute: typeof RepresentativesRoute
@@ -1692,7 +2236,9 @@ export interface RootRouteChildren {
   ShippingPolicyRoute: typeof ShippingPolicyRoute
   ShopRoute: typeof ShopRouteWithChildren
   SitemapAuthorsDotxmlRoute: typeof SitemapAuthorsDotxmlRoute
+  SitemapElectionsDotxmlRoute: typeof SitemapElectionsDotxmlRoute
   SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
+  SitemapExploreLocationsDotxmlRoute: typeof SitemapExploreLocationsDotxmlRoute
   SitemapExploreDotxmlRoute: typeof SitemapExploreDotxmlRoute
   SitemapImagesDotxmlRoute: typeof SitemapImagesDotxmlRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
@@ -1730,6 +2276,7 @@ export interface RootRouteChildren {
   TexasRentVsBuyCalculatorRoute: typeof TexasRentVsBuyCalculatorRoute
   TexasSalaryCalculatorRoute: typeof TexasSalaryCalculatorRoute
   TexasSalaryComparisonByCityRoute: typeof TexasSalaryComparisonByCityRoute
+  TexasSalesTaxExplainedRoute: typeof TexasSalesTaxExplainedRoute
   TexasSportsRoute: typeof TexasSportsRouteWithChildren
   TexasUtilityCostCalculatorRoute: typeof TexasUtilityCostCalculatorRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
@@ -1792,6 +2339,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-sports'
       fullPath: '/texas-sports'
       preLoaderRoute: typeof TexasSportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-sales-tax-explained': {
+      id: '/texas-sales-tax-explained'
+      path: '/texas-sales-tax-explained'
+      fullPath: '/texas-sales-tax-explained'
+      preLoaderRoute: typeof TexasSalesTaxExplainedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-salary-comparison-by-city': {
@@ -2053,11 +2607,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapExploreDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-explore-locations.xml': {
+      id: '/sitemap-explore-locations.xml'
+      path: '/sitemap-explore-locations.xml'
+      fullPath: '/sitemap-explore-locations.xml'
+      preLoaderRoute: typeof SitemapExploreLocationsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap-evergreen.xml': {
       id: '/sitemap-evergreen.xml'
       path: '/sitemap-evergreen.xml'
       fullPath: '/sitemap-evergreen.xml'
       preLoaderRoute: typeof SitemapEvergreenDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-elections.xml': {
+      id: '/sitemap-elections.xml'
+      path: '/sitemap-elections.xml'
+      fullPath: '/sitemap-elections.xml'
+      preLoaderRoute: typeof SitemapElectionsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-authors.xml': {
@@ -2121,6 +2689,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news-sitemap.xml': {
+      id: '/news-sitemap.xml'
+      path: '/news-sitemap.xml'
+      fullPath: '/news-sitemap.xml'
+      preLoaderRoute: typeof NewsSitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/news': {
@@ -2445,6 +3020,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsSlugRouteImport
       parentRoute: typeof NewsRoute
     }
+    '/explore/wildlife-management-areas': {
+      id: '/explore/wildlife-management-areas'
+      path: '/wildlife-management-areas'
+      fullPath: '/explore/wildlife-management-areas'
+      preLoaderRoute: typeof ExploreWildlifeManagementAreasRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/explore/trip-planner': {
       id: '/explore/trip-planner'
       path: '/trip-planner'
@@ -2452,11 +3034,123 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreTripPlannerRouteImport
       parentRoute: typeof ExploreRoute
     }
+    '/explore/texas-wildflower-seasons': {
+      id: '/explore/texas-wildflower-seasons'
+      path: '/texas-wildflower-seasons'
+      fullPath: '/explore/texas-wildflower-seasons'
+      preLoaderRoute: typeof ExploreTexasWildflowerSeasonsRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-state-parks-guide': {
+      id: '/explore/texas-state-parks-guide'
+      path: '/texas-state-parks-guide'
+      fullPath: '/explore/texas-state-parks-guide'
+      preLoaderRoute: typeof ExploreTexasStateParksGuideRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-scenic-drives': {
+      id: '/explore/texas-scenic-drives'
+      path: '/texas-scenic-drives'
+      fullPath: '/explore/texas-scenic-drives'
+      preLoaderRoute: typeof ExploreTexasScenicDrivesRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-lakes-guide': {
+      id: '/explore/texas-lakes-guide'
+      path: '/texas-lakes-guide'
+      fullPath: '/explore/texas-lakes-guide'
+      preLoaderRoute: typeof ExploreTexasLakesGuideRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-dark-sky-stargazing': {
+      id: '/explore/texas-dark-sky-stargazing'
+      path: '/texas-dark-sky-stargazing'
+      fullPath: '/explore/texas-dark-sky-stargazing'
+      preLoaderRoute: typeof ExploreTexasDarkSkyStargazingRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-camping-guide': {
+      id: '/explore/texas-camping-guide'
+      path: '/texas-camping-guide'
+      fullPath: '/explore/texas-camping-guide'
+      preLoaderRoute: typeof ExploreTexasCampingGuideRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/state-parks': {
+      id: '/explore/state-parks'
+      path: '/state-parks'
+      fullPath: '/explore/state-parks'
+      preLoaderRoute: typeof ExploreStateParksRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/spring-fed-swimming': {
+      id: '/explore/spring-fed-swimming'
+      path: '/spring-fed-swimming'
+      fullPath: '/explore/spring-fed-swimming'
+      preLoaderRoute: typeof ExploreSpringFedSwimmingRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/spring-conservation-and-education': {
+      id: '/explore/spring-conservation-and-education'
+      path: '/spring-conservation-and-education'
+      fullPath: '/explore/spring-conservation-and-education'
+      preLoaderRoute: typeof ExploreSpringConservationAndEducationRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/explore/search': {
       id: '/explore/search'
       path: '/search'
       fullPath: '/explore/search'
       preLoaderRoute: typeof ExploreSearchRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/scenic-rivers': {
+      id: '/explore/scenic-rivers'
+      path: '/scenic-rivers'
+      fullPath: '/explore/scenic-rivers'
+      preLoaderRoute: typeof ExploreScenicRiversRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/national-wildlife-refuges': {
+      id: '/explore/national-wildlife-refuges'
+      path: '/national-wildlife-refuges'
+      fullPath: '/explore/national-wildlife-refuges'
+      preLoaderRoute: typeof ExploreNationalWildlifeRefugesRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/national-parks': {
+      id: '/explore/national-parks'
+      path: '/national-parks'
+      fullPath: '/explore/national-parks'
+      preLoaderRoute: typeof ExploreNationalParksRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/major-springs': {
+      id: '/explore/major-springs'
+      path: '/major-springs'
+      fullPath: '/explore/major-springs'
+      preLoaderRoute: typeof ExploreMajorSpringsRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/lighthouses': {
+      id: '/explore/lighthouses'
+      path: '/lighthouses'
+      fullPath: '/explore/lighthouses'
+      preLoaderRoute: typeof ExploreLighthousesRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/historic-sites': {
+      id: '/explore/historic-sites'
+      path: '/historic-sites'
+      fullPath: '/explore/historic-sites'
+      preLoaderRoute: typeof ExploreHistoricSitesRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/hill-country-springs': {
+      id: '/explore/hill-country-springs'
+      path: '/hill-country-springs'
+      fullPath: '/explore/hill-country-springs'
+      preLoaderRoute: typeof ExploreHillCountrySpringsRouteImport
       parentRoute: typeof ExploreRoute
     }
     '/explore/caverns': {
@@ -2480,12 +3174,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/elections/voting': {
+      id: '/elections/voting'
+      path: '/voting'
+      fullPath: '/elections/voting'
+      preLoaderRoute: typeof ElectionsVotingRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/results': {
+      id: '/elections/results'
+      path: '/results'
+      fullPath: '/elections/results'
+      preLoaderRoute: typeof ElectionsResultsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/races': {
+      id: '/elections/races'
+      path: '/races'
+      fullPath: '/elections/races'
+      preLoaderRoute: typeof ElectionsRacesRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/polls': {
+      id: '/elections/polls'
+      path: '/polls'
+      fullPath: '/elections/polls'
+      preLoaderRoute: typeof ElectionsPollsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/methodology': {
+      id: '/elections/methodology'
+      path: '/methodology'
+      fullPath: '/elections/methodology'
+      preLoaderRoute: typeof ElectionsMethodologyRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/forecast': {
+      id: '/elections/forecast'
+      path: '/forecast'
+      fullPath: '/elections/forecast'
+      preLoaderRoute: typeof ElectionsForecastRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/corrections': {
+      id: '/elections/corrections'
+      path: '/corrections'
+      fullPath: '/elections/corrections'
+      preLoaderRoute: typeof ElectionsCorrectionsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/candidates': {
+      id: '/elections/candidates'
+      path: '/candidates'
+      fullPath: '/elections/candidates'
+      preLoaderRoute: typeof ElectionsCandidatesRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
     '/authors/$slug': {
       id: '/authors/$slug'
       path: '/authors/$slug'
       fullPath: '/authors/$slug'
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/elections/': {
+      id: '/admin/elections/'
+      path: '/elections'
+      fullPath: '/admin/elections/'
+      preLoaderRoute: typeof AdminElectionsIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/texas-sports/team/$team': {
       id: '/texas-sports/team/$team'
@@ -2508,11 +3265,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreTripTokenRouteImport
       parentRoute: typeof ExploreRoute
     }
+    '/explore/state-park/$slug': {
+      id: '/explore/state-park/$slug'
+      path: '/state-park/$slug'
+      fullPath: '/explore/state-park/$slug'
+      preLoaderRoute: typeof ExploreStateParkSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/river/$slug': {
+      id: '/explore/river/$slug'
+      path: '/river/$slug'
+      fullPath: '/explore/river/$slug'
+      preLoaderRoute: typeof ExploreRiverSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
     '/explore/region/$region': {
       id: '/explore/region/$region'
       path: '/region/$region'
       fullPath: '/explore/region/$region'
       preLoaderRoute: typeof ExploreRegionRegionRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/lake/$slug': {
+      id: '/explore/lake/$slug'
+      path: '/lake/$slug'
+      fullPath: '/explore/lake/$slug'
+      preLoaderRoute: typeof ExploreLakeSlugRouteImport
       parentRoute: typeof ExploreRoute
     }
     '/explore/county/$county': {
@@ -2522,12 +3300,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ExploreCountyCountyRouteImport
       parentRoute: typeof ExploreRoute
     }
+    '/explore/cavern/$slug': {
+      id: '/explore/cavern/$slug'
+      path: '/cavern/$slug'
+      fullPath: '/explore/cavern/$slug'
+      preLoaderRoute: typeof ExploreCavernSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/elections/results/$resultSlug': {
+      id: '/elections/results/$resultSlug'
+      path: '/$resultSlug'
+      fullPath: '/elections/results/$resultSlug'
+      preLoaderRoute: typeof ElectionsResultsResultSlugRouteImport
+      parentRoute: typeof ElectionsResultsRoute
+    }
+    '/elections/races/$raceSlug': {
+      id: '/elections/races/$raceSlug'
+      path: '/$raceSlug'
+      fullPath: '/elections/races/$raceSlug'
+      preLoaderRoute: typeof ElectionsRacesRaceSlugRouteImport
+      parentRoute: typeof ElectionsRacesRoute
+    }
+    '/elections/polls/$pollSlug': {
+      id: '/elections/polls/$pollSlug'
+      path: '/$pollSlug'
+      fullPath: '/elections/polls/$pollSlug'
+      preLoaderRoute: typeof ElectionsPollsPollSlugRouteImport
+      parentRoute: typeof ElectionsPollsRoute
+    }
+    '/elections/forecast/$forecastSlug': {
+      id: '/elections/forecast/$forecastSlug'
+      path: '/$forecastSlug'
+      fullPath: '/elections/forecast/$forecastSlug'
+      preLoaderRoute: typeof ElectionsForecastForecastSlugRouteImport
+      parentRoute: typeof ElectionsForecastRoute
+    }
+    '/elections/candidates/$candidateSlug': {
+      id: '/elections/candidates/$candidateSlug'
+      path: '/$candidateSlug'
+      fullPath: '/elections/candidates/$candidateSlug'
+      preLoaderRoute: typeof ElectionsCandidatesCandidateSlugRouteImport
+      parentRoute: typeof ElectionsCandidatesRoute
+    }
     '/api/public/property-address-lookup': {
       id: '/api/public/property-address-lookup'
       path: '/api/public/property-address-lookup'
       fullPath: '/api/public/property-address-lookup'
       preLoaderRoute: typeof ApiPublicPropertyAddressLookupRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/elections/results': {
+      id: '/admin/elections/results'
+      path: '/elections/results'
+      fullPath: '/admin/elections/results'
+      preLoaderRoute: typeof AdminElectionsResultsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/races': {
+      id: '/admin/elections/races'
+      path: '/elections/races'
+      fullPath: '/admin/elections/races'
+      preLoaderRoute: typeof AdminElectionsRacesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/polls': {
+      id: '/admin/elections/polls'
+      path: '/elections/polls'
+      fullPath: '/admin/elections/polls'
+      preLoaderRoute: typeof AdminElectionsPollsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/forecast': {
+      id: '/admin/elections/forecast'
+      path: '/elections/forecast'
+      fullPath: '/admin/elections/forecast'
+      preLoaderRoute: typeof AdminElectionsForecastRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/candidates': {
+      id: '/admin/elections/candidates'
+      path: '/elections/candidates'
+      fullPath: '/admin/elections/candidates'
+      preLoaderRoute: typeof AdminElectionsCandidatesRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/admin/explore/imports/': {
       id: '/admin/explore/imports/'
@@ -2701,34 +3556,172 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminElectionsCandidatesRoute: typeof AdminElectionsCandidatesRoute
+  AdminElectionsForecastRoute: typeof AdminElectionsForecastRoute
+  AdminElectionsPollsRoute: typeof AdminElectionsPollsRoute
+  AdminElectionsRacesRoute: typeof AdminElectionsRacesRoute
+  AdminElectionsResultsRoute: typeof AdminElectionsResultsRoute
+  AdminElectionsIndexRoute: typeof AdminElectionsIndexRoute
   AdminExploreImportsIndexRoute: typeof AdminExploreImportsIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminElectionsCandidatesRoute: AdminElectionsCandidatesRoute,
+  AdminElectionsForecastRoute: AdminElectionsForecastRoute,
+  AdminElectionsPollsRoute: AdminElectionsPollsRoute,
+  AdminElectionsRacesRoute: AdminElectionsRacesRoute,
+  AdminElectionsResultsRoute: AdminElectionsResultsRoute,
+  AdminElectionsIndexRoute: AdminElectionsIndexRoute,
   AdminExploreImportsIndexRoute: AdminExploreImportsIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ElectionsCandidatesRouteChildren {
+  ElectionsCandidatesCandidateSlugRoute: typeof ElectionsCandidatesCandidateSlugRoute
+}
+
+const ElectionsCandidatesRouteChildren: ElectionsCandidatesRouteChildren = {
+  ElectionsCandidatesCandidateSlugRoute: ElectionsCandidatesCandidateSlugRoute,
+}
+
+const ElectionsCandidatesRouteWithChildren =
+  ElectionsCandidatesRoute._addFileChildren(ElectionsCandidatesRouteChildren)
+
+interface ElectionsForecastRouteChildren {
+  ElectionsForecastForecastSlugRoute: typeof ElectionsForecastForecastSlugRoute
+}
+
+const ElectionsForecastRouteChildren: ElectionsForecastRouteChildren = {
+  ElectionsForecastForecastSlugRoute: ElectionsForecastForecastSlugRoute,
+}
+
+const ElectionsForecastRouteWithChildren =
+  ElectionsForecastRoute._addFileChildren(ElectionsForecastRouteChildren)
+
+interface ElectionsPollsRouteChildren {
+  ElectionsPollsPollSlugRoute: typeof ElectionsPollsPollSlugRoute
+}
+
+const ElectionsPollsRouteChildren: ElectionsPollsRouteChildren = {
+  ElectionsPollsPollSlugRoute: ElectionsPollsPollSlugRoute,
+}
+
+const ElectionsPollsRouteWithChildren = ElectionsPollsRoute._addFileChildren(
+  ElectionsPollsRouteChildren,
+)
+
+interface ElectionsRacesRouteChildren {
+  ElectionsRacesRaceSlugRoute: typeof ElectionsRacesRaceSlugRoute
+}
+
+const ElectionsRacesRouteChildren: ElectionsRacesRouteChildren = {
+  ElectionsRacesRaceSlugRoute: ElectionsRacesRaceSlugRoute,
+}
+
+const ElectionsRacesRouteWithChildren = ElectionsRacesRoute._addFileChildren(
+  ElectionsRacesRouteChildren,
+)
+
+interface ElectionsResultsRouteChildren {
+  ElectionsResultsResultSlugRoute: typeof ElectionsResultsResultSlugRoute
+}
+
+const ElectionsResultsRouteChildren: ElectionsResultsRouteChildren = {
+  ElectionsResultsResultSlugRoute: ElectionsResultsResultSlugRoute,
+}
+
+const ElectionsResultsRouteWithChildren =
+  ElectionsResultsRoute._addFileChildren(ElectionsResultsRouteChildren)
+
+interface ElectionsRouteChildren {
+  ElectionsCandidatesRoute: typeof ElectionsCandidatesRouteWithChildren
+  ElectionsCorrectionsRoute: typeof ElectionsCorrectionsRoute
+  ElectionsForecastRoute: typeof ElectionsForecastRouteWithChildren
+  ElectionsMethodologyRoute: typeof ElectionsMethodologyRoute
+  ElectionsPollsRoute: typeof ElectionsPollsRouteWithChildren
+  ElectionsRacesRoute: typeof ElectionsRacesRouteWithChildren
+  ElectionsResultsRoute: typeof ElectionsResultsRouteWithChildren
+  ElectionsVotingRoute: typeof ElectionsVotingRoute
+}
+
+const ElectionsRouteChildren: ElectionsRouteChildren = {
+  ElectionsCandidatesRoute: ElectionsCandidatesRouteWithChildren,
+  ElectionsCorrectionsRoute: ElectionsCorrectionsRoute,
+  ElectionsForecastRoute: ElectionsForecastRouteWithChildren,
+  ElectionsMethodologyRoute: ElectionsMethodologyRoute,
+  ElectionsPollsRoute: ElectionsPollsRouteWithChildren,
+  ElectionsRacesRoute: ElectionsRacesRouteWithChildren,
+  ElectionsResultsRoute: ElectionsResultsRouteWithChildren,
+  ElectionsVotingRoute: ElectionsVotingRoute,
+}
+
+const ElectionsRouteWithChildren = ElectionsRoute._addFileChildren(
+  ElectionsRouteChildren,
+)
+
 interface ExploreRouteChildren {
   ExploreSlugRoute: typeof ExploreSlugRoute
   ExploreCavernsRoute: typeof ExploreCavernsRoute
+  ExploreHillCountrySpringsRoute: typeof ExploreHillCountrySpringsRoute
+  ExploreHistoricSitesRoute: typeof ExploreHistoricSitesRoute
+  ExploreLighthousesRoute: typeof ExploreLighthousesRoute
+  ExploreMajorSpringsRoute: typeof ExploreMajorSpringsRoute
+  ExploreNationalParksRoute: typeof ExploreNationalParksRoute
+  ExploreNationalWildlifeRefugesRoute: typeof ExploreNationalWildlifeRefugesRoute
+  ExploreScenicRiversRoute: typeof ExploreScenicRiversRoute
   ExploreSearchRoute: typeof ExploreSearchRoute
+  ExploreSpringConservationAndEducationRoute: typeof ExploreSpringConservationAndEducationRoute
+  ExploreSpringFedSwimmingRoute: typeof ExploreSpringFedSwimmingRoute
+  ExploreStateParksRoute: typeof ExploreStateParksRoute
+  ExploreTexasCampingGuideRoute: typeof ExploreTexasCampingGuideRoute
+  ExploreTexasDarkSkyStargazingRoute: typeof ExploreTexasDarkSkyStargazingRoute
+  ExploreTexasLakesGuideRoute: typeof ExploreTexasLakesGuideRoute
+  ExploreTexasScenicDrivesRoute: typeof ExploreTexasScenicDrivesRoute
+  ExploreTexasStateParksGuideRoute: typeof ExploreTexasStateParksGuideRoute
+  ExploreTexasWildflowerSeasonsRoute: typeof ExploreTexasWildflowerSeasonsRoute
   ExploreTripPlannerRoute: typeof ExploreTripPlannerRoute
+  ExploreWildlifeManagementAreasRoute: typeof ExploreWildlifeManagementAreasRoute
   ExploreIndexRoute: typeof ExploreIndexRoute
+  ExploreCavernSlugRoute: typeof ExploreCavernSlugRoute
   ExploreCountyCountyRoute: typeof ExploreCountyCountyRoute
+  ExploreLakeSlugRoute: typeof ExploreLakeSlugRoute
   ExploreRegionRegionRoute: typeof ExploreRegionRegionRoute
+  ExploreRiverSlugRoute: typeof ExploreRiverSlugRoute
+  ExploreStateParkSlugRoute: typeof ExploreStateParkSlugRoute
   ExploreTripTokenRoute: typeof ExploreTripTokenRoute
 }
 
 const ExploreRouteChildren: ExploreRouteChildren = {
   ExploreSlugRoute: ExploreSlugRoute,
   ExploreCavernsRoute: ExploreCavernsRoute,
+  ExploreHillCountrySpringsRoute: ExploreHillCountrySpringsRoute,
+  ExploreHistoricSitesRoute: ExploreHistoricSitesRoute,
+  ExploreLighthousesRoute: ExploreLighthousesRoute,
+  ExploreMajorSpringsRoute: ExploreMajorSpringsRoute,
+  ExploreNationalParksRoute: ExploreNationalParksRoute,
+  ExploreNationalWildlifeRefugesRoute: ExploreNationalWildlifeRefugesRoute,
+  ExploreScenicRiversRoute: ExploreScenicRiversRoute,
   ExploreSearchRoute: ExploreSearchRoute,
+  ExploreSpringConservationAndEducationRoute:
+    ExploreSpringConservationAndEducationRoute,
+  ExploreSpringFedSwimmingRoute: ExploreSpringFedSwimmingRoute,
+  ExploreStateParksRoute: ExploreStateParksRoute,
+  ExploreTexasCampingGuideRoute: ExploreTexasCampingGuideRoute,
+  ExploreTexasDarkSkyStargazingRoute: ExploreTexasDarkSkyStargazingRoute,
+  ExploreTexasLakesGuideRoute: ExploreTexasLakesGuideRoute,
+  ExploreTexasScenicDrivesRoute: ExploreTexasScenicDrivesRoute,
+  ExploreTexasStateParksGuideRoute: ExploreTexasStateParksGuideRoute,
+  ExploreTexasWildflowerSeasonsRoute: ExploreTexasWildflowerSeasonsRoute,
   ExploreTripPlannerRoute: ExploreTripPlannerRoute,
+  ExploreWildlifeManagementAreasRoute: ExploreWildlifeManagementAreasRoute,
   ExploreIndexRoute: ExploreIndexRoute,
+  ExploreCavernSlugRoute: ExploreCavernSlugRoute,
   ExploreCountyCountyRoute: ExploreCountyCountyRoute,
+  ExploreLakeSlugRoute: ExploreLakeSlugRoute,
   ExploreRegionRegionRoute: ExploreRegionRegionRoute,
+  ExploreRiverSlugRoute: ExploreRiverSlugRoute,
+  ExploreStateParkSlugRoute: ExploreStateParkSlugRoute,
   ExploreTripTokenRoute: ExploreTripTokenRoute,
 }
 
@@ -2832,7 +3825,7 @@ const rootRouteChildren: RootRouteChildren = {
   DallasFortWorthRoute: DallasFortWorthRoute,
   EditorialStandardsRoute: EditorialStandardsRoute,
   ElPasoRoute: ElPasoRoute,
-  ElectionsRoute: ElectionsRoute,
+  ElectionsRoute: ElectionsRouteWithChildren,
   ExploreRoute: ExploreRouteWithChildren,
   FindMyDmvRoute: FindMyDmvRoute,
   FindMySchoolDistrictRoute: FindMySchoolDistrictRoute,
@@ -2850,6 +3843,7 @@ const rootRouteChildren: RootRouteChildren = {
   MovingToTexasRoute: MovingToTexasRoute,
   MovingToTexasChecklistRoute: MovingToTexasChecklistRoute,
   NewsRoute: NewsRouteWithChildren,
+  NewsSitemapDotxmlRoute: NewsSitemapDotxmlRoute,
   PrivacyRoute: PrivacyRoute,
   RegisterToVoteRoute: RegisterToVoteRoute,
   RepresentativesRoute: RepresentativesRoute,
@@ -2859,7 +3853,9 @@ const rootRouteChildren: RootRouteChildren = {
   ShippingPolicyRoute: ShippingPolicyRoute,
   ShopRoute: ShopRouteWithChildren,
   SitemapAuthorsDotxmlRoute: SitemapAuthorsDotxmlRoute,
+  SitemapElectionsDotxmlRoute: SitemapElectionsDotxmlRoute,
   SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
+  SitemapExploreLocationsDotxmlRoute: SitemapExploreLocationsDotxmlRoute,
   SitemapExploreDotxmlRoute: SitemapExploreDotxmlRoute,
   SitemapImagesDotxmlRoute: SitemapImagesDotxmlRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
@@ -2899,6 +3895,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasRentVsBuyCalculatorRoute: TexasRentVsBuyCalculatorRoute,
   TexasSalaryCalculatorRoute: TexasSalaryCalculatorRoute,
   TexasSalaryComparisonByCityRoute: TexasSalaryComparisonByCityRoute,
+  TexasSalesTaxExplainedRoute: TexasSalesTaxExplainedRoute,
   TexasSportsRoute: TexasSportsRouteWithChildren,
   TexasUtilityCostCalculatorRoute: TexasUtilityCostCalculatorRoute,
   UnsubscribeRoute: UnsubscribeRoute,
@@ -2937,3 +3934,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

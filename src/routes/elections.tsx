@@ -1,123 +1,38 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ELECTION_RACES } from "@/data/articles";
-import { getArticlesByCategory } from "@/lib/articles-by-category";
-import ballot from "@/assets/ballot.jpg";
-import { AgedFeedSection } from "@/components/aged-feed-section";
-import { assignUniqueImages } from "@/lib/dedupe-images";
-import { getNextElection, daysUntil, formatElectionDate, electionTypeLabel } from "@/lib/election-calendar";
+import { createFileRoute } from "@tanstack/react-router";
+import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
+import { ElectionHomePage } from "@/pages/elections";
 
 export const Route = createFileRoute("/elections")({
   head: () => ({
     meta: [
-      { title: "Texas Elections 2026 — Keep TX Red" },
-      { name: "description", content: "Race-by-race coverage of Texas elections: U.S. Senate, Governor, Congress, statehouse, and school boards." },
-      { property: "og:title", content: "Texas Elections 2026 — Keep TX Red" },
-      { property: "og:description", content: "Race ratings, polls, and voter guides for every Texas election." },
+      { title: "Texas Election Central | Races, Candidates, Polls & Voting" },
+      {
+        name: "description",
+        content:
+          "Follow Texas election races, candidates, polls, forecasts, results, and practical voting information from Keep TX Red Election Central.",
+      },
+      {
+        property: "og:title",
+        content: "Texas Election Central | Keep TX Red",
+      },
+      {
+        property: "og:description",
+        content:
+          "Texas race ratings, candidate profiles, polling, forecasts, results, and voter guidance in one election hub.",
+      },
       { property: "og:url", content: "/elections" },
-      { property: "og:image", content: ballot },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/elections" }],
   }),
-  component: ElectionsPage,
+  component: ElectionCentralRoute,
 });
 
-function ElectionsPage() {
-  // Category page = exactly one category_slug, sourced from this route's URL.
-  const electionNews = getArticlesByCategory("elections");
-  const uniqImg = assignUniqueImages(electionNews, (a) => a.slug, (a) => a.image, () => "elections");
-  const nextElection = getNextElection();
-  const countdownValue = nextElection ? String(daysUntil(nextElection)) : "—";
-  const countdownLabel = nextElection ? `Days to ${nextElection.name}` : "Next Texas Election";
-  const dateValue = nextElection ? formatElectionDate(nextElection) : "TBA";
-  const typeValue = nextElection ? electionTypeLabel(nextElection.type) : "—";
-
+function ElectionCentralRoute() {
   return (
-    <>
-      <section className="bg-secondary text-secondary-foreground">
-        <div className="mx-auto max-w-6xl px-4 py-16">
-          <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-accent">★ 2026 Election Pulse</span>
-          <h1 className="font-display text-6xl md:text-7xl tracking-tight mt-2 leading-none">
-            EVERY RACE. <br />
-            <span className="text-primary">EVERY VOTE.</span>
-          </h1>
-          <p className="mt-5 max-w-2xl text-white/90">
-            Statewide and district-by-district analysis of the Texas elections shaping the next decade. Polls, ratings, and a complete voter guide.
-          </p>
-          <div className="grid sm:grid-cols-3 gap-4 mt-10">
-            <Stat value={countdownValue} label={countdownLabel} />
-            <Stat value={dateValue} label="Election Date" />
-            <Stat value={typeValue} label="Election Type" />
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 py-14">
-        <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground pb-3 mb-6">Race Ratings</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              <tr className="border-b border-border">
-                <th className="text-left py-3">Office</th>
-                <th className="text-left py-3">Status</th>
-                <th className="text-left py-3">Margin</th>
-                <th className="text-left py-3">Rating</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ELECTION_RACES.map((r) => (
-                <tr key={r.office} className="border-b border-border last:border-0">
-                  <td className="py-4 font-semibold">{r.office}</td>
-                  <td className="py-4 text-muted-foreground">{r.incumbent}</td>
-                  <td className="py-4 font-mono font-bold text-primary">{r.margin}</td>
-                  <td className="py-4">
-                    <span className="text-[10px] font-bold tracking-widest uppercase border border-foreground px-2 py-1">
-                      {r.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-16">
-        <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground pb-3 mb-8">Election News</h2>
-        <div className="grid md:grid-cols-2 gap-8">
-          {electionNews.map((a) => (
-            <Link
-              key={a.slug}
-              to="/news/$slug"
-              params={{ slug: a.slug }}
-              className="grid grid-cols-[140px_1fr] gap-4 group cursor-pointer"
-            >
-              <div className="aspect-square overflow-hidden bg-muted">
-                <img src={uniqImg.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover" />
-              </div>
-              <div>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{a.category}</span>
-                <h3 className="font-serif font-bold mt-1 leading-snug group-hover:underline underline-offset-4">{a.title}</h3>
-                <p className="text-[11px] text-muted-foreground mt-2 italic">{a.date}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <AgedFeedSection
-        section="elections"
-        title="From the Live Feed"
-        blurb="Election-related updates from the Secretary of State and Governor's Office, filed here once they're more than 24 hours old."
-      />
-    </>
-  );
-}
-
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div className="border border-white/15 p-6">
-      <div className="font-display text-5xl text-primary leading-none">{value}</div>
-      <div className="mt-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/85">{label}</div>
-    </div>
+    <ElectionRepositoryProvider>
+      <ElectionHomePage />
+    </ElectionRepositoryProvider>
   );
 }

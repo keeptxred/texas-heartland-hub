@@ -1,0 +1,43 @@
+name: Update Election Central forecasts
+
+on:
+  schedule:
+    - cron: "17 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: election-forecast-daily-update
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      FORECAST_UPDATE_URL: ${{ secrets.ELECTION_FORECAST_UPDATE_URL }}
+      FORECAST_UPDATE_TOKEN: ${{ secrets.ELECTION_FORECAST_UPDATE_TOKEN }}
+    steps:
+      - name: Require the configured forecast update service
+        shell: bash
+        run: |
+          if [[ -z "$FORECAST_UPDATE_URL" || -z "$FORECAST_UPDATE_TOKEN" ]]; then
+            echo "::error::Configure ELECTION_FORECAST_UPDATE_URL and ELECTION_FORECAST_UPDATE_TOKEN."
+            exit 1
+          fi
+
+      - name: Request one source-backed forecast update
+        shell: bash
+        run: |
+          curl \
+            --fail-with-body \
+            --silent \
+            --show-error \
+            --max-time 480 \
+            --request POST \
+            --header "Authorization: Bearer $FORECAST_UPDATE_TOKEN" \
+            --header "Content-Type: application/json" \
+            --data '{"trigger":"github-actions","scope":"published-texas-election-forecasts"}' \
+            "$FORECAST_UPDATE_URL"
