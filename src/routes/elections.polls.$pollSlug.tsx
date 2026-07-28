@@ -4,6 +4,7 @@ import {
   ElectionLayout,
   ElectionLoading,
   ElectionNavigation,
+  PollDetailView,
 } from "@/components/elections";
 import { useElectionPoll } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
@@ -90,9 +91,5 @@ function ElectionPollDetailData({ pollSlug }: { pollSlug: string }) {
     );
   }
 
-  return (
-    <div className="sr-only" aria-live="polite">
-      Poll detail data loaded.
-    </div>
-  );
+  return <PollDetailView poll={poll.data} />;
 }

@@ -3,6 +3,7 @@ export * from "./candidates";
 export * from "./countdown";
 export * from "./layout";
 export * from "./navigation";
+export * from "./polls";
 export * from "./races";
 export * from "./resources";
 export * from "./states";
