@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -20,6 +20,8 @@ const publicCandidates = publicRecords(candidates);
 const publicPolls = publicRecords(polls);
 const publicForecasts = publicRecords(forecasts);
 const candidateById = new Map(publicCandidates.map((candidate) => [candidate.id, candidate]));
+const uncoveredRaceIds = [];
+const partiallyCoveredRaceIds = [];
 
 require(publicCycles.length === 1, `Expected one published 2026 cycle; found ${publicCycles.length}.`);
 require(publicRaces.length === 227, `Expected all 227 launch-scope races; found ${publicRaces.length}.`);
@@ -35,8 +37,11 @@ for (const race of publicRaces) {
   if (race.uncontested ? raceCandidates.length >= 1 : raceCandidates.length >= 2) {
     fullyCoveredRaces += 1;
   }
-  if (raceCandidates.length === 0) blockers.push(`${race.id} has no published verified candidate.`);
-  else if (!race.uncontested && raceCandidates.length < 2) {
+  if (raceCandidates.length === 0) {
+    uncoveredRaceIds.push(race.id);
+    blockers.push(`${race.id} has no published verified candidate.`);
+  } else if (!race.uncontested && raceCandidates.length < 2) {
+    partiallyCoveredRaceIds.push(race.id);
     blockers.push(`${race.id} is not marked uncontested and has fewer than two published candidates.`);
   }
   freshness(race, `Race ${race.id}`);
@@ -56,6 +61,32 @@ if (publicForecasts.length === 0) {
 
 const enabled = readBoolean(process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE, false);
 const ready = blockers.length === 0;
+const report = {
+  generatedAt: now.toISOString(),
+  ready,
+  homepageTakeoverEnabled: enabled,
+  counts: {
+    cycles: publicCycles.length,
+    races: publicRaces.length,
+    candidates: publicCandidates.length,
+    polls: publicPolls.length,
+    forecasts: publicForecasts.length,
+    racesWithAtLeastOneCandidate: coveredRaces,
+    launchCoveredRaces: fullyCoveredRaces,
+  },
+  uncoveredRaceIds,
+  partiallyCoveredRaceIds,
+  warnings,
+  blockerCount: blockers.length,
+};
+
+if (readBoolean(process.env.ELECTION_WRITE_READINESS, false)) {
+  await writeFile(
+    path.join(DATA_DIR, "readiness.json"),
+    `${JSON.stringify(report, null, 2)}\n`,
+  );
+  console.log("Wrote src/data/elections/2026/readiness.json.");
+}
 
 console.log(
   `Election Central readiness: ${ready ? "READY" : "NOT READY"}; ${publicRaces.length} races, ${publicCandidates.length} candidates, ${coveredRaces}/${publicRaces.length} races with at least one candidate, ${fullyCoveredRaces}/${publicRaces.length} launch-covered races.`,
