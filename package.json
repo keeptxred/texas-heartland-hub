@@ -20,6 +20,7 @@
     "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts && npm run elections:normalize",
     "elections:resolve:fec": "node --experimental-strip-types scripts/elections/resolve-fec-ids.ts",
     "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
+    "elections:import:polls": "node --experimental-strip-types scripts/elections/import-ut-june-poll.ts",
     "elections:generate:geography": "node --experimental-strip-types scripts/elections/generate-official-geography.ts",
     "elections:import:geography": "npm run elections:generate:geography && node --experimental-strip-types scripts/elections/import-geography.ts",
     "elections:forecast": "node --experimental-strip-types scripts/elections/forecast.ts",
@@ -28,7 +29,7 @@
     "elections:readiness": "node scripts/elections/launch-readiness.mjs",
     "elections:test:mobile": "playwright test --config=playwright.elections.config.ts",
     "elections:qa": "node scripts/elections/qa.mjs && npm run elections:routes:qa && npm run elections:sitemap:qa && npm run elections:readiness",
-    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:resolve:fec && npm run elections:import:finance && npm run elections:import:geography && npm run elections:normalize && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
+    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:resolve:fec && npm run elections:import:finance && npm run elections:import:polls && npm run elections:import:geography && npm run elections:normalize && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
