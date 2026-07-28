@@ -1,16 +1,9 @@
-import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ElectionEmptyState, RaceCard } from "@/components/elections";
 import { useActiveElectionCycle, useElectionCycles, useElectionRaces } from "@/hooks/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionRaceListPage } from "@/pages/elections";
-import type {
-  ElectionCycleId,
-  ElectionType,
-  OfficeLevel,
-  PartyScope,
-  RaceStatus,
-} from "@/types/elections";
+import type { ElectionType, OfficeLevel, PartyScope, RaceStatus } from "@/types/elections";
 import {
   ELECTION_TYPES,
   ELECTION_TYPE_LABELS,
@@ -20,6 +13,10 @@ import {
   PARTY_SCOPE_LABELS,
   RACE_STATUSES,
   RACE_STATUS_LABELS,
+  isElectionType,
+  isOfficeLevel,
+  isPartyScope,
+  isRaceStatus,
 } from "@/types/elections/raceClassifications";
 
 const RACE_SORT_OPTIONS = [
@@ -31,7 +28,40 @@ const RACE_SORT_OPTIONS = [
 
 type RaceSortOption = (typeof RACE_SORT_OPTIONS)[number]["value"];
 
+interface ElectionRaceListSearch {
+  cycle?: string;
+  officeLevel?: OfficeLevel;
+  electionType?: ElectionType;
+  partyScope?: PartyScope;
+  status?: RaceStatus;
+  featured?: boolean;
+  sort?: RaceSortOption;
+}
+
+function parseRaceListSearch(search: Record<string, unknown>): ElectionRaceListSearch {
+  return {
+    cycle: typeof search.cycle === "string" && search.cycle ? search.cycle : undefined,
+    officeLevel:
+      typeof search.officeLevel === "string" && isOfficeLevel(search.officeLevel)
+        ? search.officeLevel
+        : undefined,
+    electionType:
+      typeof search.electionType === "string" && isElectionType(search.electionType)
+        ? search.electionType
+        : undefined,
+    partyScope:
+      typeof search.partyScope === "string" && isPartyScope(search.partyScope)
+        ? search.partyScope
+        : undefined,
+    status:
+      typeof search.status === "string" && isRaceStatus(search.status) ? search.status : undefined,
+    featured: search.featured === true || search.featured === "true" ? true : undefined,
+    sort: RACE_SORT_OPTIONS.find((option) => option.value === search.sort)?.value,
+  };
+}
+
 export const Route = createFileRoute("/elections/races")({
+  validateSearch: parseRaceListSearch,
   head: () => ({
     meta: [
       { title: "Texas Election Races | KeepTXRed Election Central" },
@@ -72,13 +102,14 @@ function ElectionRacesRoute() {
 }
 
 function ElectionRacesContent() {
-  const [selectedCycleId, setSelectedCycleId] = useState<ElectionCycleId | null>(null);
-  const [officeLevel, setOfficeLevel] = useState<OfficeLevel | null>(null);
-  const [electionType, setElectionType] = useState<ElectionType | null>(null);
-  const [partyScope, setPartyScope] = useState<PartyScope | null>(null);
-  const [raceStatus, setRaceStatus] = useState<RaceStatus | null>(null);
-  const [featuredOnly, setFeaturedOnly] = useState(false);
-  const [sortBy, setSortBy] = useState<RaceSortOption>("election_date");
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const officeLevel = search.officeLevel ?? null;
+  const electionType = search.electionType ?? null;
+  const partyScope = search.partyScope ?? null;
+  const raceStatus = search.status ?? null;
+  const featuredOnly = search.featured ?? false;
+  const sortBy = search.sort ?? "election_date";
   const activeCycle = useActiveElectionCycle();
   const cycles = useElectionCycles({
     filters: {
@@ -87,7 +118,8 @@ function ElectionRacesContent() {
     },
     sort: [{ field: "election_date", direction: "desc" }],
   });
-  const electionCycleId = selectedCycleId ?? activeCycle.data?.id ?? null;
+  const restoredCycleId = cycles.data?.items.find((cycle) => cycle.id === search.cycle)?.id ?? null;
+  const electionCycleId = restoredCycleId ?? activeCycle.data?.id ?? null;
   const races = useElectionRaces({
     filters: {
       electionCycleIds: electionCycleId ? [electionCycleId] : [],
@@ -108,9 +140,16 @@ function ElectionRacesContent() {
   });
   const error = activeCycle.error ?? cycles.error ?? races.error;
 
+  const updateSearch = (updates: Partial<ElectionRaceListSearch>) => {
+    void navigate({
+      search: (previous) => ({ ...previous, ...updates }),
+      replace: true,
+    });
+  };
+
   const handleCycleChange = (value: string) => {
     const cycle = cycles.data?.items.find((item) => item.id === value);
-    setSelectedCycleId(cycle?.id ?? null);
+    updateSearch({ cycle: cycle?.id });
   };
 
   const handleRetry = () => {
@@ -120,11 +159,13 @@ function ElectionRacesContent() {
   };
 
   const clearFilters = () => {
-    setOfficeLevel(null);
-    setElectionType(null);
-    setPartyScope(null);
-    setRaceStatus(null);
-    setFeaturedOnly(false);
+    updateSearch({
+      officeLevel: undefined,
+      electionType: undefined,
+      partyScope: undefined,
+      status: undefined,
+      featured: undefined,
+    });
   };
 
   return (
@@ -159,7 +200,7 @@ function ElectionRacesContent() {
             onChange={(value) => {
               const option = RACE_SORT_OPTIONS.find((item) => item.value === value);
               if (option) {
-                setSortBy(option.value);
+                updateSearch({ sort: option.value });
               }
             }}
           />
@@ -177,7 +218,9 @@ function ElectionRacesContent() {
               label: OFFICE_LEVEL_LABELS[value],
             }))}
             onChange={(value) =>
-              setOfficeLevel(OFFICE_LEVELS.find((item) => item === value) ?? null)
+              updateSearch({
+                officeLevel: OFFICE_LEVELS.find((item) => item === value),
+              })
             }
           />
           <RaceFilterSelect
@@ -188,7 +231,9 @@ function ElectionRacesContent() {
               label: ELECTION_TYPE_LABELS[value],
             }))}
             onChange={(value) =>
-              setElectionType(ELECTION_TYPES.find((item) => item === value) ?? null)
+              updateSearch({
+                electionType: ELECTION_TYPES.find((item) => item === value),
+              })
             }
           />
           <RaceFilterSelect
@@ -198,7 +243,11 @@ function ElectionRacesContent() {
               value,
               label: PARTY_SCOPE_LABELS[value],
             }))}
-            onChange={(value) => setPartyScope(PARTY_SCOPES.find((item) => item === value) ?? null)}
+            onChange={(value) =>
+              updateSearch({
+                partyScope: PARTY_SCOPES.find((item) => item === value),
+              })
+            }
           />
           <RaceFilterSelect
             label="Race status"
@@ -208,7 +257,9 @@ function ElectionRacesContent() {
               label: RACE_STATUS_LABELS[value],
             }))}
             onChange={(value) =>
-              setRaceStatus(RACE_STATUSES.find((item) => item === value) ?? null)
+              updateSearch({
+                status: RACE_STATUSES.find((item) => item === value),
+              })
             }
           />
           <div className="flex flex-col justify-end gap-3">
@@ -216,7 +267,7 @@ function ElectionRacesContent() {
               <input
                 type="checkbox"
                 checked={featuredOnly}
-                onChange={(event) => setFeaturedOnly(event.target.checked)}
+                onChange={(event) => updateSearch({ featured: event.target.checked || undefined })}
                 className="h-4 w-4 rounded border-slate-300 text-red-700 focus:ring-red-600"
               />
               Featured races only
