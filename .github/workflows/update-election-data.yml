@@ -144,15 +144,42 @@ jobs:
           ELECTION_QA_CHECK_LINKS: "true"
         run: pnpm elections:qa
 
-      - name: Commit refreshed data
+      - name: Record refresh conclusion and publish safe changes
+        if: always()
         shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_SHA: ${{ github.sha }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          if git diff --quiet -- src/data/elections/2026; then
-            echo "No election data changes to commit."
-            exit 0
+          if [[ "$JOB_STATUS" != "success" ]]; then
+            git restore src/data/elections/2026 || true
           fi
+          cat > src/data/elections/2026/workflow-status.json <<EOF
+          {
+            "updatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "conclusion": "$JOB_STATUS",
+            "runId": "$RUN_ID",
+            "runAttempt": "$RUN_ATTEMPT",
+            "triggerCommit": "$RUN_SHA",
+            "runUrl": "$RUN_URL"
+          }
+          EOF
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/elections/2026
-          git commit -m "Refresh verified 2026 election data"
+          if [[ "$JOB_STATUS" == "success" ]]; then
+            git add src/data/elections/2026
+            message="Refresh verified 2026 election data"
+          else
+            git add src/data/elections/2026/workflow-status.json
+            message="Record failed election data refresh"
+          fi
+          if git diff --cached --quiet; then
+            echo "No refresh status or election data changes to commit."
+            exit 0
+          fi
+          git commit -m "$message"
+          git pull --rebase origin main
           git push origin HEAD:main
