@@ -4,6 +4,7 @@ import {
   CandidateCampaignLinks,
   CandidatePollingSection,
   CandidateRaceSection,
+  CandidateResultsSection,
   ElectionErrorState,
   ElectionLayout,
   ElectionLoading,
@@ -124,6 +125,11 @@ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string 
         candidate={candidate.data}
         polls={polls.data?.items ?? []}
         hasStaleData={polls.hasStaleData}
+      />
+      <CandidateResultsSection
+        candidate={candidate.data}
+        result={result.data ?? null}
+        isPreElection={result.isPreElection}
       />
     </div>
   );
