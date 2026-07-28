@@ -2,12 +2,14 @@ import { ElectionErrorState, ElectionLoading } from "@/components/elections";
 import { useAdminElectionPolls } from "@/hooks/elections";
 import { ElectionAdminMenu } from "./ElectionAdminMenu";
 import { ElectionAdminDataNotice } from "./ElectionAdminDataNotice";
+import { PollEntryAdminForm } from "./PollEntryAdminForm";
 
 export function ElectionAdminPollList() {
   const polls = useAdminElectionPolls();
   return (
     <div className="space-y-8">
       <ElectionAdminMenu currentPath="/admin/elections/polls" />
+      <PollEntryAdminForm />
       <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <h2 className="text-2xl font-bold text-slate-950">Poll records</h2>
         <p className="mt-2 text-sm text-slate-600">

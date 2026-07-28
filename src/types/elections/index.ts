@@ -95,3 +95,4 @@ export * from "./votingLocationClassifications";
 export * from "./votingLocationProjections";
 export * from "./votingLocationRepository";
 export * from "./votingLocationService";
+export * from "./pollAdmin";

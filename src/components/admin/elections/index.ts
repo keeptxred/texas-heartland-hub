@@ -6,3 +6,4 @@ export * from "./ElectionAdminPollList";
 export * from "./ElectionAdminForecastList";
 export * from "./ElectionAdminResultList";
 export * from "./ElectionAdminDataNotice";
+export * from "./PollEntryAdminForm";
