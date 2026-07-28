@@ -1,4 +1,5 @@
 import type { CandidateDetail } from "@/types/elections";
+import { safeCandidateExternalUrl } from "./candidateUrls";
 
 export function CandidateOfficeHistory({ candidate }: { candidate: CandidateDetail }) {
   return (
@@ -12,23 +13,36 @@ export function CandidateOfficeHistory({ candidate }: { candidate: CandidateDeta
         </p>
       ) : (
         <ol className="mt-5 divide-y divide-slate-200">
-          {candidate.officeHistory.map((office, index) => (
-            <li key={`${office.officeName}-${office.serviceStartDate ?? index}`} className="py-4">
-              <div className="flex flex-wrap items-baseline justify-between gap-3">
-                <div>
-                  <h3 className="font-semibold text-slate-950">{office.officeName}</h3>
-                  {office.districtName ? (
-                    <p className="mt-1 text-sm text-slate-600">{office.districtName}</p>
-                  ) : null}
+          {candidate.officeHistory.map((office, index) => {
+            const sourceUrl = safeCandidateExternalUrl(office.sourceUrl);
+            return (
+              <li key={`${office.officeName}-${office.serviceStartDate ?? index}`} className="py-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-3">
+                  <div>
+                    <h3 className="font-semibold text-slate-950">{office.officeName}</h3>
+                    {office.districtName ? (
+                      <p className="mt-1 text-sm text-slate-600">{office.districtName}</p>
+                    ) : null}
+                  </div>
+                  <p className="text-sm text-slate-600">
+                    {office.current
+                      ? "Current"
+                      : formatServiceDates(office.serviceStartDate, office.serviceEndDate)}
+                  </p>
                 </div>
-                <p className="text-sm text-slate-600">
-                  {office.current
-                    ? "Current"
-                    : formatServiceDates(office.serviceStartDate, office.serviceEndDate)}
-                </p>
-              </div>
-            </li>
-          ))}
+                {sourceUrl ? (
+                  <a
+                    href={sourceUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-2 inline-flex text-sm font-semibold text-red-700 hover:underline"
+                  >
+                    Office-history source
+                  </a>
+                ) : null}
+              </li>
+            );
+          })}
         </ol>
       )}
     </section>

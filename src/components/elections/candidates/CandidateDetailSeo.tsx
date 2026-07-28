@@ -22,12 +22,13 @@ export function CandidateDetailSeo({ candidate, race }: CandidateDetailSeoProps)
   const description =
     candidate.biography ??
     `Review verified election information for ${candidate.fullName}${race ? ` in the ${race.name}` : ""}.`;
+  const usableImage = candidate.imageRights?.usageStatus === "approved" ? candidate.imageUrl : null;
   const metadata = buildElectionSeo({
     title: candidate.fullName,
     description,
     pathname,
     pageType: "candidate",
-    image: candidate.imageUrl ?? undefined,
+    image: usableImage ?? undefined,
     imageAlt: candidate.imageAltText ?? `Portrait of ${candidate.fullName}`,
     publishedTime: candidate.publishedAt ?? undefined,
     modifiedTime: candidate.updatedAt,
@@ -62,7 +63,7 @@ export function CandidateDetailSeo({ candidate, race }: CandidateDetailSeoProps)
     "@type": "Person",
     name: candidate.fullName,
     url: metadata.canonicalUrl,
-    ...(candidate.imageUrl ? { image: candidate.imageUrl } : {}),
+    ...(usableImage ? { image: usableImage } : {}),
     ...(race?.officeName ? { jobTitle: `Candidate for ${race.officeName}` } : {}),
     affiliation: {
       "@type": "Organization",

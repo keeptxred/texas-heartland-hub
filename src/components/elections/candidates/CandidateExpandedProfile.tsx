@@ -1,4 +1,5 @@
 import type { CandidateDetail } from "@/types/elections";
+import { safeCandidateExternalUrl } from "./candidateUrls";
 
 export function CandidateExpandedProfile({ candidate }: { candidate: CandidateDetail }) {
   if (candidate.profileDepth !== "expanded") return null;
@@ -40,19 +41,32 @@ export function CandidateExpandedProfile({ candidate }: { candidate: CandidateDe
         <h3 className="text-lg font-bold text-slate-950">Published endorsements</h3>
         {candidate.endorsements.length > 0 ? (
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {candidate.endorsements.map((endorsement) => (
-              <li
-                key={`${endorsement.organizationName}-${endorsement.endorsementDate ?? ""}`}
-                className="rounded-lg bg-slate-50 p-4"
-              >
-                <p className="font-semibold text-slate-950">{endorsement.organizationName}</p>
-                {endorsement.endorsementDate ? (
-                  <p className="mt-1 text-xs text-slate-500">
-                    {formatDate(endorsement.endorsementDate)}
-                  </p>
-                ) : null}
-              </li>
-            ))}
+            {candidate.endorsements.map((endorsement) => {
+              const sourceUrl = safeCandidateExternalUrl(endorsement.sourceUrl);
+              return (
+                <li
+                  key={`${endorsement.organizationName}-${endorsement.endorsementDate ?? ""}`}
+                  className="rounded-lg bg-slate-50 p-4"
+                >
+                  <p className="font-semibold text-slate-950">{endorsement.organizationName}</p>
+                  {endorsement.endorsementDate ? (
+                    <p className="mt-1 text-xs text-slate-500">
+                      {formatDate(endorsement.endorsementDate)}
+                    </p>
+                  ) : null}
+                  {sourceUrl ? (
+                    <a
+                      href={sourceUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-2 inline-flex text-xs font-semibold text-red-700 hover:underline"
+                    >
+                      Endorsement source
+                    </a>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
         ) : (
           <p className="mt-3 text-sm text-slate-600">
