@@ -33,9 +33,9 @@ const [allCounties, countyLinks, congressional, senate, house] = await Promise.a
     returnGeometry: "false",
   }),
   fetchCountyLinks(),
-  queryDistricts(0),
-  queryDistricts(1),
-  queryDistricts(2),
+  queryDistricts(0, "CD119"),
+  queryDistricts(1, "SLDU"),
+  queryDistricts(2, "SLDL"),
 ]);
 
 const countiesByFips = new Map(
@@ -101,13 +101,14 @@ console.log(
   `Generated authoritative county geography for ${updated} race(s) using ${statewideCounties.length} Texas counties.`,
 );
 
-async function queryDistricts(layer: number) {
+async function queryDistricts(layer: number, attribute: "CD119" | "SLDU" | "SLDL") {
   return queryFeatures(`${LEGISLATIVE_SERVICE}/${layer}`, {
     where: "STATE='48'",
-    outFields: "GEOID,BASENAME,NAME,STATE,CD119,SLDU,SLDL",
+    outFields: `GEOID,BASENAME,NAME,STATE,${attribute}`,
     returnGeometry: "true",
     outSR: "4326",
     geometryPrecision: "5",
+    maxAllowableOffset: "0.0005",
   });
 }
 
@@ -154,7 +155,11 @@ async function countiesIntersecting(geometry: Record<string, unknown>) {
   if (!response.ok) throw new Error(`TIGERweb county intersection failed: ${response.status}`);
   const payload = await response.json();
   if (payload.error) throw new Error(`TIGERweb county intersection failed: ${payload.error.message}`);
-  return [...new Set((payload.features ?? []).map((feature: ArcGisFeature) => String(feature.attributes.GEOID)))];
+  return [
+    ...new Set(
+      (payload.features ?? []).map((feature: ArcGisFeature) => String(feature.attributes.GEOID)),
+    ),
+  ];
 }
 
 async function queryFeatures(endpoint: string, parameters: Record<string, string>) {
