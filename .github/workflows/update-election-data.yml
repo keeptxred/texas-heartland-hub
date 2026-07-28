@@ -14,6 +14,7 @@ on:
       - "scripts/elections/fec-candidate-resolver.ts"
       - "scripts/elections/resolve-fec-ids.ts"
       - "scripts/elections/import-finance.ts"
+      - "scripts/elections/generate-official-geography.ts"
       - "scripts/elections/import-geography.ts"
       - "scripts/elections/normalize-imports.mjs"
       - "scripts/elections/validate-enums.mjs"
