@@ -38,6 +38,7 @@ on:
       - "src/routes/elections*.tsx"
       - "src/types/elections/**"
       - "package.json"
+      - "vitest.config.ts"
       - ".github/workflows/update-election-data.yml"
 
 permissions:
