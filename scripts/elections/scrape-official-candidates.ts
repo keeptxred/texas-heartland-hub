@@ -1,9 +1,14 @@
 import { writeFile } from "node:fs/promises";
-import { chromium, type Frame, type Locator, type Page } from "@playwright/test";
+import { chromium } from "@playwright/test";
 
 const SOURCE_URL =
   process.env.ELECTION_CANDIDATE_LIST_URL ??
   "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information";
+const API_URL =
+  process.env.ELECTION_CANDIDATE_API_URL ??
+  "https://goelect.txelections.civixapps.com/api-ivis-cbp/api/cbp/findQualifiedCandidates";
+const ELECTION_YEAR = Number(process.env.ELECTION_YEAR ?? "2026");
+const ELECTION_ID = Number(process.env.ELECTION_GENERAL_ELECTION_ID ?? "53815");
 const OUTPUT = process.env.ELECTION_CANDIDATE_SCRAPE_OUTPUT ?? "/tmp/texas-candidates.json";
 const DEBUG_HTML = "/tmp/official-candidate-debug.html";
 const DEBUG_SCREENSHOT = "/tmp/official-candidate-debug.png";
@@ -42,6 +47,13 @@ page.on("console", (message) => {
 });
 
 try {
+  if (!Number.isInteger(ELECTION_YEAR) || ELECTION_YEAR < 2026) {
+    throw new Error(`Invalid election year: ${ELECTION_YEAR}.`);
+  }
+  if (!Number.isInteger(ELECTION_ID) || ELECTION_ID <= 0) {
+    throw new Error(`Invalid official general-election ID: ${ELECTION_ID}.`);
+  }
+
   const navigation = await page.goto(SOURCE_URL, {
     waitUntil: "domcontentloaded",
     timeout: 90_000,
@@ -49,28 +61,44 @@ try {
   if (navigation && navigation.status() >= 400) {
     throw new Error(`Official candidate application returned HTTP ${navigation.status()}.`);
   }
-  await page.waitForTimeout(8_000);
 
-  const frame = await findCandidateFrame(page);
-  await selectMatOption(frame, 'mat-select[formcontrolname="electionYear"]', /^2026$/i);
-  await selectMatOption(
-    frame,
-    'mat-select[formcontrolname="electionId"]',
-    /(?:2026.*general|general.*2026|nov(?:ember)?\s*3.*2026)/i,
-  );
-
-  const responsePromise = page.waitForResponse(
-    (response) => /\/findQualifiedCandidates(?:\?|$)/i.test(response.url()),
-    { timeout: 120_000 },
-  );
-  const button = frame.getByRole("button", { name: /qualified candidates information/i }).first();
-  await waitForButtonEnabled(button);
-  await button.click({ timeout: 10_000 });
-
-  const response = await responsePromise;
+  // Let the state application establish its normal browser session and Cloudflare cookies,
+  // then query the same public endpoint the application uses. This avoids depending on
+  // Angular Material controls whose enabled state has changed across deployments.
+  await page.waitForTimeout(4_000);
+  const filters = {
+    electionYear: ELECTION_YEAR,
+    electionId: ELECTION_ID,
+    party: null,
+    officeId: null,
+    officeType: null,
+    status: null,
+    countyId: null,
+  };
+  const response = await context.request.post(API_URL, {
+    data: filters,
+    headers: {
+      accept: "application/json, text/plain, */*",
+      origin: new URL(SOURCE_URL).origin,
+      referer: SOURCE_URL,
+    },
+    timeout: 120_000,
+  });
+  networkEvents.push({
+    kind: "api-response",
+    method: "POST",
+    status: response.status(),
+    contentType: response.headers()["content-type"] ?? "",
+    url: API_URL,
+    filters,
+  });
   if (!response.ok()) {
-    throw new Error(`Official qualified-candidate API returned HTTP ${response.status()}.`);
+    const body = (await response.text()).slice(0, 2_000);
+    throw new Error(
+      `Official qualified-candidate API returned HTTP ${response.status()}: ${body}`,
+    );
   }
+
   const payload: unknown = await response.json();
   if (!Array.isArray(payload)) {
     throw new Error("Official qualified-candidate API did not return an array.");
@@ -137,49 +165,6 @@ interface CandidateRow {
   sourceType: "official_candidate_listing";
   sourceRecordId: string;
   sourceRetrievedAt: string;
-}
-
-async function findCandidateFrame(page: Page) {
-  for (const frame of page.frames()) {
-    if (await frame.locator('mat-select[formcontrolname="electionYear"]').count()) return frame;
-  }
-  throw new Error("The official candidate application did not expose the election-year control.");
-}
-
-async function selectMatOption(frame: Frame, selector: string, pattern: RegExp) {
-  const control = frame.locator(selector).first();
-  await waitForEnabled(control);
-  await control.scrollIntoViewIfNeeded();
-  await control.click({ timeout: 10_000 });
-  const options = frame.locator('mat-option, [role="option"]');
-  await options.first().waitFor({ state: "visible", timeout: 10_000 });
-  const texts = await options.allTextContents();
-  const index = texts.findIndex((text) => pattern.test(clean(text)));
-  if (index < 0) {
-    throw new Error(
-      `Candidate application option not found. Available options: ${texts.map(clean).join(" | ")}`,
-    );
-  }
-  await options.nth(index).click({ timeout: 10_000 });
-  await frame.waitForTimeout(1_500);
-}
-
-async function waitForEnabled(locator: Locator, timeoutMs = 20_000) {
-  const started = Date.now();
-  while (Date.now() - started < timeoutMs) {
-    if ((await locator.count()) && (await locator.getAttribute("aria-disabled")) !== "true") return;
-    await new Promise((resolve) => setTimeout(resolve, 400));
-  }
-  throw new Error("A required candidate application control remained disabled.");
-}
-
-async function waitForButtonEnabled(button: Locator, timeoutMs = 20_000) {
-  const started = Date.now();
-  while (Date.now() - started < timeoutMs) {
-    if (await button.isEnabled()) return;
-    await new Promise((resolve) => setTimeout(resolve, 400));
-  }
-  throw new Error("The qualified-candidate search button remained disabled.");
 }
 
 function normalizeOfficialCandidate(value: unknown): CandidateRow | null {
