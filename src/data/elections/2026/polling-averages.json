@@ -4,7 +4,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-07-28T17:34:11.791Z",
+    "recalculatedAt": "2026-07-28T17:40:02.047Z",
     "weightedMargin": 5,
     "uncertaintyRange": {
       "low": 2.1,
@@ -14,13 +14,13 @@
       {
         "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
         "candidateName": "MAYES MIDDLETON",
-        "averagePercentage": 42.1,
+        "averagePercentage": 42,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
         "candidateName": "NATHAN JOHNSON",
-        "averagePercentage": 37.1,
+        "averagePercentage": 37,
         "pollCount": 2
       }
     ],
@@ -29,9 +29,9 @@
         "pollId": "poll-tpor-may-2026-attorney-general",
         "pollsterName": "Texas Public Opinion Research",
         "fieldEndDate": "2026-05-28",
-        "finalWeight": 0.128,
+        "finalWeight": 0.127,
         "factors": {
-          "recency": 0.133,
+          "recency": 0.132,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,

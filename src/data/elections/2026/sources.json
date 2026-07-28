@@ -17,8 +17,8 @@
     "sourceUrl": "https://goelect.txelections.civixapps.com/ivis-enr-ui/races",
     "type": "official",
     "url": "https://goelect.txelections.civixapps.com/ivis-enr-ui/races",
-    "retrievedAt": "2026-07-28T17:34:00.112Z",
-    "lastVerifiedAt": "2026-07-28T17:34:00.112Z",
+    "retrievedAt": "2026-07-28T17:39:48.396Z",
+    "lastVerifiedAt": "2026-07-28T17:39:48.396Z",
     "notes": "candidates source for candidate-ken-paxton-republican-race-2026-us-senate."
   },
   {
@@ -28,8 +28,8 @@
     "sourceUrl": "https://www.sos.texas.gov/elections/voter/links.shtml",
     "type": "official",
     "url": "https://www.sos.texas.gov/elections/voter/links.shtml",
-    "retrievedAt": "2026-07-28T17:34:06.325Z",
-    "lastVerifiedAt": "2026-07-28T17:34:06.325Z",
+    "retrievedAt": "2026-07-28T17:39:52.497Z",
+    "lastVerifiedAt": "2026-07-28T17:39:52.497Z",
     "notes": "Official county election-link directory used by race-2026-texas-house-150."
   },
   {
@@ -37,8 +37,8 @@
     "name": "Texas Public Opinion Research",
     "sourceType": "pollster",
     "sourceUrl": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
-    "retrievedAt": "2026-07-28T17:34:05.721Z",
-    "lastVerifiedAt": "2026-07-28T17:34:05.721Z",
+    "retrievedAt": "2026-07-28T17:39:51.908Z",
+    "lastVerifiedAt": "2026-07-28T17:39:51.908Z",
     "notes": "Texas Public Opinion Research, May 2026 general-election poll",
     "type": "pollster",
     "url": "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken"
@@ -50,8 +50,8 @@
     "sourceUrl": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer/layers",
     "type": "government",
     "url": "https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer/layers",
-    "retrievedAt": "2026-07-28T17:34:06.325Z",
-    "lastVerifiedAt": "2026-07-28T17:34:06.325Z",
+    "retrievedAt": "2026-07-28T17:39:52.497Z",
+    "lastVerifiedAt": "2026-07-28T17:39:52.497Z",
     "notes": "District and county geography source for race-2026-texas-house-150."
   },
   {
@@ -59,8 +59,8 @@
     "name": "University of Texas/Texas Politics Project Poll",
     "sourceType": "academic",
     "sourceUrl": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash",
-    "retrievedAt": "2026-07-28T17:34:05.806Z",
-    "lastVerifiedAt": "2026-07-28T17:34:05.806Z",
+    "retrievedAt": "2026-07-28T17:39:51.991Z",
+    "lastVerifiedAt": "2026-07-28T17:39:51.991Z",
     "notes": "University of Texas/Texas Politics Project Poll, June 2026",
     "type": "academic",
     "url": "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
@@ -83,8 +83,8 @@
     "sourceUrl": "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
     "type": "official",
     "url": "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
-    "retrievedAt": "2026-07-28T17:33:37.442Z",
-    "lastVerifiedAt": "2026-07-28T17:33:37.442Z",
+    "retrievedAt": "2026-07-28T17:38:58.852Z",
+    "lastVerifiedAt": "2026-07-28T17:38:58.852Z",
     "notes": "Texas Secretary of State offices up for election in 2026"
   }
 ]
