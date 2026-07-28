@@ -25,6 +25,7 @@ import type {
   ElectionCandidateUpdateInput,
 } from "./candidate";
 import type { CandidateDetail, CandidateSummary } from "./candidateProjections";
+import type { OfficeLevel } from "./raceClassifications";
 import type { RacePage, RacePagination, SortDirection } from "./raceRepository";
 
 export const CANDIDATE_SORT_FIELDS = [
@@ -48,6 +49,7 @@ export interface CandidateFilters {
   raceIds?: readonly RaceId[];
   primaryRaceIds?: readonly RaceId[];
   currentOfficeIds?: readonly ElectionEntityId[];
+  officeLevels?: readonly OfficeLevel[];
   residenceCountyIds?: readonly ElectionEntityId[];
   parties?: readonly CandidateParty[];
   statuses?: readonly CandidateStatus[];
@@ -110,10 +112,7 @@ export interface CandidateRepository {
   exists(lookup: CandidateLookup): Promise<boolean>;
 
   create(input: ElectionCandidateCreateInput): Promise<ElectionCandidate>;
-  update(
-    id: CandidateId,
-    input: ElectionCandidateUpdateInput,
-  ): Promise<ElectionCandidate>;
+  update(id: CandidateId, input: ElectionCandidateUpdateInput): Promise<ElectionCandidate>;
   delete(id: CandidateId): Promise<boolean>;
 }
 

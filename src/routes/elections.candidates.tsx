@@ -1,9 +1,16 @@
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { CandidateCard, ElectionEmptyState } from "@/components/elections";
+import { CandidateCard, CandidateListFilters, ElectionEmptyState } from "@/components/elections";
 import { useElectionCandidates } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionCandidateListPage } from "@/pages/elections";
+import type {
+  CandidateParty,
+  CandidateStatus,
+  IncumbencyType,
+  OfficeLevel,
+} from "@/types/elections";
 
 export const Route = createFileRoute("/elections/candidates")({
   head: () => ({
@@ -48,9 +55,17 @@ function ElectionCandidatesRoute() {
 }
 
 function ElectionCandidatesContent() {
+  const [party, setParty] = useState<CandidateParty | null>(null);
+  const [officeLevel, setOfficeLevel] = useState<OfficeLevel | null>(null);
+  const [status, setStatus] = useState<CandidateStatus | null>(null);
+  const [incumbency, setIncumbency] = useState<IncumbencyType | null>(null);
   const candidates = useElectionCandidates({
     filters: {
       stateCodes: ["TX"],
+      parties: party ? [party] : undefined,
+      officeLevels: officeLevel ? [officeLevel] : undefined,
+      statuses: status ? [status] : undefined,
+      incumbencyTypes: incumbency ? [incumbency] : undefined,
       publicationStatuses: ["published"],
     },
     pagination: { page: 1, pageSize: 50 },
@@ -63,33 +78,47 @@ function ElectionCandidatesContent() {
       isLoading={candidates.isLoading}
       onRetry={() => void candidates.refetch()}
     >
-      {candidates.isEmpty ? (
-        <ElectionEmptyState kind="candidates" />
-      ) : (
-        <div className="grid gap-6 lg:grid-cols-2">
-          {candidates.data?.items.map((candidate) => (
-            <CandidateCard
-              key={candidate.id}
-              name={candidate.ballotName}
-              party={candidate.party}
-              partyLabel={candidate.partyLabel ?? undefined}
-              office={candidate.primaryRace?.officeName}
-              district={candidate.primaryRace?.districtName ?? undefined}
-              incumbent={
-                candidate.incumbencyType === "incumbent" ||
-                candidate.incumbencyType === "appointed_incumbent"
-              }
-              status={candidate.status}
-              photoUrl={candidate.imageUrl}
-              occupation={candidate.occupation}
-              hometown={candidate.hometown}
-              raceHref={
-                candidate.primaryRace ? ELECTION_ROUTES.race(candidate.primaryRace.slug) : undefined
-              }
-            />
-          ))}
-        </div>
-      )}
+      <div className="space-y-6">
+        <CandidateListFilters
+          party={party}
+          officeLevel={officeLevel}
+          status={status}
+          incumbency={incumbency}
+          onPartyChange={setParty}
+          onOfficeLevelChange={setOfficeLevel}
+          onStatusChange={setStatus}
+          onIncumbencyChange={setIncumbency}
+        />
+        {candidates.isEmpty ? (
+          <ElectionEmptyState kind="filters" />
+        ) : (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {candidates.data?.items.map((candidate) => (
+              <CandidateCard
+                key={candidate.id}
+                name={candidate.ballotName}
+                party={candidate.party}
+                partyLabel={candidate.partyLabel ?? undefined}
+                office={candidate.primaryRace?.officeName}
+                district={candidate.primaryRace?.districtName ?? undefined}
+                incumbent={
+                  candidate.incumbencyType === "incumbent" ||
+                  candidate.incumbencyType === "appointed_incumbent"
+                }
+                status={candidate.status}
+                photoUrl={candidate.imageUrl}
+                occupation={candidate.occupation}
+                hometown={candidate.hometown}
+                raceHref={
+                  candidate.primaryRace
+                    ? ELECTION_ROUTES.race(candidate.primaryRace.slug)
+                    : undefined
+                }
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </ElectionCandidateListPage>
   );
 }
