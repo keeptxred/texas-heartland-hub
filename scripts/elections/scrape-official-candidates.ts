@@ -4,10 +4,11 @@ import { chromium, type Frame, type Locator, type Page } from "@playwright/test"
 const SOURCE_URL =
   process.env.ELECTION_CANDIDATE_LIST_URL ??
   "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information";
-const OUTPUT = process.env.ELECTION_CANDIDATE_SCRAPE_OUTPUT ?? "/tmp/texas-candidates.html";
+const OUTPUT = process.env.ELECTION_CANDIDATE_SCRAPE_OUTPUT ?? "/tmp/texas-candidates.json";
 const DEBUG_HTML = "/tmp/official-candidate-debug.html";
 const DEBUG_SCREENSHOT = "/tmp/official-candidate-debug.png";
 const DEBUG_NETWORK = "/tmp/official-candidate-debug-network.json";
+const retrievedAt = new Date(process.env.ELECTION_IMPORT_AS_OF ?? Date.now()).toISOString();
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
   locale: "en-US",
@@ -36,7 +37,7 @@ page.on("requestfailed", (request) => {
   });
 });
 page.on("console", (message) => {
-  if (!['error', 'warning'].includes(message.type())) return;
+  if (!["error", "warning"].includes(message.type())) return;
   networkEvents.push({ kind: "console", level: message.type(), text: message.text() });
 });
 
@@ -82,7 +83,7 @@ try {
     );
   }
 
-  await writeFile(OUTPUT, candidateRowsToTable(rows));
+  await writeFile(OUTPUT, `${JSON.stringify(rows, null, 2)}\n`);
   console.log(
     `Extracted ${rows.length} privacy-safe candidate row(s) from ${payload.length} official qualified-candidate record(s).`,
   );
@@ -103,7 +104,9 @@ try {
       )}\n`,
     ),
   ]);
-  console.error(`Official candidate extraction failed: ${error instanceof Error ? error.message : String(error)}`);
+  console.error(
+    `Official candidate extraction failed: ${error instanceof Error ? error.message : String(error)}`,
+  );
   throw error;
 } finally {
   await browser.close();
@@ -117,13 +120,23 @@ interface OfficialCandidateRecord {
   txFullNameBallot?: unknown;
   txOfficeName?: unknown;
   flActive?: unknown;
+  flIncmbntGen?: unknown;
 }
 
 interface CandidateRow {
   fullName: string;
+  ballotName: string;
   officeName: string;
-  party: string;
+  party: "republican" | "democratic" | "libertarian" | "green" | "independent" | "other";
+  status: "nominee" | "write_in";
+  filingStatus: "accepted";
+  ballotAccessStatus: "qualified";
+  incumbencyType: "incumbent" | "unknown";
+  sourceName: string;
+  sourceUrl: string;
+  sourceType: "official_candidate_listing";
   sourceRecordId: string;
+  sourceRetrievedAt: string;
 }
 
 async function findCandidateFrame(page: Page) {
@@ -143,7 +156,9 @@ async function selectMatOption(frame: Frame, selector: string, pattern: RegExp) 
   const texts = await options.allTextContents();
   const index = texts.findIndex((text) => pattern.test(clean(text)));
   if (index < 0) {
-    throw new Error(`Candidate application option not found. Available options: ${texts.map(clean).join(" | ")}`);
+    throw new Error(
+      `Candidate application option not found. Available options: ${texts.map(clean).join(" | ")}`,
+    );
   }
   await options.nth(index).click({ timeout: 10_000 });
   await frame.waitForTimeout(1_500);
@@ -177,11 +192,25 @@ function normalizeOfficialCandidate(value: unknown): CandidateRow | null {
       [record.txFirstNameBallot, record.txLastNameBallot].map(clean).filter(Boolean).join(" "),
   );
   const officeName = clean(record.txOfficeName);
-  const party = partyLabel(record.cdParty);
+  const classification = partyClassification(record.cdParty);
   const sourceRecordId = clean(record.idCandidate);
-  if (!looksLikePerson(fullName) || !officeName || !party || !sourceRecordId) return null;
+  if (!looksLikePerson(fullName) || !officeName || !classification || !sourceRecordId) return null;
 
-  return { fullName, officeName, party, sourceRecordId };
+  return {
+    fullName,
+    ballotName: fullName,
+    officeName,
+    party: classification.party,
+    status: classification.writeIn ? "write_in" : "nominee",
+    filingStatus: "accepted",
+    ballotAccessStatus: "qualified",
+    incumbencyType: record.flIncmbntGen === true ? "incumbent" : "unknown",
+    sourceName: "Texas Secretary of State Qualified Candidate Listing",
+    sourceUrl: SOURCE_URL,
+    sourceType: "official_candidate_listing",
+    sourceRecordId,
+    sourceRetrievedAt: retrievedAt,
+  };
 }
 
 function isCandidateRow(value: CandidateRow | null): value is CandidateRow {
@@ -204,25 +233,24 @@ function deduplicateRows(rows: readonly CandidateRow[]) {
   );
 }
 
-function partyLabel(value: unknown) {
+function partyClassification(value: unknown): { party: CandidateRow["party"]; writeIn: boolean } | null {
   const party = clean(value).toUpperCase();
-  if (["R", "REP", "REPUBLICAN", "GOP"].includes(party)) return "Republican";
-  if (["D", "DEM", "DEMOCRAT", "DEMOCRATIC"].includes(party)) return "Democratic";
-  if (["L", "LIB", "LIBERTARIAN"].includes(party)) return "Libertarian";
-  if (["G", "GRN", "GREEN"].includes(party)) return "Green";
-  if (["I", "IND", "INDEPENDENT"].includes(party)) return "Independent";
-  if (["NP", "NON", "NONPARTISAN"].includes(party)) return "Nonpartisan";
-  if (["O", "OTH", "OTHER"].includes(party)) return "Other";
+  if (["R", "REP", "REPUBLICAN", "GOP"].includes(party)) {
+    return { party: "republican", writeIn: false };
+  }
+  if (["D", "DEM", "DEMOCRAT", "DEMOCRATIC"].includes(party)) {
+    return { party: "democratic", writeIn: false };
+  }
+  if (["L", "LIB", "LIBERTARIAN"].includes(party)) {
+    return { party: "libertarian", writeIn: false };
+  }
+  if (["G", "GRN", "GREEN"].includes(party)) return { party: "green", writeIn: false };
+  if (["I", "IND", "INDEPENDENT"].includes(party)) {
+    return { party: "independent", writeIn: false };
+  }
+  if (["W", "WRITE-IN", "WRITE IN"].includes(party)) return { party: "other", writeIn: true };
+  if (["O", "OTH", "OTHER"].includes(party)) return { party: "other", writeIn: false };
   return null;
-}
-
-function candidateRowsToTable(rows: readonly CandidateRow[]) {
-  return `<html><body><table><thead><tr><th>Candidate Name</th><th>Office</th><th>Party</th><th>Source Record ID</th></tr></thead><tbody>${rows
-    .map(
-      (row) =>
-        `<tr><td>${escapeHtml(row.fullName)}</td><td>${escapeHtml(row.officeName)}</td><td>${escapeHtml(row.party)}</td><td>${escapeHtml(row.sourceRecordId)}</td></tr>`,
-    )
-    .join("\n")}</tbody></table></body></html>`;
 }
 
 function looksLikePerson(value: unknown) {
@@ -236,13 +264,4 @@ function normalize(value: unknown) {
 
 function clean(value: unknown) {
   return String(value ?? "").replace(/\s+/g, " ").trim();
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }
