@@ -15,12 +15,13 @@
     "format": "prettier --write .",
     "elections:validate": "node scripts/elections/validate.mjs",
     "elections:import:races": "node --experimental-strip-types scripts/elections/import-races.ts",
-    "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts",
+    "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts && node --experimental-strip-types scripts/elections/normalize-candidates.ts",
     "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
     "elections:import:geography": "node --experimental-strip-types scripts/elections/import-geography.ts",
+    "elections:sources": "node --experimental-strip-types scripts/elections/sync-sources.ts",
     "elections:forecast": "node --experimental-strip-types scripts/elections/forecast.ts",
     "elections:qa": "node scripts/elections/qa.mjs",
-    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:import:finance && npm run elections:import:geography && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
+    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:import:finance && npm run elections:import:geography && npm run elections:forecast && npm run elections:sources && npm run elections:validate && npm run elections:qa"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
