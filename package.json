@@ -14,7 +14,9 @@
     "test": "vitest run",
     "format": "prettier --write .",
     "elections:normalize": "node scripts/elections/normalize-imports.mjs",
-    "elections:validate": "node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs",
+    "elections:sources": "node scripts/elections/rebuild-sources.mjs",
+    "elections:polling-averages": "node --experimental-strip-types scripts/elections/polling-averages.ts",
+    "elections:validate": "node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs && node scripts/elections/validate-sources.mjs",
     "elections:import:races": "node --experimental-strip-types scripts/elections/import-races.ts && npm run elections:normalize",
     "elections:scrape:candidates": "node --experimental-strip-types scripts/elections/scrape-official-candidates.ts",
     "elections:scrape:primary-winners": "node scripts/elections/scrape-official-primary-winners.mjs",
@@ -30,7 +32,7 @@
     "elections:readiness": "node scripts/elections/launch-readiness.mjs",
     "elections:test:mobile": "playwright test --config=playwright.elections.config.ts",
     "elections:qa": "node scripts/elections/qa.mjs && npm run elections:routes:qa && npm run elections:sitemap:qa && npm run elections:readiness",
-    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:resolve:fec && npm run elections:import:finance && npm run elections:import:polls && npm run elections:import:geography && npm run elections:normalize && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
+    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:resolve:fec && npm run elections:import:finance && npm run elections:import:polls && npm run elections:import:geography && npm run elections:normalize && npm run elections:sources && npm run elections:polling-averages && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
