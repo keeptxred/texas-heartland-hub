@@ -8,6 +8,7 @@ on:
     paths:
       - "src/components/elections/**"
       - "src/data/elections/**"
+      - "!src/data/elections/2026/ci-status.json"
       - "src/lib/elections/**"
       - "src/pages/elections/**"
       - "src/routes/elections*.tsx"
