@@ -24,4 +24,14 @@ export const ELECTION_PRIMARY_NAV_ROUTES = [
   ELECTION_ROUTES.methodology,
 ] as const;
 
+export const ELECTION_PRIMARY_NAVIGATION = [
+  { label: "Overview", href: ELECTION_ROUTES.root },
+  { label: "Races", href: ELECTION_ROUTES.races },
+  { label: "Candidates", href: ELECTION_ROUTES.candidates },
+  { label: "Polls", href: ELECTION_ROUTES.polls },
+  { label: "Forecasts", href: ELECTION_ROUTES.forecast },
+  { label: "Results", href: ELECTION_ROUTES.results },
+  { label: "Methodology", href: ELECTION_ROUTES.methodology },
+] as const;
+
 export type ElectionStaticRoute = (typeof ELECTION_PRIMARY_NAV_ROUTES)[number];
