@@ -250,7 +250,9 @@ jobs:
               src/components/elections/navigation/ElectionNavigation.tsx \
               src/lib/elections/repositories/static.ts \
               src/routes/elections.tsx \
-              src/routes/elections.2026.tsx || true
+              src/routes/elections.2026.tsx \
+              src/routeTree.gen.ts \
+              scripts/elections/import-candidates.ts || true
           fi
           node --input-type=module <<'NODE'
           import fs from "node:fs";
@@ -288,12 +290,15 @@ jobs:
               src/components/elections/navigation/ElectionNavigation.tsx \
               src/lib/elections/repositories/static.ts \
               src/routes/elections.tsx \
-              src/routes/elections.2026.tsx
+              src/routes/elections.2026.tsx \
+              src/routeTree.gen.ts \
+              scripts/elections/import-candidates.ts
             message="Refresh verified 2026 election data"
           else
             git add src/data/elections/2026/workflow-status.json
             message="Record failed election data refresh"
           fi
+          git restore --worktree .
           if git diff --cached --quiet; then
             echo "No refresh status, source, or election data changes to commit."
             exit 0
