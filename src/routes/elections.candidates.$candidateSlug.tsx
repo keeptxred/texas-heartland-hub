@@ -3,6 +3,7 @@ import {
   CandidateBiographySection,
   CandidateCampaignLinks,
   CandidateDetailSeo,
+  CandidateExpandedProfile,
   CandidateInternalLinks,
   CandidateOfficeHistory,
   CandidatePollingSection,
@@ -127,6 +128,7 @@ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string 
       <CandidateCampaignLinks candidate={candidate.data} />
       <CandidateOfficeHistory candidate={candidate.data} />
       <CandidateRaceSection candidate={candidate.data} race={race.data ?? null} />
+      <CandidateExpandedProfile candidate={candidate.data} />
       <CandidatePollingSection
         candidate={candidate.data}
         polls={polls.data?.items ?? []}
