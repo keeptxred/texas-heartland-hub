@@ -6,11 +6,7 @@ import type {
   ElectionEntityId,
   RaceId,
 } from "./identifiers";
-import type {
-  ElectionDataMetadata,
-  IsoDateString,
-  IsoDateTimeString,
-} from "./metadata";
+import type { ElectionDataMetadata, IsoDateString, IsoDateTimeString } from "./metadata";
 import type {
   BallotAccessStatus,
   CampaignStatus,
@@ -32,6 +28,17 @@ export interface CandidateExternalIdentifiers {
   texasEthicsId: string | null;
   ballotpediaId: string | null;
   wikidataId: string | null;
+}
+
+export const CANDIDATE_IMAGE_USAGE_STATUSES = ["approved", "restricted", "unknown"] as const;
+
+export type CandidateImageUsageStatus = (typeof CANDIDATE_IMAGE_USAGE_STATUSES)[number];
+
+export interface CandidateImageRights {
+  usageStatus: CandidateImageUsageStatus;
+  sourceUrl: string;
+  credit: string | null;
+  license: string | null;
 }
 
 /**
@@ -77,6 +84,7 @@ export interface ElectionCandidate extends ElectionDataMetadata {
 
   imageUrl: string | null;
   imageAltText: string | null;
+  imageRights: CandidateImageRights | null;
   websiteUrl: string | null;
   campaignUrl: string | null;
   donationUrl: string | null;

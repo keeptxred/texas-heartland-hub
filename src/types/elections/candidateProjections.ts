@@ -22,15 +22,11 @@ import type {
 } from "./candidateClassifications";
 import type {
   CandidateExternalIdentifiers,
+  CandidateImageRights,
   CandidateSocialLinks,
   ElectionCandidate,
 } from "./candidate";
-import type {
-  ElectionType,
-  OfficeLevel,
-  RaceStatus,
-  RaceType,
-} from "./raceClassifications";
+import type { ElectionType, OfficeLevel, RaceStatus, RaceType } from "./raceClassifications";
 
 export interface CandidateRaceSummary {
   id: RaceId;
@@ -73,6 +69,23 @@ export interface CandidateEndorsementSummary {
   sourceUrl: string | null;
 }
 
+export interface CandidateOfficeHistoryEntry {
+  officeName: string;
+  districtName: string | null;
+  serviceStartDate: IsoDateString | null;
+  serviceEndDate: IsoDateString | null;
+  current: boolean;
+  sourceUrl: string | null;
+}
+
+export interface CandidateSourceReference {
+  label: string;
+  url: string;
+  retrievedAt: IsoDateTimeString;
+}
+
+export type CandidateProfileDepth = "standard" | "expanded";
+
 export interface CandidateSummary {
   id: CandidateId;
   electionCycleId: ElectionCycleId;
@@ -104,7 +117,12 @@ export interface CandidateDetail extends ElectionCandidate {
   races: readonly CandidateRaceSummary[];
   currentOffice: CandidateOfficeSummary | null;
   fundraising: CandidateFundraisingSummary | null;
+  campaignFinanceUrl: string | null;
   endorsements: readonly CandidateEndorsementSummary[];
+  officeHistory: readonly CandidateOfficeHistoryEntry[];
+  sources: readonly CandidateSourceReference[];
+  profileDepth: CandidateProfileDepth;
+  imageRights: CandidateImageRights | null;
   socialLinks: CandidateSocialLinks;
   externalIds: CandidateExternalIdentifiers;
   relatedCandidateIds: readonly CandidateId[];
