@@ -57,6 +57,7 @@ export interface RacePage<T> {
 }
 
 export interface RaceFilters {
+  raceIds?: readonly RaceId[];
   electionCycleIds?: readonly ElectionCycleId[];
   officeIds?: readonly ElectionEntityId[];
   districtIds?: readonly ElectionEntityId[];

@@ -5,8 +5,9 @@ import {
   CandidateComparison,
   CandidateListFilters,
   ElectionEmptyState,
+  ElectionResearchList,
 } from "@/components/elections";
-import { useElectionCandidates } from "@/hooks/elections";
+import { useElectionCandidates, useElectionResearchList } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionCandidateListPage } from "@/pages/elections";
@@ -101,6 +102,7 @@ function ElectionCandidatesRoute() {
 function ElectionCandidatesContent() {
   const search = Route.useSearch();
   const [comparisonIds, setComparisonIds] = useState<readonly string[]>([]);
+  const research = useElectionResearchList();
   const navigate = useNavigate({ from: Route.fullPath });
   const sortBy = search.sort ?? "last_name";
   const candidates = useElectionCandidates({
@@ -125,6 +127,14 @@ function ElectionCandidatesContent() {
   };
   const comparisonCandidates =
     candidates.data?.items.filter((candidate) => comparisonIds.includes(candidate.id)) ?? [];
+  const savedCandidates =
+    candidates.data?.items
+      .filter((candidate) => research.candidateIds.includes(candidate.id))
+      .map((candidate) => ({
+        id: candidate.id,
+        label: candidate.fullName,
+        href: ELECTION_ROUTES.candidate(candidate.slug),
+      })) ?? [];
 
   return (
     <ElectionCandidateListPage
@@ -133,6 +143,11 @@ function ElectionCandidatesContent() {
       onRetry={() => void candidates.refetch()}
     >
       <div className="space-y-6">
+        <ElectionResearchList
+          entries={savedCandidates}
+          totalSaved={research.candidateIds.length + research.raceIds.length}
+          onClear={research.clear}
+        />
         <CandidateComparison
           candidates={comparisonCandidates}
           onClear={() => setComparisonIds([])}
@@ -204,6 +219,15 @@ function ElectionCandidatesContent() {
                   />
                   Compare {candidate.ballotName}
                 </label>
+                <button
+                  type="button"
+                  onClick={() => research.toggleCandidate(candidate.id)}
+                  className="text-sm font-semibold text-blue-800 underline-offset-4 hover:underline"
+                >
+                  {research.candidateIds.includes(candidate.id)
+                    ? "Remove from ballot research"
+                    : "Save to ballot research"}
+                </button>
                 <CandidateCard
                   name={candidate.ballotName}
                   party={candidate.party}

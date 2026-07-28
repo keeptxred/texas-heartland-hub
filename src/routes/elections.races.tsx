@@ -1,6 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ElectionEmptyState, RaceCard } from "@/components/elections";
-import { useActiveElectionCycle, useElectionCycles, useElectionRaces } from "@/hooks/elections";
+import { ElectionEmptyState, ElectionResearchList, RaceCard } from "@/components/elections";
+import {
+  useActiveElectionCycle,
+  useElectionCycles,
+  useElectionRaces,
+  useElectionResearchList,
+} from "@/hooks/elections";
+import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionRaceListPage } from "@/pages/elections";
 import type { ElectionType, OfficeLevel, PartyScope, RaceStatus } from "@/types/elections";
@@ -116,6 +122,7 @@ function ElectionRacesRoute() {
 function ElectionRacesContent() {
   const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
+  const research = useElectionResearchList();
   const officeLevel = search.officeLevel ?? null;
   const electionType = search.electionType ?? null;
   const partyScope = search.partyScope ?? null;
@@ -170,6 +177,13 @@ function ElectionRacesContent() {
     }
     return race.jurisdictionType === search.browse && race.districtName === search.area;
   });
+  const savedRaces = (races.data?.items ?? [])
+    .filter((race) => research.raceIds.includes(race.id))
+    .map((race) => ({
+      id: race.id,
+      label: race.name,
+      href: ELECTION_ROUTES.race(race.slug),
+    }));
 
   const updateSearch = (updates: Partial<ElectionRaceListSearch>) => {
     void navigate({
@@ -206,6 +220,11 @@ function ElectionRacesContent() {
       onRetry={handleRetry}
     >
       <div className="space-y-6">
+        <ElectionResearchList
+          entries={savedRaces}
+          totalSaved={research.candidateIds.length + research.raceIds.length}
+          onClear={research.clear}
+        />
         <section
           aria-labelledby="browse-ballot-heading"
           className="rounded-xl border border-slate-200 bg-slate-50 p-4"
@@ -366,23 +385,33 @@ function ElectionRacesContent() {
         ) : (
           <div className="grid gap-6 lg:grid-cols-2">
             {visibleRaces.map((race) => (
-              <RaceCard
-                key={race.id}
-                name={race.name}
-                office={race.officeName}
-                district={race.districtName ?? undefined}
-                electionDate={race.electionDate}
-                electionType={ELECTION_TYPE_LABELS[race.electionType]}
-                status={race.status}
-                rating={race.rating}
-                competitive={race.competitive}
-                candidates={race.candidates.map((candidate) => ({
-                  id: candidate.id,
-                  name: candidate.fullName,
-                  partyLabel: candidate.partyLabel ?? undefined,
-                  incumbent: candidate.incumbent,
-                }))}
-              />
+              <div key={race.id} className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => research.toggleRace(race.id)}
+                  className="text-sm font-semibold text-blue-800 underline-offset-4 hover:underline"
+                >
+                  {research.raceIds.includes(race.id)
+                    ? "Remove from ballot research"
+                    : "Save to ballot research"}
+                </button>
+                <RaceCard
+                  name={race.name}
+                  office={race.officeName}
+                  district={race.districtName ?? undefined}
+                  electionDate={race.electionDate}
+                  electionType={ELECTION_TYPE_LABELS[race.electionType]}
+                  status={race.status}
+                  rating={race.rating}
+                  competitive={race.competitive}
+                  candidates={race.candidates.map((candidate) => ({
+                    id: candidate.id,
+                    name: candidate.fullName,
+                    partyLabel: candidate.partyLabel ?? undefined,
+                    incumbent: candidate.incumbent,
+                  }))}
+                />
+              </div>
             ))}
           </div>
         )}

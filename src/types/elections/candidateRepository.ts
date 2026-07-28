@@ -47,6 +47,7 @@ export interface CandidateSort {
 }
 
 export interface CandidateFilters {
+  candidateIds?: readonly CandidateId[];
   electionCycleIds?: readonly ElectionCycleId[];
   raceIds?: readonly RaceId[];
   primaryRaceIds?: readonly RaceId[];
