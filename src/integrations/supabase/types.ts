@@ -383,6 +383,202 @@ export type Database = {
         }
         Relationships: []
       }
+      election_poll_questions: {
+        Row: {
+          display_order: number | null
+          id: string
+          notes: string | null
+          poll_id: string
+          population: string
+          prompt: string
+          question_key: string
+          question_type: string
+          sample_size: number | null
+        }
+        Insert: {
+          display_order?: number | null
+          id?: string
+          notes?: string | null
+          poll_id: string
+          population: string
+          prompt: string
+          question_key: string
+          question_type: string
+          sample_size?: number | null
+        }
+        Update: {
+          display_order?: number | null
+          id?: string
+          notes?: string | null
+          poll_id?: string
+          population?: string
+          prompt?: string
+          question_key?: string
+          question_type?: string
+          sample_size?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "election_poll_questions_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "election_polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      election_poll_responses: {
+        Row: {
+          candidate_id: string | null
+          id: string
+          is_other: boolean
+          is_undecided: boolean
+          label: string
+          party: string | null
+          percentage: number | null
+          question_id: string
+          respondent_count: number | null
+          response_key: string
+        }
+        Insert: {
+          candidate_id?: string | null
+          id?: string
+          is_other?: boolean
+          is_undecided?: boolean
+          label: string
+          party?: string | null
+          percentage?: number | null
+          question_id: string
+          respondent_count?: number | null
+          response_key: string
+        }
+        Update: {
+          candidate_id?: string | null
+          id?: string
+          is_other?: boolean
+          is_undecided?: boolean
+          label?: string
+          party?: string | null
+          percentage?: number | null
+          question_id?: string
+          respondent_count?: number | null
+          response_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "election_poll_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "election_poll_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      election_polls: {
+        Row: {
+          created_at: string
+          crosstabs_url: string | null
+          data_as_of: string | null
+          election_cycle_id: string
+          field_end_date: string
+          field_start_date: string
+          freshness_status: string
+          id: string
+          internal_poll: boolean
+          jurisdiction_id: string | null
+          methodology: Json
+          partisan_poll: boolean
+          pollster_grade: string
+          pollster_name: string
+          pollster_url: string | null
+          publication_status: string
+          published_at: string | null
+          questionnaire_url: string | null
+          race_id: string | null
+          release_date: string | null
+          retrieved_at: string
+          slug: string
+          source_name: string
+          source_url: string
+          sponsors: Json
+          status: string
+          title: string
+          topline_url: string | null
+          tracking_poll: boolean
+          updated_at: string
+          verification_status: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          crosstabs_url?: string | null
+          data_as_of?: string | null
+          election_cycle_id: string
+          field_end_date: string
+          field_start_date: string
+          freshness_status?: string
+          id?: string
+          internal_poll?: boolean
+          jurisdiction_id?: string | null
+          methodology: Json
+          partisan_poll?: boolean
+          pollster_grade?: string
+          pollster_name: string
+          pollster_url?: string | null
+          publication_status?: string
+          published_at?: string | null
+          questionnaire_url?: string | null
+          race_id?: string | null
+          release_date?: string | null
+          retrieved_at: string
+          slug: string
+          source_name: string
+          source_url: string
+          sponsors?: Json
+          status: string
+          title: string
+          topline_url?: string | null
+          tracking_poll?: boolean
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          crosstabs_url?: string | null
+          data_as_of?: string | null
+          election_cycle_id?: string
+          field_end_date?: string
+          field_start_date?: string
+          freshness_status?: string
+          id?: string
+          internal_poll?: boolean
+          jurisdiction_id?: string | null
+          methodology?: Json
+          partisan_poll?: boolean
+          pollster_grade?: string
+          pollster_name?: string
+          pollster_url?: string | null
+          publication_status?: string
+          published_at?: string | null
+          questionnaire_url?: string | null
+          race_id?: string | null
+          release_date?: string | null
+          retrieved_at?: string
+          slug?: string
+          source_name?: string
+          source_url?: string
+          sponsors?: Json
+          status?: string
+          title?: string
+          topline_url?: string | null
+          tracking_poll?: boolean
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
