@@ -1,0 +1,142 @@
+name: Verify Election Central build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/components/elections/**"
+      - "src/data/elections/**"
+      - "src/lib/elections/**"
+      - "src/pages/elections/**"
+      - "src/routes/elections*.tsx"
+      - "src/routes/sitemap-elections*.ts"
+      - "src/types/elections/**"
+      - "scripts/elections/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "tsconfig.json"
+      - "vite.config.ts"
+      - ".github/workflows/election-ci.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-central-ci
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Validate election records
+        id: validate
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm elections:validate 2>&1 | tee /tmp/election-ci-validate.log
+
+      - name: Typecheck application
+        id: typecheck
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee /tmp/election-ci-typecheck.log
+
+      - name: Run unit tests
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee /tmp/election-ci-tests.log
+
+      - name: Build production application
+        id: build
+        continue-on-error: true
+        shell: bash
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee /tmp/election-ci-build.log
+
+      - name: Record verification result
+        if: always()
+        shell: bash
+        env:
+          VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_SHA: ${{ github.sha }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+
+          function compactLog(file) {
+            if (!fs.existsSync(file)) return null;
+            const lines = fs.readFileSync(file, "utf8").trim().split(/\r?\n/);
+            return lines.slice(-100).join("\n").slice(-16000) || null;
+          }
+
+          const checks = {
+            validation: process.env.VALIDATE_OUTCOME,
+            typecheck: process.env.TYPECHECK_OUTCOME,
+            tests: process.env.TEST_OUTCOME,
+            build: process.env.BUILD_OUTCOME,
+          };
+          const passed = Object.values(checks).every((outcome) => outcome === "success");
+          const status = {
+            updatedAt: new Date().toISOString(),
+            conclusion: passed ? "success" : "failure",
+            runId: process.env.RUN_ID,
+            runAttempt: process.env.RUN_ATTEMPT,
+            triggerCommit: process.env.RUN_SHA,
+            runUrl: process.env.RUN_URL,
+            checks,
+            validationSummary: compactLog("/tmp/election-ci-validate.log"),
+            typecheckSummary: compactLog("/tmp/election-ci-typecheck.log"),
+            testSummary: compactLog("/tmp/election-ci-tests.log"),
+            buildSummary: compactLog("/tmp/election-ci-build.log"),
+          };
+          fs.writeFileSync(
+            "src/data/elections/2026/ci-status.json",
+            `${JSON.stringify(status, null, 2)}\n`,
+          );
+          if (!passed) process.exitCode = 1;
+          NODE
+          result=$?
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/elections/2026/ci-status.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Record Election Central build verification"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+          exit $result
