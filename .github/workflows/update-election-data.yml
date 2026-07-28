@@ -13,6 +13,11 @@ on:
       - "scripts/elections/import-finance.ts"
       - "scripts/elections/import-geography.ts"
       - "scripts/elections/normalize-imports.mjs"
+      - "scripts/elections/validate-enums.mjs"
+      - "scripts/elections/validate.mjs"
+      - "scripts/elections/qa.mjs"
+      - "scripts/elections/sitemap-qa.mjs"
+      - "scripts/elections/launch-readiness.mjs"
       - "scripts/elections/import/**"
       - ".github/workflows/update-election-data.yml"
 
@@ -65,7 +70,9 @@ jobs:
       - name: Validate election data
         run: pnpm elections:validate
 
-      - name: Run election launch QA
+      - name: Run election launch QA and write readiness report
+        env:
+          ELECTION_WRITE_READINESS: "true"
         run: pnpm elections:qa
 
       - name: Commit refreshed data
