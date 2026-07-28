@@ -32,6 +32,11 @@ export function ForecastDetailView({ forecast }: ForecastDetailViewProps) {
         </p>
       </header>
 
+      <aside className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
+        Forecasts are model estimates, not vote totals or guarantees. Review the source,
+        assumptions, methodology, and update time before interpreting this outlook.
+      </aside>
+
       <section
         aria-labelledby="forecast-rating"
         className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
