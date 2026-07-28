@@ -41,6 +41,8 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Capture official API payload
+        id: capture
+        continue-on-error: true
         run: node scripts/elections/probe-official-candidate-api.mjs
 
       - name: Upload official API payload
@@ -49,19 +51,23 @@ jobs:
         with:
           name: official-candidate-api-schema
           path: /tmp/official-candidate-api-payload.json
-          if-no-files-found: error
+          if-no-files-found: warn
           retention-days: 7
 
       - name: Publish safe schema summary
+        if: always()
         shell: bash
+        env:
+          CAPTURE_OUTCOME: ${{ steps.capture.outcome }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/data/elections/2026/candidate-api-schema.json
-          if git diff --cached --quiet; then
-            echo "Official candidate API schema is unchanged."
-            exit 0
+          if ! git diff --cached --quiet; then
+            git commit -m "Record official candidate API schema"
+            git pull --rebase origin main
+            git push origin HEAD:main
           fi
-          git commit -m "Record official candidate API schema"
-          git pull --rebase origin main
-          git push origin HEAD:main
+          if [[ "$CAPTURE_OUTCOME" != "success" ]]; then
+            exit 1
+          fi
