@@ -33,7 +33,11 @@ describe("Election Central metadata and sitemap", () => {
     const entries = buildElectionSitemapEntries({ lastmod: "2026-07-27" });
     const locations = entries.map((entry) => entry.loc);
     expect(entries).toHaveLength(ELECTION_STATIC_SITEMAP_COUNT);
-    for (const route of [...ELECTION_PRIMARY_NAV_ROUTES, ELECTION_ROUTES.voting]) {
+    for (const route of [
+      ...ELECTION_PRIMARY_NAV_ROUTES,
+      ELECTION_ROUTES.voting,
+      ELECTION_ROUTES.corrections,
+    ]) {
       expect(locations).toContain(`https://keeptxred.com${route}`);
     }
   });

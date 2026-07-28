@@ -54,9 +54,7 @@ export function ElectionLayout({
         <meta property="og:type" content="website" />
         {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
         {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
-        <script type="application/ld+json">
-          {JSON.stringify(schema ?? defaultSchema)}
-        </script>
+        <script type="application/ld+json">{JSON.stringify(schema ?? defaultSchema)}</script>
       </Helmet>
 
       <section className="min-h-screen bg-slate-50">
@@ -74,9 +72,7 @@ export function ElectionLayout({
                   {description}
                 </p>
                 {lastUpdated && (
-                  <p className="mt-3 text-sm text-slate-500">
-                    Last updated: {lastUpdated}
-                  </p>
+                  <p className="mt-3 text-sm text-slate-500">Last updated: {lastUpdated}</p>
                 )}
               </header>
 
@@ -87,18 +83,14 @@ export function ElectionLayout({
 
         {navigation && (
           <div className="border-b border-slate-200 bg-white">
-            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-              {navigation}
-            </div>
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">{navigation}</div>
           </div>
         )}
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           {sidebar ? (
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-              <main className={fullWidth ? "lg:col-span-9" : "lg:col-span-8"}>
-                {children}
-              </main>
+              <main className={fullWidth ? "lg:col-span-9" : "lg:col-span-8"}>{children}</main>
               <aside className={fullWidth ? "lg:col-span-3" : "lg:col-span-4"}>
                 <div className="space-y-6 lg:sticky lg:top-6">{sidebar}</div>
               </aside>
@@ -106,6 +98,19 @@ export function ElectionLayout({
           ) : (
             <main>{children}</main>
           )}
+          <aside className="mt-10 border-t border-slate-200 pt-5 text-sm leading-6 text-slate-600">
+            <strong className="text-slate-800">Election data notice:</strong> Election Central
+            republishes source-backed public information. Polls are survey snapshots, forecasts are
+            estimates, and election returns are unofficial until certified. Confirm voting and
+            ballot information with the responsible election authority.{" "}
+            <a
+              href="/elections/corrections"
+              className="font-semibold text-red-700 underline-offset-4 hover:underline"
+            >
+              Report a correction
+            </a>
+            .
+          </aside>
         </div>
       </section>
     </>

@@ -24,6 +24,7 @@ const STATIC_ELECTION_PATHS = [
   ELECTION_ROUTES.forecast,
   ELECTION_ROUTES.results,
   ELECTION_ROUTES.methodology,
+  ELECTION_ROUTES.corrections,
   ELECTION_ROUTES.voting,
 ] as const;
 
@@ -36,9 +37,10 @@ function normalizeElectionPath(path: string): string | null {
     if (url.hostname !== "keeptxred.com" && url.hostname !== "www.keeptxred.com") return null;
     url.search = "";
     url.hash = "";
-    const normalized = url.pathname.length > 1 && url.pathname.endsWith("/")
-      ? url.pathname.slice(0, -1)
-      : url.pathname;
+    const normalized =
+      url.pathname.length > 1 && url.pathname.endsWith("/")
+        ? url.pathname.slice(0, -1)
+        : url.pathname;
     return normalized === ELECTION_ROUTES.root || normalized.startsWith(`${ELECTION_ROUTES.root}/`)
       ? normalized
       : null;
@@ -47,7 +49,10 @@ function normalizeElectionPath(path: string): string | null {
   }
 }
 
-function recordToEntry(record: ElectionSitemapRecord, fallbackLastmod: string | Date): UrlEntry | null {
+function recordToEntry(
+  record: ElectionSitemapRecord,
+  fallbackLastmod: string | Date,
+): UrlEntry | null {
   if (record.indexable === false) return null;
 
   const requestedPath = normalizeElectionPath(record.path);

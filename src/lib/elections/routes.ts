@@ -11,6 +11,7 @@ export const ELECTION_ROUTES = {
   results: "/elections/results",
   result: (slug: string) => `/elections/results/${slug}` as const,
   methodology: "/elections/methodology",
+  corrections: "/elections/corrections",
   voting: "/elections/voting",
 } as const;
 
