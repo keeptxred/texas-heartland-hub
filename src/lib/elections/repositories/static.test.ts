@@ -37,6 +37,17 @@ describe("production static election repositories", () => {
     expect(candidateDetail?.profileDepth).toMatch(/standard|expanded/);
   });
 
+  it("marks only the declared incumbent candidate as incumbent", async () => {
+    const races = await repositories.races.list({
+      pagination: { page: 1, pageSize: 300 },
+    });
+
+    for (const race of races.items) {
+      const marked = race.candidates.filter((candidate) => candidate.incumbent).map((candidate) => candidate.id);
+      expect(marked).toEqual(race.incumbentCandidateId ? [race.incumbentCandidateId] : []);
+    }
+  });
+
   it("does not expose mutation methods in static production mode", () => {
     for (const repository of [
       repositories.cycles,
