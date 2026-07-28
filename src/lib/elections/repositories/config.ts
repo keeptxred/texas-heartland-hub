@@ -1,8 +1,8 @@
-export const ELECTION_REPOSITORY_MODES = ["mock", "supabase", "api"] as const;
+export const ELECTION_REPOSITORY_MODES = ["mock", "static", "supabase", "api"] as const;
 
 export type ElectionRepositoryMode = (typeof ELECTION_REPOSITORY_MODES)[number];
 
-export const DEFAULT_ELECTION_REPOSITORY_MODE: ElectionRepositoryMode = "mock";
+export const DEFAULT_ELECTION_REPOSITORY_MODE: ElectionRepositoryMode = "static";
 
 export interface ElectionRepositoryConfig {
   mode: ElectionRepositoryMode;
