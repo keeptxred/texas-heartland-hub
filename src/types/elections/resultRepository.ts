@@ -19,6 +19,7 @@ import type {
   ResultReportingStatus,
   TabulationScope,
 } from "./resultClassifications";
+import type { OfficeLevel } from "./raceClassifications";
 import type {
   ElectionResult,
   ElectionResultCreateInput,
@@ -29,11 +30,7 @@ import type {
   ElectionResultSnapshot,
   ElectionResultSummary,
 } from "./resultProjections";
-import type {
-  RacePage,
-  RacePagination,
-  SortDirection,
-} from "./raceRepository";
+import type { RacePage, RacePagination, SortDirection } from "./raceRepository";
 
 export const ELECTION_RESULT_SORT_FIELDS = [
   "election_date",
@@ -44,8 +41,7 @@ export const ELECTION_RESULT_SORT_FIELDS = [
   "total_votes",
 ] as const;
 
-export type ElectionResultSortField =
-  (typeof ELECTION_RESULT_SORT_FIELDS)[number];
+export type ElectionResultSortField = (typeof ELECTION_RESULT_SORT_FIELDS)[number];
 
 export interface ElectionResultSort {
   field: ElectionResultSortField;
@@ -56,6 +52,7 @@ export interface ElectionResultFilters {
   electionCycleIds?: readonly ElectionCycleId[];
   raceIds?: readonly RaceId[];
   candidateIds?: readonly CandidateId[];
+  officeLevels?: readonly OfficeLevel[];
   subdivisionEntityIds?: readonly ElectionEntityId[];
   statuses?: readonly ElectionResultStatus[];
   reportingStatuses?: readonly ResultReportingStatus[];
@@ -109,12 +106,8 @@ export interface ElectionResultRepository {
   findDetailById(id: ElectionResultId): Promise<ElectionResultDetail | null>;
   findDetailByRaceId(raceId: RaceId): Promise<ElectionResultDetail | null>;
 
-  list(
-    query?: ElectionResultListQuery,
-  ): Promise<RacePage<ElectionResultSummary>>;
-  listCore(
-    query?: ElectionResultListQuery,
-  ): Promise<RacePage<ElectionResult>>;
+  list(query?: ElectionResultListQuery): Promise<RacePage<ElectionResultSummary>>;
+  listCore(query?: ElectionResultListQuery): Promise<RacePage<ElectionResult>>;
   listLive(
     electionCycleId: ElectionCycleId,
     limit?: number,
@@ -123,25 +116,18 @@ export interface ElectionResultRepository {
     electionCycleId: ElectionCycleId,
     limit?: number,
   ): Promise<readonly ElectionResultSummary[]>;
-  listByCandidate(
-    candidateId: CandidateId,
-  ): Promise<readonly ElectionResultSummary[]>;
+  listByCandidate(candidateId: CandidateId): Promise<readonly ElectionResultSummary[]>;
   listBySubdivision(
     entityId: ElectionEntityId,
     electionCycleId?: ElectionCycleId,
   ): Promise<readonly ElectionResultSummary[]>;
-  listSnapshots(
-    query: ElectionResultSnapshotQuery,
-  ): Promise<readonly ElectionResultSnapshot[]>;
+  listSnapshots(query: ElectionResultSnapshotQuery): Promise<readonly ElectionResultSnapshot[]>;
 
   count(filters?: ElectionResultFilters): Promise<number>;
   exists(lookup: ElectionResultLookup): Promise<boolean>;
 
   create(input: ElectionResultCreateInput): Promise<ElectionResult>;
-  update(
-    id: ElectionResultId,
-    input: ElectionResultUpdateInput,
-  ): Promise<ElectionResult>;
+  update(id: ElectionResultId, input: ElectionResultUpdateInput): Promise<ElectionResult>;
   saveSnapshot(snapshot: ElectionResultSnapshot): Promise<ElectionResultSnapshot>;
   delete(id: ElectionResultId): Promise<boolean>;
 }

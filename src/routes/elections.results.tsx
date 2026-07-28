@@ -1,11 +1,38 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ElectionEmptyState, ResultSummaryCard } from "@/components/elections";
-import { useElectionResults } from "@/hooks/elections";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ElectionEmptyState, ResultListFilters, ResultSummaryCard } from "@/components/elections";
+import { useElectionCycles, useElectionResults } from "@/hooks/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionResultsListPage } from "@/pages/elections";
-import type { ElectionResultSummary } from "@/types/elections";
+import type {
+  CertificationStatus,
+  ElectionResultSummary,
+  OfficeLevel,
+  ResultReportingStatus,
+} from "@/types/elections";
+import { isOfficeLevel } from "@/types/elections/raceClassifications";
+import {
+  isCertificationStatus,
+  isResultReportingStatus,
+} from "@/types/elections/resultClassifications";
+
+interface ResultSearch {
+  officeLevel?: OfficeLevel;
+  reporting?: ResultReportingStatus;
+  certification?: CertificationStatus;
+  cycle?: string;
+}
+
+function parseResultSearch(search: Record<string, unknown>): ResultSearch {
+  return {
+    officeLevel: isOfficeLevel(search.officeLevel) ? search.officeLevel : undefined,
+    reporting: isResultReportingStatus(search.reporting) ? search.reporting : undefined,
+    certification: isCertificationStatus(search.certification) ? search.certification : undefined,
+    cycle: typeof search.cycle === "string" && search.cycle ? search.cycle : undefined,
+  };
+}
 
 export const Route = createFileRoute("/elections/results")({
+  validateSearch: parseResultSearch,
   head: () => ({
     meta: [
       { title: "Texas Election Results | KeepTXRed Election Central" },
@@ -41,8 +68,19 @@ function ElectionResultsRoute() {
 }
 
 function ElectionResultsContent() {
+  const search = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const cycles = useElectionCycles({
+    filters: { stateCodes: ["TX"], publicationStatuses: ["published"] },
+    sort: [{ field: "election_date", direction: "desc" }],
+  });
+  const cycleId = cycles.data?.items.find((cycle) => cycle.id === search.cycle)?.id ?? null;
   const results = useElectionResults({
     filters: {
+      electionCycleIds: cycleId ? [cycleId] : undefined,
+      officeLevels: search.officeLevel ? [search.officeLevel] : undefined,
+      reportingStatuses: search.reporting ? [search.reporting] : undefined,
+      certificationStatuses: search.certification ? [search.certification] : undefined,
       publicationStatuses: ["published"],
     },
     pagination: { page: 1, pageSize: 100 },
@@ -58,42 +96,71 @@ function ElectionResultsContent() {
     else groups.set(electionDate, [result]);
     return groups;
   }, new Map<string, ElectionResultSummary[]>());
+  const updateSearch = (updates: Partial<ResultSearch>) => {
+    void navigate({
+      search: (previous) => ({ ...previous, ...updates }),
+      replace: true,
+    });
+  };
 
   return (
     <ElectionResultsListPage
-      error={results.error}
-      isLoading={results.isLoading}
-      onRetry={() => void results.refetch()}
+      error={cycles.error ?? results.error}
+      isLoading={cycles.isLoading || results.isLoading}
+      onRetry={() => {
+        void cycles.refetch();
+        void results.refetch();
+      }}
     >
-      {results.isEmpty ? (
-        <ElectionEmptyState kind="results" />
-      ) : (
-        <div className="space-y-12">
-          {Array.from(groupedResults.entries()).map(([electionDate, items]) => {
-            const reporting = items.filter((result) => !isCompletedResult(result));
-            const completed = items.filter(isCompletedResult);
+      <div className="space-y-8">
+        <ResultListFilters
+          officeLevel={search.officeLevel ?? null}
+          reportingStatus={search.reporting ?? null}
+          certificationStatus={search.certification ?? null}
+          electionCycleId={cycleId}
+          electionCycles={
+            cycles.data?.items.map((cycle) => ({
+              value: cycle.id,
+              label: cycle.name,
+            })) ?? []
+          }
+          onOfficeLevelChange={(value) => updateSearch({ officeLevel: value ?? undefined })}
+          onReportingStatusChange={(value) => updateSearch({ reporting: value ?? undefined })}
+          onCertificationStatusChange={(value) =>
+            updateSearch({ certification: value ?? undefined })
+          }
+          onElectionCycleChange={(value) => updateSearch({ cycle: value ?? undefined })}
+        />
+        {results.isEmpty ? (
+          <ElectionEmptyState kind="filters" />
+        ) : (
+          <div className="space-y-12">
+            {Array.from(groupedResults.entries()).map(([electionDate, items]) => {
+              const reporting = items.filter((result) => !isCompletedResult(result));
+              const completed = items.filter(isCompletedResult);
 
-            return (
-              <section key={electionDate} aria-labelledby={`election-${electionDate}`}>
-                <h2
-                  id={`election-${electionDate}`}
-                  className="text-2xl font-bold tracking-tight text-slate-950"
-                >
-                  {formatElectionDate(electionDate)}
-                </h2>
-                <div className="mt-6 space-y-8">
-                  {reporting.length > 0 ? (
-                    <ResultGroup title="Reporting now" results={reporting} />
-                  ) : null}
-                  {completed.length > 0 ? (
-                    <ResultGroup title="Completed reporting" results={completed} />
-                  ) : null}
-                </div>
-              </section>
-            );
-          })}
-        </div>
-      )}
+              return (
+                <section key={electionDate} aria-labelledby={`election-${electionDate}`}>
+                  <h2
+                    id={`election-${electionDate}`}
+                    className="text-2xl font-bold tracking-tight text-slate-950"
+                  >
+                    {formatElectionDate(electionDate)}
+                  </h2>
+                  <div className="mt-6 space-y-8">
+                    {reporting.length > 0 ? (
+                      <ResultGroup title="Reporting now" results={reporting} />
+                    ) : null}
+                    {completed.length > 0 ? (
+                      <ResultGroup title="Completed reporting" results={completed} />
+                    ) : null}
+                  </div>
+                </section>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </ElectionResultsListPage>
   );
 }
