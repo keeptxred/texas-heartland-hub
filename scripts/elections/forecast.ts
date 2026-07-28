@@ -2,6 +2,8 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { runForecastModel } from "../../src/lib/elections/forecastEngine.ts";
+import { calculatePollWeight } from "../../src/lib/elections/pollingAverage.ts";
+import type { ElectionPollSummary } from "../../src/types/elections/pollProjections.ts";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const DATA_DIR = path.join(ROOT, "src/data/elections/2026");
@@ -19,6 +21,7 @@ const [races, candidates, polls, existingForecasts] = await Promise.all([
   readJson("polls.json"),
   readJson("forecasts.json"),
 ]);
+const candidateById = new Map(candidates.map((candidate) => [candidate.id, candidate]));
 
 const generatedByRace = new Map();
 for (const race of races) {
@@ -43,7 +46,10 @@ for (const race of races) {
   }
 
   const racePolls = polls.filter(
-    (poll) => poll.raceId === race.id && isPublicVerified(poll) && ["published", "revised"].includes(poll.status),
+    (poll) =>
+      poll.raceId === race.id &&
+      isPublicVerified(poll) &&
+      ["published", "revised"].includes(poll.status),
   );
   const pollingAverages = calculateCandidatePollingAverages(racePolls, now);
   const previous = existingForecasts
@@ -93,7 +99,8 @@ for (const race of races) {
     projectedMargin: result.expectedMargin,
     candidateSummaries: result.candidateProbabilities.map((candidate) => ({
       candidateId: candidate.candidateId,
-      candidateSlug: raceCandidates.find((item) => item.id === candidate.candidateId)?.slug ?? candidate.candidateId,
+      candidateSlug:
+        raceCandidates.find((item) => item.id === candidate.candidateId)?.slug ?? candidate.candidateId,
       candidateName:
         raceCandidates.find((item) => item.id === candidate.candidateId)?.fullName ?? candidate.candidateId,
       party: candidate.party,
@@ -190,7 +197,9 @@ const output = [
   ...generatedByRace.values(),
 ].sort((left, right) => String(left.raceId).localeCompare(String(right.raceId)));
 await writeFile(path.join(DATA_DIR, "forecasts.json"), `${JSON.stringify(output, null, 2)}\n`);
-console.log(`Updated ${generatedByRace.size} forecast(s); preserved ${output.length - generatedByRace.size} external or inactive record(s).`);
+console.log(
+  `Updated ${generatedByRace.size} forecast(s); preserved ${output.length - generatedByRace.size} external or inactive record(s).`,
+);
 
 async function readJson(filename) {
   return JSON.parse(await readFile(path.join(DATA_DIR, filename), "utf8"));
@@ -205,7 +214,17 @@ function calculateCandidatePollingAverages(racePolls, asOf) {
   for (const poll of racePolls) {
     const question = poll.questions?.find((item) => item.id === poll.primaryQuestionId);
     if (!question) continue;
-    const weight = pollWeight(poll, asOf);
+    const summary = {
+      id: poll.id,
+      pollsterName: poll.pollster?.name ?? "Unknown pollster",
+      pollsterGrade: poll.pollster?.grade ?? "unrated",
+      fieldEndDate: poll.fieldEndDate,
+      methodology: poll.methodology,
+      internalPoll: Boolean(poll.internalPoll),
+      partisanPoll: Boolean(poll.partisanPoll),
+    } as ElectionPollSummary;
+    const weight = calculatePollWeight(summary, asOf).finalWeight;
+    if (weight <= 0) continue;
     for (const response of question.responses ?? []) {
       if (!response.candidateId || response.percentage == null) continue;
       const current = totals.get(response.candidateId) ?? { total: 0, weight: 0 };
@@ -215,25 +234,10 @@ function calculateCandidatePollingAverages(racePolls, asOf) {
     }
   }
   return new Map(
-    [...totals.entries()].map(([candidateId, value]) => [
-      candidateId,
-      Math.round((value.total / value.weight) * 10) / 10,
-    ]),
+    [...totals.entries()]
+      .filter(([, value]) => value.weight > 0)
+      .map(([candidateId, value]) => [candidateId, Math.round((value.total / value.weight) * 10) / 10]),
   );
-}
-
-function pollWeight(poll, asOf) {
-  const ageDays = Math.max(0, (asOf.getTime() - new Date(`${poll.fieldEndDate}T12:00:00Z`).getTime()) / 86_400_000);
-  const recency = clamp(Math.pow(0.5, ageDays / 21), 0.12, 1);
-  const sample = clamp(Math.sqrt(number(poll.methodology?.sampleSize, 600) / 600), 0.5, 1.65);
-  const populations = { likely_voters: 1, primary_voters: 1, registered_voters: 0.88, adults: 0.68, unknown: 0.62 };
-  const grades = { a_plus: 1.2, a: 1.15, a_minus: 1.1, b_plus: 1.05, b: 1, b_minus: 0.95, c_plus: 0.9, c: 0.84, c_minus: 0.78, d: 0.65, f: 0.45, unrated: 0.8 };
-  const modes = { mixed_mode: 1.08, live_phone: 1.05, online_panel: 1, automated_phone: 0.92, text_message: 0.88, unknown: 0.7 };
-  const population = populations[poll.methodology?.population] ?? 0.72;
-  const quality = grades[poll.pollster?.grade] ?? 0.8;
-  const independence = poll.internalPoll ? 0.55 : poll.partisanPoll ? 0.72 : 1;
-  const methodology = modes[poll.methodology?.mode] ?? 0.78;
-  return recency * sample * population * quality * independence * methodology;
 }
 
 function nullableNumber(value) {
@@ -243,10 +247,6 @@ function nullableNumber(value) {
 function number(value, fallback) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function clamp(value, minimum, maximum) {
-  return Math.min(maximum, Math.max(minimum, value));
 }
 
 function addDays(date, days) {
