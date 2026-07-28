@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ElectionEmptyState, PollCard, PollingTrendChart } from "@/components/elections";
-import { useElectionPolls, useElectionRaces } from "@/hooks/elections";
+import { useElectionCandidates, useElectionPolls, useElectionRaces } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionPollListPage } from "@/pages/elections";
-import type { PollPopulation, PollSponsorType, RaceId } from "@/types/elections";
+import type { CandidateId, PollPopulation, PollSponsorType, RaceId } from "@/types/elections";
 import {
   POLL_POPULATIONS,
   POLL_GRADE_LABELS,
@@ -61,24 +61,37 @@ function formatDate(value: string) {
 
 function ElectionPollsContent() {
   const [raceId, setRaceId] = useState<RaceId | null>(null);
+  const [candidateId, setCandidateId] = useState<CandidateId | null>(null);
   const [pollsterName, setPollsterName] = useState("");
   const [population, setPopulation] = useState<PollPopulation | null>(null);
   const [sponsorType, setSponsorType] = useState<PollSponsorType | null>(null);
   const [fieldDateFrom, setFieldDateFrom] = useState("");
   const [fieldDateTo, setFieldDateTo] = useState("");
+  const [internalPoll, setInternalPoll] = useState<boolean | null>(null);
   const races = useElectionRaces({
     filters: { publicationStatuses: ["published"], stateCodes: ["TX"] },
     pagination: { page: 1, pageSize: 100 },
     sort: [{ field: "name", direction: "asc" }],
   });
+  const candidates = useElectionCandidates({
+    filters: {
+      primaryRaceIds: raceId ? [raceId] : undefined,
+      publicationStatuses: ["published"],
+      stateCodes: ["TX"],
+    },
+    pagination: { page: 1, pageSize: 100 },
+    sort: [{ field: "ballot_name", direction: "asc" }],
+  });
   const polls = useElectionPolls({
     filters: {
       raceIds: raceId ? [raceId] : undefined,
+      candidateIds: candidateId ? [candidateId] : undefined,
       pollsterNames: pollsterName.trim() ? [pollsterName.trim()] : undefined,
       populations: population ? [population] : undefined,
       sponsorTypes: sponsorType ? [sponsorType] : undefined,
       fieldDateFrom: fieldDateFrom || undefined,
       fieldDateTo: fieldDateTo || undefined,
+      internalPoll: internalPoll ?? undefined,
       publicationStatuses: ["published"],
     },
     pagination: { page: 1, pageSize: 50 },
@@ -87,10 +100,11 @@ function ElectionPollsContent() {
 
   return (
     <ElectionPollListPage
-      error={races.error ?? polls.error}
-      isLoading={races.isLoading || polls.isLoading}
+      error={races.error ?? candidates.error ?? polls.error}
+      isLoading={races.isLoading || candidates.isLoading || polls.isLoading}
       onRetry={() => {
         void races.refetch();
+        void candidates.refetch();
         void polls.refetch();
       }}
     >
@@ -109,7 +123,26 @@ function ElectionPollsContent() {
               })) ?? []
             }
             onChange={(value) =>
-              setRaceId(races.data?.items.find((race) => race.id === value)?.id ?? null)
+              setRaceId((current) => {
+                const next = races.data?.items.find((race) => race.id === value)?.id ?? null;
+                if (next !== current) setCandidateId(null);
+                return next;
+              })
+            }
+          />
+          <PollFilterSelect
+            label="Candidate"
+            value={candidateId ?? ""}
+            options={
+              candidates.data?.items.map((candidate) => ({
+                value: candidate.id,
+                label: candidate.fullName,
+              })) ?? []
+            }
+            onChange={(value) =>
+              setCandidateId(
+                candidates.data?.items.find((candidate) => candidate.id === value)?.id ?? null,
+              )
             }
           />
           <label className="text-sm font-semibold text-slate-900">
@@ -142,6 +175,17 @@ function ElectionPollsContent() {
             }))}
             onChange={(value) =>
               setSponsorType(POLL_SPONSOR_TYPES.find((item) => item === value) ?? null)
+            }
+          />
+          <PollFilterSelect
+            label="Poll source"
+            value={internalPoll == null ? "" : internalPoll ? "internal" : "independent"}
+            options={[
+              { value: "independent", label: "Independent polls" },
+              { value: "internal", label: "Internal polls" },
+            ]}
+            onChange={(value) =>
+              setInternalPoll(value === "internal" ? true : value === "independent" ? false : null)
             }
           />
           <DateFilter label="Field date from" value={fieldDateFrom} onChange={setFieldDateFrom} />
