@@ -10,6 +10,7 @@ import type {
   ElectionResultListQuery,
   ForecastId,
   PollId,
+  PollSlug,
   RaceId,
   RaceListQuery,
   RaceSlug,
@@ -26,22 +27,18 @@ export const electionQueryKeys = {
     list: (query?: ElectionCycleListQuery) =>
       [...electionQueryKeys.cycles.lists(), query ?? {}] as const,
     details: () => [...electionQueryKeys.cycles.all(), "detail"] as const,
-    detailById: (id: ElectionCycleId) =>
-      [...electionQueryKeys.cycles.details(), "id", id] as const,
+    detailById: (id: ElectionCycleId) => [...electionQueryKeys.cycles.details(), "id", id] as const,
     detailBySlug: (slug: ElectionCycleSlug) =>
       [...electionQueryKeys.cycles.details(), "slug", slug] as const,
-    active: (stateCode = "TX") =>
-      [...electionQueryKeys.cycles.all(), "active", stateCode] as const,
+    active: (stateCode = "TX") => [...electionQueryKeys.cycles.all(), "active", stateCode] as const,
   },
 
   races: {
     all: () => [...electionQueryKeys.all, "races"] as const,
     lists: () => [...electionQueryKeys.races.all(), "list"] as const,
-    list: (query?: RaceListQuery) =>
-      [...electionQueryKeys.races.lists(), query ?? {}] as const,
+    list: (query?: RaceListQuery) => [...electionQueryKeys.races.lists(), query ?? {}] as const,
     details: () => [...electionQueryKeys.races.all(), "detail"] as const,
-    detailById: (id: RaceId) =>
-      [...electionQueryKeys.races.details(), "id", id] as const,
+    detailById: (id: RaceId) => [...electionQueryKeys.races.details(), "id", id] as const,
     detailBySlug: (slug: RaceSlug, electionCycleId?: ElectionCycleId) =>
       [...electionQueryKeys.races.details(), "slug", slug, electionCycleId ?? null] as const,
     featured: (electionCycleId: ElectionCycleId, limit?: number) =>
@@ -54,12 +51,10 @@ export const electionQueryKeys = {
     list: (query?: CandidateListQuery) =>
       [...electionQueryKeys.candidates.lists(), query ?? {}] as const,
     details: () => [...electionQueryKeys.candidates.all(), "detail"] as const,
-    detailById: (id: CandidateId) =>
-      [...electionQueryKeys.candidates.details(), "id", id] as const,
+    detailById: (id: CandidateId) => [...electionQueryKeys.candidates.details(), "id", id] as const,
     detailBySlug: (slug: CandidateSlug, electionCycleId?: ElectionCycleId) =>
       [...electionQueryKeys.candidates.details(), "slug", slug, electionCycleId ?? null] as const,
-    byRace: (raceId: RaceId) =>
-      [...electionQueryKeys.candidates.all(), "race", raceId] as const,
+    byRace: (raceId: RaceId) => [...electionQueryKeys.candidates.all(), "race", raceId] as const,
   },
 
   polls: {
@@ -68,8 +63,9 @@ export const electionQueryKeys = {
     list: (query?: ElectionPollListQuery) =>
       [...electionQueryKeys.polls.lists(), query ?? {}] as const,
     details: () => [...electionQueryKeys.polls.all(), "detail"] as const,
-    detail: (id: PollId) =>
-      [...electionQueryKeys.polls.details(), id] as const,
+    detail: (id: PollId) => [...electionQueryKeys.polls.details(), id] as const,
+    detailBySlug: (slug: PollSlug, electionCycleId?: ElectionCycleId) =>
+      [...electionQueryKeys.polls.details(), "slug", slug, electionCycleId ?? null] as const,
     byRace: (raceId: RaceId, query?: Omit<ElectionPollListQuery, "filters">) =>
       [...electionQueryKeys.polls.all(), "race", raceId, query ?? {}] as const,
     latest: (electionCycleId: ElectionCycleId, limit?: number) =>
@@ -82,10 +78,8 @@ export const electionQueryKeys = {
     list: (query?: ElectionForecastListQuery) =>
       [...electionQueryKeys.forecasts.lists(), query ?? {}] as const,
     details: () => [...electionQueryKeys.forecasts.all(), "detail"] as const,
-    detail: (id: ForecastId) =>
-      [...electionQueryKeys.forecasts.details(), id] as const,
-    byRace: (raceId: RaceId) =>
-      [...electionQueryKeys.forecasts.all(), "race", raceId] as const,
+    detail: (id: ForecastId) => [...electionQueryKeys.forecasts.details(), id] as const,
+    byRace: (raceId: RaceId) => [...electionQueryKeys.forecasts.all(), "race", raceId] as const,
     featured: (electionCycleId: ElectionCycleId, limit?: number) =>
       [...electionQueryKeys.forecasts.all(), "featured", electionCycleId, limit ?? null] as const,
   },
@@ -98,8 +92,7 @@ export const electionQueryKeys = {
     details: () => [...electionQueryKeys.results.all(), "detail"] as const,
     detail: (identifier: ElectionRecordIdentifier) =>
       [...electionQueryKeys.results.details(), identifier] as const,
-    byRace: (raceId: RaceId) =>
-      [...electionQueryKeys.results.all(), "race", raceId] as const,
+    byRace: (raceId: RaceId) => [...electionQueryKeys.results.all(), "race", raceId] as const,
     active: (electionCycleId: ElectionCycleId, limit?: number) =>
       [...electionQueryKeys.results.all(), "active", electionCycleId, limit ?? null] as const,
   },
