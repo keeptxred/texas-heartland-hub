@@ -1,0 +1,78 @@
+name: Refresh Election Central data
+
+on:
+  schedule:
+    - cron: "37 10 * * 1"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/elections/import-races.ts"
+      - "scripts/elections/import-candidates.ts"
+      - "scripts/elections/import-finance.ts"
+      - "scripts/elections/import-geography.ts"
+      - "scripts/elections/import/**"
+      - ".github/workflows/update-election-data.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Refresh official race directory
+        run: pnpm elections:import:races
+
+      - name: Refresh authoritative candidate records
+        run: pnpm elections:import:candidates
+
+      - name: Refresh selective finance records
+        run: pnpm elections:import:finance
+
+      - name: Refresh authoritative geography records
+        run: pnpm elections:import:geography
+
+      - name: Recalculate eligible forecasts
+        run: pnpm elections:forecast
+
+      - name: Validate election data
+        run: pnpm elections:validate
+
+      - name: Run election launch QA
+        run: pnpm elections:qa
+
+      - name: Commit refreshed data
+        shell: bash
+        run: |
+          if git diff --quiet -- src/data/elections/2026; then
+            echo "No election data changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/elections/2026
+          git commit -m "Refresh verified 2026 election data"
+          git push origin HEAD:main
