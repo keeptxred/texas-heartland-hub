@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import {
   CandidateBiographySection,
   CandidateCampaignLinks,
+  CandidateRaceSection,
   ElectionErrorState,
   ElectionLayout,
   ElectionLoading,
@@ -117,6 +118,7 @@ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string 
     <div className="space-y-10">
       <CandidateBiographySection candidate={candidate.data} race={race.data ?? null} />
       <CandidateCampaignLinks candidate={candidate.data} />
+      <CandidateRaceSection candidate={candidate.data} race={race.data ?? null} />
     </div>
   );
 }
