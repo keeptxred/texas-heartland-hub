@@ -8,5 +8,6 @@ export * from "./seo";
 export * from "./sitemap";
 export * from "./modelValidation";
 export * from "./pollEntryValidation";
+export * from "./pollFileWorkflow";
 export * from "./pollingAverage";
 export * from "./electionQa";
