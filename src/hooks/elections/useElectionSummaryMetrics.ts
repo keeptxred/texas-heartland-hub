@@ -8,28 +8,28 @@ import { useElectionRepositories } from "@/lib/elections/repositories";
 import type { ElectionCycleId } from "@/types/elections";
 
 export function useElectionSummaryMetrics(electionCycleId?: ElectionCycleId) {
-  const { candidates, polls, races, results } = useElectionRepositories();
+  const { candidates, forecasts, polls, races, results } = useElectionRepositories();
 
   return useQuery({
     ...electionQueryDefaults,
     queryKey: [...electionQueryKeys.all, "summary-metrics", electionCycleId ?? "disabled"],
     queryFn: electionCycleId
       ? async () => {
-          const [raceCount, candidateCount, pollCount, activeResultCount] = await Promise.all([
-            races.count({ electionCycleIds: [electionCycleId] }),
-            candidates.count({ electionCycleIds: [electionCycleId] }),
-            polls.count({ electionCycleIds: [electionCycleId] }),
-            results.count({
-              electionCycleIds: [electionCycleId],
-              live: true,
-            }),
-          ]);
+          const [raceCount, candidateCount, pollCount, forecastCount, resultCount] =
+            await Promise.all([
+              races.count({ electionCycleIds: [electionCycleId] }),
+              candidates.count({ electionCycleIds: [electionCycleId] }),
+              polls.count({ electionCycleIds: [electionCycleId] }),
+              forecasts.count({ electionCycleIds: [electionCycleId] }),
+              results.count({ electionCycleIds: [electionCycleId] }),
+            ]);
 
           return {
             raceCount,
             candidateCount,
             pollCount,
-            activeResultCount,
+            forecastCount,
+            resultCount,
           };
         }
       : skipToken,

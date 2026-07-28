@@ -1,5 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ElectionAdminDashboard } from "@/components/admin/elections";
+import { useActiveElectionCycle, useElectionSummaryMetrics } from "@/hooks/elections";
+import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 
 export const Route = createFileRoute("/admin/elections/")({
   head: () => ({
@@ -40,14 +42,65 @@ function ElectionAdminPage() {
           </Link>
           <h1 className="mt-2 font-display text-4xl">Election Central Administration</h1>
           <p className="mt-2 max-w-3xl text-sm text-white/90">
-            Manage launch readiness, election data quality, publishing safeguards, and future election-night operations.
+            Manage launch readiness, election data quality, publishing safeguards, and future
+            election-night operations.
           </p>
         </div>
       </header>
 
       <div className="mx-auto max-w-7xl px-4 py-8">
-        <ElectionAdminDashboard />
+        <ElectionRepositoryProvider>
+          <ElectionAdminDashboardData />
+        </ElectionRepositoryProvider>
       </div>
     </main>
+  );
+}
+
+function ElectionAdminDashboardData() {
+  const cycle = useActiveElectionCycle();
+  const metrics = useElectionSummaryMetrics(cycle.data?.id);
+  const values = metrics.data;
+
+  return (
+    <ElectionAdminDashboard
+      metrics={
+        values
+          ? [
+              {
+                label: "Races",
+                value: values.raceCount,
+                description: "Race records in the active election cycle.",
+                status: "ready",
+              },
+              {
+                label: "Candidates",
+                value: values.candidateCount,
+                description: "Candidate records connected to active-cycle races.",
+                status: "ready",
+              },
+              {
+                label: "Polls",
+                value: values.pollCount,
+                description: "Poll records in the active election cycle.",
+                status: "ready",
+              },
+              {
+                label: "Forecasts",
+                value: values.forecastCount,
+                description: "Forecast records in the active election cycle.",
+                status: "ready",
+              },
+              {
+                label: "Results",
+                value: values.resultCount,
+                description: "Result records in the active election cycle.",
+                status: "ready",
+              },
+            ]
+          : []
+      }
+      lastUpdated={metrics.dataUpdatedAt ? new Date(metrics.dataUpdatedAt) : undefined}
+    />
   );
 }
