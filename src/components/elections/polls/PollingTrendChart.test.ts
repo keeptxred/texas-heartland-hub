@@ -44,5 +44,5 @@ function poll(id: string, fieldEndDate: string, percentage: number | null) {
         },
       ],
     },
-  } as ElectionPollSummary;
+  } as unknown as ElectionPollSummary;
 }

@@ -224,7 +224,7 @@ export function ElectionHomePage() {
                   ["Races", summaryMetrics.data?.raceCount ?? 0],
                   ["Candidates", summaryMetrics.data?.candidateCount ?? 0],
                   ["Polls", summaryMetrics.data?.pollCount ?? 0],
-                  ["Active results", summaryMetrics.data?.activeResultCount ?? 0],
+                  ["Results", summaryMetrics.data?.resultCount ?? 0],
                 ].map(([label, value]) => (
                   <div
                     key={label}

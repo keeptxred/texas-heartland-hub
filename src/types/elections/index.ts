@@ -60,7 +60,15 @@ export * from "./legislativeScorecardRepository";
 export * from "./legislativeScorecardService";
 export * from "./metadata";
 export * from "./office";
-export * from "./officeClassifications";
+export {
+  OFFICE_BRANCHES,
+  OFFICE_BRANCH_LABELS,
+  OFFICE_ELECTION_METHODS,
+  isOfficeBranch,
+  isOfficeElectionMethod,
+  type OfficeBranch,
+  type OfficeElectionMethod,
+} from "./officeClassifications";
 export * from "./officeProjections";
 export * from "./officeRepository";
 export * from "./officeService";

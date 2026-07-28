@@ -97,7 +97,7 @@ function TexasSalesTaxExplained() {
               Texas relies on a mix of sales taxes, property taxes, franchise taxes, energy-related revenue, fees, and federal funds rather than a personal income tax. That structure shifts more of the everyday tax burden toward consumption and real estate. A household may notice the system at the cash register, while a business feels it through permits, collection rules, filing deadlines, and recordkeeping.
             </p>
             <p className="mt-4">
-              Sales tax also connects directly to local government finance. Cities, counties, transit authorities, and special-purpose districts may receive local sales-tax revenue, which means two purchases of the same item can produce different combined rates when they occur in different jurisdictions. For the broader picture, read <Link to="/news/why-texas-has-no-income-tax" className="font-semibold text-primary hover:underline">why Texas has no state income tax</Link> and the <Link to="/news/texas-property-tax-guide" className="font-semibold text-primary hover:underline">Texas property tax guide</Link>.
+              Sales tax also connects directly to local government finance. Cities, counties, transit authorities, and special-purpose districts may receive local sales-tax revenue, which means two purchases of the same item can produce different combined rates when they occur in different jurisdictions. For the broader picture, read <Link to="/news/$slug" params={{ slug: "why-texas-has-no-income-tax" }} className="font-semibold text-primary hover:underline">why Texas has no state income tax</Link> and the <Link to="/news/$slug" params={{ slug: "texas-property-tax-guide" }} className="font-semibold text-primary hover:underline">Texas property tax guide</Link>.
             </p>
           </section>
 
@@ -179,7 +179,7 @@ function TexasSalesTaxExplained() {
               Sales tax can materially increase the final cost of vehicles, furniture, electronics, home improvements, restaurant meals, and other major purchases. A household comparing prices should use the after-tax total rather than the advertised price. This is especially important when budgeting for a move, furnishing a home, or making a large one-time purchase.
             </p>
             <p className="mt-4">
-              Sales tax is only one piece of the Texas cost structure. Use the <Link to="/tax-calculator" className="font-semibold text-primary hover:underline">Texas property tax calculator</Link>, the <Link to="/news/texas-utility-costs-guide" className="font-semibold text-primary hover:underline">Texas utility-cost guide</Link>, and the <Link to="/news/true-cost-of-owning-a-home-in-texas" className="font-semibold text-primary hover:underline">true cost of owning a Texas home</Link> to build a more complete household budget.
+              Sales tax is only one piece of the Texas cost structure. Use the <Link to="/tax-calculator" className="font-semibold text-primary hover:underline">Texas property tax calculator</Link>, the <Link to="/news/$slug" params={{ slug: "texas-utility-costs-guide" }} className="font-semibold text-primary hover:underline">Texas utility-cost guide</Link>, and the <Link to="/news/$slug" params={{ slug: "true-cost-of-owning-a-home-in-texas" }} className="font-semibold text-primary hover:underline">true cost of owning a Texas home</Link> to build a more complete household budget.
             </p>
           </section>
 

@@ -13,7 +13,7 @@ function poll(id: string, fieldEndDate: string, responses: readonly [string, str
         percentage,
       })),
     },
-  } as ElectionPollSummary;
+  } as unknown as ElectionPollSummary;
 }
 
 describe("polling average calculator", () => {
@@ -44,7 +44,7 @@ describe("polling average calculator", () => {
             },
           ],
         },
-      } as ElectionPollSummary,
+      } as unknown as ElectionPollSummary,
     ]);
     expect(average?.candidates[0].averagePercentage).toBe(48);
     expect(average?.candidates[0].pollCount).toBe(1);

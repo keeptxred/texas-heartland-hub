@@ -47,7 +47,7 @@ export function PollingTrendChart({ polls }: PollingTrendChartProps) {
         </p>
       </div>
       <ChartContainer config={config} className="min-h-[260px] w-full">
-        <LineChart data={trend.points} margin={{ left: 4, right: 16, top: 8, bottom: 8 }}>
+        <LineChart data={[...trend.points]} margin={{ left: 4, right: 16, top: 8, bottom: 8 }}>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="date"

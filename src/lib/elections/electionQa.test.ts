@@ -37,7 +37,7 @@ describe("Election Central launch QA", () => {
       candidateSummaries: [
         { candidateId: "candidate-1", candidateName: "Candidate", winProbability: 101 },
       ],
-    } as ElectionForecastDetail;
+    } as unknown as ElectionForecastDetail;
     expect(validateForecast(forecast).map((issue) => issue.code)).toEqual([
       "forecast_probability_range",
       "forecast_fundamentals_missing",

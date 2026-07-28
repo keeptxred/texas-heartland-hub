@@ -3,7 +3,9 @@ export const OFFICE_LEVELS = [
   "state",
   "county",
   "municipal",
-  "local",
+  "school_district",
+  "special_district",
+  "other",
 ] as const;
 
 export const RACE_TYPES = [
@@ -83,7 +85,9 @@ export const OFFICE_LEVEL_LABELS: Record<OfficeLevel, string> = {
   state: "State",
   county: "County",
   municipal: "Municipal",
-  local: "Local",
+  school_district: "School district",
+  special_district: "Special district",
+  other: "Other",
 };
 
 export const RACE_TYPE_LABELS: Record<RaceType, string> = {
@@ -151,24 +155,23 @@ export const RACE_STATUS_LABELS: Record<RaceStatus, string> = {
   postponed: "Postponed",
 };
 
-function includesValue<T extends readonly string[]>(values: T, value: string): value is T[number] {
-  return values.includes(value as T[number]);
+function includesValue<T extends readonly string[]>(values: T, value: unknown): value is T[number] {
+  return typeof value === "string" && values.includes(value as T[number]);
 }
 
-export const isOfficeLevel = (value: string): value is OfficeLevel =>
+export const isOfficeLevel = (value: unknown): value is OfficeLevel =>
   includesValue(OFFICE_LEVELS, value);
 
-export const isRaceType = (value: string): value is RaceType =>
-  includesValue(RACE_TYPES, value);
+export const isRaceType = (value: unknown): value is RaceType => includesValue(RACE_TYPES, value);
 
-export const isElectionType = (value: string): value is ElectionType =>
+export const isElectionType = (value: unknown): value is ElectionType =>
   includesValue(ELECTION_TYPES, value);
 
-export const isJurisdictionType = (value: string): value is JurisdictionType =>
+export const isJurisdictionType = (value: unknown): value is JurisdictionType =>
   includesValue(JURISDICTION_TYPES, value);
 
-export const isPartyScope = (value: string): value is PartyScope =>
+export const isPartyScope = (value: unknown): value is PartyScope =>
   includesValue(PARTY_SCOPES, value);
 
-export const isRaceStatus = (value: string): value is RaceStatus =>
+export const isRaceStatus = (value: unknown): value is RaceStatus =>
   includesValue(RACE_STATUSES, value);
