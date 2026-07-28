@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { ELECTION_ROUTES } from "@/lib/elections";
-import type { CandidateSummary } from "@/types/elections";
+import { useElectionRepositories } from "@/lib/elections/repositories";
+import type { CandidateDetail, CandidateSummary, ElectionPollSummary } from "@/types/elections";
 
 interface SourcedComparisonItem {
   label?: string;
@@ -13,35 +14,61 @@ interface SourcedComparisonItem {
   sourceUrl?: string | null;
 }
 
-export interface CandidateComparisonRecord extends CandidateSummary {
-  biography?: string | null;
+interface CandidateComparisonExtras {
   experience?: readonly SourcedComparisonItem[];
   issuePositions?: readonly SourcedComparisonItem[];
-  endorsements?: readonly SourcedComparisonItem[];
-  fundraising?: {
-    totalRaised: number | null;
-    totalSpent: number | null;
-    cashOnHand: number | null;
-    debtsOwed: number | null;
-    reportingPeriodEnd: string | null;
-    sourceUrl: string | null;
-  } | null;
-  polling?: readonly {
-    pollsterName: string;
-    percentage: number;
-    fieldEndDate: string;
-    sourceUrl: string;
-  }[];
   recentStatements?: readonly SourcedComparisonItem[];
   votingRecord?: readonly SourcedComparisonItem[];
 }
 
+interface LoadedComparisonData {
+  detail: (CandidateDetail & CandidateComparisonExtras) | null;
+  polls: readonly ElectionPollSummary[];
+}
+
 export interface CandidateComparisonProps {
-  candidates: readonly CandidateComparisonRecord[];
+  candidates: readonly CandidateSummary[];
   onClear: () => void;
 }
 
 export function CandidateComparison({ candidates, onClear }: CandidateComparisonProps) {
+  const repositories = useElectionRepositories();
+  const [loaded, setLoaded] = useState<Readonly<Record<string, LoadedComparisonData>>>({});
+
+  useEffect(() => {
+    let active = true;
+    if (candidates.length < 2) {
+      setLoaded({});
+      return () => {
+        active = false;
+      };
+    }
+    void Promise.all(
+      candidates.map(async (candidate) => {
+        const [detail, polls] = await Promise.all([
+          repositories.candidates.findDetailById(candidate.id),
+          repositories.polls.listByCandidate(candidate.id, candidate.electionCycleId),
+        ]);
+        return [candidate.id, { detail: detail as LoadedComparisonData["detail"], polls }] as const;
+      }),
+    ).then((entries) => {
+      if (active) setLoaded(Object.fromEntries(entries));
+    });
+    return () => {
+      active = false;
+    };
+  }, [candidates, repositories]);
+
+  const comparisonCandidates = useMemo(
+    () =>
+      candidates.map((summary) => ({
+        summary,
+        detail: loaded[summary.id]?.detail ?? null,
+        polls: loaded[summary.id]?.polls ?? [],
+      })),
+    [candidates, loaded],
+  );
+
   if (candidates.length < 2) return null;
 
   return (
@@ -74,17 +101,17 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
               <th className="p-4 font-semibold text-slate-700" scope="col">
                 Field
               </th>
-              {candidates.map((candidate) => (
+              {comparisonCandidates.map(({ summary }) => (
                 <th
-                  key={candidate.id}
+                  key={summary.id}
                   className="min-w-64 p-4 font-bold text-slate-950"
                   scope="col"
                 >
                   <a
-                    href={ELECTION_ROUTES.candidate(candidate.slug)}
+                    href={ELECTION_ROUTES.candidate(summary.slug)}
                     className="hover:text-red-700 hover:underline"
                   >
-                    {candidate.fullName}
+                    {summary.fullName}
                   </a>
                 </th>
               ))}
@@ -93,80 +120,94 @@ export function CandidateComparison({ candidates, onClear }: CandidateComparison
           <tbody>
             <ComparisonRow
               label="Party"
-              candidates={candidates}
-              value={(candidate) => candidate.partyLabel ?? formatValue(candidate.party)}
+              candidates={comparisonCandidates}
+              value={({ summary }) => summary.partyLabel ?? formatValue(summary.party)}
             />
             <ComparisonRow
               label="Race"
-              candidates={candidates}
-              value={(candidate) => candidate.primaryRace?.name ?? "Not assigned"}
+              candidates={comparisonCandidates}
+              value={({ summary }) => summary.primaryRace?.name ?? "Not assigned"}
             />
             <ComparisonRow
               label="Office"
-              candidates={candidates}
-              value={(candidate) => candidate.primaryRace?.officeName ?? "Not assigned"}
+              candidates={comparisonCandidates}
+              value={({ summary }) => summary.primaryRace?.officeName ?? "Not assigned"}
             />
             <ComparisonRow
               label="District"
-              candidates={candidates}
-              value={(candidate) => candidate.primaryRace?.districtName ?? "Statewide"}
+              candidates={comparisonCandidates}
+              value={({ summary }) => summary.primaryRace?.districtName ?? "Statewide"}
             />
             <ComparisonRow
               label="Incumbency"
-              candidates={candidates}
-              value={(candidate) => formatValue(candidate.incumbencyType)}
+              candidates={comparisonCandidates}
+              value={({ summary }) => formatValue(summary.incumbencyType)}
             />
             <ComparisonRow
               label="Biography"
-              candidates={candidates}
-              value={(candidate) => candidate.biography || "No sourced biography available"}
+              candidates={comparisonCandidates}
+              value={({ detail }) => detail?.biography || "No sourced biography available"}
             />
             <ComparisonRow
               label="Experience"
-              candidates={candidates}
-              value={(candidate) => renderSourcedItems(candidate.experience, "No documented experience found")}
+              candidates={comparisonCandidates}
+              value={({ detail }) =>
+                renderSourcedItems(
+                  detail?.experience ?? detail?.officeHistory,
+                  "No documented experience found",
+                )
+              }
             />
             <ComparisonRow
               label="Issue positions"
-              candidates={candidates}
-              value={(candidate) =>
-                renderSourcedItems(candidate.issuePositions, "No documented position found")
+              candidates={comparisonCandidates}
+              value={({ detail }) =>
+                renderSourcedItems(detail?.issuePositions, "No documented position found")
               }
             />
             <ComparisonRow
               label="Endorsements"
-              candidates={candidates}
-              value={(candidate) => renderSourcedItems(candidate.endorsements, "No sourced endorsements found")}
+              candidates={comparisonCandidates}
+              value={({ detail }) =>
+                renderSourcedItems(detail?.endorsements, "No sourced endorsements found")
+              }
             />
             <ComparisonRow
               label="Fundraising"
-              candidates={candidates}
-              value={(candidate) => renderFundraising(candidate.fundraising)}
+              candidates={comparisonCandidates}
+              value={({ detail }) => renderFundraising(detail?.fundraising ?? null)}
             />
             <ComparisonRow
               label="Polling"
-              candidates={candidates}
-              value={(candidate) => renderPolling(candidate.polling)}
+              candidates={comparisonCandidates}
+              value={({ summary, polls }) => renderPolling(summary.id, polls)}
             />
             <ComparisonRow
               label="Recent statements"
-              candidates={candidates}
-              value={(candidate) => renderSourcedItems(candidate.recentStatements, "No sourced recent statement found")}
+              candidates={comparisonCandidates}
+              value={({ detail }) =>
+                renderSourcedItems(detail?.recentStatements, "No sourced recent statement found")
+              }
             />
             <ComparisonRow
               label="Voting record"
-              candidates={candidates}
-              value={(candidate) => renderSourcedItems(candidate.votingRecord, "No applicable sourced voting record found")}
+              candidates={comparisonCandidates}
+              value={({ detail }) =>
+                renderSourcedItems(
+                  detail?.votingRecord,
+                  "No applicable sourced voting record found",
+                )
+              }
             />
             <ComparisonRow
               label="Candidate status"
-              candidates={candidates}
-              value={(candidate) => formatValue(candidate.status)}
+              candidates={comparisonCandidates}
+              value={({ summary }) => formatValue(summary.status)}
             />
             <ComparisonRow
               label="Last verified data update"
-              candidates={candidates}
-              value={(candidate) => formatDate(candidate.updatedAt)}
+              candidates={comparisonCandidates}
+              value={({ summary }) => formatDate(summary.updatedAt)}
             />
           </tbody>
         </table>
@@ -181,8 +222,16 @@ function ComparisonRow({
   value,
 }: {
   label: string;
-  candidates: readonly CandidateComparisonRecord[];
-  value: (candidate: CandidateComparisonRecord) => ReactNode;
+  candidates: readonly {
+    summary: CandidateSummary;
+    detail: LoadedComparisonData["detail"];
+    polls: readonly ElectionPollSummary[];
+  }[];
+  value: (candidate: {
+    summary: CandidateSummary;
+    detail: LoadedComparisonData["detail"];
+    polls: readonly ElectionPollSummary[];
+  }) => ReactNode;
 }) {
   return (
     <tr className="border-t border-slate-200 align-top">
@@ -190,7 +239,7 @@ function ComparisonRow({
         {label}
       </th>
       {candidates.map((candidate) => (
-        <td key={candidate.id} className="p-4 leading-6 text-slate-800">
+        <td key={candidate.summary.id} className="p-4 leading-6 text-slate-800">
           {value(candidate)}
         </td>
       ))}
@@ -236,7 +285,7 @@ function renderSourcedItems(
   );
 }
 
-function renderFundraising(candidate: CandidateComparisonRecord["fundraising"]) {
+function renderFundraising(candidate: CandidateDetail["fundraising"]) {
   if (!candidate) return <span className="text-slate-500">No sourced finance summary found</span>;
   const body = (
     <div className="space-y-1">
@@ -256,11 +305,26 @@ function renderFundraising(candidate: CandidateComparisonRecord["fundraising"]) 
   );
 }
 
-function renderPolling(candidate: CandidateComparisonRecord["polling"]) {
-  if (!candidate?.length) return <span className="text-slate-500">No published poll result found</span>;
+function renderPolling(candidateId: string, polls: readonly ElectionPollSummary[]) {
+  const entries = polls.flatMap((poll) => {
+    const response = poll.primaryQuestion?.responses.find(
+      (item) => item.candidateId === candidateId && item.percentage != null,
+    );
+    return response?.percentage == null
+      ? []
+      : [
+          {
+            pollsterName: poll.pollsterName,
+            percentage: response.percentage,
+            fieldEndDate: poll.fieldEndDate,
+            sourceUrl: poll.sourceUrl,
+          },
+        ];
+  });
+  if (!entries.length) return <span className="text-slate-500">No published poll result found</span>;
   return (
     <ul className="space-y-2">
-      {candidate.slice(0, 3).map((poll) => (
+      {entries.slice(0, 3).map((poll) => (
         <li key={`${poll.pollsterName}-${poll.fieldEndDate}`}>
           <a
             href={poll.sourceUrl}
