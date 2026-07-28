@@ -102,6 +102,7 @@ export interface CandidateSummary {
   ballotAccessStatus: BallotAccessStatus;
   imageUrl: string | null;
   imageAltText: string | null;
+  imageRights: CandidateImageRights | null;
   occupation: string | null;
   hometown: string | null;
   stateCode: string;

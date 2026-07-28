@@ -171,9 +171,12 @@ function ElectionCandidatesContent() {
                   candidate.incumbencyType === "appointed_incumbent"
                 }
                 status={candidate.status}
-                photoUrl={candidate.imageUrl}
+                photoUrl={
+                  candidate.imageRights?.usageStatus === "approved" ? candidate.imageUrl : null
+                }
                 occupation={candidate.occupation}
                 hometown={candidate.hometown}
+                profileHref={ELECTION_ROUTES.candidate(candidate.slug)}
                 raceHref={
                   candidate.primaryRace
                     ? ELECTION_ROUTES.race(candidate.primaryRace.slug)
