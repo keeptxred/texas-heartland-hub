@@ -114,12 +114,15 @@ function addSource(input) {
   if (!String(input.sourceUrl ?? "").startsWith("https://")) return;
   const id = input.id || sourceId(input.name, input.sourceUrl);
   const previous = sources.get(id);
+  const sourceType = ALLOWED_TYPES.has(input.sourceType) ? input.sourceType : inferType(input.sourceUrl);
   const source = {
     ...(previous ?? {}),
     id,
     name: input.name || previous?.name || hostname(input.sourceUrl),
-    sourceType: ALLOWED_TYPES.has(input.sourceType) ? input.sourceType : inferType(input.sourceUrl),
+    sourceType,
     sourceUrl: input.sourceUrl,
+    type: sourceType,
+    url: input.sourceUrl,
     retrievedAt: input.retrievedAt || previous?.retrievedAt || new Date().toISOString(),
     lastVerifiedAt:
       input.lastVerifiedAt || previous?.lastVerifiedAt || input.retrievedAt || new Date().toISOString(),
