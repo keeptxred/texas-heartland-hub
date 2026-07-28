@@ -20,9 +20,10 @@
     "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
     "elections:import:geography": "node --experimental-strip-types scripts/elections/import-geography.ts",
     "elections:forecast": "node --experimental-strip-types scripts/elections/forecast.ts",
+    "elections:routes:qa": "node scripts/elections/routes-qa.mjs",
     "elections:sitemap:qa": "node scripts/elections/sitemap-qa.mjs",
     "elections:readiness": "node scripts/elections/launch-readiness.mjs",
-    "elections:qa": "node scripts/elections/qa.mjs && npm run elections:sitemap:qa && npm run elections:readiness",
+    "elections:qa": "node scripts/elections/qa.mjs && npm run elections:routes:qa && npm run elections:sitemap:qa && npm run elections:readiness",
     "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:import:finance && npm run elections:import:geography && npm run elections:normalize && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
   },
   "dependencies": {
@@ -99,7 +100,7 @@
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
-    "eslint-plugin-react-hooks": "^6.1.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
     "nitro": "3.0.260603-beta",
