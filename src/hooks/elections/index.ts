@@ -25,3 +25,4 @@ export * from "./useAdminElectionRaces";
 export * from "./useAdminElectionCandidates";
 export * from "./useAdminElectionPolls";
 export * from "./useAdminElectionForecasts";
+export * from "./useAdminElectionResults";

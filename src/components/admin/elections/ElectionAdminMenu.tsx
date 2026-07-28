@@ -46,7 +46,7 @@ export const DEFAULT_ELECTION_ADMIN_MENU_ITEMS: readonly ElectionAdminMenuItem[]
     label: "Results",
     href: "/admin/elections/results",
     description: "Prepare election-night reporting and track unofficial and certified results.",
-    status: "planned",
+    status: "ready",
   },
 ] as const;
 
