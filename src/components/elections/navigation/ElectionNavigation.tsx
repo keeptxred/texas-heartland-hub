@@ -20,8 +20,7 @@ export function ElectionNavigation({
         <ul className="flex min-w-max items-center gap-1 py-2">
           {ELECTION_PRIMARY_NAVIGATION.map((item) => {
             const isActive =
-              currentPath === item.href ||
-              (item.href !== "/elections" && currentPath?.startsWith(`${item.href}/`));
+              currentPath === item.href || currentPath?.startsWith(`${item.href}/`);
 
             return (
               <li key={item.href}>

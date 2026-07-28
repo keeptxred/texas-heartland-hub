@@ -19,6 +19,7 @@ import type {
   ElectionPoll,
   ElectionPollDetail,
   ElectionPollSummary,
+  ElectionRace,
   ElectionResult,
   ElectionResultCandidateSummary,
   ElectionResultDetail,
@@ -57,9 +58,9 @@ type ExtendedCandidate = ElectionCandidate & {
   sources?: CandidateDetail["sources"];
   profileDepth?: CandidateDetail["profileDepth"];
   relatedCandidateIds?: readonly CandidateId[];
-  issuePositions?: readonly unknown[];
-  recentStatements?: readonly unknown[];
-  votingRecord?: readonly unknown[];
+  issuePositions?: CandidateDetail["issuePositions"];
+  recentStatements?: CandidateDetail["recentStatements"];
+  votingRecord?: CandidateDetail["votingRecord"];
 };
 type ExtendedForecast = ElectionForecast & { snapshots?: readonly ElectionForecastSnapshot[] };
 type ExtendedResult = ElectionResult & { snapshots?: readonly ElectionResultSnapshot[] };
@@ -279,6 +280,13 @@ function cycleDetail(record: ElectionCycleRecord): ElectionCycleDetail {
   };
 }
 
+function raceCandidateStatus(
+  status: ElectionCandidate["status"],
+): "active" | "withdrawn" | "disqualified" | "write_in" {
+  if (status === "withdrawn" || status === "disqualified" || status === "write_in") return status;
+  return "active";
+}
+
 function raceCandidate(candidate: ExtendedCandidate) {
   return {
     id: candidate.id,
@@ -287,9 +295,11 @@ function raceCandidate(candidate: ExtendedCandidate) {
     shortName: candidate.preferredName ?? candidate.ballotName,
     party: candidate.party,
     partyLabel: candidate.partyLabel,
-    incumbent: candidate.incumbencyType !== "none",
+    incumbent:
+      candidate.incumbencyType === "incumbent" ||
+      candidate.incumbencyType === "appointed_incumbent",
     imageUrl: candidate.imageUrl,
-    status: candidate.status,
+    status: raceCandidateStatus(candidate.status),
   } as const;
 }
 
