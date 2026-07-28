@@ -61,9 +61,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -71,9 +71,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -82,7 +82,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-attorney-general-nathan-johnson",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -90,7 +90,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -157,9 +157,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -167,9 +167,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -178,7 +178,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-attorney-general-mayes-middleton",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -186,7 +186,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -253,9 +253,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -263,9 +263,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -274,7 +274,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-judge-court-of-criminal-appeals-place-3-thomas-smith",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -282,7 +282,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -349,9 +349,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -359,9 +359,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -370,7 +370,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-lieutenant-governor-vikki-goodwin",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -378,7 +378,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -445,9 +445,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -455,9 +455,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -466,7 +466,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-railroad-commissioner-bo-french",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -474,7 +474,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -541,9 +541,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -551,9 +551,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -562,7 +562,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-member-state-board-of-education-district-5-allison-bush",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -570,7 +570,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -637,9 +637,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -647,9 +647,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -658,7 +658,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-member-state-board-of-education-district-7-tiffany-perkinz",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -666,7 +666,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -733,9 +733,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -743,9 +743,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -754,7 +754,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-state-representative-district-100-venton-jones-i",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -762,7 +762,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -829,9 +829,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -839,9 +839,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -850,7 +850,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-state-representative-district-125-adrian-reyna",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -858,7 +858,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -925,9 +925,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -935,9 +935,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -946,7 +946,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-state-representative-district-126-stan-stanart",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -954,7 +954,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1021,9 +1021,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1031,9 +1031,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1042,7 +1042,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-state-representative-district-131-staci-childs",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1050,7 +1050,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1117,9 +1117,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1127,9 +1127,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1138,7 +1138,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-state-representative-district-149-darlene-breaux",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1146,7 +1146,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1213,9 +1213,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1223,9 +1223,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1234,7 +1234,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-state-representative-district-37-oziel-ozzie-ochoa-jr",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1242,7 +1242,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1309,9 +1309,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1319,9 +1319,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1330,7 +1330,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-state-representative-district-40-celeste-cabrera-huff",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1338,7 +1338,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1405,9 +1405,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1415,9 +1415,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1426,7 +1426,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-state-representative-district-41-julio-salinas",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1434,7 +1434,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1501,9 +1501,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1511,9 +1511,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1522,7 +1522,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-state-representative-district-41-gary-groves",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1530,7 +1530,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1597,9 +1597,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1607,9 +1607,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1618,7 +1618,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-state-representative-district-49-montserrat-garibay",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1626,7 +1626,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1693,9 +1693,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1703,9 +1703,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1714,7 +1714,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-state-representative-district-97-beth-llewellyn-mclaughlin",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1722,7 +1722,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1789,9 +1789,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1799,9 +1799,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1810,7 +1810,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-state-senator-district-19-marcus-cardenas",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1818,7 +1818,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1885,9 +1885,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1895,9 +1895,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -1906,7 +1906,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-u-s-representative-district-1-yolanda-r-prince",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -1914,7 +1914,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -1981,9 +1981,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -1991,9 +1991,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2002,7 +2002,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-u-s-representative-district-14-thurman-bill-bartie",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2010,7 +2010,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2077,9 +2077,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2087,9 +2087,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2098,7 +2098,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-16-adam-bauman",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2106,7 +2106,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2173,9 +2173,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2183,9 +2183,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2194,7 +2194,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-u-s-representative-district-17-casey-shepard",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2202,7 +2202,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2269,9 +2269,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2279,9 +2279,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2290,7 +2290,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-u-s-representative-district-18-christian-dashaun-menefee",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2298,7 +2298,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2365,9 +2365,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2375,9 +2375,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2386,7 +2386,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-19-tom-sell",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2394,7 +2394,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2461,9 +2461,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2471,9 +2471,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2482,7 +2482,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-u-s-representative-district-24-kevin-burge",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2490,7 +2490,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2557,9 +2557,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2567,9 +2567,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2578,7 +2578,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-30-everett-jackson",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2586,7 +2586,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2653,9 +2653,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2663,9 +2663,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2674,7 +2674,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-u-s-representative-district-33-colin-allred",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2682,7 +2682,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2749,9 +2749,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2759,9 +2759,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2770,7 +2770,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-33-patrick-david-gillespie",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2778,7 +2778,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2845,9 +2845,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2855,9 +2855,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2866,7 +2866,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-u-s-representative-district-35-johnny-c-garcia",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2874,7 +2874,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -2941,9 +2941,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -2951,9 +2951,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -2962,7 +2962,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-35-carlos-de-la-cruz",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -2970,7 +2970,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -3037,9 +3037,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -3047,9 +3047,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -3058,7 +3058,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-37-lauren-b-pena",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -3066,7 +3066,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -3133,9 +3133,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -3143,9 +3143,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -3154,7 +3154,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-38-jon-bonck",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -3162,7 +3162,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -3229,9 +3229,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -3239,9 +3239,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -3250,7 +3250,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "democratic-u-s-representative-district-5-chelsey-hockett",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -3258,7 +3258,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -3325,9 +3325,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -3335,9 +3335,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -3346,7 +3346,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-7-alexander-hale",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -3354,7 +3354,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -3421,9 +3421,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -3431,9 +3431,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -3442,7 +3442,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-representative-district-9-alex-mealer",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -3450,7 +3450,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
@@ -3517,9 +3517,9 @@
     "endorsed": false,
     "notes": null,
     "createdAt": "2026-07-28T14:17:43.540Z",
-    "updatedAt": "2026-07-28T14:54:17.560Z",
+    "updatedAt": "2026-07-28T15:08:14.625Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-28T14:54:17.560Z",
+    "verifiedAt": "2026-07-28T15:08:14.625Z",
     "verifiedBy": "Election candidate import pipeline",
     "verificationNotes": "Candidate identity and ballot status supported by the cited authoritative record.",
     "publicationStatus": "published",
@@ -3527,9 +3527,9 @@
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "Election candidate import pipeline",
-    "dataAsOf": "2026-07-28T14:54:17.560Z",
-    "lastCheckedAt": "2026-07-28T14:54:17.560Z",
-    "staleAfter": "2026-08-11T14:54:17.560Z",
+    "dataAsOf": "2026-07-28T15:08:14.625Z",
+    "lastCheckedAt": "2026-07-28T15:08:14.625Z",
+    "staleAfter": "2026-08-11T15:08:14.625Z",
     "expiresAt": "2026-11-04T12:00:00.000Z",
     "freshnessStatus": "fresh",
     "source": {
@@ -3538,7 +3538,7 @@
       "sourceType": "official",
       "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
       "sourceRecordId": "republican-u-s-senator-ken-paxton",
-      "retrievedAt": "2026-07-28T14:54:17.560Z",
+      "retrievedAt": "2026-07-28T15:08:14.625Z",
       "attributionText": null
     },
     "campaignFinanceUrl": null,
@@ -3546,7 +3546,7 @@
       {
         "label": "Texas Secretary of State 2026 Primary Runoff Results",
         "url": "https://electionresults.sos.state.tx.us/results.html",
-        "retrievedAt": "2026-07-28T14:54:17.560Z"
+        "retrievedAt": "2026-07-28T15:08:14.625Z"
       }
     ],
     "profileDepth": "standard"
