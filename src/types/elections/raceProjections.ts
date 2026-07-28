@@ -1,3 +1,4 @@
+import type { CandidateStatus } from "./candidateClassifications";
 import type { CandidateParty, RaceRating } from "./domain";
 import type {
   CandidateId,
@@ -35,7 +36,7 @@ export interface RaceCandidateSummary {
   partyLabel: string | null;
   incumbent: boolean;
   imageUrl: string | null;
-  status: "active" | "withdrawn" | "disqualified" | "write_in";
+  status: CandidateStatus;
 }
 
 export interface RaceSummary {
