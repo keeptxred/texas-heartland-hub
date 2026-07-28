@@ -29,14 +29,14 @@ for (const poll of polls.filter(isPublic)) {
 const output = [];
 for (const [raceId, racePolls] of grouped) {
   const summaries = racePolls.map(toPollSummary).filter(Boolean);
-  const average = calculatePollingAverage(summaries as never, asOf);
+  const average = calculatePollingAverage(summaries as never, { asOf });
   if (!average) continue;
   output.push({
     raceId,
     pollCount: average.pollCount,
     fieldDateFrom: average.fieldDateFrom,
     fieldDateTo: average.fieldDateTo,
-    calculatedAt: average.calculatedAt,
+    recalculatedAt: average.recalculatedAt,
     weightedMargin: average.weightedMargin,
     uncertaintyRange: average.uncertaintyRange,
     candidates: average.candidates,
