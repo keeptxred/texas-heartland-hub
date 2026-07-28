@@ -45,7 +45,9 @@ export function useLatestElectionPolls(
             ],
           });
 
-          return page.items.filter((poll) => poll.primaryQuestion !== null).slice(0, resultLimit);
+          return page.items
+            .filter((poll) => poll.race !== null && poll.primaryQuestion !== null)
+            .slice(0, resultLimit);
         }
       : skipToken,
     staleTime: electionQueryStaleTimes.polls,

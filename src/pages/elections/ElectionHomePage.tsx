@@ -8,9 +8,14 @@ import {
   ElectionLoading,
   ElectionNavigation,
   FeaturedRaceCard,
+  PollCard,
   RelatedResources,
 } from "@/components/elections";
-import { useActiveElectionCycle, useFeaturedElectionRaces } from "@/hooks/elections";
+import {
+  useActiveElectionCycle,
+  useFeaturedElectionRaces,
+  useLatestElectionPolls,
+} from "@/hooks/elections";
 import { getArticlesByCategory } from "@/lib/articles-by-category";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import {
@@ -76,6 +81,7 @@ const VERIFIED_RESOURCES = [
 export function ElectionHomePage() {
   const activeCycle = useActiveElectionCycle();
   const featuredRaces = useFeaturedElectionRaces(activeCycle.data?.id, 6);
+  const latestPolls = useLatestElectionPolls(activeCycle.data?.id, 3);
   const electionNews = getArticlesByCategory("elections").slice(0, 6);
   const uniqueImages = assignUniqueImages(
     electionNews,
@@ -239,6 +245,89 @@ export function ElectionHomePage() {
                   />
                 ))}
               </div>
+            )}
+          </div>
+        </section>
+
+        <section aria-labelledby="latest-polls">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Polling</p>
+              <h2
+                id="latest-polls"
+                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+              >
+                Latest election polls
+              </h2>
+            </div>
+            <a
+              href={ELECTION_ROUTES.polls}
+              className="text-sm font-semibold text-red-700 hover:underline"
+            >
+              View all polls â†’
+            </a>
+          </div>
+
+          <div className="mt-6">
+            {activeCycle.isPending || (activeCycle.data && latestPolls.isPending) ? (
+              <ElectionLoading variant="cards" count={3} label="Loading latest election polls" />
+            ) : activeCycle.isError || latestPolls.isError ? (
+              <ElectionErrorState
+                compact
+                title="Latest polls could not be loaded"
+                retryAction={{
+                  label: "Try again",
+                  onClick: () => {
+                    void activeCycle.refetch();
+                    void latestPolls.refetch();
+                  },
+                }}
+                secondaryActions={[]}
+              />
+            ) : !activeCycle.data || latestPolls.isEmpty ? (
+              <ElectionEmptyState kind="polls" />
+            ) : (
+              <>
+                {latestPolls.data?.some(
+                  (poll) => poll.freshnessStatus === "stale" || poll.freshnessStatus === "expired",
+                ) ? (
+                  <p
+                    role="status"
+                    className="mb-5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950"
+                  >
+                    One or more polls are older than the configured freshness window. Review each
+                    pollâ€™s field dates before drawing conclusions.
+                  </p>
+                ) : null}
+                <div className="grid gap-5 xl:grid-cols-3">
+                  {latestPolls.data?.map((poll) => (
+                    <PollCard
+                      key={poll.id}
+                      pollster={poll.pollsterName}
+                      raceName={poll.race?.name ?? poll.title}
+                      raceHref={ELECTION_ROUTES.races}
+                      fieldDates={`${poll.fieldStartDate}â€“${poll.fieldEndDate}`}
+                      publishedDate={poll.releaseDate ?? undefined}
+                      sampleSize={poll.methodology.sampleSize}
+                      populationLabel={poll.methodology.population.replaceAll("_", " ")}
+                      methodologyLabel={poll.methodology.mode.replaceAll("_", " ")}
+                      marginOfError={poll.methodology.marginOfError}
+                      grade={poll.pollsterGrade}
+                      sponsor={poll.sponsors[0]?.name}
+                      results={
+                        poll.primaryQuestion?.responses
+                          .filter((response) => response.percentage !== null)
+                          .map((response) => ({
+                            candidateId: response.candidateId ?? response.id,
+                            candidateName: response.candidateName ?? response.label,
+                            partyLabel: response.partyLabel ?? undefined,
+                            percentage: response.percentage ?? 0,
+                          })) ?? []
+                      }
+                    />
+                  ))}
+                </div>
+              </>
             )}
           </div>
         </section>
