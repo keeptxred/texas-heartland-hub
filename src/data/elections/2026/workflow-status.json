@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-07-28T17:27:10.023Z",
+  "updatedAt": "2026-07-28T17:30:03.967Z",
   "conclusion": "failure",
-  "runId": "30382752347",
+  "runId": "30383062576",
   "runAttempt": "1",
-  "triggerCommit": "73a165adb4cb99aa01cf62bc4491d46ae4f79349",
-  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30382752347",
+  "triggerCommit": "7e9b3658f8b15eb54c00ecb51ef46cf3fcdf5af0",
+  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30383062576",
   "validationSummary": "> tanstack_start_ts@ elections:validate /home/runner/work/texas-heartland-hub/texas-heartland-hub\n> node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs && node scripts/elections/validate-sources.mjs\n\nElection enum validation passed.\nElection data validation passed (1 cycle, 227 races, 37 candidates, 2 polls, 0 forecasts, 0 results, 7 sources).\nElection source validation passed: 7 canonical source(s).",
   "qaSummary": "> tanstack_start_ts@ elections:qa /home/runner/work/texas-heartland-hub/texas-heartland-hub\n> node scripts/elections/qa.mjs && npm run elections:routes:qa && npm run elections:sitemap:qa && npm run elections:readiness\n\nQA warning: No forecasts are generated because no race has complete sourced model inputs.\nQA warning: External source is reachable but access-controlled or rate-limited: https://texaspublicopinionresearch.substack.com/ (403).\nQA warning: External source is reachable but access-controlled or rate-limited: https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken (403).\nElection launch QA failed with 1 error(s):\n- Broken external source: https://electionresults.sos.state.tx.us/results.html (404).\n ELIFECYCLE  Command failed with exit code 1."
 }
