@@ -6,10 +6,12 @@ import {
   ElectionNavigation,
   RaceCandidateSection,
   RaceDetailHeader,
+  RaceForecastSection,
   RacePollingSection,
 } from "@/components/elections";
 import {
   useCandidatesByRace,
+  useElectionForecast,
   useElectionRace,
   useForecastByRace,
   usePollsByRace,
@@ -75,13 +77,21 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
   const candidates = useCandidatesByRace(race.data?.id);
   const polls = usePollsByRace(race.data?.id);
   const forecast = useForecastByRace(race.data?.id);
+  const forecastDetail = useElectionForecast(forecast.data?.id);
   const result = useResultByRace(race.data?.id);
-  const error = race.error ?? candidates.error ?? polls.error ?? forecast.error ?? result.error;
+  const error =
+    race.error ??
+    candidates.error ??
+    polls.error ??
+    forecast.error ??
+    forecastDetail.error ??
+    result.error;
   const isLoading =
     race.isLoading ||
     candidates.isLoading ||
     polls.isLoading ||
     forecast.isLoading ||
+    forecastDetail.isLoading ||
     result.isLoading;
 
   const handleRetry = () => {
@@ -89,6 +99,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     void candidates.refetch();
     void polls.refetch();
     void forecast.refetch();
+    void forecastDetail.refetch();
     void result.refetch();
   };
 
@@ -126,6 +137,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
         polls={polls.data?.items ?? []}
         hasStaleData={polls.hasStaleData}
       />
+      <RaceForecastSection forecast={forecastDetail.data ?? null} />
     </div>
   );
 }
