@@ -27,7 +27,7 @@ import {
   formatElectionDate,
   getNextElection,
 } from "@/lib/election-calendar";
-import { ELECTION_ROUTES } from "@/lib/elections";
+import { buildElectionCollectionSchema, ELECTION_ROUTES } from "@/lib/elections";
 import { useElectionRepositoryMode } from "@/lib/elections/repositories";
 import {
   FORECAST_CONFIDENCE_LEVEL_LABELS,
@@ -55,6 +55,16 @@ const QUICK_LINKS = [
     description:
       "Find registration, early-voting, ballot, identification, and election-day guidance.",
     href: ELECTION_ROUTES.voting,
+  },
+  {
+    title: "Review forecasts",
+    description: "See model estimates, confidence, change, and clearly labeled fundamentals.",
+    href: ELECTION_ROUTES.forecast,
+  },
+  {
+    title: "Check results",
+    description: "Follow sourced, clearly labeled unofficial returns until certification.",
+    href: ELECTION_ROUTES.results,
   },
 ] as const;
 
@@ -111,6 +121,13 @@ export function ElectionHomePage() {
       title="Texas Election Central"
       description="Follow Texas races, candidates, polls, forecasts, results, and the voting information Texans need before election day."
       canonicalUrl="https://keeptxred.com/elections"
+      schema={buildElectionCollectionSchema({
+        name: "Texas Election Central",
+        description:
+          "Texas races, candidates, polls, forecasts, results, and public voting resources.",
+        pathname: ELECTION_ROUTES.root,
+        itemType: "Election",
+      })}
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.root} />}
       fullWidth
     >
@@ -129,8 +146,8 @@ export function ElectionHomePage() {
               </h2>
               <p className="mt-4 max-w-2xl leading-7 text-slate-300">
                 Election Central brings together race ratings, candidate profiles, polling,
-                forecasts, live results, and practical voting guidance as each part of the platform
-                comes online.
+                forecasts, sourced results, ballot research, and practical voting guidance in one
+                public hub.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
@@ -229,7 +246,7 @@ export function ElectionHomePage() {
         <RelatedResources
           resources={VERIFIED_RESOURCES}
           title="Popular Texas election resources"
-          description="Start with these existing KeepTXRed guides and hubs while the full Election Central platform is being built."
+          description="Use these KeepTXRed guides alongside the source-backed race, candidate, poll, forecast, and results directories."
         />
 
         <section aria-labelledby="election-central-start">
@@ -246,7 +263,7 @@ export function ElectionHomePage() {
               </h2>
             </div>
           </div>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {QUICK_LINKS.map((item) => (
               <a
                 key={item.href}
@@ -318,7 +335,7 @@ export function ElectionHomePage() {
                       party: candidate.partyLabel ?? candidate.party,
                       incumbent: candidate.incumbent,
                     }))}
-                    raceHref={ELECTION_ROUTES.races}
+                    raceHref={ELECTION_ROUTES.race(race.slug)}
                   />
                 ))}
               </div>
@@ -382,7 +399,9 @@ export function ElectionHomePage() {
                       key={poll.id}
                       pollster={poll.pollsterName}
                       raceName={poll.race?.name ?? poll.title}
-                      raceHref={ELECTION_ROUTES.races}
+                      raceHref={
+                        poll.race ? ELECTION_ROUTES.race(poll.race.slug) : ELECTION_ROUTES.races
+                      }
                       fieldDates={`${poll.fieldStartDate}â€“${poll.fieldEndDate}`}
                       publishedDate={poll.releaseDate ?? undefined}
                       sampleSize={poll.methodology.sampleSize}
@@ -392,15 +411,20 @@ export function ElectionHomePage() {
                       grade={poll.pollsterGrade}
                       sponsor={poll.sponsors[0]?.name}
                       results={
-                        poll.primaryQuestion?.responses
-                          .filter((response) => response.percentage !== null)
-                          .map((response) => ({
-                            candidateId: response.candidateId ?? response.id,
-                            candidateName: response.candidateName ?? response.label,
-                            partyLabel: response.partyLabel ?? undefined,
-                            percentage: response.percentage ?? 0,
-                          })) ?? []
+                        poll.primaryQuestion?.responses.flatMap((response) =>
+                          response.percentage == null
+                            ? []
+                            : [
+                                {
+                                  candidateId: response.candidateId ?? response.id,
+                                  candidateName: response.candidateName ?? response.label,
+                                  partyLabel: response.partyLabel ?? undefined,
+                                  percentage: response.percentage,
+                                },
+                              ],
+                        ) ?? []
                       }
+                      sourceUrl={poll.toplineUrl ?? poll.sourceUrl}
                     />
                   ))}
                 </div>
@@ -511,7 +535,7 @@ export function ElectionHomePage() {
 
                     <div className="mt-6 border-t border-slate-200 pt-4">
                       <a
-                        href={ELECTION_ROUTES.methodology}
+                        href={ELECTION_ROUTES.forecastDetail(forecast.slug)}
                         className="text-sm font-semibold text-red-700 hover:underline"
                       >
                         How this forecast works â†’
@@ -532,7 +556,7 @@ export function ElectionHomePage() {
                 id="results-preview"
                 className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
               >
-                Election results preview
+                Active election results
               </h2>
             </div>
             <a
