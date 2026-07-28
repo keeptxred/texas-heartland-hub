@@ -38,20 +38,6 @@ await patch("src/lib/elections/repositories/static.ts", [
   ],
 ]);
 
-await patch("src/routes/elections.2026.tsx", [
-  [
-    `export const Route = createFileRoute("/elections/2026")({`,
-    `export const Route = createFileRoute("/elections/2026" as never)({`,
-  ],
-]);
-
-await patch("src/routes/elections.tsx", [
-  [
-    `    throw redirect({ to: "/elections/2026" });`,
-    `    throw redirect({ to: "/elections/2026" as never });`,
-  ],
-]);
-
 await patch("scripts/elections/import-candidates.ts", [
   [
     `const updatedRaces = races.map((race) => ({\n  ...race,\n  candidateIds: [...new Set(candidateIdsByRace.get(race.id) ?? [])].sort(),\n  updatedAt: candidateIdsByRace.has(race.id) ? timestamp : race.updatedAt,\n}));`,
