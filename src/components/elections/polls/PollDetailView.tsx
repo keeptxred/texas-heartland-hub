@@ -5,6 +5,7 @@ import {
   POLL_GRADE_LABELS,
   POLL_MODE_LABELS,
   POLL_POPULATION_LABELS,
+  POLL_SPONSOR_TYPE_LABELS,
 } from "@/types/elections/pollClassifications";
 
 export interface PollDetailViewProps {
@@ -38,6 +39,11 @@ export function PollDetailView({ poll }: PollDetailViewProps) {
             },
           ],
     ) ?? [];
+  const missingMethodology =
+    !poll.methodology.methodologyUrl &&
+    !poll.methodology.samplingDescription &&
+    !poll.methodology.weightingDescription;
+  const stale = poll.freshnessStatus === "stale" || poll.freshnessStatus === "expired";
 
   return (
     <div className="space-y-6">
@@ -50,6 +56,36 @@ export function PollDetailView({ poll }: PollDetailViewProps) {
           <p className="mt-4 text-base leading-7 text-slate-600">{question.prompt}</p>
         ) : null}
       </header>
+
+      <div className="space-y-3">
+        {poll.sponsors.length > 0 ? (
+          <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-700">
+            <strong className="text-slate-950">Sponsor disclosure:</strong>{" "}
+            {poll.sponsors
+              .map((sponsor) => `${sponsor.name} (${POLL_SPONSOR_TYPE_LABELS[sponsor.type]})`)
+              .join(", ")}
+          </div>
+        ) : null}
+        {poll.partisanPoll || poll.sponsors.some((sponsor) => sponsor.partisanAffiliation) ? (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+            <strong>Partisan-source disclosure:</strong> This poll is marked as partisan or has a
+            sponsor with a reported partisan affiliation. Review the sponsor and methodology when
+            interpreting its findings.
+          </div>
+        ) : null}
+        {missingMethodology ? (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+            <strong>Methodology warning:</strong> Sampling, weighting, and a methodology link were
+            not published with this record.
+          </div>
+        ) : null}
+        {stale ? (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950">
+            <strong>Stale-data warning:</strong> This poll is outside the current freshness window.
+            Check its field dates before relying on it as a current measure.
+          </div>
+        ) : null}
+      </div>
 
       <PollCard
         pollster={poll.pollster.name}
