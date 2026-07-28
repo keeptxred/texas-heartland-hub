@@ -57,6 +57,16 @@ jobs:
           set -o pipefail
           pnpm elections:validate 2>&1 | tee /tmp/election-ci-validate.log
 
+      - name: Build production application and generate routes
+        id: build
+        continue-on-error: true
+        shell: bash
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee /tmp/election-ci-build.log
+
       - name: Typecheck application
         id: typecheck
         continue-on-error: true
@@ -70,18 +80,11 @@ jobs:
         continue-on-error: true
         shell: bash
         run: |
-          set -o pipefail
+          set +e
           pnpm test 2>&1 | tee /tmp/election-ci-tests.log
-
-      - name: Build production application
-        id: build
-        continue-on-error: true
-        shell: bash
-        env:
-          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
-        run: |
-          set -o pipefail
-          pnpm build 2>&1 | tee /tmp/election-ci-build.log
+          status=${PIPESTATUS[0]}
+          grep -E "FAIL|failed|AssertionError|Error:|Test Files|Tests  " /tmp/election-ci-tests.log | tail -160 > /tmp/election-ci-test-failures.log || true
+          exit $status
 
       - name: Record verification result
         if: always()
@@ -99,17 +102,17 @@ jobs:
           node --input-type=module <<'NODE'
           import fs from "node:fs";
 
-          function compactLog(file) {
+          function compactLog(file, lineLimit = 100, characterLimit = 16000) {
             if (!fs.existsSync(file)) return null;
             const lines = fs.readFileSync(file, "utf8").trim().split(/\r?\n/);
-            return lines.slice(-100).join("\n").slice(-16000) || null;
+            return lines.slice(-lineLimit).join("\n").slice(-characterLimit) || null;
           }
 
           const checks = {
             validation: process.env.VALIDATE_OUTCOME,
+            build: process.env.BUILD_OUTCOME,
             typecheck: process.env.TYPECHECK_OUTCOME,
             tests: process.env.TEST_OUTCOME,
-            build: process.env.BUILD_OUTCOME,
           };
           const passed = Object.values(checks).every((outcome) => outcome === "success");
           const status = {
@@ -121,9 +124,10 @@ jobs:
             runUrl: process.env.RUN_URL,
             checks,
             validationSummary: compactLog("/tmp/election-ci-validate.log"),
-            typecheckSummary: compactLog("/tmp/election-ci-typecheck.log"),
-            testSummary: compactLog("/tmp/election-ci-tests.log"),
             buildSummary: compactLog("/tmp/election-ci-build.log"),
+            typecheckSummary: compactLog("/tmp/election-ci-typecheck.log"),
+            testFailureSummary: compactLog("/tmp/election-ci-test-failures.log", 160, 20000),
+            testSummary: compactLog("/tmp/election-ci-tests.log"),
           };
           fs.writeFileSync(
             "src/data/elections/2026/ci-status.json",
