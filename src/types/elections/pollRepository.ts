@@ -12,11 +12,7 @@ import type {
   ElectionVerificationStatus,
   IsoDateString,
 } from "./metadata";
-import type {
-  ElectionPoll,
-  ElectionPollCreateInput,
-  ElectionPollUpdateInput,
-} from "./poll";
+import type { ElectionPoll, ElectionPollCreateInput, ElectionPollUpdateInput } from "./poll";
 import type {
   PollGrade,
   PollMode,
@@ -25,16 +21,8 @@ import type {
   PollSponsorType,
   PollStatus,
 } from "./pollClassifications";
-import type {
-  ElectionPollDetail,
-  ElectionPollSummary,
-  PollTrendPoint,
-} from "./pollProjections";
-import type {
-  RacePage,
-  RacePagination,
-  SortDirection,
-} from "./raceRepository";
+import type { ElectionPollDetail, ElectionPollSummary, PollTrendPoint } from "./pollProjections";
+import type { RacePage, RacePagination, SortDirection } from "./raceRepository";
 
 export const ELECTION_POLL_SORT_FIELDS = [
   "field_end_date",
@@ -45,8 +33,7 @@ export const ELECTION_POLL_SORT_FIELDS = [
   "status",
 ] as const;
 
-export type ElectionPollSortField =
-  (typeof ELECTION_POLL_SORT_FIELDS)[number];
+export type ElectionPollSortField = (typeof ELECTION_POLL_SORT_FIELDS)[number];
 
 export interface ElectionPollSort {
   field: ElectionPollSortField;
@@ -58,6 +45,7 @@ export interface ElectionPollFilters {
   raceIds?: readonly RaceId[];
   jurisdictionIds?: readonly ElectionEntityId[];
   candidateIds?: readonly CandidateId[];
+  pollsterNames?: readonly string[];
   statuses?: readonly PollStatus[];
   populations?: readonly PollPopulation[];
   modes?: readonly PollMode[];
@@ -102,10 +90,7 @@ export interface PollTrendQuery {
 
 export interface ElectionPollRepository {
   findById(id: PollId): Promise<ElectionPoll | null>;
-  findBySlug(
-    slug: PollSlug,
-    electionCycleId?: ElectionCycleId,
-  ): Promise<ElectionPoll | null>;
+  findBySlug(slug: PollSlug, electionCycleId?: ElectionCycleId): Promise<ElectionPoll | null>;
   findSummaryById(id: PollId): Promise<ElectionPollSummary | null>;
   findDetailById(id: PollId): Promise<ElectionPollDetail | null>;
   findDetailBySlug(
@@ -127,9 +112,7 @@ export interface ElectionPollRepository {
     electionCycleId: ElectionCycleId,
     limit?: number,
   ): Promise<readonly ElectionPollSummary[]>;
-  listTrackingSeries(
-    raceId: RaceId,
-  ): Promise<readonly ElectionPollSummary[]>;
+  listTrackingSeries(raceId: RaceId): Promise<readonly ElectionPollSummary[]>;
   listTrendPoints(query: PollTrendQuery): Promise<readonly PollTrendPoint[]>;
 
   count(filters?: ElectionPollFilters): Promise<number>;
