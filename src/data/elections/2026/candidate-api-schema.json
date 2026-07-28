@@ -1,0 +1,143 @@
+{
+  "capturedAt": "2026-07-28T17:49:34.191Z",
+  "sourceUrl": "https://goelect.txelections.civixapps.com/ivis-cbp-ui/candidate-information",
+  "endpoint": "https://goelect.txelections.civixapps.com/api-ivis-cbp/api/cbp/findQualifiedCandidates",
+  "method": "POST",
+  "responseStatus": 200,
+  "requestSchema": {
+    "type": "object",
+    "properties": {
+      "electionYear": {
+        "type": "number"
+      },
+      "electionId": {
+        "type": "number"
+      },
+      "party": {
+        "type": "null"
+      },
+      "officeId": {
+        "type": "null"
+      },
+      "officeType": {
+        "type": "null"
+      },
+      "status": {
+        "type": "null"
+      },
+      "countyId": {
+        "type": "null"
+      }
+    }
+  },
+  "responseSchema": {
+    "type": "array",
+    "length": 3791,
+    "itemTypes": [
+      "object"
+    ],
+    "itemSchema": {
+      "type": "object",
+      "properties": {
+        "idCandidate": {
+          "type": "number"
+        },
+        "cdStatus": {
+          "type": "string"
+        },
+        "cdParty": {
+          "type": "string"
+        },
+        "idElection": {
+          "type": "number"
+        },
+        "idOffice": {
+          "type": "number"
+        },
+        "cdDeclarationStatus": {
+          "type": "string"
+        },
+        "cdFilingStatus": {
+          "type": "string"
+        },
+        "nbSortOrder": {
+          "type": "number"
+        },
+        "nbSecondarySortOrder": {
+          "type": "number"
+        },
+        "txLastNameBallot": {
+          "type": "string"
+        },
+        "txFirstNameBallot": {
+          "type": "string"
+        },
+        "txFullNameBallot": {
+          "type": "string"
+        },
+        "dtFiled": {
+          "type": "string"
+        },
+        "txEmail": {
+          "type": "string"
+        },
+        "txOccupation": {
+          "type": "string"
+        },
+        "flActive": {
+          "type": "boolean"
+        },
+        "mailingAddress": {
+          "type": "object",
+          "properties": {
+            "txStreetNumber": {
+              "type": "string"
+            },
+            "txStreetName": {
+              "type": "string"
+            },
+            "txCity": {
+              "type": "string"
+            },
+            "cdState": {
+              "type": "string"
+            },
+            "txZip5": {
+              "type": "string"
+            },
+            "cdAddressType": {
+              "type": "string"
+            },
+            "validAddress": {
+              "type": "boolean"
+            },
+            "txStreetName2": {
+              "type": "string"
+            }
+          }
+        },
+        "txElectionName": {
+          "type": "string"
+        },
+        "txOfficeName": {
+          "type": "string"
+        },
+        "cdOfficeType": {
+          "type": "string"
+        },
+        "txOfficeTypeName": {
+          "type": "string"
+        },
+        "txWebsiteUrl": {
+          "type": "string"
+        },
+        "cdCandType": {
+          "type": "string"
+        },
+        "flIncmbntGen": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
