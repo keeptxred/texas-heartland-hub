@@ -1,0 +1,70 @@
+name: Prepare Election Central validation data
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/election-central-prepare-data.yml"
+      - "scripts/elections/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-central-prepare-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  prepare:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out pull-request branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Build verified race directory
+        run: pnpm elections:import:races
+
+      - name: Import authoritative candidates
+        run: pnpm elections:import:candidates
+
+      - name: Import available finance summaries
+        run: pnpm elections:import:finance
+
+      - name: Import authoritative geography
+        run: pnpm elections:import:geography
+
+      - name: Generate eligible forecast snapshots
+        run: pnpm elections:forecast
+
+      - name: Validate generated data
+        run: pnpm elections:validate
+
+      - name: Run launch QA
+        run: pnpm elections:qa
+
+      - name: Commit generated validation data
+        shell: bash
+        run: |
+          if git diff --quiet -- src/data/elections/2026; then
+            echo "No generated data changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/elections/2026
+          git commit -m "Populate verified 2026 election data"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
