@@ -21,12 +21,9 @@ const [races, candidates, polls, existingForecasts] = await Promise.all([
   readJson("polls.json"),
   readJson("forecasts.json"),
 ]);
-const candidateById = new Map(candidates.map((candidate) => [candidate.id, candidate]));
 
 const generatedByRace = new Map();
 for (const race of races) {
-  const inputs = race.forecastInputs;
-  if (!inputs?.enabled) continue;
   if (!isPublicVerified(race)) {
     console.warn(`Skipping ${race.id}: race is not published and verified.`);
     continue;
@@ -41,7 +38,6 @@ for (const race of races) {
   const republican = raceCandidates.find((candidate) => candidate.party === "republican");
   const democratic = raceCandidates.find((candidate) => candidate.party === "democratic");
   if (!republican || !democratic) {
-    console.warn(`Skipping ${race.id}: verified Republican and Democratic candidates are required.`);
     continue;
   }
 
@@ -51,7 +47,31 @@ for (const race of races) {
       isPublicVerified(poll) &&
       ["published", "revised"].includes(poll.status),
   );
+  const configuredInputs = race.forecastInputs;
+  if (configuredInputs && !configuredInputs.enabled) continue;
+  const pollingOnlyInputs =
+    !configuredInputs && racePolls.length
+      ? {
+          enabled: true,
+          previousElectionMargin: null,
+          districtPartisanLean: null,
+          electionEnvironment: 0,
+          candidateAdjustments: {},
+          sourceUrls: [],
+        }
+      : null;
+  const inputs = configuredInputs?.enabled ? configuredInputs : pollingOnlyInputs;
+  if (!inputs) continue;
+
   const pollingAverages = calculateCandidatePollingAverages(racePolls, now);
+  if (
+    pollingOnlyInputs &&
+    (pollingAverages.get(republican.id) == null || pollingAverages.get(democratic.id) == null)
+  ) {
+    console.warn(`Skipping ${race.id}: polling-only forecast requires both major-party averages.`);
+    continue;
+  }
+
   const previous = existingForecasts
     .filter((forecast) => forecast.raceId === race.id && forecast.source?.sourceId === MODEL_SOURCE_ID)
     .sort((left, right) => String(right.updatedAt).localeCompare(String(left.updatedAt)))[0];
@@ -119,6 +139,10 @@ for (const race of races) {
     ...priorSnapshots.filter((item) => String(item.capturedAt).slice(0, 10) !== day),
     snapshot,
   ].sort((left, right) => String(left.capturedAt).localeCompare(String(right.capturedAt)));
+  const sourceIds = [
+    MODEL_SOURCE_ID,
+    ...racePolls.map((poll) => poll.source?.sourceId).filter(Boolean),
+  ];
 
   generatedByRace.set(race.id, {
     id: `forecast-${race.id}`,
@@ -157,9 +181,12 @@ for (const race of races) {
     projectedWinnerCandidateId: result.projectedWinnerCandidateId,
     publishedAt: previous?.publishedAt ?? timestamp,
     finalizedAt: null,
-    notes: result.fundamentalsBased
-      ? "Fundamentals-based forecast; no credible public polling average was available."
-      : "Hybrid forecast using weighted public polling and disclosed fundamentals.",
+    notes:
+      result.model === "polling"
+        ? "Polling-only forecast using the weighted public polling average; no fundamentals adjustments were applied."
+        : result.model === "fundamentals"
+          ? "Fundamentals-based forecast; no credible public polling average was available."
+          : "Hybrid forecast using weighted public polling and disclosed fundamentals.",
     createdAt: previous?.createdAt ?? timestamp,
     updatedAt: timestamp,
     verificationStatus: "verified",
@@ -185,7 +212,7 @@ for (const race of races) {
       attributionText: "Keep TX Red deterministic election model",
     },
     fundamentalsBased: result.fundamentalsBased,
-    sourceIds: result.sourceUrls,
+    sourceIds: [...new Set(sourceIds)],
     snapshots,
   });
 }
