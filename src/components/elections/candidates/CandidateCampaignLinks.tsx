@@ -24,6 +24,10 @@ export function CandidateCampaignLinks({ candidate }: CandidateCampaignLinksProp
     { label: "Instagram", href: safeExternalUrl(candidate.socialLinks.instagramUrl) },
     { label: "YouTube", href: safeExternalUrl(candidate.socialLinks.youtubeUrl) },
     { label: "LinkedIn", href: safeExternalUrl(candidate.socialLinks.linkedinUrl) },
+    {
+      label: "Campaign finance",
+      href: safeExternalUrl(candidate.campaignFinanceUrl ?? candidate.fundraising?.sourceUrl),
+    },
   ].filter((link): link is { label: string; href: string } => Boolean(link.href));
   const filingSourceUrl = safeExternalUrl(candidate.source.sourceUrl);
 

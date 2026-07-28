@@ -6,3 +6,5 @@ export * from "./CandidateListFilters";
 export * from "./CandidatePollingSection";
 export * from "./CandidateRaceSection";
 export * from "./CandidateResultsSection";
+export * from "./CandidateOfficeHistory";
+export * from "./CandidateSourcesSection";

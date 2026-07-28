@@ -24,20 +24,29 @@ export function CandidateBiographySection({ candidate, race }: CandidateBiograph
     .map((part) => part[0]?.toUpperCase())
     .join("");
   const officeName = race?.officeName ?? candidate.currentOfficeName;
+  const usableImage =
+    candidate.imageUrl && candidate.imageRights?.usageStatus === "approved"
+      ? candidate.imageUrl
+      : null;
 
   return (
     <article className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
       <div className="grid gap-7 md:grid-cols-[12rem_1fr]">
-        <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-4xl font-bold text-slate-500">
-          {candidate.imageUrl ? (
-            <img
-              src={candidate.imageUrl}
-              alt={candidate.imageAltText ?? `Portrait of ${candidate.fullName}`}
-              className="size-full object-cover"
-            />
-          ) : (
-            <span aria-label={`No published portrait for ${candidate.fullName}`}>{initials}</span>
-          )}
+        <div>
+          <div className="flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-slate-100 text-4xl font-bold text-slate-500">
+            {usableImage ? (
+              <img
+                src={usableImage}
+                alt={candidate.imageAltText ?? `Portrait of ${candidate.fullName}`}
+                className="size-full object-cover"
+              />
+            ) : (
+              <span aria-label={`No published portrait for ${candidate.fullName}`}>{initials}</span>
+            )}
+          </div>
+          {usableImage && candidate.imageRights?.credit ? (
+            <p className="mt-2 text-xs text-slate-500">Photo: {candidate.imageRights.credit}</p>
+          ) : null}
         </div>
 
         <div>

@@ -4,9 +4,11 @@ import {
   CandidateCampaignLinks,
   CandidateDetailSeo,
   CandidateInternalLinks,
+  CandidateOfficeHistory,
   CandidatePollingSection,
   CandidateRaceSection,
   CandidateResultsSection,
+  CandidateSourcesSection,
   ElectionErrorState,
   ElectionLayout,
   ElectionLoading,
@@ -123,6 +125,7 @@ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string 
       <CandidateDetailSeo candidate={candidate.data} race={race.data ?? null} />
       <CandidateBiographySection candidate={candidate.data} race={race.data ?? null} />
       <CandidateCampaignLinks candidate={candidate.data} />
+      <CandidateOfficeHistory candidate={candidate.data} />
       <CandidateRaceSection candidate={candidate.data} race={race.data ?? null} />
       <CandidatePollingSection
         candidate={candidate.data}
@@ -134,6 +137,7 @@ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string 
         result={result.data ?? null}
         isPreElection={result.isPreElection}
       />
+      <CandidateSourcesSection candidate={candidate.data} />
       <CandidateInternalLinks candidate={candidate.data} race={race.data ?? null} />
     </div>
   );
