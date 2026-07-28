@@ -33,8 +33,17 @@ export function ForecastDetailView({ forecast }: ForecastDetailViewProps) {
       </header>
 
       <aside className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm leading-6 text-amber-950">
-        Forecasts are model estimates, not vote totals or guarantees. Review the source,
-        assumptions, methodology, and update time before interpreting this outlook.
+        {forecast.model.model === "fundamentals" ? (
+          <>
+            <strong>Fundamentals-based forecast.</strong> Credible public polling is not available
+            for this race, so the model uses the clearly labeled fundamentals below.
+          </>
+        ) : (
+          <>
+            Forecasts are model estimates, not vote totals or guarantees. Review the source,
+            assumptions, methodology, and update time before interpreting this outlook.
+          </>
+        )}
       </aside>
 
       <section
@@ -90,11 +99,78 @@ export function ForecastDetailView({ forecast }: ForecastDetailViewProps) {
                     style={{ width: `${probability}%` }}
                   />
                 </div>
+                <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
+                  <Detail
+                    label="Estimated vote share"
+                    value={formatPercent(candidate.projectedVoteShare)}
+                  />
+                  <Detail label="Polling average" value={formatPercent(candidate.pollingAverage)} />
+                  <Detail
+                    label="Forecast change"
+                    value={formatChange(candidate.winProbabilityChange)}
+                  />
+                </dl>
               </div>
             );
           })}
         </div>
       </section>
+
+      {forecast.model.model === "fundamentals" && forecast.model.fundamentals ? (
+        <section
+          aria-labelledby="forecast-fundamentals"
+          className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+        >
+          <h2 id="forecast-fundamentals" className="text-xl font-bold text-slate-950">
+            Fundamentals inputs
+          </h2>
+          <p className="mt-2 text-sm text-slate-600">
+            These are model inputs expressed in points. They are not poll results.
+          </p>
+          <dl className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Detail
+              label="Previous election result"
+              value={formatPoints(forecast.model.fundamentals.previousElectionMargin)}
+            />
+            <Detail
+              label="District partisan lean"
+              value={formatPoints(forecast.model.fundamentals.districtPartisanLean)}
+            />
+            <Detail
+              label="Incumbency"
+              value={formatPoints(forecast.model.fundamentals.incumbencyAdjustment)}
+            />
+            <Detail
+              label="Fundraising"
+              value={formatPoints(forecast.model.fundamentals.fundraisingAdvantage)}
+            />
+            <Detail
+              label="Candidate quality indicators"
+              value={formatPoints(forecast.model.fundamentals.candidateQualityAdjustment)}
+            />
+            <Detail
+              label="Inputs updated"
+              value={formatDateTime(forecast.model.fundamentals.dataAsOf)}
+            />
+          </dl>
+          {forecast.model.fundamentals.sourceUrls.length > 0 ? (
+            <ul className="mt-5 space-y-2 text-sm">
+              {forecast.model.fundamentals.sourceUrls.map((url, index) => (
+                <li key={url}>
+                  <a
+                    href={url}
+                    className="font-semibold text-red-700 hover:underline"
+                    rel="noreferrer"
+                    target="_blank"
+                  >
+                    Fundamentals source {index + 1}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </section>
+      ) : null}
 
       <section
         aria-labelledby="forecast-methodology"
@@ -154,6 +230,20 @@ export function ForecastDetailView({ forecast }: ForecastDetailViewProps) {
       </footer>
     </div>
   );
+}
+
+function formatPercent(value: number | null) {
+  return value == null ? "Not available" : `${value.toFixed(1)}%`;
+}
+
+function formatChange(value: number | null) {
+  if (value == null) return "No prior published forecast";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)} percentage points`;
+}
+
+function formatPoints(value: number | null) {
+  if (value == null) return "Not used";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)} points`;
 }
 
 function Detail({ label, value }: { label: string; value: string }) {

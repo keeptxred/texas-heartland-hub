@@ -34,6 +34,11 @@ export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
           <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
             {FORECAST_CONFIDENCE_LEVEL_LABELS[forecast.confidenceLevel]} confidence
           </span>
+          {forecast.model === "fundamentals" ? (
+            <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-900">
+              Fundamentals-based forecast
+            </span>
+          ) : null}
         </div>
       </div>
 
@@ -49,6 +54,21 @@ export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
                   {probability.toFixed(1)}%
                 </span>
               </div>
+              <dl className="mt-2 grid grid-cols-2 gap-2 text-xs text-slate-600 sm:grid-cols-4">
+                <CandidateMetric
+                  label="Est. vote"
+                  value={formatPercent(candidate.projectedVoteShare)}
+                />
+                <CandidateMetric
+                  label="Poll avg."
+                  value={formatPercent(candidate.pollingAverage)}
+                />
+                <CandidateMetric
+                  label="Change"
+                  value={formatChange(candidate.winProbabilityChange)}
+                />
+                <CandidateMetric label="Win chance" value={`${probability.toFixed(1)}%`} />
+              </dl>
               <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
                 <div
                   aria-hidden="true"
@@ -66,6 +86,24 @@ export function ForecastSummaryCard({ forecast }: ForecastSummaryCardProps) {
       </p>
     </article>
   );
+}
+
+function CandidateMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt className="font-semibold uppercase tracking-wide text-slate-500">{label}</dt>
+      <dd className="mt-0.5 font-mono font-semibold text-slate-800">{value}</dd>
+    </div>
+  );
+}
+
+function formatPercent(value: number | null) {
+  return value == null ? "Not available" : `${value.toFixed(1)}%`;
+}
+
+function formatChange(value: number | null) {
+  if (value == null) return "No prior update";
+  return `${value > 0 ? "+" : ""}${value.toFixed(1)} pts`;
 }
 
 export default ForecastSummaryCard;
