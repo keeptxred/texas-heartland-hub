@@ -9,6 +9,7 @@ on:
       - main
     paths:
       - "scripts/elections/import-races.ts"
+      - "scripts/elections/scrape-official-candidates.ts"
       - "scripts/elections/import-candidates.ts"
       - "scripts/elections/fec-candidate-resolver.ts"
       - "scripts/elections/resolve-fec-ids.ts"
@@ -34,7 +35,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -52,11 +53,28 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile --reporter=silent
 
+      - name: Install candidate-listing browser
+        run: pnpm exec playwright install --with-deps chromium
+
       - name: Refresh official race directory
         run: pnpm elections:import:races
 
+      - name: Extract official candidate listing
+        id: candidate_scrape
+        continue-on-error: true
+        env:
+          ELECTION_CANDIDATE_SCRAPE_OUTPUT: /tmp/texas-candidates.html
+        run: pnpm elections:scrape:candidates
+
       - name: Refresh authoritative candidate records
-        run: pnpm elections:import:candidates
+        shell: bash
+        run: |
+          if [[ -s /tmp/texas-candidates.html ]]; then
+            ELECTION_CANDIDATE_IMPORT=/tmp/texas-candidates.html pnpm elections:import:candidates
+          else
+            echo "Official browser extraction was unavailable; preserving the verified fallback sources."
+            pnpm elections:import:candidates
+          fi
 
       - name: Resolve federal candidate FEC identifiers
         run: pnpm elections:resolve:fec
