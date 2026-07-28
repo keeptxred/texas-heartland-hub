@@ -26,6 +26,7 @@ import type {
   CandidateSocialLinks,
   ElectionCandidate,
 } from "./candidate";
+import type { CandidateIssuePositionSummary } from "./issuePositionProjections";
 import type { ElectionType, OfficeLevel, RaceStatus, RaceType } from "./raceClassifications";
 
 export interface CandidateRaceSummary {
@@ -84,6 +85,28 @@ export interface CandidateSourceReference {
   retrievedAt: IsoDateTimeString;
 }
 
+export interface CandidateRecentStatementSummary {
+  title: string;
+  summary: string;
+  sourceUrl: string;
+  publishedAt: IsoDateTimeString | null;
+}
+
+export interface CandidateVotingRecordSummary {
+  title: string;
+  summary: string;
+  sourceUrl: string;
+  updatedAt: IsoDateTimeString | null;
+}
+
+export interface CandidatePollingComparisonSummary {
+  averagePercentage: number;
+  pollCount: number;
+  fieldDateFrom: IsoDateString;
+  fieldDateTo: IsoDateString;
+  sourceUrls: readonly string[];
+}
+
 export type CandidateProfileDepth = "standard" | "expanded";
 
 export interface CandidateSummary {
@@ -127,6 +150,14 @@ export interface CandidateDetail extends ElectionCandidate {
   socialLinks: CandidateSocialLinks;
   externalIds: CandidateExternalIdentifiers;
   relatedCandidateIds: readonly CandidateId[];
+  /** Sourced issue positions only. Missing records must never be inferred. */
+  issuePositions?: readonly CandidateIssuePositionSummary[];
+  /** Sourced public statements summarized for comparison. */
+  recentStatements?: readonly CandidateRecentStatementSummary[];
+  /** Sourced voting-record summaries where the candidate has held office. */
+  votingRecord?: readonly CandidateVotingRecordSummary[];
+  /** Weighted polling output generated from published poll records. */
+  polling?: CandidatePollingComparisonSummary | null;
 }
 
 export type CandidateListItem = CandidateSummary;
