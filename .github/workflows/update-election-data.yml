@@ -16,6 +16,7 @@ on:
       - "scripts/elections/validate-enums.mjs"
       - "scripts/elections/validate.mjs"
       - "scripts/elections/qa.mjs"
+      - "scripts/elections/routes-qa.mjs"
       - "scripts/elections/sitemap-qa.mjs"
       - "scripts/elections/launch-readiness.mjs"
       - "scripts/elections/import/**"
@@ -73,6 +74,7 @@ jobs:
       - name: Run election launch QA and write readiness report
         env:
           ELECTION_WRITE_READINESS: "true"
+          ELECTION_QA_CHECK_LINKS: "true"
         run: pnpm elections:qa
 
       - name: Commit refreshed data
