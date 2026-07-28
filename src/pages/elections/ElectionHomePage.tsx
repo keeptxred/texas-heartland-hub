@@ -13,6 +13,7 @@ import {
 } from "@/components/elections";
 import {
   useActiveElectionCycle,
+  useActiveElectionResults,
   useFeaturedElectionRaces,
   useFeaturedForecasts,
   useLatestElectionPolls,
@@ -85,6 +86,7 @@ const VERIFIED_RESOURCES = [
 
 export function ElectionHomePage() {
   const activeCycle = useActiveElectionCycle();
+  const activeResults = useActiveElectionResults(activeCycle.data?.id, 4);
   const featuredRaces = useFeaturedElectionRaces(activeCycle.data?.id, 6);
   const latestPolls = useLatestElectionPolls(activeCycle.data?.id, 3);
   const featuredForecasts = useFeaturedForecasts(activeCycle.data?.id, 3);
@@ -446,6 +448,108 @@ export function ElectionHomePage() {
                         How this forecast works â†’
                       </a>
                     </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section aria-labelledby="results-preview">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Results</p>
+              <h2
+                id="results-preview"
+                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+              >
+                Election results preview
+              </h2>
+            </div>
+            <a
+              href={ELECTION_ROUTES.results}
+              className="text-sm font-semibold text-red-700 hover:underline"
+            >
+              View election results â†’
+            </a>
+          </div>
+
+          <div className="mt-6">
+            {activeCycle.isPending || (activeCycle.data && activeResults.isPending) ? (
+              <ElectionLoading variant="cards" count={4} label="Loading active election results" />
+            ) : activeCycle.isError || activeResults.isError ? (
+              <ElectionErrorState
+                compact
+                title="Election results are temporarily unavailable"
+                message="Election Central will not substitute estimated or unverified totals while the official result source is unavailable."
+                retryAction={{
+                  label: "Try again",
+                  onClick: () => {
+                    void activeCycle.refetch();
+                    void activeResults.refetch();
+                  },
+                }}
+                secondaryActions={[]}
+              />
+            ) : !activeCycle.data || activeResults.isEmpty ? (
+              <ElectionEmptyState
+                kind="results"
+                message="No races are actively reporting. Results will appear after official reporting begins; no placeholder vote totals are displayed."
+              />
+            ) : (
+              <div className="grid gap-5 md:grid-cols-2">
+                {activeResults.data?.map((result) => (
+                  <article
+                    key={result.id}
+                    className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">
+                          Unofficial results
+                        </p>
+                        <h3 className="mt-2 text-xl font-bold tracking-tight text-slate-950">
+                          {result.race.name}
+                        </h3>
+                      </div>
+                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                        {result.reporting.reportingPercentage == null
+                          ? "Reporting percentage unavailable"
+                          : `${result.reporting.reportingPercentage.toFixed(1)}% reporting`}
+                      </span>
+                    </div>
+
+                    <div className="mt-5 space-y-3">
+                      {result.candidates
+                        .slice()
+                        .sort(
+                          (left, right) =>
+                            right.votes - left.votes ||
+                            left.candidateName.localeCompare(right.candidateName),
+                        )
+                        .slice(0, 4)
+                        .map((candidate) => (
+                          <div
+                            key={candidate.candidateId}
+                            className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3 text-sm last:border-0 last:pb-0"
+                          >
+                            <span className="font-semibold text-slate-800">
+                              {candidate.candidateName}
+                            </span>
+                            <span className="text-right font-mono font-bold text-slate-950">
+                              {candidate.votes.toLocaleString("en-US")}
+                              {candidate.voteShare == null
+                                ? ""
+                                : ` (${candidate.voteShare.toFixed(1)}%)`}
+                            </span>
+                          </div>
+                        ))}
+                    </div>
+
+                    <p className="mt-5 border-t border-slate-200 pt-4 text-xs leading-5 text-slate-600">
+                      Last updated {result.lastVoteUpdateAt ?? result.updatedAt}. Totals remain
+                      unofficial until certified.
+                    </p>
                   </article>
                 ))}
               </div>
