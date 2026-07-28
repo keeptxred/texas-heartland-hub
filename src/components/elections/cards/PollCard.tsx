@@ -22,6 +22,7 @@ export interface PollCardProps {
   sponsor?: string | null;
   results: readonly PollCardResult[];
   sourceUrl?: string;
+  disclosureLabels?: readonly string[];
   relatedLinks?: readonly ElectionResourceLink[];
   className?: string;
 }
@@ -40,6 +41,7 @@ export function PollCard({
   sponsor,
   results,
   sourceUrl,
+  disclosureLabels = [],
   relatedLinks = [],
   className = "",
 }: PollCardProps) {
@@ -78,6 +80,14 @@ export function PollCard({
               Leader +{spread.toFixed(1)}
             </span>
           )}
+          {disclosureLabels.map((label) => (
+            <span
+              key={label}
+              className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-900"
+            >
+              {label}
+            </span>
+          ))}
         </div>
       </div>
 

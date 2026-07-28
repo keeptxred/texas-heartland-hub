@@ -193,7 +193,22 @@ function ElectionPollsContent() {
         </div>
 
         {polls.isEmpty ? (
-          <ElectionEmptyState kind="filters" />
+          raceId &&
+          !candidateId &&
+          !pollsterName.trim() &&
+          !population &&
+          !sponsorType &&
+          !fieldDateFrom &&
+          !fieldDateTo &&
+          internalPoll == null ? (
+            <ElectionEmptyState
+              kind="polls"
+              title="No credible public polling is currently available for this race."
+              message="Election Central does not create or estimate poll numbers when a qualifying public poll has not been published."
+            />
+          ) : (
+            <ElectionEmptyState kind="filters" />
+          )
         ) : (
           <div className="space-y-6">
             {raceId && polls.data ? <PollingTrendChart polls={polls.data.items} /> : null}
@@ -227,6 +242,10 @@ function ElectionPollsContent() {
                     POLL_POPULATION_LABELS[question?.population ?? poll.methodology.population]
                   }
                   methodologyLabel={POLL_MODE_LABELS[poll.methodology.mode]}
+                  disclosureLabels={[
+                    ...(poll.internalPoll ? ["Internal poll"] : ["Independent poll"]),
+                    ...(poll.partisanPoll ? ["Partisan sponsor"] : []),
+                  ]}
                   marginOfError={poll.methodology.marginOfError}
                   grade={POLL_GRADE_LABELS[poll.pollsterGrade]}
                   sponsor={
@@ -235,7 +254,7 @@ function ElectionPollsContent() {
                       : undefined
                   }
                   results={results}
-                  sourceUrl={poll.methodology.methodologyUrl ?? undefined}
+                  sourceUrl={poll.toplineUrl ?? poll.sourceUrl}
                 />
               );
             })}

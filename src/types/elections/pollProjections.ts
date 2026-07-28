@@ -23,11 +23,7 @@ import type {
   PollSponsor,
   PollsterProfile,
 } from "./poll";
-import type {
-  PollPopulation,
-  PollQuestionType,
-  PollStatus,
-} from "./pollClassifications";
+import type { PollPopulation, PollQuestionType, PollStatus } from "./pollClassifications";
 
 /** Candidate or response option enriched for public poll displays. */
 export interface PollResponseSummary extends PollResponseOption {
@@ -78,6 +74,10 @@ export interface ElectionPollSummary {
   fieldStartDate: IsoDateString;
   fieldEndDate: IsoDateString;
   releaseDate: IsoDateString | null;
+  /** Original publisher or pollster page used to verify this poll. */
+  sourceUrl: string;
+  /** Direct topline report when the publisher provides one. */
+  toplineUrl: string | null;
   methodology: PollMethodology;
   primaryQuestion: PollQuestionSummary | null;
   internalPoll: boolean;
