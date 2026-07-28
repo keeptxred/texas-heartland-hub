@@ -10,6 +10,7 @@ on:
     paths:
       - "scripts/elections/import-races.ts"
       - "scripts/elections/scrape-official-candidates.ts"
+      - "scripts/elections/scrape-official-primary-winners.ts"
       - "scripts/elections/import-candidates.ts"
       - "scripts/elections/fec-candidate-resolver.ts"
       - "scripts/elections/resolve-fec-ids.ts"
@@ -38,7 +39,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -56,11 +57,30 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile --reporter=silent
 
-      - name: Install candidate-listing browser
+      - name: Install election-source browser
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Refresh official race directory
         run: pnpm elections:import:races
+
+      - name: Extract official March primary winners
+        id: primary_winner_scrape
+        continue-on-error: true
+        env:
+          ELECTION_PRIMARY_WINNERS_OUTPUT: /tmp/texas-primary-winners.json
+        run: pnpm elections:scrape:primary-winners
+
+      - name: Upload primary-result extraction diagnostics
+        if: steps.primary_winner_scrape.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-primary-result-extraction-diagnostics
+          path: |
+            /tmp/official-primary-results-debug.json
+            /tmp/official-primary-results-debug.html
+            /tmp/official-primary-results-debug.png
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Extract official candidate listing
         id: candidate_scrape
@@ -83,10 +103,17 @@ jobs:
       - name: Refresh authoritative candidate records
         shell: bash
         run: |
+          imported=false
+          if [[ -s /tmp/texas-primary-winners.json ]]; then
+            ELECTION_CANDIDATE_IMPORT=/tmp/texas-primary-winners.json pnpm elections:import:candidates
+            imported=true
+          fi
           if [[ -s /tmp/texas-candidates.html ]]; then
             ELECTION_CANDIDATE_IMPORT=/tmp/texas-candidates.html pnpm elections:import:candidates
-          else
-            echo "Official browser extraction was unavailable; preserving the verified fallback sources."
+            imported=true
+          fi
+          if [[ "$imported" == "false" ]]; then
+            echo "Official browser extraction was unavailable; preserving verified runoff, independent, and repository-maintained sources."
             pnpm elections:import:candidates
           fi
 
