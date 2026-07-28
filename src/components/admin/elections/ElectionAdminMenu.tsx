@@ -34,7 +34,7 @@ export const DEFAULT_ELECTION_ADMIN_MENU_ITEMS: readonly ElectionAdminMenuItem[]
     label: "Polls",
     href: "/admin/elections/polls",
     description: "Review poll sources, methodology, field dates, samples, and results.",
-    status: "planned",
+    status: "ready",
   },
   {
     label: "Forecast",
