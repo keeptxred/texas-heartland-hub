@@ -5,13 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
+    "prebuild": "npm run elections:validate",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "elections:validate": "node scripts/elections/validate.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
