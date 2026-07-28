@@ -1,0 +1,49 @@
+name: Apply Election Central typecheck fixes
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/elections/apply-typecheck-fixes.mjs"
+      - ".github/workflows/apply-election-typecheck-fixes.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-election-typecheck-fixes
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Apply strict source patches
+        run: node scripts/elections/apply-typecheck-fixes.mjs
+
+      - name: Commit patched source files
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/elections/navigation/ElectionNavigation.tsx src/lib/elections/repositories/static.ts
+          if git diff --cached --quiet; then
+            echo "Typecheck fixes are already applied."
+            exit 0
+          fi
+          git commit -m "Fix Election Central TypeScript contracts"
+          git pull --rebase origin main
+          git push origin HEAD:main
