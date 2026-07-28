@@ -27,9 +27,15 @@ export function usePollsByCandidate(candidateId?: CandidateId) {
     queryFn: query ? () => polls.list(query) : skipToken,
     staleTime: electionQueryStaleTimes.polls,
   });
+  const stalePollCount =
+    result.data?.items.filter(
+      (poll) => poll.freshnessStatus === "stale" || poll.freshnessStatus === "expired",
+    ).length ?? 0;
 
   return {
     ...result,
+    stalePollCount,
+    hasStaleData: stalePollCount > 0,
     isEmpty: Boolean(candidateId) && result.isSuccess && result.data.items.length === 0,
   };
 }
