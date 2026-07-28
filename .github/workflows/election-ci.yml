@@ -128,9 +128,11 @@ jobs:
             "src/data/elections/2026/ci-status.json",
             `${JSON.stringify(status, null, 2)}\n`,
           );
-          if (!passed) process.exitCode = 1;
           NODE
-          result=$?
+          result=0
+          if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" ]]; then
+            result=1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/data/elections/2026/ci-status.json
