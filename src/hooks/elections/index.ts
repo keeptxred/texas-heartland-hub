@@ -1,3 +1,4 @@
+export * from "./useActiveElectionCycle";
 export * from "./useActiveElectionResults";
 export * from "./useCandidatesByRace";
 export * from "./useElectionCandidate";

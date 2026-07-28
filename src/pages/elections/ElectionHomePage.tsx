@@ -2,11 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { AgedFeedSection } from "@/components/aged-feed-section";
 import {
   ElectionCountdown,
+  ElectionEmptyState,
+  ElectionErrorState,
   ElectionLayout,
+  ElectionLoading,
   ElectionNavigation,
+  FeaturedRaceCard,
   RelatedResources,
 } from "@/components/elections";
-import { ELECTION_RACES } from "@/data/articles";
+import { useActiveElectionCycle, useFeaturedElectionRaces } from "@/hooks/elections";
 import { getArticlesByCategory } from "@/lib/articles-by-category";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import {
@@ -35,7 +39,8 @@ const QUICK_LINKS = [
   },
   {
     title: "Prepare to vote",
-    description: "Find registration, early-voting, ballot, identification, and election-day guidance.",
+    description:
+      "Find registration, early-voting, ballot, identification, and election-day guidance.",
     href: ELECTION_ROUTES.voting,
   },
 ] as const;
@@ -44,7 +49,8 @@ const VERIFIED_RESOURCES = [
   {
     title: "How to register to vote in Texas",
     href: "/register-to-vote",
-    description: "Review eligibility, registration steps, deadlines, and official Texas voter resources.",
+    description:
+      "Review eligibility, registration steps, deadlines, and official Texas voter resources.",
     eyebrow: "Voting guide",
   },
   {
@@ -68,6 +74,8 @@ const VERIFIED_RESOURCES = [
 ] as const;
 
 export function ElectionHomePage() {
+  const activeCycle = useActiveElectionCycle();
+  const featuredRaces = useFeaturedElectionRaces(activeCycle.data?.id, 6);
   const electionNews = getArticlesByCategory("elections").slice(0, 6);
   const uniqueImages = assignUniqueImages(
     electionNews,
@@ -103,8 +111,8 @@ export function ElectionHomePage() {
               </h2>
               <p className="mt-4 max-w-2xl leading-7 text-slate-300">
                 Election Central brings together race ratings, candidate profiles, polling,
-                forecasts, live results, and practical voting guidance as each part of the
-                platform comes online.
+                forecasts, live results, and practical voting guidance as each part of the platform
+                comes online.
               </p>
               <div className="mt-6 flex flex-wrap gap-3">
                 <a
@@ -144,8 +152,13 @@ export function ElectionHomePage() {
         <section aria-labelledby="election-central-start">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Start here</p>
-              <h2 id="election-central-start" className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+                Start here
+              </p>
+              <h2
+                id="election-central-start"
+                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+              >
                 Explore Election Central
               </h2>
             </div>
@@ -157,9 +170,13 @@ export function ElectionHomePage() {
                 href={item.href}
                 className="group rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-red-200 hover:shadow-md"
               >
-                <h3 className="font-semibold text-slate-950 group-hover:text-red-700">{item.title}</h3>
+                <h3 className="font-semibold text-slate-950 group-hover:text-red-700">
+                  {item.title}
+                </h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
-                <span className="mt-4 block text-sm font-semibold text-red-700">Open section →</span>
+                <span className="mt-4 block text-sm font-semibold text-red-700">
+                  Open section →
+                </span>
               </a>
             ))}
           </div>
@@ -168,50 +185,74 @@ export function ElectionHomePage() {
         <section aria-labelledby="featured-races">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Race watch</p>
-              <h2 id="featured-races" className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+                Race watch
+              </p>
+              <h2
+                id="featured-races"
+                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+              >
                 Featured Texas races
               </h2>
             </div>
-            <a href={ELECTION_ROUTES.races} className="text-sm font-semibold text-red-700 hover:underline">
+            <a
+              href={ELECTION_ROUTES.races}
+              className="text-sm font-semibold text-red-700 hover:underline"
+            >
               View all races →
             </a>
           </div>
-          <div className="mt-6 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[640px] text-left text-sm">
-                <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
-                  <tr>
-                    <th className="px-5 py-3 font-semibold">Office</th>
-                    <th className="px-5 py-3 font-semibold">Incumbent</th>
-                    <th className="px-5 py-3 font-semibold">Margin</th>
-                    <th className="px-5 py-3 font-semibold">Rating</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {ELECTION_RACES.slice(0, 6).map((race) => (
-                    <tr key={race.office}>
-                      <td className="px-5 py-4 font-semibold text-slate-950">{race.office}</td>
-                      <td className="px-5 py-4 text-slate-600">{race.incumbent}</td>
-                      <td className="px-5 py-4 font-mono font-semibold text-red-700">{race.margin}</td>
-                      <td className="px-5 py-4">
-                        <span className="inline-flex rounded-full border border-slate-300 px-2.5 py-1 text-xs font-semibold text-slate-700">
-                          {race.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="mt-6">
+            {activeCycle.isPending || (activeCycle.data && featuredRaces.isPending) ? (
+              <ElectionLoading variant="cards" count={3} label="Loading featured election races" />
+            ) : activeCycle.isError || featuredRaces.isError ? (
+              <ElectionErrorState
+                compact
+                title="Featured races could not be loaded"
+                retryAction={{
+                  label: "Try again",
+                  onClick: () => {
+                    void activeCycle.refetch();
+                    void featuredRaces.refetch();
+                  },
+                }}
+                secondaryActions={[]}
+              />
+            ) : !activeCycle.data || featuredRaces.isEmpty ? (
+              <ElectionEmptyState kind="races" />
+            ) : (
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {featuredRaces.data?.map((race) => (
+                  <FeaturedRaceCard
+                    key={race.id}
+                    office={race.officeName}
+                    district={race.districtName ?? undefined}
+                    electionDate={race.electionDate}
+                    electionType={race.electionType}
+                    rating={race.rating}
+                    candidates={race.candidates.map((candidate) => ({
+                      name: candidate.fullName,
+                      party: candidate.partyLabel ?? candidate.party,
+                      incumbent: candidate.incumbent,
+                    }))}
+                    raceHref={ELECTION_ROUTES.races}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
         <section aria-labelledby="election-news">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">Latest coverage</p>
-              <h2 id="election-news" className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-700">
+                Latest coverage
+              </p>
+              <h2
+                id="election-news"
+                className="mt-2 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl"
+              >
                 Texas election news
               </h2>
             </div>
@@ -238,7 +279,9 @@ export function ElectionHomePage() {
                     />
                   </div>
                   <div className="p-5">
-                    <p className="text-xs font-bold uppercase tracking-wider text-red-700">{article.category}</p>
+                    <p className="text-xs font-bold uppercase tracking-wider text-red-700">
+                      {article.category}
+                    </p>
                     <h3 className="mt-2 font-semibold leading-snug text-slate-950 group-hover:text-red-700">
                       {article.title}
                     </h3>
