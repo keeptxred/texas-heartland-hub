@@ -1,9 +1,10 @@
 {
-  "updatedAt": "2026-07-28T17:19:32.301Z",
-  "conclusion": "failure",
-  "runId": "30382213906",
+  "updatedAt": "2026-07-28T17:24:52.115Z",
+  "conclusion": "cancelled",
+  "runId": "30382334102",
   "runAttempt": "1",
-  "triggerCommit": "9816d36214afbc2cc5079981750e15fd932c8b15",
-  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30382213906",
-  "validationSummary": "> tanstack_start_ts@ elections:validate /home/runner/work/texas-heartland-hub/texas-heartland-hub\n> node scripts/elections/validate-enums.mjs && node scripts/elections/validate.mjs && node scripts/elections/validate-sources.mjs\n\nElection enum validation passed.\nElection data validation passed (1 cycle, 227 races, 37 candidates, 2 polls, 0 forecasts, 0 results, 7 sources).\nElection source validation passed: 7 canonical source(s)."
+  "triggerCommit": "473f2050d900841bdd3ff13e2c64ec5543a29149",
+  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30382334102",
+  "validationSummary": null,
+  "qaSummary": null
 }
