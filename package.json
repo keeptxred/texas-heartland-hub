@@ -20,7 +20,7 @@
     "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts && npm run elections:normalize",
     "elections:resolve:fec": "node --experimental-strip-types scripts/elections/resolve-fec-ids.ts",
     "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
-    "elections:import:polls": "node --experimental-strip-types scripts/elections/import-ut-june-poll.ts",
+    "elections:import:polls": "node --experimental-strip-types scripts/elections/import-tpor-may-poll.ts && node --experimental-strip-types scripts/elections/import-ut-june-poll.ts",
     "elections:generate:geography": "node --experimental-strip-types scripts/elections/generate-official-geography.ts",
     "elections:import:geography": "npm run elections:generate:geography && node --experimental-strip-types scripts/elections/import-geography.ts",
     "elections:forecast": "node --experimental-strip-types scripts/elections/forecast.ts",
