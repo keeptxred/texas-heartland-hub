@@ -20,6 +20,9 @@ on:
       - "scripts/elections/generate-official-geography.ts"
       - "scripts/elections/import-geography.ts"
       - "scripts/elections/normalize-imports.mjs"
+      - "scripts/elections/rebuild-sources.mjs"
+      - "scripts/elections/validate-sources.mjs"
+      - "scripts/elections/polling-averages.ts"
       - "scripts/elections/validate-enums.mjs"
       - "scripts/elections/validate.mjs"
       - "scripts/elections/qa.mjs"
@@ -39,7 +42,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 50
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -132,11 +135,30 @@ jobs:
       - name: Normalize imported records
         run: pnpm elections:normalize
 
+      - name: Rebuild canonical source catalog
+        run: pnpm elections:sources
+
+      - name: Generate weighted polling averages
+        run: pnpm elections:polling-averages
+
       - name: Recalculate eligible forecasts
         run: pnpm elections:forecast
 
       - name: Validate election data
-        run: pnpm elections:validate
+        id: validation
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm elections:validate 2>&1 | tee /tmp/election-validation.log
+
+      - name: Upload election validation diagnostics
+        if: always() && steps.validation.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: election-validation-diagnostics
+          path: /tmp/election-validation.log
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Run election launch QA and write readiness report
         env:
@@ -157,16 +179,31 @@ jobs:
           if [[ "$JOB_STATUS" != "success" ]]; then
             git restore src/data/elections/2026 || true
           fi
-          cat > src/data/elections/2026/workflow-status.json <<EOF
-          {
-            "updatedAt": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "conclusion": "$JOB_STATUS",
-            "runId": "$RUN_ID",
-            "runAttempt": "$RUN_ATTEMPT",
-            "triggerCommit": "$RUN_SHA",
-            "runUrl": "$RUN_URL"
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+
+          const validationPath = "/tmp/election-validation.log";
+          let validationSummary = null;
+          if (fs.existsSync(validationPath)) {
+            const lines = fs.readFileSync(validationPath, "utf8").trim().split(/\r?\n/);
+            validationSummary = lines.slice(-80).join("\n").slice(-12000) || null;
           }
-          EOF
+
+          const status = {
+            updatedAt: new Date().toISOString(),
+            conclusion: process.env.JOB_STATUS,
+            runId: process.env.RUN_ID,
+            runAttempt: process.env.RUN_ATTEMPT,
+            triggerCommit: process.env.RUN_SHA,
+            runUrl: process.env.RUN_URL,
+            validationSummary,
+          };
+
+          fs.writeFileSync(
+            "src/data/elections/2026/workflow-status.json",
+            `${JSON.stringify(status, null, 2)}\n`,
+          );
+          NODE
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           if [[ "$JOB_STATUS" == "success" ]]; then
