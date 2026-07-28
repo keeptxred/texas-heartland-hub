@@ -20,8 +20,15 @@ const candidates = [
   },
 ] as const;
 
+const pollingOnlyCandidates = candidates.map((candidate) => ({
+  ...candidate,
+  incumbencyAdjustment: 0,
+  fundraisingAdjustment: 0,
+  candidateQualityAdjustment: 0,
+}));
+
 describe("forecast engine", () => {
-  it("produces deterministic hybrid outputs when polling exists", () => {
+  it("produces deterministic hybrid outputs when polling and fundamentals exist", () => {
     const first = runForecastModel({
       raceId: "race-1",
       asOf: "2026-07-28T12:00:00Z",
@@ -46,6 +53,23 @@ describe("forecast engine", () => {
     expect(first.fundamentalsBased).toBe(false);
     expect(first.projectedWinnerCandidateId).toBe("candidate-r");
     expect(first.candidateProbabilities[0].winProbability).toBeGreaterThan(0.5);
+  });
+
+  it("uses sourced polling directly when no fundamentals are supplied", () => {
+    const result = runForecastModel({
+      raceId: "race-polling",
+      asOf: "2026-07-28T12:00:00Z",
+      candidates: pollingOnlyCandidates,
+      previousElectionMargin: null,
+      districtPartisanLean: null,
+      electionEnvironment: 0,
+      sourceUrls: ["https://example.com/poll-one", "https://example.com/poll-two"],
+    });
+
+    expect(result.model).toBe("polling");
+    expect(result.expectedMargin).toBe(5);
+    expect(result.confidenceLevel).toBe("medium");
+    expect(result.fundamentalsBased).toBe(false);
   });
 
   it("uses disclosed fundamentals without manufacturing polling averages", () => {
