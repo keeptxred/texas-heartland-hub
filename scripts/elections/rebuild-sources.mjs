@@ -27,7 +27,28 @@ const records = Object.fromEntries(
     ]),
   ),
 );
-const sources = new Map(existing.map((source) => [source.id, source]));
+const sources = new Map();
+const sourceIdByUrl = new Map();
+
+for (const existingSource of existing) {
+  const sourceUrl = existingSource.sourceUrl ?? existingSource.url;
+  if (!existingSource.id || !String(sourceUrl ?? "").startsWith("https://")) continue;
+  if (sourceIdByUrl.has(sourceUrl)) continue;
+  const sourceType = ALLOWED_TYPES.has(existingSource.sourceType)
+    ? existingSource.sourceType
+    : ALLOWED_TYPES.has(existingSource.type)
+      ? existingSource.type
+      : inferType(sourceUrl);
+  const normalized = {
+    ...existingSource,
+    sourceType,
+    sourceUrl,
+    type: sourceType,
+    url: sourceUrl,
+  };
+  sources.set(normalized.id, normalized);
+  sourceIdByUrl.set(sourceUrl, normalized.id);
+}
 
 for (const [collection, values] of Object.entries(records)) {
   for (const record of values) {
@@ -111,29 +132,33 @@ await writeFile(path.join(DATA_DIR, "sources.json"), `${JSON.stringify(output, n
 console.log(`Rebuilt canonical election source catalog with ${output.length} source(s).`);
 
 function addSource(input) {
-  if (!String(input.sourceUrl ?? "").startsWith("https://")) return;
-  const id = input.id || sourceId(input.name, input.sourceUrl);
+  const sourceUrl = String(input.sourceUrl ?? "");
+  if (!sourceUrl.startsWith("https://")) return;
+  const requestedId = input.id || sourceId(input.name, sourceUrl);
+  const id = sourceIdByUrl.get(sourceUrl) ?? requestedId;
   const previous = sources.get(id);
-  const sourceType = ALLOWED_TYPES.has(input.sourceType) ? input.sourceType : inferType(input.sourceUrl);
+  const sourceType = ALLOWED_TYPES.has(input.sourceType) ? input.sourceType : inferType(sourceUrl);
   const source = {
     ...(previous ?? {}),
     id,
-    name: input.name || previous?.name || hostname(input.sourceUrl),
+    name: input.name || previous?.name || hostname(sourceUrl),
     sourceType,
-    sourceUrl: input.sourceUrl,
+    sourceUrl,
     type: sourceType,
-    url: input.sourceUrl,
+    url: sourceUrl,
     retrievedAt: input.retrievedAt || previous?.retrievedAt || new Date().toISOString(),
     lastVerifiedAt:
       input.lastVerifiedAt || previous?.lastVerifiedAt || input.retrievedAt || new Date().toISOString(),
     notes: input.notes || previous?.notes || null,
   };
   const conflicting = sources.get(id);
-  if (conflicting && conflicting.sourceUrl !== source.sourceUrl) {
-    const disambiguated = `${id}-${shortHash(source.sourceUrl)}`;
+  if (conflicting && conflicting.sourceUrl !== sourceUrl) {
+    const disambiguated = `${requestedId}-${shortHash(sourceUrl)}`;
     sources.set(disambiguated, { ...source, id: disambiguated });
+    sourceIdByUrl.set(sourceUrl, disambiguated);
   } else {
     sources.set(id, source);
+    sourceIdByUrl.set(sourceUrl, id);
   }
 }
 
