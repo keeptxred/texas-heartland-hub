@@ -6,34 +6,56 @@ import { AdSlot } from "@/components/ad-slot";
 import { BrandIdentity } from "@/components/brand-identity";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { assignUniqueImages } from "@/lib/dedupe-images";
+import { ELECTION_FEATURE_FLAGS } from "@/lib/elections";
+import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
+import { ElectionHomePage } from "@/pages/elections";
 
 function getLeadImage(): string | null {
   const lead = ARTICLES.filter((article) => isPublished(article)).sort(sortByDateDesc)[0];
   return lead?.image ?? null;
 }
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Keep Texas Red | Texas Living, Relocation Tools & News" },
-      {
-        name: "description",
-        content:
-          "Keep TX Red helps people move to Texas, live well in Texas, use practical calculators, follow statewide news, and discover products made for proud Texans.",
-      },
-      { property: "og:title", content: "Keep Texas Red | Your Texas Living Platform" },
-      {
-        property: "og:description",
-        content:
-          "Texas relocation guides, resident resources, calculators, daily news, and the Keep TX Red shop in one place.",
-      },
-      { property: "og:url", content: "/" },
-      { property: "og:image", content: heroFlag },
-      { name: "twitter:image", content: heroFlag },
-    ],
+function homepageHead() {
+  const electionTakeover = ELECTION_FEATURE_FLAGS.homepagePromotion;
+  return {
+    meta: electionTakeover
+      ? [
+          { title: "Texas Election Central 2026 | Races, Candidates, Polls & Voting" },
+          {
+            name: "description",
+            content:
+              "Follow verified Texas 2026 election races, candidates, polling, forecasts, results, and voting information from Keep TX Red Election Central.",
+          },
+          { property: "og:title", content: "Texas Election Central 2026 | Keep TX Red" },
+          {
+            property: "og:description",
+            content:
+              "Texas race directories, sourced candidate profiles, weighted polling, forecasts, results, and voter guidance in one election hub.",
+          },
+          { property: "og:url", content: "/" },
+          { property: "og:image", content: heroFlag },
+          { name: "twitter:image", content: heroFlag },
+        ]
+      : [
+          { title: "Keep Texas Red | Texas Living, Relocation Tools & News" },
+          {
+            name: "description",
+            content:
+              "Keep TX Red helps people move to Texas, live well in Texas, use practical calculators, follow statewide news, and discover products made for proud Texans.",
+          },
+          { property: "og:title", content: "Keep Texas Red | Your Texas Living Platform" },
+          {
+            property: "og:description",
+            content:
+              "Texas relocation guides, resident resources, calculators, daily news, and the Keep TX Red shop in one place.",
+          },
+          { property: "og:url", content: "/" },
+          { property: "og:image", content: heroFlag },
+          { name: "twitter:image", content: heroFlag },
+        ],
     links: [
       { rel: "canonical", href: "https://keeptxred.com/" },
-      ...(getLeadImage()
+      ...(!electionTakeover && getLeadImage()
         ? [{ rel: "preload", as: "image", href: getLeadImage() as string, fetchpriority: "high" }]
         : []),
     ],
@@ -66,7 +88,11 @@ export const Route = createFileRoute("/")({
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/")({
+  head: homepageHead,
   loader: () => getDailyArticles(),
   component: Index,
 });
@@ -82,7 +108,7 @@ const LIVING_LINKS = [
   ["Estimate property taxes", "/tax-calculator"],
   ["Plan household utility costs", "/texas-utility-cost-calculator"],
   ["Understand Texas laws", "/laws"],
-  ["Find voting resources", "/elections"],
+  ["Find voting resources", "/elections/2026"],
 ] as const;
 
 const POPULAR_TOOLS = [
@@ -105,6 +131,16 @@ const POPULAR_TOOLS = [
 ] as const;
 
 function Index() {
+  return ELECTION_FEATURE_FLAGS.homepagePromotion ? (
+    <ElectionRepositoryProvider>
+      <ElectionHomePage />
+    </ElectionRepositoryProvider>
+  ) : (
+    <StandardHomepage />
+  );
+}
+
+function StandardHomepage() {
   const { articles: live } = Route.useLoaderData() as { articles: DailyArticle[] };
   const breaking = live.filter((article) => article.is_breaking).slice(0, 3);
   const trending = live
