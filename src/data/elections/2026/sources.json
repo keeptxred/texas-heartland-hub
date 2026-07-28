@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "id": "source-texas-secretary-of-state-2026-primary-runoff-results",
+    "name": "Texas Secretary of State 2026 Primary Runoff Results",
+    "sourceType": "other",
+    "sourceUrl": "https://electionresults.sos.state.tx.us/results.html",
+    "type": "other",
+    "url": "https://electionresults.sos.state.tx.us/results.html",
+    "retrievedAt": "2026-07-28T15:08:14.625Z",
+    "lastVerifiedAt": "2026-07-28T15:08:14.625Z",
+    "notes": "Candidate profile source for candidate-ken-paxton-republican-race-2026-us-senate."
+  },
+  {
+    "id": "tx-sos-2026-election-dates",
+    "name": "Texas Secretary of State",
+    "sourceType": "official",
+    "sourceUrl": "https://www.sos.texas.gov/elections/voter/important-election-dates.shtml",
+    "type": "official",
+    "url": "https://www.sos.texas.gov/elections/voter/important-election-dates.shtml",
+    "retrievedAt": "2026-07-28T12:00:00.000Z",
+    "lastVerifiedAt": "2026-07-28T12:00:00.000Z",
+    "notes": "Texas Secretary of State election dates"
+  },
+  {
+    "id": "tx-sos-offices-up-2026",
+    "name": "Texas Secretary of State",
+    "sourceType": "official",
+    "sourceUrl": "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
+    "type": "official",
+    "url": "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
+    "retrievedAt": "2026-07-28T15:08:13.923Z",
+    "lastVerifiedAt": "2026-07-28T15:08:13.923Z",
+    "notes": "Texas Secretary of State offices up for election in 2026"
+  }
+]
