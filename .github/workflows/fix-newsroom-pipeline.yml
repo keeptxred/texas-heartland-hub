@@ -1,8 +1,8 @@
 name: Fix newsroom publishing pipeline
 
 on:
-  issues:
-    types: [opened]
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: write
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   patch:
-    if: github.event.issue.title == 'RUN NEWSROOM PIPELINE REPAIR'
+    if: github.event.issue.title == 'RUN NEWSROOM PIPELINE REPAIR' && github.event.comment.body == 'RUN REPAIR NOW'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
