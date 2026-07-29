@@ -1,15 +1,16 @@
 name: Fix newsroom publishing pipeline
 
 on:
-  push:
-    paths:
-      - '.github/workflows/fix-newsroom-pipeline.yml'
+  issues:
+    types: [opened]
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   patch:
+    if: github.event.issue.title == 'RUN NEWSROOM PIPELINE REPAIR'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -68,3 +69,7 @@ jobs:
           git add src/components/admin/ViralRadarPanel.tsx src/lib/viral-score.ts src/routes/api/public/hooks/ingest-feeds.ts .github/workflows/fix-newsroom-pipeline.yml
           git commit -m "Restore newsroom candidates and correct publish timestamps"
           git push
+      - name: Close trigger issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh issue close "${{ github.event.issue.number }}" --comment "Newsroom pipeline repair applied."
