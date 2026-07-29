@@ -136,6 +136,9 @@ function canAttemptPublish(result: RewritePreflightResult, alreadyPublished: boo
 function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
   if (row.internal_slug) return true;
   if (result.rewriteable) return true;
+  // Persisted preflight means extraction already ran. Any persisted
+  // non-ready result is terminal and must leave the publish queue.
+  if (row.preflight_json) return false;
   return result.reason === "PENDING_EXTRACTION";
 }
 
