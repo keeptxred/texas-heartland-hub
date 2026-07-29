@@ -10,20 +10,20 @@ import { isLowValueTitle } from "@/lib/low-value-titles";
 
 const DISCOVERY_FEEDS = [
   {
-    name: "Google News — Texas Politics",
-    url: "https://news.google.com/rss/search?q=Texas+politics+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+    name: "The Texas Tribune",
+    url: "https://feeds.texastribune.org/feeds/main/",
   },
   {
-    name: "Google News — Texas Breaking News",
-    url: "https://news.google.com/rss/search?q=Texas+breaking+news+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+    name: "The Texas Tribune — Politics",
+    url: "https://www.texastribune.org/topics/politics/feed",
   },
   {
-    name: "Google News — Texas Legislature",
-    url: "https://news.google.com/rss/search?q=Texas+Legislature+OR+Governor+Abbott+when%3A2d&hl=en-US&gl=US&ceid=US%3Aen",
+    name: "The Texas Tribune — Elections",
+    url: "https://www.texastribune.org/topics/elections/feed",
   },
   {
-    name: "Google News — Texas Local",
-    url: "https://news.google.com/rss/search?q=Texas+Houston+OR+Dallas+OR+Austin+OR+San+Antonio+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+    name: "The Texas Tribune — Energy",
+    url: "https://www.texastribune.org/topics/energy/feed",
   },
 ] as const;
 
@@ -143,9 +143,8 @@ async function scoreRecent(request: Request) {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  // The official fallback feeds are intentionally conservative and may publish
-  // only a few times per day. Add current Texas discovery searches so Viral
-  // Radar and Content Opportunities receive a useful flow of statewide stories.
+  // Import verified direct publisher RSS feeds during every manual newsroom refresh.
+  // This does not depend on Supabase migrations or content_sources being populated.
   const discovery = await ingestDiscoveryFeeds(supabase);
 
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
