@@ -47,7 +47,7 @@ export function ElectionLayout({
   return (
     <>
       <Helmet>
-        <title>{title} | KeepTXRed</title>
+        <title>{`${title} | KeepTXRed`}</title>
         <meta name="description" content={description} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
