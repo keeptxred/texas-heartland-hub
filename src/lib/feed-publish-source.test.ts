@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveFeedPublishSource } from "@/lib/feed-publish-source";
-import {
-  ABSOLUTE_MIN_SOURCE_WORDS,
-  assessRewritePreflight,
-} from "@/lib/rewrite-preflight";
+import { ABSOLUTE_MIN_SOURCE_WORDS, assessRewritePreflight } from "@/lib/rewrite-preflight";
 
 function words(count: number): string {
   return Array.from({ length: count }, (_, index) => `word${index + 1}`).join(" ");
