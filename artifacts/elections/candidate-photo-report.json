@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-29T23:45:22.858Z",
+  "generatedAt": "2026-07-29T23:49:20.434Z",
   "candidateCount": 463,
-  "approvedPhotoCount": 1,
-  "missingPhotoCount": 462,
-  "manifestEntryCount": 1,
+  "approvedPhotoCount": 8,
+  "missingPhotoCount": 455,
+  "manifestEntryCount": 8,
   "errors": [],
   "warnings": [],
   "missing": [
@@ -22,13 +22,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-austin-r-kelly-libertarian-race-2026-agriculture-commissioner",
-      "name": "AUSTIN R. KELLY",
-      "raceId": "race-2026-agriculture-commissioner",
-      "party": "libertarian",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-nate-sheets-republican-race-2026-agriculture-commissioner",
       "name": "NATE SHEETS",
       "raceId": "race-2026-agriculture-commissioner",
@@ -40,13 +33,6 @@
       "name": "NATHAN JOHNSON",
       "raceId": "race-2026-attorney-general",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-tom-oxford-libertarian-race-2026-attorney-general",
-      "name": "TOM OXFORD",
-      "raceId": "race-2026-attorney-general",
-      "party": "libertarian",
       "priority": "standard"
     },
     {
@@ -68,13 +54,6 @@
       "name": "SHEHLA FAIZI",
       "raceId": "race-2026-comptroller",
       "party": "green",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-v-alonzo-echavarria-garza-libertarian-race-2026-comptroller",
-      "name": "V. ALONZO ECHAVARRIA-GARZA",
-      "raceId": "race-2026-comptroller",
-      "party": "libertarian",
       "priority": "standard"
     },
     {
@@ -141,24 +120,10 @@
       "priority": "statewide"
     },
     {
-      "candidateId": "candidate-pat-dixon-libertarian-race-2026-governor",
-      "name": "PAT DIXON",
-      "raceId": "race-2026-governor",
-      "party": "libertarian",
-      "priority": "statewide"
-    },
-    {
       "candidateId": "candidate-benjamin-flores-democratic-race-2026-land-commissioner",
       "name": "BENJAMIN FLORES",
       "raceId": "race-2026-land-commissioner",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-neill-snider-libertarian-race-2026-land-commissioner",
-      "name": "NEILL SNIDER",
-      "raceId": "race-2026-land-commissioner",
-      "party": "libertarian",
       "priority": "standard"
     },
     {
@@ -180,13 +145,6 @@
       "name": "KEVIN MCCORMICK",
       "raceId": "race-2026-lieutenant-governor",
       "party": "green",
-      "priority": "statewide"
-    },
-    {
-      "candidateId": "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
-      "name": "ANTHONY CRISTO",
-      "raceId": "race-2026-lieutenant-governor",
-      "party": "libertarian",
       "priority": "statewide"
     },
     {
@@ -3225,13 +3183,6 @@
       "name": "JAMES TALARICO",
       "raceId": "race-2026-us-senate",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-ted-brown-libertarian-race-2026-us-senate",
-      "name": "TED BROWN",
-      "raceId": "race-2026-us-senate",
-      "party": "libertarian",
       "priority": "standard"
     },
     {
