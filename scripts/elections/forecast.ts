@@ -13,32 +13,36 @@ const now = process.env.ELECTION_FORECAST_AS_OF ? new Date(process.env.ELECTION_
 if (Number.isNaN(now.getTime())) throw new Error("ELECTION_FORECAST_AS_OF is not a valid date.");
 const timestamp = now.toISOString();
 
-const [races, candidates, polls, existingForecasts] = await Promise.all([
+const [races, candidates, polls] = await Promise.all([
   readJson("races.json"),
   readJson("candidates.json"),
   readJson("polls.json"),
-  readJson("forecasts.json"),
 ]);
 
 const generatedByRace = new Map();
+const skipped = [];
+const skip = (race, reason) => skipped.push({ raceId: race.id, raceName: race.name, reason });
+
 for (const race of races) {
-  if (!isPublicVerified(race)) continue;
+  if (!isPublicVerified(race)) { skip(race, "race is not published and verified"); continue; }
+
   const raceCandidates = candidates.filter((candidate) => Array.isArray(candidate.raceIds) && candidate.raceIds.includes(race.id) && isPublicVerified(candidate));
   const republican = raceCandidates.find((candidate) => candidate.party === "republican");
   const democratic = raceCandidates.find((candidate) => candidate.party === "democratic");
-  if (!republican || !democratic) continue;
+  if (!republican || !democratic) { skip(race, "missing verified republican or democratic candidate"); continue; }
 
   const racePolls = polls.filter((poll) => poll.raceId === race.id && isPublicVerified(poll) && ["published", "revised", "completed"].includes(poll.status));
-  const configuredInputs = race.forecastInputs;
-  const pollingOnlyInputs = !configuredInputs?.enabled && racePolls.length ? { enabled: true, previousElectionMargin: null, districtPartisanLean: null, electionEnvironment: 0, candidateAdjustments: {}, sourceUrls: [] } : null;
-  const inputs = configuredInputs?.enabled ? configuredInputs : pollingOnlyInputs;
-  if (!inputs) continue;
+  const pollingOnlyInputs = racePolls.length ? { enabled: true, previousElectionMargin: null, districtPartisanLean: null, electionEnvironment: 0, candidateAdjustments: {}, sourceUrls: [] } : null;
+  if (!pollingOnlyInputs) { skip(race, "no eligible verified polls and no forecast inputs"); continue; }
 
   const pollingAverages = calculateCandidatePollingAverages(racePolls, now);
-  if (pollingOnlyInputs && (pollingAverages.get(republican.id) == null || pollingAverages.get(democratic.id) == null)) continue;
+  if (pollingAverages.get(republican.id) == null || pollingAverages.get(democratic.id) == null) {
+    skip(race, "missing polling average for one or both major-party candidates");
+    continue;
+  }
 
-  const sourceUrls = [...(Array.isArray(inputs.sourceUrls) ? inputs.sourceUrls : []), ...racePolls.flatMap((poll) => [poll.source?.sourceUrl, ...(poll.sources ?? []).map((source) => source.url)]).filter(Boolean)];
-  if (!sourceUrls.length) continue;
+  const sourceUrls = racePolls.flatMap((poll) => [poll.source?.sourceUrl, ...(poll.sources ?? []).map((source) => source.url)]).filter(Boolean);
+  if (!sourceUrls.length) { skip(race, "no source URLs"); continue; }
 
   const result = runForecastModel({
     raceId: race.id,
@@ -55,7 +59,9 @@ for (const race of races) {
 }
 
 await writeFile(path.join(DATA_DIR, "forecasts.json"), `${JSON.stringify([...generatedByRace.values()], null, 2)}\n`);
+await writeFile(path.join(DATA_DIR, "forecast-diagnostics.json"), `${JSON.stringify({ generated: generatedByRace.size, skipped }, null, 2)}\n`);
 console.log(`Updated ${generatedByRace.size} forecast(s)`);
+if (skipped.length) console.log(`Skipped ${skipped.length} race(s): ${JSON.stringify(skipped)}`);
 
 async function readJson(filename) { return JSON.parse(await readFile(path.join(DATA_DIR, filename), "utf8")); }
 function isPublicVerified(record) { return record.publicationStatus === "published" && record.verificationStatus === "verified"; }
