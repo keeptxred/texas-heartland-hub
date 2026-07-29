@@ -8,6 +8,111 @@ import {
 } from "@/lib/viral-score";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 
+const DISCOVERY_FEEDS = [
+  {
+    name: "Google News — Texas Politics",
+    url: "https://news.google.com/rss/search?q=Texas+politics+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+  },
+  {
+    name: "Google News — Texas Breaking News",
+    url: "https://news.google.com/rss/search?q=Texas+breaking+news+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+  },
+  {
+    name: "Google News — Texas Legislature",
+    url: "https://news.google.com/rss/search?q=Texas+Legislature+OR+Governor+Abbott+when%3A2d&hl=en-US&gl=US&ceid=US%3Aen",
+  },
+  {
+    name: "Google News — Texas Local",
+    url: "https://news.google.com/rss/search?q=Texas+Houston+OR+Dallas+OR+Austin+OR+San+Antonio+when%3A1d&hl=en-US&gl=US&ceid=US%3Aen",
+  },
+] as const;
+
+function decodeXml(value: string): string {
+  return value
+    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/gi, "$1")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function pickTag(block: string, tag: string): string {
+  const match = block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"));
+  return match ? decodeXml(match[1]) : "";
+}
+
+function parseGoogleNewsFeed(xml: string, fallbackSource: string) {
+  const blocks = xml.match(/<item[\s\S]*?<\/item>/gi) ?? [];
+  return blocks.slice(0, 30).flatMap((block) => {
+    const rawTitle = pickTag(block, "title");
+    const link = pickTag(block, "link");
+    const description = pickTag(block, "description");
+    const rawDate = pickTag(block, "pubDate");
+    if (!rawTitle || !link) return [];
+
+    const titleParts = rawTitle.split(" - ");
+    const source = titleParts.length > 1 ? titleParts.pop()!.trim() : fallbackSource;
+    const title = titleParts.join(" - ").trim() || rawTitle;
+    const parsedDate = Date.parse(rawDate);
+
+    return [
+      {
+        title: title.slice(0, 500),
+        link,
+        pub_date: new Date(Number.isNaN(parsedDate) ? Date.now() : parsedDate).toISOString(),
+        source,
+        description: description.slice(0, 1000),
+      },
+    ];
+  });
+}
+
+async function ingestDiscoveryFeeds(
+  supabase: ReturnType<typeof createClient>,
+): Promise<{ fetched: number; inserted: number; feedsOk: number; errors: string[] }> {
+  let fetched = 0;
+  let inserted = 0;
+  let feedsOk = 0;
+  const errors: string[] = [];
+
+  for (const feed of DISCOVERY_FEEDS) {
+    try {
+      const response = await fetch(feed.url, {
+        headers: {
+          "User-Agent": "KeepTXRedBot/1.0 (+https://keeptxred.com)",
+          Accept: "application/rss+xml,application/xml,text/xml,*/*",
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      if (!response.ok) {
+        errors.push(`${feed.name}: HTTP ${response.status}`);
+        continue;
+      }
+
+      feedsOk += 1;
+      const rows = parseGoogleNewsFeed(await response.text(), feed.name).filter(
+        (row) => !isLowValueTitle(row.title),
+      );
+      fetched += rows.length;
+      if (rows.length === 0) continue;
+
+      const { count, error } = await supabase
+        .from("texas_news_feed")
+        .upsert(rows, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
+      if (error) errors.push(`${feed.name}: ${error.message}`);
+      else inserted += count ?? 0;
+    } catch (error) {
+      errors.push(`${feed.name}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
+  return { fetched, inserted, feedsOk, errors };
+}
+
 // Refreshes ingestion first, then recomputes viral scoring for recent feed rows.
 // This makes the admin "Rescore Now" action a true newsroom refresh instead of
 // merely recalculating stale rows that were already in texas_news_feed.
@@ -25,8 +130,6 @@ async function scoreRecent(request: Request) {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return json({ ok: false, error: "server not configured" }, 500);
 
-  // Pull fresh RSS rows before scoring. Ingestion is storage-only and does not
-  // invoke paid AI rewrites, so this is safe for the manual refresh button.
   let ingest: Record<string, unknown> | null = null;
   try {
     const ingestUrl = new URL("/api/public/hooks/ingest-feeds", request.url);
@@ -40,6 +143,11 @@ async function scoreRecent(request: Request) {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
+  // The official fallback feeds are intentionally conservative and may publish
+  // only a few times per day. Add current Texas discovery searches so Viral
+  // Radar and Content Opportunities receive a useful flow of statewide stories.
+  const discovery = await ingestDiscoveryFeeds(supabase);
+
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from("texas_news_feed")
@@ -48,7 +156,7 @@ async function scoreRecent(request: Request) {
     .order("pub_date", { ascending: false })
     .limit(300);
 
-  if (error) return json({ ok: false, error: error.message, ingest }, 500);
+  if (error) return json({ ok: false, error: error.message, ingest, discovery }, 500);
   const rows = (data ?? []) as Array<{
     id: number;
     title: string;
@@ -74,19 +182,19 @@ async function scoreRecent(request: Request) {
   });
 
   const clusters = new Map<string, number>();
-  const clusterKey = (t: string) =>
-    (t ?? "")
+  const clusterKey = (title: string) =>
+    (title ?? "")
       .toLowerCase()
       .replace(/[^a-z0-9\s]/g, " ")
       .split(/\s+/)
-      .filter((w) => w.length > 3)
+      .filter((word) => word.length > 3)
       .slice(0, 6)
       .join(" ");
-  rows.forEach((r) => {
-    if (isLowValueTitle(r.title)) return;
-    const k = clusterKey(r.title);
-    if (!k) return;
-    clusters.set(k, (clusters.get(k) ?? 0) + 1);
+  rows.forEach((row) => {
+    if (isLowValueTitle(row.title)) return;
+    const cluster = clusterKey(row.title);
+    if (!cluster) return;
+    clusters.set(cluster, (clusters.get(cluster) ?? 0) + 1);
   });
 
   const now = new Date().toISOString();
@@ -98,9 +206,6 @@ async function scoreRecent(request: Request) {
   const VIDEO_RE = /(youtube\.com|youtu\.be|tiktok\.com|instagram\.com\/reel|twitter\.com\/.+\/status|x\.com\/.+\/status|\.mp4|video)/i;
 
   for (const row of rows) {
-    // Remove already-created podcast/video landing-page stubs from published
-    // articles and unlink the feed row. This cleans up items published before
-    // the stricter preflight rule was deployed.
     if (isLowValueTitle(row.title)) {
       if (row.internal_slug) {
         const { error: deleteError } = await supabase
@@ -122,43 +227,43 @@ async function scoreRecent(request: Request) {
       repOverride.get((row.source || "").toLowerCase()) ??
       classifySourceReputation(row.source || "");
     const hasVideo = VIDEO_RE.test(`${row.link ?? ""} ${row.description ?? ""}`);
-    const r = scoreFeedItem({
+    const result = scoreFeedItem({
       ...row,
       has_video: hasVideo,
       source_reputation_score: rep.score,
       source_reputation_reason: rep.reason,
     });
 
-    const key = clusterKey(row.title);
-    const sourceCount = key ? clusters.get(key) ?? 1 : 1;
+    const cluster = clusterKey(row.title);
+    const sourceCount = cluster ? clusters.get(cluster) ?? 1 : 1;
     const prior = row.viral_score ?? 0;
-    const trendVelocity = Number(((r.viralScore - prior) + (sourceCount - 1) * 5).toFixed(2));
+    const trendVelocity = Number(((result.viralScore - prior) + (sourceCount - 1) * 5).toFixed(2));
 
-    const readyForRewrite = qualifiesReadyForRewrite(r);
+    const readyForRewrite = qualifiesReadyForRewrite(result);
     if (readyForRewrite) readyFlagged += 1;
 
-    const { error: upErr } = await supabase
+    const { error: updateError } = await supabase
       .from("texas_news_feed")
       .update({
-        viral_score: r.viralScore,
-        classification_confidence: r.classificationConfidence,
+        viral_score: result.viralScore,
+        classification_confidence: result.classificationConfidence,
         viral_signals: {
-          ...r.signals,
-          source_reputation_reason: r.sourceReputationReason,
+          ...result.signals,
+          source_reputation_reason: result.sourceReputationReason,
           has_video: hasVideo,
         },
-        texas_relevance_score: r.texasRelevanceScore,
-        source_reputation_score: r.sourceReputationScore,
-        routing_type: r.routingType,
+        texas_relevance_score: result.texasRelevanceScore,
+        source_reputation_score: result.sourceReputationScore,
+        routing_type: result.routingType,
         trend_velocity: trendVelocity,
         source_count: sourceCount,
         ready_for_rewrite: readyForRewrite,
         viral_scored_at: now,
       })
       .eq("id", row.id);
-    if (!upErr) updated += 1;
+    if (!updateError) updated += 1;
 
-    if (r.viralScore >= VIRAL_READY_MIN_SCORE && hasVideo && r.classificationConfidence >= 0.8) {
+    if (result.viralScore >= VIRAL_READY_MIN_SCORE && hasVideo && result.classificationConfidence >= 0.8) {
       const { data: existing } = await supabase
         .from("reel_candidates")
         .select("id")
@@ -170,8 +275,8 @@ async function scoreRecent(request: Request) {
           source_account: row.source,
           source_url: row.link || "",
           title: row.title,
-          topic: r.signals.category,
-          notes: `Auto-added from Viral Radar (score ${r.viralScore})`,
+          topic: result.signals.category,
+          notes: `Auto-added from Viral Radar (score ${result.viralScore})`,
           status: "queued",
         });
         reelsQueued += 1;
@@ -182,6 +287,7 @@ async function scoreRecent(request: Request) {
   return json({
     ok: true,
     ingest,
+    discovery,
     scanned: rows.length,
     updated,
     readyFlagged,
