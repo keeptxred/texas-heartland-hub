@@ -111,7 +111,7 @@ jobs:
           TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
           TEST_OUTCOME: ${{ steps.tests.outcome }}
           BUILD_OUTCOME: ${{ steps.build.outcome }}
-          MOBILE_OUTCOME: ${{ steps.mobile.outcome }}
+          MOBILE_OUTCOME: ${{ steps.mobile.outcome }}\n          MOBILE_HOMEPAGE_OUTCOME: ${{ steps.mobile_homepage.outcome }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           RUN_SHA: ${{ github.sha }}
@@ -131,7 +131,7 @@ jobs:
             build: process.env.BUILD_OUTCOME,
             typecheck: process.env.TYPECHECK_OUTCOME,
             tests: process.env.TEST_OUTCOME,
-            mobile: process.env.MOBILE_OUTCOME,
+            mobile: process.env.MOBILE_OUTCOME,\n            homepageEnabledMobile: process.env.MOBILE_HOMEPAGE_OUTCOME,
           };
           const passed = Object.values(checks).every((outcome) => outcome === "success");
           const status = {
@@ -147,12 +147,12 @@ jobs:
             typecheckSummary: compactLog("/tmp/election-ci-typecheck.log"),
             testFailureSummary: compactLog("/tmp/election-ci-test-failures.log", 160, 20000),
             testSummary: compactLog("/tmp/election-ci-tests.log"),
-            mobileSummary: compactLog("/tmp/election-ci-mobile.log", 160, 20000),
+            mobileSummary: compactLog("/tmp/election-ci-mobile.log", 160, 20000),\n            homepageEnabledMobileSummary: compactLog("/tmp/election-ci-mobile-homepage.log", 160, 20000),
           };
           fs.writeFileSync("/tmp/election-ci-status.json", `${JSON.stringify(status, null, 2)}\n`);
           NODE
           result=0
-          if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" ]]; then
+          if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" || "$MOBILE_HOMEPAGE_OUTCOME" != "success" ]]; then
             result=1
           fi
           git config user.name "github-actions[bot]"
