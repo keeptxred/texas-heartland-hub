@@ -11,16 +11,20 @@ import { publishFeedItem } from "@/services/publishArticle";
 import {
   assessRewritePreflight,
   preflightStatusLabel,
+  type RewritePreflightReason,
   type RewritePreflightResult,
 } from "@/lib/rewrite-preflight";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
+
+type PersistedPreflight = {
+  status?: RewritePreflightReason;
+  reason?: RewritePreflightReason;
+  message?: string;
+  sourceWordCount?: number;
+  factualSignalCount?: number;
+  checkedAt?: string;
+  failureStage?: "extraction" | "preflight" | "none";
+};
 
 type Row = {
   id: number;
@@ -31,9 +35,16 @@ type Row = {
   internal_slug: string | null;
   link: string | null;
   description: string | null;
+  extracted_body: string | null;
+  preflight_json: PersistedPreflight | null;
   viral_score: number | null;
   classification_confidence: number | null;
-  viral_signals: { reasons?: string[]; category?: string; has_video?: boolean; source_reputation_reason?: string } | null;
+  viral_signals: {
+    reasons?: string[];
+    category?: string;
+    has_video?: boolean;
+    source_reputation_reason?: string;
+  } | null;
   trend_source: string | null;
   texas_relevance_score: number | null;
   source_reputation_score: number | null;
@@ -43,7 +54,11 @@ type Row = {
   ready_for_rewrite: boolean | null;
 };
 
-type ArticleMeta = { slug: string; title: string | null; featured_image_url: string | null };
+type ArticleMeta = {
+  slug: string;
+  title: string | null;
+  featured_image_url: string | null;
+};
 
 type FilterKey = "all" | "score" | "texas" | "video" | "reel" | "fb" | "seo" | "ready";
 
@@ -56,9 +71,10 @@ function loadIgnored(): Set<number> {
   try {
     const raw = window.localStorage.getItem(IGNORE_STORAGE_KEY);
     if (!raw) return new Set();
-    const arr = JSON.parse(raw) as unknown;
-    if (!Array.isArray(arr)) return new Set();
-    return new Set(arr.filter((v): v is number => typeof v === "number"));
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed)
+      ? new Set(parsed.filter((value): value is number => typeof value === "number"))
+      : new Set();
   } catch {
     return new Set();
   }
@@ -69,8 +85,54 @@ function saveIgnored(ids: Set<number>) {
   try {
     window.localStorage.setItem(IGNORE_STORAGE_KEY, JSON.stringify([...ids]));
   } catch {
-    /* ignore quota errors */
+    // Ignore storage quota failures.
   }
+}
+
+function resultFromSnapshot(snapshot: PersistedPreflight): RewritePreflightResult | null {
+  const reason = snapshot.reason ?? snapshot.status;
+  if (!reason) return null;
+  return {
+    rewriteable: reason === "READY",
+    reason,
+    message: snapshot.message ?? "Source preflight completed",
+    sourceWordCount: snapshot.sourceWordCount ?? 0,
+    factualSignalCount: snapshot.factualSignalCount ?? 0,
+    hasClearNewsEvent: null,
+  };
+}
+
+function effectivePreflight(row: Row): RewritePreflightResult {
+  const persisted = row.preflight_json ? resultFromSnapshot(row.preflight_json) : null;
+  if (persisted) return persisted;
+
+  const extracted = row.extracted_body?.trim() ?? "";
+  if (extracted) {
+    return assessRewritePreflight({
+      title: row.title,
+      description: extracted,
+      link: row.link,
+    });
+  }
+
+  // Never treat the short RSS/Reddit card description as a verified article body.
+  // The first Publish click performs source extraction and persists the real result.
+  return assessRewritePreflight({
+    title: row.title,
+    description: "",
+    link: row.link,
+  });
+}
+
+function readinessLabel(result: RewritePreflightResult): string {
+  if (result.reason === "PENDING_EXTRACTION") {
+    return "Needs source extraction · click Publish to check";
+  }
+  return preflightStatusLabel(result);
+}
+
+function canAttemptPublish(result: RewritePreflightResult, alreadyPublished: boolean): boolean {
+  return alreadyPublished || result.rewriteable || result.reason === "PENDING_EXTRACTION";
 }
 
 export function ViralRadarPanel() {
@@ -79,7 +141,7 @@ export function ViralRadarPanel() {
   const [loading, setLoading] = useState(true);
   const [scoring, setScoring] = useState(false);
   const [backfilling, setBackfilling] = useState(false);
-  const [msg, setMsg] = useState<string>("");
+  const [msg, setMsg] = useState("");
   const [publishing, setPublishing] = useState<Record<number, boolean>>({});
   const [publishMsg, setPublishMsg] = useState<Record<number, { ok: boolean; text: string }>>({});
   const [articleWorking, setArticleWorking] = useState<Record<number, boolean>>({});
@@ -87,43 +149,50 @@ export function ViralRadarPanel() {
   const [filter, setFilter] = useState<FilterKey>("all");
   const [ignored, setIgnored] = useState<Set<number>>(() => loadIgnored());
   const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});
-  const [previewId, setPreviewId] = useState<number | null>(null);
 
   async function load() {
     setLoading(true);
     const cutoffIso = new Date(Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000).toISOString();
     const { data } = await supabase
       .from("texas_news_feed")
-      .select("id,title,source,pub_date,created_at,internal_slug,link,description,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite")
+      .select(
+        "id,title,source,pub_date,created_at,internal_slug,link,description,extracted_body,preflight_json,viral_score,classification_confidence,viral_signals,trend_source,texas_relevance_score,source_reputation_score,routing_type,trend_velocity,source_count,ready_for_rewrite",
+      )
       .gte("pub_date", cutoffIso)
       .order("pub_date", { ascending: false })
       .order("viral_score", { ascending: false })
       .limit(FETCH_LIMIT);
-    const feed = ((data ?? []) as Row[]).filter((r) => !isLowValueTitle(r.title));
+
+    const feed = ((data ?? []) as Row[]).filter((row) => !isLowValueTitle(row.title));
     setRows(feed);
-    const slugs = feed.map((r) => r.internal_slug).filter(Boolean) as string[];
-    if (slugs.length > 0) {
-      const { data: arts } = await supabase
+
+    const slugs = feed.map((row) => row.internal_slug).filter(Boolean) as string[];
+    if (slugs.length === 0) {
+      setArticles({});
+    } else {
+      const { data: articleRows } = await supabase
         .from("daily_articles")
         .select("slug,title,featured_image_url")
         .in("slug", slugs);
-      const map: Record<string, ArticleMeta> = {};
-      (arts ?? []).forEach((a) => { map[a.slug] = a as ArticleMeta; });
-      setArticles(map);
+      const next: Record<string, ArticleMeta> = {};
+      (articleRows ?? []).forEach((article) => {
+        next[article.slug] = article as ArticleMeta;
+      });
+      setArticles(next);
     }
     setLoading(false);
   }
 
   useEffect(() => {
     void load();
-    const onFocus = () => { void load(); };
+    const onFocus = () => void load();
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
   }, []);
 
   function ignoreRow(id: number) {
-    setIgnored((prev) => {
-      const next = new Set(prev);
+    setIgnored((current) => {
+      const next = new Set(current);
       next.add(id);
       saveIgnored(next);
       return next;
@@ -134,12 +203,12 @@ export function ViralRadarPanel() {
     setScoring(true);
     setMsg("");
     try {
-      const res = await fetch("/api/public/hooks/score-viral", { method: "POST" });
-      const body = await res.json();
+      const response = await fetch("/api/public/hooks/score-viral", { method: "POST" });
+      const body = await response.json();
       setMsg(body.ok ? `Scored ${body.updated}/${body.scanned}` : `Error: ${body.error}`);
       await load();
-    } catch (e) {
-      setMsg(e instanceof Error ? e.message : "Rescore failed");
+    } catch (error) {
+      setMsg(error instanceof Error ? error.message : "Rescore failed");
     } finally {
       setScoring(false);
     }
@@ -149,167 +218,155 @@ export function ViralRadarPanel() {
     setBackfilling(true);
     setMsg("");
     try {
-      const res = await fetch("/api/public/hooks/score-viral-backfill", { method: "POST" });
-      const body = await res.json();
+      const response = await fetch("/api/public/hooks/score-viral-backfill", { method: "POST" });
+      const body = await response.json();
       setMsg(
         body.ok
           ? `Backfilled ${body.updated}/${body.scanned} (${body.remaining} unscored remaining)`
-          : `Error: ${body.error}`
+          : `Error: ${body.error}`,
       );
       await load();
-    } catch (e) {
-      setMsg(e instanceof Error ? e.message : "Backfill failed");
+    } catch (error) {
+      setMsg(error instanceof Error ? error.message : "Backfill failed");
     } finally {
       setBackfilling(false);
     }
   }
 
-  async function post(r: Row) {
-    setPublishing((s) => ({ ...s, [r.id]: true }));
+  async function publishToKtr(row: Row) {
+    setArticleWorking((state) => ({ ...state, [row.id]: true }));
+    setArticleMsg((state) => ({ ...state, [row.id]: { ok: false, text: "" } }));
     try {
-      const res = await quickPublishToFacebook({
-        headline: r.title,
-        source: r.source,
-        feed_item_id: r.id,
-        slug: r.internal_slug ?? null,
-      });
-      setPublishMsg((s) => ({
-        ...s,
-        [r.id]: { ok: res.ok, text: res.ok ? "Published" : res.error },
+      const result = await publishFeedItem(row.id);
+      if (result.ok) {
+        setArticleMsg((state) => ({
+          ...state,
+          [row.id]: {
+            ok: true,
+            text: result.alreadyPublished ? "Already published" : "Published to Keep TX Red",
+          },
+        }));
+      } else {
+        setArticleMsg((state) => ({ ...state, [row.id]: { ok: false, text: result.error } }));
+      }
+      // A failed publish can still persist extracted_body + preflight_json.
+      // Reload so the card immediately shows the authoritative server result.
+      await load();
+    } catch (error) {
+      setArticleMsg((state) => ({
+        ...state,
+        [row.id]: { ok: false, text: error instanceof Error ? error.message : "Publish failed" },
       }));
-    } catch (e) {
-      setPublishMsg((s) => ({
-        ...s,
-        [r.id]: { ok: false, text: e instanceof Error ? e.message : "Failed" },
-      }));
+      await load();
     } finally {
-      setPublishing((s) => ({ ...s, [r.id]: false }));
+      setArticleWorking((state) => ({ ...state, [row.id]: false }));
     }
   }
 
-  async function generateImageAndPost(r: Row) {
-    const slug = r.internal_slug;
-    if (!slug) {
-      setPublishMsg((s) => ({
-        ...s,
-        [r.id]: { ok: false, text: "Publish to Keep Texas Red first — image generation needs an article slug." },
+  async function post(row: Row) {
+    setPublishing((state) => ({ ...state, [row.id]: true }));
+    try {
+      const result = await quickPublishToFacebook({
+        headline: row.title,
+        source: row.source,
+        feed_item_id: row.id,
+        slug: row.internal_slug ?? null,
+      });
+      setPublishMsg((state) => ({
+        ...state,
+        [row.id]: { ok: result.ok, text: result.ok ? "Published" : result.error },
       }));
-      return;
+    } catch (error) {
+      setPublishMsg((state) => ({
+        ...state,
+        [row.id]: { ok: false, text: error instanceof Error ? error.message : "Failed" },
+      }));
+    } finally {
+      setPublishing((state) => ({ ...state, [row.id]: false }));
     }
-    setImageWorking((s) => ({ ...s, [r.id]: true }));
-    setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: "Generating image…" } }));
+  }
+
+  async function generateImageAndPost(row: Row) {
+    if (!row.internal_slug) return;
+    setImageWorking((state) => ({ ...state, [row.id]: true }));
     try {
       const token =
         (typeof window !== "undefined" && sessionStorage.getItem("ktr-admin-passcode")) ||
         (import.meta.env.VITE_ADMIN_PASSCODE as string) ||
         "keeptxred";
-      const genRes = await regenerateFeaturedImage({ data: { slug, token } });
-      if (!genRes.ok) {
-        setPublishMsg((s) => ({ ...s, [r.id]: { ok: false, text: `Image generation failed: ${genRes.error}` } }));
+      const image = await regenerateFeaturedImage({ data: { slug: row.internal_slug, token } });
+      if (!image.ok) {
+        setPublishMsg((state) => ({
+          ...state,
+          [row.id]: { ok: false, text: `Image generation failed: ${image.error}` },
+        }));
         return;
       }
-      setPublishMsg((s) => ({ ...s, [r.id]: { ok: true, text: "Image ready. Posting…" } }));
-      const postRes = await quickPublishToFacebook({
-        headline: r.title,
-        source: r.source,
-        feed_item_id: r.id,
-        slug,
-        asset_url: genRes.url,
+      const result = await quickPublishToFacebook({
+        headline: row.title,
+        source: row.source,
+        feed_item_id: row.id,
+        slug: row.internal_slug,
+        asset_url: image.url,
       });
-      setPublishMsg((s) => ({
-        ...s,
-        [r.id]: { ok: postRes.ok, text: postRes.ok ? "Published to Facebook" : postRes.error },
+      setPublishMsg((state) => ({
+        ...state,
+        [row.id]: { ok: result.ok, text: result.ok ? "Published to Facebook" : result.error },
       }));
-      if (postRes.ok) await load();
-    } catch (e) {
-      setPublishMsg((s) => ({
-        ...s,
-        [r.id]: { ok: false, text: e instanceof Error ? e.message : "Generate & post failed" },
-      }));
-    } finally {
-      setImageWorking((s) => ({ ...s, [r.id]: false }));
-    }
-  }
-
-  async function publishToKtr(r: Row) {
-    setArticleWorking((s) => ({ ...s, [r.id]: true }));
-    setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: "" } }));
-    try {
-      const res = await publishFeedItem(r.id);
-      if (res.ok) {
-        setArticleMsg((s) => ({
-          ...s,
-          [r.id]: {
-            ok: true,
-            text: res.alreadyPublished ? "Already published" : "Published to Keep TX Red",
-          },
-        }));
-        // Refresh so the newly created daily_articles row lights up FB button.
-        await load();
-      } else {
-        setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
-      }
-    } catch (e) {
-      setArticleMsg((s) => ({
-        ...s,
-        [r.id]: { ok: false, text: e instanceof Error ? e.message : "Publish failed" },
+      if (result.ok) await load();
+    } catch (error) {
+      setPublishMsg((state) => ({
+        ...state,
+        [row.id]: {
+          ok: false,
+          text: error instanceof Error ? error.message : "Generate & post failed",
+        },
       }));
     } finally {
-      setArticleWorking((s) => ({ ...s, [r.id]: false }));
+      setImageWorking((state) => ({ ...state, [row.id]: false }));
     }
   }
 
   const recentRows = useMemo(() => {
     const cutoff = Date.now() - RECENT_DAYS * 24 * 60 * 60 * 1000;
-    return rows.filter((r) => {
-      if (ignored.has(r.id)) return false;
-      const dateIso = r.pub_date || r.created_at;
-      if (!dateIso) return true;
-      const dateMs = new Date(dateIso).getTime();
-      return !Number.isNaN(dateMs) && dateMs >= cutoff;
+    return rows.filter((row) => {
+      if (ignored.has(row.id)) return false;
+      const iso = row.pub_date || row.created_at;
+      if (!iso) return true;
+      const time = new Date(iso).getTime();
+      return !Number.isNaN(time) && time >= cutoff;
     });
   }, [rows, ignored]);
 
-  const total = useMemo(() => recentRows.length, [recentRows]);
-
-  const filtered = useMemo(() => {
-    const arr = [...recentRows];
-    switch (filter) {
-      case "score":
-        return arr.sort((a, b) => (b.viral_score ?? 0) - (a.viral_score ?? 0));
-      case "texas":
-        return arr.sort((a, b) => (b.texas_relevance_score ?? 0) - (a.texas_relevance_score ?? 0));
-      case "video":
-        return arr.filter((r) => r.viral_signals?.has_video);
-      case "reel":
-        return arr.filter((r) => r.routing_type === "REEL_CANDIDATE" || r.routing_type === "BOTH");
-      case "fb":
-        return arr.filter((r) => r.routing_type === "FACEBOOK_ONLY" || r.routing_type === "BOTH");
-      case "seo":
-        return arr.filter((r) => r.routing_type === "SEO_ARTICLE" || r.routing_type === "BOTH");
-      case "ready":
-        return arr.filter((r) => r.ready_for_rewrite);
-      default:
-        return arr;
-    }
-  }, [recentRows, filter]);
-
   const preflightById = useMemo(() => {
-    const m: Record<number, RewritePreflightResult> = {};
-    recentRows.forEach((r) => {
-      m[r.id] = assessRewritePreflight({
-        title: r.title,
-        description: r.description,
-        link: r.link,
-      });
+    const map: Record<number, RewritePreflightResult> = {};
+    recentRows.forEach((row) => {
+      map[row.id] = effectivePreflight(row);
     });
-    return m;
+    return map;
   }, [recentRows]);
 
-  const previewRow = useMemo(
-    () => (previewId == null ? null : recentRows.find((r) => r.id === previewId) ?? null),
-    [previewId, recentRows],
-  );
+  const filtered = useMemo(() => {
+    const items = [...recentRows];
+    switch (filter) {
+      case "score":
+        return items.sort((a, b) => (b.viral_score ?? 0) - (a.viral_score ?? 0));
+      case "texas":
+        return items.sort((a, b) => (b.texas_relevance_score ?? 0) - (a.texas_relevance_score ?? 0));
+      case "video":
+        return items.filter((row) => row.viral_signals?.has_video);
+      case "reel":
+        return items.filter((row) => row.routing_type === "REEL_CANDIDATE" || row.routing_type === "BOTH");
+      case "fb":
+        return items.filter((row) => row.routing_type === "FACEBOOK_ONLY" || row.routing_type === "BOTH");
+      case "seo":
+        return items.filter((row) => row.routing_type === "SEO_ARTICLE" || row.routing_type === "BOTH");
+      case "ready":
+        return items.filter((row) => preflightById[row.id]?.rewriteable);
+      default:
+        return items;
+    }
+  }, [recentRows, filter, preflightById]);
 
   return (
     <div className="border-2 border-foreground/10 bg-card p-5">
@@ -338,10 +395,11 @@ export function ViralRadarPanel() {
           </button>
         </div>
       </div>
+
       <p className="text-[11px] text-muted-foreground mb-3">
-        Auto-rewrite threshold: score ≥ {VIRAL_AUTO_REWRITE_MIN_SCORE}, confidence ≥{" "}
-        {VIRAL_AUTO_REWRITE_MIN_CONFIDENCE}. Publishing always requires a human click.
+        Viral scoring and rewrite eligibility are separate. Green rewrite status now appears only after full-source extraction passes the server preflight.
       </p>
+
       <div className="flex flex-wrap gap-1 mb-3">
         {([
           ["all", "All"],
@@ -352,23 +410,26 @@ export function ViralRadarPanel() {
           ["reel", "Reel Candidate"],
           ["fb", "Facebook Ready"],
           ["seo", "SEO Article"],
-        ] as [FilterKey, string][]).map(([k, label]) => (
+        ] as [FilterKey, string][]).map(([key, label]) => (
           <button
-            key={k}
+            key={key}
             type="button"
-            onClick={() => setFilter(k)}
+            onClick={() => setFilter(key)}
             className={`px-2 py-1 text-[10px] font-bold uppercase tracking-widest border ${
-              filter === k ? "bg-primary text-primary-foreground border-primary" : "border-border text-muted-foreground"
+              filter === key
+                ? "bg-primary text-primary-foreground border-primary"
+                : "border-border text-muted-foreground"
             }`}
           >
             {label}
           </button>
         ))}
       </div>
+
       {loading ? (
         <div className="text-sm text-muted-foreground">Loading…</div>
       ) : filtered.length === 0 ? (
-        <div className="text-sm text-muted-foreground">No scored feed items yet — click Rescore Now.</div>
+        <div className="text-sm text-muted-foreground">No matching feed items.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -376,173 +437,136 @@ export function ViralRadarPanel() {
               <tr className="text-left text-[10px] font-bold uppercase tracking-widest text-muted-foreground border-b border-border">
                 <th className="py-2 pr-2">Headline</th>
                 <th className="py-2 pr-2">Category</th>
-                <th className="py-2 pr-2">Route</th>
                 <th className="py-2 pr-2 text-right">Score</th>
                 <th className="py-2 pr-2 text-right">TX</th>
-                <th className="py-2 pr-2 text-right">Rep</th>
                 <th className="py-2 pr-2 text-right">Conf</th>
                 <th className="py-2 pr-2">Signals</th>
                 <th className="py-2 pr-2">Action</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r) => {
-                const art = r.internal_slug ? articles[r.internal_slug] : undefined;
-                const rewritten = !!art;
-                const hasImage = !!art?.featured_image_url;
-                const cat = r.viral_signals?.category ?? "—";
-                const conf = r.classification_confidence ?? 0;
-                const score = r.viral_score ?? 0;
-                const tx = r.texas_relevance_score ?? 0;
-                const rep = r.source_reputation_score ?? 0;
-                const route = r.routing_type ?? "—";
-                const hasVideo = !!r.viral_signals?.has_video;
-                const ready = !!r.ready_for_rewrite;
+              {filtered.map((row) => {
+                const article = row.internal_slug ? articles[row.internal_slug] : undefined;
+                const rewritten = Boolean(article);
+                const hasImage = Boolean(article?.featured_image_url);
+                const preflight = preflightById[row.id];
+                const pending = preflight.reason === "PENDING_EXTRACTION";
+                const publishAllowed = canAttemptPublish(preflight, rewritten);
                 const qualifies =
-                  score >= VIRAL_AUTO_REWRITE_MIN_SCORE &&
-                  conf >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE;
-                const canPostToFacebook = !!r.internal_slug && rewritten;
-                const displayDateIso = r.pub_date || r.created_at || null;
-                const displayDateLabel = displayDateIso
-                  ? new Date(displayDateIso).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                      timeZone: "America/Chicago",
-                    })
-                  : null;
-                const displayDatePrefix = r.pub_date ? "Published" : "Discovered";
+                  (row.viral_score ?? 0) >= VIRAL_AUTO_REWRITE_MIN_SCORE &&
+                  (row.classification_confidence ?? 0) >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE;
+                const displayDate = row.pub_date || row.created_at;
+
                 return (
-                  <tr key={r.id} className="border-b border-border/50 align-top">
-                    <td className="py-2 pr-2 max-w-[24rem]">
+                  <tr key={row.id} className="border-b border-border/50 align-top">
+                    <td className="py-2 pr-2 max-w-[28rem]">
                       <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          title={r.title}
-                          onClick={() => setPreviewId(r.id)}
-                          className="font-medium leading-snug truncate text-left hover:underline focus:outline-none focus:ring-1 focus:ring-primary"
-                          aria-label={`Preview: ${r.title}`}
-                        >
-                          {r.title}
-                        </button>
-                        {rewritten ? (
-                          <span title="Rewritten" className="text-emerald-600 shrink-0">
-                            <FileText size={14} />
-                          </span>
-                        ) : null}
-                        {hasImage ? (
-                          <span title="Image Ready" className="text-blue-600 shrink-0">
-                            <ImageIcon size={14} />
-                          </span>
-                        ) : null}
-                        {hasVideo ? (
-                          <span title="Video Available" className="text-purple-600 shrink-0">
-                            <Video size={14} />
-                          </span>
-                        ) : null}
-                        {ready ? (
-                          <span title="Ready for Rewrite" className="text-primary shrink-0">
-                            <Sparkles size={14} />
-                          </span>
-                        ) : null}
+                        {row.link ? (
+                          <a
+                            href={row.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={row.title}
+                            className="font-medium leading-snug hover:underline"
+                          >
+                            {row.title}
+                          </a>
+                        ) : (
+                          <span className="font-medium leading-snug">{row.title}</span>
+                        )}
+                        {rewritten ? <FileText size={14} className="text-emerald-600 shrink-0" /> : null}
+                        {hasImage ? <ImageIcon size={14} className="text-blue-600 shrink-0" /> : null}
+                        {row.viral_signals?.has_video ? <Video size={14} className="text-purple-600 shrink-0" /> : null}
+                        {preflight.rewriteable ? <Sparkles size={14} className="text-primary shrink-0" /> : null}
                       </div>
                       <div className="text-[11px] text-muted-foreground">
-                        {r.source}
-                        {(r.source_count ?? 1) > 1 ? ` · ${r.source_count} sources` : ""}
-                        {r.trend_velocity ? ` · v${r.trend_velocity.toFixed(0)}` : ""}
+                        {row.source}
+                        {(row.source_count ?? 1) > 1 ? ` · ${row.source_count} sources` : ""}
                       </div>
-                      {(() => {
-                        const pf = preflightById[r.id];
-                        if (!pf) return null;
-                        const tone = rewritten
-                          ? "text-emerald-600"
-                          : pf.rewriteable
-                          ? "text-emerald-600"
-                          : pf.reason === "PENDING_EXTRACTION"
-                          ? "text-muted-foreground"
-                          : "text-red-600";
-                        const label = rewritten
-                          ? "Published to Keep Texas Red"
-                          : preflightStatusLabel(pf);
-                        return <div className={`text-[10px] ${tone}`}>{label}</div>;
-                      })()}
-                      {displayDateLabel ? (
+                      <div
+                        className={`text-[10px] ${
+                          rewritten || preflight.rewriteable
+                            ? "text-emerald-600"
+                            : pending
+                              ? "text-amber-600"
+                              : "text-red-600"
+                        }`}
+                      >
+                        {rewritten ? "Published to Keep Texas Red" : readinessLabel(preflight)}
+                      </div>
+                      {displayDate ? (
                         <div className="text-[11px] text-muted-foreground">
-                          {displayDatePrefix}: {displayDateLabel}
+                          Published: {new Date(displayDate).toLocaleDateString("en-US", { timeZone: "America/Chicago" })}
                         </div>
                       ) : null}
                     </td>
-                    <td className="py-2 pr-2 text-[11px] text-muted-foreground">{cat}</td>
-                    <td className="py-2 pr-2 text-[10px] font-bold uppercase tracking-widest">{route}</td>
-                    <td className={`py-2 pr-2 text-right tabular-nums ${score >= VIRAL_AUTO_REWRITE_MIN_SCORE ? "text-primary font-bold" : ""}`}>
-                      {score}
+                    <td className="py-2 pr-2 text-[11px] text-muted-foreground">
+                      {row.viral_signals?.category ?? "—"}
                     </td>
-                    <td className={`py-2 pr-2 text-right tabular-nums ${tx >= 85 ? "text-emerald-600" : tx < 40 ? "text-red-600" : ""}`}>
-                      {tx}
-                    </td>
-                    <td className={`py-2 pr-2 text-right tabular-nums ${rep >= 85 ? "text-emerald-600" : rep < 55 ? "text-red-600" : ""}`}>
-                      {rep}
-                    </td>
-                    <td className={`py-2 pr-2 text-right tabular-nums ${conf >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE ? "text-emerald-600" : "text-amber-600"}`}>
-                      {conf.toFixed(2)}
+                    <td className="py-2 pr-2 text-right tabular-nums">{row.viral_score ?? 0}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">{row.texas_relevance_score ?? 0}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">
+                      {(row.classification_confidence ?? 0).toFixed(2)}
                     </td>
                     <td className="py-2 pr-2 text-[11px] text-muted-foreground max-w-[20rem]">
-                      {tx < 40 ? <span className="text-red-600 font-bold">Not Texas focused</span> : (r.viral_signals?.reasons ?? []).slice(0, 3).join(" · ")}
+                      {(row.texas_relevance_score ?? 0) < 40 ? (
+                        <span className="text-red-600 font-bold">Not Texas focused</span>
+                      ) : (
+                        (row.viral_signals?.reasons ?? []).slice(0, 3).join(" · ")
+                      )}
                     </td>
                     <td className="py-2 pr-2 whitespace-nowrap">
                       <div className="flex flex-col items-start gap-1">
                         <div className="flex flex-wrap gap-2">
                           <button
                             type="button"
-                            disabled={
-                              !!articleWorking[r.id] ||
-                              (!rewritten && !preflightById[r.id]?.rewriteable)
-                            }
-                            onClick={() => void publishToKtr(r)}
-                            title={
-                              !rewritten && !preflightById[r.id]?.rewriteable
-                                ? preflightById[r.id]?.message
-                                : undefined
-                            }
+                            disabled={Boolean(articleWorking[row.id]) || !publishAllowed}
+                            onClick={() => void publishToKtr(row)}
+                            title={!publishAllowed ? preflight.message : undefined}
                             className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
                           >
-                            {articleWorking[r.id]
-                              ? "Publishing…"
+                            {articleWorking[row.id]
+                              ? pending
+                                ? "Checking source…"
+                                : "Publishing…"
                               : rewritten
-                              ? "Republish"
-                              : "Publish to Keep Texas Red"}
+                                ? "Republish"
+                                : pending
+                                  ? "Check Source & Publish"
+                                  : "Publish to Keep Texas Red"}
                           </button>
-                          {canPostToFacebook && hasImage ? (
-                            <button
-                              type="button"
-                              disabled={!!publishing[r.id]}
-                              onClick={() => void post(r)}
-                              className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
-                            >
-                              {publishing[r.id] ? "Posting…" : "Post to Facebook"}
-                            </button>
-                          ) : canPostToFacebook ? (
-                            <button
-                              type="button"
-                              disabled={!!imageWorking[r.id] || !!publishing[r.id]}
-                              onClick={() => void generateImageAndPost(r)}
-                              className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
-                            >
-                              {imageWorking[r.id] ? "Generating…" : "Generate Image & Post"}
-                            </button>
+                          {rewritten && row.internal_slug ? (
+                            hasImage ? (
+                              <button
+                                type="button"
+                                disabled={Boolean(publishing[row.id])}
+                                onClick={() => void post(row)}
+                                className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                              >
+                                {publishing[row.id] ? "Posting…" : "Post to Facebook"}
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                disabled={Boolean(imageWorking[row.id])}
+                                onClick={() => void generateImageAndPost(row)}
+                                className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
+                              >
+                                {imageWorking[row.id] ? "Generating…" : "Generate Image & Post"}
+                              </button>
+                            )
                           ) : (
                             <button
                               type="button"
                               disabled
-                              title="Publish to Keep Texas Red first — Facebook posts require a KeepTXRed article URL."
-                              className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest opacity-60 cursor-not-allowed"
+                              className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest opacity-60"
                             >
                               Post to Facebook
                             </button>
                           )}
                           <button
                             type="button"
-                            onClick={() => ignoreRow(r.id)}
+                            onClick={() => ignoreRow(row.id)}
                             className="px-3 py-1 border border-border text-[11px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground"
                           >
                             Ignore
@@ -551,14 +575,14 @@ export function ViralRadarPanel() {
                         {!qualifies ? (
                           <span className="text-[10px] text-muted-foreground">Below auto-rewrite gate</span>
                         ) : null}
-                        {articleMsg[r.id]?.text ? (
-                          <span className={`text-[10px] ${articleMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
-                            {articleMsg[r.id].text}
+                        {articleMsg[row.id]?.text ? (
+                          <span className={`text-[10px] ${articleMsg[row.id].ok ? "text-emerald-600" : "text-red-600"}`}>
+                            {articleMsg[row.id].text}
                           </span>
                         ) : null}
-                        {publishMsg[r.id]?.text ? (
-                          <span className={`text-[10px] ${publishMsg[r.id].ok ? "text-emerald-600" : "text-red-600"}`}>
-                            {publishMsg[r.id].text}
+                        {publishMsg[row.id]?.text ? (
+                          <span className={`text-[10px] ${publishMsg[row.id].ok ? "text-emerald-600" : "text-red-600"}`}>
+                            {publishMsg[row.id].text}
                           </span>
                         ) : null}
                       </div>
@@ -570,146 +594,6 @@ export function ViralRadarPanel() {
           </table>
         </div>
       )}
-
-      <Dialog open={previewRow != null} onOpenChange={(o) => !o && setPreviewId(null)}>
-        <DialogContent className="max-w-2xl">
-          {previewRow ? (() => {
-            const art = previewRow.internal_slug ? articles[previewRow.internal_slug] : undefined;
-            const pf = preflightById[previewRow.id];
-            const rewritten = !!art;
-            const hasImage = !!art?.featured_image_url;
-            const canPostToFacebook = !!previewRow.internal_slug && rewritten;
-            return (
-              <>
-                <DialogHeader>
-                  <DialogTitle className="text-base leading-snug">Viral opportunity preview</DialogTitle>
-                  <DialogDescription>
-                    Full headlines, readiness, and image status for this signal.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4 text-sm">
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                      Source headline
-                    </div>
-                    <div className="font-medium">{previewRow.title}</div>
-                  </div>
-                  <div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                      Keep Texas Red headline
-                    </div>
-                    <div className="font-medium">
-                      {art?.title ?? (
-                        <span className="text-muted-foreground italic">
-                          Not generated yet — publishing will rewrite this headline.
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  {previewRow.link ? (
-                    <a
-                      href={previewRow.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[11px] underline text-primary break-all"
-                    >
-                      Open source article ↗
-                    </a>
-                  ) : null}
-                  {pf ? (
-                    <div className="text-[11px]">
-                      <div className="text-muted-foreground uppercase tracking-widest text-[10px] font-bold">
-                        Rewrite readiness
-                      </div>
-                      <div className={pf.rewriteable ? "text-emerald-600" : "text-red-600"}>
-                        {preflightStatusLabel(pf)}
-                      </div>
-                    </div>
-                  ) : null}
-                  <div className="text-[11px]">
-                    <div className="text-muted-foreground uppercase tracking-widest text-[10px] font-bold">
-                      Facebook image
-                    </div>
-                    <div>
-                      {hasImage ? (
-                        <span className="text-emerald-600">
-                          Image stored · will be verified before Facebook posting
-                        </span>
-                      ) : (
-                        <span className="text-amber-600">
-                          No image stored · Facebook posting will require Generate Image &amp; Post
-                        </span>
-                      )}
-                    </div>
-                    {art?.featured_image_url && hasImage ? (
-                      <img
-                        src={art.featured_image_url}
-                        alt=""
-                        className="mt-2 max-h-40 rounded border border-border"
-                        loading="lazy"
-                      />
-                    ) : null}
-                  </div>
-                  {previewRow.description ? (
-                    <div className="text-[11px]">
-                      <div className="text-muted-foreground uppercase tracking-widest text-[10px] font-bold">
-                        Source summary
-                      </div>
-                      <div className="max-h-40 overflow-y-auto whitespace-pre-wrap text-muted-foreground">
-                        {previewRow.description.slice(0, 1200)}
-                      </div>
-                    </div>
-                  ) : null}
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    <button
-                      type="button"
-                      disabled={
-                        !!articleWorking[previewRow.id] ||
-                        (!rewritten && !pf?.rewriteable)
-                      }
-                      onClick={() => void publishToKtr(previewRow)}
-                      className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
-                    >
-                      {rewritten ? "Republish" : "Publish to Keep Texas Red"}
-                    </button>
-                    {canPostToFacebook ? (
-                      hasImage ? (
-                        <button
-                          type="button"
-                          disabled={!!publishing[previewRow.id]}
-                          onClick={() => void post(previewRow)}
-                          className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
-                        >
-                          Post to Facebook
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled={!!imageWorking[previewRow.id]}
-                          onClick={() => void generateImageAndPost(previewRow)}
-                          className="px-3 py-1 bg-primary text-primary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
-                        >
-                          Generate Image &amp; Post
-                        </button>
-                      )
-                    ) : null}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        ignoreRow(previewRow.id);
-                        setPreviewId(null);
-                      }}
-                      className="px-3 py-1 border border-border text-[11px] font-bold uppercase tracking-widest hover:bg-muted"
-                    >
-                      Ignore
-                    </button>
-                  </div>
-                </div>
-              </>
-            );
-          })() : null}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
