@@ -67,6 +67,22 @@ const BOILERPLATE_PATTERNS: RegExp[] = [
   /related stories?/i,
 ];
 
+// Audio/video landing pages often contain enough names and numbers to look
+// factual while providing only a short teaser instead of reportable article
+// text. These must never be expanded into a newsroom article without a real
+// transcript or independently extracted written report.
+const MEDIA_LANDING_PATTERNS: RegExp[] = [
+  /watch the video (above|below)/i,
+  /listen to (the|this) (episode|podcast)/i,
+  /subscribe to (the )?.*(itunes|apple podcasts|spotify|rss)/i,
+  /new episodes? every/i,
+  /podcast episode/i,
+  /video transcript/i,
+];
+
+const MEDIA_TITLE_PATTERN = /\b(podcast|tribcast|video|watch|episode)\b/i;
+const TRANSCRIPT_PATTERN = /\b(full transcript|transcript follows|complete transcript|read the transcript)\b/i;
+
 const NEWS_EVENT_PATTERNS: RegExp[] = [
   /\b(signs?|signed|vetoe(s|d)?|announces?|announced|declares?|declared|files?|filed|rules?|ruled|indict(s|ed|ment)?|arrest(s|ed|ing)?|charge(s|d)?|passe(s|d)|approve(s|d)|reject(s|ed)|vote(s|d)?|elects?|elected|appoint(s|ed)|resigns?|resigned|launch(es|ed)?|opens?|opened|closes?|closed|kill(s|ed)|injure(s|d))\b/i,
   /\b(bill|law|ruling|order|lawsuit|indictment|arrest|election|primary|runoff|hearing|verdict|storm|hurricane|tornado|flood|wildfire|shooting|crash|outbreak)\b/i,
@@ -122,6 +138,14 @@ function detectBoilerplateHeavy(text: string): boolean {
   return hits >= 2 && words < 250;
 }
 
+function detectUnsupportedMediaLanding(title: string, body: string): boolean {
+  if (TRANSCRIPT_PATTERN.test(body)) return false;
+  const mediaHits = countMatches(body, MEDIA_LANDING_PATTERNS);
+  // A clearly labeled podcast/video title plus one playback/subscription cue is
+  // sufficient. Otherwise require two independent landing-page cues.
+  return (MEDIA_TITLE_PATTERN.test(title) && mediaHits >= 1) || mediaHits >= 2;
+}
+
 function detectNewsEvent(title: string, body: string): boolean | null {
   const t = `${title} ${body}`;
   const hits = countMatches(t, NEWS_EVENT_PATTERNS);
@@ -152,7 +176,7 @@ function reasonMessage(reason: RewritePreflightReason, words: number): string {
     case "NOT_ENGLISH":
       return "Not rewriteable · source does not appear to be English";
     case "UNSUPPORTED_CONTENT_TYPE":
-      return "Not rewriteable · unsupported source content type";
+      return "Not rewriteable · source is a podcast/video landing page without a usable transcript";
     case "NO_CLEAR_NEWS_EVENT":
       return "Not rewriteable · no clear news event detected in the source";
   }
@@ -182,6 +206,9 @@ export function assessRewritePreflight(input: RewritePreflightInput): RewritePre
     // enrichment yet (Reddit selftext / linked-article fetch happens on demand
     // in publishSingleFeedItem), so mark it pending, not blocked.
     return finalize("PENDING_EXTRACTION");
+  }
+  if (detectUnsupportedMediaLanding(title, body)) {
+    return finalize("UNSUPPORTED_CONTENT_TYPE");
   }
   if (detectPaywall(body) && words < STANDARD_MIN_WORDS) {
     return finalize("PAYWALL_OR_TRUNCATED");
