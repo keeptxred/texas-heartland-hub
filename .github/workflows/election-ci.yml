@@ -1,4 +1,5 @@
 name: Verify Election Central build
+# Final verification revision: populated forecasts, mobile rendering, and retry-safe status publication.
 
 on:
   workflow_dispatch:
