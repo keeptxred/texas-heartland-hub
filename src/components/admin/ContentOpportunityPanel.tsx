@@ -26,6 +26,14 @@ type FeedItem = {
   internal_slug: string | null;
   link: string | null;
   description: string | null;
+  extracted_body?: string | null;
+  preflight_json?: {
+    status?: string;
+    reason?: string;
+    message?: string;
+    sourceWordCount?: number;
+    factualSignalCount?: number;
+  } | null;
   // When set, this row is an already-published daily_articles piece surfaced
   // for Facebook distribution rather than an RSS feed item.
   article_slug?: string | null;
@@ -91,6 +99,33 @@ function score(item: FeedItem): Scored {
     socialScore: social,
     total: texas + breaking + social + freshness,
   };
+}
+
+function effectivePreflight(item: FeedItem): RewritePreflightResult {
+  const snapshot = item.preflight_json;
+  const persistedReason = snapshot?.reason ?? snapshot?.status;
+  if (persistedReason) {
+    return {
+      rewriteable: persistedReason === "READY",
+      reason: persistedReason as RewritePreflightResult["reason"],
+      message: snapshot?.message ?? "Source preflight completed",
+      sourceWordCount: snapshot?.sourceWordCount ?? 0,
+      factualSignalCount: snapshot?.factualSignalCount ?? 0,
+      hasClearNewsEvent: null,
+    };
+  }
+
+  return assessRewritePreflight({
+    title: item.title,
+    description: item.extracted_body?.trim() || item.description,
+    link: item.link,
+  });
+}
+
+function shouldShowOpportunity(item: FeedItem): boolean {
+  if (item.id < 0 || item.internal_slug) return true;
+  if (!item.preflight_json) return true;
+  return effectivePreflight(item).rewriteable;
 }
 
 function OpportunityStatusBadges({ status }: { status?: OpportunityStatus }) {
@@ -307,6 +342,9 @@ export function ContentOpportunityPanel() {
         }));
       } else {
         setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
+        if (/does not contain enough text|not enough factual/i.test(res.error)) {
+          setItems((current) => current.filter((item) => item.id !== r.id));
+        }
       }
     } catch (e) {
       setArticleMsg((s) => ({
@@ -324,7 +362,7 @@ export function ContentOpportunityPanel() {
       const [feedRes, articleRes, pkgRes] = await Promise.all([
         supabase
           .from("texas_news_feed")
-          .select("id,title,source,pub_date,internal_slug,link,description")
+          .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
           .order("pub_date", { ascending: false })
           .limit(150),
         supabase
@@ -464,11 +502,7 @@ export function ContentOpportunityPanel() {
               factualSignalCount: 0,
               hasClearNewsEvent: true,
             }
-          : assessRewritePreflight({
-              title: it.title,
-              description: it.description,
-              link: it.link,
-            });
+          : effectivePreflight(it);
     });
     return m;
   }, [items]);
@@ -476,6 +510,7 @@ export function ContentOpportunityPanel() {
   const scored = useMemo(
     () =>
       items
+        .filter(shouldShowOpportunity)
         .filter((it) => !ignored.has(ignoreKey(it)))
         .map(score)
         .sort((a, b) => b.total - a.total),
