@@ -98,7 +98,7 @@ function ElectionResultsContent() {
   }, new Map<string, ElectionResultSummary[]>());
   const updateSearch = (updates: Partial<ResultSearch>) => {
     void navigate({
-      search: (previous) => ({ ...previous, ...updates }),
+      search: (previous: any) => ({ ...previous, ...updates }),
       replace: true,
     });
   };

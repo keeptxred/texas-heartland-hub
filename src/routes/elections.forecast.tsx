@@ -123,7 +123,7 @@ function ElectionForecastContent() {
 
   const updateSearch = (updates: Partial<ElectionForecastListSearch>) => {
     void navigate({
-      search: (previous) => ({ ...previous, ...updates }),
+      search: (previous: any) => ({ ...previous, ...updates }),
       replace: true,
     });
   };

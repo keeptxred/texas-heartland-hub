@@ -11,12 +11,18 @@ export const Route = createFileRoute("/api/public/article-image/$filename")({
         if (!/^[a-z0-9-]+\.(png|jpg|jpeg|webp)$/i.test(filename)) {
           return new Response("Bad filename", { status: 400 });
         }
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data, error } = await supabaseAdmin.storage
-          .from("article-images")
-          .download(filename);
-        if (error || !data) return new Response("Not found", { status: 404 });
-        const buf = await data.arrayBuffer();
+        let buf: ArrayBuffer;
+        try {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data, error } = await supabaseAdmin.storage
+            .from("article-images")
+            .download(filename);
+          if (error || !data) return new Response("Not found", { status: 404 });
+          buf = await data.arrayBuffer();
+        } catch (err) {
+          console.error("[article-image] download failed", filename, err);
+          return new Response("Not found", { status: 404 });
+        }
         const type = filename.toLowerCase().endsWith(".png")
           ? "image/png"
           : filename.toLowerCase().endsWith(".webp")
