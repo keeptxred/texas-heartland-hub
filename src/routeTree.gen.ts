@@ -96,6 +96,7 @@ import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
 import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as ElectionsIndexRouteImport } from './routes/elections.index'
 import { Route as Elections2026RouteImport } from './routes/elections.2026'
 import { Route as ElectionsCandidatesRouteImport } from './routes/elections.candidates'
 import { Route as ElectionsCorrectionsRouteImport } from './routes/elections.corrections'
@@ -642,6 +643,11 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   id: '/authors/$slug',
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ElectionsIndexRoute = ElectionsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ElectionsRoute,
 } as any)
 const Elections2026Route = Elections2026RouteImport.update({
   id: '/2026',
@@ -1263,6 +1269,7 @@ export interface FileRoutesByFullPath {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
   '/authors/': typeof AuthorsIndexRoute
+  '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
@@ -1328,7 +1335,6 @@ export interface FileRoutesByTo {
   '/dallas-fort-worth': typeof DallasFortWorthRoute
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
-  '/elections': typeof ElectionsRouteWithChildren
   '/find-my-dmv': typeof FindMyDmvRoute
   '/find-my-school-district': typeof FindMySchoolDistrictRoute
   '/find-representative': typeof FindRepresentativeRoute
@@ -1437,6 +1443,7 @@ export interface FileRoutesByTo {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
   '/authors': typeof AuthorsIndexRoute
+  '/elections': typeof ElectionsIndexRoute
   '/explore': typeof ExploreIndexRoute
   '/news': typeof NewsIndexRoute
   '/shop': typeof ShopIndexRoute
@@ -1618,6 +1625,7 @@ export interface FileRoutesById {
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
   '/authors/': typeof AuthorsIndexRoute
+  '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
@@ -1800,6 +1808,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/texas/$slug'
     | '/authors/'
+    | '/elections/'
     | '/explore/'
     | '/news/'
     | '/shop/'
@@ -1865,7 +1874,6 @@ export interface FileRouteTypes {
     | '/dallas-fort-worth'
     | '/editorial-standards'
     | '/el-paso'
-    | '/elections'
     | '/find-my-dmv'
     | '/find-my-school-district'
     | '/find-representative'
@@ -1974,6 +1982,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/texas/$slug'
     | '/authors'
+    | '/elections'
     | '/explore'
     | '/news'
     | '/shop'
@@ -2154,6 +2163,7 @@ export interface FileRouteTypes {
     | '/texas-sports/$league'
     | '/texas/$slug'
     | '/authors/'
+    | '/elections/'
     | '/explore/'
     | '/news/'
     | '/shop/'
@@ -2934,6 +2944,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/elections/': {
+      id: '/elections/'
+      path: '/'
+      fullPath: '/elections/'
+      preLoaderRoute: typeof ElectionsIndexRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
     '/elections/2026': {
       id: '/elections/2026'
       path: '/2026'
@@ -3663,6 +3680,7 @@ interface ElectionsRouteChildren {
   ElectionsRacesRoute: typeof ElectionsRacesRouteWithChildren
   ElectionsResultsRoute: typeof ElectionsResultsRouteWithChildren
   ElectionsVotingRoute: typeof ElectionsVotingRoute
+  ElectionsIndexRoute: typeof ElectionsIndexRoute
 }
 
 const ElectionsRouteChildren: ElectionsRouteChildren = {
@@ -3675,6 +3693,7 @@ const ElectionsRouteChildren: ElectionsRouteChildren = {
   ElectionsRacesRoute: ElectionsRacesRouteWithChildren,
   ElectionsResultsRoute: ElectionsResultsRouteWithChildren,
   ElectionsVotingRoute: ElectionsVotingRoute,
+  ElectionsIndexRoute: ElectionsIndexRoute,
 }
 
 const ElectionsRouteWithChildren = ElectionsRoute._addFileChildren(
