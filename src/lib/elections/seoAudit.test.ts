@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const publicRoutes = [
-  "elections",
+  "elections.index",
   "elections.races",
   "elections.candidates",
   "elections.polls",
