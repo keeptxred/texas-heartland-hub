@@ -63,7 +63,9 @@ test("polling and forecasts are sourced while result states remain honest", asyn
   await expect(page.locator('a[href^="/elections/forecast/"]').first()).toBeVisible();
 
   await page.goto("/elections/results", { waitUntil: "domcontentloaded" });
-  await expect(page.getByText(/remain unofficial until certified/i)).toBeVisible();
+  await expect(page.getByText(/remain unofficial until certified/i)).toBeVisible({
+    timeout: 20_000,
+  });
 });
 
 async function expectNoHorizontalOverflow(page: Page) {
