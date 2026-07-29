@@ -142,12 +142,13 @@ function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
 
   if (result.reason !== "PENDING_EXTRACTION") return false;
 
-  const meetsScoreGate = (row.viral_score ?? 0) >= VIRAL_AUTO_REWRITE_MIN_SCORE;
-  const meetsConfidenceGate =
-    (row.classification_confidence ?? 0) >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE;
-  const meetsTexasGate = (row.texas_relevance_score ?? 0) >= 40;
-
-  return meetsScoreGate && meetsConfidenceGate && meetsTexasGate;
+  // Keep Viral Radar useful as a manual-review queue. The stricter score and
+  // confidence thresholds belong to the Ready for Rewrite filter, not to the
+  // entire panel. Pending rows still must be Texas-focused and credible.
+  return (
+    (row.texas_relevance_score ?? 0) >= 40 &&
+    (row.source_reputation_score ?? 0) >= 55
+  );
 }
 
 export function ViralRadarPanel() {
