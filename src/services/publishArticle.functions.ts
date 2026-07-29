@@ -25,6 +25,10 @@ function explainPublishFailure(error: string, feedItemId: number): string {
   return message;
 }
 
+function isTieredWordCountFailure(error: string | undefined): boolean {
+  return Boolean(error && /rewrite below tiered minimum/i.test(error));
+}
+
 export const publishFeedItemFn = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => InputSchema.parse(d))
   .handler(async ({ data }): Promise<PublishArticleResult> => {
@@ -35,7 +39,18 @@ export const publishFeedItemFn = createServerFn({ method: "POST" })
       const { publishSingleFeedItem } = await import(
         "@/routes/api/public/hooks/ingest-feeds"
       );
-      const res = await publishSingleFeedItem(data.feed_item_id);
+      let res = await publishSingleFeedItem(data.feed_item_id);
+
+      // A source-ready item can still have a cached generated draft that lands
+      // just below its 800- or 1,200-word publishing tier. Expand that cached
+      // draft automatically and retry once instead of showing contradictory
+      // source/rewrite messaging or requiring another manual publish attempt.
+      if (!res.ok && isTieredWordCountFailure(res.error)) {
+        const { expandCachedRewriteForFeedItem } = await import("@/lib/expand-cached-rewrite");
+        const expanded = await expandCachedRewriteForFeedItem(data.feed_item_id);
+        if (expanded) res = await publishSingleFeedItem(data.feed_item_id);
+      }
+
       if (!res.ok) {
         return {
           ok: false,
