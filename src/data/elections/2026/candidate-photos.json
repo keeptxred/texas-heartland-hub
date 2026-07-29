@@ -8,5 +8,75 @@
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-ted-brown-libertarian-race-2026-us-senate",
+    "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/423/attachments/original/1717515146/ted-brown.png",
+    "sourceUrl": "https://www.lptexas.org/candidates",
+    "altText": "Ted Brown, Libertarian candidate for United States Senate",
+    "credit": "Libertarian Party of Texas",
+    "license": null,
+    "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-pat-dixon-libertarian-race-2026-governor",
+    "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1777575637/pat-dixon.png?1777575637=",
+    "sourceUrl": "https://www.lptexas.org/candidates",
+    "altText": "Pat Dixon, Libertarian candidate for Governor of Texas",
+    "credit": "Libertarian Party of Texas",
+    "license": null,
+    "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
+    "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1777595646/anthony-cristo.png?1777595646=",
+    "sourceUrl": "https://www.lptexas.org/candidates",
+    "altText": "Anthony Cristo, Libertarian candidate for Lieutenant Governor of Texas",
+    "credit": "Libertarian Party of Texas",
+    "license": null,
+    "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-tom-oxford-libertarian-race-2026-attorney-general",
+    "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1783612206/Tom_Oxford.png?1783612206=",
+    "sourceUrl": "https://www.lptexas.org/candidates",
+    "altText": "Tom Oxford, Libertarian candidate for Texas Attorney General",
+    "credit": "Libertarian Party of Texas",
+    "license": null,
+    "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-v-alonzo-echavarria-garza-libertarian-race-2026-comptroller",
+    "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1783366321/Alonzo_Echavarria-Garza.png?1783366321=",
+    "sourceUrl": "https://www.lptexas.org/candidates",
+    "altText": "V. Alonzo Echavarria-Garza, Libertarian candidate for Texas Comptroller",
+    "credit": "Libertarian Party of Texas",
+    "license": null,
+    "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-neill-snider-libertarian-race-2026-land-commissioner",
+    "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1777907794/neil-snider.png?1777907794=",
+    "sourceUrl": "https://www.lptexas.org/candidates",
+    "altText": "Neill Snider, Libertarian candidate for Texas Land Commissioner",
+    "credit": "Libertarian Party of Texas",
+    "license": null,
+    "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-austin-r-kelly-libertarian-race-2026-agriculture-commissioner",
+    "imageUrl": "https://assets.nationbuilder.com/lptexas/pages/8541/attachments/original/1777575646/austin-kelly.png?1777575646=",
+    "sourceUrl": "https://www.lptexas.org/candidates",
+    "altText": "Austin R. Kelly, Libertarian candidate for Texas Agriculture Commissioner",
+    "credit": "Libertarian Party of Texas",
+    "license": null,
+    "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
+    "usageStatus": "approved"
   }
 ]
