@@ -139,7 +139,15 @@ function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
   // Persisted preflight means extraction already ran. Any persisted
   // non-ready result is terminal and must leave the publish queue.
   if (row.preflight_json) return false;
-  return result.reason === "PENDING_EXTRACTION";
+
+  if (result.reason !== "PENDING_EXTRACTION") return false;
+
+  const meetsScoreGate = (row.viral_score ?? 0) >= VIRAL_AUTO_REWRITE_MIN_SCORE;
+  const meetsConfidenceGate =
+    (row.classification_confidence ?? 0) >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE;
+  const meetsTexasGate = (row.texas_relevance_score ?? 0) >= 40;
+
+  return meetsScoreGate && meetsConfidenceGate && meetsTexasGate;
 }
 
 export function ViralRadarPanel() {
