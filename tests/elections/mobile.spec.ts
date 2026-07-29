@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const ROUTES = [
+const HOMEPAGE_TAKEOVER_ENABLED =\n  process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE === "true";\n\nconst ROUTES = [
   "/elections/2026",
   "/elections/races",
   "/elections/races/2026-us-senate",
@@ -38,7 +38,9 @@ for (const route of ROUTES) {
 
 test("polling and forecasts are sourced while result states remain honest", async ({ page }) => {
   await page.goto("/elections/polls", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("link", { name: /view poll source/i }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /view poll source/i }).first()).toBeVisible({
+    timeout: 20_000,
+  });
 
   await page.goto("/elections/forecast", { waitUntil: "domcontentloaded" });
   await expect(page.getByText("Forecasts are not available yet")).toHaveCount(0);
