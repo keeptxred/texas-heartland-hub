@@ -10,6 +10,7 @@ const requiredFiles = [
   "index.tsx",
   "news.index.tsx",
   "elections.tsx",
+  "elections.index.tsx",
   "elections.2026.tsx",
   "elections.races.tsx",
   "elections.races.$raceSlug.tsx",
@@ -35,16 +36,28 @@ for (const file of requiredFiles) {
   }
 }
 
-const [home, legacy, cycle, flags] = await Promise.all([
+const [home, layout, legacyIndex, cycle, flags] = await Promise.all([
   read("src/routes/index.tsx"),
   read("src/routes/elections.tsx"),
+  read("src/routes/elections.index.tsx"),
   read("src/routes/elections.2026.tsx"),
   read("src/lib/elections/featureFlags.ts"),
 ]);
 
 requireText(home, "ELECTION_FEATURE_FLAGS.homepagePromotion", "Homepage is not wired to the election feature flag.");
 requireText(home, "<ElectionHomePage", "Homepage takeover does not render Election Central.");
-requireText(legacy, 'throw redirect({ to: "/elections/2026"', "Legacy /elections route does not redirect to /elections/2026.");
+requireText(layout, 'createFileRoute("/elections")', "Election parent layout route is not registered.");
+requireText(layout, "<Outlet />", "Election parent route must render an Outlet for child routes.");
+requireText(
+  legacyIndex,
+  'createFileRoute("/elections/")',
+  "Exact legacy /elections index route is not registered.",
+);
+requireText(
+  legacyIndex,
+  'throw redirect({ to: "/elections/2026"',
+  "Legacy /elections index route does not redirect to /elections/2026.",
+);
 requireText(cycle, 'createFileRoute("/elections/2026")', "Canonical 2026 cycle route is not registered.");
 requireText(flags, "false", "Election homepage feature flag must default to disabled.");
 
