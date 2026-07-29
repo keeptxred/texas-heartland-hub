@@ -23,32 +23,24 @@ jobs:
           path = Path('src/components/admin/ViralRadarPanel.tsx')
           text = path.read_text()
 
-          old_helper = '''function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
+          old = '''function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
             if (row.internal_slug) return true;
             if (result.rewriteable) return true;
             return result.reason === "PENDING_EXTRACTION";
           }'''
-          new_helper = '''function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
+          new = '''function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
             if (row.internal_slug) return true;
             if (result.rewriteable) return true;
-            // A persisted snapshot means extraction/preflight already ran. Any
-            // persisted non-ready result is terminal and should not remain in
-            // the publish queue. Only never-tested rows stay visible as pending.
+            // Persisted preflight means extraction already ran. Any persisted
+            // non-ready result is terminal and must leave the publish queue.
             if (row.preflight_json) return false;
             return result.reason === "PENDING_EXTRACTION";
           }'''
 
-          old_items = '    const items = [...recentRows];'
-          new_items = '    const items = recentRows.filter((row) => shouldShowRow(row, preflightById[row.id]));'
-
-          if old_helper not in text:
+          if old not in text:
               raise SystemExit('Expected shouldShowRow helper was not found')
-          if old_items not in text:
-              raise SystemExit('Expected filtered-items line was not found')
 
-          text = text.replace(old_helper, new_helper, 1)
-          text = text.replace(old_items, new_items, 1)
-          path.write_text(text)
+          path.write_text(text.replace(old, new, 1))
           PY
       - name: Remove one-time workflow and commit fix
         run: |
