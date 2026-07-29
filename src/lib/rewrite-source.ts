@@ -59,9 +59,10 @@ export function resolveRewriteSource(input: RewriteSourceInput): ResolvedRewrite
       kind: "linked-article",
       text: normalizeUsableSourceText(input.linkedArticleText),
     },
-  ].filter((candidate) => candidate.text.length > 0);
+  ];
+  const usableCandidates = candidates.filter((candidate) => candidate.text.length > 0);
 
-  if (candidates.length === 0) {
+  if (usableCandidates.length === 0) {
     return {
       text: "",
       wordCount: 0,
@@ -72,7 +73,7 @@ export function resolveRewriteSource(input: RewriteSourceInput): ResolvedRewrite
   }
 
   const seen = new Set<string>();
-  const unique = candidates.filter((candidate) => {
+  const unique = usableCandidates.filter((candidate) => {
     const key = candidate.text.toLowerCase();
     if (seen.has(key)) return false;
     seen.add(key);
