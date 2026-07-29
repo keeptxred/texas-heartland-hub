@@ -13,7 +13,7 @@ function readBooleanFlag(value: string | boolean | undefined, fallback: boolean)
 export const ELECTION_FEATURE_FLAGS = {
   homepagePromotion: readBooleanFlag(
     import.meta.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE,
-    false,
+    true,
   ),
 } as const;
 

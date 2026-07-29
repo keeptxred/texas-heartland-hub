@@ -51,16 +51,23 @@ const pollingEligibleRaceIds = pollingAverages
 const missingCompetitiveForecasts = competitiveRaceIds.filter((raceId) => !forecastRaceIds.has(raceId));
 const homepageTakeoverEnabled = readBoolean(
   process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE,
-  false,
+  true,
+);
+const electionLayout = await readFile(
+  path.join(ROOT, "src/components/elections/layout/ElectionLayout.tsx"),
+  "utf8",
+);
+const hasSelectedRaceForecastDisclosure = /forecasts are\s+estimates available for selected races only/i.test(
+  electionLayout,
 );
 
 if (missingCompetitiveForecasts.length > 0) {
   warnings.push(
-    `Forecast coverage is limited to ${publicForecasts.length}/${competitiveRaceIds.length} competitive major-party races. Public copy must say forecasts cover selected races.`,
+    `Forecast coverage is limited to ${publicForecasts.length}/${competitiveRaceIds.length} competitive major-party races.`,
   );
-  if (homepageTakeoverEnabled) {
+  if (homepageTakeoverEnabled && !hasSelectedRaceForecastDisclosure) {
     blockers.push(
-      `Homepage takeover cannot launch while ${missingCompetitiveForecasts.length} competitive races have no forecast unless the homepage explicitly labels forecast coverage as selected races.`,
+      `Homepage takeover cannot launch while ${missingCompetitiveForecasts.length} competitive races have no forecast unless Election Central clearly labels forecasts as available for selected races only.`,
     );
   }
 }
@@ -138,6 +145,7 @@ const report = {
   generatedAt: new Date().toISOString(),
   ready: blockers.length === 0,
   homepageTakeoverEnabled,
+  hasSelectedRaceForecastDisclosure,
   counts: {
     races: publicRaces.length,
     candidates: publicCandidates.length,

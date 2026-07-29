@@ -101,8 +101,8 @@ export function ElectionLayout({
           <aside className="mt-10 border-t border-slate-200 pt-5 text-sm leading-6 text-slate-600">
             <strong className="text-slate-800">Election data notice:</strong> Election Central
             republishes source-backed public information. Polls are survey snapshots, forecasts are
-            estimates, and election returns are unofficial until certified. Confirm voting and
-            ballot information with the responsible election authority.{" "}
+            estimates available for selected races only, and election returns are unofficial until
+            certified. Confirm voting and ballot information with the responsible election authority.{" "}
             <a
               href="/elections/corrections"
               className="font-semibold text-red-700 underline-offset-4 hover:underline"
