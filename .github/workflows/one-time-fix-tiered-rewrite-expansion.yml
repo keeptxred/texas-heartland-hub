@@ -1,0 +1,107 @@
+name: One-time tiered rewrite expansion fix
+
+on:
+  push:
+    paths:
+      - .github/workflows/one-time-fix-tiered-rewrite-expansion.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Patch tiered rewrite expansion
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("src/routes/api/public/hooks/ingest-feeds.ts")
+          text = path.read_text()
+
+          replacements = [
+              (
+                  '''async function expandRewrite(
+  it: Item,
+  prior: Rewrite,
+  lovableApiKey: string,
+): Promise<Rewrite | null> {
+  const currentWords = rewriteMainProseWordCount(prior);
+  const need = NON_EVERGREEN_MIN_MAIN_WORDS - currentWords;
+''',
+                  '''async function expandRewrite(
+  it: Item,
+  prior: Rewrite,
+  lovableApiKey: string,
+  targetWords: number,
+): Promise<Rewrite | null> {
+  const currentWords = rewriteMainProseWordCount(prior);
+  const need = targetWords - currentWords;
+''',
+              ),
+              (
+                  '''    const expanded = await expandRewrite(it, draft, lovableApiKey);''',
+                  '''    const expanded = await expandRewrite(it, draft, lovableApiKey, target);''',
+              ),
+              (
+                  '''  if (!rw) return { ok: false, error: "AI rewrite failed" };
+  void PreflightBlockedError; // keep type import referenced for downstream callers
+
+  const articleRow = buildArticleRow(item, rw);
+''',
+                  '''  if (!rw) return { ok: false, error: "AI rewrite failed" };
+  void PreflightBlockedError; // keep type import referenced for downstream callers
+
+  // Cached rewrites may have been generated before tier-aware expansion was
+  // fixed. Repair a short cached draft automatically instead of asking the
+  // editor to retry an article that is already marked source-ready.
+  const rewriteTarget = minWordsForItem(item, rw);
+  if (rewriteMainProseWordCount(rw) < rewriteTarget) {
+    const expanded = await expandRewrite(item, rw, lovableApiKey, rewriteTarget);
+    if (expanded && rewriteMainProseWordCount(expanded) > rewriteMainProseWordCount(rw)) {
+      rw = expanded;
+      await cacheClient
+        .from("ai_rewrite_cache")
+        .update({
+          status: "completed",
+          result_json: rw,
+          failure_reason: null,
+          completed_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        } as never)
+        .eq("content_fingerprint", fingerprint);
+    }
+  }
+
+  const articleRow = buildArticleRow(item, rw);
+''',
+              ),
+              (
+                  '''      error: `Rewrite below tiered minimum (${words}/${target} words). Try again.`,''',
+                  '''      error: `Generated article below tiered minimum (${words}/${target} generated article words).`,''',
+              ),
+          ]
+
+          for old, new in replacements:
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"Expected exactly one match, found {count}: {old[:80]!r}")
+              text = text.replace(old, new)
+
+          path.write_text(text)
+
+          workflow = Path(".github/workflows/one-time-fix-tiered-rewrite-expansion.yml")
+          workflow.unlink()
+
+      - name: Commit fix and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/routes/api/public/hooks/ingest-feeds.ts .github/workflows/one-time-fix-tiered-rewrite-expansion.yml
+          git commit -m "Fix tier-aware rewrite expansion"
+          git push
