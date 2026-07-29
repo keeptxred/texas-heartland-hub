@@ -45,12 +45,12 @@ for (const race of races) {
     (poll) =>
       poll.raceId === race.id &&
       isPublicVerified(poll) &&
-      ["published", "revised"].includes(poll.status),
+      ["published", "revised", "completed"].includes(poll.status),
   );
   const configuredInputs = race.forecastInputs;
-  if (configuredInputs && !configuredInputs.enabled) continue;
+  const configuredForecastEnabled = configuredInputs?.enabled === true;
   const pollingOnlyInputs =
-    !configuredInputs && racePolls.length
+    !configuredForecastEnabled && racePolls.length
       ? {
           enabled: true,
           previousElectionMargin: null,
@@ -60,7 +60,7 @@ for (const race of races) {
           sourceUrls: [],
         }
       : null;
-  const inputs = configuredInputs?.enabled ? configuredInputs : pollingOnlyInputs;
+  const inputs = configuredForecastEnabled ? configuredInputs : pollingOnlyInputs;
   if (!inputs) continue;
 
   const pollingAverages = calculateCandidatePollingAverages(racePolls, now);
