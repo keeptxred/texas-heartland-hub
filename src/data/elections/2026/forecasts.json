@@ -1,1 +1,638 @@
-[]
+[
+  {
+    "id": "forecast-race-2026-attorney-general",
+    "slug": "2026-attorney-general-forecast",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-attorney-general",
+    "title": "2026 Texas Attorney General forecast",
+    "status": "active",
+    "rating": "leans_republican",
+    "confidenceLevel": "medium",
+    "model": {
+      "model": "polling",
+      "modelName": "Keep TX Red 2026 Election Forecast",
+      "modelVersion": "ktr-2026.2",
+      "methodologyUrl": "https://keeptxred.com/elections/methodology",
+      "simulationCount": null,
+      "lastModelRunAt": "2026-07-29T04:01:38.706Z",
+      "fundamentals": {
+        "previousElectionMargin": null,
+        "districtPartisanLean": null,
+        "incumbencyAdjustment": 0,
+        "fundraisingAdvantage": 0,
+        "candidateQualityAdjustment": 0,
+        "dataAsOf": "2026-07-29T04:01:38.706Z",
+        "sourceUrls": [
+          "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+          "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+        ]
+      }
+    },
+    "candidateProbabilities": [
+      {
+        "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+        "party": "republican",
+        "winProbability": 0.74,
+        "runoffProbability": null,
+        "projectedVoteShare": 52.5,
+        "projectedVoteShareLow": 48,
+        "projectedVoteShareHigh": 57,
+        "pollingAverage": 42.1,
+        "winProbabilityChange": null
+      },
+      {
+        "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+        "party": "democratic",
+        "winProbability": 0.26,
+        "runoffProbability": null,
+        "projectedVoteShare": 47.5,
+        "projectedVoteShareLow": 43,
+        "projectedVoteShareHigh": 52,
+        "pollingAverage": 37.1,
+        "winProbabilityChange": null
+      }
+    ],
+    "projectedMargin": 5,
+    "projectedWinnerCandidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+    "publishedAt": "2026-07-29T04:01:38.706Z",
+    "finalizedAt": null,
+    "notes": "Polling-only forecast using the weighted public polling average; no fundamentals adjustments were applied.",
+    "createdAt": "2026-07-29T04:01:38.706Z",
+    "updatedAt": "2026-07-29T04:01:38.706Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-07-29T04:01:38.706Z",
+    "verifiedBy": "GitHub Actions election forecast workflow",
+    "verificationNotes": null,
+    "publicationStatus": "published",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "GitHub Actions election forecast workflow",
+    "dataAsOf": "2026-07-29T04:01:38.706Z",
+    "lastCheckedAt": "2026-07-29T04:01:38.706Z",
+    "staleAfter": "2026-07-31T04:01:38.706Z",
+    "expiresAt": "2026-08-05T04:01:38.706Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "ktr-forecast-model",
+      "sourceName": "Keep TX Red Election Forecast Model",
+      "sourceType": "forecast_provider",
+      "sourceUrl": "https://keeptxred.com/elections/methodology",
+      "sourceRecordId": "race-2026-attorney-general",
+      "retrievedAt": "2026-07-29T04:01:38.706Z",
+      "attributionText": "Keep TX Red deterministic election model"
+    },
+    "fundamentalsBased": false,
+    "sourceIds": [
+      "ktr-forecast-model",
+      "source-tpor-may-2026-general-election",
+      "source-ut-texas-politics-project-june-2026"
+    ],
+    "snapshots": [
+      {
+        "forecastId": "forecast-race-2026-attorney-general",
+        "capturedAt": "2026-07-29T04:01:38.706Z",
+        "status": "active",
+        "rating": "leans_republican",
+        "confidenceLevel": "medium",
+        "projectedWinnerCandidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+        "projectedMargin": 5,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+            "candidateSlug": "mayes-middleton-republican-race-2026-attorney-general",
+            "candidateName": "MAYES MIDDLETON",
+            "party": "republican",
+            "imageUrl": null,
+            "winProbability": 0.74,
+            "projectedVoteShare": 52.5,
+            "projectedVoteShareLow": 48,
+            "projectedVoteShareHigh": 57,
+            "pollingAverage": 42.1,
+            "winProbabilityChange": null
+          },
+          {
+            "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+            "candidateSlug": "nathan-johnson-democratic-race-2026-attorney-general",
+            "candidateName": "NATHAN JOHNSON",
+            "party": "democratic",
+            "imageUrl": null,
+            "winProbability": 0.26,
+            "projectedVoteShare": 47.5,
+            "projectedVoteShareLow": 43,
+            "projectedVoteShareHigh": 52,
+            "pollingAverage": 37.1,
+            "winProbabilityChange": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "forecast-race-2026-comptroller",
+    "slug": "2026-comptroller-forecast",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-comptroller",
+    "title": "2026 Texas Comptroller of Public Accounts forecast",
+    "status": "active",
+    "rating": "leans_republican",
+    "confidenceLevel": "low",
+    "model": {
+      "model": "polling",
+      "modelName": "Keep TX Red 2026 Election Forecast",
+      "modelVersion": "ktr-2026.2",
+      "methodologyUrl": "https://keeptxred.com/elections/methodology",
+      "simulationCount": null,
+      "lastModelRunAt": "2026-07-29T04:01:38.706Z",
+      "fundamentals": {
+        "previousElectionMargin": null,
+        "districtPartisanLean": null,
+        "incumbencyAdjustment": 0,
+        "fundraisingAdvantage": 0,
+        "candidateQualityAdjustment": 0,
+        "dataAsOf": "2026-07-29T04:01:38.706Z",
+        "sourceUrls": [
+          "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+        ]
+      }
+    },
+    "candidateProbabilities": [
+      {
+        "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+        "party": "republican",
+        "winProbability": 0.78,
+        "runoffProbability": null,
+        "projectedVoteShare": 53,
+        "projectedVoteShareLow": 47,
+        "projectedVoteShareHigh": 59,
+        "pollingAverage": 40,
+        "winProbabilityChange": null
+      },
+      {
+        "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+        "party": "democratic",
+        "winProbability": 0.22,
+        "runoffProbability": null,
+        "projectedVoteShare": 47,
+        "projectedVoteShareLow": 41,
+        "projectedVoteShareHigh": 53,
+        "pollingAverage": 34,
+        "winProbabilityChange": null
+      }
+    ],
+    "projectedMargin": 6,
+    "projectedWinnerCandidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+    "publishedAt": "2026-07-29T04:01:38.706Z",
+    "finalizedAt": null,
+    "notes": "Polling-only forecast using the weighted public polling average; no fundamentals adjustments were applied.",
+    "createdAt": "2026-07-29T04:01:38.706Z",
+    "updatedAt": "2026-07-29T04:01:38.706Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-07-29T04:01:38.706Z",
+    "verifiedBy": "GitHub Actions election forecast workflow",
+    "verificationNotes": null,
+    "publicationStatus": "published",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "GitHub Actions election forecast workflow",
+    "dataAsOf": "2026-07-29T04:01:38.706Z",
+    "lastCheckedAt": "2026-07-29T04:01:38.706Z",
+    "staleAfter": "2026-07-31T04:01:38.706Z",
+    "expiresAt": "2026-08-05T04:01:38.706Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "ktr-forecast-model",
+      "sourceName": "Keep TX Red Election Forecast Model",
+      "sourceType": "forecast_provider",
+      "sourceUrl": "https://keeptxred.com/elections/methodology",
+      "sourceRecordId": "race-2026-comptroller",
+      "retrievedAt": "2026-07-29T04:01:38.706Z",
+      "attributionText": "Keep TX Red deterministic election model"
+    },
+    "fundamentalsBased": false,
+    "sourceIds": [
+      "ktr-forecast-model",
+      "source-ut-texas-politics-project-june-2026"
+    ],
+    "snapshots": [
+      {
+        "forecastId": "forecast-race-2026-comptroller",
+        "capturedAt": "2026-07-29T04:01:38.706Z",
+        "status": "active",
+        "rating": "leans_republican",
+        "confidenceLevel": "low",
+        "projectedWinnerCandidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+        "projectedMargin": 6,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+            "candidateSlug": "don-huffines-republican-race-2026-comptroller",
+            "candidateName": "DON HUFFINES",
+            "party": "republican",
+            "imageUrl": null,
+            "winProbability": 0.78,
+            "projectedVoteShare": 53,
+            "projectedVoteShareLow": 47,
+            "projectedVoteShareHigh": 59,
+            "pollingAverage": 40,
+            "winProbabilityChange": null
+          },
+          {
+            "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+            "candidateSlug": "sarah-eckhardt-democratic-race-2026-comptroller",
+            "candidateName": "SARAH ECKHARDT",
+            "party": "democratic",
+            "imageUrl": null,
+            "winProbability": 0.22,
+            "projectedVoteShare": 47,
+            "projectedVoteShareLow": 41,
+            "projectedVoteShareHigh": 53,
+            "pollingAverage": 34,
+            "winProbabilityChange": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "forecast-race-2026-governor",
+    "slug": "2026-governor-forecast",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-governor",
+    "title": "2026 Texas Governor forecast",
+    "status": "active",
+    "rating": "leans_republican",
+    "confidenceLevel": "medium",
+    "model": {
+      "model": "polling",
+      "modelName": "Keep TX Red 2026 Election Forecast",
+      "modelVersion": "ktr-2026.2",
+      "methodologyUrl": "https://keeptxred.com/elections/methodology",
+      "simulationCount": null,
+      "lastModelRunAt": "2026-07-29T04:01:38.706Z",
+      "fundamentals": {
+        "previousElectionMargin": null,
+        "districtPartisanLean": null,
+        "incumbencyAdjustment": 0,
+        "fundraisingAdvantage": 0,
+        "candidateQualityAdjustment": 0,
+        "dataAsOf": "2026-07-29T04:01:38.706Z",
+        "sourceUrls": [
+          "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+          "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+        ]
+      }
+    },
+    "candidateProbabilities": [
+      {
+        "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
+        "party": "republican",
+        "winProbability": 0.79,
+        "runoffProbability": null,
+        "projectedVoteShare": 53.1,
+        "projectedVoteShareLow": 48.6,
+        "projectedVoteShareHigh": 57.6,
+        "pollingAverage": 46.6,
+        "winProbabilityChange": null
+      },
+      {
+        "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+        "party": "democratic",
+        "winProbability": 0.21,
+        "runoffProbability": null,
+        "projectedVoteShare": 46.9,
+        "projectedVoteShareLow": 42.4,
+        "projectedVoteShareHigh": 51.4,
+        "pollingAverage": 40.4,
+        "winProbabilityChange": null
+      }
+    ],
+    "projectedMargin": 6.2,
+    "projectedWinnerCandidateId": "candidate-greg-abbott-republican-race-2026-governor",
+    "publishedAt": "2026-07-29T04:01:38.706Z",
+    "finalizedAt": null,
+    "notes": "Polling-only forecast using the weighted public polling average; no fundamentals adjustments were applied.",
+    "createdAt": "2026-07-29T04:01:38.706Z",
+    "updatedAt": "2026-07-29T04:01:38.706Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-07-29T04:01:38.706Z",
+    "verifiedBy": "GitHub Actions election forecast workflow",
+    "verificationNotes": null,
+    "publicationStatus": "published",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "GitHub Actions election forecast workflow",
+    "dataAsOf": "2026-07-29T04:01:38.706Z",
+    "lastCheckedAt": "2026-07-29T04:01:38.706Z",
+    "staleAfter": "2026-07-31T04:01:38.706Z",
+    "expiresAt": "2026-08-05T04:01:38.706Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "ktr-forecast-model",
+      "sourceName": "Keep TX Red Election Forecast Model",
+      "sourceType": "forecast_provider",
+      "sourceUrl": "https://keeptxred.com/elections/methodology",
+      "sourceRecordId": "race-2026-governor",
+      "retrievedAt": "2026-07-29T04:01:38.706Z",
+      "attributionText": "Keep TX Red deterministic election model"
+    },
+    "fundamentalsBased": false,
+    "sourceIds": [
+      "ktr-forecast-model",
+      "source-tpor-may-2026-general-election",
+      "source-ut-texas-politics-project-june-2026"
+    ],
+    "snapshots": [
+      {
+        "forecastId": "forecast-race-2026-governor",
+        "capturedAt": "2026-07-29T04:01:38.706Z",
+        "status": "active",
+        "rating": "leans_republican",
+        "confidenceLevel": "medium",
+        "projectedWinnerCandidateId": "candidate-greg-abbott-republican-race-2026-governor",
+        "projectedMargin": 6.2,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
+            "candidateSlug": "greg-abbott-republican-race-2026-governor",
+            "candidateName": "GREG ABBOTT",
+            "party": "republican",
+            "imageUrl": null,
+            "winProbability": 0.79,
+            "projectedVoteShare": 53.1,
+            "projectedVoteShareLow": 48.6,
+            "projectedVoteShareHigh": 57.6,
+            "pollingAverage": 46.6,
+            "winProbabilityChange": null
+          },
+          {
+            "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+            "candidateSlug": "gina-hinojosa-democratic-race-2026-governor",
+            "candidateName": "GINA HINOJOSA",
+            "party": "democratic",
+            "imageUrl": null,
+            "winProbability": 0.21,
+            "projectedVoteShare": 46.9,
+            "projectedVoteShareLow": 42.4,
+            "projectedVoteShareHigh": 51.4,
+            "pollingAverage": 40.4,
+            "winProbabilityChange": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "forecast-race-2026-lieutenant-governor",
+    "slug": "2026-lieutenant-governor-forecast",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-lieutenant-governor",
+    "title": "2026 Texas Lieutenant Governor forecast",
+    "status": "active",
+    "rating": "leans_republican",
+    "confidenceLevel": "low",
+    "model": {
+      "model": "polling",
+      "modelName": "Keep TX Red 2026 Election Forecast",
+      "modelVersion": "ktr-2026.2",
+      "methodologyUrl": "https://keeptxred.com/elections/methodology",
+      "simulationCount": null,
+      "lastModelRunAt": "2026-07-29T04:01:38.706Z",
+      "fundamentals": {
+        "previousElectionMargin": null,
+        "districtPartisanLean": null,
+        "incumbencyAdjustment": 0,
+        "fundraisingAdvantage": 0,
+        "candidateQualityAdjustment": 0,
+        "dataAsOf": "2026-07-29T04:01:38.706Z",
+        "sourceUrls": [
+          "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+        ]
+      }
+    },
+    "candidateProbabilities": [
+      {
+        "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+        "party": "republican",
+        "winProbability": 0.81,
+        "runoffProbability": null,
+        "projectedVoteShare": 53.5,
+        "projectedVoteShareLow": 47.5,
+        "projectedVoteShareHigh": 59.5,
+        "pollingAverage": 43,
+        "winProbabilityChange": null
+      },
+      {
+        "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+        "party": "democratic",
+        "winProbability": 0.19,
+        "runoffProbability": null,
+        "projectedVoteShare": 46.5,
+        "projectedVoteShareLow": 40.5,
+        "projectedVoteShareHigh": 52.5,
+        "pollingAverage": 36,
+        "winProbabilityChange": null
+      }
+    ],
+    "projectedMargin": 7,
+    "projectedWinnerCandidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+    "publishedAt": "2026-07-29T04:01:38.706Z",
+    "finalizedAt": null,
+    "notes": "Polling-only forecast using the weighted public polling average; no fundamentals adjustments were applied.",
+    "createdAt": "2026-07-29T04:01:38.706Z",
+    "updatedAt": "2026-07-29T04:01:38.706Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-07-29T04:01:38.706Z",
+    "verifiedBy": "GitHub Actions election forecast workflow",
+    "verificationNotes": null,
+    "publicationStatus": "published",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "GitHub Actions election forecast workflow",
+    "dataAsOf": "2026-07-29T04:01:38.706Z",
+    "lastCheckedAt": "2026-07-29T04:01:38.706Z",
+    "staleAfter": "2026-07-31T04:01:38.706Z",
+    "expiresAt": "2026-08-05T04:01:38.706Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "ktr-forecast-model",
+      "sourceName": "Keep TX Red Election Forecast Model",
+      "sourceType": "forecast_provider",
+      "sourceUrl": "https://keeptxred.com/elections/methodology",
+      "sourceRecordId": "race-2026-lieutenant-governor",
+      "retrievedAt": "2026-07-29T04:01:38.706Z",
+      "attributionText": "Keep TX Red deterministic election model"
+    },
+    "fundamentalsBased": false,
+    "sourceIds": [
+      "ktr-forecast-model",
+      "source-ut-texas-politics-project-june-2026"
+    ],
+    "snapshots": [
+      {
+        "forecastId": "forecast-race-2026-lieutenant-governor",
+        "capturedAt": "2026-07-29T04:01:38.706Z",
+        "status": "active",
+        "rating": "leans_republican",
+        "confidenceLevel": "low",
+        "projectedWinnerCandidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+        "projectedMargin": 7,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+            "candidateSlug": "dan-patrick-republican-race-2026-lieutenant-governor",
+            "candidateName": "DAN PATRICK",
+            "party": "republican",
+            "imageUrl": null,
+            "winProbability": 0.81,
+            "projectedVoteShare": 53.5,
+            "projectedVoteShareLow": 47.5,
+            "projectedVoteShareHigh": 59.5,
+            "pollingAverage": 43,
+            "winProbabilityChange": null
+          },
+          {
+            "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+            "candidateSlug": "vikki-goodwin-democratic-race-2026-lieutenant-governor",
+            "candidateName": "VIKKI GOODWIN",
+            "party": "democratic",
+            "imageUrl": null,
+            "winProbability": 0.19,
+            "projectedVoteShare": 46.5,
+            "projectedVoteShareLow": 40.5,
+            "projectedVoteShareHigh": 52.5,
+            "pollingAverage": 36,
+            "winProbabilityChange": null
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "forecast-race-2026-us-senate",
+    "slug": "2026-us-senate-forecast",
+    "electionCycleId": "election-cycle-2026-texas-general",
+    "raceId": "race-2026-us-senate",
+    "title": "2026 Texas U.S. Senate forecast",
+    "status": "active",
+    "rating": "toss_up",
+    "confidenceLevel": "medium",
+    "model": {
+      "model": "polling",
+      "modelName": "Keep TX Red 2026 Election Forecast",
+      "modelVersion": "ktr-2026.2",
+      "methodologyUrl": "https://keeptxred.com/elections/methodology",
+      "simulationCount": null,
+      "lastModelRunAt": "2026-07-29T04:01:38.706Z",
+      "fundamentals": {
+        "previousElectionMargin": null,
+        "districtPartisanLean": null,
+        "incumbencyAdjustment": 0,
+        "fundraisingAdvantage": 0,
+        "candidateQualityAdjustment": 0,
+        "dataAsOf": "2026-07-29T04:01:38.706Z",
+        "sourceUrls": [
+          "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
+          "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
+        ]
+      }
+    },
+    "candidateProbabilities": [
+      {
+        "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
+        "party": "republican",
+        "winProbability": 0.48,
+        "runoffProbability": null,
+        "projectedVoteShare": 49.8,
+        "projectedVoteShareLow": 45.3,
+        "projectedVoteShareHigh": 54.3,
+        "pollingAverage": 43.4,
+        "winProbabilityChange": null
+      },
+      {
+        "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+        "party": "democratic",
+        "winProbability": 0.52,
+        "runoffProbability": null,
+        "projectedVoteShare": 50.2,
+        "projectedVoteShareLow": 45.7,
+        "projectedVoteShareHigh": 54.7,
+        "pollingAverage": 43.8,
+        "winProbabilityChange": null
+      }
+    ],
+    "projectedMargin": -0.4,
+    "projectedWinnerCandidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+    "publishedAt": "2026-07-29T04:01:38.706Z",
+    "finalizedAt": null,
+    "notes": "Polling-only forecast using the weighted public polling average; no fundamentals adjustments were applied.",
+    "createdAt": "2026-07-29T04:01:38.706Z",
+    "updatedAt": "2026-07-29T04:01:38.706Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-07-29T04:01:38.706Z",
+    "verifiedBy": "GitHub Actions election forecast workflow",
+    "verificationNotes": null,
+    "publicationStatus": "published",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "GitHub Actions election forecast workflow",
+    "dataAsOf": "2026-07-29T04:01:38.706Z",
+    "lastCheckedAt": "2026-07-29T04:01:38.706Z",
+    "staleAfter": "2026-07-31T04:01:38.706Z",
+    "expiresAt": "2026-08-05T04:01:38.706Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "ktr-forecast-model",
+      "sourceName": "Keep TX Red Election Forecast Model",
+      "sourceType": "forecast_provider",
+      "sourceUrl": "https://keeptxred.com/elections/methodology",
+      "sourceRecordId": "race-2026-us-senate",
+      "retrievedAt": "2026-07-29T04:01:38.706Z",
+      "attributionText": "Keep TX Red deterministic election model"
+    },
+    "fundamentalsBased": false,
+    "sourceIds": [
+      "ktr-forecast-model",
+      "source-tpor-may-2026-general-election",
+      "source-ut-texas-politics-project-june-2026"
+    ],
+    "snapshots": [
+      {
+        "forecastId": "forecast-race-2026-us-senate",
+        "capturedAt": "2026-07-29T04:01:38.706Z",
+        "status": "active",
+        "rating": "toss_up",
+        "confidenceLevel": "medium",
+        "projectedWinnerCandidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+        "projectedMargin": -0.4,
+        "candidateSummaries": [
+          {
+            "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
+            "candidateSlug": "ken-paxton-republican-race-2026-us-senate",
+            "candidateName": "KEN PAXTON",
+            "party": "republican",
+            "imageUrl": null,
+            "winProbability": 0.48,
+            "projectedVoteShare": 49.8,
+            "projectedVoteShareLow": 45.3,
+            "projectedVoteShareHigh": 54.3,
+            "pollingAverage": 43.4,
+            "winProbabilityChange": null
+          },
+          {
+            "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+            "candidateSlug": "james-talarico-democratic-race-2026-us-senate",
+            "candidateName": "JAMES TALARICO",
+            "party": "democratic",
+            "imageUrl": null,
+            "winProbability": 0.52,
+            "projectedVoteShare": 50.2,
+            "projectedVoteShareLow": 45.7,
+            "projectedVoteShareHigh": 54.7,
+            "pollingAverage": 43.8,
+            "winProbabilityChange": null
+          }
+        ]
+      }
+    ]
+  }
+]

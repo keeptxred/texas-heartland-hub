@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-29T03:48:24.657Z",
+  "generatedAt": "2026-07-29T04:01:44.245Z",
   "ready": true,
   "homepageTakeoverEnabled": false,
   "counts": {
@@ -7,7 +7,9 @@
     "races": 227,
     "candidates": 462,
     "polls": 8,
-    "forecasts": 0,
+    "forecasts": 5,
+    "forecastEligibleRaces": 5,
+    "forecastCoveredRaces": 5,
     "racesWithAtLeastOneCandidate": 227,
     "launchCoveredRaces": 227,
     "geographyRequiredRaces": 219,
@@ -16,8 +18,7 @@
   "uncoveredRaceIds": [],
   "partiallyCoveredRaceIds": [],
   "missingGeographyRaceIds": [],
-  "warnings": [
-    "No forecasts are loaded; the published no-forecast state must remain visible."
-  ],
+  "missingForecastRaceIds": [],
+  "warnings": [],
   "blockerCount": 0
 }
