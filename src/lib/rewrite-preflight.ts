@@ -72,14 +72,16 @@ const NEWS_EVENT_PATTERNS: RegExp[] = [
   /\b(bill|law|ruling|order|lawsuit|indictment|arrest|election|primary|runoff|hearing|verdict|storm|hurricane|tornado|flood|wildfire|shooting|crash|outbreak)\b/i,
 ];
 
-function normalize(text: string | null | undefined): string {
+/** Normalizes the exact text that may be counted, displayed and rewritten. */
+export function normalizeUsableSourceText(text: string | null | undefined): string {
   return (text ?? "").replace(/\s+/g, " ").trim();
 }
 
-function wordCount(text: string): number {
-  const t = text.trim();
-  if (!t) return 0;
-  return t.split(/\s+/).length;
+/** Single source of truth for all rewrite-source word counts. */
+export function countUsableSourceWords(text: string | null | undefined): number {
+  const normalized = normalizeUsableSourceText(text);
+  if (!normalized) return 0;
+  return normalized.split(/\s+/).filter(Boolean).length;
 }
 
 function countMatches(text: string, patterns: RegExp[]): number {
@@ -117,7 +119,7 @@ function detectPaywall(text: string): boolean {
 
 function detectBoilerplateHeavy(text: string): boolean {
   const hits = countMatches(text, BOILERPLATE_PATTERNS);
-  const words = wordCount(text);
+  const words = countUsableSourceWords(text);
   // Only flag when the extraction is small AND dominated by boilerplate cues.
   return hits >= 2 && words < 250;
 }
@@ -159,9 +161,9 @@ function reasonMessage(reason: RewritePreflightReason, words: number): string {
 }
 
 export function assessRewritePreflight(input: RewritePreflightInput): RewritePreflightResult {
-  const title = normalize(input.title);
-  const body = normalize(input.description);
-  const words = wordCount(body);
+  const title = normalizeUsableSourceText(input.title);
+  const body = normalizeUsableSourceText(input.description);
+  const words = countUsableSourceWords(body);
   const factual = factualSignalCount(`${title} ${body}`);
   const eventState = detectNewsEvent(title, body);
 
