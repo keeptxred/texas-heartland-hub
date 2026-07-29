@@ -8,8 +8,8 @@ const blockers = [];
 const warnings = [];
 const now = new Date();
 
-const [cycles, races, candidates, polls, forecasts] = await Promise.all(
-  ["cycle", "races", "candidates", "polls", "forecasts"].map(async (name) =>
+const [cycles, races, candidates, polls, forecasts, pollingAverages] = await Promise.all(
+  ["cycle", "races", "candidates", "polls", "forecasts", "polling-averages"].map(async (name) =>
     JSON.parse(await readFile(path.join(DATA_DIR, `${name}.json`), "utf8")),
   ),
 );
@@ -20,9 +20,11 @@ const publicCandidates = publicRecords(candidates);
 const publicPolls = publicRecords(polls);
 const publicForecasts = publicRecords(forecasts);
 const candidateById = new Map(publicCandidates.map((candidate) => [candidate.id, candidate]));
+const forecastByRaceId = new Map(publicForecasts.map((forecast) => [forecast.raceId, forecast]));
 const uncoveredRaceIds = [];
 const partiallyCoveredRaceIds = [];
 const missingGeographyRaceIds = [];
+const missingForecastRaceIds = [];
 
 require(publicCycles.length === 1, `Expected one published 2026 cycle; found ${publicCycles.length}.`);
 require(publicRaces.length === 227, `Expected all 227 launch-scope races; found ${publicRaces.length}.`);
@@ -88,9 +90,26 @@ require(
   `Geography coverage is incomplete: ${geographyCoveredRaces}/${geographyRequiredRaces} required races are covered.`,
 );
 
+const forecastEligibleRaceIds = pollingAverages
+  .filter((average) => {
+    const parties = new Set(
+      (average.candidates ?? [])
+        .map((candidate) => candidateById.get(candidate.candidateId)?.party)
+        .filter(Boolean),
+    );
+    return parties.has("republican") && parties.has("democratic");
+  })
+  .map((average) => average.raceId);
+for (const raceId of forecastEligibleRaceIds) {
+  if (!forecastByRaceId.has(raceId)) {
+    missingForecastRaceIds.push(raceId);
+    blockers.push(`${raceId} has complete major-party polling averages but no published forecast.`);
+  }
+}
+
 if (publicPolls.length === 0) warnings.push("No public polls are loaded; the published no-poll state must remain visible.");
-if (publicForecasts.length === 0) {
-  warnings.push("No forecasts are loaded; the published no-forecast state must remain visible.");
+if (publicForecasts.length === 0 && forecastEligibleRaceIds.length === 0) {
+  warnings.push("No forecasts are loaded because no race has complete sourced forecast inputs.");
 }
 
 const enabled = readBoolean(process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE, false);
@@ -105,6 +124,8 @@ const report = {
     candidates: publicCandidates.length,
     polls: publicPolls.length,
     forecasts: publicForecasts.length,
+    forecastEligibleRaces: forecastEligibleRaceIds.length,
+    forecastCoveredRaces: forecastEligibleRaceIds.length - missingForecastRaceIds.length,
     racesWithAtLeastOneCandidate: coveredRaces,
     launchCoveredRaces: fullyCoveredRaces,
     geographyRequiredRaces,
@@ -113,6 +134,7 @@ const report = {
   uncoveredRaceIds,
   partiallyCoveredRaceIds,
   missingGeographyRaceIds,
+  missingForecastRaceIds,
   warnings,
   blockerCount: blockers.length,
 };
@@ -126,7 +148,7 @@ if (readBoolean(process.env.ELECTION_WRITE_READINESS, false)) {
 }
 
 console.log(
-  `Election Central readiness: ${ready ? "READY" : "NOT READY"}; ${publicRaces.length} races, ${publicCandidates.length} candidates, ${coveredRaces}/${publicRaces.length} races with at least one candidate, ${fullyCoveredRaces}/${publicRaces.length} launch-covered races, ${geographyCoveredRaces}/${geographyRequiredRaces} geography-covered races.`,
+  `Election Central readiness: ${ready ? "READY" : "NOT READY"}; ${publicRaces.length} races, ${publicCandidates.length} candidates, ${coveredRaces}/${publicRaces.length} races with at least one candidate, ${fullyCoveredRaces}/${publicRaces.length} launch-covered races, ${geographyCoveredRaces}/${geographyRequiredRaces} geography-covered races, ${forecastEligibleRaceIds.length - missingForecastRaceIds.length}/${forecastEligibleRaceIds.length} polling-eligible races forecasted.`,
 );
 for (const warning of warnings) console.warn(`Launch warning: ${warning}`);
 
