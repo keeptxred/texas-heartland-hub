@@ -1,0 +1,64 @@
+name: Fix Viral Radar pending gate
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-viral-radar-pending-gate.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Patch Viral Radar filter
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/components/admin/ViralRadarPanel.tsx')
+          text = path.read_text()
+          old = '''function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
+            if (row.internal_slug) return true;
+            if (result.rewriteable) return true;
+            // Persisted preflight means extraction already ran. Any persisted
+            // non-ready result is terminal and must leave the publish queue.
+            if (row.preflight_json) return false;
+            return result.reason === "PENDING_EXTRACTION";
+          }
+          '''
+          new = '''function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
+            if (row.internal_slug) return true;
+            if (result.rewriteable) return true;
+            // Persisted preflight means extraction already ran. Any persisted
+            // non-ready result is terminal and must leave the publish queue.
+            if (row.preflight_json) return false;
+
+            if (result.reason !== "PENDING_EXTRACTION") return false;
+
+            const meetsScoreGate = (row.viral_score ?? 0) >= VIRAL_AUTO_REWRITE_MIN_SCORE;
+            const meetsConfidenceGate =
+              (row.classification_confidence ?? 0) >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE;
+            const meetsTexasGate = (row.texas_relevance_score ?? 0) >= 40;
+
+            return meetsScoreGate && meetsConfidenceGate && meetsTexasGate;
+          }
+          '''
+          if old not in text:
+              raise SystemExit('Expected shouldShowRow block not found')
+          path.write_text(text.replace(old, new))
+          PY
+      - name: Remove one-time workflow
+        run: rm .github/workflows/fix-viral-radar-pending-gate.yml
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/admin/ViralRadarPanel.tsx .github/workflows/fix-viral-radar-pending-gate.yml
+          git commit -m "Filter below-gate pending rows from Viral Radar"
+          git push
