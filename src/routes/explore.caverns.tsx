@@ -69,7 +69,7 @@ function TexasCavernsPage() {
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: data.total,
-      itemListElement: data.items.map((item, index) => ({
+      itemListElement: data.items.map((item: any, index: number) => ({
         "@type": "ListItem",
         position: index + 1,
         name: item.name,
@@ -173,7 +173,7 @@ function TexasCavernsPage() {
               </p>
             </div>
 
-            {data.regionalGroups.map((group) => (
+            {data.regionalGroups.map((group: any) => (
               <div key={group.region} className="border-t pt-8">
                 <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
                   <div>

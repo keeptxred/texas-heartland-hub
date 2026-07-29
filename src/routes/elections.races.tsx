@@ -187,7 +187,7 @@ function ElectionRacesContent() {
 
   const updateSearch = (updates: Partial<ElectionRaceListSearch>) => {
     void navigate({
-      search: (previous) => ({ ...previous, ...updates }),
+      search: (previous: any) => ({ ...previous, ...updates }),
       replace: true,
     });
   };

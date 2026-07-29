@@ -74,7 +74,7 @@ function ExploreLanding() {
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: destinationCount,
-      itemListElement: data.featured.items.map((item, index) => ({
+      itemListElement: data.featured.items.map((item: any, index: number) => ({
         "@type": "ListItem",
         position: index + 1,
         name: item.name,
