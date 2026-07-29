@@ -8,6 +8,7 @@ const errors = [];
 const warnings = [];
 const now = new Date();
 const checkLinks = process.env.ELECTION_QA_CHECK_LINKS === "true";
+const FIRST_PARTY_HOSTS = new Set(["keeptxred.com", "www.keeptxred.com"]);
 
 const [cycles, races, candidates, polls, forecasts, results] = await Promise.all(
   ["cycle", "races", "candidates", "polls", "forecasts", "results"].map(async (name) =>
@@ -167,6 +168,14 @@ function collectUrls(value, urls) {
 }
 
 async function checkExternalUrl(url) {
+  try {
+    if (FIRST_PARTY_HOSTS.has(new URL(url).hostname.toLowerCase())) {
+      return { kind: "ok", message: "" };
+    }
+  } catch {
+    return { kind: "broken", message: `Invalid source URL: ${url}.` };
+  }
+
   const response = await fetchWithRetry(url, 2);
   if (!response) {
     return {
