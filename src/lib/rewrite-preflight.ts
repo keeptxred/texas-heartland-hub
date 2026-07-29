@@ -158,7 +158,7 @@ function detectNewsEvent(title: string, body: string): boolean | null {
 function reasonMessage(reason: RewritePreflightReason, words: number): string {
   switch (reason) {
     case "READY":
-      return `Rewrite ready · ${words} source words`;
+      return `Source ready for rewrite · ${words} extracted source words`;
     case "PENDING_EXTRACTION":
       return "Checking source · extraction has not been attempted yet";
     case "MISSING_SOURCE_URL":
@@ -237,7 +237,9 @@ export function assessRewritePreflight(input: RewritePreflightInput): RewritePre
 }
 
 export function preflightStatusLabel(result: RewritePreflightResult): string {
-  if (result.rewriteable) return `Rewrite ready · ${result.sourceWordCount} source words`;
+  if (result.rewriteable) {
+    return `Source ready for rewrite · ${result.sourceWordCount} extracted source words`;
+  }
   if (result.reason === "PENDING_EXTRACTION") return "Checking source";
   return result.message;
 }
