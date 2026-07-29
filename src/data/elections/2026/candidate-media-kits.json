@@ -1,0 +1,42 @@
+[
+  {
+    "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+    "campaignUrl": "https://ginafortexas.com/",
+    "pressUrl": "https://ginafortexas.com/news/",
+    "pressEmail": "press@ginafortexas.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://ginafortexas.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes campaign photography and a dedicated press contact; no standalone downloadable media kit was found."
+  },
+  {
+    "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
+    "campaignUrl": "https://www.gregabbott.com/",
+    "pressUrl": "https://www.gregabbott.com/news/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.gregabbott.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site publishes event photography and campaign imagery; no standalone media-kit page was located."
+  },
+  {
+    "candidateId": "candidate-pat-dixon-libertarian-race-2026-governor",
+    "campaignUrl": "https://patdixon.org/",
+    "pressUrl": "https://patdixon.org/",
+    "pressEmail": "info@PatDixon.org",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://patdixon.org/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site contains multiple candidate photos and direct campaign contact information."
+  },
+  {
+    "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
+    "campaignUrl": "https://www.kenpaxton.com/",
+    "pressUrl": "https://www.kenpaxton.com/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.kenpaxton.com/",
+    "status": "official-campaign-source",
+    "notes": "Official U.S. Senate campaign site with campaign photography; no dedicated downloadable media kit was found."
+  }
+]
