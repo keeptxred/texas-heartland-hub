@@ -1,6 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const HOMEPAGE_TAKEOVER_ENABLED =\n  process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE === "true";\n\nconst ROUTES = [
+const HOMEPAGE_TAKEOVER_ENABLED =
+  process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE === "true";
+
+const ROUTES = [
   "/elections/2026",
   "/elections/races",
   "/elections/races/2026-us-senate",
@@ -13,11 +16,24 @@ const HOMEPAGE_TAKEOVER_ENABLED =\n  process.env.VITE_ENABLE_ELECTION_CENTRAL_HO
   "/elections/methodology",
 ] as const;
 
-test("normal homepage remains active while takeover is disabled", async ({ page }) => {
+test(`homepage renders the ${HOMEPAGE_TAKEOVER_ENABLED ? "Election Central" : "standard"} experience`, async ({ page }) => {
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
   expect(response?.status()).toBeLessThan(400);
-  await expect(page.getByRole("heading", { name: /your guide to moving to and living in texas/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /texas election central/i })).toHaveCount(0);
+
+  if (HOMEPAGE_TAKEOVER_ENABLED) {
+    await expect(
+      page.getByRole("heading", { name: /texas election central/i }).first(),
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(
+      page.getByRole("heading", { name: /your guide to moving to and living in texas/i }),
+    ).toHaveCount(0);
+  } else {
+    await expect(
+      page.getByRole("heading", { name: /your guide to moving to and living in texas/i }),
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole("heading", { name: /texas election central/i })).toHaveCount(0);
+  }
+
   await expectNoHorizontalOverflow(page);
 });
 
