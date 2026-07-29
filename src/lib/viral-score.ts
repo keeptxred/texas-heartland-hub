@@ -44,7 +44,7 @@ export const SOURCE_REPUTATION_FLOOR = 55;
 export const TEXAS_RELEVANCE_MIN = 40;
 export const TEXAS_RELEVANCE_AUTO = 85;
 
-const TEXAS_STRONG = /\btexas\b|\btexan\b|\bt\.x\.\b/i;
+const TEXAS_STRONG = /\btexas\b|\btexans?\b|\bt\.x\.\b/i;
 const TEXAS_CITIES = /\b(houston|dallas|austin|san antonio|fort worth|el paso|rgv|rio grande valley|rio grande|mcallen|brownsville|laredo|lubbock|amarillo|corpus christi|waco|arlington|plano|frisco|mckinney|denton|irving|garland|richardson|round rock|tyler|abilene|midland|odessa|beaumont|galveston|killeen|college station|bryan|san marcos|new braunfels|conroe|the woodlands|sugar land|katy|pearland|pasadena tx|humble|spring tx)\b/i;
 const TEXAS_COUNTIES = /\b(harris county|dallas county|tarrant county|bexar county|travis county|collin county|denton county|fort bend county|montgomery county|williamson county|hidalgo county|el paso county|nueces county|cameron county|galveston county|brazoria county|jefferson county|lubbock county|mclennan county)\b/i;
 const OFFICIAL_SOURCE = /(governor|texas\.gov|office of the governor|attorney general|state of texas)/i;
