@@ -1,0 +1,17 @@
+{
+  "updatedAt": "2026-07-29T19:39:01.982Z",
+  "conclusion": "success",
+  "runId": "30485216185",
+  "runAttempt": "1",
+  "triggerCommit": "4cbef98bfe24bc52f177bd2901ae1def25e5ef4c",
+  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30485216185",
+  "checks": {
+    "build": "success",
+    "mobileTests": "success"
+  },
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "homepageTakeoverEnabledDuringTest": false
+}
