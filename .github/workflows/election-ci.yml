@@ -116,7 +116,6 @@ jobs:
           RUN_SHA: ${{ github.sha }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          git restore --worktree .
           node --input-type=module <<'NODE'
           import fs from "node:fs";
 
@@ -149,10 +148,7 @@ jobs:
             testSummary: compactLog("/tmp/election-ci-tests.log"),
             mobileSummary: compactLog("/tmp/election-ci-mobile.log", 160, 20000),
           };
-          fs.writeFileSync(
-            "src/data/elections/2026/ci-status.json",
-            `${JSON.stringify(status, null, 2)}\n`,
-          );
+          fs.writeFileSync("/tmp/election-ci-status.json", `${JSON.stringify(status, null, 2)}\n`);
           NODE
           result=0
           if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" ]]; then
@@ -160,10 +156,26 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/elections/2026/ci-status.json
-          if ! git diff --cached --quiet; then
+          published=false
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p src/data/elections/2026
+            cp /tmp/election-ci-status.json src/data/elections/2026/ci-status.json
+            git add src/data/elections/2026/ci-status.json
+            if git diff --cached --quiet; then
+              published=true
+              break
+            fi
             git commit -m "Record Election Central build verification"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            if git push origin HEAD:main; then
+              published=true
+              break
+            fi
+            echo "CI status push conflicted; retrying from the latest main branch ($attempt/3)."
+          done
+          if [[ "$published" != "true" ]]; then
+            echo "Unable to publish Election Central CI status after three attempts."
+            exit 1
           fi
           exit $result
