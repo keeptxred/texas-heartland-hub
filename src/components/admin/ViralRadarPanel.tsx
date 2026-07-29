@@ -115,8 +115,6 @@ function effectivePreflight(row: Row): RewritePreflightResult {
     });
   }
 
-  // Never treat the short RSS/Reddit card description as a verified article body.
-  // The first Publish click performs source extraction and persists the real result.
   return assessRewritePreflight({
     title: row.title,
     description: "",
@@ -133,6 +131,12 @@ function readinessLabel(result: RewritePreflightResult): string {
 
 function canAttemptPublish(result: RewritePreflightResult, alreadyPublished: boolean): boolean {
   return alreadyPublished || result.rewriteable || result.reason === "PENDING_EXTRACTION";
+}
+
+function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
+  if (row.internal_slug) return true;
+  if (result.rewriteable) return true;
+  return result.reason === "PENDING_EXTRACTION";
 }
 
 export function ViralRadarPanel() {
@@ -249,8 +253,6 @@ export function ViralRadarPanel() {
       } else {
         setArticleMsg((state) => ({ ...state, [row.id]: { ok: false, text: result.error } }));
       }
-      // A failed publish can still persist extracted_body + preflight_json.
-      // Reload so the card immediately shows the authoritative server result.
       await load();
     } catch (error) {
       setArticleMsg((state) => ({
@@ -346,8 +348,13 @@ export function ViralRadarPanel() {
     return map;
   }, [recentRows]);
 
+  const publishableRows = useMemo(
+    () => recentRows.filter((row) => shouldShowRow(row, preflightById[row.id])),
+    [recentRows, preflightById],
+  );
+
   const filtered = useMemo(() => {
-    const items = [...recentRows];
+    const items = [...publishableRows];
     switch (filter) {
       case "score":
         return items.sort((a, b) => (b.viral_score ?? 0) - (a.viral_score ?? 0));
@@ -366,7 +373,7 @@ export function ViralRadarPanel() {
       default:
         return items;
     }
-  }, [recentRows, filter, preflightById]);
+  }, [publishableRows, filter, preflightById]);
 
   return (
     <div className="border-2 border-foreground/10 bg-card p-5">
@@ -397,7 +404,7 @@ export function ViralRadarPanel() {
       </div>
 
       <p className="text-[11px] text-muted-foreground mb-3">
-        Viral scoring and rewrite eligibility are separate. Green rewrite status now appears only after full-source extraction passes the server preflight.
+        Articles disappear after source extraction confirms they cannot pass the rewrite gate.
       </p>
 
       <div className="flex flex-wrap gap-1 mb-3">
@@ -429,7 +436,7 @@ export function ViralRadarPanel() {
       {loading ? (
         <div className="text-sm text-muted-foreground">Loading…</div>
       ) : filtered.length === 0 ? (
-        <div className="text-sm text-muted-foreground">No matching feed items.</div>
+        <div className="text-sm text-muted-foreground">No publishable feed items.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
