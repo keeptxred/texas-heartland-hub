@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-29T13:15:02.301Z",
+  "generatedAt": "2026-07-29T15:50:05.557Z",
   "ready": true,
   "homepageTakeoverEnabled": false,
   "counts": {
     "cycles": 1,
     "races": 227,
-    "candidates": 462,
+    "candidates": 463,
     "polls": 8,
     "forecasts": 5,
     "forecastEligibleRaces": 5,
