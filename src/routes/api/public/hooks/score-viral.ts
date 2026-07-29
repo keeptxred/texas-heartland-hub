@@ -72,7 +72,7 @@ function parseGoogleNewsFeed(xml: string, fallbackSource: string) {
 }
 
 async function ingestDiscoveryFeeds(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,
 ): Promise<{ fetched: number; inserted: number; feedsOk: number; errors: string[] }> {
   let fetched = 0;
   let inserted = 0;
