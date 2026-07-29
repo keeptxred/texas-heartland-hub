@@ -1,12 +1,12 @@
 name: One-time tiered rewrite expansion fix
 
 on:
-  push:
-    paths:
-      - .github/workflows/one-time-fix-tiered-rewrite-expansion.yml
+  issues:
+    types: [opened]
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
   apply-fix:
