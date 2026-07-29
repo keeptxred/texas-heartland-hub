@@ -6,37 +6,49 @@ import {
   qualifiesReadyForRewrite,
   VIRAL_READY_MIN_SCORE,
 } from "@/lib/viral-score";
+import { isLowValueTitle } from "@/lib/low-value-titles";
 
-// Recomputes viral_score / classification_confidence / viral_signals for
-// the most recent feed rows. Deterministic, no external trend APIs.
-// Safe to call frequently (pg_cron every 15 min).
+// Refreshes ingestion first, then recomputes viral scoring for recent feed rows.
+// This makes the admin "Rescore Now" action a true newsroom refresh instead of
+// merely recalculating stale rows that were already in texas_news_feed.
 export const Route = createFileRoute("/api/public/hooks/score-viral")({
   server: {
     handlers: {
-      GET: async () => scoreRecent(),
-      POST: async () => scoreRecent(),
+      GET: async ({ request }) => scoreRecent(request),
+      POST: async ({ request }) => scoreRecent(request),
     },
   },
 });
 
-async function scoreRecent() {
+async function scoreRecent(request: Request) {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return json({ ok: false, error: "server not configured" }, 500);
+
+  // Pull fresh RSS rows before scoring. Ingestion is storage-only and does not
+  // invoke paid AI rewrites, so this is safe for the manual refresh button.
+  let ingest: Record<string, unknown> | null = null;
+  try {
+    const ingestUrl = new URL("/api/public/hooks/ingest-feeds", request.url);
+    const ingestResponse = await fetch(ingestUrl, { method: "POST" });
+    ingest = (await ingestResponse.json()) as Record<string, unknown>;
+  } catch (error) {
+    ingest = { ok: false, error: error instanceof Error ? error.message : "ingest failed" };
+  }
 
   const supabase = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const sinceIso = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+  const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from("texas_news_feed")
-    .select("id,title,source,link,pub_date,description,viral_score")
+    .select("id,title,source,link,pub_date,description,viral_score,internal_slug")
     .gte("pub_date", sinceIso)
     .order("pub_date", { ascending: false })
-    .limit(200);
+    .limit(300);
 
-  if (error) return json({ ok: false, error: error.message }, 500);
+  if (error) return json({ ok: false, error: error.message, ingest }, 500);
   const rows = (data ?? []) as Array<{
     id: number;
     title: string;
@@ -45,9 +57,9 @@ async function scoreRecent() {
     pub_date: string;
     description: string | null;
     viral_score: number | null;
+    internal_slug: string | null;
   }>;
 
-  // Load reputation overrides from content_sources (match by source name).
   const { data: srcs } = await supabase
     .from("content_sources")
     .select("source_name,source_reputation_score,source_quality_reason");
@@ -61,7 +73,6 @@ async function scoreRecent() {
     }
   });
 
-  // Cluster by normalized title (first 6 significant words) — duplicate story count.
   const clusters = new Map<string, number>();
   const clusterKey = (t: string) =>
     (t ?? "")
@@ -72,6 +83,7 @@ async function scoreRecent() {
       .slice(0, 6)
       .join(" ");
   rows.forEach((r) => {
+    if (isLowValueTitle(r.title)) return;
     const k = clusterKey(r.title);
     if (!k) return;
     clusters.set(k, (clusters.get(k) ?? 0) + 1);
@@ -81,10 +93,31 @@ async function scoreRecent() {
   let updated = 0;
   let readyFlagged = 0;
   let reelsQueued = 0;
+  let removedMediaStubs = 0;
 
   const VIDEO_RE = /(youtube\.com|youtu\.be|tiktok\.com|instagram\.com\/reel|twitter\.com\/.+\/status|x\.com\/.+\/status|\.mp4|video)/i;
 
   for (const row of rows) {
+    // Remove already-created podcast/video landing-page stubs from published
+    // articles and unlink the feed row. This cleans up items published before
+    // the stricter preflight rule was deployed.
+    if (isLowValueTitle(row.title)) {
+      if (row.internal_slug) {
+        const { error: deleteError } = await supabase
+          .from("daily_articles")
+          .delete()
+          .eq("slug", row.internal_slug);
+        if (!deleteError) {
+          await supabase
+            .from("texas_news_feed")
+            .update({ internal_slug: null, ready_for_rewrite: false })
+            .eq("id", row.id);
+          removedMediaStubs += 1;
+        }
+      }
+      continue;
+    }
+
     const rep =
       repOverride.get((row.source || "").toLowerCase()) ??
       classifySourceReputation(row.source || "");
@@ -98,7 +131,6 @@ async function scoreRecent() {
 
     const key = clusterKey(row.title);
     const sourceCount = key ? clusters.get(key) ?? 1 : 1;
-    // Simple velocity: score delta since last scan + duplicate story boost.
     const prior = row.viral_score ?? 0;
     const trendVelocity = Number(((r.viralScore - prior) + (sourceCount - 1) * 5).toFixed(2));
 
@@ -126,7 +158,6 @@ async function scoreRecent() {
       .eq("id", row.id);
     if (!upErr) updated += 1;
 
-    // Reel connection: high-viral + video → upsert reel_candidates row.
     if (r.viralScore >= VIRAL_READY_MIN_SCORE && hasVideo && r.classificationConfidence >= 0.8) {
       const { data: existing } = await supabase
         .from("reel_candidates")
@@ -148,7 +179,15 @@ async function scoreRecent() {
     }
   }
 
-  return json({ ok: true, scanned: rows.length, updated, readyFlagged, reelsQueued });
+  return json({
+    ok: true,
+    ingest,
+    scanned: rows.length,
+    updated,
+    readyFlagged,
+    reelsQueued,
+    removedMediaStubs,
+  });
 }
 
 function json(body: unknown, status = 200) {
