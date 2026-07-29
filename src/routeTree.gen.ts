@@ -19,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as DallasFortWorthRouteImport } from './routes/dallas-fort-worth'
+import { Route as DmvRouteImport } from './routes/dmv'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
 import { Route as ElPasoRouteImport } from './routes/el-paso'
 import { Route as ElectionsRouteImport } from './routes/elections'
@@ -96,6 +97,20 @@ import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
 import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
+import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
+import { Route as DmvCdlEndorsementsRouteImport } from './routes/dmv.cdl-endorsements'
+import { Route as DmvChangeAddressRouteImport } from './routes/dmv.change-address'
+import { Route as DmvDpsAppointmentsRouteImport } from './routes/dmv.dps-appointments'
+import { Route as DmvDriverLicenseRouteImport } from './routes/dmv.driver-license'
+import { Route as DmvDriverLicenseDocumentsRouteImport } from './routes/dmv.driver-license-documents'
+import { Route as DmvDriverLicenseRenewalRouteImport } from './routes/dmv.driver-license-renewal'
+import { Route as DmvFormsDownloadsRouteImport } from './routes/dmv.forms-downloads'
+import { Route as DmvIdentificationCardRouteImport } from './routes/dmv.identification-card'
+import { Route as DmvLicenseStatusRouteImport } from './routes/dmv.license-status'
+import { Route as DmvRealIdRouteImport } from './routes/dmv.real-id'
+import { Route as DmvReplaceLostLicenseRouteImport } from './routes/dmv.replace-lost-license'
+import { Route as DmvTexasDmvVsDpsRouteImport } from './routes/dmv.texas-dmv-vs-dps'
 import { Route as ElectionsIndexRouteImport } from './routes/elections.index'
 import { Route as Elections2026RouteImport } from './routes/elections.2026'
 import { Route as ElectionsCandidatesRouteImport } from './routes/elections.candidates'
@@ -143,6 +158,29 @@ import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.inde
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as TexasIndexRouteImport } from './routes/texas.index'
 import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
+import { Route as VehiclesAutoInsuranceRequirementsRouteImport } from './routes/vehicles.auto-insurance-requirements'
+import { Route as VehiclesBondedTitlesRouteImport } from './routes/vehicles.bonded-titles'
+import { Route as VehiclesBuyingACarRouteImport } from './routes/vehicles.buying-a-car'
+import { Route as VehiclesBuyingSellingRouteImport } from './routes/vehicles.buying-selling'
+import { Route as VehiclesCommercialFleetIrpRouteImport } from './routes/vehicles.commercial-fleet-irp'
+import { Route as VehiclesDisabledParkingRouteImport } from './routes/vehicles.disabled-parking'
+import { Route as VehiclesDuplicateTitlesRouteImport } from './routes/vehicles.duplicate-titles'
+import { Route as VehiclesFarmAntiqueSpecialtyRouteImport } from './routes/vehicles.farm-antique-specialty'
+import { Route as VehiclesFinancialResponsibilityRouteImport } from './routes/vehicles.financial-responsibility'
+import { Route as VehiclesInspectionsRouteImport } from './routes/vehicles.inspections'
+import { Route as VehiclesInspectionsEmissionsRouteImport } from './routes/vehicles.inspections-emissions'
+import { Route as VehiclesLiensDuplicateCorrectedTitlesRouteImport } from './routes/vehicles.liens-duplicate-corrected-titles'
+import { Route as VehiclesNewResidentsRouteImport } from './routes/vehicles.new-residents'
+import { Route as VehiclesPersonalizedPlatesRouteImport } from './routes/vehicles.personalized-plates'
+import { Route as VehiclesPlatesRouteImport } from './routes/vehicles.plates'
+import { Route as VehiclesPrivatePartySalesRouteImport } from './routes/vehicles.private-party-sales'
+import { Route as VehiclesRegistrationRouteImport } from './routes/vehicles.registration'
+import { Route as VehiclesRegistrationFeesTaxesRouteImport } from './routes/vehicles.registration-fees-taxes'
+import { Route as VehiclesRenewalRouteImport } from './routes/vehicles.renewal'
+import { Route as VehiclesSalvageRebuiltTitlesRouteImport } from './routes/vehicles.salvage-rebuilt-titles'
+import { Route as VehiclesSellingACarRouteImport } from './routes/vehicles.selling-a-car'
+import { Route as VehiclesTemporaryTagsRouteImport } from './routes/vehicles.temporary-tags'
+import { Route as VehiclesTitleTransferRouteImport } from './routes/vehicles.title-transfer'
 import { Route as AdminElectionsIndexRouteImport } from './routes/admin/elections/index'
 import { Route as AdminElectionsCandidatesRouteImport } from './routes/admin/elections/candidates'
 import { Route as AdminElectionsForecastRouteImport } from './routes/admin/elections/forecast'
@@ -237,6 +275,11 @@ const CountyElectionsRoute = CountyElectionsRouteImport.update({
 const DallasFortWorthRoute = DallasFortWorthRouteImport.update({
   id: '/dallas-fort-worth',
   path: '/dallas-fort-worth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DmvRoute = DmvRouteImport.update({
+  id: '/dmv',
+  path: '/dmv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
@@ -644,6 +687,77 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DmvCdlRoute = DmvCdlRouteImport.update({
+  id: '/cdl',
+  path: '/cdl',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvCdlClassesRoute = DmvCdlClassesRouteImport.update({
+  id: '/cdl-classes',
+  path: '/cdl-classes',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvCdlEndorsementsRoute = DmvCdlEndorsementsRouteImport.update({
+  id: '/cdl-endorsements',
+  path: '/cdl-endorsements',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvChangeAddressRoute = DmvChangeAddressRouteImport.update({
+  id: '/change-address',
+  path: '/change-address',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvDpsAppointmentsRoute = DmvDpsAppointmentsRouteImport.update({
+  id: '/dps-appointments',
+  path: '/dps-appointments',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvDriverLicenseRoute = DmvDriverLicenseRouteImport.update({
+  id: '/driver-license',
+  path: '/driver-license',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvDriverLicenseDocumentsRoute =
+  DmvDriverLicenseDocumentsRouteImport.update({
+    id: '/driver-license-documents',
+    path: '/driver-license-documents',
+    getParentRoute: () => DmvRoute,
+  } as any)
+const DmvDriverLicenseRenewalRoute = DmvDriverLicenseRenewalRouteImport.update({
+  id: '/driver-license-renewal',
+  path: '/driver-license-renewal',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvFormsDownloadsRoute = DmvFormsDownloadsRouteImport.update({
+  id: '/forms-downloads',
+  path: '/forms-downloads',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvIdentificationCardRoute = DmvIdentificationCardRouteImport.update({
+  id: '/identification-card',
+  path: '/identification-card',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvLicenseStatusRoute = DmvLicenseStatusRouteImport.update({
+  id: '/license-status',
+  path: '/license-status',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvRealIdRoute = DmvRealIdRouteImport.update({
+  id: '/real-id',
+  path: '/real-id',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvReplaceLostLicenseRoute = DmvReplaceLostLicenseRouteImport.update({
+  id: '/replace-lost-license',
+  path: '/replace-lost-license',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvTexasDmvVsDpsRoute = DmvTexasDmvVsDpsRouteImport.update({
+  id: '/texas-dmv-vs-dps',
+  path: '/texas-dmv-vs-dps',
+  getParentRoute: () => DmvRoute,
+} as any)
 const ElectionsIndexRoute = ElectionsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -888,6 +1002,131 @@ const TexasSlugRoute = TexasSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => TexasRoute,
+} as any)
+const VehiclesAutoInsuranceRequirementsRoute =
+  VehiclesAutoInsuranceRequirementsRouteImport.update({
+    id: '/vehicles/auto-insurance-requirements',
+    path: '/vehicles/auto-insurance-requirements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesBondedTitlesRoute = VehiclesBondedTitlesRouteImport.update({
+  id: '/vehicles/bonded-titles',
+  path: '/vehicles/bonded-titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesBuyingACarRoute = VehiclesBuyingACarRouteImport.update({
+  id: '/vehicles/buying-a-car',
+  path: '/vehicles/buying-a-car',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesBuyingSellingRoute = VehiclesBuyingSellingRouteImport.update({
+  id: '/vehicles/buying-selling',
+  path: '/vehicles/buying-selling',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesCommercialFleetIrpRoute =
+  VehiclesCommercialFleetIrpRouteImport.update({
+    id: '/vehicles/commercial-fleet-irp',
+    path: '/vehicles/commercial-fleet-irp',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesDisabledParkingRoute = VehiclesDisabledParkingRouteImport.update({
+  id: '/vehicles/disabled-parking',
+  path: '/vehicles/disabled-parking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesDuplicateTitlesRoute = VehiclesDuplicateTitlesRouteImport.update({
+  id: '/vehicles/duplicate-titles',
+  path: '/vehicles/duplicate-titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesFarmAntiqueSpecialtyRoute =
+  VehiclesFarmAntiqueSpecialtyRouteImport.update({
+    id: '/vehicles/farm-antique-specialty',
+    path: '/vehicles/farm-antique-specialty',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesFinancialResponsibilityRoute =
+  VehiclesFinancialResponsibilityRouteImport.update({
+    id: '/vehicles/financial-responsibility',
+    path: '/vehicles/financial-responsibility',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesInspectionsRoute = VehiclesInspectionsRouteImport.update({
+  id: '/vehicles/inspections',
+  path: '/vehicles/inspections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesInspectionsEmissionsRoute =
+  VehiclesInspectionsEmissionsRouteImport.update({
+    id: '/vehicles/inspections-emissions',
+    path: '/vehicles/inspections-emissions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesLiensDuplicateCorrectedTitlesRoute =
+  VehiclesLiensDuplicateCorrectedTitlesRouteImport.update({
+    id: '/vehicles/liens-duplicate-corrected-titles',
+    path: '/vehicles/liens-duplicate-corrected-titles',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesNewResidentsRoute = VehiclesNewResidentsRouteImport.update({
+  id: '/vehicles/new-residents',
+  path: '/vehicles/new-residents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesPersonalizedPlatesRoute =
+  VehiclesPersonalizedPlatesRouteImport.update({
+    id: '/vehicles/personalized-plates',
+    path: '/vehicles/personalized-plates',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesPlatesRoute = VehiclesPlatesRouteImport.update({
+  id: '/vehicles/plates',
+  path: '/vehicles/plates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesPrivatePartySalesRoute =
+  VehiclesPrivatePartySalesRouteImport.update({
+    id: '/vehicles/private-party-sales',
+    path: '/vehicles/private-party-sales',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesRegistrationRoute = VehiclesRegistrationRouteImport.update({
+  id: '/vehicles/registration',
+  path: '/vehicles/registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesRegistrationFeesTaxesRoute =
+  VehiclesRegistrationFeesTaxesRouteImport.update({
+    id: '/vehicles/registration-fees-taxes',
+    path: '/vehicles/registration-fees-taxes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesRenewalRoute = VehiclesRenewalRouteImport.update({
+  id: '/vehicles/renewal',
+  path: '/vehicles/renewal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesSalvageRebuiltTitlesRoute =
+  VehiclesSalvageRebuiltTitlesRouteImport.update({
+    id: '/vehicles/salvage-rebuilt-titles',
+    path: '/vehicles/salvage-rebuilt-titles',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesSellingACarRoute = VehiclesSellingACarRouteImport.update({
+  id: '/vehicles/selling-a-car',
+  path: '/vehicles/selling-a-car',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesTemporaryTagsRoute = VehiclesTemporaryTagsRouteImport.update({
+  id: '/vehicles/temporary-tags',
+  path: '/vehicles/temporary-tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesTitleTransferRoute = VehiclesTitleTransferRouteImport.update({
+  id: '/vehicles/title-transfer',
+  path: '/vehicles/title-transfer',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminElectionsIndexRoute = AdminElectionsIndexRouteImport.update({
   id: '/elections/',
@@ -1152,6 +1391,7 @@ export interface FileRoutesByFullPath {
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRouteWithChildren
@@ -1228,6 +1468,20 @@ export interface FileRoutesByFullPath {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/dmv/cdl': typeof DmvCdlRoute
+  '/dmv/cdl-classes': typeof DmvCdlClassesRoute
+  '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
+  '/dmv/change-address': typeof DmvChangeAddressRoute
+  '/dmv/dps-appointments': typeof DmvDpsAppointmentsRoute
+  '/dmv/driver-license': typeof DmvDriverLicenseRoute
+  '/dmv/driver-license-documents': typeof DmvDriverLicenseDocumentsRoute
+  '/dmv/driver-license-renewal': typeof DmvDriverLicenseRenewalRoute
+  '/dmv/forms-downloads': typeof DmvFormsDownloadsRoute
+  '/dmv/identification-card': typeof DmvIdentificationCardRoute
+  '/dmv/license-status': typeof DmvLicenseStatusRoute
+  '/dmv/real-id': typeof DmvRealIdRoute
+  '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
+  '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
   '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
   '/elections/corrections': typeof ElectionsCorrectionsRoute
@@ -1268,6 +1522,29 @@ export interface FileRoutesByFullPath {
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
+  '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
+  '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
+  '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
+  '/vehicles/buying-selling': typeof VehiclesBuyingSellingRoute
+  '/vehicles/commercial-fleet-irp': typeof VehiclesCommercialFleetIrpRoute
+  '/vehicles/disabled-parking': typeof VehiclesDisabledParkingRoute
+  '/vehicles/duplicate-titles': typeof VehiclesDuplicateTitlesRoute
+  '/vehicles/farm-antique-specialty': typeof VehiclesFarmAntiqueSpecialtyRoute
+  '/vehicles/financial-responsibility': typeof VehiclesFinancialResponsibilityRoute
+  '/vehicles/inspections': typeof VehiclesInspectionsRoute
+  '/vehicles/inspections-emissions': typeof VehiclesInspectionsEmissionsRoute
+  '/vehicles/liens-duplicate-corrected-titles': typeof VehiclesLiensDuplicateCorrectedTitlesRoute
+  '/vehicles/new-residents': typeof VehiclesNewResidentsRoute
+  '/vehicles/personalized-plates': typeof VehiclesPersonalizedPlatesRoute
+  '/vehicles/plates': typeof VehiclesPlatesRoute
+  '/vehicles/private-party-sales': typeof VehiclesPrivatePartySalesRoute
+  '/vehicles/registration': typeof VehiclesRegistrationRoute
+  '/vehicles/registration-fees-taxes': typeof VehiclesRegistrationFeesTaxesRoute
+  '/vehicles/renewal': typeof VehiclesRenewalRoute
+  '/vehicles/salvage-rebuilt-titles': typeof VehiclesSalvageRebuiltTitlesRoute
+  '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
+  '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
+  '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
   '/authors/': typeof AuthorsIndexRoute
   '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
@@ -1333,6 +1610,7 @@ export interface FileRoutesByTo {
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
   '/find-my-dmv': typeof FindMyDmvRoute
@@ -1402,6 +1680,20 @@ export interface FileRoutesByTo {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/dmv/cdl': typeof DmvCdlRoute
+  '/dmv/cdl-classes': typeof DmvCdlClassesRoute
+  '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
+  '/dmv/change-address': typeof DmvChangeAddressRoute
+  '/dmv/dps-appointments': typeof DmvDpsAppointmentsRoute
+  '/dmv/driver-license': typeof DmvDriverLicenseRoute
+  '/dmv/driver-license-documents': typeof DmvDriverLicenseDocumentsRoute
+  '/dmv/driver-license-renewal': typeof DmvDriverLicenseRenewalRoute
+  '/dmv/forms-downloads': typeof DmvFormsDownloadsRoute
+  '/dmv/identification-card': typeof DmvIdentificationCardRoute
+  '/dmv/license-status': typeof DmvLicenseStatusRoute
+  '/dmv/real-id': typeof DmvRealIdRoute
+  '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
+  '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
   '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
   '/elections/corrections': typeof ElectionsCorrectionsRoute
@@ -1442,6 +1734,29 @@ export interface FileRoutesByTo {
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
+  '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
+  '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
+  '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
+  '/vehicles/buying-selling': typeof VehiclesBuyingSellingRoute
+  '/vehicles/commercial-fleet-irp': typeof VehiclesCommercialFleetIrpRoute
+  '/vehicles/disabled-parking': typeof VehiclesDisabledParkingRoute
+  '/vehicles/duplicate-titles': typeof VehiclesDuplicateTitlesRoute
+  '/vehicles/farm-antique-specialty': typeof VehiclesFarmAntiqueSpecialtyRoute
+  '/vehicles/financial-responsibility': typeof VehiclesFinancialResponsibilityRoute
+  '/vehicles/inspections': typeof VehiclesInspectionsRoute
+  '/vehicles/inspections-emissions': typeof VehiclesInspectionsEmissionsRoute
+  '/vehicles/liens-duplicate-corrected-titles': typeof VehiclesLiensDuplicateCorrectedTitlesRoute
+  '/vehicles/new-residents': typeof VehiclesNewResidentsRoute
+  '/vehicles/personalized-plates': typeof VehiclesPersonalizedPlatesRoute
+  '/vehicles/plates': typeof VehiclesPlatesRoute
+  '/vehicles/private-party-sales': typeof VehiclesPrivatePartySalesRoute
+  '/vehicles/registration': typeof VehiclesRegistrationRoute
+  '/vehicles/registration-fees-taxes': typeof VehiclesRegistrationFeesTaxesRoute
+  '/vehicles/renewal': typeof VehiclesRenewalRoute
+  '/vehicles/salvage-rebuilt-titles': typeof VehiclesSalvageRebuiltTitlesRoute
+  '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
+  '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
+  '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
   '/authors': typeof AuthorsIndexRoute
   '/elections': typeof ElectionsIndexRoute
   '/explore': typeof ExploreIndexRoute
@@ -1508,6 +1823,7 @@ export interface FileRoutesById {
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRouteWithChildren
@@ -1584,6 +1900,20 @@ export interface FileRoutesById {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/dmv/cdl': typeof DmvCdlRoute
+  '/dmv/cdl-classes': typeof DmvCdlClassesRoute
+  '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
+  '/dmv/change-address': typeof DmvChangeAddressRoute
+  '/dmv/dps-appointments': typeof DmvDpsAppointmentsRoute
+  '/dmv/driver-license': typeof DmvDriverLicenseRoute
+  '/dmv/driver-license-documents': typeof DmvDriverLicenseDocumentsRoute
+  '/dmv/driver-license-renewal': typeof DmvDriverLicenseRenewalRoute
+  '/dmv/forms-downloads': typeof DmvFormsDownloadsRoute
+  '/dmv/identification-card': typeof DmvIdentificationCardRoute
+  '/dmv/license-status': typeof DmvLicenseStatusRoute
+  '/dmv/real-id': typeof DmvRealIdRoute
+  '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
+  '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
   '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
   '/elections/corrections': typeof ElectionsCorrectionsRoute
@@ -1624,6 +1954,29 @@ export interface FileRoutesById {
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
+  '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
+  '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
+  '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
+  '/vehicles/buying-selling': typeof VehiclesBuyingSellingRoute
+  '/vehicles/commercial-fleet-irp': typeof VehiclesCommercialFleetIrpRoute
+  '/vehicles/disabled-parking': typeof VehiclesDisabledParkingRoute
+  '/vehicles/duplicate-titles': typeof VehiclesDuplicateTitlesRoute
+  '/vehicles/farm-antique-specialty': typeof VehiclesFarmAntiqueSpecialtyRoute
+  '/vehicles/financial-responsibility': typeof VehiclesFinancialResponsibilityRoute
+  '/vehicles/inspections': typeof VehiclesInspectionsRoute
+  '/vehicles/inspections-emissions': typeof VehiclesInspectionsEmissionsRoute
+  '/vehicles/liens-duplicate-corrected-titles': typeof VehiclesLiensDuplicateCorrectedTitlesRoute
+  '/vehicles/new-residents': typeof VehiclesNewResidentsRoute
+  '/vehicles/personalized-plates': typeof VehiclesPersonalizedPlatesRoute
+  '/vehicles/plates': typeof VehiclesPlatesRoute
+  '/vehicles/private-party-sales': typeof VehiclesPrivatePartySalesRoute
+  '/vehicles/registration': typeof VehiclesRegistrationRoute
+  '/vehicles/registration-fees-taxes': typeof VehiclesRegistrationFeesTaxesRoute
+  '/vehicles/renewal': typeof VehiclesRenewalRoute
+  '/vehicles/salvage-rebuilt-titles': typeof VehiclesSalvageRebuiltTitlesRoute
+  '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
+  '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
+  '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
   '/authors/': typeof AuthorsIndexRoute
   '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
@@ -1691,6 +2044,7 @@ export interface FileRouteTypes {
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
     | '/elections'
@@ -1767,6 +2121,20 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/dmv/cdl'
+    | '/dmv/cdl-classes'
+    | '/dmv/cdl-endorsements'
+    | '/dmv/change-address'
+    | '/dmv/dps-appointments'
+    | '/dmv/driver-license'
+    | '/dmv/driver-license-documents'
+    | '/dmv/driver-license-renewal'
+    | '/dmv/forms-downloads'
+    | '/dmv/identification-card'
+    | '/dmv/license-status'
+    | '/dmv/real-id'
+    | '/dmv/replace-lost-license'
+    | '/dmv/texas-dmv-vs-dps'
     | '/elections/2026'
     | '/elections/candidates'
     | '/elections/corrections'
@@ -1807,6 +2175,29 @@ export interface FileRouteTypes {
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/texas/$slug'
+    | '/vehicles/auto-insurance-requirements'
+    | '/vehicles/bonded-titles'
+    | '/vehicles/buying-a-car'
+    | '/vehicles/buying-selling'
+    | '/vehicles/commercial-fleet-irp'
+    | '/vehicles/disabled-parking'
+    | '/vehicles/duplicate-titles'
+    | '/vehicles/farm-antique-specialty'
+    | '/vehicles/financial-responsibility'
+    | '/vehicles/inspections'
+    | '/vehicles/inspections-emissions'
+    | '/vehicles/liens-duplicate-corrected-titles'
+    | '/vehicles/new-residents'
+    | '/vehicles/personalized-plates'
+    | '/vehicles/plates'
+    | '/vehicles/private-party-sales'
+    | '/vehicles/registration'
+    | '/vehicles/registration-fees-taxes'
+    | '/vehicles/renewal'
+    | '/vehicles/salvage-rebuilt-titles'
+    | '/vehicles/selling-a-car'
+    | '/vehicles/temporary-tags'
+    | '/vehicles/title-transfer'
     | '/authors/'
     | '/elections/'
     | '/explore/'
@@ -1872,6 +2263,7 @@ export interface FileRouteTypes {
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
     | '/find-my-dmv'
@@ -1941,6 +2333,20 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/dmv/cdl'
+    | '/dmv/cdl-classes'
+    | '/dmv/cdl-endorsements'
+    | '/dmv/change-address'
+    | '/dmv/dps-appointments'
+    | '/dmv/driver-license'
+    | '/dmv/driver-license-documents'
+    | '/dmv/driver-license-renewal'
+    | '/dmv/forms-downloads'
+    | '/dmv/identification-card'
+    | '/dmv/license-status'
+    | '/dmv/real-id'
+    | '/dmv/replace-lost-license'
+    | '/dmv/texas-dmv-vs-dps'
     | '/elections/2026'
     | '/elections/candidates'
     | '/elections/corrections'
@@ -1981,6 +2387,29 @@ export interface FileRouteTypes {
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/texas/$slug'
+    | '/vehicles/auto-insurance-requirements'
+    | '/vehicles/bonded-titles'
+    | '/vehicles/buying-a-car'
+    | '/vehicles/buying-selling'
+    | '/vehicles/commercial-fleet-irp'
+    | '/vehicles/disabled-parking'
+    | '/vehicles/duplicate-titles'
+    | '/vehicles/farm-antique-specialty'
+    | '/vehicles/financial-responsibility'
+    | '/vehicles/inspections'
+    | '/vehicles/inspections-emissions'
+    | '/vehicles/liens-duplicate-corrected-titles'
+    | '/vehicles/new-residents'
+    | '/vehicles/personalized-plates'
+    | '/vehicles/plates'
+    | '/vehicles/private-party-sales'
+    | '/vehicles/registration'
+    | '/vehicles/registration-fees-taxes'
+    | '/vehicles/renewal'
+    | '/vehicles/salvage-rebuilt-titles'
+    | '/vehicles/selling-a-car'
+    | '/vehicles/temporary-tags'
+    | '/vehicles/title-transfer'
     | '/authors'
     | '/elections'
     | '/explore'
@@ -2046,6 +2475,7 @@ export interface FileRouteTypes {
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
     | '/elections'
@@ -2122,6 +2552,20 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/dmv/cdl'
+    | '/dmv/cdl-classes'
+    | '/dmv/cdl-endorsements'
+    | '/dmv/change-address'
+    | '/dmv/dps-appointments'
+    | '/dmv/driver-license'
+    | '/dmv/driver-license-documents'
+    | '/dmv/driver-license-renewal'
+    | '/dmv/forms-downloads'
+    | '/dmv/identification-card'
+    | '/dmv/license-status'
+    | '/dmv/real-id'
+    | '/dmv/replace-lost-license'
+    | '/dmv/texas-dmv-vs-dps'
     | '/elections/2026'
     | '/elections/candidates'
     | '/elections/corrections'
@@ -2162,6 +2606,29 @@ export interface FileRouteTypes {
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/texas/$slug'
+    | '/vehicles/auto-insurance-requirements'
+    | '/vehicles/bonded-titles'
+    | '/vehicles/buying-a-car'
+    | '/vehicles/buying-selling'
+    | '/vehicles/commercial-fleet-irp'
+    | '/vehicles/disabled-parking'
+    | '/vehicles/duplicate-titles'
+    | '/vehicles/farm-antique-specialty'
+    | '/vehicles/financial-responsibility'
+    | '/vehicles/inspections'
+    | '/vehicles/inspections-emissions'
+    | '/vehicles/liens-duplicate-corrected-titles'
+    | '/vehicles/new-residents'
+    | '/vehicles/personalized-plates'
+    | '/vehicles/plates'
+    | '/vehicles/private-party-sales'
+    | '/vehicles/registration'
+    | '/vehicles/registration-fees-taxes'
+    | '/vehicles/renewal'
+    | '/vehicles/salvage-rebuilt-titles'
+    | '/vehicles/selling-a-car'
+    | '/vehicles/temporary-tags'
+    | '/vehicles/title-transfer'
     | '/authors/'
     | '/elections/'
     | '/explore/'
@@ -2228,6 +2695,7 @@ export interface RootRouteChildren {
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
   DallasFortWorthRoute: typeof DallasFortWorthRoute
+  DmvRoute: typeof DmvRouteWithChildren
   EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElPasoRoute: typeof ElPasoRoute
   ElectionsRoute: typeof ElectionsRouteWithChildren
@@ -2305,6 +2773,29 @@ export interface RootRouteChildren {
   VotingLocationsRoute: typeof VotingLocationsRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  VehiclesAutoInsuranceRequirementsRoute: typeof VehiclesAutoInsuranceRequirementsRoute
+  VehiclesBondedTitlesRoute: typeof VehiclesBondedTitlesRoute
+  VehiclesBuyingACarRoute: typeof VehiclesBuyingACarRoute
+  VehiclesBuyingSellingRoute: typeof VehiclesBuyingSellingRoute
+  VehiclesCommercialFleetIrpRoute: typeof VehiclesCommercialFleetIrpRoute
+  VehiclesDisabledParkingRoute: typeof VehiclesDisabledParkingRoute
+  VehiclesDuplicateTitlesRoute: typeof VehiclesDuplicateTitlesRoute
+  VehiclesFarmAntiqueSpecialtyRoute: typeof VehiclesFarmAntiqueSpecialtyRoute
+  VehiclesFinancialResponsibilityRoute: typeof VehiclesFinancialResponsibilityRoute
+  VehiclesInspectionsRoute: typeof VehiclesInspectionsRoute
+  VehiclesInspectionsEmissionsRoute: typeof VehiclesInspectionsEmissionsRoute
+  VehiclesLiensDuplicateCorrectedTitlesRoute: typeof VehiclesLiensDuplicateCorrectedTitlesRoute
+  VehiclesNewResidentsRoute: typeof VehiclesNewResidentsRoute
+  VehiclesPersonalizedPlatesRoute: typeof VehiclesPersonalizedPlatesRoute
+  VehiclesPlatesRoute: typeof VehiclesPlatesRoute
+  VehiclesPrivatePartySalesRoute: typeof VehiclesPrivatePartySalesRoute
+  VehiclesRegistrationRoute: typeof VehiclesRegistrationRoute
+  VehiclesRegistrationFeesTaxesRoute: typeof VehiclesRegistrationFeesTaxesRoute
+  VehiclesRenewalRoute: typeof VehiclesRenewalRoute
+  VehiclesSalvageRebuiltTitlesRoute: typeof VehiclesSalvageRebuiltTitlesRoute
+  VehiclesSellingACarRoute: typeof VehiclesSellingACarRoute
+  VehiclesTemporaryTagsRoute: typeof VehiclesTemporaryTagsRoute
+  VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
   ApiPublicPropertyAddressLookupRoute: typeof ApiPublicPropertyAddressLookupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
@@ -2403,6 +2894,13 @@ declare module '@tanstack/react-router' {
       path: '/dallas-fort-worth'
       fullPath: '/dallas-fort-worth'
       preLoaderRoute: typeof DallasFortWorthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dmv': {
+      id: '/dmv'
+      path: '/dmv'
+      fullPath: '/dmv'
+      preLoaderRoute: typeof DmvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/editorial-standards': {
@@ -2944,6 +3442,104 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dmv/cdl': {
+      id: '/dmv/cdl'
+      path: '/cdl'
+      fullPath: '/dmv/cdl'
+      preLoaderRoute: typeof DmvCdlRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/cdl-classes': {
+      id: '/dmv/cdl-classes'
+      path: '/cdl-classes'
+      fullPath: '/dmv/cdl-classes'
+      preLoaderRoute: typeof DmvCdlClassesRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/cdl-endorsements': {
+      id: '/dmv/cdl-endorsements'
+      path: '/cdl-endorsements'
+      fullPath: '/dmv/cdl-endorsements'
+      preLoaderRoute: typeof DmvCdlEndorsementsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/change-address': {
+      id: '/dmv/change-address'
+      path: '/change-address'
+      fullPath: '/dmv/change-address'
+      preLoaderRoute: typeof DmvChangeAddressRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/dps-appointments': {
+      id: '/dmv/dps-appointments'
+      path: '/dps-appointments'
+      fullPath: '/dmv/dps-appointments'
+      preLoaderRoute: typeof DmvDpsAppointmentsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license': {
+      id: '/dmv/driver-license'
+      path: '/driver-license'
+      fullPath: '/dmv/driver-license'
+      preLoaderRoute: typeof DmvDriverLicenseRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license-documents': {
+      id: '/dmv/driver-license-documents'
+      path: '/driver-license-documents'
+      fullPath: '/dmv/driver-license-documents'
+      preLoaderRoute: typeof DmvDriverLicenseDocumentsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license-renewal': {
+      id: '/dmv/driver-license-renewal'
+      path: '/driver-license-renewal'
+      fullPath: '/dmv/driver-license-renewal'
+      preLoaderRoute: typeof DmvDriverLicenseRenewalRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/forms-downloads': {
+      id: '/dmv/forms-downloads'
+      path: '/forms-downloads'
+      fullPath: '/dmv/forms-downloads'
+      preLoaderRoute: typeof DmvFormsDownloadsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/identification-card': {
+      id: '/dmv/identification-card'
+      path: '/identification-card'
+      fullPath: '/dmv/identification-card'
+      preLoaderRoute: typeof DmvIdentificationCardRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/license-status': {
+      id: '/dmv/license-status'
+      path: '/license-status'
+      fullPath: '/dmv/license-status'
+      preLoaderRoute: typeof DmvLicenseStatusRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/real-id': {
+      id: '/dmv/real-id'
+      path: '/real-id'
+      fullPath: '/dmv/real-id'
+      preLoaderRoute: typeof DmvRealIdRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/replace-lost-license': {
+      id: '/dmv/replace-lost-license'
+      path: '/replace-lost-license'
+      fullPath: '/dmv/replace-lost-license'
+      preLoaderRoute: typeof DmvReplaceLostLicenseRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/texas-dmv-vs-dps': {
+      id: '/dmv/texas-dmv-vs-dps'
+      path: '/texas-dmv-vs-dps'
+      fullPath: '/dmv/texas-dmv-vs-dps'
+      preLoaderRoute: typeof DmvTexasDmvVsDpsRouteImport
+      parentRoute: typeof DmvRoute
+    }
     '/elections/': {
       id: '/elections/'
       path: '/'
@@ -3272,6 +3868,167 @@ declare module '@tanstack/react-router' {
       fullPath: '/texas/$slug'
       preLoaderRoute: typeof TexasSlugRouteImport
       parentRoute: typeof TexasRoute
+    }
+    '/vehicles/auto-insurance-requirements': {
+      id: '/vehicles/auto-insurance-requirements'
+      path: '/vehicles/auto-insurance-requirements'
+      fullPath: '/vehicles/auto-insurance-requirements'
+      preLoaderRoute: typeof VehiclesAutoInsuranceRequirementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/bonded-titles': {
+      id: '/vehicles/bonded-titles'
+      path: '/vehicles/bonded-titles'
+      fullPath: '/vehicles/bonded-titles'
+      preLoaderRoute: typeof VehiclesBondedTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/buying-a-car': {
+      id: '/vehicles/buying-a-car'
+      path: '/vehicles/buying-a-car'
+      fullPath: '/vehicles/buying-a-car'
+      preLoaderRoute: typeof VehiclesBuyingACarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/buying-selling': {
+      id: '/vehicles/buying-selling'
+      path: '/vehicles/buying-selling'
+      fullPath: '/vehicles/buying-selling'
+      preLoaderRoute: typeof VehiclesBuyingSellingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/commercial-fleet-irp': {
+      id: '/vehicles/commercial-fleet-irp'
+      path: '/vehicles/commercial-fleet-irp'
+      fullPath: '/vehicles/commercial-fleet-irp'
+      preLoaderRoute: typeof VehiclesCommercialFleetIrpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/disabled-parking': {
+      id: '/vehicles/disabled-parking'
+      path: '/vehicles/disabled-parking'
+      fullPath: '/vehicles/disabled-parking'
+      preLoaderRoute: typeof VehiclesDisabledParkingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/duplicate-titles': {
+      id: '/vehicles/duplicate-titles'
+      path: '/vehicles/duplicate-titles'
+      fullPath: '/vehicles/duplicate-titles'
+      preLoaderRoute: typeof VehiclesDuplicateTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/farm-antique-specialty': {
+      id: '/vehicles/farm-antique-specialty'
+      path: '/vehicles/farm-antique-specialty'
+      fullPath: '/vehicles/farm-antique-specialty'
+      preLoaderRoute: typeof VehiclesFarmAntiqueSpecialtyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/financial-responsibility': {
+      id: '/vehicles/financial-responsibility'
+      path: '/vehicles/financial-responsibility'
+      fullPath: '/vehicles/financial-responsibility'
+      preLoaderRoute: typeof VehiclesFinancialResponsibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/inspections': {
+      id: '/vehicles/inspections'
+      path: '/vehicles/inspections'
+      fullPath: '/vehicles/inspections'
+      preLoaderRoute: typeof VehiclesInspectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/inspections-emissions': {
+      id: '/vehicles/inspections-emissions'
+      path: '/vehicles/inspections-emissions'
+      fullPath: '/vehicles/inspections-emissions'
+      preLoaderRoute: typeof VehiclesInspectionsEmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/liens-duplicate-corrected-titles': {
+      id: '/vehicles/liens-duplicate-corrected-titles'
+      path: '/vehicles/liens-duplicate-corrected-titles'
+      fullPath: '/vehicles/liens-duplicate-corrected-titles'
+      preLoaderRoute: typeof VehiclesLiensDuplicateCorrectedTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/new-residents': {
+      id: '/vehicles/new-residents'
+      path: '/vehicles/new-residents'
+      fullPath: '/vehicles/new-residents'
+      preLoaderRoute: typeof VehiclesNewResidentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/personalized-plates': {
+      id: '/vehicles/personalized-plates'
+      path: '/vehicles/personalized-plates'
+      fullPath: '/vehicles/personalized-plates'
+      preLoaderRoute: typeof VehiclesPersonalizedPlatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/plates': {
+      id: '/vehicles/plates'
+      path: '/vehicles/plates'
+      fullPath: '/vehicles/plates'
+      preLoaderRoute: typeof VehiclesPlatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/private-party-sales': {
+      id: '/vehicles/private-party-sales'
+      path: '/vehicles/private-party-sales'
+      fullPath: '/vehicles/private-party-sales'
+      preLoaderRoute: typeof VehiclesPrivatePartySalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/registration': {
+      id: '/vehicles/registration'
+      path: '/vehicles/registration'
+      fullPath: '/vehicles/registration'
+      preLoaderRoute: typeof VehiclesRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/registration-fees-taxes': {
+      id: '/vehicles/registration-fees-taxes'
+      path: '/vehicles/registration-fees-taxes'
+      fullPath: '/vehicles/registration-fees-taxes'
+      preLoaderRoute: typeof VehiclesRegistrationFeesTaxesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/renewal': {
+      id: '/vehicles/renewal'
+      path: '/vehicles/renewal'
+      fullPath: '/vehicles/renewal'
+      preLoaderRoute: typeof VehiclesRenewalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/salvage-rebuilt-titles': {
+      id: '/vehicles/salvage-rebuilt-titles'
+      path: '/vehicles/salvage-rebuilt-titles'
+      fullPath: '/vehicles/salvage-rebuilt-titles'
+      preLoaderRoute: typeof VehiclesSalvageRebuiltTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/selling-a-car': {
+      id: '/vehicles/selling-a-car'
+      path: '/vehicles/selling-a-car'
+      fullPath: '/vehicles/selling-a-car'
+      preLoaderRoute: typeof VehiclesSellingACarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/temporary-tags': {
+      id: '/vehicles/temporary-tags'
+      path: '/vehicles/temporary-tags'
+      fullPath: '/vehicles/temporary-tags'
+      preLoaderRoute: typeof VehiclesTemporaryTagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/title-transfer': {
+      id: '/vehicles/title-transfer'
+      path: '/vehicles/title-transfer'
+      fullPath: '/vehicles/title-transfer'
+      preLoaderRoute: typeof VehiclesTitleTransferRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/elections/': {
       id: '/admin/elections/'
@@ -3613,6 +4370,42 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface DmvRouteChildren {
+  DmvCdlRoute: typeof DmvCdlRoute
+  DmvCdlClassesRoute: typeof DmvCdlClassesRoute
+  DmvCdlEndorsementsRoute: typeof DmvCdlEndorsementsRoute
+  DmvChangeAddressRoute: typeof DmvChangeAddressRoute
+  DmvDpsAppointmentsRoute: typeof DmvDpsAppointmentsRoute
+  DmvDriverLicenseRoute: typeof DmvDriverLicenseRoute
+  DmvDriverLicenseDocumentsRoute: typeof DmvDriverLicenseDocumentsRoute
+  DmvDriverLicenseRenewalRoute: typeof DmvDriverLicenseRenewalRoute
+  DmvFormsDownloadsRoute: typeof DmvFormsDownloadsRoute
+  DmvIdentificationCardRoute: typeof DmvIdentificationCardRoute
+  DmvLicenseStatusRoute: typeof DmvLicenseStatusRoute
+  DmvRealIdRoute: typeof DmvRealIdRoute
+  DmvReplaceLostLicenseRoute: typeof DmvReplaceLostLicenseRoute
+  DmvTexasDmvVsDpsRoute: typeof DmvTexasDmvVsDpsRoute
+}
+
+const DmvRouteChildren: DmvRouteChildren = {
+  DmvCdlRoute: DmvCdlRoute,
+  DmvCdlClassesRoute: DmvCdlClassesRoute,
+  DmvCdlEndorsementsRoute: DmvCdlEndorsementsRoute,
+  DmvChangeAddressRoute: DmvChangeAddressRoute,
+  DmvDpsAppointmentsRoute: DmvDpsAppointmentsRoute,
+  DmvDriverLicenseRoute: DmvDriverLicenseRoute,
+  DmvDriverLicenseDocumentsRoute: DmvDriverLicenseDocumentsRoute,
+  DmvDriverLicenseRenewalRoute: DmvDriverLicenseRenewalRoute,
+  DmvFormsDownloadsRoute: DmvFormsDownloadsRoute,
+  DmvIdentificationCardRoute: DmvIdentificationCardRoute,
+  DmvLicenseStatusRoute: DmvLicenseStatusRoute,
+  DmvRealIdRoute: DmvRealIdRoute,
+  DmvReplaceLostLicenseRoute: DmvReplaceLostLicenseRoute,
+  DmvTexasDmvVsDpsRoute: DmvTexasDmvVsDpsRoute,
+}
+
+const DmvRouteWithChildren = DmvRoute._addFileChildren(DmvRouteChildren)
+
 interface ElectionsCandidatesRouteChildren {
   ElectionsCandidatesCandidateSlugRoute: typeof ElectionsCandidatesCandidateSlugRoute
 }
@@ -3863,6 +4656,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
   DallasFortWorthRoute: DallasFortWorthRoute,
+  DmvRoute: DmvRouteWithChildren,
   EditorialStandardsRoute: EditorialStandardsRoute,
   ElPasoRoute: ElPasoRoute,
   ElectionsRoute: ElectionsRouteWithChildren,
@@ -3942,6 +4736,31 @@ const rootRouteChildren: RootRouteChildren = {
   VotingLocationsRoute: VotingLocationsRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  VehiclesAutoInsuranceRequirementsRoute:
+    VehiclesAutoInsuranceRequirementsRoute,
+  VehiclesBondedTitlesRoute: VehiclesBondedTitlesRoute,
+  VehiclesBuyingACarRoute: VehiclesBuyingACarRoute,
+  VehiclesBuyingSellingRoute: VehiclesBuyingSellingRoute,
+  VehiclesCommercialFleetIrpRoute: VehiclesCommercialFleetIrpRoute,
+  VehiclesDisabledParkingRoute: VehiclesDisabledParkingRoute,
+  VehiclesDuplicateTitlesRoute: VehiclesDuplicateTitlesRoute,
+  VehiclesFarmAntiqueSpecialtyRoute: VehiclesFarmAntiqueSpecialtyRoute,
+  VehiclesFinancialResponsibilityRoute: VehiclesFinancialResponsibilityRoute,
+  VehiclesInspectionsRoute: VehiclesInspectionsRoute,
+  VehiclesInspectionsEmissionsRoute: VehiclesInspectionsEmissionsRoute,
+  VehiclesLiensDuplicateCorrectedTitlesRoute:
+    VehiclesLiensDuplicateCorrectedTitlesRoute,
+  VehiclesNewResidentsRoute: VehiclesNewResidentsRoute,
+  VehiclesPersonalizedPlatesRoute: VehiclesPersonalizedPlatesRoute,
+  VehiclesPlatesRoute: VehiclesPlatesRoute,
+  VehiclesPrivatePartySalesRoute: VehiclesPrivatePartySalesRoute,
+  VehiclesRegistrationRoute: VehiclesRegistrationRoute,
+  VehiclesRegistrationFeesTaxesRoute: VehiclesRegistrationFeesTaxesRoute,
+  VehiclesRenewalRoute: VehiclesRenewalRoute,
+  VehiclesSalvageRebuiltTitlesRoute: VehiclesSalvageRebuiltTitlesRoute,
+  VehiclesSellingACarRoute: VehiclesSellingACarRoute,
+  VehiclesTemporaryTagsRoute: VehiclesTemporaryTagsRoute,
+  VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
   ApiPublicPropertyAddressLookupRoute: ApiPublicPropertyAddressLookupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
