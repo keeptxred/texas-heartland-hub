@@ -196,5 +196,60 @@
     "license": null,
     "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-thomas-smith-republican-race-2026-court-of-criminal-appeals-place-3",
+    "assetType": "campaign-family-portrait",
+    "imageUrl": "https://smithfortexas.org/UserFiles/image/Thomas_Smith_Family.webp",
+    "sourceUrl": "https://smithfortexas.org/about.html",
+    "altText": "Thomas Smith with his family in an official campaign photograph",
+    "credit": "Texans for Thomas Smith",
+    "license": null,
+    "permissionBasis": "Image published by the candidate's official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
+    "assetType": "campaign-portrait-graphic",
+    "imageUrl": "https://www.judgeaudrariley.com/images/arileyblue.png",
+    "sourceUrl": "https://www.judgeaudrariley.com/",
+    "altText": "Judge Audra Riley in an official judicial campaign graphic",
+    "credit": "Audra Riley for Judge",
+    "license": null,
+    "permissionBasis": "Image published by the official judicial campaign and used for editorial candidate identification with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4",
+    "assetType": "official-court-portrait",
+    "imageUrl": "https://www.txcourts.gov/media/1462538/yeary.jpg",
+    "sourceUrl": "https://www.txcourts.gov/cca/about-the-court/judges/judge-kevin-yeary/",
+    "altText": "Official portrait of Court of Criminal Appeals Judge Kevin Yeary",
+    "credit": "Texas Judicial Branch",
+    "license": null,
+    "permissionBasis": "Official Texas Judicial Branch portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4",
+    "assetType": "campaign-portrait",
+    "imageUrl": "https://d3n8a8pro7vhmx.cloudfront.net/judgeyeary/pages/1/attachments/original/1559409735/BBP_150107_5718.jpg?1559409735=",
+    "sourceUrl": "https://www.judgeyeary.com/about",
+    "altText": "Kevin Yeary in an official reelection campaign portrait",
+    "credit": "Judge Kevin Patrick Yeary Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official reelection campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
+    "assetType": "campaign-portrait",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/656b914f3b6db119ed7e75b7/9682dbf5-3bb1-4678-ad81-d1ebf2739fda/024_Taylor_%C2%A92025BrendaLadd%2B7inPrint.cropped.1150x1500.jpg",
+    "sourceUrl": "https://www.hollytforjudge.com/bio",
+    "altText": "Holly Taylor, Democratic candidate for Court of Criminal Appeals Place 9",
+    "credit": "Holly Taylor Campaign; photograph credited in filename to Brenda Ladd",
+    "license": null,
+    "permissionBasis": "High-resolution portrait published by the official campaign and used for editorial candidate identification with attribution and source link.",
+    "usageStatus": "approved"
   }
 ]
