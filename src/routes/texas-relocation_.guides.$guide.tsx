@@ -30,7 +30,6 @@ const GUIDE_SECTIONS: Record<string, { heading: string; body: string }[]> = {
 type Calculator = NonNullable<ReturnType<typeof getCalculatorBySlug>>;
 
 // The checked-in route tree is refreshed by the TanStack build plugin.
-// @ts-expect-error new file route is not present in the pre-build generated route tree
 export const Route = createFileRoute("/texas-relocation/guides/$guide")({
   loader: ({ params }) => {
     const routeParams = params as unknown as { guide: string };
