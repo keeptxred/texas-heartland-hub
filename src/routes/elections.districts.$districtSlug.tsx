@@ -3,6 +3,7 @@ import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 
 type DistrictType = "congressional" | "state_house" | "state_senate";
+const TEXAS_SENATE_DISTRICTS = new Set([1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31]);
 
 interface DistrictInfo {
   type: DistrictType;
@@ -22,7 +23,7 @@ function parseDistrictSlug(slug: string): DistrictInfo | null {
   if (match[1] === "texas-house-district" && number >= 1 && number <= 150) {
     return { type: "state_house", number, name: `Texas House District ${number}`, browse: "state_house_district", officeLevel: "state" };
   }
-  if (match[1] === "texas-senate-district" && number >= 1 && number <= 31) {
+  if (match[1] === "texas-senate-district" && TEXAS_SENATE_DISTRICTS.has(number)) {
     return { type: "state_senate", number, name: `Texas Senate District ${number}`, browse: "state_senate_district", officeLevel: "state" };
   }
   return null;
