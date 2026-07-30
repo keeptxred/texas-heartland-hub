@@ -116,7 +116,7 @@ function TexasElectionDistrict() {
   const district = parseDistrictSlug(districtSlug);
   if (!district) {
     return (
-      <ElectionLayout title="Election district not found" description="Return to the district directory to choose a valid Texas election district.">
+      <ElectionLayout title="Election district not found" description="Return to the district directory to choose a valid Texas election district." indexable={false}>
         <a href="/elections/districts" className="font-semibold text-red-700">Browse Texas election districts</a>
       </ElectionLayout>
     );
