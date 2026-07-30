@@ -1,0 +1,2 @@
+export interface HomeAffordabilityEvent{action:string;income?:number;homePrice?:number;score?:number;rating?:string;}
+export function trackHomeAffordabilityEvent(event:HomeAffordabilityEvent){if(typeof window==="undefined")return;const payload={tool:"texas_home_affordability_calculator",...event};const gtag=(window as Window&{gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("home_affordability_event",{detail:payload}));}

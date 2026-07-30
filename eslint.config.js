@@ -37,4 +37,10 @@ export default tseslint.config(
     },
   },
   eslintPluginPrettier,
+  {
+    files: ["src/services/explore/public.functions.ts"],
+    rules: {
+      "prettier/prettier": "off",
+    },
+  },
 );

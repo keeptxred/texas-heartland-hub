@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Texas state parks landscape</title>
+  <desc id="desc">A stylized Texas landscape showing desert mountains, pine forest, a winding river, and a lone star.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dcecf2"/>
+      <stop offset="1" stop-color="#fff4dd"/>
+    </linearGradient>
+    <linearGradient id="river" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#5b94a8"/>
+      <stop offset="1" stop-color="#2f6f80"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1270" cy="180" r="72" fill="#d9a441" opacity=".9"/>
+  <path d="M0 510 230 310l170 142 170-214 245 272 180-185 235 185 190-120 180 120v390H0Z" fill="#9a6548"/>
+  <path d="M0 590 210 420l175 125 190-175 205 185 180-145 210 155 180-100 250 145v290H0Z" fill="#75503f"/>
+  <path d="M0 660c240-80 420-62 610 20 170 73 341 59 510-18 171-78 324-84 480-18v256H0Z" fill="#657a50"/>
+  <path d="M650 900c30-115 99-179 192-236 91-56 121-105 115-181 129 102 145 214 83 313-25 40-44 74-58 104Z" fill="url(#river)"/>
+  <g fill="#294936">
+    <path d="M120 650h36l-18-52 33 13-33-82-33 82 33-13Z"/><rect x="134" y="646" width="8" height="80"/>
+    <path d="M210 675h42l-21-60 38 15-38-94-38 94 38-15Z"/><rect x="227" y="670" width="9" height="82"/>
+    <path d="M1340 655h40l-20-58 36 14-36-89-36 89 36-14Z"/><rect x="1356" y="650" width="9" height="84"/>
+    <path d="M1435 690h34l-17-49 31 12-31-77-31 77 31-12Z"/><rect x="1448" y="686" width="8" height="70"/>
+  </g>
+  <path d="m800 88 18 36 40 6-29 28 7 40-36-19-36 19 7-40-29-28 40-6Z" fill="#b3272d"/>
+  <text x="80" y="120" font-family="Georgia,serif" font-size="62" font-weight="700" fill="#20352b">TEXAS STATE PARKS</text>
+  <text x="84" y="174" font-family="Arial,sans-serif" font-size="25" letter-spacing="5" fill="#4e5e54">A YEAR-ROUND PLANNING GUIDE</text>
+</svg>

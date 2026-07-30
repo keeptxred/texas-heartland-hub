@@ -1,0 +1,2 @@
+export interface MortgagePayoffEvent{action:string;mortgageBalance?:number;interestRate?:number;extraPayment?:number;yearsSaved?:number;interestSaved?:number;freedomScore?:number;}
+export function trackMortgagePayoffEvent(event:MortgagePayoffEvent){if(typeof window==="undefined")return;const payload={tool:"texas_mortgage_payoff_calculator",...event};const gtag=(window as Window&{gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("mortgage_payoff_event",{detail:payload}));}

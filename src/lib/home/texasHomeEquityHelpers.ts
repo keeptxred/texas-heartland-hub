@@ -1,0 +1,10 @@
+import type {TexasHomeEquityResult} from "@/types/home/TexasHomeEquity";
+export const formatEquityCurrency=(value:number)=>new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",maximumFractionDigits:0}).format(value);
+export const explainCurrentEquity=(r:TexasHomeEquityResult)=>`Your estimated home equity is ${formatEquityCurrency(r.currentEquity.totalEquity)}, representing approximately ${Math.round(r.currentEquity.equityPercentage*100)}% of your home's value.`;
+export const explainLoanToValue=(r:TexasHomeEquityResult)=>`Your loan-to-value ratio is approximately ${Math.round(r.currentEquity.loanToValue*100)}%.`;
+export const explainEquityAccess=(r:TexasHomeEquityResult)=>r.equityAccess.availableEquity>0?`You may have approximately ${formatEquityCurrency(r.equityAccess.availableEquity)} in available equity.`:"There may not be enough available equity for borrowing.";
+export const explainHELOCPotential=(r:TexasHomeEquityResult)=>`A potential HELOC or home equity loan amount could be estimated near ${formatEquityCurrency(r.equityAccess.estimatedHELOCLimit)}, subject to lender requirements.`;
+export const explainFutureEquity=(r:TexasHomeEquityResult)=>`Estimated equity could grow to approximately ${formatEquityCurrency(r.futureEquity.futureEquity)}.`;
+export const explainEquityScore=(r:TexasHomeEquityResult)=>r.decisionScore>=80?"Your equity position is strong.":r.decisionScore>=60?"Your equity position is healthy.":"Your equity position is still developing.";
+export const generateEquityRecommendation=(r:TexasHomeEquityResult)=>r.decisionScore>=80?"Your current equity position may support future financial planning options.":r.decisionScore>=60?"Continue building equity while evaluating borrowing carefully.":"Focus on reducing mortgage balance over time.";
+export const generateEquitySEODescription=(location="Texas")=>`Use this ${location} home equity calculator to estimate home value, mortgage balance, available equity, loan-to-value ratio, and potential borrowing capacity.`;

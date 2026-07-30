@@ -1,0 +1,2 @@
+export const homeAffordabilitySitemap={url:"https://keeptxred.com/texas-home-affordability-calculator",lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.95};
+export const generateAffordabilityLocationPages=(locations:string[])=>locations.map(location=>({url:`https://keeptxred.com/${location}-home-affordability-calculator`,lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.85}));

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroFlag from "@/assets/hero-flag.jpg";
 
-const URL = "https://www.keeptxred.com/keep-texas-red";
+const URL = "https://keeptxred.com/keep-texas-red";
 const TITLE = "Keep Texas Red | What It Means and Why Texans Support It";
 const DESC =
   "An in-depth, evergreen guide to what Keep Texas Red means — covering Texas history, economy, border, energy, constitutional rights, education, elections, business, agriculture, military, and infrastructure.";
@@ -36,8 +36,8 @@ export const Route = createFileRoute("/keep-texas-red")({
           publisher: {
             "@type": "NewsMediaOrganization",
             name: "Keep TX Red",
-            url: "https://www.keeptxred.com/",
-            logo: { "@type": "ImageObject", url: "https://www.keeptxred.com/favicon.ico" },
+            url: "https://keeptxred.com/",
+            logo: { "@type": "ImageObject", url: "https://keeptxred.com/favicon.ico" },
           },
           mainEntityOfPage: { "@type": "WebPage", "@id": URL },
         }),
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/keep-texas-red")({
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "Home", item: "https://www.keeptxred.com/" },
+            { "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com/" },
             { "@type": "ListItem", position: 2, name: "Keep Texas Red", item: URL },
           ],
         }),
@@ -249,7 +249,7 @@ function KeepTexasRedPage() {
         </div>
         <div>
           <dt className="font-semibold text-foreground mb-1">What is Operation Lone Star?</dt>
-          <dd className="text-muted-foreground leading-relaxed">Operation Lone Star is the state-led border security mission launched in 2021 that deployed Texas DPS troopers and the Texas National Guard to the southern border. It has reshaped the political map of South Texas. Read our full <Link to="/news/operation-lone-star" className="text-primary underline">Operation Lone Star</Link> coverage.</dd>
+          <dd className="text-muted-foreground leading-relaxed">Operation Lone Star is the state-led border security mission launched in 2021 that deployed Texas DPS troopers and the Texas National Guard to the southern border. It has reshaped the political map of South Texas. Read our full <Link to="/news/$slug" params={{ slug: "operation-lone-star" }} className="text-primary underline">Operation Lone Star</Link> coverage.</dd>
         </div>
         <div>
           <dt className="font-semibold text-foreground mb-1">How do I check my Texas voter registration?</dt>

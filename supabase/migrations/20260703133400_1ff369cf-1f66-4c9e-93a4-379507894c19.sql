@@ -11,17 +11,30 @@ REVOKE ALL ON FUNCTION public.enqueue_email(text, jsonb) FROM PUBLIC, anon, auth
 REVOKE ALL ON FUNCTION public.read_email_batch(text, integer, integer) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.delete_email(text, bigint) FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.move_to_dlq(text, text, bigint, jsonb) FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.email_queue_wake() FROM PUBLIC, anon, authenticated;
-REVOKE ALL ON FUNCTION public.email_queue_dispatch() FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON FUNCTION public.increment_variant_metric(text, text, text) FROM PUBLIC, anon, authenticated;
 
 GRANT EXECUTE ON FUNCTION public.enqueue_email(text, jsonb) TO service_role;
 GRANT EXECUTE ON FUNCTION public.read_email_batch(text, integer, integer) TO service_role;
 GRANT EXECUTE ON FUNCTION public.delete_email(text, bigint) TO service_role;
 GRANT EXECUTE ON FUNCTION public.move_to_dlq(text, text, bigint, jsonb) TO service_role;
-GRANT EXECUTE ON FUNCTION public.email_queue_wake() TO service_role;
-GRANT EXECUTE ON FUNCTION public.email_queue_dispatch() TO service_role;
 GRANT EXECUTE ON FUNCTION public.increment_variant_metric(text, text, text) TO service_role;
+
+-- These helpers are installed only when the database has the email queue wake/dispatch
+-- implementation. Guard the permission changes so a clean database can replay the full
+-- migration history even when those optional functions are not present.
+DO $$
+BEGIN
+  IF to_regprocedure('public.email_queue_wake()') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON FUNCTION public.email_queue_wake() FROM PUBLIC, anon, authenticated';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION public.email_queue_wake() TO service_role';
+  END IF;
+
+  IF to_regprocedure('public.email_queue_dispatch()') IS NOT NULL THEN
+    EXECUTE 'REVOKE ALL ON FUNCTION public.email_queue_dispatch() FROM PUBLIC, anon, authenticated';
+    EXECUTE 'GRANT EXECUTE ON FUNCTION public.email_queue_dispatch() TO service_role';
+  END IF;
+END
+$$;
 
 -- 3) Defensively re-assert RLS on PII-bearing tables. These already had service-role-only
 --    policies; this makes the "no anon/authenticated read" posture explicit and durable.

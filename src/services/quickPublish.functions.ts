@@ -21,7 +21,7 @@ const Input = z.object({
 
 const GRAPH_VERSION = "v21.0";
 const KEEP_TX_RED_PAGE_ID = "1211420085383129";
-const SITE_URL = "https://www.keeptxred.com";
+const SITE_URL = "https://keeptxred.com";
 
 function normalizeAssetUrl(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
