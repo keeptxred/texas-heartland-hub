@@ -75,5 +75,60 @@
     "license": null,
     "permissionBasis": "Image published by the candidate's official campaign and used for editorial candidate coverage with attribution and source link.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
+    "assetType": "official-field-portrait",
+    "imageUrl": "https://www.glo.texas.gov/sites/default/files/styles/hero_commissioner/public/2025-08/L_GLO_Commissioner.jpg?itok=El0N0lgI",
+    "sourceUrl": "https://www.glo.texas.gov/about-glo/about-the-commissioner",
+    "altText": "Texas Land Commissioner Dawn Buckingham visiting state land",
+    "credit": "Texas General Land Office",
+    "license": null,
+    "permissionBasis": "Official Texas government image used for informational candidate coverage with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-benjamin-flores-democratic-race-2026-land-commissioner",
+    "assetType": "campaign-event",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/691122492e4c8c1a6bc9c376/1764553941177-L6RI347IPZAUPX4Y61BD/IMG_9152.png",
+    "sourceUrl": "https://www.letsgowithben.com/gallery-1",
+    "altText": "Benjamin Flores meeting voters during his Texas listening tour",
+    "credit": "Benjamin Flores for Texas Campaign",
+    "license": null,
+    "permissionBasis": "Image published in the official campaign photo gallery and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-benjamin-flores-democratic-race-2026-land-commissioner",
+    "assetType": "campaign-event",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/691122492e4c8c1a6bc9c376/3664007c-f567-4cf0-9dac-9fcd34348749/IMG_9155.JPG",
+    "sourceUrl": "https://www.letsgowithben.com/gallery-1",
+    "altText": "Benjamin Flores speaking with Texans during a campaign event",
+    "credit": "Benjamin Flores for Texas Campaign",
+    "license": null,
+    "permissionBasis": "Image published in the official campaign photo gallery and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-bo-french-republican-race-2026-railroad-commissioner",
+    "assetType": "campaign-family-portrait",
+    "imageUrl": "https://bofrench.com/wp-content/uploads/2025/11/BoFrench05-updated.jpg",
+    "sourceUrl": "https://bofrench.com/",
+    "altText": "Bo French with his family in an official campaign photograph",
+    "credit": "Bo French Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-jon-rosenthal-democratic-race-2026-railroad-commissioner",
+    "assetType": "legislative-event",
+    "imageUrl": "https://jonrosenthaltx.com/wp-content/uploads/2025/09/ede2.jpg",
+    "sourceUrl": "https://jonrosenthaltx.com/",
+    "altText": "Jon Rosenthal speaking at the Texas Capitol",
+    "credit": "Jon Rosenthal for Texas",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
   }
 ]
