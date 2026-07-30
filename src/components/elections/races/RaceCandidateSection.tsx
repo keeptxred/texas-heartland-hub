@@ -28,8 +28,7 @@ export function RaceCandidateSection({ race, candidates }: RaceCandidateSectionP
       ) : (
         <div className="grid gap-5 lg:grid-cols-2">
           {candidates.map((candidate) => {
-            const featuredProfile = getFeaturedCandidateProfile(candidate.fullName ?? candidate.ballotName);
-            const approvedImage = candidate.imageRights?.usageStatus === "approved" ? candidate.imageUrl : null;
+            const featuredProfile = getFeaturedCandidateProfile(candidate.ballotName);
             return (
               <CandidateCard
                 key={candidate.id}
@@ -43,7 +42,7 @@ export function RaceCandidateSection({ race, candidates }: RaceCandidateSectionP
                   candidate.incumbencyType === "appointed_incumbent"
                 }
                 status={candidate.status}
-                photoUrl={approvedImage ?? featuredProfile?.imageUrl ?? null}
+                photoUrl={candidate.imageUrl ?? featuredProfile?.imageUrl ?? null}
                 occupation={candidate.occupation}
                 hometown={candidate.hometown}
                 profileHref={ELECTION_ROUTES.candidate(candidate.slug)}
