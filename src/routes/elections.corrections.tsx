@@ -11,6 +11,12 @@ export const Route = createFileRoute("/elections/corrections")({
         content:
           "Report a factual issue and review the KeepTXRed Election Central correction process.",
       },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:title", content: "Election Central Corrections | KeepTXRed" },
+      { property: "og:url", content: "https://keeptxred.com/elections/corrections" },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Keep TX Red" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/elections/corrections" }],
   }),
