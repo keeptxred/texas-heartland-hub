@@ -97,8 +97,9 @@ function ElectionCandidateDetailRoute() {
       <ElectionLayout
         title="Texas Election Candidate"
         description="Verified candidate details from KeepTXRed Election Central."
+        indexable={indexable}
         canonicalUrl={
-          validSlug ? `https://keeptxred.com/elections/candidates/${candidateSlug}` : undefined
+          indexable ? `https://keeptxred.com/elections/candidates/${candidateSlug}` : undefined
         }
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.candidates} />}
       >
