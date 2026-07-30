@@ -34,9 +34,18 @@ export function ElectionLayout({
     name: title,
     description,
     url: canonicalUrl,
+    inLanguage: "en-US",
     isPartOf: {
       "@type": "WebSite",
-      name: "KeepTXRed",
+      "@id": "https://keeptxred.com/#website",
+      url: "https://keeptxred.com",
+      name: "Keep TX Red",
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": "https://keeptxred.com/#organization",
+      name: "Keep TX Red",
+      url: "https://keeptxred.com",
     },
     about: {
       "@type": "Thing",
@@ -49,9 +58,15 @@ export function ElectionLayout({
       <Helmet>
         <title>{`${title} | KeepTXRed`}</title>
         <meta name="description" content={description} />
+        <meta name="robots" content="index, follow, max-image-preview:large" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Keep TX Red" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
         {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
         {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
         <script type="application/ld+json">{JSON.stringify(schema ?? defaultSchema)}</script>
