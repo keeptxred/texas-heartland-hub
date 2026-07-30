@@ -1,13 +1,13 @@
 {
-  "updatedAt": "2026-07-30T00:05:00.547Z",
-  "conclusion": "success",
-  "runId": "30501471388",
+  "updatedAt": "2026-07-30T00:06:35.043Z",
+  "conclusion": "failure",
+  "runId": "30501616153",
   "runAttempt": "1",
-  "triggerCommit": "cc8b6d25b1bca23061c0b3bb2dff9daa0d32809d",
-  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30501471388",
+  "triggerCommit": "588158a0532ab56d55cc4477693819613094f705",
+  "runUrl": "https://github.com/keeptxred/texas-heartland-hub/actions/runs/30501616153",
   "checks": {
-    "build": "success",
-    "mobileTests": "success"
+    "build": "skipped",
+    "mobileTests": "skipped"
   },
   "viewport": {
     "width": 390,
