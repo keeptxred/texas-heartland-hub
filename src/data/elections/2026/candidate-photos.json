@@ -148,5 +148,45 @@
     "license": null,
     "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+    "imageUrl": "https://www.senate.texas.gov/_assets/photos/LtGov_Patrick_2021.jpg",
+    "sourceUrl": "https://www.senate.texas.gov/ltgov.php?lang=en",
+    "altText": "Official portrait of Texas Lieutenant Governor Dan Patrick",
+    "credit": "Texas State Senate",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+    "imageUrl": "https://www.senate.texas.gov/members/d11/img/Middleton_87-0662D-009.jpg",
+    "sourceUrl": "https://www.senate.texas.gov/member.php?d=11",
+    "altText": "Official portrait of Texas Senator Mayes Middleton",
+    "credit": "Texas State Senate",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+    "imageUrl": "https://senate.texas.gov/members/d16/img/SNJ-Headshot-2023-web.jpg",
+    "sourceUrl": "https://senate.texas.gov/member.php?d=16",
+    "altText": "Official portrait of Texas Senator Nathan Johnson",
+    "credit": "Texas State Senate",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+    "imageUrl": "https://senate.texas.gov/members/d14/img/SE_headshot_2020.jpg",
+    "sourceUrl": "https://senate.texas.gov/member.php?d=14",
+    "altText": "Official portrait of Texas Senator Sarah Eckhardt",
+    "credit": "Texas State Senate",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
   }
 ]
