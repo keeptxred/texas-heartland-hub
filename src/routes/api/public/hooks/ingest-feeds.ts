@@ -72,6 +72,11 @@ const HARDCODED_SOURCES: { name: string; url: string; category?: string }[] = [
     url: "https://news.google.com/rss/search?q=site%3Afoxnews.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
     category: "Politics",
   },
+  {
+    name: "Breitbart — Texas (Google News)",
+    url: "https://news.google.com/rss/search?q=site%3Abreitbart.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
+    category: "Politics",
+  },
 ];
 
 type IngestSource = { name: string; url: string; category?: string };
@@ -91,6 +96,17 @@ const EDITORIAL_BACKFILLS: Item[] = [
     category: "Politics",
     description:
       "Podcaster Joe Rogan discussed the political character of Austin and Texas during a conversation with wildlife television personality Forrest Galante. Rogan described Austin as a progressive city surrounded by strongly Republican parts of Texas and argued that the contrast creates a balance that benefits the city and the state. He said Austin progressives tend to be more reasonable than liberals he encountered in New York or Los Angeles and pushed back on stereotypes that portray Texas as culturally uniform or unsophisticated. Rogan, who moved from Los Angeles to Austin during the COVID-19 era and records his podcast in the area, warned activists who want to make Texas uniformly Democratic that doing so could undermine what makes the state attractive, including for newcomers. The discussion also touched on the phrase Keep Austin weird and surrounded, Austin's long history of Democratic municipal leadership, and the city's position as a liberal enclave inside a Republican-led state. Rogan's comments are relevant to the continuing debate over demographic change, migration, political identity, and Democratic efforts to become more competitive in statewide Texas elections.",
+  },
+  {
+    title:
+      "Report: James Talarico filmed driving rental truck in 'Real Texan' campaign ad",
+    link:
+      "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/",
+    pub_date: "2026-07-29T00:00:00.000Z",
+    source: "Breitbart",
+    category: "Politics",
+    description:
+      "A July 29 Breitbart report concerns Texas Democratic politician James Talarico and a campaign advertisement presenting him driving a pickup truck. The report says the vehicle shown in the advertisement was an Enterprise rental rather than Talarico's own truck. The story focuses on political image-making, the authenticity of campaign advertising, and how candidates present their Texas identity to voters. Because Talarico is a Texas candidate and the advertisement is aimed at Texas voters, the report is directly relevant to statewide political coverage and the 2026 election cycle.",
   },
 ];
 
