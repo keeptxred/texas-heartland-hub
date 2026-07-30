@@ -1,16 +1,18 @@
+import { candidateSeoSlug, raceSeoSlug } from "./seoSlugs";
+
 export const ELECTION_ROUTES = {
   base: "/elections",
   legacyRoot: "/elections",
   root: "/elections/2026",
   cycle: (year: number | string) => `/elections/${year}` as const,
   races: "/elections/races",
-  race: (slug: string) => `/elections/races/${slug}` as const,
+  race: (slug: string) => `/elections/races/${raceSeoSlug(slug)}` as const,
   statewide: "/elections/statewide",
   legislative: "/elections/legislative",
   districts: "/elections/districts",
   district: (slug: string) => `/elections/districts/${slug}` as const,
   candidates: "/elections/candidates",
-  candidate: (slug: string) => `/elections/candidates/${slug}` as const,
+  candidate: (slug: string) => `/elections/candidates/${candidateSeoSlug(slug)}` as const,
   polls: "/elections/polls",
   poll: (slug: string) => `/elections/polls/${slug}` as const,
   forecast: "/elections/forecast",

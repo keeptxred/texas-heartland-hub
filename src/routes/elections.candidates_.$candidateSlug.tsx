@@ -1,5 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
-import candidates from "@/data/elections/2026/candidates.json";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
   CandidateBiographySection,
   CandidateCampaignLinks,
@@ -16,6 +15,7 @@ import {
   ElectionLoading,
   ElectionNavigation,
 } from "@/components/elections";
+import candidatesJson from "@/data/elections/2026/candidates.json";
 import {
   useElectionCandidate,
   useElectionRace,
@@ -23,113 +23,48 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { candidateSeoSlug, findCandidateStoredSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
+const candidates = candidatesJson as readonly { slug: string }[];
+
 export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
+  beforeLoad: ({ params }) => {
+    const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);
+    if (!storedSlug) return;
+
+    const canonicalSlug = candidateSeoSlug(storedSlug);
+    if (params.candidateSlug !== canonicalSlug) {
+      throw redirect({
+        to: "/elections/candidates/$candidateSlug",
+        params: { candidateSlug: canonicalSlug },
+        replace: true,
+        statusCode: 301,
+      });
+    }
+  },
   head: ({ params }) => {
-    const record = candidates.find(
-      (item) =>
-        item.slug === params.candidateSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
-    );
-    const validSlug = isElectionSlug(params.candidateSlug);
-    const indexable = validSlug && Boolean(record);
-    const canonicalUrl = `https://keeptxred.com/elections/candidates/${params.candidateSlug}`;
-    const recordName =
-      record && "fullName" in record && typeof record.fullName === "string"
-        ? record.fullName
-        : record && "name" in record && typeof record.name === "string"
-          ? record.name
-          : "Texas Election Candidate";
-    const recordDescription =
-      record && "biography" in record && typeof record.biography === "string" && record.biography
-        ? record.biography
-        : record && "description" in record && typeof record.description === "string" && record.description
-          ? record.description
-          : "View verified information for this Texas election candidate.";
-    const recordImage =
-      record &&
-      "imageUrl" in record &&
-      typeof record.imageUrl === "string" &&
-      record.imageUrl &&
-      "imageRights" in record &&
-      record.imageRights &&
-      typeof record.imageRights === "object" &&
-      "usageStatus" in record.imageRights &&
-      record.imageRights.usageStatus === "approved"
-        ? record.imageUrl
-        : null;
-    const title = indexable
-      ? `${recordName} | KeepTXRed Election Central`
-      : "Election candidate not found | KeepTXRed";
+    const canonicalSlug = candidateSeoSlug(params.candidateSlug);
+    const validSlug = isElectionSlug(canonicalSlug);
+    const canonicalUrl = `https://keeptxred.com/elections/candidates/${canonicalSlug}`;
 
     return {
       meta: [
-        { title },
-        { name: "description", content: recordDescription },
         {
-          name: "robots",
-          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
+          title: validSlug
+            ? "Texas Election Candidate | KeepTXRed Election Central"
+            : "Invalid Election Candidate | KeepTXRed Election Central",
         },
-        ...(indexable
-          ? [
-              { property: "og:title", content: title },
-              { property: "og:description", content: recordDescription },
-              { property: "og:url", content: canonicalUrl },
-              { property: "og:type", content: "website" },
-              { property: "og:site_name", content: "Keep TX Red" },
-              { name: "twitter:card", content: "summary_large_image" },
-              { name: "twitter:title", content: title },
-              { name: "twitter:description", content: recordDescription },
-              ...(recordImage
-                ? [
-                    { property: "og:image", content: recordImage },
-                    { property: "og:image:alt", content: `Portrait of ${recordName}` },
-                    { name: "twitter:image", content: recordImage },
-                  ]
-                : [
-                    {
-                      property: "og:image",
-                      content: "https://keeptxred.com/images/elections/election-central-social.jpg",
-                    },
-                    { property: "og:image:width", content: "1200" },
-                    { property: "og:image:height", content: "630" },
-                    { property: "og:image:alt", content: "2026 Texas Election Central" },
-                    {
-                      name: "twitter:image",
-                      content: "https://keeptxred.com/images/elections/election-central-social.jpg",
-                    },
-                  ]),
-            ]
-          : []),
+        {
+          name: "description",
+          content: validSlug
+            ? "View verified information for this Texas election candidate."
+            : "The requested Texas election candidate URL is invalid.",
+        },
+        ...(validSlug ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
       ],
-      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
-      scripts: indexable
-        ? [
-            {
-              type: "application/ld+json",
-              children: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "Person",
-                name: recordName,
-                description: recordDescription,
-                url: canonicalUrl,
-                ...(recordImage ? { image: recordImage } : {}),
-                affiliation: {
-                  "@type": "Organization",
-                  name:
-                    record && "partyLabel" in record && typeof record.partyLabel === "string"
-                      ? record.partyLabel
-                      : record && "party" in record && typeof record.party === "string"
-                        ? record.party
-                        : "Candidate",
-                },
-              }).replace(/</g, "\\u003c"),
-            },
-          ]
-        : [],
+      links: validSlug ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
   },
   component: ElectionCandidateDetailRoute,
@@ -137,29 +72,22 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
 
 function ElectionCandidateDetailRoute() {
   const { candidateSlug } = Route.useParams();
-  const validSlug = isElectionSlug(candidateSlug);
-  const indexable =
-    validSlug &&
-    candidates.some(
-      (item) =>
-        item.slug === candidateSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
-    );
+  const storedSlug = findCandidateStoredSlug(candidateSlug, candidates);
+  const validSlug = Boolean(storedSlug && isElectionSlug(candidateSlug));
+  const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : candidateSlug;
 
   return (
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Candidate"
         description="Verified candidate details from KeepTXRed Election Central."
-        indexable={indexable}
         canonicalUrl={
-          indexable ? `https://keeptxred.com/elections/candidates/${candidateSlug}` : undefined
+          validSlug ? `https://keeptxred.com/elections/candidates/${canonicalSlug}` : undefined
         }
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.candidates} />}
       >
-        {indexable ? (
-          <ElectionCandidateDetailData candidateSlug={candidateSlug} />
+        {validSlug && storedSlug ? (
+          <ElectionCandidateDetailData candidateSlug={storedSlug} />
         ) : (
           <ElectionErrorState
             kind="not_found"

@@ -59,8 +59,8 @@ jobs:
       - name: Run full public-launch audit
         run: bun scripts/elections/public-launch-audit.mjs
 
-      - name: Lint changed district routes
-        run: bunx eslint src/routes/elections.districts.tsx src/routes/elections.districts.index.tsx
+      - name: Lint changed election routes
+        run: bunx eslint src/lib/elections/routes.ts src/lib/elections/seoSlugs.ts 'src/routes/elections.candidates_.$candidateSlug.tsx' 'src/routes/elections.races_.$raceSlug.tsx' src/routes/elections.districts.tsx src/routes/elections.districts.index.tsx 'src/routes/sitemap-elections[.]xml.ts'
 
       - name: Typecheck
         run: bun run typecheck
