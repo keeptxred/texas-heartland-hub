@@ -4,6 +4,7 @@ import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
 import { TEXAS_DATASETS } from "@/data/texas-data-center";
+import { calculators } from "@/data/calculators";
 
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
@@ -41,7 +42,9 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
     handlers: {
       GET: async () => {
         const lastmod = toIsoDate(new Date());
-        const paths = [...STATIC_PATHS];
+        const paths = [
+          ...new Set([...STATIC_PATHS, ...calculators.map((calculator) => calculator.slug)]),
+        ];
         for (const league of ["nfl", "mlb", "nba"] as const) {
           if (await hasEnoughContent({ kind: `sports-${league}` }, MIN_ARTICLES_DEFAULT)) paths.push(`/texas-sports/${league}`);
         }
