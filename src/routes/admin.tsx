@@ -25,8 +25,8 @@ export const Route = createFileRoute("/admin")({
 });
 
 const STORAGE_KEY = "ktr-admin-ok";
-const ROGAN_SOURCE_URL =
-  "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance";
+const INGEST_VALIDATION_SOURCE_URL =
+  "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/";
 const PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string) || "keeptxred";
 
 type FeedRow = {
@@ -129,7 +129,7 @@ function AdminDashboard() {
         setIngestDetail(error instanceof Error ? error.message : "Feed refresh failed");
       }
 
-      const [{ data: f }, { data: a }, roganResult] = await Promise.all([
+      const [{ data: f }, { data: a }, validationResult] = await Promise.all([
         supabase
           .from("texas_news_feed")
           .select("id,title,source,internal_slug,pub_date")
@@ -143,22 +143,22 @@ function AdminDashboard() {
         supabase
           .from("texas_news_feed")
           .select("id,title,source,pub_date")
-          .eq("link", ROGAN_SOURCE_URL)
+          .eq("link", INGEST_VALIDATION_SOURCE_URL)
           .maybeSingle(),
       ]);
       if (!active) return;
       setFeed((f ?? []) as FeedRow[]);
       setArticles((a ?? []) as ArticleRow[]);
-      if (roganResult.data) {
+      if (validationResult.data) {
         setIngestStatus("verified");
         setIngestDetail(
-          `Verified in Admin feed as item ${roganResult.data.id}: ${roganResult.data.title}`,
+          `Verified in Admin feed as item ${validationResult.data.id}: ${validationResult.data.title}`,
         );
       } else if (refreshOk) {
         setIngestStatus("missing");
         setIngestDetail(
-          roganResult.error?.message ||
-            "Feed refresh completed, but the requested Fox story is still missing.",
+          validationResult.error?.message ||
+            "Feed refresh completed, but the requested Breitbart story is still missing.",
         );
       }
       setLoading(false);
