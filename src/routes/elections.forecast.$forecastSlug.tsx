@@ -79,8 +79,9 @@ function ElectionForecastDetailRoute() {
       <ElectionLayout
         title="Texas Election Forecast"
         description="Published forecast details from KeepTXRed Election Central."
+        indexable={indexable}
         canonicalUrl={
-          validSlug ? `https://keeptxred.com/elections/forecast/${forecastSlug}` : undefined
+          indexable ? `https://keeptxred.com/elections/forecast/${forecastSlug}` : undefined
         }
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.forecast} />}
       >
