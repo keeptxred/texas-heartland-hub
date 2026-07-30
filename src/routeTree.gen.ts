@@ -205,6 +205,7 @@ import { Route as AdminElectionsRacesRouteImport } from './routes/admin/election
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
 import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
+import { Route as ElectionsDistrictsIndexRouteImport } from './routes/elections.districts.index'
 import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elections.forecast.$forecastSlug'
 import { Route as ElectionsPollsPollSlugRouteImport } from './routes/elections.polls.$pollSlug'
@@ -1272,6 +1273,11 @@ const ElectionsCandidatesCandidateSlugRoute =
     path: '/candidates/$candidateSlug',
     getParentRoute: () => ElectionsRoute,
   } as any)
+const ElectionsDistrictsIndexRoute = ElectionsDistrictsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ElectionsDistrictsRoute,
+} as any)
 const ElectionsDistrictsDistrictSlugRoute =
   ElectionsDistrictsDistrictSlugRouteImport.update({
     id: '/$districtSlug',
@@ -1704,6 +1710,7 @@ export interface FileRoutesByFullPath {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections/': typeof AdminElectionsIndexRoute
+  '/elections/districts/': typeof ElectionsDistrictsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -1832,7 +1839,6 @@ export interface FileRoutesByTo {
   '/elections/2026': typeof Elections2026Route
   '/elections/candidates': typeof ElectionsCandidatesRoute
   '/elections/corrections': typeof ElectionsCorrectionsRoute
-  '/elections/districts': typeof ElectionsDistrictsRouteWithChildren
   '/elections/forecast': typeof ElectionsForecastRouteWithChildren
   '/elections/legislative': typeof ElectionsLegislativeRoute
   '/elections/methodology': typeof ElectionsMethodologyRoute
@@ -1933,6 +1939,7 @@ export interface FileRoutesByTo {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections': typeof AdminElectionsIndexRoute
+  '/elections/districts': typeof ElectionsDistrictsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -2171,6 +2178,7 @@ export interface FileRoutesById {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections/': typeof AdminElectionsIndexRoute
+  '/elections/districts/': typeof ElectionsDistrictsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -2410,6 +2418,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/admin/elections/'
+    | '/elections/districts/'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -2538,7 +2547,6 @@ export interface FileRouteTypes {
     | '/elections/2026'
     | '/elections/candidates'
     | '/elections/corrections'
-    | '/elections/districts'
     | '/elections/forecast'
     | '/elections/legislative'
     | '/elections/methodology'
@@ -2639,6 +2647,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/admin/elections'
+    | '/elections/districts'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -2876,6 +2885,7 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-sports/team/$team'
     | '/admin/elections/'
+    | '/elections/districts/'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -4424,6 +4434,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElectionsCandidatesCandidateSlugRouteImport
       parentRoute: typeof ElectionsRoute
     }
+    '/elections/districts/': {
+      id: '/elections/districts/'
+      path: '/'
+      fullPath: '/elections/districts/'
+      preLoaderRoute: typeof ElectionsDistrictsIndexRouteImport
+      parentRoute: typeof ElectionsDistrictsRoute
+    }
     '/elections/districts/$districtSlug': {
       id: '/elections/districts/$districtSlug'
       path: '/$districtSlug'
@@ -4760,10 +4777,12 @@ const DmvRouteWithChildren = DmvRoute._addFileChildren(DmvRouteChildren)
 
 interface ElectionsDistrictsRouteChildren {
   ElectionsDistrictsDistrictSlugRoute: typeof ElectionsDistrictsDistrictSlugRoute
+  ElectionsDistrictsIndexRoute: typeof ElectionsDistrictsIndexRoute
 }
 
 const ElectionsDistrictsRouteChildren: ElectionsDistrictsRouteChildren = {
   ElectionsDistrictsDistrictSlugRoute: ElectionsDistrictsDistrictSlugRoute,
+  ElectionsDistrictsIndexRoute: ElectionsDistrictsIndexRoute,
 }
 
 const ElectionsDistrictsRouteWithChildren =
