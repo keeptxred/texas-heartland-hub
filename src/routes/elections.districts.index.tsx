@@ -23,11 +23,17 @@ export const Route = createFileRoute("/elections/districts/")({
       { property: "og:url", content: URL },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Keep TX Red" },
-      { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+      {
+        property: "og:image",
+        content: "https://keeptxred.com/images/elections/election-central-social.jpg",
+      },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },
       { property: "og:image:alt", content: "2026 Texas Election Central" },
-      { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+      {
+        name: "twitter:image",
+        content: "https://keeptxred.com/images/elections/election-central-social.jpg",
+      },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: URL }],
@@ -45,15 +51,33 @@ function TexasElectionDistricts() {
       fullWidth
     >
       <div className="relative z-10 space-y-10 pointer-events-auto">
-        <DistrictGroup title="Texas congressional districts" prefix="congressional-district" count={38} />
-        <DistrictGroup title="Texas Senate districts on the 2026 ballot" prefix="texas-senate-district" districts={TEXAS_SENATE_DISTRICTS} />
+        <DistrictGroup
+          title="Texas congressional districts"
+          prefix="congressional-district"
+          count={38}
+        />
+        <DistrictGroup
+          title="Texas Senate districts on the 2026 ballot"
+          prefix="texas-senate-district"
+          districts={TEXAS_SENATE_DISTRICTS}
+        />
         <DistrictGroup title="Texas House districts" prefix="texas-house-district" count={150} />
       </div>
     </ElectionLayout>
   );
 }
 
-function DistrictGroup({ title, prefix, count, districts }: { title: string; prefix: string; count?: number; districts?: readonly number[] }) {
+function DistrictGroup({
+  title,
+  prefix,
+  count,
+  districts,
+}: {
+  title: string;
+  prefix: string;
+  count?: number;
+  districts?: readonly number[];
+}) {
   const districtNumbers = districts ?? Array.from({ length: count ?? 0 }, (_, index) => index + 1);
   return (
     <section>
