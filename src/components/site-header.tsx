@@ -9,6 +9,7 @@ const NAV = [
   { to: "/", label: "Home" },
   { to: "/texas-news", label: "Texas News" },
   { to: "/happening-now", label: "Happening Now" },
+  { to: "/elections/2026", label: "Elections" },
   { to: "/texas-politics", label: "Politics" },
   { to: "/moving-to-texas", label: "Moving to Texas" },
   { to: "/living-in-texas", label: "Living in Texas" },
@@ -58,7 +59,7 @@ export function SiteHeader() {
                     ))
                   ) : (
                     <Link
-                      to="/elections"
+                      to="/elections/2026"
                       className="flex items-center gap-2 hover:text-primary transition-colors"
                     >
                       <span className="size-1.5 rounded-full bg-primary" />
