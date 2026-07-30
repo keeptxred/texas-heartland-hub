@@ -6,8 +6,10 @@ on:
       - "src/lib/texas-government.ts"
       - "src/routes/texas-government*"
       - "src/routes/sitemap-government*"
-      - "src/routes/sitemap[.]xml.ts"
+      - "src/routes/sitemap*.ts"
       - "scripts/government/**"
+      - "package.json"
+      - "bun.lock"
       - ".github/workflows/government-authority-pages.yml"
   push:
     branches: [main]
@@ -15,8 +17,11 @@ on:
       - "src/lib/texas-government.ts"
       - "src/routes/texas-government*"
       - "src/routes/sitemap-government*"
-      - "src/routes/sitemap[.]xml.ts"
+      - "src/routes/sitemap*.ts"
       - "scripts/government/**"
+      - "package.json"
+      - "bun.lock"
+      - ".github/workflows/government-authority-pages.yml"
 
 permissions:
   contents: read
@@ -27,19 +32,28 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
       - name: Validate authority-page coverage
-        run: node scripts/government/validate-authority-pages.mjs
+        run: bun scripts/government/validate-authority-pages.mjs
+
       - name: Typecheck
-        run: npm run typecheck
-      - name: Lint
-        run: npm run lint
+        run: bun run typecheck
+
+      - name: Lint changed district routes
+        run: bunx eslint src/routes/elections.districts.tsx src/routes/elections.districts.index.tsx
+
       - name: Test
-        run: npm test
+        run: bun run test
+
       - name: Production build
-        run: npm run build
+        run: bun run build
