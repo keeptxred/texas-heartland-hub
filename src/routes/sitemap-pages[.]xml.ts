@@ -6,6 +6,7 @@ import { TEAMS } from "@/lib/texas-teams";
 import { TEXAS_DATASETS } from "@/data/texas-data-center";
 import { calculators } from "@/data/calculators";
 import { LAUNCH_COUNTIES, LAUNCH_GUIDES, RELOCATION_LAUNCH_PATH } from "@/data/relocationLaunch";
+import { CITY_COMPARISON_PATH, CITY_RELOCATION_PATH, RELOCATION_CITIES } from "@/data/relocationCities";
 
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
@@ -37,6 +38,8 @@ const STATIC_PATHS: string[] = [
   "/texas/moving-to-texas-2026", "/texas-data",
   ...TEXAS_DATASETS.map((dataset) => `/texas-data/${dataset.slug}`),
   RELOCATION_LAUNCH_PATH,
+  CITY_RELOCATION_PATH,
+  CITY_COMPARISON_PATH,
 ];
 
 export const Route = createFileRoute("/sitemap-pages.xml")({
@@ -50,6 +53,7 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
             ...calculators.map((calculator) => calculator.slug),
             ...LAUNCH_COUNTIES.map((county) => `${RELOCATION_LAUNCH_PATH}/${county.slug}`),
             ...LAUNCH_GUIDES.map((guide) => `${RELOCATION_LAUNCH_PATH}/guides/${guide.slug}`),
+            ...RELOCATION_CITIES.map((city) => `${CITY_RELOCATION_PATH}/${city.slug}`),
           ]),
         ];
         for (const league of ["nfl", "mlb", "nba"] as const) {
