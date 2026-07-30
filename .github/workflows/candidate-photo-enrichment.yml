@@ -9,6 +9,7 @@ on:
       - "src/data/elections/2026/candidates.json"
       - "scripts/elections/candidate-photo-enrichment.mjs"
       - "scripts/elections/discover-candidate-photos.mjs"
+      - "scripts/elections/discover-candidate-photos-directories.mjs"
       - ".github/workflows/candidate-photo-enrichment.yml"
 
 permissions:
@@ -33,7 +34,10 @@ jobs:
         with:
           node-version: 22
 
-      - name: Discover verified candidate portraits
+      - name: Discover directory candidate portraits
+        run: node scripts/elections/discover-candidate-photos-directories.mjs
+
+      - name: Discover linked-source candidate portraits
         run: node scripts/elections/discover-candidate-photos.mjs
 
       - name: Apply approved candidate photos
