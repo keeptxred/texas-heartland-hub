@@ -16,6 +16,21 @@ export interface ElectionSitemapInput {
   lastmod?: string | Date;
 }
 
+const ELECTION_DISTRICT_PATHS = [
+  ...Array.from(
+    { length: 38 },
+    (_, index) => `/elections/districts/congressional-district-${index + 1}`,
+  ),
+  ...Array.from(
+    { length: 31 },
+    (_, index) => `/elections/districts/texas-senate-district-${index + 1}`,
+  ),
+  ...Array.from(
+    { length: 150 },
+    (_, index) => `/elections/districts/texas-house-district-${index + 1}`,
+  ),
+] as const;
+
 const STATIC_ELECTION_PATHS = [
   ELECTION_ROUTES.root,
   ELECTION_ROUTES.races,
@@ -29,6 +44,7 @@ const STATIC_ELECTION_PATHS = [
   ELECTION_ROUTES.methodology,
   ELECTION_ROUTES.corrections,
   ELECTION_ROUTES.voting,
+  ...ELECTION_DISTRICT_PATHS,
 ] as const;
 
 function normalizeElectionPath(path: string): string | null {
