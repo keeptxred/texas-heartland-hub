@@ -76,6 +76,24 @@ const HARDCODED_SOURCES: { name: string; url: string; category?: string }[] = [
 
 type IngestSource = { name: string; url: string; category?: string };
 
+// One-time editorial recovery items are merged into each storage-only ingest
+// and deduped by canonical link. This guarantees a specifically requested
+// missed story reaches Content Opportunities even when database migrations
+// are not applied automatically by the hosting deployment.
+const EDITORIAL_BACKFILLS: Item[] = [
+  {
+    title:
+      "Joe Rogan warns liberals against trying to turn Texas blue, says it would wreck the state's delicate balance",
+    link:
+      "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance",
+    pub_date: "2026-07-28T00:00:00.000Z",
+    source: "Fox News",
+    category: "Politics",
+    description:
+      "Podcaster Joe Rogan discussed the political character of Austin and Texas during a conversation with wildlife television personality Forrest Galante. Rogan described Austin as a progressive city surrounded by strongly Republican parts of Texas and argued that the contrast creates a balance that benefits the city and the state. He said Austin progressives tend to be more reasonable than liberals he encountered in New York or Los Angeles and pushed back on stereotypes that portray Texas as culturally uniform or unsophisticated. Rogan, who moved from Los Angeles to Austin during the COVID-19 era and records his podcast in the area, warned activists who want to make Texas uniformly Democratic that doing so could undermine what makes the state attractive, including for newcomers. The discussion also touched on the phrase Keep Austin weird and surrounded, Austin's long history of Democratic municipal leadership, and the city's position as a liberal enclave inside a Republican-led state. Rogan's comments are relevant to the continuing debate over demographic change, migration, political identity, and Democratic efforts to become more competitive in statewide Texas elections.",
+  },
+];
+
 // Merge hard-coded official sources with any enabled content_sources rows that
 // declare an rss_url. Dedupe by feed URL (case-insensitive). The Source Library
 // is additive — it never removes an official feed.
@@ -772,7 +790,7 @@ async function handler() {
     }),
   );
 
-  const allRaw = results.flatMap((r) => r.items);
+  const allRaw = [...EDITORIAL_BACKFILLS, ...results.flatMap((r) => r.items)];
   const preRelevanceCount = allRaw.length;
   const all = allRaw.filter(isTexasRelevantItem);
   const droppedNonTexas = preRelevanceCount - all.length;
