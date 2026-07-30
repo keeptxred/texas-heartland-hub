@@ -89,7 +89,19 @@ export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
                     { property: "og:image:alt", content: `Portrait of ${recordName}` },
                     { name: "twitter:image", content: recordImage },
                   ]
-                : []),
+                : [
+                    {
+                      property: "og:image",
+                      content: "https://keeptxred.com/images/elections/election-central-social.jpg",
+                    },
+                    { property: "og:image:width", content: "1200" },
+                    { property: "og:image:height", content: "630" },
+                    { property: "og:image:alt", content: "2026 Texas Election Central" },
+                    {
+                      name: "twitter:image",
+                      content: "https://keeptxred.com/images/elections/election-central-social.jpg",
+                    },
+                  ]),
             ]
           : []),
       ],
