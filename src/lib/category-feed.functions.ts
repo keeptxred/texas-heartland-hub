@@ -66,7 +66,7 @@ async function client() {
 }
 
 export const getArticlesByCategory = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) => InputSchema.parse(input))
+  .validator((input: unknown) => InputSchema.parse(input))
   .handler(async ({ data }): Promise<CategoryFeedItem[]> => {
     const supabase = await client();
     if (!supabase) return [];
