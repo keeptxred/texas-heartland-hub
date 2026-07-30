@@ -8,7 +8,7 @@ export const Route = createFileRoute("/get-involved")({
       { name: "description", content: "Register to vote, contact your legislators, find your representative, and find your polling place." },
       { property: "og:title", content: "Get Involved — Keep TX Red" },
     ],
-    links: [{ rel: "canonical", href: "/get-involved" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/get-involved" }],
   }),
   component: GetInvolvedPage,
 });

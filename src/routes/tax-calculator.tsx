@@ -34,12 +34,12 @@ export const Route = createFileRoute("/tax-calculator")({
       { property: "og:title", content: "Texas Property Tax Calculator — County, ISD & Homestead Estimate" },
       { property: "og:description", content: "Estimate Texas property taxes using exact local rates with transparent assumptions and official source guidance." },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://www.keeptxred.com/tax-calculator" },
+      { property: "og:url", content: "https://keeptxred.com/tax-calculator" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Texas Property Tax Calculator" },
       { name: "twitter:description", content: "Estimate county, city, ISD, and special-district property taxes with the Texas homestead exemption." },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/tax-calculator" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/tax-calculator" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -48,7 +48,7 @@ export const Route = createFileRoute("/tax-calculator")({
           "@type": "WebApplication",
           name: "Texas Property Tax Calculator",
           description: "Estimate Texas property taxes by county, city, ISD, special districts, and exemptions using exact local rates.",
-          url: "https://www.keeptxred.com/tax-calculator",
+          url: "https://keeptxred.com/tax-calculator",
           applicationCategory: "FinanceApplication",
           operatingSystem: "Web",
           isAccessibleForFree: true,

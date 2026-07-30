@@ -1,0 +1,7 @@
+export const texasPropertyTaxBenchmarks={low:{rate:.015,label:"Lower Texas property tax area"},average:{rate:.02,label:"Typical Texas planning estimate"},high:{rate:.025,label:"Higher Texas property tax area"}};
+export const texasInsuranceBenchmarks={starterHome:{annual:1800,label:"Lower-value home estimate"},averageHome:{annual:2800,label:"Typical Texas homeowner estimate"},higherValueHome:{annual:4500,label:"Higher-value property estimate"}};
+export const homeMaintenanceBenchmarks={standard:{annualRate:.01,label:"1% of home value annually"},conservative:{annualRate:.015,label:"1.5% reserve for older homes"},newConstruction:{annualRate:.005,label:"Lower maintenance reserve"}};
+export const texasUtilityBenchmarks={smallHome:{monthly:200,label:"Smaller home utility estimate"},averageHome:{monthly:300,label:"Typical Texas home utility estimate"},largeHome:{monthly:450,label:"Larger home utility estimate"}};
+export const hoaBenchmarks={none:{monthly:0,label:"No HOA"},average:{monthly:75,label:"Typical Texas HOA"},higher:{monthly:200,label:"Master planned community HOA"}};
+export const repairReserveBenchmarks={low:{monthly:100,label:"Minimal repair reserve"},standard:{monthly:200,label:"Standard homeowner reserve"},high:{monthly:400,label:"Older home repair reserve"}};
+export const ownershipAffordabilityThresholds={excellent:{ratio:.25,label:"Very comfortable"},good:{ratio:.3,label:"Manageable"},warning:{ratio:.36,label:"Financial pressure"},highRisk:{ratio:.45,label:"High housing burden"}};

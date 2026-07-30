@@ -3,6 +3,7 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
+  useLocation,
   useRouter,
   HeadContent,
   Scripts,
@@ -14,6 +15,12 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
 import { organizationJsonLd } from "../lib/seo";
+import { exploreDestinations } from "../data/explore/all-destinations";
+import { isPublicCavernDestination, relatedCaverns } from "../lib/explore/cavern-discovery";
+import {
+  buildCavernBreadcrumbSchema,
+  buildRelatedCavernItemListSchema,
+} from "../lib/explore/cavern-structured-data";
 
 function NotFoundComponent() {
   return (
@@ -80,34 +87,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Keep Texas Red – Texas News, Politics & Local Updates" },
-      { name: "description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes." },
-      { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" },
-      { property: "og:title", content: "Keep Texas Red – Texas News, Politics & Local Updates" },
-      { property: "og:description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes." },
-      { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "Keep Texas Red" },
-      { property: "og:locale", content: "en_US" },
-      { property: "og:image", content: "https://www.keeptxred.com/og/default.jpg" },
-      { property: "og:image:secure_url", content: "https://www.keeptxred.com/og/default.jpg" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:type", content: "image/jpeg" },
-      { property: "og:image:alt", content: "Keep TX Red — Texas News, Politics & Conservative Commentary" },
+      {
+        name: "robots",
+        content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+      },
       { name: "msvalidate.01", content: "74E5E79AEC351CF6D2577A6FC6A125DF" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@KeepTXRed" },
-      { name: "twitter:creator", content: "@KeepTXRed" },
-      { name: "twitter:title", content: "Keep Texas Red – Texas News, Politics & Local Updates" },
-      { name: "twitter:description", content: "Independent Texas news covering politics, Houston, sports, business, elections, and property taxes." },
-      { name: "twitter:image", content: "https://www.keeptxred.com/og/default.jpg" },
-      { name: "twitter:image:alt", content: "Keep TX Red — Texas News, Politics & Conservative Commentary" },
       { name: "google-site-verification", content: "58wEXUcyQN-Wcn4LaY6yS_mUwAWVh99ni3Z2SqJ_Bkk" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png" },
-      { rel: "apple-touch-icon", href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png" },
+      {
+        rel: "icon",
+        type: "image/png",
+        href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png",
+      },
       { rel: "dns-prefetch", href: "https://fonts.googleapis.com" },
       { rel: "dns-prefetch", href: "https://pagead2.googlesyndication.com" },
       { rel: "dns-prefetch", href: "https://googleads.g.doubleclick.net" },
@@ -115,32 +112,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "dns-prefetch", href: "https://www.googletagservices.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      // Preload + load fonts. `display=swap` keeps text visible in a fallback while web fonts arrive,
-      // so this never causes invisible-text (FOIT) and avoids blocking LCP text rendering.
-      {
-        rel: "preload",
-        as: "style",
-        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
-      },
       {
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Libre+Baskerville:wght@400;700&family=Inter:wght@400;500;600;700&display=swap",
       },
     ],
     scripts: [
-      // Defer AdSense until after the window load event so the third-party
-      // script never competes with the LCP image/network on first paint.
       {
         children:
           "(function(){function l(){var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1891256141359926';document.head.appendChild(s);}if(document.readyState==='complete'){setTimeout(l,1500);}else{window.addEventListener('load',function(){setTimeout(l,1500);});}})();",
       },
       {
-        async: true,
-        src: "https://www.googletagmanager.com/gtag/js?id=G-R7QW1X96TW",
-      },
-      {
         children:
-          "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-R7QW1X96TW');",
+          "(function(){function l(){var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id=G-R7QW1X96TW';document.head.appendChild(s);window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}window.gtag=gtag;gtag('js',new Date());gtag('config','G-R7QW1X96TW');}if(document.readyState==='complete'){setTimeout(l,500);}else{window.addEventListener('load',function(){setTimeout(l,500);});}})();",
       },
       {
         type: "application/ld+json",
@@ -168,6 +152,72 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function CavernGuideTrail() {
+  const location = useLocation();
+  const slug = location.pathname.match(/^\/explore\/([^/]+)\/?$/)?.[1];
+  if (!slug || slug === "caverns" || slug === "search" || slug === "trip-planner") return null;
+
+  const cavern = exploreDestinations.find(
+    (destination) => destination.slug === slug && isPublicCavernDestination(destination),
+  );
+  if (!cavern) return null;
+
+  const recommendations = relatedCaverns(cavern, exploreDestinations, 3);
+  const breadcrumbSchema = buildCavernBreadcrumbSchema(cavern);
+  const relatedSchema = buildRelatedCavernItemListSchema(cavern, recommendations);
+  const structuredData = [breadcrumbSchema, relatedSchema].filter(Boolean);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(structuredData).replace(/</g, "\\u003c"),
+        }}
+      />
+      <aside className="border-y bg-muted/30" aria-label="Texas cavern guide navigation">
+        <div className="mx-auto max-w-6xl px-4 py-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                Texas caverns
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Compare this destination with other guided cave tours, visitor policies, and
+                underground attractions across Texas.
+              </p>
+            </div>
+            <Link
+              to="/explore/caverns"
+              className="shrink-0 text-sm font-semibold text-primary hover:underline"
+            >
+              Explore all Texas caverns and caves
+            </Link>
+          </div>
+
+          {recommendations.length > 0 && (
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              {recommendations.map((related) => (
+                <Link
+                  key={related.slug}
+                  to="/explore/$slug"
+                  params={{ slug: related.slug }}
+                  className="rounded-lg border bg-background p-4 transition-colors hover:border-primary hover:bg-primary/5"
+                >
+                  <span className="block font-semibold">{related.name}</span>
+                  <span className="mt-1 block text-sm text-muted-foreground">
+                    {[related.city, related.region].filter(Boolean).join(", ")}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </aside>
+    </>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -177,6 +227,7 @@ function RootComponent() {
         <SiteHeader />
         <main className="flex-1">
           <Outlet />
+          <CavernGuideTrail />
         </main>
         <SiteFooter />
       </div>

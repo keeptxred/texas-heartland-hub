@@ -1,0 +1,1077 @@
+{
+  "generatedAt": "2026-07-30T21:56:17.321Z",
+  "totals": {
+    "races": 227,
+    "candidates": 464,
+    "polls": 8,
+    "publishedVerifiedRaces": 227,
+    "racesWithCandidateMatches": 208,
+    "racesWithPollMatches": 5,
+    "forecastInputsEnabled": 0,
+    "forecastInputsDisabled": 227,
+    "forecastInputsAbsent": 0,
+    "pollingFallbackEligible": 5,
+    "generated": 5
+  },
+  "polledRaces": [
+    {
+      "raceId": "race-2026-us-senate",
+      "raceName": "2026 Texas U.S. Senate",
+      "racePublishedVerified": true,
+      "configuredForecastInputs": {
+        "present": true,
+        "enabled": false
+      },
+      "pollCount": 2,
+      "pollIds": [
+        "poll-tpor-may-2026-us-senate",
+        "poll-ut-texas-politics-project-june-2026-us-senate"
+      ],
+      "pollCandidateIds": [
+        "candidate-james-talarico-democratic-race-2026-us-senate",
+        "candidate-ken-paxton-republican-race-2026-us-senate",
+        "candidate-ted-brown-libertarian-race-2026-us-senate"
+      ],
+      "matchedCandidateCount": 3,
+      "matchedCandidateIds": [
+        "candidate-james-talarico-democratic-race-2026-us-senate",
+        "candidate-ted-brown-libertarian-race-2026-us-senate",
+        "candidate-ken-paxton-republican-race-2026-us-senate"
+      ],
+      "republicanCandidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
+      "democraticCandidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
+      "pollingAverageCandidateIds": [
+        "candidate-james-talarico-democratic-race-2026-us-senate",
+        "candidate-ken-paxton-republican-race-2026-us-senate",
+        "candidate-ted-brown-libertarian-race-2026-us-senate"
+      ],
+      "outcome": "generated"
+    },
+    {
+      "raceId": "race-2026-governor",
+      "raceName": "2026 Texas Governor",
+      "racePublishedVerified": true,
+      "configuredForecastInputs": {
+        "present": true,
+        "enabled": false
+      },
+      "pollCount": 2,
+      "pollIds": [
+        "poll-tpor-may-2026-governor",
+        "poll-ut-texas-politics-project-june-2026-governor"
+      ],
+      "pollCandidateIds": [
+        "candidate-greg-abbott-republican-race-2026-governor",
+        "candidate-gina-hinojosa-democratic-race-2026-governor",
+        "candidate-pat-dixon-libertarian-race-2026-governor"
+      ],
+      "matchedCandidateCount": 4,
+      "matchedCandidateIds": [
+        "candidate-gina-hinojosa-democratic-race-2026-governor",
+        "candidate-pat-dixon-libertarian-race-2026-governor",
+        "candidate-jenn-mack-other-race-2026-governor",
+        "candidate-greg-abbott-republican-race-2026-governor"
+      ],
+      "republicanCandidateId": "candidate-greg-abbott-republican-race-2026-governor",
+      "democraticCandidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+      "pollingAverageCandidateIds": [
+        "candidate-greg-abbott-republican-race-2026-governor",
+        "candidate-gina-hinojosa-democratic-race-2026-governor",
+        "candidate-pat-dixon-libertarian-race-2026-governor"
+      ],
+      "outcome": "generated"
+    },
+    {
+      "raceId": "race-2026-lieutenant-governor",
+      "raceName": "2026 Texas Lieutenant Governor",
+      "racePublishedVerified": true,
+      "configuredForecastInputs": {
+        "present": true,
+        "enabled": false
+      },
+      "pollCount": 1,
+      "pollIds": [
+        "poll-ut-texas-politics-project-june-2026-lieutenant-governor"
+      ],
+      "pollCandidateIds": [
+        "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+        "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+        "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
+        "candidate-kevin-mccormick-green-race-2026-lieutenant-governor"
+      ],
+      "matchedCandidateCount": 5,
+      "matchedCandidateIds": [
+        "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+        "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
+        "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
+        "candidate-arturo-espinosa-other-race-2026-lieutenant-governor",
+        "candidate-dan-patrick-republican-race-2026-lieutenant-governor"
+      ],
+      "republicanCandidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+      "democraticCandidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+      "pollingAverageCandidateIds": [
+        "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+        "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+        "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
+        "candidate-kevin-mccormick-green-race-2026-lieutenant-governor"
+      ],
+      "outcome": "generated"
+    },
+    {
+      "raceId": "race-2026-attorney-general",
+      "raceName": "2026 Texas Attorney General",
+      "racePublishedVerified": true,
+      "configuredForecastInputs": {
+        "present": true,
+        "enabled": false
+      },
+      "pollCount": 2,
+      "pollIds": [
+        "poll-tpor-may-2026-attorney-general",
+        "poll-ut-texas-politics-project-june-2026-attorney-general"
+      ],
+      "pollCandidateIds": [
+        "candidate-mayes-middleton-republican-race-2026-attorney-general",
+        "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+        "candidate-tom-oxford-libertarian-race-2026-attorney-general"
+      ],
+      "matchedCandidateCount": 3,
+      "matchedCandidateIds": [
+        "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+        "candidate-tom-oxford-libertarian-race-2026-attorney-general",
+        "candidate-mayes-middleton-republican-race-2026-attorney-general"
+      ],
+      "republicanCandidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+      "democraticCandidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+      "pollingAverageCandidateIds": [
+        "candidate-mayes-middleton-republican-race-2026-attorney-general",
+        "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+        "candidate-tom-oxford-libertarian-race-2026-attorney-general"
+      ],
+      "outcome": "generated"
+    },
+    {
+      "raceId": "race-2026-comptroller",
+      "raceName": "2026 Texas Comptroller of Public Accounts",
+      "racePublishedVerified": true,
+      "configuredForecastInputs": {
+        "present": true,
+        "enabled": false
+      },
+      "pollCount": 1,
+      "pollIds": [
+        "poll-ut-texas-politics-project-june-2026-comptroller"
+      ],
+      "pollCandidateIds": [
+        "candidate-don-huffines-republican-race-2026-comptroller",
+        "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+        "candidate-shehla-faizi-green-race-2026-comptroller"
+      ],
+      "matchedCandidateCount": 4,
+      "matchedCandidateIds": [
+        "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+        "candidate-shehla-faizi-green-race-2026-comptroller",
+        "candidate-v-alonzo-echavarria-garza-libertarian-race-2026-comptroller",
+        "candidate-don-huffines-republican-race-2026-comptroller"
+      ],
+      "republicanCandidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+      "democraticCandidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+      "pollingAverageCandidateIds": [
+        "candidate-don-huffines-republican-race-2026-comptroller",
+        "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+        "candidate-shehla-faizi-green-race-2026-comptroller"
+      ],
+      "outcome": "generated"
+    }
+  ],
+  "skipped": [
+    {
+      "raceId": "race-2026-land-commissioner",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-agriculture-commissioner",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-railroad-commissioner",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-supreme-court-place-1",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-supreme-court-place-2",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-supreme-court-place-7",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-supreme-court-place-8",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-court-of-criminal-appeals-place-3",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-court-of-criminal-appeals-place-4",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-court-of-criminal-appeals-place-9",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-1",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-2",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-3",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-4",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-5",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-6",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-7",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-8",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-9",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-10",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-11",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-12",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-13",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-14",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-15",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-16",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-17",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-18",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-19",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-20",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-21",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-22",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-23",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-24",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-25",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-26",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-27",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-28",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-29",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-30",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-31",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-32",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-33",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-34",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-35",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-36",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-37",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-us-house-38",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-1",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-2",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-3",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-4",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-5",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-9",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-11",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-13",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-senate-18",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-19",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-21",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-22",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-24",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-26",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-senate-28",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-senate-31",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-1",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-2",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-3",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-4",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-5",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-6",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-7",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-8",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-9",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-10",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-11",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-12",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-13",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-14",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-15",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-16",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-17",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-18",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-19",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-20",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-21",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-22",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-23",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-24",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-25",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-26",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-27",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-28",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-29",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-30",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-31",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-32",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-33",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-34",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-35",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-36",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-37",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-38",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-39",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-40",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-41",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-42",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-43",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-44",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-45",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-46",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-47",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-48",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-49",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-50",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-51",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-52",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-53",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-54",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-55",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-56",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-57",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-58",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-59",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-60",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-61",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-62",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-63",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-64",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-65",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-66",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-67",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-68",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-69",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-70",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-71",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-72",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-73",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-74",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-75",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-76",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-77",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-78",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-79",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-80",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-81",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-82",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-83",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-84",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-85",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-86",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-87",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-88",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-89",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-90",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-91",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-92",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-93",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-94",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-95",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-96",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-97",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-98",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-99",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-100",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-101",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-102",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-103",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-104",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-105",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-106",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-107",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-108",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-109",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-110",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-111",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-112",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-113",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-114",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-115",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-116",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-117",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-118",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-119",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-120",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-121",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-122",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-123",
+      "reason": "missing verified Republican or Democratic candidate"
+    },
+    {
+      "raceId": "race-2026-texas-house-124",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-125",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-126",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-127",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-128",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-129",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-130",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-131",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-132",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-133",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-134",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-135",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-136",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-137",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-138",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-139",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-140",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-141",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-142",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-143",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-144",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-145",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-146",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-147",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-148",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-149",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-texas-house-150",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-state-board-of-education-2",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-state-board-of-education-5",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-state-board-of-education-6",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-state-board-of-education-7",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-state-board-of-education-8",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-state-board-of-education-9",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-state-board-of-education-13",
+      "reason": "no eligible verified polls"
+    },
+    {
+      "raceId": "race-2026-state-board-of-education-14",
+      "reason": "no eligible verified polls"
+    }
+  ]
+}

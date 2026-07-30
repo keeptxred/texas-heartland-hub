@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Texas camping landscape</title>
+  <desc id="desc">A tent beside a Texas lake with pine trees, limestone hills, camp chairs, and a warm sunset.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#18324a"/>
+      <stop offset="0.58" stop-color="#d97845"/>
+      <stop offset="1" stop-color="#f4c27a"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#274f5e"/>
+      <stop offset="1" stop-color="#4f7c7d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1240" cy="180" r="74" fill="#f7d58c" opacity="0.95"/>
+  <path d="M0 470 C220 380 340 430 520 355 C710 270 860 410 1040 330 C1230 245 1390 340 1600 250 L1600 610 L0 610 Z" fill="#5f6650"/>
+  <path d="M0 540 C260 435 470 520 690 430 C930 335 1150 500 1600 360 L1600 690 L0 690 Z" fill="#394d3b"/>
+  <path d="M0 610 C330 570 520 635 820 590 C1090 550 1320 610 1600 565 L1600 900 L0 900 Z" fill="url(#water)"/>
+  <path d="M0 730 C250 680 490 740 730 700 C980 660 1250 730 1600 660 L1600 900 L0 900 Z" fill="#314532"/>
+  <g fill="#20372a">
+    <path d="M145 610 l48-135 48 135 h-32 l24 70 h-80 l24-70z"/>
+    <path d="M260 625 l42-120 42 120 h-28 l22 62 h-72 l22-62z"/>
+    <path d="M1370 600 l52-150 52 150 h-35 l27 78 h-88 l27-78z"/>
+    <path d="M1490 625 l40-115 40 115 h-26 l20 60 h-68 l20-60z"/>
+  </g>
+  <g transform="translate(500 575)">
+    <path d="M0 170 L150 10 L310 170 Z" fill="#c75a34" stroke="#f7d9a6" stroke-width="8"/>
+    <path d="M150 10 L175 170 L310 170 Z" fill="#8e3b2b"/>
+    <path d="M120 170 L160 90 L205 170 Z" fill="#2e2c2a"/>
+    <line x1="150" y1="10" x2="150" y2="-30" stroke="#f7d9a6" stroke-width="7"/>
+  </g>
+  <g stroke="#d6b07a" stroke-width="12" stroke-linecap="round" fill="none">
+    <path d="M990 700 l-35 95 M990 700 l55 95 M945 735 h100"/>
+    <path d="M1110 710 l-30 85 M1110 710 l55 85 M1070 745 h95"/>
+  </g>
+  <g fill="#efb96f">
+    <circle cx="880" cy="755" r="18"/>
+    <path d="M880 735 l-18-35 20 8 12-30 10 38z"/>
+  </g>
+  <path d="M0 805 C360 760 620 820 900 790 C1180 760 1390 790 1600 750 L1600 900 L0 900 Z" fill="#223326" opacity="0.9"/>
+</svg>

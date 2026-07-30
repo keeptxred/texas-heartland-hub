@@ -1,14 +1,39 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { TexasNewsView, TEXAS_NEWS_SECTIONS } from "@/components/texas-news-view";
-import { getLiveArticlesByCategory } from "@/lib/articles-by-category.functions";
+import { CATEGORY_SLUG_TO_NAME, isCategorySlug } from "@/lib/articles-by-category";
+import { getArticlesByCategory } from "@/lib/category-feed.functions";
 
 const VALID = new Set(TEXAS_NEWS_SECTIONS.map((s) => s.id));
+const SPORTS_CULTURE_KINDS = [
+  "sports-nfl",
+  "sports-mlb",
+  "sports-nba",
+  "sports-cfb",
+] as const;
 
 export const Route = createFileRoute("/texas-news/$topic")({
   beforeLoad: ({ params }) => {
     if (!VALID.has(params.topic)) throw notFound();
   },
-  loader: ({ params }) => getLiveArticlesByCategory({ data: { activeFilter: params.topic } }),
+  loader: ({ params }) => {
+    if (params.topic === "sports-culture") {
+      return getArticlesByCategory({
+        data: {
+          kind: [...SPORTS_CULTURE_KINDS],
+          limit: 24,
+          order: "newest",
+        },
+      });
+    }
+    if (!isCategorySlug(params.topic)) return [];
+    return getArticlesByCategory({
+      data: {
+        category: CATEGORY_SLUG_TO_NAME[params.topic],
+        limit: 24,
+        order: "newest",
+      },
+    });
+  },
   head: ({ params }) => {
     const section = TEXAS_NEWS_SECTIONS.find((s) => s.id === params.topic);
     if (!section) {
@@ -23,7 +48,7 @@ export const Route = createFileRoute("/texas-news/$topic")({
     const desc = section?.description ?? "Texas news coverage.";
     // Filter sub-routes consolidate into the main category page — canonical to
     // the base URL + noindex prevents duplicate indexed pages.
-    const canonical = "https://www.keeptxred.com/texas-news";
+    const canonical = "https://keeptxred.com/texas-news";
     return {
       meta: [
         { title: `${title} | Keep Texas Red` },

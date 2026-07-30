@@ -1,0 +1,60 @@
+name: Maintain Election Central source catalog
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/elections/rebuild-sources.mjs"
+      - "scripts/elections/validate-sources.mjs"
+      - "package.json"
+      - ".github/workflows/election-source-catalog.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-source-catalog
+  cancel-in-progress: true
+
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Rebuild source catalog
+        run: pnpm elections:sources
+
+      - name: Validate source references
+        run: node scripts/elections/validate-sources.mjs
+
+      - name: Commit source catalog
+        shell: bash
+        run: |
+          if git diff --quiet -- src/data/elections/2026/sources.json; then
+            echo "Source catalog is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/elections/2026/sources.json
+          git commit -m "Rebuild election source catalog"
+          git pull --rebase origin main
+          git push origin HEAD:main

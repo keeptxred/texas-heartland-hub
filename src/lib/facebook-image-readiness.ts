@@ -4,7 +4,7 @@
 // additionally calls `verifyImageIsReachable` at posting time to confirm the
 // URL returns real image bytes.
 
-const SITE_URL = "https://www.keeptxred.com";
+const SITE_URL = "https://keeptxred.com";
 
 export type FacebookImageReadinessSource =
   | "generated_featured_image"

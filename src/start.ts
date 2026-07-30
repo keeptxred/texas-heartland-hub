@@ -1,4 +1,4 @@
-import { createStart, createMiddleware } from "@tanstack/react-start";
+import { createCsrfMiddleware, createStart, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
@@ -18,15 +18,72 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
-// SEO URL cleanup: 301 redirect legacy /texas-news?topic=X style URLs to
-// clean path-based /texas-news/X, and mark any remaining query-string URL
-// as noindex so Google doesn't index thin duplicate pages.
+// SEO URL cleanup: 301 redirect legacy URLs to their clean canonical paths,
+// and mark remaining query-string URLs as noindex to avoid thin duplicates.
 const REDIRECT_PATHS = new Set(["/texas-news", "/texas-business"]);
+const LEGACY_ELECTION_PATHS = new Map([
+  ["/election", "/elections/2026"],
+  ["/election-central", "/elections/2026"],
+  ["/texas-elections", "/elections/2026"],
+  ["/elections-2026", "/elections/2026"],
+  ["/elections/2026/", "/elections/2026"],
+  ["/elections/forecasts", "/elections/forecast"],
+  ["/elections/statewide-races", "/elections/statewide"],
+  ["/elections/legislative-races", "/elections/legislative"],
+  ["/elections/district", "/elections/districts"],
+  ["/elections/2026/races", "/elections/races"],
+  ["/elections/2026/candidates", "/elections/candidates"],
+  ["/elections/2026/polls", "/elections/polls"],
+  ["/elections/2026/forecast", "/elections/forecast"],
+  ["/elections/2026/forecasts", "/elections/forecast"],
+  ["/elections/2026/results", "/elections/results"],
+]);
+const CANONICAL_ORIGIN = "https://keeptxred.com";
 const slugify = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const requestHost = (forwardedHost || url.host).toLowerCase();
+
+  // Consolidate every www URL into the non-www canonical host. Keep the full
+  // path and query so old links transfer their signals to the matching page.
+  if (requestHost === "www.keeptxred.com") {
+    return new Response(null, {
+      status: 301,
+      headers: {
+        location: `${CANONICAL_ORIGIN}${url.pathname}${url.search}`,
+        "cache-control": "public, max-age=86400",
+      },
+    });
+  }
+
+  const normalizedElectionPath =
+    url.pathname.startsWith("/elections/") && url.pathname.endsWith("/")
+      ? url.pathname.slice(0, -1)
+      : null;
+  if (normalizedElectionPath) {
+    return new Response(null, {
+      status: 301,
+      headers: {
+        location: `${normalizedElectionPath}${url.search}`,
+        "cache-control": "public, max-age=86400",
+      },
+    });
+  }
+
+  const legacyElectionTarget = LEGACY_ELECTION_PATHS.get(url.pathname.toLowerCase());
+  if (legacyElectionTarget) {
+    return new Response(null, {
+      status: 301,
+      headers: {
+        location: `${legacyElectionTarget}${url.search}`,
+        "cache-control": "public, max-age=86400",
+      },
+    });
+  }
+
   if (url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe") {
     return next();
   }
@@ -51,7 +108,11 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   return result;
 });
 
+const csrfMiddleware = createCsrfMiddleware({
+  filter: (context) => context.handlerType === "serverFn",
+});
+
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [seoUrlCleanup, errorMiddleware],
+  requestMiddleware: [csrfMiddleware, seoUrlCleanup, errorMiddleware],
 }));

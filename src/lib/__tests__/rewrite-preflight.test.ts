@@ -1,5 +1,6 @@
-import { describe, expect, it, mock } from "bun:test";
+import { describe, expect, it, vi } from "vitest";
 import {
+  ABSOLUTE_MIN_SOURCE_WORDS,
   assessRewritePreflight,
   assertRewriteableOrThrow,
   PreflightBlockedError,
@@ -37,6 +38,12 @@ a supplemental appropriations request during the 2027 regular session to expand 
 Statewide agencies were directed to publish implementation rules within 90 days, and the Texas
 Sunset Advisory Commission will audit the program in 2028.`.repeat(1); // ~500+ words
 
+const FACT_DENSE_RELEASE_PARAGRAPH = `Governor Greg Abbott announced on October 14, 2025 that Texas
+will allocate $250 million in emergency funds. Attorney General Ken Paxton filed the enforcement
+order today. Senator Charles Perry voted in support. Harris County will receive 42% of the initial
+500,000 dollar disbursement. State officials said the program begins January 1, 2026 and directs
+the Texas Division of Emergency Management to publish implementation rules within 90 days.`;
+
 describe("assessRewritePreflight — extracted body vs RSS blurb", () => {
   it("blocks when only a short RSS description is passed", () => {
     const r = assessRewritePreflight({
@@ -71,16 +78,27 @@ describe("assessRewritePreflight — extracted body vs RSS blurb", () => {
     expect(r.reason).toBe("PAYWALL_OR_TRUNCATED");
   });
 
-  it("passes short but fact-dense official releases via the factual-signal bypass", () => {
-    const release = `Governor Greg Abbott announced on October 14, 2025 that Texas
-will allocate $250 million in emergency funds. Attorney General Ken Paxton filed
-the enforcement order today. Senator Charles Perry voted in support. Harris County
-will receive 42% of the initial 500,000 dollar disbursement.`;
+  it("blocks fact-dense sources that do not clear the absolute 150-word floor", () => {
+    const r = assessRewritePreflight({
+      title: "Texas Announces $250M Emergency Fund",
+      description: FACT_DENSE_RELEASE_PARAGRAPH,
+      link: "https://gov.texas.gov/news/release",
+    });
+    expect(r.sourceWordCount).toBeLessThan(ABSOLUTE_MIN_SOURCE_WORDS);
+    expect(r.factualSignalCount).toBeGreaterThanOrEqual(6);
+    expect(r.rewriteable).toBe(false);
+    expect(r.reason).toBe("BODY_TOO_SHORT");
+  });
+
+  it("passes fact-dense official releases after they clear the absolute floor", () => {
+    const release = `${FACT_DENSE_RELEASE_PARAGRAPH}\n\n${FACT_DENSE_RELEASE_PARAGRAPH}\n\n${FACT_DENSE_RELEASE_PARAGRAPH}`;
     const r = assessRewritePreflight({
       title: "Texas Announces $250M Emergency Fund",
       description: release,
       link: "https://gov.texas.gov/news/release",
     });
+    expect(r.sourceWordCount).toBeGreaterThanOrEqual(ABSOLUTE_MIN_SOURCE_WORDS);
+    expect(r.sourceWordCount).toBeLessThan(400);
     expect(r.rewriteable).toBe(true);
     expect(r.reason).toBe("READY");
     expect(r.factualSignalCount).toBeGreaterThanOrEqual(6);
@@ -89,7 +107,7 @@ will receive 42% of the initial 500,000 dollar disbursement.`;
 
 describe("assertRewriteableOrThrow — hard guard before the paid AI call", () => {
   it("throws PreflightBlockedError when preflight is not rewriteable, and never calls the rewrite mock", () => {
-    const rewriteMock = mock(() => Promise.resolve({ ok: true }));
+    const rewriteMock = vi.fn(() => Promise.resolve({ ok: true }));
     const blocked = assessRewritePreflight({
       title: "Short",
       description: SHORT_RSS,
