@@ -3,6 +3,7 @@ import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 
 const URL = "https://keeptxred.com/elections/districts";
+const TEXAS_SENATE_DISTRICTS = [1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31] as const;
 
 export const Route = createFileRoute("/elections/districts")({
   head: () => ({
@@ -40,19 +41,20 @@ function TexasElectionDistricts() {
     >
       <div className="space-y-10">
         <DistrictGroup title="Texas congressional districts" prefix="congressional-district" count={38} />
-        <DistrictGroup title="Texas Senate districts" prefix="texas-senate-district" count={31} />
+        <DistrictGroup title="Texas Senate districts on the 2026 ballot" prefix="texas-senate-district" districts={TEXAS_SENATE_DISTRICTS} />
         <DistrictGroup title="Texas House districts" prefix="texas-house-district" count={150} />
       </div>
     </ElectionLayout>
   );
 }
 
-function DistrictGroup({ title, prefix, count }: { title: string; prefix: string; count: number }) {
+function DistrictGroup({ title, prefix, count, districts }: { title: string; prefix: string; count?: number; districts?: readonly number[] }) {
+  const districtNumbers = districts ?? Array.from({ length: count ?? 0 }, (_, index) => index + 1);
   return (
     <section>
       <h2 className="text-2xl font-bold text-slate-950">{title}</h2>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-        {Array.from({ length: count }, (_, index) => index + 1).map((number) => (
+        {districtNumbers.map((number) => (
           <a
             key={number}
             href={`/elections/districts/${prefix}-${number}`}
