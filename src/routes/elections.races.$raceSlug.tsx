@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import races from "@/data/elections/2026/races.json";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -27,33 +28,53 @@ import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/races/$raceSlug")({
   head: ({ params }) => {
+    const record = races.find(
+      (item) =>
+        item.slug === params.raceSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
     const validSlug = isElectionSlug(params.raceSlug);
+    const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/races/${params.raceSlug}`;
+    const recordName =
+      record && "fullName" in record && typeof record.fullName === "string"
+        ? record.fullName
+        : record && "name" in record && typeof record.name === "string"
+          ? record.name
+          : "Texas Election Race";
+    const recordDescription =
+      record && "biography" in record && typeof record.biography === "string" && record.biography
+        ? record.biography
+        : record && "description" in record && typeof record.description === "string" && record.description
+          ? record.description
+          : "View verified details for this Texas election race.";
+    const title = indexable
+      ? `${recordName} | KeepTXRed Election Central`
+      : "Election race not found | KeepTXRed";
 
     return {
       meta: [
+        { title },
+        { name: "description", content: recordDescription },
         {
-          title: validSlug
-            ? "Texas Election Race | KeepTXRed Election Central"
-            : "Invalid Election Race | KeepTXRed Election Central",
+          name: "robots",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
         },
-        {
-          name: "description",
-          content: validSlug
-            ? "View verified details for this Texas election race."
-            : "The requested Texas election race URL is invalid.",
-        },
-        ...(validSlug
+        ...(indexable
           ? [
-              { name: "robots", content: "index, follow, max-image-preview:large" },
+              { property: "og:title", content: title },
+              { property: "og:description", content: recordDescription },
               { property: "og:url", content: canonicalUrl },
               { property: "og:type", content: "website" },
               { property: "og:site_name", content: "Keep TX Red" },
               { name: "twitter:card", content: "summary_large_image" },
+              { name: "twitter:title", content: title },
+              { name: "twitter:description", content: recordDescription },
             ]
-          : [{ name: "robots", content: "noindex, nofollow" }]),
+          : []),
       ],
-      links: validSlug ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
   },
   component: ElectionRaceDetailRoute,
