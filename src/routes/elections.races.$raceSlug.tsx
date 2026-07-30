@@ -43,7 +43,15 @@ export const Route = createFileRoute("/elections/races/$raceSlug")({
             ? "View verified details for this Texas election race."
             : "The requested Texas election race URL is invalid.",
         },
-        ...(validSlug ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
+        ...(validSlug
+          ? [
+              { name: "robots", content: "index, follow, max-image-preview:large" },
+              { property: "og:url", content: canonicalUrl },
+              { property: "og:type", content: "website" },
+              { property: "og:site_name", content: "Keep TX Red" },
+              { name: "twitter:card", content: "summary_large_image" },
+            ]
+          : [{ name: "robots", content: "noindex, nofollow" }]),
       ],
       links: validSlug ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
