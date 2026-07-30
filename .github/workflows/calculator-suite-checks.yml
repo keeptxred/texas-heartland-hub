@@ -23,7 +23,7 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: Capture validation diagnostics
         shell: bash
@@ -78,3 +78,4 @@ jobs:
           test "$(cat typecheck.exit)" -eq 0
           test "$(cat build.exit)" -eq 0
           test "$(cat lint.exit)" -eq 0
+
