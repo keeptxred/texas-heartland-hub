@@ -84,7 +84,7 @@ requireText(
 );
 requireText(
   cycle,
-  'href: "https://keeptxred.com/elections/2026"',
+  'const ELECTION_CENTRAL_URL = "https://keeptxred.com/elections/2026"',
   "Election Central hub is missing its absolute canonical URL.",
 );
 requireText(
