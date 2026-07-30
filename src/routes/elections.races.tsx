@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { ElectionEmptyState, ElectionResearchList, RaceCard } from "@/components/elections";
 import {
   useActiveElectionCycle,
@@ -119,9 +119,9 @@ export const Route = createFileRoute("/elections/races")({
 });
 
 function ElectionRacesRoute() {
-  const location = useLocation();
+  const { raceSlug } = useParams({ strict: false }) as { raceSlug?: string };
 
-  if (location.pathname !== Route.fullPath) {
+  if (raceSlug) {
     return <Outlet />;
   }
 
