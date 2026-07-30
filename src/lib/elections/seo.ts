@@ -1,5 +1,6 @@
 const DEFAULT_SITE_NAME = "KeepTXRed";
 const DEFAULT_SITE_URL = "https://keeptxred.com";
+const DEFAULT_SOCIAL_IMAGE = "/images/elections/election-central-social.jpg";
 const DEFAULT_DESCRIPTION =
   "Follow Texas elections, candidates, races, polling, forecasts, voting dates, and voter resources from KeepTXRed.";
 
@@ -80,7 +81,7 @@ export function buildElectionSeo(input: ElectionSeoInput): ElectionSeoMetadata {
   const title = formatElectionTitle(input.title, siteName);
   const description = normalizeDescription(input.description || DEFAULT_DESCRIPTION);
   const canonicalUrl = buildCanonicalUrl(input.pathname, siteUrl);
-  const image = input.image ? toAbsoluteUrl(input.image, siteUrl) : undefined;
+  const image = toAbsoluteUrl(input.image || DEFAULT_SOCIAL_IMAGE, siteUrl);
   const openGraphType = input.pageType === "website" || !input.pageType ? "website" : "article";
 
   return {
