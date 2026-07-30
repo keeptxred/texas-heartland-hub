@@ -13,6 +13,7 @@ export interface ElectionLayoutProps {
   actions?: ReactNode;
   schema?: Record<string, unknown> | Record<string, unknown>[];
   fullWidth?: boolean;
+  indexable?: boolean;
 }
 
 export function ElectionLayout({
@@ -27,6 +28,7 @@ export function ElectionLayout({
   actions,
   schema,
   fullWidth = false,
+  indexable = true,
 }: ElectionLayoutProps) {
   const defaultSchema = {
     "@context": "https://schema.org",
@@ -58,7 +60,10 @@ export function ElectionLayout({
       <Helmet>
         <title>{`${title} | KeepTXRed`}</title>
         <meta name="description" content={description} />
-        <meta name="robots" content="index, follow, max-image-preview:large" />
+        <meta
+          name="robots"
+          content={indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow"}
+        />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
@@ -67,8 +72,8 @@ export function ElectionLayout({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-        {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+        {indexable && canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+        {indexable && canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
         <script type="application/ld+json">{JSON.stringify(schema ?? defaultSchema)}</script>
       </Helmet>
 
