@@ -49,6 +49,18 @@ export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
         : record && "description" in record && typeof record.description === "string" && record.description
           ? record.description
           : "View verified information for this Texas election candidate.";
+    const recordImage =
+      record &&
+      "imageUrl" in record &&
+      typeof record.imageUrl === "string" &&
+      record.imageUrl &&
+      "imageRights" in record &&
+      record.imageRights &&
+      typeof record.imageRights === "object" &&
+      "usageStatus" in record.imageRights &&
+      record.imageRights.usageStatus === "approved"
+        ? record.imageUrl
+        : null;
     const title = indexable
       ? `${recordName} | KeepTXRed Election Central`
       : "Election candidate not found | KeepTXRed";
@@ -71,6 +83,13 @@ export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
               { name: "twitter:card", content: "summary_large_image" },
               { name: "twitter:title", content: title },
               { name: "twitter:description", content: recordDescription },
+              ...(recordImage
+                ? [
+                    { property: "og:image", content: recordImage },
+                    { property: "og:image:alt", content: `Portrait of ${recordName}` },
+                    { name: "twitter:image", content: recordImage },
+                  ]
+                : []),
             ]
           : []),
       ],
@@ -85,17 +104,7 @@ export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
                 name: recordName,
                 description: recordDescription,
                 url: canonicalUrl,
-                ...(record &&
-                "imageUrl" in record &&
-                typeof record.imageUrl === "string" &&
-                record.imageUrl &&
-                "imageRights" in record &&
-                record.imageRights &&
-                typeof record.imageRights === "object" &&
-                "usageStatus" in record.imageRights &&
-                record.imageRights.usageStatus === "approved"
-                  ? { image: record.imageUrl }
-                  : {}),
+                ...(recordImage ? { image: recordImage } : {}),
                 affiliation: {
                   "@type": "Organization",
                   name:
