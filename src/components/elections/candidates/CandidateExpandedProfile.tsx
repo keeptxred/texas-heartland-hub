@@ -117,7 +117,7 @@ export function CandidateExpandedProfile({ candidate }: { candidate: CandidateDe
                     <td className="py-3 pr-4 text-slate-600">{race.districtName ?? "Statewide"}</td>
                     <td className="py-3 pr-4 text-slate-600">{formatDate(race.electionDate)}</td>
                     <td className="py-3 pr-4 text-slate-600">{humanize(race.status)}</td>
-                    <td className="py-3 font-semibold text-slate-800">{race.isWinner ? "Won" : race.status === "completed" ? "Did not win" : "Pending"}</td>
+                    <td className="py-3 font-semibold text-slate-800">{race.isWinner ? "Won" : race.status === "certified" || race.status === "called" ? "Did not win" : "Pending"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -133,7 +133,7 @@ export function CandidateExpandedProfile({ candidate }: { candidate: CandidateDe
               <li key={`${bill.billNumber}-${bill.session ?? ""}`} className="rounded-lg bg-slate-50 p-4">
                 <div className="flex flex-wrap gap-2"><span className="font-bold text-red-700">{bill.billNumber}</span>{bill.status ? <span className="text-xs font-semibold text-slate-500">{bill.status}</span> : null}</div>
                 <p className="mt-1 font-semibold text-slate-950">{bill.title}</p>
-                {bill.slug ? <Link to="/bills/$billSlug" params={{ billSlug: bill.slug }} className="mt-2 inline-flex text-xs font-semibold text-red-700 hover:underline">View bill details</Link> : null}
+                {bill.slug ? <a href={bill.slug.startsWith("/") ? bill.slug : `/bills/${bill.slug}`} className="mt-2 inline-flex text-xs font-semibold text-red-700 hover:underline">View bill details</a> : null}
               </li>
             ))}
           </ul>
