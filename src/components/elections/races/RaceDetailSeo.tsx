@@ -60,9 +60,20 @@ export function RaceDetailSeo({ race }: RaceDetailSeoProps) {
       <meta property="og:description" content={metadata.openGraph.description} />
       <meta property="og:url" content={metadata.openGraph.url} />
       <meta property="og:site_name" content={metadata.openGraph.siteName} />
+      {metadata.openGraph.image ? (
+        <>
+          <meta property="og:image" content={metadata.openGraph.image} />
+          {metadata.openGraph.imageAlt ? (
+            <meta property="og:image:alt" content={metadata.openGraph.imageAlt} />
+          ) : null}
+        </>
+      ) : null}
       <meta name="twitter:card" content={metadata.twitter.card} />
       <meta name="twitter:title" content={metadata.twitter.title} />
       <meta name="twitter:description" content={metadata.twitter.description} />
+      {metadata.twitter.image ? (
+        <meta name="twitter:image" content={metadata.twitter.image} />
+      ) : null}
       <meta property="article:modified_time" content={race.updatedAt} />
       {race.publishedAt ? (
         <meta property="article:published_time" content={race.publishedAt} />
