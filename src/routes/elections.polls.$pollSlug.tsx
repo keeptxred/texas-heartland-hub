@@ -57,6 +57,30 @@ export const Route = createFileRoute("/elections/polls/$pollSlug")({
           : []),
       ],
       links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: indexable
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Dataset",
+                name: recordName || "Texas election poll",
+                description,
+                url: canonicalUrl,
+                measurementTechnique: "Public opinion survey",
+                creator: {
+                  "@type": "Organization",
+                  name: "Keep TX Red",
+                  url: "https://keeptxred.com",
+                },
+                isPartOf: {
+                  "@type": "WebSite",
+                  "@id": "https://keeptxred.com/#website",
+                },
+              }).replace(/</g, "\\u003c"),
+            },
+          ]
+        : [],
     };
   },
   component: ElectionPollDetailRoute,
