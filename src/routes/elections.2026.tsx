@@ -8,6 +8,85 @@ const ELECTION_CENTRAL_TITLE =
 const ELECTION_CENTRAL_DESCRIPTION =
   "Track verified 2026 Texas election races, candidate profiles, polls, forecasts, results, key dates, and voting information in Keep TX Red Election Central.";
 
+const electionCentralSchema = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "@id": `${ELECTION_CENTRAL_URL}#webpage`,
+  url: ELECTION_CENTRAL_URL,
+  name: ELECTION_CENTRAL_TITLE,
+  description: ELECTION_CENTRAL_DESCRIPTION,
+  inLanguage: "en-US",
+  isPartOf: {
+    "@type": "WebSite",
+    "@id": "https://keeptxred.com/#website",
+    url: "https://keeptxred.com",
+    name: "Keep TX Red",
+  },
+  about: [
+    { "@type": "Thing", name: "2026 Texas elections" },
+    { "@type": "Thing", name: "Voting in Texas" },
+  ],
+  mainEntity: {
+    "@type": "ItemList",
+    name: "2026 Texas Election Central resources",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Texas election races",
+        url: "https://keeptxred.com/elections/races",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Texas election candidates",
+        url: "https://keeptxred.com/elections/candidates",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: "Texas election polls",
+        url: "https://keeptxred.com/elections/polls",
+      },
+      {
+        "@type": "ListItem",
+        position: 4,
+        name: "Texas election forecasts",
+        url: "https://keeptxred.com/elections/forecast",
+      },
+      {
+        "@type": "ListItem",
+        position: 5,
+        name: "Texas election results",
+        url: "https://keeptxred.com/elections/results",
+      },
+      {
+        "@type": "ListItem",
+        position: 6,
+        name: "Texas voting information",
+        url: "https://keeptxred.com/elections/voting",
+      },
+    ],
+  },
+  breadcrumb: {
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Keep TX Red",
+        item: "https://keeptxred.com",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "2026 Texas Election Central",
+        item: ELECTION_CENTRAL_URL,
+      },
+    ],
+  },
+};
+
 export const Route = createFileRoute("/elections/2026")({
   head: () => ({
     meta: [
@@ -30,6 +109,12 @@ export const Route = createFileRoute("/elections/2026")({
       { name: "twitter:description", content: ELECTION_CENTRAL_DESCRIPTION },
     ],
     links: [{ rel: "canonical", href: ELECTION_CENTRAL_URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(electionCentralSchema),
+      },
+    ],
   }),
   component: ElectionCentral2026Route,
 });
