@@ -77,6 +77,72 @@
     "usageStatus": "approved"
   },
   {
+    "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+    "assetType": "campaign-graphic",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/63f8e0a9bfccd918635445e3/0ae6de0a-ae55-4b91-a56d-356cd1860b11/EK%2Bfor%2BCOMP.%2BWeb%2BTransition%2B%2869%29.png",
+    "sourceUrl": "https://www.saraheckhardt.com/",
+    "altText": "Sarah Eckhardt for Texas Comptroller campaign graphic",
+    "credit": "Sarah Eckhardt Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate identification with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+    "assetType": "campaign-portrait",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/63f8e0a9bfccd918635445e3/523b60e4-008e-4d06-871c-86d5f6985faa/EK%2Bfor%2BCongress%2BWeb%2BTransition%2B%2849%29.png",
+    "sourceUrl": "https://www.saraheckhardt.com/",
+    "altText": "Sarah Eckhardt in an official campaign image",
+    "credit": "Sarah Eckhardt Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+    "assetType": "campaign-family-portrait",
+    "imageUrl": "https://donhuffines.com/wp-content/uploads/2025/12/HuffinesFamily-2.png",
+    "sourceUrl": "https://donhuffines.com/",
+    "altText": "Don Huffines with his family in an official campaign photograph",
+    "credit": "Don Huffines Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-clayton-tucker-democratic-race-2026-agriculture-commissioner",
+    "assetType": "campaign-farm-portrait",
+    "imageUrl": "https://assets.nationbuilder.com/cht/pages/330/attachments/original/1783878147/FullSizeRender_3.jpeg?1783878147=",
+    "sourceUrl": "https://www.claytontuckertx.com/",
+    "altText": "Clayton Tucker holding young goats on his family farm",
+    "credit": "Clayton Tucker Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-clayton-tucker-democratic-race-2026-agriculture-commissioner",
+    "assetType": "campaign-event",
+    "imageUrl": "https://assets.nationbuilder.com/cht/pages/330/attachments/original/1783877660/IMG_0031.jpg?1783877660=",
+    "sourceUrl": "https://www.claytontuckertx.com/",
+    "altText": "Clayton Tucker speaking at a campaign event about data centers and agriculture",
+    "credit": "Clayton Tucker Campaign",
+    "license": null,
+    "permissionBasis": "Image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-nate-sheets-republican-race-2026-agriculture-commissioner",
+    "assetType": "campaign-event-portrait",
+    "imageUrl": "https://natesheets.com/wp-content/uploads/2026/02/698229cb10bc691f40bd25c7_NS-2-1-1-1.avif",
+    "sourceUrl": "https://natesheets.com/",
+    "altText": "Nate Sheets speaking at an agriculture campaign event",
+    "credit": "Nate Sheets Campaign",
+    "license": null,
+    "permissionBasis": "High-resolution image published by the official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
     "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
     "assetType": "official-field-portrait",
     "imageUrl": "https://www.glo.texas.gov/sites/default/files/styles/hero_commissioner/public/2025-08/L_GLO_Commissioner.jpg?itok=El0N0lgI",
