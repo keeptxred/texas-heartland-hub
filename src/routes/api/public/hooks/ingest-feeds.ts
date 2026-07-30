@@ -1173,7 +1173,7 @@ async function handler() {
 
   // Canonical-URL dedupe: for any daily_articles rows sharing the same
   // source_url, keep the most-recently-updated slug and drop the rest.
-  let dedupedCanonical = 0;
+  const dedupedCanonical = 0;
   let dedupeSkippedReason: string | null = null;
   try {
     // Total daily_articles row count — used both to skip cleanup on empty-run
