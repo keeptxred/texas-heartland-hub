@@ -19,6 +19,8 @@ export interface ElectionSitemapInput {
 const STATIC_ELECTION_PATHS = [
   ELECTION_ROUTES.root,
   ELECTION_ROUTES.races,
+  ELECTION_ROUTES.statewide,
+  ELECTION_ROUTES.legislative,
   ELECTION_ROUTES.candidates,
   ELECTION_ROUTES.polls,
   ELECTION_ROUTES.forecast,
