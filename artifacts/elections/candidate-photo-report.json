@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-30T22:43:23.772Z",
+  "generatedAt": "2026-07-30T22:45:56.864Z",
   "candidateCount": 464,
-  "approvedPhotoCount": 19,
-  "missingPhotoCount": 445,
-  "manifestEntryCount": 19,
+  "approvedPhotoCount": 24,
+  "missingPhotoCount": 440,
+  "manifestEntryCount": 24,
   "errors": [],
   "warnings": [],
   "missing": [
@@ -33,13 +33,6 @@
       "name": "SHEHLA FAIZI",
       "raceId": "race-2026-comptroller",
       "party": "green",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
-      "name": "DON HUFFINES",
-      "raceId": "race-2026-comptroller",
-      "party": "republican",
       "priority": "standard"
     },
     {
@@ -85,13 +78,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
-      "name": "GINA HINOJOSA",
-      "raceId": "race-2026-governor",
-      "party": "democratic",
-      "priority": "statewide"
-    },
-    {
       "candidateId": "candidate-jenn-mack-other-race-2026-governor",
       "name": "JENN MACK",
       "raceId": "race-2026-governor",
@@ -106,20 +92,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
-      "name": "DAWN BUCKINGHAM",
-      "raceId": "race-2026-land-commissioner",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
-      "name": "VIKKI GOODWIN",
-      "raceId": "race-2026-lieutenant-governor",
-      "party": "democratic",
-      "priority": "statewide"
-    },
-    {
       "candidateId": "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
       "name": "KEVIN MCCORMICK",
       "raceId": "race-2026-lieutenant-governor",
@@ -132,13 +104,6 @@
       "raceId": "race-2026-lieutenant-governor",
       "party": "other",
       "priority": "statewide"
-    },
-    {
-      "candidateId": "candidate-jon-rosenthal-democratic-race-2026-railroad-commissioner",
-      "name": "JON ROSENTHAL",
-      "raceId": "race-2026-railroad-commissioner",
-      "party": "democratic",
-      "priority": "standard"
     },
     {
       "candidateId": "candidate-bo-french-republican-race-2026-railroad-commissioner",
