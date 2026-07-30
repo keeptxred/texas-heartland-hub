@@ -29,7 +29,7 @@ import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 const races = racesJson as readonly { slug: string }[];
 
-export const Route = createFileRoute("/elections/races/$raceSlug")({
+export const Route = createFileRoute("/elections/races_/$raceSlug")({
   beforeLoad: ({ params }) => {
     const storedSlug = findRaceStoredSlug(params.raceSlug, races);
     if (!storedSlug) return;

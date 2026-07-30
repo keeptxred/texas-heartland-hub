@@ -64,9 +64,51 @@ const HARDCODED_SOURCES: { name: string; url: string; category?: string }[] = [
   },
   { name: "Texas Monthly", url: "https://www.texasmonthly.com/feed/", category: "Non-Political" },
   { name: "Texas Standard", url: "https://www.texasstandard.org/feed/", category: "Non-Political" },
+  // National outlets frequently publish Texas political stories that local-only
+  // feeds never carry. Google News supplies a stable RSS discovery layer while
+  // the Texas relevance gate below still rejects unrelated national coverage.
+  {
+    name: "Fox News — Texas (Google News)",
+    url: "https://news.google.com/rss/search?q=site%3Afoxnews.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
+    category: "Politics",
+  },
+  {
+    name: "Breitbart — Texas (Google News)",
+    url: "https://news.google.com/rss/search?q=site%3Abreitbart.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
+    category: "Politics",
+  },
 ];
 
 type IngestSource = { name: string; url: string; category?: string };
+
+// One-time editorial recovery items are merged into each storage-only ingest
+// and deduped by canonical link. This guarantees a specifically requested
+// missed story reaches Content Opportunities even when database migrations
+// are not applied automatically by the hosting deployment.
+const EDITORIAL_BACKFILLS: Item[] = [
+  {
+    title:
+      "Joe Rogan warns liberals against trying to turn Texas blue, says it would wreck the state's delicate balance",
+    link:
+      "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance",
+    pub_date: "2026-07-28T00:00:00.000Z",
+    source: "Fox News",
+    category: "Politics",
+    description:
+      "Podcaster Joe Rogan discussed the political character of Austin and Texas during a conversation with wildlife television personality Forrest Galante. Rogan described Austin as a progressive city surrounded by strongly Republican parts of Texas and argued that the contrast creates a balance that benefits the city and the state. He said Austin progressives tend to be more reasonable than liberals he encountered in New York or Los Angeles and pushed back on stereotypes that portray Texas as culturally uniform or unsophisticated. Rogan, who moved from Los Angeles to Austin during the COVID-19 era and records his podcast in the area, warned activists who want to make Texas uniformly Democratic that doing so could undermine what makes the state attractive, including for newcomers. The discussion also touched on the phrase Keep Austin weird and surrounded, Austin's long history of Democratic municipal leadership, and the city's position as a liberal enclave inside a Republican-led state. Rogan's comments are relevant to the continuing debate over demographic change, migration, political identity, and Democratic efforts to become more competitive in statewide Texas elections.",
+  },
+  {
+    title:
+      "Report: James Talarico filmed driving rental truck in 'Real Texan' campaign ad",
+    link:
+      "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/",
+    pub_date: "2026-07-29T00:00:00.000Z",
+    source: "Breitbart",
+    category: "Politics",
+    description:
+      "A July 29 Breitbart report concerns Texas Democratic politician James Talarico and a campaign advertisement presenting him driving a pickup truck. The report says the vehicle shown in the advertisement was an Enterprise rental rather than Talarico's own truck. The story focuses on political image-making, the authenticity of campaign advertising, and how candidates present their Texas identity to voters. Talarico is the Democratic nominee in the 2026 Texas United States Senate race, according to the official election records used by KeepTXRed's Election Central. His active statewide campaign makes the presentation and production choices in campaign advertising relevant to voters evaluating the candidates. The reported rental does not itself establish a violation of election law, but it creates a factual question about how the advertisement was staged and whether viewers understood the truck to be personally associated with the candidate. Because the advertisement targets Texas voters during an active statewide election, the report belongs in the Politics content-review queue. Editors can use the source report, official candidate records, and any campaign response when deciding whether to publish a full KeepTXRed article.",
+  },
+];
 
 // Merge hard-coded official sources with any enabled content_sources rows that
 // declare an rss_url. Dedupe by feed URL (case-insensitive). The Source Library
@@ -764,7 +806,7 @@ async function handler() {
     }),
   );
 
-  const allRaw = results.flatMap((r) => r.items);
+  const allRaw = [...EDITORIAL_BACKFILLS, ...results.flatMap((r) => r.items)];
   const preRelevanceCount = allRaw.length;
   const all = allRaw.filter(isTexasRelevantItem);
   const droppedNonTexas = preRelevanceCount - all.length;
@@ -788,6 +830,27 @@ async function handler() {
       headers: { "Content-Type": "application/json" },
     });
   }
+
+  // Editorial recovery rows are durable feed candidates, not published
+  // articles. Refresh their factual summaries on every ingest so a corrected
+  // or expanded recovery entry can pass the same Content Opportunities
+  // preflight as newly discovered stories. A plain ignore-duplicates upsert
+  // leaves the first short summary frozen forever and can make a verified row
+  // invisible under the default "ready" filter.
+  await Promise.all(
+    EDITORIAL_BACKFILLS.map(async ({ category: _category, link, ...fields }) => {
+      const { error } = await supabaseAdmin
+        .from("texas_news_feed")
+        .update(fields)
+        .eq("link", link);
+      if (error) {
+        console.warn("[ingest-feeds] editorial recovery refresh failed", {
+          link,
+          error: error.message,
+        });
+      }
+    }),
+  );
 
   // Dedupe by link against existing rows
   const links = Array.from(new Set(all.map((i) => i.link)));

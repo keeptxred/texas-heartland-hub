@@ -13,6 +13,14 @@ const publicRoutes = [
   "elections.voting",
 ];
 
+function detailRouteFile(identifier: string) {
+  if (identifier === "raceSlug") return "elections.races_.$raceSlug.tsx";
+  if (identifier === "candidateSlug") return "elections.candidates_.$candidateSlug.tsx";
+  if (identifier === "pollSlug") return "elections.polls.$pollSlug.tsx";
+  if (identifier === "forecastSlug") return "elections.forecast.$forecastSlug.tsx";
+  return "elections.results.$resultSlug.tsx";
+}
+
 describe("Election Central SEO audit", () => {
   it.each(publicRoutes)("%s defines title, description, and canonical metadata", (route) => {
     const source = readFileSync(resolve(process.cwd(), "src/routes", `${route}.tsx`), "utf8");
@@ -24,18 +32,8 @@ describe("Election Central SEO audit", () => {
   it.each(["raceSlug", "candidateSlug", "pollSlug", "forecastSlug", "resultSlug"])(
     "%s detail route handles canonical and invalid indexing",
     (identifier) => {
-      const prefix =
-        identifier === "raceSlug"
-          ? "races"
-          : identifier === "candidateSlug"
-            ? "candidates"
-            : identifier === "pollSlug"
-              ? "polls"
-              : identifier === "forecastSlug"
-                ? "forecast"
-                : "results";
       const source = readFileSync(
-        resolve(process.cwd(), "src/routes", `elections.${prefix}.$${identifier}.tsx`),
+        resolve(process.cwd(), "src/routes", detailRouteFile(identifier)),
         "utf8",
       );
       expect(source).toContain('rel: "canonical"');

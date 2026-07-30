@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import {
   CandidateCard,
   CandidateComparison,
@@ -106,6 +106,12 @@ export const Route = createFileRoute("/elections/candidates")({
 });
 
 function ElectionCandidatesRoute() {
+  const { candidateSlug } = useParams({ strict: false }) as { candidateSlug?: string };
+
+  if (candidateSlug) {
+    return <Outlet />;
+  }
+
   return (
     <ElectionRepositoryProvider>
       <ElectionCandidatesContent />

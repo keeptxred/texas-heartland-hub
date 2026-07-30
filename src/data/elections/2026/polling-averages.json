@@ -4,7 +4,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-07-29T23:32:27.053Z",
+    "recalculatedAt": "2026-07-30T21:56:16.834Z",
     "weightedMargin": 5,
     "uncertaintyRange": {
       "low": 2.1,
@@ -35,9 +35,9 @@
         "pollId": "poll-tpor-may-2026-attorney-general",
         "pollsterName": "Texas Public Opinion Research",
         "fieldEndDate": "2026-05-28",
-        "finalWeight": 0.122,
+        "finalWeight": 0.118,
         "factors": {
-          "recency": 0.127,
+          "recency": 0.123,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -45,7 +45,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "62 day(s) old",
+          "63 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -56,9 +56,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-attorney-general",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.227,
+        "finalWeight": 0.22,
         "factors": {
-          "recency": 0.209,
+          "recency": 0.202,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -66,7 +66,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "47 day(s) old",
+          "48 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -80,7 +80,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-07-29T23:32:27.053Z",
+    "recalculatedAt": "2026-07-30T21:56:16.834Z",
     "weightedMargin": 6,
     "uncertaintyRange": {
       "low": 2,
@@ -111,9 +111,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-comptroller",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.227,
+        "finalWeight": 0.22,
         "factors": {
-          "recency": 0.209,
+          "recency": 0.202,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -121,7 +121,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "47 day(s) old",
+          "48 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -135,7 +135,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-07-29T23:32:27.053Z",
+    "recalculatedAt": "2026-07-30T21:56:16.834Z",
     "weightedMargin": 6.4,
     "uncertaintyRange": {
       "low": 3.5,
@@ -166,9 +166,9 @@
         "pollId": "poll-tpor-may-2026-governor",
         "pollsterName": "Texas Public Opinion Research",
         "fieldEndDate": "2026-05-28",
-        "finalWeight": 0.122,
+        "finalWeight": 0.118,
         "factors": {
-          "recency": 0.127,
+          "recency": 0.123,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -176,7 +176,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "62 day(s) old",
+          "63 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -187,9 +187,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.227,
+        "finalWeight": 0.22,
         "factors": {
-          "recency": 0.209,
+          "recency": 0.202,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -197,7 +197,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "47 day(s) old",
+          "48 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -211,7 +211,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-07-29T23:32:27.053Z",
+    "recalculatedAt": "2026-07-30T21:56:16.834Z",
     "weightedMargin": 7,
     "uncertaintyRange": {
       "low": 3,
@@ -248,9 +248,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-lieutenant-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.227,
+        "finalWeight": 0.22,
         "factors": {
-          "recency": 0.209,
+          "recency": 0.202,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -258,7 +258,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "47 day(s) old",
+          "48 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -272,7 +272,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-07-29T23:32:27.053Z",
+    "recalculatedAt": "2026-07-30T21:56:16.834Z",
     "weightedMargin": 0.4,
     "uncertaintyRange": {
       "low": -2.5,
@@ -303,9 +303,9 @@
         "pollId": "poll-tpor-may-2026-us-senate",
         "pollsterName": "Texas Public Opinion Research",
         "fieldEndDate": "2026-05-28",
-        "finalWeight": 0.122,
+        "finalWeight": 0.118,
         "factors": {
-          "recency": 0.127,
+          "recency": 0.123,
           "sampleSize": 1.65,
           "population": 1,
           "pollsterQuality": 0.8,
@@ -313,7 +313,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "62 day(s) old",
+          "63 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -324,9 +324,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-us-senate",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.227,
+        "finalWeight": 0.22,
         "factors": {
-          "recency": 0.209,
+          "recency": 0.202,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -334,7 +334,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "47 day(s) old",
+          "48 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",

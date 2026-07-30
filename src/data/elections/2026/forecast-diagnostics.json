@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-29T23:32:27.520Z",
+  "generatedAt": "2026-07-30T21:56:17.321Z",
   "totals": {
     "races": 227,
-    "candidates": 463,
+    "candidates": 464,
     "polls": 8,
     "publishedVerifiedRaces": 227,
     "racesWithCandidateMatches": 208,
@@ -65,10 +65,11 @@
         "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidate-pat-dixon-libertarian-race-2026-governor"
       ],
-      "matchedCandidateCount": 3,
+      "matchedCandidateCount": 4,
       "matchedCandidateIds": [
         "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidate-pat-dixon-libertarian-race-2026-governor",
+        "candidate-jenn-mack-other-race-2026-governor",
         "candidate-greg-abbott-republican-race-2026-governor"
       ],
       "republicanCandidateId": "candidate-greg-abbott-republican-race-2026-governor",

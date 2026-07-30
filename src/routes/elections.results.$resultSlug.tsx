@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import resultRecords from "@/data/elections/2026/results.json";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -11,26 +12,91 @@ import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
+interface ResultSeoRecord {
+  slug: string;
+  publicationStatus: string;
+  verificationStatus: string;
+  title?: string | null;
+  raceName?: string | null;
+  description?: string | null;
+}
+
+const records: readonly ResultSeoRecord[] = resultRecords;
+
 export const Route = createFileRoute("/elections/results/$resultSlug")({
   head: ({ params }) => {
-    const valid = isElectionSlug(params.resultSlug);
+    const record = records.find(
+      (item) =>
+        item.slug === params.resultSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
+    const validSlug = isElectionSlug(params.resultSlug);
+    const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/results/${params.resultSlug}`;
+    const recordName =
+      record && "title" in record && typeof record.title === "string" && record.title ? record.title :
+        record && "raceName" in record && typeof record.raceName === "string" && record.raceName ? record.raceName :
+        "Texas Election Result";
+    const description =
+      record && "description" in record && typeof record.description === "string" && record.description
+        ? record.description
+        : "Review published Texas election vote totals, reporting, winner, certification, and source information.";
+    const title = indexable
+      ? `${recordName} | KeepTXRed Election Central`
+      : "Election result not found | KeepTXRed";
+
     return {
       meta: [
+        { title },
+        { name: "description", content: description },
         {
-          title: valid
-            ? "Texas Election Result | KeepTXRed Election Central"
-            : "Invalid Election Result | KeepTXRed Election Central",
+          name: "robots",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
         },
-        {
-          name: "description",
-          content: valid
-            ? "Review published Texas election vote totals, reporting, winner, certification, and source information."
-            : "The requested Texas election result URL is invalid.",
-        },
-        ...(valid ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
+        ...(indexable
+          ? [
+              { property: "og:title", content: title },
+              { property: "og:description", content: description },
+              { property: "og:url", content: canonicalUrl },
+              { property: "og:type", content: "website" },
+              { property: "og:site_name", content: "Keep TX Red" },
+              { name: "twitter:card", content: "summary_large_image" },
+              { name: "twitter:title", content: title },
+              { name: "twitter:description", content: description },
+              { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+              { property: "og:image:width", content: "1200" },
+              { property: "og:image:height", content: "630" },
+              { property: "og:image:alt", content: "2026 Texas Election Central" },
+              { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+            ]
+          : []),
       ],
-      links: valid ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: indexable
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Dataset",
+                name: recordName || "Texas election results",
+                description,
+                url: canonicalUrl,
+                measurementTechnique: "Official election reporting",
+                creator: {
+                  "@type": "Organization",
+                  name: "Keep TX Red",
+                  url: "https://keeptxred.com",
+                },
+                isPartOf: {
+                  "@type": "WebSite",
+                  "@id": "https://keeptxred.com/#website",
+                },
+              }).replace(/</g, "\\u003c"),
+            },
+          ]
+        : [],
     };
   },
   component: ElectionResultDetailRoute,
@@ -39,15 +105,24 @@ export const Route = createFileRoute("/elections/results/$resultSlug")({
 function ElectionResultDetailRoute() {
   const { resultSlug } = Route.useParams();
   const valid = isElectionSlug(resultSlug);
+  const indexable =
+    valid &&
+    records.some(
+      (item) =>
+        item.slug === resultSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
   return (
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Result"
         description="Published result details from KeepTXRed Election Central."
-        canonicalUrl={valid ? `https://keeptxred.com/elections/results/${resultSlug}` : undefined}
+        indexable={indexable}
+        canonicalUrl={indexable ? `https://keeptxred.com/elections/results/${resultSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.results} />}
       >
-        {valid ? (
+        {indexable ? (
           <ElectionResultData resultSlug={resultSlug} />
         ) : (
           <ElectionErrorState
