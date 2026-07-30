@@ -65,6 +65,14 @@ export const Route = createFileRoute("/elections/forecast/$forecastSlug")({
 function ElectionForecastDetailRoute() {
   const { forecastSlug } = Route.useParams();
   const validSlug = isElectionSlug(forecastSlug);
+  const indexable =
+    validSlug &&
+    records.some(
+      (item) =>
+        item.slug === forecastSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
 
   return (
     <ElectionRepositoryProvider>
@@ -76,7 +84,7 @@ function ElectionForecastDetailRoute() {
         }
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.forecast} />}
       >
-        {validSlug ? (
+        {indexable ? (
           <ElectionForecastDetailData forecastSlug={forecastSlug} />
         ) : (
           <ElectionErrorState
