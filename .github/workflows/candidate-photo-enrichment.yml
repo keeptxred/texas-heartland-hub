@@ -12,6 +12,7 @@ on:
       - "scripts/elections/discover-candidate-photos-directories.mjs"
       - "scripts/elections/discover-candidate-photos-search-providers.mjs"
       - "scripts/elections/discover-candidate-photos-expanded.mjs"
+      - "scripts/elections/discover-candidate-photos-race-aware.mjs"
       - ".github/workflows/candidate-photo-enrichment.yml"
 
 permissions:
@@ -24,7 +25,7 @@ concurrency:
 jobs:
   discover-and-apply-photos:
     runs-on: ubuntu-latest
-    timeout-minutes: 240
+    timeout-minutes: 300
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -48,6 +49,9 @@ jobs:
       - name: Discover expanded voter-guide and public-directory portraits
         run: node scripts/elections/discover-candidate-photos-expanded.mjs
 
+      - name: Discover race-aware multi-engine portraits
+        run: node scripts/elections/discover-candidate-photos-race-aware.mjs
+
       - name: Apply approved candidate photos
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
@@ -60,6 +64,8 @@ jobs:
             artifacts/elections/candidate-photo-discovery-report.json
             artifacts/elections/candidate-photo-search-provider-report.json
             artifacts/elections/candidate-photo-expanded-report.json
+            artifacts/elections/candidate-photo-race-aware-report.json
+            artifacts/elections/candidate-photo-source-cache.json
             artifacts/elections/candidate-photo-review-queue.json
           )
           if git diff --quiet -- "${TRACKED[@]}"; then
