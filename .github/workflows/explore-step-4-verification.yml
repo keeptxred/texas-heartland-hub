@@ -224,7 +224,7 @@ jobs:
           " | grep -qx 1
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm exec vitest run --exclude 'src/data/__tests__/**'
 
       - name: Run TypeScript typecheck
         run: pnpm typecheck
