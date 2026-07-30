@@ -364,7 +364,9 @@ export function ContentOpportunityPanel() {
           .from("texas_news_feed")
           .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
           .order("pub_date", { ascending: false })
-          .limit(150),
+          // Keep a full recent catch-up window visible. A 150-row cap hid
+          // requested backfills after large multi-source refreshes.
+          .limit(500),
         supabase
           .from("daily_articles")
           .select("slug,title,category,source_name,published_at,featured_image_url")
