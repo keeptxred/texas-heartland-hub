@@ -148,5 +148,95 @@
     "license": null,
     "permissionBasis": "Official party candidate-slate image used for editorial candidate identification with attribution and a link to the source page.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+    "imageUrl": "https://www.senate.texas.gov/_assets/photos/LtGov_Patrick_2021.jpg",
+    "sourceUrl": "https://www.senate.texas.gov/ltgov.php?lang=en",
+    "altText": "Official portrait of Texas Lieutenant Governor Dan Patrick",
+    "credit": "Texas State Senate",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+    "imageUrl": "https://www.senate.texas.gov/members/d11/img/Middleton_87-0662D-009.jpg",
+    "sourceUrl": "https://www.senate.texas.gov/member.php?d=11",
+    "altText": "Official portrait of Texas Senator Mayes Middleton",
+    "credit": "Texas State Senate",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+    "imageUrl": "https://senate.texas.gov/members/d16/img/SNJ-Headshot-2023-web.jpg",
+    "sourceUrl": "https://senate.texas.gov/member.php?d=16",
+    "altText": "Official portrait of Texas Senator Nathan Johnson",
+    "credit": "Texas State Senate",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+    "imageUrl": "https://senate.texas.gov/members/d14/img/SE_headshot_2020.jpg",
+    "sourceUrl": "https://senate.texas.gov/member.php?d=14",
+    "altText": "Official portrait of Texas Senator Sarah Eckhardt",
+    "credit": "Texas State Senate",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+    "altText": "Gina Hinojosa speaking at the AFL-CIO COPE convention",
+    "credit": "RRC1701 / Wikimedia Commons",
+    "license": "CC0 1.0",
+    "permissionBasis": null,
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/HiRes-Vikki_Goodwin-6381-red.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:HiRes-Vikki_Goodwin-6381-red.jpg",
+    "altText": "Portrait of Texas Representative Vikki Goodwin",
+    "credit": "Wikimedia Commons contributor",
+    "license": "Creative Commons license documented on source page",
+    "permissionBasis": null,
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Sen._Dawn_Buckingham,_M.D_(cropped).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sen._Dawn_Buckingham,_M.D_(cropped).jpg",
+    "altText": "Portrait of Texas Land Commissioner Dawn Buckingham",
+    "credit": "Jay Godwin, LBJ Presidential Library / Wikimedia Commons",
+    "license": "Public Domain Mark 1.0",
+    "permissionBasis": null,
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-jon-rosenthal-democratic-race-2026-railroad-commissioner",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jon_Rosenthal_(cropped).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jon_Rosenthal_(cropped).jpg",
+    "altText": "Texas Representative Jon Rosenthal speaking at a public education event",
+    "credit": "Chael1963 / Wikimedia Commons",
+    "license": "CC BY-SA 4.0",
+    "permissionBasis": null,
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Don_Huffines_(51370822589)_(cropped).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Don_Huffines_(51370822589)_(cropped).jpg",
+    "altText": "Portrait of former Texas Senator Don Huffines",
+    "credit": "Gage Skidmore / Wikimedia Commons",
+    "license": "CC BY-SA 2.0",
+    "permissionBasis": null,
+    "usageStatus": "approved"
   }
 ]
