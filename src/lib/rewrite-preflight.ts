@@ -81,21 +81,24 @@ const MEDIA_LANDING_PATTERNS: RegExp[] = [
 ];
 
 const MEDIA_TITLE_PATTERN = /\b(podcast|tribcast|video|watch|episode)\b/i;
-const TRANSCRIPT_PATTERN = /\b(full transcript|transcript follows|complete transcript|read the transcript)\b/i;
+const TRANSCRIPT_PATTERN =
+  /\b(full transcript|transcript follows|complete transcript|read the transcript)\b/i;
 
 const NEWS_EVENT_PATTERNS: RegExp[] = [
   /\b(signs?|signed|vetoe(s|d)?|announces?|announced|declares?|declared|files?|filed|rules?|ruled|indict(s|ed|ment)?|arrest(s|ed|ing)?|charge(s|d)?|passe(s|d)|approve(s|d)|reject(s|ed)|vote(s|d)?|elects?|elected|appoint(s|ed)|resigns?|resigned|launch(es|ed)?|opens?|opened|closes?|closed|kill(s|ed)|injure(s|d))\b/i,
   /\b(bill|law|ruling|order|lawsuit|indictment|arrest|election|primary|runoff|hearing|verdict|storm|hurricane|tornado|flood|wildfire|shooting|crash|outbreak)\b/i,
 ];
 
-function normalize(text: string | null | undefined): string {
+/** Normalizes the exact text that may be counted, displayed and rewritten. */
+export function normalizeUsableSourceText(text: string | null | undefined): string {
   return (text ?? "").replace(/\s+/g, " ").trim();
 }
 
-function wordCount(text: string): number {
-  const t = text.trim();
-  if (!t) return 0;
-  return t.split(/\s+/).length;
+/** Single source of truth for all rewrite-source word counts. */
+export function countUsableSourceWords(text: string | null | undefined): number {
+  const normalized = normalizeUsableSourceText(text);
+  if (!normalized) return 0;
+  return normalized.split(/\s+/).filter(Boolean).length;
 }
 
 function countMatches(text: string, patterns: RegExp[]): number {
@@ -113,15 +116,26 @@ function factualSignalCount(text: string): number {
   const properNounRuns = text.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})\b/g);
   if (properNounRuns) n += Math.min(properNounRuns.length, 6);
   // Dates.
-  if (/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2}\b/.test(text)) n += 1;
+  if (/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2}\b/.test(text))
+    n += 1;
   if (/\b(19|20)\d{2}\b/.test(text)) n += 1;
   // Numbers — dollar amounts, percentages, counts.
   if (/\$\s?\d[\d,]*(?:\.\d+)?/.test(text)) n += 1;
   if (/\b\d+(\.\d+)?\s?%/.test(text)) n += 1;
   if (/\b\d[\d,]{2,}\b/.test(text)) n += 1;
   // Official titles / actions.
-  if (/\b(Gov(ernor)?|Sen(ator)?|Rep(resentative)?|Attorney General|Judge|Sheriff|Mayor|Commissioner|Chairman|President|Chief|Director|Secretary)\b/.test(text)) n += 1;
-  if (/\b(vote|voted|voting|filed|filing|arrest|arrested|indicted|charged|signed|passed|ruled|ordered|announced|declared)\b/i.test(text)) n += 1;
+  if (
+    /\b(Gov(ernor)?|Sen(ator)?|Rep(resentative)?|Attorney General|Judge|Sheriff|Mayor|Commissioner|Chairman|President|Chief|Director|Secretary)\b/.test(
+      text,
+    )
+  )
+    n += 1;
+  if (
+    /\b(vote|voted|voting|filed|filing|arrest|arrested|indicted|charged|signed|passed|ruled|ordered|announced|declared)\b/i.test(
+      text,
+    )
+  )
+    n += 1;
   // Attributed statement (loose).
   if (/\b(said|says|according to|told|announced)\b/i.test(text)) n += 1;
   return n;
@@ -133,7 +147,7 @@ function detectPaywall(text: string): boolean {
 
 function detectBoilerplateHeavy(text: string): boolean {
   const hits = countMatches(text, BOILERPLATE_PATTERNS);
-  const words = wordCount(text);
+  const words = countUsableSourceWords(text);
   // Only flag when the extraction is small AND dominated by boilerplate cues.
   return hits >= 2 && words < 250;
 }
@@ -183,9 +197,9 @@ function reasonMessage(reason: RewritePreflightReason, words: number): string {
 }
 
 export function assessRewritePreflight(input: RewritePreflightInput): RewritePreflightResult {
-  const title = normalize(input.title);
-  const body = normalize(input.description);
-  const words = wordCount(body);
+  const title = normalizeUsableSourceText(input.title);
+  const body = normalizeUsableSourceText(input.description);
+  const words = countUsableSourceWords(body);
   const factual = factualSignalCount(`${title} ${body}`);
   const eventState = detectNewsEvent(title, body);
 

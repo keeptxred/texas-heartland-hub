@@ -1,0 +1,38 @@
+name: Verify
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: verify-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Typecheck, lint, test, and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Lint rewrite-hardening changes
+        run: npx eslint src/lib/feed-publish-source.test.ts src/lib/feed-publish-source.ts src/lib/rewrite-preflight.ts src/lib/rewrite-source.test.ts src/lib/rewrite-source.ts src/routes/api/public/hooks/ingest-feeds.ts
+
+      - name: Run repository verification
+        run: npm run verify
