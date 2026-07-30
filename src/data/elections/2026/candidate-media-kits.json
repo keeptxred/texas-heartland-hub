@@ -70,6 +70,46 @@
     "notes": "Official attorney-general campaign site includes candidate biography, news, contact, video, and campaign imagery; no standalone downloadable media kit was located."
   },
   {
+    "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+    "campaignUrl": "https://www.saraheckhardt.com/",
+    "pressUrl": "https://www.saraheckhardt.com/",
+    "pressEmail": "campaign@saraheckhardt.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.saraheckhardt.com/",
+    "status": "official-campaign-source",
+    "notes": "Official comptroller campaign site contains multiple high-resolution campaign graphics and portraits, issue material, endorsements, event outreach, and campaign contact information."
+  },
+  {
+    "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+    "campaignUrl": "https://donhuffines.com/",
+    "pressUrl": "https://donhuffines.com/news/",
+    "pressEmail": "press@donhuffines.com",
+    "mediaKitUrl": "https://donhuffines.com/wp-content/uploads/Press-Kit.zip",
+    "photoSourceUrl": "https://donhuffines.com/",
+    "status": "official-campaign-media-kit",
+    "notes": "Official campaign provides a downloadable press kit, campaign photography, logos, news archive, embedded event media, and a dedicated press email."
+  },
+  {
+    "candidateId": "candidate-clayton-tucker-democratic-race-2026-agriculture-commissioner",
+    "campaignUrl": "https://www.claytontuckertx.com/",
+    "pressUrl": "https://www.claytontuckertx.com/press",
+    "pressEmail": "info@claytontuckertx.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.claytontuckertx.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes candidate photography, farm and campaign-event images, a dedicated press-release archive, social links, and campaign contact information."
+  },
+  {
+    "candidateId": "candidate-nate-sheets-republican-race-2026-agriculture-commissioner",
+    "campaignUrl": "https://natesheets.com/",
+    "pressUrl": "https://natesheets.com/news/",
+    "pressEmail": "campaign@natesheets.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://natesheets.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes high-resolution candidate imagery, biography and issue pages, news, calendar, endorsements, campaign merchandise, and media inquiry routing."
+  },
+  {
     "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
     "campaignUrl": "https://dawnbuckingham.com/",
     "pressUrl": "https://www.glo.texas.gov/about-glo/press-releases",
