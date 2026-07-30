@@ -11,6 +11,7 @@ interface DistrictInfo {
   name: string;
   browse: string;
   officeLevel: "federal" | "state";
+  raceSlug: string;
 }
 
 function parseDistrictSlug(slug: string): DistrictInfo | null {
@@ -18,13 +19,13 @@ function parseDistrictSlug(slug: string): DistrictInfo | null {
   if (!match) return null;
   const number = Number(match[2]);
   if (match[1] === "congressional-district" && number >= 1 && number <= 38) {
-    return { type: "congressional", number, name: `Texas Congressional District ${number}`, browse: "congressional_district", officeLevel: "federal" };
+    return { type: "congressional", number, name: `Texas Congressional District ${number}`, browse: "congressional_district", officeLevel: "federal", raceSlug: `2026-us-house-district-${number}` };
   }
   if (match[1] === "texas-house-district" && number >= 1 && number <= 150) {
-    return { type: "state_house", number, name: `Texas House District ${number}`, browse: "state_house_district", officeLevel: "state" };
+    return { type: "state_house", number, name: `Texas House District ${number}`, browse: "state_house_district", officeLevel: "state", raceSlug: `2026-texas-house-district-${number}` };
   }
   if (match[1] === "texas-senate-district" && TEXAS_SENATE_DISTRICTS.has(number)) {
-    return { type: "state_senate", number, name: `Texas Senate District ${number}`, browse: "state_senate_district", officeLevel: "state" };
+    return { type: "state_senate", number, name: `Texas Senate District ${number}`, browse: "state_senate_district", officeLevel: "state", raceSlug: `2026-texas-senate-district-${number}` };
   }
   return null;
 }
@@ -122,7 +123,7 @@ function TexasElectionDistrict() {
   }
 
   const canonicalUrl = `https://keeptxred.com/elections/districts/${districtSlug}`;
-  const raceQuery = `/elections/races?browse=${district.browse}&area=${encodeURIComponent(district.name)}`;
+  const raceUrl = `/elections/races/${district.raceSlug}`;
   return (
     <ElectionLayout
       title={`2026 ${district.name} Election`}
@@ -131,7 +132,7 @@ function TexasElectionDistrict() {
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.districts} />}
     >
       <div className="grid gap-6 md:grid-cols-2">
-        <DistrictLink href={raceQuery} title={`${district.name} races`} description="View the published election contests and election dates for this district." />
+        <DistrictLink href={raceUrl} title={`${district.name} race`} description="View the published election contests and election dates for this district." />
         <DistrictLink href={`/elections/candidates?officeLevel=${district.officeLevel}&q=${encodeURIComponent(district.name)}`} title="Candidates" description="Search verified candidate profiles connected to this district." />
         <DistrictLink href={`/elections/forecast?officeLevel=${district.officeLevel}`} title="Forecasts" description="Review available ratings and probabilities for covered races." />
         <DistrictLink href={`/elections/results?officeLevel=${district.officeLevel}`} title="Results" description="Follow reporting, vote totals, winners, and certification status." />
