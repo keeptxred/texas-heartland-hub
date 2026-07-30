@@ -37,6 +37,19 @@ function TexasLegislativeElections() {
       canonicalUrl={URL}
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.legislative} />}
     >
+      <section className="mb-10 rounded-xl border border-slate-200 bg-white p-6">
+        <h2 className="text-2xl font-bold text-slate-950">Find your 2026 legislative district race</h2>
+        <p className="mt-2 leading-7 text-slate-600">
+          Browse every Texas House district, each Texas Senate district on the 2026 ballot, and all
+          38 congressional districts from the district directory.
+        </p>
+        <a
+          href="/elections/districts"
+          className="mt-4 inline-flex rounded-lg bg-red-700 px-4 py-2 font-semibold text-white hover:bg-red-800"
+        >
+          Browse Texas election districts
+        </a>
+      </section>
       <div className="grid gap-6 md:grid-cols-2">
         <ElectionSeoLink
           href="/elections/races?browse=state_house_district"
