@@ -66,6 +66,24 @@ const electionCentralSchema = {
         name: "Texas voting information",
         url: "https://keeptxred.com/elections/voting",
       },
+      {
+        "@type": "ListItem",
+        position: 7,
+        name: "Texas statewide elections",
+        url: "https://keeptxred.com/elections/statewide",
+      },
+      {
+        "@type": "ListItem",
+        position: 8,
+        name: "Texas legislative elections",
+        url: "https://keeptxred.com/elections/legislative",
+      },
+      {
+        "@type": "ListItem",
+        position: 9,
+        name: "Texas election districts",
+        url: "https://keeptxred.com/elections/districts",
+      },
     ],
   },
   breadcrumb: {
