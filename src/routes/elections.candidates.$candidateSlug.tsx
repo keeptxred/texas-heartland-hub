@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
   CandidateBiographySection,
   CandidateCampaignLinks,
@@ -15,6 +15,7 @@ import {
   ElectionLoading,
   ElectionNavigation,
 } from "@/components/elections";
+import candidatesJson from "@/data/elections/2026/candidates.json";
 import {
   useElectionCandidate,
   useElectionRace,
@@ -22,13 +23,34 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import {
+  candidateSeoSlug,
+  findCandidateStoredSlug,
+} from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
+const candidates = candidatesJson as readonly { slug: string }[];
+
 export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
+  beforeLoad: ({ params }) => {
+    const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);
+    if (!storedSlug) return;
+
+    const canonicalSlug = candidateSeoSlug(storedSlug);
+    if (params.candidateSlug !== canonicalSlug) {
+      throw redirect({
+        to: "/elections/candidates/$candidateSlug",
+        params: { candidateSlug: canonicalSlug },
+        replace: true,
+        statusCode: 301,
+      });
+    }
+  },
   head: ({ params }) => {
-    const validSlug = isElectionSlug(params.candidateSlug);
-    const canonicalUrl = `https://keeptxred.com/elections/candidates/${params.candidateSlug}`;
+    const canonicalSlug = candidateSeoSlug(params.candidateSlug);
+    const validSlug = isElectionSlug(canonicalSlug);
+    const canonicalUrl = `https://keeptxred.com/elections/candidates/${canonicalSlug}`;
 
     return {
       meta: [
@@ -53,7 +75,9 @@ export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
 
 function ElectionCandidateDetailRoute() {
   const { candidateSlug } = Route.useParams();
-  const validSlug = isElectionSlug(candidateSlug);
+  const storedSlug = findCandidateStoredSlug(candidateSlug, candidates);
+  const validSlug = Boolean(storedSlug && isElectionSlug(candidateSlug));
+  const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : candidateSlug;
 
   return (
     <ElectionRepositoryProvider>
@@ -61,12 +85,12 @@ function ElectionCandidateDetailRoute() {
         title="Texas Election Candidate"
         description="Verified candidate details from KeepTXRed Election Central."
         canonicalUrl={
-          validSlug ? `https://keeptxred.com/elections/candidates/${candidateSlug}` : undefined
+          validSlug ? `https://keeptxred.com/elections/candidates/${canonicalSlug}` : undefined
         }
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.candidates} />}
       >
-        {validSlug ? (
-          <ElectionCandidateDetailData candidateSlug={candidateSlug} />
+        {validSlug && storedSlug ? (
+          <ElectionCandidateDetailData candidateSlug={storedSlug} />
         ) : (
           <ElectionErrorState
             kind="not_found"
