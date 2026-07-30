@@ -14,6 +14,10 @@ const requiredFiles = [
   "elections.2026.tsx",
   "elections.races.tsx",
   "elections.races.$raceSlug.tsx",
+  "elections.statewide.tsx",
+  "elections.legislative.tsx",
+  "elections.districts.tsx",
+  "elections.districts.$districtSlug.tsx",
   "elections.candidates.tsx",
   "elections.candidates.$candidateSlug.tsx",
   "elections.polls.tsx",
@@ -36,12 +40,14 @@ for (const file of requiredFiles) {
   }
 }
 
-const [home, layout, legacyIndex, cycle, flags] = await Promise.all([
+const [home, layout, legacyIndex, cycle, flags, electionRoutes, electionSitemap] = await Promise.all([
   read("src/routes/index.tsx"),
   read("src/routes/elections.tsx"),
   read("src/routes/elections.index.tsx"),
   read("src/routes/elections.2026.tsx"),
   read("src/lib/elections/featureFlags.ts"),
+  read("src/lib/elections/routes.ts"),
+  read("src/lib/elections/sitemap.ts"),
 ]);
 
 requireText(home, "ELECTION_FEATURE_FLAGS.homepagePromotion", "Homepage is not wired to the election feature flag.");
@@ -60,6 +66,18 @@ requireText(
 );
 requireText(cycle, 'createFileRoute("/elections/2026")', "Canonical 2026 cycle route is not registered.");
 requireText(flags, "false", "Election homepage feature flag must default to disabled.");
+for (const route of [
+  'statewide: "/elections/statewide"',
+  'legislative: "/elections/legislative"',
+  'districts: "/elections/districts"',
+]) {
+  requireText(electionRoutes, route, `Missing SEO election route constant: ${route}.`);
+}
+requireText(
+  electionSitemap,
+  "ELECTION_DISTRICT_PATHS",
+  "Election sitemap does not include district URL generation.",
+);
 
 if (/VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE\s*=\s*(?:true|1|yes|on)/i.test(`${home}\n${flags}`)) {
   errors.push("Homepage takeover appears to be hard-coded on.");
