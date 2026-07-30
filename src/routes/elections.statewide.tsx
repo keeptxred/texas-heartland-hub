@@ -42,6 +42,24 @@ export const Route = createFileRoute("/elections/statewide")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "2026 Texas statewide election races",
+          url: URL,
+          numberOfItems: STATEWIDE_RACES.length,
+          itemListElement: STATEWIDE_RACES.map((race, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: race.name,
+            url: `https://keeptxred.com/elections/races/${race.slug}`,
+          })),
+        }),
+      },
+    ],
   }),
   component: TexasStatewideElections,
 });
