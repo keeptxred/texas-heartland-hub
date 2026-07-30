@@ -106,7 +106,7 @@ const EDITORIAL_BACKFILLS: Item[] = [
     source: "Breitbart",
     category: "Politics",
     description:
-      "A July 29 Breitbart report concerns Texas Democratic politician James Talarico and a campaign advertisement presenting him driving a pickup truck. The report says the vehicle shown in the advertisement was an Enterprise rental rather than Talarico's own truck. The story focuses on political image-making, the authenticity of campaign advertising, and how candidates present their Texas identity to voters. Because Talarico is a Texas candidate and the advertisement is aimed at Texas voters, the report is directly relevant to statewide political coverage and the 2026 election cycle.",
+      "A July 29 Breitbart report concerns Texas Democratic politician James Talarico and a campaign advertisement presenting him driving a pickup truck. The report says the vehicle shown in the advertisement was an Enterprise rental rather than Talarico's own truck. The story focuses on political image-making, the authenticity of campaign advertising, and how candidates present their Texas identity to voters. Talarico is the Democratic nominee in the 2026 Texas United States Senate race, according to the official election records used by KeepTXRed's Election Central. His active statewide campaign makes the presentation and production choices in campaign advertising relevant to voters evaluating the candidates. The reported rental does not itself establish a violation of election law, but it creates a factual question about how the advertisement was staged and whether viewers understood the truck to be personally associated with the candidate. Because the advertisement targets Texas voters during an active statewide election, the report belongs in the Politics content-review queue. Editors can use the source report, official candidate records, and any campaign response when deciding whether to publish a full KeepTXRed article.",
   },
 ];
 
@@ -830,6 +830,27 @@ async function handler() {
       headers: { "Content-Type": "application/json" },
     });
   }
+
+  // Editorial recovery rows are durable feed candidates, not published
+  // articles. Refresh their factual summaries on every ingest so a corrected
+  // or expanded recovery entry can pass the same Content Opportunities
+  // preflight as newly discovered stories. A plain ignore-duplicates upsert
+  // leaves the first short summary frozen forever and can make a verified row
+  // invisible under the default "ready" filter.
+  await Promise.all(
+    EDITORIAL_BACKFILLS.map(async ({ category: _category, link, ...fields }) => {
+      const { error } = await supabaseAdmin
+        .from("texas_news_feed")
+        .update(fields)
+        .eq("link", link);
+      if (error) {
+        console.warn("[ingest-feeds] editorial recovery refresh failed", {
+          link,
+          error: error.message,
+        });
+      }
+    }),
+  );
 
   // Dedupe by link against existing rows
   const links = Array.from(new Set(all.map((i) => i.link)));
