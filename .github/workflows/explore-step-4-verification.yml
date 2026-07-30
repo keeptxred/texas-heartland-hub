@@ -87,6 +87,13 @@ jobs:
           fi
 
           if [[ "${GITHUB_EVENT_NAME}" != "push" ]]; then
+            git diff --name-only "origin/${GITHUB_BASE_REF}...HEAD" \
+              | grep -E '^(supabase/migrations/|src/integrations/supabase/types\.ts$)' \
+              > /tmp/changed-supabase-schema-files.txt || true
+            if [[ ! -s /tmp/changed-supabase-schema-files.txt ]]; then
+              echo "::warning::Generated Supabase types drift exists on the base branch; this PR does not change the schema or generated types."
+              exit 0
+            fi
             diff -u src/integrations/supabase/types.ts /tmp/supabase-types.ts || true
             echo "Supabase types are stale and cannot be committed from this event." >&2
             exit 1
@@ -246,3 +253,4 @@ jobs:
             /tmp/explore-dry-run-response.json
             /tmp/supabase-types.ts
           if-no-files-found: ignore
+
