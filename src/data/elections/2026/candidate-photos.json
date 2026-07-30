@@ -188,5 +188,55 @@
     "license": null,
     "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
     "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
+    "altText": "Gina Hinojosa speaking at the AFL-CIO COPE convention",
+    "credit": "RRC1701 / Wikimedia Commons",
+    "license": "CC0 1.0",
+    "permissionBasis": null,
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/HiRes-Vikki_Goodwin-6381-red.jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:HiRes-Vikki_Goodwin-6381-red.jpg",
+    "altText": "Portrait of Texas Representative Vikki Goodwin",
+    "credit": "Wikimedia Commons contributor",
+    "license": "Creative Commons license documented on source page",
+    "permissionBasis": null,
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Sen._Dawn_Buckingham,_M.D_(cropped).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Sen._Dawn_Buckingham,_M.D_(cropped).jpg",
+    "altText": "Portrait of Texas Land Commissioner Dawn Buckingham",
+    "credit": "Jay Godwin, LBJ Presidential Library / Wikimedia Commons",
+    "license": "Public Domain Mark 1.0",
+    "permissionBasis": null,
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-jon-rosenthal-democratic-race-2026-railroad-commissioner",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Jon_Rosenthal_(cropped).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Jon_Rosenthal_(cropped).jpg",
+    "altText": "Texas Representative Jon Rosenthal speaking at a public education event",
+    "credit": "Chael1963 / Wikimedia Commons",
+    "license": "CC BY-SA 4.0",
+    "permissionBasis": null,
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+    "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Don_Huffines_(51370822589)_(cropped).jpg",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Don_Huffines_(51370822589)_(cropped).jpg",
+    "altText": "Portrait of former Texas Senator Don Huffines",
+    "credit": "Gage Skidmore / Wikimedia Commons",
+    "license": "CC BY-SA 2.0",
+    "permissionBasis": null,
+    "usageStatus": "approved"
   }
 ]
