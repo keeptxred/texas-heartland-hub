@@ -28,8 +28,9 @@ export const Route = createFileRoute("/elections/polls")({
         property: "og:title",
         content: "Texas Election Polls | KeepTXRed Election Central",
       },
-      { property: "og:url", content: "/elections/polls" },
+      { property: "og:url", content: "https://keeptxred.com/elections/polls" },
       { property: "og:type", content: "website" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
