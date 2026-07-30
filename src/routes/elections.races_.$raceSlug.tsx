@@ -177,4 +177,3 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     </div>
   );
 }
-

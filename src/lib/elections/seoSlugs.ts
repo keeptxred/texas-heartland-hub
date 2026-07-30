@@ -36,7 +36,8 @@ export function findRaceStoredSlug<T extends { slug: string }>(
   records: readonly T[],
 ): string | null {
   return (
-    records.find((record) => record.slug === requestedSlug || raceSeoSlug(record.slug) === requestedSlug)
-      ?.slug ?? null
+    records.find(
+      (record) => record.slug === requestedSlug || raceSeoSlug(record.slug) === requestedSlug,
+    )?.slug ?? null
   );
 }

@@ -165,4 +165,3 @@ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string 
     </div>
   );
 }
-
