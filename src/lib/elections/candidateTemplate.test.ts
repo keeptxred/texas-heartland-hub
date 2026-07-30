@@ -32,6 +32,7 @@ describe("candidate directory and reusable profile template", () => {
 
     expect(candidateDirectory).toContain("if (candidateSlug)");
     expect(candidateDirectory).toContain("return <Outlet />");
+    expect(raceDirectory).toContain("if (raceSlug)");
     expect(raceDirectory).toContain("return <Outlet />");
     expect(raceDirectory).toContain("raceHref={ELECTION_ROUTES.race(race.slug)}");
     expect(raceDirectory).toContain(
