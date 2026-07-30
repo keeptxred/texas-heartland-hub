@@ -25,6 +25,28 @@ export const Route = createFileRoute("/elections/legislative")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          url: URL,
+          name: "2026 Texas Legislative Elections",
+          description:
+            "Texas House and Texas Senate races, candidates, forecasts, and results for the 2026 election.",
+          isPartOf: {
+            "@type": "WebSite",
+            "@id": "https://keeptxred.com/#website",
+            name: "Keep TX Red",
+          },
+          about: [
+            { "@type": "GovernmentOrganization", name: "Texas Legislature" },
+            { "@type": "Thing", name: "2026 Texas legislative elections" },
+          ],
+        }),
+      },
+    ],
   }),
   component: TexasLegislativeElections,
 });
