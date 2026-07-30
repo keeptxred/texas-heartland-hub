@@ -26,7 +26,7 @@ import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
-export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
+export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
   head: ({ params }) => {
     const record = candidates.find(
       (item) =>

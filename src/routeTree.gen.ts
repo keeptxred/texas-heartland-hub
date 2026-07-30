@@ -191,11 +191,11 @@ import { Route as AdminElectionsPollsRouteImport } from './routes/admin/election
 import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
-import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates.$candidateSlug'
+import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
 import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elections.forecast.$forecastSlug'
 import { Route as ElectionsPollsPollSlugRouteImport } from './routes/elections.polls.$pollSlug'
-import { Route as ElectionsRacesRaceSlugRouteImport } from './routes/elections.races.$raceSlug'
+import { Route as ElectionsRacesRaceSlugRouteImport } from './routes/elections.races_.$raceSlug'
 import { Route as ElectionsResultsResultSlugRouteImport } from './routes/elections.results.$resultSlug'
 import { Route as ExploreCavernSlugRouteImport } from './routes/explore.cavern.$slug'
 import { Route as ExploreCountyCountyRouteImport } from './routes/explore.county.$county'
@@ -1186,9 +1186,9 @@ const ApiPublicPropertyAddressLookupRoute =
   } as any)
 const ElectionsCandidatesCandidateSlugRoute =
   ElectionsCandidatesCandidateSlugRouteImport.update({
-    id: '/$candidateSlug',
-    path: '/$candidateSlug',
-    getParentRoute: () => ElectionsCandidatesRoute,
+    id: '/candidates/$candidateSlug',
+    path: '/candidates/$candidateSlug',
+    getParentRoute: () => ElectionsRoute,
   } as any)
 const ElectionsDistrictsDistrictSlugRoute =
   ElectionsDistrictsDistrictSlugRouteImport.update({
@@ -1208,9 +1208,9 @@ const ElectionsPollsPollSlugRoute = ElectionsPollsPollSlugRouteImport.update({
   getParentRoute: () => ElectionsPollsRoute,
 } as any)
 const ElectionsRacesRaceSlugRoute = ElectionsRacesRaceSlugRouteImport.update({
-  id: '/$raceSlug',
-  path: '/$raceSlug',
-  getParentRoute: () => ElectionsRacesRoute,
+  id: '/races/$raceSlug',
+  path: '/races/$raceSlug',
+  getParentRoute: () => ElectionsRoute,
 } as any)
 const ElectionsResultsResultSlugRoute =
   ElectionsResultsResultSlugRouteImport.update({
@@ -1508,14 +1508,14 @@ export interface FileRoutesByFullPath {
   '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
   '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
-  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/candidates': typeof ElectionsCandidatesRoute
   '/elections/corrections': typeof ElectionsCorrectionsRoute
   '/elections/districts': typeof ElectionsDistrictsRouteWithChildren
   '/elections/forecast': typeof ElectionsForecastRouteWithChildren
   '/elections/legislative': typeof ElectionsLegislativeRoute
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
-  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
   '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
@@ -1724,14 +1724,14 @@ export interface FileRoutesByTo {
   '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
   '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
-  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/candidates': typeof ElectionsCandidatesRoute
   '/elections/corrections': typeof ElectionsCorrectionsRoute
   '/elections/districts': typeof ElectionsDistrictsRouteWithChildren
   '/elections/forecast': typeof ElectionsForecastRouteWithChildren
   '/elections/legislative': typeof ElectionsLegislativeRoute
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
-  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
   '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
@@ -1948,14 +1948,14 @@ export interface FileRoutesById {
   '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
   '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
-  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/candidates': typeof ElectionsCandidatesRoute
   '/elections/corrections': typeof ElectionsCorrectionsRoute
   '/elections/districts': typeof ElectionsDistrictsRouteWithChildren
   '/elections/forecast': typeof ElectionsForecastRouteWithChildren
   '/elections/legislative': typeof ElectionsLegislativeRoute
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
-  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
   '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
@@ -4154,7 +4154,7 @@ declare module '@tanstack/react-router' {
       path: '/$candidateSlug'
       fullPath: '/elections/candidates/$candidateSlug'
       preLoaderRoute: typeof ElectionsCandidatesCandidateSlugRouteImport
-      parentRoute: typeof ElectionsCandidatesRoute
+      parentRoute: typeof ElectionsRoute
     }
     '/elections/districts/$districtSlug': {
       id: '/elections/districts/$districtSlug'
@@ -4182,7 +4182,7 @@ declare module '@tanstack/react-router' {
       path: '/$raceSlug'
       fullPath: '/elections/races/$raceSlug'
       preLoaderRoute: typeof ElectionsRacesRaceSlugRouteImport
-      parentRoute: typeof ElectionsRacesRoute
+      parentRoute: typeof ElectionsRoute
     }
     '/elections/results/$resultSlug': {
       id: '/elections/results/$resultSlug'
@@ -4483,17 +4483,6 @@ const DmvRouteChildren: DmvRouteChildren = {
 
 const DmvRouteWithChildren = DmvRoute._addFileChildren(DmvRouteChildren)
 
-interface ElectionsCandidatesRouteChildren {
-  ElectionsCandidatesCandidateSlugRoute: typeof ElectionsCandidatesCandidateSlugRoute
-}
-
-const ElectionsCandidatesRouteChildren: ElectionsCandidatesRouteChildren = {
-  ElectionsCandidatesCandidateSlugRoute: ElectionsCandidatesCandidateSlugRoute,
-}
-
-const ElectionsCandidatesRouteWithChildren =
-  ElectionsCandidatesRoute._addFileChildren(ElectionsCandidatesRouteChildren)
-
 interface ElectionsDistrictsRouteChildren {
   ElectionsDistrictsDistrictSlugRoute: typeof ElectionsDistrictsDistrictSlugRoute
 }
@@ -4528,18 +4517,6 @@ const ElectionsPollsRouteWithChildren = ElectionsPollsRoute._addFileChildren(
   ElectionsPollsRouteChildren,
 )
 
-interface ElectionsRacesRouteChildren {
-  ElectionsRacesRaceSlugRoute: typeof ElectionsRacesRaceSlugRoute
-}
-
-const ElectionsRacesRouteChildren: ElectionsRacesRouteChildren = {
-  ElectionsRacesRaceSlugRoute: ElectionsRacesRaceSlugRoute,
-}
-
-const ElectionsRacesRouteWithChildren = ElectionsRacesRoute._addFileChildren(
-  ElectionsRacesRouteChildren,
-)
-
 interface ElectionsResultsRouteChildren {
   ElectionsResultsResultSlugRoute: typeof ElectionsResultsResultSlugRoute
 }
@@ -4553,14 +4530,16 @@ const ElectionsResultsRouteWithChildren =
 
 interface ElectionsRouteChildren {
   Elections2026Route: typeof Elections2026Route
-  ElectionsCandidatesRoute: typeof ElectionsCandidatesRouteWithChildren
+  ElectionsCandidatesRoute: typeof ElectionsCandidatesRoute
+  ElectionsCandidatesCandidateSlugRoute: typeof ElectionsCandidatesCandidateSlugRoute
   ElectionsCorrectionsRoute: typeof ElectionsCorrectionsRoute
   ElectionsDistrictsRoute: typeof ElectionsDistrictsRouteWithChildren
   ElectionsForecastRoute: typeof ElectionsForecastRouteWithChildren
   ElectionsLegislativeRoute: typeof ElectionsLegislativeRoute
   ElectionsMethodologyRoute: typeof ElectionsMethodologyRoute
   ElectionsPollsRoute: typeof ElectionsPollsRouteWithChildren
-  ElectionsRacesRoute: typeof ElectionsRacesRouteWithChildren
+  ElectionsRacesRoute: typeof ElectionsRacesRoute
+  ElectionsRacesRaceSlugRoute: typeof ElectionsRacesRaceSlugRoute
   ElectionsResultsRoute: typeof ElectionsResultsRouteWithChildren
   ElectionsStatewideRoute: typeof ElectionsStatewideRoute
   ElectionsVotingRoute: typeof ElectionsVotingRoute
@@ -4569,14 +4548,16 @@ interface ElectionsRouteChildren {
 
 const ElectionsRouteChildren: ElectionsRouteChildren = {
   Elections2026Route: Elections2026Route,
-  ElectionsCandidatesRoute: ElectionsCandidatesRouteWithChildren,
+  ElectionsCandidatesRoute: ElectionsCandidatesRoute,
+  ElectionsCandidatesCandidateSlugRoute: ElectionsCandidatesCandidateSlugRoute,
   ElectionsCorrectionsRoute: ElectionsCorrectionsRoute,
   ElectionsDistrictsRoute: ElectionsDistrictsRouteWithChildren,
   ElectionsForecastRoute: ElectionsForecastRouteWithChildren,
   ElectionsLegislativeRoute: ElectionsLegislativeRoute,
   ElectionsMethodologyRoute: ElectionsMethodologyRoute,
   ElectionsPollsRoute: ElectionsPollsRouteWithChildren,
-  ElectionsRacesRoute: ElectionsRacesRouteWithChildren,
+  ElectionsRacesRoute: ElectionsRacesRoute,
+  ElectionsRacesRaceSlugRoute: ElectionsRacesRaceSlugRoute,
   ElectionsResultsRoute: ElectionsResultsRouteWithChildren,
   ElectionsStatewideRoute: ElectionsStatewideRoute,
   ElectionsVotingRoute: ElectionsVotingRoute,
