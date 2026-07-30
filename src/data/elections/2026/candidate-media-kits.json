@@ -70,6 +70,46 @@
     "notes": "Official attorney-general campaign site includes candidate biography, news, contact, video, and campaign imagery; no standalone downloadable media kit was located."
   },
   {
+    "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
+    "campaignUrl": "https://dawnbuckingham.com/",
+    "pressUrl": "https://www.glo.texas.gov/about-glo/press-releases",
+    "pressEmail": "media@glo.texas.gov",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.glo.texas.gov/about-glo/about-the-commissioner",
+    "status": "official-campaign-and-government-source",
+    "notes": "Official campaign site plus the Texas General Land Office commissioner page and press archive provide portraits, field photography, and a government press contact."
+  },
+  {
+    "candidateId": "candidate-benjamin-flores-democratic-race-2026-land-commissioner",
+    "campaignUrl": "https://www.letsgowithben.com/home",
+    "pressUrl": "https://www.letsgowithben.com/opinions-and-remarks",
+    "pressEmail": null,
+    "mediaKitUrl": "https://www.letsgowithben.com/gallery-1",
+    "photoSourceUrl": "https://www.letsgowithben.com/gallery-1",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes a large public photo gallery, campaign biography, policy materials, contact page, video, and social links."
+  },
+  {
+    "candidateId": "candidate-bo-french-republican-race-2026-railroad-commissioner",
+    "campaignUrl": "https://bofrench.com/",
+    "pressUrl": "https://bofrench.com/news/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://bofrench.com/about/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes candidate portraits, family photography, issue imagery, press releases, and campaign event pages."
+  },
+  {
+    "candidateId": "candidate-jon-rosenthal-democratic-race-2026-railroad-commissioner",
+    "campaignUrl": "https://jonrosenthaltx.com/",
+    "pressUrl": "https://jonrosenthaltx.com/news/",
+    "pressEmail": "jonr@jonrosenthaltx.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://jonrosenthaltx.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes campaign and legislative photography, candidate biography, policy pages, videos, press releases, and campaign contact information."
+  },
+  {
     "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
     "campaignUrl": "https://www.kenpaxton.com/",
     "pressUrl": "https://www.kenpaxton.com/",
