@@ -1,0 +1,79 @@
+[
+  {
+    "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+    "assetType": "campaign-collage",
+    "imageUrl": "https://ginafortexas.com/wp-content/uploads/2025/10/collage-3.png",
+    "sourceUrl": "https://ginafortexas.com/",
+    "altText": "Gina Hinojosa speaking at campaign and public events across Texas",
+    "credit": "Gina Hinojosa for Texas",
+    "license": null,
+    "permissionBasis": "Image published by the candidate's official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+    "assetType": "campaign-event",
+    "imageUrl": "https://ginafortexas.com/wp-content/uploads/2025/10/Group-1492.png",
+    "sourceUrl": "https://ginafortexas.com/",
+    "altText": "Gina Hinojosa speaking with Texas voters at a campaign gathering",
+    "credit": "Gina Hinojosa for Texas",
+    "license": null,
+    "permissionBasis": "Image published by the candidate's official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+    "assetType": "campaign-portrait",
+    "imageUrl": "https://images.squarespace-cdn.com/content/v1/58df094546c3c418500a66ec/74c473f0-25b2-41c2-b4c2-f1661d894473/Goodwin%2Bhome%2Bpage%2Bbanner%2B-%2B2.3.jpg",
+    "sourceUrl": "https://www.vikkigoodwin.com/",
+    "altText": "Vikki Goodwin, Democratic candidate for Lieutenant Governor of Texas",
+    "credit": "Vikki Goodwin Campaign",
+    "license": null,
+    "permissionBasis": "High-resolution portrait published by the candidate's official campaign and used for editorial candidate identification with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+    "assetType": "official-portrait",
+    "imageUrl": "https://www.ltgov.state.tx.us/wp-content/uploads/2021/01/dan_patrick_new_2021.jpg",
+    "sourceUrl": "https://www.ltgov.texas.gov/",
+    "altText": "Official portrait of Texas Lieutenant Governor Dan Patrick",
+    "credit": "Office of the Lieutenant Governor of Texas",
+    "license": null,
+    "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+    "assetType": "campaign-event",
+    "imageUrl": "https://www.danpatrick.org/wp-content/uploads/2025/02/WhatsApp-Image-2025-02-13-at-6.23.37-AM.jpeg",
+    "sourceUrl": "https://www.danpatrick.org/",
+    "altText": "Dan Patrick at a campaign or public event",
+    "credit": "Texans for Dan Patrick",
+    "license": null,
+    "permissionBasis": "Image published by the candidate's official reelection campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+    "assetType": "campaign-portrait",
+    "imageUrl": "https://mayesmiddleton.com/img/mayes-middleton-for-attorney-general.png",
+    "sourceUrl": "https://mayesmiddleton.com/",
+    "altText": "Mayes Middleton, Republican candidate for Texas Attorney General",
+    "credit": "Mayes Middleton for Texas Attorney General",
+    "license": null,
+    "permissionBasis": "Primary candidate image published by the official campaign and used for editorial candidate identification with attribution and source link.",
+    "usageStatus": "approved"
+  },
+  {
+    "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+    "assetType": "campaign-event",
+    "imageUrl": "https://mayesmiddleton.com/img/trump1.png",
+    "sourceUrl": "https://mayesmiddleton.com/",
+    "altText": "Mayes Middleton at a campaign event",
+    "credit": "Mayes Middleton for Texas Attorney General",
+    "license": null,
+    "permissionBasis": "Image published by the candidate's official campaign and used for editorial candidate coverage with attribution and source link.",
+    "usageStatus": "approved"
+  }
+]
