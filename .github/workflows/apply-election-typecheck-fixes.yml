@@ -1,0 +1,82 @@
+name: Apply Election Central typecheck fixes
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/elections/apply-typecheck-fixes.mjs"
+      - ".github/workflows/apply-election-typecheck-fixes.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: apply-election-typecheck-fixes
+  cancel-in-progress: true
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Apply strict source patches
+        id: patch
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          node scripts/elections/apply-typecheck-fixes.mjs 2>&1 | tee /tmp/election-type-fix.log
+
+      - name: Commit patched source files and diagnostics
+        if: always()
+        shell: bash
+        env:
+          PATCH_OUTCOME: ${{ steps.patch.outcome }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const log = fs.existsSync("/tmp/election-type-fix.log")
+            ? fs.readFileSync("/tmp/election-type-fix.log", "utf8").trim().slice(-12000)
+            : null;
+          fs.writeFileSync(
+            "src/data/elections/2026/type-fix-status.json",
+            `${JSON.stringify({
+              updatedAt: new Date().toISOString(),
+              conclusion: process.env.PATCH_OUTCOME,
+              runId: process.env.RUN_ID,
+              runUrl: process.env.RUN_URL,
+              summary: log,
+            }, null, 2)}\n`,
+          );
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add \
+            src/components/elections/navigation/ElectionNavigation.tsx \
+            src/lib/elections/repositories/static.ts \
+            src/routes/elections.tsx \
+            src/routes/elections.2026.tsx \
+            scripts/elections/import-candidates.ts \
+            src/data/elections/2026/type-fix-status.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Apply Election Central type fixes"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+          if [[ "$PATCH_OUTCOME" != "success" ]]; then
+            exit 1
+          fi

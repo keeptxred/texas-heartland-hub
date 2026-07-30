@@ -18,10 +18,10 @@ export const Route = createFileRoute("/texas-economy")({
       { name: "description", content: "Analysis of Texas economic trends, energy, business growth, taxes, and employment across the Lone Star State." },
       { property: "og:title", content: "Texas Economy — Keep TX Red" },
       { property: "og:description", content: "Analysis of Texas economic trends, energy, business growth, taxes, and employment." },
-      { property: "og:url", content: "https://www.keeptxred.com/texas-economy" },
+      { property: "og:url", content: "https://keeptxred.com/texas-economy" },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/texas-economy" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-economy" }],
   }),
   component: TexasEconomyPage,
 });
@@ -55,6 +55,27 @@ function TexasEconomyPage() {
             <Link to="/tax-calculator" className="underline text-primary">Texas property tax calculator</Link>{" "}
             to estimate your Texas property taxes by county and ISD. Our coverage below walks through each of them.
           </p>
+        </div>
+      </section>
+
+      <section className="mt-10 overflow-hidden rounded-xl border bg-muted/20 md:grid md:grid-cols-[1.1fr_1fr]">
+        <img
+          src="/images/texas-sales-tax-guide.svg"
+          alt="Texas receipt showing state and local sales-tax components"
+          className="h-full min-h-64 w-full object-cover"
+          width="1600"
+          height="900"
+          loading="lazy"
+        />
+        <div className="p-7 md:p-9">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Evergreen tax guide</p>
+          <h2 className="mt-2 font-display text-3xl">Texas Sales Tax Explained</h2>
+          <p className="mt-4 leading-7 text-muted-foreground">
+            Learn how state and local rates combine, which purchases may be exempt, how online sales and use tax work, and what Texas businesses need to know about permits and recordkeeping.
+          </p>
+          <Link to="/texas-sales-tax-explained" className="mt-5 inline-flex font-semibold text-primary hover:underline">
+            Read the complete guide
+          </Link>
         </div>
       </section>
     </HubView>

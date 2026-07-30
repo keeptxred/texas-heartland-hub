@@ -1,0 +1,7 @@
+export type RefinanceDecision="refinance"|"keep_current"|"neutral";
+export interface TexasRefinanceInput{currentLoanBalance:number;currentInterestRate:number;currentLoanTermYears:number;currentYearsRemaining:number;newInterestRate:number;newLoanTermYears:number;closingCosts:number;cashOutAmount:number;taxRate:number;}
+export interface CurrentMortgageAnalysis{monthlyPayment:number;remainingInterest:number;remainingPayments:number;}
+export interface NewMortgageAnalysis{monthlyPayment:number;totalInterest:number;totalPayments:number;}
+export interface RefinanceSavingsAnalysis{monthlySavings:number;annualSavings:number;totalInterestSavings:number;netSavingsAfterCosts:number;}
+export interface RefinanceBreakEven{monthsToBreakEven:number;yearsToBreakEven:number;message:string;}
+export interface TexasRefinanceResult{input:TexasRefinanceInput;currentMortgage:CurrentMortgageAnalysis;newMortgage:NewMortgageAnalysis;savings:RefinanceSavingsAnalysis;breakEven:RefinanceBreakEven;decisionScore:number;recommendation:string;}

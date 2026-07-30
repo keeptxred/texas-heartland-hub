@@ -1,0 +1,6 @@
+export interface TexasBuyerProfile{annualIncome:number;monthlyDebtPayments:number;downPayment:number;creditScore:number;interestRate:number;loanTermYears:number;propertyTaxRate:number;annualInsurance:number;hoaMonthly:number;}
+export interface TexasHomeAffordabilityInput{buyer:TexasBuyerProfile;desiredMonthlyBudget?:number;}
+export interface AffordabilityPaymentAnalysis{grossMonthlyIncome:number;maximumHousingPayment:number;comfortableHousingPayment:number;currentDebtRatio:number;futureDebtRatio:number;}
+export interface HomePriceAffordabilityAnalysis{maximumHomePrice:number;comfortableHomePrice:number;loanAmount:number;downPayment:number;}
+export interface AffordabilityScore{score:number;rating:"excellent"|"comfortable"|"stretch"|"high_risk";}
+export interface TexasHomeAffordabilityResult{input:TexasHomeAffordabilityInput;paymentAnalysis:AffordabilityPaymentAnalysis;homePriceAnalysis:HomePriceAffordabilityAnalysis;score:AffordabilityScore;recommendation:string;}

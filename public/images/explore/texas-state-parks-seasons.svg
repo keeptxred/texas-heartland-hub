@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 700" role="img" aria-labelledby="title desc">
+  <title id="title">Texas state parks through the seasons</title>
+  <desc id="desc">Four illustrated panels representing spring wildflowers, summer rivers, fall hiking, and winter desert camping in Texas.</desc>
+  <rect width="1400" height="700" rx="36" fill="#f5f1e8"/>
+  <g font-family="Arial,sans-serif" text-anchor="middle">
+    <g transform="translate(35 35)">
+      <rect width="315" height="630" rx="24" fill="#dcebd6"/>
+      <circle cx="158" cy="112" r="52" fill="#f1c866"/>
+      <path d="M0 385c82-70 168-78 315-4v249H0Z" fill="#609159"/>
+      <g fill="#315d39"><rect x="154" y="205" width="8" height="190"/><path d="M158 245c-53-44-83-35-92-5 37 31 67 36 92 5Zm0 53c48-42 81-31 91 1-36 29-67 29-91-1Z"/></g>
+      <g fill="#315ca8"><circle cx="100" cy="440" r="12"/><circle cx="130" cy="474" r="12"/><circle cx="184" cy="446" r="12"/><circle cx="226" cy="486" r="12"/></g>
+      <text x="158" y="570" font-size="34" font-weight="700" fill="#243a2a">SPRING</text>
+      <text x="158" y="607" font-size="18" fill="#385142">Wildflowers & trails</text>
+    </g>
+    <g transform="translate(375 35)">
+      <rect width="315" height="630" rx="24" fill="#d7edf1"/>
+      <circle cx="245" cy="105" r="58" fill="#e5a83d"/>
+      <path d="M0 390c95-48 205-51 315 0v240H0Z" fill="#627f4b"/>
+      <path d="M75 630c6-107 45-179 125-235 44-31 76-72 84-122 52 74 38 143-17 204-45 50-65 99-71 153Z" fill="#4389a2"/>
+      <path d="M78 255h18l-9-26 16 6-16-40-16 40 16-6Z" fill="#274c34"/>
+      <text x="158" y="570" font-size="34" font-weight="700" fill="#243a2a">SUMMER</text>
+      <text x="158" y="607" font-size="18" fill="#385142">Rivers & swimming</text>
+    </g>
+    <g transform="translate(715 35)">
+      <rect width="315" height="630" rx="24" fill="#efe0c5"/>
+      <circle cx="75" cy="105" r="48" fill="#d9903d"/>
+      <path d="M0 395c70-72 190-81 315-7v242H0Z" fill="#8a6944"/>
+      <path d="M150 630c8-99 34-176 91-241" stroke="#ead6a4" stroke-width="18" fill="none" stroke-linecap="round"/>
+      <g fill="#a84f2b"><circle cx="70" cy="355" r="35"/><circle cx="120" cy="322" r="29"/><circle cx="250" cy="360" r="39"/></g>
+      <text x="158" y="570" font-size="34" font-weight="700" fill="#473324">FALL</text>
+      <text x="158" y="607" font-size="18" fill="#5f4935">Hiking & camping</text>
+    </g>
+    <g transform="translate(1055 35)">
+      <rect width="315" height="630" rx="24" fill="#dfe6e8"/>
+      <circle cx="235" cy="95" r="38" fill="#f2e8c9"/>
+      <path d="M0 410 92 250l80 105 65-150 78 205v220H0Z" fill="#765a4c"/>
+      <path d="M112 485h92l-46-78Z" fill="#c96c37"/><path d="M158 407v78" stroke="#6e3f28" stroke-width="6"/>
+      <circle cx="158" cy="505" r="16" fill="#f0b34e"/><path d="M158 520v45" stroke="#665042" stroke-width="7"/>
+      <text x="158" y="570" font-size="34" font-weight="700" fill="#34434a">WINTER</text>
+      <text x="158" y="607" font-size="18" fill="#4a5960">Desert skies & quiet</text>
+    </g>
+  </g>
+</svg>

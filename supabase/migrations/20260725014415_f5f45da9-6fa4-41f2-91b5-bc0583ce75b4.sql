@@ -1,0 +1,4 @@
+-- This migration originally duplicated the Explore Phase II tables created by
+-- 20260724143000, 20260724150000, and 20260724153000. Those canonical
+-- migrations remain the source of truth; retaining this version as a no-op
+-- preserves the deployed migration history and permits clean database resets.

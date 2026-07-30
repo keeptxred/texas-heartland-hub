@@ -10,19 +10,19 @@ type League = (typeof LEAGUES)[number];
 
 const LEAGUE_IMAGES: Record<League, string[]> = {
   nfl: [
-    "https://www.keeptxred.com/__l5e/assets-v1/cc97f0e5-5817-419b-80ed-27c7f73eddde/nfl-1.jpg",
-    "https://www.keeptxred.com/__l5e/assets-v1/8224cbdd-d972-4bd3-a6fe-8a0dfb3d61b7/nfl-2.jpg",
-    "https://www.keeptxred.com/__l5e/assets-v1/8440c8e2-93f0-435b-ac9d-a59b1c891fe8/nfl-3.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/cc97f0e5-5817-419b-80ed-27c7f73eddde/nfl-1.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/8224cbdd-d972-4bd3-a6fe-8a0dfb3d61b7/nfl-2.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/8440c8e2-93f0-435b-ac9d-a59b1c891fe8/nfl-3.jpg",
   ],
   mlb: [
-    "https://www.keeptxred.com/__l5e/assets-v1/0d14382d-24e7-448d-9df6-3bb4acba04d4/mlb-1.jpg",
-    "https://www.keeptxred.com/__l5e/assets-v1/99eda2bf-0020-4096-a84d-3b5e585d135a/mlb-2.jpg",
-    "https://www.keeptxred.com/__l5e/assets-v1/c0ea7e8f-6aec-4de0-92d6-21373e70556e/mlb-3.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/0d14382d-24e7-448d-9df6-3bb4acba04d4/mlb-1.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/99eda2bf-0020-4096-a84d-3b5e585d135a/mlb-2.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/c0ea7e8f-6aec-4de0-92d6-21373e70556e/mlb-3.jpg",
   ],
   nba: [
-    "https://www.keeptxred.com/__l5e/assets-v1/2fb0d24d-c01c-4cca-bfca-16a522cb9eba/nba-1.jpg",
-    "https://www.keeptxred.com/__l5e/assets-v1/08d4b935-12c9-43e6-bdf7-c9741d1f0fe0/nba-2.jpg",
-    "https://www.keeptxred.com/__l5e/assets-v1/d9dcf452-1451-4ef7-b57a-93b7a5987dd1/nba-3.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/2fb0d24d-c01c-4cca-bfca-16a522cb9eba/nba-1.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/08d4b935-12c9-43e6-bdf7-c9741d1f0fe0/nba-2.jpg",
+    "https://keeptxred.com/__l5e/assets-v1/d9dcf452-1451-4ef7-b57a-93b7a5987dd1/nba-3.jpg",
   ],
 };
 

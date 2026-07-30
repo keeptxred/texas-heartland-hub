@@ -37,7 +37,7 @@ export const Route = createFileRoute("/texas-sports/$league")({
   head: ({ loaderData }) => {
     const meta = loaderData ? LEAGUE_META[loaderData.league] : null;
     if (!meta) return {};
-    const url = `https://www.keeptxred.com/texas-sports/${loaderData!.league}`;
+    const url = `https://keeptxred.com/texas-sports/${loaderData!.league}`;
     const thin = !isReadyFromItems(loaderData!.items, MIN_ARTICLES_DEFAULT);
     return {
       meta: [

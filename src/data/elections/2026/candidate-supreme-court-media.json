@@ -1,0 +1,118 @@
+{
+  "generatedAt": "2026-07-30T00:39:00Z",
+  "raceIds": [
+    "race-2026-texas-supreme-court-place-1",
+    "race-2026-texas-supreme-court-place-2",
+    "race-2026-texas-supreme-court-place-7",
+    "race-2026-texas-supreme-court-place-8"
+  ],
+  "candidates": [
+    {
+      "candidateId": "candidate-maggie-ellis-democratic-race-2026-texas-supreme-court-place-1",
+      "campaignUrl": "https://maggieforjustice.com/",
+      "pressUrl": "https://maggieforjustice.com/",
+      "pressEmail": "maggie@maggieforjustice.com",
+      "photoSourceUrl": "https://maggieforjustice.com/",
+      "status": "official-campaign-source",
+      "notes": "Official campaign website for the Democratic nominee for Chief Justice."
+    },
+    {
+      "candidateId": "candidate-jimmy-blacklock-republican-race-2026-texas-supreme-court-place-1",
+      "campaignUrl": "https://jimmyblacklock.com/",
+      "pressUrl": "https://jimmyblacklock.com/",
+      "pressEmail": "contact@jimmyblacklock.com",
+      "photoSourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/chief-justice-jimmy-blacklock/",
+      "status": "official-campaign-and-government-source",
+      "notes": "Official campaign website plus the Texas Judicial Branch biography and portrait."
+    },
+    {
+      "candidateId": "candidate-chari-kelly-democratic-race-2026-texas-supreme-court-place-2",
+      "campaignUrl": "https://charikelly.com/",
+      "pressUrl": "https://charikelly.com/",
+      "pressEmail": null,
+      "photoSourceUrl": "https://charikelly.com/",
+      "status": "official-campaign-source",
+      "notes": "Official campaign website for the Democratic nominee for Supreme Court Place 2."
+    },
+    {
+      "candidateId": "candidate-james-p-sullivan-republican-race-2026-texas-supreme-court-place-2",
+      "campaignUrl": "https://www.judgesully.com/",
+      "pressUrl": "https://www.judgesully.com/",
+      "pressEmail": null,
+      "photoSourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/",
+      "status": "official-campaign-and-government-source",
+      "notes": "Official campaign website plus Texas Judicial Branch biography materials."
+    },
+    {
+      "candidateId": "candidate-kristen-hawkins-democratic-race-2026-texas-supreme-court-place-7",
+      "campaignUrl": "https://judgehawkins.com/",
+      "pressUrl": "https://judgehawkins.com/",
+      "pressEmail": null,
+      "photoSourceUrl": "https://judgehawkins.com/",
+      "status": "official-campaign-source",
+      "notes": "Official campaign website for the Democratic nominee for Supreme Court Place 7."
+    },
+    {
+      "candidateId": "candidate-kyle-hawkins-republican-race-2026-texas-supreme-court-place-7",
+      "campaignUrl": "https://justicekylehawkins.com/",
+      "pressUrl": "https://justicekylehawkins.com/",
+      "pressEmail": null,
+      "photoSourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/justice-kyle-d-hawkins/",
+      "status": "official-campaign-and-government-source",
+      "notes": "Official campaign website plus the Texas Judicial Branch biography and portrait."
+    },
+    {
+      "candidateId": "candidate-gisela-d-triana-democratic-race-2026-texas-supreme-court-place-8",
+      "campaignUrl": "https://www.justicetriana.com/",
+      "pressUrl": "https://www.justicetriana.com/",
+      "pressEmail": null,
+      "photoSourceUrl": "https://www.justicetriana.com/",
+      "status": "official-campaign-source",
+      "notes": "Official campaign website for the Democratic nominee for Supreme Court Place 8."
+    },
+    {
+      "candidateId": "candidate-brett-busby-republican-race-2026-texas-supreme-court-place-8",
+      "campaignUrl": "https://brettbusby.com/",
+      "pressUrl": "https://brettbusby.com/",
+      "pressEmail": null,
+      "photoSourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/justice-brett-busby/",
+      "status": "official-campaign-and-government-source",
+      "notes": "Official campaign website plus the Texas Judicial Branch biography and portrait."
+    }
+  ],
+  "assets": [
+    {
+      "candidateId": "candidate-jimmy-blacklock-republican-race-2026-texas-supreme-court-place-1",
+      "assetType": "official-court-portrait",
+      "imageUrl": "https://www.txcourts.gov/media/1460030/chief-justice-jimmy-blacklock-web.jpg",
+      "sourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/chief-justice-jimmy-blacklock/",
+      "altText": "Official portrait of Texas Supreme Court Chief Justice Jimmy Blacklock",
+      "credit": "Texas Judicial Branch",
+      "license": null,
+      "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+      "usageStatus": "approved"
+    },
+    {
+      "candidateId": "candidate-kyle-hawkins-republican-race-2026-texas-supreme-court-place-7",
+      "assetType": "official-court-portrait",
+      "imageUrl": "https://www.txcourts.gov/media/1461570/justice-kyle-hawkins.jpg",
+      "sourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/justice-kyle-d-hawkins/",
+      "altText": "Official portrait of Texas Supreme Court Justice Kyle Hawkins",
+      "credit": "Texas Judicial Branch",
+      "license": null,
+      "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+      "usageStatus": "approved"
+    },
+    {
+      "candidateId": "candidate-brett-busby-republican-race-2026-texas-supreme-court-place-8",
+      "assetType": "official-court-portrait",
+      "imageUrl": "https://www.txcourts.gov/media/1461169/brett-busby.png",
+      "sourceUrl": "https://www.txcourts.gov/supreme/about-the-court/justices/justice-brett-busby/",
+      "altText": "Official portrait of Texas Supreme Court Justice Brett Busby",
+      "credit": "Texas Judicial Branch",
+      "license": null,
+      "permissionBasis": "Official Texas government portrait used for informational candidate identification with source attribution.",
+      "usageStatus": "approved"
+    }
+  ]
+}

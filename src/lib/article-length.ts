@@ -29,11 +29,15 @@ export function articleMainText(body: ArticleBodyShape | null | undefined): stri
   if (!body || typeof body !== "object") return "";
   const parts: string[] = [];
 
-  // Count only the actual story body. Metadata, source attribution, FAQs,
-  // key takeaways, and boilerplate Texas-relevance sections do not count.
+  // Count the complete substantive story body, including descriptive section
+  // headings. Headings are reader-facing editorial content and are counted by
+  // normal page word-count tools. Metadata, source attribution, FAQs, key
+  // takeaways, and boilerplate Texas-relevance sections remain excluded.
   (Array.isArray(body.intro) ? body.intro : []).forEach((p) => parts.push(p));
   (Array.isArray(body.sections) ? body.sections : []).forEach((section) => {
     if (!section || isExcludedSectionHeading(section.heading)) return;
+    const heading = (section.heading ?? "").trim();
+    if (heading) parts.push(heading);
     (Array.isArray(section.paragraphs) ? section.paragraphs : []).forEach((p) => parts.push(p));
     (Array.isArray(section.bullets) ? section.bullets : []).forEach((p) => parts.push(p));
   });

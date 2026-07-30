@@ -105,7 +105,7 @@ async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
     headers: {
       Accept: "application/json",
-      "User-Agent": "KeepTXRedPropertyTaxCalculator/1.0 (+https://www.keeptxred.com)",
+      "User-Agent": "KeepTXRedPropertyTaxCalculator/1.0 (+https://keeptxred.com)",
     },
     signal: AbortSignal.timeout(15000),
   });

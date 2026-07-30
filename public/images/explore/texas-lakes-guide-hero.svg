@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Texas lake recreation landscape</title>
+  <desc id="desc">A Texas lake with kayaks, a fishing boat, shoreline trees, and distant hills.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8ec5ff"/>
+      <stop offset="1" stop-color="#f7d9a5"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4d9fbd"/>
+      <stop offset="1" stop-color="#1f6077"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1320" cy="150" r="72" fill="#fff4bf" opacity=".9"/>
+  <path d="M0 430 C180 320 340 390 500 310 C700 210 840 355 1020 285 C1180 220 1370 320 1600 250 L1600 560 L0 560 Z" fill="#78905d"/>
+  <path d="M0 500 C220 420 400 470 620 410 C820 355 1020 450 1210 390 C1370 340 1490 390 1600 370 L1600 610 L0 610 Z" fill="#4d6d46"/>
+  <rect y="520" width="1600" height="380" fill="url(#water)"/>
+  <path d="M0 605 C250 570 410 635 640 600 C850 570 1080 640 1600 590" fill="none" stroke="#b8e1e8" stroke-width="8" opacity=".45"/>
+  <path d="M0 700 C230 665 520 730 760 690 C1030 645 1290 720 1600 675" fill="none" stroke="#d3eef2" stroke-width="5" opacity=".3"/>
+  <g fill="#2e4b31">
+    <path d="M120 520 l45-120 45 120z"/><rect x="159" y="500" width="12" height="70"/>
+    <path d="M250 525 l55-145 55 145z"/><rect x="299" y="500" width="12" height="75"/>
+    <path d="M1420 520 l48-130 48 130z"/><rect x="1462" y="500" width="12" height="75"/>
+  </g>
+  <g transform="translate(770 650)">
+    <path d="M-120 0 Q0 38 120 0 L90 34 Q0 68-90 34 Z" fill="#7b2d26"/>
+    <rect x="-5" y="-58" width="10" height="58" fill="#5c4635"/>
+    <path d="M0-58 l52 18 -52 9z" fill="#f3efe5"/>
+  </g>
+  <g transform="translate(460 735)">
+    <path d="M-105 0 Q0 30 105 0 Q0 62-105 0Z" fill="#d2762a"/>
+    <circle cx="-10" cy="-18" r="13" fill="#3b2e28"/>
+    <path d="M-10-7 L10 10" stroke="#3b2e28" stroke-width="8"/>
+    <path d="M-35-12 L48 30" stroke="#f2e5c4" stroke-width="6"/>
+  </g>
+  <g transform="translate(1120 700)">
+    <path d="M-80 0 Q0 25 80 0 Q0 50-80 0Z" fill="#c7b22d"/>
+    <circle cx="8" cy="-16" r="12" fill="#3b2e28"/>
+    <path d="M8-5 L26 10" stroke="#3b2e28" stroke-width="7"/>
+  </g>
+  <rect x="90" y="80" width="760" height="170" rx="18" fill="#102b38" opacity=".82"/>
+  <text x="135" y="145" fill="#fff" font-family="Georgia,serif" font-size="38" font-weight="700">EXPLORE TEXAS</text>
+  <text x="135" y="210" fill="#fff" font-family="Georgia,serif" font-size="72" font-weight="700">Texas Lakes Guide</text>
+</svg>

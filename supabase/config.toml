@@ -1,1 +1,10 @@
 project_id = "qhwwmdszjgkscqxgmenf"
+
+[functions.explore-import]
+verify_jwt = false
+
+[functions.explore-sync]
+verify_jwt = false
+
+[functions.explore-review]
+verify_jwt = false

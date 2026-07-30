@@ -1,0 +1,12 @@
+export interface BudgetIncomeInput{grossAnnualIncome:number;monthlyTakeHomePay:number;additionalIncome:number;}
+export interface BudgetHousingInput{mortgage:number;rent:number;propertyTaxes:number;insurance:number;utilities:number;maintenance:number;}
+export interface BudgetTransportationInput{vehiclePayments:number;fuel:number;insurance:number;maintenance:number;registration:number;}
+export interface BudgetDebtInput{creditCards:number;studentLoans:number;personalLoans:number;autoLoans:number;otherDebt:number;}
+export interface BudgetLifestyleInput{groceries:number;restaurants:number;entertainment:number;shopping:number;healthcare:number;childcare:number;subscriptions:number;other:number;}
+export interface BudgetSavingsInput{retirement:number;emergencyFund:number;investments:number;otherSavings:number;}
+export interface TexasBudgetInput{city:string;householdSize:number;income:BudgetIncomeInput;housing:BudgetHousingInput;transportation:BudgetTransportationInput;debt:BudgetDebtInput;lifestyle:BudgetLifestyleInput;savings:BudgetSavingsInput;}
+export interface BudgetSummary{totalHousing:number;totalTransportation:number;totalDebt:number;totalLifestyle:number;totalSavings:number;totalMonthlyExpenses:number;monthlyRemaining:number;}
+export interface BudgetRatios{housingRatio:number;debtRatio:number;savingsRate:number;expenseRatio:number;}
+export interface BudgetHealthScore{score:number;category:string;description:string;}
+export interface BudgetRecommendation{priority:string;message:string;}
+export interface TexasBudgetResult{input:TexasBudgetInput;summary:BudgetSummary;ratios:BudgetRatios;health:BudgetHealthScore;recommendations:BudgetRecommendation[];}

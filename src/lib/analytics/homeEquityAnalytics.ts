@@ -1,0 +1,2 @@
+export interface HomeEquityEvent{action:string;homeValue?:number;mortgageBalance?:number;equityAmount?:number;availableEquity?:number;decisionScore?:number;}
+export function trackHomeEquityEvent(event:HomeEquityEvent){if(typeof window==="undefined")return;const payload={tool:"texas_home_equity_calculator",...event};const gtag=(window as Window&{gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("home_equity_event",{detail:payload}));}

@@ -1,0 +1,2 @@
+export const homeEquitySitemap={url:"https://keeptxred.com/texas-home-equity-calculator",lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.95};
+export const generateEquityLocationPages=(locations:string[])=>locations.map(location=>({url:`https://keeptxred.com/${location}-home-equity-calculator`,lastModified:new Date().toISOString(),changeFrequency:"monthly",priority:.85}));

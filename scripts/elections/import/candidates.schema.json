@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://keeptxred.com/schemas/elections/2026/candidates-import.schema.json",
+  "title": "Keep TX Red 2026 Candidate Import",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": true,
+    "required": ["fullName", "party", "raceId", "sourceUrl"],
+    "properties": {
+      "fullName": { "type": "string", "minLength": 1 },
+      "ballotName": { "type": "string", "minLength": 1 },
+      "party": {
+        "enum": [
+          "republican",
+          "democratic",
+          "libertarian",
+          "green",
+          "independent",
+          "nonpartisan",
+          "other"
+        ]
+      },
+      "raceId": {
+        "type": "string",
+        "pattern": "^race-2026-"
+      },
+      "status": {
+        "enum": ["active", "nominee", "write_in", "withdrawn", "disqualified"]
+      },
+      "filingStatus": {
+        "enum": ["filed", "pending_review", "accepted", "rejected", "withdrawn", "challenged"]
+      },
+      "incumbencyType": {
+        "enum": [
+          "incumbent",
+          "appointed_incumbent",
+          "former_officeholder",
+          "challenger",
+          "open_seat_candidate",
+          "unknown"
+        ]
+      },
+      "ballotAccessStatus": {
+        "enum": ["pending", "qualified", "challenged", "removed", "write_in_only", "unknown"]
+      },
+      "sourceName": { "type": "string", "minLength": 1 },
+      "sourceUrl": {
+        "type": "string",
+        "format": "uri",
+        "pattern": "^https://"
+      },
+      "sourceType": {
+        "enum": [
+          "official",
+          "government",
+          "campaign",
+          "news_organization",
+          "manual",
+          "other"
+        ]
+      },
+      "sourceRecordId": { "type": "string" },
+      "sourceRetrievedAt": { "type": "string", "format": "date-time" },
+      "filingDate": { "type": ["string", "null"], "format": "date" },
+      "websiteUrl": { "type": ["string", "null"], "format": "uri" },
+      "campaignUrl": { "type": ["string", "null"], "format": "uri" },
+      "fecCandidateId": { "type": ["string", "null"] },
+      "texasEthicsId": { "type": ["string", "null"] },
+      "occupation": { "type": ["string", "null"] },
+      "hometown": { "type": ["string", "null"] },
+      "biography": { "type": ["string", "null"] },
+      "notes": { "type": ["string", "null"] }
+    }
+  }
+}

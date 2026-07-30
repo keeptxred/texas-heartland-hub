@@ -218,7 +218,7 @@ function ShopPage() {
               <h1 className="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-3xl">
                 Texas Patriotic Apparel, Hats & Gifts
               </h1>
-              <p className="mt-4 max-w-2xl text-white/70">
+              <p className="mt-4 max-w-2xl text-white/90">
                 Every order helps keep our newsroom independent. Add items to your cart, review your bag, and check out securely with card.
               </p>
             </div>

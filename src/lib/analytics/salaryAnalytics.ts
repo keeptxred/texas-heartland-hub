@@ -1,0 +1,2 @@
+export interface SalaryEvent{action:string;salary?:number;takeHomePay?:number;lifestyleScore?:number;filingStatus?:string;}
+export function trackSalaryEvent(event:SalaryEvent){if(typeof window==="undefined")return;const payload={tool:"texas_salary_calculator",...event};const gtag=(window as Window&{gtag?:(...args:unknown[])=>void}).gtag;gtag?.("event",event.action,payload);window.dispatchEvent(new CustomEvent("salary_calculator_event",{detail:payload}));}

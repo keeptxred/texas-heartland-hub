@@ -9,7 +9,7 @@ export const Route = createFileRoute("/find-representative")({
       { name: "description", content: "Enter your address or ZIP code to find your U.S. House district, Texas State House and Senate representatives." },
       { property: "og:title", content: "Find Your Texas Representative" },
     ],
-    links: [{ rel: "canonical", href: "/find-representative" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/find-representative" }],
   }),
   component: FindRepPage,
 });

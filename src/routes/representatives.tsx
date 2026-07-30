@@ -10,7 +10,7 @@ export const Route = createFileRoute("/representatives")({
       { property: "og:title", content: "Texas Representatives" },
       { property: "og:description", content: "Contact your Texas elected officials — federal and state." },
     ],
-    links: [{ rel: "canonical", href: "/representatives" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/representatives" }],
   }),
   component: RepresentativesPage,
 });

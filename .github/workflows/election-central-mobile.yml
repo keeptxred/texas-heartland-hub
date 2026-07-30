@@ -1,0 +1,127 @@
+name: Election Central mobile browser QA
+
+on:
+  pull_request:
+    paths:
+      - "src/data/elections/**"
+      - "src/lib/elections/**"
+      - "src/types/elections/**"
+      - "src/components/elections/**"
+      - "src/pages/elections/**"
+      - "src/routes/elections*"
+      - "src/routes/index.tsx"
+      - "tests/elections/**"
+      - "playwright.elections.config.ts"
+      - "package.json"
+      - ".github/workflows/election-central-mobile.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "src/data/elections/**"
+      - "src/lib/elections/**"
+      - "src/types/elections/**"
+      - "src/components/elections/**"
+      - "src/pages/elections/**"
+      - "src/routes/elections*"
+      - "src/routes/index.tsx"
+      - "tests/elections/**"
+      - "playwright.elections.config.ts"
+      - "package.json"
+      - ".github/workflows/election-central-mobile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-central-mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mobile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Build production application
+        id: build
+        continue-on-error: true
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
+        run: pnpm build
+
+      - name: Run mobile browser smoke tests
+        id: mobile_tests
+        continue-on-error: true
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
+        run: pnpm elections:test:mobile
+
+      - name: Record and enforce mobile QA result
+        if: always()
+        shell: bash
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          MOBILE_OUTCOME: ${{ steps.mobile_tests.outcome }}
+          EVENT_NAME: ${{ github.event_name }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_SHA: ${{ github.sha }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          result=0
+          if [[ "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" ]]; then
+            result=1
+          fi
+          if [[ "$EVENT_NAME" == "push" || "$EVENT_NAME" == "workflow_dispatch" ]]; then
+            git restore --worktree .
+            node --input-type=module <<'NODE'
+            import fs from "node:fs";
+            const checks = {
+              build: process.env.BUILD_OUTCOME,
+              mobileTests: process.env.MOBILE_OUTCOME,
+            };
+            fs.writeFileSync(
+              ".github/election-mobile-status.json",
+              `${JSON.stringify({
+                updatedAt: new Date().toISOString(),
+                conclusion: Object.values(checks).every((value) => value === "success")
+                  ? "success"
+                  : "failure",
+                runId: process.env.RUN_ID,
+                runAttempt: process.env.RUN_ATTEMPT,
+                triggerCommit: process.env.RUN_SHA,
+                runUrl: process.env.RUN_URL,
+                checks,
+                viewport: { width: 390, height: 844 },
+                homepageTakeoverEnabledDuringTest: false,
+              }, null, 2)}\n`,
+            );
+          NODE
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add .github/election-mobile-status.json
+            if ! git diff --cached --quiet; then
+              git commit -m "Record Election Central mobile QA"
+              git pull --rebase origin main
+              git push origin HEAD:main
+            fi
+          fi
+          exit $result
