@@ -150,6 +150,66 @@
     "notes": "Official campaign site includes campaign and legislative photography, candidate biography, policy pages, videos, press releases, and campaign contact information."
   },
   {
+    "candidateId": "candidate-okey-anyiam-democratic-race-2026-court-of-criminal-appeals-place-3",
+    "campaignUrl": "https://www.facebook.com/okeyanyiam1",
+    "pressUrl": "https://www.facebook.com/okeyanyiam1",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.facebook.com/okeyanyiam1",
+    "status": "official-candidate-social-source",
+    "notes": "No standalone campaign website was located. The candidate's public campaign Facebook page is the verified campaign source currently identified."
+  },
+  {
+    "candidateId": "candidate-thomas-smith-republican-race-2026-court-of-criminal-appeals-place-3",
+    "campaignUrl": "https://smithfortexas.org/",
+    "pressUrl": "https://smithfortexas.org/",
+    "pressEmail": "tsmith@smithfortexas.org",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://smithfortexas.org/about.html",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes a candidate biography, family photograph, endorsements, campaign contact information, and directly hosted campaign imagery."
+  },
+  {
+    "candidateId": "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
+    "campaignUrl": "https://www.judgeaudrariley.com/",
+    "pressUrl": "https://www.judgeaudrariley.com/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.judgeaudrariley.com/",
+    "status": "official-campaign-source",
+    "notes": "Official judicial campaign site publishes candidate portraits and campaign graphics. The site still contains some 2024 reelection wording, so the image source is retained while date-sensitive copy should not be reused."
+  },
+  {
+    "candidateId": "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4",
+    "campaignUrl": "https://www.judgeyeary.com/",
+    "pressUrl": "https://www.judgeyeary.com/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.txcourts.gov/cca/about-the-court/judges/judge-kevin-yeary/",
+    "status": "official-campaign-and-government-source",
+    "notes": "Official reelection campaign site plus the Texas Judicial Branch biography provide campaign photography and a high-resolution official court portrait."
+  },
+  {
+    "candidateId": "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
+    "campaignUrl": "https://www.hollytforjudge.com/",
+    "pressUrl": "https://www.hollytforjudge.com/news-media",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.hollytforjudge.com/bio",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes a high-resolution candidate portrait, biography, experience, endorsements, events, and a dedicated news and media section."
+  },
+  {
+    "candidateId": "candidate-john-messinger-republican-race-2026-court-of-criminal-appeals-place-9",
+    "campaignUrl": "https://messingerforjustice.com/",
+    "pressUrl": "https://messingerforjustice.com/news/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://messingerforjustice.com/about-john/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes candidate biography, news, contact, endorsements, voting information, and campaign-hosted imagery."
+  },
+  {
     "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
     "campaignUrl": "https://www.kenpaxton.com/",
     "pressUrl": "https://www.kenpaxton.com/",
