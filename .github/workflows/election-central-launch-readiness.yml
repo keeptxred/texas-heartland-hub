@@ -58,7 +58,7 @@ jobs:
         run: bun scripts/elections/public-launch-audit.mjs
 
       - name: Lint changed election SEO files
-        run: bunx eslint src/lib/elections/routes.ts src/lib/elections/seoSlugs.ts 'src/routes/elections.candidates.$candidateSlug.tsx' 'src/routes/elections.races.$raceSlug.tsx' 'src/routes/sitemap-elections[.]xml.ts'
+        run: bunx eslint src/lib/elections/routes.ts src/lib/elections/seoSlugs.ts 'src/routes/elections.candidates_.$candidateSlug.tsx' 'src/routes/elections.races_.$raceSlug.tsx' 'src/routes/sitemap-elections[.]xml.ts'
 
       - name: Typecheck
         run: bun run typecheck
@@ -68,3 +68,4 @@ jobs:
 
       - name: Production build
         run: bun run build
+
