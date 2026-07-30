@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import candidates from "@/data/elections/2026/candidates.json";
 import {
   CandidateBiographySection,
   CandidateCampaignLinks,
@@ -27,33 +28,53 @@ import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
   head: ({ params }) => {
+    const record = candidates.find(
+      (item) =>
+        item.slug === params.candidateSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
     const validSlug = isElectionSlug(params.candidateSlug);
+    const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/candidates/${params.candidateSlug}`;
+    const recordName =
+      record && "fullName" in record && typeof record.fullName === "string"
+        ? record.fullName
+        : record && "name" in record && typeof record.name === "string"
+          ? record.name
+          : "Texas Election Candidate";
+    const recordDescription =
+      record && "biography" in record && typeof record.biography === "string" && record.biography
+        ? record.biography
+        : record && "description" in record && typeof record.description === "string" && record.description
+          ? record.description
+          : "View verified information for this Texas election candidate.";
+    const title = indexable
+      ? `${recordName} | KeepTXRed Election Central`
+      : "Election candidate not found | KeepTXRed";
 
     return {
       meta: [
+        { title },
+        { name: "description", content: recordDescription },
         {
-          title: validSlug
-            ? "Texas Election Candidate | KeepTXRed Election Central"
-            : "Invalid Election Candidate | KeepTXRed Election Central",
+          name: "robots",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
         },
-        {
-          name: "description",
-          content: validSlug
-            ? "View verified information for this Texas election candidate."
-            : "The requested Texas election candidate URL is invalid.",
-        },
-        ...(validSlug
+        ...(indexable
           ? [
-              { name: "robots", content: "index, follow, max-image-preview:large" },
+              { property: "og:title", content: title },
+              { property: "og:description", content: recordDescription },
               { property: "og:url", content: canonicalUrl },
               { property: "og:type", content: "website" },
               { property: "og:site_name", content: "Keep TX Red" },
               { name: "twitter:card", content: "summary_large_image" },
+              { name: "twitter:title", content: title },
+              { name: "twitter:description", content: recordDescription },
             ]
-          : [{ name: "robots", content: "noindex, nofollow" }]),
+          : []),
       ],
-      links: validSlug ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
   },
   component: ElectionCandidateDetailRoute,
