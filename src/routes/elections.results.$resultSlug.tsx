@@ -28,7 +28,15 @@ export const Route = createFileRoute("/elections/results/$resultSlug")({
             ? "Review published Texas election vote totals, reporting, winner, certification, and source information."
             : "The requested Texas election result URL is invalid.",
         },
-        ...(valid ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
+        ...(valid
+          ? [
+              { name: "robots", content: "index, follow, max-image-preview:large" },
+              { property: "og:url", content: canonicalUrl },
+              { property: "og:type", content: "website" },
+              { property: "og:site_name", content: "Keep TX Red" },
+              { name: "twitter:card", content: "summary_large_image" },
+            ]
+          : [{ name: "robots", content: "noindex, nofollow" }]),
       ],
       links: valid ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
