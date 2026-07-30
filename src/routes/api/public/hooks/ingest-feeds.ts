@@ -64,6 +64,14 @@ const HARDCODED_SOURCES: { name: string; url: string; category?: string }[] = [
   },
   { name: "Texas Monthly", url: "https://www.texasmonthly.com/feed/", category: "Non-Political" },
   { name: "Texas Standard", url: "https://www.texasstandard.org/feed/", category: "Non-Political" },
+  // National outlets frequently publish Texas political stories that local-only
+  // feeds never carry. Google News supplies a stable RSS discovery layer while
+  // the Texas relevance gate below still rejects unrelated national coverage.
+  {
+    name: "Fox News — Texas (Google News)",
+    url: "https://news.google.com/rss/search?q=site%3Afoxnews.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
+    category: "Politics",
+  },
 ];
 
 type IngestSource = { name: string; url: string; category?: string };
