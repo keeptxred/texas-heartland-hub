@@ -65,15 +65,24 @@ export const Route = createFileRoute("/elections/results/$resultSlug")({
 function ElectionResultDetailRoute() {
   const { resultSlug } = Route.useParams();
   const valid = isElectionSlug(resultSlug);
+  const indexable =
+    valid &&
+    records.some(
+      (item) =>
+        item.slug === resultSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
   return (
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Result"
         description="Published result details from KeepTXRed Election Central."
-        canonicalUrl={valid ? `https://keeptxred.com/elections/results/${resultSlug}` : undefined}
+        indexable={indexable}
+        canonicalUrl={indexable ? `https://keeptxred.com/elections/results/${resultSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.results} />}
       >
-        {valid ? (
+        {indexable ? (
           <ElectionResultData resultSlug={resultSlug} />
         ) : (
           <ElectionErrorState
