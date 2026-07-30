@@ -5,7 +5,6 @@ import { LAUNCH_GUIDES, RELOCATION_LAUNCH_PATH, getLaunchCountyBySlug } from "@/
 const BASE_URL = "https://www.keeptxred.com";
 
 // The checked-in route tree is refreshed by the TanStack build plugin.
-// @ts-expect-error new file route is not present in the pre-build generated route tree
 export const Route = createFileRoute("/texas-relocation/$county")({
   loader: ({ params }) => {
     const routeParams = params as unknown as { county: string };

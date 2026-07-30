@@ -10,7 +10,6 @@ import {
 const BASE_URL = "https://www.keeptxred.com";
 
 // The checked-in route tree is refreshed by the TanStack build plugin.
-// @ts-expect-error new file route is not present in the pre-build generated route tree
 export const Route = createFileRoute("/texas-relocation")({
   head: () => ({
     meta: [
