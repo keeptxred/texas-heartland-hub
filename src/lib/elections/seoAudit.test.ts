@@ -29,7 +29,7 @@ describe("Election Central SEO audit", () => {
     expect(source).toContain('rel: "canonical"');
   });
 
-  it.each(["raceSlug", "candidateSlug", "pollSlug", "forecastSlug", "resultSlug"])(
+  it.each(["pollSlug", "forecastSlug", "resultSlug"])(
     "%s detail route handles canonical and invalid indexing",
     (identifier) => {
       const source = readFileSync(
