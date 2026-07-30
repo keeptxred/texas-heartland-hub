@@ -15,6 +15,7 @@ on:
       - "scripts/elections/discover-candidate-photos-race-aware.mjs"
       - "scripts/elections/discover-candidate-photos-source-wave.mjs"
       - "scripts/elections/discover-candidate-photos-deep-web.mjs"
+      - "scripts/elections/discover-candidate-photos-local-records.mjs"
       - ".github/workflows/candidate-photo-enrichment.yml"
 
 permissions:
@@ -63,6 +64,9 @@ jobs:
       - name: Discover deep-web document image and archived portraits
         run: node scripts/elections/discover-candidate-photos-deep-web.mjs
 
+      - name: Discover local public-record and biography portraits
+        run: node scripts/elections/discover-candidate-photos-local-records.mjs
+
       - name: Apply approved candidate photos
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
@@ -78,6 +82,7 @@ jobs:
             artifacts/elections/candidate-photo-race-aware-report.json
             artifacts/elections/candidate-photo-source-wave-report.json
             artifacts/elections/candidate-photo-deep-web-report.json
+            artifacts/elections/candidate-photo-local-records-report.json
             artifacts/elections/candidate-photo-source-cache.json
             artifacts/elections/candidate-photo-review-queue.json
           )
