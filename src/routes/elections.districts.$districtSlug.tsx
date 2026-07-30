@@ -55,6 +55,55 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
           : []),
       ],
       links: district ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: district
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "CollectionPage",
+                "@id": `${canonicalUrl}#webpage`,
+                url: canonicalUrl,
+                name: title,
+                description,
+                inLanguage: "en-US",
+                isPartOf: {
+                  "@type": "WebSite",
+                  "@id": "https://keeptxred.com/#website",
+                  name: "Keep TX Red",
+                  url: "https://keeptxred.com",
+                },
+                about: {
+                  "@type": "AdministrativeArea",
+                  name: district.name,
+                },
+                breadcrumb: {
+                  "@type": "BreadcrumbList",
+                  itemListElement: [
+                    {
+                      "@type": "ListItem",
+                      position: 1,
+                      name: "Election Central",
+                      item: "https://keeptxred.com/elections/2026",
+                    },
+                    {
+                      "@type": "ListItem",
+                      position: 2,
+                      name: "Texas election districts",
+                      item: "https://keeptxred.com/elections/districts",
+                    },
+                    {
+                      "@type": "ListItem",
+                      position: 3,
+                      name: district.name,
+                      item: canonicalUrl,
+                    },
+                  ],
+                },
+              }),
+            },
+          ]
+        : [],
     };
   },
   component: TexasElectionDistrict,
