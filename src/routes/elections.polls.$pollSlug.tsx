@@ -65,16 +65,25 @@ export const Route = createFileRoute("/elections/polls/$pollSlug")({
 function ElectionPollDetailRoute() {
   const { pollSlug } = Route.useParams();
   const validSlug = isElectionSlug(pollSlug);
+  const indexable =
+    validSlug &&
+    records.some(
+      (item) =>
+        item.slug === pollSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
 
   return (
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Poll"
         description="Verified poll details from KeepTXRed Election Central."
-        canonicalUrl={validSlug ? `https://keeptxred.com/elections/polls/${pollSlug}` : undefined}
+        indexable={indexable}
+        canonicalUrl={indexable ? `https://keeptxred.com/elections/polls/${pollSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.polls} />}
       >
-        {validSlug ? (
+        {indexable ? (
           <ElectionPollDetailData pollSlug={pollSlug} />
         ) : (
           <ElectionErrorState
