@@ -75,6 +75,37 @@ export const Route = createFileRoute("/elections/races/$raceSlug")({
           : []),
       ],
       links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: indexable
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Event",
+                name: recordName,
+                description: recordDescription,
+                url: canonicalUrl,
+                startDate:
+                  record && "electionDate" in record && typeof record.electionDate === "string"
+                    ? record.electionDate
+                    : "2026-11-03",
+                eventStatus: "https://schema.org/EventScheduled",
+                eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+                location: {
+                  "@type": "AdministrativeArea",
+                  name:
+                    record && "districtName" in record && typeof record.districtName === "string"
+                      ? record.districtName
+                      : "Texas",
+                },
+                organizer: {
+                  "@type": "GovernmentOrganization",
+                  name: "Texas election authorities",
+                },
+              }).replace(/</g, "\\u003c"),
+            },
+          ]
+        : [],
     };
   },
   component: ElectionRaceDetailRoute,
