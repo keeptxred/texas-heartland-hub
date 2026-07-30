@@ -76,4 +76,3 @@ async function expectNoHorizontalOverflow(page: Page) {
     dimensions.viewport + 1,
   );
 }
-

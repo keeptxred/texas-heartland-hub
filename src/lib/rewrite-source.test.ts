@@ -83,4 +83,3 @@ describe("rewrite source consistency", () => {
     expect(preflightStatusLabel(preflight)).toContain(`${preflight.sourceWordCount} source words`);
   });
 });
-

@@ -105,4 +105,3 @@ export function resolveRewriteSource(input: RewriteSourceInput): ResolvedRewrite
     meetsAbsoluteMinimum: wordCount >= ABSOLUTE_MIN_SOURCE_WORDS,
   };
 }
-

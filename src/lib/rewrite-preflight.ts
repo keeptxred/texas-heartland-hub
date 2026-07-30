@@ -1,7 +1,7 @@
 // Deterministic, AI-free preflight for the KeepTXRed rewrite pipeline.
 //
 // Given a feed item's title + already-extracted description (Reddit selftext,
-// linked-source text, RSS summary â€” whatever ingestion has already stored),
+// linked-source text, RSS summary — whatever ingestion has already stored),
 // this returns a structured decision on whether it's worth spending an AI
 // rewrite credit. It is intentionally cheap: no network calls, no AI, no
 // database access. Callers in the UI can render it on every row; server
@@ -112,14 +112,14 @@ function countMatches(text: string, patterns: RegExp[]): number {
 // helpful but not required.
 function factualSignalCount(text: string): number {
   let n = 0;
-  // Proper-noun runs (people, orgs, places) â€” 2+ capitalized words in a row.
+  // Proper-noun runs (people, orgs, places) — 2+ capitalized words in a row.
   const properNounRuns = text.match(/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,3})\b/g);
   if (properNounRuns) n += Math.min(properNounRuns.length, 6);
   // Dates.
   if (/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2}\b/.test(text))
     n += 1;
   if (/\b(19|20)\d{2}\b/.test(text)) n += 1;
-  // Numbers â€” dollar amounts, percentages, counts.
+  // Numbers — dollar amounts, percentages, counts.
   if (/\$\s?\d[\d,]*(?:\.\d+)?/.test(text)) n += 1;
   if (/\b\d+(\.\d+)?\s?%/.test(text)) n += 1;
   if (/\b\d[\d,]{2,}\b/.test(text)) n += 1;
@@ -165,34 +165,34 @@ function detectNewsEvent(title: string, body: string): boolean | null {
   const hits = countMatches(t, NEWS_EVENT_PATTERNS);
   if (hits >= 2) return true;
   if (hits === 1) return true;
-  // Insufficient signal â€” treat as unknown, not a hard block.
+  // Insufficient signal — treat as unknown, not a hard block.
   return null;
 }
 
 function reasonMessage(reason: RewritePreflightReason, words: number): string {
   switch (reason) {
     case "READY":
-      return `Source ready for rewrite Â· ${words} extracted source words`;
+      return `Source ready for rewrite · ${words} extracted source words`;
     case "PENDING_EXTRACTION":
-      return "Checking source Â· extraction has not been attempted yet";
+      return "Checking source · extraction has not been attempted yet";
     case "MISSING_SOURCE_URL":
-      return "Not rewriteable Â· this item has no source URL";
+      return "Not rewriteable · this item has no source URL";
     case "SOURCE_FETCH_FAILED":
-      return "Not rewriteable Â· source page could not be fetched";
+      return "Not rewriteable · source page could not be fetched";
     case "PAYWALL_OR_TRUNCATED":
-      return "Not rewriteable Â· paywall or subscription wall prevented extraction";
+      return "Not rewriteable · paywall or subscription wall prevented extraction";
     case "BODY_TOO_SHORT":
-      return `Not rewriteable Â· only ${words} usable source words were extracted`;
+      return `Not rewriteable · only ${words} usable source words were extracted`;
     case "BOILERPLATE_CONTENT":
-      return "Not rewriteable Â· extracted page contained mostly navigation or boilerplate";
+      return "Not rewriteable · extracted page contained mostly navigation or boilerplate";
     case "INSUFFICIENT_FACTS":
-      return "Not rewriteable Â· source lacks concrete names, dates, or actions";
+      return "Not rewriteable · source lacks concrete names, dates, or actions";
     case "NOT_ENGLISH":
-      return "Not rewriteable Â· source does not appear to be English";
+      return "Not rewriteable · source does not appear to be English";
     case "UNSUPPORTED_CONTENT_TYPE":
-      return "Not rewriteable Â· source is a podcast/video landing page without a usable transcript";
+      return "Not rewriteable · source is a podcast/video landing page without a usable transcript";
     case "NO_CLEAR_NEWS_EVENT":
-      return "Not rewriteable Â· no clear news event detected in the source";
+      return "Not rewriteable · no clear news event detected in the source";
   }
 }
 
@@ -252,7 +252,7 @@ export function assessRewritePreflight(input: RewritePreflightInput): RewritePre
 
 export function preflightStatusLabel(result: RewritePreflightResult): string {
   if (result.rewriteable) {
-    return `Source ready for rewrite Â· ${result.sourceWordCount} extracted source words`;
+    return `Source ready for rewrite · ${result.sourceWordCount} extracted source words`;
   }
   if (result.reason === "PENDING_EXTRACTION") return "Checking source";
   return result.message;
@@ -302,4 +302,3 @@ export function toPersistedSnapshot(
     failureStage,
   };
 }
-
