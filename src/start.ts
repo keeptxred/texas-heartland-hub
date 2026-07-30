@@ -27,6 +27,16 @@ const LEGACY_ELECTION_PATHS = new Map([
   ["/texas-elections", "/elections/2026"],
   ["/elections-2026", "/elections/2026"],
   ["/elections/2026/", "/elections/2026"],
+  ["/elections/forecasts", "/elections/forecast"],
+  ["/elections/statewide-races", "/elections/statewide"],
+  ["/elections/legislative-races", "/elections/legislative"],
+  ["/elections/district", "/elections/districts"],
+  ["/elections/2026/races", "/elections/races"],
+  ["/elections/2026/candidates", "/elections/candidates"],
+  ["/elections/2026/polls", "/elections/polls"],
+  ["/elections/2026/forecast", "/elections/forecast"],
+  ["/elections/2026/forecasts", "/elections/forecast"],
+  ["/elections/2026/results", "/elections/results"],
 ]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
 const slugify = (s: string) =>
@@ -44,6 +54,20 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
       status: 301,
       headers: {
         location: `${CANONICAL_ORIGIN}${url.pathname}${url.search}`,
+        "cache-control": "public, max-age=86400",
+      },
+    });
+  }
+
+  const normalizedElectionPath =
+    url.pathname.startsWith("/elections/") && url.pathname.endsWith("/")
+      ? url.pathname.slice(0, -1)
+      : null;
+  if (normalizedElectionPath) {
+    return new Response(null, {
+      status: 301,
+      headers: {
+        location: `${normalizedElectionPath}${url.search}`,
         "cache-control": "public, max-age=86400",
       },
     });
