@@ -17,6 +17,7 @@ const requiredFiles = [
   "elections.statewide.tsx",
   "elections.legislative.tsx",
   "elections.districts.tsx",
+  "elections.districts.index.tsx",
   "elections.districts.$districtSlug.tsx",
   "elections.candidates.tsx",
   "elections.candidates_.$candidateSlug.tsx",
