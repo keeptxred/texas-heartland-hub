@@ -87,6 +87,18 @@ import homeEquityHelocGuide from "@/assets/texas-home-equity-heloc-guide.jpg";
 
 export const ARTICLES: Article[] = [
   {
+    slug: "joe-rogan-warns-against-turning-texas-blue",
+    category: "Elections",
+    title: "Joe Rogan Warns Turning Texas Blue Could Destroy the Balance That Makes Austin Work",
+    dek: "Joe Rogan praised Austin’s mix of progressive culture and conservative surroundings while warning Democrats against remaking all of Texas.",
+    author: "Keep TX Red Newsroom",
+    date: "July 29, 2026",
+    publishedAt: "2026-07-29T21:30:00-05:00",
+    image: podium,
+    topics: ["Joe Rogan", "Austin", "Texas politics", "Texas elections"],
+    subcategory: "texas-politics",
+  },
+  {
     slug: "renting-vs-buying-in-texas",
     category: "Non-Political",
     title: "Renting vs. Buying in Texas: How to Decide",
