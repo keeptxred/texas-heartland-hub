@@ -81,7 +81,9 @@ function ElectionRaceDetailRoute() {
       <ElectionLayout
         title="Texas Election Race"
         description="Verified race details from KeepTXRed Election Central."
-        canonicalUrl={validSlug ? `https://keeptxred.com/elections/races/${canonicalSlug}` : undefined}
+        canonicalUrl={
+          validSlug ? `https://keeptxred.com/elections/races/${canonicalSlug}` : undefined
+        }
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.races} />}
       >
         {validSlug && storedSlug ? (
@@ -175,3 +177,4 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     </div>
   );
 }
+

@@ -23,10 +23,7 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
-import {
-  candidateSeoSlug,
-  findCandidateStoredSlug,
-} from "@/lib/elections/seoSlugs";
+import { candidateSeoSlug, findCandidateStoredSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
@@ -168,3 +165,4 @@ function ElectionCandidateDetailData({ candidateSlug }: { candidateSlug: string 
     </div>
   );
 }
+
