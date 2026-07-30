@@ -53,7 +53,7 @@ jobs:
         run: bunx eslint src/routes/elections.districts.tsx src/routes/elections.districts.index.tsx
 
       - name: Test
-        run: bun test
+        run: bun run test
 
       - name: Production build
         run: bun run build
