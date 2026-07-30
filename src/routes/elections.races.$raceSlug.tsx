@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -12,6 +12,7 @@ import {
   RacePollingSection,
   RaceResultsSection,
 } from "@/components/elections";
+import racesJson from "@/data/elections/2026/races.json";
 import {
   useCandidatesByRace,
   useElectionForecast,
@@ -22,13 +23,31 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { findRaceStoredSlug, raceSeoSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
+const races = racesJson as readonly { slug: string }[];
+
 export const Route = createFileRoute("/elections/races/$raceSlug")({
+  beforeLoad: ({ params }) => {
+    const storedSlug = findRaceStoredSlug(params.raceSlug, races);
+    if (!storedSlug) return;
+
+    const canonicalSlug = raceSeoSlug(storedSlug);
+    if (params.raceSlug !== canonicalSlug) {
+      throw redirect({
+        to: "/elections/races/$raceSlug",
+        params: { raceSlug: canonicalSlug },
+        replace: true,
+        statusCode: 301,
+      });
+    }
+  },
   head: ({ params }) => {
-    const validSlug = isElectionSlug(params.raceSlug);
-    const canonicalUrl = `https://keeptxred.com/elections/races/${params.raceSlug}`;
+    const canonicalSlug = raceSeoSlug(params.raceSlug);
+    const validSlug = isElectionSlug(canonicalSlug);
+    const canonicalUrl = `https://keeptxred.com/elections/races/${canonicalSlug}`;
 
     return {
       meta: [
@@ -53,18 +72,20 @@ export const Route = createFileRoute("/elections/races/$raceSlug")({
 
 function ElectionRaceDetailRoute() {
   const { raceSlug } = Route.useParams();
-  const validSlug = isElectionSlug(raceSlug);
+  const storedSlug = findRaceStoredSlug(raceSlug, races);
+  const validSlug = Boolean(storedSlug && isElectionSlug(raceSlug));
+  const canonicalSlug = storedSlug ? raceSeoSlug(storedSlug) : raceSlug;
 
   return (
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Race"
         description="Verified race details from KeepTXRed Election Central."
-        canonicalUrl={validSlug ? `https://keeptxred.com/elections/races/${raceSlug}` : undefined}
+        canonicalUrl={validSlug ? `https://keeptxred.com/elections/races/${canonicalSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.races} />}
       >
-        {validSlug ? (
-          <ElectionRaceDetailData raceSlug={raceSlug} />
+        {validSlug && storedSlug ? (
+          <ElectionRaceDetailData raceSlug={storedSlug} />
         ) : (
           <ElectionErrorState
             title="Invalid election race URL"
