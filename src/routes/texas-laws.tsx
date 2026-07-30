@@ -10,7 +10,7 @@ export const Route = createFileRoute("/texas-laws")({
       { name: "description", content: "Plain-English explanations of major Texas laws — Constitutional Carry, election integrity, property tax relief, parental rights, and more." },
       { property: "og:title", content: "Texas Laws Explained" },
     ],
-    links: [{ rel: "canonical", href: "/texas-laws" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-laws" }],
   }),
   component: TexasLawsPage,
 });

@@ -18,6 +18,11 @@ export function isLowValueTitle(title: string | null | undefined): boolean {
     /\bhoroscope(s)?\b/.test(t) ||
     /\bquiz\s+of\s+the\s+(day|week)\b/.test(t) ||
     /\bcartoon\s+of\s+the\s+day\b/.test(t) ||
-    /\bnewsletter\b/.test(t)
+    /\bnewsletter\b/.test(t) ||
+    // podcast/video episode landing pages are not written source articles
+    /\btribcast\b/.test(t) ||
+    /\bpodcast\s*(episode)?\b/.test(t) ||
+    /\bvideo:\s*/.test(t) ||
+    /\bwatch:\s*/.test(t)
   );
 }

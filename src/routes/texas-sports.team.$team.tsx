@@ -18,7 +18,7 @@ export const Route = createFileRoute("/texas-sports/team/$team")({
     const t = loaderData.team;
     const title = `${t.name} News – Texas Sports Coverage`;
     const desc = `${t.name} weekly coverage — recaps, roster moves, and storylines shaping the ${t.short} season, from a Texas fan perspective.`;
-    const url = `https://www.keeptxred.com/texas-sports/team/${t.slug}`;
+    const url = `https://keeptxred.com/texas-sports/team/${t.slug}`;
     const thin = !isReadyFromItems(loaderData.items, MIN_ARTICLES_DEFAULT);
     return {
       meta: [

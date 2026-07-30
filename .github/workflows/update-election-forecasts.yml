@@ -1,0 +1,83 @@
+name: Update Election Central forecasts
+
+on:
+  schedule:
+    - cron: "17 11 * * *"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/elections/forecast.ts"
+      - "scripts/elections/validate-forecast-pipeline.mjs"
+      - "scripts/elections/polling-averages.ts"
+      - "src/data/elections/2026/polls.json"
+      - "src/data/elections/2026/candidates.json"
+      - "src/data/elections/2026/races.json"
+      - "package.json"
+      - ".github/workflows/update-election-forecasts.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-data-refresh
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Recalculate forecasts from latest main
+        shell: bash
+        run: |
+          git fetch origin main
+          git reset --hard origin/main
+          pnpm elections:polling-averages
+          pnpm elections:forecast
+
+      - name: Validate election data and forecast invariants
+        run: |
+          pnpm elections:validate
+          pnpm elections:qa
+
+      - name: Commit changed forecast snapshots
+        shell: bash
+        run: |
+          git add \
+            src/data/elections/2026/forecasts.json \
+            src/data/elections/2026/forecast-diagnostics.json \
+            src/data/elections/2026/polling-averages.json \
+            src/data/elections/2026/sources.json \
+            src/data/elections/2026/readiness.json
+          if git diff --cached --quiet; then
+            echo "No forecast changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update daily election forecast snapshots"
+          git fetch origin main
+          if [[ "$(git rev-parse HEAD^)" != "$(git rev-parse origin/main)" ]]; then
+            echo "Main advanced during forecast generation; refusing to publish stale snapshots."
+            exit 1
+          fi
+          git push origin HEAD:main

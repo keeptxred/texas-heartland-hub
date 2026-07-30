@@ -21,6 +21,1601 @@ export type ArticleBody = {
 };
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
+  "renting-vs-buying-in-texas": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen decision guide. Calculator results depend on assumptions about rent growth, home appreciation, financing, transaction costs, taxes, insurance, and the time the household remains in the home.",
+    keyTakeaways: [
+      "Buying is not automatically better than renting; the right choice depends heavily on time horizon, cash reserves, mobility, and total monthly cost.",
+      "Texas buyers must compare property taxes, insurance, HOA dues, utilities, and maintenance—not only rent against principal and interest.",
+      "Transaction costs make short ownership periods especially uncertain.",
+      "Run conservative, expected, and optimistic scenarios instead of relying on one forecast.",
+    ],
+    intro: [
+      "Deciding whether to rent or buy in Texas is not a contest between “throwing money away” and “building equity.” Rent purchases flexibility and transfers many repair risks to a landlord. Buying can provide stability and long-term equity, but it also concentrates money in one property and makes the household responsible for taxes, insurance, maintenance, and the cost of selling.",
+      "Start with the [Texas Rent vs. Buy Calculator](/texas-rent-vs-buy-calculator). The most useful result is not a universal winner; it is the point at which buying may pull ahead under assumptions you can defend.",
+    ],
+    sections: [
+      {
+        heading: "Compare complete monthly costs",
+        paragraphs: [
+          "The fair comparison is not rent versus principal and interest. A buyer’s recurring cost may include mortgage principal and interest, property taxes, homeowners insurance, mortgage insurance, HOA dues, utilities, maintenance, repairs, and special assessments. A renter may pay base rent, renters insurance, utilities, parking, amenity charges, pet fees, and predictable rent increases.",
+          "Use the [Texas Mortgage Calculator](/texas-mortgage-calculator) to calculate the full payment. Then estimate ongoing ownership with the [Texas Homeownership Cost Calculator](/texas-homeownership-cost-calculator), [Texas Property Tax Calculator](/tax-calculator), and [Texas Home Insurance Calculator](/texas-home-insurance-calculator).",
+        ],
+      },
+      {
+        heading: "Time horizon can change the answer",
+        paragraphs: [
+          "Buying and selling create transaction costs. A buyer pays loan and closing expenses at purchase and may face brokerage, title, repair, concession, moving, and other costs when selling. In the early years of an amortizing mortgage, a larger share of the payment generally goes to interest than later in the term.",
+          "That is why a household expecting a job transfer, military move, family change, or school change within a few years should model renting carefully. The Consumer Financial Protection Bureau warns that short ownership periods can be risky and expensive because those transaction costs have less time to be offset.",
+        ],
+      },
+      {
+        heading: "Equity is real, but appreciation is not guaranteed",
+        paragraphs: [
+          "Each principal payment increases ownership in the property, all else equal. Appreciation can add equity, while price declines can reduce it. Selling costs also reduce what an owner receives. A rent-versus-buy model should never assume that every Texas market appreciates at the same rate.",
+          "Run at least three appreciation assumptions, including a flat or mildly declining case. Use the same discipline for rent growth, investment returns on cash not used for a down payment, maintenance, and selling costs.",
+        ],
+      },
+      {
+        heading: "The Texas address matters",
+        paragraphs: [
+          "Two similarly priced homes can have different property-tax bills, insurance premiums, utility providers, HOA dues, flood exposure, and special-district charges. A buyer should investigate the parcel and service territory, not rely on a metro-wide average.",
+          "Renters should also read the full lease and fee schedule. A lower advertised rent can be offset by mandatory parking, trash, technology, pest, package, utility-administration, or amenity charges. Compare the amount that leaves the bank account each month.",
+        ],
+      },
+      {
+        heading: "When renting may be the stronger choice",
+        bullets: [
+          "You expect to move within a relatively short or uncertain period.",
+          "Income is unstable or the emergency fund would be depleted by closing.",
+          "The homes you would buy require a payment that crowds out retirement or other priorities.",
+          "You want the landlord to carry major repair and market-value risk.",
+          "You are new to a Texas city and want time to learn commutes, flood patterns, schools, and neighborhoods.",
+        ],
+      },
+      {
+        heading: "When buying may fit",
+        bullets: [
+          "You expect to stay long enough to absorb buying and eventual selling costs.",
+          "Income, credit, reserves, and the complete monthly payment are stable.",
+          "You want control over the property and accept responsibility for repairs.",
+          "The address works for likely future needs, not only today’s situation.",
+          "Conservative assumptions still leave room in the household budget.",
+        ],
+      },
+      {
+        heading: "A practical Texas rent-or-buy test",
+        paragraphs: [
+          "First, collect an actual lease quote and an actual home scenario in the same area. Second, calculate the full payment, cash to close, ownership costs, and likely selling costs. Third, test several time horizons. Fourth, place both options inside a monthly budget. Finally, decide how much flexibility and repair risk are worth to you.",
+          "If the model declares buying the winner only under aggressive appreciation or unusually low maintenance, the result is fragile. A sound decision should survive ordinary surprises.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Is it cheaper to rent or buy in Texas?",
+        a: "It depends on the address, rent, home price, financing, taxes, insurance, maintenance, transaction costs, and how long you stay. Calculate both complete costs over multiple time horizons.",
+      },
+      {
+        q: "How long should I stay in a Texas home for buying to make sense?",
+        a: "There is no universal number. The break-even period changes with purchase and selling costs, appreciation, rent growth, mortgage terms, and maintenance.",
+      },
+      {
+        q: "Does rent build equity?",
+        a: "No ownership equity is created for the renter, but renting can preserve liquidity and flexibility. Those benefits should be valued rather than ignored.",
+      },
+      {
+        q: "Should I buy immediately after moving to Texas?",
+        a: "Not necessarily. Renting first can provide time to learn neighborhoods, commuting patterns, insurance risks, utility territories, and local tax structures.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Consider whether it is the right time to buy", url: "https://www.consumerfinance.gov/owning-a-home/prepare/consider-whether-its-the-right-time-for-you-to-buy/" },
+      { label: "Consumer Financial Protection Bureau — Financial considerations of buying", url: "https://www.consumerfinance.gov/ask-cfpb/what-are-some-of-the-financial-considerations-of-buying-a-home-en-119/" },
+      { label: "Consumer Financial Protection Bureau — Ready to buy a home?", url: "https://www.consumerfinance.gov/consumer-tools/mortgages/ready-to-buy-a-home/" },
+    ],
+    related: ["texas-mortgage-payment-guide", "salary-needed-to-buy-a-house-in-texas", "true-cost-of-owning-a-home-in-texas", "moving-to-texas-guide"],
+    cta: { label: "Compare Renting and Buying in Texas", href: "/texas-rent-vs-buy-calculator" },
+  },
+  "texas-house-down-payment-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen educational guide. Loan eligibility, minimum investment, assistance, mortgage insurance, funding fees, rates, and underwriting depend on the program, lender, property, occupancy, and borrower.",
+    keyTakeaways: [
+      "Twenty percent is not a universal minimum down payment.",
+      "A smaller down payment can preserve reserves but may increase the payment, mortgage insurance, or other program costs.",
+      "Closing costs and emergency savings are separate from the down payment.",
+      "Texas assistance programs have current eligibility, income, purchase-price, education, lender, and repayment rules that must be verified before relying on funds.",
+    ],
+    intro: [
+      "The down payment needed for a Texas house depends on the mortgage program, borrower, property, price, appraisal, and source of funds. Twenty percent can reduce the loan balance and may avoid conventional private mortgage insurance, but it is not the entry price for every mortgage.",
+      "Use the [Texas Down Payment Calculator](/texas-down-payment-calculator) to compare cash and payment scenarios. Then confirm actual eligibility and required funds with approved lenders before signing a contract.",
+    ],
+    sections: [
+      {
+        heading: "Down payment is only one part of cash to close",
+        paragraphs: [
+          "Cash to close can include the down payment, loan and settlement charges, prepaid interest, insurance, initial escrow deposits, and other costs, minus credits and deposits already applied. A household that saves exactly the down payment can still arrive short.",
+          "Run the [Texas Closing Cost Calculator](/texas-closing-cost-calculator) alongside the down-payment estimate. Keep moving expenses, utility deposits, immediate repairs, and emergency savings outside the amount committed at closing.",
+        ],
+      },
+      {
+        heading: "Conventional mortgages",
+        paragraphs: [
+          "Conventional loans are not insured or guaranteed by FHA or VA. Required down payments and private mortgage insurance depend on the specific loan product, occupancy, property type, credit, loan size, and underwriting. Some qualified borrowers may find low-down-payment options, while other transactions require more.",
+          "Do not assume the smallest permitted down payment is automatically best. Compare the interest rate, PMI, monthly payment, cash remaining, and time required to reach the equity level associated with cancellation rules.",
+        ],
+      },
+      {
+        heading: "FHA-insured mortgages",
+        paragraphs: [
+          "FHA-insured financing is commonly associated with a minimum required investment of 3.5 percent for qualifying borrowers under current program rules, while some credit profiles require a larger investment. FHA loans also include upfront and annual mortgage insurance governed by program rules.",
+          "Eligibility is not created by the down payment alone. The property, appraisal, occupancy, borrower, lender, loan limits, and underwriting must qualify. Ask an FHA-approved lender for the current handbook rules that apply to the transaction.",
+        ],
+      },
+      {
+        heading: "VA-backed purchase loans",
+        paragraphs: [
+          "Eligible veterans, service members, and certain surviving spouses may be able to use a VA-backed purchase loan with no down payment when the sales price does not exceed appraised value and other requirements are met. VA and lender eligibility still apply.",
+          "VA loans do not require monthly private mortgage insurance, but many borrowers pay a one-time funding fee unless exempt. A low-down-payment benefit does not remove closing costs, appraisal gaps, reserves, or the need for an affordable payment.",
+        ],
+      },
+      {
+        heading: "Texas down-payment assistance",
+        paragraphs: [
+          "The Texas Department of Housing and Community Affairs operates homebuyer programs through approved lenders. Current offerings may pair a mortgage with down-payment or closing-cost assistance and may require homebuyer education. Program structure, rates, income limits, purchase-price limits, geography, repayment, and availability can change.",
+          "Use the [Texas Down Payment Assistance Calculator](/texas-down-payment-assistance-calculator) only as an illustration, then verify current programs through TDHCA and an approved lender. Assistance can be valuable, but compare the complete first mortgage, assistance terms, and long-run cost.",
+        ],
+      },
+      {
+        heading: "Choose a down payment without draining reserves",
+        paragraphs: [
+          "Model several amounts in the [Texas Home Affordability Calculator](/texas-home-affordability-calculator). For each, compare monthly payment, mortgage insurance, interest, closing cash, and funds remaining after closing.",
+          "A larger down payment can lower the payment and risk, but a homeowner without reserves may rely on expensive debt when the HVAC, roof, vehicle, or job situation changes. The safer amount often balances lower borrowing with enough liquidity to own the home responsibly.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Do you need 20 percent down to buy a house in Texas?",
+        a: "No. Some mortgage programs permit qualified borrowers to put down less. The appropriate amount depends on eligibility, payment, mortgage insurance, closing costs, and reserves.",
+      },
+      {
+        q: "Can down-payment assistance cover all cash to close?",
+        a: "Do not assume it will. Programs have limits and rules, and buyers may still need earnest money, inspections, reserves, appraisal-gap funds, or other costs.",
+      },
+      {
+        q: "Can gift funds be used for a down payment?",
+        a: "Many programs allow certain documented gifts, but acceptable donors, documentation, borrower contribution, and transfer rules vary. Confirm them with the lender before moving money.",
+      },
+      {
+        q: "Is a larger down payment always better?",
+        a: "Not if it leaves the household unable to cover closing costs, repairs, or emergencies. Compare payment savings against the value of retained cash.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Your down payment decision", url: "https://www.consumerfinance.gov/owning-a-home/what-are-all-costs-buying-home/" },
+      { label: "HUD — FHA revised down-payment requirements", url: "https://www.hud.gov/sites/documents/DOC_19737.PDF" },
+      { label: "U.S. Department of Veterans Affairs — VA-backed purchase loan", url: "https://www.va.gov/housing-assistance/home-loans/loan-types/purchase-loan/" },
+      { label: "Texas Department of Housing and Community Affairs — Homebuyer programs", url: "https://welcomehome.tdhca.texas.gov/programs" },
+    ],
+    related: ["texas-closing-costs-guide", "salary-needed-to-buy-a-house-in-texas", "texas-mortgage-payment-guide", "renting-vs-buying-in-texas"],
+    cta: { label: "Compare Texas Down-Payment Options", href: "/texas-down-payment-calculator" },
+  },
+  "true-cost-of-owning-a-home-in-texas": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen budgeting guide. Service life, repair cost, taxes, insurance, HOA dues, utilities, and special-district charges vary by property and should be verified during due diligence.",
+    keyTakeaways: [
+      "The mortgage payment is only the starting point of a Texas homeownership budget.",
+      "Taxes, insurance, utilities, maintenance, repairs, HOA dues, and special-district charges must be modeled separately.",
+      "HVAC, roofs, foundations, plumbing, pools, and drainage create irregular costs that a monthly average can hide.",
+      "A maintenance reserve is cash-flow planning, not a prediction that every system will fail.",
+    ],
+    intro: [
+      "The true cost of owning a home in Texas includes every dollar required to finance, protect, operate, maintain, and eventually repair the property. A listing price or lender payment cannot reveal the whole obligation.",
+      "Begin with the [Texas Homeownership Cost Calculator](/texas-homeownership-cost-calculator). Then replace generic percentages with facts about the address, inspection, roof, HVAC, foundation, utilities, insurance, HOA, and taxing units.",
+    ],
+    sections: [
+      {
+        heading: "Start with fixed and predictable costs",
+        paragraphs: [
+          "Principal and interest are the loan core. Property taxes, insurance, HOA dues, and some utility base charges are recurring but can change. Mortgage insurance may apply depending on the program and equity. These items establish the minimum cost before maintenance.",
+          "Estimate taxes with the [Texas Property Tax Calculator](/tax-calculator) using the expected purchase price and applicable exemptions. Estimate coverage with the [Texas Home Insurance Calculator](/texas-home-insurance-calculator), then obtain an address-specific quote before committing.",
+        ],
+      },
+      {
+        heading: "Texas HVAC and energy costs",
+        paragraphs: [
+          "Cooling is essential across much of Texas, and a system failure during extreme heat can require urgent service. Record equipment age, capacity, efficiency, condition, service history, and warranty status. Budget for filters, tune-ups, minor repairs, and eventual replacement.",
+          "The utility impact depends on climate, insulation, ductwork, windows, shade, square footage, thermostat settings, and electric plan. Use the [Texas Utility Cost Calculator](/texas-utility-cost-calculator) with a high-summer scenario rather than an annual average alone.",
+        ],
+      },
+      {
+        heading: "Roofs, wind, hail, and insurance",
+        paragraphs: [
+          "Roof age and condition affect repair risk and may affect insurance pricing or eligibility. Ask the inspector to identify the roof covering, visible damage, flashing, drainage, penetrations, and remaining condition without treating a visual estimate as a warranty.",
+          "Convert percentage wind or hail deductibles into dollars. A maintenance reserve and an insurance deductible reserve solve different problems: insurance does not cover ordinary wear, excluded causes, or every cosmetic issue.",
+        ],
+      },
+      {
+        heading: "Foundations, soil, drainage, and plumbing",
+        paragraphs: [
+          "Texas has varied soils and climates, and no single foundation rule fits every region. Look for drainage toward the structure, plumbing leaks, grading problems, sticking openings, repaired cracks, and prior engineering or foundation records. If concerns arise, obtain qualified independent evaluation.",
+          "Foundation movement can also involve plumbing, masonry, flooring, drainage, and landscaping. Budget decisions should consider the full system rather than a single repair quote.",
+        ],
+      },
+      {
+        heading: "Pools, irrigation, lawns, and outdoor systems",
+        paragraphs: [
+          "A pool adds electricity, water, chemicals, cleaning, equipment service, insurance considerations, and eventual resurfacing or component replacement. Irrigation systems add water use, winterization or freeze risk in some regions, heads, valves, controllers, and leak exposure.",
+          "Large lawns, mature trees, fences, gates, septic systems, wells, and outbuildings all convert space into maintenance. Price these features before treating them as free benefits.",
+        ],
+      },
+      {
+        heading: "HOAs, MUDs, PIDs, and special districts",
+        paragraphs: [
+          "HOA dues may fund common areas and services but can rise, and special assessments can create one-time bills. Review governing documents, budgets, reserves, insurance, meeting records, pending litigation, violations, and recent assessments.",
+          "Municipal utility districts, public improvement districts, and other special districts can affect taxes or assessments. Pull the parcel record and identify every taxing unit. Do not assume the seller’s current bill represents the buyer’s future bill.",
+        ],
+      },
+      {
+        heading: "Build a reserve that works",
+        paragraphs: [
+          "List major systems, likely service windows, deductible exposure, and known projects. Convert the total into a monthly sinking-fund contribution, while keeping a separate emergency reserve for events that arrive early.",
+          "Put mortgage, taxes, insurance, utilities, HOA dues, maintenance savings, and replacement funds into the [Texas Budget Planner](/texas-budget-planner). If the purchase works only by assuming no repairs, it does not yet fit the budget.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much should Texas homeowners budget for maintenance?",
+        a: "There is no reliable statewide percentage for every property. Build the reserve from the home’s age, condition, systems, climate, inspection findings, deductibles, and planned work.",
+      },
+      {
+        q: "Are property taxes included in the mortgage?",
+        a: "They may be collected through escrow, but they remain a homeowner cost and can change. Without escrow, the owner pays taxing units directly.",
+      },
+      {
+        q: "Does homeowners insurance cover HVAC or foundation repairs?",
+        a: "Coverage depends on the policy and cause of loss. Ordinary wear, maintenance, and many forms of movement are commonly outside standard coverage; read the actual policy.",
+      },
+      {
+        q: "Are HOA dues the only neighborhood charge?",
+        a: "No. A property may also be affected by special taxing districts, public improvement assessments, utility districts, or other local charges.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Financial considerations of buying", url: "https://www.consumerfinance.gov/ask-cfpb/what-are-some-of-the-financial-considerations-of-buying-a-home-en-119/" },
+      { label: "Texas Comptroller — Property tax assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      { label: "Texas Department of Insurance — Home insurance", url: "https://www.tdi.texas.gov/consumer/home-insurance.html" },
+      { label: "U.S. Department of Energy — Energy Saver", url: "https://www.energy.gov/energysaver/energy-saver" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-utility-costs-guide", "texas-homeowners-insurance-guide", "renting-vs-buying-in-texas"],
+    cta: { label: "Estimate the Full Cost of Texas Homeownership", href: "/texas-homeownership-cost-calculator" },
+  },
+  "should-you-refinance-texas-mortgage": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen consumer guide. Refinance availability, pricing, appraisal, closing costs, taxes, insurance, loan terms, and qualification vary. This article does not recommend a loan.",
+    keyTakeaways: [
+      "A lower rate or payment does not prove a refinance saves money.",
+      "Break-even analysis should use real closing costs and monthly savings over the expected time the new loan will be kept.",
+      "Restarting a long loan term can lower the payment while increasing total interest or delaying payoff.",
+      "Cash-out refinancing converts equity into debt secured by the home and should be compared with home-equity alternatives.",
+    ],
+    intro: [
+      "Refinancing replaces an existing mortgage with a new loan. It may reduce the interest rate, change the payment, shorten or extend the term, remove or change mortgage insurance, switch rate structures, or provide cash from equity. Every benefit has to be measured against closing costs and the new loan’s full timeline.",
+      "Start with the [Texas Refinance Savings Calculator](/texas-refinance-savings-calculator), using an actual Loan Estimate when available rather than an advertised rate.",
+    ],
+    sections: [
+      {
+        heading: "Calculate the break-even point",
+        paragraphs: [
+          "A simple break-even estimate divides eligible upfront refinance costs by expected monthly savings. If costs are $6,000 and the comparable monthly savings are $200, the simple break-even is 30 months. That calculation is a starting point, not the complete answer.",
+          "Separate true costs from escrow transfers and prepaids, compare principal reduction, and account for points, lender credits, mortgage insurance, tax effects, and the likelihood of selling or refinancing again. If you will not keep the loan beyond break-even, the refinance may not recover its costs.",
+        ],
+      },
+      {
+        heading: "Do not compare payments with different clocks",
+        paragraphs: [
+          "A homeowner with 22 years remaining who refinances into a new 30-year loan may receive a lower payment partly because repayment is stretched across eight additional years. The rate may improve while the payoff date moves backward.",
+          "Compare the new loan at the same remaining term when possible, then compare alternative terms. Use the [Texas Mortgage Payoff Calculator](/texas-mortgage-payoff-calculator) to test whether applying the projected savings as extra principal preserves the payoff goal.",
+        ],
+      },
+      {
+        heading: "Refinance closing costs are still costs",
+        paragraphs: [
+          "Appraisal, origination, title, recording, credit, settlement, points, and other charges may apply. A “no-closing-cost” refinance generally means the costs are covered through a higher rate, lender credit, or increased loan balance—not that the services are free.",
+          "Compare multiple Loan Estimates on the same day with the same loan amount, term, lock period, and points. Review the five-year cost and cash-to-close sections, and ask why fees differ.",
+        ],
+      },
+      {
+        heading: "Rate-and-term refinance",
+        paragraphs: [
+          "A rate-and-term refinance primarily changes rate, payment, term, or loan structure without taking substantial cash out. It may make sense when savings are durable, costs are reasonable, and the expected holding period exceeds break-even.",
+          "Check whether the refinance affects mortgage insurance, escrow, prepayment terms, or protections associated with the old loan. Government-backed loans can have program-specific streamline options and rules; verify them with the responsible agency and qualified lenders.",
+        ],
+      },
+      {
+        heading: "Cash-out refinance",
+        paragraphs: [
+          "A cash-out refinance creates a larger first mortgage and gives the homeowner part of the difference. It can replace a favorable existing rate with a higher rate on the entire mortgage balance, not only the cash received.",
+          "Compare it with a home-equity loan or HELOC using the [Texas Home Equity Calculator](/texas-home-equity-calculator). Consolidating unsecured debt into mortgage debt can lower the stated rate while placing the home at risk and extending repayment.",
+        ],
+      },
+      {
+        heading: "A refinance decision checklist",
+        bullets: [
+          "State the goal: lower lifetime cost, lower required payment, shorter term, different rate structure, or cash access.",
+          "Record the current balance, rate, remaining term, payoff date, and mortgage insurance.",
+          "Compare written offers using the same assumptions.",
+          "Calculate break-even and total interest over the expected holding period.",
+          "Stress-test a job change, move, rate adjustment, or property-value change.",
+          "Keep enough reserves after closing and verify wiring instructions independently.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much lower should the rate be before refinancing?",
+        a: "There is no universal threshold. The decision depends on balance, costs, term, monthly savings, mortgage insurance, and how long the new loan will be kept.",
+      },
+      {
+        q: "What is a refinance break-even point?",
+        a: "It is the time required for expected savings to recover refinance costs. A complete comparison also considers term changes, principal, mortgage insurance, and future plans.",
+      },
+      {
+        q: "Is a no-closing-cost refinance free?",
+        a: "No. The lender generally covers costs through a higher rate, lender credit, or larger loan balance, which can increase cost over time.",
+      },
+      {
+        q: "Can refinancing delay mortgage payoff?",
+        a: "Yes. Starting a new longer term can move the payoff date later even when the monthly payment falls.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Should I refinance?", url: "https://files.consumerfinance.gov/f/documents/cfpb_should_i_refinance_handout.pdf" },
+      { label: "Consumer Financial Protection Bureau — Mortgage refinance key term", url: "https://www.consumerfinance.gov/consumer-tools/mortgages/answers/key-terms/" },
+      { label: "Consumer Financial Protection Bureau — No-closing-cost refinancing", url: "https://www.consumerfinance.gov/ask-cfpb/is-there-such-a-thing-as-a-no-cost-or-no-closing-loan-or-refinancing-en-141/" },
+      { label: "Consumer Financial Protection Bureau — Cash-out refinance report", url: "https://www.consumerfinance.gov/archive/newsroom/cfpb-report-finds-cash-out-mortgage-refinance-borrowers-improve-credit-scores/" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-home-equity-heloc-guide", "true-cost-of-owning-a-home-in-texas"],
+    cta: { label: "Calculate Texas Refinance Savings", href: "/texas-refinance-savings-calculator" },
+  },
+  "texas-home-equity-heloc-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen Texas consumer guide. Home-equity law, interpretations, disclosures, lender rules, rates, and tax treatment can change. Review current documents and obtain qualified legal, tax, or financial advice when needed.",
+    keyTakeaways: [
+      "Texas protects homesteads with state-specific constitutional conditions for home-equity borrowing.",
+      "Total debt secured by a Texas homestead generally may not exceed 80 percent of fair market value at closing under Section 50(a)(6).",
+      "A home-equity loan usually provides a lump sum; a HELOC provides a revolving line and commonly has a variable rate.",
+      "Failure to repay can put the home at risk, so available equity is not the same as affordable debt.",
+    ],
+    intro: [
+      "Home equity is the difference between a home’s current value and debts secured by it. Texas homeowners may be able to borrow against that equity through a home-equity loan or home-equity line of credit, but the Texas Constitution imposes protections and limits that differ from generic national summaries.",
+      "Use the [Texas Home Equity Calculator](/texas-home-equity-calculator) to estimate equity and borrowing room. Treat the result as planning information; appraisal, liens, constitutional rules, underwriting, and lender policy determine the actual transaction.",
+    ],
+    sections: [
+      {
+        heading: "Home-equity loan versus HELOC",
+        table: {
+          headers: ["Feature", "Home-equity loan", "HELOC"],
+          rows: [
+            ["Funding", "Lump sum at closing", "Revolving draws up to the available line"],
+            ["Rate", "Commonly fixed", "Commonly variable"],
+            ["Payment", "Scheduled principal and interest", "May change with balance, rate, draw period, and repayment period"],
+            ["Use", "Defined one-time need", "Staged or uncertain costs"],
+            ["Core risk", "Home secures the debt", "Home secures the debt and variable payments may rise"],
+          ],
+        },
+      },
+      {
+        heading: "Texas 80 percent homestead limit",
+        paragraphs: [
+          "Section 50(a)(6), Article XVI of the Texas Constitution generally limits the home-equity loan so that its principal, when added to other liens against the homestead, does not exceed 80 percent of fair market value at closing. This is a combined limit, not permission to borrow 80 percent in cash.",
+          "If a home is valued at $400,000 and the existing mortgage balance is $250,000, 80 percent of value is $320,000. The simple theoretical room is $70,000 before lender restrictions, closing economics, valuation differences, and other liens. Use the calculator, then verify every figure.",
+        ],
+      },
+      {
+        heading: "Texas closing protections and limits",
+        paragraphs: [
+          "Texas home-equity transactions include constitutionally required notices and waiting periods. The Office of Consumer Credit Commissioner explains that the 12-day period begins after the application is filed and the required disclosure is received. Texas law also contains conditions concerning consent, location, appraisal, fees, copies of documents, rescission, and foreclosure.",
+          "The Constitution generally limits certain fees and charges to 2 percent of the loan amount while excluding specified items such as a qualifying third-party appraisal, survey, title-insurance premium, and title examination report. Do not calculate compliance from a marketing quote; review the official disclosure and closing package.",
+        ],
+      },
+      {
+        heading: "One loan, timing, and refinance rules",
+        paragraphs: [
+          "Texas rules generally do not allow more than one home-equity loan against the same homestead at a time and restrict another home-equity closing before the first anniversary of the prior home-equity closing, subject to current law and exceptions. Refinancing an existing equity loan can also trigger specialized constitutional requirements.",
+          "Because classification matters, tell the lender and title company about every lien and prior home-equity transaction. Do not assume a product labeled “second mortgage” falls outside Texas home-equity law.",
+        ],
+      },
+      {
+        heading: "How a HELOC can change over time",
+        paragraphs: [
+          "A HELOC generally has a draw period followed by a repayment period. The rate is commonly variable, so minimum payments can change. Payments may rise when the draw period ends, the rate increases, or principal amortization begins.",
+          "The lender may limit additional advances under the contract and applicable law if value or financial circumstances change. Borrow only what the budget can repay under a higher-rate scenario, not the maximum line offered.",
+        ],
+      },
+      {
+        heading: "Responsible uses and dangerous assumptions",
+        paragraphs: [
+          "Home-equity borrowing may finance a planned repair, accessibility work, education, or another defined need, but purpose does not remove repayment risk. Using the home to pay unsecured debt can create a lower rate while converting debt into a lien that can threaten the homestead.",
+          "Avoid treating appreciation as income or a HELOC as an emergency fund. Maintain cash reserves, compare unsecured alternatives, and calculate the full payment. Project longer-term equity with the [Texas Home Equity Growth Calculator](/texas-home-equity-growth-calculator).",
+        ],
+      },
+      {
+        heading: "What to compare before signing",
+        bullets: [
+          "Fixed versus variable rate and the index, margin, caps, and floors.",
+          "Draw period, repayment period, minimum draws, annual fees, inactivity fees, and early-closure charges.",
+          "Loan amount, combined liens, appraisal, and 80 percent constitutional calculation.",
+          "Closing costs, excluded charges, lender credits, and whether costs are financed.",
+          "Payment under current, higher-rate, and full-balance scenarios.",
+          "Alternatives including savings, staged work, personal credit, a home-equity loan, HELOC, or cash-out refinance.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much equity can I borrow in Texas?",
+        a: "Texas generally limits total debt secured by the homestead to 80 percent of fair market value for a Section 50(a)(6) loan. Existing liens, appraisal, underwriting, and lender policy reduce actual availability.",
+      },
+      {
+        q: "Can I have two HELOCs on my Texas homestead?",
+        a: "Texas generally permits only one home-equity loan secured by the homestead at a time. Confirm current rules and lien classification with qualified professionals.",
+      },
+      {
+        q: "Is a HELOC rate fixed?",
+        a: "HELOC rates are commonly variable, although some products may allow fixed-rate conversions. Read the index, margin, caps, and conversion terms.",
+      },
+      {
+        q: "Can a Texas home-equity lender foreclose?",
+        a: "Yes. The home secures the debt. Texas provides special protections and generally requires a court order, but failure to meet the loan terms can still put the home at risk.",
+      },
+    ],
+    sources: [
+      { label: "Texas Constitution, Article XVI, Section 50", url: "https://statutes.capitol.texas.gov/SOTWDocs/CN/pdf/CN.16.pdf" },
+      { label: "Texas Office of Consumer Credit Commissioner — Home-equity disclosures", url: "https://occc.texas.gov/industry/regulated-lenders/bulletins/" },
+      { label: "Consumer Financial Protection Bureau — What is a HELOC?", url: "https://www.consumerfinance.gov/ask-cfpb/what-is-a-home-equity-line-of-credit-heloc-en-107/" },
+      { label: "Consumer Financial Protection Bureau — What is a home-equity loan?", url: "https://www.consumerfinance.gov/ask-cfpb/what-is-a-home-equity-loan-en-106/" },
+      { label: "Consumer Financial Protection Bureau — HELOC booklet", url: "https://files.consumerfinance.gov/f/documents/cfpb_heloc-brochure.pdf" },
+    ],
+    related: ["should-you-refinance-texas-mortgage", "true-cost-of-owning-a-home-in-texas", "texas-mortgage-payment-guide"],
+    cta: { label: "Estimate Your Texas Home Equity", href: "/texas-home-equity-calculator" },
+  },
+  "texas-mortgage-payment-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen consumer guide. Mortgage terms, tax estimates, insurance premiums, and loan pricing should be verified for the buyer’s property and loan.",
+    keyTakeaways: [
+      "A complete Texas house payment can include principal, interest, property taxes, homeowners insurance, mortgage insurance, and HOA dues.",
+      "Property taxes and insurance can materially change affordability even when two homes have the same price.",
+      "Escrow changes how taxes and insurance are collected; it does not make those costs disappear.",
+      "Buyers should compare homes by total monthly ownership cost, not principal and interest alone.",
+    ],
+    intro: [
+      "A Texas mortgage payment is rarely just principal and interest. The number that matters to a household budget is the complete monthly housing cost: loan payment, property taxes, homeowners insurance, any mortgage insurance, homeowners association dues, and a reserve for expenses the lender does not collect.",
+      "That distinction matters in Texas because local property-tax rates and insurance exposure can vary sharply from one address to another. Start with the [Texas Mortgage Calculator](/tools/mortgage-calculator), then use this guide to understand every line in the result.",
+    ],
+    sections: [
+      {
+        heading: "What is included in a Texas mortgage payment?",
+        paragraphs: [
+          "Principal reduces the amount you owe. Interest is the lender’s charge for financing the purchase. On a fixed-rate mortgage, the combined principal-and-interest payment normally stays level, although the share going to principal grows over time.",
+          "Taxes and insurance are different. They are commonly collected through an escrow account and can change each year. A payment that felt comfortable at closing can rise after the county updates the taxable value, a local taxing unit changes its rate, or the insurer renews the policy at a new premium.",
+        ],
+        bullets: [
+          "Principal: repayment of the borrowed balance.",
+          "Interest: the cost of borrowing at the note rate.",
+          "Property taxes: charges from school districts, counties, cities, and special districts.",
+          "Homeowners insurance: protection for the dwelling, belongings, liability, and covered loss of use.",
+          "Mortgage insurance: often required when the down payment or equity is below a program threshold.",
+          "HOA or special assessments: usually paid separately even when a lender includes them in affordability calculations.",
+        ],
+      },
+      {
+        heading: "Why the same-price Texas homes can have different payments",
+        paragraphs: [
+          "A home’s sales price does not reveal its full carrying cost. One address may sit inside a municipal utility district, a higher-rate school district, or an HOA. Another may have a newer roof, lower storm exposure, and a more favorable insurance quote. Those differences can outweigh a modest change in interest rate.",
+          "Use the [Texas Property Tax Calculator](/tools/property-tax-calculator) with the expected purchase price rather than relying only on the seller’s old bill. Then estimate coverage with the [Texas Home Insurance Calculator](/tools/home-insurance-calculator). For an apples-to-apples comparison, run both addresses with the same down payment and loan assumptions.",
+        ],
+      },
+      {
+        heading: "Escrow accounts: convenient, but not a discount",
+        paragraphs: [
+          "With escrow, the servicer adds one-twelfth of projected annual taxes and insurance to each payment and pays the bills when due. Federal servicing rules generally require an annual escrow statement showing collections, disbursements, shortages, and surpluses.",
+          "A shortage can increase the next year’s payment because the servicer may collect both the new projected amount and repayment of the prior shortfall. Review every escrow analysis, confirm that the homestead exemption is reflected where applicable, and contact the servicer promptly if a tax or insurance figure is wrong.",
+        ],
+      },
+      {
+        heading: "PMI, FHA mortgage insurance, and down-payment tradeoffs",
+        paragraphs: [
+          "Conventional private mortgage insurance and FHA mortgage insurance are not identical. Their pricing, cancellation rules, and duration depend on the loan program, down payment, credit profile, and origination date. A lower down payment can preserve cash but may create a larger monthly obligation.",
+          "Compare scenarios instead of treating 20 percent down as an automatic rule. A buyer may be better served by retaining an emergency reserve, but that choice should be tested against mortgage insurance, interest, and total cash needs. The [Texas Home Affordability Calculator](/tools/home-affordability-calculator) helps model the tradeoff.",
+        ],
+      },
+      {
+        heading: "Build the payment your budget can actually carry",
+        paragraphs: [
+          "After calculating the lender-facing payment, add the owner-facing costs: maintenance, repairs, pest control, lawn care, utilities, and replacements for major systems. A newer home is not maintenance-free, and an older home should not be judged by the mortgage payment alone.",
+          "Stress-test the budget with higher insurance and tax assumptions, one major repair, and a temporary income interruption. Then place the result inside the [Texas Budget Planner](/texas-budget-planner). The best purchase price is the one that leaves room for ordinary life after the keys are handed over.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Does a Texas mortgage payment include property taxes?",
+        a: "Often, but not always. If the loan has an escrow account, the servicer usually collects estimated taxes monthly. Without escrow, the homeowner pays taxing units directly.",
+      },
+      {
+        q: "Why did my mortgage payment go up if I have a fixed rate?",
+        a: "The principal-and-interest portion may be fixed while escrowed property taxes, insurance premiums, or a prior escrow shortage increase.",
+      },
+      {
+        q: "Are HOA dues included in escrow?",
+        a: "Usually no. A lender may count HOA dues when qualifying the borrower, but owners commonly pay the association separately.",
+      },
+      {
+        q: "What is the best way to compare two Texas homes?",
+        a: "Use the same financing assumptions and compare total monthly cost, including address-specific taxes, insurance, HOA dues, utilities, and a maintenance reserve.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Your mortgage payment", url: "https://www.consumerfinance.gov/ask-cfpb/what-is-included-in-a-mortgage-payment-en-194/" },
+      { label: "Consumer Financial Protection Bureau — Escrow accounts", url: "https://www.consumerfinance.gov/ask-cfpb/what-is-an-escrow-or-impound-account-en-140/" },
+      { label: "Texas Comptroller — Property tax assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      { label: "Texas Department of Insurance — Home insurance", url: "https://www.tdi.texas.gov/consumer/home-insurance.html" },
+    ],
+    related: ["texas-property-tax-guide", "homestead-exemption-explained", "texas-closing-costs-guide", "texas-homeowners-insurance-guide"],
+    cta: { label: "Calculate Your Texas Mortgage Payment", href: "/tools/mortgage-calculator" },
+  },
+  "texas-closing-costs-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen consumer guide. Actual charges vary by lender, title company, property, loan product, tax calendar, and negotiated contract.",
+    keyTakeaways: [
+      "Cash to close includes the down payment plus closing costs, prepaid items, and initial escrow deposits, minus credits and deposits already paid.",
+      "The Loan Estimate and Closing Disclosure are the best documents for comparing a specific mortgage’s costs.",
+      "Prepaid taxes and insurance are not duplicate fees; they fund obligations due soon after closing.",
+      "Texas buyers should keep a post-closing reserve rather than sending every available dollar to the settlement table.",
+    ],
+    intro: [
+      "Texas buyers often save for a down payment and then discover a second number: cash to close. That total combines the down payment with lender charges, title and settlement services, prepaid interest, insurance, tax-related deposits, and other transaction costs.",
+      "Use the [Texas Closing Cost Calculator](/tools/closing-cost-calculator) for an early estimate. Then replace assumptions with the lender’s Loan Estimate, the title company’s figures, and the final Closing Disclosure.",
+    ],
+    sections: [
+      {
+        heading: "Closing costs versus cash to close",
+        paragraphs: [
+          "Closing costs are the fees and prepaid amounts tied to originating and completing the transaction. Cash to close is the final amount the buyer must deliver after adding the down payment and subtracting earnest money, option money if credited, lender credits, seller credits, and other adjustments.",
+          "A quote that says “low closing costs” may still require substantial cash because the down payment is separate. Conversely, a loan with lender credits may reduce the upfront total while carrying a higher interest rate. Compare the complete transaction, not one advertised fee.",
+        ],
+      },
+      {
+        heading: "The major categories on a Texas buyer’s estimate",
+        table: {
+          headers: ["Category", "Common examples", "What to verify"],
+          rows: [
+            ["Loan charges", "Origination, underwriting, points, appraisal, credit report", "Whether the fee changes with rate or loan option"],
+            ["Title and settlement", "Title search, lender policy, escrow or settlement services", "Who selected the provider and whether the service is shoppable"],
+            ["Government and recording", "County recording and other required charges", "Final figures from the settlement agent"],
+            ["Prepaids", "Daily interest, first-year homeowners insurance", "Coverage date, premium, and closing date"],
+            ["Initial escrow", "Tax and insurance reserves", "Number of months collected and cushion assumptions"],
+            ["Other", "Survey, inspection, HOA transfer or resale documents", "Which party owes each charge under the contract"],
+          ],
+        },
+      },
+      {
+        heading: "Why prepaid items can move the total",
+        paragraphs: [
+          "A closing late in the month generally creates fewer days of prepaid mortgage interest than a closing early in the month, but the first regular payment date also shifts. Insurance is often paid for the first policy term at or before closing. Escrow reserves give the servicer enough funds to pay future tax and insurance bills when they come due.",
+          "Texas property-tax timing can make estimates look unfamiliar because taxes are assessed locally and bills are typically sent later in the year. Prorations between buyer and seller are contract and closing-date specific. Ask the settlement agent to explain the proration rather than assuming it is a fee.",
+        ],
+      },
+      {
+        heading: "Use the Loan Estimate and Closing Disclosure",
+        paragraphs: [
+          "For most covered mortgages, the lender provides a Loan Estimate after application and a Closing Disclosure before consummation. These forms separate loan costs, other costs, credits, and cash to close. The Consumer Financial Protection Bureau recommends comparing the documents and asking about changes.",
+          "Focus on interest rate, annual percentage rate, points, lender credits, origination charges, services you can shop for, and the projected payment. A lower headline rate is not automatically cheaper if it requires expensive points that take many years to recover.",
+        ],
+      },
+      {
+        heading: "A safer Texas cash-to-close plan",
+        paragraphs: [
+          "Run a base estimate, then add a buffer for inspection findings, moving expenses, utility deposits, immediate repairs, and differences between early quotes and final figures. Do not wire funds using instructions received only by an unexpected email; verify wiring instructions through a trusted phone number because real-estate wire fraud is a known risk.",
+          "After setting aside cash to close, keep an emergency reserve. Use the [Texas Moving Cost Calculator](/texas-moving-cost-calculator) and [Texas Budget Planner](/texas-budget-planner) to account for expenses that occur just before and after the transaction.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much are closing costs in Texas?",
+        a: "There is no single statewide percentage. Costs depend on the loan, price, service providers, insurance, tax timing, credits, and contract. Use an estimate early and the Loan Estimate and Closing Disclosure for the specific transaction.",
+      },
+      {
+        q: "Is the down payment included in closing costs?",
+        a: "No. The down payment is separate, but it is included when calculating the total cash to close.",
+      },
+      {
+        q: "Can a Texas seller pay buyer closing costs?",
+        a: "A contract may provide seller credits, subject to negotiation and the loan program’s limits. Credits reduce cash due but do not necessarily reduce the price or loan balance.",
+      },
+      {
+        q: "When should I receive the Closing Disclosure?",
+        a: "For most covered mortgages, federal rules require the consumer to receive it at least three business days before consummation, with limited exceptions.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Loan Estimate explainer", url: "https://www.consumerfinance.gov/owning-a-home/loan-estimate/" },
+      { label: "Consumer Financial Protection Bureau — Closing Disclosure explainer", url: "https://www.consumerfinance.gov/owning-a-home/closing-disclosure/" },
+      { label: "Consumer Financial Protection Bureau — Mortgage closing checklist", url: "https://www.consumerfinance.gov/owning-a-home/close/mortgage-closing-checklist/" },
+      { label: "Texas Department of Insurance — Title insurance", url: "https://www.tdi.texas.gov/title/index.html" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-homeowners-insurance-guide", "moving-to-texas-guide"],
+    cta: { label: "Estimate Texas Buyer Closing Costs", href: "/tools/closing-cost-calculator" },
+  },
+  "texas-utility-costs-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen budgeting guide. Utility availability, providers, rates, deposits, and municipal charges are address-specific and should be verified directly.",
+    keyTakeaways: [
+      "Texas utility costs depend on the exact address, home size, efficiency, weather, occupants, and provider territory.",
+      "Electricity usually has the largest seasonal swing, especially during hot summers.",
+      "A complete budget should include water, wastewater, gas, internet, trash, deposits, and optional pool or irrigation costs.",
+      "The best estimate combines prior bills for the property with conservative assumptions in a calculator.",
+    ],
+    intro: [
+      "A Texas utility budget is not one statewide average. A compact apartment in El Paso, an all-electric house near Dallas, and a coastal home with heavy air-conditioning demand can have very different monthly totals.",
+      "Use the [Texas Utilities Cost Calculator](/tools/texas-utilities-calculator) to build a household estimate. Before signing a lease or buying a home, confirm which services are available at the exact address and ask for historical usage when possible.",
+    ],
+    sections: [
+      {
+        heading: "The six bills most households should include",
+        bullets: [
+          "Electricity: energy use, delivery charges, plan terms, and seasonal cooling demand.",
+          "Water and wastewater: metered usage, base charges, sewer calculations, and drought-stage rates.",
+          "Natural gas or propane: space heating, water heating, cooking, and fuel delivery where applicable.",
+          "Internet: speed tier, equipment, installation, promotions, and post-promotion price.",
+          "Trash and recycling: municipal bill, utility-district charge, HOA arrangement, or private hauler.",
+          "Address-specific extras: pool pumps, irrigation, septic service, well equipment, or electric-vehicle charging.",
+        ],
+      },
+      {
+        heading: "Texas electricity markets are local",
+        paragraphs: [
+          "Many Texans in areas open to retail competition can choose among retail electric plans, while municipal utilities and electric cooperatives generally serve their own territories. The Public Utility Commission’s Power to Choose website is a state resource for residential plan shopping in eligible areas.",
+          "Compare more than the advertised cents per kilowatt-hour. Review the Electricity Facts Label, contract term, early termination fee, renewable content, price structure, and whether credits or minimum-usage rules make the effective price change at different usage levels.",
+        ],
+      },
+      {
+        heading: "Estimate summer electricity without fooling yourself",
+        paragraphs: [
+          "Air-conditioning demand rises with temperature, square footage, insulation, window exposure, thermostat setting, equipment efficiency, and occupancy. A spring bill is a poor stand-in for August. Ask for a full year of usage, not only one convenient month.",
+          "For a purchase, note the age and condition of the HVAC system during inspection. Compare kilowatt-hour usage rather than only dollar totals because the prior occupant’s rate plan may differ from the plan available to you.",
+        ],
+      },
+      {
+        heading: "Water, wastewater, and outdoor use",
+        paragraphs: [
+          "Water bills can include base service, volume tiers, wastewater, drainage, solid waste, and other local charges. Irrigation, pools, leaks, and summer landscaping can move the total quickly. Some wastewater charges are based on winter water use or another local formula.",
+          "Confirm the provider and rate schedule, then ask whether the property is inside a city, municipal utility district, or another service area. For a house with a pool or large irrigated lot, run a separate higher-use scenario rather than blending those costs into a generic average.",
+        ],
+      },
+      {
+        heading: "Deposits, connection fees, and the first month",
+        paragraphs: [
+          "A move-in budget may need utility deposits, connection charges, equipment fees, and overlapping service at the old and new homes. Some providers waive or adjust deposits based on credit or payment history, but policies differ.",
+          "Place these one-time costs in the [Texas Moving Cost Calculator](/texas-moving-cost-calculator), then move ongoing charges into the [Texas Budget Planner](/texas-budget-planner). If you are comparing cities, the [Texas Cost of Living Calculator](/texas-cost-of-living-calculator) provides the broader context beyond utilities.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "What is the average utility bill in Texas?",
+        a: "A single average can be misleading. The useful estimate is address- and household-specific, with separate assumptions for electricity, water, gas, internet, trash, and optional loads.",
+      },
+      {
+        q: "Can every Texan choose an electricity company?",
+        a: "No. Choice depends on the service territory. Municipal utilities and cooperatives generally operate differently from areas open to retail electric competition.",
+      },
+      {
+        q: "What should I ask before renting a Texas home?",
+        a: "Ask which utilities the tenant pays, provider names, average monthly usage across a full year, deposit requirements, and whether water, trash, internet, or amenity charges are bundled.",
+      },
+      {
+        q: "How can I lower a Texas summer electric bill?",
+        a: "Start with HVAC maintenance, thermostat strategy, air sealing, shade, filter replacement, and an electric plan suited to actual usage. Avoid changes that compromise health or indoor safety.",
+      },
+    ],
+    sources: [
+      { label: "Public Utility Commission of Texas — Power to Choose", url: "https://www.powertochoose.org/" },
+      { label: "Public Utility Commission of Texas — Consumer resources", url: "https://www.puc.texas.gov/consumer/" },
+      { label: "Texas Commission on Environmental Quality — Water conservation", url: "https://www.tceq.texas.gov/drinkingwater/homeland_security/security_pdw/water-conservation" },
+      { label: "U.S. Department of Energy — Energy Saver", url: "https://www.energy.gov/energysaver/energy-saver" },
+    ],
+    related: ["moving-to-texas-guide", "texas-grid-ercot-explained", "texas-energy-economy-overview"],
+    cta: { label: "Estimate Your Texas Utility Costs", href: "/tools/texas-utilities-calculator" },
+  },
+  "texas-homeowners-insurance-guide": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen insurance guide. Coverage, exclusions, deductibles, eligibility, and premiums vary by company and policy; consumers should read the policy and declarations page.",
+    keyTakeaways: [
+      "Texas home policies are not standardized across every company, so buyers must compare coverage as well as price.",
+      "Wind and hail deductibles may be percentage-based, creating a larger out-of-pocket exposure than a flat deductible.",
+      "Flood damage is generally not covered by a standard homeowners policy.",
+      "The dwelling limit should reflect rebuilding cost, not simply market value or the mortgage balance.",
+    ],
+    intro: [
+      "Homeowners insurance is one of the largest address-specific costs in a Texas housing budget. Roof age, construction, location, claim history, coverage limits, deductibles, and exposure to wind, hail, wildfire, or coastal weather can all affect price and availability.",
+      "Run an initial scenario with the [Texas Home Insurance Calculator](/tools/home-insurance-calculator), but treat it as a planning figure. The real decision comes from comparable written quotes for the exact property.",
+    ],
+    sections: [
+      {
+        heading: "What a home policy commonly protects",
+        paragraphs: [
+          "A homeowners policy commonly includes dwelling coverage, other structures, personal property, additional living expenses after a covered loss, personal liability, and medical payments. The causes of loss covered—and the exclusions—depend on the policy form and endorsements.",
+          "The declarations page summarizes major limits and deductibles, but it is not the entire contract. Read the exclusions and endorsements. Ask the agent to identify whether coverage is replacement cost or actual cash value for the roof, personal property, and other major components.",
+        ],
+      },
+      {
+        heading: "Texas deductibles can be the real surprise",
+        paragraphs: [
+          "A policy may have one deductible for many losses and separate deductibles for wind, hail, named storms, or hurricanes. Percentage deductibles are generally applied to the insured dwelling limit, not the repair invoice. On a high-value home, that can create a substantial out-of-pocket amount.",
+          "Compare the deductible in dollars. A cheaper premium may simply transfer more risk to the homeowner. Keep enough liquid savings to cover the largest plausible deductible, and include that reserve when using the [Texas Home Affordability Calculator](/tools/home-affordability-calculator).",
+        ],
+      },
+      {
+        heading: "Flood, wind, and coastal coverage",
+        paragraphs: [
+          "Standard homeowners insurance generally does not cover flooding. A separate flood policy may be available through the National Flood Insurance Program or a private insurer. Lenders may require flood insurance for certain properties, but a property outside a mapped high-risk zone is not free from flood risk.",
+          "Along parts of the Texas coast, homeowners may face limited wind coverage in the private market and may need to investigate the Texas Windstorm Insurance Association. Coverage arrangements are property-specific, so obtain insurance information before the option period or other important contract deadlines expire.",
+        ],
+      },
+      {
+        heading: "How to compare Texas home insurance quotes",
+        bullets: [
+          "Use the same dwelling, other-structures, personal-property, liability, and loss-of-use limits.",
+          "Convert every percentage deductible to a dollar amount.",
+          "Compare roof settlement terms, water coverage, replacement-cost endorsements, and exclusions.",
+          "Confirm discounts and whether they depend on bundling, monitoring, roof age, or mitigation features.",
+          "Check the company and agent through the Texas Department of Insurance.",
+          "Ask what documentation is needed after a loss and whether matching or cosmetic damage is limited.",
+        ],
+      },
+      {
+        heading: "Put insurance inside the full housing budget",
+        paragraphs: [
+          "A lender’s early estimate may not match the premium quoted after underwriting the address. Obtain a realistic insurance quote before deciding what mortgage payment is affordable, especially for an older roof, coastal property, rural property, or home with prior losses.",
+          "Enter the updated premium in the [Texas Mortgage Calculator](/tools/mortgage-calculator). Then compare taxes with the [Texas Property Tax Calculator](/tools/property-tax-calculator). A home that looks cheaper on price alone may be more expensive after both address-specific costs are included.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Is homeowners insurance required by Texas law?",
+        a: "Texas law does not generally require a homeowner to buy it, but a mortgage lender usually requires adequate property coverage while the loan is outstanding.",
+      },
+      {
+        q: "Does Texas homeowners insurance cover flooding?",
+        a: "Standard homeowners policies generally exclude flooding. Flood coverage is usually purchased separately through the National Flood Insurance Program or a private insurer.",
+      },
+      {
+        q: "What does a 2 percent wind deductible mean?",
+        a: "It commonly means the homeowner pays an amount equal to 2 percent of the dwelling coverage limit before covered wind damage is paid, subject to the policy’s terms.",
+      },
+      {
+        q: "Should the dwelling limit equal the home’s market price?",
+        a: "Not necessarily. Dwelling coverage is intended to reflect the cost to rebuild the insured structure, which can differ from market value, land value, or the mortgage balance.",
+      },
+    ],
+    sources: [
+      { label: "Texas Department of Insurance — Home insurance guide", url: "https://www.tdi.texas.gov/consumer/home-insurance.html" },
+      { label: "Texas Department of Insurance — Help after a disaster", url: "https://www.tdi.texas.gov/consumer/storms.html" },
+      { label: "Texas Windstorm Insurance Association", url: "https://www.twia.org/" },
+      { label: "FEMA — National Flood Insurance Program", url: "https://www.floodsmart.gov/" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-closing-costs-guide", "moving-to-houston-address-checklist"],
+    cta: { label: "Estimate Texas Home Insurance", href: "/tools/home-insurance-calculator" },
+  },
+  "salary-needed-to-buy-a-house-in-texas": {
+    updated: "2026-07-25",
+    editorNote:
+      "Evergreen affordability guide. Lender qualification is not a promise of household comfort; rates, taxes, insurance, debts, and underwriting standards vary.",
+    keyTakeaways: [
+      "There is no single salary required to buy a Texas home because the answer changes with price, down payment, debts, rate, taxes, insurance, and HOA dues.",
+      "Debt-to-income ratio is a lender measure, not a complete household budget.",
+      "Buyers should calculate both the maximum approval and a lower comfortable payment.",
+      "Emergency savings, closing cash, utilities, maintenance, and future priorities belong in the decision.",
+    ],
+    intro: [
+      "The salary needed to buy a house in Texas cannot be reduced to one statewide number. A buyer with little debt and a larger down payment may support the same home price on less income than a buyer with car loans, student debt, and a smaller cash reserve.",
+      "The practical method is to work backward from the complete monthly cost. Use the [Texas Home Affordability Calculator](/tools/home-affordability-calculator), then test the result against a real household budget.",
+    ],
+    sections: [
+      {
+        heading: "Start with the all-in monthly housing cost",
+        paragraphs: [
+          "Calculate principal and interest, property taxes, homeowners insurance, mortgage insurance, and HOA dues. Then add maintenance and utilities for the household budget even if the lender does not place them in the mortgage payment.",
+          "The [Texas Mortgage Calculator](/tools/mortgage-calculator) models the loan payment. Use the [Texas Property Tax Calculator](/tools/property-tax-calculator) and [Texas Home Insurance Calculator](/tools/home-insurance-calculator) to replace generic assumptions with Texas-specific estimates.",
+        ],
+      },
+      {
+        heading: "Understand debt-to-income without treating it as a target",
+        paragraphs: [
+          "Debt-to-income ratio compares monthly debt obligations with gross monthly income. Lenders may consider a housing ratio and a total ratio that includes obligations such as car loans, student loans, credit cards, and other recurring debts. Acceptable limits vary by loan program and underwriting.",
+          "A household can qualify and still feel stretched because groceries, child care, health care, utilities, savings, and commuting are not fully represented in DTI. Treat approval as a ceiling set by underwriting, not proof that the payment fits your life.",
+        ],
+      },
+      {
+        heading: "A simple way to estimate the salary needed",
+        paragraphs: [
+          "First, choose a monthly housing payment that leaves room for savings and variable expenses. Second, add recurring monthly debts. Third, divide that combined amount by a conservative total debt ratio expressed as a decimal. Multiply the result by 12 to create a rough gross annual income target.",
+          "For example, if a household selects a $2,400 housing payment and has $600 in other monthly debts, the combined obligation is $3,000. Dividing by 0.36 produces about $8,333 in gross monthly income, or about $100,000 annually. This is only an illustration; underwriting and comfort can point to different numbers.",
+        ],
+      },
+      {
+        heading: "Down payment changes more than the loan balance",
+        paragraphs: [
+          "A larger down payment reduces the amount borrowed and may reduce or remove mortgage insurance, but using all available cash can leave the buyer vulnerable to repairs or income shocks. A smaller down payment preserves liquidity but can increase payment and total interest.",
+          "Model at least three scenarios. Keep the home price constant while changing the down payment, then compare monthly payment, cash to close, mortgage insurance, and remaining reserves. Use the [Texas Closing Cost Calculator](/tools/closing-cost-calculator) so transaction expenses are not mistaken for down payment.",
+        ],
+      },
+      {
+        heading: "Build a comfortable number, not only a qualifying number",
+        paragraphs: [
+          "Place the proposed housing payment into the [Texas Budget Planner](/texas-budget-planner). Add utilities, transportation, child care, food, health costs, giving, travel, retirement contributions, and irregular expenses. If the budget works only when every category is perfect, the price is too aggressive.",
+          "Finally, stress-test taxes, insurance, and repairs. Compare the purchase with renting through the [Texas Rent vs. Buy Calculator](/texas-rent-vs-buy-calculator). Buying can build stability and equity, but flexibility and adequate reserves also have value.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "How much income do I need for a $300,000 house in Texas?",
+        a: "It depends on the down payment, interest rate, taxes, insurance, mortgage insurance, HOA dues, and monthly debts. Calculate the all-in payment first, then test it with your debts and budget.",
+      },
+      {
+        q: "Do lenders use gross or take-home income?",
+        a: "Debt-to-income calculations generally use gross monthly income, while households should also evaluate the payment against take-home pay and real expenses.",
+      },
+      {
+        q: "Does Texas having no individual state income tax make homes more affordable?",
+        a: "It can affect take-home pay, but housing affordability also depends on property taxes, insurance, utilities, local costs, and the household’s federal taxes and deductions.",
+      },
+      {
+        q: "Should I buy the maximum home a lender approves?",
+        a: "Not automatically. A lender’s approval focuses on repayment standards; a comfortable price should also preserve emergency savings and room for the household’s other goals.",
+      },
+    ],
+    sources: [
+      { label: "Consumer Financial Protection Bureau — Decide how much to spend on a home", url: "https://www.consumerfinance.gov/owning-a-home/prepare/decide-how-much-you-want-to-spend/" },
+      { label: "Consumer Financial Protection Bureau — Explore interest rates", url: "https://www.consumerfinance.gov/owning-a-home/explore-rates/" },
+      { label: "U.S. Department of Housing and Urban Development — Buying a home", url: "https://www.hud.gov/helping-americans/buying-a-home" },
+      { label: "Texas Comptroller — Property tax assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+    ],
+    related: ["texas-mortgage-payment-guide", "texas-closing-costs-guide", "why-texas-has-no-income-tax", "texas-property-tax-guide"],
+    cta: { label: "Calculate How Much Texas Home You Can Afford", href: "/tools/home-affordability-calculator" },
+  },
+  "2026-07-11-unt-appoints-scholar-focused-on-race-and-neoliberalism-as-interim-provost": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at its original address from the surviving source record. This version uses university records and clearly attributes outside reporting.",
+    keyTakeaways: [
+      "Albert Bimper was selected to serve as the University of North Texas interim provost.",
+      "The provost is UNT's chief academic officer and oversees the university's academic mission.",
+      "Bimper's research has examined race, college athletics, identity, and neoliberalism.",
+      "He previously held administrative posts at UNT and Colorado State University.",
+    ],
+    intro: [
+      "The University of North Texas selected Albert Bimper to serve as interim provost, placing an experienced higher-education administrator in the university's top academic post.",
+      "The appointment followed the planned transition of Michael McPherson, whom UNT President Harrison Keller named senior adviser to the president in May. UNT said at the time that more information about an interim appointment would follow a Board of Regents meeting.",
+    ],
+    sections: [
+      {
+        heading: "Who is Albert Bimper?",
+        paragraphs: [
+          "Bimper joined UNT after holding a series of leadership roles at Colorado State University. His UNT biography lists experience as an interim school director, interim presidential chief of staff, associate dean, assistant vice provost for academic affairs, and assistant vice president for student affairs.",
+          "A native of Arlington and graduate of Bowie High School, Bimper played football at Colorado State and was part of the Indianapolis Colts organization during its 2006 Super Bowl season. He earned a doctorate in curriculum and instruction from the University of Texas at Austin, a master's degree from Purdue University, and a bachelor's degree from Colorado State.",
+        ],
+      },
+      {
+        heading: "His scholarship and the public debate",
+        paragraphs: [
+          "Bimper's academic work has addressed the intersection of race, identity, college athletics, and the economics and institutions surrounding higher education. Outside coverage of the appointment highlighted his published work on race and neoliberalism.",
+          "Those subjects have become politically sensitive in Texas higher education. Describing the research accurately matters: an academic's field of study does not by itself establish what policies the university will adopt. The interim provost's decisions, budgets, and academic initiatives provide the more concrete basis on which to evaluate the appointment.",
+        ],
+      },
+      {
+        heading: "What the provost controls",
+        paragraphs: [
+          "The provost serves as the university's chief academic officer. The office coordinates colleges and academic programs, faculty affairs, student success, accreditation, and academic planning. That makes the position consequential for curriculum, hiring priorities, and the university's broader academic strategy.",
+          "Because the appointment is interim, UNT can maintain continuity while determining its longer-term leadership plan. Students, faculty, and taxpayers can follow the provost office and Board of Regents agendas for specific decisions.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "What does a university provost do?", a: "The provost is generally the chief academic officer, overseeing academic programs, faculty affairs, planning, and student-success work." },
+      { q: "Is this a permanent appointment?", a: "No. Bimper was appointed interim provost while UNT manages its leadership transition." },
+      { q: "Where did Bimper study?", a: "He earned degrees from Colorado State University, Purdue University, and the University of Texas at Austin." },
+    ],
+    sources: [
+      { label: "UNT — Albert Bimper biography", url: "https://president.unt.edu/people/albert-bimper.html" },
+      { label: "UNT — Provost McPherson transition announcement", url: "https://www.unt.edu/announcements/2026/provost-mcpherson-stepping-down-named-senior-advisor-to-the-president.html" },
+      { label: "Texas Scorecard — Interim provost appointment coverage", url: "https://texasscorecard.com/state/unt-appoints-critical-race-theory-scholar-as-interim-provost/" },
+    ],
+    related: ["texas-education-laws-explained", "school-choice-esa-guide"],
+  },
+  "live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at the article's original address using the surviving Keep TX Red record and program information from Food Network and Texas reporting.",
+    keyTakeaways: [
+      "Food Network's “Pitmasters” premieres July 13 at 9 p.m. Eastern and Pacific.",
+      "Four competitors are tied to prominent Texas barbecue businesses.",
+      "Nine teams compete in live-fire and barbecue challenges for a $50,000 prize.",
+      "Episodes are scheduled to stream on HBO Max the following day.",
+    ],
+    intro: [
+      "Texas barbecue will have a large presence on Food Network's new competition series “Pitmasters,” with four Lone Star State competitors among the nine teams.",
+      "The program puts regional techniques, fire management, and the personalities behind American barbecue at the center of a national television competition.",
+    ],
+    sections: [
+      {
+        heading: "The Texas pitmasters in the competition",
+        paragraphs: [
+          "The Texas contingent includes Esaul Ramos and Grecia Ramos of 2M Smokehouse in San Antonio; live-fire cook Al Frugoni of Frugoni Open Fire Cooking in Boerne; and Ruben Santana, associated with Barbs-B-Q and Barb Barbecue in the Boerne area.",
+          "Their inclusion reflects several strands of contemporary Texas barbecue: Central Texas-style smoke, South Texas and Mexican American influences, and open-fire cooking that reaches beyond the traditional offset smoker.",
+        ],
+      },
+      {
+        heading: "How the series works",
+        paragraphs: [
+          "Food Network describes “Pitmasters” as a competition built around barbecue and live-fire challenges. Nine teams face tests of technique and creativity, with $50,000 at stake.",
+          "Andrew Zimmern hosts and judges alongside barbecue figures including Jess Pryles, Moe Cason, and Ernest Servantes. The premiere is scheduled for July 13 at 9 p.m. ET/PT, with streaming availability the next day.",
+        ],
+      },
+      {
+        heading: "Why it matters for Texas barbecue",
+        paragraphs: [
+          "Texas barbecue has become both a cultural calling card and a travel draw. National exposure can translate into longer lines and more visitors for featured restaurants, but it also gives viewers a closer look at the craft behind brisket, ribs, sausage, and live-fire cooking.",
+          "The strongest Texas barbecue traditions are not frozen in time. They combine exacting fire control with family histories, regional ingredients, and new ideas. The four Texas competitors give the series several different versions of that story.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "When does “Pitmasters” premiere?", a: "Food Network lists the premiere for July 13 at 9 p.m. ET/PT." },
+      { q: "How many teams compete?", a: "Nine teams compete for a $50,000 prize." },
+      { q: "Can the show be streamed?", a: "Food Network says episodes will be available on HBO Max the day after their television premiere." },
+    ],
+    sources: [
+      { label: "Food Network — Pitmasters", url: "https://www.foodnetwork.com/shows/pitmasters" },
+      { label: "Chron — Texas competitors in Food Network's Pitmasters", url: "https://www.chron.com/food/article/food-network-pitmasters-texas-20398404.php" },
+      { label: "San Antonio Report — San Antonio pitmasters join the competition", url: "https://sanantonioreport.org/san-antonio-pitmasters-food-network-competition/" },
+    ],
+    related: ["living-in-texas"],
+  },
+  "2026-07-06-rangers-texas-rangers-prospect-guide-the-next-stars-of-arlington": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at its exact original address. Prospect rankings and assignments change quickly; this guide reflects MLB Pipeline's 2026 list and club reporting.",
+    keyTakeaways: [
+      "Shortstop Sebastian Walcott remains the system's highest-upside prospect.",
+      "Pitchers Caden Scarborough, AJ Russell, Jose Corniell, and Winston Santos headline the next tier.",
+      "Texas has intriguing two-way and international talent deeper in the system.",
+      "Development timelines can change because of health, performance, and roster needs.",
+    ],
+    intro: [
+      "The Texas Rangers' farm system is built around one of baseball's most exciting young shortstops, but the next wave is broader than one name. A mix of power arms, recent draft selections, and young international hitters is working toward Arlington.",
+      "This guide focuses on the prospects most likely to shape the Rangers' next roster cycle and the development questions that matter most.",
+    ],
+    sections: [
+      {
+        heading: "Sebastian Walcott remains the headline",
+        paragraphs: [
+          "Walcott, signed out of the Bahamas in 2023, has paired elite bat speed and power projection with the ability to handle demanding infield positions. He played a full Double-A season as a teenager, hitting .255 with a .355 on-base percentage, 13 home runs, and 32 stolen bases.",
+          "His path was slowed by internal-brace surgery on his throwing elbow in February 2026. The recovery timetable matters, but it does not erase the rare combination of age, athleticism, and upper-level experience that made him MLB Pipeline's only Rangers prospect in the overall Top 100.",
+        ],
+      },
+      {
+        heading: "The arms behind him",
+        paragraphs: [
+          "Right-hander Caden Scarborough entered the season as MLB Pipeline's second-ranked Rangers prospect. AJ Russell, a 2025 second-round selection, brings another high-upside arm to the lower levels.",
+          "Jose Corniell and Winston Santos are closer to the majors. Corniell opened 2026 with Triple-A Round Rock, while Santos was assigned to Double-A Frisco. David Davalillo, Leandro Lopez, Emiliano Teodo, and Gavin Collyer add different combinations of velocity, breaking stuff, and relief or rotation possibilities.",
+        ],
+      },
+      {
+        heading: "Position players to track",
+        paragraphs: [
+          "Josh Owens offers an unusual shortstop-and-pitcher profile. Yolfran Castillo and Elian Rosario represent younger international upside, while outfielder Dylan Dreiling and versatile infielder Cameron Cauley have reached the upper minors.",
+          "The important distinction is proximity. Upper-level players can become injury replacements or trade pieces quickly; teenagers in rookie ball may carry more upside but require years of development. A healthy system needs both groups.",
+        ],
+      },
+      {
+        heading: "What could change the rankings",
+        paragraphs: [
+          "Prospect lists are snapshots, not guarantees. Health, command, swing decisions, defensive position, and performance against older competition can move a player rapidly. Trades and major-league graduations also reshape the list.",
+          "For Rangers fans, the best checkpoints are Walcott's rehabilitation, the upper-minors pitchers' strike-throwing, and whether the 2025 draft class converts raw stuff into durable professional innings.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Who is the Rangers' top prospect?", a: "MLB Pipeline ranks shortstop Sebastian Walcott first in the Texas system." },
+      { q: "Which prospects are closest to the majors?", a: "Players assigned to Triple-A or Double-A, including Jose Corniell, Cameron Cauley, and Winston Santos, are generally closer, though performance and roster needs determine call-ups." },
+      { q: "Are prospect rankings permanent?", a: "No. Rankings change with health, performance, new draft classes, trades, and major-league graduations." },
+    ],
+    sources: [
+      { label: "MLB Pipeline — Rangers 2026 Top 30", url: "https://www.mlb.com/rangers/news/rangers-top-30-prospects-list-2026-preseason" },
+      { label: "MLB — Rangers prospect assignments", url: "https://www.mlb.com/rangers/news/rangers-prospects-team-assignments-to-open-2026" },
+      { label: "MLB — Rangers prospect statistics", url: "https://www.mlb.com/rangers/prospects/stats/top-prospects" },
+    ],
+    related: ["texas-sports"],
+  },
+  "live-2026-07-02-secretary-of-state-releases-july-3-texas-register-detailing-new-state--m0th5w": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at its original address from the surviving Keep TX Red record and the official July 3 Texas Register issue.",
+    keyTakeaways: [
+      "The Texas Register is the state's official journal for executive-branch rulemaking.",
+      "The July 3 issue contains proposed and adopted rules, public notices, and other agency actions.",
+      "Proposed rules include deadlines and instructions for public participation.",
+      "The Secretary of State publishes the Register weekly.",
+    ],
+    intro: [
+      "The Texas Secretary of State released the July 3 edition of the Texas Register, the weekly publication that records state-agency rulemaking and other official notices.",
+      "The issue gives residents, businesses, local governments, and advocacy groups a central place to see proposed rules before they are adopted, review final rules, and find opportunities for public comment.",
+    ],
+    sections: [
+      {
+        heading: "What appears in the Texas Register",
+        paragraphs: [
+          "The Register is the official journal of Texas state-agency rulemaking. Editions can include proposed rules, adopted rules, emergency rules, withdrawals, reviews of existing rules, attorney general opinions, gubernatorial appointments, and notices from state agencies.",
+          "A proposed rule typically identifies the legal authority for the proposal, explains its expected effects, and tells the public where and when comments may be submitted. An adopted-rule notice records the final text and its effective date.",
+        ],
+      },
+      {
+        heading: "Why the July 3 edition matters",
+        paragraphs: [
+          "Many important state policies do not arrive as stand-alone bills. The Legislature authorizes programs in statute, then agencies write the detailed rules that determine how those programs operate. Those details can affect professional licenses, health and safety standards, environmental permits, insurance, education, and public benefits.",
+          "Reading the Register during the proposal stage gives affected Texans a chance to respond before a rule becomes final. Readers should confirm the comment deadline and submission method in the individual notice.",
+        ],
+      },
+      {
+        heading: "How to follow a rule",
+        paragraphs: [
+          "Start with the table of contents in the July 3 issue, then locate the agency and rule chapter. Record the Texas Register citation, agency contact, comment deadline, and any scheduled hearing.",
+          "Later editions will show whether the proposal was adopted, changed, withdrawn, or allowed to lapse. The Secretary of State also maintains an archive of past issues and access to the Texas Administrative Code, where effective rules are compiled.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "What is the Texas Register?", a: "It is the official state publication for executive-branch rulemaking, notices, and related government actions." },
+      { q: "Can the public comment on proposed rules?", a: "Yes. Proposed-rule notices provide the deadline and instructions for submitting comments; some also announce public hearings." },
+      { q: "How often is it published?", a: "The Secretary of State publishes the Texas Register weekly." },
+    ],
+    sources: [
+      { label: "Texas Secretary of State — July 3, 2026 Texas Register", url: "https://www.sos.state.tx.us/texreg/pdf/backview/0703/0703is.pdf" },
+      { label: "Texas Secretary of State — Texas Register", url: "https://www.sos.state.tx.us/texreg/index.shtml" },
+      { label: "Texas Administrative Code", url: "https://texreg.sos.state.tx.us/public/readtac$ext.ViewTAC" },
+    ],
+    related: ["texas-new-laws-2026", "legislative-updates"],
+  },
+  "live-2026-06-29-the-history-behind-the-texas-stock-tank-name-bxkvg7": {
+    updated: "2026-07-25",
+    editorNote:
+      "Restored at its exact original address from the retained source record. This article independently summarizes the history and meaning of the term without reproducing the source publication.",
+    keyTakeaways: [
+      "A stock tank is a tank or artificial pond used to water livestock.",
+      "In Texas, “tank” commonly describes an excavated or dammed ranch pond as well as a manufactured trough.",
+      "The term reflects the water needs of cattle country and the practical purpose of the feature.",
+      "Modern stock tanks may also support wildlife, fishing, fire protection, or backyard swimming.",
+    ],
+    intro: [
+      "A newcomer may see a small pond in a Texas pasture. A rancher may call the same body of water a stock tank. The difference is not simply a bit of Lone Star slang: the name describes why many of those ponds were built.",
+      "“Stock” means livestock, and a stock tank is a tank or artificial pond used to supply animals with water. In Texas ranch country, the label expanded naturally to include earthen ponds created by excavation or by damming runoff.",
+    ],
+    sections: [
+      {
+        heading: "From livestock water to landscape vocabulary",
+        paragraphs: [
+          "Reliable water has always limited where livestock can graze in a large, drought-prone state. Ranchers built watering points where streams were absent or seasonal. Some were metal, wood, or concrete vessels filled by wells and windmills. Others were excavated basins or small impoundments that captured rain.",
+          "Because both served the same practical purpose—watering stock—the word “tank” could refer to either form. Dictionaries still define a stock tank broadly enough to include an artificial pond, and Texas agricultural publications have long used “stock tank” and “farm pond” side by side.",
+        ],
+      },
+      {
+        heading: "Why Texans say “tank” when others say “pond”",
+        paragraphs: [
+          "Regional vocabulary follows work and landscape. In ranching areas, a small body of water was often identified by its job rather than by a strict engineering category. Calling it a stock tank immediately told a landowner or ranch hand what it was for.",
+          "The wording is especially useful because the feature may not be natural. A creek, spring, or pond can exist without human construction; many stock tanks were deliberately dug, bermed, or supplied to hold water where cattle needed it.",
+        ],
+      },
+      {
+        heading: "The term keeps evolving",
+        paragraphs: [
+          "Today, an earthen stock tank may water cattle, provide wildlife habitat, hold fish, or serve as an emergency water source. The galvanized stock tank has also moved from the feed store to urban backyards, where people convert it into a compact pool.",
+          "Those newer uses can blur the meaning, but the ranching origin remains visible in the name. What sounds like a Texas nickname is really a concise piece of working-land history.",
+        ],
+      },
+    ],
+    faq: [
+      { q: "Is a stock tank the same as a pond?", a: "It can be. In Texas usage, “stock tank” often means an artificial or improved pond used to provide water for livestock." },
+      { q: "Are all stock tanks made of metal?", a: "No. The term can describe a manufactured trough or an earthen pond, depending on context." },
+      { q: "Why is it called “stock”?", a: "“Stock” is short for livestock—the cattle, horses, sheep, or other animals the water source was built to serve." },
+    ],
+    sources: [
+      { label: "Texas Monthly — Origins of the phrase “stock tank”", url: "https://www.texasmonthly.com/culture/origins-of-the-phrase-stock-tank/" },
+      { label: "Merriam-Webster — Stock tank definition", url: "https://www.merriam-webster.com/dictionary/stock%20tank" },
+      { label: "Texas Water Resources Institute — Texas Water archive", url: "https://twri.tamu.edu/media/3967/volume-8-january-february-1982.pdf" },
+      { label: "Texas Parks and Wildlife — Wildlife management practices", url: "https://tpwd.texas.gov/publications/pwdpubs/media/pwd_bk_w7000_0790.pdf" },
+    ],
+    related: ["living-in-texas"],
+  },
+  "moving-to-houston-address-checklist": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Verify property-specific conditions, boundaries, rates, and insurance with the responsible agencies and licensed professionals before making a decision.",
+    keyTakeaways: [
+      "In the Houston region, evaluate the exact address rather than relying on the city name in a listing.",
+      "Research flood exposure, drainage history, and insurance availability before signing a lease or purchase contract.",
+      "Add every taxing unit, utility provider, school district, toll, and insurance quote to the monthly budget.",
+      "Test the commute during the hours you will actually travel.",
+    ],
+    intro: [
+      'Houston offers major employment centers, established neighborhoods, master-planned suburbs, and nearly every style of housing. That variety is useful, but it also makes a broad label such as "Houston area" too imprecise for a relocation decision. Two homes with similar prices can have different flood exposure, school assignments, tax bills, utility providers, insurance costs, and commute times.',
+      "The best Houston search begins with a candidate street address. Use the checklist below before you compare finishes, incentives, or list price.",
+    ],
+    sections: [
+      {
+        heading: "1. Map the exact address",
+        paragraphs: [
+          "First confirm whether the property is inside Houston city limits, another municipality, or an unincorporated area. Then identify the county, school district, emergency-service districts, and any municipal utility district. A Houston mailing address does not answer those questions.",
+          "The [Houston Planning Department's map tools](https://www.houstontx.gov/planning/) provide layers for city limits, districts, neighborhoods, transportation, public safety, and flood hazards. County appraisal records can identify the parcel and its taxing units. Save the results for each address you seriously consider.",
+        ],
+        bullets: [
+          "City and county",
+          "Independent school district and assigned campuses",
+          "Municipal utility district or other special districts",
+          "Water, sewer, electric, gas, and trash providers",
+          "Nearest emergency services, hospitals, and evacuation routes",
+        ],
+      },
+      {
+        heading: "2. Complete flood and insurance research before price negotiations",
+        paragraphs: [
+          "A flood-zone label is only one part of the risk review. Use official maps, ask for the property's flood and drainage history, examine nearby bayous and detention areas, and request insurance quotes for the specific building. Renters should also ask how vehicles and ground-floor belongings are protected.",
+          "The City of Houston maintains an official [Floodplain Management Office portal](https://floodplain.houstontx.gov/). Federal maps, local drainage projects, prior claims information that is legally available, elevation, and the property's construction details can all affect the decision. Homeowners coverage generally does not substitute for a separate flood policy.",
+        ],
+      },
+      {
+        heading: "3. Calculate the complete housing payment",
+        paragraphs: [
+          "Do not compare Houston-area homes using principal and interest alone. Add the county, city, school district, community college, hospital district, and any special-district taxes shown for the parcel. Newer developments may carry substantial district debt or assessments.",
+          "Then add homeowners or renters insurance, any separate wind or flood coverage, homeowners association dues, utility estimates, tolls, and routine maintenance. Use our [Texas Property Tax Calculator](/tax-calculator) for a first estimate and read the [homestead exemption guide](/news/homestead-exemption-explained) before buying a primary residence.",
+        ],
+      },
+      {
+        heading: "4. Test the commute and utility territory",
+        paragraphs: [
+          "Houston's employment is spread among Downtown, the Texas Medical Center, the Energy Corridor, Uptown, Greenway Plaza, the Ship Channel, and suburban job centers. A short distance on a map can become a difficult peak-hour drive. Test a candidate route on the weekday and at the hours you expect to travel, including school drop-off or shift changes.",
+          "Electric service also depends on the address. Many residents can choose a retail electricity plan through the state's [Power to Choose](https://www.powertochoose.org/) marketplace, while some municipal and cooperative territories work differently. Confirm the delivery utility and available provider options rather than assuming the arrangement.",
+        ],
+      },
+      {
+        heading: "5. Use a 30-day arrival plan",
+        bullets: [
+          "Start or transfer utilities and confirm deposit, connection, and trash-service requirements.",
+          "Update your driver license and vehicle registration using the deadlines in the [interactive moving checklist](/moving-checklist).",
+          "Register eligible students with the address-assigned district and campus.",
+          "Update voter registration after a county move.",
+          "If you bought a primary residence, calendar the homestead exemption filing and appraisal-review dates.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Is a Houston mailing address always inside the City of Houston?",
+        a: "No. Postal city names do not reliably establish municipal boundaries, counties, school districts, or service providers. Verify each item using the street address.",
+      },
+      {
+        q: "Does being outside a mapped high-risk flood zone mean flood insurance is unnecessary?",
+        a: "Not necessarily. Maps are one input, and flooding can occur outside higher-risk zones. Review the property history and drainage context, then obtain property-specific advice and quotes.",
+      },
+      {
+        q: "Can I choose any electricity company?",
+        a: "It depends on the service territory. Many Houston-area addresses participate in the competitive retail market, while municipal utilities and cooperatives may not. Check the address before selecting a plan.",
+      },
+    ],
+    sources: [
+      {
+        label: "City of Houston relocation resources",
+        url: "https://www.houstontx.gov/abouthouston/relocation.html",
+      },
+      {
+        label: "Houston Planning Department maps and data",
+        url: "https://www.houstontx.gov/planning/",
+      },
+      {
+        label: "City of Houston Floodplain Management Office",
+        url: "https://floodplain.houstontx.gov/",
+      },
+      {
+        label: "Public Utility Commission of Texas - Power to Choose",
+        url: "https://www.powertochoose.org/",
+      },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+      "texas-grid-ercot-explained",
+    ],
+    cta: { label: "Explore the Houston city page", href: "/houston" },
+  },
+  "moving-to-dallas-fort-worth-guide": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Confirm current taxes, boundaries, transportation costs, and service providers for the exact address.",
+    keyTakeaways: [
+      "Treat Dallas-Fort Worth as one regional economy with many separate job centers and local governments.",
+      "Choose the likely commute first, then compare homes within a realistic travel area.",
+      "Price tolls, property taxes, insurance, utilities, and special districts alongside rent or mortgage.",
+      "Verify the county, municipality, school district, and utility providers for every address.",
+    ],
+    intro: [
+      "Dallas-Fort Worth is not a single-center metro where every commute points downtown. Employment is distributed across Dallas, Fort Worth, Arlington, Irving, Plano, Richardson, Frisco, the airport area, and other hubs. A house that looks centrally located on a regional map may be on the wrong side of the daily trip.",
+      "North Central Texas continued growing rapidly in 2025, with the regional planning agency estimating nearly nine million residents at the start of 2026. Growth creates opportunity, but it can also change road demand, school enrollment, construction patterns, and infrastructure needs. Use current address-level information rather than an old reputation for a suburb.",
+    ],
+    sections: [
+      {
+        heading: "Choose the work corridor before the neighborhood",
+        paragraphs: [
+          "Identify the workplace you expect to visit most often and any second location used by another member of the household. Test routes during actual commute hours and note toll roads, construction, school traffic, and alternatives when a freeway is disrupted.",
+          "If the job may change, compare access to several employment corridors instead of optimizing for one building. Proximity to a freeway entrance is not the same as a predictable commute; the direction and bottleneck matter.",
+        ],
+      },
+      {
+        heading: "Understand the local-government stack",
+        paragraphs: [
+          "The region crosses Dallas, Tarrant, Collin, Denton, and other counties, and contains dozens of municipalities and independent school districts. Each address can have a different combination of tax offices, local services, development rules, school assignments, and special districts.",
+          "Pull the current parcel record from the county appraisal district. List every taxing unit and compare the prior tax bill with an estimate based on the expected purchase price. For a primary home, learn how the [Texas homestead exemption](/news/homestead-exemption-explained) applies after the purchase.",
+        ],
+      },
+      {
+        heading: "Add transportation to the monthly budget",
+        paragraphs: [
+          "DFW households may combine driving, toll roads, commuter rail, light rail, and bus service. The region's systems are operated by different agencies. DART serves Dallas and participating cities, Trinity Metro serves Fort Worth and Tarrant County communities, and DCTA serves Denton County. The Trinity Railway Express links downtown Dallas and Fort Worth.",
+          "Check whether the home and workplace are both convenient to the same service, whether the schedule fits your hours, and how you will cover the first and last mile. For a driving commute, estimate tolls and parking over a full month rather than treating them as occasional costs.",
+        ],
+      },
+      {
+        heading: "Verify schools, utilities, and growth plans",
+        paragraphs: [
+          "A city name does not establish the school district or assigned campus. Use the exact address and confirm directly with the district, particularly near fast-growing attendance boundaries. Ask how new campuses, rezoning, or construction could affect the property.",
+          "Confirm electric, water, sewer, gas, trash, and internet providers before signing. City water rates and deposits vary, and some developments are served by districts or providers that do not match the mailing address. Review planned roads and nearby development using municipal and regional planning documents.",
+        ],
+      },
+      {
+        heading: "A practical DFW comparison sheet",
+        bullets: [
+          "Weekday commute time, tolls, parking, and backup route",
+          "County, city, school district, and every special taxing unit",
+          "Estimated tax bill at the likely purchase price",
+          "Insurance and utility quotes for the address",
+          "Assigned schools and current boundary information",
+          "Transit access, airport access, and expected construction",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Should Dallas and Fort Worth be considered separately?",
+        a: "They are part of one connected economy, but they remain separate cities with distinct job centers, services, and commuting patterns. Compare the whole region, then make an address-level decision.",
+      },
+      {
+        q: "Can I rely on mileage to estimate a DFW commute?",
+        a: "No. Direction, time of day, toll-road access, construction, and bottlenecks can matter more than distance. Test the trip at the hours you expect to travel.",
+      },
+      {
+        q: "Does every DFW address have rail access?",
+        a: "No. Transit service and frequency vary widely by city and corridor. Verify both ends of the trip with the relevant transit agency.",
+      },
+    ],
+    sources: [
+      {
+        label: "North Central Texas Council of Governments - regional population update",
+        url: "https://www.nctcog.org/executive-director/public-affairs/press-releases/north-central-texas-nears-9-million-residents-as-region-adds-more-than-200-000-people-in-one-year",
+      },
+      {
+        label: "NCTCOG public transportation services",
+        url: "https://www.nctcog.org/trans/plan/lumo/transit-management-and-planning/general-public-information/existing-services",
+      },
+      {
+        label: "DART transit services",
+        url: "https://dart.org/guide/transit-and-use/transit-services",
+      },
+      {
+        label: "City of Fort Worth water services",
+        url: "https://www.fortworthtexas.gov/departments/water/services",
+      },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-property-tax-guide",
+      "texas-school-finance-explained",
+      "what-local-governments-control",
+    ],
+    cta: { label: "Explore the Dallas-Fort Worth city page", href: "/dallas-fort-worth" },
+  },
+  "moving-to-san-antonio-guide": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Verify boundaries, utility service, rates, and school assignments for a specific address.",
+    keyTakeaways: [
+      "San Antonio-area decisions change across Bexar, Comal, and Guadalupe counties and across city boundaries.",
+      "Confirm whether CPS Energy and SAWS serve the address; the mailing city alone is not enough.",
+      "Test travel around Loop 1604, I-10, I-35, and US 281 during the hours you expect to use them.",
+      "Compare school boundaries, taxing units, water service, and special districts before choosing a home.",
+    ],
+    intro: [
+      "San Antonio combines a large central city with established inner suburbs, military communities, and fast-growing corridors toward Boerne, New Braunfels, Schertz, and Cibolo. The region can offer more space than some other Texas metros, but a lower list price does not replace address-level research.",
+      "Start with the likely job location, then identify the county, municipality, school district, utility territory, and full property-tax stack for each candidate address.",
+    ],
+    sections: [
+      {
+        heading: "Match the home to the daily travel pattern",
+        paragraphs: [
+          "Major destinations include Downtown, the South Texas Medical Center, Joint Base San Antonio locations, Port San Antonio, and employment corridors along I-10 and I-35. A household connected to more than one of these should test both trips.",
+          "Loop 1604, I-10, I-35, and US 281 are useful organizing lines, but construction and peak demand can change travel times. Drive the route on a normal weekday and identify a backup before deciding that a community is close enough.",
+        ],
+      },
+      {
+        heading: "Confirm the county, city, and school district",
+        paragraphs: [
+          "The broader region crosses Bexar, Comal, and Guadalupe counties, with multiple cities and independent school districts. A San Antonio-area mailing label does not determine municipal services or school assignment.",
+          "Use the county appraisal district to identify the parcel and taxing units, then verify the assigned campus directly with the school district. If buying, estimate taxes using the expected purchase price and review [homestead exemption filing guidance](/news/homestead-exemption-explained).",
+        ],
+      },
+      {
+        heading: "Know how public utilities work",
+        paragraphs: [
+          "The City of San Antonio owns CPS Energy and the San Antonio Water System. Those organizations provide important electric, gas, water, and wastewater service in their territories, with city oversight of rates. Addresses outside their service areas may use other utilities, cooperatives, or districts.",
+          "Before signing, check the actual provider, connection process, deposits, current rates, water restrictions, and average use for a similar property. Large lots, irrigation, older air-conditioning equipment, and pool ownership can materially change a monthly estimate.",
+        ],
+      },
+      {
+        heading: "Review water, development, and special districts",
+        paragraphs: [
+          "Fast-growing edges of the metro may have newer infrastructure, active construction, or special districts that affect taxes and utility costs. Ask who owns and maintains the roads, drainage, water, sewer, and emergency-service infrastructure.",
+          "Review current water rules with the serving utility and determine whether the property uses municipal service, a district, or a well. Do not assume that practices at one San Antonio-area address apply to another community.",
+        ],
+      },
+      {
+        heading: "Your San Antonio due-diligence list",
+        bullets: [
+          "Job-center commute at the real travel time",
+          "County, municipality, school district, and assigned campus",
+          "CPS Energy, SAWS, or alternative service providers",
+          "All property-taxing units and special-district obligations",
+          "Water rules, drainage context, insurance, and utility estimates",
+          "Vehicle, voter, school, and homestead tasks after arrival",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Do all San Antonio-area homes use CPS Energy and SAWS?",
+        a: "No. Service depends on the address and utility territory. Confirm electric, gas, water, and wastewater providers before signing.",
+      },
+      {
+        q: "Is a San Antonio mailing address always in Bexar County?",
+        a: "No. The wider market reaches neighboring counties, and postal labels do not establish county or city boundaries. Verify the parcel.",
+      },
+      {
+        q: "What is the most important commute check?",
+        a: "Test the actual home-to-work route on a typical weekday at the time you expect to travel, including any military gate, school, or construction delays relevant to the trip.",
+      },
+    ],
+    sources: [
+      {
+        label: "City of San Antonio Public Utilities Division",
+        url: "https://www.sa.gov/Directory/Departments/Finance/About/Divisions/Public-Utilities",
+      },
+      { label: "CPS Energy", url: "https://www.cpsenergy.com/" },
+      { label: "San Antonio Water System", url: "https://www.saws.org/" },
+      { label: "VIA Metropolitan Transit", url: "https://www.viainfo.net/" },
+      { label: "Bexar Appraisal District", url: "https://www.bcad.org/" },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-water-rights-explained",
+      "texas-property-tax-guide",
+      "texas-school-finance-explained",
+    ],
+    cta: { label: "Explore the San Antonio city page", href: "/san-antonio" },
+  },
+  "moving-to-austin-guide": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Verify current boundaries, taxes, utility service, school assignments, and transportation conditions for the exact address.",
+    keyTakeaways: [
+      "Compare Austin-area homes by total monthly cost, not rent or mortgage alone.",
+      "Verify whether an address is inside Austin city limits and which county, school district, and utility territory serves it.",
+      "Test the commute to the actual job corridor and include tolls, parking, and time in the budget.",
+      "Confirm water and electric service before assuming a City of Austin account applies.",
+    ],
+    intro: [
+      "The Austin market extends far beyond the central city into Travis, Williamson, and Hays counties. Round Rock, Cedar Park, Pflugerville, Georgetown, Buda, Kyle, and other communities connect to the same regional economy while operating under different local governments, tax structures, school districts, and utilities.",
+      "That makes an address-level budget essential. A less expensive home farther from work can become more costly after property taxes, tolls, utilities, insurance, and hours spent commuting.",
+    ],
+    sections: [
+      {
+        heading: "Build the full monthly cost",
+        paragraphs: [
+          "For buyers, estimate the property-tax bill from the expected purchase price and all taxing units, not only the seller's prior bill. Add homeowners insurance, homeowners association dues, utility estimates, maintenance, tolls, and parking. For renters, include utility setup, recurring fees, parking, insurance, and commute costs.",
+          "Use our [property-tax calculator](/tax-calculator) for an initial comparison and read the [homestead exemption guide](/news/homestead-exemption-explained) before purchasing a primary residence.",
+        ],
+      },
+      {
+        heading: "Locate the address within the region",
+        paragraphs: [
+          "Confirm the county, city limits, school district, and any special districts. Some addresses described as Austin may be outside the city limits or in an extraterritorial area, while nearby cities provide their own services and rules.",
+          "Pull the parcel from the relevant appraisal district and verify school assignment directly with the district. Review planned roads, development, and nearby infrastructure with the responsible city and county.",
+        ],
+      },
+      {
+        heading: "Verify utilities instead of assuming",
+        paragraphs: [
+          "A City of Austin utility bill can combine electric, water, wastewater, solid waste, drainage, and street-service charges, depending on the account and location. That does not mean every Austin-area property receives the same bundle or uses the same providers.",
+          "Ask for the serving electric utility, water and wastewater provider, trash provider, connection requirements, current rates, and prior usage where available. Austin Energy, electric cooperatives, municipal providers, retail electric arrangements in some territories, Austin Water, and other water systems may serve different parts of the region.",
+        ],
+      },
+      {
+        heading: "Test the job corridor and transportation choices",
+        paragraphs: [
+          "Employment destinations include Downtown and the Capitol area, the University of Texas, North Austin technology corridors, Round Rock, and growing southern and eastern areas. Test the exact route at the time you expect to travel rather than relying on a weekend map estimate.",
+          "Include tolls, parking, transit frequency, and a backup route. CapMetro operates regional bus and rail services, but usefulness depends on both ends of a specific trip. A nearby stop is valuable only if its route and schedule fit the household.",
+        ],
+      },
+      {
+        heading: "Complete the move in the right order",
+        bullets: [
+          "Confirm all utility providers before the move-in date.",
+          "Use the [interactive moving checklist](/moving-checklist) for license, vehicle, voter, and school tasks.",
+          "Record the county appraisal district and all taxing units.",
+          "If buying a primary home, prepare the homestead exemption filing.",
+          "Recheck school boundaries and transportation plans before enrollment.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Is every Austin mailing address inside Austin city limits?",
+        a: "No. Mailing addresses and real-estate descriptions can cover properties outside the city. Verify the municipal boundary, county, and service providers by address.",
+      },
+      {
+        q: "Will every Austin-area resident receive one City of Austin utility bill?",
+        a: "No. The billing arrangement and providers depend on the service territory. Confirm electricity, water, wastewater, trash, and other services separately.",
+      },
+      {
+        q: "Which Austin-area county is best?",
+        a: "There is no universal answer. Travis, Williamson, and Hays County addresses can differ in commute, taxes, services, schools, and housing. Compare those factors for the household's needs.",
+      },
+    ],
+    sources: [
+      {
+        label: "City of Austin utility billing",
+        url: "https://www.austintexas.gov/services/pay-utility-bill",
+      },
+      {
+        label: "Austin Water customer service",
+        url: "https://www.austintexas.gov/water/divisions/customer-service",
+      },
+      {
+        label: "Austin Transportation and Public Works",
+        url: "https://www.austintexas.gov/transportation-public-works",
+      },
+      { label: "CapMetro", url: "https://www.capmetro.org/" },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-property-tax-guide",
+      "texas-water-rights-explained",
+      "texas-grid-ercot-explained",
+    ],
+    cta: { label: "Explore the Austin city page", href: "/austin" },
+  },
+  "moving-to-el-paso-guide": {
+    updated: "2026-07-23",
+    editorNote:
+      "This is an original Keep TX Red relocation guide built from official public resources. Verify current vehicle, utility, tax, school, and installation-access requirements before acting.",
+    keyTakeaways: [
+      "Choose among west, central, northeast, east, and lower-valley areas based on the real daily commute.",
+      "Vehicles registered in El Paso County remain subject to emissions requirements; check the current process before registration.",
+      "Budget for desert cooling, water use, insurance, taxes, and the serving utilities at the exact address.",
+      "Military households should verify Fort Bliss access and travel time from the chosen neighborhood.",
+    ],
+    intro: [
+      "El Paso is geographically and economically distinct from the larger Texas metros. Fort Bliss, international trade, logistics, health care, government, and cross-border family ties shape the region. Its mountain geography and long east-west travel corridors also make neighborhood choice especially practical: the right side of the city can simplify daily life.",
+      "Use the exact address to compare commute, county and city services, school boundaries, utilities, taxes, and vehicle requirements before you commit.",
+    ],
+    sections: [
+      {
+        heading: "Start with the daily destination",
+        paragraphs: [
+          "Map the likely route to Fort Bliss, Downtown, a port of entry, the airport, a hospital, school, or other workplace. Then test the trip at the actual travel time. Mountain crossings, freeway construction, military gates, and school traffic can make two addresses with similar mileage perform differently.",
+          "If the household regularly crosses the border, research the relevant port, operating conditions, documentation, and backup plans separately. Do not let an occasional trip outweigh the commute used every weekday.",
+        ],
+      },
+      {
+        heading: "Plan vehicle registration and emissions testing",
+        paragraphs: [
+          "The El Paso County Tax Assessor-Collector handles local vehicle title and registration services. The county states that vehicles registered in El Paso County remain subject to emissions inspections. Review the current inspection and registration instructions before the move so an out-of-state vehicle does not create a last-minute delay.",
+          "Use our [Find My DMV and vehicle registration guide](/find-my-dmv) to organize the process, then confirm office locations, documents, fees, and current emissions rules through the official county and Texas Department of Motor Vehicles pages.",
+        ],
+      },
+      {
+        heading: "Budget for a desert home",
+        paragraphs: [
+          "Ask for prior electric and water usage where available, identify the cooling system, and note insulation, window exposure, shade, landscaping, and irrigation. A home's size and equipment can matter as much as the neighborhood.",
+          "Confirm the water, wastewater, electric, gas, and trash providers for the address. Review current conservation rules with El Paso Water and ask how drainage, elevation, and the lot's construction affect the property. Desert conditions reduce some risks but do not eliminate property-specific drainage concerns.",
+        ],
+      },
+      {
+        heading: "Verify taxes, schools, and local services",
+        paragraphs: [
+          "Identify whether the home is in El Paso, Horizon City, Socorro, San Elizario, Anthony, or an unincorporated area, then verify the school district and assigned campus. Use the county appraisal record to list every taxing unit and estimate the bill at the likely purchase price.",
+          "Military households should also confirm school, health-care, and installation-access procedures through official Fort Bliss resources. Rules can change, and access assumptions should not rest on a listing description or an informal map.",
+        ],
+      },
+      {
+        heading: "El Paso arrival checklist",
+        bullets: [
+          "Verify the commute and any Fort Bliss gate or port-of-entry considerations.",
+          "Confirm emissions, title, registration, and driver-license requirements.",
+          "Start utilities and learn current water-conservation rules.",
+          "Verify school assignment and county or municipal services.",
+          "Update voter registration and, for buyers, prepare a homestead exemption filing.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "Do El Paso County vehicles need an emissions inspection?",
+        a: "El Paso County states that vehicles registered in the county remain subject to emissions inspections. Check the current official requirements for your vehicle before registration.",
+      },
+      {
+        q: "Should I choose an El Paso neighborhood only by distance?",
+        a: "No. Mountain crossings, freeway access, construction, military gates, and the direction of travel affect the real commute. Test the route at the expected time.",
+      },
+      {
+        q: "What utility information should I request?",
+        a: "Confirm every serving provider, current rates and setup rules, and prior electric and water usage when available. Also inspect the cooling system, insulation, irrigation, and landscaping.",
+      },
+    ],
+    sources: [
+      {
+        label: "El Paso County Tax Assessor-Collector",
+        url: "https://www.epcounty.com/240/Tax-Assessor-Collector",
+      },
+      {
+        label: "Texas Department of Motor Vehicles - El Paso County offices",
+        url: "https://www.txdmv.gov/tax-assessor-collectors/county-tax-offices/elpaso",
+      },
+      { label: "El Paso Water", url: "https://www.epwater.org/" },
+      { label: "Sun Metro", url: "https://sunmetro.net/" },
+      { label: "Fort Bliss", url: "https://home.army.mil/bliss/" },
+    ],
+    related: [
+      "moving-to-texas-guide",
+      "texas-border-geography-101",
+      "texas-property-tax-guide",
+      "texas-water-rights-explained",
+    ],
+    cta: { label: "Explore the El Paso city page", href: "/el-paso" },
+  },
   "moving-to-texas-guide": {
     updated: "2026-07-09",
     intro: [
@@ -115,7 +1710,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         heading: "A Practical First-90-Days Checklist",
         paragraphs: [
           "1. Register your vehicle within 30 days and get a Texas driver's license within 90 days — use [Find My DMV](/find-my-dmv) to locate both offices.",
-          "2. File your homestead exemption the moment you close on a home — most counties tie the deadline to January 1 of the following tax year.",
+          "2. File your homestead exemption with the county appraisal district after you acquire and occupy the home. The general application deadline is before May 1, and late-filing rules may apply.",
           "3. Register to vote and mark your calendar for the March primary, not just the November general.",
           "4. Shop your electricity plan if you're in ERCOT territory.",
           "5. Look up your county appraisal district and set a reminder for protest season, typically April–May.",
@@ -148,7 +1743,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "TxDMV: New to Texas", url: "https://www.txdmv.gov/motorists/new-to-texas" },
-      { label: "Texas DPS: Moving to Texas", url: "https://www.dps.texas.gov/section/driver-license/moving-texas" },
+      {
+        label: "Texas DPS: Moving to Texas",
+        url: "https://www.dps.texas.gov/section/driver-license/moving-texas",
+      },
       {
         label: "Texas Comptroller: Homestead Exemption Form 50-114",
         url: "https://comptroller.texas.gov/forms/50-114.pdf",
@@ -191,7 +1789,9 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sections: [
       {
         heading: "The Three-Step Formula",
-        paragraphs: ["Every Texas property tax bill follows the same arithmetic, no matter which county you live in:"],
+        paragraphs: [
+          "Every Texas property tax bill follows the same arithmetic, no matter which county you live in:",
+        ],
         bullets: [
           "Step 1 — Appraised value: your County Appraisal District (CAD) sets a market value as of January 1.",
           "Step 2 — Taxable value: subtract exemptions (homestead, over-65, disabled veteran) to get the value actually taxed.",
@@ -233,13 +1833,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Comptroller — Property Tax Basics", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      {
+        label: "Texas Comptroller — Property Tax Basics",
+        url: "https://comptroller.texas.gov/taxes/property-tax/",
+      },
       {
         label: "Texas Tax Code Chapter 11 (Exemptions)",
         url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.11.htm",
       },
     ],
-    related: ["homestead-exemption-explained", "appraisal-protest-playbook", "county-appraisal-districts-explained"],
+    related: [
+      "homestead-exemption-explained",
+      "appraisal-protest-playbook",
+      "county-appraisal-districts-explained",
+    ],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
   },
 
@@ -247,14 +1854,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     updated: "2026-06-10",
     editorNote: "Updated June 2026 by the Keep TX Red editorial team.",
     intro: [
-      "If you own and occupy your home in Texas as of January 1, you are leaving money on the table every year you do not file a homestead exemption. The $100,000 school-district exemption alone is worth roughly $1,000 a year for most homeowners — and filing is free.",
+      "If you own and occupy a Texas home as your principal residence, you may be leaving money on the table every year you do not file a homestead exemption. The $140,000 school-district exemption can produce meaningful annual savings, depending on the local school tax rate, and filing with the county appraisal district is free.",
       "Here is exactly what the exemption does, who qualifies, and how to file with your County Appraisal District.",
     ],
     sections: [
       {
         heading: "What the Exemption Actually Does",
         bullets: [
-          "Removes $100,000 from the value taxed by your school district (the largest line on your bill).",
+          "Removes $140,000 from the value taxed by your school district (the largest line on many Texas property-tax bills).",
           "Removes $3,000 from county road-and-bridge value (in counties that levy it).",
           "Caps annual taxable-value growth at 10% per year, even when market values surge.",
         ],
@@ -262,7 +1869,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         heading: "Extra Exemptions Most People Miss",
         bullets: [
-          "Over-65 or disabled: additional $10,000 school exemption plus a ceiling that freezes the school-tax dollar amount.",
+          "Age 65 or older or disabled: an additional $60,000 school exemption plus a school-tax ceiling for qualifying homeowners.",
           "100% disabled veteran: full exemption on the homestead.",
           "Surviving spouse of a first responder killed in the line of duty: full exemption.",
         ],
@@ -289,13 +1896,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Form 50-114 — Residence Homestead Application", url: "https://comptroller.texas.gov/forms/50-114.pdf" },
+      {
+        label: "Form 50-114 — Residence Homestead Application",
+        url: "https://comptroller.texas.gov/forms/50-114.pdf",
+      },
       {
         label: "Texas Comptroller — Homestead Exemptions",
         url: "https://comptroller.texas.gov/taxes/property-tax/exemptions/residence-homestead.php",
       },
     ],
-    related: ["texas-property-tax-guide", "appraisal-protest-playbook", "county-appraisal-districts-explained"],
+    related: [
+      "texas-property-tax-guide",
+      "appraisal-protest-playbook",
+      "county-appraisal-districts-explained",
+    ],
     cta: { label: "Calculate Your Savings", href: "/tax-calculator" },
   },
 
@@ -343,9 +1957,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
-      { label: "Texas Constitution Article III", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm" },
+      {
+        label: "Texas Constitution Article III",
+        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.3.htm",
+      },
     ],
-    related: ["texas-political-terminology", "texas-constitutional-amendments-guide", "speaker-special-session"],
+    related: [
+      "texas-political-terminology",
+      "texas-constitutional-amendments-guide",
+      "speaker-special-session",
+    ],
     cta: { label: "Find Your Representative", href: "/find-representative" },
   },
 
@@ -394,7 +2015,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.172.htm",
       },
     ],
-    related: ["beginners-guide-texas-elections", "texas-voter-registration-guide", "voter-id-surge"],
+    related: [
+      "beginners-guide-texas-elections",
+      "texas-voter-registration-guide",
+      "voter-id-surge",
+    ],
     cta: { label: "Find Your Polling Place", href: "/voting-locations" },
   },
 
@@ -424,7 +2049,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         q: "Why are there so many May elections?",
         a: "Texas law lets local governments (ISDs, cities, MUDs) hold elections on uniform May or November dates. Most pick May to depress turnout and let core voters decide.",
       },
-      { q: "When do I vote on judges?", a: "Texas elects most judges in partisan November elections." },
+      {
+        q: "When do I vote on judges?",
+        a: "Texas elects most judges in partisan November elections.",
+      },
     ],
     sources: [
       {
@@ -432,7 +2060,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://www.sos.state.tx.us/elections/voter/important-election-dates.shtml",
       },
     ],
-    related: ["primary-vs-general-election", "texas-voter-registration-guide", "texas-school-board-powers"],
+    related: [
+      "primary-vs-general-election",
+      "texas-voter-registration-guide",
+      "texas-school-board-powers",
+    ],
     cta: { label: "Check County Election Pages", href: "/county-elections" },
   },
 
@@ -478,7 +2110,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Vote Texas — Register to Vote", url: "https://www.votetexas.gov/register-to-vote/" },
+      {
+        label: "Vote Texas — Register to Vote",
+        url: "https://www.votetexas.gov/register-to-vote/",
+      },
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/elections/" },
     ],
     related: ["primary-vs-general-election", "beginners-guide-texas-elections", "voter-id-surge"],
@@ -525,7 +2160,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.11.htm",
       },
     ],
-    related: ["school-board-elections", "texas-school-finance-explained", "school-choice-esa-guide"],
+    related: [
+      "school-board-elections",
+      "texas-school-finance-explained",
+      "school-choice-esa-guide",
+    ],
     cta: { label: "Find Your School Board Race", href: "/county-elections" },
   },
 
@@ -611,9 +2250,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         label: "Texas Comptroller — Appraisal Districts",
         url: "https://comptroller.texas.gov/taxes/property-tax/cad/",
       },
-      { label: "Tax Code Chapter 41 (Local Review)", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm" },
+      {
+        label: "Tax Code Chapter 41 (Local Review)",
+        url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm",
+      },
     ],
-    related: ["appraisal-protest-playbook", "texas-property-tax-guide", "homestead-exemption-explained"],
+    related: [
+      "appraisal-protest-playbook",
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+    ],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
   },
 
@@ -631,7 +2277,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
             ["County", "Sheriff, jail, district courts, roads", "Property tax"],
             ["City", "Police, fire, zoning, water", "Property + sales tax"],
             ["ISD", "K-12 education", "Property tax (largest share)"],
-            ["MUD", "Water and sewer in unincorporated growth areas", "Property tax + utility fees"],
+            [
+              "MUD",
+              "Water and sewer in unincorporated growth areas",
+              "Property tax + utility fees",
+            ],
             ["Special District", "Hospitals, EMS, community college", "Property tax"],
           ],
         },
@@ -649,9 +2299,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Texas Association of Counties", url: "https://www.county.org/" },
-      { label: "Texas Comptroller — Local Government", url: "https://comptroller.texas.gov/economy/local/" },
+      {
+        label: "Texas Comptroller — Local Government",
+        url: "https://comptroller.texas.gov/economy/local/",
+      },
     ],
-    related: ["how-texas-counties-spend", "texas-property-tax-guide", "county-appraisal-districts-explained"],
+    related: [
+      "how-texas-counties-spend",
+      "texas-property-tax-guide",
+      "county-appraisal-districts-explained",
+    ],
     cta: { label: "See What Your County Charges", href: "/tax-calculator" },
   },
 
@@ -729,8 +2386,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "TEA — School Finance", url: "https://tea.texas.gov/finance-and-grants/state-funding" },
-      { label: "Education Code Chapter 48", url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.48.htm" },
+      {
+        label: "TEA — School Finance",
+        url: "https://tea.texas.gov/finance-and-grants/state-funding",
+      },
+      {
+        label: "Education Code Chapter 48",
+        url: "https://statutes.capitol.texas.gov/Docs/ED/htm/ED.48.htm",
+      },
     ],
     related: ["texas-school-board-powers", "school-choice-esa-guide", "isd-tax-burdens"],
     cta: { label: "See School Tax Burdens by County", href: "/tax-calculator" },
@@ -756,7 +2419,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "What is 'chub'?", a: "House slang for talking a bill to death as a procedural deadline approaches." },
+      {
+        q: "What is 'chub'?",
+        a: "House slang for talking a bill to death as a procedural deadline approaches.",
+      },
       {
         q: "What is the 'Local & Consent Calendar'?",
         a: "The House calendar for non-controversial bills, debated under time-limited rules.",
@@ -766,7 +2432,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       { label: "Texas House Rules", url: "https://capitol.texas.gov/" },
       { label: "Glossary of Legislative Terms", url: "https://www.tlc.texas.gov/" },
     ],
-    related: ["how-a-bill-becomes-texas-law", "texas-constitutional-amendments-guide", "speaker-special-session"],
+    related: [
+      "how-a-bill-becomes-texas-law",
+      "texas-constitutional-amendments-guide",
+      "speaker-special-session",
+    ],
     cta: { label: "Browse the Full Glossary", href: "/glossary" },
   },
 
@@ -806,7 +2476,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         label: "Texas Association of Counties — Budgets",
         url: "https://www.county.org/Education-Training/County-Budgets",
       },
-      { label: "Texas Comptroller — Local Finances", url: "https://comptroller.texas.gov/transparency/local/" },
+      {
+        label: "Texas Comptroller — Local Finances",
+        url: "https://comptroller.texas.gov/transparency/local/",
+      },
     ],
     related: ["what-local-governments-control", "texas-property-tax-guide"],
     cta: { label: "Calculate Your County Tax", href: "/tax-calculator" },
@@ -880,7 +2553,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Legislative Reference Library — Amendments", url: "https://lrl.texas.gov/legis/constAmends/" },
+      {
+        label: "Texas Legislative Reference Library — Amendments",
+        url: "https://lrl.texas.gov/legis/constAmends/",
+      },
       { label: "Texas Constitution", url: "https://statutes.capitol.texas.gov/?link=CN" },
     ],
     related: ["how-a-bill-becomes-texas-law", "texas-political-terminology"],
@@ -922,8 +2598,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
           headers: ["Violation", "Remedy"],
           rows: [
             ["No 72-hour notice", "Action taken at the meeting is voidable in district court"],
-            ["Walking quorum (members meeting in groups to dodge OMA)", "Criminal misdemeanor under §551.143"],
-            ["Improperly withheld records", "Sue in district court for mandamus and attorney's fees"],
+            [
+              "Walking quorum (members meeting in groups to dodge OMA)",
+              "Criminal misdemeanor under §551.143",
+            ],
+            [
+              "Improperly withheld records",
+              "Sue in district court for mandamus and attorney's fees",
+            ],
           ],
         },
       },
@@ -951,9 +2633,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         label: "Texas Government Code Ch. 552 — Public Information",
         url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.552.htm",
       },
-      { label: "Attorney General — Open Government", url: "https://www.texasattorneygeneral.gov/open-government" },
+      {
+        label: "Attorney General — Open Government",
+        url: "https://www.texasattorneygeneral.gov/open-government",
+      },
     ],
-    related: ["how-a-bill-becomes-texas-law", "what-local-governments-control", "texas-school-board-powers"],
+    related: [
+      "how-a-bill-becomes-texas-law",
+      "what-local-governments-control",
+      "texas-school-board-powers",
+    ],
     cta: { label: "Find Your Local Officials", href: "/find-representative" },
   },
 
@@ -1015,9 +2704,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         label: "Texas Constitution Article 8 §24-a (Income Tax Prohibition)",
         url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.8.htm",
       },
-      { label: "Tax Foundation — State Tax Climate Index", url: "https://taxfoundation.org/research/state-tax/" },
+      {
+        label: "Tax Foundation — State Tax Climate Index",
+        url: "https://taxfoundation.org/research/state-tax/",
+      },
     ],
-    related: ["texas-property-tax-guide", "what-local-governments-control", "how-texas-counties-spend"],
+    related: [
+      "texas-property-tax-guide",
+      "what-local-governments-control",
+      "how-texas-counties-spend",
+    ],
     cta: { label: "Estimate Your Property Tax", href: "/tax-calculator" },
   },
   "texas-attorney-general-powers": {
@@ -1085,7 +2781,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Office of the Texas Attorney General", url: "https://www.texasattorneygeneral.gov/" },
+      {
+        label: "Office of the Texas Attorney General",
+        url: "https://www.texasattorneygeneral.gov/",
+      },
       {
         label: "Texas Constitution Article 4 (Executive Department)",
         url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.4.htm",
@@ -1095,7 +2794,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://statutes.capitol.texas.gov/Docs/GV/htm/GV.402.htm",
       },
     ],
-    related: ["texas-governor-powers", "how-a-bill-becomes-texas-law", "texas-open-meetings-public-info"],
+    related: [
+      "texas-governor-powers",
+      "how-a-bill-becomes-texas-law",
+      "texas-open-meetings-public-info",
+    ],
     cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
   },
   "texas-governor-powers": {
@@ -1175,7 +2878,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://lrl.texas.gov/legeLeaders/governors/",
       },
     ],
-    related: ["texas-attorney-general-powers", "how-a-bill-becomes-texas-law", "texas-constitutional-amendments-guide"],
+    related: [
+      "texas-attorney-general-powers",
+      "how-a-bill-becomes-texas-law",
+      "texas-constitutional-amendments-guide",
+    ],
     cta: { label: "Meet Your Texas Representatives", href: "/representatives" },
   },
 
@@ -1289,7 +2996,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
       { label: "Texas Department of Public Safety", url: "https://www.dps.texas.gov/" },
       { label: "Texas Military Department", url: "https://tmd.texas.gov/" },
-      { label: "Senate Bill 4 (88R)", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=88R&Bill=SB4" },
+      {
+        label: "Senate Bill 4 (88R)",
+        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=88R&Bill=SB4",
+      },
       {
         label: "U.S. Customs and Border Protection — Southwest Border Sectors",
         url: "https://www.cbp.gov/newsroom/stats/southwest-land-border-encounters",
@@ -1474,12 +3184,18 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         table: {
           headers: ["If you don't have an accepted ID", "What to do"],
           rows: [
-            ["Forgot it at home", "Cast a provisional ballot; bring ID to county registrar within 6 days."],
+            [
+              "Forgot it at home",
+              "Cast a provisional ballot; bring ID to county registrar within 6 days.",
+            ],
             [
               "Lost or stolen",
               "Sign a Reasonable Impediment Declaration and present a supporting document (utility bill, paycheck, bank statement).",
             ],
-            ["Never had one", "Apply for a free Election Identification Certificate at any DPS office."],
+            [
+              "Never had one",
+              "Apply for a free Election Identification Certificate at any DPS office.",
+            ],
           ],
         },
       },
@@ -1559,17 +3275,26 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     ],
     sources: [
       { label: "Texas Secretary of State — VoteTexas.gov", url: "https://www.votetexas.gov/" },
-      { label: "Texas Secretary of State — My Voter Portal", url: "https://teamrv-mvp.sos.texas.gov/MVP/" },
-      { label: "Texas Election Code", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.toc.htm" },
+      {
+        label: "Texas Secretary of State — My Voter Portal",
+        url: "https://teamrv-mvp.sos.texas.gov/MVP/",
+      },
+      {
+        label: "Texas Election Code",
+        url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.toc.htm",
+      },
       {
         label: "DPS — Election Identification Certificate",
         url: "https://www.dps.texas.gov/section/driver-license/election-identification-certificate-eic",
       },
     ],
-    related: ["texas-voter-registration-guide", "primary-vs-general-election", "beginners-guide-texas-elections"],
+    related: [
+      "texas-voter-registration-guide",
+      "primary-vs-general-election",
+      "beginners-guide-texas-elections",
+    ],
     cta: { label: "Find Your Polling Place", href: "/voting-locations" },
   },
-
 
   "speaker-special-session": {
     updated: "2026-06-23",
@@ -1637,7 +3362,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
     ],
-    related: ["property-tax-relief-package", "texas-property-tax-guide", "how-a-bill-becomes-texas-law"],
+    related: [
+      "property-tax-relief-package",
+      "texas-property-tax-guide",
+      "how-a-bill-becomes-texas-law",
+    ],
     cta: { label: "Contact Your Legislator", href: "/contact-legislators" },
     keyTakeaways: [
       "A special session is increasingly likely if appraisal caps aren't paired with compression.",
@@ -1715,7 +3444,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
         url: "https://comptroller.texas.gov/taxes/property-tax/",
       },
     ],
-    related: ["texas-property-tax-guide", "homestead-exemption-explained", "speaker-special-session"],
+    related: [
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+      "speaker-special-session",
+    ],
     cta: { label: "Estimate Your Savings", href: "/tax-calculator" },
     keyTakeaways: [
       "Largest single tax cut in Texas history at $18 billion.",
@@ -1782,14 +3515,21 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/operationlonestar" },
+      {
+        label: "Texas Governor — Operation Lone Star",
+        url: "https://gov.texas.gov/operationlonestar",
+      },
       { label: "Texas DPS — Border Security", url: "https://www.dps.texas.gov/" },
       {
         label: "U.S. Constitution Article I, Section 10",
         url: "https://constitution.congress.gov/constitution/article-1/",
       },
     ],
-    related: ["border-security-state-role", "texas-political-terminology", "how-a-bill-becomes-texas-law"],
+    related: [
+      "border-security-state-role",
+      "texas-political-terminology",
+      "how-a-bill-becomes-texas-law",
+    ],
     cta: { label: "Read Our Border Coverage", href: "/news" },
     keyTakeaways: [
       "Operation Lone Star has expanded to 168 miles of barrier and 9,000+ personnel.",
@@ -1858,8 +3598,14 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Secretary of State — Elections", url: "https://www.sos.state.tx.us/elections/" },
-      { label: "Texas Election Code Chapter 13", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.13.htm" },
+      {
+        label: "Texas Secretary of State — Elections",
+        url: "https://www.sos.state.tx.us/elections/",
+      },
+      {
+        label: "Texas Election Code Chapter 13",
+        url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.13.htm",
+      },
     ],
     related: ["school-board-elections", "primary-vs-general-election", "how-to-register-and-vote"],
     cta: { label: "Register to Vote", href: "/register-to-vote" },
@@ -1933,7 +3679,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sources: [
       { label: "Texas Education Agency", url: "https://tea.texas.gov/" },
       { label: "Texas Association of School Boards", url: "https://www.tasb.org/" },
-      { label: "Texas Election Code Chapter 41", url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.41.htm" },
+      {
+        label: "Texas Election Code Chapter 41",
+        url: "https://statutes.capitol.texas.gov/Docs/EL/htm/EL.41.htm",
+      },
     ],
     related: ["school-choice-esa-guide", "voter-id-surge", "primary-vs-general-election"],
     cta: { label: "Find Your Ballot", href: "/voting-locations" },
@@ -2006,13 +3755,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Education Agency — Financial Data", url: "https://tea.texas.gov/finance-and-grants" },
+      {
+        label: "Texas Education Agency — Financial Data",
+        url: "https://tea.texas.gov/finance-and-grants",
+      },
       {
         label: "Texas Comptroller — School District Property Values",
         url: "https://comptroller.texas.gov/taxes/property-tax/",
       },
     ],
-    related: ["texas-property-tax-guide", "property-tax-relief-package", "appraisal-protest-playbook"],
+    related: [
+      "texas-property-tax-guide",
+      "property-tax-relief-package",
+      "appraisal-protest-playbook",
+    ],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
     keyTakeaways: [
       "Fast-growing suburban counties top the ISD tax burden list.",
@@ -2077,9 +3833,16 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sources: [
       { label: "Texas Railroad Commission", url: "https://www.rrc.texas.gov/" },
       { label: "EIA — Permian Basin Data", url: "https://www.eia.gov/petroleum/drilling/" },
-      { label: "Texas Comptroller — Severance Tax", url: "https://comptroller.texas.gov/economy/economic-data/" },
+      {
+        label: "Texas Comptroller — Severance Tax",
+        url: "https://comptroller.texas.gov/economy/economic-data/",
+      },
     ],
-    related: ["texas-grid-ercot-explained", "texas-property-tax-guide", "how-a-bill-becomes-texas-law"],
+    related: [
+      "texas-grid-ercot-explained",
+      "texas-property-tax-guide",
+      "how-a-bill-becomes-texas-law",
+    ],
     cta: { label: "Read Our Energy Coverage", href: "/news" },
     keyTakeaways: [
       "Permian output hit a record 6.1 million barrels per day.",
@@ -2150,10 +3913,17 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Penal Code Chapter 46", url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm" },
+      {
+        label: "Texas Penal Code Chapter 46",
+        url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm",
+      },
       { label: "Texas DPS — License to Carry", url: "https://www.dps.texas.gov/rsd/ltc/" },
     ],
-    related: ["how-a-bill-becomes-texas-law", "texas-political-terminology", "texas-constitutional-amendments-guide"],
+    related: [
+      "how-a-bill-becomes-texas-law",
+      "texas-political-terminology",
+      "texas-constitutional-amendments-guide",
+    ],
     cta: { label: "Explore Texas Laws", href: "/laws" },
     keyTakeaways: [
       "HB 1927 lets eligible adults 21+ carry without a state permit.",
@@ -2239,7 +4009,11 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       { label: "Texas Education Agency — School Choice", url: "https://tea.texas.gov/" },
       { label: "Texas Comptroller — Education Programs", url: "https://comptroller.texas.gov/" },
     ],
-    related: ["school-board-elections", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
+    related: [
+      "school-board-elections",
+      "how-a-bill-becomes-texas-law",
+      "texas-political-terminology",
+    ],
     cta: { label: "Read Our Education Coverage", href: "/news" },
     keyTakeaways: [
       "Largest school choice expansion in Texas history.",
@@ -2319,13 +4093,20 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Tax Code Chapter 41", url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm" },
+      {
+        label: "Texas Tax Code Chapter 41",
+        url: "https://statutes.capitol.texas.gov/Docs/TX/htm/TX.41.htm",
+      },
       {
         label: "Texas Comptroller — Property Tax Protests",
         url: "https://comptroller.texas.gov/taxes/property-tax/protests/",
       },
     ],
-    related: ["texas-property-tax-guide", "homestead-exemption-explained", "county-appraisal-districts-explained"],
+    related: [
+      "texas-property-tax-guide",
+      "homestead-exemption-explained",
+      "county-appraisal-districts-explained",
+    ],
     cta: { label: "Estimate Your Bill", href: "/tax-calculator" },
     keyTakeaways: [
       "Protest deadline is May 15 or 30 days after your notice.",
@@ -2397,7 +4178,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
     sources: [
       { label: "ERCOT", url: "https://www.ercot.com/" },
       { label: "Public Utility Commission of Texas", url: "https://www.puc.texas.gov/" },
-      { label: "Texas Energy Fund", url: "https://www.puc.texas.gov/agency/resources/reports/TEF.aspx" },
+      {
+        label: "Texas Energy Fund",
+        url: "https://www.puc.texas.gov/agency/resources/reports/TEF.aspx",
+      },
     ],
     related: ["permian-energy", "how-a-bill-becomes-texas-law", "texas-political-terminology"],
     cta: { label: "Read Our Energy Coverage", href: "/news" },
@@ -2462,7 +4246,10 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     sources: [
-      { label: "Texas Governor — Operation Lone Star", url: "https://gov.texas.gov/operationlonestar" },
+      {
+        label: "Texas Governor — Operation Lone Star",
+        url: "https://gov.texas.gov/operationlonestar",
+      },
       { label: "Texas DPS", url: "https://www.dps.texas.gov/" },
       {
         label: "U.S. Constitution Article I, Section 10",
@@ -2579,19 +4366,46 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "Do I need any license to carry a handgun in Texas?", a: "If you are 21 or older, a legal U.S. resident, and not otherwise prohibited under state or federal law, you may lawfully carry a handgun in most public places without a permit under HB 1927. Location restrictions in Sections 46.03 and 46.035 still apply." },
-      { q: "Is the Texas License to Carry still worth getting after constitutional carry?", a: "Yes for most active carriers — the LTC provides reciprocity with 37 other states, exempts you from NICS on future purchases, gives you an affirmative defense to certain location prosecutions, and often reduces friction with law enforcement." },
-      { q: "Can I carry openly in Texas?", a: "Open carry of a holstered handgun by someone 21 or older is generally legal in most public places. Long-gun open carry has always been legal but can trigger disorderly conduct scrutiny if used to intimidate." },
-      { q: "Where can I never carry a firearm in Texas regardless of my license?", a: "Schools, courts, polling places during voting, secured airport areas, federal buildings, correctional facilities, and any private property that has posted effective notice under Sections 30.06 or 30.07." },
-      { q: "Do I have to tell an officer I have a firearm during a traffic stop?", a: "Texas law does not require automatic disclosure, but calm, prompt disclosure with your hands visible is the standard recommended practice and usually shortens the encounter." },
-      { q: "Can a Texas landlord prohibit firearms in a rented home?", a: "Landlords can include reasonable, non-discriminatory firearm provisions in a residential lease, though blanket bans in a private residence face more scrutiny than in commercial contexts." },
+      {
+        q: "Do I need any license to carry a handgun in Texas?",
+        a: "If you are 21 or older, a legal U.S. resident, and not otherwise prohibited under state or federal law, you may lawfully carry a handgun in most public places without a permit under HB 1927. Location restrictions in Sections 46.03 and 46.035 still apply.",
+      },
+      {
+        q: "Is the Texas License to Carry still worth getting after constitutional carry?",
+        a: "Yes for most active carriers — the LTC provides reciprocity with 37 other states, exempts you from NICS on future purchases, gives you an affirmative defense to certain location prosecutions, and often reduces friction with law enforcement.",
+      },
+      {
+        q: "Can I carry openly in Texas?",
+        a: "Open carry of a holstered handgun by someone 21 or older is generally legal in most public places. Long-gun open carry has always been legal but can trigger disorderly conduct scrutiny if used to intimidate.",
+      },
+      {
+        q: "Where can I never carry a firearm in Texas regardless of my license?",
+        a: "Schools, courts, polling places during voting, secured airport areas, federal buildings, correctional facilities, and any private property that has posted effective notice under Sections 30.06 or 30.07.",
+      },
+      {
+        q: "Do I have to tell an officer I have a firearm during a traffic stop?",
+        a: "Texas law does not require automatic disclosure, but calm, prompt disclosure with your hands visible is the standard recommended practice and usually shortens the encounter.",
+      },
+      {
+        q: "Can a Texas landlord prohibit firearms in a rented home?",
+        a: "Landlords can include reasonable, non-discriminatory firearm provisions in a residential lease, though blanket bans in a private residence face more scrutiny than in commercial contexts.",
+      },
     ],
     sources: [
-      { label: "Texas Penal Code Chapter 46", url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm" },
+      {
+        label: "Texas Penal Code Chapter 46",
+        url: "https://statutes.capitol.texas.gov/Docs/PE/htm/PE.46.htm",
+      },
       { label: "Texas DPS License to Carry", url: "https://www.dps.texas.gov/rsd/ltc" },
-      { label: "HB 1927 (2021) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=87R&Bill=HB1927" },
+      {
+        label: "HB 1927 (2021) Bill Text",
+        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=87R&Bill=HB1927",
+      },
       { label: "ATF Firearms Verification", url: "https://www.atf.gov/firearms" },
-      { label: "Texas Constitution Article I, Section 23", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.1.htm" },
+      {
+        label: "Texas Constitution Article I, Section 23",
+        url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.1.htm",
+      },
     ],
     related: [
       "constitutional-carry-one-year-later",
@@ -2635,7 +4449,7 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       {
         heading: "The Homestead Exemption and Other Statutory Reductions",
         paragraphs: [
-          "The residence homestead exemption is the single largest reduction most Texans will ever qualify for. As of the November 2025 constitutional amendment, the school-district homestead exemption is $140,000, up from $100,000. Homeowners 65 or older or with a qualifying disability receive an additional $10,000 ($60,000 in some prior packages) plus a school-district tax freeze that caps school taxes at the level owed the year they qualified.",
+          "The residence homestead exemption is the single largest property-tax reduction many Texans will qualify for. Following the November 2025 constitutional amendments, the school-district homestead exemption is $140,000. Homeowners age 65 or older or with a qualifying disability receive an additional $60,000 school-district exemption plus a school-tax ceiling for qualifying homeowners.",
           "Optional local homestead exemptions of up to 20% of appraised value may be adopted by counties, cities, and other taxing units. Many major counties have adopted them. Disabled veterans qualify for exemptions ranging from $5,000 to a full exemption depending on VA disability rating; 100% disabled veterans and their surviving spouses pay no property tax on their homestead.",
           "The exemption is not automatic. It must be applied for at your county appraisal district using Form 50-114, ordinarily by April 30 of the tax year, though late filings back two years are commonly accepted. See [The Texas Homestead Exemption Explained](/news/homestead-exemption-explained) for the filing walkthrough.",
         ],
@@ -2702,19 +4516,49 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "How much is the Texas homestead exemption in 2026?", a: "The residence homestead exemption for school district purposes is $140,000 as of the November 2025 constitutional amendment. Homeowners 65 or older or with a qualifying disability receive an additional exemption plus a school-tax freeze." },
-      { q: "When is the deadline to protest my property appraisal?", a: "The standard deadline is May 15 or 30 days after the appraisal notice was mailed, whichever is later. File online with your county appraisal district as soon as the notice arrives." },
-      { q: "Who actually sets my property tax rate?", a: "Each taxing entity — school district, county, city, hospital district, MUD — sets its own rate every year. If the total exceeds the voter-approval rate, a rollback election is automatic in November." },
-      { q: "What is the appraisal cap and how does it work?", a: "The Texas Constitution caps growth of the taxable value on a homestead at 10% per year regardless of market value. A temporary 20% cap applies to non-homestead residential properties valued under $5 million through the 2026 tax year." },
-      { q: "Can I stop paying property tax when I turn 65?", a: "No, but you may qualify for a school-tax freeze, an additional exemption, and a full deferral of collection during your lifetime (interest continues to accrue). File with your CAD when you qualify." },
-      { q: "What happens if I do not pay my property tax bill?", a: "Delinquency triggers penalty and interest starting February 1, followed by potential lawsuit, lien, and eventually tax-lien foreclosure at courthouse auction." },
+      {
+        q: "How much is the Texas homestead exemption in 2026?",
+        a: "The residence homestead exemption for school district purposes is $140,000 as of the November 2025 constitutional amendment. Homeowners 65 or older or with a qualifying disability receive an additional exemption plus a school-tax freeze.",
+      },
+      {
+        q: "When is the deadline to protest my property appraisal?",
+        a: "The standard deadline is May 15 or 30 days after the appraisal notice was mailed, whichever is later. File online with your county appraisal district as soon as the notice arrives.",
+      },
+      {
+        q: "Who actually sets my property tax rate?",
+        a: "Each taxing entity — school district, county, city, hospital district, MUD — sets its own rate every year. If the total exceeds the voter-approval rate, a rollback election is automatic in November.",
+      },
+      {
+        q: "What is the appraisal cap and how does it work?",
+        a: "The Texas Constitution caps growth of the taxable value on a homestead at 10% per year regardless of market value. A temporary 20% cap applies to non-homestead residential properties valued under $5 million through the 2026 tax year.",
+      },
+      {
+        q: "Can I stop paying property tax when I turn 65?",
+        a: "No, but you may qualify for a school-tax freeze, an additional exemption, and a full deferral of collection during your lifetime (interest continues to accrue). File with your CAD when you qualify.",
+      },
+      {
+        q: "What happens if I do not pay my property tax bill?",
+        a: "Delinquency triggers penalty and interest starting February 1, followed by potential lawsuit, lien, and eventually tax-lien foreclosure at courthouse auction.",
+      },
     ],
     sources: [
-      { label: "Texas Property Tax Code (Title 1)", url: "https://statutes.capitol.texas.gov/?link=TX" },
-      { label: "Texas Comptroller — Property Tax Assistance", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      {
+        label: "Texas Property Tax Code (Title 1)",
+        url: "https://statutes.capitol.texas.gov/?link=TX",
+      },
+      {
+        label: "Texas Comptroller — Property Tax Assistance",
+        url: "https://comptroller.texas.gov/taxes/property-tax/",
+      },
       { label: "Truth-in-Taxation Portal", url: "https://truth-in-taxation.com/" },
-      { label: "Constitutional Amendments Ballot History", url: "https://www.sos.state.tx.us/elections/historical/index.shtml" },
-      { label: "Senate Bill 2 (2019) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=86R&Bill=SB2" },
+      {
+        label: "Constitutional Amendments Ballot History",
+        url: "https://www.sos.state.tx.us/elections/historical/index.shtml",
+      },
+      {
+        label: "Senate Bill 2 (2019) Bill Text",
+        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=86R&Bill=SB2",
+      },
     ],
     related: [
       "texas-property-tax-guide",
@@ -2839,19 +4683,46 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "What is the deadline to register to vote in Texas?", a: "Registration must be received by your county voter registrar at least 30 days before the election. There is no same-day registration in Texas." },
-      { q: "What forms of ID does Texas accept at the polls?", a: "Texas driver license, Election ID Certificate, personal ID, License to Carry, military ID with photo, U.S. passport, or U.S. citizenship certificate with photo. Voters without ID can use a supporting document and sign a Reasonable Impediment Declaration." },
-      { q: "Can I vote by mail in Texas?", a: "Only if you are 65 or older, disabled, out of the county during the entire early voting period and election day, expecting to give birth, or confined in jail but eligible." },
-      { q: "When is early voting in Texas?", a: "Early voting is typically 17 to 12 days before a general election and 10 to 4 days before a primary. Most large counties allow countywide voting during early voting." },
-      { q: "What is an open primary and can I switch parties?", a: "Texas has open primaries — you choose which party's primary to vote in on primary day without registering by party. Your choice binds you to that party for the remainder of the primary cycle." },
-      { q: "What happens if I vote at the wrong precinct?", a: "In most large counties Texas allows countywide voting on election day, so any polling place counts. In smaller counties that still use precinct voting, you can cast a provisional ballot, which will be counted only for races you are eligible to vote in from your correct precinct." },
+      {
+        q: "What is the deadline to register to vote in Texas?",
+        a: "Registration must be received by your county voter registrar at least 30 days before the election. There is no same-day registration in Texas.",
+      },
+      {
+        q: "What forms of ID does Texas accept at the polls?",
+        a: "Texas driver license, Election ID Certificate, personal ID, License to Carry, military ID with photo, U.S. passport, or U.S. citizenship certificate with photo. Voters without ID can use a supporting document and sign a Reasonable Impediment Declaration.",
+      },
+      {
+        q: "Can I vote by mail in Texas?",
+        a: "Only if you are 65 or older, disabled, out of the county during the entire early voting period and election day, expecting to give birth, or confined in jail but eligible.",
+      },
+      {
+        q: "When is early voting in Texas?",
+        a: "Early voting is typically 17 to 12 days before a general election and 10 to 4 days before a primary. Most large counties allow countywide voting during early voting.",
+      },
+      {
+        q: "What is an open primary and can I switch parties?",
+        a: "Texas has open primaries — you choose which party's primary to vote in on primary day without registering by party. Your choice binds you to that party for the remainder of the primary cycle.",
+      },
+      {
+        q: "What happens if I vote at the wrong precinct?",
+        a: "In most large counties Texas allows countywide voting on election day, so any polling place counts. In smaller counties that still use precinct voting, you can cast a provisional ballot, which will be counted only for races you are eligible to vote in from your correct precinct.",
+      },
     ],
     sources: [
       { label: "Texas Election Code", url: "https://statutes.capitol.texas.gov/?link=EL" },
-      { label: "Texas Secretary of State — Voting", url: "https://www.sos.state.tx.us/elections/voter/" },
-      { label: "Senate Bill 1 (2021) Bill Text", url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=872&Bill=SB1" },
+      {
+        label: "Texas Secretary of State — Voting",
+        url: "https://www.sos.state.tx.us/elections/voter/",
+      },
+      {
+        label: "Senate Bill 1 (2021) Bill Text",
+        url: "https://capitol.texas.gov/BillLookup/History.aspx?LegSess=872&Bill=SB1",
+      },
       { label: "VoteTexas.gov", url: "https://www.votetexas.gov/" },
-      { label: "Federal Voting Rights Act Section 203", url: "https://www.justice.gov/crt/language-minority-provisions" },
+      {
+        label: "Federal Voting Rights Act Section 203",
+        url: "https://www.justice.gov/crt/language-minority-provisions",
+      },
     ],
     related: [
       "texas-voting-guide-2026",
@@ -2982,18 +4853,39 @@ export const ARTICLE_BODIES: Record<string, ArticleBody> = {
       },
     ],
     faq: [
-      { q: "What was the biggest new Texas law for 2026?", a: "The constitutional amendment raising the residence homestead exemption to $140,000, combined with continued school-district rate compression — the largest ongoing property tax relief package in state history." },
-      { q: "When did the education savings account program actually start?", a: "The ESA program authorized by SB 2 in 2025 begins operating at scale in the 2026-27 school year, prioritizing low-income families, students with disabilities, and children in low-performing public schools." },
-      { q: "Did Texas pass any new gun laws in 2025?", a: "No major changes. Constitutional carry under HB 1927 remains the operative framework, with narrow clarifications on carry in state parks and expansions of the School Marshal program." },
-      { q: "How do I find out when a specific bill takes effect?", a: "Check the bill's caption on Texas Legislature Online — the effective date is stated in the final section of every enrolled bill. Default is September 1 after the regular session." },
-      { q: "What is the Texas Business Court and does it affect small businesses?", a: "The Business Court handles complex commercial disputes above a jurisdictional threshold — it primarily affects mid-size and larger enterprises, not typical small-business litigation." },
-      { q: "Are there major new laws taking effect in 2027?", a: "The Legislature will meet in regular session in early 2027; new statutes from that session typically take effect September 1, 2027, or January 1, 2028." },
+      {
+        q: "What was the biggest new Texas law for 2026?",
+        a: "The constitutional amendment raising the residence homestead exemption to $140,000, combined with continued school-district rate compression — the largest ongoing property tax relief package in state history.",
+      },
+      {
+        q: "When did the education savings account program actually start?",
+        a: "The ESA program authorized by SB 2 in 2025 begins operating at scale in the 2026-27 school year, prioritizing low-income families, students with disabilities, and children in low-performing public schools.",
+      },
+      {
+        q: "Did Texas pass any new gun laws in 2025?",
+        a: "No major changes. Constitutional carry under HB 1927 remains the operative framework, with narrow clarifications on carry in state parks and expansions of the School Marshal program.",
+      },
+      {
+        q: "How do I find out when a specific bill takes effect?",
+        a: "Check the bill's caption on Texas Legislature Online — the effective date is stated in the final section of every enrolled bill. Default is September 1 after the regular session.",
+      },
+      {
+        q: "What is the Texas Business Court and does it affect small businesses?",
+        a: "The Business Court handles complex commercial disputes above a jurisdictional threshold — it primarily affects mid-size and larger enterprises, not typical small-business litigation.",
+      },
+      {
+        q: "Are there major new laws taking effect in 2027?",
+        a: "The Legislature will meet in regular session in early 2027; new statutes from that session typically take effect September 1, 2027, or January 1, 2028.",
+      },
     ],
     sources: [
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
       { label: "Legislative Reference Library", url: "https://lrl.texas.gov/" },
       { label: "Texas Register", url: "https://www.sos.state.tx.us/texreg/" },
-      { label: "Texas Comptroller — Property Tax", url: "https://comptroller.texas.gov/taxes/property-tax/" },
+      {
+        label: "Texas Comptroller — Property Tax",
+        url: "https://comptroller.texas.gov/taxes/property-tax/",
+      },
       { label: "Texas Education Agency — ESA Program", url: "https://tea.texas.gov/" },
     ],
     related: [

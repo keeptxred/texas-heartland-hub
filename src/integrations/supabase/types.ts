@@ -14,6 +14,76 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_rewrite_cache: {
+        Row: {
+          claimed_at: string
+          completed_at: string | null
+          content_fingerprint: string
+          failure_reason: string | null
+          feed_item_id: number | null
+          result_json: Json | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          claimed_at?: string
+          completed_at?: string | null
+          content_fingerprint: string
+          failure_reason?: string | null
+          feed_item_id?: number | null
+          result_json?: Json | null
+          status: string
+          updated_at?: string
+        }
+        Update: {
+          claimed_at?: string
+          completed_at?: string | null
+          content_fingerprint?: string
+          failure_reason?: string | null
+          feed_item_id?: number | null
+          result_json?: Json | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_rewrite_cache_feed_item_id_fkey"
+            columns: ["feed_item_id"]
+            isOneToOne: false
+            referencedRelation: "texas_news_feed"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_rewrite_usage: {
+        Row: {
+          claimed_at: string
+          content_fingerprint: string
+          feed_item_id: number | null
+          id: number
+        }
+        Insert: {
+          claimed_at?: string
+          content_fingerprint: string
+          feed_item_id?: number | null
+          id?: number
+        }
+        Update: {
+          claimed_at?: string
+          content_fingerprint?: string
+          feed_item_id?: number | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_rewrite_usage_feed_item_id_fkey"
+            columns: ["feed_item_id"]
+            isOneToOne: false
+            referencedRelation: "texas_news_feed"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_packages: {
         Row: {
           asset_notes: string | null
@@ -380,6 +450,1943 @@ export type Database = {
         }
         Relationships: []
       }
+      explore_activities: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          icon_key: string | null
+          id: string
+          is_active: boolean
+          key: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon_key?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon_key?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_amenities: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          icon_key: string | null
+          id: string
+          is_active: boolean
+          key: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon_key?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          icon_key?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_business_profiles: {
+        Row: {
+          booking_url: string | null
+          business_type: string | null
+          claimed: boolean
+          created_at: string
+          email: string | null
+          entity_id: string
+          operating_hours: Json
+          owner_user_id: string | null
+          permanently_closed: boolean
+          phone: string | null
+          price_level: number | null
+          profile_metadata: Json
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          booking_url?: string | null
+          business_type?: string | null
+          claimed?: boolean
+          created_at?: string
+          email?: string | null
+          entity_id: string
+          operating_hours?: Json
+          owner_user_id?: string | null
+          permanently_closed?: boolean
+          phone?: string | null
+          price_level?: number | null
+          profile_metadata?: Json
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          booking_url?: string | null
+          business_type?: string | null
+          claimed?: boolean
+          created_at?: string
+          email?: string | null
+          entity_id?: string
+          operating_hours?: Json
+          owner_user_id?: string | null
+          permanently_closed?: boolean
+          phone?: string | null
+          price_level?: number | null
+          profile_metadata?: Json
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_business_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_business_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_campground_profiles: {
+        Row: {
+          campground_type: string | null
+          created_at: string
+          dump_station: boolean | null
+          electric_hookups: boolean | null
+          entity_id: string
+          fire_rings: boolean | null
+          generators_allowed: boolean | null
+          group_sites: number | null
+          laundry: boolean | null
+          managing_authority: string | null
+          max_rv_length_feet: number | null
+          nightly_fee_max_cents: number | null
+          nightly_fee_min_cents: number | null
+          picnic_tables: boolean | null
+          potable_water: boolean | null
+          profile_metadata: Json
+          reservation_url: string | null
+          restrooms: boolean | null
+          rv_sites: number | null
+          sewer_hookups: boolean | null
+          showers: boolean | null
+          tent_sites: number | null
+          total_sites: number | null
+          updated_at: string
+          water_hookups: boolean | null
+          wifi: boolean | null
+        }
+        Insert: {
+          campground_type?: string | null
+          created_at?: string
+          dump_station?: boolean | null
+          electric_hookups?: boolean | null
+          entity_id: string
+          fire_rings?: boolean | null
+          generators_allowed?: boolean | null
+          group_sites?: number | null
+          laundry?: boolean | null
+          managing_authority?: string | null
+          max_rv_length_feet?: number | null
+          nightly_fee_max_cents?: number | null
+          nightly_fee_min_cents?: number | null
+          picnic_tables?: boolean | null
+          potable_water?: boolean | null
+          profile_metadata?: Json
+          reservation_url?: string | null
+          restrooms?: boolean | null
+          rv_sites?: number | null
+          sewer_hookups?: boolean | null
+          showers?: boolean | null
+          tent_sites?: number | null
+          total_sites?: number | null
+          updated_at?: string
+          water_hookups?: boolean | null
+          wifi?: boolean | null
+        }
+        Update: {
+          campground_type?: string | null
+          created_at?: string
+          dump_station?: boolean | null
+          electric_hookups?: boolean | null
+          entity_id?: string
+          fire_rings?: boolean | null
+          generators_allowed?: boolean | null
+          group_sites?: number | null
+          laundry?: boolean | null
+          managing_authority?: string | null
+          max_rv_length_feet?: number | null
+          nightly_fee_max_cents?: number | null
+          nightly_fee_min_cents?: number | null
+          picnic_tables?: boolean | null
+          potable_water?: boolean | null
+          profile_metadata?: Json
+          reservation_url?: string | null
+          restrooms?: boolean | null
+          rv_sites?: number | null
+          sewer_hookups?: boolean | null
+          showers?: boolean | null
+          tent_sites?: number | null
+          total_sites?: number | null
+          updated_at?: string
+          water_hookups?: boolean | null
+          wifi?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_campground_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_campground_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon_key: string | null
+          id: string
+          is_active: boolean
+          key: string
+          name: string
+          parent_id: string | null
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon_key?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          name: string
+          parent_id?: string | null
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon_key?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+          parent_id?: string | null
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "explore_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_duplicate_candidates: {
+        Row: {
+          created_at: string
+          entity_a_id: string
+          entity_b_id: string
+          evidence: Json
+          id: string
+          matching_fields: string[]
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by_user_id: string | null
+          similarity_score: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          entity_a_id: string
+          entity_b_id: string
+          evidence?: Json
+          id?: string
+          matching_fields?: string[]
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by_user_id?: string | null
+          similarity_score: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          entity_a_id?: string
+          entity_b_id?: string
+          evidence?: Json
+          id?: string
+          matching_fields?: string[]
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by_user_id?: string | null
+          similarity_score?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_duplicate_candidates_entity_a_id_fkey"
+            columns: ["entity_a_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_duplicate_candidates_entity_a_id_fkey"
+            columns: ["entity_a_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_duplicate_candidates_entity_b_id_fkey"
+            columns: ["entity_b_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_duplicate_candidates_entity_b_id_fkey"
+            columns: ["entity_b_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entities: {
+        Row: {
+          alternate_names: string[]
+          archived_at: string | null
+          created_at: string
+          entity_type_id: string
+          featured: boolean
+          id: string
+          long_description: string | null
+          name: string
+          owner_user_id: string | null
+          popularity_score: number
+          published_at: string | null
+          short_description: string | null
+          slug: string
+          source_confidence: number
+          status: string
+          summary: string | null
+          updated_at: string
+          verified_at: string | null
+          version: number
+          visibility: string
+        }
+        Insert: {
+          alternate_names?: string[]
+          archived_at?: string | null
+          created_at?: string
+          entity_type_id: string
+          featured?: boolean
+          id?: string
+          long_description?: string | null
+          name: string
+          owner_user_id?: string | null
+          popularity_score?: number
+          published_at?: string | null
+          short_description?: string | null
+          slug: string
+          source_confidence?: number
+          status?: string
+          summary?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          version?: number
+          visibility?: string
+        }
+        Update: {
+          alternate_names?: string[]
+          archived_at?: string | null
+          created_at?: string
+          entity_type_id?: string
+          featured?: boolean
+          id?: string
+          long_description?: string | null
+          name?: string
+          owner_user_id?: string | null
+          popularity_score?: number
+          published_at?: string | null
+          short_description?: string | null
+          slug?: string
+          source_confidence?: number
+          status?: string
+          summary?: string | null
+          updated_at?: string
+          verified_at?: string | null
+          version?: number
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entities_entity_type_id_fkey"
+            columns: ["entity_type_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entity_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_activities: {
+        Row: {
+          activity_id: string
+          best_months: number[]
+          created_at: string
+          entity_id: string
+          fee_required: boolean | null
+          id: string
+          metadata: Json
+          notes: string | null
+          permit_required: boolean | null
+          skill_level: string | null
+          suitability: string
+          updated_at: string
+          verified_at: string | null
+        }
+        Insert: {
+          activity_id: string
+          best_months?: number[]
+          created_at?: string
+          entity_id: string
+          fee_required?: boolean | null
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          permit_required?: boolean | null
+          skill_level?: string | null
+          suitability?: string
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Update: {
+          activity_id?: string
+          best_months?: number[]
+          created_at?: string
+          entity_id?: string
+          fee_required?: boolean | null
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          permit_required?: boolean | null
+          skill_level?: string | null
+          suitability?: string
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_activities_activity_id_fkey"
+            columns: ["activity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_activities_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_activities_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_amenities: {
+        Row: {
+          amenity_id: string
+          availability: string
+          created_at: string
+          entity_id: string
+          fee_required: boolean | null
+          id: string
+          metadata: Json
+          notes: string | null
+          quantity: number | null
+          updated_at: string
+          verified_at: string | null
+        }
+        Insert: {
+          amenity_id: string
+          availability?: string
+          created_at?: string
+          entity_id: string
+          fee_required?: boolean | null
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          quantity?: number | null
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Update: {
+          amenity_id?: string
+          availability?: string
+          created_at?: string
+          entity_id?: string
+          fee_required?: boolean | null
+          id?: string
+          metadata?: Json
+          notes?: string | null
+          quantity?: number | null
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_amenities_amenity_id_fkey"
+            columns: ["amenity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_amenities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_amenities_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_amenities_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          entity_id: string
+          is_primary: boolean
+          sort_order: number
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          entity_id: string
+          is_primary?: boolean
+          sort_order?: number
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          entity_id?: string
+          is_primary?: boolean
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "explore_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_categories_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_categories_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_media: {
+        Row: {
+          created_at: string
+          entity_id: string
+          id: string
+          is_primary: boolean
+          media_id: string
+          metadata: Json
+          role: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id: string
+          id?: string
+          is_primary?: boolean
+          media_id: string
+          metadata?: Json
+          role?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string
+          id?: string
+          is_primary?: boolean
+          media_id?: string
+          metadata?: Json
+          role?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_media_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_media_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_media_media_id_fkey"
+            columns: ["media_id"]
+            isOneToOne: false
+            referencedRelation: "explore_media"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_relationships: {
+        Row: {
+          created_at: string
+          effective_from: string | null
+          effective_until: string | null
+          id: string
+          is_active: boolean
+          metadata: Json
+          priority: string
+          relationship_type_id: string
+          source_entity_id: string
+          target_entity_id: string
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          effective_from?: string | null
+          effective_until?: string | null
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          priority?: string
+          relationship_type_id: string
+          source_entity_id: string
+          target_entity_id: string
+          updated_at?: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          effective_from?: string | null
+          effective_until?: string | null
+          id?: string
+          is_active?: boolean
+          metadata?: Json
+          priority?: string
+          relationship_type_id?: string
+          source_entity_id?: string
+          target_entity_id?: string
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_relationships_relationship_type_id_fkey"
+            columns: ["relationship_type_id"]
+            isOneToOne: false
+            referencedRelation: "explore_relationship_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_relationships_source_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_relationships_source_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_relationships_target_entity_id_fkey"
+            columns: ["target_entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_relationships_target_entity_id_fkey"
+            columns: ["target_entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_reviews: {
+        Row: {
+          assigned_to_user_id: string | null
+          checklist: Json
+          completed_at: string | null
+          created_at: string
+          due_at: string | null
+          entity_id: string
+          id: string
+          notes: string | null
+          review_type: string
+          reviewed_by_user_id: string | null
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to_user_id?: string | null
+          checklist?: Json
+          completed_at?: string | null
+          created_at?: string
+          due_at?: string | null
+          entity_id: string
+          id?: string
+          notes?: string | null
+          review_type?: string
+          reviewed_by_user_id?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to_user_id?: string | null
+          checklist?: Json
+          completed_at?: string | null
+          created_at?: string
+          due_at?: string | null
+          entity_id?: string
+          id?: string
+          notes?: string | null
+          review_type?: string
+          reviewed_by_user_id?: string | null
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_reviews_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_reviews_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_slug_history: {
+        Row: {
+          entity_id: string
+          id: string
+          reason: string | null
+          replaced_at: string
+          replaced_by_user_id: string | null
+          slug: string
+        }
+        Insert: {
+          entity_id: string
+          id?: string
+          reason?: string | null
+          replaced_at?: string
+          replaced_by_user_id?: string | null
+          slug: string
+        }
+        Update: {
+          entity_id?: string
+          id?: string
+          reason?: string | null
+          replaced_at?: string
+          replaced_by_user_id?: string | null
+          slug?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_slug_history_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_slug_history_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_sources: {
+        Row: {
+          confidence: number
+          created_at: string
+          entity_id: string
+          external_id: string | null
+          field_paths: string[]
+          id: string
+          notes: string | null
+          raw_metadata: Json
+          retrieved_at: string | null
+          source_id: string
+          source_url: string | null
+          updated_at: string
+          verified_at: string | null
+        }
+        Insert: {
+          confidence: number
+          created_at?: string
+          entity_id: string
+          external_id?: string | null
+          field_paths?: string[]
+          id?: string
+          notes?: string | null
+          raw_metadata?: Json
+          retrieved_at?: string | null
+          source_id: string
+          source_url?: string | null
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          entity_id?: string
+          external_id?: string | null
+          field_paths?: string[]
+          id?: string
+          notes?: string | null
+          raw_metadata?: Json
+          retrieved_at?: string | null
+          source_id?: string
+          source_url?: string | null
+          updated_at?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_sources_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_sources_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_sources_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "explore_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_tags: {
+        Row: {
+          confidence: number
+          created_at: string
+          entity_id: string
+          source: string
+          tag_id: string
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          entity_id: string
+          source?: string
+          tag_id: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          entity_id?: string
+          source?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_tags_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_tags_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "explore_tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_entity_types: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon_key: string | null
+          id: string
+          is_active: boolean
+          key: string
+          name: string
+          plural_name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon_key?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          name: string
+          plural_name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon_key?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+          plural_name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_entity_versions: {
+        Row: {
+          change_source: string
+          change_summary: string | null
+          changed_by_user_id: string | null
+          created_at: string
+          entity_id: string
+          id: string
+          snapshot: Json
+          version: number
+        }
+        Insert: {
+          change_source?: string
+          change_summary?: string | null
+          changed_by_user_id?: string | null
+          created_at?: string
+          entity_id: string
+          id?: string
+          snapshot: Json
+          version: number
+        }
+        Update: {
+          change_source?: string
+          change_summary?: string | null
+          changed_by_user_id?: string | null
+          created_at?: string
+          entity_id?: string
+          id?: string
+          snapshot?: Json
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_entity_versions_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_entity_versions_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_import_jobs: {
+        Row: {
+          completed_at: string | null
+          connector_key: string
+          created_at: string
+          cursor_state: Json
+          entities_created: number
+          entities_unchanged: number
+          entities_updated: number
+          error_details: Json
+          errors_count: number
+          id: string
+          records_received: number
+          source_id: string | null
+          started_at: string | null
+          status: string
+          summary: Json
+          updated_at: string
+          warnings_count: number
+        }
+        Insert: {
+          completed_at?: string | null
+          connector_key: string
+          created_at?: string
+          cursor_state?: Json
+          entities_created?: number
+          entities_unchanged?: number
+          entities_updated?: number
+          error_details?: Json
+          errors_count?: number
+          id?: string
+          records_received?: number
+          source_id?: string | null
+          started_at?: string | null
+          status?: string
+          summary?: Json
+          updated_at?: string
+          warnings_count?: number
+        }
+        Update: {
+          completed_at?: string | null
+          connector_key?: string
+          created_at?: string
+          cursor_state?: Json
+          entities_created?: number
+          entities_unchanged?: number
+          entities_updated?: number
+          error_details?: Json
+          errors_count?: number
+          id?: string
+          records_received?: number
+          source_id?: string | null
+          started_at?: string | null
+          status?: string
+          summary?: Json
+          updated_at?: string
+          warnings_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_import_jobs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "explore_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_lake_profiles: {
+        Row: {
+          average_depth_feet: number | null
+          boating_allowed: boolean | null
+          created_at: string
+          dam_name: string | null
+          entity_id: string
+          fishing_allowed: boolean | null
+          managing_authority: string | null
+          max_depth_feet: number | null
+          profile_metadata: Json
+          reservoir: boolean | null
+          shoreline_miles: number | null
+          surface_area_acres: number | null
+          swimming_allowed: boolean | null
+          updated_at: string
+          wake_restrictions: string | null
+          water_level_source_url: string | null
+          water_type: string | null
+        }
+        Insert: {
+          average_depth_feet?: number | null
+          boating_allowed?: boolean | null
+          created_at?: string
+          dam_name?: string | null
+          entity_id: string
+          fishing_allowed?: boolean | null
+          managing_authority?: string | null
+          max_depth_feet?: number | null
+          profile_metadata?: Json
+          reservoir?: boolean | null
+          shoreline_miles?: number | null
+          surface_area_acres?: number | null
+          swimming_allowed?: boolean | null
+          updated_at?: string
+          wake_restrictions?: string | null
+          water_level_source_url?: string | null
+          water_type?: string | null
+        }
+        Update: {
+          average_depth_feet?: number | null
+          boating_allowed?: boolean | null
+          created_at?: string
+          dam_name?: string | null
+          entity_id?: string
+          fishing_allowed?: boolean | null
+          managing_authority?: string | null
+          max_depth_feet?: number | null
+          profile_metadata?: Json
+          reservoir?: boolean | null
+          shoreline_miles?: number | null
+          surface_area_acres?: number | null
+          swimming_allowed?: boolean | null
+          updated_at?: string
+          wake_restrictions?: string | null
+          water_level_source_url?: string | null
+          water_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_lake_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_lake_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_locations: {
+        Row: {
+          address_line_1: string | null
+          address_line_2: string | null
+          city: string | null
+          county: string | null
+          created_at: string
+          directions: string | null
+          elevation_feet: number | null
+          entity_id: string
+          id: string
+          latitude: number | null
+          longitude: number | null
+          map_metadata: Json
+          postal_code: string | null
+          state_code: string
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          address_line_1?: string | null
+          address_line_2?: string | null
+          city?: string | null
+          county?: string | null
+          created_at?: string
+          directions?: string | null
+          elevation_feet?: number | null
+          entity_id: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          map_metadata?: Json
+          postal_code?: string | null
+          state_code?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          address_line_1?: string | null
+          address_line_2?: string | null
+          city?: string | null
+          county?: string | null
+          created_at?: string
+          directions?: string | null
+          elevation_feet?: number | null
+          entity_id?: string
+          id?: string
+          latitude?: number | null
+          longitude?: number | null
+          map_metadata?: Json
+          postal_code?: string | null
+          state_code?: string
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_locations_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_locations_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_media: {
+        Row: {
+          alt_text: string | null
+          caption: string | null
+          checksum_sha256: string | null
+          created_at: string
+          credit_text: string | null
+          external_url: string | null
+          file_size_bytes: number | null
+          height: number | null
+          id: string
+          is_active: boolean
+          license_name: string | null
+          license_url: string | null
+          media_type: string
+          metadata: Json
+          mime_type: string | null
+          photographer: string | null
+          source_id: string | null
+          storage_bucket: string | null
+          storage_path: string | null
+          title: string | null
+          updated_at: string
+          width: number | null
+        }
+        Insert: {
+          alt_text?: string | null
+          caption?: string | null
+          checksum_sha256?: string | null
+          created_at?: string
+          credit_text?: string | null
+          external_url?: string | null
+          file_size_bytes?: number | null
+          height?: number | null
+          id?: string
+          is_active?: boolean
+          license_name?: string | null
+          license_url?: string | null
+          media_type: string
+          metadata?: Json
+          mime_type?: string | null
+          photographer?: string | null
+          source_id?: string | null
+          storage_bucket?: string | null
+          storage_path?: string | null
+          title?: string | null
+          updated_at?: string
+          width?: number | null
+        }
+        Update: {
+          alt_text?: string | null
+          caption?: string | null
+          checksum_sha256?: string | null
+          created_at?: string
+          credit_text?: string | null
+          external_url?: string | null
+          file_size_bytes?: number | null
+          height?: number | null
+          id?: string
+          is_active?: boolean
+          license_name?: string | null
+          license_url?: string | null
+          media_type?: string
+          metadata?: Json
+          mime_type?: string | null
+          photographer?: string | null
+          source_id?: string | null
+          storage_bucket?: string | null
+          storage_path?: string | null
+          title?: string | null
+          updated_at?: string
+          width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_media_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "explore_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_observations: {
+        Row: {
+          confidence: number
+          created_at: string
+          entity_id: string
+          expires_at: string | null
+          id: string
+          observation_type: string
+          observed_at: string
+          payload: Json
+          review_status: string
+          reviewed_at: string | null
+          reviewed_by_user_id: string | null
+          source_id: string | null
+          source_url: string | null
+          title: string | null
+          unit: string | null
+          updated_at: string
+          value_number: number | null
+          value_text: string | null
+        }
+        Insert: {
+          confidence?: number
+          created_at?: string
+          entity_id: string
+          expires_at?: string | null
+          id?: string
+          observation_type: string
+          observed_at: string
+          payload?: Json
+          review_status?: string
+          reviewed_at?: string | null
+          reviewed_by_user_id?: string | null
+          source_id?: string | null
+          source_url?: string | null
+          title?: string | null
+          unit?: string | null
+          updated_at?: string
+          value_number?: number | null
+          value_text?: string | null
+        }
+        Update: {
+          confidence?: number
+          created_at?: string
+          entity_id?: string
+          expires_at?: string | null
+          id?: string
+          observation_type?: string
+          observed_at?: string
+          payload?: Json
+          review_status?: string
+          reviewed_at?: string | null
+          reviewed_by_user_id?: string | null
+          source_id?: string | null
+          source_url?: string | null
+          title?: string | null
+          unit?: string | null
+          updated_at?: string
+          value_number?: number | null
+          value_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_observations_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_observations_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_observations_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "explore_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_park_profiles: {
+        Row: {
+          accessibility_notes: string | null
+          acreage: number | null
+          camping_available: boolean | null
+          created_at: string
+          entity_id: string
+          entrance_fee_cents: number | null
+          fee_notes: string | null
+          managing_authority: string | null
+          official_park_id: string | null
+          operating_hours: Json
+          park_type: string | null
+          pets_allowed: boolean | null
+          playground_available: boolean | null
+          profile_metadata: Json
+          reservations_required: boolean | null
+          reservations_url: string | null
+          restrooms_available: boolean | null
+          updated_at: string
+          visitor_center_available: boolean | null
+        }
+        Insert: {
+          accessibility_notes?: string | null
+          acreage?: number | null
+          camping_available?: boolean | null
+          created_at?: string
+          entity_id: string
+          entrance_fee_cents?: number | null
+          fee_notes?: string | null
+          managing_authority?: string | null
+          official_park_id?: string | null
+          operating_hours?: Json
+          park_type?: string | null
+          pets_allowed?: boolean | null
+          playground_available?: boolean | null
+          profile_metadata?: Json
+          reservations_required?: boolean | null
+          reservations_url?: string | null
+          restrooms_available?: boolean | null
+          updated_at?: string
+          visitor_center_available?: boolean | null
+        }
+        Update: {
+          accessibility_notes?: string | null
+          acreage?: number | null
+          camping_available?: boolean | null
+          created_at?: string
+          entity_id?: string
+          entrance_fee_cents?: number | null
+          fee_notes?: string | null
+          managing_authority?: string | null
+          official_park_id?: string | null
+          operating_hours?: Json
+          park_type?: string | null
+          pets_allowed?: boolean | null
+          playground_available?: boolean | null
+          profile_metadata?: Json
+          reservations_required?: boolean | null
+          reservations_url?: string | null
+          restrooms_available?: boolean | null
+          updated_at?: string
+          visitor_center_available?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_park_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_park_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_relationship_types: {
+        Row: {
+          created_at: string
+          default_weight: number
+          description: string | null
+          id: string
+          is_active: boolean
+          is_symmetric: boolean
+          key: string
+          name: string
+          reverse_name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          default_weight?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_symmetric?: boolean
+          key: string
+          name: string
+          reverse_name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          default_weight?: number
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_symmetric?: boolean
+          key?: string
+          name?: string
+          reverse_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_saved_searches: {
+        Row: {
+          created_at: string
+          filters: Json
+          id: string
+          is_shared: boolean
+          name: string
+          owner_user_id: string | null
+          query_text: string | null
+          sort_key: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_shared?: boolean
+          name: string
+          owner_user_id?: string | null
+          query_text?: string | null
+          sort_key?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          id?: string
+          is_shared?: boolean
+          name?: string
+          owner_user_id?: string | null
+          query_text?: string | null
+          sort_key?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_search_index: {
+        Row: {
+          alternate_names: string[]
+          category_names: string[]
+          document: unknown
+          entity_id: string
+          entity_type_key: string
+          indexed_at: string
+          location_text: string | null
+          name: string
+          popularity_score: number
+          searchable_text: string
+          slug: string
+          source_confidence: number
+          status: string
+          tag_names: string[]
+          updated_at: string
+          visibility: string
+        }
+        Insert: {
+          alternate_names?: string[]
+          category_names?: string[]
+          document?: unknown
+          entity_id: string
+          entity_type_key: string
+          indexed_at?: string
+          location_text?: string | null
+          name: string
+          popularity_score?: number
+          searchable_text?: string
+          slug: string
+          source_confidence?: number
+          status: string
+          tag_names?: string[]
+          updated_at?: string
+          visibility?: string
+        }
+        Update: {
+          alternate_names?: string[]
+          category_names?: string[]
+          document?: unknown
+          entity_id?: string
+          entity_type_key?: string
+          indexed_at?: string
+          location_text?: string | null
+          name?: string
+          popularity_score?: number
+          searchable_text?: string
+          slug?: string
+          source_confidence?: number
+          status?: string
+          tag_names?: string[]
+          updated_at?: string
+          visibility?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_search_index_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_search_index_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_search_synonyms: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          is_bidirectional: boolean
+          normalized_term: string
+          relationship: string
+          synonym: string
+          synonym_normalized: string
+          term: string
+          updated_at: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_bidirectional?: boolean
+          normalized_term: string
+          relationship?: string
+          synonym: string
+          synonym_normalized: string
+          term: string
+          updated_at?: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_bidirectional?: boolean
+          normalized_term?: string
+          relationship?: string
+          synonym?: string
+          synonym_normalized?: string
+          term?: string
+          updated_at?: string
+          weight?: number
+        }
+        Relationships: []
+      }
+      explore_sources: {
+        Row: {
+          base_url: string | null
+          created_at: string
+          default_confidence: number
+          id: string
+          is_active: boolean
+          is_authoritative: boolean
+          license_name: string | null
+          license_url: string | null
+          name: string
+          publisher: string | null
+          source_type: string
+          updated_at: string
+        }
+        Insert: {
+          base_url?: string | null
+          created_at?: string
+          default_confidence?: number
+          id?: string
+          is_active?: boolean
+          is_authoritative?: boolean
+          license_name?: string | null
+          license_url?: string | null
+          name: string
+          publisher?: string | null
+          source_type: string
+          updated_at?: string
+        }
+        Update: {
+          base_url?: string | null
+          created_at?: string
+          default_confidence?: number
+          id?: string
+          is_active?: boolean
+          is_authoritative?: boolean
+          license_name?: string | null
+          license_url?: string | null
+          name?: string
+          publisher?: string | null
+          source_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_species_profiles: {
+        Row: {
+          average_length_inches: number | null
+          average_weight_pounds: number | null
+          bloom_months: number[]
+          conservation_status: string | null
+          created_at: string
+          entity_id: string
+          family: string | null
+          game_species: boolean | null
+          genus: string | null
+          habitat_notes: string | null
+          identification_notes: string | null
+          invasive: boolean | null
+          kingdom: string | null
+          migration_months: number[]
+          native_to_texas: boolean | null
+          profile_metadata: Json
+          safety_notes: string | null
+          scientific_name: string | null
+          spawning_months: number[]
+          species: string | null
+          updated_at: string
+        }
+        Insert: {
+          average_length_inches?: number | null
+          average_weight_pounds?: number | null
+          bloom_months?: number[]
+          conservation_status?: string | null
+          created_at?: string
+          entity_id: string
+          family?: string | null
+          game_species?: boolean | null
+          genus?: string | null
+          habitat_notes?: string | null
+          identification_notes?: string | null
+          invasive?: boolean | null
+          kingdom?: string | null
+          migration_months?: number[]
+          native_to_texas?: boolean | null
+          profile_metadata?: Json
+          safety_notes?: string | null
+          scientific_name?: string | null
+          spawning_months?: number[]
+          species?: string | null
+          updated_at?: string
+        }
+        Update: {
+          average_length_inches?: number | null
+          average_weight_pounds?: number | null
+          bloom_months?: number[]
+          conservation_status?: string | null
+          created_at?: string
+          entity_id?: string
+          family?: string | null
+          game_species?: boolean | null
+          genus?: string | null
+          habitat_notes?: string | null
+          identification_notes?: string | null
+          invasive?: boolean | null
+          kingdom?: string | null
+          migration_months?: number[]
+          native_to_texas?: boolean | null
+          profile_metadata?: Json
+          safety_notes?: string | null
+          scientific_name?: string | null
+          spawning_months?: number[]
+          species?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_species_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_species_profiles_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: true
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_tags: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          key: string
+          name: string
+          slug: string
+          tag_group: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          name: string
+          slug: string
+          tag_group?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          name?: string
+          slug?: string
+          tag_group?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      explore_trips: {
+        Row: {
+          created_at: string
+          ends_on: string | null
+          id: string
+          is_public: boolean
+          itinerary: Json
+          owner_id: string | null
+          preferences: Json
+          share_token: string | null
+          starts_on: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          is_public?: boolean
+          itinerary?: Json
+          owner_id?: string | null
+          preferences?: Json
+          share_token?: string | null
+          starts_on?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          ends_on?: string | null
+          id?: string
+          is_public?: boolean
+          itinerary?: Json
+          owner_id?: string | null
+          preferences?: Json
+          share_token?: string | null
+          starts_on?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_signups: {
         Row: {
           created_at: string
@@ -732,9 +2739,120 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      explore_public_entities: {
+        Row: {
+          activities: string[] | null
+          address: Json | null
+          alternate_names: string[] | null
+          amenities: string[] | null
+          categories: string[] | null
+          city: string | null
+          county: string | null
+          description: string | null
+          email: string | null
+          entity_type: string | null
+          fee_required: boolean | null
+          fees: Json | null
+          hero_image_alt: string | null
+          hero_image_url: string | null
+          hours: Json | null
+          id: string | null
+          is_accessible: boolean | null
+          is_family_friendly: boolean | null
+          is_featured: boolean | null
+          is_pet_friendly: boolean | null
+          latitude: number | null
+          longitude: number | null
+          name: string | null
+          official_url: string | null
+          phone: string | null
+          popularity_score: number | null
+          profile: Json | null
+          region: string | null
+          regulations: Json | null
+          seasonal_guidance: Json | null
+          slug: string | null
+          source_name: string | null
+          source_updated_at: string | null
+          source_url: string | null
+          status: string | null
+          summary: string | null
+          tags: string[] | null
+          updated_at: string | null
+          visibility: string | null
+        }
+        Relationships: []
+      }
+      explore_public_observations: {
+        Row: {
+          description: string | null
+          ends_at: string | null
+          entity_id: string | null
+          id: string | null
+          observation_type: string | null
+          severity: string | null
+          source_url: string | null
+          starts_at: string | null
+          title: string | null
+        }
+        Insert: {
+          description?: never
+          ends_at?: string | null
+          entity_id?: string | null
+          id?: string | null
+          observation_type?: string | null
+          severity?: never
+          source_url?: string | null
+          starts_at?: string | null
+          title?: never
+        }
+        Update: {
+          description?: never
+          ends_at?: string | null
+          entity_id?: string | null
+          id?: string | null
+          observation_type?: string | null
+          severity?: never
+          source_url?: string | null
+          starts_at?: string | null
+          title?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_observations_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_observations_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "explore_public_entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
+      autocomplete_explore_entities: {
+        Args: { result_limit?: number; search_query: string }
+        Returns: {
+          entity_type: string
+          name: string
+          region: string
+          slug: string
+        }[]
+      }
+      claim_ai_rewrite_slot: {
+        Args: {
+          p_content_fingerprint: string
+          p_daily_limit?: number
+          p_feed_item_id: number
+        }
+        Returns: string
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -743,6 +2861,24 @@ export type Database = {
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
+      }
+      explore_merge_duplicate_candidate: {
+        Args: {
+          p_candidate_id: string
+          p_notes?: string
+          p_resolved_by?: string
+          p_survivor_id: string
+        }
+        Returns: Json
+      }
+      explore_merge_entities: {
+        Args: {
+          p_loser_id: string
+          p_notes?: string
+          p_resolved_by?: string
+          p_survivor_id: string
+        }
+        Returns: Json
       }
       increment_variant_metric: {
         Args: { _kind: string; _slug: string; _variant: string }
@@ -765,6 +2901,46 @@ export type Database = {
           read_ct: number
         }[]
       }
+      search_explore_entities: {
+        Args: {
+          counties?: string[]
+          entity_types?: string[]
+          near_lat?: number
+          near_lng?: number
+          radius_km?: number
+          regions?: string[]
+          required_activities?: string[]
+          required_amenities?: string[]
+          result_limit?: number
+          result_offset?: number
+          search_query?: string
+        }
+        Returns: {
+          activities: string[]
+          amenities: string[]
+          city: string
+          county: string
+          distance_km: number
+          entity_type: string
+          fee_required: boolean
+          hero_image_alt: string
+          hero_image_url: string
+          id: string
+          is_accessible: boolean
+          is_family_friendly: boolean
+          is_pet_friendly: boolean
+          latitude: number
+          longitude: number
+          name: string
+          rank: number
+          region: string
+          slug: string
+          summary: string
+          total_count: number
+        }[]
+      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       [_ in never]: never

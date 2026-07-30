@@ -1,0 +1,71 @@
+name: Election Central Launch Readiness
+
+on:
+  pull_request:
+    paths:
+      - "src/**/election*"
+      - "src/**/elections/**"
+      - "src/data/elections/**"
+      - "scripts/elections/**"
+      - "public/images/elections/**"
+      - "package.json"
+      - ".github/workflows/election-central-launch-readiness.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/**/election*"
+      - "src/**/elections/**"
+      - "src/data/elections/**"
+      - "scripts/elections/**"
+      - "public/images/elections/**"
+      - "package.json"
+      - ".github/workflows/election-central-launch-readiness.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: election-central-launch-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate Election Central
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate election data
+        run: npm run elections:validate
+
+      - name: Run election QA with source-link checks
+        env:
+          ELECTION_QA_CHECK_LINKS: "true"
+        run: npm run elections:qa
+
+      - name: Run full public-launch audit
+        run: node scripts/elections/public-launch-audit.mjs
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build

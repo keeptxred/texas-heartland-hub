@@ -6,7 +6,7 @@
  *  - omit <priority>/<changefreq> (Google ignores them)
  *  - dedupe by canonical URL
  */
-export const BASE_URL = "https://www.keeptxred.com";
+export const BASE_URL = "https://keeptxred.com";
 
 export function xmlEscape(s: string): string {
   return s

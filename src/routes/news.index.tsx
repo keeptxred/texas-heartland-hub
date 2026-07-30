@@ -23,7 +23,7 @@ export const Route = createFileRoute("/news/")({
       { property: "og:description", content: "Conservative reporting on Texas politics, legislation, and policy." },
       { property: "og:url", content: "/news" },
     ],
-    links: [{ rel: "canonical", href: "/news" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/news" }],
   }),
   loader: () => getDailyArticles(),
   component: NewsPage,
@@ -57,7 +57,6 @@ function timeAgo(iso: string): string {
 
 function NewsPage() {
   const { articles } = Route.useLoaderData();
-  const useLive = articles.length > 0;
   const [activeCat, setActiveCat] = useState<(typeof CATS)[number]>("All");
 
   const filteredLive = useMemo(
@@ -121,7 +120,7 @@ function NewsPage() {
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {useLive
+        {filteredLive.length > 0
           ? filteredLive.map((a: DailyArticle) => {
               const img = liveImages.get(a.slug) ?? resolveArticleImage(a);
               const { headline: title } = resolveDisplayHeadline(a);
@@ -151,7 +150,7 @@ function NewsPage() {
               // Safety net: never link off-site from the live feed.
               return <article key={a.slug} className="group">{card}</article>;
             })
-          : filteredStatic.map((a) => (
+          : filteredStatic.slice(0, 30).map((a) => (
               <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block cursor-pointer">
                 <div className="aspect-[4/3] overflow-hidden bg-muted mb-4">
                   <img src={staticImages.get(a.slug) ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />

@@ -1,0 +1,50 @@
+[
+  {
+    "id": "election-cycle-2026-texas-general",
+    "slug": "texas-2026-general-election",
+    "year": 2026,
+    "name": "2026 Texas General Election",
+    "description": "Texas federal, statewide, judicial, State Board of Education, and legislative races scheduled for November 3, 2026.",
+    "stateCode": "TX",
+    "status": "scheduled",
+    "milestones": {
+      "registrationDeadline": "2026-10-05",
+      "earlyVotingStart": "2026-10-19",
+      "earlyVotingEnd": "2026-10-30",
+      "absenteeBallotRequestDeadline": "2026-10-23",
+      "absenteeBallotReturnDeadline": "2026-11-03",
+      "primaryDate": "2026-03-03",
+      "primaryRunoffDate": "2026-05-26",
+      "generalElectionDate": "2026-11-03",
+      "certificationDeadline": null
+    },
+    "active": true,
+    "featured": true,
+    "archivedAt": null,
+    "createdAt": "2026-07-28T12:00:00.000Z",
+    "updatedAt": "2026-07-28T12:00:00.000Z",
+    "verificationStatus": "verified",
+    "verifiedAt": "2026-07-28T12:00:00.000Z",
+    "verifiedBy": "Keep TX Red editorial",
+    "verificationNotes": "Dates verified against the Texas Secretary of State 2026 election calendar and important election dates.",
+    "publicationStatus": "published",
+    "publishedAt": "2026-07-28T12:00:00.000Z",
+    "unpublishedAt": null,
+    "scheduledFor": null,
+    "publishedBy": "Keep TX Red editorial",
+    "dataAsOf": "2026-07-28T12:00:00.000Z",
+    "lastCheckedAt": "2026-07-28T12:00:00.000Z",
+    "staleAfter": "2026-08-28T12:00:00.000Z",
+    "expiresAt": "2026-11-04T12:00:00.000Z",
+    "freshnessStatus": "fresh",
+    "source": {
+      "sourceId": "tx-sos-2026-election-dates",
+      "sourceName": "Texas Secretary of State",
+      "sourceType": "official",
+      "sourceUrl": "https://www.sos.texas.gov/elections/voter/important-election-dates.shtml",
+      "sourceRecordId": "2026-general-election",
+      "retrievedAt": "2026-07-28T12:00:00.000Z",
+      "attributionText": "Texas Secretary of State election dates"
+    }
+  }
+]

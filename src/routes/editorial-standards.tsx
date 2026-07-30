@@ -8,7 +8,7 @@ export const Route = createFileRoute("/editorial-standards")({
       { property: "og:title", content: "Editorial Standards — Keep TX Red" },
       { property: "og:description", content: "How Keep TX Red verifies facts, maintains independence, and earns reader trust." },
     ],
-    links: [{ rel: "canonical", href: "/editorial-standards" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/editorial-standards" }],
   }),
   component: EditorialStandardsPage,
 });

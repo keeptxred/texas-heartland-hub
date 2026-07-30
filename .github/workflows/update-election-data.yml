@@ -1,0 +1,308 @@
+name: Refresh Election Central data
+
+on:
+  schedule:
+    - cron: "37 10 * * 1"
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "scripts/elections/import-races.ts"
+      - "scripts/elections/scrape-official-candidates.ts"
+      - "scripts/elections/scrape-official-primary-winners.mjs"
+      - "scripts/elections/import-candidates.ts"
+      - "scripts/elections/fec-candidate-resolver.ts"
+      - "scripts/elections/resolve-fec-ids.ts"
+      - "scripts/elections/import-finance.ts"
+      - "scripts/elections/import-tpor-may-poll.ts"
+      - "scripts/elections/import-ut-june-poll.ts"
+      - "scripts/elections/generate-official-geography.ts"
+      - "scripts/elections/import-geography.ts"
+      - "scripts/elections/normalize-imports.mjs"
+      - "scripts/elections/migrate-source-urls.mjs"
+      - "scripts/elections/rebuild-sources.mjs"
+      - "scripts/elections/validate-sources.mjs"
+      - "scripts/elections/polling-averages.ts"
+      - "scripts/elections/validate-enums.mjs"
+      - "scripts/elections/validate.mjs"
+      - "scripts/elections/qa.mjs"
+      - "scripts/elections/routes-qa.mjs"
+      - "scripts/elections/sitemap-qa.mjs"
+      - "scripts/elections/launch-readiness.mjs"
+      - "scripts/elections/apply-typecheck-fixes.mjs"
+      - "scripts/elections/import/**"
+      - "src/components/elections/**"
+      - "src/lib/elections/**"
+      - "src/pages/elections/**"
+      - "src/routes/elections*.tsx"
+      - "src/types/elections/**"
+      - "package.json"
+      - "vitest.config.ts"
+      - ".github/workflows/update-election-data.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-data-refresh
+  cancel-in-progress: true
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Apply strict Election Central source fixes
+        run: node scripts/elections/apply-typecheck-fixes.mjs
+
+      - name: Install election-source browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Refresh official race directory
+        run: pnpm elections:import:races
+
+      - name: Extract official March primary winners
+        id: primary_winner_scrape
+        continue-on-error: true
+        env:
+          ELECTION_PRIMARY_WINNERS_OUTPUT: /tmp/texas-primary-winners.json
+        run: pnpm elections:scrape:primary-winners
+
+      - name: Upload primary-result extraction diagnostics
+        if: steps.primary_winner_scrape.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-primary-result-extraction-diagnostics
+          path: |
+            /tmp/official-primary-results-debug.json
+            /tmp/official-primary-results-debug.html
+            /tmp/official-primary-results-debug.png
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Extract official candidate listing
+        id: candidate_scrape
+        continue-on-error: true
+        env:
+          ELECTION_CANDIDATE_SCRAPE_OUTPUT: /tmp/texas-candidates.html
+        run: pnpm elections:scrape:candidates
+
+      - name: Upload candidate extraction diagnostics
+        if: steps.candidate_scrape.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-candidate-extraction-diagnostics
+          path: |
+            /tmp/official-candidate-debug.html
+            /tmp/official-candidate-debug.png
+            /tmp/official-candidate-debug-network.json
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Refresh authoritative candidate records
+        shell: bash
+        run: |
+          imported=false
+          if [[ -s /tmp/texas-primary-winners.json ]]; then
+            ELECTION_CANDIDATE_IMPORT=/tmp/texas-primary-winners.json pnpm elections:import:candidates
+            imported=true
+          fi
+          if [[ -s /tmp/texas-candidates.html ]]; then
+            ELECTION_CANDIDATE_IMPORT=/tmp/texas-candidates.html pnpm elections:import:candidates
+            imported=true
+          fi
+          if [[ "$imported" == "false" ]]; then
+            echo "Official browser extraction was unavailable; preserving verified runoff, independent, and repository-maintained sources."
+            pnpm elections:import:candidates
+          fi
+
+      - name: Resolve federal candidate FEC identifiers
+        run: pnpm elections:resolve:fec
+
+      - name: Refresh selective finance records
+        run: pnpm elections:import:finance
+
+      - name: Refresh verified public polls
+        run: pnpm elections:import:polls
+
+      - name: Refresh authoritative geography records
+        run: pnpm elections:import:geography
+
+      - name: Normalize imported records
+        run: pnpm elections:normalize
+
+      - name: Migrate retired source URLs
+        run: pnpm elections:migrate-sources
+
+      - name: Rebuild canonical source catalog
+        run: pnpm elections:sources
+
+      - name: Generate weighted polling averages
+        run: pnpm elections:polling-averages
+
+      - name: Recalculate eligible forecasts
+        run: pnpm elections:forecast
+
+      - name: Validate election data
+        id: validation
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm elections:validate 2>&1 | tee /tmp/election-validation.log
+
+      - name: Upload election validation diagnostics
+        if: always() && steps.validation.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: election-validation-diagnostics
+          path: /tmp/election-validation.log
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Run election launch QA and write readiness report
+        id: launch_qa
+        shell: bash
+        env:
+          ELECTION_WRITE_READINESS: "true"
+          ELECTION_QA_CHECK_LINKS: "true"
+        run: |
+          set -o pipefail
+          pnpm elections:qa 2>&1 | tee /tmp/election-qa.log
+
+      - name: Typecheck application
+        id: typecheck
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee /tmp/election-typecheck.log
+
+      - name: Run unit tests
+        id: tests
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm test 2>&1 | tee /tmp/election-tests.log
+
+      - name: Build production application
+        id: build
+        shell: bash
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee /tmp/election-build.log
+
+      - name: Upload election verification diagnostics
+        if: always() && (steps.typecheck.outcome == 'failure' || steps.tests.outcome == 'failure' || steps.build.outcome == 'failure')
+        uses: actions/upload-artifact@v4
+        with:
+          name: election-compile-test-build-diagnostics
+          path: |
+            /tmp/election-typecheck.log
+            /tmp/election-tests.log
+            /tmp/election-build.log
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload election launch QA diagnostics
+        if: always() && steps.launch_qa.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: election-launch-qa-diagnostics
+          path: /tmp/election-qa.log
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Record refresh conclusion and publish safe changes
+        if: always()
+        shell: bash
+        env:
+          JOB_STATUS: ${{ job.status }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_SHA: ${{ github.sha }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [[ "$JOB_STATUS" == "cancelled" ]]; then
+            echo "Superseded refresh cancelled; preserving the last completed workflow status."
+            exit 0
+          fi
+          if [[ "$JOB_STATUS" != "success" ]]; then
+            git restore \
+              src/data/elections/2026 \
+              src/components/elections/navigation/ElectionNavigation.tsx \
+              src/lib/elections/repositories/static.ts \
+              src/routes/elections.tsx \
+              src/routes/elections.2026.tsx \
+              src/routeTree.gen.ts \
+              scripts/elections/import-candidates.ts || true
+          fi
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+
+          function compactLog(file) {
+            if (!fs.existsSync(file)) return null;
+            const lines = fs.readFileSync(file, "utf8").trim().split(/\r?\n/);
+            return lines.slice(-100).join("\n").slice(-16000) || null;
+          }
+
+          const status = {
+            updatedAt: new Date().toISOString(),
+            conclusion: process.env.JOB_STATUS,
+            runId: process.env.RUN_ID,
+            runAttempt: process.env.RUN_ATTEMPT,
+            triggerCommit: process.env.RUN_SHA,
+            runUrl: process.env.RUN_URL,
+            validationSummary: compactLog("/tmp/election-validation.log"),
+            qaSummary: compactLog("/tmp/election-qa.log"),
+            typecheckSummary: compactLog("/tmp/election-typecheck.log"),
+            testSummary: compactLog("/tmp/election-tests.log"),
+            buildSummary: compactLog("/tmp/election-build.log"),
+          };
+
+          fs.writeFileSync(
+            "src/data/elections/2026/workflow-status.json",
+            `${JSON.stringify(status, null, 2)}\n`,
+          );
+          NODE
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [[ "$JOB_STATUS" == "success" ]]; then
+            git add \
+              src/data/elections/2026 \
+              src/components/elections/navigation/ElectionNavigation.tsx \
+              src/lib/elections/repositories/static.ts \
+              src/routes/elections.tsx \
+              src/routes/elections.2026.tsx \
+              src/routeTree.gen.ts \
+              scripts/elections/import-candidates.ts
+            message="Refresh verified 2026 election data"
+          else
+            git add src/data/elections/2026/workflow-status.json
+            message="Record failed election data refresh"
+          fi
+          git restore --worktree .
+          if git diff --cached --quiet; then
+            echo "No refresh status, source, or election data changes to commit."
+            exit 0
+          fi
+          git commit -m "$message"
+          git pull --rebase origin main
+          git push origin HEAD:main

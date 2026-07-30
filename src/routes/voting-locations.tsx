@@ -10,7 +10,7 @@ export const Route = createFileRoute("/voting-locations")({
       { name: "description", content: "Find your polling place, early voting locations, and ballot drop-off sites in every Texas county." },
       { property: "og:title", content: "Texas Voting Locations" },
     ],
-    links: [{ rel: "canonical", href: "/voting-locations" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/voting-locations" }],
   }),
   component: VotingLocationsPage,
 });

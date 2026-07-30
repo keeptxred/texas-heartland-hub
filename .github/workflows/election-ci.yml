@@ -1,0 +1,195 @@
+name: Verify Election Central build
+# Final verification revision: populated forecasts, mobile rendering, and retry-safe status publication.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/components/elections/**"
+      - "src/data/elections/**"
+      - "!src/data/elections/2026/ci-status.json"
+      - "src/lib/elections/**"
+      - "src/pages/elections/**"
+      - "src/routes/elections*.tsx"
+      - "src/routes/sitemap-elections*.ts"
+      - "src/types/elections/**"
+      - "scripts/elections/**"
+      - "tests/elections/**"
+      - "playwright.elections.config.ts"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "tsconfig.json"
+      - "vite.config.ts"
+      - "vitest.config.ts"
+      - ".github/workflows/election-ci.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-central-ci
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Install Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Validate election records
+        id: validate
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm elections:validate 2>&1 | tee /tmp/election-ci-validate.log
+
+      - name: Build production application and generate routes
+        id: build
+        continue-on-error: true
+        shell: bash
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
+        run: |
+          set -o pipefail
+          pnpm build 2>&1 | tee /tmp/election-ci-build.log
+
+      - name: Typecheck application
+        id: typecheck
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          pnpm typecheck 2>&1 | tee /tmp/election-ci-typecheck.log
+
+      - name: Run unit tests
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          pnpm test 2>&1 | tee /tmp/election-ci-tests.log
+          status=${PIPESTATUS[0]}
+          grep -E "FAIL|failed|AssertionError|Error:|Test Files|Tests  " /tmp/election-ci-tests.log | tail -160 > /tmp/election-ci-test-failures.log || true
+          exit $status
+
+      - name: Run mobile browser smoke tests (standard homepage)
+        id: mobile
+        continue-on-error: true
+        shell: bash
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
+        run: |
+          set -o pipefail
+          pnpm elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile.log
+
+      - name: Run mobile browser smoke tests (Election Central homepage)
+        id: mobile_homepage
+        continue-on-error: true
+        shell: bash
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "true"
+        run: |
+          set -o pipefail
+          pnpm elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile-homepage.log
+
+      - name: Record verification result
+        if: always()
+        shell: bash
+        env:
+          VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          MOBILE_OUTCOME: ${{ steps.mobile.outcome }}
+          MOBILE_HOMEPAGE_OUTCOME: ${{ steps.mobile_homepage.outcome }}
+          RUN_ID: ${{ github.run_id }}
+          RUN_ATTEMPT: ${{ github.run_attempt }}
+          RUN_SHA: ${{ github.sha }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+
+          function compactLog(file, lineLimit = 100, characterLimit = 16000) {
+            if (!fs.existsSync(file)) return null;
+            const lines = fs.readFileSync(file, "utf8").trim().split(/\r?\n/);
+            return lines.slice(-lineLimit).join("\n").slice(-characterLimit) || null;
+          }
+
+          const checks = {
+            validation: process.env.VALIDATE_OUTCOME,
+            build: process.env.BUILD_OUTCOME,
+            typecheck: process.env.TYPECHECK_OUTCOME,
+            tests: process.env.TEST_OUTCOME,
+            mobile: process.env.MOBILE_OUTCOME,
+            homepageEnabledMobile: process.env.MOBILE_HOMEPAGE_OUTCOME,
+          };
+          const passed = Object.values(checks).every((outcome) => outcome === "success");
+          const status = {
+            updatedAt: new Date().toISOString(),
+            conclusion: passed ? "success" : "failure",
+            runId: process.env.RUN_ID,
+            runAttempt: process.env.RUN_ATTEMPT,
+            triggerCommit: process.env.RUN_SHA,
+            runUrl: process.env.RUN_URL,
+            checks,
+            validationSummary: compactLog("/tmp/election-ci-validate.log"),
+            buildSummary: compactLog("/tmp/election-ci-build.log"),
+            typecheckSummary: compactLog("/tmp/election-ci-typecheck.log"),
+            testFailureSummary: compactLog("/tmp/election-ci-test-failures.log", 160, 20000),
+            testSummary: compactLog("/tmp/election-ci-tests.log"),
+            mobileSummary: compactLog("/tmp/election-ci-mobile.log", 160, 20000),
+            homepageEnabledMobileSummary: compactLog("/tmp/election-ci-mobile-homepage.log", 160, 20000),
+          };
+          fs.writeFileSync("/tmp/election-ci-status.json", `${JSON.stringify(status, null, 2)}\n`);
+          NODE
+          result=0
+          if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" || "$MOBILE_HOMEPAGE_OUTCOME" != "success" ]]; then
+            result=1
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          published=false
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            mkdir -p src/data/elections/2026
+            cp /tmp/election-ci-status.json src/data/elections/2026/ci-status.json
+            git add src/data/elections/2026/ci-status.json
+            if git diff --cached --quiet; then
+              published=true
+              break
+            fi
+            git commit -m "Record Election Central build verification"
+            if git push origin HEAD:main; then
+              published=true
+              break
+            fi
+            echo "CI status push conflicted; retrying from the latest main branch ($attempt/3)."
+          done
+          if [[ "$published" != "true" ]]; then
+            echo "Unable to publish Election Central CI status after three attempts."
+            exit 1
+          fi
+          exit $result

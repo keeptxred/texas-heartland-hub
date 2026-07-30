@@ -54,7 +54,7 @@ function CheckoutPage() {
             Keep TX Red Shop
           </div>
           <h1 className="font-display text-3xl md:text-4xl leading-tight">Secure Checkout</h1>
-          <p className="mt-3 max-w-2xl text-white/70 text-sm">
+          <p className="mt-3 max-w-2xl text-white/90 text-sm">
             Payment is processed securely. Your order ships from our print partner within 3–7 business days.
           </p>
         </div>
