@@ -5,6 +5,7 @@ const PRIMARY_LINKS = [
   { to: "/", label: "Home" },
   { to: "/texas-news", label: "Texas News" },
   { to: "/texas-politics", label: "Politics" },
+  { to: "/elections/2026", label: "Election Central" },
   { to: "/moving-to-texas", label: "Moving to Texas" },
   { to: "/living-in-texas", label: "Living in Texas" },
   { to: "/explore", label: "Explore Texas" },
