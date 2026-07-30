@@ -30,6 +30,7 @@ describe("candidate directory and reusable profile template", () => {
     const candidateDirectory = source("src/routes/elections.candidates.tsx");
     const raceDirectory = source("src/routes/elections.races.tsx");
 
+    expect(candidateDirectory).toContain("if (candidateSlug)");
     expect(candidateDirectory).toContain("return <Outlet />");
     expect(raceDirectory).toContain("return <Outlet />");
     expect(raceDirectory).toContain("raceHref={ELECTION_ROUTES.race(race.slug)}");
