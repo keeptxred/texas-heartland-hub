@@ -93,7 +93,7 @@ jobs:
           grep -E "FAIL|failed|AssertionError|Error:|Test Files|Tests  " /tmp/election-ci-tests.log | tail -160 > /tmp/election-ci-test-failures.log || true
           exit $status
 
-      - name: Run mobile browser smoke tests
+      - name: Run mobile browser smoke tests (standard homepage)
         id: mobile
         continue-on-error: true
         shell: bash
@@ -102,6 +102,16 @@ jobs:
         run: |
           set -o pipefail
           pnpm elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile.log
+
+      - name: Run mobile browser smoke tests (Election Central homepage)
+        id: mobile_homepage
+        continue-on-error: true
+        shell: bash
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "true"
+        run: |
+          set -o pipefail
+          pnpm elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile-homepage.log
 
       - name: Record verification result
         if: always()
@@ -112,6 +122,7 @@ jobs:
           TEST_OUTCOME: ${{ steps.tests.outcome }}
           BUILD_OUTCOME: ${{ steps.build.outcome }}
           MOBILE_OUTCOME: ${{ steps.mobile.outcome }}
+          MOBILE_HOMEPAGE_OUTCOME: ${{ steps.mobile_homepage.outcome }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           RUN_SHA: ${{ github.sha }}
@@ -132,6 +143,7 @@ jobs:
             typecheck: process.env.TYPECHECK_OUTCOME,
             tests: process.env.TEST_OUTCOME,
             mobile: process.env.MOBILE_OUTCOME,
+            homepageEnabledMobile: process.env.MOBILE_HOMEPAGE_OUTCOME,
           };
           const passed = Object.values(checks).every((outcome) => outcome === "success");
           const status = {
@@ -148,11 +160,12 @@ jobs:
             testFailureSummary: compactLog("/tmp/election-ci-test-failures.log", 160, 20000),
             testSummary: compactLog("/tmp/election-ci-tests.log"),
             mobileSummary: compactLog("/tmp/election-ci-mobile.log", 160, 20000),
+            homepageEnabledMobileSummary: compactLog("/tmp/election-ci-mobile-homepage.log", 160, 20000),
           };
           fs.writeFileSync("/tmp/election-ci-status.json", `${JSON.stringify(status, null, 2)}\n`);
           NODE
           result=0
-          if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" ]]; then
+          if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" || "$MOBILE_HOMEPAGE_OUTCOME" != "success" ]]; then
             result=1
           fi
           git config user.name "github-actions[bot]"

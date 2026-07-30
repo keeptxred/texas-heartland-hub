@@ -19,6 +19,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as DallasFortWorthRouteImport } from './routes/dallas-fort-worth'
+import { Route as DmvRouteImport } from './routes/dmv'
 import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
 import { Route as ElPasoRouteImport } from './routes/el-paso'
 import { Route as ElectionsRouteImport } from './routes/elections'
@@ -35,6 +36,7 @@ import { Route as KeepTexasRedRouteImport } from './routes/keep-texas-red'
 import { Route as LawsRouteImport } from './routes/laws'
 import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
 import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
+import { Route as LegislatureRouteImport } from './routes/legislature'
 import { Route as LivingInTexasRouteImport } from './routes/living-in-texas'
 import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
 import { Route as MovingToTexasChecklistRouteImport } from './routes/moving-to-texas-checklist'
@@ -53,6 +55,7 @@ import { Route as SitemapElectionsDotxmlRouteImport } from './routes/sitemap-ele
 import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
 import { Route as SitemapExploreLocationsDotxmlRouteImport } from './routes/sitemap-explore-locations[.]xml'
 import { Route as SitemapExploreDotxmlRouteImport } from './routes/sitemap-explore[.]xml'
+import { Route as SitemapGovernmentDotxmlRouteImport } from './routes/sitemap-government[.]xml'
 import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
@@ -66,11 +69,13 @@ import { Route as TexasBudgetPlannerRouteImport } from './routes/texas-budget-pl
 import { Route as TexasBusinessRouteImport } from './routes/texas-business'
 import { Route as TexasClosingCostCalculatorRouteImport } from './routes/texas-closing-cost-calculator'
 import { Route as TexasCostOfLivingCalculatorRouteImport } from './routes/texas-cost-of-living-calculator'
+import { Route as TexasDataRouteImport } from './routes/texas-data'
 import { Route as TexasDownPaymentAssistanceCalculatorRouteImport } from './routes/texas-down-payment-assistance-calculator'
 import { Route as TexasDownPaymentCalculatorRouteImport } from './routes/texas-down-payment-calculator'
 import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
 import { Route as TexasFinancialToolsRouteImport } from './routes/texas-financial-tools'
 import { Route as TexasFirstTimeHomebuyerProgramsRouteImport } from './routes/texas-first-time-homebuyer-programs'
+import { Route as TexasGovernmentRouteImport } from './routes/texas-government'
 import { Route as TexasHomeAffordabilityCalculatorRouteImport } from './routes/texas-home-affordability-calculator'
 import { Route as TexasHomeEquityCalculatorRouteImport } from './routes/texas-home-equity-calculator'
 import { Route as TexasHomeEquityGrowthCalculatorRouteImport } from './routes/texas-home-equity-growth-calculator'
@@ -78,6 +83,7 @@ import { Route as TexasHomeInsuranceCalculatorRouteImport } from './routes/texas
 import { Route as TexasHomeownershipCostCalculatorRouteImport } from './routes/texas-homeownership-cost-calculator'
 import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
 import { Route as TexasLawsRouteImport } from './routes/texas-laws'
+import { Route as TexasLegislatureRouteImport } from './routes/texas-legislature'
 import { Route as TexasMortgageCalculatorRouteImport } from './routes/texas-mortgage-calculator'
 import { Route as TexasMortgagePayoffCalculatorRouteImport } from './routes/texas-mortgage-payoff-calculator'
 import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-moving-cost-calculator'
@@ -96,15 +102,33 @@ import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
 import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as BillsIndexRouteImport } from './routes/bills/index'
+import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
+import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
+import { Route as DmvCdlEndorsementsRouteImport } from './routes/dmv.cdl-endorsements'
+import { Route as DmvChangeAddressRouteImport } from './routes/dmv.change-address'
+import { Route as DmvDpsAppointmentsRouteImport } from './routes/dmv.dps-appointments'
+import { Route as DmvDriverLicenseRouteImport } from './routes/dmv.driver-license'
+import { Route as DmvDriverLicenseDocumentsRouteImport } from './routes/dmv.driver-license-documents'
+import { Route as DmvDriverLicenseRenewalRouteImport } from './routes/dmv.driver-license-renewal'
+import { Route as DmvFormsDownloadsRouteImport } from './routes/dmv.forms-downloads'
+import { Route as DmvIdentificationCardRouteImport } from './routes/dmv.identification-card'
+import { Route as DmvLicenseStatusRouteImport } from './routes/dmv.license-status'
+import { Route as DmvRealIdRouteImport } from './routes/dmv.real-id'
+import { Route as DmvReplaceLostLicenseRouteImport } from './routes/dmv.replace-lost-license'
+import { Route as DmvTexasDmvVsDpsRouteImport } from './routes/dmv.texas-dmv-vs-dps'
 import { Route as ElectionsIndexRouteImport } from './routes/elections.index'
 import { Route as Elections2026RouteImport } from './routes/elections.2026'
 import { Route as ElectionsCandidatesRouteImport } from './routes/elections.candidates'
 import { Route as ElectionsCorrectionsRouteImport } from './routes/elections.corrections'
+import { Route as ElectionsDistrictsRouteImport } from './routes/elections.districts'
 import { Route as ElectionsForecastRouteImport } from './routes/elections.forecast'
+import { Route as ElectionsLegislativeRouteImport } from './routes/elections.legislative'
 import { Route as ElectionsMethodologyRouteImport } from './routes/elections.methodology'
 import { Route as ElectionsPollsRouteImport } from './routes/elections.polls'
 import { Route as ElectionsRacesRouteImport } from './routes/elections.races'
 import { Route as ElectionsResultsRouteImport } from './routes/elections.results'
+import { Route as ElectionsStatewideRouteImport } from './routes/elections.statewide'
 import { Route as ElectionsVotingRouteImport } from './routes/elections.voting'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as ExploreIndexRouteImport } from './routes/explore.index'
@@ -137,12 +161,42 @@ import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
 import { Route as ShopCheckoutReturnRouteImport } from './routes/shop.checkout-return'
 import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
-import { Route as TexasNewsIndexRouteImport } from './routes/texas-news.index'
+import { Route as TexasDataDatasetSlugRouteImport } from './routes/texas-data.$datasetSlug'
+import { Route as TexasGovernmentEntitySlugRouteImport } from './routes/texas-government.$entitySlug'
+import { Route as TexasLegislatureIndexRouteImport } from './routes/texas-legislature.index'
+import { Route as TexasLegislatureCurrentSessionRouteImport } from './routes/texas-legislature.current-session'
+import { Route as TexasLegislatureHouseRouteImport } from './routes/texas-legislature.house'
+import { Route as TexasLegislatureSenateRouteImport } from './routes/texas-legislature.senate'
+import { Route as TexasLegislatureSessionsRouteImport } from './routes/texas-legislature.sessions'
+import { Route as TexasNewsIndexRouteImport } from './routes/texas-news/index'
 import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
 import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
 import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
 import { Route as TexasIndexRouteImport } from './routes/texas.index'
 import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
+import { Route as VehiclesAutoInsuranceRequirementsRouteImport } from './routes/vehicles.auto-insurance-requirements'
+import { Route as VehiclesBondedTitlesRouteImport } from './routes/vehicles.bonded-titles'
+import { Route as VehiclesBuyingACarRouteImport } from './routes/vehicles.buying-a-car'
+import { Route as VehiclesBuyingSellingRouteImport } from './routes/vehicles.buying-selling'
+import { Route as VehiclesCommercialFleetIrpRouteImport } from './routes/vehicles.commercial-fleet-irp'
+import { Route as VehiclesDisabledParkingRouteImport } from './routes/vehicles.disabled-parking'
+import { Route as VehiclesDuplicateTitlesRouteImport } from './routes/vehicles.duplicate-titles'
+import { Route as VehiclesFarmAntiqueSpecialtyRouteImport } from './routes/vehicles.farm-antique-specialty'
+import { Route as VehiclesFinancialResponsibilityRouteImport } from './routes/vehicles.financial-responsibility'
+import { Route as VehiclesInspectionsRouteImport } from './routes/vehicles.inspections'
+import { Route as VehiclesInspectionsEmissionsRouteImport } from './routes/vehicles.inspections-emissions'
+import { Route as VehiclesLiensDuplicateCorrectedTitlesRouteImport } from './routes/vehicles.liens-duplicate-corrected-titles'
+import { Route as VehiclesNewResidentsRouteImport } from './routes/vehicles.new-residents'
+import { Route as VehiclesPersonalizedPlatesRouteImport } from './routes/vehicles.personalized-plates'
+import { Route as VehiclesPlatesRouteImport } from './routes/vehicles.plates'
+import { Route as VehiclesPrivatePartySalesRouteImport } from './routes/vehicles.private-party-sales'
+import { Route as VehiclesRegistrationRouteImport } from './routes/vehicles.registration'
+import { Route as VehiclesRegistrationFeesTaxesRouteImport } from './routes/vehicles.registration-fees-taxes'
+import { Route as VehiclesRenewalRouteImport } from './routes/vehicles.renewal'
+import { Route as VehiclesSalvageRebuiltTitlesRouteImport } from './routes/vehicles.salvage-rebuilt-titles'
+import { Route as VehiclesSellingACarRouteImport } from './routes/vehicles.selling-a-car'
+import { Route as VehiclesTemporaryTagsRouteImport } from './routes/vehicles.temporary-tags'
+import { Route as VehiclesTitleTransferRouteImport } from './routes/vehicles.title-transfer'
 import { Route as AdminElectionsIndexRouteImport } from './routes/admin/elections/index'
 import { Route as AdminElectionsCandidatesRouteImport } from './routes/admin/elections/candidates'
 import { Route as AdminElectionsForecastRouteImport } from './routes/admin/elections/forecast'
@@ -150,10 +204,11 @@ import { Route as AdminElectionsPollsRouteImport } from './routes/admin/election
 import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
-import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates.$candidateSlug'
+import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
+import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elections.forecast.$forecastSlug'
 import { Route as ElectionsPollsPollSlugRouteImport } from './routes/elections.polls.$pollSlug'
-import { Route as ElectionsRacesRaceSlugRouteImport } from './routes/elections.races.$raceSlug'
+import { Route as ElectionsRacesRaceSlugRouteImport } from './routes/elections.races_.$raceSlug'
 import { Route as ElectionsResultsResultSlugRouteImport } from './routes/elections.results.$resultSlug'
 import { Route as ExploreCavernSlugRouteImport } from './routes/explore.cavern.$slug'
 import { Route as ExploreCountyCountyRouteImport } from './routes/explore.county.$county'
@@ -188,6 +243,7 @@ import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/l
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as ApiPublicOauthFacebookCallbackRouteImport } from './routes/api/public/oauth/facebook/callback'
 import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
+import { Route as BillsTexasLegislatureBillTypeBillNumberRouteImport } from './routes/bills/texas/$legislature/$billType/$billNumber'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -237,6 +293,11 @@ const CountyElectionsRoute = CountyElectionsRouteImport.update({
 const DallasFortWorthRoute = DallasFortWorthRouteImport.update({
   id: '/dallas-fort-worth',
   path: '/dallas-fort-worth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DmvRoute = DmvRouteImport.update({
+  id: '/dmv',
+  path: '/dmv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
@@ -318,6 +379,11 @@ const LawsToKnowRoute = LawsToKnowRouteImport.update({
 const LegislativeUpdatesRoute = LegislativeUpdatesRouteImport.update({
   id: '/legislative-updates',
   path: '/legislative-updates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegislatureRoute = LegislatureRouteImport.update({
+  id: '/legislature',
+  path: '/legislature',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LivingInTexasRoute = LivingInTexasRouteImport.update({
@@ -411,6 +477,11 @@ const SitemapExploreDotxmlRoute = SitemapExploreDotxmlRouteImport.update({
   path: '/sitemap-explore.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapGovernmentDotxmlRoute = SitemapGovernmentDotxmlRouteImport.update({
+  id: '/sitemap-government.xml',
+  path: '/sitemap-government.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
   id: '/sitemap-images.xml',
   path: '/sitemap-images.xml',
@@ -478,6 +549,11 @@ const TexasCostOfLivingCalculatorRoute =
     path: '/texas-cost-of-living-calculator',
     getParentRoute: () => rootRouteImport,
   } as any)
+const TexasDataRoute = TexasDataRouteImport.update({
+  id: '/texas-data',
+  path: '/texas-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasDownPaymentAssistanceCalculatorRoute =
   TexasDownPaymentAssistanceCalculatorRouteImport.update({
     id: '/texas-down-payment-assistance-calculator',
@@ -506,6 +582,11 @@ const TexasFirstTimeHomebuyerProgramsRoute =
     path: '/texas-first-time-homebuyer-programs',
     getParentRoute: () => rootRouteImport,
   } as any)
+const TexasGovernmentRoute = TexasGovernmentRouteImport.update({
+  id: '/texas-government',
+  path: '/texas-government',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasHomeAffordabilityCalculatorRoute =
   TexasHomeAffordabilityCalculatorRouteImport.update({
     id: '/texas-home-affordability-calculator',
@@ -544,6 +625,11 @@ const TexasLawPolicyRoute = TexasLawPolicyRouteImport.update({
 const TexasLawsRoute = TexasLawsRouteImport.update({
   id: '/texas-laws',
   path: '/texas-laws',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLegislatureRoute = TexasLegislatureRouteImport.update({
+  id: '/texas-legislature',
+  path: '/texas-legislature',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasMortgageCalculatorRoute = TexasMortgageCalculatorRouteImport.update({
@@ -644,6 +730,82 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BillsIndexRoute = BillsIndexRouteImport.update({
+  id: '/bills/',
+  path: '/bills/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DmvCdlRoute = DmvCdlRouteImport.update({
+  id: '/cdl',
+  path: '/cdl',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvCdlClassesRoute = DmvCdlClassesRouteImport.update({
+  id: '/cdl-classes',
+  path: '/cdl-classes',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvCdlEndorsementsRoute = DmvCdlEndorsementsRouteImport.update({
+  id: '/cdl-endorsements',
+  path: '/cdl-endorsements',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvChangeAddressRoute = DmvChangeAddressRouteImport.update({
+  id: '/change-address',
+  path: '/change-address',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvDpsAppointmentsRoute = DmvDpsAppointmentsRouteImport.update({
+  id: '/dps-appointments',
+  path: '/dps-appointments',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvDriverLicenseRoute = DmvDriverLicenseRouteImport.update({
+  id: '/driver-license',
+  path: '/driver-license',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvDriverLicenseDocumentsRoute =
+  DmvDriverLicenseDocumentsRouteImport.update({
+    id: '/driver-license-documents',
+    path: '/driver-license-documents',
+    getParentRoute: () => DmvRoute,
+  } as any)
+const DmvDriverLicenseRenewalRoute = DmvDriverLicenseRenewalRouteImport.update({
+  id: '/driver-license-renewal',
+  path: '/driver-license-renewal',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvFormsDownloadsRoute = DmvFormsDownloadsRouteImport.update({
+  id: '/forms-downloads',
+  path: '/forms-downloads',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvIdentificationCardRoute = DmvIdentificationCardRouteImport.update({
+  id: '/identification-card',
+  path: '/identification-card',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvLicenseStatusRoute = DmvLicenseStatusRouteImport.update({
+  id: '/license-status',
+  path: '/license-status',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvRealIdRoute = DmvRealIdRouteImport.update({
+  id: '/real-id',
+  path: '/real-id',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvReplaceLostLicenseRoute = DmvReplaceLostLicenseRouteImport.update({
+  id: '/replace-lost-license',
+  path: '/replace-lost-license',
+  getParentRoute: () => DmvRoute,
+} as any)
+const DmvTexasDmvVsDpsRoute = DmvTexasDmvVsDpsRouteImport.update({
+  id: '/texas-dmv-vs-dps',
+  path: '/texas-dmv-vs-dps',
+  getParentRoute: () => DmvRoute,
+} as any)
 const ElectionsIndexRoute = ElectionsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -664,9 +826,19 @@ const ElectionsCorrectionsRoute = ElectionsCorrectionsRouteImport.update({
   path: '/corrections',
   getParentRoute: () => ElectionsRoute,
 } as any)
+const ElectionsDistrictsRoute = ElectionsDistrictsRouteImport.update({
+  id: '/districts',
+  path: '/districts',
+  getParentRoute: () => ElectionsRoute,
+} as any)
 const ElectionsForecastRoute = ElectionsForecastRouteImport.update({
   id: '/forecast',
   path: '/forecast',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsLegislativeRoute = ElectionsLegislativeRouteImport.update({
+  id: '/legislative',
+  path: '/legislative',
   getParentRoute: () => ElectionsRoute,
 } as any)
 const ElectionsMethodologyRoute = ElectionsMethodologyRouteImport.update({
@@ -687,6 +859,11 @@ const ElectionsRacesRoute = ElectionsRacesRouteImport.update({
 const ElectionsResultsRoute = ElectionsResultsRouteImport.update({
   id: '/results',
   path: '/results',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsStatewideRoute = ElectionsStatewideRouteImport.update({
+  id: '/statewide',
+  path: '/statewide',
   getParentRoute: () => ElectionsRoute,
 } as any)
 const ElectionsVotingRoute = ElectionsVotingRouteImport.update({
@@ -859,6 +1036,44 @@ const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
   path: '/$topic',
   getParentRoute: () => TexasBusinessRoute,
 } as any)
+const TexasDataDatasetSlugRoute = TexasDataDatasetSlugRouteImport.update({
+  id: '/$datasetSlug',
+  path: '/$datasetSlug',
+  getParentRoute: () => TexasDataRoute,
+} as any)
+const TexasGovernmentEntitySlugRoute =
+  TexasGovernmentEntitySlugRouteImport.update({
+    id: '/$entitySlug',
+    path: '/$entitySlug',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasLegislatureIndexRoute = TexasLegislatureIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasLegislatureRoute,
+} as any)
+const TexasLegislatureCurrentSessionRoute =
+  TexasLegislatureCurrentSessionRouteImport.update({
+    id: '/current-session',
+    path: '/current-session',
+    getParentRoute: () => TexasLegislatureRoute,
+  } as any)
+const TexasLegislatureHouseRoute = TexasLegislatureHouseRouteImport.update({
+  id: '/house',
+  path: '/house',
+  getParentRoute: () => TexasLegislatureRoute,
+} as any)
+const TexasLegislatureSenateRoute = TexasLegislatureSenateRouteImport.update({
+  id: '/senate',
+  path: '/senate',
+  getParentRoute: () => TexasLegislatureRoute,
+} as any)
+const TexasLegislatureSessionsRoute =
+  TexasLegislatureSessionsRouteImport.update({
+    id: '/sessions',
+    path: '/sessions',
+    getParentRoute: () => TexasLegislatureRoute,
+  } as any)
 const TexasNewsIndexRoute = TexasNewsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -888,6 +1103,131 @@ const TexasSlugRoute = TexasSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
   getParentRoute: () => TexasRoute,
+} as any)
+const VehiclesAutoInsuranceRequirementsRoute =
+  VehiclesAutoInsuranceRequirementsRouteImport.update({
+    id: '/vehicles/auto-insurance-requirements',
+    path: '/vehicles/auto-insurance-requirements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesBondedTitlesRoute = VehiclesBondedTitlesRouteImport.update({
+  id: '/vehicles/bonded-titles',
+  path: '/vehicles/bonded-titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesBuyingACarRoute = VehiclesBuyingACarRouteImport.update({
+  id: '/vehicles/buying-a-car',
+  path: '/vehicles/buying-a-car',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesBuyingSellingRoute = VehiclesBuyingSellingRouteImport.update({
+  id: '/vehicles/buying-selling',
+  path: '/vehicles/buying-selling',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesCommercialFleetIrpRoute =
+  VehiclesCommercialFleetIrpRouteImport.update({
+    id: '/vehicles/commercial-fleet-irp',
+    path: '/vehicles/commercial-fleet-irp',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesDisabledParkingRoute = VehiclesDisabledParkingRouteImport.update({
+  id: '/vehicles/disabled-parking',
+  path: '/vehicles/disabled-parking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesDuplicateTitlesRoute = VehiclesDuplicateTitlesRouteImport.update({
+  id: '/vehicles/duplicate-titles',
+  path: '/vehicles/duplicate-titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesFarmAntiqueSpecialtyRoute =
+  VehiclesFarmAntiqueSpecialtyRouteImport.update({
+    id: '/vehicles/farm-antique-specialty',
+    path: '/vehicles/farm-antique-specialty',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesFinancialResponsibilityRoute =
+  VehiclesFinancialResponsibilityRouteImport.update({
+    id: '/vehicles/financial-responsibility',
+    path: '/vehicles/financial-responsibility',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesInspectionsRoute = VehiclesInspectionsRouteImport.update({
+  id: '/vehicles/inspections',
+  path: '/vehicles/inspections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesInspectionsEmissionsRoute =
+  VehiclesInspectionsEmissionsRouteImport.update({
+    id: '/vehicles/inspections-emissions',
+    path: '/vehicles/inspections-emissions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesLiensDuplicateCorrectedTitlesRoute =
+  VehiclesLiensDuplicateCorrectedTitlesRouteImport.update({
+    id: '/vehicles/liens-duplicate-corrected-titles',
+    path: '/vehicles/liens-duplicate-corrected-titles',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesNewResidentsRoute = VehiclesNewResidentsRouteImport.update({
+  id: '/vehicles/new-residents',
+  path: '/vehicles/new-residents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesPersonalizedPlatesRoute =
+  VehiclesPersonalizedPlatesRouteImport.update({
+    id: '/vehicles/personalized-plates',
+    path: '/vehicles/personalized-plates',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesPlatesRoute = VehiclesPlatesRouteImport.update({
+  id: '/vehicles/plates',
+  path: '/vehicles/plates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesPrivatePartySalesRoute =
+  VehiclesPrivatePartySalesRouteImport.update({
+    id: '/vehicles/private-party-sales',
+    path: '/vehicles/private-party-sales',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesRegistrationRoute = VehiclesRegistrationRouteImport.update({
+  id: '/vehicles/registration',
+  path: '/vehicles/registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesRegistrationFeesTaxesRoute =
+  VehiclesRegistrationFeesTaxesRouteImport.update({
+    id: '/vehicles/registration-fees-taxes',
+    path: '/vehicles/registration-fees-taxes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesRenewalRoute = VehiclesRenewalRouteImport.update({
+  id: '/vehicles/renewal',
+  path: '/vehicles/renewal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesSalvageRebuiltTitlesRoute =
+  VehiclesSalvageRebuiltTitlesRouteImport.update({
+    id: '/vehicles/salvage-rebuilt-titles',
+    path: '/vehicles/salvage-rebuilt-titles',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesSellingACarRoute = VehiclesSellingACarRouteImport.update({
+  id: '/vehicles/selling-a-car',
+  path: '/vehicles/selling-a-car',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesTemporaryTagsRoute = VehiclesTemporaryTagsRouteImport.update({
+  id: '/vehicles/temporary-tags',
+  path: '/vehicles/temporary-tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesTitleTransferRoute = VehiclesTitleTransferRouteImport.update({
+  id: '/vehicles/title-transfer',
+  path: '/vehicles/title-transfer',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AdminElectionsIndexRoute = AdminElectionsIndexRouteImport.update({
   id: '/elections/',
@@ -928,9 +1268,15 @@ const ApiPublicPropertyAddressLookupRoute =
   } as any)
 const ElectionsCandidatesCandidateSlugRoute =
   ElectionsCandidatesCandidateSlugRouteImport.update({
-    id: '/$candidateSlug',
-    path: '/$candidateSlug',
-    getParentRoute: () => ElectionsCandidatesRoute,
+    id: '/candidates_/$candidateSlug',
+    path: '/candidates/$candidateSlug',
+    getParentRoute: () => ElectionsRoute,
+  } as any)
+const ElectionsDistrictsDistrictSlugRoute =
+  ElectionsDistrictsDistrictSlugRouteImport.update({
+    id: '/$districtSlug',
+    path: '/$districtSlug',
+    getParentRoute: () => ElectionsDistrictsRoute,
   } as any)
 const ElectionsForecastForecastSlugRoute =
   ElectionsForecastForecastSlugRouteImport.update({
@@ -944,9 +1290,9 @@ const ElectionsPollsPollSlugRoute = ElectionsPollsPollSlugRouteImport.update({
   getParentRoute: () => ElectionsPollsRoute,
 } as any)
 const ElectionsRacesRaceSlugRoute = ElectionsRacesRaceSlugRouteImport.update({
-  id: '/$raceSlug',
-  path: '/$raceSlug',
-  getParentRoute: () => ElectionsRacesRoute,
+  id: '/races_/$raceSlug',
+  path: '/races/$raceSlug',
+  getParentRoute: () => ElectionsRoute,
 } as any)
 const ElectionsResultsResultSlugRoute =
   ElectionsResultsResultSlugRouteImport.update({
@@ -1140,6 +1486,12 @@ const ApiPublicOauthFacebookStartRoute =
     path: '/api/public/oauth/facebook/start',
     getParentRoute: () => rootRouteImport,
   } as any)
+const BillsTexasLegislatureBillTypeBillNumberRoute =
+  BillsTexasLegislatureBillTypeBillNumberRouteImport.update({
+    id: '/bills/texas/$legislature/$billType/$billNumber',
+    path: '/bills/texas/$legislature/$billType/$billNumber',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -1152,6 +1504,7 @@ export interface FileRoutesByFullPath {
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRouteWithChildren
@@ -1168,6 +1521,7 @@ export interface FileRoutesByFullPath {
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
+  '/legislature': typeof LegislatureRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
@@ -1186,6 +1540,7 @@ export interface FileRoutesByFullPath {
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
+  '/sitemap-government.xml': typeof SitemapGovernmentDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -1199,11 +1554,13 @@ export interface FileRoutesByFullPath {
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
   '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
+  '/texas-government': typeof TexasGovernmentRouteWithChildren
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
@@ -1211,6 +1568,7 @@ export interface FileRoutesByFullPath {
   '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-legislature': typeof TexasLegislatureRouteWithChildren
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
@@ -1228,14 +1586,31 @@ export interface FileRoutesByFullPath {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/dmv/cdl': typeof DmvCdlRoute
+  '/dmv/cdl-classes': typeof DmvCdlClassesRoute
+  '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
+  '/dmv/change-address': typeof DmvChangeAddressRoute
+  '/dmv/dps-appointments': typeof DmvDpsAppointmentsRoute
+  '/dmv/driver-license': typeof DmvDriverLicenseRoute
+  '/dmv/driver-license-documents': typeof DmvDriverLicenseDocumentsRoute
+  '/dmv/driver-license-renewal': typeof DmvDriverLicenseRenewalRoute
+  '/dmv/forms-downloads': typeof DmvFormsDownloadsRoute
+  '/dmv/identification-card': typeof DmvIdentificationCardRoute
+  '/dmv/license-status': typeof DmvLicenseStatusRoute
+  '/dmv/real-id': typeof DmvRealIdRoute
+  '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
+  '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
-  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/candidates': typeof ElectionsCandidatesRoute
   '/elections/corrections': typeof ElectionsCorrectionsRoute
+  '/elections/districts': typeof ElectionsDistrictsRouteWithChildren
   '/elections/forecast': typeof ElectionsForecastRouteWithChildren
+  '/elections/legislative': typeof ElectionsLegislativeRoute
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
-  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
+  '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
@@ -1265,14 +1640,45 @@ export interface FileRoutesByFullPath {
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
+  '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
+  '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
+  '/texas-legislature/house': typeof TexasLegislatureHouseRoute
+  '/texas-legislature/senate': typeof TexasLegislatureSenateRoute
+  '/texas-legislature/sessions': typeof TexasLegislatureSessionsRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
+  '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
+  '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
+  '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
+  '/vehicles/buying-selling': typeof VehiclesBuyingSellingRoute
+  '/vehicles/commercial-fleet-irp': typeof VehiclesCommercialFleetIrpRoute
+  '/vehicles/disabled-parking': typeof VehiclesDisabledParkingRoute
+  '/vehicles/duplicate-titles': typeof VehiclesDuplicateTitlesRoute
+  '/vehicles/farm-antique-specialty': typeof VehiclesFarmAntiqueSpecialtyRoute
+  '/vehicles/financial-responsibility': typeof VehiclesFinancialResponsibilityRoute
+  '/vehicles/inspections': typeof VehiclesInspectionsRoute
+  '/vehicles/inspections-emissions': typeof VehiclesInspectionsEmissionsRoute
+  '/vehicles/liens-duplicate-corrected-titles': typeof VehiclesLiensDuplicateCorrectedTitlesRoute
+  '/vehicles/new-residents': typeof VehiclesNewResidentsRoute
+  '/vehicles/personalized-plates': typeof VehiclesPersonalizedPlatesRoute
+  '/vehicles/plates': typeof VehiclesPlatesRoute
+  '/vehicles/private-party-sales': typeof VehiclesPrivatePartySalesRoute
+  '/vehicles/registration': typeof VehiclesRegistrationRoute
+  '/vehicles/registration-fees-taxes': typeof VehiclesRegistrationFeesTaxesRoute
+  '/vehicles/renewal': typeof VehiclesRenewalRoute
+  '/vehicles/salvage-rebuilt-titles': typeof VehiclesSalvageRebuiltTitlesRoute
+  '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
+  '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
+  '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
   '/authors/': typeof AuthorsIndexRoute
+  '/bills/': typeof BillsIndexRoute
   '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
+  '/texas-legislature/': typeof TexasLegislatureIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
@@ -1283,6 +1689,7 @@ export interface FileRoutesByFullPath {
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
+  '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
   '/elections/forecast/$forecastSlug': typeof ElectionsForecastForecastSlugRoute
   '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
   '/elections/races/$raceSlug': typeof ElectionsRacesRaceSlugRoute
@@ -1321,6 +1728,7 @@ export interface FileRoutesByFullPath {
   '/admin/explore/imports/': typeof AdminExploreImportsIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
+  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -1333,6 +1741,7 @@ export interface FileRoutesByTo {
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
   '/find-my-dmv': typeof FindMyDmvRoute
@@ -1347,6 +1756,7 @@ export interface FileRoutesByTo {
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
+  '/legislature': typeof LegislatureRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
@@ -1363,6 +1773,7 @@ export interface FileRoutesByTo {
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
+  '/sitemap-government.xml': typeof SitemapGovernmentDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -1375,11 +1786,13 @@ export interface FileRoutesByTo {
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
   '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
+  '/texas-government': typeof TexasGovernmentRouteWithChildren
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
@@ -1402,14 +1815,31 @@ export interface FileRoutesByTo {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/dmv/cdl': typeof DmvCdlRoute
+  '/dmv/cdl-classes': typeof DmvCdlClassesRoute
+  '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
+  '/dmv/change-address': typeof DmvChangeAddressRoute
+  '/dmv/dps-appointments': typeof DmvDpsAppointmentsRoute
+  '/dmv/driver-license': typeof DmvDriverLicenseRoute
+  '/dmv/driver-license-documents': typeof DmvDriverLicenseDocumentsRoute
+  '/dmv/driver-license-renewal': typeof DmvDriverLicenseRenewalRoute
+  '/dmv/forms-downloads': typeof DmvFormsDownloadsRoute
+  '/dmv/identification-card': typeof DmvIdentificationCardRoute
+  '/dmv/license-status': typeof DmvLicenseStatusRoute
+  '/dmv/real-id': typeof DmvRealIdRoute
+  '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
+  '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
-  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/candidates': typeof ElectionsCandidatesRoute
   '/elections/corrections': typeof ElectionsCorrectionsRoute
+  '/elections/districts': typeof ElectionsDistrictsRouteWithChildren
   '/elections/forecast': typeof ElectionsForecastRouteWithChildren
+  '/elections/legislative': typeof ElectionsLegislativeRoute
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
-  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
+  '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
@@ -1439,14 +1869,45 @@ export interface FileRoutesByTo {
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
+  '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
+  '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
+  '/texas-legislature/house': typeof TexasLegislatureHouseRoute
+  '/texas-legislature/senate': typeof TexasLegislatureSenateRoute
+  '/texas-legislature/sessions': typeof TexasLegislatureSessionsRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
+  '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
+  '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
+  '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
+  '/vehicles/buying-selling': typeof VehiclesBuyingSellingRoute
+  '/vehicles/commercial-fleet-irp': typeof VehiclesCommercialFleetIrpRoute
+  '/vehicles/disabled-parking': typeof VehiclesDisabledParkingRoute
+  '/vehicles/duplicate-titles': typeof VehiclesDuplicateTitlesRoute
+  '/vehicles/farm-antique-specialty': typeof VehiclesFarmAntiqueSpecialtyRoute
+  '/vehicles/financial-responsibility': typeof VehiclesFinancialResponsibilityRoute
+  '/vehicles/inspections': typeof VehiclesInspectionsRoute
+  '/vehicles/inspections-emissions': typeof VehiclesInspectionsEmissionsRoute
+  '/vehicles/liens-duplicate-corrected-titles': typeof VehiclesLiensDuplicateCorrectedTitlesRoute
+  '/vehicles/new-residents': typeof VehiclesNewResidentsRoute
+  '/vehicles/personalized-plates': typeof VehiclesPersonalizedPlatesRoute
+  '/vehicles/plates': typeof VehiclesPlatesRoute
+  '/vehicles/private-party-sales': typeof VehiclesPrivatePartySalesRoute
+  '/vehicles/registration': typeof VehiclesRegistrationRoute
+  '/vehicles/registration-fees-taxes': typeof VehiclesRegistrationFeesTaxesRoute
+  '/vehicles/renewal': typeof VehiclesRenewalRoute
+  '/vehicles/salvage-rebuilt-titles': typeof VehiclesSalvageRebuiltTitlesRoute
+  '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
+  '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
+  '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
   '/authors': typeof AuthorsIndexRoute
+  '/bills': typeof BillsIndexRoute
   '/elections': typeof ElectionsIndexRoute
   '/explore': typeof ExploreIndexRoute
   '/news': typeof NewsIndexRoute
   '/shop': typeof ShopIndexRoute
+  '/texas-legislature': typeof TexasLegislatureIndexRoute
   '/texas-news': typeof TexasNewsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
   '/texas': typeof TexasIndexRoute
@@ -1457,6 +1918,7 @@ export interface FileRoutesByTo {
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
+  '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
   '/elections/forecast/$forecastSlug': typeof ElectionsForecastForecastSlugRoute
   '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
   '/elections/races/$raceSlug': typeof ElectionsRacesRaceSlugRoute
@@ -1495,6 +1957,7 @@ export interface FileRoutesByTo {
   '/admin/explore/imports': typeof AdminExploreImportsIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
+  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -1508,6 +1971,7 @@ export interface FileRoutesById {
   '/contact-legislators': typeof ContactLegislatorsRoute
   '/county-elections': typeof CountyElectionsRoute
   '/dallas-fort-worth': typeof DallasFortWorthRoute
+  '/dmv': typeof DmvRouteWithChildren
   '/editorial-standards': typeof EditorialStandardsRoute
   '/el-paso': typeof ElPasoRoute
   '/elections': typeof ElectionsRouteWithChildren
@@ -1524,6 +1988,7 @@ export interface FileRoutesById {
   '/laws': typeof LawsRoute
   '/laws-to-know': typeof LawsToKnowRoute
   '/legislative-updates': typeof LegislativeUpdatesRoute
+  '/legislature': typeof LegislatureRoute
   '/living-in-texas': typeof LivingInTexasRoute
   '/moving-to-texas': typeof MovingToTexasRoute
   '/moving-to-texas-checklist': typeof MovingToTexasChecklistRoute
@@ -1542,6 +2007,7 @@ export interface FileRoutesById {
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
+  '/sitemap-government.xml': typeof SitemapGovernmentDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
@@ -1555,11 +2021,13 @@ export interface FileRoutesById {
   '/texas-business': typeof TexasBusinessRouteWithChildren
   '/texas-closing-cost-calculator': typeof TexasClosingCostCalculatorRoute
   '/texas-cost-of-living-calculator': typeof TexasCostOfLivingCalculatorRoute
+  '/texas-data': typeof TexasDataRouteWithChildren
   '/texas-down-payment-assistance-calculator': typeof TexasDownPaymentAssistanceCalculatorRoute
   '/texas-down-payment-calculator': typeof TexasDownPaymentCalculatorRoute
   '/texas-economy': typeof TexasEconomyRoute
   '/texas-financial-tools': typeof TexasFinancialToolsRoute
   '/texas-first-time-homebuyer-programs': typeof TexasFirstTimeHomebuyerProgramsRoute
+  '/texas-government': typeof TexasGovernmentRouteWithChildren
   '/texas-home-affordability-calculator': typeof TexasHomeAffordabilityCalculatorRoute
   '/texas-home-equity-calculator': typeof TexasHomeEquityCalculatorRoute
   '/texas-home-equity-growth-calculator': typeof TexasHomeEquityGrowthCalculatorRoute
@@ -1567,6 +2035,7 @@ export interface FileRoutesById {
   '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-legislature': typeof TexasLegislatureRouteWithChildren
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
@@ -1584,14 +2053,31 @@ export interface FileRoutesById {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
+  '/dmv/cdl': typeof DmvCdlRoute
+  '/dmv/cdl-classes': typeof DmvCdlClassesRoute
+  '/dmv/cdl-endorsements': typeof DmvCdlEndorsementsRoute
+  '/dmv/change-address': typeof DmvChangeAddressRoute
+  '/dmv/dps-appointments': typeof DmvDpsAppointmentsRoute
+  '/dmv/driver-license': typeof DmvDriverLicenseRoute
+  '/dmv/driver-license-documents': typeof DmvDriverLicenseDocumentsRoute
+  '/dmv/driver-license-renewal': typeof DmvDriverLicenseRenewalRoute
+  '/dmv/forms-downloads': typeof DmvFormsDownloadsRoute
+  '/dmv/identification-card': typeof DmvIdentificationCardRoute
+  '/dmv/license-status': typeof DmvLicenseStatusRoute
+  '/dmv/real-id': typeof DmvRealIdRoute
+  '/dmv/replace-lost-license': typeof DmvReplaceLostLicenseRoute
+  '/dmv/texas-dmv-vs-dps': typeof DmvTexasDmvVsDpsRoute
   '/elections/2026': typeof Elections2026Route
-  '/elections/candidates': typeof ElectionsCandidatesRouteWithChildren
+  '/elections/candidates': typeof ElectionsCandidatesRoute
   '/elections/corrections': typeof ElectionsCorrectionsRoute
+  '/elections/districts': typeof ElectionsDistrictsRouteWithChildren
   '/elections/forecast': typeof ElectionsForecastRouteWithChildren
+  '/elections/legislative': typeof ElectionsLegislativeRoute
   '/elections/methodology': typeof ElectionsMethodologyRoute
   '/elections/polls': typeof ElectionsPollsRouteWithChildren
-  '/elections/races': typeof ElectionsRacesRouteWithChildren
+  '/elections/races': typeof ElectionsRacesRoute
   '/elections/results': typeof ElectionsResultsRouteWithChildren
+  '/elections/statewide': typeof ElectionsStatewideRoute
   '/elections/voting': typeof ElectionsVotingRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/explore/$slug': typeof ExploreSlugRoute
@@ -1621,14 +2107,45 @@ export interface FileRoutesById {
   '/shop/checkout': typeof ShopCheckoutRoute
   '/shop/checkout-return': typeof ShopCheckoutReturnRoute
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
+  '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
+  '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
+  '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
+  '/texas-legislature/house': typeof TexasLegislatureHouseRoute
+  '/texas-legislature/senate': typeof TexasLegislatureSenateRoute
+  '/texas-legislature/sessions': typeof TexasLegislatureSessionsRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
+  '/vehicles/auto-insurance-requirements': typeof VehiclesAutoInsuranceRequirementsRoute
+  '/vehicles/bonded-titles': typeof VehiclesBondedTitlesRoute
+  '/vehicles/buying-a-car': typeof VehiclesBuyingACarRoute
+  '/vehicles/buying-selling': typeof VehiclesBuyingSellingRoute
+  '/vehicles/commercial-fleet-irp': typeof VehiclesCommercialFleetIrpRoute
+  '/vehicles/disabled-parking': typeof VehiclesDisabledParkingRoute
+  '/vehicles/duplicate-titles': typeof VehiclesDuplicateTitlesRoute
+  '/vehicles/farm-antique-specialty': typeof VehiclesFarmAntiqueSpecialtyRoute
+  '/vehicles/financial-responsibility': typeof VehiclesFinancialResponsibilityRoute
+  '/vehicles/inspections': typeof VehiclesInspectionsRoute
+  '/vehicles/inspections-emissions': typeof VehiclesInspectionsEmissionsRoute
+  '/vehicles/liens-duplicate-corrected-titles': typeof VehiclesLiensDuplicateCorrectedTitlesRoute
+  '/vehicles/new-residents': typeof VehiclesNewResidentsRoute
+  '/vehicles/personalized-plates': typeof VehiclesPersonalizedPlatesRoute
+  '/vehicles/plates': typeof VehiclesPlatesRoute
+  '/vehicles/private-party-sales': typeof VehiclesPrivatePartySalesRoute
+  '/vehicles/registration': typeof VehiclesRegistrationRoute
+  '/vehicles/registration-fees-taxes': typeof VehiclesRegistrationFeesTaxesRoute
+  '/vehicles/renewal': typeof VehiclesRenewalRoute
+  '/vehicles/salvage-rebuilt-titles': typeof VehiclesSalvageRebuiltTitlesRoute
+  '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
+  '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
+  '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
   '/authors/': typeof AuthorsIndexRoute
+  '/bills/': typeof BillsIndexRoute
   '/elections/': typeof ElectionsIndexRoute
   '/explore/': typeof ExploreIndexRoute
   '/news/': typeof NewsIndexRoute
   '/shop/': typeof ShopIndexRoute
+  '/texas-legislature/': typeof TexasLegislatureIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
@@ -1638,10 +2155,11 @@ export interface FileRoutesById {
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
-  '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
+  '/elections/candidates_/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
+  '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
   '/elections/forecast/$forecastSlug': typeof ElectionsForecastForecastSlugRoute
   '/elections/polls/$pollSlug': typeof ElectionsPollsPollSlugRoute
-  '/elections/races/$raceSlug': typeof ElectionsRacesRaceSlugRoute
+  '/elections/races_/$raceSlug': typeof ElectionsRacesRaceSlugRoute
   '/elections/results/$resultSlug': typeof ElectionsResultsResultSlugRoute
   '/explore/cavern/$slug': typeof ExploreCavernSlugRoute
   '/explore/county/$county': typeof ExploreCountyCountyRoute
@@ -1677,6 +2195,7 @@ export interface FileRoutesById {
   '/admin/explore/imports/': typeof AdminExploreImportsIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
+  '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -1691,6 +2210,7 @@ export interface FileRouteTypes {
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
     | '/elections'
@@ -1707,6 +2227,7 @@ export interface FileRouteTypes {
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
+    | '/legislature'
     | '/living-in-texas'
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
@@ -1725,6 +2246,7 @@ export interface FileRouteTypes {
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
+    | '/sitemap-government.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
@@ -1738,11 +2260,13 @@ export interface FileRouteTypes {
     | '/texas-business'
     | '/texas-closing-cost-calculator'
     | '/texas-cost-of-living-calculator'
+    | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-financial-tools'
     | '/texas-first-time-homebuyer-programs'
+    | '/texas-government'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
@@ -1750,6 +2274,7 @@ export interface FileRouteTypes {
     | '/texas-homeownership-cost-calculator'
     | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-legislature'
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
     | '/texas-moving-cost-calculator'
@@ -1767,14 +2292,31 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/dmv/cdl'
+    | '/dmv/cdl-classes'
+    | '/dmv/cdl-endorsements'
+    | '/dmv/change-address'
+    | '/dmv/dps-appointments'
+    | '/dmv/driver-license'
+    | '/dmv/driver-license-documents'
+    | '/dmv/driver-license-renewal'
+    | '/dmv/forms-downloads'
+    | '/dmv/identification-card'
+    | '/dmv/license-status'
+    | '/dmv/real-id'
+    | '/dmv/replace-lost-license'
+    | '/dmv/texas-dmv-vs-dps'
     | '/elections/2026'
     | '/elections/candidates'
     | '/elections/corrections'
+    | '/elections/districts'
     | '/elections/forecast'
+    | '/elections/legislative'
     | '/elections/methodology'
     | '/elections/polls'
     | '/elections/races'
     | '/elections/results'
+    | '/elections/statewide'
     | '/elections/voting'
     | '/email/unsubscribe'
     | '/explore/$slug'
@@ -1804,14 +2346,45 @@ export interface FileRouteTypes {
     | '/shop/checkout'
     | '/shop/checkout-return'
     | '/texas-business/$topic'
+    | '/texas-data/$datasetSlug'
+    | '/texas-government/$entitySlug'
+    | '/texas-legislature/current-session'
+    | '/texas-legislature/house'
+    | '/texas-legislature/senate'
+    | '/texas-legislature/sessions'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/texas/$slug'
+    | '/vehicles/auto-insurance-requirements'
+    | '/vehicles/bonded-titles'
+    | '/vehicles/buying-a-car'
+    | '/vehicles/buying-selling'
+    | '/vehicles/commercial-fleet-irp'
+    | '/vehicles/disabled-parking'
+    | '/vehicles/duplicate-titles'
+    | '/vehicles/farm-antique-specialty'
+    | '/vehicles/financial-responsibility'
+    | '/vehicles/inspections'
+    | '/vehicles/inspections-emissions'
+    | '/vehicles/liens-duplicate-corrected-titles'
+    | '/vehicles/new-residents'
+    | '/vehicles/personalized-plates'
+    | '/vehicles/plates'
+    | '/vehicles/private-party-sales'
+    | '/vehicles/registration'
+    | '/vehicles/registration-fees-taxes'
+    | '/vehicles/renewal'
+    | '/vehicles/salvage-rebuilt-titles'
+    | '/vehicles/selling-a-car'
+    | '/vehicles/temporary-tags'
+    | '/vehicles/title-transfer'
     | '/authors/'
+    | '/bills/'
     | '/elections/'
     | '/explore/'
     | '/news/'
     | '/shop/'
+    | '/texas-legislature/'
     | '/texas-news/'
     | '/texas-sports/'
     | '/texas/'
@@ -1822,6 +2395,7 @@ export interface FileRouteTypes {
     | '/admin/elections/results'
     | '/api/public/property-address-lookup'
     | '/elections/candidates/$candidateSlug'
+    | '/elections/districts/$districtSlug'
     | '/elections/forecast/$forecastSlug'
     | '/elections/polls/$pollSlug'
     | '/elections/races/$raceSlug'
@@ -1860,6 +2434,7 @@ export interface FileRouteTypes {
     | '/admin/explore/imports/'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
+    | '/bills/texas/$legislature/$billType/$billNumber'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -1872,6 +2447,7 @@ export interface FileRouteTypes {
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
     | '/find-my-dmv'
@@ -1886,6 +2462,7 @@ export interface FileRouteTypes {
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
+    | '/legislature'
     | '/living-in-texas'
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
@@ -1902,6 +2479,7 @@ export interface FileRouteTypes {
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
+    | '/sitemap-government.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
@@ -1914,11 +2492,13 @@ export interface FileRouteTypes {
     | '/texas-business'
     | '/texas-closing-cost-calculator'
     | '/texas-cost-of-living-calculator'
+    | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-financial-tools'
     | '/texas-first-time-homebuyer-programs'
+    | '/texas-government'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
@@ -1941,14 +2521,31 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/dmv/cdl'
+    | '/dmv/cdl-classes'
+    | '/dmv/cdl-endorsements'
+    | '/dmv/change-address'
+    | '/dmv/dps-appointments'
+    | '/dmv/driver-license'
+    | '/dmv/driver-license-documents'
+    | '/dmv/driver-license-renewal'
+    | '/dmv/forms-downloads'
+    | '/dmv/identification-card'
+    | '/dmv/license-status'
+    | '/dmv/real-id'
+    | '/dmv/replace-lost-license'
+    | '/dmv/texas-dmv-vs-dps'
     | '/elections/2026'
     | '/elections/candidates'
     | '/elections/corrections'
+    | '/elections/districts'
     | '/elections/forecast'
+    | '/elections/legislative'
     | '/elections/methodology'
     | '/elections/polls'
     | '/elections/races'
     | '/elections/results'
+    | '/elections/statewide'
     | '/elections/voting'
     | '/email/unsubscribe'
     | '/explore/$slug'
@@ -1978,14 +2575,45 @@ export interface FileRouteTypes {
     | '/shop/checkout'
     | '/shop/checkout-return'
     | '/texas-business/$topic'
+    | '/texas-data/$datasetSlug'
+    | '/texas-government/$entitySlug'
+    | '/texas-legislature/current-session'
+    | '/texas-legislature/house'
+    | '/texas-legislature/senate'
+    | '/texas-legislature/sessions'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/texas/$slug'
+    | '/vehicles/auto-insurance-requirements'
+    | '/vehicles/bonded-titles'
+    | '/vehicles/buying-a-car'
+    | '/vehicles/buying-selling'
+    | '/vehicles/commercial-fleet-irp'
+    | '/vehicles/disabled-parking'
+    | '/vehicles/duplicate-titles'
+    | '/vehicles/farm-antique-specialty'
+    | '/vehicles/financial-responsibility'
+    | '/vehicles/inspections'
+    | '/vehicles/inspections-emissions'
+    | '/vehicles/liens-duplicate-corrected-titles'
+    | '/vehicles/new-residents'
+    | '/vehicles/personalized-plates'
+    | '/vehicles/plates'
+    | '/vehicles/private-party-sales'
+    | '/vehicles/registration'
+    | '/vehicles/registration-fees-taxes'
+    | '/vehicles/renewal'
+    | '/vehicles/salvage-rebuilt-titles'
+    | '/vehicles/selling-a-car'
+    | '/vehicles/temporary-tags'
+    | '/vehicles/title-transfer'
     | '/authors'
+    | '/bills'
     | '/elections'
     | '/explore'
     | '/news'
     | '/shop'
+    | '/texas-legislature'
     | '/texas-news'
     | '/texas-sports'
     | '/texas'
@@ -1996,6 +2624,7 @@ export interface FileRouteTypes {
     | '/admin/elections/results'
     | '/api/public/property-address-lookup'
     | '/elections/candidates/$candidateSlug'
+    | '/elections/districts/$districtSlug'
     | '/elections/forecast/$forecastSlug'
     | '/elections/polls/$pollSlug'
     | '/elections/races/$raceSlug'
@@ -2034,6 +2663,7 @@ export interface FileRouteTypes {
     | '/admin/explore/imports'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
+    | '/bills/texas/$legislature/$billType/$billNumber'
   id:
     | '__root__'
     | '/'
@@ -2046,6 +2676,7 @@ export interface FileRouteTypes {
     | '/contact-legislators'
     | '/county-elections'
     | '/dallas-fort-worth'
+    | '/dmv'
     | '/editorial-standards'
     | '/el-paso'
     | '/elections'
@@ -2062,6 +2693,7 @@ export interface FileRouteTypes {
     | '/laws'
     | '/laws-to-know'
     | '/legislative-updates'
+    | '/legislature'
     | '/living-in-texas'
     | '/moving-to-texas'
     | '/moving-to-texas-checklist'
@@ -2080,6 +2712,7 @@ export interface FileRouteTypes {
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
+    | '/sitemap-government.xml'
     | '/sitemap-images.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
@@ -2093,11 +2726,13 @@ export interface FileRouteTypes {
     | '/texas-business'
     | '/texas-closing-cost-calculator'
     | '/texas-cost-of-living-calculator'
+    | '/texas-data'
     | '/texas-down-payment-assistance-calculator'
     | '/texas-down-payment-calculator'
     | '/texas-economy'
     | '/texas-financial-tools'
     | '/texas-first-time-homebuyer-programs'
+    | '/texas-government'
     | '/texas-home-affordability-calculator'
     | '/texas-home-equity-calculator'
     | '/texas-home-equity-growth-calculator'
@@ -2105,6 +2740,7 @@ export interface FileRouteTypes {
     | '/texas-homeownership-cost-calculator'
     | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-legislature'
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
     | '/texas-moving-cost-calculator'
@@ -2122,14 +2758,31 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/authors/$slug'
+    | '/dmv/cdl'
+    | '/dmv/cdl-classes'
+    | '/dmv/cdl-endorsements'
+    | '/dmv/change-address'
+    | '/dmv/dps-appointments'
+    | '/dmv/driver-license'
+    | '/dmv/driver-license-documents'
+    | '/dmv/driver-license-renewal'
+    | '/dmv/forms-downloads'
+    | '/dmv/identification-card'
+    | '/dmv/license-status'
+    | '/dmv/real-id'
+    | '/dmv/replace-lost-license'
+    | '/dmv/texas-dmv-vs-dps'
     | '/elections/2026'
     | '/elections/candidates'
     | '/elections/corrections'
+    | '/elections/districts'
     | '/elections/forecast'
+    | '/elections/legislative'
     | '/elections/methodology'
     | '/elections/polls'
     | '/elections/races'
     | '/elections/results'
+    | '/elections/statewide'
     | '/elections/voting'
     | '/email/unsubscribe'
     | '/explore/$slug'
@@ -2159,14 +2812,45 @@ export interface FileRouteTypes {
     | '/shop/checkout'
     | '/shop/checkout-return'
     | '/texas-business/$topic'
+    | '/texas-data/$datasetSlug'
+    | '/texas-government/$entitySlug'
+    | '/texas-legislature/current-session'
+    | '/texas-legislature/house'
+    | '/texas-legislature/senate'
+    | '/texas-legislature/sessions'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/texas/$slug'
+    | '/vehicles/auto-insurance-requirements'
+    | '/vehicles/bonded-titles'
+    | '/vehicles/buying-a-car'
+    | '/vehicles/buying-selling'
+    | '/vehicles/commercial-fleet-irp'
+    | '/vehicles/disabled-parking'
+    | '/vehicles/duplicate-titles'
+    | '/vehicles/farm-antique-specialty'
+    | '/vehicles/financial-responsibility'
+    | '/vehicles/inspections'
+    | '/vehicles/inspections-emissions'
+    | '/vehicles/liens-duplicate-corrected-titles'
+    | '/vehicles/new-residents'
+    | '/vehicles/personalized-plates'
+    | '/vehicles/plates'
+    | '/vehicles/private-party-sales'
+    | '/vehicles/registration'
+    | '/vehicles/registration-fees-taxes'
+    | '/vehicles/renewal'
+    | '/vehicles/salvage-rebuilt-titles'
+    | '/vehicles/selling-a-car'
+    | '/vehicles/temporary-tags'
+    | '/vehicles/title-transfer'
     | '/authors/'
+    | '/bills/'
     | '/elections/'
     | '/explore/'
     | '/news/'
     | '/shop/'
+    | '/texas-legislature/'
     | '/texas-news/'
     | '/texas-sports/'
     | '/texas/'
@@ -2176,10 +2860,11 @@ export interface FileRouteTypes {
     | '/admin/elections/races'
     | '/admin/elections/results'
     | '/api/public/property-address-lookup'
-    | '/elections/candidates/$candidateSlug'
+    | '/elections/candidates_/$candidateSlug'
+    | '/elections/districts/$districtSlug'
     | '/elections/forecast/$forecastSlug'
     | '/elections/polls/$pollSlug'
-    | '/elections/races/$raceSlug'
+    | '/elections/races_/$raceSlug'
     | '/elections/results/$resultSlug'
     | '/explore/cavern/$slug'
     | '/explore/county/$county'
@@ -2215,6 +2900,7 @@ export interface FileRouteTypes {
     | '/admin/explore/imports/'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
+    | '/bills/texas/$legislature/$billType/$billNumber'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -2228,6 +2914,7 @@ export interface RootRouteChildren {
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
   CountyElectionsRoute: typeof CountyElectionsRoute
   DallasFortWorthRoute: typeof DallasFortWorthRoute
+  DmvRoute: typeof DmvRouteWithChildren
   EditorialStandardsRoute: typeof EditorialStandardsRoute
   ElPasoRoute: typeof ElPasoRoute
   ElectionsRoute: typeof ElectionsRouteWithChildren
@@ -2244,6 +2931,7 @@ export interface RootRouteChildren {
   LawsRoute: typeof LawsRoute
   LawsToKnowRoute: typeof LawsToKnowRoute
   LegislativeUpdatesRoute: typeof LegislativeUpdatesRoute
+  LegislatureRoute: typeof LegislatureRoute
   LivingInTexasRoute: typeof LivingInTexasRoute
   MovingToTexasRoute: typeof MovingToTexasRoute
   MovingToTexasChecklistRoute: typeof MovingToTexasChecklistRoute
@@ -2262,6 +2950,7 @@ export interface RootRouteChildren {
   SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
   SitemapExploreLocationsDotxmlRoute: typeof SitemapExploreLocationsDotxmlRoute
   SitemapExploreDotxmlRoute: typeof SitemapExploreDotxmlRoute
+  SitemapGovernmentDotxmlRoute: typeof SitemapGovernmentDotxmlRoute
   SitemapImagesDotxmlRoute: typeof SitemapImagesDotxmlRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
@@ -2275,11 +2964,13 @@ export interface RootRouteChildren {
   TexasBusinessRoute: typeof TexasBusinessRouteWithChildren
   TexasClosingCostCalculatorRoute: typeof TexasClosingCostCalculatorRoute
   TexasCostOfLivingCalculatorRoute: typeof TexasCostOfLivingCalculatorRoute
+  TexasDataRoute: typeof TexasDataRouteWithChildren
   TexasDownPaymentAssistanceCalculatorRoute: typeof TexasDownPaymentAssistanceCalculatorRoute
   TexasDownPaymentCalculatorRoute: typeof TexasDownPaymentCalculatorRoute
   TexasEconomyRoute: typeof TexasEconomyRoute
   TexasFinancialToolsRoute: typeof TexasFinancialToolsRoute
   TexasFirstTimeHomebuyerProgramsRoute: typeof TexasFirstTimeHomebuyerProgramsRoute
+  TexasGovernmentRoute: typeof TexasGovernmentRouteWithChildren
   TexasHomeAffordabilityCalculatorRoute: typeof TexasHomeAffordabilityCalculatorRoute
   TexasHomeEquityCalculatorRoute: typeof TexasHomeEquityCalculatorRoute
   TexasHomeEquityGrowthCalculatorRoute: typeof TexasHomeEquityGrowthCalculatorRoute
@@ -2287,6 +2978,7 @@ export interface RootRouteChildren {
   TexasHomeownershipCostCalculatorRoute: typeof TexasHomeownershipCostCalculatorRoute
   TexasLawPolicyRoute: typeof TexasLawPolicyRoute
   TexasLawsRoute: typeof TexasLawsRoute
+  TexasLegislatureRoute: typeof TexasLegislatureRouteWithChildren
   TexasMortgageCalculatorRoute: typeof TexasMortgageCalculatorRoute
   TexasMortgagePayoffCalculatorRoute: typeof TexasMortgagePayoffCalculatorRoute
   TexasMovingCostCalculatorRoute: typeof TexasMovingCostCalculatorRoute
@@ -2305,7 +2997,31 @@ export interface RootRouteChildren {
   VotingLocationsRoute: typeof VotingLocationsRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  VehiclesAutoInsuranceRequirementsRoute: typeof VehiclesAutoInsuranceRequirementsRoute
+  VehiclesBondedTitlesRoute: typeof VehiclesBondedTitlesRoute
+  VehiclesBuyingACarRoute: typeof VehiclesBuyingACarRoute
+  VehiclesBuyingSellingRoute: typeof VehiclesBuyingSellingRoute
+  VehiclesCommercialFleetIrpRoute: typeof VehiclesCommercialFleetIrpRoute
+  VehiclesDisabledParkingRoute: typeof VehiclesDisabledParkingRoute
+  VehiclesDuplicateTitlesRoute: typeof VehiclesDuplicateTitlesRoute
+  VehiclesFarmAntiqueSpecialtyRoute: typeof VehiclesFarmAntiqueSpecialtyRoute
+  VehiclesFinancialResponsibilityRoute: typeof VehiclesFinancialResponsibilityRoute
+  VehiclesInspectionsRoute: typeof VehiclesInspectionsRoute
+  VehiclesInspectionsEmissionsRoute: typeof VehiclesInspectionsEmissionsRoute
+  VehiclesLiensDuplicateCorrectedTitlesRoute: typeof VehiclesLiensDuplicateCorrectedTitlesRoute
+  VehiclesNewResidentsRoute: typeof VehiclesNewResidentsRoute
+  VehiclesPersonalizedPlatesRoute: typeof VehiclesPersonalizedPlatesRoute
+  VehiclesPlatesRoute: typeof VehiclesPlatesRoute
+  VehiclesPrivatePartySalesRoute: typeof VehiclesPrivatePartySalesRoute
+  VehiclesRegistrationRoute: typeof VehiclesRegistrationRoute
+  VehiclesRegistrationFeesTaxesRoute: typeof VehiclesRegistrationFeesTaxesRoute
+  VehiclesRenewalRoute: typeof VehiclesRenewalRoute
+  VehiclesSalvageRebuiltTitlesRoute: typeof VehiclesSalvageRebuiltTitlesRoute
+  VehiclesSellingACarRoute: typeof VehiclesSellingACarRoute
+  VehiclesTemporaryTagsRoute: typeof VehiclesTemporaryTagsRoute
+  VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
+  BillsIndexRoute: typeof BillsIndexRoute
   ApiPublicPropertyAddressLookupRoute: typeof ApiPublicPropertyAddressLookupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
@@ -2331,6 +3047,7 @@ export interface RootRouteChildren {
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   ApiPublicOauthFacebookCallbackRoute: typeof ApiPublicOauthFacebookCallbackRoute
   ApiPublicOauthFacebookStartRoute: typeof ApiPublicOauthFacebookStartRoute
+  BillsTexasLegislatureBillTypeBillNumberRoute: typeof BillsTexasLegislatureBillTypeBillNumberRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -2403,6 +3120,13 @@ declare module '@tanstack/react-router' {
       path: '/dallas-fort-worth'
       fullPath: '/dallas-fort-worth'
       preLoaderRoute: typeof DallasFortWorthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dmv': {
+      id: '/dmv'
+      path: '/dmv'
+      fullPath: '/dmv'
+      preLoaderRoute: typeof DmvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/editorial-standards': {
@@ -2515,6 +3239,13 @@ declare module '@tanstack/react-router' {
       path: '/legislative-updates'
       fullPath: '/legislative-updates'
       preLoaderRoute: typeof LegislativeUpdatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legislature': {
+      id: '/legislature'
+      path: '/legislature'
+      fullPath: '/legislature'
+      preLoaderRoute: typeof LegislatureRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/living-in-texas': {
@@ -2643,6 +3374,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapExploreDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-government.xml': {
+      id: '/sitemap-government.xml'
+      path: '/sitemap-government.xml'
+      fullPath: '/sitemap-government.xml'
+      preLoaderRoute: typeof SitemapGovernmentDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap-images.xml': {
       id: '/sitemap-images.xml'
       path: '/sitemap-images.xml'
@@ -2734,6 +3472,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasCostOfLivingCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-data': {
+      id: '/texas-data'
+      path: '/texas-data'
+      fullPath: '/texas-data'
+      preLoaderRoute: typeof TexasDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-down-payment-assistance-calculator': {
       id: '/texas-down-payment-assistance-calculator'
       path: '/texas-down-payment-assistance-calculator'
@@ -2767,6 +3512,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-first-time-homebuyer-programs'
       fullPath: '/texas-first-time-homebuyer-programs'
       preLoaderRoute: typeof TexasFirstTimeHomebuyerProgramsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-government': {
+      id: '/texas-government'
+      path: '/texas-government'
+      fullPath: '/texas-government'
+      preLoaderRoute: typeof TexasGovernmentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-home-affordability-calculator': {
@@ -2816,6 +3568,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-laws'
       fullPath: '/texas-laws'
       preLoaderRoute: typeof TexasLawsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-legislature': {
+      id: '/texas-legislature'
+      path: '/texas-legislature'
+      fullPath: '/texas-legislature'
+      preLoaderRoute: typeof TexasLegislatureRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-mortgage-calculator': {
@@ -2944,6 +3703,111 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bills/': {
+      id: '/bills/'
+      path: '/bills'
+      fullPath: '/bills/'
+      preLoaderRoute: typeof BillsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dmv/cdl': {
+      id: '/dmv/cdl'
+      path: '/cdl'
+      fullPath: '/dmv/cdl'
+      preLoaderRoute: typeof DmvCdlRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/cdl-classes': {
+      id: '/dmv/cdl-classes'
+      path: '/cdl-classes'
+      fullPath: '/dmv/cdl-classes'
+      preLoaderRoute: typeof DmvCdlClassesRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/cdl-endorsements': {
+      id: '/dmv/cdl-endorsements'
+      path: '/cdl-endorsements'
+      fullPath: '/dmv/cdl-endorsements'
+      preLoaderRoute: typeof DmvCdlEndorsementsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/change-address': {
+      id: '/dmv/change-address'
+      path: '/change-address'
+      fullPath: '/dmv/change-address'
+      preLoaderRoute: typeof DmvChangeAddressRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/dps-appointments': {
+      id: '/dmv/dps-appointments'
+      path: '/dps-appointments'
+      fullPath: '/dmv/dps-appointments'
+      preLoaderRoute: typeof DmvDpsAppointmentsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license': {
+      id: '/dmv/driver-license'
+      path: '/driver-license'
+      fullPath: '/dmv/driver-license'
+      preLoaderRoute: typeof DmvDriverLicenseRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license-documents': {
+      id: '/dmv/driver-license-documents'
+      path: '/driver-license-documents'
+      fullPath: '/dmv/driver-license-documents'
+      preLoaderRoute: typeof DmvDriverLicenseDocumentsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license-renewal': {
+      id: '/dmv/driver-license-renewal'
+      path: '/driver-license-renewal'
+      fullPath: '/dmv/driver-license-renewal'
+      preLoaderRoute: typeof DmvDriverLicenseRenewalRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/forms-downloads': {
+      id: '/dmv/forms-downloads'
+      path: '/forms-downloads'
+      fullPath: '/dmv/forms-downloads'
+      preLoaderRoute: typeof DmvFormsDownloadsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/identification-card': {
+      id: '/dmv/identification-card'
+      path: '/identification-card'
+      fullPath: '/dmv/identification-card'
+      preLoaderRoute: typeof DmvIdentificationCardRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/license-status': {
+      id: '/dmv/license-status'
+      path: '/license-status'
+      fullPath: '/dmv/license-status'
+      preLoaderRoute: typeof DmvLicenseStatusRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/real-id': {
+      id: '/dmv/real-id'
+      path: '/real-id'
+      fullPath: '/dmv/real-id'
+      preLoaderRoute: typeof DmvRealIdRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/replace-lost-license': {
+      id: '/dmv/replace-lost-license'
+      path: '/replace-lost-license'
+      fullPath: '/dmv/replace-lost-license'
+      preLoaderRoute: typeof DmvReplaceLostLicenseRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/texas-dmv-vs-dps': {
+      id: '/dmv/texas-dmv-vs-dps'
+      path: '/texas-dmv-vs-dps'
+      fullPath: '/dmv/texas-dmv-vs-dps'
+      preLoaderRoute: typeof DmvTexasDmvVsDpsRouteImport
+      parentRoute: typeof DmvRoute
+    }
     '/elections/': {
       id: '/elections/'
       path: '/'
@@ -2972,11 +3836,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElectionsCorrectionsRouteImport
       parentRoute: typeof ElectionsRoute
     }
+    '/elections/districts': {
+      id: '/elections/districts'
+      path: '/districts'
+      fullPath: '/elections/districts'
+      preLoaderRoute: typeof ElectionsDistrictsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
     '/elections/forecast': {
       id: '/elections/forecast'
       path: '/forecast'
       fullPath: '/elections/forecast'
       preLoaderRoute: typeof ElectionsForecastRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/legislative': {
+      id: '/elections/legislative'
+      path: '/legislative'
+      fullPath: '/elections/legislative'
+      preLoaderRoute: typeof ElectionsLegislativeRouteImport
       parentRoute: typeof ElectionsRoute
     }
     '/elections/methodology': {
@@ -3005,6 +3883,13 @@ declare module '@tanstack/react-router' {
       path: '/results'
       fullPath: '/elections/results'
       preLoaderRoute: typeof ElectionsResultsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/statewide': {
+      id: '/elections/statewide'
+      path: '/statewide'
+      fullPath: '/elections/statewide'
+      preLoaderRoute: typeof ElectionsStatewideRouteImport
       parentRoute: typeof ElectionsRoute
     }
     '/elections/voting': {
@@ -3231,6 +4116,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasBusinessTopicRouteImport
       parentRoute: typeof TexasBusinessRoute
     }
+    '/texas-data/$datasetSlug': {
+      id: '/texas-data/$datasetSlug'
+      path: '/$datasetSlug'
+      fullPath: '/texas-data/$datasetSlug'
+      preLoaderRoute: typeof TexasDataDatasetSlugRouteImport
+      parentRoute: typeof TexasDataRoute
+    }
+    '/texas-government/$entitySlug': {
+      id: '/texas-government/$entitySlug'
+      path: '/$entitySlug'
+      fullPath: '/texas-government/$entitySlug'
+      preLoaderRoute: typeof TexasGovernmentEntitySlugRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-legislature/': {
+      id: '/texas-legislature/'
+      path: '/'
+      fullPath: '/texas-legislature/'
+      preLoaderRoute: typeof TexasLegislatureIndexRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/current-session': {
+      id: '/texas-legislature/current-session'
+      path: '/current-session'
+      fullPath: '/texas-legislature/current-session'
+      preLoaderRoute: typeof TexasLegislatureCurrentSessionRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/house': {
+      id: '/texas-legislature/house'
+      path: '/house'
+      fullPath: '/texas-legislature/house'
+      preLoaderRoute: typeof TexasLegislatureHouseRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/senate': {
+      id: '/texas-legislature/senate'
+      path: '/senate'
+      fullPath: '/texas-legislature/senate'
+      preLoaderRoute: typeof TexasLegislatureSenateRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/sessions': {
+      id: '/texas-legislature/sessions'
+      path: '/sessions'
+      fullPath: '/texas-legislature/sessions'
+      preLoaderRoute: typeof TexasLegislatureSessionsRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
     '/texas-news/': {
       id: '/texas-news/'
       path: '/'
@@ -3272,6 +4206,167 @@ declare module '@tanstack/react-router' {
       fullPath: '/texas/$slug'
       preLoaderRoute: typeof TexasSlugRouteImport
       parentRoute: typeof TexasRoute
+    }
+    '/vehicles/auto-insurance-requirements': {
+      id: '/vehicles/auto-insurance-requirements'
+      path: '/vehicles/auto-insurance-requirements'
+      fullPath: '/vehicles/auto-insurance-requirements'
+      preLoaderRoute: typeof VehiclesAutoInsuranceRequirementsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/bonded-titles': {
+      id: '/vehicles/bonded-titles'
+      path: '/vehicles/bonded-titles'
+      fullPath: '/vehicles/bonded-titles'
+      preLoaderRoute: typeof VehiclesBondedTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/buying-a-car': {
+      id: '/vehicles/buying-a-car'
+      path: '/vehicles/buying-a-car'
+      fullPath: '/vehicles/buying-a-car'
+      preLoaderRoute: typeof VehiclesBuyingACarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/buying-selling': {
+      id: '/vehicles/buying-selling'
+      path: '/vehicles/buying-selling'
+      fullPath: '/vehicles/buying-selling'
+      preLoaderRoute: typeof VehiclesBuyingSellingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/commercial-fleet-irp': {
+      id: '/vehicles/commercial-fleet-irp'
+      path: '/vehicles/commercial-fleet-irp'
+      fullPath: '/vehicles/commercial-fleet-irp'
+      preLoaderRoute: typeof VehiclesCommercialFleetIrpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/disabled-parking': {
+      id: '/vehicles/disabled-parking'
+      path: '/vehicles/disabled-parking'
+      fullPath: '/vehicles/disabled-parking'
+      preLoaderRoute: typeof VehiclesDisabledParkingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/duplicate-titles': {
+      id: '/vehicles/duplicate-titles'
+      path: '/vehicles/duplicate-titles'
+      fullPath: '/vehicles/duplicate-titles'
+      preLoaderRoute: typeof VehiclesDuplicateTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/farm-antique-specialty': {
+      id: '/vehicles/farm-antique-specialty'
+      path: '/vehicles/farm-antique-specialty'
+      fullPath: '/vehicles/farm-antique-specialty'
+      preLoaderRoute: typeof VehiclesFarmAntiqueSpecialtyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/financial-responsibility': {
+      id: '/vehicles/financial-responsibility'
+      path: '/vehicles/financial-responsibility'
+      fullPath: '/vehicles/financial-responsibility'
+      preLoaderRoute: typeof VehiclesFinancialResponsibilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/inspections': {
+      id: '/vehicles/inspections'
+      path: '/vehicles/inspections'
+      fullPath: '/vehicles/inspections'
+      preLoaderRoute: typeof VehiclesInspectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/inspections-emissions': {
+      id: '/vehicles/inspections-emissions'
+      path: '/vehicles/inspections-emissions'
+      fullPath: '/vehicles/inspections-emissions'
+      preLoaderRoute: typeof VehiclesInspectionsEmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/liens-duplicate-corrected-titles': {
+      id: '/vehicles/liens-duplicate-corrected-titles'
+      path: '/vehicles/liens-duplicate-corrected-titles'
+      fullPath: '/vehicles/liens-duplicate-corrected-titles'
+      preLoaderRoute: typeof VehiclesLiensDuplicateCorrectedTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/new-residents': {
+      id: '/vehicles/new-residents'
+      path: '/vehicles/new-residents'
+      fullPath: '/vehicles/new-residents'
+      preLoaderRoute: typeof VehiclesNewResidentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/personalized-plates': {
+      id: '/vehicles/personalized-plates'
+      path: '/vehicles/personalized-plates'
+      fullPath: '/vehicles/personalized-plates'
+      preLoaderRoute: typeof VehiclesPersonalizedPlatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/plates': {
+      id: '/vehicles/plates'
+      path: '/vehicles/plates'
+      fullPath: '/vehicles/plates'
+      preLoaderRoute: typeof VehiclesPlatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/private-party-sales': {
+      id: '/vehicles/private-party-sales'
+      path: '/vehicles/private-party-sales'
+      fullPath: '/vehicles/private-party-sales'
+      preLoaderRoute: typeof VehiclesPrivatePartySalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/registration': {
+      id: '/vehicles/registration'
+      path: '/vehicles/registration'
+      fullPath: '/vehicles/registration'
+      preLoaderRoute: typeof VehiclesRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/registration-fees-taxes': {
+      id: '/vehicles/registration-fees-taxes'
+      path: '/vehicles/registration-fees-taxes'
+      fullPath: '/vehicles/registration-fees-taxes'
+      preLoaderRoute: typeof VehiclesRegistrationFeesTaxesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/renewal': {
+      id: '/vehicles/renewal'
+      path: '/vehicles/renewal'
+      fullPath: '/vehicles/renewal'
+      preLoaderRoute: typeof VehiclesRenewalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/salvage-rebuilt-titles': {
+      id: '/vehicles/salvage-rebuilt-titles'
+      path: '/vehicles/salvage-rebuilt-titles'
+      fullPath: '/vehicles/salvage-rebuilt-titles'
+      preLoaderRoute: typeof VehiclesSalvageRebuiltTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/selling-a-car': {
+      id: '/vehicles/selling-a-car'
+      path: '/vehicles/selling-a-car'
+      fullPath: '/vehicles/selling-a-car'
+      preLoaderRoute: typeof VehiclesSellingACarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/temporary-tags': {
+      id: '/vehicles/temporary-tags'
+      path: '/vehicles/temporary-tags'
+      fullPath: '/vehicles/temporary-tags'
+      preLoaderRoute: typeof VehiclesTemporaryTagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/title-transfer': {
+      id: '/vehicles/title-transfer'
+      path: '/vehicles/title-transfer'
+      fullPath: '/vehicles/title-transfer'
+      preLoaderRoute: typeof VehiclesTitleTransferRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/admin/elections/': {
       id: '/admin/elections/'
@@ -3322,12 +4417,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPropertyAddressLookupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/elections/candidates/$candidateSlug': {
-      id: '/elections/candidates/$candidateSlug'
-      path: '/$candidateSlug'
+    '/elections/candidates_/$candidateSlug': {
+      id: '/elections/candidates_/$candidateSlug'
+      path: '/candidates/$candidateSlug'
       fullPath: '/elections/candidates/$candidateSlug'
       preLoaderRoute: typeof ElectionsCandidatesCandidateSlugRouteImport
-      parentRoute: typeof ElectionsCandidatesRoute
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/districts/$districtSlug': {
+      id: '/elections/districts/$districtSlug'
+      path: '/$districtSlug'
+      fullPath: '/elections/districts/$districtSlug'
+      preLoaderRoute: typeof ElectionsDistrictsDistrictSlugRouteImport
+      parentRoute: typeof ElectionsDistrictsRoute
     }
     '/elections/forecast/$forecastSlug': {
       id: '/elections/forecast/$forecastSlug'
@@ -3343,12 +4445,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ElectionsPollsPollSlugRouteImport
       parentRoute: typeof ElectionsPollsRoute
     }
-    '/elections/races/$raceSlug': {
-      id: '/elections/races/$raceSlug'
-      path: '/$raceSlug'
+    '/elections/races_/$raceSlug': {
+      id: '/elections/races_/$raceSlug'
+      path: '/races/$raceSlug'
       fullPath: '/elections/races/$raceSlug'
       preLoaderRoute: typeof ElectionsRacesRaceSlugRouteImport
-      parentRoute: typeof ElectionsRacesRoute
+      parentRoute: typeof ElectionsRoute
     }
     '/elections/results/$resultSlug': {
       id: '/elections/results/$resultSlug'
@@ -3588,6 +4690,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicOauthFacebookStartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bills/texas/$legislature/$billType/$billNumber': {
+      id: '/bills/texas/$legislature/$billType/$billNumber'
+      path: '/bills/texas/$legislature/$billType/$billNumber'
+      fullPath: '/bills/texas/$legislature/$billType/$billNumber'
+      preLoaderRoute: typeof BillsTexasLegislatureBillTypeBillNumberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -3613,16 +4722,52 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
-interface ElectionsCandidatesRouteChildren {
-  ElectionsCandidatesCandidateSlugRoute: typeof ElectionsCandidatesCandidateSlugRoute
+interface DmvRouteChildren {
+  DmvCdlRoute: typeof DmvCdlRoute
+  DmvCdlClassesRoute: typeof DmvCdlClassesRoute
+  DmvCdlEndorsementsRoute: typeof DmvCdlEndorsementsRoute
+  DmvChangeAddressRoute: typeof DmvChangeAddressRoute
+  DmvDpsAppointmentsRoute: typeof DmvDpsAppointmentsRoute
+  DmvDriverLicenseRoute: typeof DmvDriverLicenseRoute
+  DmvDriverLicenseDocumentsRoute: typeof DmvDriverLicenseDocumentsRoute
+  DmvDriverLicenseRenewalRoute: typeof DmvDriverLicenseRenewalRoute
+  DmvFormsDownloadsRoute: typeof DmvFormsDownloadsRoute
+  DmvIdentificationCardRoute: typeof DmvIdentificationCardRoute
+  DmvLicenseStatusRoute: typeof DmvLicenseStatusRoute
+  DmvRealIdRoute: typeof DmvRealIdRoute
+  DmvReplaceLostLicenseRoute: typeof DmvReplaceLostLicenseRoute
+  DmvTexasDmvVsDpsRoute: typeof DmvTexasDmvVsDpsRoute
 }
 
-const ElectionsCandidatesRouteChildren: ElectionsCandidatesRouteChildren = {
-  ElectionsCandidatesCandidateSlugRoute: ElectionsCandidatesCandidateSlugRoute,
+const DmvRouteChildren: DmvRouteChildren = {
+  DmvCdlRoute: DmvCdlRoute,
+  DmvCdlClassesRoute: DmvCdlClassesRoute,
+  DmvCdlEndorsementsRoute: DmvCdlEndorsementsRoute,
+  DmvChangeAddressRoute: DmvChangeAddressRoute,
+  DmvDpsAppointmentsRoute: DmvDpsAppointmentsRoute,
+  DmvDriverLicenseRoute: DmvDriverLicenseRoute,
+  DmvDriverLicenseDocumentsRoute: DmvDriverLicenseDocumentsRoute,
+  DmvDriverLicenseRenewalRoute: DmvDriverLicenseRenewalRoute,
+  DmvFormsDownloadsRoute: DmvFormsDownloadsRoute,
+  DmvIdentificationCardRoute: DmvIdentificationCardRoute,
+  DmvLicenseStatusRoute: DmvLicenseStatusRoute,
+  DmvRealIdRoute: DmvRealIdRoute,
+  DmvReplaceLostLicenseRoute: DmvReplaceLostLicenseRoute,
+  DmvTexasDmvVsDpsRoute: DmvTexasDmvVsDpsRoute,
 }
 
-const ElectionsCandidatesRouteWithChildren =
-  ElectionsCandidatesRoute._addFileChildren(ElectionsCandidatesRouteChildren)
+const DmvRouteWithChildren = DmvRoute._addFileChildren(DmvRouteChildren)
+
+interface ElectionsDistrictsRouteChildren {
+  ElectionsDistrictsDistrictSlugRoute: typeof ElectionsDistrictsDistrictSlugRoute
+}
+
+const ElectionsDistrictsRouteChildren: ElectionsDistrictsRouteChildren = {
+  ElectionsDistrictsDistrictSlugRoute: ElectionsDistrictsDistrictSlugRoute,
+}
+
+const ElectionsDistrictsRouteWithChildren =
+  ElectionsDistrictsRoute._addFileChildren(ElectionsDistrictsRouteChildren)
 
 interface ElectionsForecastRouteChildren {
   ElectionsForecastForecastSlugRoute: typeof ElectionsForecastForecastSlugRoute
@@ -3647,18 +4792,6 @@ const ElectionsPollsRouteWithChildren = ElectionsPollsRoute._addFileChildren(
   ElectionsPollsRouteChildren,
 )
 
-interface ElectionsRacesRouteChildren {
-  ElectionsRacesRaceSlugRoute: typeof ElectionsRacesRaceSlugRoute
-}
-
-const ElectionsRacesRouteChildren: ElectionsRacesRouteChildren = {
-  ElectionsRacesRaceSlugRoute: ElectionsRacesRaceSlugRoute,
-}
-
-const ElectionsRacesRouteWithChildren = ElectionsRacesRoute._addFileChildren(
-  ElectionsRacesRouteChildren,
-)
-
 interface ElectionsResultsRouteChildren {
   ElectionsResultsResultSlugRoute: typeof ElectionsResultsResultSlugRoute
 }
@@ -3672,28 +4805,38 @@ const ElectionsResultsRouteWithChildren =
 
 interface ElectionsRouteChildren {
   Elections2026Route: typeof Elections2026Route
-  ElectionsCandidatesRoute: typeof ElectionsCandidatesRouteWithChildren
+  ElectionsCandidatesRoute: typeof ElectionsCandidatesRoute
   ElectionsCorrectionsRoute: typeof ElectionsCorrectionsRoute
+  ElectionsDistrictsRoute: typeof ElectionsDistrictsRouteWithChildren
   ElectionsForecastRoute: typeof ElectionsForecastRouteWithChildren
+  ElectionsLegislativeRoute: typeof ElectionsLegislativeRoute
   ElectionsMethodologyRoute: typeof ElectionsMethodologyRoute
   ElectionsPollsRoute: typeof ElectionsPollsRouteWithChildren
-  ElectionsRacesRoute: typeof ElectionsRacesRouteWithChildren
+  ElectionsRacesRoute: typeof ElectionsRacesRoute
   ElectionsResultsRoute: typeof ElectionsResultsRouteWithChildren
+  ElectionsStatewideRoute: typeof ElectionsStatewideRoute
   ElectionsVotingRoute: typeof ElectionsVotingRoute
   ElectionsIndexRoute: typeof ElectionsIndexRoute
+  ElectionsCandidatesCandidateSlugRoute: typeof ElectionsCandidatesCandidateSlugRoute
+  ElectionsRacesRaceSlugRoute: typeof ElectionsRacesRaceSlugRoute
 }
 
 const ElectionsRouteChildren: ElectionsRouteChildren = {
   Elections2026Route: Elections2026Route,
-  ElectionsCandidatesRoute: ElectionsCandidatesRouteWithChildren,
+  ElectionsCandidatesRoute: ElectionsCandidatesRoute,
   ElectionsCorrectionsRoute: ElectionsCorrectionsRoute,
+  ElectionsDistrictsRoute: ElectionsDistrictsRouteWithChildren,
   ElectionsForecastRoute: ElectionsForecastRouteWithChildren,
+  ElectionsLegislativeRoute: ElectionsLegislativeRoute,
   ElectionsMethodologyRoute: ElectionsMethodologyRoute,
   ElectionsPollsRoute: ElectionsPollsRouteWithChildren,
-  ElectionsRacesRoute: ElectionsRacesRouteWithChildren,
+  ElectionsRacesRoute: ElectionsRacesRoute,
   ElectionsResultsRoute: ElectionsResultsRouteWithChildren,
+  ElectionsStatewideRoute: ElectionsStatewideRoute,
   ElectionsVotingRoute: ElectionsVotingRoute,
   ElectionsIndexRoute: ElectionsIndexRoute,
+  ElectionsCandidatesCandidateSlugRoute: ElectionsCandidatesCandidateSlugRoute,
+  ElectionsRacesRaceSlugRoute: ElectionsRacesRaceSlugRoute,
 }
 
 const ElectionsRouteWithChildren = ElectionsRoute._addFileChildren(
@@ -3822,6 +4965,49 @@ const TexasBusinessRouteWithChildren = TexasBusinessRoute._addFileChildren(
   TexasBusinessRouteChildren,
 )
 
+interface TexasDataRouteChildren {
+  TexasDataDatasetSlugRoute: typeof TexasDataDatasetSlugRoute
+}
+
+const TexasDataRouteChildren: TexasDataRouteChildren = {
+  TexasDataDatasetSlugRoute: TexasDataDatasetSlugRoute,
+}
+
+const TexasDataRouteWithChildren = TexasDataRoute._addFileChildren(
+  TexasDataRouteChildren,
+)
+
+interface TexasGovernmentRouteChildren {
+  TexasGovernmentEntitySlugRoute: typeof TexasGovernmentEntitySlugRoute
+}
+
+const TexasGovernmentRouteChildren: TexasGovernmentRouteChildren = {
+  TexasGovernmentEntitySlugRoute: TexasGovernmentEntitySlugRoute,
+}
+
+const TexasGovernmentRouteWithChildren = TexasGovernmentRoute._addFileChildren(
+  TexasGovernmentRouteChildren,
+)
+
+interface TexasLegislatureRouteChildren {
+  TexasLegislatureCurrentSessionRoute: typeof TexasLegislatureCurrentSessionRoute
+  TexasLegislatureHouseRoute: typeof TexasLegislatureHouseRoute
+  TexasLegislatureSenateRoute: typeof TexasLegislatureSenateRoute
+  TexasLegislatureSessionsRoute: typeof TexasLegislatureSessionsRoute
+  TexasLegislatureIndexRoute: typeof TexasLegislatureIndexRoute
+}
+
+const TexasLegislatureRouteChildren: TexasLegislatureRouteChildren = {
+  TexasLegislatureCurrentSessionRoute: TexasLegislatureCurrentSessionRoute,
+  TexasLegislatureHouseRoute: TexasLegislatureHouseRoute,
+  TexasLegislatureSenateRoute: TexasLegislatureSenateRoute,
+  TexasLegislatureSessionsRoute: TexasLegislatureSessionsRoute,
+  TexasLegislatureIndexRoute: TexasLegislatureIndexRoute,
+}
+
+const TexasLegislatureRouteWithChildren =
+  TexasLegislatureRoute._addFileChildren(TexasLegislatureRouteChildren)
+
 interface TexasNewsRouteChildren {
   TexasNewsTopicRoute: typeof TexasNewsTopicRoute
   TexasNewsIndexRoute: typeof TexasNewsIndexRoute
@@ -3863,6 +5049,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactLegislatorsRoute: ContactLegislatorsRoute,
   CountyElectionsRoute: CountyElectionsRoute,
   DallasFortWorthRoute: DallasFortWorthRoute,
+  DmvRoute: DmvRouteWithChildren,
   EditorialStandardsRoute: EditorialStandardsRoute,
   ElPasoRoute: ElPasoRoute,
   ElectionsRoute: ElectionsRouteWithChildren,
@@ -3879,6 +5066,7 @@ const rootRouteChildren: RootRouteChildren = {
   LawsRoute: LawsRoute,
   LawsToKnowRoute: LawsToKnowRoute,
   LegislativeUpdatesRoute: LegislativeUpdatesRoute,
+  LegislatureRoute: LegislatureRoute,
   LivingInTexasRoute: LivingInTexasRoute,
   MovingToTexasRoute: MovingToTexasRoute,
   MovingToTexasChecklistRoute: MovingToTexasChecklistRoute,
@@ -3897,6 +5085,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
   SitemapExploreLocationsDotxmlRoute: SitemapExploreLocationsDotxmlRoute,
   SitemapExploreDotxmlRoute: SitemapExploreDotxmlRoute,
+  SitemapGovernmentDotxmlRoute: SitemapGovernmentDotxmlRoute,
   SitemapImagesDotxmlRoute: SitemapImagesDotxmlRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
@@ -3910,12 +5099,14 @@ const rootRouteChildren: RootRouteChildren = {
   TexasBusinessRoute: TexasBusinessRouteWithChildren,
   TexasClosingCostCalculatorRoute: TexasClosingCostCalculatorRoute,
   TexasCostOfLivingCalculatorRoute: TexasCostOfLivingCalculatorRoute,
+  TexasDataRoute: TexasDataRouteWithChildren,
   TexasDownPaymentAssistanceCalculatorRoute:
     TexasDownPaymentAssistanceCalculatorRoute,
   TexasDownPaymentCalculatorRoute: TexasDownPaymentCalculatorRoute,
   TexasEconomyRoute: TexasEconomyRoute,
   TexasFinancialToolsRoute: TexasFinancialToolsRoute,
   TexasFirstTimeHomebuyerProgramsRoute: TexasFirstTimeHomebuyerProgramsRoute,
+  TexasGovernmentRoute: TexasGovernmentRouteWithChildren,
   TexasHomeAffordabilityCalculatorRoute: TexasHomeAffordabilityCalculatorRoute,
   TexasHomeEquityCalculatorRoute: TexasHomeEquityCalculatorRoute,
   TexasHomeEquityGrowthCalculatorRoute: TexasHomeEquityGrowthCalculatorRoute,
@@ -3923,6 +5114,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasHomeownershipCostCalculatorRoute: TexasHomeownershipCostCalculatorRoute,
   TexasLawPolicyRoute: TexasLawPolicyRoute,
   TexasLawsRoute: TexasLawsRoute,
+  TexasLegislatureRoute: TexasLegislatureRouteWithChildren,
   TexasMortgageCalculatorRoute: TexasMortgageCalculatorRoute,
   TexasMortgagePayoffCalculatorRoute: TexasMortgagePayoffCalculatorRoute,
   TexasMovingCostCalculatorRoute: TexasMovingCostCalculatorRoute,
@@ -3942,7 +5134,33 @@ const rootRouteChildren: RootRouteChildren = {
   VotingLocationsRoute: VotingLocationsRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  VehiclesAutoInsuranceRequirementsRoute:
+    VehiclesAutoInsuranceRequirementsRoute,
+  VehiclesBondedTitlesRoute: VehiclesBondedTitlesRoute,
+  VehiclesBuyingACarRoute: VehiclesBuyingACarRoute,
+  VehiclesBuyingSellingRoute: VehiclesBuyingSellingRoute,
+  VehiclesCommercialFleetIrpRoute: VehiclesCommercialFleetIrpRoute,
+  VehiclesDisabledParkingRoute: VehiclesDisabledParkingRoute,
+  VehiclesDuplicateTitlesRoute: VehiclesDuplicateTitlesRoute,
+  VehiclesFarmAntiqueSpecialtyRoute: VehiclesFarmAntiqueSpecialtyRoute,
+  VehiclesFinancialResponsibilityRoute: VehiclesFinancialResponsibilityRoute,
+  VehiclesInspectionsRoute: VehiclesInspectionsRoute,
+  VehiclesInspectionsEmissionsRoute: VehiclesInspectionsEmissionsRoute,
+  VehiclesLiensDuplicateCorrectedTitlesRoute:
+    VehiclesLiensDuplicateCorrectedTitlesRoute,
+  VehiclesNewResidentsRoute: VehiclesNewResidentsRoute,
+  VehiclesPersonalizedPlatesRoute: VehiclesPersonalizedPlatesRoute,
+  VehiclesPlatesRoute: VehiclesPlatesRoute,
+  VehiclesPrivatePartySalesRoute: VehiclesPrivatePartySalesRoute,
+  VehiclesRegistrationRoute: VehiclesRegistrationRoute,
+  VehiclesRegistrationFeesTaxesRoute: VehiclesRegistrationFeesTaxesRoute,
+  VehiclesRenewalRoute: VehiclesRenewalRoute,
+  VehiclesSalvageRebuiltTitlesRoute: VehiclesSalvageRebuiltTitlesRoute,
+  VehiclesSellingACarRoute: VehiclesSellingACarRoute,
+  VehiclesTemporaryTagsRoute: VehiclesTemporaryTagsRoute,
+  VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
+  BillsIndexRoute: BillsIndexRoute,
   ApiPublicPropertyAddressLookupRoute: ApiPublicPropertyAddressLookupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
@@ -3970,6 +5188,8 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   ApiPublicOauthFacebookCallbackRoute: ApiPublicOauthFacebookCallbackRoute,
   ApiPublicOauthFacebookStartRoute: ApiPublicOauthFacebookStartRoute,
+  BillsTexasLegislatureBillTypeBillNumberRoute:
+    BillsTexasLegislatureBillTypeBillNumberRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

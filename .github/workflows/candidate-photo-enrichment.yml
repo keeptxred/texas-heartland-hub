@@ -1,0 +1,41 @@
+name: Candidate photo enrichment
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/data/elections/2026/candidate-photos.json"
+      - "scripts/elections/candidate-photo-enrichment.mjs"
+
+permissions:
+  contents: write
+
+jobs:
+  apply-approved-photos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Apply approved candidate photos
+        run: node scripts/elections/candidate-photo-enrichment.mjs --apply
+
+      - name: Commit enriched candidate records and report
+        run: |
+          if git diff --quiet -- src/data/elections/2026/candidates.json artifacts/elections/candidate-photo-report.json; then
+            echo "No candidate photo changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/elections/2026/candidates.json artifacts/elections/candidate-photo-report.json
+          git commit -m "Apply approved candidate photos"
+          git push

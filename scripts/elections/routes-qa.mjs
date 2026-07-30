@@ -13,9 +13,13 @@ const requiredFiles = [
   "elections.index.tsx",
   "elections.2026.tsx",
   "elections.races.tsx",
-  "elections.races.$raceSlug.tsx",
+  "elections.races_.$raceSlug.tsx",
+  "elections.statewide.tsx",
+  "elections.legislative.tsx",
+  "elections.districts.tsx",
+  "elections.districts.$districtSlug.tsx",
   "elections.candidates.tsx",
-  "elections.candidates.$candidateSlug.tsx",
+  "elections.candidates_.$candidateSlug.tsx",
   "elections.polls.tsx",
   "elections.polls.$pollSlug.tsx",
   "elections.forecast.tsx",
@@ -36,12 +40,18 @@ for (const file of requiredFiles) {
   }
 }
 
-const [home, layout, legacyIndex, cycle, flags] = await Promise.all([
+const [home, layout, legacyIndex, cycle, flags, electionRoutes, electionSitemap, siteHeader, siteFooter, start, sitemapIndex] = await Promise.all([
   read("src/routes/index.tsx"),
   read("src/routes/elections.tsx"),
   read("src/routes/elections.index.tsx"),
   read("src/routes/elections.2026.tsx"),
   read("src/lib/elections/featureFlags.ts"),
+  read("src/lib/elections/routes.ts"),
+  read("src/lib/elections/sitemap.ts"),
+  read("src/components/site-header.tsx"),
+  read("src/components/site-footer.tsx"),
+  read("src/start.ts"),
+  read("src/routes/sitemap[.]xml.ts"),
 ]);
 
 requireText(home, "ELECTION_FEATURE_FLAGS.homepagePromotion", "Homepage is not wired to the election feature flag.");
@@ -60,6 +70,51 @@ requireText(
 );
 requireText(cycle, 'createFileRoute("/elections/2026")', "Canonical 2026 cycle route is not registered.");
 requireText(flags, "false", "Election homepage feature flag must default to disabled.");
+for (const route of [
+  'statewide: "/elections/statewide"',
+  'legislative: "/elections/legislative"',
+  'districts: "/elections/districts"',
+]) {
+  requireText(electionRoutes, route, `Missing SEO election route constant: ${route}.`);
+}
+requireText(
+  electionSitemap,
+  "ELECTION_DISTRICT_PATHS",
+  "Election sitemap does not include district URL generation.",
+);
+requireText(
+  cycle,
+  'const ELECTION_CENTRAL_URL = "https://keeptxred.com/elections/2026"',
+  "Election Central hub is missing its absolute canonical URL.",
+);
+requireText(
+  cycle,
+  '"@type": "CollectionPage"',
+  "Election Central hub is missing CollectionPage structured data.",
+);
+requireText(
+  siteHeader,
+  '{ to: "/elections/2026", label: "Elections" }',
+  "Election Central is missing from the primary site navigation.",
+);
+requireText(
+  siteFooter,
+  '{ to: "/elections/2026", label: "Election Central" }',
+  "Election Central is missing from the site footer.",
+);
+for (const redirectSource of [
+  '["/election", "/elections/2026"]',
+  '["/election-central", "/elections/2026"]',
+  '["/texas-elections", "/elections/2026"]',
+  '["/elections/forecasts", "/elections/forecast"]',
+]) {
+  requireText(start, redirectSource, `Missing legacy election redirect: ${redirectSource}.`);
+}
+requireText(
+  sitemapIndex,
+  '{ file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT }',
+  "The root sitemap index does not advertise the election sitemap.",
+);
 
 if (/VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE\s*=\s*(?:true|1|yes|on)/i.test(`${home}\n${flags}`)) {
   errors.push("Homepage takeover appears to be hard-coded on.");

@@ -429,7 +429,7 @@ const SELECT_COLS =
 
 /** Generate featured image for one slug (idempotent unless overwrite=true). */
 export const generateFeaturedImageForSlug = createServerFn({ method: "POST" })
-  .inputValidator((d) =>
+  .validator((d) =>
     z
       .object({ slug: z.string().min(1).max(200), overwrite: z.boolean().optional() })
       .parse(d),
@@ -461,7 +461,7 @@ export async function generateFeaturedImageForSlugDirect(
 
 /** Admin-gated regenerate (checks shared passcode header). */
 export const regenerateFeaturedImage = createServerFn({ method: "POST" })
-  .inputValidator((d) =>
+  .validator((d) =>
     z.object({ slug: z.string().min(1).max(200), token: z.string().min(1) }).parse(d),
   )
   .handler(async ({ data }) => {

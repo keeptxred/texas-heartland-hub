@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import {
   CandidateCard,
   CandidateComparison,
@@ -27,6 +27,10 @@ const CANDIDATE_SORT_OPTIONS = [
   { value: "party", label: "Party" },
   { value: "race_date", label: "Race date" },
 ] as const;
+
+const CANDIDATE_DIRECTORY_PAGE_SIZE = 1_000;
+const CANDIDATE_DIRECTORY_URL = "https://keeptxred.com/elections/candidates";
+const ELECTION_SOCIAL_IMAGE = "https://keeptxred.com/images/elections/election-central-social.jpg";
 
 type CandidateSortOption = (typeof CANDIDATE_SORT_OPTIONS)[number]["value"];
 
@@ -60,9 +64,7 @@ export const Route = createFileRoute("/elections/candidates")({
   validateSearch: parseCandidateListSearch,
   head: () => ({
     meta: [
-      {
-        title: "Texas Election Candidates | KeepTXRed Election Central",
-      },
+      { title: "Texas Election Candidates | KeepTXRed Election Central" },
       {
         name: "description",
         content:
@@ -77,21 +79,39 @@ export const Route = createFileRoute("/elections/candidates")({
         content:
           "Review published candidate profiles for Texas statewide, congressional, legislative, county, and local races.",
       },
-      { property: "og:url", content: "/elections/candidates" },
+      { property: "og:url", content: CANDIDATE_DIRECTORY_URL },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
+      { property: "og:image", content: ELECTION_SOCIAL_IMAGE },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       {
-        rel: "canonical",
-        href: "https://keeptxred.com/elections/candidates",
+        property: "og:image:alt",
+        content: "KeepTXRed Election Central Texas candidate directory",
       },
+      { name: "twitter:card", content: "summary_large_image" },
+      {
+        name: "twitter:title",
+        content: "Texas Election Candidates | KeepTXRed Election Central",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Review published candidate profiles for Texas statewide, congressional, legislative, county, and local races.",
+      },
+      { name: "twitter:image", content: ELECTION_SOCIAL_IMAGE },
     ],
+    links: [{ rel: "canonical", href: CANDIDATE_DIRECTORY_URL }],
   }),
   component: ElectionCandidatesRoute,
 });
 
 function ElectionCandidatesRoute() {
+  const { candidateSlug } = useParams({ strict: false }) as { candidateSlug?: string };
+
+  if (candidateSlug) {
+    return <Outlet />;
+  }
+
   return (
     <ElectionRepositoryProvider>
       <ElectionCandidatesContent />
@@ -115,13 +135,13 @@ function ElectionCandidatesContent() {
       publicationStatuses: ["published"],
       search: search.q,
     },
-    pagination: { page: 1, pageSize: 50 },
+    pagination: { page: 1, pageSize: CANDIDATE_DIRECTORY_PAGE_SIZE },
     sort: [{ field: sortBy, direction: "asc" }],
   });
 
   const updateSearch = (updates: Partial<ElectionCandidateListSearch>) => {
     void navigate({
-      search: (previous) => ({ ...previous, ...updates }),
+      search: (previous: any) => ({ ...previous, ...updates }),
       replace: true,
     });
   };
@@ -148,10 +168,7 @@ function ElectionCandidatesContent() {
           totalSaved={research.candidateIds.length + research.raceIds.length}
           onClear={research.clear}
         />
-        <CandidateComparison
-          candidates={comparisonCandidates}
-          onClear={() => setComparisonIds([])}
-        />
+        <CandidateComparison candidates={comparisonCandidates} onClear={() => setComparisonIds([])} />
         <aside className="rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
           Select two to four published candidates below to compare their verified directory fields.
         </aside>
@@ -171,12 +188,8 @@ function ElectionCandidatesContent() {
             className="mt-2 block w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm shadow-sm focus:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-100"
             value={sortBy}
             onChange={(event) => {
-              const option = CANDIDATE_SORT_OPTIONS.find(
-                (item) => item.value === event.target.value,
-              );
-              if (option) {
-                updateSearch({ sort: option.value });
-              }
+              const option = CANDIDATE_SORT_OPTIONS.find((item) => item.value === event.target.value);
+              if (option) updateSearch({ sort: option.value });
             }}
           >
             {CANDIDATE_SORT_OPTIONS.map((option) => (
@@ -192,9 +205,7 @@ function ElectionCandidatesContent() {
           status={search.status ?? null}
           incumbency={search.incumbency ?? null}
           onPartyChange={(party) => updateSearch({ party: party ?? undefined })}
-          onOfficeLevelChange={(officeLevel) =>
-            updateSearch({ officeLevel: officeLevel ?? undefined })
-          }
+          onOfficeLevelChange={(officeLevel) => updateSearch({ officeLevel: officeLevel ?? undefined })}
           onStatusChange={(status) => updateSearch({ status: status ?? undefined })}
           onIncumbencyChange={(incumbency) => updateSearch({ incumbency: incumbency ?? undefined })}
         />
@@ -239,16 +250,12 @@ function ElectionCandidatesContent() {
                     candidate.incumbencyType === "appointed_incumbent"
                   }
                   status={candidate.status}
-                  photoUrl={
-                    candidate.imageRights?.usageStatus === "approved" ? candidate.imageUrl : null
-                  }
+                  photoUrl={candidate.imageRights?.usageStatus === "approved" ? candidate.imageUrl : null}
                   occupation={candidate.occupation}
                   hometown={candidate.hometown}
                   profileHref={ELECTION_ROUTES.candidate(candidate.slug)}
                   raceHref={
-                    candidate.primaryRace
-                      ? ELECTION_ROUTES.race(candidate.primaryRace.slug)
-                      : undefined
+                    candidate.primaryRace ? ELECTION_ROUTES.race(candidate.primaryRace.slug) : undefined
                   }
                 />
               </div>

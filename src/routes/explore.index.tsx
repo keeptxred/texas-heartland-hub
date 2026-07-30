@@ -74,7 +74,7 @@ function ExploreLanding() {
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: destinationCount,
-      itemListElement: data.featured.items.map((item, index) => ({
+      itemListElement: data.featured.items.map((item: any, index: number) => ({
         "@type": "ListItem",
         position: index + 1,
         name: item.name,
@@ -237,7 +237,7 @@ function ExploreLanding() {
               Explore Texas by region
             </h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {regions.map((region) => (
+              {regions.map((region: string) => (
                 <Link
                   key={region}
                   to={geographyPath("region", region)}
@@ -259,7 +259,7 @@ function ExploreLanding() {
               Find parks, waterways, heritage sites, and attractions across Texas counties.
             </p>
             <div className="mt-5 flex flex-wrap gap-2">
-              {counties.map((county) => (
+              {counties.map((county: string) => (
                 <Link
                   key={county}
                   to={geographyPath("county", county)}

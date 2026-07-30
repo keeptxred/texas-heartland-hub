@@ -46,9 +46,16 @@ export const Route = createFileRoute("/elections/forecast")({
         property: "og:title",
         content: "Texas Election Forecasts | KeepTXRed Election Central",
       },
-      { property: "og:url", content: "/elections/forecast" },
+      { property: "og:url", content: "https://keeptxred.com/elections/forecast" },
       { property: "og:type", content: "website" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:site_name", content: "Keep TX Red" },
+      { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "2026 Texas Election Central" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
     ],
     links: [
       {
@@ -123,7 +130,7 @@ function ElectionForecastContent() {
 
   const updateSearch = (updates: Partial<ElectionForecastListSearch>) => {
     void navigate({
-      search: (previous) => ({ ...previous, ...updates }),
+      search: (previous: any) => ({ ...previous, ...updates }),
       replace: true,
     });
   };

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { TexasNewsView } from "@/components/texas-news-view";
+import { getArticlesByCategory } from "@/lib/category-feed.functions";
 
 export const Route = createFileRoute("/texas-news/")({
   head: ({ match }) => {
@@ -29,9 +30,18 @@ export const Route = createFileRoute("/texas-news/")({
       links: [{ rel: "canonical", href: canonical }],
     };
   },
+  loader: () =>
+    getArticlesByCategory({
+      data: {
+        limit: 60,
+        offset: 0,
+        order: "newest",
+      },
+    }),
   component: NewsIndexPage,
 });
 
 function NewsIndexPage() {
-  return <TexasNewsView topic="" />;
+  const liveArticles = Route.useLoaderData();
+  return <TexasNewsView topic="" liveArticles={liveArticles} />;
 }

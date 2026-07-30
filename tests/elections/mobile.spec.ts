@@ -1,5 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
+const HOMEPAGE_TAKEOVER_ENABLED =
+  process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE === "true";
+
 const ROUTES = [
   "/elections/2026",
   "/elections/races",
@@ -13,11 +16,24 @@ const ROUTES = [
   "/elections/methodology",
 ] as const;
 
-test("normal homepage remains active while takeover is disabled", async ({ page }) => {
+test(`homepage renders the ${HOMEPAGE_TAKEOVER_ENABLED ? "Election Central" : "standard"} experience`, async ({ page }) => {
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
   expect(response?.status()).toBeLessThan(400);
-  await expect(page.getByRole("heading", { name: /your guide to moving to and living in texas/i })).toBeVisible();
-  await expect(page.getByRole("heading", { name: /texas election central/i })).toHaveCount(0);
+
+  if (HOMEPAGE_TAKEOVER_ENABLED) {
+    await expect(
+      page.getByRole("heading", { name: /texas election central/i }).first(),
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(
+      page.getByRole("heading", { name: /your guide to moving to and living in texas/i }),
+    ).toHaveCount(0);
+  } else {
+    await expect(
+      page.getByRole("heading", { name: /your guide to moving to and living in texas/i }),
+    ).toBeVisible({ timeout: 20_000 });
+    await expect(page.getByRole("heading", { name: /texas election central/i })).toHaveCount(0);
+  }
+
   await expectNoHorizontalOverflow(page);
 });
 
@@ -45,7 +61,9 @@ test("polling and forecasts render while result states remain honest", async ({ 
   await expect(page.locator('a[href^="/elections/forecast/"]').first()).toBeVisible();
 
   await page.goto("/elections/results", { waitUntil: "domcontentloaded" });
-  await expect(page.getByText(/remain unofficial until certified/i)).toBeVisible();
+  await expect(page.getByText(/unofficial and may change as ballots are counted/i)).toBeVisible({
+    timeout: 20_000,
+  });
 });
 
 async function expectNoHorizontalOverflow(page: Page) {

@@ -140,6 +140,13 @@ function Index() {
   );
 }
 
+type HomepageArticle = {
+  slug: string;
+  title: string;
+  category: string | null;
+  image: string;
+};
+
 function StandardHomepage() {
   const { articles: live } = Route.useLoaderData() as { articles: DailyArticle[] };
   const breaking = live.filter((article) => article.is_breaking).slice(0, 3);
@@ -147,14 +154,28 @@ function StandardHomepage() {
     .filter((article) => !article.is_breaking)
     .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
     .slice(0, 5);
-  const latest = ARTICLES.filter((article) => isPublished(article))
+
+  const liveLatest: HomepageArticle[] = live.slice(0, 6).map((article) => ({
+    slug: article.slug,
+    title: article.title,
+    category: article.category,
+    image: article.featured_image_url ?? article.image_url ?? heroFlag,
+  }));
+  const staticLatest: HomepageArticle[] = ARTICLES.filter((article) => isPublished(article))
     .sort(sortByDateDesc)
-    .slice(0, 6);
+    .slice(0, 6)
+    .map((article) => ({
+      slug: article.slug,
+      title: article.title,
+      category: article.category ?? null,
+      image: article.image,
+    }));
+  const latest = liveLatest.length > 0 ? liveLatest : staticLatest;
   const images = assignUniqueImages(
     latest,
     (article) => article.slug,
     (article) => article.image,
-    (article) => article.category ?? null,
+    (article) => article.category,
   );
 
   return (

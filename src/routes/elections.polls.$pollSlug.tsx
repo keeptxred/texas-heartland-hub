@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import records from "@/data/elections/2026/polls.json";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -13,25 +14,78 @@ import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/polls/$pollSlug")({
   head: ({ params }) => {
+    const record = records.find(
+      (item) =>
+        item.slug === params.pollSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
     const validSlug = isElectionSlug(params.pollSlug);
+    const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/polls/${params.pollSlug}`;
+    const recordName =
+      record && "title" in record && typeof record.title === "string" && record.title ? record.title :
+        record && "pollsterName" in record && typeof record.pollsterName === "string" && record.pollsterName ? record.pollsterName :
+        "Texas Election Poll";
+    const description =
+      record && "description" in record && typeof record.description === "string" && record.description
+        ? record.description
+        : "Review poll toplines, sample details, sponsor, and methodology.";
+    const title = indexable
+      ? `${recordName} | KeepTXRed Election Central`
+      : "Election poll not found | KeepTXRed";
 
     return {
       meta: [
+        { title },
+        { name: "description", content: description },
         {
-          title: validSlug
-            ? "Texas Election Poll | KeepTXRed Election Central"
-            : "Invalid Election Poll | KeepTXRed Election Central",
+          name: "robots",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
         },
-        {
-          name: "description",
-          content: validSlug
-            ? "Review poll toplines, sample details, sponsor, and methodology."
-            : "The requested election poll URL is invalid.",
-        },
-        ...(validSlug ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
+        ...(indexable
+          ? [
+              { property: "og:title", content: title },
+              { property: "og:description", content: description },
+              { property: "og:url", content: canonicalUrl },
+              { property: "og:type", content: "website" },
+              { property: "og:site_name", content: "Keep TX Red" },
+              { name: "twitter:card", content: "summary_large_image" },
+              { name: "twitter:title", content: title },
+              { name: "twitter:description", content: description },
+              { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+              { property: "og:image:width", content: "1200" },
+              { property: "og:image:height", content: "630" },
+              { property: "og:image:alt", content: "2026 Texas Election Central" },
+              { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+            ]
+          : []),
       ],
-      links: validSlug ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: indexable
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Dataset",
+                name: recordName || "Texas election poll",
+                description,
+                url: canonicalUrl,
+                measurementTechnique: "Public opinion survey",
+                creator: {
+                  "@type": "Organization",
+                  name: "Keep TX Red",
+                  url: "https://keeptxred.com",
+                },
+                isPartOf: {
+                  "@type": "WebSite",
+                  "@id": "https://keeptxred.com/#website",
+                },
+              }).replace(/</g, "\\u003c"),
+            },
+          ]
+        : [],
     };
   },
   component: ElectionPollDetailRoute,
@@ -40,16 +94,25 @@ export const Route = createFileRoute("/elections/polls/$pollSlug")({
 function ElectionPollDetailRoute() {
   const { pollSlug } = Route.useParams();
   const validSlug = isElectionSlug(pollSlug);
+  const indexable =
+    validSlug &&
+    records.some(
+      (item) =>
+        item.slug === pollSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
 
   return (
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Poll"
         description="Verified poll details from KeepTXRed Election Central."
-        canonicalUrl={validSlug ? `https://keeptxred.com/elections/polls/${pollSlug}` : undefined}
+        indexable={indexable}
+        canonicalUrl={indexable ? `https://keeptxred.com/elections/polls/${pollSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.polls} />}
       >
-        {validSlug ? (
+        {indexable ? (
           <ElectionPollDetailData pollSlug={pollSlug} />
         ) : (
           <ElectionErrorState

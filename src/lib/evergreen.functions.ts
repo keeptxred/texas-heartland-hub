@@ -46,7 +46,7 @@ function client() {
 }
 
 export const getEvergreenBySlug = createServerFn({ method: "GET" })
-  .inputValidator((d) => z.object({ slug: z.string().min(1).max(120) }).parse(d))
+  .validator((d) => z.object({ slug: z.string().min(1).max(120) }).parse(d))
   .handler(async ({ data }): Promise<EvergreenArticle | null> => {
     const supabase = client();
     if (!supabase) return null;

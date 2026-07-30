@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import races from "@/data/elections/2026/races.json";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -25,27 +26,91 @@ import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
-export const Route = createFileRoute("/elections/races/$raceSlug")({
+export const Route = createFileRoute("/elections/races_/$raceSlug")({
   head: ({ params }) => {
+    const record = races.find(
+      (item) =>
+        item.slug === params.raceSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
     const validSlug = isElectionSlug(params.raceSlug);
+    const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/races/${params.raceSlug}`;
+    const recordName =
+      record && "fullName" in record && typeof record.fullName === "string"
+        ? record.fullName
+        : record && "name" in record && typeof record.name === "string"
+          ? record.name
+          : "Texas Election Race";
+    const recordDescription =
+      record && "biography" in record && typeof record.biography === "string" && record.biography
+        ? record.biography
+        : record && "description" in record && typeof record.description === "string" && record.description
+          ? record.description
+          : "View verified details for this Texas election race.";
+    const title = indexable
+      ? `${recordName} | KeepTXRed Election Central`
+      : "Election race not found | KeepTXRed";
 
     return {
       meta: [
+        { title },
+        { name: "description", content: recordDescription },
         {
-          title: validSlug
-            ? "Texas Election Race | KeepTXRed Election Central"
-            : "Invalid Election Race | KeepTXRed Election Central",
+          name: "robots",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
         },
-        {
-          name: "description",
-          content: validSlug
-            ? "View verified details for this Texas election race."
-            : "The requested Texas election race URL is invalid.",
-        },
-        ...(validSlug ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
+        ...(indexable
+          ? [
+              { property: "og:title", content: title },
+              { property: "og:description", content: recordDescription },
+              { property: "og:url", content: canonicalUrl },
+              { property: "og:type", content: "website" },
+              { property: "og:site_name", content: "Keep TX Red" },
+              { name: "twitter:card", content: "summary_large_image" },
+              { name: "twitter:title", content: title },
+              { name: "twitter:description", content: recordDescription },
+              { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+              { property: "og:image:width", content: "1200" },
+              { property: "og:image:height", content: "630" },
+              { property: "og:image:alt", content: "2026 Texas Election Central" },
+              { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+            ]
+          : []),
       ],
-      links: validSlug ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: indexable
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Event",
+                name: recordName,
+                description: recordDescription,
+                url: canonicalUrl,
+                startDate:
+                  record && "electionDate" in record && typeof record.electionDate === "string"
+                    ? record.electionDate
+                    : "2026-11-03",
+                eventStatus: "https://schema.org/EventScheduled",
+                eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+                location: {
+                  "@type": "AdministrativeArea",
+                  name:
+                    record && "districtName" in record && typeof record.districtName === "string"
+                      ? record.districtName
+                      : "Texas",
+                },
+                organizer: {
+                  "@type": "GovernmentOrganization",
+                  name: "Texas election authorities",
+                },
+              }).replace(/</g, "\\u003c"),
+            },
+          ]
+        : [],
     };
   },
   component: ElectionRaceDetailRoute,
@@ -54,16 +119,25 @@ export const Route = createFileRoute("/elections/races/$raceSlug")({
 function ElectionRaceDetailRoute() {
   const { raceSlug } = Route.useParams();
   const validSlug = isElectionSlug(raceSlug);
+  const indexable =
+    validSlug &&
+    races.some(
+      (item) =>
+        item.slug === raceSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
 
   return (
     <ElectionRepositoryProvider>
       <ElectionLayout
         title="Texas Election Race"
         description="Verified race details from KeepTXRed Election Central."
-        canonicalUrl={validSlug ? `https://keeptxred.com/elections/races/${raceSlug}` : undefined}
+        indexable={indexable}
+        canonicalUrl={indexable ? `https://keeptxred.com/elections/races/${raceSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.races} />}
       >
-        {validSlug ? (
+        {indexable ? (
           <ElectionRaceDetailData raceSlug={raceSlug} />
         ) : (
           <ElectionErrorState

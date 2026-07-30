@@ -6,6 +6,7 @@ import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 import { AUTHORS } from "@/data/authors";
 import { ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
+import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 
 /** Sitemap INDEX. Includes only sub-sitemaps that would contain >0 URLs. */
 export const Route = createFileRoute("/sitemap.xml")({
@@ -57,6 +58,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           { file: "sitemap-pages.xml", count: 1 },
           { file: "sitemap-explore.xml", count: 1 },
           { file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT },
+          { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
           { file: "sitemap-news.xml", count: newsCount },
           { file: "sitemap-evergreen.xml", count: evergreenCount },
           { file: "sitemap-products.xml", count: productCount },

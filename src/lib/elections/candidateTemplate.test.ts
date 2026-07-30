@@ -14,8 +14,34 @@ describe("candidate directory and reusable profile template", () => {
     expect(directory).toContain('usageStatus === "approved"');
   });
 
+  it("keeps candidate-card actions on slug-specific detail routes", () => {
+    const card = source("src/components/elections/cards/CandidateCard.tsx");
+    const raceCandidates = source("src/components/elections/races/RaceCandidateSection.tsx");
+
+    expect(card).toContain("<Link to={profileHref}");
+    expect(card).toContain("to={raceHref}");
+    expect(raceCandidates).toContain(
+      "profileHref={ELECTION_ROUTES.candidate(candidate.slug)}",
+    );
+    expect(raceCandidates).toContain("raceHref={ELECTION_ROUTES.race(race.slug)}");
+  });
+
+  it("renders nested candidate and race detail routes instead of their directories", () => {
+    const candidateDirectory = source("src/routes/elections.candidates.tsx");
+    const raceDirectory = source("src/routes/elections.races.tsx");
+
+    expect(candidateDirectory).toContain("if (candidateSlug)");
+    expect(candidateDirectory).toContain("return <Outlet />");
+    expect(raceDirectory).toContain("if (raceSlug)");
+    expect(raceDirectory).toContain("return <Outlet />");
+    expect(raceDirectory).toContain("raceHref={ELECTION_ROUTES.race(race.slug)}");
+    expect(raceDirectory).toContain(
+      "candidateHref: ELECTION_ROUTES.candidate(candidate.slug)",
+    );
+  });
+
   it("composes required candidate profile sections once", () => {
-    const route = source("src/routes/elections.candidates.$candidateSlug.tsx");
+    const route = source("src/routes/elections.candidates_.$candidateSlug.tsx");
     for (const section of [
       "CandidateBiographySection",
       "CandidateCampaignLinks",

@@ -1,0 +1,222 @@
+[
+  {
+    "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
+    "campaignUrl": "https://ginafortexas.com/",
+    "pressUrl": "https://ginafortexas.com/news/",
+    "pressEmail": "press@ginafortexas.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://ginafortexas.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes campaign photography and a dedicated press contact; no standalone downloadable media kit was found."
+  },
+  {
+    "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
+    "campaignUrl": "https://www.gregabbott.com/",
+    "pressUrl": "https://www.gregabbott.com/news/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.gregabbott.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site publishes event photography and campaign imagery; no standalone media-kit page was located."
+  },
+  {
+    "candidateId": "candidate-pat-dixon-libertarian-race-2026-governor",
+    "campaignUrl": "https://patdixon.org/",
+    "pressUrl": "https://patdixon.org/",
+    "pressEmail": "info@PatDixon.org",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://patdixon.org/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site contains multiple candidate photos and direct campaign contact information."
+  },
+  {
+    "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+    "campaignUrl": "https://www.danpatrick.org/",
+    "pressUrl": "https://www.danpatrick.org/category/press-releases/",
+    "pressEmail": "info@danpatrick.org",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.danpatrick.org/",
+    "status": "official-campaign-source",
+    "notes": "Official reelection campaign site provides campaign photography, press releases, campaign updates, videos, and direct campaign contact information."
+  },
+  {
+    "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+    "campaignUrl": "https://www.vikkigoodwin.com/",
+    "pressUrl": "https://www.vikkigoodwin.com/news",
+    "pressEmail": "AskMe@VikkiGoodwin.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.vikkigoodwin.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes a high-resolution candidate banner, campaign photography, a news archive, and campaign inquiry contact information."
+  },
+  {
+    "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+    "campaignUrl": "https://mayesmiddleton.com/",
+    "pressUrl": "https://mayesmiddleton.com/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://mayesmiddleton.com/",
+    "status": "official-campaign-source",
+    "notes": "Official attorney-general campaign site includes a primary campaign portrait plus multiple issue and campaign images."
+  },
+  {
+    "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+    "campaignUrl": "https://www.nathanfortexas.com/",
+    "pressUrl": "https://www.nathanfortexas.com/news",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.nathanfortexas.com/",
+    "status": "official-campaign-source",
+    "notes": "Official attorney-general campaign site includes candidate biography, news, contact, video, and campaign imagery; no standalone downloadable media kit was located."
+  },
+  {
+    "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+    "campaignUrl": "https://www.saraheckhardt.com/",
+    "pressUrl": "https://www.saraheckhardt.com/",
+    "pressEmail": "campaign@saraheckhardt.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.saraheckhardt.com/",
+    "status": "official-campaign-source",
+    "notes": "Official comptroller campaign site contains multiple high-resolution campaign graphics and portraits, issue material, endorsements, event outreach, and campaign contact information."
+  },
+  {
+    "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
+    "campaignUrl": "https://donhuffines.com/",
+    "pressUrl": "https://donhuffines.com/news/",
+    "pressEmail": "press@donhuffines.com",
+    "mediaKitUrl": "https://donhuffines.com/wp-content/uploads/Press-Kit.zip",
+    "photoSourceUrl": "https://donhuffines.com/",
+    "status": "official-campaign-media-kit",
+    "notes": "Official campaign provides a downloadable press kit, campaign photography, logos, news archive, embedded event media, and a dedicated press email."
+  },
+  {
+    "candidateId": "candidate-clayton-tucker-democratic-race-2026-agriculture-commissioner",
+    "campaignUrl": "https://www.claytontuckertx.com/",
+    "pressUrl": "https://www.claytontuckertx.com/press",
+    "pressEmail": "info@claytontuckertx.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.claytontuckertx.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes candidate photography, farm and campaign-event images, a dedicated press-release archive, social links, and campaign contact information."
+  },
+  {
+    "candidateId": "candidate-nate-sheets-republican-race-2026-agriculture-commissioner",
+    "campaignUrl": "https://natesheets.com/",
+    "pressUrl": "https://natesheets.com/news/",
+    "pressEmail": "campaign@natesheets.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://natesheets.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes high-resolution candidate imagery, biography and issue pages, news, calendar, endorsements, campaign merchandise, and media inquiry routing."
+  },
+  {
+    "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
+    "campaignUrl": "https://dawnbuckingham.com/",
+    "pressUrl": "https://www.glo.texas.gov/about-glo/press-releases",
+    "pressEmail": "media@glo.texas.gov",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.glo.texas.gov/about-glo/about-the-commissioner",
+    "status": "official-campaign-and-government-source",
+    "notes": "Official campaign site plus the Texas General Land Office commissioner page and press archive provide portraits, field photography, and a government press contact."
+  },
+  {
+    "candidateId": "candidate-benjamin-flores-democratic-race-2026-land-commissioner",
+    "campaignUrl": "https://www.letsgowithben.com/home",
+    "pressUrl": "https://www.letsgowithben.com/opinions-and-remarks",
+    "pressEmail": null,
+    "mediaKitUrl": "https://www.letsgowithben.com/gallery-1",
+    "photoSourceUrl": "https://www.letsgowithben.com/gallery-1",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes a large public photo gallery, campaign biography, policy materials, contact page, video, and social links."
+  },
+  {
+    "candidateId": "candidate-bo-french-republican-race-2026-railroad-commissioner",
+    "campaignUrl": "https://bofrench.com/",
+    "pressUrl": "https://bofrench.com/news/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://bofrench.com/about/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes candidate portraits, family photography, issue imagery, press releases, and campaign event pages."
+  },
+  {
+    "candidateId": "candidate-jon-rosenthal-democratic-race-2026-railroad-commissioner",
+    "campaignUrl": "https://jonrosenthaltx.com/",
+    "pressUrl": "https://jonrosenthaltx.com/news/",
+    "pressEmail": "jonr@jonrosenthaltx.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://jonrosenthaltx.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes campaign and legislative photography, candidate biography, policy pages, videos, press releases, and campaign contact information."
+  },
+  {
+    "candidateId": "candidate-okey-anyiam-democratic-race-2026-court-of-criminal-appeals-place-3",
+    "campaignUrl": "https://www.facebook.com/okeyanyiam1",
+    "pressUrl": "https://www.facebook.com/okeyanyiam1",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.facebook.com/okeyanyiam1",
+    "status": "official-candidate-social-source",
+    "notes": "No standalone campaign website was located. The candidate's public campaign Facebook page is the verified campaign source currently identified."
+  },
+  {
+    "candidateId": "candidate-thomas-smith-republican-race-2026-court-of-criminal-appeals-place-3",
+    "campaignUrl": "https://smithfortexas.org/",
+    "pressUrl": "https://smithfortexas.org/",
+    "pressEmail": "tsmith@smithfortexas.org",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://smithfortexas.org/about.html",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes a candidate biography, family photograph, endorsements, campaign contact information, and directly hosted campaign imagery."
+  },
+  {
+    "candidateId": "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
+    "campaignUrl": "https://www.judgeaudrariley.com/",
+    "pressUrl": "https://www.judgeaudrariley.com/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.judgeaudrariley.com/",
+    "status": "official-campaign-source",
+    "notes": "Official judicial campaign site publishes candidate portraits and campaign graphics. The site still contains some 2024 reelection wording, so the image source is retained while date-sensitive copy should not be reused."
+  },
+  {
+    "candidateId": "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4",
+    "campaignUrl": "https://www.judgeyeary.com/",
+    "pressUrl": "https://www.judgeyeary.com/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.txcourts.gov/cca/about-the-court/judges/judge-kevin-yeary/",
+    "status": "official-campaign-and-government-source",
+    "notes": "Official reelection campaign site plus the Texas Judicial Branch biography provide campaign photography and a high-resolution official court portrait."
+  },
+  {
+    "candidateId": "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
+    "campaignUrl": "https://www.hollytforjudge.com/",
+    "pressUrl": "https://www.hollytforjudge.com/news-media",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.hollytforjudge.com/bio",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes a high-resolution candidate portrait, biography, experience, endorsements, events, and a dedicated news and media section."
+  },
+  {
+    "candidateId": "candidate-john-messinger-republican-race-2026-court-of-criminal-appeals-place-9",
+    "campaignUrl": "https://messingerforjustice.com/",
+    "pressUrl": "https://messingerforjustice.com/news/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://messingerforjustice.com/about-john/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes candidate biography, news, contact, endorsements, voting information, and campaign-hosted imagery."
+  },
+  {
+    "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
+    "campaignUrl": "https://www.kenpaxton.com/",
+    "pressUrl": "https://www.kenpaxton.com/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.kenpaxton.com/",
+    "status": "official-campaign-source",
+    "notes": "Official U.S. Senate campaign site with campaign photography; no dedicated downloadable media kit was found."
+  }
+]

@@ -25,6 +25,8 @@ export const Route = createFileRoute("/admin")({
 });
 
 const STORAGE_KEY = "ktr-admin-ok";
+const INGEST_VALIDATION_SOURCE_URL =
+  "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/";
 const PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string) || "keeptxred";
 
 type FeedRow = {
@@ -42,6 +44,7 @@ type ArticleRow = {
   category: string;
   is_breaking: boolean | null;
   published_at: string;
+  created_at?: string | null;
   source_name?: string | null;
   featured_image_url?: string | null;
   image_generation_status?: string | null;
@@ -99,11 +102,34 @@ function AdminDashboard() {
   const [feed, setFeed] = useState<FeedRow[]>([]);
   const [articles, setArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [ingestStatus, setIngestStatus] = useState<
+    "running" | "verified" | "missing" | "failed"
+  >("running");
+  const [ingestDetail, setIngestDetail] = useState("Refreshing feeds…");
 
   useEffect(() => {
     let active = true;
     async function load() {
-      const [{ data: f }, { data: a }] = await Promise.all([
+      let refreshOk = false;
+      try {
+        const response = await fetch("/api/public/hooks/ingest-feeds", {
+          method: "POST",
+          headers: { Accept: "application/json" },
+        });
+        const payload = (await response.json().catch(() => null)) as
+          | { ok?: boolean; inserted?: number; error?: string }
+          | null;
+        refreshOk = response.ok && payload?.ok === true;
+        if (!refreshOk) {
+          setIngestStatus("failed");
+          setIngestDetail(payload?.error || `Feed refresh failed (HTTP ${response.status})`);
+        }
+      } catch (error) {
+        setIngestStatus("failed");
+        setIngestDetail(error instanceof Error ? error.message : "Feed refresh failed");
+      }
+
+      const [{ data: f }, { data: a }, validationResult] = await Promise.all([
         supabase
           .from("texas_news_feed")
           .select("id,title,source,internal_slug,pub_date")
@@ -111,13 +137,30 @@ function AdminDashboard() {
           .limit(50),
         supabase
           .from("daily_articles")
-        .select("id,slug,title,category,is_breaking,published_at,source_name,featured_image_url,image_generation_status")
-          .order("published_at", { ascending: false })
+          .select("id,slug,title,category,is_breaking,published_at,created_at,source_name,featured_image_url,image_generation_status")
+          .order("created_at", { ascending: false })
           .limit(50),
+        supabase
+          .from("texas_news_feed")
+          .select("id,title,source,pub_date")
+          .eq("link", INGEST_VALIDATION_SOURCE_URL)
+          .maybeSingle(),
       ]);
       if (!active) return;
       setFeed((f ?? []) as FeedRow[]);
       setArticles((a ?? []) as ArticleRow[]);
+      if (validationResult.data) {
+        setIngestStatus("verified");
+        setIngestDetail(
+          `Verified in Admin feed as item ${validationResult.data.id}: ${validationResult.data.title}`,
+        );
+      } else if (refreshOk) {
+        setIngestStatus("missing");
+        setIngestDetail(
+          validationResult.error?.message ||
+            "Feed refresh completed, but the requested Breitbart story is still missing.",
+        );
+      }
       setLoading(false);
     }
     load();
@@ -128,9 +171,12 @@ function AdminDashboard() {
   const latestNormalArticle = articles.find(
     (article) => article.source_name !== "Keep TX Red Reserve Desk",
   );
+  const latestNormalActivity = latestNormalArticle
+    ? latestNormalArticle.created_at ?? latestNormalArticle.published_at
+    : null;
   const publishingStalled =
-    !latestNormalArticle ||
-    Date.now() - Date.parse(latestNormalArticle.published_at) >= 24 * 60 * 60 * 1000;
+    !latestNormalActivity ||
+    Date.now() - Date.parse(latestNormalActivity) >= 24 * 60 * 60 * 1000;
 
   function signOut() {
     sessionStorage.removeItem(STORAGE_KEY);
@@ -152,6 +198,21 @@ function AdminDashboard() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-6xl px-4 pt-8">
+        <div
+          role="status"
+          className={
+            ingestStatus === "verified"
+              ? "border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900"
+              : ingestStatus === "running"
+                ? "border border-blue-300 bg-blue-50 p-3 text-sm text-blue-900"
+                : "border-2 border-red-400 bg-red-50 p-3 text-sm text-red-900"
+          }
+        >
+          <strong>Native feed validation:</strong> {ingestDetail}
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl px-4 py-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Feed items (last 50)" value={feed.length} />
         <Stat label="Missing internal slug" value={missingSlug} tone={missingSlug > 0 ? "warn" : "ok"} />
@@ -167,10 +228,10 @@ function AdminDashboard() {
               No normal newsroom article has published for at least 24 hours.
               The reserve queue will release one prewritten article per 24-hour gap until normal publishing resumes.
             </p>
-            {latestNormalArticle ? (
+            {latestNormalActivity ? (
               <p className="mt-1 text-xs">
                 Latest normal publication:{" "}
-                {new Date(latestNormalArticle.published_at).toLocaleString("en-US", {
+                {new Date(latestNormalActivity).toLocaleString("en-US", {
                   timeZone: "America/Chicago",
                 })}
               </p>
@@ -181,7 +242,7 @@ function AdminDashboard() {
         <section className="mx-auto max-w-6xl px-4 pb-8">
           <div className="border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900">
             Publishing monitor healthy. Latest normal article:{" "}
-            {new Date(latestNormalArticle.published_at).toLocaleString("en-US", {
+            {new Date(latestNormalActivity!).toLocaleString("en-US", {
               timeZone: "America/Chicago",
             })}
           </div>
@@ -230,7 +291,7 @@ function AdminDashboard() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <ContentOpportunityPanel />
+        {loading ? <Skel /> : <ContentOpportunityPanel />}
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">

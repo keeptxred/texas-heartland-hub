@@ -54,7 +54,7 @@ function TexasLighthousesPage() {
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: items.length,
-      itemListElement: items.map((item, index) => ({
+      itemListElement: items.map((item: any, index: number) => ({
         "@type": "ListItem",
         position: index + 1,
         name: item.name,

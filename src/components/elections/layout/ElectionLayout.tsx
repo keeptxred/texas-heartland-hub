@@ -13,6 +13,7 @@ export interface ElectionLayoutProps {
   actions?: ReactNode;
   schema?: Record<string, unknown> | Record<string, unknown>[];
   fullWidth?: boolean;
+  indexable?: boolean;
 }
 
 export function ElectionLayout({
@@ -27,6 +28,7 @@ export function ElectionLayout({
   actions,
   schema,
   fullWidth = false,
+  indexable = true,
 }: ElectionLayoutProps) {
   const defaultSchema = {
     "@context": "https://schema.org",
@@ -34,9 +36,18 @@ export function ElectionLayout({
     name: title,
     description,
     url: canonicalUrl,
+    inLanguage: "en-US",
     isPartOf: {
       "@type": "WebSite",
-      name: "KeepTXRed",
+      "@id": "https://keeptxred.com/#website",
+      url: "https://keeptxred.com",
+      name: "Keep TX Red",
+    },
+    publisher: {
+      "@type": "Organization",
+      "@id": "https://keeptxred.com/#organization",
+      name: "Keep TX Red",
+      url: "https://keeptxred.com",
     },
     about: {
       "@type": "Thing",
@@ -47,13 +58,22 @@ export function ElectionLayout({
   return (
     <>
       <Helmet>
-        <title>{title} | KeepTXRed</title>
+        <title>{`${title} | KeepTXRed`}</title>
         <meta name="description" content={description} />
+        <meta
+          name="robots"
+          content={indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow"}
+        />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="og:type" content="website" />
-        {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-        {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+        <meta property="og:site_name" content="Keep TX Red" />
+        <meta property="og:locale" content="en_US" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        {indexable && canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+        {indexable && canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
         <script type="application/ld+json">{JSON.stringify(schema ?? defaultSchema)}</script>
       </Helmet>
 
@@ -101,8 +121,8 @@ export function ElectionLayout({
           <aside className="mt-10 border-t border-slate-200 pt-5 text-sm leading-6 text-slate-600">
             <strong className="text-slate-800">Election data notice:</strong> Election Central
             republishes source-backed public information. Polls are survey snapshots, forecasts are
-            estimates, and election returns are unofficial until certified. Confirm voting and
-            ballot information with the responsible election authority.{" "}
+            estimates available for selected races only, and election returns are unofficial until
+            certified. Confirm voting and ballot information with the responsible election authority.{" "}
             <a
               href="/elections/corrections"
               className="font-semibold text-red-700 underline-offset-4 hover:underline"

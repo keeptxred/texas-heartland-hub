@@ -89,6 +89,9 @@ export function CandidateDetailSeo({ candidate, race }: CandidateDetailSeoProps)
       <meta name="twitter:card" content={metadata.twitter.card} />
       <meta name="twitter:title" content={metadata.twitter.title} />
       <meta name="twitter:description" content={metadata.twitter.description} />
+      {metadata.twitter.image ? (
+        <meta name="twitter:image" content={metadata.twitter.image} />
+      ) : null}
       <script type="application/ld+json">
         {JSON.stringify([webPageSchema, personSchema]).replace(/</g, "\\u003c")}
       </script>

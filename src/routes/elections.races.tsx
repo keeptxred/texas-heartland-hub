@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { ElectionEmptyState, ElectionResearchList, RaceCard } from "@/components/elections";
 import {
   useActiveElectionCycle,
@@ -97,9 +97,16 @@ export const Route = createFileRoute("/elections/races")({
         content:
           "Follow published statewide, congressional, legislative, county, and local Texas election races.",
       },
-      { property: "og:url", content: "/elections/races" },
+      { property: "og:url", content: "https://keeptxred.com/elections/races" },
       { property: "og:type", content: "website" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:site_name", content: "Keep TX Red" },
+      { property: "og:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "2026 Texas Election Central" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
     ],
     links: [
       {
@@ -112,6 +119,12 @@ export const Route = createFileRoute("/elections/races")({
 });
 
 function ElectionRacesRoute() {
+  const { raceSlug } = useParams({ strict: false }) as { raceSlug?: string };
+
+  if (raceSlug) {
+    return <Outlet />;
+  }
+
   return (
     <ElectionRepositoryProvider>
       <ElectionRacesContent />
@@ -187,7 +200,7 @@ function ElectionRacesContent() {
 
   const updateSearch = (updates: Partial<ElectionRaceListSearch>) => {
     void navigate({
-      search: (previous) => ({ ...previous, ...updates }),
+      search: (previous: any) => ({ ...previous, ...updates }),
       replace: true,
     });
   };
@@ -404,10 +417,12 @@ function ElectionRacesContent() {
                   status={race.status}
                   rating={race.rating}
                   competitive={race.competitive}
+                  raceHref={ELECTION_ROUTES.race(race.slug)}
                   candidates={race.candidates.map((candidate) => ({
                     id: candidate.id,
                     name: candidate.fullName,
                     partyLabel: candidate.partyLabel ?? undefined,
+                    candidateHref: ELECTION_ROUTES.candidate(candidate.slug),
                     incumbent: candidate.incumbent,
                   }))}
                 />
