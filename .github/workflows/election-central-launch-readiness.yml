@@ -1,4 +1,3 @@
-# Revalidated after branch reconciliation
 name: Election Central Launch Readiness
 
 on:
@@ -10,6 +9,7 @@ on:
       - "scripts/elections/**"
       - "public/images/elections/**"
       - "package.json"
+      - "bun.lock"
       - ".github/workflows/election-central-launch-readiness.yml"
   push:
     branches: [main]
@@ -20,6 +20,7 @@ on:
       - "scripts/elections/**"
       - "public/images/elections/**"
       - "package.json"
+      - "bun.lock"
       - ".github/workflows/election-central-launch-readiness.yml"
   workflow_dispatch:
 
@@ -58,8 +59,8 @@ jobs:
       - name: Run full public-launch audit
         run: bun scripts/elections/public-launch-audit.mjs
 
-      - name: Lint changed election SEO files
-        run: bunx eslint src/lib/elections/routes.ts src/lib/elections/seoSlugs.ts 'src/routes/elections.candidates_.$candidateSlug.tsx' 'src/routes/elections.races_.$raceSlug.tsx' 'src/routes/sitemap-elections[.]xml.ts'
+      - name: Lint changed election routes
+        run: bunx eslint src/lib/elections/routes.ts src/lib/elections/seoSlugs.ts 'src/routes/elections.candidates_.$candidateSlug.tsx' 'src/routes/elections.races_.$raceSlug.tsx' src/routes/elections.districts.tsx src/routes/elections.districts.index.tsx 'src/routes/sitemap-elections[.]xml.ts'
 
       - name: Typecheck
         run: bun run typecheck
@@ -69,4 +70,3 @@ jobs:
 
       - name: Production build
         run: bun run build
-
