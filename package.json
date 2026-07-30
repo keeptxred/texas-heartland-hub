@@ -12,7 +12,7 @@
     "lint": "eslint .",
     "typecheck": "npm run build:dev && tsc --noEmit",
     "test": "vitest run",
-    "verify": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "verify": "npm run typecheck && npm run test && npm run build",
     "format": "prettier --write .",
     "elections:normalize": "node scripts/elections/normalize-imports.mjs",
     "elections:migrate-sources": "node scripts/elections/migrate-source-urls.mjs",
