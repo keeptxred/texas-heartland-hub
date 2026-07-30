@@ -81,11 +81,11 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
       <section className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-6 md:grid-cols-2">
           {content.sections.map(([title, description, href]) => (
-            <Link key={href} to={href} className="rounded-xl border bg-card p-6 shadow-sm transition hover:border-primary/40 hover:shadow-md">
+            <a key={href} href={href} className="rounded-xl border bg-card p-6 shadow-sm transition hover:border-primary/40 hover:shadow-md">
               <h2 className="text-xl font-bold text-foreground">{title}</h2>
               <p className="mt-2 leading-7 text-muted-foreground">{description}</p>
               <span className="mt-4 inline-block font-semibold text-primary">Explore →</span>
-            </Link>
+            </a>
           ))}
         </div>
         <aside className="mt-10 rounded-xl border-l-4 border-primary bg-muted p-6">
