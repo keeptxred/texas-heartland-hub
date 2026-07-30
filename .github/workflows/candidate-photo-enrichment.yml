@@ -22,7 +22,7 @@ concurrency:
 jobs:
   discover-and-apply-photos:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 120
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
 
-      - name: Discover linked-source candidate portraits
+      - name: Discover multi-source candidate portraits
         run: node scripts/elections/discover-candidate-photos.mjs
 
       - name: Apply approved candidate photos
@@ -45,12 +45,19 @@ jobs:
 
       - name: Commit enriched candidate records and reports
         run: |
-          if git diff --quiet -- src/data/elections/2026/candidate-photos.json src/data/elections/2026/candidates.json artifacts/elections/candidate-photo-report.json artifacts/elections/candidate-photo-discovery-report.json; then
+          TRACKED=(
+            src/data/elections/2026/candidate-photos.json
+            src/data/elections/2026/candidates.json
+            artifacts/elections/candidate-photo-report.json
+            artifacts/elections/candidate-photo-discovery-report.json
+            artifacts/elections/candidate-photo-review-queue.json
+          )
+          if git diff --quiet -- "${TRACKED[@]}"; then
             echo "No candidate photo changes to commit."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/data/elections/2026/candidate-photos.json src/data/elections/2026/candidates.json artifacts/elections/candidate-photo-report.json artifacts/elections/candidate-photo-discovery-report.json
-          git commit -m "Discover and apply candidate photos"
+          git add "${TRACKED[@]}"
+          git commit -m "Discover and apply candidate photos from expanded sources"
           git push
