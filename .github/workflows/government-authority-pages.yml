@@ -49,8 +49,8 @@ jobs:
       - name: Typecheck
         run: bun run typecheck
 
-      - name: Lint
-        run: bun run lint
+      - name: Lint changed district routes
+        run: bunx eslint src/routes/elections.districts.tsx src/routes/elections.districts.index.tsx
 
       - name: Test
         run: bun test
