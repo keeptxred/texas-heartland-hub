@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import records from "@/data/elections/2026/results.json";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -13,32 +14,49 @@ import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/results/$resultSlug")({
   head: ({ params }) => {
-    const valid = isElectionSlug(params.resultSlug);
+    const record = records.find(
+      (item) =>
+        item.slug === params.resultSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
+    const validSlug = isElectionSlug(params.resultSlug);
+    const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/results/${params.resultSlug}`;
+    const recordName =
+      record && "title" in record && typeof record.title === "string" && record.title ? record.title :
+        record && "raceName" in record && typeof record.raceName === "string" && record.raceName ? record.raceName :
+        "Texas Election Result";
+    const description =
+      record && "description" in record && typeof record.description === "string" && record.description
+        ? record.description
+        : "Review published Texas election vote totals, reporting, winner, certification, and source information.";
+    const title = indexable
+      ? `${recordName} | KeepTXRed Election Central`
+      : "Election result not found | KeepTXRed";
+
     return {
       meta: [
+        { title },
+        { name: "description", content: description },
         {
-          title: valid
-            ? "Texas Election Result | KeepTXRed Election Central"
-            : "Invalid Election Result | KeepTXRed Election Central",
+          name: "robots",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
         },
-        {
-          name: "description",
-          content: valid
-            ? "Review published Texas election vote totals, reporting, winner, certification, and source information."
-            : "The requested Texas election result URL is invalid.",
-        },
-        ...(valid
+        ...(indexable
           ? [
-              { name: "robots", content: "index, follow, max-image-preview:large" },
+              { property: "og:title", content: title },
+              { property: "og:description", content: description },
               { property: "og:url", content: canonicalUrl },
               { property: "og:type", content: "website" },
               { property: "og:site_name", content: "Keep TX Red" },
               { name: "twitter:card", content: "summary_large_image" },
+              { name: "twitter:title", content: title },
+              { name: "twitter:description", content: description },
             ]
-          : [{ name: "robots", content: "noindex, nofollow" }]),
+          : []),
       ],
-      links: valid ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
   },
   component: ElectionResultDetailRoute,
