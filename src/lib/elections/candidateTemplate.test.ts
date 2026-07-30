@@ -26,6 +26,18 @@ describe("candidate directory and reusable profile template", () => {
     expect(raceCandidates).toContain("raceHref={ELECTION_ROUTES.race(race.slug)}");
   });
 
+  it("renders nested candidate and race detail routes instead of their directories", () => {
+    const candidateDirectory = source("src/routes/elections.candidates.tsx");
+    const raceDirectory = source("src/routes/elections.races.tsx");
+
+    expect(candidateDirectory).toContain("return <Outlet />");
+    expect(raceDirectory).toContain("return <Outlet />");
+    expect(raceDirectory).toContain("raceHref={ELECTION_ROUTES.race(race.slug)}");
+    expect(raceDirectory).toContain(
+      "candidateHref: ELECTION_ROUTES.candidate(candidate.slug)",
+    );
+  });
+
   it("composes required candidate profile sections once", () => {
     const route = source("src/routes/elections.candidates.$candidateSlug.tsx");
     for (const section of [
