@@ -29,7 +29,15 @@ export const Route = createFileRoute("/elections/forecast/$forecastSlug")({
             ? "Review a published Texas election forecast, probabilities, methodology, and source."
             : "The requested Texas election forecast URL is invalid.",
         },
-        ...(validSlug ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
+        ...(validSlug
+          ? [
+              { name: "robots", content: "index, follow, max-image-preview:large" },
+              { property: "og:url", content: canonicalUrl },
+              { property: "og:type", content: "website" },
+              { property: "og:site_name", content: "Keep TX Red" },
+              { name: "twitter:card", content: "summary_large_image" },
+            ]
+          : [{ name: "robots", content: "noindex, nofollow" }]),
       ],
       links: validSlug ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
