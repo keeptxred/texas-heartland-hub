@@ -18,10 +18,16 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
-// SEO URL cleanup: 301 redirect legacy /texas-news?topic=X style URLs to
-// clean path-based /texas-news/X, and mark any remaining query-string URL
-// as noindex so Google doesn't index thin duplicate pages.
+// SEO URL cleanup: 301 redirect legacy URLs to their clean canonical paths,
+// and mark remaining query-string URLs as noindex to avoid thin duplicates.
 const REDIRECT_PATHS = new Set(["/texas-news", "/texas-business"]);
+const LEGACY_ELECTION_PATHS = new Map([
+  ["/election", "/elections/2026"],
+  ["/election-central", "/elections/2026"],
+  ["/texas-elections", "/elections/2026"],
+  ["/elections-2026", "/elections/2026"],
+  ["/elections/2026/", "/elections/2026"],
+]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
 const slugify = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -38,6 +44,17 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
       status: 301,
       headers: {
         location: `${CANONICAL_ORIGIN}${url.pathname}${url.search}`,
+        "cache-control": "public, max-age=86400",
+      },
+    });
+  }
+
+  const legacyElectionTarget = LEGACY_ELECTION_PATHS.get(url.pathname.toLowerCase());
+  if (legacyElectionTarget) {
+    return new Response(null, {
+      status: 301,
+      headers: {
+        location: `${legacyElectionTarget}${url.search}`,
         "cache-control": "public, max-age=86400",
       },
     });
