@@ -1,5 +1,6 @@
 import { CandidateCard } from "../cards";
 import { ElectionEmptyState } from "../states";
+import { ELECTION_ROUTES } from "@/lib/elections";
 import type { CandidateSummary, RaceDetail } from "@/types/elections";
 
 export interface RaceCandidateSectionProps {
@@ -44,6 +45,8 @@ export function RaceCandidateSection({ race, candidates }: RaceCandidateSectionP
               photoUrl={candidate.imageUrl}
               occupation={candidate.occupation}
               hometown={candidate.hometown}
+              profileHref={ELECTION_ROUTES.candidate(candidate.slug)}
+              raceHref={ELECTION_ROUTES.race(race.slug)}
               className={
                 candidate.status === "withdrawn" ? "border-amber-200 bg-amber-50/30" : undefined
               }
