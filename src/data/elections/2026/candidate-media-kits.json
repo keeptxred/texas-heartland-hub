@@ -30,6 +30,46 @@
     "notes": "Official campaign site contains multiple candidate photos and direct campaign contact information."
   },
   {
+    "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+    "campaignUrl": "https://www.danpatrick.org/",
+    "pressUrl": "https://www.danpatrick.org/category/press-releases/",
+    "pressEmail": "info@danpatrick.org",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.danpatrick.org/",
+    "status": "official-campaign-source",
+    "notes": "Official reelection campaign site provides campaign photography, press releases, campaign updates, videos, and direct campaign contact information."
+  },
+  {
+    "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
+    "campaignUrl": "https://www.vikkigoodwin.com/",
+    "pressUrl": "https://www.vikkigoodwin.com/news",
+    "pressEmail": "AskMe@VikkiGoodwin.com",
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.vikkigoodwin.com/",
+    "status": "official-campaign-source",
+    "notes": "Official campaign site includes a high-resolution candidate banner, campaign photography, a news archive, and campaign inquiry contact information."
+  },
+  {
+    "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
+    "campaignUrl": "https://mayesmiddleton.com/",
+    "pressUrl": "https://mayesmiddleton.com/",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://mayesmiddleton.com/",
+    "status": "official-campaign-source",
+    "notes": "Official attorney-general campaign site includes a primary campaign portrait plus multiple issue and campaign images."
+  },
+  {
+    "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+    "campaignUrl": "https://www.nathanfortexas.com/",
+    "pressUrl": "https://www.nathanfortexas.com/news",
+    "pressEmail": null,
+    "mediaKitUrl": null,
+    "photoSourceUrl": "https://www.nathanfortexas.com/",
+    "status": "official-campaign-source",
+    "notes": "Official attorney-general campaign site includes candidate biography, news, contact, video, and campaign imagery; no standalone downloadable media kit was located."
+  },
+  {
     "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
     "campaignUrl": "https://www.kenpaxton.com/",
     "pressUrl": "https://www.kenpaxton.com/",
