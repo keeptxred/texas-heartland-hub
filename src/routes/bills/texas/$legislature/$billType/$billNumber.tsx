@@ -19,8 +19,8 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
     if (!loaderData) return {};
     const { bill, sponsors, actions } = loaderData;
     const canonical = `${SITE_URL}${canonicalBillPath(bill)}`;
-    const title = bill.seo_title || `${bill.bill_identifier} Texas Legislature: Status, Sponsors and History | KeepTXRed`;
-    const description = bill.seo_description || `Track Texas ${bill.bill_identifier}, including its current status, sponsors, committee history, legislative actions, bill text and related Texas news.`;
+    const title = `${bill.bill_identifier} Texas Legislature: Status, Sponsors and History | KeepTXRed`;
+    const description = `Track Texas ${bill.bill_identifier}, including its current status, sponsors, committee history, legislative actions, bill text and related Texas news.`;
     return {
       meta: [
         { title }, { name: 'description', content: description },
@@ -45,7 +45,7 @@ function BillPage() {
   const summary = bill.plain_language_summary || bill.summary || bill.description || bill.caption;
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <Link to="/bills">Bills</Link> / {bill.legislature_number}th Legislature / {bill.bill_identifier}</nav>
+      <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <a href="/bills">Bills</a> / {bill.legislature_number}th Legislature / {bill.bill_identifier}</nav>
       <header className="rounded-2xl border bg-card p-6 md:p-10">
         <div className="flex flex-wrap items-center gap-3"><span className="rounded-full bg-primary px-3 py-1 text-sm font-bold text-primary-foreground">{bill.bill_identifier}</span><span className="rounded-full border px-3 py-1 text-sm font-semibold">{bill.current_status_label}</span>{bill.became_law && <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-semibold text-green-900">Became law</span>}</div>
         <h1 className="mt-5 text-3xl font-bold leading-tight md:text-5xl">{bill.caption}</h1>

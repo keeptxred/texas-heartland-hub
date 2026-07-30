@@ -41,7 +41,7 @@ describe("candidate directory and reusable profile template", () => {
   });
 
   it("composes required candidate profile sections once", () => {
-    const route = source("src/routes/elections.candidates.$candidateSlug.tsx");
+    const route = source("src/routes/elections.candidates_.$candidateSlug.tsx");
     for (const section of [
       "CandidateBiographySection",
       "CandidateCampaignLinks",

@@ -12,7 +12,7 @@ const SubscribeSchema = z.object({
  * Duplicate emails succeed silently (dedupe unique index).
  */
 export const subscribeNewsletter = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => SubscribeSchema.parse(input))
+  .validator((input: unknown) => SubscribeSchema.parse(input))
   .handler(async ({ data }) => {
     const supabaseUrl = process.env.SUPABASE_URL;
     const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;

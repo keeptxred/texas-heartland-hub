@@ -9,7 +9,7 @@ export const Route = createFileRoute("/texas-government/$entitySlug")({
     if (!entity) throw notFound();
     const relatedEntities = entity.relatedEntities.map(getGovernmentEntity).filter(Boolean);
     const terms = [...entity.newsKeywords, entity.name, entity.shortName].map((value) => value.toLowerCase());
-    const news = ARTICLES.filter(isPublished)
+    const news = ARTICLES.filter((article) => isPublished(article))
       .filter((article) => {
         const haystack = `${article.title} ${article.dek} ${(article.topics ?? []).join(" ")}`.toLowerCase();
         return terms.some((term) => haystack.includes(term));

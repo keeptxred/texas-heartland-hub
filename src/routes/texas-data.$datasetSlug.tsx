@@ -9,6 +9,7 @@ export const Route = createFileRoute("/texas-data/$datasetSlug")({
     return dataset;
   },
   head: ({ loaderData }) => {
+    if (!loaderData) return {};
     const dataset = loaderData;
     const canonical = `https://keeptxred.com/texas-data/${dataset.slug}`;
     return {
