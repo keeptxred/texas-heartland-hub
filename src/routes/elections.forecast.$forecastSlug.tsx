@@ -57,6 +57,30 @@ export const Route = createFileRoute("/elections/forecast/$forecastSlug")({
           : []),
       ],
       links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: indexable
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "CreativeWork",
+                name: recordName || "Texas election forecast",
+                description,
+                url: canonicalUrl,
+                genre: "Election forecast",
+                creator: {
+                  "@type": "Organization",
+                  name: "Keep TX Red",
+                  url: "https://keeptxred.com",
+                },
+                isPartOf: {
+                  "@type": "WebSite",
+                  "@id": "https://keeptxred.com/#website",
+                },
+              }).replace(/</g, "\\u003c"),
+            },
+          ]
+        : [],
     };
   },
   component: ElectionForecastDetailRoute,
