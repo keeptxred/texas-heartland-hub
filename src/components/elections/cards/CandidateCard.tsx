@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { CandidateParty, CandidateStatus, ElectionResourceLink } from "@/types/elections";
 import { CANDIDATE_STATUS_LABELS } from "@/types/elections/candidateClassifications";
 
@@ -92,9 +93,9 @@ export function CandidateCard({
 
           <h3 className="mt-3 text-xl font-bold tracking-tight text-slate-950">
             {profileHref ? (
-              <a href={profileHref} className="hover:text-red-700 hover:underline">
+              <Link to={profileHref} className="hover:text-red-700 hover:underline">
                 {name}
-              </a>
+              </Link>
             ) : (
               name
             )}
@@ -131,17 +132,17 @@ export function CandidateCard({
 
         <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold">
           {profileHref ? (
-            <a href={profileHref} className="text-red-700 underline-offset-4 hover:underline">
+            <Link to={profileHref} className="text-red-700 underline-offset-4 hover:underline">
               View candidate profile →
-            </a>
+            </Link>
           ) : null}
           {raceHref && (
-            <a
-              href={raceHref}
+            <Link
+              to={raceHref}
               className="text-slate-700 underline-offset-4 hover:text-red-700 hover:underline"
             >
               View race overview →
-            </a>
+            </Link>
           )}
         </div>
 
