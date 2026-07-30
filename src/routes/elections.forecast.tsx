@@ -46,8 +46,9 @@ export const Route = createFileRoute("/elections/forecast")({
         property: "og:title",
         content: "Texas Election Forecasts | KeepTXRed Election Central",
       },
-      { property: "og:url", content: "/elections/forecast" },
+      { property: "og:url", content: "https://keeptxred.com/elections/forecast" },
       { property: "og:type", content: "website" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
