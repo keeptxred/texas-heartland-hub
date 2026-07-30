@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import records from "@/data/elections/2026/forecasts.json";
 import {
   ElectionErrorState,
   ForecastDetailView,
@@ -13,33 +14,49 @@ import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/forecast/$forecastSlug")({
   head: ({ params }) => {
+    const record = records.find(
+      (item) =>
+        item.slug === params.forecastSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
     const validSlug = isElectionSlug(params.forecastSlug);
+    const indexable = validSlug && Boolean(record);
     const canonicalUrl = `https://keeptxred.com/elections/forecast/${params.forecastSlug}`;
+    const recordName =
+      record && "title" in record && typeof record.title === "string" && record.title ? record.title :
+        record && "sourceName" in record && typeof record.sourceName === "string" && record.sourceName ? record.sourceName :
+        "Texas Election Forecast";
+    const description =
+      record && "description" in record && typeof record.description === "string" && record.description
+        ? record.description
+        : "Review a published Texas election forecast, probabilities, methodology, and source.";
+    const title = indexable
+      ? `${recordName} | KeepTXRed Election Central`
+      : "Election forecast not found | KeepTXRed";
 
     return {
       meta: [
+        { title },
+        { name: "description", content: description },
         {
-          title: validSlug
-            ? "Texas Election Forecast | KeepTXRed Election Central"
-            : "Invalid Election Forecast | KeepTXRed Election Central",
+          name: "robots",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
         },
-        {
-          name: "description",
-          content: validSlug
-            ? "Review a published Texas election forecast, probabilities, methodology, and source."
-            : "The requested Texas election forecast URL is invalid.",
-        },
-        ...(validSlug
+        ...(indexable
           ? [
-              { name: "robots", content: "index, follow, max-image-preview:large" },
+              { property: "og:title", content: title },
+              { property: "og:description", content: description },
               { property: "og:url", content: canonicalUrl },
               { property: "og:type", content: "website" },
               { property: "og:site_name", content: "Keep TX Red" },
               { name: "twitter:card", content: "summary_large_image" },
+              { name: "twitter:title", content: title },
+              { name: "twitter:description", content: description },
             ]
-          : [{ name: "robots", content: "noindex, nofollow" }]),
+          : []),
       ],
-      links: validSlug ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
     };
   },
   component: ElectionForecastDetailRoute,
