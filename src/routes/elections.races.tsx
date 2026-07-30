@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
 import { ElectionEmptyState, ElectionResearchList, RaceCard } from "@/components/elections";
 import {
   useActiveElectionCycle,
@@ -119,6 +119,12 @@ export const Route = createFileRoute("/elections/races")({
 });
 
 function ElectionRacesRoute() {
+  const location = useLocation();
+
+  if (location.pathname !== Route.fullPath) {
+    return <Outlet />;
+  }
+
   return (
     <ElectionRepositoryProvider>
       <ElectionRacesContent />
@@ -411,10 +417,12 @@ function ElectionRacesContent() {
                   status={race.status}
                   rating={race.rating}
                   competitive={race.competitive}
+                  raceHref={ELECTION_ROUTES.race(race.slug)}
                   candidates={race.candidates.map((candidate) => ({
                     id: candidate.id,
                     name: candidate.fullName,
                     partyLabel: candidate.partyLabel ?? undefined,
+                    candidateHref: ELECTION_ROUTES.candidate(candidate.slug),
                     incumbent: candidate.incumbent,
                   }))}
                 />
