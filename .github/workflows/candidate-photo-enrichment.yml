@@ -24,6 +24,9 @@ concurrency:
   group: candidate-photo-enrichment
   cancel-in-progress: false
 
+env:
+  SEARCH_RUN_REQUESTED_AT: "2026-07-30T18:47:00-05:00"
+
 jobs:
   discover-and-apply-photos:
     runs-on: ubuntu-latest
