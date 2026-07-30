@@ -21,6 +21,85 @@ export type ArticleBody = {
 };
 
 export const ARTICLE_BODIES: Record<string, ArticleBody> = {
+  "joe-rogan-warns-against-turning-texas-blue": {
+    updated: "2026-07-29",
+    editorNote:
+      "This report independently summarizes comments discussed in Fox News coverage. Short quotations are limited and attributed; political interpretation is clearly identified.",
+    keyTakeaways: [
+      "Joe Rogan described Austin as a progressive pocket inside a Republican-led state and said that contrast creates a useful political balance.",
+      "He warned activists seeking to turn all of Texas Democratic that they could damage the conditions that attracted people to the state.",
+      "The comments place Austin’s identity inside the larger contest over migration, statewide elections, and Texas political culture.",
+      "Texas remains politically diverse at the city level even while Republicans control statewide government.",
+    ],
+    intro: [
+      "Joe Rogan is warning Democrats against trying to remake Texas in the image of the coastal states many newcomers left behind. During a recent podcast conversation, the Austin-based host praised the capital city’s progressive culture while arguing that it works partly because it exists inside a state shaped by conservative voters, gun rights, lower regulation, and Republican statewide leadership.",
+      "Rogan’s point was not that Austin should become uniformly conservative. He described the city’s political contrast with the rest of Texas as a balance that benefits both sides. His warning was aimed at activists who want the entire state to move left: changing the statewide environment, he argued, could also destroy what liberal newcomers enjoy about living in Austin.",
+    ],
+    sections: [
+      {
+        heading: "Rogan’s argument about Austin’s political balance",
+        paragraphs: [
+          "Rogan characterized Austin as a liberal and easygoing city surrounded by strongly Republican communities. He said the arrangement creates a check on political excess and gives the Texas capital a different character from progressive cities on the East and West coasts.",
+          "He also pushed back on the stereotype that Texas is culturally uniform or populated only by caricatures of rural conservatives. Austin’s technology sector, music industry, universities, state-government workforce, and large population of transplants have made it one of the most politically distinctive cities in the state.",
+          "The tension is part of Austin’s long-running identity. The city has maintained progressive municipal leadership while operating as the seat of a Republican-led state government. That proximity forces local and state leaders with opposing priorities to compete, negotiate, and live with the practical consequences of each other’s decisions.",
+        ],
+      },
+      {
+        heading: "The warning to Democrats seeking a blue Texas",
+        paragraphs: [
+          "Rogan directly cautioned liberals who want to turn Texas blue, saying they risk ruining the state for themselves as well. The warning reflects a common argument among Texas conservatives: newcomers may be attracted by employment, housing, business opportunity, or personal freedom, but could vote for policies resembling those in the states they chose to leave.",
+          "That argument is politically potent even though migration does not produce a single predictable voting pattern. New Texans arrive from many states and for many reasons. Some are liberal, some conservative, and others are politically disengaged. Native-born Texans are also divided by region, generation, education, race, religion, and whether they live in a major city, suburb, small town, or rural county.",
+          "The practical question is not whether every newcomer votes the same way. It is whether population growth in Austin, Houston, Dallas–Fort Worth, San Antonio, and their suburbs will change the statewide coalition faster than Republicans can adapt their message and organization.",
+        ],
+      },
+      {
+        heading: "Why Austin matters to statewide politics",
+        paragraphs: [
+          "Austin is more than a symbolic blue dot. It is the state capital, the center of Texas government, a major university city, and a national technology hub. Political ideas developed there can influence legislation, business coalitions, media coverage, and campaigns far beyond Travis County.",
+          "At the same time, winning Austin by a large margin does not determine a statewide election. Democratic candidates must add strong turnout in other major cities while improving their performance in competitive suburbs and limiting Republican margins elsewhere. Republicans can retain statewide control by consolidating rural voters, maintaining strength in fast-growing suburbs, and making gains among working-class Texans in South Texas and other regions.",
+          "Rogan’s comments therefore touch a real strategic divide. Democrats see urban growth as a path toward competitiveness. Republicans argue that voters should preserve the statewide policies that helped fuel that growth in the first place.",
+        ],
+      },
+      {
+        heading: "Migration and the debate over what newcomers are choosing",
+        paragraphs: [
+          "Texas has spent years attracting residents and employers from higher-cost states. Supporters of the Texas model point to the absence of a state individual income tax, a comparatively business-friendly regulatory climate, abundant land, major energy resources, and a culture that places a high value on individual liberty.",
+          "Critics answer that rapid growth has brought higher housing costs, traffic, infrastructure strain, school-capacity pressures, water concerns, and rising property-tax bills. They argue that large cities need different policy tools than smaller communities and that population growth alone does not prove every part of the Texas model is working.",
+          "Rogan’s balance argument sits between those positions. He values Austin’s progressive social culture but does not want that culture to displace the conservative statewide framework surrounding it. In his telling, the friction is a feature rather than a flaw.",
+        ],
+      },
+      {
+        heading: "What the comments mean for the 2026 political conversation",
+        paragraphs: [
+          "Celebrity and podcast commentary does not decide an election, but Rogan commands an audience far larger than most Texas officeholders. His remarks can shape how politically independent listeners understand the state’s partisan competition, particularly voters who distrust both parties and consume long-form digital media rather than traditional television news.",
+          "For Republicans, the message is an argument for preservation: Texas cities can remain culturally varied without surrendering conservative statewide governance. For Democrats, the comments highlight the difficulty of presenting political change as an improvement rather than a rejection of the state’s identity.",
+          "The larger contest will be settled through turnout and persuasion, not slogans. Texas voters will decide whether the state’s current balance still serves them, which policies should change, and which features of Texas they are unwilling to trade away.",
+        ],
+      },
+    ],
+    faq: [
+      {
+        q: "What did Joe Rogan say about turning Texas blue?",
+        a: "Rogan warned liberals against trying to make the entire state Democratic, arguing that doing so could damage the political balance that makes Austin and Texas attractive.",
+      },
+      {
+        q: "Did Rogan criticize Austin for being liberal?",
+        a: "No. He praised Austin as liberal, easygoing, and progressive. His argument was that the city benefits from being surrounded by a more conservative state.",
+      },
+      {
+        q: "Why is Austin considered politically different from Texas overall?",
+        a: "Austin consistently favors Democratic candidates and progressive municipal leadership, while Republicans have maintained control of Texas statewide offices and the Legislature.",
+      },
+    ],
+    sources: [
+      {
+        label: "Fox News — Joe Rogan warns liberals against trying to turn Texas blue",
+        url: "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance",
+      },
+    ],
+    related: ["keep-texas-red", "beginners-guide-texas-elections", "primary-vs-general-election"],
+    cta: { label: "Follow Texas Politics", href: "/texas-politics" },
+  },
   "renting-vs-buying-in-texas": {
     updated: "2026-07-25",
     editorNote:
