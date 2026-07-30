@@ -31,5 +31,8 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Lint rewrite-hardening changes
+        run: npx eslint src/lib/feed-publish-source.test.ts src/lib/feed-publish-source.ts src/lib/rewrite-preflight.ts src/lib/rewrite-source.test.ts src/lib/rewrite-source.ts src/routes/api/public/hooks/ingest-feeds.ts
+
       - name: Run repository verification
         run: npm run verify
