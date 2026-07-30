@@ -32,6 +32,7 @@ export const ELECTION_PRIMARY_NAV_ROUTES = [
   ELECTION_ROUTES.polls,
   ELECTION_ROUTES.forecast,
   ELECTION_ROUTES.results,
+  ELECTION_ROUTES.voting,
   ELECTION_ROUTES.methodology,
 ] as const;
 
@@ -45,6 +46,7 @@ export const ELECTION_PRIMARY_NAVIGATION = [
   { label: "Polls", href: ELECTION_ROUTES.polls },
   { label: "Forecasts", href: ELECTION_ROUTES.forecast },
   { label: "Results", href: ELECTION_ROUTES.results },
+  { label: "Voting", href: ELECTION_ROUTES.voting },
   { label: "Methodology", href: ELECTION_ROUTES.methodology },
 ] as const;
 
