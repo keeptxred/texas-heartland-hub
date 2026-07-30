@@ -5,6 +5,8 @@ export const ELECTION_ROUTES = {
   cycle: (year: number | string) => `/elections/${year}` as const,
   races: "/elections/races",
   race: (slug: string) => `/elections/races/${slug}` as const,
+  statewide: "/elections/statewide",
+  legislative: "/elections/legislative",
   candidates: "/elections/candidates",
   candidate: (slug: string) => `/elections/candidates/${slug}` as const,
   polls: "/elections/polls",
@@ -21,6 +23,8 @@ export const ELECTION_ROUTES = {
 export const ELECTION_PRIMARY_NAV_ROUTES = [
   ELECTION_ROUTES.root,
   ELECTION_ROUTES.races,
+  ELECTION_ROUTES.statewide,
+  ELECTION_ROUTES.legislative,
   ELECTION_ROUTES.candidates,
   ELECTION_ROUTES.polls,
   ELECTION_ROUTES.forecast,
@@ -30,7 +34,9 @@ export const ELECTION_PRIMARY_NAV_ROUTES = [
 
 export const ELECTION_PRIMARY_NAVIGATION = [
   { label: "Overview", href: ELECTION_ROUTES.root },
-  { label: "Races", href: ELECTION_ROUTES.races },
+  { label: "All Races", href: ELECTION_ROUTES.races },
+  { label: "Statewide", href: ELECTION_ROUTES.statewide },
+  { label: "Legislature", href: ELECTION_ROUTES.legislative },
   { label: "Candidates", href: ELECTION_ROUTES.candidates },
   { label: "Polls", href: ELECTION_ROUTES.polls },
   { label: "Forecasts", href: ELECTION_ROUTES.forecast },
