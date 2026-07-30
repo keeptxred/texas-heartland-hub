@@ -97,8 +97,9 @@ export const Route = createFileRoute("/elections/races")({
         content:
           "Follow published statewide, congressional, legislative, county, and local Texas election races.",
       },
-      { property: "og:url", content: "/elections/races" },
+      { property: "og:url", content: "https://keeptxred.com/elections/races" },
       { property: "og:type", content: "website" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
