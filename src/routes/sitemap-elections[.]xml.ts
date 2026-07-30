@@ -5,6 +5,7 @@ import forecasts from "@/data/elections/2026/forecasts.json";
 import polls from "@/data/elections/2026/polls.json";
 import races from "@/data/elections/2026/races.json";
 import results from "@/data/elections/2026/results.json";
+import { candidateSeoSlug, raceSeoSlug } from "@/lib/elections/seoSlugs";
 import { buildElectionSitemapEntries } from "@/lib/elections/sitemap";
 import { renderUrlset, xmlResponse } from "@/lib/sitemap-shared";
 
@@ -14,8 +15,8 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
       GET: async () => {
         const entries = buildElectionSitemapEntries({
           lastmod: newestElectionUpdate(),
-          races: publicRecords(races, "/elections/races/"),
-          candidates: publicRecords(candidates, "/elections/candidates/"),
+          races: publicRecords(races, "/elections/races/", raceSeoSlug),
+          candidates: publicRecords(candidates, "/elections/candidates/", candidateSeoSlug),
           additionalPages: [
             ...publicRecords(polls, "/elections/polls/"),
             ...publicRecords(forecasts, "/elections/forecast/"),
@@ -28,7 +29,11 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
   },
 });
 
-function publicRecords(records: readonly Record<string, unknown>[], prefix: string) {
+function publicRecords(
+  records: readonly Record<string, unknown>[],
+  prefix: string,
+  normalizeSlug: (slug: string) => string = (slug) => slug,
+) {
   return records
     .filter(
       (record) =>
@@ -36,12 +41,15 @@ function publicRecords(records: readonly Record<string, unknown>[], prefix: stri
         record.verificationStatus === "verified" &&
         typeof record.slug === "string",
     )
-    .map((record) => ({
-      path: `${prefix}${record.slug}`,
-      canonicalPath: `${prefix}${record.slug}`,
-      updatedAt: String(record.updatedAt ?? record.dataAsOf ?? newestElectionUpdate()),
-      indexable: true,
-    }));
+    .map((record) => {
+      const slug = normalizeSlug(String(record.slug));
+      return {
+        path: `${prefix}${slug}`,
+        canonicalPath: `${prefix}${slug}`,
+        updatedAt: String(record.updatedAt ?? record.dataAsOf ?? newestElectionUpdate()),
+        indexable: true,
+      };
+    });
 }
 
 function newestElectionUpdate() {
