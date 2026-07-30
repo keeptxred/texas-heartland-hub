@@ -14,6 +14,12 @@ export const Route = createFileRoute("/elections/voting")({
         content:
           "Browse published Texas election races by ZIP, county, or district and continue to official Texas ballot resources.",
       },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { property: "og:title", content: "Texas Ballot Research | KeepTXRed Election Central" },
+      { property: "og:url", content: "https://keeptxred.com/elections/voting" },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Keep TX Red" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/elections/voting" }],
   }),
