@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Outlet, createFileRoute, useLocation, useNavigate } from "@tanstack/react-router";
+import { Outlet, createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import {
   CandidateCard,
   CandidateComparison,
@@ -106,9 +106,9 @@ export const Route = createFileRoute("/elections/candidates")({
 });
 
 function ElectionCandidatesRoute() {
-  const location = useLocation();
+  const { candidateSlug } = useParams({ strict: false }) as { candidateSlug?: string };
 
-  if (location.pathname !== Route.fullPath) {
+  if (candidateSlug) {
     return <Outlet />;
   }
 
