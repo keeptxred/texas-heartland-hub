@@ -21,9 +21,8 @@ const ELECTION_DISTRICT_PATHS = [
     { length: 38 },
     (_, index) => `/elections/districts/congressional-district-${index + 1}`,
   ),
-  ...Array.from(
-    { length: 31 },
-    (_, index) => `/elections/districts/texas-senate-district-${index + 1}`,
+  ...[1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31].map(
+    (district) => `/elections/districts/texas-senate-district-${district}`,
   ),
   ...Array.from(
     { length: 150 },
