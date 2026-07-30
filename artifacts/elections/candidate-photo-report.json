@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-29T23:49:20.434Z",
-  "candidateCount": 463,
-  "approvedPhotoCount": 8,
-  "missingPhotoCount": 455,
-  "manifestEntryCount": 8,
+  "generatedAt": "2026-07-30T22:45:56.864Z",
+  "candidateCount": 464,
+  "approvedPhotoCount": 24,
+  "missingPhotoCount": 440,
+  "manifestEntryCount": 24,
   "errors": [],
   "warnings": [],
   "missing": [
@@ -29,27 +29,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
-      "name": "NATHAN JOHNSON",
-      "raceId": "race-2026-attorney-general",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
-      "name": "MAYES MIDDLETON",
-      "raceId": "race-2026-attorney-general",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
-      "name": "SARAH ECKHARDT",
-      "raceId": "race-2026-comptroller",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-shehla-faizi-green-race-2026-comptroller",
       "name": "SHEHLA FAIZI",
       "raceId": "race-2026-comptroller",
@@ -57,24 +36,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-don-huffines-republican-race-2026-comptroller",
-      "name": "DON HUFFINES",
-      "raceId": "race-2026-comptroller",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-okey-anyiam-democratic-race-2026-court-of-criminal-appeals-place-3",
       "name": "OKEY ANYIAM",
       "raceId": "race-2026-court-of-criminal-appeals-place-3",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-mark-ash-libertarian-race-2026-court-of-criminal-appeals-place-3",
-      "name": "MARK ASH",
-      "raceId": "race-2026-court-of-criminal-appeals-place-3",
-      "party": "libertarian",
       "priority": "standard"
     },
     {
@@ -113,10 +78,10 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
-      "name": "GINA HINOJOSA",
+      "candidateId": "candidate-jenn-mack-other-race-2026-governor",
+      "name": "JENN MACK",
       "raceId": "race-2026-governor",
-      "party": "democratic",
+      "party": "other",
       "priority": "statewide"
     },
     {
@@ -125,20 +90,6 @@
       "raceId": "race-2026-land-commissioner",
       "party": "democratic",
       "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
-      "name": "DAWN BUCKINGHAM",
-      "raceId": "race-2026-land-commissioner",
-      "party": "republican",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
-      "name": "VIKKI GOODWIN",
-      "raceId": "race-2026-lieutenant-governor",
-      "party": "democratic",
-      "priority": "statewide"
     },
     {
       "candidateId": "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
@@ -153,27 +104,6 @@
       "raceId": "race-2026-lieutenant-governor",
       "party": "other",
       "priority": "statewide"
-    },
-    {
-      "candidateId": "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
-      "name": "DAN PATRICK",
-      "raceId": "race-2026-lieutenant-governor",
-      "party": "republican",
-      "priority": "statewide"
-    },
-    {
-      "candidateId": "candidate-jon-rosenthal-democratic-race-2026-railroad-commissioner",
-      "name": "JON ROSENTHAL",
-      "raceId": "race-2026-railroad-commissioner",
-      "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-arthur-dibianca-libertarian-race-2026-railroad-commissioner",
-      "name": "ARTHUR DIBIANCA",
-      "raceId": "race-2026-railroad-commissioner",
-      "party": "libertarian",
-      "priority": "standard"
     },
     {
       "candidateId": "candidate-bo-french-republican-race-2026-railroad-commissioner",
@@ -876,13 +806,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-jeff-miller-libertarian-race-2026-texas-house-14",
-      "name": "JEFF MILLER",
-      "raceId": "race-2026-texas-house-14",
-      "party": "libertarian",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-paul-dyson-republican-race-2026-texas-house-14",
       "name": "PAUL DYSON",
       "raceId": "race-2026-texas-house-14",
@@ -1034,13 +957,6 @@
       "name": "MONIQUA' S. SCOTT",
       "raceId": "race-2026-texas-house-15",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-jessi-cowart-libertarian-race-2026-texas-house-15",
-      "name": "JESSI COWART",
-      "raceId": "race-2026-texas-house-15",
-      "party": "libertarian",
       "priority": "standard"
     },
     {
@@ -1671,13 +1587,6 @@
       "name": "RAY STITH",
       "raceId": "race-2026-texas-house-57",
       "party": "democratic",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-darren-hamilton-libertarian-race-2026-texas-house-57",
-      "name": "DARREN HAMILTON",
-      "raceId": "race-2026-texas-house-57",
-      "party": "libertarian",
       "priority": "standard"
     },
     {
@@ -2850,13 +2759,6 @@
       "priority": "standard"
     },
     {
-      "candidateId": "candidate-phil-gray-libertarian-race-2026-us-house-26",
-      "name": "PHIL GRAY",
-      "raceId": "race-2026-us-house-26",
-      "party": "libertarian",
-      "priority": "standard"
-    },
-    {
       "candidateId": "candidate-brandon-gill-republican-race-2026-us-house-26",
       "name": "BRANDON GILL",
       "raceId": "race-2026-us-house-26",
@@ -3008,13 +2910,6 @@
       "name": "EDDIE ESPINOZA",
       "raceId": "race-2026-us-house-34",
       "party": "green",
-      "priority": "standard"
-    },
-    {
-      "candidateId": "candidate-chris-royal-libertarian-race-2026-us-house-34",
-      "name": "CHRIS ROYAL",
-      "raceId": "race-2026-us-house-34",
-      "party": "libertarian",
       "priority": "standard"
     },
     {
