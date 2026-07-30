@@ -2,7 +2,9 @@
 // Every shareable page should call buildSeo({...}) and spread the returned
 // `meta`, `links`, and `scripts` arrays into its TanStack `head()` return.
 
-export const SITE_URL = "https://www.keeptxred.com";
+import { getCavernSeoOverride } from "@/lib/explore/cavern-seo";
+
+export const SITE_URL = "https://keeptxred.com";
 export const SITE_NAME = "Keep TX Red";
 export const TWITTER_HANDLE = "@KeepTXRed";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/default.jpg`;
@@ -44,12 +46,21 @@ function clampDescription(d: string): string {
 }
 
 export function buildSeo(input: SeoInput) {
-  const url = `${SITE_URL}${input.path.startsWith("/") ? input.path : `/${input.path}`}`;
-  const title = clampTitle(input.title);
-  const description = clampDescription(input.description);
-  const image = absolute(input.image);
-  const isArticle = input.type === "article";
-  const imageAlt = input.imageAlt ?? input.title;
+  const cavernOverride = getCavernSeoOverride(input.path);
+  const effectiveInput = cavernOverride
+    ? {
+        ...input,
+        title: cavernOverride.title,
+        description: cavernOverride.description,
+        keywords: cavernOverride.keywords,
+      }
+    : input;
+  const url = `${SITE_URL}${effectiveInput.path.startsWith("/") ? effectiveInput.path : `/${effectiveInput.path}`}`;
+  const title = clampTitle(effectiveInput.title);
+  const description = clampDescription(effectiveInput.description);
+  const image = absolute(effectiveInput.image);
+  const isArticle = effectiveInput.type === "article";
+  const imageAlt = effectiveInput.imageAlt ?? effectiveInput.title;
 
   const meta: Array<Record<string, string>> = [
     { title },
@@ -76,10 +87,10 @@ export function buildSeo(input: SeoInput) {
     { name: "twitter:image:alt", content: imageAlt },
   ];
 
-  if (input.imageWidth && input.imageHeight) {
+  if (effectiveInput.imageWidth && effectiveInput.imageHeight) {
     meta.push(
-      { property: "og:image:width", content: String(input.imageWidth) },
-      { property: "og:image:height", content: String(input.imageHeight) },
+      { property: "og:image:width", content: String(effectiveInput.imageWidth) },
+      { property: "og:image:height", content: String(effectiveInput.imageHeight) },
     );
   } else if (image === DEFAULT_OG_IMAGE) {
     meta.push(
@@ -88,18 +99,18 @@ export function buildSeo(input: SeoInput) {
     );
   }
 
-  if (input.keywords) meta.push({ name: "keywords", content: input.keywords });
-  if (input.noindex) {
+  if (effectiveInput.keywords) meta.push({ name: "keywords", content: effectiveInput.keywords });
+  if (effectiveInput.noindex) {
     // override robots
     const i = meta.findIndex((m) => m.name === "robots");
     if (i >= 0) meta[i] = { name: "robots", content: "noindex,nofollow" };
   }
 
   if (isArticle) {
-    if (input.publishedTime) meta.push({ property: "article:published_time", content: input.publishedTime });
-    if (input.modifiedTime) meta.push({ property: "article:modified_time", content: input.modifiedTime });
-    if (input.section) meta.push({ property: "article:section", content: input.section });
-    if (input.author) meta.push({ property: "article:author", content: input.author });
+    if (effectiveInput.publishedTime) meta.push({ property: "article:published_time", content: effectiveInput.publishedTime });
+    if (effectiveInput.modifiedTime) meta.push({ property: "article:modified_time", content: effectiveInput.modifiedTime });
+    if (effectiveInput.section) meta.push({ property: "article:section", content: effectiveInput.section });
+    if (effectiveInput.author) meta.push({ property: "article:author", content: effectiveInput.author });
   }
 
   const links = [{ rel: "canonical", href: url }];

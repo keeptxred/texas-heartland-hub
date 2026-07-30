@@ -1,0 +1,24 @@
+{
+  "generatedAt": "2026-07-30T21:56:21.677Z",
+  "ready": true,
+  "homepageTakeoverEnabled": false,
+  "counts": {
+    "cycles": 1,
+    "races": 227,
+    "candidates": 464,
+    "polls": 8,
+    "forecasts": 5,
+    "forecastEligibleRaces": 5,
+    "forecastCoveredRaces": 5,
+    "racesWithAtLeastOneCandidate": 227,
+    "launchCoveredRaces": 227,
+    "geographyRequiredRaces": 219,
+    "geographyCoveredRaces": 219
+  },
+  "uncoveredRaceIds": [],
+  "partiallyCoveredRaceIds": [],
+  "missingGeographyRaceIds": [],
+  "missingForecastRaceIds": [],
+  "warnings": [],
+  "blockerCount": 0
+}

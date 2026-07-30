@@ -8,10 +8,10 @@ export const Route = createFileRoute("/texas-sports/")({
       { name: "description", content: "Texas sports news covering the Texans, Cowboys, Astros, Rangers, Spurs, Mavericks, Longhorns, Texas A&M, TCU, Baylor, and Texas Tech — game updates, recaps, and storylines that matter." },
       { property: "og:title", content: "Texas Sports – Pro & College Team Coverage" },
       { property: "og:description", content: "Texas sports news covering the Texans, Cowboys, Astros, Rangers, Spurs, Mavericks, Longhorns, Texas A&M, TCU, Baylor, and Texas Tech." },
-      { property: "og:url", content: "https://www.keeptxred.com/texas-sports" },
+      { property: "og:url", content: "https://keeptxred.com/texas-sports" },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "https://www.keeptxred.com/texas-sports" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/texas-sports" }],
   }),
   component: SportsPage,
 });

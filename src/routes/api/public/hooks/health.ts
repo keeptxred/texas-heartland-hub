@@ -33,19 +33,27 @@ export const Route = createFileRoute("/api/public/hooks/health")({
           supabase
             .from("daily_articles")
             .select("published_at")
+            .or("source_name.neq.Keep TX Red Reserve Desk,source_name.is.null")
             .order("published_at", { ascending: false })
             .limit(1)
             .maybeSingle(),
         ]);
 
         const dbOk = !countRes.error && !latestRes.error;
+        const latestPublishedAt = latestRes.data?.published_at ?? null;
+        const publishingStalled =
+          dbOk &&
+          (!latestPublishedAt ||
+            Date.now() - Date.parse(latestPublishedAt) >= 24 * 60 * 60 * 1000);
 
         return Response.json({
-          status: dbOk ? "ok" : "degraded",
+          status: dbOk && !publishingStalled ? "ok" : "degraded",
           timestamp,
           database: dbOk ? "ok" : "error",
           articles_last_24h: dbOk ? (countRes.count ?? 0) : null,
-          latest_published_at: dbOk ? (latestRes.data?.published_at ?? null) : null,
+          latest_published_at: dbOk ? latestPublishedAt : null,
+          publishing_stalled: dbOk ? publishingStalled : null,
+          publishing_stall_threshold_hours: 24,
         });
       },
     },

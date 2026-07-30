@@ -472,9 +472,10 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
 
         await Promise.allSettled(rows.map((row) => generateFeaturedImageForSlugDirect(row.slug, true)));
 
-        // 5. Prune anything older than 30 days so the table stays lean.
-        const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-        await supabase.from("daily_articles").delete().lt("published_at", cutoff).eq("kind", "news");
+        // Published URLs are permanent. Removing old rows turns indexed article
+        // URLs into 404s and discards the search equity those pages earned.
+        // Archive presentation should be handled by feed queries, never by
+        // deleting the underlying published article.
 
         return Response.json({
           ok: true,

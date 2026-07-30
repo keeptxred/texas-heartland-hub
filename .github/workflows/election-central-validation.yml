@@ -1,0 +1,73 @@
+name: Election Central validation
+
+on:
+  pull_request:
+    paths:
+      - "src/data/elections/**"
+      - "src/lib/elections/**"
+      - "src/types/elections/**"
+      - "src/components/elections/**"
+      - "src/components/admin/elections/**"
+      - "src/pages/elections/**"
+      - "src/routes/elections*"
+      - "src/routes/sitemap-elections*"
+      - "scripts/elections/**"
+      - "package.json"
+      - ".github/workflows/election-central-validation.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "src/data/elections/**"
+      - "src/lib/elections/**"
+      - "src/types/elections/**"
+      - "src/components/elections/**"
+      - "src/components/admin/elections/**"
+      - "src/pages/elections/**"
+      - "src/routes/elections*"
+      - "src/routes/sitemap-elections*"
+      - "scripts/elections/**"
+      - "package.json"
+      - ".github/workflows/election-central-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: election-central-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Validate canonical election data
+        run: pnpm elections:validate
+
+      - name: Run election calculation fixtures
+        run: pnpm exec vitest run src/lib/elections
+
+      - name: Typecheck application
+        run: pnpm typecheck
+
+      - name: Build production application and routes
+        run: pnpm build
+
+      - name: Run real-data launch QA
+        run: pnpm elections:qa

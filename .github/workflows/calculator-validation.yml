@@ -1,0 +1,138 @@
+name: Calculator validation
+
+on:
+  pull_request:
+    paths:
+      - "src/lib/**"
+      - "src/types/**"
+      - "src/data/**"
+      - "src/components/**"
+      - "src/pages/**"
+      - "src/routes/**"
+      - "package.json"
+      - "tsconfig.calculators.json"
+      - ".github/workflows/calculator-validation.yml"
+  push:
+    branches:
+      - agent/chat-calculators-through-tool-56
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile --reporter=silent
+
+      - name: Build production application and generate routes
+        run: pnpm build
+
+      - name: Typecheck calculator code
+        run: pnpm exec tsc -p tsconfig.calculators.json --pretty false
+
+      - name: Capture calculator test output
+        id: tests
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          pnpm exec vitest run src/lib/calculators/__tests__/financialEngines.test.ts > calculator-tests.log 2>&1
+          status=$?
+          cat calculator-tests.log
+          exit $status
+
+      - name: Upload calculator test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calculator-test-diagnostics
+          path: calculator-tests.log
+          if-no-files-found: error
+
+      - name: Stop on calculator test failure
+        if: steps.tests.outcome == 'failure'
+        run: exit 1
+
+      - name: Capture calculator lint output
+        id: lint
+        continue-on-error: true
+        shell: bash
+        run: |
+          set +e
+          pnpm exec eslint --rule 'prettier/prettier: off' \
+            src/components/calculators \
+            src/components/budget \
+            src/components/closingCosts \
+            src/components/cost \
+            src/components/downPayment \
+            src/components/equity \
+            src/components/home \
+            src/components/homeAffordability \
+            src/components/income \
+            src/components/mortgage \
+            src/data/budget \
+            src/data/closingCosts \
+            src/data/cost \
+            src/data/downPayment \
+            src/data/equity \
+            src/data/home \
+            src/data/homeAffordability \
+            src/data/income \
+            src/data/mortgage \
+            src/lib/budget \
+            src/lib/closingCosts \
+            src/lib/cost \
+            src/lib/downPayment \
+            src/lib/equity \
+            src/lib/home \
+            src/lib/homeAffordability \
+            src/lib/income \
+            src/lib/mortgage \
+            src/pages/budget \
+            src/pages/closingCosts \
+            src/pages/cost \
+            src/pages/downPayment \
+            src/pages/equity \
+            src/pages/home \
+            src/pages/homeAffordability \
+            src/pages/income \
+            src/pages/mortgage \
+            src/types/budget \
+            src/types/closingCosts \
+            src/types/cost \
+            src/types/downPayment \
+            src/types/equity \
+            src/types/home \
+            src/types/homeAffordability \
+            src/types/income \
+            src/types/mortgage > calculator-lint.log 2>&1
+          status=$?
+          cat calculator-lint.log
+          exit $status
+
+      - name: Upload calculator lint output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: calculator-lint-diagnostics
+          path: calculator-lint.log
+          if-no-files-found: error
+
+      - name: Stop on calculator lint failure
+        if: steps.lint.outcome == 'failure'
+        run: exit 1

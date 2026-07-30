@@ -60,7 +60,7 @@
   --secondary: var(--tx-navy);
   --secondary-foreground: var(--tx-cream);
   --muted: oklch(0.94 0.012 80);
-  --muted-foreground: oklch(0.45 0.02 260);
+  --muted-foreground: oklch(0.22 0.025 260);
   --accent: var(--tx-gold);
   --accent-foreground: var(--tx-ink);
   --destructive: oklch(0.577 0.245 27.325);
@@ -119,3 +119,28 @@
   to { transform: translateX(-50%); }
 }
 .animate-marquee { animation: marquee 35s linear infinite; }
+
+@media print {
+  header,
+  nav,
+  aside,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .trip-print {
+    color: #111 !important;
+    background: #fff !important;
+    font-size: 11pt;
+  }
+
+  .break-inside-avoid {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @page {
+    size: letter;
+    margin: 0.65in;
+  }
+}

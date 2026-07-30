@@ -1,0 +1,53 @@
+name: Generate Election Central polling averages
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/data/elections/2026/polls.json"
+      - "src/data/elections/2026/candidates.json"
+      - "src/data/elections/2026/races.json"
+      - "scripts/elections/polling-averages.ts"
+      - "src/lib/elections/pollingAverage.ts"
+      - ".github/workflows/election-polling-averages.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: election-polling-averages
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate weighted averages
+        run: node --experimental-strip-types scripts/elections/polling-averages.ts
+
+      - name: Commit derived polling averages
+        shell: bash
+        run: |
+          if git diff --quiet -- src/data/elections/2026/polling-averages.json; then
+            echo "Polling averages are already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/elections/2026/polling-averages.json
+          git commit -m "Regenerate weighted election polling averages"
+          git pull --rebase origin main
+          git push origin HEAD:main

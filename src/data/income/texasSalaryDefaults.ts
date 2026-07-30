@@ -1,0 +1,10 @@
+export const texasTaxDefaults={stateIncomeTax:0,description:"Texas has no state income tax"};
+export const payrollTaxDefaults={socialSecurity:.062,medicare:.0145,additionalMedicare:.009};
+export const federalTaxProfiles={lowIncome:{rate:.1,threshold:50000},middleIncome:{rate:.15,threshold:100000},highIncome:{rate:.22,threshold:200000},upperIncome:{rate:.28,threshold:500000}};
+export const payFrequencyOptions={weekly:52,biweekly:26,semimonthly:24,monthly:12};
+export const retirementDefaults={none:0,basic:.03,recommended:.06,aggressive:.1};
+export const healthInsuranceDefaults={individual:250,couple:500,family:900};
+export const salaryHousingBenchmarks={comfortable:.28,maximum:.36,highRisk:.45};
+export const texasSalaryProfiles={starter:{salary:60000,description:"Single professional or starter household"},comfortable:{salary:100000,description:"Comfortable suburban household"},affluent:{salary:150000,description:"Upper middle-class Texas lifestyle"},highIncome:{salary:250000,description:"High-income household lifestyle"}};
+export const texasCitySalaryAdjustments={austin:1.25,dallas:1.15,houston:1,sanAntonio:.9,fortWorth:1};
+export const lifestyleSalaryTargets={basic:60000,comfortable:100000,family:125000,premium:200000};
