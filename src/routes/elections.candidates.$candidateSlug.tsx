@@ -83,6 +83,14 @@ export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
 function ElectionCandidateDetailRoute() {
   const { candidateSlug } = Route.useParams();
   const validSlug = isElectionSlug(candidateSlug);
+  const indexable =
+    validSlug &&
+    candidates.some(
+      (item) =>
+        item.slug === candidateSlug &&
+        item.publicationStatus === "published" &&
+        item.verificationStatus === "verified",
+    );
 
   return (
     <ElectionRepositoryProvider>
@@ -94,7 +102,7 @@ function ElectionCandidateDetailRoute() {
         }
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.candidates} />}
       >
-        {validSlug ? (
+        {indexable ? (
           <ElectionCandidateDetailData candidateSlug={candidateSlug} />
         ) : (
           <ElectionErrorState
