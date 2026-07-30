@@ -10,6 +10,7 @@ const NAV = [
   { to: "/texas-news", label: "Texas News" },
   { to: "/happening-now", label: "Happening Now" },
   { to: "/elections/2026", label: "Elections" },
+  { to: "/bills", label: "Bills" },
   { to: "/texas-politics", label: "Politics" },
   { to: "/moving-to-texas", label: "Moving to Texas" },
   { to: "/living-in-texas", label: "Living in Texas" },
@@ -81,7 +82,7 @@ export function SiteHeader() {
         </Link>
         <nav
           aria-label="Primary navigation"
-          className="hidden lg:flex items-center gap-5 xl:gap-7 text-sm font-medium"
+          className="hidden lg:flex items-center gap-4 xl:gap-6 text-sm font-medium"
         >
           {NAV.map((n) => (
             <Link
