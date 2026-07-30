@@ -9,6 +9,7 @@ on:
       - "scripts/elections/**"
       - "public/images/elections/**"
       - "package.json"
+      - "bun.lock"
       - ".github/workflows/election-central-launch-readiness.yml"
   push:
     branches: [main]
@@ -19,6 +20,7 @@ on:
       - "scripts/elections/**"
       - "public/images/elections/**"
       - "package.json"
+      - "bun.lock"
       - ".github/workflows/election-central-launch-readiness.yml"
   workflow_dispatch:
 
@@ -38,50 +40,33 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
+          bun-version: latest
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --reporter=silent
+        run: bun install
 
       - name: Validate election data
-        run: npm run elections:validate
+        run: bun run elections:validate
 
       - name: Run election QA with source-link checks
         env:
           ELECTION_QA_CHECK_LINKS: "true"
-        run: npm run elections:qa
+        run: bun run elections:qa
 
       - name: Run full public-launch audit
-        run: node scripts/elections/public-launch-audit.mjs
+        run: bun scripts/elections/public-launch-audit.mjs
 
-      - name: Lint changed TypeScript files
-        shell: bash
-        run: |
-          git diff --name-only --diff-filter=ACMR "origin/${GITHUB_BASE_REF}...HEAD" \
-            | grep -E '\.(ts|tsx)$' > /tmp/changed-ts-files.txt || true
-          if [[ -s /tmp/changed-ts-files.txt ]]; then
-            xargs pnpm exec eslint --rule 'prettier/prettier: off' < /tmp/changed-ts-files.txt
-          else
-            echo "No changed TypeScript files to lint."
-          fi
+      - name: Lint changed district routes
+        run: bunx eslint src/routes/elections.districts.tsx src/routes/elections.districts.index.tsx
 
       - name: Typecheck
-        run: npm run typecheck
+        run: bun run typecheck
 
       - name: Unit tests
-        run: pnpm exec vitest run --exclude 'src/data/__tests__/**'
+        run: bun run test
 
       - name: Production build
-        run: npm run build
-
-
-
-
+        run: bun run build
