@@ -1,7 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const HOMEPAGE_TAKEOVER_ENABLED =
-  process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE === "true";
+const HOMEPAGE_TAKEOVER_ENABLED = process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE === "true";
 
 const ROUTES = [
   "/elections/2026",
@@ -16,7 +15,9 @@ const ROUTES = [
   "/elections/methodology",
 ] as const;
 
-test(`homepage renders the ${HOMEPAGE_TAKEOVER_ENABLED ? "Election Central" : "standard"} experience`, async ({ page }) => {
+test(`homepage renders the ${HOMEPAGE_TAKEOVER_ENABLED ? "Election Central" : "standard"} experience`, async ({
+  page,
+}) => {
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
   expect(response?.status()).toBeLessThan(400);
 
@@ -75,3 +76,4 @@ async function expectNoHorizontalOverflow(page: Page) {
     dimensions.viewport + 1,
   );
 }
+

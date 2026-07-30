@@ -80,8 +80,7 @@ describe("rewrite source consistency", () => {
       link: "https://example.com/texas-order",
     });
 
-    expect(preflightStatusLabel(preflight)).toContain(
-      `${preflight.sourceWordCount} source words`,
-    );
+    expect(preflightStatusLabel(preflight)).toContain(`${preflight.sourceWordCount} source words`);
   });
 });
+

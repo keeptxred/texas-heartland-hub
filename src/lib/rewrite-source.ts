@@ -1,11 +1,11 @@
-import { ABSOLUTE_MIN_SOURCE_WORDS, countUsableSourceWords, normalizeUsableSourceText } from "@/lib/rewrite-preflight";
+import {
+  ABSOLUTE_MIN_SOURCE_WORDS,
+  countUsableSourceWords,
+  normalizeUsableSourceText,
+} from "@/lib/rewrite-preflight";
 
 export type RewriteSourceKind =
-  | "cached-extraction"
-  | "reddit-selftext"
-  | "linked-article"
-  | "stored-description"
-  | "none";
+  "cached-extraction" | "reddit-selftext" | "linked-article" | "stored-description" | "none";
 
 export type RewriteSourceInput = {
   cachedExtraction?: string | null;
@@ -105,3 +105,4 @@ export function resolveRewriteSource(input: RewriteSourceInput): ResolvedRewrite
     meetsAbsoluteMinimum: wordCount >= ABSOLUTE_MIN_SOURCE_WORDS,
   };
 }
+

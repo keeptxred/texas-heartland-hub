@@ -13,7 +13,7 @@ import { runEditorialRewrite } from "@/lib/editorial-pipeline";
 import { resolveFeedPublishSource } from "@/lib/feed-publish-source";
 
 // Reuses the existing Texas relevance scorer (title + description + source
-// entity signals) so a source labelled "USGS Earthquakes — Texas" cannot push
+// entity signals) so a source labelled "USGS Earthquakes â€” Texas" cannot push
 // non-Texas events (Peru, California, etc.) into Texas-facing surfaces.
 // Items that score below the shared TEXAS_RELEVANCE_MIN floor are dropped
 // before they reach texas_news_feed and before native articles are minted,
@@ -69,12 +69,12 @@ const HARDCODED_SOURCES: { name: string; url: string; category?: string }[] = [
   // feeds never carry. Google News supplies a stable RSS discovery layer while
   // the Texas relevance gate below still rejects unrelated national coverage.
   {
-    name: "Fox News — Texas (Google News)",
+    name: "Fox News â€” Texas (Google News)",
     url: "https://news.google.com/rss/search?q=site%3Afoxnews.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
     category: "Politics",
   },
   {
-    name: "Breitbart — Texas (Google News)",
+    name: "Breitbart â€” Texas (Google News)",
     url: "https://news.google.com/rss/search?q=site%3Abreitbart.com+Texas+when%3A7d&hl=en-US&gl=US&ceid=US%3Aen",
     category: "Politics",
   },
@@ -90,8 +90,7 @@ const EDITORIAL_BACKFILLS: Item[] = [
   {
     title:
       "Joe Rogan warns liberals against trying to turn Texas blue, says it would wreck the state's delicate balance",
-    link:
-      "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance",
+    link: "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance",
     pub_date: "2026-07-28T00:00:00.000Z",
     source: "Fox News",
     category: "Politics",
@@ -99,10 +98,8 @@ const EDITORIAL_BACKFILLS: Item[] = [
       "Podcaster Joe Rogan discussed the political character of Austin and Texas during a conversation with wildlife television personality Forrest Galante. Rogan described Austin as a progressive city surrounded by strongly Republican parts of Texas and argued that the contrast creates a balance that benefits the city and the state. He said Austin progressives tend to be more reasonable than liberals he encountered in New York or Los Angeles and pushed back on stereotypes that portray Texas as culturally uniform or unsophisticated. Rogan, who moved from Los Angeles to Austin during the COVID-19 era and records his podcast in the area, warned activists who want to make Texas uniformly Democratic that doing so could undermine what makes the state attractive, including for newcomers. The discussion also touched on the phrase Keep Austin weird and surrounded, Austin's long history of Democratic municipal leadership, and the city's position as a liberal enclave inside a Republican-led state. Rogan's comments are relevant to the continuing debate over demographic change, migration, political identity, and Democratic efforts to become more competitive in statewide Texas elections.",
   },
   {
-    title:
-      "Report: James Talarico filmed driving rental truck in 'Real Texan' campaign ad",
-    link:
-      "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/",
+    title: "Report: James Talarico filmed driving rental truck in 'Real Texan' campaign ad",
+    link: "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/",
     pub_date: "2026-07-29T00:00:00.000Z",
     source: "Breitbart",
     category: "Politics",
@@ -113,7 +110,7 @@ const EDITORIAL_BACKFILLS: Item[] = [
 
 // Merge hard-coded official sources with any enabled content_sources rows that
 // declare an rss_url. Dedupe by feed URL (case-insensitive). The Source Library
-// is additive — it never removes an official feed.
+// is additive â€” it never removes an official feed.
 async function loadSources(supabaseAdmin: {
   from: (t: string) => {
     select: (c: string) => {
@@ -171,8 +168,8 @@ function decode(s: string) {
     .replace(/&nbsp;/g, " ")
     .replace(/&(?:lsquo|rsquo);/g, "'")
     .replace(/&(?:ldquo|rdquo);/g, '"')
-    .replace(/&(?:ndash|mdash);/g, "—")
-    .replace(/&hellip;/g, "…")
+    .replace(/&(?:ndash|mdash);/g, "â€”")
+    .replace(/&hellip;/g, "â€¦")
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
@@ -328,7 +325,7 @@ function wordCount(text: string): number {
 
 // Small concurrency limiter used by the batch rewrite path. Cloudflare Workers
 // have a fixed wall-clock budget per request; firing `Promise.all` over
-// hundreds of 15–90s AI fetches was killing the whole invocation, which
+// hundreds of 15â€“90s AI fetches was killing the whole invocation, which
 // showed up in logs as every rewrite ending in `no_response` (the fetch was
 // aborted before it ever reached the AI gateway). Capping concurrency lets
 // each rewrite complete and lets us log per-item outcomes.
@@ -371,18 +368,18 @@ const REWRITE_SYSTEM = `You are the Keep TX Red editorial engine. Rewrite a Texa
 HARD RULES:
 - Extract only facts (who/what/when/where/why). Never copy sentences or phrasing from the source. No direct quote longer than 10 words.
 - Neutral, factual tone in Summary, Relevance, and Key Takeaways. Analysis is clearly labeled opinion and is optional.
-- Mobile-friendly paragraphs (2–4 sentences each).
+- Mobile-friendly paragraphs (2â€“4 sentences each).
 - Meta description (dek) MUST be <= 155 characters.
 - Title must be SEO-optimized, original, and not resemble the source headline.
-- 5–10 lowercase keywords, Texas-specific where possible.
+- 5â€“10 lowercase keywords, Texas-specific where possible.
 - MINIMUM LENGTH: every non-evergreen article MUST be at least ${NON_EVERGREEN_MIN_MAIN_WORDS} words of original MAIN STORY PROSE across summary + analysis + sections only. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward this minimum. There is no upper word limit. Do not summarize briefly; expand with source-grounded context, background, stakeholders, local impact, timeline, what changes next, and reader context until the main story prose meets the minimum.
-- TEXAS RELEVANCE IS REQUIRED — the "relevance" field must always name Texas or a specific Texas city/region and explain the local stake, even if the source is national.
+- TEXAS RELEVANCE IS REQUIRED â€” the "relevance" field must always name Texas or a specific Texas city/region and explain the local stake, even if the source is national.
 - Add a short original CONTEXT paragraph (history, prior action, comparable state precedent) inside the "summary" or as the first sentences of "relevance".
-- Include 5–8 additional article sections in "sections". Each section must have a clear heading and 2–4 substantial paragraphs. Do not use filler, generic slogans, or repeated paragraphs.
+- Include 5â€“8 additional article sections in "sections". Each section must have a clear heading and 2â€“4 substantial paragraphs. Do not use filler, generic slogans, or repeated paragraphs.
 - FAQ answers should be substantial enough to help readers, not one-line answers.
 - Output VALID JSON only matching the schema below.
 
-CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Business, Sports, Education, Non-Political. Use "Non-Political" for human-interest, animals, viral, culture, festivals, weather, travel, lifestyle, entertainment, science, and parks/wildlife stories. Do NOT use Education as a fallback — only true school/academic policy.
+CATEGORY: Choose the best fit from: Politics, Elections, Laws, Legislature, Business, Sports, Education, Non-Political. Use "Non-Political" for human-interest, animals, viral, culture, festivals, weather, travel, lifestyle, entertainment, science, and parks/wildlife stories. Do NOT use Education as a fallback â€” only true school/academic policy.
 
 SCHEMA:
 {"title":"...","dek":"<=155 chars","keywords":["..."],"summary":"substantial opening section","relevance":"substantial Texas relevance section","analysis":"optional labeled editorial interpretation, or omit","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["3-5 short bullets"],"faq":[{"q":"...","a":"..."}],"category":"one of the allowed values"}`;
@@ -421,8 +418,7 @@ type RedditPostData = {
   externalUrl: string | null;
 };
 
-// One request covers both self-posts and link-posts: Red…5745 tokens truncated… AI calls).
-    for (const row of articleRows) {
+// One requ…5771 tokens truncated…{
       const anyRow = row as Record<string, unknown>;
       const variants =
         variantMap[row.slug] ??
@@ -604,7 +600,7 @@ type RedditPostData = {
   let dedupedCanonical = 0;
   let dedupeSkippedReason: string | null = null;
   try {
-    // Total daily_articles row count — used both to skip cleanup on empty-run
+    // Total daily_articles row count â€” used both to skip cleanup on empty-run
     // scenarios and to enforce a % safety cap on how much a single ingest may
     // delete. A prior version of this block wiped the whole table when the
     // rewrite batch produced no rows AND canonical dedupe ran unchecked.
@@ -615,7 +611,7 @@ type RedditPostData = {
 
     // Safety rule 3: if the table already has articles but THIS ingest run
     // produced zero successful rewrites (native mint + backfill both silent),
-    // do not run destructive cleanup — an empty rewrite batch is not evidence
+    // do not run destructive cleanup â€” an empty rewrite batch is not evidence
     // that historical rows are duplicates.
     if (totalCount > 0 && nativeMinted === 0) {
       dedupeSkippedReason = "no successful rewrites in this run";
@@ -673,7 +669,7 @@ type RedditPostData = {
 
 /**
  * Single-item publish path used by the Admin "Publish to Keep Texas Red"
- * button. Reuses the same rewrite → build → enrich → image pipeline as the
+ * button. Reuses the same rewrite â†’ build â†’ enrich â†’ image pipeline as the
  * batch ingestion so category, article type, SEO and image logic remain the
  * single source of truth. Safe to call multiple times: if the feed row is
  * already linked to a daily_articles slug, returns that slug unchanged.
@@ -708,7 +704,7 @@ export async function publishSingleFeedItem(
   };
 
   // ------------------------------------------------------------------
-  // FULL SOURCE EXTRACTION FIRST — the preflight must see the real body,
+  // FULL SOURCE EXTRACTION FIRST â€” the preflight must see the real body,
   // not the ~40-word RSS summary. Reuse a previously stored extracted body
   // when we already paid to fetch it. Otherwise run extraction exactly once,
   // cache it, and hand it to the preflight assessor.
@@ -722,7 +718,7 @@ export async function publishSingleFeedItem(
   let resolvedSourceWordCount: number | null = null;
 
   if (isRedditLink(item.link)) {
-    // Reddit RSS descriptions rarely contain the post body — pull selftext from
+    // Reddit RSS descriptions rarely contain the post body â€” pull selftext from
     // the public JSON endpoint so the AI rewrite has real source material.
     // Refuse to publish headline-only Reddit posts rather than fabricating facts.
     let selftext: string | null = null;
@@ -786,7 +782,7 @@ export async function publishSingleFeedItem(
   // The AI rewrite prompt now sees the full extracted body, not the RSS blurb.
   if (extractedBody) item.description = extractedBody;
 
-  // Deterministic preflight — refuse to spend AI rewrite credits when the
+  // Deterministic preflight â€” refuse to spend AI rewrite credits when the
   // extracted source clearly cannot produce a factual article.
   const {
     assessRewritePreflight,
@@ -825,7 +821,7 @@ export async function publishSingleFeedItem(
     };
   }
 
-  // Hard guard — no matter how we got here, refuse to call the paid rewrite
+  // Hard guard â€” no matter how we got here, refuse to call the paid rewrite
   // function when preflight is not ok. Throws PreflightBlockedError so tests
   // can prove the rewrite mock is never reached.
   assertRewriteableOrThrow(preflight);
@@ -932,3 +928,4 @@ export async function publishSingleFeedItem(
 
   return { ok: true, slug: articleRow.slug };
 }
+
