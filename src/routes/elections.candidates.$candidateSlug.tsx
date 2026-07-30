@@ -75,6 +75,40 @@ export const Route = createFileRoute("/elections/candidates/$candidateSlug")({
           : []),
       ],
       links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: indexable
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Person",
+                name: recordName,
+                description: recordDescription,
+                url: canonicalUrl,
+                ...(record &&
+                "imageUrl" in record &&
+                typeof record.imageUrl === "string" &&
+                record.imageUrl &&
+                "imageRights" in record &&
+                record.imageRights &&
+                typeof record.imageRights === "object" &&
+                "usageStatus" in record.imageRights &&
+                record.imageRights.usageStatus === "approved"
+                  ? { image: record.imageUrl }
+                  : {}),
+                affiliation: {
+                  "@type": "Organization",
+                  name:
+                    record && "partyLabel" in record && typeof record.partyLabel === "string"
+                      ? record.partyLabel
+                      : record && "party" in record && typeof record.party === "string"
+                        ? record.party
+                        : "Candidate",
+                },
+              }).replace(/</g, "\\u003c"),
+            },
+          ]
+        : [],
     };
   },
   component: ElectionCandidateDetailRoute,
