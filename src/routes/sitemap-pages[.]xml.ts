@@ -5,6 +5,7 @@ import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness"
 import { TEAMS } from "@/lib/texas-teams";
 import { TEXAS_DATASETS } from "@/data/texas-data-center";
 import { calculators } from "@/data/calculators";
+import { LAUNCH_COUNTIES, LAUNCH_GUIDES, RELOCATION_LAUNCH_PATH } from "@/data/relocationLaunch";
 
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
@@ -35,6 +36,7 @@ const STATIC_PATHS: string[] = [
   "/shop", "/texas", "/texas/no-state-income-tax-2026", "/texas/property-taxes-2026",
   "/texas/moving-to-texas-2026", "/texas-data",
   ...TEXAS_DATASETS.map((dataset) => `/texas-data/${dataset.slug}`),
+  RELOCATION_LAUNCH_PATH,
 ];
 
 export const Route = createFileRoute("/sitemap-pages.xml")({
@@ -43,7 +45,12 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
       GET: async () => {
         const lastmod = toIsoDate(new Date());
         const paths = [
-          ...new Set([...STATIC_PATHS, ...calculators.map((calculator) => calculator.slug)]),
+          ...new Set([
+            ...STATIC_PATHS,
+            ...calculators.map((calculator) => calculator.slug),
+            ...LAUNCH_COUNTIES.map((county) => `${RELOCATION_LAUNCH_PATH}/${county.slug}`),
+            ...LAUNCH_GUIDES.map((guide) => `${RELOCATION_LAUNCH_PATH}/guides/${guide.slug}`),
+          ]),
         ];
         for (const league of ["nfl", "mlb", "nba"] as const) {
           if (await hasEnoughContent({ kind: `sports-${league}` }, MIN_ARTICLES_DEFAULT)) paths.push(`/texas-sports/${league}`);
