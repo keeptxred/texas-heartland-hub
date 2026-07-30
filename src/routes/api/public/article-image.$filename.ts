@@ -11,6 +11,9 @@ export const Route = createFileRoute("/api/public/article-image/$filename")({
         if (!/^[a-z0-9-]+\.(png|jpg|jpeg|webp)$/i.test(filename)) {
           return new Response("Bad filename", { status: 400 });
         }
+        if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+          return new Response("Not found", { status: 404 });
+        }
         let buf: ArrayBuffer;
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
