@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import records from "@/data/elections/2026/results.json";
+import resultRecords from "@/data/elections/2026/results.json";
 import {
   ElectionErrorState,
   ElectionLayout,
@@ -11,6 +11,17 @@ import { useElectionResult } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
+
+interface ResultSeoRecord {
+  slug: string;
+  publicationStatus: string;
+  verificationStatus: string;
+  title?: string | null;
+  raceName?: string | null;
+  description?: string | null;
+}
+
+const records: readonly ResultSeoRecord[] = resultRecords;
 
 export const Route = createFileRoute("/elections/results/$resultSlug")({
   head: ({ params }) => {
