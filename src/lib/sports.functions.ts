@@ -57,7 +57,7 @@ function toSportsListItem(r: CategoryFeedItem): SportsListItem {
 }
 
 export const listSportsByLeague = createServerFn({ method: "GET" })
-  .inputValidator((d) => z.object({ league: z.enum(LEAGUES) }).parse(d))
+  .validator((d) => z.object({ league: z.enum(LEAGUES) }).parse(d))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
     // Route the league feed through the shared category feed service so
     // daily_articles stays the single source of truth. Sports-specific
@@ -78,7 +78,7 @@ export const listSportsByLeague = createServerFn({ method: "GET" })
  *      written before teams[] existed). This is what makes cross-posting work
  *      — one article can appear on multiple team pages. */
 export const listSportsByTeam = createServerFn({ method: "GET" })
-  .inputValidator((d) => z.object({ team: z.string().min(1) }).parse(d))
+  .validator((d) => z.object({ team: z.string().min(1) }).parse(d))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
     if (!isTeamSlug(data.team)) return { items: [] };
     const supabase = client();
