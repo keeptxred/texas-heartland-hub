@@ -125,6 +125,10 @@ for (const file of electionSourceFiles) {
 const requiredRoutes = [
   "src/routes/elections.2026.tsx",
   "src/routes/elections.races.tsx",
+  "src/routes/elections.statewide.tsx",
+  "src/routes/elections.legislative.tsx",
+  "src/routes/elections.districts.tsx",
+  "src/routes/elections.districts.$districtSlug.tsx",
   "src/routes/elections.candidates.tsx",
   "src/routes/elections.polls.tsx",
   "src/routes/elections.forecast.tsx",
