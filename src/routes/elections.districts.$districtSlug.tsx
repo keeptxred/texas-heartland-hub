@@ -315,12 +315,12 @@ function TexasElectionDistrict() {
                 <a href={race.source.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
                   Texas Secretary of State race source
                 </a>
-                <a href={race.geographySource?.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
+                {race.geographySource ? <a href={race.geographySource.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
                   Census district geography source
-                </a>
-                <a href={race.countyElectionLinkSource?.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
+                </a> : null}
+                {race.countyElectionLinkSource ? <a href={race.countyElectionLinkSource.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
                   Official county election directory
-                </a>
+                </a> : null}
               </>
             ) : null}
           </div>
