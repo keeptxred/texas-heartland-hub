@@ -1,0 +1,59 @@
+name: Candidate photo new-domain sweep
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/elections/discover-candidate-photos-new-domains.mjs"
+      - "scripts/elections/discover-candidate-photos-new-domains-wave2.mjs"
+      - ".github/workflows/candidate-photo-new-domains.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: candidate-photo-new-domains
+  cancel-in-progress: false
+
+jobs:
+  sweep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run unused-domain sweep
+        run: node scripts/elections/discover-candidate-photos-new-domains.mjs
+
+      - name: Run second unused-domain sweep
+        run: node scripts/elections/discover-candidate-photos-new-domains-wave2.mjs
+
+      - name: Apply approved portraits
+        run: node scripts/elections/candidate-photo-enrichment.mjs --apply
+
+      - name: Commit results
+        run: |
+          TRACKED=(
+            src/data/elections/2026/candidate-photos.json
+            src/data/elections/2026/candidates.json
+            artifacts/elections/candidate-photo-report.json
+            artifacts/elections/candidate-photo-new-domains-report.json
+            artifacts/elections/candidate-photo-new-domains-wave2-report.json
+            artifacts/elections/candidate-photo-review-queue.json
+          )
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${TRACKED[@]}"
+          if git diff --cached --quiet; then
+            echo "No new-domain candidate photo changes."
+            exit 0
+          fi
+          git commit -m "Apply candidate photos from previously unused domains"
+          git push
