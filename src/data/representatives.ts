@@ -19,7 +19,7 @@ export function representativeSlug(name: string) {
 }
 
 export function findRepresentativeBySlug(slug: string) {
-  return [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_SAMPLE].find(
+  return [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION].find(
     (representative) => representativeSlug(representative.name) === slug,
   );
 }
@@ -38,16 +38,53 @@ export const STATE_LEADERSHIP: Rep[] = [
   { name: "Dawn Buckingham", office: "Land Commissioner", party: "R", phoneTX: "(512) 463-5256", website: "https://www.glo.texas.gov" },
 ];
 
-export const US_HOUSE_SAMPLE: Rep[] = [
-  { name: "Wesley Hunt", office: "U.S. House", party: "R", district: "TX-38 (Houston)", phoneDC: "(202) 225-5601", website: "https://hunt.house.gov" },
+export const US_HOUSE_DELEGATION: Rep[] = [
+  { name: "Nathaniel Moran", office: "U.S. House", party: "R", district: "TX-1", phoneDC: "(202) 225-3035", website: "https://moran.house.gov" },
   { name: "Dan Crenshaw", office: "U.S. House", party: "R", district: "TX-2 (Houston)", phoneDC: "(202) 225-6565", website: "https://crenshaw.house.gov" },
-  { name: "Chip Roy", office: "U.S. House", party: "R", district: "TX-21 (Hill Country)", phoneDC: "(202) 225-4236", website: "https://roy.house.gov" },
-  { name: "Ronny Jackson", office: "U.S. House", party: "R", district: "TX-13 (Panhandle)", phoneDC: "(202) 225-3706", website: "https://jackson.house.gov" },
+  { name: "Keith Self", office: "U.S. House", party: "R", district: "TX-3", phoneDC: "(202) 225-4201", website: "https://keithself.house.gov" },
   { name: "Pat Fallon", office: "U.S. House", party: "R", district: "TX-4 (North TX)", phoneDC: "(202) 225-6673", website: "https://fallon.house.gov" },
-  { name: "Beth Van Duyne", office: "U.S. House", party: "R", district: "TX-24 (DFW)", phoneDC: "(202) 225-6605", website: "https://vanduyne.house.gov" },
   { name: "Lance Gooden", office: "U.S. House", party: "R", district: "TX-5 (East TX)", phoneDC: "(202) 225-3484", website: "https://gooden.house.gov" },
-  { name: "Monica De La Cruz", office: "U.S. House", party: "R", district: "TX-15 (RGV)", phoneDC: "(202) 225-2531", website: "https://delacruz.house.gov" },
+  { name: "Jake Ellzey", office: "U.S. House", party: "R", district: "TX-6", phoneDC: "(202) 225-2002", website: "https://ellzey.house.gov" },
+  { name: "Lizzie Fletcher", office: "U.S. House", party: "D", district: "TX-7", phoneDC: "(202) 225-2571", website: "https://fletcher.house.gov" },
+  { name: "Morgan Luttrell", office: "U.S. House", party: "R", district: "TX-8", phoneDC: "(202) 225-4901", website: "https://luttrell.house.gov" },
+  { name: "Al Green", office: "U.S. House", party: "D", district: "TX-9", phoneDC: "(202) 225-7508", website: "https://algreen.house.gov" },
+  { name: "Michael McCaul", office: "U.S. House", party: "R", district: "TX-10", phoneDC: "(202) 225-2401", website: "https://mccaul.house.gov" },
+  { name: "August Pfluger", office: "U.S. House", party: "R", district: "TX-11", phoneDC: "(202) 225-3605", website: "https://pfluger.house.gov" },
+  { name: "Craig Goldman", office: "U.S. House", party: "R", district: "TX-12", phoneDC: "(202) 225-5071", website: "https://craiggoldman.house.gov" },
+  { name: "Ronny Jackson", office: "U.S. House", party: "R", district: "TX-13 (Panhandle)", phoneDC: "(202) 225-3706", website: "https://jackson.house.gov" },
+  { name: "Randy Weber", office: "U.S. House", party: "R", district: "TX-14", phoneDC: "(202) 225-2831", website: "https://weber.house.gov" },
+  { name: "Monica De La Cruz", office: "U.S. House", party: "R", district: "TX-15 (RGV)", phoneDC: "(202) 225-9901", website: "https://delacruz.house.gov" },
+  { name: "Veronica Escobar", office: "U.S. House", party: "D", district: "TX-16", phoneDC: "(202) 225-4831", website: "https://escobar.house.gov" },
+  { name: "Pete Sessions", office: "U.S. House", party: "R", district: "TX-17", phoneDC: "(202) 225-6105", website: "https://sessions.house.gov" },
+  { name: "Christian Menefee", office: "U.S. House", party: "D", district: "TX-18", phoneDC: "(202) 225-3816", website: "https://menefee.house.gov" },
+  { name: "Jodey Arrington", office: "U.S. House", party: "R", district: "TX-19", phoneDC: "(202) 225-4005", website: "https://arrington.house.gov" },
+  { name: "Joaquin Castro", office: "U.S. House", party: "D", district: "TX-20", phoneDC: "(202) 225-3236", website: "https://castro.house.gov" },
+  { name: "Chip Roy", office: "U.S. House", party: "R", district: "TX-21 (Hill Country)", phoneDC: "(202) 225-4236", website: "https://roy.house.gov" },
+  { name: "Troy Nehls", office: "U.S. House", party: "R", district: "TX-22", phoneDC: "(202) 225-5951", website: "https://nehls.house.gov" },
+  { name: "Beth Van Duyne", office: "U.S. House", party: "R", district: "TX-24 (DFW)", phoneDC: "(202) 225-6605", website: "https://vanduyne.house.gov" },
+  { name: "Roger Williams", office: "U.S. House", party: "R", district: "TX-25", phoneDC: "(202) 225-9896", website: "https://williams.house.gov" },
+  { name: "Brandon Gill", office: "U.S. House", party: "R", district: "TX-26", phoneDC: "(202) 225-7772", website: "https://gill.house.gov" },
+  { name: "Michael Cloud", office: "U.S. House", party: "R", district: "TX-27", phoneDC: "(202) 225-7742", website: "https://cloud.house.gov" },
+  { name: "Henry Cuellar", office: "U.S. House", party: "D", district: "TX-28", phoneDC: "(202) 225-1640", website: "https://cuellar.house.gov" },
+  { name: "Sylvia Garcia", office: "U.S. House", party: "D", district: "TX-29", phoneDC: "(202) 225-1688", website: "https://sylviagarcia.house.gov" },
+  { name: "Jasmine Crockett", office: "U.S. House", party: "D", district: "TX-30", phoneDC: "(202) 225-8885", website: "https://crockett.house.gov" },
+  { name: "John Carter", office: "U.S. House", party: "R", district: "TX-31", phoneDC: "(202) 225-3864", website: "https://carter.house.gov" },
+  { name: "Julie Johnson", office: "U.S. House", party: "D", district: "TX-32", phoneDC: "(202) 225-2231", website: "https://juliejohnson.house.gov" },
+  { name: "Marc Veasey", office: "U.S. House", party: "D", district: "TX-33", phoneDC: "(202) 225-9897", website: "https://veasey.house.gov" },
+  { name: "Vicente Gonzalez", office: "U.S. House", party: "D", district: "TX-34", phoneDC: "(202) 225-2531", website: "https://gonzalez.house.gov" },
+  { name: "Greg Casar", office: "U.S. House", party: "D", district: "TX-35", phoneDC: "(202) 225-5645", website: "https://casar.house.gov" },
+  { name: "Brian Babin", office: "U.S. House", party: "R", district: "TX-36", phoneDC: "(202) 225-1555", website: "https://babin.house.gov" },
+  { name: "Lloyd Doggett", office: "U.S. House", party: "D", district: "TX-37", phoneDC: "(202) 225-4865", website: "https://doggett.house.gov" },
+  { name: "Wesley Hunt", office: "U.S. House", party: "R", district: "TX-38 (Houston)", phoneDC: "(202) 225-5646", website: "https://hunt.house.gov" },
 ];
+
+/** Districts without a seated voting representative, verified against House.gov. */
+export const US_HOUSE_VACANCIES = [
+  { district: "TX-23", label: "Vacant", source: "https://www.house.gov/representatives" },
+] as const;
+
+/** Backward-compatible export for code written before the complete delegation was added. */
+export const US_HOUSE_SAMPLE = US_HOUSE_DELEGATION;
 
 export const TEXAS_LAWS = [
   {
