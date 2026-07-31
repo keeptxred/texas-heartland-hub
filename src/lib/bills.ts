@@ -78,7 +78,7 @@ export async function getBillRelations(billId: string) {
     db.from('bill_committee_history').select('*,legislative_committees(committee_slug)').eq('bill_id', billId).order('sequence'),
     db.from('bill_documents').select('*').eq('bill_id', billId).order('document_date', { ascending: false }),
     db.from('bill_subject_relationships').select('bill_subjects(*)').eq('bill_id', billId),
-    db.from('bill_article_relationships').select('relationship_type,confidence,is_manual,articles(id,title,slug,excerpt,published_at,image_url)').eq('bill_id', billId).order('is_manual', { ascending: false }).order('confidence', { ascending: false }).limit(8),
+    db.from('bill_article_relationships').select('relationship_type,confidence,is_manual,daily_articles(id,title,slug,dek,published_at,image_url)').eq('bill_id', billId).order('is_manual', { ascending: false }).order('confidence', { ascending: false }).limit(8),
   ]);
   const firstError = [sponsors, actions, committees, documents, subjects, articles].find((result) => result.error)?.error;
   if (firstError) throw firstError;
@@ -88,7 +88,9 @@ export async function getBillRelations(billId: string) {
     committees: committees.data ?? [],
     documents: documents.data ?? [],
     subjects: (subjects.data ?? []).map((row: any) => row.bill_subjects).filter(Boolean),
-    articles: (articles.data ?? []).map((row: any) => ({ ...row.articles, relationship_type: row.relationship_type })).filter((row: any) => row.id),
+    articles: (articles.data ?? [])
+      .map((row: any) => (row.daily_articles ? { ...row.daily_articles, excerpt: row.daily_articles.dek, relationship_type: row.relationship_type } : null))
+      .filter((row: any) => row?.id),
   };
 }
 
