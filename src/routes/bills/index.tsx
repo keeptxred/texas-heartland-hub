@@ -9,6 +9,7 @@ export const Route = createFileRoute('/bills/')({
     page: Math.max(1, Number(search.page) || 1),
   }),
   loaderDeps: ({ search }) => search,
+  ssr: false,
   loader: ({ deps }) => listBills({ search: deps.q, status: deps.status, limit: 24, offset: (deps.page - 1) * 24 }),
   head: () => ({
     meta: [
