@@ -190,8 +190,10 @@ export function scoreFeedItem(item: {
 // low-confidence items in the panel for manual review.
 export const VIRAL_AUTO_REWRITE_MIN_SCORE = 70;
 export const VIRAL_AUTO_REWRITE_MIN_CONFIDENCE = 0.6;
-// Stricter "Ready for Rewrite" auto-flag gate.
-export const VIRAL_READY_MIN_SCORE = 90;
+// Reachable "Ready for Rewrite" flag gate, calibrated to the observed
+// production distribution. Confidence, Texas relevance, and reputation
+// floors remain strict.
+export const VIRAL_READY_MIN_SCORE = 65;
 export const VIRAL_READY_MIN_CONFIDENCE = 0.8;
 
 export function qualifiesForAutoRewrite(r: ViralResult): boolean {
