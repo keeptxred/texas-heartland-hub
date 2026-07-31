@@ -19,6 +19,7 @@ on:
       - "scripts/elections/discover-candidate-photos-local-records.mjs"
       - "scripts/elections/discover-candidate-photos-wikimedia.mjs"
       - "scripts/elections/discover-candidate-photos-new-domains.mjs"
+      - "scripts/elections/discover-candidate-photos-new-domains-wave2.mjs"
       - ".github/workflows/candidate-photo-enrichment.yml"
 
 permissions:
@@ -29,7 +30,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SEARCH_RUN_REQUESTED_AT: "2026-07-30T20:12:00-05:00"
+  SEARCH_RUN_REQUESTED_AT: "2026-07-30T20:14:00-05:00"
 
 jobs:
   discover-and-apply-photos:
@@ -79,6 +80,9 @@ jobs:
       - name: Discover portraits from previously unused domains only
         run: node scripts/elections/discover-candidate-photos-new-domains.mjs
 
+      - name: Discover second-wave portraits from unused campaign and local domains
+        run: node scripts/elections/discover-candidate-photos-new-domains-wave2.mjs
+
       - name: Apply approved candidate photos
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
@@ -97,6 +101,7 @@ jobs:
             artifacts/elections/candidate-photo-local-records-report.json
             artifacts/elections/candidate-photo-wikimedia-report.json
             artifacts/elections/candidate-photo-new-domains-report.json
+            artifacts/elections/candidate-photo-new-domains-wave2-report.json
             artifacts/elections/candidate-photo-source-cache.json
             artifacts/elections/candidate-photo-review-queue.json
           )
