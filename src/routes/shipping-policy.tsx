@@ -65,7 +65,7 @@ function ShippingPolicyPage() {
       <section>
         <h2>Shipping Charges</h2>
         <p>
-          Shipping charges are displayed at checkout and may vary by product, quantity, destination, and fulfillment location. Any promotional shipping offer applies only under the terms shown with that promotion.
+          Standard shipping is free for orders delivered within the United States. The price shown for each product is the merchandise total before applicable sales tax; no separate standard-shipping charge is added at checkout.
         </p>
       </section>
 
