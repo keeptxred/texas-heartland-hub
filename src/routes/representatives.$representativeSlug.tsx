@@ -1,18 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import {
-  findRepresentativeBySlug,
-  representativeSlug,
-} from "@/data/representatives";
+import { findRepresentativeBySlug, representativeSlug } from "@/data/representatives";
 import { ARTICLES, isPublished } from "@/data/articles";
 import {
   getHouseCommitteeAssignments,
   getRepresentativeAuthority,
 } from "@/data/representative-authority";
-import {
-  canonicalBillPath,
-  getRepresentativeLegislation,
-  SITE_URL,
-} from "@/lib/bills";
+import { canonicalBillPath, getRepresentativeLegislation, SITE_URL } from "@/lib/bills";
 
 export const Route = createFileRoute("/representatives/$representativeSlug")({
   loader: async ({ params }) => {
@@ -20,11 +13,13 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
     const legislation = await getRepresentativeLegislation(params.representativeSlug);
     const authority = getRepresentativeAuthority(params.representativeSlug);
     if (!directoryRepresentative && !legislation.identity) throw notFound();
-    const terms = (authority?.newsKeywords ?? (directoryRepresentative ? [directoryRepresentative.name] : []))
-      .map((term) => term.toLowerCase());
+    const terms = (
+      authority?.newsKeywords ?? (directoryRepresentative ? [directoryRepresentative.name] : [])
+    ).map((term) => term.toLowerCase());
     const news = ARTICLES.filter((article) => isPublished(article))
       .filter((article) => {
-        const haystack = `${article.title} ${article.dek} ${(article.topics ?? []).join(" ")}`.toLowerCase();
+        const haystack =
+          `${article.title} ${article.dek} ${(article.topics ?? []).join(" ")}`.toLowerCase();
         return terms.some((term) => haystack.includes(term));
       })
       .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
@@ -75,7 +70,12 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
                 "@type": "EducationalOrganization",
                 name,
               })),
-              knowsAbout: ["Texas government", "Texas elections", "Public policy", ...loaderData.authority.committees],
+              knowsAbout: [
+                "Texas government",
+                "Texas elections",
+                "Public policy",
+                ...loaderData.authority.committees,
+              ],
             }
           : {}),
       },
@@ -138,21 +138,30 @@ function RepresentativeProfile() {
   const district = rep?.district ?? identity?.district ?? null;
   const party = rep?.party ?? identity?.party ?? null;
   const houseCommittees = getHouseCommitteeAssignments(slug);
-  const profileAuthority = authority ?? (rep?.office === "U.S. House" ? {
-    biography: `${name} serves as the United States representative for ${district ?? "a Texas congressional district"}. This profile connects the member's official office, current House committee assignments, federal campaign-finance records, district election coverage, sponsored legislation and related KeepTXRed reporting.`,
-    career: [`Current member of the U.S. House of Representatives for ${district ?? "Texas"}.`],
-    education: [] as string[],
-    committees: houseCommittees.map((committee) => `House Committee on ${committee}.`),
-    electionHistory: [] as { year: string; result: string }[],
-    districtOverview: `${district ?? "This congressional district"} is represented in the U.S. House. District boundaries and address-level representation should be verified through the official House lookup.`,
-    financeUrl: `https://www.fec.gov/data/candidates/?search=${encodeURIComponent(name)}`,
-    financeLabel: "Federal Election Commission candidate records",
-    sources: [
-      { label: "Official congressional office", url: rep.website },
-      { label: "Official House directory and committee assignments", url: "https://www.house.gov/representatives" },
-    ],
-    reviewedAt: "2026-07-30",
-  } : null);
+  const profileAuthority =
+    authority ??
+    (rep?.office === "U.S. House"
+      ? {
+          biography: `${name} serves as the United States representative for ${district ?? "a Texas congressional district"}. This profile connects the member's official office, current House committee assignments, federal campaign-finance records, district election coverage, sponsored legislation and related KeepTXRed reporting.`,
+          career: [
+            `Current member of the U.S. House of Representatives for ${district ?? "Texas"}.`,
+          ],
+          education: [] as string[],
+          committees: houseCommittees.map((committee) => `House Committee on ${committee}.`),
+          electionHistory: [] as { year: string; result: string }[],
+          districtOverview: `${district ?? "This congressional district"} is represented in the U.S. House. District boundaries and address-level representation should be verified through the official House lookup.`,
+          financeUrl: `https://www.fec.gov/data/candidates/?search=${encodeURIComponent(name)}`,
+          financeLabel: "Federal Election Commission candidate records",
+          sources: [
+            { label: "Official congressional office", url: rep.website },
+            {
+              label: "Official House directory and committee assignments",
+              url: "https://www.house.gov/representatives",
+            },
+          ],
+          reviewedAt: "2026-07-30",
+        }
+      : null);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -161,6 +170,13 @@ function RepresentativeProfile() {
       </nav>
 
       <header className="mt-6 rounded-2xl border bg-card p-6 shadow-sm sm:p-10">
+        {rep?.imageUrl ? (
+          <img
+            src={rep.imageUrl}
+            alt={`${name} official portrait`}
+            className="mb-6 h-40 w-32 rounded-lg border object-cover"
+          />
+        ) : null}
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
           Representative authority profile
         </p>
@@ -187,9 +203,27 @@ function RepresentativeProfile() {
           </a>
         </div>
         {profileAuthority ? (
-          <nav className="mt-6 flex flex-wrap gap-2 border-t pt-5" aria-label={`${name} profile sections`}>
-            {["Biography", "Career", "Education", "Committees", "Elections", "Legislation", "Finance", "District", "News", "Sources"].map((label) => (
-              <a key={label} href={`#${label.toLowerCase()}`} className="rounded-full bg-muted px-3 py-1.5 text-xs font-bold hover:bg-primary hover:text-primary-foreground">
+          <nav
+            className="mt-6 flex flex-wrap gap-2 border-t pt-5"
+            aria-label={`${name} profile sections`}
+          >
+            {[
+              "Biography",
+              "Career",
+              "Education",
+              "Committees",
+              "Elections",
+              "Legislation",
+              "Finance",
+              "District",
+              "News",
+              "Sources",
+            ].map((label) => (
+              <a
+                key={label}
+                href={`#${label.toLowerCase()}`}
+                className="rounded-full bg-muted px-3 py-1.5 text-xs font-bold hover:bg-primary hover:text-primary-foreground"
+              >
                 {label}
               </a>
             ))}
@@ -204,20 +238,44 @@ function RepresentativeProfile() {
               <AuthoritySection id="biography" title="Biography">
                 <p className="text-lg leading-8">{profileAuthority.biography}</p>
               </AuthoritySection>
-              <AuthoritySection id="career" title="Career"><AuthorityList items={profileAuthority.career} /></AuthoritySection>
-              <AuthoritySection id="education" title="Education">
-                {profileAuthority.education.length ? <AuthorityList items={profileAuthority.education} /> : <VerificationPending source={rep?.website} field="Education history" />}
+              <AuthoritySection id="career" title="Career">
+                <AuthorityList items={profileAuthority.career} />
               </AuthoritySection>
-              <AuthoritySection id="committees" title="Committee assignments and governing role"><AuthorityList items={profileAuthority.committees} /></AuthoritySection>
+              <AuthoritySection id="education" title="Education">
+                {profileAuthority.education.length ? (
+                  <AuthorityList items={profileAuthority.education} />
+                ) : (
+                  <VerificationPending source={rep?.website} field="Education history" />
+                )}
+              </AuthoritySection>
+              <AuthoritySection id="committees" title="Committee assignments and governing role">
+                <AuthorityList items={profileAuthority.committees} />
+              </AuthoritySection>
               <AuthoritySection id="elections" title="Election history">
-                {profileAuthority.electionHistory.length ? <ol className="space-y-4">
-                  {profileAuthority.electionHistory.map((event: any) => (
-                    <li key={`${event.year}-${event.result}`} className="grid gap-1 border-l-2 border-primary pl-4 sm:grid-cols-[5rem_1fr]">
-                      <strong>{event.year}</strong><span className="text-muted-foreground">{event.result}</span>
-                    </li>
-                  ))}
-                </ol> : <VerificationPending source={`/elections/candidates?q=${encodeURIComponent(name)}`} field="Election-history summary" />}
-                <a href={`/elections/candidates?q=${encodeURIComponent(name)}`} className="mt-5 inline-block font-semibold text-primary hover:underline">Search related election records →</a>
+                {profileAuthority.electionHistory.length ? (
+                  <ol className="space-y-4">
+                    {profileAuthority.electionHistory.map((event: any) => (
+                      <li
+                        key={`${event.year}-${event.result}`}
+                        className="grid gap-1 border-l-2 border-primary pl-4 sm:grid-cols-[5rem_1fr]"
+                      >
+                        <strong>{event.year}</strong>
+                        <span className="text-muted-foreground">{event.result}</span>
+                      </li>
+                    ))}
+                  </ol>
+                ) : (
+                  <VerificationPending
+                    source={`/elections/candidates?q=${encodeURIComponent(name)}`}
+                    field="Election-history summary"
+                  />
+                )}
+                <a
+                  href={`/elections/candidates?q=${encodeURIComponent(name)}`}
+                  className="mt-5 inline-block font-semibold text-primary hover:underline"
+                >
+                  Search related election records →
+                </a>
               </AuthoritySection>
             </>
           ) : null}
@@ -228,6 +286,7 @@ function RepresentativeProfile() {
               <ProfileFact label="Office" value={office} />
               <ProfileFact label="District" value={district ?? "Statewide"} />
               <ProfileFact label="Party" value={partyLabel(party) ?? "Not published"} />
+              {rep?.phoneTX ? <ProfileFact label="Capitol phone" value={rep.phoneTX} /> : null}
               <ProfileFact label="Profile identifier" value={representativeSlug(name)} />
             </dl>
             {district ? (
@@ -238,7 +297,10 @@ function RepresentativeProfile() {
                 View district election authority page →
               </a>
             ) : (
-              <a href="/elections/statewide" className="mt-5 inline-block font-semibold text-primary hover:underline">
+              <a
+                href="/elections/statewide"
+                className="mt-5 inline-block font-semibold text-primary hover:underline"
+              >
                 View statewide elections →
               </a>
             )}
@@ -278,12 +340,30 @@ function RepresentativeProfile() {
           {profileAuthority ? (
             <>
               <AuthoritySection id="finance" title="Campaign finance">
-                <p className="leading-7 text-muted-foreground">Campaign totals and filings can change throughout an election cycle. Use the official disclosure database for the current record rather than a cached dollar amount.</p>
-                <a href={profileAuthority.financeUrl} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block font-semibold text-primary hover:underline">{profileAuthority.financeLabel} →</a>
+                <p className="leading-7 text-muted-foreground">
+                  Campaign totals and filings can change throughout an election cycle. Use the
+                  official disclosure database for the current record rather than a cached dollar
+                  amount.
+                </p>
+                <a
+                  href={profileAuthority.financeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 inline-block font-semibold text-primary hover:underline"
+                >
+                  {profileAuthority.financeLabel} →
+                </a>
               </AuthoritySection>
               <AuthoritySection id="district" title="District information">
                 <p className="leading-7">{profileAuthority.districtOverview}</p>
-                <a href={district ? `/elections/districts/${districtRouteSlug(district)}` : "/elections/statewide"} className="mt-4 inline-block font-semibold text-primary hover:underline">
+                <a
+                  href={
+                    district
+                      ? `/elections/districts/${districtRouteSlug(district)}`
+                      : "/elections/statewide"
+                  }
+                  className="mt-4 inline-block font-semibold text-primary hover:underline"
+                >
                   {district ? "District" : "Statewide"} election authority page →
                 </a>
               </AuthoritySection>
@@ -291,22 +371,51 @@ function RepresentativeProfile() {
                 {news.length ? (
                   <div className="grid gap-4 sm:grid-cols-2">
                     {news.map((article: any) => (
-                      <a key={article.slug} href={`/article/${article.slug}`} className="rounded-lg border p-4 hover:border-primary">
-                        <p className="text-xs font-bold uppercase tracking-wide text-primary">{article.category}</p>
+                      <a
+                        key={article.slug}
+                        href={`/article/${article.slug}`}
+                        className="rounded-lg border p-4 hover:border-primary"
+                      >
+                        <p className="text-xs font-bold uppercase tracking-wide text-primary">
+                          {article.category}
+                        </p>
                         <h3 className="mt-2 font-bold">{article.title}</h3>
-                        <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{article.dek}</p>
+                        <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">
+                          {article.dek}
+                        </p>
                       </a>
                     ))}
                   </div>
-                ) : <p className="text-muted-foreground">No matching published KeepTXRed articles are currently linked.</p>}
+                ) : (
+                  <p className="text-muted-foreground">
+                    No matching published KeepTXRed articles are currently linked.
+                  </p>
+                )}
               </AuthoritySection>
               <AuthoritySection id="sources" title="Primary sources">
                 <ul className="space-y-3">
                   {profileAuthority.sources.map((source: any) => (
-                    <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">{source.label} →</a></li>
+                    <li key={source.url}>
+                      <a
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-semibold text-primary hover:underline"
+                      >
+                        {source.label} →
+                      </a>
+                    </li>
                   ))}
                 </ul>
-                <p className="mt-5 text-sm text-muted-foreground">Authority review completed {new Date(`${profileAuthority.reviewedAt}T12:00:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}.</p>
+                <p className="mt-5 text-sm text-muted-foreground">
+                  Authority review completed{" "}
+                  {new Date(`${profileAuthority.reviewedAt}T12:00:00`).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                  .
+                </p>
               </AuthoritySection>
             </>
           ) : null}
@@ -323,10 +432,18 @@ function RepresentativeProfile() {
           <section className="rounded-xl border bg-muted/30 p-5">
             <h2 className="font-bold">Related authority pages</h2>
             <div className="mt-4 space-y-3 text-sm font-semibold">
-              <a href="/bills" className="block text-primary hover:underline">Texas Bills</a>
-              <a href="/texas-legislature" className="block text-primary hover:underline">Texas Legislature</a>
-              <a href="/find-representative" className="block text-primary hover:underline">Find Your Representative</a>
-              <a href="/contact-legislators" className="block text-primary hover:underline">Contact Legislators</a>
+              <a href="/bills" className="block text-primary hover:underline">
+                Texas Bills
+              </a>
+              <a href="/texas-legislature" className="block text-primary hover:underline">
+                Texas Legislature
+              </a>
+              <a href="/find-representative" className="block text-primary hover:underline">
+                Find Your Representative
+              </a>
+              <a href="/contact-legislators" className="block text-primary hover:underline">
+                Contact Legislators
+              </a>
             </div>
           </section>
         </aside>
@@ -335,16 +452,50 @@ function RepresentativeProfile() {
   );
 }
 
-function AuthoritySection({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
-  return <section id={id} className="scroll-mt-24 rounded-xl border bg-card p-6"><h2 className="text-2xl font-bold">{title}</h2><div className="mt-5">{children}</div></section>;
+function AuthoritySection({
+  id,
+  title,
+  children,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className="scroll-mt-24 rounded-xl border bg-card p-6">
+      <h2 className="text-2xl font-bold">{title}</h2>
+      <div className="mt-5">{children}</div>
+    </section>
+  );
 }
 
 function AuthorityList({ items }: { items: string[] }) {
-  return <ul className="space-y-3">{items.map((item) => <li key={item} className="flex gap-3 leading-7"><span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" /><span>{item}</span></li>)}</ul>;
+  return (
+    <ul className="space-y-3">
+      {items.map((item) => (
+        <li key={item} className="flex gap-3 leading-7">
+          <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 function VerificationPending({ source, field }: { source?: string; field: string }) {
-  return <p className="rounded-lg border border-dashed p-4 text-sm leading-6 text-muted-foreground">{field} is not summarized here until it passes primary-source verification.{source ? <> <a href={source} className="font-semibold text-primary hover:underline">Consult the official source →</a></> : null}</p>;
+  return (
+    <p className="rounded-lg border border-dashed p-4 text-sm leading-6 text-muted-foreground">
+      {field} is not summarized here until it passes primary-source verification.
+      {source ? (
+        <>
+          {" "}
+          <a href={source} className="font-semibold text-primary hover:underline">
+            Consult the official source →
+          </a>
+        </>
+      ) : null}
+    </p>
+  );
 }
 
 function ProfileFact({ label, value }: { label: string; value: string }) {
@@ -376,5 +527,8 @@ function districtRouteSlug(district: string) {
   if (house) return `texas-house-district-${house[1]}`;
   const senate = /senate\s*(?:district)?\s*(\d+)/i.exec(district);
   if (senate) return `texas-senate-district-${senate[1]}`;
-  return district.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  return district
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
 }
