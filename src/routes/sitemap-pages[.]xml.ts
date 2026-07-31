@@ -4,6 +4,12 @@ import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
 import { TEXAS_DATASETS } from "@/data/texas-data-center";
+import {
+  STATE_LEADERSHIP,
+  US_HOUSE_SAMPLE,
+  US_SENATORS,
+  representativeSlug,
+} from "@/data/representatives";
 
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
@@ -34,6 +40,9 @@ const STATIC_PATHS: string[] = [
   "/shop", "/texas", "/texas/no-state-income-tax-2026", "/texas/property-taxes-2026",
   "/texas/moving-to-texas-2026", "/texas-data",
   ...TEXAS_DATASETS.map((dataset) => `/texas-data/${dataset.slug}`),
+  ...[...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_SAMPLE].map(
+    (representative) => `/representatives/${representativeSlug(representative.name)}`,
+  ),
 ];
 
 export const Route = createFileRoute("/sitemap-pages.xml")({
