@@ -1,6 +1,14 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Outlet, createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
-import { US_SENATORS, STATE_LEADERSHIP, US_HOUSE_SAMPLE, type Rep } from "@/data/representatives";
+import {
+  US_SENATORS,
+  STATE_LEADERSHIP,
+  US_HOUSE_SAMPLE,
+  representativeSlug,
+  type Rep,
+} from "@/data/representatives";
+
+const ALL_REPRESENTATIVES = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_SAMPLE];
 
 export const Route = createFileRoute("/representatives")({
   head: () => ({
@@ -11,6 +19,36 @@ export const Route = createFileRoute("/representatives")({
       { property: "og:description", content: "Contact your Texas elected officials — federal and state." },
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/representatives" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          name: "Texas Representatives",
+          url: "https://keeptxred.com/representatives",
+          mainEntity: {
+            "@type": "ItemList",
+            numberOfItems: ALL_REPRESENTATIVES.length,
+            itemListElement: ALL_REPRESENTATIVES.map((rep, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              url: `https://keeptxred.com/representatives/${representativeSlug(rep.name)}`,
+              item: {
+                "@type": "Person",
+                name: rep.name,
+                jobTitle: rep.office,
+                affiliation: {
+                  "@type": "Organization",
+                  name: rep.party === "R" ? "Republican Party" : "Democratic Party",
+                },
+                sameAs: [rep.website],
+              },
+            })),
+          },
+        }).replace(/</g, "\\u003c"),
+      },
+    ],
   }),
   component: RepresentativesPage,
 });
@@ -24,13 +62,20 @@ function RepCard({ rep }: { rep: Rep }) {
           <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">
             {rep.office}{rep.district ? ` • ${rep.district}` : ""}
           </p>
+          <Link
+            to="/representatives/$representativeSlug"
+            params={{ representativeSlug: representativeSlug(rep.name) }}
+            className="mt-3 inline-block text-sm font-bold text-primary hover:underline"
+          >
+            View authority profile →
+          </Link>
         </div>
         <span className={`text-[10px] font-bold px-2 py-1 ${rep.party === "R" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>{rep.party}</span>
       </div>
       <dl className="mt-4 space-y-1 text-sm">
         {rep.phoneDC && <div><dt className="inline text-muted-foreground">DC:&nbsp;</dt><dd className="inline font-mono">{rep.phoneDC}</dd></div>}
         {rep.phoneTX && <div><dt className="inline text-muted-foreground">TX:&nbsp;</dt><dd className="inline font-mono">{rep.phoneTX}</dd></div>}
-        <a href={rep.website} target="_blank" rel="noopener noreferrer" className="inline-block mt-1 text-primary font-semibold text-xs uppercase tracking-widest hover:underline">Visit Site →</a>
+        <a href={rep.website} target="_blank" rel="noopener noreferrer" className="inline-block mt-1 text-primary font-semibold text-xs uppercase tracking-widest hover:underline">Official Office →</a>
       </dl>
     </div>
   );
@@ -46,6 +91,12 @@ function Section({ title, reps }: { title: string; reps: Rep[] }) {
 }
 
 function RepresentativesPage() {
+  const { representativeSlug } = useParams({ strict: false }) as { representativeSlug?: string };
+
+  if (representativeSlug) {
+    return <Outlet />;
+  }
+
   return (
     <>
       <PageHero
