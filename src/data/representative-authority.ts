@@ -397,3 +397,48 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
 export function getRepresentativeAuthority(slug: string) {
   return REPRESENTATIVE_AUTHORITY.find((profile) => profile.slug === slug);
 }
+
+/** Current 119th Congress assignments, reviewed against House.gov on 2026-07-30. */
+export const US_HOUSE_COMMITTEES: Record<string, string[]> = {
+  "nathaniel-moran": ["Ethics", "Ways and Means", "Select Committee on the Strategic Competition Between the United States and the Chinese Communist Party"],
+  "dan-crenshaw": ["Energy and Commerce", "Intelligence"],
+  "keith-self": ["Foreign Affairs", "Science, Space, and Technology", "Veterans' Affairs"],
+  "pat-fallon": ["Armed Services", "Oversight and Government Reform", "Intelligence"],
+  "lance-gooden": ["Armed Services", "Judiciary"],
+  "jake-ellzey": ["Appropriations", "Small Business"],
+  "lizzie-fletcher": ["Energy and Commerce"],
+  "morgan-luttrell": ["Armed Services", "Homeland Security", "Veterans' Affairs"],
+  "al-green": ["Financial Services", "Homeland Security"],
+  "michael-mccaul": ["Foreign Affairs", "Homeland Security"],
+  "august-pfluger": ["Homeland Security", "Energy and Commerce"],
+  "craig-goldman": ["Energy and Commerce"],
+  "ronny-jackson": ["Agriculture", "Armed Services", "Foreign Affairs", "Intelligence"],
+  "randy-weber": ["Energy and Commerce", "Science, Space, and Technology"],
+  "monica-de-la-cruz": ["Agriculture", "Financial Services"],
+  "veronica-escobar": ["Appropriations", "Budget"],
+  "pete-sessions": ["Financial Services", "Oversight and Government Reform"],
+  "christian-menefee": ["Oversight and Government Reform", "Science, Space, and Technology"],
+  "jodey-arrington": ["Budget", "Ways and Means"],
+  "joaquin-castro": ["Foreign Affairs", "Intelligence"],
+  "chip-roy": ["Budget", "Judiciary", "Rules"],
+  "troy-nehls": ["Judiciary", "Transportation and Infrastructure", "Select Subcommittee to Investigate the Remaining Questions Surrounding January 6, 2021"],
+  "beth-van-duyne": ["Small Business", "Ways and Means"],
+  "roger-williams": ["Financial Services", "Small Business"],
+  "brandon-gill": ["Budget", "Oversight and Government Reform", "Judiciary"],
+  "michael-cloud": ["Appropriations", "Oversight and Government Reform"],
+  "henry-cuellar": ["Appropriations"],
+  "sylvia-garcia": ["Financial Services", "Ethics"],
+  "jasmine-crockett": ["Oversight and Government Reform", "Judiciary", "Select Subcommittee to Investigate the Remaining Questions Surrounding January 6, 2021"],
+  "john-carter": ["Appropriations"],
+  "julie-johnson": ["Foreign Affairs", "House Administration", "Homeland Security", "Joint Committee of Congress on the Library"],
+  "marc-veasey": ["Energy and Commerce"],
+  "vicente-gonzalez": ["Financial Services"],
+  "greg-casar": ["Education and Workforce", "Oversight and Government Reform"],
+  "brian-babin": ["Transportation and Infrastructure", "Science, Space, and Technology"],
+  "lloyd-doggett": ["Budget", "Joint Committee on Taxation", "Ways and Means"],
+  "wesley-hunt": ["Natural Resources", "Judiciary"],
+};
+
+export function getHouseCommitteeAssignments(slug: string) {
+  return US_HOUSE_COMMITTEES[slug] ?? [];
+}
