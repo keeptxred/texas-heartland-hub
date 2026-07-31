@@ -7,10 +7,43 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+      upsert_bidirectional_authority_relationship: {
+        Args: {
+          p_evidence?: Json
+          p_is_manual?: boolean
+          p_relationship_type: string
+          p_score: number
+          p_source_key: string
+          p_source_type: string
+          p_target_key: string
+          p_target_type: string
+        }
+        Returns: undefined
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -83,6 +116,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      authority_relationships: {
+        Row: {
+          created_at: string
+          evidence: Json
+          id: string
+          is_manual: boolean
+          relationship_type: string
+          score: number
+          source_key: string
+          source_type: string
+          target_key: string
+          target_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          evidence?: Json
+          id?: string
+          is_manual?: boolean
+          relationship_type: string
+          score?: number
+          source_key: string
+          source_type: string
+          target_key: string
+          target_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          evidence?: Json
+          id?: string
+          is_manual?: boolean
+          relationship_type?: string
+          score?: number
+          source_key?: string
+          source_type?: string
+          target_key?: string
+          target_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       bill_actions: {
         Row: {
@@ -3201,6 +3276,84 @@ export type Database = {
         }
         Relationships: []
       }
+      legislative_source_records: {
+        Row: {
+          content_hash: string
+          last_imported_at: string
+          last_seen_at: string
+          metadata: Json
+          source_key: string
+          source_record_key: string
+          source_updated_at: string | null
+          source_url: string
+        }
+        Insert: {
+          content_hash: string
+          last_imported_at?: string
+          last_seen_at?: string
+          metadata?: Json
+          source_key: string
+          source_record_key: string
+          source_updated_at?: string | null
+          source_url: string
+        }
+        Update: {
+          content_hash?: string
+          last_imported_at?: string
+          last_seen_at?: string
+          metadata?: Json
+          source_key?: string
+          source_record_key?: string
+          source_updated_at?: string | null
+          source_url?: string
+        }
+        Relationships: []
+      }
+      legislative_sync_runs: {
+        Row: {
+          completed_at: string | null
+          cursor_after: Json
+          cursor_before: Json
+          errors: Json
+          id: string
+          legislature_number: number
+          records_changed: number
+          records_seen: number
+          session_code: string
+          source_key: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          cursor_after?: Json
+          cursor_before?: Json
+          errors?: Json
+          id?: string
+          legislature_number: number
+          records_changed?: number
+          records_seen?: number
+          session_code: string
+          source_key?: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          cursor_after?: Json
+          cursor_before?: Json
+          errors?: Json
+          id?: string
+          legislature_number?: number
+          records_changed?: number
+          records_seen?: number
+          session_code?: string
+          source_key?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       newsletter_signups: {
         Row: {
           created_at: string
@@ -3794,7 +3947,6 @@ export type Database = {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
       }
-      email_queue_dispatch: { Args: never; Returns: undefined }
       enqueue_email: {
         Args: { payload: Json; queue_name: string }
         Returns: number
@@ -3843,6 +3995,17 @@ export type Database = {
           message: Json
           msg_id: number
           read_ct: number
+        }[]
+      }
+      refresh_legislative_authority_graph: { Args: never; Returns: undefined }
+      related_authority_content: {
+        Args: { p_limit?: number; p_source_key: string; p_source_type: string }
+        Returns: {
+          evidence: Json
+          relationship_type: string
+          score: number
+          target_key: string
+          target_type: string
         }[]
       }
       search_explore_entities: {
@@ -4028,6 +4191,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
