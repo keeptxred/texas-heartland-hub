@@ -10,6 +10,12 @@ export type PublishArticleResult =
   | { ok: true; slug: string; alreadyPublished?: boolean }
   | { ok: false; error: string };
 
+type UsageRow = {
+  content_fingerprint: string;
+  feed_item_id: number | null;
+  claimed_at: string;
+};
+
 function explainPublishFailure(error: string, feedItemId: number): string {
   const message = error.trim() || "Publish failed without an error message";
 
@@ -29,6 +35,13 @@ function isTieredWordCountFailure(error: string | undefined): boolean {
   return Boolean(error && /rewrite below tiered minimum/i.test(error));
 }
 
+function isMissingBypassRpc(error: { message?: string } | null): boolean {
+  return Boolean(
+    error?.message &&
+      /grant_manual_ai_rewrite_bypass|schema cache|could not find the function/i.test(error.message),
+  );
+}
+
 export const publishFeedItemFn = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => InputSchema.parse(d))
   .handler(async ({ data }): Promise<PublishArticleResult> => {
@@ -37,20 +50,62 @@ export const publishFeedItemFn = createServerFn({ method: "POST" })
 
     try {
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      const manualStartedAt = new Date().toISOString();
+      let fallbackReleasedUsage: UsageRow | null = null;
 
       // Explicit admin publishing is intentionally outside the automated
-      // daily AI allowance. The database consumes this marker once when the
-      // rewrite slot is claimed, so cron or other automated callers cannot
-      // inherit the exemption.
+      // daily AI allowance. Prefer the one-time database bypass marker. When
+      // production has not applied the migration yet, use a backward-compatible
+      // ledger fallback so the admin action still works without weakening cron.
       const { error: bypassError } = await supabaseAdmin.rpc(
         "grant_manual_ai_rewrite_bypass" as never,
         { p_feed_item_id: data.feed_item_id } as never,
       );
-      if (bypassError) {
+
+      if (bypassError && !isMissingBypassRpc(bypassError)) {
         return {
           ok: false,
           error: `Could not authorize manual rewrite bypass: ${bypassError.message}`,
         };
+      }
+
+      if (isMissingBypassRpc(bypassError)) {
+        const utcDayStart = new Date();
+        utcDayStart.setUTCHours(0, 0, 0, 0);
+
+        const { data: usageRows, error: usageReadError } = await supabaseAdmin
+          .from("ai_rewrite_usage")
+          .select("content_fingerprint,feed_item_id,claimed_at")
+          .gte("claimed_at", utcDayStart.toISOString())
+          .order("claimed_at", { ascending: true })
+          .limit(1);
+
+        if (usageReadError) {
+          return {
+            ok: false,
+            error: `Manual rewrite bypass migration is missing and the fallback ledger could not be read: ${usageReadError.message}`,
+          };
+        }
+
+        fallbackReleasedUsage = ((usageRows ?? [])[0] as UsageRow | undefined) ?? null;
+        if (fallbackReleasedUsage) {
+          const { error: releaseError } = await supabaseAdmin
+            .from("ai_rewrite_usage")
+            .delete()
+            .eq("content_fingerprint", fallbackReleasedUsage.content_fingerprint)
+            .eq("claimed_at", fallbackReleasedUsage.claimed_at);
+
+          if (releaseError) {
+            return {
+              ok: false,
+              error: `Manual rewrite bypass migration is missing and the fallback slot could not be released: ${releaseError.message}`,
+            };
+          }
+        }
+
+        console.warn("[publishFeedItemFn] manual bypass RPC missing; using temporary ledger fallback", {
+          feed_item_id: data.feed_item_id,
+        });
       }
 
       const { publishSingleFeedItem } = await import(
@@ -66,6 +121,31 @@ export const publishFeedItemFn = createServerFn({ method: "POST" })
         const { expandCachedRewriteForFeedItem } = await import("@/lib/expand-cached-rewrite");
         const expanded = await expandCachedRewriteForFeedItem(data.feed_item_id);
         if (expanded) res = await publishSingleFeedItem(data.feed_item_id);
+      }
+
+      if (isMissingBypassRpc(bypassError)) {
+        // Remove the manual attempt from the automated usage ledger whether it
+        // succeeded or failed, then restore the automated slot temporarily
+        // released above. This keeps the automated count exactly unchanged.
+        await supabaseAdmin
+          .from("ai_rewrite_usage")
+          .delete()
+          .eq("feed_item_id", data.feed_item_id)
+          .gte("claimed_at", manualStartedAt);
+
+        if (fallbackReleasedUsage) {
+          const { error: restoreError } = await supabaseAdmin.from("ai_rewrite_usage").insert({
+            content_fingerprint: fallbackReleasedUsage.content_fingerprint,
+            feed_item_id: fallbackReleasedUsage.feed_item_id,
+            claimed_at: fallbackReleasedUsage.claimed_at,
+          });
+          if (restoreError) {
+            console.error("[publishFeedItemFn] failed to restore automated usage row", {
+              feed_item_id: data.feed_item_id,
+              error: restoreError.message,
+            });
+          }
+        }
       }
 
       if (!res.ok) {
