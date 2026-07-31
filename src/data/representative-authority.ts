@@ -1,3 +1,5 @@
+import { TEXAS_LEGISLATOR_AUTHORITY } from "./texas-legislators.generated";
+
 export type AuthoritySource = {
   label: string;
   url: string;
@@ -62,9 +64,15 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["John Cornyn", "Senator Cornyn"],
     sources: [
-      { label: "Official Senate biography", url: "https://www.cornyn.senate.gov/about/about-john-cornyn/" },
+      {
+        label: "Official Senate biography",
+        url: "https://www.cornyn.senate.gov/about/about-john-cornyn/",
+      },
       { label: "U.S. Senate Texas delegation", url: "https://www.senate.gov/states/TX/intro.htm" },
-      { label: "Official committee assignments", url: "https://www.cornyn.senate.gov/about/committee-assignments/" },
+      {
+        label: "Official committee assignments",
+        url: "https://www.cornyn.senate.gov/about/committee-assignments/",
+      },
     ],
   },
   {
@@ -102,7 +110,10 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     sources: [
       { label: "Official Senate biography", url: "https://www.cruz.senate.gov/about/about-ted" },
       { label: "U.S. Senate Texas delegation", url: "https://www.senate.gov/states/TX/intro.htm" },
-      { label: "Official committee assignments", url: "https://www.cruz.senate.gov/about/committee-assignments" },
+      {
+        label: "Official committee assignments",
+        url: "https://www.cruz.senate.gov/about/committee-assignments",
+      },
     ],
   },
   {
@@ -120,7 +131,9 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
       "Bachelor of Business Administration from the University of Texas at Austin.",
       "Juris Doctor from Vanderbilt University Law School.",
     ],
-    committees: ["Executive office; the governor does not receive legislative committee assignments."],
+    committees: [
+      "Executive office; the governor does not receive legislative committee assignments.",
+    ],
     electionHistory: [
       { year: "2014", result: "First elected governor of Texas." },
       { year: "2018", result: "Reelected to a second term." },
@@ -132,7 +145,10 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     newsKeywords: ["Greg Abbott", "Governor Abbott", "Texas governor"],
     sources: [
       { label: "Office of the Governor biography", url: "https://gov.texas.gov/governor-abbott" },
-      { label: "Texas statewide elected officials", url: "https://www.sos.texas.gov/elections/voter/elected.shtml" },
+      {
+        label: "Texas statewide elected officials",
+        url: "https://www.sos.texas.gov/elections/voter/elected.shtml",
+      },
     ],
   },
   {
@@ -157,13 +173,20 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
       { year: "2018", result: "Reelected lieutenant governor." },
       { year: "2022", result: "Reelected to a third term." },
     ],
-    districtOverview: "The lieutenant governor is elected statewide and presides over the 31-member Texas Senate.",
+    districtOverview:
+      "The lieutenant governor is elected statewide and presides over the 31-member Texas Senate.",
     financeUrl: TEXAS_ETHICS,
     financeLabel: "Texas Ethics Commission campaign-finance search",
     newsKeywords: ["Dan Patrick", "Lieutenant Governor Patrick", "Texas lieutenant governor"],
     sources: [
-      { label: "Official lieutenant governor biography", url: "https://www.ltgov.texas.gov/biography/" },
-      { label: "Texas statewide elected officials", url: "https://www.sos.texas.gov/elections/voter/elected.shtml" },
+      {
+        label: "Official lieutenant governor biography",
+        url: "https://www.ltgov.texas.gov/biography/",
+      },
+      {
+        label: "Texas statewide elected officials",
+        url: "https://www.sos.texas.gov/elections/voter/elected.shtml",
+      },
       { label: "Texas Senate committees", url: "https://senate.texas.gov/committees.php" },
     ],
   },
@@ -182,19 +205,28 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
       "Bachelor's degree and Master of Business Administration from Baylor University.",
       "Juris Doctor from the University of Virginia School of Law.",
     ],
-    committees: ["Executive office; the attorney general does not receive legislative committee assignments."],
+    committees: [
+      "Executive office; the attorney general does not receive legislative committee assignments.",
+    ],
     electionHistory: [
       { year: "2014", result: "First elected attorney general of Texas." },
       { year: "2018", result: "Reelected to a second term." },
       { year: "2022", result: "Reelected to a third term." },
     ],
-    districtOverview: "The attorney general is elected statewide and serves as Texas's chief legal officer.",
+    districtOverview:
+      "The attorney general is elected statewide and serves as Texas's chief legal officer.",
     financeUrl: TEXAS_ETHICS,
     financeLabel: "Texas Ethics Commission campaign-finance search",
     newsKeywords: ["Ken Paxton", "Attorney General Paxton", "Texas attorney general"],
     sources: [
-      { label: "Attorney General biography", url: "https://www.texasattorneygeneral.gov/about-office" },
-      { label: "Texas statewide elected officials", url: "https://www.sos.texas.gov/elections/voter/elected.shtml" },
+      {
+        label: "Attorney General biography",
+        url: "https://www.texasattorneygeneral.gov/about-office",
+      },
+      {
+        label: "Texas statewide elected officials",
+        url: "https://www.sos.texas.gov/elections/voter/elected.shtml",
+      },
     ],
   },
   {
@@ -209,19 +241,31 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
       "Worked in his family's manufacturing business.",
     ],
     education: ["Bachelor of Business Administration from Baylor University."],
-    committees: ["Executive office; the comptroller does not receive legislative committee assignments."],
+    committees: [
+      "Executive office; the comptroller does not receive legislative committee assignments.",
+    ],
     electionHistory: [
       { year: "2012", result: "Elected to the Texas Senate." },
       { year: "2025", result: "Began serving as acting Texas comptroller." },
     ],
-    districtOverview: "The comptroller is a statewide office responsible for tax administration, state accounting and revenue estimates.",
+    districtOverview:
+      "The comptroller is a statewide office responsible for tax administration, state accounting and revenue estimates.",
     financeUrl: TEXAS_ETHICS,
     financeLabel: "Texas Ethics Commission campaign-finance search",
     newsKeywords: ["Kelly Hancock", "Texas comptroller", "Acting Comptroller Hancock"],
     sources: [
-      { label: "Official acting comptroller biography", url: "https://comptroller.texas.gov/about/bio.php" },
-      { label: "Incoming comptroller appointment announcement", url: "https://gov.texas.gov/news/post/governor-abbott-appoints-don-huffines-as-comptroller-of-public-accounts" },
-      { label: "2026 offices up for election", url: "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml" },
+      {
+        label: "Official acting comptroller biography",
+        url: "https://comptroller.texas.gov/about/bio.php",
+      },
+      {
+        label: "Incoming comptroller appointment announcement",
+        url: "https://gov.texas.gov/news/post/governor-abbott-appoints-don-huffines-as-comptroller-of-public-accounts",
+      },
+      {
+        label: "2026 offices up for election",
+        url: "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
+      },
     ],
   },
   {
@@ -234,20 +278,31 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
       "Represented Texas Senate District 16 from 2015 through 2019.",
       "Worked in automotive and real-estate businesses.",
     ],
-    education: ["Bachelor of Business Administration in Finance from the University of Texas at Austin."],
-    committees: ["Executive office; the comptroller does not receive legislative committee assignments."],
+    education: [
+      "Bachelor of Business Administration in Finance from the University of Texas at Austin.",
+    ],
+    committees: [
+      "Executive office; the comptroller does not receive legislative committee assignments.",
+    ],
     electionHistory: [
       { year: "2014", result: "Elected to Texas Senate District 16." },
       { year: "2026", result: "Appointed comptroller with an effective date of August 1, 2026." },
     ],
-    districtOverview: "The comptroller is a statewide office responsible for tax administration, state accounting and revenue estimates.",
+    districtOverview:
+      "The comptroller is a statewide office responsible for tax administration, state accounting and revenue estimates.",
     financeUrl: TEXAS_ETHICS,
     financeLabel: "Texas Ethics Commission campaign-finance search",
     newsKeywords: ["Don Huffines", "Texas comptroller", "Comptroller Huffines"],
     sources: [
-      { label: "Governor's appointment announcement", url: "https://gov.texas.gov/news/post/governor-abbott-appoints-don-huffines-as-comptroller-of-public-accounts" },
+      {
+        label: "Governor's appointment announcement",
+        url: "https://gov.texas.gov/news/post/governor-abbott-appoints-don-huffines-as-comptroller-of-public-accounts",
+      },
       { label: "Texas Comptroller official website", url: "https://comptroller.texas.gov/" },
-      { label: "2026 offices up for election", url: "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml" },
+      {
+        label: "2026 offices up for election",
+        url: "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml",
+      },
     ],
   },
   {
@@ -263,19 +318,32 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     education: [
       "Bachelor of Science in vocational agriculture education from Sam Houston State University.",
     ],
-    committees: ["Executive office; the agriculture commissioner does not receive legislative committee assignments."],
+    committees: [
+      "Executive office; the agriculture commissioner does not receive legislative committee assignments.",
+    ],
     electionHistory: [
       { year: "2014", result: "First elected Texas agriculture commissioner." },
       { year: "2018", result: "Reelected to a second term." },
       { year: "2022", result: "Reelected to a third term." },
     ],
-    districtOverview: "The agriculture commissioner is elected statewide and leads the Texas Department of Agriculture.",
+    districtOverview:
+      "The agriculture commissioner is elected statewide and leads the Texas Department of Agriculture.",
     financeUrl: TEXAS_ETHICS,
     financeLabel: "Texas Ethics Commission campaign-finance search",
-    newsKeywords: ["Sid Miller", "Agriculture Commissioner Miller", "Texas Department of Agriculture"],
+    newsKeywords: [
+      "Sid Miller",
+      "Agriculture Commissioner Miller",
+      "Texas Department of Agriculture",
+    ],
     sources: [
-      { label: "Texas Department of Agriculture biography", url: "https://texasagriculture.gov/About/TexasAgCommissioner.aspx" },
-      { label: "Texas statewide elected officials", url: "https://www.sos.texas.gov/elections/voter/elected.shtml" },
+      {
+        label: "Texas Department of Agriculture biography",
+        url: "https://texasagriculture.gov/About/TexasAgCommissioner.aspx",
+      },
+      {
+        label: "Texas statewide elected officials",
+        url: "https://www.sos.texas.gov/elections/voter/elected.shtml",
+      },
     ],
   },
   {
@@ -292,461 +360,1235 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
       "Bachelor's degree from the University of Texas at Austin.",
       "Medical degree from the University of Texas Medical Branch at Galveston.",
     ],
-    committees: ["Executive office; the land commissioner does not receive legislative committee assignments."],
+    committees: [
+      "Executive office; the land commissioner does not receive legislative committee assignments.",
+    ],
     electionHistory: [
       { year: "2016", result: "First elected to Texas Senate District 24." },
       { year: "2020", result: "Reelected to the Texas Senate." },
       { year: "2022", result: "Elected commissioner of the Texas General Land Office." },
     ],
-    districtOverview: "The land commissioner is elected statewide and manages the Texas General Land Office.",
+    districtOverview:
+      "The land commissioner is elected statewide and manages the Texas General Land Office.",
     financeUrl: TEXAS_ETHICS,
     financeLabel: "Texas Ethics Commission campaign-finance search",
     newsKeywords: ["Dawn Buckingham", "Land Commissioner Buckingham", "Texas General Land Office"],
     sources: [
-      { label: "General Land Office leadership", url: "https://www.glo.texas.gov/about/leadership" },
-      { label: "Texas statewide elected officials", url: "https://www.sos.texas.gov/elections/voter/elected.shtml" },
+      {
+        label: "General Land Office leadership",
+        url: "https://www.glo.texas.gov/about/leadership",
+      },
+      {
+        label: "Texas statewide elected officials",
+        url: "https://www.sos.texas.gov/elections/voter/elected.shtml",
+      },
     ],
   },
   {
     slug: "wesley-hunt",
     reviewedAt: "2026-07-30",
-    biography: "Wesley Hunt represents Texas's 38th Congressional District. A West Point graduate and former Army Apache helicopter pilot, he entered Congress in January 2023.",
-    career: ["U.S. representative for Texas District 38 since 2023.", "Served in the U.S. Army as an aviation officer and Apache helicopter pilot.", "Worked in the private sector after military service."],
-    education: ["Bachelor of Science from the United States Military Academy at West Point.", "Graduate degrees from Cornell University, including an MBA and public-administration study."],
+    biography:
+      "Wesley Hunt represents Texas's 38th Congressional District. A West Point graduate and former Army Apache helicopter pilot, he entered Congress in January 2023.",
+    career: [
+      "U.S. representative for Texas District 38 since 2023.",
+      "Served in the U.S. Army as an aviation officer and Apache helicopter pilot.",
+      "Worked in the private sector after military service.",
+    ],
+    education: [
+      "Bachelor of Science from the United States Military Academy at West Point.",
+      "Graduate degrees from Cornell University, including an MBA and public-administration study.",
+    ],
     committees: ["House Committee on Natural Resources.", "House Committee on the Judiciary."],
-    electionHistory: [{ year: "2022", result: "First elected to the U.S. House." }, { year: "2024", result: "Reelected to a second House term." }],
-    districtOverview: "Texas District 38 is a Houston-area congressional district. Congressional boundaries may change after redistricting, so voters should verify their address through the official House lookup.",
+    electionHistory: [
+      { year: "2022", result: "First elected to the U.S. House." },
+      { year: "2024", result: "Reelected to a second House term." },
+    ],
+    districtOverview:
+      "Texas District 38 is a Houston-area congressional district. Congressional boundaries may change after redistricting, so voters should verify their address through the official House lookup.",
     financeUrl: `${FEC_SEARCH}${encodeURIComponent("Wesley Hunt")}`,
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["Wesley Hunt", "Congressman Hunt", "Texas District 38"],
-    sources: [{ label: "Official House biography", url: "https://hunt.house.gov/about" }, { label: "Official House directory and committees", url: "https://www.house.gov/representatives" }, { label: "Congressional Biographical Directory", url: "https://bioguide.congress.gov/search/bio/H001095" }],
+    sources: [
+      { label: "Official House biography", url: "https://hunt.house.gov/about" },
+      {
+        label: "Official House directory and committees",
+        url: "https://www.house.gov/representatives",
+      },
+      {
+        label: "Congressional Biographical Directory",
+        url: "https://bioguide.congress.gov/search/bio/H001095",
+      },
+    ],
   },
   {
     slug: "dan-crenshaw",
     reviewedAt: "2026-07-30",
-    biography: "Dan Crenshaw represents Texas's 2nd Congressional District. He served as a Navy SEAL before entering Congress in January 2019.",
-    career: ["U.S. representative for Texas District 2 since 2019.", "Served as a U.S. Navy SEAL officer, completing five overseas deployments.", "Worked as a congressional military legislative assistant after active military service."],
-    education: ["Bachelor's degree from Tufts University.", "Master of Public Administration from Harvard Kennedy School."],
-    committees: ["House Committee on Energy and Commerce.", "House Permanent Select Committee on Intelligence."],
-    electionHistory: [{ year: "2018", result: "First elected to the U.S. House." }, { year: "2020", result: "Reelected." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 2 is a Houston-area congressional district. Voters should confirm current boundaries and representation through the official House address lookup.",
+    biography:
+      "Dan Crenshaw represents Texas's 2nd Congressional District. He served as a Navy SEAL before entering Congress in January 2019.",
+    career: [
+      "U.S. representative for Texas District 2 since 2019.",
+      "Served as a U.S. Navy SEAL officer, completing five overseas deployments.",
+      "Worked as a congressional military legislative assistant after active military service.",
+    ],
+    education: [
+      "Bachelor's degree from Tufts University.",
+      "Master of Public Administration from Harvard Kennedy School.",
+    ],
+    committees: [
+      "House Committee on Energy and Commerce.",
+      "House Permanent Select Committee on Intelligence.",
+    ],
+    electionHistory: [
+      { year: "2018", result: "First elected to the U.S. House." },
+      { year: "2020", result: "Reelected." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 2 is a Houston-area congressional district. Voters should confirm current boundaries and representation through the official House address lookup.",
     financeUrl: `${FEC_SEARCH}${encodeURIComponent("Dan Crenshaw")}`,
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["Dan Crenshaw", "Congressman Crenshaw", "Texas District 2"],
-    sources: [{ label: "Official House biography", url: "https://crenshaw.house.gov/biography" }, { label: "Official House directory and committees", url: "https://www.house.gov/representatives" }],
+    sources: [
+      { label: "Official House biography", url: "https://crenshaw.house.gov/biography" },
+      {
+        label: "Official House directory and committees",
+        url: "https://www.house.gov/representatives",
+      },
+    ],
   },
   {
     slug: "chip-roy",
     reviewedAt: "2026-07-30",
-    biography: "Chip Roy represents Texas's 21st Congressional District. His earlier public-service roles included first assistant attorney general of Texas and chief of staff to U.S. Senator Ted Cruz.",
-    career: ["U.S. representative for Texas District 21 since 2019.", "Former first assistant attorney general of Texas.", "Former chief of staff to U.S. Senator Ted Cruz.", "Previously worked as a federal prosecutor and in private-sector roles."],
-    education: ["Bachelor of Science and Master of Arts from the University of Virginia.", "Juris Doctor from the University of Texas School of Law."],
-    committees: ["House Committee on the Budget.", "House Committee on the Judiciary.", "House Committee on Rules."],
-    electionHistory: [{ year: "2018", result: "First elected to the U.S. House." }, { year: "2020", result: "Reelected." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 21 includes parts of Central Texas and the Hill Country. Voters should verify current district boundaries through the official House lookup.",
+    biography:
+      "Chip Roy represents Texas's 21st Congressional District. His earlier public-service roles included first assistant attorney general of Texas and chief of staff to U.S. Senator Ted Cruz.",
+    career: [
+      "U.S. representative for Texas District 21 since 2019.",
+      "Former first assistant attorney general of Texas.",
+      "Former chief of staff to U.S. Senator Ted Cruz.",
+      "Previously worked as a federal prosecutor and in private-sector roles.",
+    ],
+    education: [
+      "Bachelor of Science and Master of Arts from the University of Virginia.",
+      "Juris Doctor from the University of Texas School of Law.",
+    ],
+    committees: [
+      "House Committee on the Budget.",
+      "House Committee on the Judiciary.",
+      "House Committee on Rules.",
+    ],
+    electionHistory: [
+      { year: "2018", result: "First elected to the U.S. House." },
+      { year: "2020", result: "Reelected." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 21 includes parts of Central Texas and the Hill Country. Voters should verify current district boundaries through the official House lookup.",
     financeUrl: `${FEC_SEARCH}${encodeURIComponent("Chip Roy")}`,
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["Chip Roy", "Congressman Roy", "Texas District 21"],
-    sources: [{ label: "Official House biography", url: "https://roy.house.gov/about" }, { label: "Official House directory and committees", url: "https://www.house.gov/representatives" }],
+    sources: [
+      { label: "Official House biography", url: "https://roy.house.gov/about" },
+      {
+        label: "Official House directory and committees",
+        url: "https://www.house.gov/representatives",
+      },
+    ],
   },
   {
     slug: "ronny-jackson",
     reviewedAt: "2026-07-30",
-    biography: "Ronny Jackson represents Texas's 13th Congressional District. A physician and retired Navy rear admiral, he served in the White House Medical Unit before entering Congress in January 2021.",
-    career: ["U.S. representative for Texas District 13 since 2021.", "Served 25 years in the U.S. Navy and retired as a rear admiral.", "Served as physician to the president and led the White House Medical Unit.", "Practiced emergency and operational medicine during his military career."],
-    education: ["Undergraduate degree from Texas A&M University.", "Medical degree from the University of Texas Medical Branch at Galveston."],
-    committees: ["House Committee on Agriculture.", "House Committee on Armed Services.", "House Committee on Foreign Affairs.", "House Permanent Select Committee on Intelligence."],
-    electionHistory: [{ year: "2020", result: "First elected to the U.S. House." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 13 covers a large portion of the Panhandle and North Texas. Voters should verify current boundaries through the official House lookup.",
+    biography:
+      "Ronny Jackson represents Texas's 13th Congressional District. A physician and retired Navy rear admiral, he served in the White House Medical Unit before entering Congress in January 2021.",
+    career: [
+      "U.S. representative for Texas District 13 since 2021.",
+      "Served 25 years in the U.S. Navy and retired as a rear admiral.",
+      "Served as physician to the president and led the White House Medical Unit.",
+      "Practiced emergency and operational medicine during his military career.",
+    ],
+    education: [
+      "Undergraduate degree from Texas A&M University.",
+      "Medical degree from the University of Texas Medical Branch at Galveston.",
+    ],
+    committees: [
+      "House Committee on Agriculture.",
+      "House Committee on Armed Services.",
+      "House Committee on Foreign Affairs.",
+      "House Permanent Select Committee on Intelligence.",
+    ],
+    electionHistory: [
+      { year: "2020", result: "First elected to the U.S. House." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 13 covers a large portion of the Panhandle and North Texas. Voters should verify current boundaries through the official House lookup.",
     financeUrl: `${FEC_SEARCH}${encodeURIComponent("Ronny Jackson")}`,
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["Ronny Jackson", "Congressman Jackson", "Texas District 13"],
-    sources: [{ label: "Official House biography", url: "https://jackson.house.gov/about/" }, { label: "Official House directory and committees", url: "https://www.house.gov/representatives" }],
+    sources: [
+      { label: "Official House biography", url: "https://jackson.house.gov/about/" },
+      {
+        label: "Official House directory and committees",
+        url: "https://www.house.gov/representatives",
+      },
+    ],
   },
   {
     slug: "pat-fallon",
     reviewedAt: "2026-07-30",
-    biography: "Pat Fallon represents Texas's 4th Congressional District. He previously served in the Texas House and Texas Senate and was an officer in the U.S. Air Force.",
-    career: ["U.S. representative for Texas District 4 since 2021.", "Former member of the Texas Senate and Texas House.", "Served as an officer in the U.S. Air Force.", "Founded and operated a business before entering Congress."],
+    biography:
+      "Pat Fallon represents Texas's 4th Congressional District. He previously served in the Texas House and Texas Senate and was an officer in the U.S. Air Force.",
+    career: [
+      "U.S. representative for Texas District 4 since 2021.",
+      "Former member of the Texas Senate and Texas House.",
+      "Served as an officer in the U.S. Air Force.",
+      "Founded and operated a business before entering Congress.",
+    ],
     education: ["Bachelor's degree from the University of Notre Dame."],
-    committees: ["House Committee on Armed Services.", "House Committee on Oversight and Government Reform.", "House Permanent Select Committee on Intelligence."],
-    electionHistory: [{ year: "2020", result: "First elected to the U.S. House." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 4 is a North and Northeast Texas congressional district. Voters should verify current boundaries through the official House lookup.",
+    committees: [
+      "House Committee on Armed Services.",
+      "House Committee on Oversight and Government Reform.",
+      "House Permanent Select Committee on Intelligence.",
+    ],
+    electionHistory: [
+      { year: "2020", result: "First elected to the U.S. House." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 4 is a North and Northeast Texas congressional district. Voters should verify current boundaries through the official House lookup.",
     financeUrl: `${FEC_SEARCH}${encodeURIComponent("Pat Fallon")}`,
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["Pat Fallon", "Congressman Fallon", "Texas District 4"],
-    sources: [{ label: "Official House biography", url: "https://fallon.house.gov/about/" }, { label: "Official House directory and committees", url: "https://www.house.gov/representatives" }],
+    sources: [
+      { label: "Official House biography", url: "https://fallon.house.gov/about/" },
+      {
+        label: "Official House directory and committees",
+        url: "https://www.house.gov/representatives",
+      },
+    ],
   },
   {
     slug: "beth-van-duyne",
     reviewedAt: "2026-07-30",
-    biography: "Beth Van Duyne represents Texas's 24th Congressional District. Before entering Congress, she served as mayor of Irving and as a regional administrator at the U.S. Department of Housing and Urban Development.",
-    career: ["U.S. representative for Texas District 24 since 2021.", "Former mayor and city council member of Irving, Texas.", "Former regional administrator for the U.S. Department of Housing and Urban Development."],
+    biography:
+      "Beth Van Duyne represents Texas's 24th Congressional District. Before entering Congress, she served as mayor of Irving and as a regional administrator at the U.S. Department of Housing and Urban Development.",
+    career: [
+      "U.S. representative for Texas District 24 since 2021.",
+      "Former mayor and city council member of Irving, Texas.",
+      "Former regional administrator for the U.S. Department of Housing and Urban Development.",
+    ],
     education: ["Bachelor's degree from Cornell University."],
     committees: ["House Committee on Small Business.", "House Committee on Ways and Means."],
-    electionHistory: [{ year: "2020", result: "First elected to the U.S. House." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 24 is centered in the Dallas–Fort Worth area. Voters should verify current boundaries through the official House lookup.",
+    electionHistory: [
+      { year: "2020", result: "First elected to the U.S. House." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 24 is centered in the Dallas–Fort Worth area. Voters should verify current boundaries through the official House lookup.",
     financeUrl: `${FEC_SEARCH}${encodeURIComponent("Beth Van Duyne")}`,
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["Beth Van Duyne", "Congresswoman Van Duyne", "Texas District 24"],
-    sources: [{ label: "Official House biography", url: "https://vanduyne.house.gov/about" }, { label: "Official House directory and committees", url: "https://www.house.gov/representatives" }],
+    sources: [
+      { label: "Official House biography", url: "https://vanduyne.house.gov/about" },
+      {
+        label: "Official House directory and committees",
+        url: "https://www.house.gov/representatives",
+      },
+    ],
   },
   {
     slug: "lance-gooden",
     reviewedAt: "2026-07-30",
-    biography: "Lance Gooden represents Texas's 5th Congressional District. He previously served three terms in the Texas House and worked in the insurance industry.",
-    career: ["U.S. representative for Texas District 5 since 2019.", "Served three terms in the Texas House of Representatives.", "Worked in the insurance industry for ten years."],
-    education: ["Bachelor of Arts in government and Bachelor of Business Administration in finance from the University of Texas at Austin."],
+    biography:
+      "Lance Gooden represents Texas's 5th Congressional District. He previously served three terms in the Texas House and worked in the insurance industry.",
+    career: [
+      "U.S. representative for Texas District 5 since 2019.",
+      "Served three terms in the Texas House of Representatives.",
+      "Worked in the insurance industry for ten years.",
+    ],
+    education: [
+      "Bachelor of Arts in government and Bachelor of Business Administration in finance from the University of Texas at Austin.",
+    ],
     committees: ["House Committee on Armed Services.", "House Committee on the Judiciary."],
-    electionHistory: [{ year: "2018", result: "First elected to the U.S. House." }, { year: "2020", result: "Reelected." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 5 extends east from the Dallas area into East Texas. Voters should verify current boundaries through the official House lookup.",
+    electionHistory: [
+      { year: "2018", result: "First elected to the U.S. House." },
+      { year: "2020", result: "Reelected." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 5 extends east from the Dallas area into East Texas. Voters should verify current boundaries through the official House lookup.",
     financeUrl: `${FEC_SEARCH}${encodeURIComponent("Lance Gooden")}`,
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["Lance Gooden", "Congressman Gooden", "Texas District 5"],
-    sources: [{ label: "Official House biography", url: "https://gooden.house.gov/about" }, { label: "Official House directory and committees", url: "https://www.house.gov/representatives" }, { label: "Congressional Biographical Directory", url: "https://bioguide.congress.gov/search/bio/G000589" }],
+    sources: [
+      { label: "Official House biography", url: "https://gooden.house.gov/about" },
+      {
+        label: "Official House directory and committees",
+        url: "https://www.house.gov/representatives",
+      },
+      {
+        label: "Congressional Biographical Directory",
+        url: "https://bioguide.congress.gov/search/bio/G000589",
+      },
+    ],
   },
   {
     slug: "monica-de-la-cruz",
     reviewedAt: "2026-07-30",
-    biography: "Monica De La Cruz represents Texas's 15th Congressional District. Before entering Congress, she worked as a small-business owner and insurance professional in South Texas.",
-    career: ["U.S. representative for Texas District 15 since 2023.", "Previously owned and operated a small business in South Texas.", "Worked in the insurance industry before entering Congress."],
+    biography:
+      "Monica De La Cruz represents Texas's 15th Congressional District. Before entering Congress, she worked as a small-business owner and insurance professional in South Texas.",
+    career: [
+      "U.S. representative for Texas District 15 since 2023.",
+      "Previously owned and operated a small business in South Texas.",
+      "Worked in the insurance industry before entering Congress.",
+    ],
     education: ["Bachelor of Business Administration from the University of Texas at San Antonio."],
     committees: ["House Committee on Agriculture.", "House Committee on Financial Services."],
-    electionHistory: [{ year: "2020", result: "Ran for Texas District 15." }, { year: "2022", result: "First elected to the U.S. House." }, { year: "2024", result: "Reelected to a second term." }],
-    districtOverview: "Texas District 15 is a South Texas congressional district that includes communities in the Rio Grande Valley. Voters should verify current boundaries through the official House lookup.",
+    electionHistory: [
+      { year: "2020", result: "Ran for Texas District 15." },
+      { year: "2022", result: "First elected to the U.S. House." },
+      { year: "2024", result: "Reelected to a second term." },
+    ],
+    districtOverview:
+      "Texas District 15 is a South Texas congressional district that includes communities in the Rio Grande Valley. Voters should verify current boundaries through the official House lookup.",
     financeUrl: `${FEC_SEARCH}${encodeURIComponent("Monica De La Cruz")}`,
     financeLabel: "Federal Election Commission candidate records",
     newsKeywords: ["Monica De La Cruz", "Congresswoman De La Cruz", "Texas District 15"],
-    sources: [{ label: "Official House biography", url: "https://delacruz.house.gov/about/" }, { label: "Official House directory and committees", url: "https://www.house.gov/representatives" }, { label: "Congressional Biographical Directory", url: "https://bioguide.congress.gov/scripts/biodisplay.pl?index=D000594" }],
+    sources: [
+      { label: "Official House biography", url: "https://delacruz.house.gov/about/" },
+      {
+        label: "Official House directory and committees",
+        url: "https://www.house.gov/representatives",
+      },
+      {
+        label: "Congressional Biographical Directory",
+        url: "https://bioguide.congress.gov/scripts/biodisplay.pl?index=D000594",
+      },
+    ],
   },
   {
-    slug: "nathaniel-moran", reviewedAt: "2026-07-30",
-    biography: "Nathaniel Moran represents Texas's 1st Congressional District. Before entering Congress, he practiced civil law and served in municipal and county government in East Texas.",
-    career: ["U.S. representative for Texas District 1 since 2023.", "Smith County judge from 2016 through 2022.", "Former Tyler City Council member and mayor pro tem.", "Practiced business and commercial law in East Texas."],
-    education: ["Studied at the United States Military Academy at West Point.", "Bachelor's degree in Russian language and area studies, MBA and Juris Doctor from Texas Tech University."],
-    committees: ["House Committee on Ethics.", "House Committee on Ways and Means.", "House Select Committee on the Strategic Competition Between the United States and the Chinese Communist Party."],
-    electionHistory: [{ year: "2022", result: "First elected to the U.S. House." }, { year: "2024", result: "Reelected to a second term." }],
-    districtOverview: "Texas District 1 is an East Texas congressional district. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Nathaniel Moran")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Nathaniel Moran", "Congressman Moran", "Texas District 1"],
-    sources: [{ label: "Official House biography", url: "https://moran.house.gov/about/" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "nathaniel-moran",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Nathaniel Moran represents Texas's 1st Congressional District. Before entering Congress, he practiced civil law and served in municipal and county government in East Texas.",
+    career: [
+      "U.S. representative for Texas District 1 since 2023.",
+      "Smith County judge from 2016 through 2022.",
+      "Former Tyler City Council member and mayor pro tem.",
+      "Practiced business and commercial law in East Texas.",
+    ],
+    education: [
+      "Studied at the United States Military Academy at West Point.",
+      "Bachelor's degree in Russian language and area studies, MBA and Juris Doctor from Texas Tech University.",
+    ],
+    committees: [
+      "House Committee on Ethics.",
+      "House Committee on Ways and Means.",
+      "House Select Committee on the Strategic Competition Between the United States and the Chinese Communist Party.",
+    ],
+    electionHistory: [
+      { year: "2022", result: "First elected to the U.S. House." },
+      { year: "2024", result: "Reelected to a second term." },
+    ],
+    districtOverview:
+      "Texas District 1 is an East Texas congressional district. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Nathaniel Moran")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Nathaniel Moran", "Congressman Moran", "Texas District 1"],
+    sources: [
+      { label: "Official House biography", url: "https://moran.house.gov/about/" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "keith-self", reviewedAt: "2026-07-30",
-    biography: "Keith Self represents Texas's 3rd Congressional District. He served for 25 years in the U.S. Army and later completed three terms as Collin County judge.",
-    career: ["U.S. representative for Texas District 3 since 2023.", "Collin County judge from 2007 through 2018.", "Retired U.S. Army lieutenant colonel with infantry, Special Forces and Pentagon assignments."],
+    slug: "keith-self",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Keith Self represents Texas's 3rd Congressional District. He served for 25 years in the U.S. Army and later completed three terms as Collin County judge.",
+    career: [
+      "U.S. representative for Texas District 3 since 2023.",
+      "Collin County judge from 2007 through 2018.",
+      "Retired U.S. Army lieutenant colonel with infantry, Special Forces and Pentagon assignments.",
+    ],
     education: ["Bachelor's degree from the United States Military Academy at West Point."],
-    committees: ["House Committee on Foreign Affairs.", "House Committee on Science, Space, and Technology.", "House Committee on Veterans' Affairs."],
-    electionHistory: [{ year: "2022", result: "First elected to the U.S. House." }, { year: "2024", result: "Reelected to a second term." }],
-    districtOverview: "Texas District 3 is centered in Collin County in North Texas. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Keith Self")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Keith Self", "Congressman Self", "Texas District 3"],
-    sources: [{ label: "Official House biography", url: "https://keithself.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    committees: [
+      "House Committee on Foreign Affairs.",
+      "House Committee on Science, Space, and Technology.",
+      "House Committee on Veterans' Affairs.",
+    ],
+    electionHistory: [
+      { year: "2022", result: "First elected to the U.S. House." },
+      { year: "2024", result: "Reelected to a second term." },
+    ],
+    districtOverview:
+      "Texas District 3 is centered in Collin County in North Texas. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Keith Self")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Keith Self", "Congressman Self", "Texas District 3"],
+    sources: [
+      { label: "Official House biography", url: "https://keithself.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "jake-ellzey", reviewedAt: "2026-07-30",
-    biography: "Jake Ellzey represents Texas's 6th Congressional District. He is a retired Navy pilot and previously served in the Texas House and on the Texas Veterans Commission.",
-    career: ["U.S. representative for Texas District 6 since a 2021 special election.", "Former Texas representative for House District 10.", "Served 20 years in the U.S. Navy as a helicopter and fighter pilot.", "Former Texas Veterans Commission member, commercial pilot and small-business owner."],
+    slug: "jake-ellzey",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Jake Ellzey represents Texas's 6th Congressional District. He is a retired Navy pilot and previously served in the Texas House and on the Texas Veterans Commission.",
+    career: [
+      "U.S. representative for Texas District 6 since a 2021 special election.",
+      "Former Texas representative for House District 10.",
+      "Served 20 years in the U.S. Navy as a helicopter and fighter pilot.",
+      "Former Texas Veterans Commission member, commercial pilot and small-business owner.",
+    ],
     education: ["Bachelor's degree from the United States Naval Academy."],
     committees: ["House Committee on Appropriations.", "House Committee on Small Business."],
-    electionHistory: [{ year: "2021", result: "Won the special election for Texas District 6." }, { year: "2022", result: "Elected to a full term." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 6 includes communities south of the Dallas–Fort Worth core. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Jake Ellzey")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Jake Ellzey", "Congressman Ellzey", "Texas District 6"],
-    sources: [{ label: "Official House biography", url: "https://ellzey.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2021", result: "Won the special election for Texas District 6." },
+      { year: "2022", result: "Elected to a full term." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 6 includes communities south of the Dallas–Fort Worth core. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Jake Ellzey")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Jake Ellzey", "Congressman Ellzey", "Texas District 6"],
+    sources: [
+      { label: "Official House biography", url: "https://ellzey.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "lizzie-fletcher", reviewedAt: "2026-07-30",
-    biography: "Lizzie Fletcher represents Texas's 7th Congressional District. Before entering Congress, she practiced commercial litigation in Houston and became the first woman partner at a Houston litigation firm.",
-    career: ["U.S. representative for Texas District 7 since 2019.", "Practiced law at Vinson & Elkins and Ahmad, Zavitsanos & Mensing in Houston.", "Worked in business and nonprofit roles before law school."],
-    education: ["Bachelor's degree in history from Kenyon College.", "Juris Doctor from William & Mary Law School."],
+    slug: "lizzie-fletcher",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Lizzie Fletcher represents Texas's 7th Congressional District. Before entering Congress, she practiced commercial litigation in Houston and became the first woman partner at a Houston litigation firm.",
+    career: [
+      "U.S. representative for Texas District 7 since 2019.",
+      "Practiced law at Vinson & Elkins and Ahmad, Zavitsanos & Mensing in Houston.",
+      "Worked in business and nonprofit roles before law school.",
+    ],
+    education: [
+      "Bachelor's degree in history from Kenyon College.",
+      "Juris Doctor from William & Mary Law School.",
+    ],
     committees: ["House Committee on Energy and Commerce."],
-    electionHistory: [{ year: "2018", result: "First elected to the U.S. House." }, { year: "2020", result: "Reelected." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 7 is a Houston-area congressional district. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Lizzie Fletcher")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Lizzie Fletcher", "Congresswoman Fletcher", "Texas District 7"],
-    sources: [{ label: "Official House biography", url: "https://fletcher.house.gov/about/" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2018", result: "First elected to the U.S. House." },
+      { year: "2020", result: "Reelected." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 7 is a Houston-area congressional district. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Lizzie Fletcher")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Lizzie Fletcher", "Congresswoman Fletcher", "Texas District 7"],
+    sources: [
+      { label: "Official House biography", url: "https://fletcher.house.gov/about/" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "morgan-luttrell", reviewedAt: "2026-07-30",
-    biography: "Morgan Luttrell represents Texas's 8th Congressional District. He served as a Navy SEAL, worked in federal veterans-policy roles and conducted research related to traumatic brain injury.",
-    career: ["U.S. representative for Texas District 8 since 2023.", "Served in the U.S. Navy as a SEAL.", "Former senior adviser at the U.S. Department of Energy and adviser in the Department of Veterans Affairs.", "Worked in health and human-performance research."],
-    education: ["Bachelor's degree in psychology from Sam Houston State University.", "Graduate study in applied cognition and neuroscience at the University of Texas at Dallas."],
-    committees: ["House Committee on Armed Services.", "House Committee on Homeland Security.", "House Committee on Veterans' Affairs."],
-    electionHistory: [{ year: "2022", result: "First elected to the U.S. House." }, { year: "2024", result: "Reelected to a second term." }],
-    districtOverview: "Texas District 8 covers communities north and northeast of Houston. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Morgan Luttrell")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Morgan Luttrell", "Congressman Luttrell", "Texas District 8"],
-    sources: [{ label: "Official House biography", url: "https://luttrell.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "morgan-luttrell",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Morgan Luttrell represents Texas's 8th Congressional District. He served as a Navy SEAL, worked in federal veterans-policy roles and conducted research related to traumatic brain injury.",
+    career: [
+      "U.S. representative for Texas District 8 since 2023.",
+      "Served in the U.S. Navy as a SEAL.",
+      "Former senior adviser at the U.S. Department of Energy and adviser in the Department of Veterans Affairs.",
+      "Worked in health and human-performance research.",
+    ],
+    education: [
+      "Bachelor's degree in psychology from Sam Houston State University.",
+      "Graduate study in applied cognition and neuroscience at the University of Texas at Dallas.",
+    ],
+    committees: [
+      "House Committee on Armed Services.",
+      "House Committee on Homeland Security.",
+      "House Committee on Veterans' Affairs.",
+    ],
+    electionHistory: [
+      { year: "2022", result: "First elected to the U.S. House." },
+      { year: "2024", result: "Reelected to a second term." },
+    ],
+    districtOverview:
+      "Texas District 8 covers communities north and northeast of Houston. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Morgan Luttrell")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Morgan Luttrell", "Congressman Luttrell", "Texas District 8"],
+    sources: [
+      { label: "Official House biography", url: "https://luttrell.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "al-green", reviewedAt: "2026-07-30",
-    biography: "Al Green represents Texas's 9th Congressional District. He practiced law, served as a Harris County justice of the peace for 26 years and led the Houston NAACP before entering Congress.",
-    career: ["U.S. representative for Texas District 9 since 2005.", "Harris County justice of the peace from 1977 through 2004.", "Co-founded and managed a Houston law firm.", "Former president of the Houston branch of the NAACP."],
-    education: ["Attended Florida A&M University, Howard University and Tuskegee Institute.", "Juris Doctor from Texas Southern University's Thurgood Marshall School of Law."],
+    slug: "al-green",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Al Green represents Texas's 9th Congressional District. He practiced law, served as a Harris County justice of the peace for 26 years and led the Houston NAACP before entering Congress.",
+    career: [
+      "U.S. representative for Texas District 9 since 2005.",
+      "Harris County justice of the peace from 1977 through 2004.",
+      "Co-founded and managed a Houston law firm.",
+      "Former president of the Houston branch of the NAACP.",
+    ],
+    education: [
+      "Attended Florida A&M University, Howard University and Tuskegee Institute.",
+      "Juris Doctor from Texas Southern University's Thurgood Marshall School of Law.",
+    ],
     committees: ["House Committee on Financial Services.", "House Committee on Homeland Security."],
-    electionHistory: [{ year: "2004", result: "First elected to the U.S. House." }, { year: "2006–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 9 is a Houston-area congressional district. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Al Green")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Al Green", "Congressman Al Green", "Texas District 9"],
-    sources: [{ label: "Official House biography", url: "https://algreen.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2004", result: "First elected to the U.S. House." },
+      { year: "2006–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 9 is a Houston-area congressional district. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Al Green")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Al Green", "Congressman Al Green", "Texas District 9"],
+    sources: [
+      { label: "Official House biography", url: "https://algreen.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "michael-mccaul", reviewedAt: "2026-07-30",
-    biography: "Michael McCaul represents Texas's 10th Congressional District. His earlier legal career included federal prosecution and service as a Texas deputy attorney general.",
-    career: ["U.S. representative for Texas District 10 since 2005.", "Former chief of counterterrorism and national security in the U.S. attorney's office for the Western District of Texas.", "Former Texas deputy attorney general and federal prosecutor."],
-    education: ["Bachelor's degree in business and history from Trinity University.", "Juris Doctor from St. Mary's University School of Law."],
+    slug: "michael-mccaul",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Michael McCaul represents Texas's 10th Congressional District. His earlier legal career included federal prosecution and service as a Texas deputy attorney general.",
+    career: [
+      "U.S. representative for Texas District 10 since 2005.",
+      "Former chief of counterterrorism and national security in the U.S. attorney's office for the Western District of Texas.",
+      "Former Texas deputy attorney general and federal prosecutor.",
+    ],
+    education: [
+      "Bachelor's degree in business and history from Trinity University.",
+      "Juris Doctor from St. Mary's University School of Law.",
+    ],
     committees: ["House Committee on Foreign Affairs.", "House Committee on Homeland Security."],
-    electionHistory: [{ year: "2004", result: "First elected to the U.S. House." }, { year: "2006–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 10 stretches between the Austin and Houston regions. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Michael McCaul")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Michael McCaul", "Congressman McCaul", "Texas District 10"],
-    sources: [{ label: "Official House biography", url: "https://mccaul.house.gov/about/full-biography" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2004", result: "First elected to the U.S. House." },
+      { year: "2006–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 10 stretches between the Austin and Houston regions. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Michael McCaul")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Michael McCaul", "Congressman McCaul", "Texas District 10"],
+    sources: [
+      { label: "Official House biography", url: "https://mccaul.house.gov/about/full-biography" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "august-pfluger", reviewedAt: "2026-07-30",
-    biography: "August Pfluger represents Texas's 11th Congressional District. He served for more than two decades as an Air Force fighter pilot and squadron commander before entering Congress.",
-    career: ["U.S. representative for Texas District 11 since 2021.", "Served 26 years in the U.S. Air Force and retired as a colonel in 2026.", "Former fighter pilot and squadron commander with combat deployments in the Middle East."],
+    slug: "august-pfluger",
+    reviewedAt: "2026-07-30",
+    biography:
+      "August Pfluger represents Texas's 11th Congressional District. He served for more than two decades as an Air Force fighter pilot and squadron commander before entering Congress.",
+    career: [
+      "U.S. representative for Texas District 11 since 2021.",
+      "Served 26 years in the U.S. Air Force and retired as a colonel in 2026.",
+      "Former fighter pilot and squadron commander with combat deployments in the Middle East.",
+    ],
     education: ["Bachelor's degree from the United States Air Force Academy."],
-    committees: ["House Committee on Homeland Security.", "House Committee on Energy and Commerce."],
-    electionHistory: [{ year: "2020", result: "First elected to the U.S. House." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 11 covers a broad area of West and Central Texas. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("August Pfluger")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["August Pfluger", "Congressman Pfluger", "Texas District 11"],
-    sources: [{ label: "Official House biography", url: "https://pfluger.house.gov/about/about-august.htm" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    committees: [
+      "House Committee on Homeland Security.",
+      "House Committee on Energy and Commerce.",
+    ],
+    electionHistory: [
+      { year: "2020", result: "First elected to the U.S. House." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 11 covers a broad area of West and Central Texas. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("August Pfluger")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["August Pfluger", "Congressman Pfluger", "Texas District 11"],
+    sources: [
+      {
+        label: "Official House biography",
+        url: "https://pfluger.house.gov/about/about-august.htm",
+      },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "craig-goldman", reviewedAt: "2026-07-30",
-    biography: "Craig Goldman represents Texas's 12th Congressional District. Before entering Congress, he represented Fort Worth-area communities in the Texas House and worked in business.",
-    career: ["U.S. representative for Texas District 12 since 2025.", "Texas representative for House District 97 from 2013 through 2025.", "Worked in a family-operated business before holding federal office."],
+    slug: "craig-goldman",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Craig Goldman represents Texas's 12th Congressional District. Before entering Congress, he represented Fort Worth-area communities in the Texas House and worked in business.",
+    career: [
+      "U.S. representative for Texas District 12 since 2025.",
+      "Texas representative for House District 97 from 2013 through 2025.",
+      "Worked in a family-operated business before holding federal office.",
+    ],
     education: ["Bachelor of Arts from the University of Texas at Austin."],
     committees: ["House Committee on Energy and Commerce."],
     electionHistory: [{ year: "2024", result: "First elected to the U.S. House." }],
-    districtOverview: "Texas District 12 includes Fort Worth-area communities in North Texas. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Craig Goldman")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Craig Goldman", "Congressman Goldman", "Texas District 12"],
-    sources: [{ label: "Official House biography", url: "https://craiggoldman.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    districtOverview:
+      "Texas District 12 includes Fort Worth-area communities in North Texas. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Craig Goldman")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Craig Goldman", "Congressman Goldman", "Texas District 12"],
+    sources: [
+      { label: "Official House biography", url: "https://craiggoldman.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "randy-weber", reviewedAt: "2026-07-30",
-    biography: "Randy Weber represents Texas's 14th Congressional District. He previously owned an air-conditioning business and served in local government and the Texas House.",
-    career: ["U.S. representative for Texas District 14 since 2013.", "Texas representative for House District 29 from 2009 through 2013.", "Former Pearland City Council member.", "Founded and operated an air-conditioning company."],
+    slug: "randy-weber",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Randy Weber represents Texas's 14th Congressional District. He previously owned an air-conditioning business and served in local government and the Texas House.",
+    career: [
+      "U.S. representative for Texas District 14 since 2013.",
+      "Texas representative for House District 29 from 2009 through 2013.",
+      "Former Pearland City Council member.",
+      "Founded and operated an air-conditioning company.",
+    ],
     education: ["Bachelor of Science in public affairs from the University of Houston–Clear Lake."],
-    committees: ["House Committee on Energy and Commerce.", "House Committee on Science, Space, and Technology."],
-    electionHistory: [{ year: "2012", result: "First elected to the U.S. House." }, { year: "2014–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 14 includes Gulf Coast communities southeast of Houston. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Randy Weber")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Randy Weber", "Congressman Weber", "Texas District 14"],
-    sources: [{ label: "Official House biography", url: "https://weber.house.gov/about/full-biography" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    committees: [
+      "House Committee on Energy and Commerce.",
+      "House Committee on Science, Space, and Technology.",
+    ],
+    electionHistory: [
+      { year: "2012", result: "First elected to the U.S. House." },
+      { year: "2014–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 14 includes Gulf Coast communities southeast of Houston. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Randy Weber")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Randy Weber", "Congressman Weber", "Texas District 14"],
+    sources: [
+      { label: "Official House biography", url: "https://weber.house.gov/about/full-biography" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "veronica-escobar", reviewedAt: "2026-07-30",
-    biography: "Veronica Escobar represents Texas's 16th Congressional District. Before entering Congress, she served as an El Paso County commissioner and county judge and worked in education and nonprofit leadership.",
-    career: ["U.S. representative for Texas District 16 since 2019.", "Former El Paso County judge and county commissioner.", "Former college English instructor, nonprofit executive director and municipal communications director."],
-    education: ["Graduate of the University of Texas at El Paso.", "Graduate study at New York University."],
+    slug: "veronica-escobar",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Veronica Escobar represents Texas's 16th Congressional District. Before entering Congress, she served as an El Paso County commissioner and county judge and worked in education and nonprofit leadership.",
+    career: [
+      "U.S. representative for Texas District 16 since 2019.",
+      "Former El Paso County judge and county commissioner.",
+      "Former college English instructor, nonprofit executive director and municipal communications director.",
+    ],
+    education: [
+      "Graduate of the University of Texas at El Paso.",
+      "Graduate study at New York University.",
+    ],
     committees: ["House Committee on Appropriations.", "House Committee on the Budget."],
-    electionHistory: [{ year: "2018", result: "First elected to the U.S. House." }, { year: "2020", result: "Reelected." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 16 is centered in El Paso. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Veronica Escobar")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Veronica Escobar", "Congresswoman Escobar", "Texas District 16"],
-    sources: [{ label: "Official House biography", url: "https://escobar.house.gov/about/" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2018", result: "First elected to the U.S. House." },
+      { year: "2020", result: "Reelected." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 16 is centered in El Paso. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Veronica Escobar")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Veronica Escobar", "Congresswoman Escobar", "Texas District 16"],
+    sources: [
+      { label: "Official House biography", url: "https://escobar.house.gov/about/" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "pete-sessions", reviewedAt: "2026-07-30",
-    biography: "Pete Sessions represents Texas's 17th Congressional District. He previously represented Dallas-area districts, worked for Southwestern Bell and held senior House Republican leadership positions.",
-    career: ["U.S. representative for Texas District 17 since 2021.", "Previously represented Texas Districts 5 and 32 from 1997 through 2019.", "Former chair of the House Rules Committee and National Republican Congressional Committee.", "Worked for Southwestern Bell for 16 years."],
+    slug: "pete-sessions",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Pete Sessions represents Texas's 17th Congressional District. He previously represented Dallas-area districts, worked for Southwestern Bell and held senior House Republican leadership positions.",
+    career: [
+      "U.S. representative for Texas District 17 since 2021.",
+      "Previously represented Texas Districts 5 and 32 from 1997 through 2019.",
+      "Former chair of the House Rules Committee and National Republican Congressional Committee.",
+      "Worked for Southwestern Bell for 16 years.",
+    ],
     education: ["Bachelor's degree from Southwestern University."],
-    committees: ["House Committee on Financial Services.", "House Committee on Oversight and Government Reform."],
-    electionHistory: [{ year: "1996", result: "First elected to the U.S. House." }, { year: "1998–2016", result: "Reelected across Dallas-area congressional districts." }, { year: "2018", result: "Defeated in the District 32 general election." }, { year: "2020", result: "Elected to represent Texas District 17." }, { year: "2022–2024", result: "Reelected." }],
-    districtOverview: "Texas District 17 includes communities in Central and East Texas. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Pete Sessions")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Pete Sessions", "Congressman Sessions", "Texas District 17"],
-    sources: [{ label: "Official House biography", url: "https://sessions.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    committees: [
+      "House Committee on Financial Services.",
+      "House Committee on Oversight and Government Reform.",
+    ],
+    electionHistory: [
+      { year: "1996", result: "First elected to the U.S. House." },
+      { year: "1998–2016", result: "Reelected across Dallas-area congressional districts." },
+      { year: "2018", result: "Defeated in the District 32 general election." },
+      { year: "2020", result: "Elected to represent Texas District 17." },
+      { year: "2022–2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 17 includes communities in Central and East Texas. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Pete Sessions")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Pete Sessions", "Congressman Sessions", "Texas District 17"],
+    sources: [
+      { label: "Official House biography", url: "https://sessions.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "christian-menefee", reviewedAt: "2026-07-30",
-    biography: "Christian Menefee represents Texas's 18th Congressional District. He previously served as Harris County attorney and practiced law in Houston.",
-    career: ["U.S. representative for Texas District 18 since 2026.", "Harris County attorney from 2021 until entering Congress.", "Previously practiced litigation at Houston law firms."],
-    education: ["Bachelor's degree from the University of Texas at San Antonio.", "Juris Doctor from Washington University School of Law in St. Louis."],
-    committees: ["House Committee on Oversight and Government Reform.", "House Committee on Science, Space, and Technology."],
-    electionHistory: [{ year: "2020", result: "Elected Harris County attorney." }, { year: "2026", result: "Won the special election for Texas District 18." }],
-    districtOverview: "Texas District 18 is a Houston-area congressional district. Voters should confirm current representation through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Christian Menefee")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Christian Menefee", "Congressman Menefee", "Texas District 18"],
-    sources: [{ label: "Official House biography", url: "https://menefee.house.gov/about/biography" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "christian-menefee",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Christian Menefee represents Texas's 18th Congressional District. He previously served as Harris County attorney and practiced law in Houston.",
+    career: [
+      "U.S. representative for Texas District 18 since 2026.",
+      "Harris County attorney from 2021 until entering Congress.",
+      "Previously practiced litigation at Houston law firms.",
+    ],
+    education: [
+      "Bachelor's degree from the University of Texas at San Antonio.",
+      "Juris Doctor from Washington University School of Law in St. Louis.",
+    ],
+    committees: [
+      "House Committee on Oversight and Government Reform.",
+      "House Committee on Science, Space, and Technology.",
+    ],
+    electionHistory: [
+      { year: "2020", result: "Elected Harris County attorney." },
+      { year: "2026", result: "Won the special election for Texas District 18." },
+    ],
+    districtOverview:
+      "Texas District 18 is a Houston-area congressional district. Voters should confirm current representation through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Christian Menefee")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Christian Menefee", "Congressman Menefee", "Texas District 18"],
+    sources: [
+      { label: "Official House biography", url: "https://menefee.house.gov/about/biography" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "jodey-arrington", reviewedAt: "2026-07-30",
-    biography: "Jodey Arrington represents Texas's 19th Congressional District. His earlier career included service in the George W. Bush administration, leadership at Texas Tech University and work in healthcare innovation.",
-    career: ["U.S. representative for Texas District 19 since 2017.", "Former senior adviser in the White House and chief of staff at the Federal Deposit Insurance Corporation.", "Former vice chancellor of the Texas Tech University System.", "Former president of a healthcare innovation company."],
+    slug: "jodey-arrington",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Jodey Arrington represents Texas's 19th Congressional District. His earlier career included service in the George W. Bush administration, leadership at Texas Tech University and work in healthcare innovation.",
+    career: [
+      "U.S. representative for Texas District 19 since 2017.",
+      "Former senior adviser in the White House and chief of staff at the Federal Deposit Insurance Corporation.",
+      "Former vice chancellor of the Texas Tech University System.",
+      "Former president of a healthcare innovation company.",
+    ],
     education: ["Graduate of Texas Tech University."],
     committees: ["House Committee on the Budget.", "House Committee on Ways and Means."],
-    electionHistory: [{ year: "2016", result: "First elected to the U.S. House." }, { year: "2018–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 19 covers much of the South Plains and West Texas. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Jodey Arrington")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Jodey Arrington", "Congressman Arrington", "Texas District 19"],
-    sources: [{ label: "Official House biography", url: "https://arrington.house.gov/about-jodey/" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2016", result: "First elected to the U.S. House." },
+      { year: "2018–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 19 covers much of the South Plains and West Texas. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Jodey Arrington")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Jodey Arrington", "Congressman Arrington", "Texas District 19"],
+    sources: [
+      { label: "Official House biography", url: "https://arrington.house.gov/about-jodey/" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "joaquin-castro", reviewedAt: "2026-07-30",
-    biography: "Joaquin Castro represents Texas's 20th Congressional District. He practiced law, taught at San Antonio universities and served five terms in the Texas House before entering Congress.",
-    career: ["U.S. representative for Texas District 20 since 2013.", "Texas representative for District 125 for five terms.", "Former private-practice attorney and visiting or adjunct law professor."],
-    education: ["Bachelor's degree with honors from Stanford University.", "Juris Doctor from Harvard Law School."],
-    committees: ["House Committee on Foreign Affairs.", "House Permanent Select Committee on Intelligence."],
-    electionHistory: [{ year: "2012", result: "First elected to the U.S. House." }, { year: "2014–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 20 includes much of San Antonio and surrounding Bexar County communities. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Joaquin Castro")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Joaquin Castro", "Congressman Castro", "Texas District 20"],
-    sources: [{ label: "Official House biography", url: "https://castro.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "joaquin-castro",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Joaquin Castro represents Texas's 20th Congressional District. He practiced law, taught at San Antonio universities and served five terms in the Texas House before entering Congress.",
+    career: [
+      "U.S. representative for Texas District 20 since 2013.",
+      "Texas representative for District 125 for five terms.",
+      "Former private-practice attorney and visiting or adjunct law professor.",
+    ],
+    education: [
+      "Bachelor's degree with honors from Stanford University.",
+      "Juris Doctor from Harvard Law School.",
+    ],
+    committees: [
+      "House Committee on Foreign Affairs.",
+      "House Permanent Select Committee on Intelligence.",
+    ],
+    electionHistory: [
+      { year: "2012", result: "First elected to the U.S. House." },
+      { year: "2014–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 20 includes much of San Antonio and surrounding Bexar County communities. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Joaquin Castro")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Joaquin Castro", "Congressman Castro", "Texas District 20"],
+    sources: [
+      { label: "Official House biography", url: "https://castro.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "troy-nehls", reviewedAt: "2026-07-30",
-    biography: "Troy Nehls represents Texas's 22nd Congressional District. He served in the Army Reserve and in Fort Bend County law enforcement before entering Congress.",
-    career: ["U.S. representative for Texas District 22 since 2021.", "Fort Bend County sheriff from 2013 through 2020.", "Former Fort Bend County constable.", "Served in the U.S. Army Reserve, including overseas deployments."],
-    education: ["Bachelor's degree from Liberty University.", "Master's degree from the University of Houston–Downtown."],
-    committees: ["House Committee on the Judiciary.", "House Committee on Transportation and Infrastructure.", "House Select Subcommittee investigating remaining questions surrounding January 6, 2021."],
-    electionHistory: [{ year: "2020", result: "First elected to the U.S. House." }, { year: "2022", result: "Reelected." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 22 includes Fort Bend County-area communities southwest of Houston. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Troy Nehls")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Troy Nehls", "Congressman Nehls", "Texas District 22"],
-    sources: [{ label: "Official House biography", url: "https://nehls.house.gov/about/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "troy-nehls",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Troy Nehls represents Texas's 22nd Congressional District. He served in the Army Reserve and in Fort Bend County law enforcement before entering Congress.",
+    career: [
+      "U.S. representative for Texas District 22 since 2021.",
+      "Fort Bend County sheriff from 2013 through 2020.",
+      "Former Fort Bend County constable.",
+      "Served in the U.S. Army Reserve, including overseas deployments.",
+    ],
+    education: [
+      "Bachelor's degree from Liberty University.",
+      "Master's degree from the University of Houston–Downtown.",
+    ],
+    committees: [
+      "House Committee on the Judiciary.",
+      "House Committee on Transportation and Infrastructure.",
+      "House Select Subcommittee investigating remaining questions surrounding January 6, 2021.",
+    ],
+    electionHistory: [
+      { year: "2020", result: "First elected to the U.S. House." },
+      { year: "2022", result: "Reelected." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 22 includes Fort Bend County-area communities southwest of Houston. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Troy Nehls")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Troy Nehls", "Congressman Nehls", "Texas District 22"],
+    sources: [
+      { label: "Official House biography", url: "https://nehls.house.gov/about/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "roger-williams", reviewedAt: "2026-07-30",
-    biography: "Roger Williams represents Texas's 25th Congressional District. He has worked in the automobile business and previously served as Texas secretary of state and as a state agency leader.",
-    career: ["U.S. representative for Texas District 25 since 2013.", "Former Texas secretary of state.", "Former chair of the Texas Department of Motor Vehicles and member of the Texas Economic Development Corporation.", "Owner of an automobile dealership business."],
+    slug: "roger-williams",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Roger Williams represents Texas's 25th Congressional District. He has worked in the automobile business and previously served as Texas secretary of state and as a state agency leader.",
+    career: [
+      "U.S. representative for Texas District 25 since 2013.",
+      "Former Texas secretary of state.",
+      "Former chair of the Texas Department of Motor Vehicles and member of the Texas Economic Development Corporation.",
+      "Owner of an automobile dealership business.",
+    ],
     education: ["Bachelor's degree from Texas Christian University."],
     committees: ["House Committee on Financial Services.", "House Committee on Small Business."],
-    electionHistory: [{ year: "2012", result: "First elected to the U.S. House." }, { year: "2014–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 25 includes portions of North and Central Texas. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Roger Williams")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Roger Williams", "Congressman Williams", "Texas District 25"],
-    sources: [{ label: "Official House biography", url: "https://williams.house.gov/about/full-biography" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2012", result: "First elected to the U.S. House." },
+      { year: "2014–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 25 includes portions of North and Central Texas. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Roger Williams")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Roger Williams", "Congressman Williams", "Texas District 25"],
+    sources: [
+      { label: "Official House biography", url: "https://williams.house.gov/about/full-biography" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "brandon-gill", reviewedAt: "2026-07-30",
-    biography: "Brandon Gill represents Texas's 26th Congressional District. Before entering Congress, he worked in finance and founded a conservative digital-media company.",
-    career: ["U.S. representative for Texas District 26 since 2025.", "Former investment banker and hedge-fund analyst.", "Founder of the DC Enquirer digital-media company."],
+    slug: "brandon-gill",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Brandon Gill represents Texas's 26th Congressional District. Before entering Congress, he worked in finance and founded a conservative digital-media company.",
+    career: [
+      "U.S. representative for Texas District 26 since 2025.",
+      "Former investment banker and hedge-fund analyst.",
+      "Founder of the DC Enquirer digital-media company.",
+    ],
     education: ["Bachelor's degrees in economics and history from Dartmouth College."],
-    committees: ["House Committee on the Budget.", "House Committee on Oversight and Government Reform.", "House Committee on the Judiciary."],
+    committees: [
+      "House Committee on the Budget.",
+      "House Committee on Oversight and Government Reform.",
+      "House Committee on the Judiciary.",
+    ],
     electionHistory: [{ year: "2024", result: "First elected to the U.S. House." }],
-    districtOverview: "Texas District 26 includes Denton County and nearby North Texas communities. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Brandon Gill")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Brandon Gill", "Congressman Gill", "Texas District 26"],
-    sources: [{ label: "Official House biography", url: "https://gill.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    districtOverview:
+      "Texas District 26 includes Denton County and nearby North Texas communities. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Brandon Gill")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Brandon Gill", "Congressman Gill", "Texas District 26"],
+    sources: [
+      { label: "Official House biography", url: "https://gill.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "michael-cloud", reviewedAt: "2026-07-30",
-    biography: "Michael Cloud represents Texas's 27th Congressional District. Before entering Congress, he owned a communications and media business and served in local civic and political leadership roles.",
-    career: ["U.S. representative for Texas District 27 since a 2018 special election.", "Former owner of a communications and media company.", "Previously served as chair of the Victoria County Republican Party."],
+    slug: "michael-cloud",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Michael Cloud represents Texas's 27th Congressional District. Before entering Congress, he owned a communications and media business and served in local civic and political leadership roles.",
+    career: [
+      "U.S. representative for Texas District 27 since a 2018 special election.",
+      "Former owner of a communications and media company.",
+      "Previously served as chair of the Victoria County Republican Party.",
+    ],
     education: ["Bachelor's degree in communications from Oral Roberts University."],
-    committees: ["House Committee on Appropriations.", "House Committee on Oversight and Government Reform."],
-    electionHistory: [{ year: "2018", result: "Won the special election and subsequent general election for Texas District 27." }, { year: "2020–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 27 includes Coastal Bend and South Texas communities. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Michael Cloud")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Michael Cloud", "Congressman Cloud", "Texas District 27"],
-    sources: [{ label: "Official House biography", url: "https://cloud.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    committees: [
+      "House Committee on Appropriations.",
+      "House Committee on Oversight and Government Reform.",
+    ],
+    electionHistory: [
+      {
+        year: "2018",
+        result: "Won the special election and subsequent general election for Texas District 27.",
+      },
+      { year: "2020–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 27 includes Coastal Bend and South Texas communities. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Michael Cloud")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Michael Cloud", "Congressman Cloud", "Texas District 27"],
+    sources: [
+      { label: "Official House biography", url: "https://cloud.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "henry-cuellar", reviewedAt: "2026-07-30",
-    biography: "Henry Cuellar represents Texas's 28th Congressional District. He previously served in the Texas House, as Texas secretary of state and in state regulatory leadership.",
-    career: ["U.S. representative for Texas District 28 since 2005.", "Former Texas secretary of state.", "Texas representative for District 42 from 1987 through 2001.", "Former Texas Railroad Commission member and university instructor."],
-    education: ["Associate degree from Laredo Community College.", "Bachelor's degree from Georgetown University.", "Master's degree from Texas A&M International University.", "Juris Doctor and doctoral degree in government from the University of Texas at Austin."],
+    slug: "henry-cuellar",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Henry Cuellar represents Texas's 28th Congressional District. He previously served in the Texas House, as Texas secretary of state and in state regulatory leadership.",
+    career: [
+      "U.S. representative for Texas District 28 since 2005.",
+      "Former Texas secretary of state.",
+      "Texas representative for District 42 from 1987 through 2001.",
+      "Former Texas Railroad Commission member and university instructor.",
+    ],
+    education: [
+      "Associate degree from Laredo Community College.",
+      "Bachelor's degree from Georgetown University.",
+      "Master's degree from Texas A&M International University.",
+      "Juris Doctor and doctoral degree in government from the University of Texas at Austin.",
+    ],
     committees: ["House Committee on Appropriations."],
-    electionHistory: [{ year: "2004", result: "First elected to the U.S. House." }, { year: "2006–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 28 extends from the San Antonio area to the South Texas border region. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Henry Cuellar")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Henry Cuellar", "Congressman Cuellar", "Texas District 28"],
-    sources: [{ label: "Official House biography", url: "https://cuellar.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2004", result: "First elected to the U.S. House." },
+      { year: "2006–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 28 extends from the San Antonio area to the South Texas border region. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Henry Cuellar")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Henry Cuellar", "Congressman Cuellar", "Texas District 28"],
+    sources: [
+      { label: "Official House biography", url: "https://cuellar.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "sylvia-garcia", reviewedAt: "2026-07-30",
-    biography: "Sylvia Garcia represents Texas's 29th Congressional District. Her public-service career has included municipal, county and state offices in the Houston area before her election to Congress.",
-    career: ["U.S. representative for Texas District 29 since 2019.", "Texas senator for District 6 from 2013 through 2018.", "Former Harris County commissioner, Houston city controller and Houston municipal judge.", "Previously worked as a social worker and legal-aid attorney."],
-    education: ["Bachelor's degree in social work from Texas Woman's University.", "Doctor of Jurisprudence from the Thurgood Marshall School of Law at Texas Southern University."],
+    slug: "sylvia-garcia",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Sylvia Garcia represents Texas's 29th Congressional District. Her public-service career has included municipal, county and state offices in the Houston area before her election to Congress.",
+    career: [
+      "U.S. representative for Texas District 29 since 2019.",
+      "Texas senator for District 6 from 2013 through 2018.",
+      "Former Harris County commissioner, Houston city controller and Houston municipal judge.",
+      "Previously worked as a social worker and legal-aid attorney.",
+    ],
+    education: [
+      "Bachelor's degree in social work from Texas Woman's University.",
+      "Doctor of Jurisprudence from the Thurgood Marshall School of Law at Texas Southern University.",
+    ],
     committees: ["House Committee on Financial Services.", "House Committee on Ethics."],
-    electionHistory: [{ year: "2018", result: "First elected to the U.S. House." }, { year: "2020–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 29 includes eastern Houston and nearby Harris County communities. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Sylvia Garcia")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Sylvia Garcia", "Congresswoman Garcia", "Texas District 29"],
-    sources: [{ label: "Official House biography", url: "https://sylviagarcia.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2018", result: "First elected to the U.S. House." },
+      { year: "2020–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 29 includes eastern Houston and nearby Harris County communities. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Sylvia Garcia")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Sylvia Garcia", "Congresswoman Garcia", "Texas District 29"],
+    sources: [
+      { label: "Official House biography", url: "https://sylviagarcia.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "jasmine-crockett", reviewedAt: "2026-07-30",
-    biography: "Jasmine Crockett represents Texas's 30th Congressional District. She worked as a public defender and civil-rights and criminal-defense attorney before serving in the Texas House and Congress.",
-    career: ["U.S. representative for Texas District 30 since 2023.", "Texas representative for District 100 from 2021 through 2023.", "Former Bowie County assistant public defender and civil-rights and criminal-defense attorney.", "Former chair of the Bowie County Democratic Party."],
-    education: ["Bachelor of Arts in business administration from Rhodes College.", "Juris Doctor from the University of Houston."],
-    committees: ["House Committee on Oversight and Government Reform.", "House Committee on the Judiciary.", "House Select Subcommittee investigating remaining questions surrounding January 6, 2021."],
-    electionHistory: [{ year: "2022", result: "First elected to the U.S. House." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 30 includes portions of Dallas and Tarrant counties. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Jasmine Crockett")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Jasmine Crockett", "Congresswoman Crockett", "Texas District 30"],
-    sources: [{ label: "Official House biography", url: "https://crockett.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "jasmine-crockett",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Jasmine Crockett represents Texas's 30th Congressional District. She worked as a public defender and civil-rights and criminal-defense attorney before serving in the Texas House and Congress.",
+    career: [
+      "U.S. representative for Texas District 30 since 2023.",
+      "Texas representative for District 100 from 2021 through 2023.",
+      "Former Bowie County assistant public defender and civil-rights and criminal-defense attorney.",
+      "Former chair of the Bowie County Democratic Party.",
+    ],
+    education: [
+      "Bachelor of Arts in business administration from Rhodes College.",
+      "Juris Doctor from the University of Houston.",
+    ],
+    committees: [
+      "House Committee on Oversight and Government Reform.",
+      "House Committee on the Judiciary.",
+      "House Select Subcommittee investigating remaining questions surrounding January 6, 2021.",
+    ],
+    electionHistory: [
+      { year: "2022", result: "First elected to the U.S. House." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 30 includes portions of Dallas and Tarrant counties. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Jasmine Crockett")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Jasmine Crockett", "Congresswoman Crockett", "Texas District 30"],
+    sources: [
+      { label: "Official House biography", url: "https://crockett.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "john-carter", reviewedAt: "2026-07-30",
-    biography: "John Carter represents Texas's 31st Congressional District. A longtime Central Texas lawyer and judge, he entered Congress after two decades on the state district-court bench.",
-    career: ["U.S. representative for Texas District 31 since 2003.", "Judge of the 277th District Court in Williamson County for approximately two decades.", "Previously practiced law in Round Rock."],
-    education: ["Bachelor's degree from Texas Tech University.", "Law degree from the University of Texas."],
+    slug: "john-carter",
+    reviewedAt: "2026-07-30",
+    biography:
+      "John Carter represents Texas's 31st Congressional District. A longtime Central Texas lawyer and judge, he entered Congress after two decades on the state district-court bench.",
+    career: [
+      "U.S. representative for Texas District 31 since 2003.",
+      "Judge of the 277th District Court in Williamson County for approximately two decades.",
+      "Previously practiced law in Round Rock.",
+    ],
+    education: [
+      "Bachelor's degree from Texas Tech University.",
+      "Law degree from the University of Texas.",
+    ],
     committees: ["House Committee on Appropriations."],
-    electionHistory: [{ year: "2002", result: "First elected to the U.S. House." }, { year: "2004–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 31 includes parts of Central Texas, including communities in Bell and Williamson counties. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("John Carter")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["John Carter", "Congressman Carter", "Texas District 31"],
-    sources: [{ label: "Official House biography", url: "https://carter.house.gov/about/" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2002", result: "First elected to the U.S. House." },
+      { year: "2004–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 31 includes parts of Central Texas, including communities in Bell and Williamson counties. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("John Carter")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["John Carter", "Congressman Carter", "Texas District 31"],
+    sources: [
+      { label: "Official House biography", url: "https://carter.house.gov/about/" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "julie-johnson", reviewedAt: "2026-07-30",
-    biography: "Julie Johnson represents Texas's 32nd Congressional District. She practiced law for more than three decades and served three terms in the Texas House before entering Congress.",
-    career: ["U.S. representative for Texas District 32 since 2025.", "Texas representative for District 115 from 2019 through 2025.", "Attorney whose practice has included personal-injury, family-law and mediation matters."],
-    education: ["Bachelor's degree from the University of Texas at Austin.", "Juris Doctor from the University of Houston Law Center."],
-    committees: ["House Committee on Foreign Affairs.", "House Committee on House Administration.", "House Committee on Homeland Security.", "Joint Committee of Congress on the Library."],
-    electionHistory: [{ year: "2018–2022", result: "Elected and twice reelected to the Texas House." }, { year: "2024", result: "First elected to the U.S. House with more than 60 percent of the vote." }],
-    districtOverview: "Texas District 32 includes Dallas-area communities in Dallas, Collin and Denton counties. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Julie Johnson")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Julie Johnson", "Congresswoman Johnson", "Texas District 32"],
-    sources: [{ label: "Official House biography", url: "https://juliejohnson.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "julie-johnson",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Julie Johnson represents Texas's 32nd Congressional District. She practiced law for more than three decades and served three terms in the Texas House before entering Congress.",
+    career: [
+      "U.S. representative for Texas District 32 since 2025.",
+      "Texas representative for District 115 from 2019 through 2025.",
+      "Attorney whose practice has included personal-injury, family-law and mediation matters.",
+    ],
+    education: [
+      "Bachelor's degree from the University of Texas at Austin.",
+      "Juris Doctor from the University of Houston Law Center.",
+    ],
+    committees: [
+      "House Committee on Foreign Affairs.",
+      "House Committee on House Administration.",
+      "House Committee on Homeland Security.",
+      "Joint Committee of Congress on the Library.",
+    ],
+    electionHistory: [
+      { year: "2018–2022", result: "Elected and twice reelected to the Texas House." },
+      {
+        year: "2024",
+        result: "First elected to the U.S. House with more than 60 percent of the vote.",
+      },
+    ],
+    districtOverview:
+      "Texas District 32 includes Dallas-area communities in Dallas, Collin and Denton counties. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Julie Johnson")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Julie Johnson", "Congresswoman Johnson", "Texas District 32"],
+    sources: [
+      { label: "Official House biography", url: "https://juliejohnson.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "marc-veasey", reviewedAt: "2026-07-30",
-    biography: "Marc Veasey represents Texas's 33rd Congressional District. His career has included congressional staff work, communications roles and service in the Texas House.",
-    career: ["U.S. representative for Texas District 33 since 2013.", "Texas representative for District 95 from 2005 through 2013.", "Former congressional aide and communications professional."],
+    slug: "marc-veasey",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Marc Veasey represents Texas's 33rd Congressional District. His career has included congressional staff work, communications roles and service in the Texas House.",
+    career: [
+      "U.S. representative for Texas District 33 since 2013.",
+      "Texas representative for District 95 from 2005 through 2013.",
+      "Former congressional aide and communications professional.",
+    ],
     education: ["Bachelor of Science in mass communication from Texas Wesleyan University."],
     committees: ["House Committee on Energy and Commerce."],
-    electionHistory: [{ year: "2012", result: "First elected to the U.S. House." }, { year: "2014–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 33 connects communities in Dallas and Tarrant counties, including portions of Fort Worth and Dallas. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Marc Veasey")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Marc Veasey", "Congressman Veasey", "Texas District 33"],
-    sources: [{ label: "Official House biography", url: "https://veasey.house.gov/about/full-biography" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2012", result: "First elected to the U.S. House." },
+      { year: "2014–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 33 connects communities in Dallas and Tarrant counties, including portions of Fort Worth and Dallas. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Marc Veasey")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Marc Veasey", "Congressman Veasey", "Texas District 33"],
+    sources: [
+      { label: "Official House biography", url: "https://veasey.house.gov/about/full-biography" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "vicente-gonzalez", reviewedAt: "2026-07-30",
-    biography: "Vicente Gonzalez represents Texas's 34th Congressional District. He built a South Texas law practice before entering Congress and previously represented the neighboring 15th District.",
-    career: ["U.S. representative for Texas District 34 since 2023.", "Represented Texas District 15 from 2017 through 2023.", "Former attorney and founder of a South Texas law firm."],
-    education: ["Associate degree in banking and finance from Del Mar College.", "Bachelor's degree from Embry-Riddle Aeronautical University.", "Juris Doctor from Texas Wesleyan University School of Law."],
+    slug: "vicente-gonzalez",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Vicente Gonzalez represents Texas's 34th Congressional District. He built a South Texas law practice before entering Congress and previously represented the neighboring 15th District.",
+    career: [
+      "U.S. representative for Texas District 34 since 2023.",
+      "Represented Texas District 15 from 2017 through 2023.",
+      "Former attorney and founder of a South Texas law firm.",
+    ],
+    education: [
+      "Associate degree in banking and finance from Del Mar College.",
+      "Bachelor's degree from Embry-Riddle Aeronautical University.",
+      "Juris Doctor from Texas Wesleyan University School of Law.",
+    ],
     committees: ["House Committee on Financial Services."],
-    electionHistory: [{ year: "2016", result: "First elected to the U.S. House for Texas District 15." }, { year: "2018–2020", result: "Reelected in District 15." }, { year: "2022", result: "Elected to represent Texas District 34." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 34 includes Rio Grande Valley and Gulf Coast communities in South Texas. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Vicente Gonzalez")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Vicente Gonzalez", "Congressman Gonzalez", "Texas District 34"],
-    sources: [{ label: "Official House biography", url: "https://gonzalez.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    electionHistory: [
+      { year: "2016", result: "First elected to the U.S. House for Texas District 15." },
+      { year: "2018–2020", result: "Reelected in District 15." },
+      { year: "2022", result: "Elected to represent Texas District 34." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 34 includes Rio Grande Valley and Gulf Coast communities in South Texas. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Vicente Gonzalez")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Vicente Gonzalez", "Congressman Gonzalez", "Texas District 34"],
+    sources: [
+      { label: "Official House biography", url: "https://gonzalez.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "greg-casar", reviewedAt: "2026-07-30",
-    biography: "Greg Casar represents Texas's 35th Congressional District. A former labor organizer, he served seven years on the Austin City Council before entering Congress.",
-    career: ["U.S. representative for Texas District 35 since 2023.", "Austin City Council member from 2015 through 2022.", "Former labor and community organizer."],
+    slug: "greg-casar",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Greg Casar represents Texas's 35th Congressional District. A former labor organizer, he served seven years on the Austin City Council before entering Congress.",
+    career: [
+      "U.S. representative for Texas District 35 since 2023.",
+      "Austin City Council member from 2015 through 2022.",
+      "Former labor and community organizer.",
+    ],
     education: ["Bachelor's degree from the University of Virginia."],
-    committees: ["House Committee on Education and Workforce.", "House Committee on Oversight and Government Reform."],
-    electionHistory: [{ year: "2022", result: "First elected to the U.S. House." }, { year: "2024", result: "Reelected." }],
-    districtOverview: "Texas District 35 follows the Interstate 35 corridor from East Austin through Hays County toward San Antonio. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Greg Casar")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Greg Casar", "Congressman Casar", "Texas District 35"],
-    sources: [{ label: "Official House biography", url: "https://casar.house.gov/about" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    committees: [
+      "House Committee on Education and Workforce.",
+      "House Committee on Oversight and Government Reform.",
+    ],
+    electionHistory: [
+      { year: "2022", result: "First elected to the U.S. House." },
+      { year: "2024", result: "Reelected." },
+    ],
+    districtOverview:
+      "Texas District 35 follows the Interstate 35 corridor from East Austin through Hays County toward San Antonio. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Greg Casar")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Greg Casar", "Congressman Casar", "Texas District 35"],
+    sources: [
+      { label: "Official House biography", url: "https://casar.house.gov/about" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "brian-babin", reviewedAt: "2026-07-30",
-    biography: "Brian Babin represents Texas's 36th Congressional District. A dentist and military veteran, he held municipal and school-board offices in East Texas before entering Congress.",
-    career: ["U.S. representative for Texas District 36 since 2015.", "Former dentist in Woodville.", "Served as a U.S. Air Force dental officer and in the Texas Army National Guard.", "Former Woodville mayor, city council member and school-board member."],
-    education: ["Bachelor of Science from Lamar University.", "Dental degree from the University of Texas Dental Branch in Houston."],
-    committees: ["House Committee on Transportation and Infrastructure.", "House Committee on Science, Space, and Technology."],
-    electionHistory: [{ year: "2014", result: "First elected to the U.S. House." }, { year: "2016–2024", result: "Reelected in each subsequent general election cycle." }],
-    districtOverview: "Texas District 36 includes East Texas and upper Gulf Coast communities. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Brian Babin")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Brian Babin", "Congressman Babin", "Texas District 36"],
-    sources: [{ label: "Official House biography", url: "https://babin.house.gov/biography/" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "brian-babin",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Brian Babin represents Texas's 36th Congressional District. A dentist and military veteran, he held municipal and school-board offices in East Texas before entering Congress.",
+    career: [
+      "U.S. representative for Texas District 36 since 2015.",
+      "Former dentist in Woodville.",
+      "Served as a U.S. Air Force dental officer and in the Texas Army National Guard.",
+      "Former Woodville mayor, city council member and school-board member.",
+    ],
+    education: [
+      "Bachelor of Science from Lamar University.",
+      "Dental degree from the University of Texas Dental Branch in Houston.",
+    ],
+    committees: [
+      "House Committee on Transportation and Infrastructure.",
+      "House Committee on Science, Space, and Technology.",
+    ],
+    electionHistory: [
+      { year: "2014", result: "First elected to the U.S. House." },
+      { year: "2016–2024", result: "Reelected in each subsequent general election cycle." },
+    ],
+    districtOverview:
+      "Texas District 36 includes East Texas and upper Gulf Coast communities. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Brian Babin")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Brian Babin", "Congressman Babin", "Texas District 36"],
+    sources: [
+      { label: "Official House biography", url: "https://babin.house.gov/biography/" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
   {
-    slug: "lloyd-doggett", reviewedAt: "2026-07-30",
-    biography: "Lloyd Doggett represents Texas's 37th Congressional District. His public career spans the Texas Senate, the Texas Supreme Court and more than three decades in the U.S. House.",
-    career: ["U.S. representative for Central Texas districts since 1995.", "Justice of the Supreme Court of Texas from 1989 through 1994.", "Texas senator from 1973 through 1985.", "Former attorney and adjunct law professor."],
-    education: ["Bachelor of Business Administration from the University of Texas at Austin.", "Juris Doctor from the University of Texas School of Law."],
-    committees: ["House Committee on the Budget.", "House Committee on Ways and Means.", "Joint Committee on Taxation."],
-    electionHistory: [{ year: "1994", result: "First elected to the U.S. House." }, { year: "1996–2024", result: "Reelected in each subsequent general election cycle across redrawn Central Texas districts." }],
-    districtOverview: "Texas District 37 is centered in Austin and nearby Travis County communities. Voters should confirm current boundaries through the official House lookup.",
-    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Lloyd Doggett")}`, financeLabel: "Federal Election Commission candidate records", newsKeywords: ["Lloyd Doggett", "Congressman Doggett", "Texas District 37"],
-    sources: [{ label: "Official House biography", url: "https://doggett.house.gov/about/full-biography" }, { label: "Official House directory", url: "https://www.house.gov/representatives" }],
+    slug: "lloyd-doggett",
+    reviewedAt: "2026-07-30",
+    biography:
+      "Lloyd Doggett represents Texas's 37th Congressional District. His public career spans the Texas Senate, the Texas Supreme Court and more than three decades in the U.S. House.",
+    career: [
+      "U.S. representative for Central Texas districts since 1995.",
+      "Justice of the Supreme Court of Texas from 1989 through 1994.",
+      "Texas senator from 1973 through 1985.",
+      "Former attorney and adjunct law professor.",
+    ],
+    education: [
+      "Bachelor of Business Administration from the University of Texas at Austin.",
+      "Juris Doctor from the University of Texas School of Law.",
+    ],
+    committees: [
+      "House Committee on the Budget.",
+      "House Committee on Ways and Means.",
+      "Joint Committee on Taxation.",
+    ],
+    electionHistory: [
+      { year: "1994", result: "First elected to the U.S. House." },
+      {
+        year: "1996–2024",
+        result:
+          "Reelected in each subsequent general election cycle across redrawn Central Texas districts.",
+      },
+    ],
+    districtOverview:
+      "Texas District 37 is centered in Austin and nearby Travis County communities. Voters should confirm current boundaries through the official House lookup.",
+    financeUrl: `${FEC_SEARCH}${encodeURIComponent("Lloyd Doggett")}`,
+    financeLabel: "Federal Election Commission candidate records",
+    newsKeywords: ["Lloyd Doggett", "Congressman Doggett", "Texas District 37"],
+    sources: [
+      { label: "Official House biography", url: "https://doggett.house.gov/about/full-biography" },
+      { label: "Official House directory", url: "https://www.house.gov/representatives" },
+    ],
   },
 ];
 
 export function getRepresentativeAuthority(slug: string) {
-  return REPRESENTATIVE_AUTHORITY.find((profile) => profile.slug === slug);
+  return [...REPRESENTATIVE_AUTHORITY, ...TEXAS_LEGISLATOR_AUTHORITY].find(
+    (profile) => profile.slug === slug,
+  );
 }
+
+export const ALL_REPRESENTATIVE_AUTHORITY = [
+  ...REPRESENTATIVE_AUTHORITY,
+  ...TEXAS_LEGISLATOR_AUTHORITY,
+];
 
 /** Current 119th Congress assignments, reviewed against House.gov on 2026-07-30. */
 export const US_HOUSE_COMMITTEES: Record<string, string[]> = {
-  "nathaniel-moran": ["Ethics", "Ways and Means", "Select Committee on the Strategic Competition Between the United States and the Chinese Communist Party"],
+  "nathaniel-moran": [
+    "Ethics",
+    "Ways and Means",
+    "Select Committee on the Strategic Competition Between the United States and the Chinese Communist Party",
+  ],
   "dan-crenshaw": ["Energy and Commerce", "Intelligence"],
   "keith-self": ["Foreign Affairs", "Science, Space, and Technology", "Veterans' Affairs"],
   "pat-fallon": ["Armed Services", "Oversight and Government Reform", "Intelligence"],
@@ -767,16 +1609,29 @@ export const US_HOUSE_COMMITTEES: Record<string, string[]> = {
   "jodey-arrington": ["Budget", "Ways and Means"],
   "joaquin-castro": ["Foreign Affairs", "Intelligence"],
   "chip-roy": ["Budget", "Judiciary", "Rules"],
-  "troy-nehls": ["Judiciary", "Transportation and Infrastructure", "Select Subcommittee to Investigate the Remaining Questions Surrounding January 6, 2021"],
+  "troy-nehls": [
+    "Judiciary",
+    "Transportation and Infrastructure",
+    "Select Subcommittee to Investigate the Remaining Questions Surrounding January 6, 2021",
+  ],
   "beth-van-duyne": ["Small Business", "Ways and Means"],
   "roger-williams": ["Financial Services", "Small Business"],
   "brandon-gill": ["Budget", "Oversight and Government Reform", "Judiciary"],
   "michael-cloud": ["Appropriations", "Oversight and Government Reform"],
   "henry-cuellar": ["Appropriations"],
   "sylvia-garcia": ["Financial Services", "Ethics"],
-  "jasmine-crockett": ["Oversight and Government Reform", "Judiciary", "Select Subcommittee to Investigate the Remaining Questions Surrounding January 6, 2021"],
+  "jasmine-crockett": [
+    "Oversight and Government Reform",
+    "Judiciary",
+    "Select Subcommittee to Investigate the Remaining Questions Surrounding January 6, 2021",
+  ],
   "john-carter": ["Appropriations"],
-  "julie-johnson": ["Foreign Affairs", "House Administration", "Homeland Security", "Joint Committee of Congress on the Library"],
+  "julie-johnson": [
+    "Foreign Affairs",
+    "House Administration",
+    "Homeland Security",
+    "Joint Committee of Congress on the Library",
+  ],
   "marc-veasey": ["Energy and Commerce"],
   "vicente-gonzalez": ["Financial Services"],
   "greg-casar": ["Education and Workforce", "Oversight and Government Reform"],
