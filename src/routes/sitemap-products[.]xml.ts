@@ -9,7 +9,11 @@ export const Route = createFileRoute("/sitemap-products.xml")({
       GET: async () => {
         const entries: UrlEntry[] = [];
         try {
-          const { products } = await getProducts();
+          const { products, isFallback } = await getProducts();
+          if (isFallback) {
+            console.error("sitemap-products: live catalog unavailable; omitting demo products");
+            return xmlResponse(renderUrlset(entries));
+          }
           const lastmod = toIsoDate(new Date());
           for (const p of products) {
             entries.push({ loc: `${BASE_URL}/shop/${p.id}`, lastmod });
