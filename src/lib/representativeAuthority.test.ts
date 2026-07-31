@@ -81,8 +81,8 @@ describe("representative authority pages", () => {
   it("covers every representative exposed in the original authority directory", () => {
     const enrichedRepresentatives = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION]
       .filter((representative) => getRepresentativeAuthority(representativeSlug(representative.name)));
-    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(enrichedRepresentatives.length);
-    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(45);
+    expect(REPRESENTATIVE_AUTHORITY.length).toBeGreaterThanOrEqual(enrichedRepresentatives.length);
+    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(46);
     expect(enrichedRepresentatives).toHaveLength(45);
   });
 

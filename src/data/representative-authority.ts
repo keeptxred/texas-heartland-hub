@@ -225,6 +225,32 @@ export const REPRESENTATIVE_AUTHORITY: RepresentativeAuthority[] = [
     ],
   },
   {
+    slug: "don-huffines",
+    reviewedAt: "2026-07-31",
+    biography:
+      "Don Huffines is the incoming comptroller of public accounts of Texas. Governor Greg Abbott appointed him on July 2, 2026, with service effective August 1, 2026. He previously represented Senate District 16 in the Texas Senate and worked in business.",
+    career: [
+      "Appointed to begin serving as Texas comptroller effective August 1, 2026.",
+      "Represented Texas Senate District 16 from 2015 through 2019.",
+      "Worked in automotive and real-estate businesses.",
+    ],
+    education: ["Bachelor of Business Administration in Finance from the University of Texas at Austin."],
+    committees: ["Executive office; the comptroller does not receive legislative committee assignments."],
+    electionHistory: [
+      { year: "2014", result: "Elected to Texas Senate District 16." },
+      { year: "2026", result: "Appointed comptroller with an effective date of August 1, 2026." },
+    ],
+    districtOverview: "The comptroller is a statewide office responsible for tax administration, state accounting and revenue estimates.",
+    financeUrl: TEXAS_ETHICS,
+    financeLabel: "Texas Ethics Commission campaign-finance search",
+    newsKeywords: ["Don Huffines", "Texas comptroller", "Comptroller Huffines"],
+    sources: [
+      { label: "Governor's appointment announcement", url: "https://gov.texas.gov/news/post/governor-abbott-appoints-don-huffines-as-comptroller-of-public-accounts" },
+      { label: "Texas Comptroller official website", url: "https://comptroller.texas.gov/" },
+      { label: "2026 offices up for election", url: "https://www.sos.texas.gov/elections/candidates/guide/2026/offices2026.shtml" },
+    ],
+  },
+  {
     slug: "sid-miller",
     reviewedAt: "2026-07-30",
     biography:
