@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "fullName": "Dan Patrick",
+    "ballotName": "Dan Patrick",
+    "party": "republican",
+    "raceId": "race-2026-lieutenant-governor",
+    "status": "nominee",
+    "filingStatus": "accepted",
+    "ballotAccessStatus": "qualified",
+    "incumbencyType": "incumbent",
+    "campaignStatus": "active",
+    "currentOfficeName": "Lieutenant Governor of Texas",
+    "sourceName": "Texas 2026 Primary Election Results Application",
+    "sourceUrl": "https://results.texas-election.com/races?election_dt=03/03/2026",
+    "sourceType": "official_election_results",
+    "sourceRecordId": "republican-lieutenant-governor-dan-patrick-2026",
+    "sourceRetrievedAt": "2026-07-31T12:32:00.000Z",
+    "notes": "Republican nominee for Lieutenant Governor in the 2026 Texas general election; incumbent officeholder."
+  }
+]
