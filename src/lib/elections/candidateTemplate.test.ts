@@ -61,6 +61,17 @@ describe("candidate directory and reusable profile template", () => {
   it("keeps restricted candidate images out of profile SEO", () => {
     const seo = source("src/components/elections/candidates/CandidateDetailSeo.tsx");
     expect(seo).toContain('imageRights?.usageStatus === "approved"');
+    expect(seo).toContain("getFeaturedCandidateProfile");
+    expect(seo).toContain("hasOccupation");
+    expect(seo).toContain("alumniOf");
+  });
+
+  it("uses featured profile authority in server-rendered candidate metadata", () => {
+    const route = source("src/routes/elections.candidates_.$candidateSlug.tsx");
+    expect(route).toContain("getFeaturedCandidateProfile");
+    expect(route).toContain("featuredProfile?.biography");
+    expect(route).toContain("featuredProfile?.imageUrl");
+    expect(route).toContain("featuredProfile?.sameAs");
   });
 
   it("rejects unsafe external candidate links", () => {
