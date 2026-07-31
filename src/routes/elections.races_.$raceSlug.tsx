@@ -6,6 +6,7 @@ import {
   ElectionLoading,
   ElectionNavigation,
   RaceCandidateSection,
+  RaceAuthoritySection,
   RaceDetailHeader,
   RaceDetailSeo,
   RaceForecastSection,
@@ -48,7 +49,9 @@ export const Route = createFileRoute("/elections/races_/$raceSlug")({
         ? record.biography
         : record && "description" in record && typeof record.description === "string" && record.description
           ? record.description
-          : "View verified details for this Texas election race.";
+          : record
+            ? `Follow verified candidates, election dates, polling, forecasts, results, district geography, and official sources for ${recordName}.`
+            : "View verified details for this Texas election race.";
     const title = indexable
       ? `${recordName} | KeepTXRed Election Central`
       : "Election race not found | KeepTXRed";
@@ -216,6 +219,7 @@ function ElectionRaceDetailData({ raceSlug }: { raceSlug: string }) {
     <div className="space-y-10">
       <RaceDetailSeo race={race.data} />
       <RaceDetailHeader race={race.data} />
+      <RaceAuthoritySection race={race.data} />
       <RaceCandidateSection race={race.data} candidates={candidates.data ?? []} />
       <RacePollingSection
         race={race.data}
