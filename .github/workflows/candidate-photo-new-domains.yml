@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - "scripts/elections/apply-direct-web-photo-findings.mjs"
+      - "scripts/elections/apply-verified-photo-findings-2026-07-31.mjs"
       - "scripts/elections/discover-candidate-photos-new-domains.mjs"
       - "scripts/elections/discover-candidate-photos-new-domains-wave2.mjs"
       - ".github/workflows/candidate-photo-new-domains.yml"
@@ -18,7 +19,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RUN_REQUESTED_AT: "2026-07-31T06:52:31-05:00"
+  RUN_REQUESTED_AT: "2026-07-31T08:54:35-05:00"
 
 jobs:
   sweep:
@@ -35,6 +36,9 @@ jobs:
 
       - name: Apply directly verified portraits
         run: node scripts/elections/apply-direct-web-photo-findings.mjs
+
+      - name: Apply newly verified portraits
+        run: node scripts/elections/apply-verified-photo-findings-2026-07-31.mjs
 
       - name: Run unused-domain sweep
         run: node scripts/elections/discover-candidate-photos-new-domains.mjs
