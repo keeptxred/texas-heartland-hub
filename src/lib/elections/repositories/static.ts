@@ -50,6 +50,9 @@ type Query = {
 type ExtendedRace = ElectionRace & {
   counties?: readonly { id: ElectionEntityId; name: string; slug: string }[];
   zipCodes?: readonly string[];
+  officialCountyElectionLinks?: RaceDetail["officialCountyElectionLinks"];
+  geographySource?: RaceDetail["geographySource"];
+  countyElectionLinkSource?: RaceDetail["countyElectionLinkSource"];
 };
 type ExtendedCandidate = ElectionCandidate & {
   fundraising?: CandidateDetail["fundraising"];
@@ -273,6 +276,8 @@ function cycleSummary(record: ElectionCycleRecord): ElectionCycleSummary {
 function cycleDetail(record: ElectionCycleRecord): ElectionCycleDetail {
   return {
     ...record,
+    counties: record.counties ?? [],
+    zipCodes: record.zipCodes ?? [],
     raceCount: races.filter((race) => race.electionCycleId === record.id).length,
     candidateCount: candidates.filter((candidate) => candidate.electionCycleId === record.id).length,
     pollCount: polls.filter((poll) => poll.electionCycleId === record.id).length,
