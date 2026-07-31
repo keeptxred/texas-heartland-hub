@@ -30,6 +30,50 @@ const findings = [
     permissionBasis: "Candidate portrait published on the official campaign website, used for editorial candidate identification with attribution.",
     usageStatus: "approved",
     discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4",
+    imageUrl: "https://www.texastribune.org/wp-content/uploads/2026/02/CCA-Kevin-Yeary-Campaign.jpg",
+    sourceUrl: "https://www.texastribune.org/2026/02/12/texas-court-of-criminal-appeals-primary-2026/",
+    altText: "Kevin Patrick Yeary, Republican candidate for Texas Court of Criminal Appeals Place 4",
+    credit: "Kevin Yeary campaign via The Texas Tribune",
+    license: null,
+    permissionBasis: "Campaign-supplied candidate portrait published in The Texas Tribune candidate guide, used for editorial candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "verified-candidate-guide"
+  },
+  {
+    candidateId: "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
+    imageUrl: "https://www.texastribune.org/wp-content/uploads/2026/02/CCA-Audra-Riley-Campaign.jpg",
+    sourceUrl: "https://www.texastribune.org/2026/02/12/texas-court-of-criminal-appeals-primary-2026/",
+    altText: "Audra Riley, Democratic candidate for Texas Court of Criminal Appeals Place 4",
+    credit: "Audra Riley campaign via The Texas Tribune",
+    license: null,
+    permissionBasis: "Campaign-supplied candidate portrait published in The Texas Tribune candidate guide, used for editorial candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "verified-candidate-guide"
+  },
+  {
+    candidateId: "candidate-john-messinger-republican-race-2026-court-of-criminal-appeals-place-9",
+    imageUrl: "https://www.texastribune.org/wp-content/uploads/2026/02/CCA-John-Messinger-Campaign.jpg",
+    sourceUrl: "https://www.texastribune.org/2026/02/12/texas-court-of-criminal-appeals-primary-2026/",
+    altText: "John Messinger, Republican candidate for Texas Court of Criminal Appeals Place 9",
+    credit: "John Messinger campaign via The Texas Tribune",
+    license: null,
+    permissionBasis: "Campaign-supplied candidate portrait published in The Texas Tribune candidate guide, used for editorial candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "verified-candidate-guide"
+  },
+  {
+    candidateId: "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
+    imageUrl: "https://www.texastribune.org/wp-content/uploads/2026/02/CCA-Holly-Taylor-Campaign.jpg",
+    sourceUrl: "https://www.texastribune.org/2026/02/12/texas-court-of-criminal-appeals-primary-2026/",
+    altText: "Holly Taylor, Democratic candidate for Texas Court of Criminal Appeals Place 9",
+    credit: "Holly Taylor campaign via The Texas Tribune",
+    license: null,
+    permissionBasis: "Campaign-supplied candidate portrait published in The Texas Tribune candidate guide, used for editorial candidate identification with source attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "verified-candidate-guide"
   }
 ];
 
