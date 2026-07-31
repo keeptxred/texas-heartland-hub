@@ -96,6 +96,28 @@ const findings = [
     permissionBasis: "Official government portrait published by the Texas State Board of Education, used for editorial candidate identification with attribution.",
     usageStatus: "approved",
     discoveryMethod: "official-government-profile"
+  },
+  {
+    candidateId: "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
+    imageUrl: "https://www.judgeaudrariley.com/images/arileyblue.png",
+    sourceUrl: "https://www.judgeaudrariley.com/",
+    altText: "Judge Audra Riley, Democratic candidate for Texas Court of Criminal Appeals Place 4",
+    credit: "Audra Riley campaign",
+    license: null,
+    permissionBasis: "Candidate portrait published on the official campaign website, used for editorial candidate identification with attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
+    imageUrl: "https://images.squarespace-cdn.com/content/v1/656b914f3b6db119ed7e75b7/9682dbf5-3bb1-4678-ad81-d1ebf2739fda/024_Taylor_%C2%A92025BrendaLadd%2B7inPrint.cropped.1150x1500.jpg",
+    sourceUrl: "https://www.hollytforjudge.com/",
+    altText: "Holly Taylor, Democratic candidate for Texas Court of Criminal Appeals Place 9",
+    credit: "Holly Taylor campaign / Brenda Ladd",
+    license: null,
+    permissionBasis: "Candidate portrait published on the official campaign website, used for editorial candidate identification with attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-profile"
   }
 ];
 
