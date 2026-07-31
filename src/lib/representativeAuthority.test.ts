@@ -2,6 +2,9 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
+  STATE_LEADERSHIP,
+  US_HOUSE_SAMPLE,
+  US_SENATORS,
   findRepresentativeBySlug,
   representativeSlug,
 } from "@/data/representatives";
@@ -70,6 +73,14 @@ describe("representative authority pages", () => {
     ).toBe(true);
     for (const id of ["biography", "career", "education", "committees", "elections", "finance", "district", "news", "sources"]) {
       expect(profile).toContain(`id="${id}"`);
+    }
+  });
+
+  it("covers every representative exposed in the public directory", () => {
+    const directoryRepresentatives = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_SAMPLE];
+    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(directoryRepresentatives.length);
+    for (const representative of directoryRepresentatives) {
+      expect(getRepresentativeAuthority(representativeSlug(representative.name))).toBeDefined();
     }
   });
 });
