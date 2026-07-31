@@ -1,3 +1,5 @@
+import { TEXAS_LEGISLATIVE_SEATS, TEXAS_LEGISLATORS } from "./texas-legislators.generated";
+
 export type Rep = {
   name: string;
   office: string;
@@ -6,6 +8,7 @@ export type Rep = {
   phoneDC?: string;
   phoneTX?: string;
   website: string;
+  imageUrl?: string;
 };
 
 export function representativeSlug(name: string) {
@@ -19,14 +22,32 @@ export function representativeSlug(name: string) {
 }
 
 export function findRepresentativeBySlug(slug: string) {
-  return [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION].find(
-    (representative) => representativeSlug(representative.name) === slug,
-  );
+  return [
+    ...US_SENATORS,
+    ...STATE_LEADERSHIP,
+    ...US_HOUSE_DELEGATION,
+    ...TEXAS_SENATE_MEMBERS,
+    ...TEXAS_HOUSE_MEMBERS,
+  ].find((representative) => representativeSlug(representative.name) === slug);
 }
 
 export const US_SENATORS: Rep[] = [
-  { name: "John Cornyn", office: "U.S. Senator", party: "R", phoneDC: "(202) 224-2934", phoneTX: "(512) 469-6034", website: "https://www.cornyn.senate.gov" },
-  { name: "Ted Cruz", office: "U.S. Senator", party: "R", phoneDC: "(202) 224-5922", phoneTX: "(512) 916-5834", website: "https://www.cruz.senate.gov" },
+  {
+    name: "John Cornyn",
+    office: "U.S. Senator",
+    party: "R",
+    phoneDC: "(202) 224-2934",
+    phoneTX: "(512) 469-6034",
+    website: "https://www.cornyn.senate.gov",
+  },
+  {
+    name: "Ted Cruz",
+    office: "U.S. Senator",
+    party: "R",
+    phoneDC: "(202) 224-5922",
+    phoneTX: "(512) 916-5834",
+    website: "https://www.cruz.senate.gov",
+  },
 ];
 
 const CURRENT_COMPTROLLER: Rep =
@@ -47,52 +68,341 @@ const CURRENT_COMPTROLLER: Rep =
       };
 
 export const STATE_LEADERSHIP: Rep[] = [
-  { name: "Greg Abbott", office: "Governor", party: "R", phoneTX: "(512) 463-2000", website: "https://gov.texas.gov" },
-  { name: "Dan Patrick", office: "Lieutenant Governor", party: "R", phoneTX: "(512) 463-0001", website: "https://www.ltgov.texas.gov" },
-  { name: "Ken Paxton", office: "Attorney General", party: "R", phoneTX: "(512) 463-2100", website: "https://www.texasattorneygeneral.gov" },
+  {
+    name: "Greg Abbott",
+    office: "Governor",
+    party: "R",
+    phoneTX: "(512) 463-2000",
+    website: "https://gov.texas.gov",
+  },
+  {
+    name: "Dan Patrick",
+    office: "Lieutenant Governor",
+    party: "R",
+    phoneTX: "(512) 463-0001",
+    website: "https://www.ltgov.texas.gov",
+  },
+  {
+    name: "Ken Paxton",
+    office: "Attorney General",
+    party: "R",
+    phoneTX: "(512) 463-2100",
+    website: "https://www.texasattorneygeneral.gov",
+  },
   CURRENT_COMPTROLLER,
-  { name: "Sid Miller", office: "Agriculture Commissioner", party: "R", phoneTX: "(512) 463-7476", website: "https://www.texasagriculture.gov" },
-  { name: "Dawn Buckingham", office: "Land Commissioner", party: "R", phoneTX: "(512) 463-5256", website: "https://www.glo.texas.gov" },
+  {
+    name: "Sid Miller",
+    office: "Agriculture Commissioner",
+    party: "R",
+    phoneTX: "(512) 463-7476",
+    website: "https://www.texasagriculture.gov",
+  },
+  {
+    name: "Dawn Buckingham",
+    office: "Land Commissioner",
+    party: "R",
+    phoneTX: "(512) 463-5256",
+    website: "https://www.glo.texas.gov",
+  },
 ];
 
 export const US_HOUSE_DELEGATION: Rep[] = [
-  { name: "Nathaniel Moran", office: "U.S. House", party: "R", district: "TX-1", phoneDC: "(202) 225-3035", website: "https://moran.house.gov" },
-  { name: "Dan Crenshaw", office: "U.S. House", party: "R", district: "TX-2 (Houston)", phoneDC: "(202) 225-6565", website: "https://crenshaw.house.gov" },
-  { name: "Keith Self", office: "U.S. House", party: "R", district: "TX-3", phoneDC: "(202) 225-4201", website: "https://keithself.house.gov" },
-  { name: "Pat Fallon", office: "U.S. House", party: "R", district: "TX-4 (North TX)", phoneDC: "(202) 225-6673", website: "https://fallon.house.gov" },
-  { name: "Lance Gooden", office: "U.S. House", party: "R", district: "TX-5 (East TX)", phoneDC: "(202) 225-3484", website: "https://gooden.house.gov" },
-  { name: "Jake Ellzey", office: "U.S. House", party: "R", district: "TX-6", phoneDC: "(202) 225-2002", website: "https://ellzey.house.gov" },
-  { name: "Lizzie Fletcher", office: "U.S. House", party: "D", district: "TX-7", phoneDC: "(202) 225-2571", website: "https://fletcher.house.gov" },
-  { name: "Morgan Luttrell", office: "U.S. House", party: "R", district: "TX-8", phoneDC: "(202) 225-4901", website: "https://luttrell.house.gov" },
-  { name: "Al Green", office: "U.S. House", party: "D", district: "TX-9", phoneDC: "(202) 225-7508", website: "https://algreen.house.gov" },
-  { name: "Michael McCaul", office: "U.S. House", party: "R", district: "TX-10", phoneDC: "(202) 225-2401", website: "https://mccaul.house.gov" },
-  { name: "August Pfluger", office: "U.S. House", party: "R", district: "TX-11", phoneDC: "(202) 225-3605", website: "https://pfluger.house.gov" },
-  { name: "Craig Goldman", office: "U.S. House", party: "R", district: "TX-12", phoneDC: "(202) 225-5071", website: "https://craiggoldman.house.gov" },
-  { name: "Ronny Jackson", office: "U.S. House", party: "R", district: "TX-13 (Panhandle)", phoneDC: "(202) 225-3706", website: "https://jackson.house.gov" },
-  { name: "Randy Weber", office: "U.S. House", party: "R", district: "TX-14", phoneDC: "(202) 225-2831", website: "https://weber.house.gov" },
-  { name: "Monica De La Cruz", office: "U.S. House", party: "R", district: "TX-15 (RGV)", phoneDC: "(202) 225-9901", website: "https://delacruz.house.gov" },
-  { name: "Veronica Escobar", office: "U.S. House", party: "D", district: "TX-16", phoneDC: "(202) 225-4831", website: "https://escobar.house.gov" },
-  { name: "Pete Sessions", office: "U.S. House", party: "R", district: "TX-17", phoneDC: "(202) 225-6105", website: "https://sessions.house.gov" },
-  { name: "Christian Menefee", office: "U.S. House", party: "D", district: "TX-18", phoneDC: "(202) 225-3816", website: "https://menefee.house.gov" },
-  { name: "Jodey Arrington", office: "U.S. House", party: "R", district: "TX-19", phoneDC: "(202) 225-4005", website: "https://arrington.house.gov" },
-  { name: "Joaquin Castro", office: "U.S. House", party: "D", district: "TX-20", phoneDC: "(202) 225-3236", website: "https://castro.house.gov" },
-  { name: "Chip Roy", office: "U.S. House", party: "R", district: "TX-21 (Hill Country)", phoneDC: "(202) 225-4236", website: "https://roy.house.gov" },
-  { name: "Troy Nehls", office: "U.S. House", party: "R", district: "TX-22", phoneDC: "(202) 225-5951", website: "https://nehls.house.gov" },
-  { name: "Beth Van Duyne", office: "U.S. House", party: "R", district: "TX-24 (DFW)", phoneDC: "(202) 225-6605", website: "https://vanduyne.house.gov" },
-  { name: "Roger Williams", office: "U.S. House", party: "R", district: "TX-25", phoneDC: "(202) 225-9896", website: "https://williams.house.gov" },
-  { name: "Brandon Gill", office: "U.S. House", party: "R", district: "TX-26", phoneDC: "(202) 225-7772", website: "https://gill.house.gov" },
-  { name: "Michael Cloud", office: "U.S. House", party: "R", district: "TX-27", phoneDC: "(202) 225-7742", website: "https://cloud.house.gov" },
-  { name: "Henry Cuellar", office: "U.S. House", party: "D", district: "TX-28", phoneDC: "(202) 225-1640", website: "https://cuellar.house.gov" },
-  { name: "Sylvia Garcia", office: "U.S. House", party: "D", district: "TX-29", phoneDC: "(202) 225-1688", website: "https://sylviagarcia.house.gov" },
-  { name: "Jasmine Crockett", office: "U.S. House", party: "D", district: "TX-30", phoneDC: "(202) 225-8885", website: "https://crockett.house.gov" },
-  { name: "John Carter", office: "U.S. House", party: "R", district: "TX-31", phoneDC: "(202) 225-3864", website: "https://carter.house.gov" },
-  { name: "Julie Johnson", office: "U.S. House", party: "D", district: "TX-32", phoneDC: "(202) 225-2231", website: "https://juliejohnson.house.gov" },
-  { name: "Marc Veasey", office: "U.S. House", party: "D", district: "TX-33", phoneDC: "(202) 225-9897", website: "https://veasey.house.gov" },
-  { name: "Vicente Gonzalez", office: "U.S. House", party: "D", district: "TX-34", phoneDC: "(202) 225-2531", website: "https://gonzalez.house.gov" },
-  { name: "Greg Casar", office: "U.S. House", party: "D", district: "TX-35", phoneDC: "(202) 225-5645", website: "https://casar.house.gov" },
-  { name: "Brian Babin", office: "U.S. House", party: "R", district: "TX-36", phoneDC: "(202) 225-1555", website: "https://babin.house.gov" },
-  { name: "Lloyd Doggett", office: "U.S. House", party: "D", district: "TX-37", phoneDC: "(202) 225-4865", website: "https://doggett.house.gov" },
-  { name: "Wesley Hunt", office: "U.S. House", party: "R", district: "TX-38 (Houston)", phoneDC: "(202) 225-5646", website: "https://hunt.house.gov" },
+  {
+    name: "Nathaniel Moran",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-1",
+    phoneDC: "(202) 225-3035",
+    website: "https://moran.house.gov",
+  },
+  {
+    name: "Dan Crenshaw",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-2 (Houston)",
+    phoneDC: "(202) 225-6565",
+    website: "https://crenshaw.house.gov",
+  },
+  {
+    name: "Keith Self",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-3",
+    phoneDC: "(202) 225-4201",
+    website: "https://keithself.house.gov",
+  },
+  {
+    name: "Pat Fallon",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-4 (North TX)",
+    phoneDC: "(202) 225-6673",
+    website: "https://fallon.house.gov",
+  },
+  {
+    name: "Lance Gooden",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-5 (East TX)",
+    phoneDC: "(202) 225-3484",
+    website: "https://gooden.house.gov",
+  },
+  {
+    name: "Jake Ellzey",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-6",
+    phoneDC: "(202) 225-2002",
+    website: "https://ellzey.house.gov",
+  },
+  {
+    name: "Lizzie Fletcher",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-7",
+    phoneDC: "(202) 225-2571",
+    website: "https://fletcher.house.gov",
+  },
+  {
+    name: "Morgan Luttrell",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-8",
+    phoneDC: "(202) 225-4901",
+    website: "https://luttrell.house.gov",
+  },
+  {
+    name: "Al Green",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-9",
+    phoneDC: "(202) 225-7508",
+    website: "https://algreen.house.gov",
+  },
+  {
+    name: "Michael McCaul",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-10",
+    phoneDC: "(202) 225-2401",
+    website: "https://mccaul.house.gov",
+  },
+  {
+    name: "August Pfluger",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-11",
+    phoneDC: "(202) 225-3605",
+    website: "https://pfluger.house.gov",
+  },
+  {
+    name: "Craig Goldman",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-12",
+    phoneDC: "(202) 225-5071",
+    website: "https://craiggoldman.house.gov",
+  },
+  {
+    name: "Ronny Jackson",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-13 (Panhandle)",
+    phoneDC: "(202) 225-3706",
+    website: "https://jackson.house.gov",
+  },
+  {
+    name: "Randy Weber",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-14",
+    phoneDC: "(202) 225-2831",
+    website: "https://weber.house.gov",
+  },
+  {
+    name: "Monica De La Cruz",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-15 (RGV)",
+    phoneDC: "(202) 225-9901",
+    website: "https://delacruz.house.gov",
+  },
+  {
+    name: "Veronica Escobar",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-16",
+    phoneDC: "(202) 225-4831",
+    website: "https://escobar.house.gov",
+  },
+  {
+    name: "Pete Sessions",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-17",
+    phoneDC: "(202) 225-6105",
+    website: "https://sessions.house.gov",
+  },
+  {
+    name: "Christian Menefee",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-18",
+    phoneDC: "(202) 225-3816",
+    website: "https://menefee.house.gov",
+  },
+  {
+    name: "Jodey Arrington",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-19",
+    phoneDC: "(202) 225-4005",
+    website: "https://arrington.house.gov",
+  },
+  {
+    name: "Joaquin Castro",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-20",
+    phoneDC: "(202) 225-3236",
+    website: "https://castro.house.gov",
+  },
+  {
+    name: "Chip Roy",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-21 (Hill Country)",
+    phoneDC: "(202) 225-4236",
+    website: "https://roy.house.gov",
+  },
+  {
+    name: "Troy Nehls",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-22",
+    phoneDC: "(202) 225-5951",
+    website: "https://nehls.house.gov",
+  },
+  {
+    name: "Beth Van Duyne",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-24 (DFW)",
+    phoneDC: "(202) 225-6605",
+    website: "https://vanduyne.house.gov",
+  },
+  {
+    name: "Roger Williams",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-25",
+    phoneDC: "(202) 225-9896",
+    website: "https://williams.house.gov",
+  },
+  {
+    name: "Brandon Gill",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-26",
+    phoneDC: "(202) 225-7772",
+    website: "https://gill.house.gov",
+  },
+  {
+    name: "Michael Cloud",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-27",
+    phoneDC: "(202) 225-7742",
+    website: "https://cloud.house.gov",
+  },
+  {
+    name: "Henry Cuellar",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-28",
+    phoneDC: "(202) 225-1640",
+    website: "https://cuellar.house.gov",
+  },
+  {
+    name: "Sylvia Garcia",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-29",
+    phoneDC: "(202) 225-1688",
+    website: "https://sylviagarcia.house.gov",
+  },
+  {
+    name: "Jasmine Crockett",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-30",
+    phoneDC: "(202) 225-8885",
+    website: "https://crockett.house.gov",
+  },
+  {
+    name: "John Carter",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-31",
+    phoneDC: "(202) 225-3864",
+    website: "https://carter.house.gov",
+  },
+  {
+    name: "Julie Johnson",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-32",
+    phoneDC: "(202) 225-2231",
+    website: "https://juliejohnson.house.gov",
+  },
+  {
+    name: "Marc Veasey",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-33",
+    phoneDC: "(202) 225-9897",
+    website: "https://veasey.house.gov",
+  },
+  {
+    name: "Vicente Gonzalez",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-34",
+    phoneDC: "(202) 225-2531",
+    website: "https://gonzalez.house.gov",
+  },
+  {
+    name: "Greg Casar",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-35",
+    phoneDC: "(202) 225-5645",
+    website: "https://casar.house.gov",
+  },
+  {
+    name: "Brian Babin",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-36",
+    phoneDC: "(202) 225-1555",
+    website: "https://babin.house.gov",
+  },
+  {
+    name: "Lloyd Doggett",
+    office: "U.S. House",
+    party: "D",
+    district: "TX-37",
+    phoneDC: "(202) 225-4865",
+    website: "https://doggett.house.gov",
+  },
+  {
+    name: "Wesley Hunt",
+    office: "U.S. House",
+    party: "R",
+    district: "TX-38 (Houston)",
+    phoneDC: "(202) 225-5646",
+    website: "https://hunt.house.gov",
+  },
 ];
 
 /** Districts without a seated voting representative, verified against House.gov. */
@@ -103,42 +413,74 @@ export const US_HOUSE_VACANCIES = [
 /** Backward-compatible export for code written before the complete delegation was added. */
 export const US_HOUSE_SAMPLE = US_HOUSE_DELEGATION;
 
+function legislativeRepresentative(chamber: "house" | "senate") {
+  return TEXAS_LEGISLATORS.filter((seat) => seat.chamber === chamber).map<Rep>((seat) => ({
+    name: seat.name,
+    office: chamber === "house" ? "Texas House" : "Texas Senate",
+    party: seat.party,
+    district: `${chamber === "house" ? "House" : "Senate"} District ${seat.district}`,
+    phoneTX: (seat as typeof seat & { phone?: string | null }).phone ?? undefined,
+    website: seat.website,
+    imageUrl: seat.imageUrl ?? undefined,
+  }));
+}
+
+export const TEXAS_HOUSE_MEMBERS: Rep[] = legislativeRepresentative("house");
+export const TEXAS_SENATE_MEMBERS: Rep[] = legislativeRepresentative("senate");
+
+export const TEXAS_LEGISLATIVE_VACANCIES = TEXAS_LEGISLATIVE_SEATS.filter(
+  (seat) => seat.vacant,
+).map((seat) => ({
+  district: `${seat.chamber === "house" ? "House" : "Senate"} District ${seat.district}`,
+  label: "Vacant",
+  source: seat.website,
+}));
+
 export const TEXAS_LAWS = [
   {
     title: "Constitutional Carry (HB 1927, 2021)",
-    summary: "Texans 21+ may carry a handgun openly or concealed without a state-issued License to Carry, subject to federal prohibitions and posted property restrictions.",
+    summary:
+      "Texans 21+ may carry a handgun openly or concealed without a state-issued License to Carry, subject to federal prohibitions and posted property restrictions.",
   },
   {
     title: "Heartbeat Act (SB 8, 2021) & Human Life Protection Act",
-    summary: "Abortion is prohibited from fertilization with narrow exceptions for medical emergencies. Civil enforcement provisions remain in effect.",
+    summary:
+      "Abortion is prohibited from fertilization with narrow exceptions for medical emergencies. Civil enforcement provisions remain in effect.",
   },
   {
     title: "Election Integrity Act (SB 1, 2021)",
-    summary: "Photo ID required for mail ballots, expanded poll-watcher access, ban on drive-thru and 24-hour voting, ID matching on mail-in ballot applications.",
+    summary:
+      "Photo ID required for mail ballots, expanded poll-watcher access, ban on drive-thru and 24-hour voting, ID matching on mail-in ballot applications.",
   },
   {
     title: "Property Tax Relief (SB 2, 2023)",
-    summary: "$100,000 homestead exemption for school M&O taxes, ISD compression, and a three-year 20% appraisal cap pilot on non-homestead properties under $5M.",
+    summary:
+      "$100,000 homestead exemption for school M&O taxes, ISD compression, and a three-year 20% appraisal cap pilot on non-homestead properties under $5M.",
   },
   {
     title: "Parental Rights in Education (SB 763 & HB 900, 2023)",
-    summary: "Schools must give parents access to instructional materials; vendors must rate library books for sexual content; chaplains may serve in public schools.",
+    summary:
+      "Schools must give parents access to instructional materials; vendors must rate library books for sexual content; chaplains may serve in public schools.",
   },
   {
     title: "Operation Lone Star / SB 4 (2023)",
-    summary: "Creates state crime of illegal entry and authorizes Texas judges to order removal. Currently in federal litigation.",
+    summary:
+      "Creates state crime of illegal entry and authorizes Texas judges to order removal. Currently in federal litigation.",
   },
   {
     title: "Save Women's Sports Act (HB 25, 2021)",
-    summary: "K-12 and collegiate athletes must compete on teams matching their biological sex assigned at birth.",
+    summary:
+      "K-12 and collegiate athletes must compete on teams matching their biological sex assigned at birth.",
   },
   {
     title: "Texas DREAM Act Repeal Efforts & In-State Tuition",
-    summary: "Ongoing legislative debate over whether non-citizens qualify for in-state college tuition rates under the 2001 statute.",
+    summary:
+      "Ongoing legislative debate over whether non-citizens qualify for in-state college tuition rates under the 2001 statute.",
   },
   {
     title: "Death Penalty & Capital Murder",
-    summary: "Texas remains an active death-penalty state. Capital cases require unanimous jury and automatic appeal to the Court of Criminal Appeals.",
+    summary:
+      "Texas remains an active death-penalty state. Capital cases require unanimous jury and automatic appeal to the Court of Criminal Appeals.",
   },
   {
     title: "Right-to-Work (Texas Labor Code §101.052)",
@@ -147,10 +489,48 @@ export const TEXAS_LAWS = [
 ];
 
 export const ACTIVE_BILLS = [
-  { bill: "HB 2", chamber: "House", topic: "Property Tax", status: "Engrossed", summary: "Further compresses ISD M&O rates and raises the homestead exemption to $140,000." },
-  { bill: "SB 12", chamber: "Senate", topic: "Parental Rights", status: "Passed Senate", summary: "Codifies parental review of curriculum and library materials in all public K-12 schools." },
-  { bill: "HB 4", chamber: "House", topic: "Border Security", status: "In Committee", summary: "Funds an additional $6.5B for state border operations and DPS deployment." },
-  { bill: "SB 17", chamber: "Senate", topic: "DEI / Higher Ed", status: "Signed", summary: "Expands prohibition on DEI offices to all state-funded higher education institutions." },
-  { bill: "HB 900", chamber: "House", topic: "Education", status: "In Conference", summary: "Strengthens vendor rating requirements for school library materials." },
-  { bill: "SB 14", chamber: "Senate", topic: "Energy", status: "Passed Senate", summary: "Streamlines permitting for natural gas peaker plants under the Texas Energy Fund." },
+  {
+    bill: "HB 2",
+    chamber: "House",
+    topic: "Property Tax",
+    status: "Engrossed",
+    summary: "Further compresses ISD M&O rates and raises the homestead exemption to $140,000.",
+  },
+  {
+    bill: "SB 12",
+    chamber: "Senate",
+    topic: "Parental Rights",
+    status: "Passed Senate",
+    summary:
+      "Codifies parental review of curriculum and library materials in all public K-12 schools.",
+  },
+  {
+    bill: "HB 4",
+    chamber: "House",
+    topic: "Border Security",
+    status: "In Committee",
+    summary: "Funds an additional $6.5B for state border operations and DPS deployment.",
+  },
+  {
+    bill: "SB 17",
+    chamber: "Senate",
+    topic: "DEI / Higher Ed",
+    status: "Signed",
+    summary:
+      "Expands prohibition on DEI offices to all state-funded higher education institutions.",
+  },
+  {
+    bill: "HB 900",
+    chamber: "House",
+    topic: "Education",
+    status: "In Conference",
+    summary: "Strengthens vendor rating requirements for school library materials.",
+  },
+  {
+    bill: "SB 14",
+    chamber: "Senate",
+    topic: "Energy",
+    status: "Passed Senate",
+    summary: "Streamlines permitting for natural gas peaker plants under the Texas Energy Fund.",
+  },
 ];
