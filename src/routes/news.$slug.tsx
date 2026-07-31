@@ -2,7 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
-import { getEvergreenBySlug } from "@/lib/evergreen.functions";
+import { getEvergreenBySlug, type EvergreenBody } from "@/lib/evergreen.functions";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import { buildSeo, SITE_URL } from "@/lib/seo";
@@ -12,10 +12,12 @@ import { resolveDisplayHeadline, type HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { useEffect } from "react";
 
+type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
+
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{
     article: Article;
-    body: ArticleBody;
+    body: StructuredArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
@@ -64,7 +66,7 @@ export const Route = createFileRoute("/news/$slug")({
         image_alt_text: ever.image_alt_text,
       }),
     };
-    const rawBody: ArticleBody = {
+    const rawBody: StructuredArticleBody = {
       updated: ever.body.updated,
       intro: ever.body.intro,
       sections: ever.body.sections,
@@ -73,10 +75,11 @@ export const Route = createFileRoute("/news/$slug")({
       related: ARTICLES.filter((x) => x.category === ever.category && isPublished(x)).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
       cta: { label: "Browse the Newsroom", href: "/news" },
       keyTakeaways: ever.body.keyTakeaways,
+      entities: ever.body.entities,
     };
     return {
       article: synth,
-      body: dedupeArticleBody(rawBody) as ArticleBody,
+      body: dedupeArticleBody(rawBody) as StructuredArticleBody,
       ctr: { variants: ever.headline_variants, score: ever.ctr_score },
     };
   },
@@ -99,7 +102,7 @@ export const Route = createFileRoute("/news/$slug")({
       image: article.image,
       imageAlt: article.title,
       type: "article",
-      publishedTime: body.updated,
+      publishedTime: article.publishedAt,
       modifiedTime: body.updated,
       section: article.category,
       author: article.author,
@@ -117,7 +120,7 @@ export const Route = createFileRoute("/news/$slug")({
             headline: article.title,
             description: seo.description,
             image: [seo.image],
-            datePublished: body.updated,
+            datePublished: article.publishedAt,
             dateModified: body.updated,
             author: { "@type": "Person", name: article.author },
             publisher: {
@@ -128,6 +131,13 @@ export const Route = createFileRoute("/news/$slug")({
             },
             mainEntityOfPage: { "@type": "WebPage", "@id": seo.url },
             articleSection: article.category,
+            about: body.entities?.map((entity) => ({
+              "@type": entity.type,
+              name: entity.name,
+              ...(entity.identifier ? { identifier: entity.identifier } : {}),
+              ...(entity.url ? { url: entity.url } : {}),
+              ...(entity.sameAs ? { sameAs: entity.sameAs } : {}),
+            })),
           }),
         },
         {

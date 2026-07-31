@@ -16,6 +16,13 @@ export type EvergreenBody = {
   sources: { label: string; url: string }[];
   editorNote?: string;
   keyTakeaways?: string[];
+  entities?: {
+    type: "Person" | "Organization" | "Event";
+    name: string;
+    identifier?: string;
+    url?: string;
+    sameAs?: string;
+  }[];
 };
 export type EvergreenArticle = {
   slug: string;
