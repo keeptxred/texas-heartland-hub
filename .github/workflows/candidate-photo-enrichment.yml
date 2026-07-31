@@ -8,6 +8,7 @@ on:
       - "src/data/elections/2026/candidate-photos.json"
       - "src/data/elections/2026/candidates.json"
       - "scripts/elections/candidate-photo-enrichment.mjs"
+      - "scripts/elections/apply-direct-web-photo-findings.mjs"
       - "scripts/elections/discover-candidate-photos.mjs"
       - "scripts/elections/discover-candidate-photos-directories.mjs"
       - "scripts/elections/discover-candidate-photos-search-providers.mjs"
@@ -27,7 +28,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SEARCH_RUN_REQUESTED_AT: "2026-07-30T19:52:00-05:00"
+  SEARCH_RUN_REQUESTED_AT: "2026-07-30T20:01:00-05:00"
 
 jobs:
   discover-and-apply-photos:
@@ -43,6 +44,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Apply direct verified web findings
+        run: node scripts/elections/apply-direct-web-photo-findings.mjs
 
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
