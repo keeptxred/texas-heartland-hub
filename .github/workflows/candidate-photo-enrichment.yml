@@ -16,6 +16,7 @@ on:
       - "scripts/elections/discover-candidate-photos-source-wave.mjs"
       - "scripts/elections/discover-candidate-photos-deep-web.mjs"
       - "scripts/elections/discover-candidate-photos-local-records.mjs"
+      - "scripts/elections/discover-candidate-photos-wikimedia.mjs"
       - ".github/workflows/candidate-photo-enrichment.yml"
 
 permissions:
@@ -26,7 +27,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  SEARCH_RUN_REQUESTED_AT: "2026-07-30T18:47:00-05:00"
+  SEARCH_RUN_REQUESTED_AT: "2026-07-30T19:52:00-05:00"
 
 jobs:
   discover-and-apply-photos:
@@ -67,6 +68,9 @@ jobs:
       - name: Discover local public-record and biography portraits
         run: node scripts/elections/discover-candidate-photos-local-records.mjs
 
+      - name: Discover verified Wikidata and Wikimedia Commons portraits
+        run: node scripts/elections/discover-candidate-photos-wikimedia.mjs
+
       - name: Apply approved candidate photos
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
@@ -83,6 +87,7 @@ jobs:
             artifacts/elections/candidate-photo-source-wave-report.json
             artifacts/elections/candidate-photo-deep-web-report.json
             artifacts/elections/candidate-photo-local-records-report.json
+            artifacts/elections/candidate-photo-wikimedia-report.json
             artifacts/elections/candidate-photo-source-cache.json
             artifacts/elections/candidate-photo-review-queue.json
           )
