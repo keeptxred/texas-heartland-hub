@@ -14,14 +14,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-07-31T04:13:32.890Z",
+      "lastModelRunAt": "2026-07-31T13:07:23.092Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-07-31T04:13:32.890Z",
+        "dataAsOf": "2026-07-31T13:07:23.092Z",
         "sourceUrls": [
           "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
           "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
@@ -37,7 +37,7 @@
         "projectedVoteShare": 52.5,
         "projectedVoteShareLow": 48,
         "projectedVoteShareHigh": 57,
-        "pollingAverage": 42,
+        "pollingAverage": 42.1,
         "winProbabilityChange": 0
       },
       {
@@ -48,7 +48,7 @@
         "projectedVoteShare": 47.5,
         "projectedVoteShareLow": 43,
         "projectedVoteShareHigh": 52,
-        "pollingAverage": 37,
+        "pollingAverage": 37.1,
         "winProbabilityChange": 0
       }
     ],
@@ -58,19 +58,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-07-31T04:13:32.890Z",
+    "updatedAt": "2026-07-31T13:07:23.092Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-31T04:13:32.890Z",
+    "verifiedAt": "2026-07-31T13:07:23.092Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-07-31T04:13:32.890Z",
-    "lastCheckedAt": "2026-07-31T04:13:32.890Z",
-    "staleAfter": "2026-08-02T04:13:32.890Z",
-    "expiresAt": "2026-08-07T04:13:32.890Z",
+    "dataAsOf": "2026-07-31T13:07:23.092Z",
+    "lastCheckedAt": "2026-07-31T13:07:23.092Z",
+    "staleAfter": "2026-08-02T13:07:23.092Z",
+    "expiresAt": "2026-08-07T13:07:23.092Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -78,7 +78,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-attorney-general",
-      "retrievedAt": "2026-07-31T04:13:32.890Z",
+      "retrievedAt": "2026-07-31T13:07:23.092Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -164,7 +164,7 @@
       },
       {
         "forecastId": "forecast-race-2026-attorney-general",
-        "capturedAt": "2026-07-31T04:13:32.890Z",
+        "capturedAt": "2026-07-31T13:07:23.092Z",
         "status": "active",
         "rating": "leans_republican",
         "confidenceLevel": "medium",
@@ -181,7 +181,7 @@
             "projectedVoteShare": 52.5,
             "projectedVoteShareLow": 48,
             "projectedVoteShareHigh": 57,
-            "pollingAverage": 42,
+            "pollingAverage": 42.1,
             "winProbabilityChange": 0
           },
           {
@@ -194,7 +194,7 @@
             "projectedVoteShare": 47.5,
             "projectedVoteShareLow": 43,
             "projectedVoteShareHigh": 52,
-            "pollingAverage": 37,
+            "pollingAverage": 37.1,
             "winProbabilityChange": 0
           }
         ]
@@ -216,14 +216,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-07-31T04:13:32.890Z",
+      "lastModelRunAt": "2026-07-31T13:07:23.092Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-07-31T04:13:32.890Z",
+        "dataAsOf": "2026-07-31T13:07:23.092Z",
         "sourceUrls": [
           "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
         ]
@@ -259,19 +259,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-07-31T04:13:32.890Z",
+    "updatedAt": "2026-07-31T13:07:23.092Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-31T04:13:32.890Z",
+    "verifiedAt": "2026-07-31T13:07:23.092Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-07-31T04:13:32.890Z",
-    "lastCheckedAt": "2026-07-31T04:13:32.890Z",
-    "staleAfter": "2026-08-02T04:13:32.890Z",
-    "expiresAt": "2026-08-07T04:13:32.890Z",
+    "dataAsOf": "2026-07-31T13:07:23.092Z",
+    "lastCheckedAt": "2026-07-31T13:07:23.092Z",
+    "staleAfter": "2026-08-02T13:07:23.092Z",
+    "expiresAt": "2026-08-07T13:07:23.092Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -279,7 +279,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-comptroller",
-      "retrievedAt": "2026-07-31T04:13:32.890Z",
+      "retrievedAt": "2026-07-31T13:07:23.092Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -364,7 +364,7 @@
       },
       {
         "forecastId": "forecast-race-2026-comptroller",
-        "capturedAt": "2026-07-31T04:13:32.890Z",
+        "capturedAt": "2026-07-31T13:07:23.092Z",
         "status": "active",
         "rating": "leans_republican",
         "confidenceLevel": "low",
@@ -416,14 +416,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-07-31T04:13:32.890Z",
+      "lastModelRunAt": "2026-07-31T13:07:23.092Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-07-31T04:13:32.890Z",
+        "dataAsOf": "2026-07-31T13:07:23.092Z",
         "sourceUrls": [
           "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
           "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
@@ -436,10 +436,10 @@
         "party": "republican",
         "winProbability": 0.79,
         "runoffProbability": null,
-        "projectedVoteShare": 53.2,
-        "projectedVoteShareLow": 48.7,
-        "projectedVoteShareHigh": 57.7,
-        "pollingAverage": 46.7,
+        "projectedVoteShare": 53.1,
+        "projectedVoteShareLow": 48.6,
+        "projectedVoteShareHigh": 57.6,
+        "pollingAverage": 46.6,
         "winProbabilityChange": 0
       },
       {
@@ -447,32 +447,32 @@
         "party": "democratic",
         "winProbability": 0.21,
         "runoffProbability": null,
-        "projectedVoteShare": 46.8,
-        "projectedVoteShareLow": 42.3,
-        "projectedVoteShareHigh": 51.3,
-        "pollingAverage": 40.3,
+        "projectedVoteShare": 46.9,
+        "projectedVoteShareLow": 42.4,
+        "projectedVoteShareHigh": 51.4,
+        "pollingAverage": 40.4,
         "winProbabilityChange": 0
       }
     ],
-    "projectedMargin": 6.4,
+    "projectedMargin": 6.2,
     "projectedWinnerCandidateId": "candidate-greg-abbott-republican-race-2026-governor",
     "publishedAt": "2026-07-29T04:01:38.706Z",
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-07-31T04:13:32.890Z",
+    "updatedAt": "2026-07-31T13:07:23.092Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-31T04:13:32.890Z",
+    "verifiedAt": "2026-07-31T13:07:23.092Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-07-31T04:13:32.890Z",
-    "lastCheckedAt": "2026-07-31T04:13:32.890Z",
-    "staleAfter": "2026-08-02T04:13:32.890Z",
-    "expiresAt": "2026-08-07T04:13:32.890Z",
+    "dataAsOf": "2026-07-31T13:07:23.092Z",
+    "lastCheckedAt": "2026-07-31T13:07:23.092Z",
+    "staleAfter": "2026-08-02T13:07:23.092Z",
+    "expiresAt": "2026-08-07T13:07:23.092Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -480,7 +480,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-governor",
-      "retrievedAt": "2026-07-31T04:13:32.890Z",
+      "retrievedAt": "2026-07-31T13:07:23.092Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -566,12 +566,12 @@
       },
       {
         "forecastId": "forecast-race-2026-governor",
-        "capturedAt": "2026-07-31T04:13:32.890Z",
+        "capturedAt": "2026-07-31T13:07:23.092Z",
         "status": "active",
         "rating": "leans_republican",
         "confidenceLevel": "medium",
         "projectedWinnerCandidateId": "candidate-greg-abbott-republican-race-2026-governor",
-        "projectedMargin": 6.4,
+        "projectedMargin": 6.2,
         "candidateSummaries": [
           {
             "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
@@ -580,10 +580,10 @@
             "party": "republican",
             "imageUrl": "https://gov.texas.gov/uploads/images/general/governor2024.png",
             "winProbability": 0.79,
-            "projectedVoteShare": 53.2,
-            "projectedVoteShareLow": 48.7,
-            "projectedVoteShareHigh": 57.7,
-            "pollingAverage": 46.7,
+            "projectedVoteShare": 53.1,
+            "projectedVoteShareLow": 48.6,
+            "projectedVoteShareHigh": 57.6,
+            "pollingAverage": 46.6,
             "winProbabilityChange": 0
           },
           {
@@ -593,10 +593,10 @@
             "party": "democratic",
             "imageUrl": "https://commons.wikimedia.org/wiki/Special:Redirect/file/Gina_Hinojosa_at_the_AFL-CIO_COPE_convention_in_2024.jpg",
             "winProbability": 0.21,
-            "projectedVoteShare": 46.8,
-            "projectedVoteShareLow": 42.3,
-            "projectedVoteShareHigh": 51.3,
-            "pollingAverage": 40.3,
+            "projectedVoteShare": 46.9,
+            "projectedVoteShareLow": 42.4,
+            "projectedVoteShareHigh": 51.4,
+            "pollingAverage": 40.4,
             "winProbabilityChange": 0
           }
         ]
@@ -618,14 +618,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-07-31T04:13:32.890Z",
+      "lastModelRunAt": "2026-07-31T13:07:23.092Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-07-31T04:13:32.890Z",
+        "dataAsOf": "2026-07-31T13:07:23.092Z",
         "sourceUrls": [
           "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
         ]
@@ -661,19 +661,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-07-31T04:13:32.890Z",
+    "updatedAt": "2026-07-31T13:07:23.092Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-31T04:13:32.890Z",
+    "verifiedAt": "2026-07-31T13:07:23.092Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-07-31T04:13:32.890Z",
-    "lastCheckedAt": "2026-07-31T04:13:32.890Z",
-    "staleAfter": "2026-08-02T04:13:32.890Z",
-    "expiresAt": "2026-08-07T04:13:32.890Z",
+    "dataAsOf": "2026-07-31T13:07:23.092Z",
+    "lastCheckedAt": "2026-07-31T13:07:23.092Z",
+    "staleAfter": "2026-08-02T13:07:23.092Z",
+    "expiresAt": "2026-08-07T13:07:23.092Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -681,7 +681,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-lieutenant-governor",
-      "retrievedAt": "2026-07-31T04:13:32.890Z",
+      "retrievedAt": "2026-07-31T13:07:23.092Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -766,7 +766,7 @@
       },
       {
         "forecastId": "forecast-race-2026-lieutenant-governor",
-        "capturedAt": "2026-07-31T04:13:32.890Z",
+        "capturedAt": "2026-07-31T13:07:23.092Z",
         "status": "active",
         "rating": "leans_republican",
         "confidenceLevel": "low",
@@ -818,14 +818,14 @@
       "modelVersion": "ktr-2026.2",
       "methodologyUrl": "https://keeptxred.com/elections/methodology",
       "simulationCount": null,
-      "lastModelRunAt": "2026-07-31T04:13:32.890Z",
+      "lastModelRunAt": "2026-07-31T13:07:23.092Z",
       "fundamentals": {
         "previousElectionMargin": null,
         "districtPartisanLean": null,
         "incumbencyAdjustment": 0,
         "fundraisingAdvantage": 0,
         "candidateQualityAdjustment": 0,
-        "dataAsOf": "2026-07-31T04:13:32.890Z",
+        "dataAsOf": "2026-07-31T13:07:23.092Z",
         "sourceUrls": [
           "https://texaspublicopinionresearch.substack.com/p/new-poll-james-talarico-leads-ken",
           "https://texaspolitics.utexas.edu/blog/june-poll-finds-a-competitive-u-s-senate-race-in-texas-amid-continuing-economic-concerns-data-center-backlash"
@@ -841,7 +841,7 @@
         "projectedVoteShare": 49.8,
         "projectedVoteShareLow": 45.3,
         "projectedVoteShareHigh": 54.3,
-        "pollingAverage": 43.3,
+        "pollingAverage": 43.4,
         "winProbabilityChange": 0
       },
       {
@@ -852,7 +852,7 @@
         "projectedVoteShare": 50.2,
         "projectedVoteShareLow": 45.7,
         "projectedVoteShareHigh": 54.7,
-        "pollingAverage": 43.7,
+        "pollingAverage": 43.8,
         "winProbabilityChange": 0
       }
     ],
@@ -862,19 +862,19 @@
     "finalizedAt": null,
     "notes": "Polling-only forecast using weighted verified public polls; no fundamentals adjustments were applied.",
     "createdAt": "2026-07-29T04:01:38.706Z",
-    "updatedAt": "2026-07-31T04:13:32.890Z",
+    "updatedAt": "2026-07-31T13:07:23.092Z",
     "verificationStatus": "verified",
-    "verifiedAt": "2026-07-31T04:13:32.890Z",
+    "verifiedAt": "2026-07-31T13:07:23.092Z",
     "verifiedBy": "GitHub Actions election forecast workflow",
     "verificationNotes": null,
     "publicationStatus": "published",
     "unpublishedAt": null,
     "scheduledFor": null,
     "publishedBy": "GitHub Actions election forecast workflow",
-    "dataAsOf": "2026-07-31T04:13:32.890Z",
-    "lastCheckedAt": "2026-07-31T04:13:32.890Z",
-    "staleAfter": "2026-08-02T04:13:32.890Z",
-    "expiresAt": "2026-08-07T04:13:32.890Z",
+    "dataAsOf": "2026-07-31T13:07:23.092Z",
+    "lastCheckedAt": "2026-07-31T13:07:23.092Z",
+    "staleAfter": "2026-08-02T13:07:23.092Z",
+    "expiresAt": "2026-08-07T13:07:23.092Z",
     "freshnessStatus": "fresh",
     "source": {
       "sourceId": "ktr-forecast-model",
@@ -882,7 +882,7 @@
       "sourceType": "forecast_provider",
       "sourceUrl": "https://keeptxred.com/elections/methodology",
       "sourceRecordId": "race-2026-us-senate",
-      "retrievedAt": "2026-07-31T04:13:32.890Z",
+      "retrievedAt": "2026-07-31T13:07:23.092Z",
       "attributionText": "Keep TX Red deterministic election model"
     },
     "fundamentalsBased": false,
@@ -968,7 +968,7 @@
       },
       {
         "forecastId": "forecast-race-2026-us-senate",
-        "capturedAt": "2026-07-31T04:13:32.890Z",
+        "capturedAt": "2026-07-31T13:07:23.092Z",
         "status": "active",
         "rating": "toss_up",
         "confidenceLevel": "medium",
@@ -985,7 +985,7 @@
             "projectedVoteShare": 49.8,
             "projectedVoteShareLow": 45.3,
             "projectedVoteShareHigh": 54.3,
-            "pollingAverage": 43.3,
+            "pollingAverage": 43.4,
             "winProbabilityChange": 0
           },
           {
@@ -998,7 +998,7 @@
             "projectedVoteShare": 50.2,
             "projectedVoteShareLow": 45.7,
             "projectedVoteShareHigh": 54.7,
-            "pollingAverage": 43.7,
+            "pollingAverage": 43.8,
             "winProbabilityChange": 0
           }
         ]
