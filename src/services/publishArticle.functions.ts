@@ -18,7 +18,7 @@ function explainPublishFailure(error: string, feedItemId: number): string {
       `AI rewrite produced no usable article for feed item ${feedItemId}. ` +
       "The source passed extraction and preflight, but the AI gateway returned no valid draft after the editorial retry. " +
       "Possible stages are gateway HTTP failure, timeout, empty response, invalid JSON, or editorial validation rejection. " +
-      "The failed attempt was not published; retry after the next deployment to capture the specific server-side reason."
+      "The failed attempt was not published and does not consume the automated daily rewrite allowance."
     );
   }
 
@@ -36,6 +36,23 @@ export const publishFeedItemFn = createServerFn({ method: "POST" })
     if (data.token !== expected) return { ok: false, error: "Unauthorized" };
 
     try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+      // Explicit admin publishing is intentionally outside the automated
+      // daily AI allowance. The database consumes this marker once when the
+      // rewrite slot is claimed, so cron or other automated callers cannot
+      // inherit the exemption.
+      const { error: bypassError } = await supabaseAdmin.rpc(
+        "grant_manual_ai_rewrite_bypass" as never,
+        { p_feed_item_id: data.feed_item_id } as never,
+      );
+      if (bypassError) {
+        return {
+          ok: false,
+          error: `Could not authorize manual rewrite bypass: ${bypassError.message}`,
+        };
+      }
+
       const { publishSingleFeedItem } = await import(
         "@/routes/api/public/hooks/ingest-feeds"
       );
