@@ -49,7 +49,7 @@ function ContactPage() {
       <section className="mb-10 rounded-xl border border-border bg-secondary/40 p-6">
         <h2 className="font-display text-2xl">Shop Order Support</h2>
         <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          For damaged, defective, misprinted, incorrect, delayed, or missing orders, email <a href="mailto:contact@keeptxred.com" className="text-primary underline underline-offset-4">contact@keeptxred.com</a>. Include your order number, a description of the issue, and clear photographs when applicable.
+          For damaged, defective, misprinted, incorrect, delayed, or missing orders, email <a href="mailto:admin@keeptxred.com" className="text-primary underline underline-offset-4">admin@keeptxred.com</a>. Include your order number, a description of the issue, and clear photographs when applicable.
         </p>
         <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold">
           <Link to="/return-refund-policy" className="text-primary underline underline-offset-4">Return &amp; Refund Policy</Link>
@@ -61,7 +61,7 @@ function ContactPage() {
         <aside className="space-y-6 text-sm md:col-span-1">
           <div>
             <h2 className="mb-2 font-display text-xs uppercase tracking-[0.25em] text-primary">Order Support & General</h2>
-            <a href="mailto:contact@keeptxred.com" className="text-muted-foreground hover:text-primary">contact@keeptxred.com</a>
+            <a href="mailto:admin@keeptxred.com" className="text-muted-foreground hover:text-primary">admin@keeptxred.com</a>
           </div>
           <div>
             <h2 className="mb-2 font-display text-xs uppercase tracking-[0.25em] text-primary">News Tips</h2>
@@ -130,7 +130,7 @@ function ContactPage() {
           { heading: "What to Send With a News Tip", body: <>The fastest path from tip to published story is documents plus a date. Send the agenda, the appraisal notice, the campaign filing, the bill text, or the meeting recording — whatever primary source backs the claim. Include the county or district name, a date, and your best phone number. If you want anonymity, say so up front and we will honor it.</> },
           { heading: "How We Handle Sensitive Tips", body: <>Tips marked confidential are seen only by the editorial team. We do not share sender identities with subjects of reporting, advertisers, or third parties. For high-sensitivity material, request a secure channel in your first email and we will arrange one. We do not publish documents that would identify a confidential source without explicit permission.</> },
           { heading: "Response Times", body: <>We aim to acknowledge every tip within two business days. Investigative leads take longer — sometimes weeks — because verifying public records, cross-checking filings, and reaching named subjects for comment takes time. If your tip is time-sensitive (a vote in the next 48 hours, a hearing tomorrow), put “TIME SENSITIVE” in the subject line.</> },
-          { heading: "Corrections, Take-Down Requests, and Legal", body: <>For corrections, email <a href="mailto:corrections@keeptxred.com" className="text-primary underline">corrections@keeptxred.com</a> with the URL and the specific factual error. We do not honor blanket take-down requests for accurate, lawfully reported information. Legal notices should go to <a href="mailto:contact@keeptxred.com" className="text-primary underline">contact@keeptxred.com</a> with “Legal” in the subject line.</> },
+          { heading: "Corrections, Take-Down Requests, and Legal", body: <>For corrections, email <a href="mailto:corrections@keeptxred.com" className="text-primary underline">corrections@keeptxred.com</a> with the URL and the specific factual error. We do not honor blanket take-down requests for accurate, lawfully reported information. Legal notices should go to <a href="mailto:admin@keeptxred.com" className="text-primary underline">admin@keeptxred.com</a> with “Legal” in the subject line.</> },
           { heading: "What We Cannot Help With", body: <>We are a newsroom, not a constituent-services office. For help reaching your elected officials, see <a href="/contact-legislators" className="text-primary underline">Contact Your Legislators</a>. For voter-registration questions, see the <a href="/register-to-vote" className="text-primary underline">voter registration guide</a>. For property tax disputes, contact your county appraisal district directly.</> },
         ]}
         faqs={[
@@ -140,7 +140,7 @@ function ContactPage() {
           { q: "Can I send large files or recordings?", a: <>Yes. Use a file-sharing link in your email; do not attach files larger than 10 MB directly.</> },
           { q: "Do you cover federal stories?", a: <>Only when there is a direct Texas angle — a Texas delegation vote, a federal action against the state, or a ruling affecting Texas law.</> },
         ]}
-        summary={<>Shop customers should include their order number and photographs. News tips should include documents and a date. Corrections go to corrections@keeptxred.com, and general or order-support questions go to contact@keeptxred.com.</>}
+        summary={<>Shop customers should include their order number and photographs. News tips should include documents and a date. Corrections go to corrections@keeptxred.com, and general or order-support questions go to admin@keeptxred.com.</>}
         related={[
           { to: "/return-refund-policy", label: "Return and refund policy" },
           { to: "/shipping-policy", label: "Shipping policy" },
