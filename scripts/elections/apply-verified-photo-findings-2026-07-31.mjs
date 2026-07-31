@@ -30,6 +30,17 @@ const findings = [
     permissionBasis: "Candidate portrait published on the official campaign website, used for editorial candidate identification with attribution.",
     usageStatus: "approved",
     discoveryMethod: "official-campaign-profile"
+  },
+  {
+    candidateId: "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
+    imageUrl: "https://images.squarespace-cdn.com/content/v1/656b914f3b6db119ed7e75b7/c622c5d3-0c53-4db8-8c9c-ce60c4d90eaf/HT_head-shot-2026.2400x3360.png?content-type=image%2Fpng",
+    sourceUrl: "https://www.hollytforjudge.com/downloads",
+    altText: "Holly Taylor, Democratic candidate for Texas Court of Criminal Appeals Place 9",
+    credit: "Holly Taylor campaign",
+    license: null,
+    permissionBasis: "Official campaign downloadable headshot; the campaign page expressly permits personal and small-group printing. Used for editorial candidate identification with attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-campaign-downloadable-asset"
   }
 ];
 
