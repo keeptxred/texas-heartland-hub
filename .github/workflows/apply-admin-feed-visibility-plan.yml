@@ -1,0 +1,211 @@
+name: Apply admin feed visibility plan
+
+on:
+  push:
+    paths:
+      - .github/workflows/apply-admin-feed-visibility-plan.yml
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Apply targeted source changes
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          def replace_once(path, old, new):
+              p = Path(path)
+              text = p.read_text()
+              if old not in text:
+                  raise SystemExit(f"Expected text not found in {path}: {old[:100]!r}")
+              p.write_text(text.replace(old, new, 1))
+
+          viral = "src/components/admin/ViralRadarPanel.tsx"
+          replace_once(viral, 'const FETCH_LIMIT = 150;', 'const FETCH_LIMIT = 500;\nconst PAGE_SIZE = 75;')
+          replace_once(
+              viral,
+              '''function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
+  if (row.internal_slug) return true;
+  if (result.rewriteable) return true;
+  // Persisted preflight means extraction already ran. Any persisted
+  // non-ready result is terminal and must leave the publish queue.
+  if (row.preflight_json) return false;
+
+  if (result.reason !== "PENDING_EXTRACTION") return false;
+
+  // Keep Viral Radar useful as a manual-review queue. The stricter score and
+  // confidence thresholds belong to the Ready for Rewrite filter, not to the
+  // entire panel. Pending rows still must be Texas-focused and credible.
+  return (
+    (row.texas_relevance_score ?? 0) >= 40 &&
+    (row.source_reputation_score ?? 0) >= 55
+  );
+}''',
+              '''function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
+  if (row.internal_slug || result.rewriteable) return true;
+
+  // Manual review is intentionally broader than automatic rewrite/publish.
+  // Persisted non-ready preflights stay visible as blocked items instead of
+  // disappearing permanently, provided the story clears this review floor.
+  const meetsManualReviewGate =
+    (row.texas_relevance_score ?? 0) >= 25 &&
+    (row.source_reputation_score ?? 0) >= 40;
+  if (!meetsManualReviewGate) return false;
+
+  if (row.preflight_json) return true;
+  return result.reason === "PENDING_EXTRACTION";
+}''')
+          replace_once(
+              viral,
+              '  const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});',
+              '  const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});\n  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);')
+          replace_once(
+              viral,
+              '''  useEffect(() => {
+    void load();
+    const onFocus = () => void load();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);''',
+              '''  useEffect(() => {
+    void load();
+    const onFocus = () => void load();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, []);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filter]);''')
+          replace_once(
+              viral,
+              '        Articles disappear after source extraction confirms they cannot pass the rewrite gate.',
+              '        Shows up to 500 recent items. Blocked preflights remain visible for manual review when they meet the broader review floor.')
+          replace_once(viral, '{filtered.map((row) => {', '{filtered.slice(0, visibleCount).map((row) => {')
+          replace_once(
+              viral,
+              '''          </table>
+        </div>
+      )}''',
+              '''          </table>
+          {visibleCount < filtered.length ? (
+            <div className="flex justify-center pt-4">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((count) => Math.min(count + PAGE_SIZE, filtered.length))}
+                className="px-4 py-2 border-2 border-primary text-primary text-[11px] font-bold uppercase tracking-widest"
+              >
+                Load more ({filtered.length - visibleCount} remaining)
+              </button>
+            </div>
+          ) : null}
+        </div>
+      )}''')
+
+          opportunities = "src/components/admin/ContentOpportunityPanel.tsx"
+          replace_once(
+              opportunities,
+              'type FilterKey = "ready" | "pending" | "blocked" | "all";',
+              'type FilterKey = "ready" | "pending" | "blocked" | "all";\n\nconst PAGE_SIZE = 75;')
+          replace_once(
+              opportunities,
+              '  const [previewId, setPreviewId] = useState<number | null>(null);',
+              '  const [previewId, setPreviewId] = useState<number | null>(null);\n  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);')
+          replace_once(
+              opportunities,
+              '''  const previewRow = useMemo(
+    () => (previewId == null ? null : scored.find((r) => r.id === previewId) ?? null),
+    [previewId, scored],
+  );''',
+              '''  const previewRow = useMemo(
+    () => (previewId == null ? null : scored.find((r) => r.id === previewId) ?? null),
+    [previewId, scored],
+  );
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filter]);''')
+          replace_once(opportunities, '{filtered.slice(0, 75).map((r) => {', '{filtered.slice(0, visibleCount).map((r) => {')
+          replace_once(
+              opportunities,
+              '''          </table>
+        </div>
+      )}''',
+              '''          </table>
+          {visibleCount < filtered.length ? (
+            <div className="flex justify-center pt-4">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((count) => Math.min(count + PAGE_SIZE, filtered.length))}
+                className="px-4 py-2 border-2 border-primary text-primary text-[11px] font-bold uppercase tracking-widest"
+              >
+                Load more ({filtered.length - visibleCount} remaining)
+              </button>
+            </div>
+          ) : null}
+        </div>
+      )}''')
+
+          score = "src/lib/viral-score.ts"
+          replace_once(score, 'export const VIRAL_READY_MIN_SCORE = 90;', 'export const VIRAL_READY_MIN_SCORE = 65;')
+          replace_once(
+              score,
+              '// Stricter "Ready for Rewrite" auto-flag gate.',
+              '// Reachable "Ready for Rewrite" flag gate, calibrated to the observed production distribution.\n// Confidence, Texas relevance, and reputation floors remain strict.')
+
+          manager = "src/components/admin/ContentSourceManager.tsx"
+          replace_once(
+              manager,
+              '''  const enabledByName = useMemo(() => {
+    const m = new Map<string, ContentSource>();
+    for (const r of rows) m.set(r.source_name.trim().toLowerCase(), r);
+    return m;
+  }, [rows]);''',
+              '''  const enabledByName = useMemo(() => {
+    const m = new Map<string, ContentSource>();
+    for (const r of rows) m.set(r.source_name.trim().toLowerCase(), r);
+    return m;
+  }, [rows]);
+
+  const sourceDiagnostics = useMemo(() => {
+    const enabled = rows.filter((row) => row.enabled);
+    const ingestible = enabled.filter((row) => Boolean(row.rss_url?.trim()));
+    return {
+      enabled: enabled.length,
+      ingestible: ingestible.length,
+      manualOnly: enabled.length - ingestible.length,
+    };
+  }, [rows]);''')
+          replace_once(
+              manager,
+              '            Track trusted accounts and sites. Stats pulled from Reel Radar by matching platform + source name.',
+              '            Enabled: {sourceDiagnostics.enabled} · RSS ingestible: {sourceDiagnostics.ingestible} · Manual/social only: {sourceDiagnostics.manualOnly}.')
+          replace_once(
+              manager,
+              '{p.rss_url ? " · RSS" : ""}',
+              '{p.rss_url ? " · RSS ingestible" : " · Manual only"}')
+
+          Path('.github/workflows/apply-admin-feed-visibility-plan.yml').unlink()
+          PY
+      - name: Install dependencies
+        run: npm ci
+      - name: Validate
+        run: npm run build
+      - name: Commit implementation
+        run: |
+          git config user.name "KeepTXRed Automation"
+          git config user.email "actions@users.noreply.github.com"
+          git add src/components/admin/ViralRadarPanel.tsx src/components/admin/ContentOpportunityPanel.tsx src/components/admin/ContentSourceManager.tsx src/lib/viral-score.ts .github/workflows/apply-admin-feed-visibility-plan.yml
+          git commit -m "Fix admin feed visibility and source diagnostics"
+          git push origin main
