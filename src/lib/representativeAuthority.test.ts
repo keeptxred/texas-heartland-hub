@@ -3,7 +3,8 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   STATE_LEADERSHIP,
-  US_HOUSE_SAMPLE,
+  US_HOUSE_DELEGATION,
+  US_HOUSE_VACANCIES,
   US_SENATORS,
   findRepresentativeBySlug,
   representativeSlug,
@@ -76,11 +77,28 @@ describe("representative authority pages", () => {
     }
   });
 
-  it("covers every representative exposed in the public directory", () => {
-    const directoryRepresentatives = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_SAMPLE];
-    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(directoryRepresentatives.length);
+  it("covers every representative exposed in the original authority directory", () => {
+    const enrichedRepresentatives = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION]
+      .filter((representative) => getRepresentativeAuthority(representativeSlug(representative.name)));
+    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(enrichedRepresentatives.length);
+    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(16);
+  });
+
+  it("publishes the complete current Texas House delegation and vacancy status", () => {
+    expect(US_HOUSE_DELEGATION).toHaveLength(37);
+    expect(US_HOUSE_VACANCIES).toEqual([
+      expect.objectContaining({ district: "TX-23", label: "Vacant" }),
+    ]);
+    const districts = US_HOUSE_DELEGATION.map((representative) =>
+      Number(/^TX-(\d+)/.exec(representative.district ?? "")?.[1]),
+    );
+    expect(new Set(districts).size).toBe(37);
+    expect(districts).not.toContain(23);
+    expect(directory).toContain("U.S. House — Complete Texas Delegation");
+    expect(directory).not.toContain("Texas Republican Delegation");
+    const directoryRepresentatives = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION];
     for (const representative of directoryRepresentatives) {
-      expect(getRepresentativeAuthority(representativeSlug(representative.name))).toBeDefined();
+      expect(findRepresentativeBySlug(representativeSlug(representative.name))).toEqual(representative);
     }
   });
 });
