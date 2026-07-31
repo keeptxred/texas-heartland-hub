@@ -5,6 +5,10 @@ import {
   findRepresentativeBySlug,
   representativeSlug,
 } from "@/data/representatives";
+import {
+  REPRESENTATIVE_AUTHORITY,
+  getRepresentativeAuthority,
+} from "@/data/representative-authority";
 
 const profile = readFileSync(
   resolve(process.cwd(), "src/routes/representatives.$representativeSlug.tsx"),
@@ -40,6 +44,32 @@ describe("representative authority pages", () => {
       "/contact-legislators",
     ]) {
       expect(profile).toContain(path);
+    }
+  });
+
+  it("publishes complete, sourced authority sections for statewide officials", () => {
+    expect(getRepresentativeAuthority("john-cornyn")?.committees.length).toBeGreaterThan(0);
+    expect(getRepresentativeAuthority("greg-abbott")?.education.length).toBeGreaterThan(0);
+    expect(
+      getRepresentativeAuthority("don-huffines")?.sources.some((source) =>
+        source.url.includes("gov.texas.gov"),
+      ),
+    ).toBe(true);
+    expect(
+      REPRESENTATIVE_AUTHORITY.every(
+        (authority) =>
+          authority.biography &&
+          authority.career.length &&
+          authority.education.length &&
+          authority.committees.length &&
+          authority.electionHistory.length &&
+          authority.districtOverview &&
+          authority.financeUrl &&
+          authority.sources.length,
+      ),
+    ).toBe(true);
+    for (const id of ["biography", "career", "education", "committees", "elections", "finance", "district", "news", "sources"]) {
+      expect(profile).toContain(`id="${id}"`);
     }
   });
 });
