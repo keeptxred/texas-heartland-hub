@@ -95,6 +95,7 @@ import { Route as CountyElectionsRouteImport } from './routes/county-elections'
 import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
+import { Route as BillsRouteImport } from './routes/bills'
 import { Route as AustinRouteImport } from './routes/austin'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
@@ -697,6 +698,11 @@ const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
   path: '/candidate-guides',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BillsRoute = BillsRouteImport.update({
+  id: '/bills',
+  path: '/bills',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AustinRoute = AustinRouteImport.update({
   id: '/austin',
   path: '/austin',
@@ -763,9 +769,9 @@ const ElectionsIndexRoute = ElectionsIndexRouteImport.update({
   getParentRoute: () => ElectionsRoute,
 } as any)
 const BillsIndexRoute = BillsIndexRouteImport.update({
-  id: '/bills/',
-  path: '/bills/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => BillsRoute,
 } as any)
 const AuthorsIndexRoute = AuthorsIndexRouteImport.update({
   id: '/authors/',
@@ -1489,9 +1495,9 @@ const ApiPublicArticleImageFilenameRoute =
   } as any)
 const BillsTexasLegislatureBillTypeBillNumberRoute =
   BillsTexasLegislatureBillTypeBillNumberRouteImport.update({
-    id: '/bills/texas/$legislature/$billType/$billNumber',
-    path: '/bills/texas/$legislature/$billType/$billNumber',
-    getParentRoute: () => rootRouteImport,
+    id: '/texas/$legislature/$billType/$billNumber',
+    path: '/texas/$legislature/$billType/$billNumber',
+    getParentRoute: () => BillsRoute,
   } as any)
 const ApiPublicOauthFacebookStartRoute =
   ApiPublicOauthFacebookStartRouteImport.update({
@@ -1512,6 +1518,7 @@ export interface FileRoutesByFullPath {
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRouteWithChildren
   '/austin': typeof AustinRoute
+  '/bills': typeof BillsRouteWithChildren
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
@@ -1982,6 +1989,7 @@ export interface FileRoutesById {
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
   '/admin': typeof AdminRouteWithChildren
   '/austin': typeof AustinRoute
+  '/bills': typeof BillsRouteWithChildren
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
   '/contact-legislators': typeof ContactLegislatorsRoute
@@ -2223,6 +2231,7 @@ export interface FileRouteTypes {
     | '/about-keep-texas-red'
     | '/admin'
     | '/austin'
+    | '/bills'
     | '/candidate-guides'
     | '/contact'
     | '/contact-legislators'
@@ -2692,6 +2701,7 @@ export interface FileRouteTypes {
     | '/about-keep-texas-red'
     | '/admin'
     | '/austin'
+    | '/bills'
     | '/candidate-guides'
     | '/contact'
     | '/contact-legislators'
@@ -2932,6 +2942,7 @@ export interface RootRouteChildren {
   AboutKeepTexasRedRoute: typeof AboutKeepTexasRedRoute
   AdminRoute: typeof AdminRouteWithChildren
   AustinRoute: typeof AustinRoute
+  BillsRoute: typeof BillsRouteWithChildren
   CandidateGuidesRoute: typeof CandidateGuidesRoute
   ContactRoute: typeof ContactRoute
   ContactLegislatorsRoute: typeof ContactLegislatorsRoute
@@ -3044,7 +3055,6 @@ export interface RootRouteChildren {
   VehiclesTemporaryTagsRoute: typeof VehiclesTemporaryTagsRoute
   VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
-  BillsIndexRoute: typeof BillsIndexRoute
   ApiPublicPropertyAddressLookupRoute: typeof ApiPublicPropertyAddressLookupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
@@ -3070,7 +3080,6 @@ export interface RootRouteChildren {
   LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
   ApiPublicOauthFacebookCallbackRoute: typeof ApiPublicOauthFacebookCallbackRoute
   ApiPublicOauthFacebookStartRoute: typeof ApiPublicOauthFacebookStartRoute
-  BillsTexasLegislatureBillTypeBillNumberRoute: typeof BillsTexasLegislatureBillTypeBillNumberRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -3677,6 +3686,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CandidateGuidesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bills': {
+      id: '/bills'
+      path: '/bills'
+      fullPath: '/bills'
+      preLoaderRoute: typeof BillsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/austin': {
       id: '/austin'
       path: '/austin'
@@ -3770,10 +3786,10 @@ declare module '@tanstack/react-router' {
     }
     '/bills/': {
       id: '/bills/'
-      path: '/bills'
+      path: '/'
       fullPath: '/bills/'
       preLoaderRoute: typeof BillsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BillsRoute
     }
     '/authors/': {
       id: '/authors/'
@@ -4715,10 +4731,10 @@ declare module '@tanstack/react-router' {
     }
     '/bills/texas/$legislature/$billType/$billNumber': {
       id: '/bills/texas/$legislature/$billType/$billNumber'
-      path: '/bills/texas/$legislature/$billType/$billNumber'
+      path: '/texas/$legislature/$billType/$billNumber'
       fullPath: '/bills/texas/$legislature/$billType/$billNumber'
       preLoaderRoute: typeof BillsTexasLegislatureBillTypeBillNumberRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof BillsRoute
     }
     '/api/public/oauth/facebook/start': {
       id: '/api/public/oauth/facebook/start'
@@ -4758,6 +4774,19 @@ const AdminRouteChildren: AdminRouteChildren = {
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
+interface BillsRouteChildren {
+  BillsIndexRoute: typeof BillsIndexRoute
+  BillsTexasLegislatureBillTypeBillNumberRoute: typeof BillsTexasLegislatureBillTypeBillNumberRoute
+}
+
+const BillsRouteChildren: BillsRouteChildren = {
+  BillsIndexRoute: BillsIndexRoute,
+  BillsTexasLegislatureBillTypeBillNumberRoute:
+    BillsTexasLegislatureBillTypeBillNumberRoute,
+}
+
+const BillsRouteWithChildren = BillsRoute._addFileChildren(BillsRouteChildren)
 
 interface DmvRouteChildren {
   DmvCdlRoute: typeof DmvCdlRoute
@@ -5096,6 +5125,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutKeepTexasRedRoute: AboutKeepTexasRedRoute,
   AdminRoute: AdminRouteWithChildren,
   AustinRoute: AustinRoute,
+  BillsRoute: BillsRouteWithChildren,
   CandidateGuidesRoute: CandidateGuidesRoute,
   ContactRoute: ContactRoute,
   ContactLegislatorsRoute: ContactLegislatorsRoute,
@@ -5212,7 +5242,6 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesTemporaryTagsRoute: VehiclesTemporaryTagsRoute,
   VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
-  BillsIndexRoute: BillsIndexRoute,
   ApiPublicPropertyAddressLookupRoute: ApiPublicPropertyAddressLookupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
@@ -5240,8 +5269,6 @@ const rootRouteChildren: RootRouteChildren = {
   LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
   ApiPublicOauthFacebookCallbackRoute: ApiPublicOauthFacebookCallbackRoute,
   ApiPublicOauthFacebookStartRoute: ApiPublicOauthFacebookStartRoute,
-  BillsTexasLegislatureBillTypeBillNumberRoute:
-    BillsTexasLegislatureBillTypeBillNumberRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
