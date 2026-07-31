@@ -16,6 +16,9 @@ concurrency:
   group: candidate-photo-new-domains
   cancel-in-progress: false
 
+env:
+  RUN_REQUESTED_AT: "2026-07-30T22:50:00-05:00"
+
 jobs:
   sweep:
     runs-on: ubuntu-latest
