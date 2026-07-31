@@ -102,7 +102,7 @@ function AboutPage() {
 
         <h2 className="font-display text-3xl tracking-tight pt-4">Corrections Policy</h2>
         <p className="text-muted-foreground">
-          If you spot a factual error in our reporting, email <a href="mailto:contact@keeptxred.com" className="text-primary underline">contact@keeptxred.com</a> with a link to the article and the correction you're suggesting. We review every correction request, update the article when warranted, and add a dated correction note to the bottom of the piece so readers can see what changed and when.
+          If you spot a factual error in our reporting, email <a href="mailto:admin@keeptxred.com" className="text-primary underline">admin@keeptxred.com</a> with a link to the article and the correction you're suggesting. We review every correction request, update the article when warranted, and add a dated correction note to the bottom of the piece so readers can see what changed and when.
         </p>
 
         <h2 className="font-display text-3xl tracking-tight pt-4">Editorial Independence</h2>
@@ -112,7 +112,7 @@ function AboutPage() {
 
         <h2 className="font-display text-3xl tracking-tight pt-4">Contact</h2>
         <p className="text-muted-foreground">
-          General inquiries, tips, and corrections: <a href="mailto:contact@keeptxred.com" className="text-primary underline">contact@keeptxred.com</a>. For more contact options, see our <a href="/contact" className="text-primary underline">Contact</a> page.
+          General inquiries, tips, and corrections: <a href="mailto:admin@keeptxred.com" className="text-primary underline">admin@keeptxred.com</a>. For more contact options, see our <a href="/contact" className="text-primary underline">Contact</a> page.
         </p>
 
         <div className="mt-8 border-l-4 border-primary bg-muted/40 p-5">
@@ -138,7 +138,7 @@ function AboutPage() {
             { q: "How do I pitch a story or tip?", a: <>Email <a href="mailto:tips@keeptxred.com" className="text-primary underline">tips@keeptxred.com</a>. Include the county, a date, and any documents you can share. We read every tip.</> },
             { q: "How do I request a correction?", a: <>Email <a href="mailto:corrections@keeptxred.com" className="text-primary underline">corrections@keeptxred.com</a> with the article URL and the specific factual error. We add a dated correction note when warranted.</> },
             { q: "Where do your property tax numbers come from?", a: <>County appraisal district filings and Texas Comptroller of Public Accounts data. See the <a href="/tax-calculator" className="text-primary underline">property tax calculator</a> for sourcing.</> },
-            { q: "Can I republish your articles?", a: <>Short excerpts with a link back are fine. For full republication, email <a href="mailto:contact@keeptxred.com" className="text-primary underline">contact@keeptxred.com</a>.</> },
+            { q: "Can I republish your articles?", a: <>Short excerpts with a link back are fine. For full republication, email <a href="mailto:admin@keeptxred.com" className="text-primary underline">admin@keeptxred.com</a>.</> },
           ]}
           summary={<>Keep Texas Red is a Texas-only newsroom that covers the Legislature, elections, property tax, energy, and the border with primary-source reporting. We are not a PAC, we label AI assistance, we correct mistakes in public, and we exist to give Texans the context they need to follow their state government.</>}
           related={[

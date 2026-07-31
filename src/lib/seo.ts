@@ -135,7 +135,7 @@ export function organizationJsonLd() {
     knowsAbout: ["Texas politics", "Texas policy", "Texas elections", "Texas legislature", "Texas news"],
     contactPoint: {
       "@type": "ContactPoint",
-      email: "contact@keeptxred.com",
+      email: "admin@keeptxred.com",
       contactType: "Editorial",
     },
     areaServed: { "@type": "State", name: "Texas" },

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { BASE_URL } from "@/lib/sitemap-shared";
+import { seoDescription, seoTitle } from "@/lib/shop-seo";
 
 const XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
 const BRAND = "Keep TX Red";
@@ -89,13 +90,14 @@ function variantSize(variant: ProductVariant): string | undefined {
 }
 
 function itemTitle(product: Product, variant?: ProductVariant): string {
-  if (!variant) return product.title;
+  const title = seoTitle(product);
+  if (!variant) return title;
   const options = [variant.color, variantSize(variant)].filter(Boolean);
-  return options.length ? `${product.title} - ${options.join(" / ")}` : product.title;
+  return options.length ? `${title} - ${options.join(" / ")}` : title;
 }
 
 function merchantItems(product: Product): MerchantItem[] {
-  const description = plainText(product.description) || `${product.title} from Keep TX Red.`;
+  const description = seoDescription(product);
   const link = `${BASE_URL}/shop/${encodeURIComponent(product.id)}`;
   const { category, apparel } = productCategory(product);
   const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled !== false);

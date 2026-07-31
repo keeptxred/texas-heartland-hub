@@ -124,7 +124,7 @@ export const Route = createFileRoute("/happening-now")({
               name: "Statewide Conservative News Dashboard",
               description:
                 "Live aggregated feeds from official Texas government sources: Legislature bills filed, Governor press releases, and Secretary of State updates.",
-isPartOf: { "@id": "https://www.keeptxred.com/#org" },
+isPartOf: { "@id": "https://keeptxred.com/#org" },
 about: [
   { "@type": "Thing", name: "Texas Legislative Tracking" },
   { "@type": "Thing", name: "Conservative Policy News" },

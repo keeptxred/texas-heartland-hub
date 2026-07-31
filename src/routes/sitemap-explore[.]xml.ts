@@ -66,7 +66,7 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
 
         if (!url || !key) {
           return xmlResponse(
-            renderUrlset([...geographyEntries, ...fallbackEntries], { image: true }),
+            renderUrlset([...geographyEntries, ...fallbackEntries]),
           );
         }
 
@@ -85,7 +85,7 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
             message: result.error.message,
           });
           return xmlResponse(
-            renderUrlset([...geographyEntries, ...fallbackEntries], { image: true }),
+            renderUrlset([...geographyEntries, ...fallbackEntries]),
           );
         }
 
@@ -103,7 +103,7 @@ export const Route = createFileRoute("/sitemap-explore.xml")({
           (entry, index, all) =>
             all.findIndex((candidate) => candidate.loc === entry.loc) === index,
         );
-        return xmlResponse(renderUrlset(entries, { image: true }));
+        return xmlResponse(renderUrlset(entries));
       },
     },
   },

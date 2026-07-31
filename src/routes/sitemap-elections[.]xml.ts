@@ -17,6 +17,7 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
           races: publicRecords(races, "/elections/races/"),
           candidates: publicRecords(candidates, "/elections/candidates/"),
           additionalPages: [
+            ...publicDistrictRecords(races),
             ...publicRecords(polls, "/elections/polls/"),
             ...publicRecords(forecasts, "/elections/forecast/"),
             ...publicRecords(results, "/elections/results/"),
@@ -27,6 +28,38 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
     },
   },
 });
+
+function districtPathForRaceSlug(slug: string): string | null {
+  const patterns: Array<[RegExp, string]> = [
+    [/^2026-us-house-district-(\d{1,2})$/, "congressional-district"],
+    [/^2026-texas-house-district-(\d{1,3})$/, "texas-house-district"],
+    [/^2026-texas-senate-district-(\d{1,2})$/, "texas-senate-district"],
+  ];
+  for (const [pattern, prefix] of patterns) {
+    const match = pattern.exec(slug);
+    if (match) return `/elections/districts/${prefix}-${match[1]}`;
+  }
+  return null;
+}
+
+function publicDistrictRecords(records: readonly Record<string, unknown>[]) {
+  return records.flatMap((record) => {
+    if (
+      record.publicationStatus !== "published" ||
+      record.verificationStatus !== "verified" ||
+      typeof record.slug !== "string"
+    ) return [];
+    const path = districtPathForRaceSlug(record.slug);
+    return path
+      ? [{
+          path,
+          canonicalPath: path,
+          updatedAt: String(record.updatedAt ?? record.dataAsOf ?? newestElectionUpdate()),
+          indexable: true,
+        }]
+      : [];
+  });
+}
 
 function publicRecords(records: readonly Record<string, unknown>[], prefix: string) {
   return records

@@ -38,6 +38,10 @@ const LEGACY_ELECTION_PATHS = new Map([
   ["/elections/2026/forecasts", "/elections/forecast"],
   ["/elections/2026/results", "/elections/results"],
 ]);
+const LEGACY_CONTENT_PATHS = new Map([
+  ["/houston-news", "/houston"],
+  ["/property-taxes", "/texas/property-taxes-2026"],
+]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
 const slugify = (s: string) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -68,6 +72,17 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
       status: 301,
       headers: {
         location: `${normalizedElectionPath}${url.search}`,
+        "cache-control": "public, max-age=86400",
+      },
+    });
+  }
+
+  const legacyContentTarget = LEGACY_CONTENT_PATHS.get(url.pathname.toLowerCase());
+  if (legacyContentTarget) {
+    return new Response(null, {
+      status: 301,
+      headers: {
+        location: `${legacyContentTarget}${url.search}`,
         "cache-control": "public, max-age=86400",
       },
     });

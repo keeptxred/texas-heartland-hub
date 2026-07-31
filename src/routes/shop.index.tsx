@@ -125,7 +125,7 @@ function ShopPage() {
 
   const faqs: Array<{ q: string; a: string }> = [
     { q: "What makes Keep Texas Red apparel unique?", a: "Every design is created for proud Texans — from bold Texas flag graphics to conservative statement pieces. Orders help fund our independent Texas newsroom." },
-    { q: "How long does shipping take?", a: "Most orders print and ship within 3–7 business days. U.S. delivery typically arrives 2–5 days after shipping." },
+    { q: "How long does shipping take?", a: "Standard U.S. shipping is free. Most orders are produced within 3–7 business days, and U.S. delivery typically takes another 2–5 business days after shipment." },
     { q: "Are products printed in the USA?", a: "Yes. Our apparel is printed on demand in U.S. print facilities to keep production close to home." },
     { q: "Are hats embroidered?", a: "Yes — our structured caps and dad hats feature embroidered Texas designs for a premium, long-lasting finish." },
     { q: "Do you offer hoodies and shirts?", a: "We stock unisex Texas patriotic tees, long sleeves, and heavyweight hoodies in a range of colors and sizes." },

@@ -66,6 +66,7 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
         )
       : [];
     const canonicalUrl = `https://keeptxred.com/elections/districts/${params.districtSlug}`;
+    const indexable = Boolean(district && race);
     const title = district
       ? `2026 ${district.name} Election | Candidates & Results`
       : "Texas Election District Not Found";
@@ -76,8 +77,8 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
       meta: [
         { title },
         { name: "description", content: description },
-        { name: "robots", content: district ? "index, follow, max-image-preview:large" : "noindex, nofollow" },
-        ...(district
+        { name: "robots", content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow" },
+        ...(district && race
           ? [
               { property: "og:title", content: title },
               { property: "og:description", content: description },
@@ -93,8 +94,8 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
             ]
           : []),
       ],
-      links: district ? [{ rel: "canonical", href: canonicalUrl }] : [],
-      scripts: district
+      links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
+      scripts: district && race
         ? [
             {
               type: "application/ld+json",
@@ -218,6 +219,7 @@ function TexasElectionDistrict() {
       description={`Track published races, verified candidates, forecasts, and results for ${district.name}.`}
       canonicalUrl={canonicalUrl}
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.districts} />}
+      indexable={Boolean(race)}
     >
       <div className="space-y-10">
         <section className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:grid-cols-2 lg:grid-cols-4">
@@ -319,12 +321,12 @@ function TexasElectionDistrict() {
                 <a href={race.source.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
                   Texas Secretary of State race source
                 </a>
-                {race.geographySource ? <a href={race.geographySource.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
+                <a href={race.geographySource?.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
                   Census district geography source
-                </a> : null}
-                {race.countyElectionLinkSource ? <a href={race.countyElectionLinkSource.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
+                </a>
+                <a href={race.countyElectionLinkSource?.sourceUrl} target="_blank" rel="noreferrer" className="font-semibold text-red-700 hover:underline">
                   Official county election directory
-                </a> : null}
+                </a>
               </>
             ) : null}
           </div>

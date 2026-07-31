@@ -9,7 +9,13 @@ export const Route = createFileRoute("/robots.txt")({
     handlers: {
       GET: async () => {
         const body = [
-          "# Keep TX Red — allow all public content, block internal system paths.",
+          "# Keep TX Red — allow product quality, image, search, and AI crawlers.",
+          "User-agent: Googlebot",
+          "Allow: /",
+          "",
+          "User-agent: Googlebot-Image",
+          "Allow: /",
+          "",
           "User-agent: OAI-SearchBot",
           "Allow: /",
           "",

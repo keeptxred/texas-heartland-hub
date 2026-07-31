@@ -70,8 +70,25 @@ export function seoTitle(product: Pick<Product, "title">): string {
   return `${BRAND} Texas Patriotic ${type}`;
 }
 
-export function seoDescription(product: Pick<Product, "title">): string {
-  return `Buy ${seoTitle(product)} from ${BRAND}. Premium Texas patriotic apparel for proud Texans with secure checkout and fast shipping.`;
+function plainText(value: string): string {
+  return value
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function seoDescription(product: Pick<Product, "title"> & Partial<Pick<Product, "description">>): string {
+  const sourceDescription = plainText(product.description || "");
+  if (sourceDescription.length >= 80) return sourceDescription;
+
+  const title = seoTitle(product);
+  return `Shop ${title}, made for proud Texans who want to show their Lone Star State spirit. Choose from available colors and sizes, check out securely, and support the independent Keep Texas Red newsroom with every order.`;
 }
 
 export function seoAlt(product: Pick<Product, "title">, color?: string | null): string {

@@ -60,11 +60,14 @@ type ArticleMeta = {
   featured_image_url: string | null;
 };
 
-type FilterKey = "all" | "score" | "texas" | "video" | "reel" | "fb" | "seo" | "ready";
+type FilterKey = "all" | "score" | "texas" | "video" | "reel" | "fb" | "seo" | "ready" | "blocked";
 
 const IGNORE_STORAGE_KEY = "ktr.viral.ignored.v1";
 const RECENT_DAYS = 14;
-const FETCH_LIMIT = 150;
+const FETCH_LIMIT = 500;
+const PAGE_SIZE = 75;
+const MANUAL_TEXAS_MIN = 25;
+const MANUAL_REPUTATION_MIN = 40;
 
 function loadIgnored(): Set<number> {
   if (typeof window === "undefined") return new Set();
@@ -133,21 +136,11 @@ function canAttemptPublish(result: RewritePreflightResult, alreadyPublished: boo
   return alreadyPublished || result.rewriteable || result.reason === "PENDING_EXTRACTION";
 }
 
-function shouldShowRow(row: Row, result: RewritePreflightResult): boolean {
+function shouldShowRow(row: Row): boolean {
   if (row.internal_slug) return true;
-  if (result.rewriteable) return true;
-  // Persisted preflight means extraction already ran. Any persisted
-  // non-ready result is terminal and must leave the publish queue.
-  if (row.preflight_json) return false;
-
-  if (result.reason !== "PENDING_EXTRACTION") return false;
-
-  // Keep Viral Radar useful as a manual-review queue. The stricter score and
-  // confidence thresholds belong to the Ready for Rewrite filter, not to the
-  // entire panel. Pending rows still must be Texas-focused and credible.
   return (
-    (row.texas_relevance_score ?? 0) >= 40 &&
-    (row.source_reputation_score ?? 0) >= 55
+    (row.texas_relevance_score ?? 0) >= MANUAL_TEXAS_MIN &&
+    (row.source_reputation_score ?? 0) >= MANUAL_REPUTATION_MIN
   );
 }
 
@@ -165,6 +158,7 @@ export function ViralRadarPanel() {
   const [filter, setFilter] = useState<FilterKey>("all");
   const [ignored, setIgnored] = useState<Set<number>>(() => loadIgnored());
   const [imageWorking, setImageWorking] = useState<Record<number, boolean>>({});
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   async function load() {
     setLoading(true);
@@ -205,6 +199,10 @@ export function ViralRadarPanel() {
     window.addEventListener("focus", onFocus);
     return () => window.removeEventListener("focus", onFocus);
   }, []);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [filter]);
 
   function ignoreRow(id: number) {
     setIgnored((current) => {
@@ -361,8 +359,8 @@ export function ViralRadarPanel() {
   }, [recentRows]);
 
   const publishableRows = useMemo(
-    () => recentRows.filter((row) => shouldShowRow(row, preflightById[row.id])),
-    [recentRows, preflightById],
+    () => recentRows.filter(shouldShowRow),
+    [recentRows],
   );
 
   const filtered = useMemo(() => {
@@ -381,11 +379,18 @@ export function ViralRadarPanel() {
       case "seo":
         return items.filter((row) => row.routing_type === "SEO_ARTICLE" || row.routing_type === "BOTH");
       case "ready":
-        return items.filter((row) => preflightById[row.id]?.rewriteable);
+        return items.filter((row) => row.ready_for_rewrite || preflightById[row.id]?.rewriteable);
+      case "blocked":
+        return items.filter((row) => {
+          const preflight = preflightById[row.id];
+          return Boolean(row.preflight_json) && !preflight?.rewriteable;
+        });
       default:
         return items;
     }
   }, [publishableRows, filter, preflightById]);
+
+  const visibleRows = filtered.slice(0, visibleCount);
 
   return (
     <div className="border-2 border-foreground/10 bg-card p-5">
@@ -415,8 +420,11 @@ export function ViralRadarPanel() {
         </div>
       </div>
 
+      <p className="text-[11px] text-muted-foreground mb-1">
+        Showing {publishableRows.length} of {recentRows.length} recent rows using the manual-review floor: Texas relevance ≥{MANUAL_TEXAS_MIN}, reputation ≥{MANUAL_REPUTATION_MIN}.
+      </p>
       <p className="text-[11px] text-muted-foreground mb-3">
-        Articles disappear after source extraction confirms they cannot pass the rewrite gate.
+        Blocked preflight rows remain visible for review, but publishing stays disabled until they are READY or pending extraction.
       </p>
 
       <div className="flex flex-wrap gap-1 mb-3">
@@ -425,6 +433,7 @@ export function ViralRadarPanel() {
           ["score", "Top Score"],
           ["texas", "Top TX Relevance"],
           ["ready", "Ready for Rewrite"],
+          ["blocked", "Blocked / Review"],
           ["video", "Video Available"],
           ["reel", "Reel Candidate"],
           ["fb", "Facebook Ready"],
@@ -448,7 +457,7 @@ export function ViralRadarPanel() {
       {loading ? (
         <div className="text-sm text-muted-foreground">Loading…</div>
       ) : filtered.length === 0 ? (
-        <div className="text-sm text-muted-foreground">No publishable feed items.</div>
+        <div className="text-sm text-muted-foreground">No feed items match this filter.</div>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -458,13 +467,14 @@ export function ViralRadarPanel() {
                 <th className="py-2 pr-2">Category</th>
                 <th className="py-2 pr-2 text-right">Score</th>
                 <th className="py-2 pr-2 text-right">TX</th>
+                <th className="py-2 pr-2 text-right">Rep</th>
                 <th className="py-2 pr-2 text-right">Conf</th>
                 <th className="py-2 pr-2">Signals</th>
                 <th className="py-2 pr-2">Action</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.map((row) => {
+              {visibleRows.map((row) => {
                 const article = row.internal_slug ? articles[row.internal_slug] : undefined;
                 const rewritten = Boolean(article);
                 const hasImage = Boolean(article?.featured_image_url);
@@ -524,12 +534,13 @@ export function ViralRadarPanel() {
                     </td>
                     <td className="py-2 pr-2 text-right tabular-nums">{row.viral_score ?? 0}</td>
                     <td className="py-2 pr-2 text-right tabular-nums">{row.texas_relevance_score ?? 0}</td>
+                    <td className="py-2 pr-2 text-right tabular-nums">{row.source_reputation_score ?? 0}</td>
                     <td className="py-2 pr-2 text-right tabular-nums">
                       {(row.classification_confidence ?? 0).toFixed(2)}
                     </td>
                     <td className="py-2 pr-2 text-[11px] text-muted-foreground max-w-[20rem]">
-                      {(row.texas_relevance_score ?? 0) < 40 ? (
-                        <span className="text-red-600 font-bold">Not Texas focused</span>
+                      {(row.texas_relevance_score ?? 0) < MANUAL_TEXAS_MIN ? (
+                        <span className="text-red-600 font-bold">Below manual TX floor</span>
                       ) : (
                         (row.viral_signals?.reasons ?? []).slice(0, 3).join(" · ")
                       )}
@@ -611,6 +622,17 @@ export function ViralRadarPanel() {
               })}
             </tbody>
           </table>
+          {visibleCount < filtered.length ? (
+            <div className="flex justify-center pt-4">
+              <button
+                type="button"
+                onClick={() => setVisibleCount((count) => count + PAGE_SIZE)}
+                className="px-4 py-2 border-2 border-primary text-primary text-[11px] font-bold uppercase tracking-widest"
+              >
+                Load more ({filtered.length - visibleCount} remaining)
+              </button>
+            </div>
+          ) : null}
         </div>
       )}
     </div>
