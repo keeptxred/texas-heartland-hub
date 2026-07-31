@@ -10,7 +10,7 @@ import { articleMainWordCount } from "@/lib/article-length";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
 import { runEditorialRewrite } from "@/lib/editorial-pipeline";
-import { validatePoliticalEntityClaims } from "@/lib/political-entity-authority";
+import { validatePoliticalAuthority } from "@/lib/political-entity-authority";
 
 // Reuses the existing Texas relevance scorer (title + description + source
 // entity signals) so a source labelled "USGS Earthquakes — Texas" cannot push
@@ -90,8 +90,7 @@ const EDITORIAL_BACKFILLS: Item[] = [
   {
     title:
       "Joe Rogan warns liberals against trying to turn Texas blue, says it would wreck the state's delicate balance",
-    link:
-      "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance",
+    link: "https://www.foxnews.com/media/joe-rogan-warns-liberals-against-trying-turn-texas-blue-says-would-wreck-states-delicate-balance",
     pub_date: "2026-07-28T00:00:00.000Z",
     source: "Fox News",
     category: "Politics",
@@ -99,10 +98,8 @@ const EDITORIAL_BACKFILLS: Item[] = [
       "Podcaster Joe Rogan discussed the political character of Austin and Texas during a conversation with wildlife television personality Forrest Galante. Rogan described Austin as a progressive city surrounded by strongly Republican parts of Texas and argued that the contrast creates a balance that benefits the city and the state. He said Austin progressives tend to be more reasonable than liberals he encountered in New York or Los Angeles and pushed back on stereotypes that portray Texas as culturally uniform or unsophisticated. Rogan, who moved from Los Angeles to Austin during the COVID-19 era and records his podcast in the area, warned activists who want to make Texas uniformly Democratic that doing so could undermine what makes the state attractive, including for newcomers. The discussion also touched on the phrase Keep Austin weird and surrounded, Austin's long history of Democratic municipal leadership, and the city's position as a liberal enclave inside a Republican-led state. Rogan's comments are relevant to the continuing debate over demographic change, migration, political identity, and Democratic efforts to become more competitive in statewide Texas elections.",
   },
   {
-    title:
-      "Report: James Talarico filmed driving rental truck in 'Real Texan' campaign ad",
-    link:
-      "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/",
+    title: "Report: James Talarico filmed driving rental truck in 'Real Texan' campaign ad",
+    link: "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/",
     pub_date: "2026-07-29T00:00:00.000Z",
     source: "Breitbart",
     category: "Politics",
@@ -841,10 +838,7 @@ async function handler() {
   // invisible under the default "ready" filter.
   await Promise.all(
     EDITORIAL_BACKFILLS.map(async ({ category: _category, link, ...fields }) => {
-      const { error } = await supabaseAdmin
-        .from("texas_news_feed")
-        .update(fields)
-        .eq("link", link);
+      const { error } = await supabaseAdmin.from("texas_news_feed").update(fields).eq("link", link);
       if (error) {
         console.warn("[ingest-feeds] editorial recovery refresh failed", {
           link,
@@ -954,12 +948,15 @@ async function handler() {
         }
         return true;
       });
+    const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
     const articleRows = pairedRows
       .map(({ row }) => row)
       .filter((row) => {
-        const validation = validatePoliticalEntityClaims(
-          `${row.title} ${row.dek} ${row.body}`,
-        );
+        const sourceItem = articleSourceBySlug.get(row.slug);
+        const validation = validatePoliticalAuthority({
+          headline: row.title,
+          body: `${row.dek} ${row.body} ${sourceItem?.description ?? ""}`,
+        });
         if (!validation.valid) {
           console.error("[ingest-feeds] political entity authority gate blocked article", {
             slug: row.slug,
@@ -968,7 +965,6 @@ async function handler() {
         }
         return validation.valid;
       });
-    const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
     if (articleRows.length === 0) {
       console.log("[ingest-feeds] batch produced 0 articles", stageCounts);
       return new Response(
@@ -1193,7 +1189,7 @@ async function handler() {
 
   // Canonical-URL dedupe: for any daily_articles rows sharing the same
   // source_url, keep the most-recently-updated slug and drop the rest.
-  let dedupedCanonical = 0;
+  const dedupedCanonical = 0;
   let dedupeSkippedReason: string | null = null;
   try {
     // Total daily_articles row count — used both to skip cleanup on empty-run
@@ -1499,9 +1495,10 @@ export async function publishSingleFeedItem(
     };
   }
   enrichArticleRow(articleRow);
-  const entityValidation = validatePoliticalEntityClaims(
-    `${articleRow.title} ${articleRow.dek} ${articleRow.body}`,
-  );
+  const entityValidation = validatePoliticalAuthority({
+    headline: articleRow.title,
+    body: `${articleRow.dek} ${articleRow.body} ${item.description}`,
+  });
   if (!entityValidation.valid) {
     return {
       ok: false,
