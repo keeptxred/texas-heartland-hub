@@ -103,7 +103,7 @@ export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
           ) : null}
         </div>
         <p className="mt-4 text-xs leading-5 text-slate-500">
-          Data verified {formatDate(race.lastCheckedAt.slice(0, 10))}. Current freshness status:{" "}
+          Data verified {formatDate((race.lastCheckedAt ?? "").slice(0, 10))}. Current freshness status:{" "}
           {race.freshnessStatus}.
         </p>
       </div>

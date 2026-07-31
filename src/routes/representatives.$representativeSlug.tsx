@@ -22,7 +22,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
     if (!directoryRepresentative && !legislation.identity) throw notFound();
     const terms = (authority?.newsKeywords ?? (directoryRepresentative ? [directoryRepresentative.name] : []))
       .map((term) => term.toLowerCase());
-    const news = ARTICLES.filter(isPublished)
+    const news = ARTICLES.filter((article) => isPublished(article))
       .filter((article) => {
         const haystack = `${article.title} ${article.dek} ${(article.topics ?? []).join(" ")}`.toLowerCase();
         return terms.some((term) => haystack.includes(term));
@@ -64,7 +64,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
               },
               sameAs: [
                 representative.website,
-                ...(loaderData.authority?.sources.map((source) => source.url) ?? []),
+                ...(loaderData.authority?.sources.map((source: any) => source.url) ?? []),
               ],
             }
           : {}),
@@ -211,7 +211,7 @@ function RepresentativeProfile() {
               <AuthoritySection id="committees" title="Committee assignments and governing role"><AuthorityList items={profileAuthority.committees} /></AuthoritySection>
               <AuthoritySection id="elections" title="Election history">
                 {profileAuthority.electionHistory.length ? <ol className="space-y-4">
-                  {profileAuthority.electionHistory.map((event) => (
+                  {profileAuthority.electionHistory.map((event: any) => (
                     <li key={`${event.year}-${event.result}`} className="grid gap-1 border-l-2 border-primary pl-4 sm:grid-cols-[5rem_1fr]">
                       <strong>{event.year}</strong><span className="text-muted-foreground">{event.result}</span>
                     </li>
@@ -290,7 +290,7 @@ function RepresentativeProfile() {
               <AuthoritySection id="news" title={`Related ${name} news`}>
                 {news.length ? (
                   <div className="grid gap-4 sm:grid-cols-2">
-                    {news.map((article) => (
+                    {news.map((article: any) => (
                       <a key={article.slug} href={`/article/${article.slug}`} className="rounded-lg border p-4 hover:border-primary">
                         <p className="text-xs font-bold uppercase tracking-wide text-primary">{article.category}</p>
                         <h3 className="mt-2 font-bold">{article.title}</h3>
@@ -302,7 +302,7 @@ function RepresentativeProfile() {
               </AuthoritySection>
               <AuthoritySection id="sources" title="Primary sources">
                 <ul className="space-y-3">
-                  {profileAuthority.sources.map((source) => (
+                  {profileAuthority.sources.map((source: any) => (
                     <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">{source.label} →</a></li>
                   ))}
                 </ul>
