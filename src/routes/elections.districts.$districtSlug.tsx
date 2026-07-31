@@ -3,6 +3,8 @@ import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import candidates from "@/data/elections/2026/candidates.json";
 import races from "@/data/elections/2026/races.json";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
+import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
 
 type DistrictType = "congressional" | "state_house" | "state_senate";
 const TEXAS_SENATE_DISTRICTS = new Set([1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31]);
@@ -51,6 +53,7 @@ function formatElectionDate(value: string) {
 }
 
 export const Route = createFileRoute("/elections/districts/$districtSlug")({
+  loader: ({ params }) => getRelatedAuthorityContent("district", params.districtSlug, 12).catch(() => []),
   head: ({ params }) => {
     const district = parseDistrictSlug(params.districtSlug);
     const race = district ? getPublishedRace(district.raceSlug) : null;
@@ -189,6 +192,7 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
 
 function TexasElectionDistrict() {
   const { districtSlug } = Route.useParams();
+  const scoredRelated = Route.useLoaderData();
   const district = parseDistrictSlug(districtSlug);
   if (!district) {
     return (
@@ -325,6 +329,8 @@ function TexasElectionDistrict() {
             ) : null}
           </div>
         </section>
+
+        <RelatedAuthorityContent items={scoredRelated} title="Related bills, representatives, elections, and news" />
 
         <section aria-labelledby="district-resources-heading">
           <h2 id="district-resources-heading" className="text-2xl font-bold text-slate-950">

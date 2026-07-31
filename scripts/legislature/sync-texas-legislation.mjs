@@ -8,6 +8,7 @@
  * Usage: node scripts/legislature/sync-texas-legislation.mjs --sessions=89R,88R
  */
 import { createHash } from 'node:crypto';
+import { readFile } from 'node:fs/promises';
 
 const SOURCE_KEY = 'texas-legislature-online';
 const FTP_HTTP_ROOT = process.env.TLO_BULK_ROOT || 'https://ftp.legis.state.tx.us/bills';
@@ -56,6 +57,28 @@ async function selectOne(table, query) {
   return (await response.json())[0] || null;
 }
 
+async function linkAuthorities(sourceType, sourceKey, targetType, targetKey, relationshipType, score, evidence) {
+  if (dryRun || !sourceKey || !targetKey) return;
+  await rest('rpc/upsert_bidirectional_authority_relationship', { method: 'POST', body: JSON.stringify({
+    p_source_type: sourceType, p_source_key: sourceKey, p_target_type: targetType,
+    p_target_key: targetKey, p_relationship_type: relationshipType, p_score: score, p_evidence: evidence,
+  }) });
+}
+function canonicalDistrictSlug(districtId) {
+  const match = /^district-(texas-house|texas-senate|us-house)-(\\d+)$/.exec(districtId || '');
+  if (!match) return null;
+  const prefix = { 'texas-house': 'texas-house-district', 'texas-senate': 'texas-senate-district', 'us-house': 'congressional-district' }[match[1]];
+  return `${prefix}-${match[2]}`;
+}
+async function syncElectionRelationships() {
+  const races = JSON.parse(await readFile(new URL('../../src/data/elections/2026/races.json', import.meta.url), 'utf8'));
+  for (const race of races) {
+    if (race.publicationStatus !== 'published' || race.verificationStatus !== 'verified') continue;
+    const districtKey = canonicalDistrictSlug(race.districtId);
+    if (districtKey) await linkAuthorities('district', districtKey, 'election', race.slug, 'district-election', 38, { source: 'verified-election-registry', electionDate: race.electionDate });
+  }
+}
+
 function billIdentity(xml, sourceUrl, session) {
   const identifier = value(xml, ['billNumber', 'bill', 'billName', 'legislationNumber']) || sourceUrl.match(/([HS](?:B|JR|CR|R)\d{1,5})/i)?.[1];
   const match = identifier?.replace(/\s/g, '').match(/^(HB|SB|HJR|SJR|HCR|SCR|HR|SR)(\d+)$/i);
@@ -90,7 +113,8 @@ function parseBill(xml, sourceUrl, session) {
   const sponsors = blocks(xml, ['author', 'coauthor', 'sponsor', 'cosponsor', 'billAuthor', 'billSponsor']).map((part, index) => {
     const name = value(part, ['name', 'memberName', 'authorName', 'sponsorName']) || decode(part.replace(/<[^>]+>/g, ' '));
     const role = value(part, ['role', 'type']) || 'author';
-    return { sponsor_name: name, sponsor_slug: slug(name), sponsor_role: role.toLowerCase(), chamber, sequence: index };
+    return { sponsor_name: name, sponsor_slug: slug(name), sponsor_role: role.toLowerCase(), chamber: value(part, ['chamber'])?.toLowerCase() || chamber,
+      district: value(part, ['district', 'districtNumber']), party: value(part, ['party']), external_legislator_id: value(part, ['memberId', 'legislatorId']), sequence: index };
   }).filter((s) => s.sponsor_name);
   const committees = blocks(xml, ['committee', 'committeeAction']).map((part, index) => ({
     committee_name: value(part, ['committeeName', 'name']) || decode(part.replace(/<[^>]+>/g, ' ')),
@@ -103,6 +127,7 @@ function parseBill(xml, sourceUrl, session) {
       last_action_date: actions.map((a) => a.action_date).sort().at(-1) || null, became_law: ['signed', 'became-law'].includes(status.code), is_active: true,
       source_url: value(xml, ['sourceUrl', 'billUrl']) || sourceUrl, bill_text_url: value(xml, ['billTextUrl', 'textUrl']), fiscal_note_url: value(xml, ['fiscalNoteUrl']), analysis_url: value(xml, ['analysisUrl']), last_synced_at: new Date().toISOString() },
     actions, sponsors, committees,
+    agencies: [...new Map(values(xml, ['affectedAgency', 'agencyName', 'stateAgency']).map((name) => [slug(name), { name, slug: slug(name) }])).values()],
   };
 }
 
@@ -130,10 +155,13 @@ async function importBill(session, sourceUrl) {
     // Committee history lacks a natural unique constraint, so replace only automated rows from this source bill.
     await rest(`bill_committee_history?bill_id=eq.${bill.id}&source_url=eq.${encodeURIComponent(sourceUrl)}`, { method: 'DELETE' });
     if (parsed.committees.length) await rest('bill_committee_history', { method: 'POST', body: JSON.stringify(parsed.committees) });
+    for (const agency of parsed.agencies) await linkAuthorities('bill', bill.id, 'government', agency.slug, 'affected-agency', 24, { source: 'official-bill-record', agencyName: agency.name });
     await upsert('legislative_source_records', [{ source_key: SOURCE_KEY, source_record_key: sourceRecordKey, source_url: sourceUrl, content_hash: contentHash, last_seen_at: new Date().toISOString(), last_imported_at: new Date().toISOString(), metadata: { session } }], 'source_key,source_record_key');
   }
   return { changed: true };
 }
+
+await syncElectionRelationships();
 
 for (const session of sessions) {
   const run = dryRun ? { id: null } : (await rest('legislative_sync_runs', { method: 'POST', body: JSON.stringify({ legislature_number: Number(session.match(/^\d+/)[0]), session_code: session.replace(/^\d+/, '').toUpperCase() }) }).then((r) => r.json()))[0];

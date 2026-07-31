@@ -94,6 +94,26 @@ begin
       jsonb_build_object('source','official-sponsor-record'));
   end loop;
 
+  -- Official sponsor geography links bills and members to canonical district pages.
+  for r in
+    select distinct b.id::text bill_key, bs.sponsor_slug representative_key,
+      case
+        when lower(coalesce(bs.chamber, b.chamber)) = 'house' then 'texas-house-district-' || regexp_replace(bs.district, '\\D', '', 'g')
+        when lower(coalesce(bs.chamber, b.chamber)) = 'senate' then 'texas-senate-district-' || regexp_replace(bs.district, '\\D', '', 'g')
+      end district_key
+    from bills b join bill_sponsors bs on bs.bill_id = b.id
+    where bs.district is not null and regexp_replace(bs.district, '\\D', '', 'g') <> ''
+  loop
+    if r.district_key is not null then
+      perform upsert_bidirectional_authority_relationship('bill', r.bill_key, 'district', r.district_key,
+        'sponsor-district', 28, jsonb_build_object('source','official-sponsor-record'));
+      if r.representative_key is not null then
+        perform upsert_bidirectional_authority_relationship('representative', r.representative_key, 'district', r.district_key,
+          'represents-district', 40, jsonb_build_object('source','official-sponsor-record'));
+      end if;
+    end if;
+  end loop;
+
   for r in
     select distinct b.id::text bill_key, lc.committee_slug target_key
     from bills b join bill_committee_history bh on bh.bill_id = b.id
