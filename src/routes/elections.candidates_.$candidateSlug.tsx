@@ -23,6 +23,7 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { getFeaturedCandidateProfile } from "@/lib/elections/featuredCandidateProfiles";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
@@ -43,9 +44,12 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
         : record && "name" in record && typeof record.name === "string"
           ? record.name
           : "Texas Election Candidate";
+    const featuredProfile = getFeaturedCandidateProfile(recordName);
     const recordDescription =
       record && "biography" in record && typeof record.biography === "string" && record.biography
         ? record.biography
+        : featuredProfile?.biography
+          ? featuredProfile.biography
         : record && "description" in record && typeof record.description === "string" && record.description
           ? record.description
           : "View verified information for this Texas election candidate.";
@@ -60,7 +64,7 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
       "usageStatus" in record.imageRights &&
       record.imageRights.usageStatus === "approved"
         ? record.imageUrl
-        : null;
+        : featuredProfile?.imageUrl ?? null;
     const title = indexable
       ? `${recordName} | KeepTXRed Election Central`
       : "Election candidate not found | KeepTXRed";
@@ -117,6 +121,23 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
                 description: recordDescription,
                 url: canonicalUrl,
                 ...(recordImage ? { image: recordImage } : {}),
+                ...(featuredProfile?.occupation
+                  ? {
+                      hasOccupation: {
+                        "@type": "Occupation",
+                        name: featuredProfile.occupation,
+                      },
+                    }
+                  : {}),
+                ...(featuredProfile?.currentRole ? { jobTitle: featuredProfile.currentRole } : {}),
+                ...(featuredProfile?.education.length
+                  ? {
+                      alumniOf: featuredProfile.education.map((education) => ({
+                        "@type": "EducationalOrganization",
+                        name: education,
+                      })),
+                    }
+                  : {}),
                 affiliation: {
                   "@type": "Organization",
                   name:
@@ -126,6 +147,7 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
                         ? record.party
                         : "Candidate",
                 },
+                ...(featuredProfile?.sameAs.length ? { sameAs: featuredProfile.sameAs } : {}),
               }).replace(/</g, "\\u003c"),
             },
           ]
