@@ -3,12 +3,13 @@ import { PageHero } from "@/components/page-hero";
 import {
   US_SENATORS,
   STATE_LEADERSHIP,
-  US_HOUSE_SAMPLE,
+  US_HOUSE_DELEGATION,
+  US_HOUSE_VACANCIES,
   representativeSlug,
   type Rep,
 } from "@/data/representatives";
 
-const ALL_REPRESENTATIVES = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_SAMPLE];
+const ALL_REPRESENTATIVES = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION];
 
 export const Route = createFileRoute("/representatives")({
   head: () => ({
@@ -110,8 +111,23 @@ function RepresentativesPage() {
       <div className="mx-auto max-w-6xl px-4 pb-16">
         <Section title="U.S. Senate" reps={US_SENATORS} />
         <Section title="Statewide Leadership" reps={STATE_LEADERSHIP} />
-        <Section title="U.S. House (Texas Republican Delegation)" reps={US_HOUSE_SAMPLE} />
-        <p className="mt-10 text-xs text-muted-foreground italic">Phone numbers compiled from official offices. For your specific House district, use the <Link to="/find-representative" className="text-primary underline">district lookup tool</Link>.</p>
+        <Section title="U.S. House — Complete Texas Delegation" reps={US_HOUSE_DELEGATION} />
+        {US_HOUSE_VACANCIES.length ? (
+          <section className="mt-8 rounded-xl border border-dashed bg-muted/30 p-5">
+            <h2 className="font-display text-2xl">Current House vacancies</h2>
+            <div className="mt-3 space-y-2">
+              {US_HOUSE_VACANCIES.map((vacancy) => (
+                <p key={vacancy.district}>
+                  <strong>{vacancy.district}</strong> — {vacancy.label}.{" "}
+                  <a href={vacancy.source} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">
+                    Verify with House.gov →
+                  </a>
+                </p>
+              ))}
+            </div>
+          </section>
+        ) : null}
+        <p className="mt-10 text-xs text-muted-foreground italic">Membership and phone numbers reviewed against the official U.S. House directory. For your specific House district, use the <Link to="/find-representative" className="text-primary underline">district lookup tool</Link>.</p>
       </div>
     </>
   );
