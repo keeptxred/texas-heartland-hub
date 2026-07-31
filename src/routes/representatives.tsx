@@ -15,7 +15,7 @@ export const Route = createFileRoute("/representatives")({
   head: () => ({
     meta: [
       { title: "Texas Representatives — Keep TX Red" },
-      { name: "description", content: "Directory of Texas U.S. Senators, U.S. House members, the Governor, Lt. Governor, Attorney General, and statewide officials with phone numbers and websites." },
+      { name: "description", content: "Directory of Texas federal and statewide officials, with direct paths to all 150 Texas House districts and 31 Texas Senate districts." },
       { property: "og:title", content: "Texas Representatives" },
       { property: "og:description", content: "Contact your Texas elected officials — federal and state." },
     ],
@@ -109,6 +109,21 @@ function RepresentativesPage() {
         <Link to="/find-representative" className="inline-block bg-primary text-primary-foreground px-5 py-3 text-xs font-bold uppercase tracking-widest hover:bg-primary/90">Find My Rep by Address →</Link>
       </PageHero>
       <div className="mx-auto max-w-6xl px-4 pb-16">
+        <section className="mt-12">
+          <h2 className="font-display text-3xl tracking-tight border-b-2 border-foreground/20 pb-2 mb-6">Texas Legislature — All 181 Districts</h2>
+          <div className="grid gap-5 md:grid-cols-2">
+            <Link to="/texas-legislature/house" className="rounded-xl border bg-card p-6 hover:border-primary">
+              <h3 className="font-display text-2xl">Texas House of Representatives</h3>
+              <p className="mt-2 text-muted-foreground">Browse resources for all 150 Texas House districts, members, elections, bills and committees.</p>
+              <span className="mt-4 inline-block font-semibold text-primary">Open Texas House directory →</span>
+            </Link>
+            <Link to="/texas-legislature/senate" className="rounded-xl border bg-card p-6 hover:border-primary">
+              <h3 className="font-display text-2xl">Texas Senate</h3>
+              <p className="mt-2 text-muted-foreground">Browse resources for all 31 Texas Senate districts, members, elections, bills and committees.</p>
+              <span className="mt-4 inline-block font-semibold text-primary">Open Texas Senate directory →</span>
+            </Link>
+          </div>
+        </section>
         <Section title="U.S. Senate" reps={US_SENATORS} />
         <Section title="Statewide Leadership" reps={STATE_LEADERSHIP} />
         <Section title="U.S. House — Complete Texas Delegation" reps={US_HOUSE_DELEGATION} />

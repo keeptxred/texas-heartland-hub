@@ -90,7 +90,7 @@ async function generate(topic: string, category: string, lovableApiKey: string):
 
   const internalLinksBlock = isTexasNews
     ? `INTERNAL LINKS (REQUIRED): Include 3–5 internal links in body paragraphs using markdown syntax [anchor text](/path). MUST include at least ONE link to each of these pillar guides where natural:
-- /texas/no-state-income-tax-2026
+- /news/why-texas-has-no-income-tax
 - /texas/property-taxes-2026
 - /texas/moving-to-texas-2026
 Also acceptable: /texas-news, /texas-business, /texas-economy, /houston, /glossary. Do not force links — weave them in naturally.`
@@ -125,7 +125,7 @@ REQUIRED SECTIONS (in this order, use these exact headings):
 
 ${internalLinksBlock}
 
-PILLAR LINK WEIGHTING (REQUIRED): Every article MUST link to ALL THREE pillar guides at least once, using natural anchor text: /texas/no-state-income-tax-2026, /texas/property-taxes-2026, /texas/moving-to-texas-2026. Also include one link back to the Texas News hub (/texas-news). Avoid isolated pages — every article must feed the pillar/hub graph.
+PILLAR LINK WEIGHTING (REQUIRED): Every article MUST link to ALL THREE pillar guides at least once, using natural anchor text: /news/why-texas-has-no-income-tax, /texas/property-taxes-2026, /texas/moving-to-texas-2026. Also include one link back to the Texas News hub (/texas-news). Avoid isolated pages — every article must feed the pillar/hub graph.
 
 CONTENT ROTATION (REQUIRED — NO CANNIBALIZATION):
 - Do NOT repeat the search intent of an existing pillar. If the topic overlaps a pillar (income tax, property tax, moving to Texas), take a DIFFERENT angle (e.g. a subtopic, a county-level cut, a comparison, an FAQ deep-dive) and link to the pillar instead of rewriting it.

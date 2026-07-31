@@ -1,17 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { buildSeo } from "@/lib/seo";
 import heroFlag from "@/assets/hero-flag.jpg";
-import noIncomeTax from "@/assets/texas/no-income-tax.jpg";
 import propertyTaxes from "@/assets/texas/property-taxes.jpg";
 import movingToTexas from "@/assets/texas/moving-to-texas.jpg";
 
 const PILLARS = [
-  {
-    slug: "no-state-income-tax-2026",
-    title: "Why Texas Has No State Income Tax in 2026 (And What They Don't Tell You)",
-    dek: "Texas keeps more of your paycheck — but the system behind it is more complex than most people realize.",
-    image: noIncomeTax,
-  },
   {
     slug: "property-taxes-2026",
     title: "Texas Property Taxes in 2026: Why They Keep Rising (and What Homeowners Miss)",
@@ -53,6 +46,11 @@ function TexasHub() {
       <p className="mt-4 max-w-3xl font-serif text-lg text-muted-foreground">
         Grounded, factual, Texas-first guides to the systems that actually shape life in the state — taxes, property, and
         the real cost of moving here.
+      </p>
+      <p className="mt-5 max-w-3xl">
+        <Link to="/news/$slug" params={{ slug: "why-texas-has-no-income-tax" }} className="font-semibold text-primary hover:underline">
+          Read the definitive guide to why Texas has no state income tax →
+        </Link>
       </p>
 
       <div className="grid md:grid-cols-3 gap-6 mt-10">

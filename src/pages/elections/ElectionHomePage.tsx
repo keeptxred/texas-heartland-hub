@@ -33,6 +33,21 @@ import {
   FORECAST_CONFIDENCE_LEVEL_LABELS,
   FORECAST_RATING_LABELS,
 } from "@/types/elections/forecastClassifications";
+import racesSnapshot from "@/data/elections/2026/races.json";
+import candidatesSnapshot from "@/data/elections/2026/candidates.json";
+import pollsSnapshot from "@/data/elections/2026/polls.json";
+import forecastsSnapshot from "@/data/elections/2026/forecasts.json";
+import resultsSnapshot from "@/data/elections/2026/results.json";
+
+const PUBLISHED_RACES = racesSnapshot.filter((race) => race.publicationStatus === "published");
+const PUBLISHED_CANDIDATES = candidatesSnapshot.filter(
+  (candidate) => candidate.publicationStatus === "published",
+);
+const PUBLISHED_POLLS = pollsSnapshot.filter((poll) => poll.publicationStatus === "published");
+const PUBLISHED_FORECASTS = forecastsSnapshot.filter(
+  (forecast) => forecast.publicationStatus === "published",
+);
+const PUBLISHED_RESULT_COUNT = resultsSnapshot.length;
 
 const QUICK_LINKS = [
   {
@@ -200,11 +215,19 @@ export function ElectionHomePage() {
 
           <div className="mt-6">
             {activeCycle.isPending || (activeCycle.data && summaryMetrics.isPending) ? (
-              <ElectionLoading
-                variant="metrics"
-                count={4}
-                label="Loading Election Central summary metrics"
-              />
+              <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Published Election Central records">
+                {[
+                  ["Races", PUBLISHED_RACES.length],
+                  ["Candidates", PUBLISHED_CANDIDATES.length],
+                  ["Polls", PUBLISHED_POLLS.length],
+                  ["Results", PUBLISHED_RESULT_COUNT],
+                ].map(([label, value]) => (
+                  <div key={label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <dt className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">{label}</dt>
+                    <dd className="mt-3 text-3xl font-bold tracking-tight text-slate-950">{Number(value).toLocaleString("en-US")}</dd>
+                  </div>
+                ))}
+              </dl>
             ) : activeCycle.isError || summaryMetrics.isError ? (
               <ElectionErrorState
                 compact
@@ -304,7 +327,15 @@ export function ElectionHomePage() {
           </div>
           <div className="mt-6">
             {activeCycle.isPending || (activeCycle.data && featuredRaces.isPending) ? (
-              <ElectionLoading variant="cards" count={3} label="Loading featured election races" />
+              <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                {PUBLISHED_RACES.slice(0, 3).map((race) => (
+                  <a key={race.id} href={ELECTION_ROUTES.race(race.slug)} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+                    <h3 className="font-semibold text-slate-950">{race.name}</h3>
+                    <p className="mt-2 text-sm text-slate-600">{race.officeName} · {race.electionType.replaceAll("_", " ")}</p>
+                    <span className="mt-4 block text-sm font-semibold text-red-700">Race overview →</span>
+                  </a>
+                ))}
+              </div>
             ) : activeCycle.isError || featuredRaces.isError ? (
               <ElectionErrorState
                 compact
@@ -358,13 +389,16 @@ export function ElectionHomePage() {
               href={ELECTION_ROUTES.polls}
               className="text-sm font-semibold text-red-700 hover:underline"
             >
-              View all polls â†’
+              View all polls →
             </a>
           </div>
 
           <div className="mt-6">
             {activeCycle.isPending || (activeCycle.data && latestPolls.isPending) ? (
-              <ElectionLoading variant="cards" count={3} label="Loading latest election polls" />
+              <div className="rounded-xl border border-slate-200 bg-white p-5">
+                <p className="font-semibold text-slate-950">{PUBLISHED_POLLS.length} verified poll records are published.</p>
+                <a href={ELECTION_ROUTES.polls} className="mt-3 inline-block text-sm font-semibold text-red-700">Review polls and methodology →</a>
+              </div>
             ) : activeCycle.isError || latestPolls.isError ? (
               <ElectionErrorState
                 compact
@@ -390,7 +424,7 @@ export function ElectionHomePage() {
                     className="mb-5 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-950"
                   >
                     One or more polls are older than the configured freshness window. Review each
-                    pollâ€™s field dates before drawing conclusions.
+                    poll’s field dates before drawing conclusions.
                   </p>
                 ) : null}
                 <div className="grid gap-5 xl:grid-cols-3">
@@ -402,7 +436,7 @@ export function ElectionHomePage() {
                       raceHref={
                         poll.race ? ELECTION_ROUTES.race(poll.race.slug) : ELECTION_ROUTES.races
                       }
-                      fieldDates={`${poll.fieldStartDate}â€“${poll.fieldEndDate}`}
+                      fieldDates={`${poll.fieldStartDate}–${poll.fieldEndDate}`}
                       publishedDate={poll.releaseDate ?? undefined}
                       sampleSize={poll.methodology.sampleSize}
                       populationLabel={poll.methodology.population.replaceAll("_", " ")}
@@ -448,17 +482,16 @@ export function ElectionHomePage() {
               href={ELECTION_ROUTES.methodology}
               className="text-sm font-semibold text-red-700 hover:underline"
             >
-              Review forecast methodology â†’
+              Review forecast methodology →
             </a>
           </div>
 
           <div className="mt-6">
             {activeCycle.isPending || (activeCycle.data && featuredForecasts.isPending) ? (
-              <ElectionLoading
-                variant="cards"
-                count={3}
-                label="Loading featured election forecasts"
-              />
+              <div className="rounded-xl border border-slate-200 bg-white p-5">
+                <p className="font-semibold text-slate-950">{PUBLISHED_FORECASTS.length} sourced forecasts are currently published.</p>
+                <a href={ELECTION_ROUTES.forecast} className="mt-3 inline-block text-sm font-semibold text-red-700">Review forecasts and methodology →</a>
+              </div>
             ) : activeCycle.isError || featuredForecasts.isError ? (
               <ElectionErrorState
                 compact
@@ -538,7 +571,7 @@ export function ElectionHomePage() {
                         href={ELECTION_ROUTES.forecastDetail(forecast.slug)}
                         className="text-sm font-semibold text-red-700 hover:underline"
                       >
-                        How this forecast works â†’
+                        How this forecast works →
                       </a>
                     </div>
                   </article>
@@ -563,7 +596,7 @@ export function ElectionHomePage() {
               href={ELECTION_ROUTES.results}
               className="text-sm font-semibold text-red-700 hover:underline"
             >
-              View election results â†’
+              View election results →
             </a>
           </div>
 

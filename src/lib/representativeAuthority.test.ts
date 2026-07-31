@@ -56,8 +56,8 @@ describe("representative authority pages", () => {
     expect(getRepresentativeAuthority("john-cornyn")?.committees.length).toBeGreaterThan(0);
     expect(getRepresentativeAuthority("greg-abbott")?.education.length).toBeGreaterThan(0);
     expect(
-      getRepresentativeAuthority("don-huffines")?.sources.some((source) =>
-        source.url.includes("gov.texas.gov"),
+      getRepresentativeAuthority("kelly-hancock")?.sources.some((source) =>
+        source.url.includes("comptroller.texas.gov"),
       ),
     ).toBe(true);
     expect(

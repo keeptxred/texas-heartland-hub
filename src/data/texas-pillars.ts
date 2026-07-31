@@ -161,7 +161,7 @@ export const TEXAS_PILLARS: Record<string, PillarArticleProps> = {
     ],
     related: [
       {
-        to: "/texas/no-state-income-tax-2026",
+        to: "/news/why-texas-has-no-income-tax",
         label: "Why Texas Has No State Income Tax",
         description: "The other half of the Texas tax equation.",
       },
@@ -244,7 +244,7 @@ export const TEXAS_PILLARS: Record<string, PillarArticleProps> = {
     ],
     related: [
       {
-        to: "/texas/no-state-income-tax-2026",
+        to: "/news/why-texas-has-no-income-tax",
         label: "Why Texas Has No State Income Tax",
         description: "The core reason so many people relocate.",
       },

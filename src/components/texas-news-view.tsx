@@ -291,8 +291,8 @@ export function TexasNewsView({
           <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
             <li>
               <Link
-                to="/texas/$slug"
-                params={{ slug: "no-state-income-tax-2026" }}
+                to="/news/$slug"
+                params={{ slug: "why-texas-has-no-income-tax" }}
                 className="text-primary hover:underline"
               >
                 Why Texas Has No State Income Tax →

@@ -178,7 +178,7 @@ export const TEXAS_ISSUE_AUTHORITY: Record<string, AuthorityFields> = {
         description: "Prepare evidence, understand deadlines, and navigate the protest process.",
       },
       {
-        to: "/texas/no-state-income-tax-2026",
+        to: "/news/why-texas-has-no-income-tax",
         label: "Why Texas Has No State Income Tax",
         description: "See why property taxes play such a large role in the Texas tax structure.",
       },
@@ -258,7 +258,7 @@ export const TEXAS_ISSUE_AUTHORITY: Record<string, AuthorityFields> = {
     ],
     relatedArticles: [
       {
-        to: "/texas/no-state-income-tax-2026",
+        to: "/news/why-texas-has-no-income-tax",
         label: "Why Texas Has No State Income Tax",
         description: "Understand a major financial reason households consider Texas.",
       },

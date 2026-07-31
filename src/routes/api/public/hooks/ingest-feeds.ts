@@ -10,6 +10,7 @@ import { articleMainWordCount } from "@/lib/article-length";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
 import { runEditorialRewrite } from "@/lib/editorial-pipeline";
+import { validatePoliticalEntityClaims } from "@/lib/political-entity-authority";
 
 // Reuses the existing Texas relevance scorer (title + description + source
 // entity signals) so a source labelled "USGS Earthquakes — Texas" cannot push
@@ -665,7 +666,8 @@ async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Re
 function buildArticleRow(it: Item, rw: Rewrite | null) {
   const datePrefix = it.pub_date.slice(0, 10);
   const baseTitle = rw?.title ?? it.title;
-  const slug = `live-${datePrefix}-${slugify(baseTitle)}-${hashStr(it.link)}`;
+  const descriptiveSlug = slugify(baseTitle).split("-").filter(Boolean).slice(0, 12).join("-");
+  const slug = `${datePrefix}-${descriptiveSlug}-${hashStr(it.link)}`;
   const aiCat =
     rw?.category && (ALLOWED_CATEGORIES as readonly string[]).includes(rw.category)
       ? rw.category
@@ -952,7 +954,20 @@ async function handler() {
         }
         return true;
       });
-    const articleRows = pairedRows.map(({ row }) => row);
+    const articleRows = pairedRows
+      .map(({ row }) => row)
+      .filter((row) => {
+        const validation = validatePoliticalEntityClaims(
+          `${row.title} ${row.dek} ${row.body}`,
+        );
+        if (!validation.valid) {
+          console.error("[ingest-feeds] political entity authority gate blocked article", {
+            slug: row.slug,
+            errors: validation.errors,
+          });
+        }
+        return validation.valid;
+      });
     const articleSourceBySlug = new Map(pairedRows.map(({ it, row }) => [row.slug, it]));
     if (articleRows.length === 0) {
       console.log("[ingest-feeds] batch produced 0 articles", stageCounts);
@@ -1484,6 +1499,15 @@ export async function publishSingleFeedItem(
     };
   }
   enrichArticleRow(articleRow);
+  const entityValidation = validatePoliticalEntityClaims(
+    `${articleRow.title} ${articleRow.dek} ${articleRow.body}`,
+  );
+  if (!entityValidation.valid) {
+    return {
+      ok: false,
+      error: `Political entity validation failed: ${entityValidation.errors.join(" ")}`,
+    };
+  }
 
   const { error: upsertErr } = await supabaseAdmin
     .from("daily_articles")

@@ -33,7 +33,7 @@ export const STATE_LEADERSHIP: Rep[] = [
   { name: "Greg Abbott", office: "Governor", party: "R", phoneTX: "(512) 463-2000", website: "https://gov.texas.gov" },
   { name: "Dan Patrick", office: "Lieutenant Governor", party: "R", phoneTX: "(512) 463-0001", website: "https://www.ltgov.texas.gov" },
   { name: "Ken Paxton", office: "Attorney General", party: "R", phoneTX: "(512) 463-2100", website: "https://www.texasattorneygeneral.gov" },
-  { name: "Don Huffines", office: "Comptroller", party: "R", phoneTX: "(512) 463-4444", website: "https://comptroller.texas.gov" },
+  { name: "Kelly Hancock", office: "Acting Comptroller", party: "R", phoneTX: "(512) 463-4444", website: "https://comptroller.texas.gov/about/bio.php" },
   { name: "Sid Miller", office: "Agriculture Commissioner", party: "R", phoneTX: "(512) 463-7476", website: "https://www.texasagriculture.gov" },
   { name: "Dawn Buckingham", office: "Land Commissioner", party: "R", phoneTX: "(512) 463-5256", website: "https://www.glo.texas.gov" },
 ];

@@ -37,7 +37,7 @@ const STATIC_PATHS: string[] = [
   "/texas-laws", "/laws-to-know", "/legislative-updates", "/contact", "/privacy", "/terms",
   "/terms-of-service", "/shipping-policy", "/return-refund-policy", "/glossary",
   "/editorial-standards", "/texas-politics", "/authors", "/texas-economy", "/texas-law-policy",
-  "/shop", "/texas", "/texas/no-state-income-tax-2026", "/texas/property-taxes-2026",
+  "/shop", "/texas", "/texas/property-taxes-2026",
   "/texas/moving-to-texas-2026", "/texas-data",
   ...TEXAS_DATASETS.map((dataset) => `/texas-data/${dataset.slug}`),
   ...[...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION].map(

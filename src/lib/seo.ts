@@ -122,8 +122,8 @@ export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "NewsMediaOrganization",
-    name: SITE_NAME,
-    alternateName: "Keep Texas Red",
+    name: "Keep Texas Red",
+    alternateName: SITE_NAME,
     url: `${SITE_URL}/`,
     description:
       "Keep Texas Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state.",
