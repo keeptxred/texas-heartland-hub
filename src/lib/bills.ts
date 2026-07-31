@@ -92,6 +92,25 @@ export async function getBillRelations(billId: string) {
   };
 }
 
+export async function getRepresentativeLegislation(sponsorSlug: string) {
+  const { data, error } = await db
+    .from('bill_sponsors')
+    .select('id,sponsor_name,sponsor_slug,sponsor_role,chamber,party,district,bills(id,legislature_number,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law)')
+    .eq('sponsor_slug', sponsorSlug)
+    .order('date_added', { ascending: false })
+    .limit(100);
+  if (error) throw error;
+  const rows = data ?? [];
+  const identity = rows[0] ?? null;
+  const bills = [...new Map(
+    rows
+      .map((row: any) => row.bills)
+      .filter(Boolean)
+      .map((bill: any) => [bill.id, bill]),
+  ).values()];
+  return { identity, bills };
+}
+
 export function billJsonLd(bill: Bill, sponsors: any[], actions: any[]) {
   const url = `${SITE_URL}${canonicalBillPath(bill)}`;
   const people = sponsors.map((sponsor) => ({
