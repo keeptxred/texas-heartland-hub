@@ -77,14 +77,14 @@ export function renderUrlset(entries: UrlEntry[], opts?: { image?: boolean }): s
     if (seen.has(key)) continue;
     seen.add(key);
     const img = opts?.image && e.image?.loc
-      ? `\n    <image:image><image:loc>${xmlEscape(e.image.loc)}</image:loc>${e.image.title ? `<image:title>${xmlEscape(e.image.title)}</image:title>` : ""}</image:image>`
+      ? `\n    <image:image><image:loc>${xmlEscape(e.image.loc)}</image:loc></image:image>`
       : "";
     rows.push(
       `  <url>\n    <loc>${xmlEscape(e.loc)}</loc>\n    <lastmod>${e.lastmod}</lastmod>${img}\n  </url>`,
     );
   }
   const ns = opts?.image
-    ? ` xmlns:image="http://www.google.com/schemas/sitemap-image/0.9"`
+    ? ` xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"`
     : "";
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"${ns}>\n${rows.join("\n")}\n</urlset>`;
 }
