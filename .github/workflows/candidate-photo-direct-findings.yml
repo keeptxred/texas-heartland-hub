@@ -1,0 +1,53 @@
+name: Candidate photo direct findings
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/elections/apply-direct-web-photo-findings.mjs"
+      - ".github/workflows/candidate-photo-direct-findings.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: candidate-photo-direct-findings
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Apply verified direct findings
+        run: node scripts/elections/apply-direct-web-photo-findings.mjs
+
+      - name: Apply portraits to candidate records and validate
+        run: node scripts/elections/candidate-photo-enrichment.mjs --apply
+
+      - name: Commit validated results
+        run: |
+          TRACKED=(
+            src/data/elections/2026/candidate-photos.json
+            src/data/elections/2026/candidates.json
+            artifacts/elections/candidate-photo-report.json
+            artifacts/elections/candidate-photo-review-queue.json
+          )
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${TRACKED[@]}"
+          if git diff --cached --quiet; then
+            echo "No direct candidate photo changes."
+            exit 0
+          fi
+          git commit -m "Apply verified direct candidate photos"
+          git push
