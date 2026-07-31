@@ -5,6 +5,7 @@ on:
   push:
     branches: [main]
     paths:
+      - "scripts/elections/apply-direct-web-photo-findings.mjs"
       - "scripts/elections/discover-candidate-photos-new-domains.mjs"
       - "scripts/elections/discover-candidate-photos-new-domains-wave2.mjs"
       - ".github/workflows/candidate-photo-new-domains.yml"
@@ -17,7 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  RUN_REQUESTED_AT: "2026-07-30T23:54:00-05:00"
+  RUN_REQUESTED_AT: "2026-07-31T00:48:45-05:00"
 
 jobs:
   sweep:
@@ -31,6 +32,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+
+      - name: Apply directly verified portraits
+        run: node scripts/elections/apply-direct-web-photo-findings.mjs
 
       - name: Run unused-domain sweep
         run: node scripts/elections/discover-candidate-photos-new-domains.mjs
@@ -58,5 +62,5 @@ jobs:
             echo "No new-domain candidate photo changes."
             exit 0
           fi
-          git commit -m "Apply candidate photos from previously unused domains"
+          git commit -m "Apply verified candidate portraits and unused-domain discoveries"
           git push
