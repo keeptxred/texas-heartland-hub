@@ -82,7 +82,7 @@ describe("representative authority pages", () => {
     const enrichedRepresentatives = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION]
       .filter((representative) => getRepresentativeAuthority(representativeSlug(representative.name)));
     expect(REPRESENTATIVE_AUTHORITY).toHaveLength(enrichedRepresentatives.length);
-    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(16);
+    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(26);
   });
 
   it("publishes the complete current Texas House delegation and vacancy status", () => {
@@ -111,5 +111,18 @@ describe("representative authority pages", () => {
     expect(profile).toContain("getHouseCommitteeAssignments");
     expect(profile).toContain("Official House directory and committee assignments");
     expect(profile).toContain("Federal Election Commission candidate records");
+  });
+
+  it("replaces verification notices with sourced editorial profiles for the first expansion batch", () => {
+    for (const slug of [
+      "nathaniel-moran", "keith-self", "jake-ellzey", "lizzie-fletcher", "morgan-luttrell",
+      "al-green", "michael-mccaul", "august-pfluger", "craig-goldman", "randy-weber",
+    ]) {
+      const authority = getRepresentativeAuthority(slug);
+      expect(authority?.education.length).toBeGreaterThan(0);
+      expect(authority?.career.length).toBeGreaterThan(1);
+      expect(authority?.electionHistory.length).toBeGreaterThan(0);
+      expect(authority?.sources.some((source) => source.url.includes("house.gov"))).toBe(true);
+    }
   });
 });
