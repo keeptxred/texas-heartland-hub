@@ -11,6 +11,7 @@ import {
 } from "@/data/representatives";
 import {
   REPRESENTATIVE_AUTHORITY,
+  US_HOUSE_COMMITTEES,
   getRepresentativeAuthority,
 } from "@/data/representative-authority";
 
@@ -100,5 +101,15 @@ describe("representative authority pages", () => {
     for (const representative of directoryRepresentatives) {
       expect(findRepresentativeBySlug(representativeSlug(representative.name))).toEqual(representative);
     }
+  });
+
+  it("has current committee authority data for every seated House member", () => {
+    expect(Object.keys(US_HOUSE_COMMITTEES)).toHaveLength(37);
+    for (const representative of US_HOUSE_DELEGATION) {
+      expect(US_HOUSE_COMMITTEES[representativeSlug(representative.name)]?.length).toBeGreaterThan(0);
+    }
+    expect(profile).toContain("getHouseCommitteeAssignments");
+    expect(profile).toContain("Official House directory and committee assignments");
+    expect(profile).toContain("Federal Election Commission candidate records");
   });
 });
