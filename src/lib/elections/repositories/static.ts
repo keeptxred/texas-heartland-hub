@@ -276,8 +276,6 @@ function cycleSummary(record: ElectionCycleRecord): ElectionCycleSummary {
 function cycleDetail(record: ElectionCycleRecord): ElectionCycleDetail {
   return {
     ...record,
-    counties: record.counties ?? [],
-    zipCodes: record.zipCodes ?? [],
     raceCount: races.filter((race) => race.electionCycleId === record.id).length,
     candidateCount: candidates.filter((candidate) => candidate.electionCycleId === record.id).length,
     pollCount: polls.filter((poll) => poll.electionCycleId === record.id).length,
@@ -355,6 +353,8 @@ function raceDetail(record: ExtendedRace): RaceDetail {
   const result = latest(results.filter((item) => item.raceId === record.id));
   return {
     ...record,
+    counties: record.counties ?? [],
+    zipCodes: record.zipCodes ?? [],
     candidates: candidates.filter((candidate) => candidate.raceIds.includes(record.id)).map(raceCandidate),
     latestPoll: poll
       ? {
