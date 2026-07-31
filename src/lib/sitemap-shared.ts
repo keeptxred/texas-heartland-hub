@@ -7,6 +7,8 @@
  *  - dedupe by canonical URL
  */
 export const BASE_URL = "https://keeptxred.com";
+const CANONICAL_HOST = "keeptxred.com";
+const SITE_HOSTS = new Set([CANONICAL_HOST, `www.${CANONICAL_HOST}`]);
 
 export function xmlEscape(s: string): string {
   return s
@@ -19,17 +21,31 @@ export function xmlEscape(s: string): string {
 
 export function absUrl(pathOrUrl: string): string {
   if (!pathOrUrl) return "";
-  if (/^https?:\/\//i.test(pathOrUrl)) return pathOrUrl;
-  return `${BASE_URL}${pathOrUrl.startsWith("/") ? "" : "/"}${pathOrUrl}`;
+  try {
+    const u = new URL(pathOrUrl, BASE_URL);
+    if (SITE_HOSTS.has(u.hostname.toLowerCase())) {
+      u.protocol = "https:";
+      u.hostname = CANONICAL_HOST;
+      u.port = "";
+    }
+    return u.toString();
+  } catch {
+    return "";
+  }
 }
 
 /** Normalize to a canonical form for dedupe: lowercase host, no trailing slash (except root), no query. */
 export function canonicalize(url: string): string {
   try {
-    const u = new URL(url);
+    const u = new URL(url, BASE_URL);
     u.hash = "";
     u.search = "";
     u.hostname = u.hostname.toLowerCase();
+    if (SITE_HOSTS.has(u.hostname)) {
+      u.protocol = "https:";
+      u.hostname = CANONICAL_HOST;
+      u.port = "";
+    }
     let p = u.pathname;
     if (p.length > 1 && p.endsWith("/")) p = p.slice(0, -1);
     u.pathname = p;
