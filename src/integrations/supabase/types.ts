@@ -24,19 +24,6 @@ export type Database = {
         }
         Returns: Json
       }
-      upsert_bidirectional_authority_relationship: {
-        Args: {
-          p_evidence?: Json
-          p_is_manual?: boolean
-          p_relationship_type: string
-          p_score: number
-          p_source_key: string
-          p_source_type: string
-          p_target_key: string
-          p_target_type: string
-        }
-        Returns: undefined
-      }
     }
     Enums: {
       [_ in never]: never
@@ -49,6 +36,7 @@ export type Database = {
     Tables: {
       ai_rewrite_cache: {
         Row: {
+          budget_exempt: boolean
           claimed_at: string
           completed_at: string | null
           content_fingerprint: string
@@ -59,6 +47,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          budget_exempt?: boolean
           claimed_at?: string
           completed_at?: string | null
           content_fingerprint: string
@@ -69,6 +58,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          budget_exempt?: boolean
           claimed_at?: string
           completed_at?: string | null
           content_fingerprint?: string
@@ -83,6 +73,64 @@ export type Database = {
             foreignKeyName: "ai_rewrite_cache_feed_item_id_fkey"
             columns: ["feed_item_id"]
             isOneToOne: false
+            referencedRelation: "texas_news_feed"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_rewrite_failures: {
+        Row: {
+          content_fingerprint: string
+          failed_at: string
+          failure_reason: string | null
+          feed_item_id: number | null
+          id: number
+        }
+        Insert: {
+          content_fingerprint: string
+          failed_at?: string
+          failure_reason?: string | null
+          feed_item_id?: number | null
+          id?: number
+        }
+        Update: {
+          content_fingerprint?: string
+          failed_at?: string
+          failure_reason?: string | null
+          feed_item_id?: number | null
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_rewrite_failures_feed_item_id_fkey"
+            columns: ["feed_item_id"]
+            isOneToOne: false
+            referencedRelation: "texas_news_feed"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_rewrite_manual_bypass: {
+        Row: {
+          expires_at: string
+          feed_item_id: number
+          granted_at: string
+        }
+        Insert: {
+          expires_at?: string
+          feed_item_id: number
+          granted_at?: string
+        }
+        Update: {
+          expires_at?: string
+          feed_item_id?: number
+          granted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_rewrite_manual_bypass_feed_item_id_fkey"
+            columns: ["feed_item_id"]
+            isOneToOne: true
             referencedRelation: "texas_news_feed"
             referencedColumns: ["id"]
           },
@@ -254,13 +302,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "bill_article_relationships_article_id_fkey"
-            columns: ["article_id"]
-            isOneToOne: false
-            referencedRelation: "daily_articles"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "bill_article_relationships_bill_id_fkey"
             columns: ["bill_id"]
@@ -916,6 +957,202 @@ export type Database = {
           variant_a_impressions?: number
           variant_b_clicks?: number
           variant_b_impressions?: number
+        }
+        Relationships: []
+      }
+      election_poll_questions: {
+        Row: {
+          display_order: number | null
+          id: string
+          notes: string | null
+          poll_id: string
+          population: string
+          prompt: string
+          question_key: string
+          question_type: string
+          sample_size: number | null
+        }
+        Insert: {
+          display_order?: number | null
+          id?: string
+          notes?: string | null
+          poll_id: string
+          population: string
+          prompt: string
+          question_key: string
+          question_type: string
+          sample_size?: number | null
+        }
+        Update: {
+          display_order?: number | null
+          id?: string
+          notes?: string | null
+          poll_id?: string
+          population?: string
+          prompt?: string
+          question_key?: string
+          question_type?: string
+          sample_size?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "election_poll_questions_poll_id_fkey"
+            columns: ["poll_id"]
+            isOneToOne: false
+            referencedRelation: "election_polls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      election_poll_responses: {
+        Row: {
+          candidate_id: string | null
+          id: string
+          is_other: boolean
+          is_undecided: boolean
+          label: string
+          party: string | null
+          percentage: number | null
+          question_id: string
+          respondent_count: number | null
+          response_key: string
+        }
+        Insert: {
+          candidate_id?: string | null
+          id?: string
+          is_other?: boolean
+          is_undecided?: boolean
+          label: string
+          party?: string | null
+          percentage?: number | null
+          question_id: string
+          respondent_count?: number | null
+          response_key: string
+        }
+        Update: {
+          candidate_id?: string | null
+          id?: string
+          is_other?: boolean
+          is_undecided?: boolean
+          label?: string
+          party?: string | null
+          percentage?: number | null
+          question_id?: string
+          respondent_count?: number | null
+          response_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "election_poll_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "election_poll_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      election_polls: {
+        Row: {
+          created_at: string
+          crosstabs_url: string | null
+          data_as_of: string | null
+          election_cycle_id: string
+          field_end_date: string
+          field_start_date: string
+          freshness_status: string
+          id: string
+          internal_poll: boolean
+          jurisdiction_id: string | null
+          methodology: Json
+          partisan_poll: boolean
+          pollster_grade: string
+          pollster_name: string
+          pollster_url: string | null
+          publication_status: string
+          published_at: string | null
+          questionnaire_url: string | null
+          race_id: string | null
+          release_date: string | null
+          retrieved_at: string
+          slug: string
+          source_name: string
+          source_url: string
+          sponsors: Json
+          status: string
+          title: string
+          topline_url: string | null
+          tracking_poll: boolean
+          updated_at: string
+          verification_status: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          crosstabs_url?: string | null
+          data_as_of?: string | null
+          election_cycle_id: string
+          field_end_date: string
+          field_start_date: string
+          freshness_status?: string
+          id?: string
+          internal_poll?: boolean
+          jurisdiction_id?: string | null
+          methodology: Json
+          partisan_poll?: boolean
+          pollster_grade?: string
+          pollster_name: string
+          pollster_url?: string | null
+          publication_status?: string
+          published_at?: string | null
+          questionnaire_url?: string | null
+          race_id?: string | null
+          release_date?: string | null
+          retrieved_at: string
+          slug: string
+          source_name: string
+          source_url: string
+          sponsors?: Json
+          status: string
+          title: string
+          topline_url?: string | null
+          tracking_poll?: boolean
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          crosstabs_url?: string | null
+          data_as_of?: string | null
+          election_cycle_id?: string
+          field_end_date?: string
+          field_start_date?: string
+          freshness_status?: string
+          id?: string
+          internal_poll?: boolean
+          jurisdiction_id?: string | null
+          methodology?: Json
+          partisan_poll?: boolean
+          pollster_grade?: string
+          pollster_name?: string
+          pollster_url?: string | null
+          publication_status?: string
+          published_at?: string | null
+          questionnaire_url?: string | null
+          race_id?: string | null
+          release_date?: string | null
+          retrieved_at?: string
+          slug?: string
+          source_name?: string
+          source_url?: string
+          sponsors?: Json
+          status?: string
+          title?: string
+          topline_url?: string | null
+          tracking_poll?: boolean
+          updated_at?: string
+          verification_status?: string
+          verified_at?: string | null
         }
         Relationships: []
       }
@@ -3904,6 +4141,14 @@ export type Database = {
         }
         Returns: string
       }
+      claim_automated_ai_rewrite_slot: {
+        Args: {
+          p_content_fingerprint: string
+          p_daily_limit?: number
+          p_feed_item_id: number
+        }
+        Returns: string
+      }
       claim_explore_import_job: {
         Args: never
         Returns: {
@@ -3968,6 +4213,10 @@ export type Database = {
           p_survivor_id: string
         }
         Returns: Json
+      }
+      grant_manual_ai_rewrite_bypass: {
+        Args: { p_feed_item_id: number }
+        Returns: undefined
       }
       has_role: {
         Args: {
@@ -4048,6 +4297,19 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      upsert_bidirectional_authority_relationship: {
+        Args: {
+          p_evidence?: Json
+          p_is_manual?: boolean
+          p_relationship_type: string
+          p_score: number
+          p_source_key: string
+          p_source_type: string
+          p_target_key: string
+          p_target_type: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
@@ -4217,3 +4479,4 @@ export const Constants = {
     },
   },
 } as const
+
