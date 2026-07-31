@@ -1,0 +1,40 @@
+name: Sync Texas legislator authority profiles
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 12 * * 1"
+  push:
+    branches: [main]
+    paths:
+      - scripts/legislators/sync-official-roster.mjs
+      - .github/workflows/sync-texas-legislators.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: texas-legislator-authority-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate official roster profiles
+        run: node scripts/legislators/sync-official-roster.mjs
+      - name: Commit refreshed authority data
+        run: |
+          if git diff --quiet -- src/data/texas-legislators.generated.ts; then
+            echo "Texas legislator authority data is already current."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/texas-legislators.generated.ts
+          git commit -m "data: refresh Texas legislator authority profiles"
+          git push
