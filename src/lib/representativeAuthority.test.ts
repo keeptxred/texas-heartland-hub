@@ -82,7 +82,8 @@ describe("representative authority pages", () => {
     const enrichedRepresentatives = [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_DELEGATION]
       .filter((representative) => getRepresentativeAuthority(representativeSlug(representative.name)));
     expect(REPRESENTATIVE_AUTHORITY).toHaveLength(enrichedRepresentatives.length);
-    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(36);
+    expect(REPRESENTATIVE_AUTHORITY).toHaveLength(45);
+    expect(enrichedRepresentatives).toHaveLength(45);
   });
 
   it("publishes the complete current Texas House delegation and vacancy status", () => {
@@ -131,6 +132,19 @@ describe("representative authority pages", () => {
       "veronica-escobar", "pete-sessions", "christian-menefee", "jodey-arrington",
       "joaquin-castro", "troy-nehls", "roger-williams", "brandon-gill",
       "michael-cloud", "henry-cuellar",
+    ]) {
+      const authority = getRepresentativeAuthority(slug);
+      expect(authority?.education.length).toBeGreaterThan(0);
+      expect(authority?.career.length).toBeGreaterThan(1);
+      expect(authority?.electionHistory.length).toBeGreaterThan(0);
+      expect(authority?.sources.some((source) => source.url.includes("house.gov"))).toBe(true);
+    }
+  });
+
+  it("publishes the final sourced congressional editorial batch", () => {
+    for (const slug of [
+      "sylvia-garcia", "jasmine-crockett", "john-carter", "julie-johnson",
+      "marc-veasey", "vicente-gonzalez", "greg-casar", "brian-babin", "lloyd-doggett",
     ]) {
       const authority = getRepresentativeAuthority(slug);
       expect(authority?.education.length).toBeGreaterThan(0);
