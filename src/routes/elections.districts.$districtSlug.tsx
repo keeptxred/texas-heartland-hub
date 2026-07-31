@@ -75,7 +75,7 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
         { title },
         { name: "description", content: description },
         { name: "robots", content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow" },
-        ...(indexable
+        ...(district && race
           ? [
               { property: "og:title", content: title },
               { property: "og:description", content: description },
@@ -92,7 +92,7 @@ export const Route = createFileRoute("/elections/districts/$districtSlug")({
           : []),
       ],
       links: indexable ? [{ rel: "canonical", href: canonicalUrl }] : [],
-      scripts: indexable
+      scripts: district && race
         ? [
             {
               type: "application/ld+json",
