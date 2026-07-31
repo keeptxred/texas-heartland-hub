@@ -52,14 +52,60 @@ const findings = [
     permissionBasis: "Candidate headshot published on the official campaign website, used for editorial candidate identification with attribution.",
     usageStatus: "approved",
     discoveryMethod: "direct-public-web-search"
+  },
+  {
+    candidateId: "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4",
+    imageUrl: "https://www.txcourts.gov/media/1462538/yeary.jpg",
+    sourceUrl: "https://www.txcourts.gov/cca/about-the-court/judges/judge-kevin-yeary/",
+    altText: "Judge Kevin Patrick Yeary, Republican candidate for Texas Court of Criminal Appeals Place 4",
+    credit: "Texas Judicial Branch",
+    license: null,
+    permissionBasis: "Official government portrait published by the Texas Judicial Branch, used for editorial candidate identification with attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-government-profile"
+  },
+  {
+    candidateId: "candidate-julie-pickren-republican-race-2026-state-board-of-education-7",
+    imageUrl: "https://sboe.texas.gov/sites/default/files/2023-j-pickren-sboe7.jpg",
+    sourceUrl: "https://sboe.texas.gov/state-board-of-education/sboe-board-members/sboe-member-district-7",
+    altText: "Julie Pickren, Republican candidate for Texas State Board of Education District 7",
+    credit: "Texas State Board of Education",
+    license: null,
+    permissionBasis: "Official government portrait published by the Texas State Board of Education, used for editorial candidate identification with attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-government-profile"
+  },
+  {
+    candidateId: "candidate-audrey-g-young-republican-race-2026-state-board-of-education-8",
+    imageUrl: "https://sboe.texas.gov/sites/default/files/District%208-A%20Young.jpg",
+    sourceUrl: "https://sboe.texas.gov/state-board-of-education/sboe-board-members/sboe-member-district-8",
+    altText: "Audrey G. Young, Republican candidate for Texas State Board of Education District 8",
+    credit: "Texas State Board of Education",
+    license: null,
+    permissionBasis: "Official government portrait published by the Texas State Board of Education, used for editorial candidate identification with attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-government-profile"
+  },
+  {
+    candidateId: "candidate-tiffany-clark-democratic-race-2026-state-board-of-education-13",
+    imageUrl: "https://sboe.texas.gov/sites/default/files/clark-sboe-district-13.jpg",
+    sourceUrl: "https://sboe.texas.gov/state-board-of-education/sboe-board-members/sboe-member-district-13",
+    altText: "Tiffany Clark, Democratic candidate for Texas State Board of Education District 13",
+    credit: "Texas State Board of Education",
+    license: null,
+    permissionBasis: "Official government portrait published by the Texas State Board of Education, used for editorial candidate identification with attribution.",
+    usageStatus: "approved",
+    discoveryMethod: "official-government-profile"
   }
 ];
 
+let applied = 0;
 for (const finding of findings) {
   if (byId.get(finding.candidateId)?.usageStatus === "approved") continue;
   byId.set(finding.candidateId, { ...finding, discoveredAt: new Date().toISOString() });
+  applied += 1;
 }
 
 const merged = [...byId.values()].sort((a, b) => a.candidateId.localeCompare(b.candidateId));
 await writeFile(manifestPath, JSON.stringify(merged, null, 2) + "\n");
-console.log(`Applied ${findings.length} direct web photo findings.`);
+console.log(`Applied ${applied} direct web photo findings.`);
