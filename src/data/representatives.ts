@@ -8,6 +8,22 @@ export type Rep = {
   website: string;
 };
 
+export function representativeSlug(name: string) {
+  return name
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export function findRepresentativeBySlug(slug: string) {
+  return [...US_SENATORS, ...STATE_LEADERSHIP, ...US_HOUSE_SAMPLE].find(
+    (representative) => representativeSlug(representative.name) === slug,
+  );
+}
+
 export const US_SENATORS: Rep[] = [
   { name: "John Cornyn", office: "U.S. Senator", party: "R", phoneDC: "(202) 224-2934", phoneTX: "(512) 469-6034", website: "https://www.cornyn.senate.gov" },
   { name: "Ted Cruz", office: "U.S. Senator", party: "R", phoneDC: "(202) 224-5922", phoneTX: "(512) 916-5834", website: "https://www.cruz.senate.gov" },
