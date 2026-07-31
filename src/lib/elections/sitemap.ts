@@ -16,7 +16,7 @@ export interface ElectionSitemapInput {
   lastmod?: string | Date;
 }
 
-const ELECTION_DISTRICT_PATHS = [
+export const ELECTION_DISTRICT_PATHS = [
   ...Array.from(
     { length: 38 },
     (_, index) => `/elections/districts/congressional-district-${index + 1}`,

@@ -1,6 +1,8 @@
 import { createFileRoute, Link, notFound, redirect } from '@tanstack/react-router';
 import { CalendarDays, ExternalLink, FileText, Landmark, Scale, Users } from 'lucide-react';
 import { billJsonLd, canonicalBillPath, getBill, getBillRelations, SITE_URL } from '@/lib/bills';
+import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
+import { RelatedAuthorityContent } from '@/components/authority/RelatedAuthorityContent';
 
 export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billNumber')({
   loader: async ({ params }) => {
@@ -12,8 +14,8 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
     if (params.billType !== billType || params.billNumber !== String(billNumber)) throw redirect({ href: normalizedPath, statusCode: 301 });
     const bill = await getBill(legislature, billType, billNumber);
     if (!bill) throw notFound();
-    const relations = await getBillRelations(bill.id);
-    return { bill, ...relations };
+    const [relations, relatedContent] = await Promise.all([getBillRelations(bill.id), getRelatedAuthorityContent('bill', bill.id)]);
+    return { bill, ...relations, relatedContent };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
@@ -37,7 +39,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
 const formatDate = (value?: string | null) => value ? new Date(`${value}T12:00:00`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
 
 function BillPage() {
-  const { bill, sponsors, actions, committees, documents, subjects, articles } = Route.useLoaderData();
+  const { bill, sponsors, actions, committees, documents, subjects, articles, relatedContent } = Route.useLoaderData();
   const groupedSponsors = sponsors.reduce((groups: Record<string, any[]>, sponsor: any) => {
     (groups[sponsor.sponsor_role] ||= []).push(sponsor); return groups;
   }, {});
@@ -65,6 +67,7 @@ function BillPage() {
           <section className="rounded-xl border bg-card p-6" id="timeline"><div className="flex items-center gap-3"><CalendarDays className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Legislative timeline</h2></div>{actions.length ? <ol className="mt-6 space-y-0">{actions.map((action: any, index: number) => <li key={action.id} className="relative border-l-2 border-border pb-6 pl-6 last:pb-0"><span className={`absolute -left-[7px] top-1 h-3 w-3 rounded-full ${index === 0 ? 'bg-primary' : 'bg-muted-foreground'}`}/><time className="text-sm font-semibold text-primary">{formatDate(action.action_date)}</time><p className="mt-1 font-medium">{action.action_text}</p><p className="mt-1 text-sm text-muted-foreground">{[action.chamber, action.normalized_status, action.legislative_committees?.committee_name].filter(Boolean).join(' · ')}</p>{action.source_url && <a href={action.source_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">Official record <ExternalLink className="h-3.5 w-3.5"/></a>}</li>)}</ol> : <p className="mt-4 text-muted-foreground">The latest official action has not yet been synchronized.</p>}</section>
 
           <section className="rounded-xl border bg-card p-6" id="articles"><h2 className="text-2xl font-bold">Related articles</h2>{articles.length ? <div className="mt-5 grid gap-4 sm:grid-cols-2">{articles.map((article: any) => <a key={article.id} href={`/article/${article.slug}`} className="rounded-lg border p-4 hover:border-primary"><h3 className="font-bold leading-snug">{article.title}</h3>{article.excerpt && <p className="mt-2 line-clamp-3 text-sm text-muted-foreground">{article.excerpt}</p>}<p className="mt-3 text-xs font-semibold uppercase text-primary">{article.relationship_type}</p></a>)}</div> : <p className="mt-4 text-muted-foreground">No related KeepTXRed articles have been linked.</p>}</section>
+          <RelatedAuthorityContent items={relatedContent} />
         </main>
 
         <aside className="space-y-6">
