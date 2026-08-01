@@ -2,16 +2,20 @@
 /**
  * Incremental Texas Legislature Online importer.
  *
- * Official source: https://ftp.legis.state.tx.us/bills/<session>/billhistory/
+ * Official source: ftp://ftp.legis.state.tx.us/bills/<session>/billhistory/
  * TLO asks bulk consumers to use this feed instead of mining capitol.texas.gov.
  * Required env: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.
  * Usage: node scripts/legislature/sync-texas-legislation.mjs --sessions=89R,88R
  */
 import { createHash } from 'node:crypto';
+import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
+import { promisify } from 'node:util';
 
 const SOURCE_KEY = 'texas-legislature-online';
-const FTP_HTTP_ROOT = process.env.TLO_BULK_ROOT || 'https://ftp.legis.state.tx.us/bills';
+const TLO_BULK_ROOT = process.env.TLO_BULK_ROOT || 'ftp://ftp.legis.state.tx.us/bills';
+const TRANSFER_TIMEOUT_SECONDS = String(Number(process.env.TLO_TRANSFER_TIMEOUT_SECONDS || 120));
+const execFileAsync = promisify(execFile);
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const args = Object.fromEntries(process.argv.slice(2).map((arg) => {
@@ -42,6 +46,46 @@ async function request(url, init = {}) {
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${url}`);
   return response;
 }
+async function transferText(url, listOnly = false) {
+  if (!url.startsWith('ftp://')) return (await request(url)).text();
+  const command = process.env.TLO_TRANSFER_COMMAND || (process.platform === 'win32' ? 'curl.exe' : 'curl');
+  try {
+    const transferArgs = [
+      '--fail', '--silent', '--show-error', '--location', '--ftp-pasv',
+      '--retry', '3', '--retry-all-errors', '--connect-timeout', '20',
+      '--max-time', TRANSFER_TIMEOUT_SECONDS,
+    ];
+    if (listOnly) transferArgs.push('--list-only');
+    transferArgs.push(url);
+    const { stdout } = await execFileAsync(command, transferArgs, { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
+    return stdout;
+  } catch (error) {
+    const detail = error.stderr?.trim() || error.message;
+    throw new Error(`Official TLO FTP download failed for ${url}: ${detail}`);
+  }
+}
+
+const BILL_HISTORY_FOLDERS = [
+  'house_bills', 'house_concurrent_resolutions', 'house_joint_resolutions', 'house_resolutions',
+  'senate_bills', 'senate_concurrent_resolutions', 'senate_joint_resolutions', 'senate_resolutions',
+];
+
+async function discoverFromDirectories(sessionRoot) {
+  const urls = [];
+  for (const billFolder of BILL_HISTORY_FOLDERS) {
+    const folderUrl = `${sessionRoot}/${billFolder}/`;
+    const groups = (await transferText(folderUrl, true)).split(/\r?\n/).map((entry) => entry.trim()).filter(Boolean).sort();
+    for (const group of groups) {
+      const groupUrl = new URL(`${group}/`, folderUrl).href;
+      const files = (await transferText(groupUrl, true)).split(/\r?\n/).map((entry) => entry.trim()).filter((entry) => /\.xml$/i.test(entry)).sort();
+      for (const file of files) {
+        urls.push(new URL(file, groupUrl).href);
+        if (maxRecords && urls.length >= maxRecords) return urls;
+      }
+    }
+  }
+  return urls;
+}
 async function rest(path, init = {}) {
   return request(`${SUPABASE_URL}/rest/v1/${path}`, { ...init, headers: { ...headers, ...(init.headers || {}) } });
 }
@@ -65,7 +109,7 @@ async function linkAuthorities(sourceType, sourceKey, targetType, targetKey, rel
   }) });
 }
 function canonicalDistrictSlug(districtId) {
-  const match = /^district-(texas-house|texas-senate|us-house)-(\\d+)$/.exec(districtId || '');
+  const match = /^district-(texas-house|texas-senate|us-house)-(\d+)$/.exec(districtId || '');
   if (!match) return null;
   const prefix = { 'texas-house': 'texas-house-district', 'texas-senate': 'texas-senate-district', 'us-house': 'congressional-district' }[match[1]];
   return `${prefix}-${match[2]}`;
@@ -80,7 +124,10 @@ async function syncElectionRelationships() {
 }
 
 function billIdentity(xml, sourceUrl, session) {
-  const identifier = value(xml, ['billNumber', 'bill', 'billName', 'legislationNumber']) || sourceUrl.match(/([HS](?:B|JR|CR|R)\d{1,5})/i)?.[1];
+  const rootBill = xml.match(/<billhistory\b[^>]*\bbill=["'][^"']*\b(HB|SB|HJR|SJR|HCR|SCR|HR|SR)\s*(\d+)/i);
+  const identifier = (rootBill ? `${rootBill[1]}${rootBill[2]}` : null)
+    || value(xml, ['billNumber', 'billName', 'legislationNumber'])
+    || decodeURIComponent(sourceUrl).match(/([HS](?:B|JR|CR|R))\s*(\d{1,5})/i)?.slice(1).join('');
   const match = identifier?.replace(/\s/g, '').match(/^(HB|SB|HJR|SJR|HCR|SCR|HR|SR)(\d+)$/i);
   if (!match) return null;
   const billType = match[1].toLowerCase();
@@ -110,36 +157,50 @@ function parseBill(xml, sourceUrl, session) {
   const status = normalizeStatus(actions);
   const caption = value(xml, ['caption', 'billCaption', 'description', 'title']) || `${identity.bill_type.toUpperCase()} ${identity.bill_number}`;
   const chamber = identity.bill_type.startsWith('h') ? 'house' : identity.bill_type.startsWith('s') ? 'senate' : 'joint';
-  const sponsors = blocks(xml, ['author', 'coauthor', 'sponsor', 'cosponsor', 'billAuthor', 'billSponsor']).map((part, index) => {
+  const structuredSponsors = blocks(xml, ['author', 'coauthor', 'sponsor', 'cosponsor', 'billAuthor', 'billSponsor']).map((part, index) => {
     const name = value(part, ['name', 'memberName', 'authorName', 'sponsorName']) || decode(part.replace(/<[^>]+>/g, ' '));
     const role = value(part, ['role', 'type']) || 'author';
     return { sponsor_name: name, sponsor_slug: slug(name), sponsor_role: role.toLowerCase(), chamber: value(part, ['chamber'])?.toLowerCase() || chamber,
       district: value(part, ['district', 'districtNumber']), party: value(part, ['party']), external_legislator_id: value(part, ['memberId', 'legislatorId']), sequence: index };
   }).filter((s) => s.sponsor_name);
-  const committees = blocks(xml, ['committee', 'committeeAction']).map((part, index) => ({
+  const listSponsors = [
+    ['authors', 'author'], ['coauthors', 'coauthor'], ['sponsors', 'sponsor'], ['cosponsors', 'cosponsor'],
+  ].flatMap(([element, role]) => (value(xml, [element]) || '').split('|').map((name) => name.trim()).filter(Boolean).map((name) => ({
+    sponsor_name: name, sponsor_slug: slug(name), sponsor_role: role, chamber, sequence: 0,
+  })));
+  const sponsors = [...new Map([...structuredSponsors, ...listSponsors].map((record) => [`${record.sponsor_role}:${record.sponsor_name}`, record])).values()]
+    .map((record, sequence) => ({ ...record, sequence }));
+  const structuredCommittees = blocks(xml, ['committee', 'committeeAction']).map((part, index) => ({
     committee_name: value(part, ['committeeName', 'name']) || decode(part.replace(/<[^>]+>/g, ' ')),
     chamber: value(part, ['chamber'])?.toLowerCase() || chamber, action_type: value(part, ['actionType', 'type']),
     action_description: value(part, ['description', 'actionDescription']), referred_date: isoDate(value(part, ['referredDate', 'date'])), sequence: index, source_url: sourceUrl,
   })).filter((c) => c.committee_name);
+  const listedCommittees = [...xml.matchAll(/<(house|senate)\b[^>]*\bname=["']([^"']+)["'][^>]*\bstatus=["']([^"']*)["'][^>]*\/?\s*>/gi)].map((match, index) => ({
+    committee_name: decode(match[2]), chamber: match[1].toLowerCase(), action_type: match[3] || null,
+    action_description: match[3] || null, referred_date: null, sequence: index, source_url: sourceUrl,
+  })).filter((committee) => committee.committee_name);
+  const committees = [...new Map([...structuredCommittees, ...listedCommittees].map((record) => [`${record.chamber}:${record.committee_name}`, record])).values()]
+    .map((record, sequence) => ({ ...record, sequence }));
   return {
     bill: { ...identity, chamber, caption, description: value(xml, ['description', 'summary']), current_status_code: status.code, current_status_label: status.label,
       current_status_description: actions.at(-1)?.action_text || null, introduced_date: isoDate(value(xml, ['filedDate', 'introducedDate'])),
       last_action_date: actions.map((a) => a.action_date).sort().at(-1) || null, became_law: ['signed', 'became-law'].includes(status.code), is_active: true,
-      source_url: value(xml, ['sourceUrl', 'billUrl']) || sourceUrl, bill_text_url: value(xml, ['billTextUrl', 'textUrl']), fiscal_note_url: value(xml, ['fiscalNoteUrl']), analysis_url: value(xml, ['analysisUrl']), last_synced_at: new Date().toISOString() },
+      source_url: value(xml, ['sourceUrl', 'billUrl']) || sourceUrl, bill_text_url: value(xml, ['billTextUrl', 'textUrl', 'WebPDFURL']), fiscal_note_url: value(xml, ['fiscalNoteUrl']), analysis_url: value(xml, ['analysisUrl']), last_synced_at: new Date().toISOString() },
     actions, sponsors, committees,
     agencies: [...new Map(values(xml, ['affectedAgency', 'agencyName', 'stateAgency']).map((name) => [slug(name), { name, slug: slug(name) }])).values()],
   };
 }
 
 async function discover(session) {
-  const indexUrl = `${FTP_HTTP_ROOT}/${session}/billhistory/history.xml`;
-  const xml = await (await request(indexUrl)).text();
+  const indexUrl = `${TLO_BULK_ROOT}/${session}/billhistory/history.xml`;
+  const xml = await transferText(indexUrl);
   const paths = new Set([...xml.matchAll(/(?:href=["']|>)([^"'<]*?(?:HB|SB|HJR|SJR|HCR|SCR|HR|SR)\d{5}\.xml)/gi)].map((m) => new URL(m[1].replace(/^\.?\//, ''), `${indexUrl}/../`).href));
-  return { indexUrl, indexHash: hash(xml), urls: [...paths].slice(0, maxRecords || undefined) };
+  const urls = paths.size ? [...paths].slice(0, maxRecords || undefined) : await discoverFromDirectories(`${TLO_BULK_ROOT}/${session}/billhistory`);
+  return { indexUrl, indexHash: hash(xml), urls };
 }
 
 async function importBill(session, sourceUrl) {
-  const xml = await (await request(sourceUrl)).text();
+  const xml = await transferText(sourceUrl);
   const sourceRecordKey = `${session}:${sourceUrl.split('/').at(-1)}`;
   const contentHash = hash(xml);
   const existing = dryRun ? null : await selectOne('legislative_source_records', `source_key=eq.${SOURCE_KEY}&source_record_key=eq.${encodeURIComponent(sourceRecordKey)}&select=content_hash`);
@@ -177,6 +238,7 @@ for (const session of sessions) {
       await rest(`legislative_sync_runs?id=eq.${run.id}`, { method: 'PATCH', body: JSON.stringify({ completed_at: new Date().toISOString(), status: errors.length ? 'completed_with_warnings' : 'completed', records_seen: seen, records_changed: changed, cursor_after: { completedAt: new Date().toISOString() }, errors }) });
       await rest('rpc/refresh_legislative_authority_graph', { method: 'POST', body: '{}' });
     }
+    if (errors.length) console.error(JSON.stringify(errors.slice(0, 10), null, 2));
     console.log(`${session}: ${seen} official records checked, ${changed} changed, ${errors.length} errors${dryRun ? ' (dry run)' : ''}.`);
   } catch (error) {
     if (!dryRun && run?.id) await rest(`legislative_sync_runs?id=eq.${run.id}`, { method: 'PATCH', body: JSON.stringify({ completed_at: new Date().toISOString(), status: 'failed', records_seen: seen, records_changed: changed, errors: [...errors, { message: error.message }] }) });
