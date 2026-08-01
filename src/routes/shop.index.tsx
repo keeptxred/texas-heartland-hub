@@ -19,7 +19,42 @@ const SHOP_OG_DESC = "Texas patriotic shirts, hats, hoodies and gifts designed f
 const SHOP_KEYWORDS = "Texas shirts, Texas apparel, Texas patriotic apparel, Texas conservative apparel, Texas gifts, Texas hats, Texas hoodies, Texas stickers, Keep Texas Red, Texas merchandise, Texas flag shirt, Lone Star apparel";
 const SHOP_OG_IMAGE = `${SITE_URL}/og/shop.jpg`;
 
+const SHOP_CATEGORIES = [
+  { slug: "all", label: "All", keywords: [] },
+  { slug: "shirts", label: "T-Shirts", keywords: ["t-shirt", "t shirt", "tee", "shirt"] },
+  { slug: "hoodies", label: "Hoodies", keywords: ["hoodie", "sweatshirt"] },
+  { slug: "hats", label: "Hats", keywords: ["hat", "cap", "snapback", "trucker"] },
+  { slug: "drinkware", label: "Drinkware", keywords: ["mug", "tumbler", "cup", "bottle", "drinkware"] },
+  { slug: "stickers", label: "Stickers", keywords: ["sticker", "decal"] },
+  { slug: "tote-bags", label: "Tote Bags", keywords: ["tote", "tote bag"] },
+  { slug: "accessories", label: "Accessories", keywords: ["accessory", "accessories", "bag", "poster", "print", "phone case", "pillow"] },
+] as const;
+
+type ShopCategory = (typeof SHOP_CATEGORIES)[number]["slug"];
+
+function isShopCategory(value: unknown): value is ShopCategory {
+  return typeof value === "string" && SHOP_CATEGORIES.some((category) => category.slug === value);
+}
+
+function productMatchesCategory(product: Product, category: ShopCategory) {
+  if (category === "all") return true;
+
+  const searchable = [
+    product.title,
+    product.description,
+    ...(product.tags ?? []),
+  ]
+    .join(" ")
+    .toLowerCase();
+  const selected = SHOP_CATEGORIES.find((item) => item.slug === category);
+
+  return selected?.keywords.some((keyword) => searchable.includes(keyword)) ?? false;
+}
+
 export const Route = createFileRoute("/shop/")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    category: isShopCategory(search.category) && search.category !== "all" ? search.category : undefined,
+  }),
   head: () => ({
     meta: [
       { title: SHOP_TITLE },
@@ -47,7 +82,6 @@ function formatPrice(p: Product) {
 
 function ProductCard({ p }: { p: Product }) {
   const displayTitle = seoTitle(p);
-  // Group variants by color (ignoring size suffix like "Red / S" -> "Red")
   const colorToImage = new Map<string, string>();
   for (const v of p.variants ?? []) {
     const color = (v.color || v.title?.split("/")[0] || "").trim();
@@ -58,7 +92,6 @@ function ProductCard({ p }: { p: Product }) {
     ? Array.from(colorToImage.keys())
     : (p.colors ?? []);
 
-  // Each card owns its own selected color/variant state.
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const displayImage =
     (selectedColor && colorToImage.get(selectedColor)) || p.image;
@@ -122,6 +155,14 @@ function ShopPage() {
   const products = data?.products ?? [];
   const loadError = data?.error;
   const { count, open } = useCart();
+  const search = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const selectedCategory: ShopCategory = search.category ?? "all";
+  const selectedCategoryDetails = SHOP_CATEGORIES.find((category) => category.slug === selectedCategory) ?? SHOP_CATEGORIES[0];
+  const filteredProducts = products.filter((product) => productMatchesCategory(product, selectedCategory));
+  const productCountLabel = selectedCategory === "all"
+    ? `${filteredProducts.length} ${filteredProducts.length === 1 ? "Product" : "Products"}`
+    : `${filteredProducts.length} ${selectedCategoryDetails.label}`;
 
   const faqs: Array<{ q: string; a: string }> = [
     { q: "What makes Keep Texas Red apparel unique?", a: "Every design is created for proud Texans — from bold Texas flag graphics to conservative statement pieces. Orders help fund our independent Texas newsroom." },
@@ -201,7 +242,6 @@ function ShopPage() {
 
   return (
     <div className="bg-background">
-      {/* Breadcrumb nav */}
       <nav aria-label="Breadcrumb" className="mx-auto max-w-[1200px] px-6 pt-4 text-xs text-muted-foreground">
         <ol className="flex items-center gap-1">
           <li><Link to="/" className="hover:text-primary">Home</Link></li>
@@ -239,6 +279,42 @@ function ShopPage() {
       </section>
 
       <section className="mx-auto max-w-[1200px] px-6 py-12">
+        {products.length > 0 && (
+          <div className="mb-8 border-b border-border pb-6">
+            <div
+              className="-mx-6 overflow-x-auto px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              aria-label="Filter products by category"
+            >
+              <div className="flex w-max min-w-full gap-2">
+                {SHOP_CATEGORIES.map((category) => {
+                  const isSelected = category.slug === selectedCategory;
+                  return (
+                    <button
+                      key={category.slug}
+                      type="button"
+                      aria-pressed={isSelected}
+                      onClick={() => navigate({
+                        search: category.slug === "all" ? {} : { category: category.slug },
+                        replace: true,
+                      })}
+                      className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-foreground hover:border-primary/60 hover:text-primary"
+                      }`}
+                    >
+                      {category.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <p className="mt-3 text-sm font-semibold text-foreground" aria-live="polite">
+              {productCountLabel}
+            </p>
+          </div>
+        )}
+
         {(loadError || products.length === 0) && (
           <div className="text-center py-20">
             <h2 className="font-display text-2xl mb-2">Store is restocking</h2>
@@ -247,14 +323,26 @@ function ShopPage() {
             </p>
           </div>
         )}
-        {products.length > 0 && (
+        {products.length > 0 && filteredProducts.length > 0 && (
           <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {products.map((p) => <ProductCard key={p.id} p={p} />)}
+            {filteredProducts.map((p) => <ProductCard key={p.id} p={p} />)}
+          </div>
+        )}
+        {products.length > 0 && filteredProducts.length === 0 && (
+          <div className="rounded-xl border border-dashed border-border py-16 text-center">
+            <h2 className="font-display text-2xl">No {selectedCategoryDetails.label.toLowerCase()} yet</h2>
+            <p className="mt-2 text-muted-foreground">Check another category or return to all products.</p>
+            <button
+              type="button"
+              onClick={() => navigate({ search: {}, replace: true })}
+              className="mt-5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              View all products
+            </button>
           </div>
         )}
       </section>
 
-      {/* Trust bar */}
       <section className="border-y border-border bg-secondary/40">
         <div className="mx-auto max-w-[1200px] px-6 py-8 grid grid-cols-2 md:grid-cols-5 gap-4 text-center text-sm">
           {[
@@ -272,7 +360,6 @@ function ShopPage() {
         </div>
       </section>
 
-      {/* Evergreen SEO copy */}
       <section className="mx-auto max-w-[900px] px-6 py-14 prose prose-neutral dark:prose-invert">
         <h2>Texas Patriotic Apparel Made for Proud Texans</h2>
         <p>
@@ -363,7 +450,6 @@ function ShopPage() {
         </ul>
       </section>
 
-      {/* Structured data */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJson) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(onlineStoreJson) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJson) }} />
