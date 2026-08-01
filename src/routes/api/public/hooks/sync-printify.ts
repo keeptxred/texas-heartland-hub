@@ -28,17 +28,22 @@ type PrintifyProduct = {
   external?: { handle?: string };
 };
 
-function stripHtml(s: string): string {
-  return (s || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+type WebsiteSettings = {
+  is_active: boolean;
+  category: string | null;
+  collections: string[];
+  is_featured: boolean;
+  is_new: boolean;
+  is_on_sale: boolean;
+};
+
+function stripHtml(value: string): string {
+  return (value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
-// Printify's list/detail endpoints return every mockup with variant_ids
-// populated with ALL variant IDs, but the actual variant a mockup depicts
-// is encoded in the URL path: /mockup/{productId}/{variantId}/... .
-// Parse that path segment so we can map each mockup to its true variant.
 function variantIdFromSrc(src: string): number | null {
-  const m = src.match(/\/mockup\/[^/]+\/(\d+)\//);
-  return m ? Number(m[1]) : null;
+  const match = src.match(/\/mockup\/[^/]+\/(\d+)\//);
+  return match ? Number(match[1]) : null;
 }
 
 function imagesForVariant(
@@ -46,52 +51,39 @@ function imagesForVariant(
   images: PrintifyImage[],
   colorByVariantId: Map<number, string>,
 ): PrintifyImage[] {
-  // 1. Exact URL match: /mockup/{productId}/{variantId}/...
-  const urlMatches = images.filter((img) => variantIdFromSrc(img.src) === variantId);
-  if (urlMatches.length > 0) return urlMatches;
+  const exactMatches = images.filter((image) => variantIdFromSrc(image.src) === variantId);
+  if (exactMatches.length > 0) return exactMatches;
 
-  // 2. Color match: Printify often generates ONE mockup per color, encoded via
-  //    the URL's variant id (e.g. Black/L is used to render every Black size).
-  //    Match by color so all sizes of a color share the correct mockup.
-  const wantColor = colorByVariantId.get(variantId);
-  if (wantColor) {
-    const byColor = images.filter((img) => {
-      const mockupVariantId = variantIdFromSrc(img.src);
-      if (mockupVariantId == null) return false;
-      return colorByVariantId.get(mockupVariantId) === wantColor;
+  const desiredColor = colorByVariantId.get(variantId);
+  if (desiredColor) {
+    const colorMatches = images.filter((image) => {
+      const mockupVariantId = variantIdFromSrc(image.src);
+      return mockupVariantId != null && colorByVariantId.get(mockupVariantId) === desiredColor;
     });
-    if (byColor.length > 0) return byColor;
+    if (colorMatches.length > 0) return colorMatches;
   }
 
-  // 3. Last-resort fallback: variant_ids listing (often includes ALL variants).
-  return images.filter((img) => (img.variant_ids ?? []).includes(variantId));
+  return images.filter((image) => (image.variant_ids ?? []).includes(variantId));
 }
 
 function extractColors(variants: PrintifyVariant[]): string[] {
   const colors = new Set<string>();
-  for (const v of variants) {
-    if (v.title) {
-      // Printify usually formats like: "White / S" or "Red / M"
-      const color = v.title.split("/")[0].trim();
-      if (color) colors.add(color);
-    }
+  for (const variant of variants) {
+    const color = variant.title?.split("/")[0]?.trim();
+    if (color) colors.add(color);
   }
   return Array.from(colors);
 }
 
-// Choose the most representative primary image for the shop grid.
-// Prefers non-white/off-white shots, then default flag, then position=front, then first.
 function pickPrimaryImage(images: PrintifyImage[]): string {
-  if (!images || images.length === 0) return "";
+  if (images.length === 0) return "";
   return (
-    images.find((i) => i.is_default)?.src ??
-    images.find((i) => (i.position ?? "").toLowerCase() === "front")?.src ??
+    images.find((image) => image.is_default)?.src ??
+    images.find((image) => (image.position ?? "").toLowerCase() === "front")?.src ??
     images[0].src
   );
 }
 
-// Build per-color variant image map for the product detail page.
-// Returns one entry per enabled variant with { id, title, price, image, color }.
 function buildVariants(
   variants: PrintifyVariant[],
   images: PrintifyImage[],
@@ -105,73 +97,77 @@ function buildVariants(
   is_enabled: boolean;
 }> {
   const colorByVariantId = new Map<number, string>();
-  for (const v of variants) {
-    if (v.title) {
-      const c = v.title.split("/")[0].trim();
-      if (c) colorByVariantId.set(v.id, c);
-    }
+  for (const variant of variants) {
+    const color = variant.title?.split("/")[0]?.trim();
+    if (color) colorByVariantId.set(variant.id, color);
   }
-  return (variants ?? [])
-    // Only include variants the merchant actually assigned to this product.
-    // Printify's product payload can echo blueprint/catalog variants that
-    // are not enabled on the listing — those must never reach the UI.
-    .filter((v) => v.is_enabled && v.title)
-    .map((v) => {
-      const parts = v.title!.split("/").map((s) => s.trim());
-      const color = parts[0] ?? "";
-      const matches = imagesForVariant(v.id, images ?? [], colorByVariantId);
-      const imgs = matches.map((m) => m.src);
+
+  return variants
+    .filter((variant) => variant.is_enabled && variant.title)
+    .map((variant) => {
+      const matches = imagesForVariant(variant.id, images, colorByVariantId);
+      const variantImages = matches.map((image) => image.src);
       return {
-        id: v.id,
-        title: v.title!,
-        price: Math.round(v.price) / 100,
-        image: imgs[0] ?? null,
-        images: imgs,
-        color,
-        is_enabled: v.is_enabled,
+        id: variant.id,
+        title: variant.title!,
+        price: Math.round(variant.price) / 100,
+        image: variantImages[0] ?? null,
+        images: variantImages,
+        color: variant.title!.split("/")[0]?.trim() ?? "",
+        is_enabled: variant.is_enabled,
       };
     });
 }
 
 async function resolveShopId(token: string, requested: string): Promise<string> {
   if (/^\d+$/.test(requested)) return requested;
-  const res = await fetch(`${PRINTIFY_BASE}/shops.json`, {
+
+  const response = await fetch(`${PRINTIFY_BASE}/shops.json`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error(`Printify /shops.json ${res.status}`);
-  const shops = (await res.json()) as PrintifyShop[];
-  const wanted = requested.toLowerCase();
-  const match = shops.find((s) => s.title?.toLowerCase().includes(wanted)) ?? shops[0];
+  if (!response.ok) throw new Error(`Printify /shops.json ${response.status}`);
+
+  const shops = (await response.json()) as PrintifyShop[];
+  const requestedName = requested.toLowerCase();
+  const match = shops.find((shop) => shop.title?.toLowerCase().includes(requestedName)) ?? shops[0];
   if (!match) throw new Error("No Printify shops found on this account");
   return String(match.id);
 }
 
-function mapProduct(p: PrintifyProduct, shopId: string) {
-  const enabled = (p.variants ?? []).filter((v) => v.is_enabled);
-  const chosen = enabled.find((v) => v.is_default) ?? enabled[0];
-  const priceCents = chosen?.price ?? 0;
-  const image = pickPrimaryImage(p.images ?? []);
-  const variants = buildVariants(p.variants ?? [], p.images ?? []);
-  const handle = p.external?.handle;
-  const url = handle
-    ? handle.startsWith("http")
-      ? handle
-      : `https://${handle}`
-    : `https://printify.com/app/store/products/${p.id}`;
+function mapProduct(product: PrintifyProduct, settings?: WebsiteSettings) {
+  const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled);
+  const chosenVariant = enabledVariants.find((variant) => variant.is_default) ?? enabledVariants[0];
+  const image = pickPrimaryImage(product.images ?? []);
+  const externalHandle = product.external?.handle;
+  const productUrl = externalHandle
+    ? externalHandle.startsWith("http")
+      ? externalHandle
+      : `https://${externalHandle}`
+    : `https://printify.com/app/store/products/${product.id}`;
+
   return {
-    id: p.id,
-    title: p.title,
-    description: stripHtml(p.description).slice(0, 800),
-    price: Math.round(priceCents) / 100,
+    id: product.id,
+    printify_product_id: product.id,
+    title: product.title,
+    description: stripHtml(product.description).slice(0, 800),
+    price: Math.round(chosenVariant?.price ?? 0) / 100,
     currency: "USD",
     image_url: image,
-    product_url: url,
-    tags: p.tags ?? [],
-    colors: extractColors(enabled),
-    variants,
+    product_url: productUrl,
+    tags: product.tags ?? [],
+    colors: extractColors(enabledVariants),
+    variants: buildVariants(product.variants ?? [], product.images ?? []),
     source: "printify",
-    is_active: (p.visible ?? true) && enabled.length > 0 && Boolean(image),
     synced_at: new Date().toISOString(),
+
+    // Website merchandising is owned by Keep TX Red, not Printify.
+    // New products start hidden; existing choices survive every sync.
+    is_active: settings?.is_active ?? false,
+    category: settings?.category ?? null,
+    collections: settings?.collections ?? [],
+    is_featured: settings?.is_featured ?? false,
+    is_new: settings?.is_new ?? false,
+    is_on_sale: settings?.is_on_sale ?? false,
   };
 }
 
@@ -186,76 +182,84 @@ export const Route = createFileRoute("/api/public/hooks/sync-printify")({
 
 async function runSync(): Promise<Response> {
   const token = process.env.PRINTIFY_API_TOKEN;
-  const shopEnv = process.env.PRINTIFY_SHOP_ID;
-  if (!token || !shopEnv) {
+  const requestedShop = process.env.PRINTIFY_SHOP_ID;
+  if (!token || !requestedShop) {
     return Response.json({ ok: false, error: "Missing Printify env vars" }, { status: 500 });
   }
 
   try {
-    const shopId = await resolveShopId(token, shopEnv);
+    const shopId = await resolveShopId(token, requestedShop);
+    const allProducts: PrintifyProduct[] = [];
 
-    const all: PrintifyProduct[] = [];
     let page = 1;
-    // Printify returns up to ~50 per page; loop until we get less than limit.
-    // Safety cap 20 pages.
     while (page <= 20) {
-      const res = await fetch(
+      const response = await fetch(
         `${PRINTIFY_BASE}/shops/${shopId}/products.json?limit=50&page=${page}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      if (!res.ok) {
-        const body = await res.text().catch(() => "");
+      if (!response.ok) {
+        const detail = await response.text().catch(() => "");
         return Response.json(
-          { ok: false, error: `Printify products ${res.status}`, detail: body.slice(0, 300) },
+          { ok: false, error: `Printify products ${response.status}`, detail: detail.slice(0, 300) },
           { status: 502 },
         );
       }
-      const json = (await res.json()) as { data: PrintifyProduct[] };
-      const batch = json.data ?? [];
-      all.push(...batch);
-      if (batch.length < 50) break;
-      page++;
-    }
 
-    const mapped = all.map((p) => mapProduct(p, shopId));
-    const seenIds = new Set(mapped.map((m) => m.id));
+      const payload = (await response.json()) as { data: PrintifyProduct[] };
+      const batch = payload.data ?? [];
+      allProducts.push(...batch);
+      if (batch.length < 50) break;
+      page += 1;
+    }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
+    const { data: existingRows, error: existingError } = await supabaseAdmin
+      .from("products")
+      .select("id,is_active,category,collections,is_featured,is_new,is_on_sale")
+      .eq("source", "printify");
+
+    if (existingError) {
+      return Response.json({ ok: false, error: existingError.message }, { status: 500 });
+    }
+
+    const settingsById = new Map<string, WebsiteSettings>();
+    for (const row of existingRows ?? []) {
+      settingsById.set(row.id, {
+        is_active: row.is_active ?? false,
+        category: row.category ?? null,
+        collections: Array.isArray(row.collections) ? row.collections : [],
+        is_featured: row.is_featured ?? false,
+        is_new: row.is_new ?? false,
+        is_on_sale: row.is_on_sale ?? false,
+      });
+    }
+
+    const mapped = allProducts.map((product) => mapProduct(product, settingsById.get(product.id)));
+
     if (mapped.length > 0) {
-      const { error: upsertErr } = await supabaseAdmin
+      const { error: upsertError } = await supabaseAdmin
         .from("products")
         .upsert(mapped, { onConflict: "id" });
-      if (upsertErr) {
-        return Response.json({ ok: false, error: upsertErr.message }, { status: 500 });
+      if (upsertError) {
+        return Response.json({ ok: false, error: upsertError.message }, { status: 500 });
       }
     }
 
-    // Deactivate products no longer returned from Printify (soft delete).
-    const { data: existing } = await supabaseAdmin
-      .from("products")
-      .select("id")
-      .eq("source", "printify");
-    const stale = (existing ?? [])
-      .map((r) => r.id)
-      .filter((id) => !seenIds.has(id));
-    if (stale.length > 0) {
-      await supabaseAdmin
-        .from("products")
-        .update({ is_active: false })
-        .in("id", stale);
-    }
+    const newlyImported = mapped.filter((product) => !settingsById.has(product.id)).length;
 
     return Response.json({
       ok: true,
       shopId,
-      fetched: all.length,
+      fetched: allProducts.length,
       upserted: mapped.length,
-      deactivated: stale.length,
+      newlyImported,
+      newProductsDefaultHidden: true,
+      preservedWebsiteSettings: true,
     });
-  } catch (err) {
+  } catch (error) {
     return Response.json(
-      { ok: false, error: err instanceof Error ? err.message : String(err) },
+      { ok: false, error: error instanceof Error ? error.message : String(error) },
       { status: 500 },
     );
   }
