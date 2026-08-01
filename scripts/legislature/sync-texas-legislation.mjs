@@ -10,6 +10,7 @@
 import { createHash } from 'node:crypto';
 import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
+import { hostname } from 'node:os';
 import { promisify } from 'node:util';
 
 const SOURCE_KEY = 'texas-legislature-online';
@@ -24,6 +25,16 @@ const args = Object.fromEntries(process.argv.slice(2).map((arg) => {
 const sessions = String(args.sessions || process.env.TLO_SESSIONS || '89R').split(',').map((v) => v.trim()).filter(Boolean);
 const dryRun = Boolean(args['dry-run']);
 const maxRecords = Number(args.limit || 0);
+const freshRun = Boolean(args.fresh);
+// A Lovable/CI command has a hard execution ceiling; stop cleanly before it and checkpoint.
+const maxSeconds = Number(args['max-seconds'] || process.env.TLO_MAX_SECONDS || 480);
+// Already-imported source files are re-downloaded only after this many days, so restarts are cheap
+// while later incremental runs still pick up upstream changes.
+const recheckDays = Number(args['recheck-days'] || process.env.TLO_RECHECK_DAYS || 7);
+// A run whose checkpoint is older than this has no live process behind it (sandbox reset or timeout).
+const staleRunMinutes = Number(args['stale-minutes'] || 12);
+const startedAtMs = Date.now();
+const outOfTime = () => (Date.now() - startedAtMs) / 1000 >= maxSeconds;
 
 if (!SUPABASE_URL || (!SERVICE_KEY && !dryRun)) {
   throw new Error('SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are required (service key is optional with --dry-run).');
@@ -199,13 +210,115 @@ async function discover(session) {
   return { indexUrl, indexHash: hash(xml), urls };
 }
 
-async function importBill(session, sourceUrl) {
+// The run table only allows running/completed/completed_with_warnings/failed, so an execution-ceiling
+// stop is recorded as `failed` with an explicit reason while its cursor stays resumable.
+const interruptedPatch = () => ({ status: 'failed', completed_at: new Date().toISOString() });
+const HOST = hostname();
+const processAlive = (pid) => { try { process.kill(pid, 0); return true; } catch { return false; } };
+
+const sessionParts = (session) => ({ legislature_number: Number(session.match(/^\d+/)[0]), session_code: session.replace(/^\d+/, '').toUpperCase() });
+const sourceRecordKeyFor = (session, sourceUrl) => `${session}:${sourceUrl.split('/').at(-1)}`;
+
+/** Load every stored source record for the session so restarts never re-download unchanged files. */
+async function loadSourceRecords(session) {
+  const map = new Map();
+  if (dryRun) return map;
+  for (let offset = 0; ; offset += 1000) {
+    const response = await rest(`legislative_source_records?source_key=eq.${SOURCE_KEY}&select=source_record_key,content_hash,last_imported_at&order=source_record_key.asc&offset=${offset}&limit=1000`);
+    const rows = await response.json();
+    for (const row of rows) if (row.source_record_key?.startsWith(`${session}:`)) map.set(row.source_record_key, row);
+    if (rows.length < 1000) break;
+  }
+  return map;
+}
+
+/** Import the session row and reconcile committees up front so those tables never stay empty. */
+async function importSessionAndCommittees(session) {
+  if (dryRun) return null;
+  const parts = sessionParts(session);
+  const suffix = { R: 'Regular Session', '1': 'First Called Session', '2': 'Second Called Session', '3': 'Third Called Session' }[parts.session_code] || `Session ${parts.session_code}`;
+  const [sessionRow] = await upsert('legislative_sessions', [{
+    ...parts, session_name: `${parts.legislature_number}th Texas Legislature ${suffix}`,
+    session_type: parts.session_code === 'R' ? 'regular' : 'special',
+    source_url: `${TLO_BULK_ROOT}/${session}/billhistory/history.xml`,
+  }], 'legislature_number,session_code');
+  await reconcileCommitteesFromHistory(session, sessionRow);
+  return sessionRow;
+}
+
+/** Promote committee names already stored on bill history rows into canonical committee records. */
+async function reconcileCommitteesFromHistory(session, sessionRow) {
+  const parts = sessionParts(session);
+  const billIds = new Set();
+  for (let offset = 0; ; offset += 1000) {
+    const response = await rest(`bills?legislature_number=eq.${parts.legislature_number}&session_code=eq.${parts.session_code}&select=id&order=id.asc&offset=${offset}&limit=1000`);
+    const rows = await response.json();
+    rows.forEach((row) => billIds.add(row.id));
+    if (rows.length < 1000) break;
+  }
+  if (!billIds.size) return;
+  const pending = new Map();
+  for (let offset = 0; ; offset += 1000) {
+    const response = await rest(`bill_committee_history?select=id,bill_id,chamber,committee_name,committee_id&committee_id=is.null&order=id.asc&offset=${offset}&limit=1000`);
+    const rows = await response.json();
+    for (const row of rows) {
+      if (!billIds.has(row.bill_id) || !row.committee_name) continue;
+      const key = `${row.chamber}:${slug(row.committee_name)}`;
+      if (!pending.has(key)) pending.set(key, { chamber: row.chamber, committee_name: row.committee_name, rows: [] });
+      pending.get(key).rows.push(row.id);
+    }
+    if (rows.length < 1000) break;
+  }
+  if (!pending.size) return;
+  const committeeRows = [...pending.values()].map((entry) => ({
+    ...parts, chamber: ['house', 'senate', 'joint'].includes(entry.chamber) ? entry.chamber : 'joint',
+    committee_name: entry.committee_name, committee_slug: slug(entry.committee_name),
+    source_url: sessionRow?.source_url || null,
+  }));
+  const saved = await upsert('legislative_committees', committeeRows, 'legislature_number,session_code,chamber,committee_slug');
+  const byKey = new Map((saved || []).map((row) => [`${row.chamber}:${row.committee_slug}`, row.id]));
+  for (const entry of pending.values()) {
+    const chamber = ['house', 'senate', 'joint'].includes(entry.chamber) ? entry.chamber : 'joint';
+    const committeeId = byKey.get(`${chamber}:${slug(entry.committee_name)}`);
+    if (!committeeId) continue;
+    for (let index = 0; index < entry.rows.length; index += 100) {
+      const batch = entry.rows.slice(index, index + 100);
+      await rest(`bill_committee_history?id=in.(${batch.join(',')})`, { method: 'PATCH', body: JSON.stringify({ committee_id: committeeId }) });
+    }
+  }
+}
+
+async function ensureCommittee(session, sessionRow, chamber, committeeName, committeeCache) {
+  const parts = sessionParts(session);
+  const normalizedChamber = ['house', 'senate', 'joint'].includes(chamber) ? chamber : 'joint';
+  const key = `${normalizedChamber}:${slug(committeeName)}`;
+  if (committeeCache.has(key)) return committeeCache.get(key);
+  const [row] = await upsert('legislative_committees', [{
+    ...parts, chamber: normalizedChamber, committee_name: committeeName,
+    committee_slug: slug(committeeName), source_url: sessionRow?.source_url || null,
+  }], 'legislature_number,session_code,chamber,committee_slug');
+  committeeCache.set(key, row?.id || null);
+  return row?.id || null;
+}
+
+/**
+ * Import one bill file. Children are written before the source record so an interrupted bill is
+ * retried on the next run, and the persistent cursor only advances after this resolves.
+ */
+async function importBill(session, sourceUrl, context) {
+  const { sessionRow, sourceRecords, committeeCache } = context;
+  const sourceRecordKey = sourceRecordKeyFor(session, sourceUrl);
   const xml = await transferText(sourceUrl);
-  const sourceRecordKey = `${session}:${sourceUrl.split('/').at(-1)}`;
   const contentHash = hash(xml);
-  const existing = dryRun ? null : await selectOne('legislative_source_records', `source_key=eq.${SOURCE_KEY}&source_record_key=eq.${encodeURIComponent(sourceRecordKey)}&select=content_hash`);
-  if (existing?.content_hash === contentHash) return { changed: false };
+  const existing = sourceRecords.get(sourceRecordKey) || null;
+  const nowIso = new Date().toISOString();
+  if (existing?.content_hash === contentHash) {
+    if (!dryRun) await upsert('legislative_source_records', [{ source_key: SOURCE_KEY, source_record_key: sourceRecordKey, source_url: sourceUrl, content_hash: contentHash, last_seen_at: nowIso, metadata: { session } }], 'source_key,source_record_key');
+    sourceRecords.set(sourceRecordKey, { ...existing, last_imported_at: existing.last_imported_at || nowIso });
+    return { result: 'unchanged' };
+  }
   const parsed = parseBill(xml, sourceUrl, session); if (!parsed) throw new Error(`Could not identify bill in ${sourceUrl}`);
+  if (sessionRow?.id) parsed.bill.legislative_session_id = sessionRow.id;
   const [bill] = await upsert('bills', [parsed.bill], 'legislature_number,session_code,bill_type,bill_number');
   if (!dryRun) {
     parsed.actions.forEach((row) => { row.bill_id = bill.id; });
@@ -213,35 +326,133 @@ async function importBill(session, sourceUrl) {
     parsed.committees.forEach((row) => { row.bill_id = bill.id; });
     await upsert('bill_actions', parsed.actions, 'bill_id,action_date,action_sequence,action_text');
     await upsert('bill_sponsors', parsed.sponsors, 'bill_id,representative_id,external_legislator_id,sponsor_name,sponsor_role');
+    for (const committee of parsed.committees) {
+      committee.committee_id = await ensureCommittee(session, sessionRow, committee.chamber, committee.committee_name, committeeCache);
+    }
     // Committee history lacks a natural unique constraint, so replace only automated rows from this source bill.
     await rest(`bill_committee_history?bill_id=eq.${bill.id}&source_url=eq.${encodeURIComponent(sourceUrl)}`, { method: 'DELETE' });
     if (parsed.committees.length) await rest('bill_committee_history', { method: 'POST', body: JSON.stringify(parsed.committees) });
     for (const agency of parsed.agencies) await linkAuthorities('bill', bill.id, 'government', agency.slug, 'affected-agency', 24, { source: 'official-bill-record', agencyName: agency.name });
-    await upsert('legislative_source_records', [{ source_key: SOURCE_KEY, source_record_key: sourceRecordKey, source_url: sourceUrl, content_hash: contentHash, last_seen_at: new Date().toISOString(), last_imported_at: new Date().toISOString(), metadata: { session } }], 'source_key,source_record_key');
+    await upsert('legislative_source_records', [{ source_key: SOURCE_KEY, source_record_key: sourceRecordKey, source_url: sourceUrl, content_hash: contentHash, last_seen_at: nowIso, last_imported_at: nowIso, metadata: { session } }], 'source_key,source_record_key');
+    sourceRecords.set(sourceRecordKey, { source_record_key: sourceRecordKey, content_hash: contentHash, last_imported_at: nowIso });
   }
-  return { changed: true };
+  return { result: existing ? 'updated' : 'inserted' };
+}
+
+/**
+ * Close out sync runs whose checkpoint proves no live process remains (sandbox reset or timeout),
+ * and hand back the newest usable cursor so the next run continues instead of restarting.
+ */
+async function recoverAbandonedRuns(session) {
+  const parts = sessionParts(session);
+  const response = await rest(`legislative_sync_runs?legislature_number=eq.${parts.legislature_number}&session_code=eq.${parts.session_code}&order=started_at.desc&limit=25`);
+  const runs = await response.json();
+  const staleBefore = Date.now() - staleRunMinutes * 60 * 1000;
+  let recovered = 0;
+  for (const run of runs) {
+    if (run.status !== 'running') continue;
+    const heartbeat = new Date(run.cursor_after?.lastCheckpointAt || run.started_at).getTime();
+    // Active means: a live pid on this host, or another host still checkpointing recently.
+    const pid = Number(run.cursor_after?.pid || 0);
+    const active = run.cursor_after?.host === HOST
+      ? pid > 0 && processAlive(pid)
+      : pid > 0 && heartbeat > staleBefore;
+    if (active && !freshRun) {
+      throw new Error(`A sync run for ${session} is still checkpointing (run ${run.id}); refusing to start a duplicate concurrent run.`);
+    }
+    await rest(`legislative_sync_runs?id=eq.${run.id}`, { method: 'PATCH', body: JSON.stringify({
+      status: 'failed', completed_at: new Date().toISOString(),
+      errors: [...(run.errors || []), { reason: 'sandbox_reset_or_timeout', detectedAt: new Date().toISOString() }],
+    }) });
+    recovered += 1;
+  }
+  const terminal = ['completed', 'completed_with_warnings'];
+  const resumable = freshRun ? null : runs.find((run) => !terminal.includes(run.status) && Number(run.cursor_after?.position) > 0);
+  return { recovered, cursor: resumable?.cursor_after || null };
 }
 
 await syncElectionRelationships();
+let interrupted = false;
 
 for (const session of sessions) {
-  const run = dryRun ? { id: null } : (await rest('legislative_sync_runs', { method: 'POST', body: JSON.stringify({ legislature_number: Number(session.match(/^\d+/)[0]), session_code: session.replace(/^\d+/, '').toUpperCase() }) }).then((r) => r.json()))[0];
-  let seen = 0, changed = 0; const errors = [];
+  const parts = sessionParts(session);
+  const recovery = dryRun ? { recovered: 0, cursor: null } : await recoverAbandonedRuns(session);
+  if (recovery.recovered) console.log(`${session}: marked ${recovery.recovered} abandoned run(s) failed (sandbox_reset_or_timeout).`);
+
+  const { urls, indexHash } = await discover(session);
+  const manifestHash = hash(`${indexHash}:${urls.length}`);
+  const resumeCursor = recovery.cursor?.manifestHash === manifestHash ? recovery.cursor : null;
+  const totals = {
+    processed: Number(resumeCursor?.processed || 0), inserted: Number(resumeCursor?.inserted || 0),
+    updated: Number(resumeCursor?.updated || 0), unchanged: Number(resumeCursor?.unchanged || 0),
+    skipped: Number(resumeCursor?.skipped || 0), errorCount: Number(resumeCursor?.errorCount || 0),
+  };
+  let position = Number(resumeCursor?.position || 0);
+  const errors = [];
+  const run = dryRun ? { id: null } : (await rest('legislative_sync_runs', { method: 'POST', body: JSON.stringify({
+    ...parts, cursor_before: resumeCursor || {},
+    cursor_after: { session, manifestHash, manifestSize: urls.length, position, ...totals, pid: process.pid, host: HOST, lastCheckpointAt: new Date().toISOString() },
+  }) }).then((r) => r.json()))[0];
+  console.log(`${session}: manifest ${urls.length} records, resuming at position ${position}${dryRun ? ' (dry run)' : ''}.`);
+
+  const context = {
+    sessionRow: await importSessionAndCommittees(session),
+    sourceRecords: await loadSourceRecords(session),
+    committeeCache: new Map(),
+  };
+
+  const checkpoint = async (extra = {}) => {
+    if (dryRun || !run?.id) return;
+    await rest(`legislative_sync_runs?id=eq.${run.id}`, { method: 'PATCH', body: JSON.stringify({
+      records_seen: totals.processed, records_changed: totals.inserted + totals.updated,
+      errors: errors.slice(-50),
+      cursor_after: { session, manifestHash, manifestSize: urls.length, position, lastSourceUrl: urls[position - 1] || null, ...totals, pid: process.pid, host: HOST, lastCheckpointAt: new Date().toISOString() },
+      ...extra,
+    }) });
+  };
+
   try {
-    const { urls } = await discover(session);
-    for (const url of urls) {
-      seen += 1;
-      try { if ((await importBill(session, url)).changed) changed += 1; }
-      catch (error) { errors.push({ url, message: error.message }); }
+    const recheckBefore = Date.now() - recheckDays * 24 * 60 * 60 * 1000;
+    while (position < urls.length) {
+      if (outOfTime()) { interrupted = true; break; }
+      const url = urls[position];
+      const stored = context.sourceRecords.get(sourceRecordKeyFor(session, url));
+      const lastImported = stored?.last_imported_at ? new Date(stored.last_imported_at).getTime() : 0;
+      if (stored?.content_hash && lastImported > recheckBefore) {
+        // Proven already imported and recent: no download needed, but still refreshable on later runs.
+        totals.skipped += 1; position += 1;
+        if (position % 50 === 0) await checkpoint();
+        continue;
+      }
+      try {
+        const { result } = await importBill(session, url, context);
+        totals[result] += 1; totals.processed += 1;
+      } catch (error) {
+        totals.errorCount += 1; errors.push({ url, message: error.message });
+        console.error(`${session}: ${url} -> ${error.message}`);
+      }
+      position += 1;
+      await checkpoint();
     }
-    if (!dryRun) {
-      await rest(`legislative_sync_runs?id=eq.${run.id}`, { method: 'PATCH', body: JSON.stringify({ completed_at: new Date().toISOString(), status: errors.length ? 'completed_with_warnings' : 'completed', records_seen: seen, records_changed: changed, cursor_after: { completedAt: new Date().toISOString() }, errors }) });
-      await rest('rpc/refresh_legislative_authority_graph', { method: 'POST', body: '{}' });
+
+    if (position >= urls.length) {
+      await checkpoint({ status: errors.length ? 'completed_with_warnings' : 'completed', completed_at: new Date().toISOString() });
+      if (!dryRun) {
+        await reconcileCommitteesFromHistory(session, context.sessionRow);
+        await rest('rpc/refresh_legislative_authority_graph', { method: 'POST', body: '{}' });
+      }
+      console.log(`${session}: COMPLETED — position ${position}/${urls.length}, inserted ${totals.inserted}, updated ${totals.updated}, unchanged ${totals.unchanged}, skipped ${totals.skipped}, errors ${totals.errorCount}${dryRun ? ' (dry run)' : ''}.`);
+    } else {
+      errors.push({ reason: 'execution_ceiling', position, at: new Date().toISOString() });
+      await checkpoint(interruptedPatch());
+      console.log(`${session}: INTERRUPTED at execution ceiling — checkpoint saved at position ${position}/${urls.length}. Re-run the same command to continue.`);
     }
-    if (errors.length) console.error(JSON.stringify(errors.slice(0, 10), null, 2));
-    console.log(`${session}: ${seen} official records checked, ${changed} changed, ${errors.length} errors${dryRun ? ' (dry run)' : ''}.`);
   } catch (error) {
-    if (!dryRun && run?.id) await rest(`legislative_sync_runs?id=eq.${run.id}`, { method: 'PATCH', body: JSON.stringify({ completed_at: new Date().toISOString(), status: 'failed', records_seen: seen, records_changed: changed, errors: [...errors, { message: error.message }] }) });
+    console.error(`${session}: aborted — ${error.message}`);
+    errors.push({ reason: 'aborted', message: error.message, at: new Date().toISOString() });
+    await checkpoint(interruptedPatch()).catch((patchError) => console.error(`checkpoint write failed: ${patchError.message}`));
     throw error;
   }
 }
+
+if (interrupted) console.log('Execution ceiling reached: progress is checkpointed, re-run to continue.');

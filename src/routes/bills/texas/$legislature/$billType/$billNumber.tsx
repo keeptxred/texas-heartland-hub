@@ -14,7 +14,13 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
     if (params.billType !== billType || params.billNumber !== String(billNumber)) throw redirect({ href: normalizedPath, statusCode: 301 });
     const bill = await getBill(legislature, billType, billNumber);
     if (!bill) throw notFound();
-    const [relations, relatedContent] = await Promise.all([getBillRelations(bill.id), getRelatedAuthorityContent('bill', bill.id)]);
+    const [relations, relatedContent] = await Promise.all([
+      getBillRelations(bill.id),
+      getRelatedAuthorityContent('bill', bill.id).catch((error: any) => {
+        console.error(`getRelatedAuthorityContent failed for bill ${bill.id}:`, error?.message ?? error);
+        return [] as any;
+      }),
+    ]);
     return { bill, ...relations, relatedContent };
   },
   head: ({ loaderData }) => {

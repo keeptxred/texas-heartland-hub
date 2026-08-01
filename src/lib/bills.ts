@@ -72,16 +72,25 @@ export async function getBill(legislature: number, billType: string, billNumber:
 }
 
 export async function getBillRelations(billId: string) {
+  // Optional joined records must never take the bill page down: log and fall back to an empty list.
+  const safe = async (label: string, build: () => any) => {
+    try {
+      const { data, error } = await build();
+      if (error) { console.error(`getBillRelations(${label}) failed for bill ${billId}:`, error.message ?? error); return { data: [] }; }
+      return { data: data ?? [] };
+    } catch (error: any) {
+      console.error(`getBillRelations(${label}) threw for bill ${billId}:`, error?.message ?? error);
+      return { data: [] };
+    }
+  };
   const [sponsors, actions, committees, documents, subjects, articles] = await Promise.all([
-    db.from('bill_sponsors').select('*').eq('bill_id', billId).order('sequence'),
-    db.from('bill_actions').select('*,legislative_committees(committee_name,committee_slug,chamber)').eq('bill_id', billId).order('action_date', { ascending: false }).order('action_sequence', { ascending: false }),
-    db.from('bill_committee_history').select('*,legislative_committees(committee_slug)').eq('bill_id', billId).order('sequence'),
-    db.from('bill_documents').select('*').eq('bill_id', billId).order('document_date', { ascending: false }),
-    db.from('bill_subject_relationships').select('bill_subjects(*)').eq('bill_id', billId),
-    db.from('bill_article_relationships').select('relationship_type,confidence,is_manual,daily_articles(id,title,slug,dek,published_at,image_url)').eq('bill_id', billId).order('is_manual', { ascending: false }).order('confidence', { ascending: false }).limit(8),
+    safe('sponsors', () => db.from('bill_sponsors').select('*').eq('bill_id', billId).order('sequence')),
+    safe('actions', () => db.from('bill_actions').select('*,legislative_committees(committee_name,committee_slug,chamber)').eq('bill_id', billId).order('action_date', { ascending: false }).order('action_sequence', { ascending: false })),
+    safe('committees', () => db.from('bill_committee_history').select('*,legislative_committees(committee_slug)').eq('bill_id', billId).order('sequence')),
+    safe('documents', () => db.from('bill_documents').select('*').eq('bill_id', billId).order('document_date', { ascending: false })),
+    safe('subjects', () => db.from('bill_subject_relationships').select('bill_subjects(*)').eq('bill_id', billId)),
+    safe('articles', () => db.from('bill_article_relationships').select('relationship_type,confidence,is_manual,daily_articles(id,title,slug,dek,published_at,image_url)').eq('bill_id', billId).order('is_manual', { ascending: false }).order('confidence', { ascending: false }).limit(8)),
   ]);
-  const firstError = [sponsors, actions, committees, documents, subjects, articles].find((result) => result.error)?.error;
-  if (firstError) throw firstError;
   return {
     sponsors: sponsors.data ?? [],
     actions: actions.data ?? [],
