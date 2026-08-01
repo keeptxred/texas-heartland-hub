@@ -208,7 +208,11 @@ function validateCandidateTextClaims(
 ) {
   for (const sentence of sentencesContainingCandidate(body, candidate)) {
     if (!CONTEST_CUE.test(sentence)) continue;
-    const offices = officesIn(sentence);
+    // A candidate can be identified by a current officeholder title while
+    // campaigning for a different office (for example, "Texas Attorney
+    // General Ken Paxton unveiled a campaign plan"). Do not interpret a title
+    // immediately before the candidate's name as the office being sought.
+    const offices = officesIn(stripOfficeholderTitles(sentence, candidate));
     if (
       offices.length > 0 &&
       !offices.some((claim) =>
@@ -250,6 +254,23 @@ function validateCandidateTextClaims(
   }
 }
 
+function stripOfficeholderTitles(text: string, candidate: CandidateAuthority) {
+  const officeholders = OFFICEHOLDERS.filter((record) =>
+    candidate.aliases.some((alias) => sameText(alias, record.name)),
+  );
+
+  return officeholders.reduce((result, officeholder) => {
+    const office = escapePattern(officeholder.office).replace(/\s+/g, "\\s+");
+    return candidate.aliases.reduce((sentence, alias) => {
+      const name = escapePattern(alias).replace(/\s+/g, "\\s+");
+      return sentence.replace(
+        new RegExp(`\\b(?:Texas\\s+)?${office}\\s+${name}(?=$|[^A-Za-z0-9])`, "gi"),
+        alias,
+      );
+    }, result);
+  }, text);
+}
+
 function contestMatchesAssertion(contest: Contest, assertion: PoliticalAuthorityAssertion) {
   if (assertion.raceId && assertion.raceId !== contest.raceId) return false;
   if (assertion.electionYear != null && assertion.electionYear !== contest.electionYear)
@@ -279,8 +300,12 @@ function sentencesContainingCandidate(text: string, candidate: CandidateAuthorit
 }
 
 function containsWholeName(text: string, name: string) {
-  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\s+/g, "\\s+");
+  const escaped = escapePattern(name).replace(/\s+/g, "\\s+");
   return new RegExp(`(?:^|[^A-Za-z0-9])${escaped}(?=$|[^A-Za-z0-9])`, "i").test(text);
+}
+
+function escapePattern(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function officesIn(text: string) {
