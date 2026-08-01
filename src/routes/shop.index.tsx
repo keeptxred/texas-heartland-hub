@@ -30,6 +30,16 @@ const SHOP_CATEGORIES = [
   { slug: "accessories", label: "Accessories", keywords: ["accessory", "accessories", "bag", "poster", "print", "phone case", "pillow"] },
 ] as const;
 
+const SHOP_COLLECTIONS = [
+  { slug: "all", label: "All Collections", keywords: [] },
+  { slug: "patriotic", label: "🇺🇸 Patriotic", keywords: ["patriotic", "usa", "america", "american", "flag", "stars and stripes"] },
+  { slug: "texas", label: "🤠 Texas", keywords: ["texas", "lone star", "tx", "longhorn", "bluebonnet"] },
+  { slug: "floral", label: "🌸 Floral", keywords: ["floral", "flower", "bluebonnet", "wildflower", "botanical", "rose"] },
+  { slug: "conservative", label: "🦅 Conservative", keywords: ["conservative", "republican", "gop", "keep texas red", "freedom", "liberty"] },
+  { slug: "new-arrivals", label: "⭐ New Arrivals", keywords: ["new arrival", "new arrivals", "new", "just added"] },
+  { slug: "on-sale", label: "🔥 On Sale", keywords: ["sale", "on sale", "discount", "clearance"] },
+] as const;
+
 const SHOP_SORT_OPTIONS = [
   { value: "featured", label: "Featured" },
   { value: "newest", label: "Newest" },
@@ -39,10 +49,15 @@ const SHOP_SORT_OPTIONS = [
 ] as const;
 
 type ShopCategory = (typeof SHOP_CATEGORIES)[number]["slug"];
+type ShopCollection = (typeof SHOP_COLLECTIONS)[number]["slug"];
 type ShopSort = (typeof SHOP_SORT_OPTIONS)[number]["value"];
 
 function isShopCategory(value: unknown): value is ShopCategory {
   return typeof value === "string" && SHOP_CATEGORIES.some((category) => category.slug === value);
+}
+
+function isShopCollection(value: unknown): value is ShopCollection {
+  return typeof value === "string" && SHOP_COLLECTIONS.some((collection) => collection.slug === value);
 }
 
 function isShopSort(value: unknown): value is ShopSort {
@@ -60,6 +75,13 @@ function productMatchesCategory(product: Product, category: ShopCategory) {
   return selected?.keywords.some((keyword) => searchable.includes(keyword)) ?? false;
 }
 
+function productMatchesCollection(product: Product, collection: ShopCollection) {
+  if (collection === "all") return true;
+  const searchable = productSearchText(product);
+  const selected = SHOP_COLLECTIONS.find((item) => item.slug === collection);
+  return selected?.keywords.some((keyword) => searchable.includes(keyword)) ?? false;
+}
+
 function isBestSeller(product: Product) {
   const searchable = productSearchText(product);
   return searchable.includes("best seller") || searchable.includes("bestseller") || searchable.includes("best-selling");
@@ -68,6 +90,7 @@ function isBestSeller(product: Product) {
 export const Route = createFileRoute("/shop/")({
   validateSearch: (search: Record<string, unknown>) => ({
     category: isShopCategory(search.category) && search.category !== "all" ? search.category : undefined,
+    collection: isShopCollection(search.collection) && search.collection !== "all" ? search.collection : undefined,
     q: typeof search.q === "string" && search.q.trim() ? search.q.trim().slice(0, 80) : undefined,
     sort: isShopSort(search.sort) && search.sort !== "featured" ? search.sort : undefined,
   }),
@@ -158,14 +181,17 @@ function ShopPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const selectedCategory: ShopCategory = search.category ?? "all";
+  const selectedCollection: ShopCollection = search.collection ?? "all";
   const selectedSort: ShopSort = search.sort ?? "featured";
   const searchQuery = search.q ?? "";
   const selectedCategoryDetails = SHOP_CATEGORIES.find((category) => category.slug === selectedCategory) ?? SHOP_CATEGORIES[0];
+  const selectedCollectionDetails = SHOP_COLLECTIONS.find((collection) => collection.slug === selectedCollection) ?? SHOP_COLLECTIONS[0];
   const normalizedQuery = searchQuery.toLowerCase();
 
   const filteredProducts = products
     .map((product, originalIndex) => ({ product, originalIndex }))
     .filter(({ product }) => productMatchesCategory(product, selectedCategory))
+    .filter(({ product }) => productMatchesCollection(product, selectedCollection))
     .filter(({ product }) => !normalizedQuery || productSearchText(product).includes(normalizedQuery))
     .sort((a, b) => {
       if (selectedSort === "price-low") return a.product.price - b.product.price;
@@ -178,14 +204,17 @@ function ShopPage() {
     })
     .map(({ product }) => product);
 
-  const productCountLabel = selectedCategory === "all"
-    ? `${filteredProducts.length} ${filteredProducts.length === 1 ? "Product" : "Products"}`
-    : `${filteredProducts.length} ${selectedCategoryDetails.label}`;
+  const productCountLabel = `${filteredProducts.length} ${filteredProducts.length === 1 ? "Product" : "Products"}`;
+  const activeFilterLabel = [
+    selectedCategory !== "all" ? selectedCategoryDetails.label : null,
+    selectedCollection !== "all" ? selectedCollectionDetails.label : null,
+  ].filter(Boolean).join(" · ");
 
-  const updateSearch = (updates: { category?: ShopCategory; q?: string; sort?: ShopSort }) => {
+  const updateSearch = (updates: { category?: ShopCategory; collection?: ShopCollection; q?: string; sort?: ShopSort }) => {
     navigate({
       search: {
         category: updates.category === "all" ? undefined : updates.category ?? search.category,
+        collection: updates.collection === "all" ? undefined : updates.collection ?? search.collection,
         q: updates.q !== undefined ? (updates.q.trim() || undefined) : search.q,
         sort: updates.sort !== undefined ? (updates.sort === "featured" ? undefined : updates.sort) : search.sort,
       },
@@ -264,6 +293,22 @@ function ShopPage() {
               </div>
             </div>
 
+            <div className="mt-4">
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.16em] text-muted-foreground">Shop by collection</p>
+              <div className="-mx-6 overflow-x-auto px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Filter products by collection">
+                <div className="flex w-max min-w-full gap-2">
+                  {SHOP_COLLECTIONS.map((collection) => {
+                    const isSelected = collection.slug === selectedCollection;
+                    return (
+                      <button key={collection.slug} type="button" aria-pressed={isSelected} onClick={() => updateSearch({ collection: collection.slug })} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary/40 text-foreground hover:border-primary/60 hover:text-primary"}`}>
+                        {collection.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
             <div className="mt-5 grid gap-3 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-end">
               <label className="block">
                 <span className="mb-1.5 block text-sm font-semibold text-foreground">Search products</span>
@@ -287,7 +332,9 @@ function ShopPage() {
               </label>
             </div>
 
-            <p className="mt-3 text-sm font-semibold text-foreground" aria-live="polite">{productCountLabel}</p>
+            <p className="mt-3 text-sm font-semibold text-foreground" aria-live="polite">
+              {productCountLabel}{activeFilterLabel ? ` · ${activeFilterLabel}` : ""}
+            </p>
           </div>
         )}
 
@@ -305,7 +352,7 @@ function ShopPage() {
         {products.length > 0 && filteredProducts.length === 0 && (
           <div className="rounded-xl border border-dashed border-border py-16 text-center">
             <h2 className="font-display text-2xl">No matching products</h2>
-            <p className="mt-2 text-muted-foreground">Try another search, category, or sorting option.</p>
+            <p className="mt-2 text-muted-foreground">Try another search, category, collection, or sorting option.</p>
             <button type="button" onClick={() => navigate({ search: {}, replace: true })} className="mt-5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">View all products</button>
           </div>
         )}
