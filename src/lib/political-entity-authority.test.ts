@@ -24,6 +24,22 @@ describe("political authority validation", () => {
     expect(result.resolvedCandidateIds).toContain(JAMES_ID);
   });
 
+  it("does not confuse a candidate's current officeholder title with the office sought", () => {
+    const result = validatePoliticalAuthority({
+      headline: "Ken Paxton unveils economic plan centered on tax breaks in U.S. Senate race",
+      body: "Texas Attorney General Ken Paxton unveiled an economic plan for his campaign.",
+    });
+    expect(result.valid).toBe(true);
+  });
+
+  it("still blocks a claim that the candidate is seeking the wrong office", () => {
+    const result = validatePoliticalEntityClaims(
+      "Ken Paxton is running for Texas Attorney General in the 2026 election.",
+    );
+    expect(result.valid).toBe(false);
+    expect(result.errors.join(" ")).toMatch(/office or race level/i);
+  });
+
   it("never resolves a political identity from a headline alone", () => {
     const result = validatePoliticalAuthority({
       headline: "James Talarico launches a new campaign message",
