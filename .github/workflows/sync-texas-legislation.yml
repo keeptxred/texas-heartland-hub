@@ -3,7 +3,7 @@ name: Sync Texas legislation
 on:
   workflow_dispatch:
   schedule:
-    - cron: "40 8 * * *"
+    - cron: "40 8 * * 1"
 
 concurrency:
   group: texas-legislation-sync

@@ -101,6 +101,40 @@ async function selectOne(table, query) {
   return (await response.json())[0] || null;
 }
 
+async function upsertSession(session) {
+  const legislatureNumber = Number(session.match(/^\d+/)?.[0]);
+  const sessionCode = session.replace(/^\d+/, '').toUpperCase();
+  return (await upsert('legislative_sessions', [{
+    legislature_number: legislatureNumber,
+    session_code: sessionCode,
+    session_name: `${legislatureNumber}th Texas Legislature ${sessionCode === 'R' ? 'Regular Session' : sessionCode}`,
+    session_type: sessionCode === 'R' ? 'regular' : 'special',
+    is_current: legislatureNumber === Math.max(...sessions.map((value) => Number(value.match(/^\d+/)?.[0]))),
+    source_url: `${TLO_BULK_ROOT}/${session}/`,
+  }], 'legislature_number,session_code'))[0];
+}
+
+async function normalizeCommittees(parsed, bill) {
+  if (dryRun || !bill?.id) return parsed.committees;
+  const normalized = [];
+  for (const committee of parsed.committees) {
+    const committeeSlug = slug(committee.committee_name);
+    const [record] = await upsert('legislative_committees', [{
+      legislature_number: parsed.bill.legislature_number,
+      session_code: parsed.bill.session_code,
+      chamber: committee.chamber,
+      committee_name: committee.committee_name,
+      committee_slug: committeeSlug,
+      source_url: committee.source_url,
+    }], 'legislature_number,session_code,chamber,committee_slug');
+    normalized.push({ ...committee, committee_id: record.id });
+    await linkAuthorities('bill', bill.id, 'committee', committeeSlug, 'committee-referral', 34, {
+      source: 'official-bill-record', chamber: committee.chamber,
+    });
+  }
+  return normalized;
+}
+
 async function linkAuthorities(sourceType, sourceKey, targetType, targetKey, relationshipType, score, evidence) {
   if (dryRun || !sourceKey || !targetKey) return;
   await rest('rpc/upsert_bidirectional_authority_relationship', { method: 'POST', body: JSON.stringify({
@@ -204,10 +238,22 @@ async function importBill(session, sourceUrl) {
   const sourceRecordKey = `${session}:${sourceUrl.split('/').at(-1)}`;
   const contentHash = hash(xml);
   const existing = dryRun ? null : await selectOne('legislative_source_records', `source_key=eq.${SOURCE_KEY}&source_record_key=eq.${encodeURIComponent(sourceRecordKey)}&select=content_hash`);
-  if (existing?.content_hash === contentHash) return { changed: false };
   const parsed = parseBill(xml, sourceUrl, session); if (!parsed) throw new Error(`Could not identify bill in ${sourceUrl}`);
+  if (existing?.content_hash === contentHash) {
+    const bill = await selectOne('bills', `legislature_number=eq.${parsed.bill.legislature_number}&session_code=eq.${parsed.bill.session_code}&bill_type=eq.${parsed.bill.bill_type}&bill_number=eq.${parsed.bill.bill_number}&select=id`);
+    if (bill?.id) {
+      const committees = await normalizeCommittees(parsed, bill);
+      for (const committee of committees) {
+        await rest(`bill_committee_history?bill_id=eq.${bill.id}&committee_name=eq.${encodeURIComponent(committee.committee_name)}`, {
+          method: 'PATCH', body: JSON.stringify({ committee_id: committee.committee_id }),
+        });
+      }
+      return { changed: false };
+    }
+  }
   const [bill] = await upsert('bills', [parsed.bill], 'legislature_number,session_code,bill_type,bill_number');
   if (!dryRun) {
+    parsed.committees = await normalizeCommittees(parsed, bill);
     parsed.actions.forEach((row) => { row.bill_id = bill.id; });
     parsed.sponsors.forEach((row) => { row.bill_id = bill.id; });
     parsed.committees.forEach((row) => { row.bill_id = bill.id; });
@@ -225,6 +271,14 @@ async function importBill(session, sourceUrl) {
 await syncElectionRelationships();
 
 for (const session of sessions) {
+  if (!dryRun) {
+    const staleBefore = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString();
+    await rest(`legislative_sync_runs?status=eq.running&legislature_number=eq.${Number(session.match(/^\d+/)[0])}&session_code=eq.${session.replace(/^\d+/, '').toUpperCase()}&started_at=lt.${encodeURIComponent(staleBefore)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: 'failed', completed_at: new Date().toISOString(), errors: [{ message: 'Previous sync did not complete before its worker stopped.' }] }),
+    });
+    await upsertSession(session);
+  }
   const run = dryRun ? { id: null } : (await rest('legislative_sync_runs', { method: 'POST', body: JSON.stringify({ legislature_number: Number(session.match(/^\d+/)[0]), session_code: session.replace(/^\d+/, '').toUpperCase() }) }).then((r) => r.json()))[0];
   let seen = 0, changed = 0; const errors = [];
   try {
