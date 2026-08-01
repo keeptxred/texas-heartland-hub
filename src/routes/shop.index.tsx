@@ -30,30 +30,46 @@ const SHOP_CATEGORIES = [
   { slug: "accessories", label: "Accessories", keywords: ["accessory", "accessories", "bag", "poster", "print", "phone case", "pillow"] },
 ] as const;
 
+const SHOP_SORT_OPTIONS = [
+  { value: "featured", label: "Featured" },
+  { value: "newest", label: "Newest" },
+  { value: "best-selling", label: "Best Selling" },
+  { value: "price-low", label: "Price: Low → High" },
+  { value: "price-high", label: "Price: High → Low" },
+] as const;
+
 type ShopCategory = (typeof SHOP_CATEGORIES)[number]["slug"];
+type ShopSort = (typeof SHOP_SORT_OPTIONS)[number]["value"];
 
 function isShopCategory(value: unknown): value is ShopCategory {
   return typeof value === "string" && SHOP_CATEGORIES.some((category) => category.slug === value);
 }
 
+function isShopSort(value: unknown): value is ShopSort {
+  return typeof value === "string" && SHOP_SORT_OPTIONS.some((option) => option.value === value);
+}
+
+function productSearchText(product: Product) {
+  return [product.title, product.description, ...(product.tags ?? [])].join(" ").toLowerCase();
+}
+
 function productMatchesCategory(product: Product, category: ShopCategory) {
   if (category === "all") return true;
-
-  const searchable = [
-    product.title,
-    product.description,
-    ...(product.tags ?? []),
-  ]
-    .join(" ")
-    .toLowerCase();
+  const searchable = productSearchText(product);
   const selected = SHOP_CATEGORIES.find((item) => item.slug === category);
-
   return selected?.keywords.some((keyword) => searchable.includes(keyword)) ?? false;
+}
+
+function isBestSeller(product: Product) {
+  const searchable = productSearchText(product);
+  return searchable.includes("best seller") || searchable.includes("bestseller") || searchable.includes("best-selling");
 }
 
 export const Route = createFileRoute("/shop/")({
   validateSearch: (search: Record<string, unknown>) => ({
     category: isShopCategory(search.category) && search.category !== "all" ? search.category : undefined,
+    q: typeof search.q === "string" && search.q.trim() ? search.q.trim().slice(0, 80) : undefined,
+    sort: isShopSort(search.sort) && search.sort !== "featured" ? search.sort : undefined,
   }),
   head: () => ({
     meta: [
@@ -88,13 +104,9 @@ function ProductCard({ p }: { p: Product }) {
     if (!color) continue;
     if (!colorToImage.has(color) && v.image) colorToImage.set(color, v.image);
   }
-  const colorChips = colorToImage.size > 0
-    ? Array.from(colorToImage.keys())
-    : (p.colors ?? []);
-
+  const colorChips = colorToImage.size > 0 ? Array.from(colorToImage.keys()) : (p.colors ?? []);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const displayImage =
-    (selectedColor && colorToImage.get(selectedColor)) || p.image;
+  const displayImage = (selectedColor && colorToImage.get(selectedColor)) || p.image;
 
   return (
     <Link
@@ -103,18 +115,10 @@ function ProductCard({ p }: { p: Product }) {
       className="group text-left bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all"
     >
       <div className="aspect-square overflow-hidden bg-muted">
-        <img
-          key={displayImage}
-          src={displayImage}
-          alt={seoAlt(p, selectedColor)}
-          loading="lazy"
-          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
+        <img key={displayImage} src={displayImage} alt={seoAlt(p, selectedColor)} loading="lazy" className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
       </div>
       <div className="p-4">
-        <h3 className="font-display text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors">
-          {displayTitle}
-        </h3>
+        <h3 className="font-display text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors">{displayTitle}</h3>
         <div className="mt-2 flex items-center justify-between">
           <span className="font-semibold">{formatPrice(p)}</span>
           <span className="text-[11px] uppercase tracking-wider text-muted-foreground">View</span>
@@ -133,11 +137,7 @@ function ProductCard({ p }: { p: Product }) {
                     setSelectedColor(isSelected ? null : color);
                   }}
                   aria-pressed={isSelected}
-                  className={`inline-block rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${
-                    isSelected
-                      ? "border-primary bg-primary text-primary-foreground"
-                      : "border-border bg-secondary text-secondary-foreground hover:border-primary/60"
-                  }`}
+                  className={`inline-block rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:border-primary/60"}`}
                 >
                   {color}
                 </button>
@@ -158,11 +158,40 @@ function ShopPage() {
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
   const selectedCategory: ShopCategory = search.category ?? "all";
+  const selectedSort: ShopSort = search.sort ?? "featured";
+  const searchQuery = search.q ?? "";
   const selectedCategoryDetails = SHOP_CATEGORIES.find((category) => category.slug === selectedCategory) ?? SHOP_CATEGORIES[0];
-  const filteredProducts = products.filter((product) => productMatchesCategory(product, selectedCategory));
+  const normalizedQuery = searchQuery.toLowerCase();
+
+  const filteredProducts = products
+    .map((product, originalIndex) => ({ product, originalIndex }))
+    .filter(({ product }) => productMatchesCategory(product, selectedCategory))
+    .filter(({ product }) => !normalizedQuery || productSearchText(product).includes(normalizedQuery))
+    .sort((a, b) => {
+      if (selectedSort === "price-low") return a.product.price - b.product.price;
+      if (selectedSort === "price-high") return b.product.price - a.product.price;
+      if (selectedSort === "best-selling") {
+        const bestsellerDifference = Number(isBestSeller(b.product)) - Number(isBestSeller(a.product));
+        return bestsellerDifference || a.originalIndex - b.originalIndex;
+      }
+      return a.originalIndex - b.originalIndex;
+    })
+    .map(({ product }) => product);
+
   const productCountLabel = selectedCategory === "all"
     ? `${filteredProducts.length} ${filteredProducts.length === 1 ? "Product" : "Products"}`
     : `${filteredProducts.length} ${selectedCategoryDetails.label}`;
+
+  const updateSearch = (updates: { category?: ShopCategory; q?: string; sort?: ShopSort }) => {
+    navigate({
+      search: {
+        category: updates.category === "all" ? undefined : updates.category ?? search.category,
+        q: updates.q !== undefined ? (updates.q.trim() || undefined) : search.q,
+        sort: updates.sort !== undefined ? (updates.sort === "featured" ? undefined : updates.sort) : search.sort,
+      },
+      replace: true,
+    });
+  };
 
   const faqs: Array<{ q: string; a: string }> = [
     { q: "What makes Keep Texas Red apparel unique?", a: "Every design is created for proud Texans — from bold Texas flag graphics to conservative statement pieces. Orders help fund our independent Texas newsroom." },
@@ -188,66 +217,19 @@ function ShopPage() {
   const itemListJson = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: products.map((p, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      url: `${SITE_URL}/shop/${p.id}`,
-      name: seoTitle(p),
-    })),
+    itemListElement: products.map((p, i) => ({ "@type": "ListItem", position: i + 1, url: `${SITE_URL}/shop/${p.id}`, name: seoTitle(p) })),
   };
 
-  const collectionPageJson = {
-    "@context": "https://schema.org",
-    "@type": "CollectionPage",
-    name: SHOP_OG_TITLE,
-    description: SHOP_OG_DESC,
-    url: `${SITE_URL}/shop`,
-    isPartOf: { "@type": "WebSite", url: SITE_URL, name: "Keep Texas Red" },
-  };
-
-  const organizationJson = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "Keep Texas Red",
-    url: SITE_URL,
-    logo: `${SITE_URL}/red-texas-icon.png`,
-  };
-
-  const onlineStoreJson = {
-    "@context": "https://schema.org",
-    "@type": "OnlineStore",
-    name: "Keep Texas Red Shop",
-    url: `${SITE_URL}/shop`,
-    image: SHOP_OG_IMAGE,
-  };
-
-  const breadcrumbJson = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE_URL}/shop` },
-    ],
-  };
-
-  const faqJson = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faqs.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
-  };
+  const collectionPageJson = { "@context": "https://schema.org", "@type": "CollectionPage", name: SHOP_OG_TITLE, description: SHOP_OG_DESC, url: `${SITE_URL}/shop`, isPartOf: { "@type": "WebSite", url: SITE_URL, name: "Keep Texas Red" } };
+  const organizationJson = { "@context": "https://schema.org", "@type": "Organization", name: "Keep Texas Red", url: SITE_URL, logo: `${SITE_URL}/red-texas-icon.png` };
+  const onlineStoreJson = { "@context": "https://schema.org", "@type": "OnlineStore", name: "Keep Texas Red Shop", url: `${SITE_URL}/shop`, image: SHOP_OG_IMAGE };
+  const breadcrumbJson = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: SITE_URL }, { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE_URL}/shop` }] };
+  const faqJson = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) };
 
   return (
     <div className="bg-background">
       <nav aria-label="Breadcrumb" className="mx-auto max-w-[1200px] px-6 pt-4 text-xs text-muted-foreground">
-        <ol className="flex items-center gap-1">
-          <li><Link to="/" className="hover:text-primary">Home</Link></li>
-          <li aria-hidden>/</li>
-          <li className="text-foreground font-medium">Shop</li>
-        </ol>
+        <ol className="flex items-center gap-1"><li><Link to="/" className="hover:text-primary">Home</Link></li><li aria-hidden>/</li><li className="text-foreground font-medium">Shop</li></ol>
       </nav>
 
       <section className="border-b border-border bg-secondary text-secondary-foreground">
@@ -255,24 +237,12 @@ function ShopPage() {
           <div className="flex items-start justify-between gap-6">
             <div>
               <div className="text-[11px] font-semibold tracking-[0.3em] uppercase text-primary mb-3">Keep TX Red — Official Shop</div>
-              <h1 className="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-3xl">
-                Texas Patriotic Apparel, Hats & Gifts
-              </h1>
-              <p className="mt-4 max-w-2xl text-white/90">
-                Every order helps keep our newsroom independent. Add items to your cart, review your bag, and check out securely with card.
-              </p>
+              <h1 className="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-3xl">Texas Patriotic Apparel, Hats & Gifts</h1>
+              <p className="mt-4 max-w-2xl text-white/90">Every order helps keep our newsroom independent. Add items to your cart, review your bag, and check out securely with card.</p>
             </div>
-            <button
-              onClick={open}
-              className="relative shrink-0 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition-colors"
-              aria-label={`Open cart, ${count} items`}
-            >
+            <button onClick={open} className="relative shrink-0 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition-colors" aria-label={`Open cart, ${count} items`}>
               <span>🛍 Cart</span>
-              {count > 0 && (
-                <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-bold">
-                  {count}
-                </span>
-              )}
+              {count > 0 && <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-bold">{count}</span>}
             </button>
           </div>
         </div>
@@ -281,46 +251,50 @@ function ShopPage() {
       <section className="mx-auto max-w-[1200px] px-6 py-12">
         {products.length > 0 && (
           <div className="mb-8 border-b border-border pb-6">
-            <div
-              className="-mx-6 overflow-x-auto px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-              aria-label="Filter products by category"
-            >
+            <div className="-mx-6 overflow-x-auto px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Filter products by category">
               <div className="flex w-max min-w-full gap-2">
                 {SHOP_CATEGORIES.map((category) => {
                   const isSelected = category.slug === selectedCategory;
                   return (
-                    <button
-                      key={category.slug}
-                      type="button"
-                      aria-pressed={isSelected}
-                      onClick={() => navigate({
-                        search: category.slug === "all" ? {} : { category: category.slug },
-                        replace: true,
-                      })}
-                      className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
-                        isSelected
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-border bg-background text-foreground hover:border-primary/60 hover:text-primary"
-                      }`}
-                    >
+                    <button key={category.slug} type="button" aria-pressed={isSelected} onClick={() => updateSearch({ category: category.slug })} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-primary/60 hover:text-primary"}`}>
                       {category.label}
                     </button>
                   );
                 })}
               </div>
             </div>
-            <p className="mt-3 text-sm font-semibold text-foreground" aria-live="polite">
-              {productCountLabel}
-            </p>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-[minmax(0,1fr)_220px] sm:items-end">
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-semibold text-foreground">Search products</span>
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => updateSearch({ q: event.target.value })}
+                  placeholder="Search products"
+                  className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20"
+                />
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block text-sm font-semibold text-foreground">Sort by</span>
+                <select
+                  value={selectedSort}
+                  onChange={(event) => updateSearch({ sort: event.target.value as ShopSort })}
+                  className="h-11 w-full rounded-md border border-border bg-background px-3 text-sm font-medium text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                >
+                  {SHOP_SORT_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <p className="mt-3 text-sm font-semibold text-foreground" aria-live="polite">{productCountLabel}</p>
           </div>
         )}
 
         {(loadError || products.length === 0) && (
           <div className="text-center py-20">
             <h2 className="font-display text-2xl mb-2">Store is restocking</h2>
-            <p className="text-muted-foreground">
-              {loadError ? "We couldn't load live listings right now. Please check back soon." : "No active listings right now. Check back soon."}
-            </p>
+            <p className="text-muted-foreground">{loadError ? "We couldn't load live listings right now. Please check back soon." : "No active listings right now. Check back soon."}</p>
           </div>
         )}
         {products.length > 0 && filteredProducts.length > 0 && (
@@ -330,123 +304,45 @@ function ShopPage() {
         )}
         {products.length > 0 && filteredProducts.length === 0 && (
           <div className="rounded-xl border border-dashed border-border py-16 text-center">
-            <h2 className="font-display text-2xl">No {selectedCategoryDetails.label.toLowerCase()} yet</h2>
-            <p className="mt-2 text-muted-foreground">Check another category or return to all products.</p>
-            <button
-              type="button"
-              onClick={() => navigate({ search: {}, replace: true })}
-              className="mt-5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
-            >
-              View all products
-            </button>
+            <h2 className="font-display text-2xl">No matching products</h2>
+            <p className="mt-2 text-muted-foreground">Try another search, category, or sorting option.</p>
+            <button type="button" onClick={() => navigate({ search: {}, replace: true })} className="mt-5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">View all products</button>
           </div>
         )}
       </section>
 
       <section className="border-y border-border bg-secondary/40">
         <div className="mx-auto max-w-[1200px] px-6 py-8 grid grid-cols-2 md:grid-cols-5 gap-4 text-center text-sm">
-          {[
-            { icon: "🔒", label: "Secure Checkout" },
-            { icon: "🖨️", label: "Printed On Demand" },
-            { icon: "⭐", label: "Premium Materials" },
-            { icon: "⚡", label: "Fast Production" },
-            { icon: "🤠", label: "Designed for Proud Texans" },
-          ].map((t) => (
-            <div key={t.label} className="flex flex-col items-center gap-1">
-              <span className="text-2xl" aria-hidden>{t.icon}</span>
-              <span className="font-semibold">{t.label}</span>
-            </div>
+          {[{ icon: "🔒", label: "Secure Checkout" }, { icon: "🖨️", label: "Printed On Demand" }, { icon: "⭐", label: "Premium Materials" }, { icon: "⚡", label: "Fast Production" }, { icon: "🤠", label: "Designed for Proud Texans" }].map((t) => (
+            <div key={t.label} className="flex flex-col items-center gap-1"><span className="text-2xl" aria-hidden>{t.icon}</span><span className="font-semibold">{t.label}</span></div>
           ))}
         </div>
       </section>
 
       <section className="mx-auto max-w-[900px] px-6 py-14 prose prose-neutral dark:prose-invert">
         <h2>Texas Patriotic Apparel Made for Proud Texans</h2>
-        <p>
-          Keep Texas Red is the go-to shop for Texas patriotic apparel and
-          conservative gifts that put the Lone Star State first. Every item in
-          our store — from bold red tees to embroidered caps — is designed with
-          the pride, grit, and independence that defines Texas. Whether you were
-          born here or got here as fast as you could, our collection is built
-          for Texans who want to wear their values.
-        </p>
-
+        <p>Keep Texas Red is the go-to shop for Texas patriotic apparel and conservative gifts that put the Lone Star State first. Every item in our store — from bold red tees to embroidered caps — is designed with the pride, grit, and independence that defines Texas. Whether you were born here or got here as fast as you could, our collection is built for Texans who want to wear their values.</p>
         <h3>Texas Shirts</h3>
-        <p>
-          Our Texas shirts range from classic Keep Texas Red graphics to Texas
-          flag tees, Lone Star silhouettes, and conservative statement designs.
-          Printed on soft, durable cotton blends, they hold their color wash
-          after wash and hold up to real Texas summers.
-        </p>
-
+        <p>Our Texas shirts range from classic Keep Texas Red graphics to Texas flag tees, Lone Star silhouettes, and conservative statement designs. Printed on soft, durable cotton blends, they hold their color wash after wash and hold up to real Texas summers.</p>
         <h3>Texas Hats</h3>
-        <p>
-          Every Texan needs a good hat. Our lineup includes structured caps,
-          dad hats, snapbacks, and trucker hats — most featuring embroidered
-          Texas stars and Keep Texas Red marks. Adjustable straps keep the fit
-          right whether you're at a rally, on the ranch, or at the game.
-        </p>
-
+        <p>Every Texan needs a good hat. Our lineup includes structured caps, dad hats, snapbacks, and trucker hats — most featuring embroidered Texas stars and Keep Texas Red marks. Adjustable straps keep the fit right whether you're at a rally, on the ranch, or at the game.</p>
         <h3>Texas Hoodies</h3>
-        <p>
-          When the northers roll in, reach for a heavyweight Texas hoodie.
-          Warm fleece linings, roomy front pockets, and clean patriotic
-          graphics make our hoodies a cold-weather staple across the state.
-        </p>
-
+        <p>When the northers roll in, reach for a heavyweight Texas hoodie. Warm fleece linings, roomy front pockets, and clean patriotic graphics make our hoodies a cold-weather staple across the state.</p>
         <h3>Texas Gifts</h3>
-        <p>
-          Looking for the right gift for a fellow Texan? Our shop stocks
-          Texas-themed mugs, tote bags, prints, and stickers that pair well
-          with any celebration — birthdays, graduations, retirements, or a
-          welcome-home present for a friend who just moved to the state.
-        </p>
-
+        <p>Looking for the right gift for a fellow Texan? Our shop stocks Texas-themed mugs, tote bags, prints, and stickers that pair well with any celebration — birthdays, graduations, retirements, or a welcome-home present for a friend who just moved to the state.</p>
         <h3>Texas Stickers</h3>
-        <p>
-          Our durable vinyl Texas stickers are weatherproof, dishwasher-safe,
-          and cut precisely for laptops, trucks, water bottles, and tool boxes.
-          It's the easiest way to fly the flag without changing your outfit.
-        </p>
-
+        <p>Our durable vinyl Texas stickers are weatherproof, dishwasher-safe, and cut precisely for laptops, trucks, water bottles, and tool boxes. It's the easiest way to fly the flag without changing your outfit.</p>
         <h3>Why Buy From Keep Texas Red</h3>
-        <p>
-          We're a Texas-focused publisher first — a shop second. Every purchase
-          directly funds our independent conservative newsroom covering
-          statewide politics, elections, business, and sports. You get gear you
-          love and help keep an independent Texas voice in the media.
-        </p>
-
+        <p>We're a Texas-focused publisher first — a shop second. Every purchase directly funds our independent conservative newsroom covering statewide politics, elections, business, and sports. You get gear you love and help keep an independent Texas voice in the media.</p>
         <h3>Printed On Demand</h3>
-        <p>
-          Products are produced when you order, cutting down on waste and
-          letting us offer more colors and sizes than a traditional storefront.
-          Most orders print and ship within a few business days from U.S.
-          facilities.
-        </p>
-
+        <p>Products are produced when you order, cutting down on waste and letting us offer more colors and sizes than a traditional storefront. Most orders print and ship within a few business days from U.S. facilities.</p>
         <h2>Frequently Asked Questions</h2>
         <div className="not-prose grid gap-4">
-          {faqs.map((f) => (
-            <details key={f.q} className="rounded-lg border border-border bg-card p-4">
-              <summary className="cursor-pointer font-semibold">{f.q}</summary>
-              <p className="mt-2 text-sm text-muted-foreground">{f.a}</p>
-            </details>
-          ))}
+          {faqs.map((f) => <details key={f.q} className="rounded-lg border border-border bg-card p-4"><summary className="cursor-pointer font-semibold">{f.q}</summary><p className="mt-2 text-sm text-muted-foreground">{f.a}</p></details>)}
         </div>
-
         <h2>Related Texas Resources</h2>
         <ul className="not-prose flex flex-wrap gap-2">
-          {internalLinks.map((l) => (
-            <li key={l.to}>
-              <Link
-                to={l.to}
-                className="inline-block rounded-full border border-border bg-secondary text-secondary-foreground px-3 py-1.5 text-sm font-medium hover:border-primary/60 hover:bg-primary hover:text-primary-foreground transition-colors"
-              >
-                {l.label}
-              </Link>
-            </li>
-          ))}
+          {internalLinks.map((l) => <li key={l.to}><Link to={l.to} className="inline-block rounded-full border border-border bg-secondary text-secondary-foreground px-3 py-1.5 text-sm font-medium hover:border-primary/60 hover:bg-primary hover:text-primary-foreground transition-colors">{l.label}</Link></li>)}
         </ul>
       </section>
 
