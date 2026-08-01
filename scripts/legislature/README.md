@@ -12,6 +12,14 @@ The `history.xml` manifest is checked first. SHA-256 hashes in `legislative_sour
 
 Use `--dry-run` to validate discovery and parsing without database writes, and `--limit=25` for a bounded smoke test. Historical sessions can be appended to `--sessions`; TLO publishes bill history from the 71st Legislature onward.
 
+Use `--resume` when an initial full import was interrupted. Resume mode loads the completed source-record keys first and does not download those XML files again:
+
+```powershell
+npm run legislature:sync -- --sessions=89R --resume
+```
+
+After the initial catalog is complete, omit `--resume` during periodic refreshes so hashes can detect amendments to previously imported bills.
+
 Optional transfer settings are `TLO_TRANSFER_TIMEOUT_SECONDS` (default `120`), `TLO_TRANSFER_COMMAND` (a custom `curl` path), and `TLO_BULK_ROOT` (an official mirror/root override).
 
 ## Election and agency relationships

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import type { LinkedBillMention } from "@/lib/bill-mentions";
 
 export type EvergreenSection = {
   heading: string;
@@ -43,6 +44,7 @@ export type EvergreenArticle = {
   kind: string;
   keywords: string[] | null;
   body: EvergreenBody | null;
+  bill_mentions: LinkedBillMention[];
 };
 
 function client() {
@@ -59,12 +61,28 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
     if (!supabase) return null;
     const { data: row, error } = await supabase
       .from("daily_articles")
-      .select("slug,category,title,dek,author,source_name,source_url,image_url,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
+      .select(
+        "slug,category,title,dek,author,source_name,source_url,image_url,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind,bill_article_relationships(bills(bill_identifier,legislature_number,bill_type,bill_number))",
+      )
       .eq("slug", data.slug)
-      .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
+      .in("kind", [
+        "evergreen",
+        "ingested",
+        "news",
+        "sports-nfl",
+        "sports-mlb",
+        "sports-nba",
+        "sports-cfb",
+      ])
       .maybeSingle();
     if (error || !row) return null;
-    if (!meetsArticleMainWordCount(row.kind, (row as { body_json?: EvergreenBody | null }).body_json ?? null)) return null;
+    if (
+      !meetsArticleMainWordCount(
+        row.kind,
+        (row as { body_json?: EvergreenBody | null }).body_json ?? null,
+      )
+    )
+      return null;
     return {
       slug: row.slug,
       category: row.category,
@@ -75,8 +93,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       image_category: (row as { image_category?: string | null }).image_category ?? null,
       featured_image_url:
         (row as { featured_image_url?: string | null }).featured_image_url ?? null,
-      image_alt_text:
-        (row as { image_alt_text?: string | null }).image_alt_text ?? null,
+      image_alt_text: (row as { image_alt_text?: string | null }).image_alt_text ?? null,
       seo_headline: (row as { seo_headline?: string | null }).seo_headline ?? null,
       discover_category: (row as { discover_category?: string | null }).discover_category ?? null,
       seo_keywords: (row as { seo_keywords?: string[] | null }).seo_keywords ?? null,
@@ -87,6 +104,15 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       kind: row.kind,
       keywords: (row as { keywords?: string[] | null }).keywords ?? null,
       body: (row as { body_json?: EvergreenBody | null }).body_json ?? null,
+      bill_mentions: (
+        (
+          row as unknown as {
+            bill_article_relationships?: Array<{ bills?: LinkedBillMention | null }>;
+          }
+        ).bill_article_relationships ?? []
+      )
+        .map((relation) => relation.bills)
+        .filter((bill): bill is LinkedBillMention => Boolean(bill)),
     };
   });
 
@@ -121,12 +147,22 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     const { data, error } = await supabase
       .from("daily_articles")
       .select("slug,title,published_at,image_url,kind,body_json")
-      .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
+      .in("kind", [
+        "evergreen",
+        "ingested",
+        "news",
+        "sports-nfl",
+        "sports-mlb",
+        "sports-nba",
+        "sports-cfb",
+      ])
       .order("published_at", { ascending: false })
       .limit(5000);
     if (error || !data) return { articles: [] };
     return {
-      articles: (data as (Omit<SitemapArticle, "updated_at"> & { body_json?: EvergreenBody | null })[])
+      articles: (
+        data as (Omit<SitemapArticle, "updated_at"> & { body_json?: EvergreenBody | null })[]
+      )
         .filter((a) => meetsArticleMainWordCount(a.kind, a.body_json ?? null))
         .map(({ body_json: _bodyJson, ...a }) => ({
           ...a,

@@ -11,6 +11,7 @@ import { resolveArticleImage } from "@/lib/seo-headline";
 import { resolveDisplayHeadline, type HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { useEffect } from "react";
+import { billMentionSegments, type LinkedBillMention } from "@/lib/bill-mentions";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
 
@@ -19,13 +20,14 @@ export const Route = createFileRoute("/news/$slug")({
     article: Article;
     body: StructuredArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
+    billMentions: LinkedBillMention[];
   }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
     if (article) {
       if (!isPublished(article)) throw notFound();
       const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
       const body = dedupeArticleBody(rawBody) as ArticleBody;
-      return { article, body, ctr: null };
+      return { article, body, ctr: null, billMentions: [] };
     }
     // Fallback: AI-generated evergreen article stored in daily_articles.
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
@@ -81,6 +83,7 @@ export const Route = createFileRoute("/news/$slug")({
       article: synth,
       body: dedupeArticleBody(rawBody) as StructuredArticleBody,
       ctr: { variants: ever.headline_variants, score: ever.ctr_score },
+      billMentions: ever.bill_mentions,
     };
   },
   head: ({ loaderData }) => {
@@ -245,10 +248,11 @@ function _buildDefaultBody(a: Article): ArticleBody {
 }
 
 function ArticlePage() {
-  const { article, body, ctr } = Route.useLoaderData() as {
+  const { article, body, ctr, billMentions } = Route.useLoaderData() as {
     article: Article;
     body: ArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
+    billMentions: LinkedBillMention[];
   };
 
   // A/B variant selection is deterministic per slug + ctr_score.
@@ -352,7 +356,7 @@ function ArticlePage() {
       <div className="prose prose-neutral max-w-none">
         {body.intro.map((p, i) => (
           <p key={i} className="font-serif text-lg leading-relaxed text-foreground first:first-letter:text-5xl first:first-letter:font-bold first:first-letter:float-left first:first-letter:mr-2 first:first-letter:leading-none first:first-letter:text-primary mb-5">
-            {renderInline(p)}
+            {renderInline(p, billMentions)}
           </p>
         ))}
 
@@ -374,7 +378,7 @@ function ArticlePage() {
             ) : null}
             {sec.paragraphs?.map((p, j) => (
               <p key={j} className="font-serif text-base leading-relaxed text-foreground mb-4">
-                {renderInline(p)}
+                {renderInline(p, billMentions)}
               </p>
             ))}
             {sec.bullets ? (
@@ -526,7 +530,7 @@ function ArticlePage() {
 }
 
 // Renders [text](/path) as an internal Link and leaves the rest as text.
-function renderInline(text: string) {
+function renderInline(text: string, billMentions: LinkedBillMention[] = []) {
   const parts: (string | { label: string; href: string })[] = [];
   const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
   let lastIndex = 0;
@@ -539,7 +543,7 @@ function renderInline(text: string) {
   if (lastIndex < text.length) parts.push(text.slice(lastIndex));
   return parts.map((p, i) =>
     typeof p === "string" ? (
-      <span key={i}>{p}</span>
+      <span key={i}>{billMentionSegments(p, billMentions).map((segment, j) => segment.href ? <Link key={j} to={segment.href} className="text-primary underline underline-offset-2 hover:no-underline">{segment.text}</Link> : <span key={j}>{segment.text}</span>)}</span>
     ) : (
       <Link key={i} to={p.href} className="text-primary underline underline-offset-2 hover:no-underline">
         {p.label}

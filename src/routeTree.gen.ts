@@ -227,6 +227,7 @@ import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elec
 import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
+import { Route as ApiPublicOfficialBillTextRouteImport } from './routes/api/public/official-bill-text'
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
 import { Route as AdminElectionsPollsRouteImport } from './routes/admin/elections/polls'
@@ -1405,6 +1406,12 @@ const ApiPublicPropertyAddressLookupRoute =
     path: '/api/public/property-address-lookup',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicOfficialBillTextRoute =
+  ApiPublicOfficialBillTextRouteImport.update({
+    id: '/api/public/official-bill-text',
+    path: '/api/public/official-bill-text',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminElectionsResultsRoute = AdminElectionsResultsRouteImport.update({
   id: '/elections/results',
   path: '/elections/results',
@@ -1781,6 +1788,7 @@ export interface FileRoutesByFullPath {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2019,6 +2027,7 @@ export interface FileRoutesByTo {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2270,6 +2279,7 @@ export interface FileRoutesById {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/public/official-bill-text': typeof ApiPublicOfficialBillTextRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
   '/elections/candidates_/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2522,6 +2532,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/public/official-bill-text'
     | '/api/public/property-address-lookup'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -2760,6 +2771,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/public/official-bill-text'
     | '/api/public/property-address-lookup'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3010,6 +3022,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/public/official-bill-text'
     | '/api/public/property-address-lookup'
     | '/elections/candidates_/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3183,6 +3196,7 @@ export interface RootRouteChildren {
   VehiclesTemporaryTagsRoute: typeof VehiclesTemporaryTagsRoute
   VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
+  ApiPublicOfficialBillTextRoute: typeof ApiPublicOfficialBillTextRoute
   ApiPublicPropertyAddressLookupRoute: typeof ApiPublicPropertyAddressLookupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
@@ -4738,6 +4752,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPropertyAddressLookupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/official-bill-text': {
+      id: '/api/public/official-bill-text'
+      path: '/api/public/official-bill-text'
+      fullPath: '/api/public/official-bill-text'
+      preLoaderRoute: typeof ApiPublicOfficialBillTextRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/elections/results': {
       id: '/admin/elections/results'
       path: '/elections/results'
@@ -5481,6 +5502,7 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesTemporaryTagsRoute: VehiclesTemporaryTagsRoute,
   VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
+  ApiPublicOfficialBillTextRoute: ApiPublicOfficialBillTextRoute,
   ApiPublicPropertyAddressLookupRoute: ApiPublicPropertyAddressLookupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
