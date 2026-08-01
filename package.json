@@ -35,7 +35,9 @@
     "elections:readiness": "node scripts/elections/launch-readiness.mjs",
     "elections:test:mobile": "playwright test --config=playwright.elections.config.ts",
     "elections:qa": "node scripts/elections/qa.mjs && npm run elections:routes:qa && npm run elections:sitemap:qa && npm run elections:readiness",
-    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:resolve:fec && npm run elections:import:finance && npm run elections:import:polls && npm run elections:import:geography && npm run elections:normalize && npm run elections:migrate-sources && npm run elections:sources && npm run elections:polling-averages && npm run elections:forecast && npm run elections:validate && npm run elections:qa"
+    "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:resolve:fec && npm run elections:import:finance && npm run elections:import:polls && npm run elections:import:geography && npm run elections:normalize && npm run elections:migrate-sources && npm run elections:sources && npm run elections:polling-averages && npm run elections:forecast && npm run elections:validate && npm run elections:qa",
+    "legislature:sync": "node scripts/legislature/sync-texas-legislation.mjs"
+    ,"legislature:validate": "node scripts/legislature/validate.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

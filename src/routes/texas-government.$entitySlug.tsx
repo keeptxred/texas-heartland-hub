@@ -1,10 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ExternalLink, Gavel, Landmark, Scale, ShieldCheck, Users } from "lucide-react";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
+import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
 import { GOVERNMENT_ENTITIES, GOVERNMENT_REVIEWED_AT, getGovernmentEntity, governmentJsonLd, governmentPath, SITE_URL, type GovernmentLink } from "@/lib/texas-government";
 
 export const Route = createFileRoute("/texas-government/$entitySlug")({
-  loader: ({ params }) => {
+  loader: async ({ params }) => {
     const entity = getGovernmentEntity(params.entitySlug);
     if (!entity) throw notFound();
     const relatedEntities = entity.relatedEntities.map(getGovernmentEntity).filter(Boolean);
@@ -16,7 +18,8 @@ export const Route = createFileRoute("/texas-government/$entitySlug")({
       })
       .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
       .slice(0, 6);
-    return { entity, relatedEntities, news };
+    const scoredRelated = await getRelatedAuthorityContent("government", entity.slug, 12).catch(() => []);
+    return { entity, relatedEntities, news, scoredRelated };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
@@ -39,7 +42,7 @@ export const Route = createFileRoute("/texas-government/$entitySlug")({
 });
 
 function GovernmentEntityPage() {
-  const { entity, relatedEntities, news } = Route.useLoaderData();
+  const { entity, relatedEntities, news, scoredRelated } = Route.useLoaderData();
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <Link to="/texas-government">Texas Government</Link> / {entity.name}</nav>
@@ -75,6 +78,7 @@ function GovernmentEntityPage() {
           <AuthoritySection id="faqs" title="Frequently asked questions" icon={<Scale className="h-6 w-6 text-primary"/>}><div className="divide-y rounded-xl border">{entity.faqs.map((faq: any) => <details key={faq.question} className="group p-5"><summary className="cursor-pointer list-none pr-8 font-bold marker:hidden">{faq.question}<span className="float-right text-primary group-open:rotate-45">+</span></summary><p className="mt-3 max-w-3xl leading-7 text-muted-foreground">{faq.answer}</p></details>)}</div></AuthoritySection>
 
           <AuthoritySection id="related-government" title="Related Texas government entities" icon={<Landmark className="h-6 w-6 text-primary"/>}><div className="grid gap-3 sm:grid-cols-2">{relatedEntities.map((related: any) => related ? <a key={related.slug} href={governmentPath(related.slug)} className="rounded-lg border p-4 hover:border-primary"><p className="font-bold">{related.name}</p><p className="mt-1 text-sm text-muted-foreground">{related.branch} · {related.entityType}</p></a> : null)}</div></AuthoritySection>
+          <RelatedAuthorityContent items={scoredRelated} title="Related bills, elections, districts, and news" />
         </main>
 
         <aside className="space-y-6">

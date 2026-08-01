@@ -6,6 +6,8 @@ import {
   getRepresentativeAuthority,
 } from "@/data/representative-authority";
 import { canonicalBillPath, getRepresentativeLegislation, SITE_URL } from "@/lib/bills";
+import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
+import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
 
 export const Route = createFileRoute("/representatives/$representativeSlug")({
   loader: async ({ params }) => {
@@ -24,7 +26,8 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       })
       .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
       .slice(0, 6);
-    return { directoryRepresentative, authority, news, ...legislation };
+    const relatedContent = await getRelatedAuthorityContent("representative", params.representativeSlug);
+    return { directoryRepresentative, authority, news, relatedContent, ...legislation };
   },
   head: ({ params, loaderData }) => {
     if (!loaderData) return {};
@@ -132,7 +135,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
 
 function RepresentativeProfile() {
   const { representativeSlug: slug } = Route.useParams();
-  const { directoryRepresentative: rep, identity, authority, bills, news } = Route.useLoaderData();
+  const { directoryRepresentative: rep, identity, authority, bills, news, relatedContent } = Route.useLoaderData();
   const name = rep?.name ?? identity?.sponsor_name ?? "Texas Representative";
   const office = rep?.office ?? chamberLabel(identity?.chamber);
   const district = rep?.district ?? identity?.district ?? null;
@@ -419,6 +422,7 @@ function RepresentativeProfile() {
               </AuthoritySection>
             </>
           ) : null}
+          <RelatedAuthorityContent items={relatedContent} />
         </div>
 
         <aside className="space-y-6">

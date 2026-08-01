@@ -17,6 +17,12 @@ export interface ElectionSitemapInput {
 }
 
 
+export const ELECTION_DISTRICT_PATHS = [
+  ...Array.from({ length: 38 }, (_, index) => `/elections/districts/congressional-district-${index + 1}`),
+  ...[1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31].map((district) => `/elections/districts/texas-senate-district-${district}`),
+  ...Array.from({ length: 150 }, (_, index) => `/elections/districts/texas-house-district-${index + 1}`),
+] as const;
+
 const STATIC_ELECTION_PATHS = [
   ELECTION_ROUTES.root,
   ELECTION_ROUTES.races,

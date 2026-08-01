@@ -49,15 +49,20 @@ import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SitemapRepresentativesDotxmlRouteImport } from './routes/sitemap-representatives[.]xml'
 import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-products[.]xml'
 import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
 import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
+import { Route as SitemapLegislatureDotxmlRouteImport } from './routes/sitemap-legislature[.]xml'
 import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
 import { Route as SitemapGovernmentDotxmlRouteImport } from './routes/sitemap-government[.]xml'
 import { Route as SitemapExploreDotxmlRouteImport } from './routes/sitemap-explore[.]xml'
 import { Route as SitemapExploreLocationsDotxmlRouteImport } from './routes/sitemap-explore-locations[.]xml'
 import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
 import { Route as SitemapElectionsDotxmlRouteImport } from './routes/sitemap-elections[.]xml'
+import { Route as SitemapDistrictsDotxmlRouteImport } from './routes/sitemap-districts[.]xml'
+import { Route as SitemapCommitteesDotxmlRouteImport } from './routes/sitemap-committees[.]xml'
+import { Route as SitemapBillsDotxmlRouteImport } from './routes/sitemap-bills[.]xml'
 import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
@@ -141,6 +146,7 @@ import { Route as TexasLegislatureSessionsRouteImport } from './routes/texas-leg
 import { Route as TexasLegislatureSenateRouteImport } from './routes/texas-legislature.senate'
 import { Route as TexasLegislatureHouseRouteImport } from './routes/texas-legislature.house'
 import { Route as TexasLegislatureCurrentSessionRouteImport } from './routes/texas-legislature.current-session'
+import { Route as TexasLegislatureCommitteesRouteImport } from './routes/texas-legislature.committees'
 import { Route as TexasGovernmentEntitySlugRouteImport } from './routes/texas-government.$entitySlug'
 import { Route as TexasDataDatasetSlugRouteImport } from './routes/texas-data.$datasetSlug'
 import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
@@ -199,9 +205,13 @@ import { Route as DmvCdlEndorsementsRouteImport } from './routes/dmv.cdl-endorse
 import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
 import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as TexasLegislatureSessionsIndexRouteImport } from './routes/texas-legislature.sessions.index'
+import { Route as TexasLegislatureCommitteesIndexRouteImport } from './routes/texas-legislature.committees.index'
 import { Route as ElectionsDistrictsIndexRouteImport } from './routes/elections.districts.index'
 import { Route as AdminElectionsIndexRouteImport } from './routes/admin/elections/index'
 import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
+import { Route as TexasLegislatureSessionsSessionSlugRouteImport } from './routes/texas-legislature.sessions.$sessionSlug'
+import { Route as TexasLegislatureCommitteesCommitteeSlugRouteImport } from './routes/texas-legislature.committees.$committeeSlug'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ExploreTripTokenRouteImport } from './routes/explore.trip.$token'
 import { Route as ExploreStateParkSlugRouteImport } from './routes/explore.state-park.$slug'
@@ -466,6 +476,12 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapRepresentativesDotxmlRoute =
+  SitemapRepresentativesDotxmlRouteImport.update({
+    id: '/sitemap-representatives.xml',
+    path: '/sitemap-representatives.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SitemapProductsDotxmlRoute = SitemapProductsDotxmlRouteImport.update({
   id: '/sitemap-products.xml',
   path: '/sitemap-products.xml',
@@ -481,6 +497,12 @@ const SitemapNewsDotxmlRoute = SitemapNewsDotxmlRouteImport.update({
   path: '/sitemap-news.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapLegislatureDotxmlRoute =
+  SitemapLegislatureDotxmlRouteImport.update({
+    id: '/sitemap-legislature.xml',
+    path: '/sitemap-legislature.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
   id: '/sitemap-images.xml',
   path: '/sitemap-images.xml',
@@ -510,6 +532,21 @@ const SitemapEvergreenDotxmlRoute = SitemapEvergreenDotxmlRouteImport.update({
 const SitemapElectionsDotxmlRoute = SitemapElectionsDotxmlRouteImport.update({
   id: '/sitemap-elections.xml',
   path: '/sitemap-elections.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDistrictsDotxmlRoute = SitemapDistrictsDotxmlRouteImport.update({
+  id: '/sitemap-districts.xml',
+  path: '/sitemap-districts.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapCommitteesDotxmlRoute = SitemapCommitteesDotxmlRouteImport.update({
+  id: '/sitemap-committees.xml',
+  path: '/sitemap-committees.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapBillsDotxmlRoute = SitemapBillsDotxmlRouteImport.update({
+  id: '/sitemap-bills.xml',
+  path: '/sitemap-bills.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapAuthorsDotxmlRoute = SitemapAuthorsDotxmlRouteImport.update({
@@ -940,6 +977,12 @@ const TexasLegislatureCurrentSessionRoute =
     path: '/current-session',
     getParentRoute: () => TexasLegislatureRoute,
   } as any)
+const TexasLegislatureCommitteesRoute =
+  TexasLegislatureCommitteesRouteImport.update({
+    id: '/committees',
+    path: '/committees',
+    getParentRoute: () => TexasLegislatureRoute,
+  } as any)
 const TexasGovernmentEntitySlugRoute =
   TexasGovernmentEntitySlugRouteImport.update({
     id: '/$entitySlug',
@@ -1243,6 +1286,18 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TexasLegislatureSessionsIndexRoute =
+  TexasLegislatureSessionsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => TexasLegislatureSessionsRoute,
+  } as any)
+const TexasLegislatureCommitteesIndexRoute =
+  TexasLegislatureCommitteesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => TexasLegislatureCommitteesRoute,
+  } as any)
 const ElectionsDistrictsIndexRoute = ElectionsDistrictsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -1258,6 +1313,18 @@ const TexasSportsTeamTeamRoute = TexasSportsTeamTeamRouteImport.update({
   path: '/team/$team',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const TexasLegislatureSessionsSessionSlugRoute =
+  TexasLegislatureSessionsSessionSlugRouteImport.update({
+    id: '/$sessionSlug',
+    path: '/$sessionSlug',
+    getParentRoute: () => TexasLegislatureSessionsRoute,
+  } as any)
+const TexasLegislatureCommitteesCommitteeSlugRoute =
+  TexasLegislatureCommitteesCommitteeSlugRouteImport.update({
+    id: '/$committeeSlug',
+    path: '/$committeeSlug',
+    getParentRoute: () => TexasLegislatureCommitteesRoute,
+  } as any)
 const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   id: '/lovable/email/suppression',
   path: '/lovable/email/suppression',
@@ -1556,15 +1623,20 @@ export interface FileRoutesByFullPath {
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-bills.xml': typeof SitemapBillsDotxmlRoute
+  '/sitemap-committees.xml': typeof SitemapCommitteesDotxmlRoute
+  '/sitemap-districts.xml': typeof SitemapDistrictsDotxmlRoute
   '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-government.xml': typeof SitemapGovernmentDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
+  '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -1663,10 +1735,11 @@ export interface FileRoutesByFullPath {
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
   '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
+  '/texas-legislature/committees': typeof TexasLegislatureCommitteesRouteWithChildren
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
   '/texas-legislature/senate': typeof TexasLegislatureSenateRoute
-  '/texas-legislature/sessions': typeof TexasLegislatureSessionsRoute
+  '/texas-legislature/sessions': typeof TexasLegislatureSessionsRouteWithChildren
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
@@ -1723,9 +1796,13 @@ export interface FileRoutesByFullPath {
   '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
+  '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections/': typeof AdminElectionsIndexRoute
   '/elections/districts/': typeof ElectionsDistrictsIndexRoute
+  '/texas-legislature/committees/': typeof TexasLegislatureCommitteesIndexRoute
+  '/texas-legislature/sessions/': typeof TexasLegislatureSessionsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -1791,15 +1868,20 @@ export interface FileRoutesByTo {
   '/san-antonio': typeof SanAntonioRoute
   '/shipping-policy': typeof ShippingPolicyRoute
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-bills.xml': typeof SitemapBillsDotxmlRoute
+  '/sitemap-committees.xml': typeof SitemapCommitteesDotxmlRoute
+  '/sitemap-districts.xml': typeof SitemapDistrictsDotxmlRoute
   '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-government.xml': typeof SitemapGovernmentDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
+  '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -1896,7 +1978,6 @@ export interface FileRoutesByTo {
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
   '/texas-legislature/senate': typeof TexasLegislatureSenateRoute
-  '/texas-legislature/sessions': typeof TexasLegislatureSessionsRoute
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
@@ -1953,9 +2034,13 @@ export interface FileRoutesByTo {
   '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
+  '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections': typeof AdminElectionsIndexRoute
   '/elections/districts': typeof ElectionsDistrictsIndexRoute
+  '/texas-legislature/committees': typeof TexasLegislatureCommitteesIndexRoute
+  '/texas-legislature/sessions': typeof TexasLegislatureSessionsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -2027,15 +2112,20 @@ export interface FileRoutesById {
   '/shipping-policy': typeof ShippingPolicyRoute
   '/shop': typeof ShopRouteWithChildren
   '/sitemap-authors.xml': typeof SitemapAuthorsDotxmlRoute
+  '/sitemap-bills.xml': typeof SitemapBillsDotxmlRoute
+  '/sitemap-committees.xml': typeof SitemapCommitteesDotxmlRoute
+  '/sitemap-districts.xml': typeof SitemapDistrictsDotxmlRoute
   '/sitemap-elections.xml': typeof SitemapElectionsDotxmlRoute
   '/sitemap-evergreen.xml': typeof SitemapEvergreenDotxmlRoute
   '/sitemap-explore-locations.xml': typeof SitemapExploreLocationsDotxmlRoute
   '/sitemap-explore.xml': typeof SitemapExploreDotxmlRoute
   '/sitemap-government.xml': typeof SitemapGovernmentDotxmlRoute
   '/sitemap-images.xml': typeof SitemapImagesDotxmlRoute
+  '/sitemap-legislature.xml': typeof SitemapLegislatureDotxmlRoute
   '/sitemap-news.xml': typeof SitemapNewsDotxmlRoute
   '/sitemap-pages.xml': typeof SitemapPagesDotxmlRoute
   '/sitemap-products.xml': typeof SitemapProductsDotxmlRoute
+  '/sitemap-representatives.xml': typeof SitemapRepresentativesDotxmlRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tax-calculator': typeof TaxCalculatorRoute
   '/terms': typeof TermsRoute
@@ -2134,10 +2224,11 @@ export interface FileRoutesById {
   '/texas-business/$topic': typeof TexasBusinessTopicRoute
   '/texas-data/$datasetSlug': typeof TexasDataDatasetSlugRoute
   '/texas-government/$entitySlug': typeof TexasGovernmentEntitySlugRoute
+  '/texas-legislature/committees': typeof TexasLegislatureCommitteesRouteWithChildren
   '/texas-legislature/current-session': typeof TexasLegislatureCurrentSessionRoute
   '/texas-legislature/house': typeof TexasLegislatureHouseRoute
   '/texas-legislature/senate': typeof TexasLegislatureSenateRoute
-  '/texas-legislature/sessions': typeof TexasLegislatureSessionsRoute
+  '/texas-legislature/sessions': typeof TexasLegislatureSessionsRouteWithChildren
   '/texas-news/$topic': typeof TexasNewsTopicRoute
   '/texas-sports/$league': typeof TexasSportsLeagueRoute
   '/texas/$slug': typeof TexasSlugRoute
@@ -2194,9 +2285,13 @@ export interface FileRoutesById {
   '/explore/state-park/$slug': typeof ExploreStateParkSlugRoute
   '/explore/trip/$token': typeof ExploreTripTokenRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
+  '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
+  '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections/': typeof AdminElectionsIndexRoute
   '/elections/districts/': typeof ElectionsDistrictsIndexRoute
+  '/texas-legislature/committees/': typeof TexasLegislatureCommitteesIndexRoute
+  '/texas-legislature/sessions/': typeof TexasLegislatureSessionsIndexRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -2269,15 +2364,20 @@ export interface FileRouteTypes {
     | '/shipping-policy'
     | '/shop'
     | '/sitemap-authors.xml'
+    | '/sitemap-bills.xml'
+    | '/sitemap-committees.xml'
+    | '/sitemap-districts.xml'
     | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
     | '/sitemap-government.xml'
     | '/sitemap-images.xml'
+    | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
     | '/sitemap-products.xml'
+    | '/sitemap-representatives.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -2376,6 +2476,7 @@ export interface FileRouteTypes {
     | '/texas-business/$topic'
     | '/texas-data/$datasetSlug'
     | '/texas-government/$entitySlug'
+    | '/texas-legislature/committees'
     | '/texas-legislature/current-session'
     | '/texas-legislature/house'
     | '/texas-legislature/senate'
@@ -2436,9 +2537,13 @@ export interface FileRouteTypes {
     | '/explore/state-park/$slug'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
+    | '/texas-legislature/committees/$committeeSlug'
+    | '/texas-legislature/sessions/$sessionSlug'
     | '/texas-sports/team/$team'
     | '/admin/elections/'
     | '/elections/districts/'
+    | '/texas-legislature/committees/'
+    | '/texas-legislature/sessions/'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -2504,15 +2609,20 @@ export interface FileRouteTypes {
     | '/san-antonio'
     | '/shipping-policy'
     | '/sitemap-authors.xml'
+    | '/sitemap-bills.xml'
+    | '/sitemap-committees.xml'
+    | '/sitemap-districts.xml'
     | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
     | '/sitemap-government.xml'
     | '/sitemap-images.xml'
+    | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
     | '/sitemap-products.xml'
+    | '/sitemap-representatives.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -2609,7 +2719,6 @@ export interface FileRouteTypes {
     | '/texas-legislature/current-session'
     | '/texas-legislature/house'
     | '/texas-legislature/senate'
-    | '/texas-legislature/sessions'
     | '/texas-news/$topic'
     | '/texas-sports/$league'
     | '/texas/$slug'
@@ -2666,9 +2775,13 @@ export interface FileRouteTypes {
     | '/explore/state-park/$slug'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
+    | '/texas-legislature/committees/$committeeSlug'
+    | '/texas-legislature/sessions/$sessionSlug'
     | '/texas-sports/team/$team'
     | '/admin/elections'
     | '/elections/districts'
+    | '/texas-legislature/committees'
+    | '/texas-legislature/sessions'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -2739,15 +2852,20 @@ export interface FileRouteTypes {
     | '/shipping-policy'
     | '/shop'
     | '/sitemap-authors.xml'
+    | '/sitemap-bills.xml'
+    | '/sitemap-committees.xml'
+    | '/sitemap-districts.xml'
     | '/sitemap-elections.xml'
     | '/sitemap-evergreen.xml'
     | '/sitemap-explore-locations.xml'
     | '/sitemap-explore.xml'
     | '/sitemap-government.xml'
     | '/sitemap-images.xml'
+    | '/sitemap-legislature.xml'
     | '/sitemap-news.xml'
     | '/sitemap-pages.xml'
     | '/sitemap-products.xml'
+    | '/sitemap-representatives.xml'
     | '/sitemap.xml'
     | '/tax-calculator'
     | '/terms'
@@ -2846,6 +2964,7 @@ export interface FileRouteTypes {
     | '/texas-business/$topic'
     | '/texas-data/$datasetSlug'
     | '/texas-government/$entitySlug'
+    | '/texas-legislature/committees'
     | '/texas-legislature/current-session'
     | '/texas-legislature/house'
     | '/texas-legislature/senate'
@@ -2906,9 +3025,13 @@ export interface FileRouteTypes {
     | '/explore/state-park/$slug'
     | '/explore/trip/$token'
     | '/lovable/email/suppression'
+    | '/texas-legislature/committees/$committeeSlug'
+    | '/texas-legislature/sessions/$sessionSlug'
     | '/texas-sports/team/$team'
     | '/admin/elections/'
     | '/elections/districts/'
+    | '/texas-legislature/committees/'
+    | '/texas-legislature/sessions/'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -2980,15 +3103,20 @@ export interface RootRouteChildren {
   ShippingPolicyRoute: typeof ShippingPolicyRoute
   ShopRoute: typeof ShopRouteWithChildren
   SitemapAuthorsDotxmlRoute: typeof SitemapAuthorsDotxmlRoute
+  SitemapBillsDotxmlRoute: typeof SitemapBillsDotxmlRoute
+  SitemapCommitteesDotxmlRoute: typeof SitemapCommitteesDotxmlRoute
+  SitemapDistrictsDotxmlRoute: typeof SitemapDistrictsDotxmlRoute
   SitemapElectionsDotxmlRoute: typeof SitemapElectionsDotxmlRoute
   SitemapEvergreenDotxmlRoute: typeof SitemapEvergreenDotxmlRoute
   SitemapExploreLocationsDotxmlRoute: typeof SitemapExploreLocationsDotxmlRoute
   SitemapExploreDotxmlRoute: typeof SitemapExploreDotxmlRoute
   SitemapGovernmentDotxmlRoute: typeof SitemapGovernmentDotxmlRoute
   SitemapImagesDotxmlRoute: typeof SitemapImagesDotxmlRoute
+  SitemapLegislatureDotxmlRoute: typeof SitemapLegislatureDotxmlRoute
   SitemapNewsDotxmlRoute: typeof SitemapNewsDotxmlRoute
   SitemapPagesDotxmlRoute: typeof SitemapPagesDotxmlRoute
   SitemapProductsDotxmlRoute: typeof SitemapProductsDotxmlRoute
+  SitemapRepresentativesDotxmlRoute: typeof SitemapRepresentativesDotxmlRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TaxCalculatorRoute: typeof TaxCalculatorRoute
   TermsRoute: typeof TermsRoute
@@ -3364,6 +3492,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap-representatives.xml': {
+      id: '/sitemap-representatives.xml'
+      path: '/sitemap-representatives.xml'
+      fullPath: '/sitemap-representatives.xml'
+      preLoaderRoute: typeof SitemapRepresentativesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap-products.xml': {
       id: '/sitemap-products.xml'
       path: '/sitemap-products.xml'
@@ -3383,6 +3518,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-news.xml'
       fullPath: '/sitemap-news.xml'
       preLoaderRoute: typeof SitemapNewsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-legislature.xml': {
+      id: '/sitemap-legislature.xml'
+      path: '/sitemap-legislature.xml'
+      fullPath: '/sitemap-legislature.xml'
+      preLoaderRoute: typeof SitemapLegislatureDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-images.xml': {
@@ -3425,6 +3567,27 @@ declare module '@tanstack/react-router' {
       path: '/sitemap-elections.xml'
       fullPath: '/sitemap-elections.xml'
       preLoaderRoute: typeof SitemapElectionsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-districts.xml': {
+      id: '/sitemap-districts.xml'
+      path: '/sitemap-districts.xml'
+      fullPath: '/sitemap-districts.xml'
+      preLoaderRoute: typeof SitemapDistrictsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-committees.xml': {
+      id: '/sitemap-committees.xml'
+      path: '/sitemap-committees.xml'
+      fullPath: '/sitemap-committees.xml'
+      preLoaderRoute: typeof SitemapCommitteesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-bills.xml': {
+      id: '/sitemap-bills.xml'
+      path: '/sitemap-bills.xml'
+      fullPath: '/sitemap-bills.xml'
+      preLoaderRoute: typeof SitemapBillsDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap-authors.xml': {
@@ -4008,6 +4171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasLegislatureCurrentSessionRouteImport
       parentRoute: typeof TexasLegislatureRoute
     }
+    '/texas-legislature/committees': {
+      id: '/texas-legislature/committees'
+      path: '/committees'
+      fullPath: '/texas-legislature/committees'
+      preLoaderRoute: typeof TexasLegislatureCommitteesRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
     '/texas-government/$entitySlug': {
       id: '/texas-government/$entitySlug'
       path: '/$entitySlug'
@@ -4414,6 +4584,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-legislature/sessions/': {
+      id: '/texas-legislature/sessions/'
+      path: '/'
+      fullPath: '/texas-legislature/sessions/'
+      preLoaderRoute: typeof TexasLegislatureSessionsIndexRouteImport
+      parentRoute: typeof TexasLegislatureSessionsRoute
+    }
+    '/texas-legislature/committees/': {
+      id: '/texas-legislature/committees/'
+      path: '/'
+      fullPath: '/texas-legislature/committees/'
+      preLoaderRoute: typeof TexasLegislatureCommitteesIndexRouteImport
+      parentRoute: typeof TexasLegislatureCommitteesRoute
+    }
     '/elections/districts/': {
       id: '/elections/districts/'
       path: '/'
@@ -4434,6 +4618,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/texas-sports/team/$team'
       preLoaderRoute: typeof TexasSportsTeamTeamRouteImport
       parentRoute: typeof TexasSportsRoute
+    }
+    '/texas-legislature/sessions/$sessionSlug': {
+      id: '/texas-legislature/sessions/$sessionSlug'
+      path: '/$sessionSlug'
+      fullPath: '/texas-legislature/sessions/$sessionSlug'
+      preLoaderRoute: typeof TexasLegislatureSessionsSessionSlugRouteImport
+      parentRoute: typeof TexasLegislatureSessionsRoute
+    }
+    '/texas-legislature/committees/$committeeSlug': {
+      id: '/texas-legislature/committees/$committeeSlug'
+      path: '/$committeeSlug'
+      fullPath: '/texas-legislature/committees/$committeeSlug'
+      preLoaderRoute: typeof TexasLegislatureCommitteesCommitteeSlugRouteImport
+      parentRoute: typeof TexasLegislatureCommitteesRoute
     }
     '/lovable/email/suppression': {
       id: '/lovable/email/suppression'
@@ -5070,19 +5268,55 @@ const TexasGovernmentRouteWithChildren = TexasGovernmentRoute._addFileChildren(
   TexasGovernmentRouteChildren,
 )
 
+interface TexasLegislatureCommitteesRouteChildren {
+  TexasLegislatureCommitteesCommitteeSlugRoute: typeof TexasLegislatureCommitteesCommitteeSlugRoute
+  TexasLegislatureCommitteesIndexRoute: typeof TexasLegislatureCommitteesIndexRoute
+}
+
+const TexasLegislatureCommitteesRouteChildren: TexasLegislatureCommitteesRouteChildren =
+  {
+    TexasLegislatureCommitteesCommitteeSlugRoute:
+      TexasLegislatureCommitteesCommitteeSlugRoute,
+    TexasLegislatureCommitteesIndexRoute: TexasLegislatureCommitteesIndexRoute,
+  }
+
+const TexasLegislatureCommitteesRouteWithChildren =
+  TexasLegislatureCommitteesRoute._addFileChildren(
+    TexasLegislatureCommitteesRouteChildren,
+  )
+
+interface TexasLegislatureSessionsRouteChildren {
+  TexasLegislatureSessionsSessionSlugRoute: typeof TexasLegislatureSessionsSessionSlugRoute
+  TexasLegislatureSessionsIndexRoute: typeof TexasLegislatureSessionsIndexRoute
+}
+
+const TexasLegislatureSessionsRouteChildren: TexasLegislatureSessionsRouteChildren =
+  {
+    TexasLegislatureSessionsSessionSlugRoute:
+      TexasLegislatureSessionsSessionSlugRoute,
+    TexasLegislatureSessionsIndexRoute: TexasLegislatureSessionsIndexRoute,
+  }
+
+const TexasLegislatureSessionsRouteWithChildren =
+  TexasLegislatureSessionsRoute._addFileChildren(
+    TexasLegislatureSessionsRouteChildren,
+  )
+
 interface TexasLegislatureRouteChildren {
+  TexasLegislatureCommitteesRoute: typeof TexasLegislatureCommitteesRouteWithChildren
   TexasLegislatureCurrentSessionRoute: typeof TexasLegislatureCurrentSessionRoute
   TexasLegislatureHouseRoute: typeof TexasLegislatureHouseRoute
   TexasLegislatureSenateRoute: typeof TexasLegislatureSenateRoute
-  TexasLegislatureSessionsRoute: typeof TexasLegislatureSessionsRoute
+  TexasLegislatureSessionsRoute: typeof TexasLegislatureSessionsRouteWithChildren
   TexasLegislatureIndexRoute: typeof TexasLegislatureIndexRoute
 }
 
 const TexasLegislatureRouteChildren: TexasLegislatureRouteChildren = {
+  TexasLegislatureCommitteesRoute: TexasLegislatureCommitteesRouteWithChildren,
   TexasLegislatureCurrentSessionRoute: TexasLegislatureCurrentSessionRoute,
   TexasLegislatureHouseRoute: TexasLegislatureHouseRoute,
   TexasLegislatureSenateRoute: TexasLegislatureSenateRoute,
-  TexasLegislatureSessionsRoute: TexasLegislatureSessionsRoute,
+  TexasLegislatureSessionsRoute: TexasLegislatureSessionsRouteWithChildren,
   TexasLegislatureIndexRoute: TexasLegislatureIndexRoute,
 }
 
@@ -5163,15 +5397,20 @@ const rootRouteChildren: RootRouteChildren = {
   ShippingPolicyRoute: ShippingPolicyRoute,
   ShopRoute: ShopRouteWithChildren,
   SitemapAuthorsDotxmlRoute: SitemapAuthorsDotxmlRoute,
+  SitemapBillsDotxmlRoute: SitemapBillsDotxmlRoute,
+  SitemapCommitteesDotxmlRoute: SitemapCommitteesDotxmlRoute,
+  SitemapDistrictsDotxmlRoute: SitemapDistrictsDotxmlRoute,
   SitemapElectionsDotxmlRoute: SitemapElectionsDotxmlRoute,
   SitemapEvergreenDotxmlRoute: SitemapEvergreenDotxmlRoute,
   SitemapExploreLocationsDotxmlRoute: SitemapExploreLocationsDotxmlRoute,
   SitemapExploreDotxmlRoute: SitemapExploreDotxmlRoute,
   SitemapGovernmentDotxmlRoute: SitemapGovernmentDotxmlRoute,
   SitemapImagesDotxmlRoute: SitemapImagesDotxmlRoute,
+  SitemapLegislatureDotxmlRoute: SitemapLegislatureDotxmlRoute,
   SitemapNewsDotxmlRoute: SitemapNewsDotxmlRoute,
   SitemapPagesDotxmlRoute: SitemapPagesDotxmlRoute,
   SitemapProductsDotxmlRoute: SitemapProductsDotxmlRoute,
+  SitemapRepresentativesDotxmlRoute: SitemapRepresentativesDotxmlRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TaxCalculatorRoute: TaxCalculatorRoute,
   TermsRoute: TermsRoute,
