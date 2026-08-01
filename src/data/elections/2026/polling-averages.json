@@ -4,7 +4,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-01T12:14:11.370Z",
+    "recalculatedAt": "2026-08-01T13:40:02.115Z",
     "weightedMargin": 5,
     "uncertaintyRange": {
       "low": 2.1,
@@ -80,7 +80,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-01T12:14:11.370Z",
+    "recalculatedAt": "2026-08-01T13:40:02.115Z",
     "weightedMargin": 6,
     "uncertaintyRange": {
       "low": 2,
@@ -135,7 +135,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-01T12:14:11.370Z",
+    "recalculatedAt": "2026-08-01T13:40:02.115Z",
     "weightedMargin": 6.2,
     "uncertaintyRange": {
       "low": 3.3,
@@ -211,7 +211,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-01T12:14:11.370Z",
+    "recalculatedAt": "2026-08-01T13:40:02.115Z",
     "weightedMargin": 7,
     "uncertaintyRange": {
       "low": 3,
@@ -272,7 +272,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-01T12:14:11.370Z",
+    "recalculatedAt": "2026-08-01T13:40:02.115Z",
     "weightedMargin": 0.4,
     "uncertaintyRange": {
       "low": -2.5,
