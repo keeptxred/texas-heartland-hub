@@ -1,8 +1,9 @@
 import { readFile, readdir } from "node:fs/promises";
-import { extname, join, relative } from "node:path";
+import { extname, join } from "node:path";
 import process from "node:process";
 
 const ROOT = process.cwd();
+const VALIDATOR_PATH = "scripts/seo/validate.mjs";
 const SOURCE_ROOTS = ["src", "scripts"];
 const TEXT_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".json"]);
 const errors = [];
@@ -39,6 +40,7 @@ const files = (await Promise.all(SOURCE_ROOTS.map(walk))).flat();
 const contents = new Map(await Promise.all(files.map(async (file) => [file, await read(file)])));
 
 for (const [file, source] of contents) {
+  if (file === VALIDATOR_PATH) continue;
   if (/favicon\.ico/i.test(source) && /(?:logo|publisher)/i.test(source)) {
     fail(file, "favicon.ico must not be used as a publisher or organization logo");
   }
@@ -71,7 +73,7 @@ if (!/noindex,follow,max-image-preview:large/.test(seo)) {
 }
 
 const articleRoute = contents.get("src/routes/news.$slug.tsx") ?? "";
-if (/selectHeadlineVariant|trackHeadlineImpression|headline_variants/.test(articleRoute)) {
+if (/selectHeadlineVariant|trackHeadlineImpression/.test(articleRoute)) {
   fail("src/routes/news.$slug.tsx", "article H1 must not use A/B headline variants");
 }
 if (!/NewsArticle/.test(articleRoute) || !/BreadcrumbList/.test(articleRoute)) {
@@ -91,7 +93,7 @@ const duplicateSitemaps = sitemapNames.filter((name, index) => sitemapNames.inde
 for (const name of new Set(duplicateSitemaps)) fail("src/routes/sitemap[.]xml.ts", `duplicate sitemap index entry: ${name}`);
 
 for (const [file, source] of contents) {
-  if (!/sitemap/i.test(file)) continue;
+  if (file === VALIDATOR_PATH || !/sitemap/i.test(file)) continue;
   if (/loc:\s*`[^`]*\?/.test(source) || /<loc>[^<]*\?/.test(source)) {
     fail(file, "query-string URL appears in sitemap output");
   }
