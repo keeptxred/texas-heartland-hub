@@ -14,7 +14,7 @@ import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 
 /** Image sitemap: one <image:image> per indexable page with a primary image.
- *  Dedupes by image URL so the same asset never appears twice. */
+ * Dedupes by image URL so the same asset never appears twice. */
 export const Route = createFileRoute("/sitemap-images.xml")({
   server: {
     handlers: {
@@ -22,16 +22,36 @@ export const Route = createFileRoute("/sitemap-images.xml")({
         const entries: UrlEntry[] = [];
         const seenImg = new Set<string>();
 
-        const push = (loc: string, image: string | null | undefined, title: string, lastmod: string) => {
+        const push = (
+          loc: string,
+          image: string | null | undefined,
+          title: string,
+          lastmod: string,
+          caption?: string | null,
+        ) => {
           if (!isRealImage(image)) return;
           const abs = absUrl(image);
-          if (seenImg.has(abs)) return;
+          if (!abs || seenImg.has(abs)) return;
           seenImg.add(abs);
-          entries.push({ loc, lastmod, image: { loc: abs, title } });
+          entries.push({
+            loc,
+            lastmod,
+            image: {
+              loc: abs,
+              title: title.trim(),
+              caption: caption?.trim() || title.trim(),
+            },
+          });
         };
 
         for (const a of ARTICLES.filter((a) => isPublished(a))) {
-          push(`${BASE_URL}/news/${a.slug}`, a.image, a.title, toIsoDate(a.publishedAt));
+          push(
+            `${BASE_URL}/news/${a.slug}`,
+            a.image,
+            a.title,
+            toIsoDate(a.publishedAt),
+            a.dek,
+          );
         }
 
         try {
@@ -42,6 +62,7 @@ export const Route = createFileRoute("/sitemap-images.xml")({
               a.image_url,
               a.title,
               toIsoDate(a.updated_at || a.published_at),
+              a.title,
             );
           }
         } catch (e) {
@@ -52,7 +73,13 @@ export const Route = createFileRoute("/sitemap-images.xml")({
           const { products } = await getProducts();
           const lastmod = toIsoDate(new Date());
           for (const p of products) {
-            push(`${BASE_URL}/shop/${p.id}`, p.image, p.title, lastmod);
+            push(
+              `${BASE_URL}/shop/${p.id}`,
+              p.image,
+              p.title,
+              lastmod,
+              `${p.title} from the Keep TX Red shop`,
+            );
           }
         } catch (e) {
           console.error("sitemap-images: products fetch failed", e);
