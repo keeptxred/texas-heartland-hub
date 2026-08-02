@@ -9,6 +9,8 @@
 export const BASE_URL = "https://keeptxred.com";
 const CANONICAL_HOST = "keeptxred.com";
 const SITE_HOSTS = new Set([CANONICAL_HOST, `www.${CANONICAL_HOST}`]);
+const INVALID_IMAGE_PATTERN =
+  /(?:placeholder|spacer|blank(?:[-_.]?image)?|transparent(?:[-_.]?pixel)?|pixel\.gif|1x1)/i;
 
 export function xmlEscape(s: string): string {
   return s
@@ -65,7 +67,7 @@ export function toIsoDate(d: string | Date | null | undefined): string {
 export type UrlEntry = {
   loc: string;
   lastmod: string;
-  image?: { loc: string; title?: string };
+  image?: { loc: string; title?: string; caption?: string };
 };
 
 export function renderUrlset(entries: UrlEntry[], opts?: { image?: boolean }): string {
@@ -76,8 +78,14 @@ export function renderUrlset(entries: UrlEntry[], opts?: { image?: boolean }): s
     const key = canonicalize(e.loc);
     if (seen.has(key)) continue;
     seen.add(key);
+    const imageTitle = e.image?.title
+      ? `<image:title>${xmlEscape(e.image.title)}</image:title>`
+      : "";
+    const imageCaption = e.image?.caption
+      ? `<image:caption>${xmlEscape(e.image.caption)}</image:caption>`
+      : "";
     const img = opts?.image && e.image?.loc
-      ? `\n    <image:image><image:loc>${xmlEscape(e.image.loc)}</image:loc></image:image>`
+      ? `\n    <image:image><image:loc>${xmlEscape(e.image.loc)}</image:loc>${imageTitle}${imageCaption}</image:image>`
       : "";
     rows.push(
       `  <url>\n    <loc>${xmlEscape(e.loc)}</loc>\n    <lastmod>${e.lastmod}</lastmod>${img}\n  </url>`,
@@ -102,8 +110,12 @@ export function xmlResponse(body: string): Response {
 export function isRealImage(url: string | null | undefined): url is string {
   if (!url) return false;
   const s = url.trim();
-  if (!s) return false;
-  if (/placeholder/i.test(s)) return false;
-  if (s.startsWith("data:")) return false;
-  return /^https?:\/\//i.test(s) || s.startsWith("/");
+  if (!s || s.startsWith("data:") || s.startsWith("blob:")) return false;
+  if (INVALID_IMAGE_PATTERN.test(s)) return false;
+  try {
+    const parsed = new URL(s, BASE_URL);
+    return parsed.protocol === "https:" || parsed.protocol === "http:";
+  } catch {
+    return false;
+  }
 }
