@@ -86,6 +86,14 @@ function isTrackingParam(name: string): boolean {
   return normalized.startsWith("utm_") || TRACKING_PARAMS.has(normalized);
 }
 
+// Parameter-specific cleanup: only known tracking keys are removed, so
+// legitimate application query state is preserved.
+function stripTrackingParams(url: URL): void {
+  for (const key of Array.from(url.searchParams.keys())) {
+    if (isTrackingParam(key)) url.searchParams.delete(key);
+  }
+}
+
 function isFileLikePath(pathname: string): boolean {
   const finalSegment = pathname.split("/").pop() ?? "";
   return finalSegment.includes(".");
@@ -113,10 +121,7 @@ function buildCanonicalTarget(url: URL): URL {
     target.searchParams.delete("topic");
   }
 
-  for (const key of Array.from(target.searchParams.keys())) {
-    if (isTrackingParam(key)) target.searchParams.delete(key);
-  }
-
+  stripTrackingParams(target);
   return target;
 }
 
