@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
 import { isLowValueTitle } from "@/lib/low-value-titles";
+import { PUBLISHER_LOGO } from "@/lib/seo";
 
 const FAQS = [
   {
