@@ -20,24 +20,24 @@ const SHOP_KEYWORDS = "Texas shirts, Texas apparel, Texas patriotic apparel, Tex
 const SHOP_OG_IMAGE = `${SITE_URL}/og/shop.jpg`;
 
 const SHOP_CATEGORIES = [
-  { slug: "all", label: "All", keywords: [] },
-  { slug: "shirts", label: "T-Shirts", keywords: ["t-shirt", "t shirt", "tee", "shirt"] },
-  { slug: "hoodies", label: "Hoodies", keywords: ["hoodie", "sweatshirt"] },
-  { slug: "hats", label: "Hats", keywords: ["hat", "cap", "snapback", "trucker"] },
-  { slug: "drinkware", label: "Drinkware", keywords: ["mug", "tumbler", "cup", "bottle", "drinkware"] },
-  { slug: "stickers", label: "Stickers", keywords: ["sticker", "decal"] },
-  { slug: "tote-bags", label: "Tote Bags", keywords: ["tote", "tote bag"] },
-  { slug: "accessories", label: "Accessories", keywords: ["accessory", "accessories", "bag", "poster", "print", "phone case", "pillow"] },
+  { slug: "all", label: "All" },
+  { slug: "shirts", label: "T-Shirts" },
+  { slug: "hoodies", label: "Hoodies" },
+  { slug: "hats", label: "Hats" },
+  { slug: "drinkware", label: "Drinkware" },
+  { slug: "stickers", label: "Stickers" },
+  { slug: "tote-bags", label: "Tote Bags" },
+  { slug: "accessories", label: "Accessories" },
 ] as const;
 
 const SHOP_COLLECTIONS = [
-  { slug: "all", label: "All Collections", keywords: [] },
-  { slug: "patriotic", label: "🇺🇸 Patriotic", keywords: ["patriotic", "usa", "america", "american", "flag", "stars and stripes"] },
-  { slug: "texas", label: "🤠 Texas", keywords: ["texas", "lone star", "tx", "longhorn", "bluebonnet"] },
-  { slug: "floral", label: "🌸 Floral", keywords: ["floral", "flower", "bluebonnet", "wildflower", "botanical", "rose"] },
-  { slug: "conservative", label: "🦅 Conservative", keywords: ["conservative", "republican", "gop", "keep texas red", "freedom", "liberty"] },
-  { slug: "new-arrivals", label: "⭐ New Arrivals", keywords: ["new arrival", "new arrivals", "new", "just added"] },
-  { slug: "on-sale", label: "🔥 On Sale", keywords: ["sale", "on sale", "discount", "clearance"] },
+  { slug: "all", label: "All Collections" },
+  { slug: "patriotic", label: "🇺🇸 Patriotic" },
+  { slug: "texas", label: "🤠 Texas" },
+  { slug: "floral", label: "🌸 Floral" },
+  { slug: "conservative", label: "🦅 Conservative" },
+  { slug: "new-arrivals", label: "⭐ New Arrivals" },
+  { slug: "on-sale", label: "🔥 On Sale" },
 ] as const;
 
 const SHOP_SORT_OPTIONS = [
@@ -53,15 +53,15 @@ type ShopCollection = (typeof SHOP_COLLECTIONS)[number]["slug"];
 type ShopSort = (typeof SHOP_SORT_OPTIONS)[number]["value"];
 
 function isShopCategory(value: unknown): value is ShopCategory {
-  return typeof value === "string" && SHOP_CATEGORIES.some((category) => category.slug === value);
+  return typeof value === "string" && SHOP_CATEGORIES.some((item) => item.slug === value);
 }
 
 function isShopCollection(value: unknown): value is ShopCollection {
-  return typeof value === "string" && SHOP_COLLECTIONS.some((collection) => collection.slug === value);
+  return typeof value === "string" && SHOP_COLLECTIONS.some((item) => item.slug === value);
 }
 
 function isShopSort(value: unknown): value is ShopSort {
-  return typeof value === "string" && SHOP_SORT_OPTIONS.some((option) => option.value === value);
+  return typeof value === "string" && SHOP_SORT_OPTIONS.some((item) => item.value === value);
 }
 
 function productSearchText(product: Product) {
@@ -69,22 +69,22 @@ function productSearchText(product: Product) {
 }
 
 function productMatchesCategory(product: Product, category: ShopCategory) {
-  if (category === "all") return true;
-  const searchable = productSearchText(product);
-  const selected = SHOP_CATEGORIES.find((item) => item.slug === category);
-  return selected?.keywords.some((keyword) => searchable.includes(keyword)) ?? false;
+  return category === "all" || product.category === category;
 }
 
 function productMatchesCollection(product: Product, collection: ShopCollection) {
   if (collection === "all") return true;
-  const searchable = productSearchText(product);
-  const selected = SHOP_COLLECTIONS.find((item) => item.slug === collection);
-  return selected?.keywords.some((keyword) => searchable.includes(keyword)) ?? false;
+  if (collection === "new-arrivals") return product.isNew === true;
+  if (collection === "on-sale") return product.isOnSale === true;
+  return product.collections?.includes(collection) ?? false;
 }
 
 function isBestSeller(product: Product) {
-  const searchable = productSearchText(product);
-  return searchable.includes("best seller") || searchable.includes("bestseller") || searchable.includes("best-selling");
+  const tags = product.tags ?? [];
+  return tags.some((tag) => {
+    const normalized = tag.toLowerCase();
+    return normalized === "best seller" || normalized === "bestseller" || normalized === "best-selling";
+  });
 }
 
 export const Route = createFileRoute("/shop/")({
@@ -115,59 +115,77 @@ export const Route = createFileRoute("/shop/")({
   component: ShopPage,
 });
 
-function formatPrice(p: Product) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: p.currency }).format(p.price);
+function formatPrice(product: Product) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: product.currency,
+  }).format(product.price);
 }
 
-function ProductCard({ p }: { p: Product }) {
-  const displayTitle = seoTitle(p);
+function ProductCard({ product }: { product: Product }) {
+  const displayTitle = seoTitle(product);
   const colorToImage = new Map<string, string>();
-  for (const v of p.variants ?? []) {
-    const color = (v.color || v.title?.split("/")[0] || "").trim();
-    if (!color) continue;
-    if (!colorToImage.has(color) && v.image) colorToImage.set(color, v.image);
+  for (const variant of product.variants ?? []) {
+    const color = (variant.color || variant.title?.split("/")[0] || "").trim();
+    if (color && !colorToImage.has(color) && variant.image) colorToImage.set(color, variant.image);
   }
-  const colorChips = colorToImage.size > 0 ? Array.from(colorToImage.keys()) : (p.colors ?? []);
+  const colorChips = colorToImage.size > 0 ? Array.from(colorToImage.keys()) : product.colors ?? [];
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
-  const displayImage = (selectedColor && colorToImage.get(selectedColor)) || p.image;
+  const displayImage = (selectedColor && colorToImage.get(selectedColor)) || product.image;
 
   return (
     <Link
       to="/shop/$productId"
-      params={{ productId: p.id }}
-      className="group text-left bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-all"
+      params={{ productId: product.id }}
+      className="group overflow-hidden rounded-xl border border-border bg-card text-left transition-all hover:-translate-y-0.5 hover:shadow-lg"
     >
       <div className="aspect-square overflow-hidden bg-muted">
-        <img key={displayImage} src={displayImage} alt={seoAlt(p, selectedColor)} loading="lazy" className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        <img
+          key={displayImage}
+          src={displayImage}
+          alt={seoAlt(product, selectedColor)}
+          loading="lazy"
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
       </div>
       <div className="p-4">
-        <h3 className="font-display text-base leading-tight line-clamp-2 group-hover:text-primary transition-colors">{displayTitle}</h3>
+        <div className="mb-2 flex flex-wrap gap-1">
+          {product.isNew ? <span className="rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase">New</span> : null}
+          {product.isOnSale ? <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase text-primary-foreground">Sale</span> : null}
+        </div>
+        <h3 className="line-clamp-2 font-display text-base leading-tight transition-colors group-hover:text-primary">
+          {displayTitle}
+        </h3>
         <div className="mt-2 flex items-center justify-between">
-          <span className="font-semibold">{formatPrice(p)}</span>
+          <span className="font-semibold">{formatPrice(product)}</span>
           <span className="text-[11px] uppercase tracking-wider text-muted-foreground">View</span>
         </div>
-        {colorChips.length > 0 && (
+        {colorChips.length > 0 ? (
           <div className="mt-2 flex flex-wrap gap-1">
             {colorChips.map((color) => {
-              const isSelected = color === selectedColor;
+              const selected = color === selectedColor;
               return (
                 <button
                   key={color}
                   type="button"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    setSelectedColor(isSelected ? null : color);
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setSelectedColor(selected ? null : color);
                   }}
-                  aria-pressed={isSelected}
-                  className={`inline-block rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary text-secondary-foreground hover:border-primary/60"}`}
+                  aria-pressed={selected}
+                  className={`rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors ${
+                    selected
+                      ? "border-primary bg-primary text-primary-foreground"
+                      : "border-border bg-secondary text-secondary-foreground hover:border-primary/60"
+                  }`}
                 >
                   {color}
                 </button>
               );
             })}
           </div>
-        )}
+        ) : null}
       </div>
     </Link>
   );
@@ -180,12 +198,11 @@ function ShopPage() {
   const { count, open } = useCart();
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
+
   const selectedCategory: ShopCategory = search.category ?? "all";
   const selectedCollection: ShopCollection = search.collection ?? "all";
   const selectedSort: ShopSort = search.sort ?? "featured";
   const searchQuery = search.q ?? "";
-  const selectedCategoryDetails = SHOP_CATEGORIES.find((category) => category.slug === selectedCategory) ?? SHOP_CATEGORIES[0];
-  const selectedCollectionDetails = SHOP_COLLECTIONS.find((collection) => collection.slug === selectedCollection) ?? SHOP_COLLECTIONS[0];
   const normalizedQuery = searchQuery.toLowerCase();
 
   const filteredProducts = products
@@ -197,95 +214,101 @@ function ShopPage() {
       if (selectedSort === "price-low") return a.product.price - b.product.price;
       if (selectedSort === "price-high") return b.product.price - a.product.price;
       if (selectedSort === "best-selling") {
-        const bestsellerDifference = Number(isBestSeller(b.product)) - Number(isBestSeller(a.product));
-        return bestsellerDifference || a.originalIndex - b.originalIndex;
+        const difference = Number(isBestSeller(b.product)) - Number(isBestSeller(a.product));
+        return difference || a.originalIndex - b.originalIndex;
+      }
+      if (selectedSort === "featured") {
+        const difference = Number(b.product.isFeatured) - Number(a.product.isFeatured);
+        return difference || a.originalIndex - b.originalIndex;
       }
       return a.originalIndex - b.originalIndex;
     })
     .map(({ product }) => product);
 
-  const productCountLabel = `${filteredProducts.length} ${filteredProducts.length === 1 ? "Product" : "Products"}`;
+  const selectedCategoryLabel = SHOP_CATEGORIES.find((item) => item.slug === selectedCategory)?.label;
+  const selectedCollectionLabel = SHOP_COLLECTIONS.find((item) => item.slug === selectedCollection)?.label;
   const activeFilterLabel = [
-    selectedCategory !== "all" ? selectedCategoryDetails.label : null,
-    selectedCollection !== "all" ? selectedCollectionDetails.label : null,
+    selectedCategory !== "all" ? selectedCategoryLabel : null,
+    selectedCollection !== "all" ? selectedCollectionLabel : null,
   ].filter(Boolean).join(" · ");
 
-  const updateSearch = (updates: { category?: ShopCategory; collection?: ShopCollection; q?: string; sort?: ShopSort }) => {
+  const updateSearch = (updates: {
+    category?: ShopCategory;
+    collection?: ShopCollection;
+    q?: string;
+    sort?: ShopSort;
+  }) => {
     navigate({
       search: {
         category: updates.category === "all" ? undefined : updates.category ?? search.category,
         collection: updates.collection === "all" ? undefined : updates.collection ?? search.collection,
-        q: updates.q !== undefined ? (updates.q.trim() || undefined) : search.q,
+        q: updates.q !== undefined ? updates.q.trim() || undefined : search.q,
         sort: updates.sort !== undefined ? (updates.sort === "featured" ? undefined : updates.sort) : search.sort,
       },
       replace: true,
     });
   };
 
-  const faqs: Array<{ q: string; a: string }> = [
-    { q: "What makes Keep Texas Red apparel unique?", a: "Every design is created for proud Texans — from bold Texas flag graphics to conservative statement pieces. Orders help fund our independent Texas newsroom." },
-    { q: "How long does shipping take?", a: "Standard U.S. shipping is free. Most orders are produced within 3–7 business days, and U.S. delivery typically takes another 2–5 business days after shipment." },
-    { q: "Are products printed in the USA?", a: "Yes. Our apparel is printed on demand in U.S. print facilities to keep production close to home." },
-    { q: "Are hats embroidered?", a: "Yes — our structured caps and dad hats feature embroidered Texas designs for a premium, long-lasting finish." },
-    { q: "Do you offer hoodies and shirts?", a: "We stock unisex Texas patriotic tees, long sleeves, and heavyweight hoodies in a range of colors and sizes." },
-    { q: "What sizes are available?", a: "Apparel is offered from S through 5XL depending on the style. Size options appear on each product page." },
-    { q: "Can I securely checkout online?", a: "Yes. All payments are processed by Stripe with encrypted card checkout — we never see or store your card number." },
-  ];
-
-  const internalLinks: Array<{ to: string; label: string }> = [
-    { to: "/texas-news", label: "Texas News" },
-    { to: "/texas-politics", label: "Texas Politics" },
-    { to: "/elections", label: "Texas Elections" },
-    { to: "/tax-calculator", label: "Property Tax Calculator" },
-    { to: "/houston", label: "Houston" },
-    { to: "/texas-business", label: "Business" },
-    { to: "/texas-sports", label: "Sports" },
-    { to: "/about", label: "About" },
-  ];
-
   const itemListJson = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    itemListElement: products.map((p, i) => ({ "@type": "ListItem", position: i + 1, url: `${SITE_URL}/shop/${p.id}`, name: seoTitle(p) })),
+    itemListElement: products.map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `${SITE_URL}/shop/${product.id}`,
+      name: seoTitle(product),
+    })),
   };
-
-  const collectionPageJson = { "@context": "https://schema.org", "@type": "CollectionPage", name: SHOP_OG_TITLE, description: SHOP_OG_DESC, url: `${SITE_URL}/shop`, isPartOf: { "@type": "WebSite", url: SITE_URL, name: "Keep Texas Red" } };
-  const organizationJson = { "@context": "https://schema.org", "@type": "Organization", name: "Keep Texas Red", url: SITE_URL, logo: `${SITE_URL}/red-texas-icon.png` };
-  const onlineStoreJson = { "@context": "https://schema.org", "@type": "OnlineStore", name: "Keep Texas Red Shop", url: `${SITE_URL}/shop`, image: SHOP_OG_IMAGE };
-  const breadcrumbJson = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: SITE_URL }, { "@type": "ListItem", position: 2, name: "Shop", item: `${SITE_URL}/shop` }] };
-  const faqJson = { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) };
 
   return (
     <div className="bg-background">
       <nav aria-label="Breadcrumb" className="mx-auto max-w-[1200px] px-6 pt-4 text-xs text-muted-foreground">
-        <ol className="flex items-center gap-1"><li><Link to="/" className="hover:text-primary">Home</Link></li><li aria-hidden>/</li><li className="text-foreground font-medium">Shop</li></ol>
+        <ol className="flex items-center gap-1">
+          <li><Link to="/" className="hover:text-primary">Home</Link></li>
+          <li aria-hidden>/</li>
+          <li className="font-medium text-foreground">Shop</li>
+        </ol>
       </nav>
 
       <section className="border-b border-border bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-[1200px] px-6 py-14">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <div className="text-[11px] font-semibold tracking-[0.3em] uppercase text-primary mb-3">Keep TX Red — Official Shop</div>
-              <h1 className="font-display text-4xl md:text-5xl leading-tight tracking-tight max-w-3xl">Texas Patriotic Apparel, Hats & Gifts</h1>
-              <p className="mt-4 max-w-2xl text-white/90">Every order helps keep our newsroom independent. Add items to your cart, review your bag, and check out securely with card.</p>
+              <div className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-primary">Keep TX Red — Official Shop</div>
+              <h1 className="max-w-3xl font-display text-4xl leading-tight tracking-tight md:text-5xl">Texas Patriotic Apparel, Hats & Gifts</h1>
+              <p className="mt-4 max-w-2xl text-white/90">Every order helps keep our newsroom independent. Add items to your cart and check out securely with card.</p>
             </div>
-            <button onClick={open} className="relative shrink-0 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold hover:bg-white/10 transition-colors" aria-label={`Open cart, ${count} items`}>
+            <button
+              onClick={open}
+              className="relative inline-flex shrink-0 items-center gap-2 rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm font-semibold transition-colors hover:bg-white/10"
+              aria-label={`Open cart, ${count} items`}
+            >
               <span>🛍 Cart</span>
-              {count > 0 && <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-bold">{count}</span>}
+              {count > 0 ? <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1.5 text-[11px] font-bold text-primary-foreground">{count}</span> : null}
             </button>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-[1200px] px-6 py-12">
-        {products.length > 0 && (
+        {products.length > 0 ? (
           <div className="mb-8 border-b border-border pb-6">
             <div className="-mx-6 overflow-x-auto px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Filter products by category">
               <div className="flex w-max min-w-full gap-2">
                 {SHOP_CATEGORIES.map((category) => {
-                  const isSelected = category.slug === selectedCategory;
+                  const selected = category.slug === selectedCategory;
                   return (
-                    <button key={category.slug} type="button" aria-pressed={isSelected} onClick={() => updateSearch({ category: category.slug })} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background text-foreground hover:border-primary/60 hover:text-primary"}`}>
+                    <button
+                      key={category.slug}
+                      type="button"
+                      aria-pressed={selected}
+                      onClick={() => updateSearch({ category: category.slug })}
+                      className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                        selected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-background text-foreground hover:border-primary/60 hover:text-primary"
+                      }`}
+                    >
                       {category.label}
                     </button>
                   );
@@ -298,9 +321,19 @@ function ShopPage() {
               <div className="-mx-6 overflow-x-auto px-6 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" aria-label="Filter products by collection">
                 <div className="flex w-max min-w-full gap-2">
                   {SHOP_COLLECTIONS.map((collection) => {
-                    const isSelected = collection.slug === selectedCollection;
+                    const selected = collection.slug === selectedCollection;
                     return (
-                      <button key={collection.slug} type="button" aria-pressed={isSelected} onClick={() => updateSearch({ collection: collection.slug })} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${isSelected ? "border-primary bg-primary text-primary-foreground" : "border-border bg-secondary/40 text-foreground hover:border-primary/60 hover:text-primary"}`}>
+                      <button
+                        key={collection.slug}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() => updateSearch({ collection: collection.slug })}
+                        className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                          selected
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-secondary/40 text-foreground hover:border-primary/60 hover:text-primary"
+                        }`}
+                      >
                         {collection.label}
                       </button>
                     );
@@ -333,72 +366,66 @@ function ShopPage() {
             </div>
 
             <p className="mt-3 text-sm font-semibold text-foreground" aria-live="polite">
-              {productCountLabel}{activeFilterLabel ? ` · ${activeFilterLabel}` : ""}
+              {filteredProducts.length} {filteredProducts.length === 1 ? "Product" : "Products"}
+              {activeFilterLabel ? ` · ${activeFilterLabel}` : ""}
             </p>
           </div>
-        )}
+        ) : null}
 
-        {(loadError || products.length === 0) && (
-          <div className="text-center py-20">
-            <h2 className="font-display text-2xl mb-2">Store is restocking</h2>
+        {loadError || products.length === 0 ? (
+          <div className="py-20 text-center">
+            <h2 className="mb-2 font-display text-2xl">Store is restocking</h2>
             <p className="text-muted-foreground">{loadError ? "We couldn't load live listings right now. Please check back soon." : "No active listings right now. Check back soon."}</p>
           </div>
-        )}
-        {products.length > 0 && filteredProducts.length > 0 && (
-          <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredProducts.map((p) => <ProductCard key={p.id} p={p} />)}
+        ) : null}
+
+        {products.length > 0 && filteredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {filteredProducts.map((product) => <ProductCard key={product.id} product={product} />)}
           </div>
-        )}
-        {products.length > 0 && filteredProducts.length === 0 && (
+        ) : null}
+
+        {products.length > 0 && filteredProducts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border py-16 text-center">
             <h2 className="font-display text-2xl">No matching products</h2>
             <p className="mt-2 text-muted-foreground">Try another search, category, collection, or sorting option.</p>
-            <button type="button" onClick={() => navigate({ search: {}, replace: true })} className="mt-5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90">View all products</button>
+            <button
+              type="button"
+              onClick={() => navigate({ search: {}, replace: true })}
+              className="mt-5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+            >
+              View all products
+            </button>
           </div>
-        )}
+        ) : null}
       </section>
 
       <section className="border-y border-border bg-secondary/40">
-        <div className="mx-auto max-w-[1200px] px-6 py-8 grid grid-cols-2 md:grid-cols-5 gap-4 text-center text-sm">
-          {[{ icon: "🔒", label: "Secure Checkout" }, { icon: "🖨️", label: "Printed On Demand" }, { icon: "⭐", label: "Premium Materials" }, { icon: "⚡", label: "Fast Production" }, { icon: "🤠", label: "Designed for Proud Texans" }].map((t) => (
-            <div key={t.label} className="flex flex-col items-center gap-1"><span className="text-2xl" aria-hidden>{t.icon}</span><span className="font-semibold">{t.label}</span></div>
+        <div className="mx-auto grid max-w-[1200px] grid-cols-2 gap-4 px-6 py-8 text-center text-sm md:grid-cols-5">
+          {[
+            ["🔒", "Secure Checkout"],
+            ["🖨️", "Printed On Demand"],
+            ["⭐", "Premium Materials"],
+            ["⚡", "Fast Production"],
+            ["🤠", "Designed for Proud Texans"],
+          ].map(([icon, label]) => (
+            <div key={label} className="flex flex-col items-center gap-1">
+              <span className="text-2xl" aria-hidden>{icon}</span>
+              <span className="font-semibold">{label}</span>
+            </div>
           ))}
         </div>
       </section>
 
       <section className="mx-auto max-w-[900px] px-6 py-14 prose prose-neutral dark:prose-invert">
         <h2>Texas Patriotic Apparel Made for Proud Texans</h2>
-        <p>Keep Texas Red is the go-to shop for Texas patriotic apparel and conservative gifts that put the Lone Star State first. Every item in our store — from bold red tees to embroidered caps — is designed with the pride, grit, and independence that defines Texas. Whether you were born here or got here as fast as you could, our collection is built for Texans who want to wear their values.</p>
-        <h3>Texas Shirts</h3>
-        <p>Our Texas shirts range from classic Keep Texas Red graphics to Texas flag tees, Lone Star silhouettes, and conservative statement designs. Printed on soft, durable cotton blends, they hold their color wash after wash and hold up to real Texas summers.</p>
-        <h3>Texas Hats</h3>
-        <p>Every Texan needs a good hat. Our lineup includes structured caps, dad hats, snapbacks, and trucker hats — most featuring embroidered Texas stars and Keep Texas Red marks. Adjustable straps keep the fit right whether you're at a rally, on the ranch, or at the game.</p>
-        <h3>Texas Hoodies</h3>
-        <p>When the northers roll in, reach for a heavyweight Texas hoodie. Warm fleece linings, roomy front pockets, and clean patriotic graphics make our hoodies a cold-weather staple across the state.</p>
-        <h3>Texas Gifts</h3>
-        <p>Looking for the right gift for a fellow Texan? Our shop stocks Texas-themed mugs, tote bags, prints, and stickers that pair well with any celebration — birthdays, graduations, retirements, or a welcome-home present for a friend who just moved to the state.</p>
-        <h3>Texas Stickers</h3>
-        <p>Our durable vinyl Texas stickers are weatherproof, dishwasher-safe, and cut precisely for laptops, trucks, water bottles, and tool boxes. It's the easiest way to fly the flag without changing your outfit.</p>
-        <h3>Why Buy From Keep Texas Red</h3>
-        <p>We're a Texas-focused publisher first — a shop second. Every purchase directly funds our independent conservative newsroom covering statewide politics, elections, business, and sports. You get gear you love and help keep an independent Texas voice in the media.</p>
-        <h3>Printed On Demand</h3>
-        <p>Products are produced when you order, cutting down on waste and letting us offer more colors and sizes than a traditional storefront. Most orders print and ship within a few business days from U.S. facilities.</p>
+        <p>Keep Texas Red offers shirts, hats, hoodies, drinkware, stickers, tote bags and accessories selected for the public website through our independent shop catalog.</p>
         <h2>Frequently Asked Questions</h2>
-        <div className="not-prose grid gap-4">
-          {faqs.map((f) => <details key={f.q} className="rounded-lg border border-border bg-card p-4"><summary className="cursor-pointer font-semibold">{f.q}</summary><p className="mt-2 text-sm text-muted-foreground">{f.a}</p></details>)}
-        </div>
-        <h2>Related Texas Resources</h2>
-        <ul className="not-prose flex flex-wrap gap-2">
-          {internalLinks.map((l) => <li key={l.to}><Link to={l.to} className="inline-block rounded-full border border-border bg-secondary text-secondary-foreground px-3 py-1.5 text-sm font-medium hover:border-primary/60 hover:bg-primary hover:text-primary-foreground transition-colors">{l.label}</Link></li>)}
-        </ul>
+        <details className="rounded-lg border border-border bg-card p-4"><summary className="cursor-pointer font-semibold">How long does shipping take?</summary><p className="mt-2 text-sm text-muted-foreground">Most orders are produced within 3–7 business days, with delivery typically taking another 2–5 business days after shipment.</p></details>
+        <details className="rounded-lg border border-border bg-card p-4"><summary className="cursor-pointer font-semibold">Is checkout secure?</summary><p className="mt-2 text-sm text-muted-foreground">Yes. Payments are processed through encrypted Stripe checkout.</p></details>
       </section>
 
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJson) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(onlineStoreJson) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJson) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJson) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJson) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJson) }} />
     </div>
   );
 }
