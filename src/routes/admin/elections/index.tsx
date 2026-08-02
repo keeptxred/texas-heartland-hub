@@ -8,7 +8,7 @@ export const Route = createFileRoute("/admin/elections/")({
   head: () => ({
     meta: [
       { title: "Election Central — Keep TX Red Admin" },
-      { name: "robots", content: "noindex, nofollow" },
+      { name: "robots", content: "noindex, follow" },
     ],
   }),
   component: ElectionAdminPage,

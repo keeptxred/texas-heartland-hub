@@ -62,7 +62,7 @@ export function ElectionLayout({
         <meta name="description" content={description} />
         <meta
           name="robots"
-          content={indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow"}
+          content={indexable ? "index, follow, max-image-preview:large" : "noindex, follow"}
         />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
