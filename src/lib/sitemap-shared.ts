@@ -1,10 +1,10 @@
 /**
  * Shared helpers for XML sitemap generation. Keep pure — no side effects.
  * All sitemaps must:
- *  - be UTF-8, absolute HTTPS URLs
- *  - include <lastmod> for every entry
+ *  - be UTF-8, absolute canonical HTTPS URLs on keeptxred.com
+ *  - include a valid <lastmod> for every entry
+ *  - omit query strings, fragments, redirects, and duplicate canonicals
  *  - omit <priority>/<changefreq> (Google ignores them)
- *  - dedupe by canonical URL
  */
 export const BASE_URL = "https://keeptxred.com";
 const CANONICAL_HOST = "keeptxred.com";
@@ -36,31 +36,31 @@ export function absUrl(pathOrUrl: string): string {
   }
 }
 
-/** Normalize to a canonical form for dedupe: lowercase host, no trailing slash (except root), no query. */
+/** Return a canonical, indexable site URL or an empty string when invalid. */
 export function canonicalize(url: string): string {
   try {
     const u = new URL(url, BASE_URL);
+    const host = u.hostname.toLowerCase();
+    if (!SITE_HOSTS.has(host)) return "";
+    if (u.protocol !== "http:" && u.protocol !== "https:") return "";
+    u.protocol = "https:";
+    u.hostname = CANONICAL_HOST;
+    u.port = "";
     u.hash = "";
     u.search = "";
-    u.hostname = u.hostname.toLowerCase();
-    if (SITE_HOSTS.has(u.hostname)) {
-      u.protocol = "https:";
-      u.hostname = CANONICAL_HOST;
-      u.port = "";
-    }
-    let p = u.pathname;
-    if (p.length > 1 && p.endsWith("/")) p = p.slice(0, -1);
-    u.pathname = p;
+    let pathname = u.pathname.replace(/\/{2,}/g, "/");
+    if (pathname.length > 1 && pathname.endsWith("/")) pathname = pathname.slice(0, -1);
+    u.pathname = pathname || "/";
     return u.toString();
   } catch {
-    return url;
+    return "";
   }
 }
 
 export function toIsoDate(d: string | Date | null | undefined): string {
-  if (!d) return new Date().toISOString();
+  if (!d) return "";
   const dt = typeof d === "string" ? new Date(d) : d;
-  if (isNaN(dt.getTime())) return new Date().toISOString();
+  if (Number.isNaN(dt.getTime())) return "";
   return dt.toISOString();
 }
 
@@ -73,22 +73,27 @@ export type UrlEntry = {
 export function renderUrlset(entries: UrlEntry[], opts?: { image?: boolean }): string {
   const seen = new Set<string>();
   const rows: string[] = [];
-  for (const e of entries) {
-    if (!e.loc) continue;
-    const key = canonicalize(e.loc);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    const imageTitle = e.image?.title
-      ? `<image:title>${xmlEscape(e.image.title)}</image:title>`
+  for (const entry of entries) {
+    const loc = canonicalize(entry.loc);
+    const lastmod = toIsoDate(entry.lastmod);
+    if (!loc || !lastmod || seen.has(loc)) continue;
+    seen.add(loc);
+
+    const imageLoc = opts?.image && isRealImage(entry.image?.loc)
+      ? absUrl(entry.image!.loc)
       : "";
-    const imageCaption = e.image?.caption
-      ? `<image:caption>${xmlEscape(e.image.caption)}</image:caption>`
+    const imageTitle = imageLoc && entry.image?.title
+      ? `<image:title>${xmlEscape(entry.image.title)}</image:title>`
       : "";
-    const img = opts?.image && e.image?.loc
-      ? `\n    <image:image><image:loc>${xmlEscape(e.image.loc)}</image:loc>${imageTitle}${imageCaption}</image:image>`
+    const imageCaption = imageLoc && entry.image?.caption
+      ? `<image:caption>${xmlEscape(entry.image.caption)}</image:caption>`
       : "";
+    const image = imageLoc
+      ? `\n    <image:image><image:loc>${xmlEscape(imageLoc)}</image:loc>${imageTitle}${imageCaption}</image:image>`
+      : "";
+
     rows.push(
-      `  <url>\n    <loc>${xmlEscape(e.loc)}</loc>\n    <lastmod>${e.lastmod}</lastmod>${img}\n  </url>`,
+      `  <url>\n    <loc>${xmlEscape(loc)}</loc>\n    <lastmod>${lastmod}</lastmod>${image}\n  </url>`,
     );
   }
   const ns = opts?.image
@@ -102,6 +107,7 @@ export function xmlResponse(body: string): Response {
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
       "Cache-Control": "public, max-age=1800, s-maxage=3600",
+      "X-Robots-Tag": "noindex, follow",
     },
   });
 }
