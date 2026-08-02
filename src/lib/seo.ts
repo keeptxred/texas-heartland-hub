@@ -6,9 +6,20 @@ import { getCavernSeoOverride } from "@/lib/explore/cavern-seo";
 
 export const SITE_URL = "https://keeptxred.com";
 export const SITE_NAME = "Keep TX Red";
+export const SITE_ALTERNATE_NAMES = ["Keep Texas Red", "KeepTXRed.com"] as const;
+export const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const TWITTER_HANDLE = "@KeepTXRed";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/default.jpg`;
 export const DEFAULT_OG_ALT = "Keep TX Red — Texas News, Politics & Conservative Commentary";
+// A dedicated publisher logo asset does not yet exist in the repository.
+// Use the existing branded 1200x630 image rather than favicon.ico until the
+// dedicated logo is added during the image/schema upgrade task.
+export const PUBLISHER_LOGO = DEFAULT_OG_IMAGE;
+export const OFFICIAL_PROFILE_URLS = [
+  "https://www.instagram.com/keeptxreddotcom/",
+  "https://github.com/keeptxred",
+] as const;
 
 type SeoInput = {
   title: string;
@@ -23,8 +34,37 @@ type SeoInput = {
   modifiedTime?: string;
   section?: string;                 // article category
   author?: string;
-  keywords?: string;
+  keywords?: string;                // retained for callers; not emitted as meta keywords
   noindex?: boolean;
+};
+
+type ImageObjectInput = {
+  url?: string;
+  width?: number;
+  height?: number;
+  caption?: string;
+  alt?: string;
+  representativeOfPage?: boolean;
+};
+
+type PersonJsonLdInput = {
+  name: string;
+  url?: string;
+  id?: string;
+  image?: string;
+  jobTitle?: string;
+  description?: string;
+  sameAs?: string[];
+};
+
+type WebPageJsonLdInput = {
+  name: string;
+  description: string;
+  path: string;
+  type?: "WebPage" | "AboutPage" | "ContactPage" | "CollectionPage";
+  image?: ImageObjectInput;
+  datePublished?: string;
+  dateModified?: string;
 };
 
 function absolute(url: string | undefined, base = SITE_URL): string {
@@ -34,15 +74,39 @@ function absolute(url: string | undefined, base = SITE_URL): string {
   return `${base}/${url}`;
 }
 
-function clampTitle(t: string): string {
-  const suffixed = t.endsWith(SITE_NAME) ? t : `${t} | ${SITE_NAME}`;
-  return suffixed.length <= 60 ? suffixed : t.slice(0, 60);
+function normalizePath(path: string): string {
+  const raw = path.startsWith("/") ? path : `/${path}`;
+  const [pathname] = raw.split(/[?#]/, 1);
+  if (!pathname || pathname === "/") return "/";
+  return pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
 }
 
-function clampDescription(d: string): string {
-  const trimmed = d.trim();
+function truncateAtWordBoundary(value: string, maxLength: number): string {
+  const normalized = value.trim().replace(/\s+/g, " ");
+  if (normalized.length <= maxLength) return normalized;
+  const clipped = normalized.slice(0, maxLength + 1);
+  const boundary = clipped.lastIndexOf(" ");
+  const safe = boundary >= Math.floor(maxLength * 0.65)
+    ? clipped.slice(0, boundary)
+    : normalized.slice(0, maxLength);
+  return safe.replace(/[\s|—–,:;-]+$/, "").trim();
+}
+
+function clampTitle(value: string): string {
+  const title = value.trim();
+  const separator = " | ";
+  const suffix = `${separator}${SITE_NAME}`;
+  if (title.endsWith(SITE_NAME)) return truncateAtWordBoundary(title, 60);
+  if (`${title}${suffix}`.length <= 60) return `${title}${suffix}`;
+  const available = 60 - suffix.length;
+  const shortened = truncateAtWordBoundary(title, available);
+  return shortened ? `${shortened}${suffix}` : truncateAtWordBoundary(title, 60);
+}
+
+function clampDescription(value: string): string {
+  const trimmed = value.trim().replace(/\s+/g, " ");
   if (trimmed.length <= 160) return trimmed;
-  return trimmed.slice(0, 157).replace(/\s+\S*$/, "") + "…";
+  return `${truncateAtWordBoundary(trimmed, 157)}…`;
 }
 
 export function buildSeo(input: SeoInput) {
@@ -55,7 +119,8 @@ export function buildSeo(input: SeoInput) {
         keywords: cavernOverride.keywords,
       }
     : input;
-  const url = `${SITE_URL}${effectiveInput.path.startsWith("/") ? effectiveInput.path : `/${effectiveInput.path}`}`;
+  const path = normalizePath(effectiveInput.path);
+  const url = `${SITE_URL}${path === "/" ? "/" : path}`;
   const title = clampTitle(effectiveInput.title);
   const description = clampDescription(effectiveInput.description);
   const image = absolute(effectiveInput.image);
@@ -65,7 +130,12 @@ export function buildSeo(input: SeoInput) {
   const meta: Array<Record<string, string>> = [
     { title },
     { name: "description", content: description },
-    { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" },
+    {
+      name: "robots",
+      content: effectiveInput.noindex
+        ? "noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+        : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+    },
     // Open Graph
     { property: "og:type", content: isArticle ? "article" : "website" },
     { property: "og:site_name", content: SITE_NAME },
@@ -99,13 +169,6 @@ export function buildSeo(input: SeoInput) {
     );
   }
 
-  if (effectiveInput.keywords) meta.push({ name: "keywords", content: effectiveInput.keywords });
-  if (effectiveInput.noindex) {
-    // override robots
-    const i = meta.findIndex((m) => m.name === "robots");
-    if (i >= 0) meta[i] = { name: "robots", content: "noindex,nofollow" };
-  }
-
   if (isArticle) {
     if (effectiveInput.publishedTime) meta.push({ property: "article:published_time", content: effectiveInput.publishedTime });
     if (effectiveInput.modifiedTime) meta.push({ property: "article:modified_time", content: effectiveInput.modifiedTime });
@@ -118,20 +181,50 @@ export function buildSeo(input: SeoInput) {
   return { meta, links, url, image, title, description };
 }
 
+export function imageObjectJsonLd(input: ImageObjectInput = {}) {
+  const url = absolute(input.url ?? PUBLISHER_LOGO);
+  return {
+    "@type": "ImageObject",
+    url,
+    contentUrl: url,
+    ...(input.width ? { width: input.width } : {}),
+    ...(input.height ? { height: input.height } : {}),
+    ...(input.caption ? { caption: input.caption } : {}),
+    ...(input.alt ? { description: input.alt } : {}),
+    ...(input.representativeOfPage != null
+      ? { representativeOfPage: input.representativeOfPage }
+      : {}),
+  };
+}
+
 export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "NewsMediaOrganization",
-    name: "Keep Texas Red",
-    alternateName: SITE_NAME,
+    "@id": ORGANIZATION_ID,
+    name: SITE_NAME,
+    alternateName: [...SITE_ALTERNATE_NAMES],
     url: `${SITE_URL}/`,
     description:
-      "Keep Texas Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state.",
+      "Keep TX Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state.",
     publishingPrinciples: `${SITE_URL}/editorial-standards`,
     diversityPolicy: `${SITE_URL}/editorial-standards`,
     ethicsPolicy: `${SITE_URL}/editorial-standards`,
-    logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.ico` },
-    sameAs: [],
+    logo: imageObjectJsonLd({
+      url: PUBLISHER_LOGO,
+      width: 1200,
+      height: 630,
+      caption: SITE_NAME,
+      alt: DEFAULT_OG_ALT,
+    }),
+    image: imageObjectJsonLd({
+      url: DEFAULT_OG_IMAGE,
+      width: 1200,
+      height: 630,
+      caption: SITE_NAME,
+      alt: DEFAULT_OG_ALT,
+    }),
+    sameAs: [...OFFICIAL_PROFILE_URLS],
     knowsAbout: ["Texas politics", "Texas policy", "Texas elections", "Texas legislature", "Texas news"],
     contactPoint: {
       "@type": "ContactPoint",
@@ -139,5 +232,56 @@ export function organizationJsonLd() {
       contactType: "Editorial",
     },
     areaServed: { "@type": "State", name: "Texas" },
+  };
+}
+
+export function websiteJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": WEBSITE_ID,
+    name: SITE_NAME,
+    alternateName: [...SITE_ALTERNATE_NAMES],
+    url: `${SITE_URL}/`,
+    publisher: { "@id": ORGANIZATION_ID },
+    inLanguage: "en-US",
+  };
+}
+
+export function webPageJsonLd(input: WebPageJsonLdInput) {
+  const path = normalizePath(input.path);
+  const url = `${SITE_URL}${path === "/" ? "/" : path}`;
+  return {
+    "@context": "https://schema.org",
+    "@type": input.type ?? "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: input.name,
+    description: clampDescription(input.description),
+    isPartOf: { "@id": WEBSITE_ID },
+    publisher: { "@id": ORGANIZATION_ID },
+    inLanguage: "en-US",
+    ...(input.image
+      ? { primaryImageOfPage: imageObjectJsonLd({ ...input.image, representativeOfPage: true }) }
+      : {}),
+    ...(input.datePublished ? { datePublished: input.datePublished } : {}),
+    ...(input.dateModified ? { dateModified: input.dateModified } : {}),
+  };
+}
+
+export function personJsonLd(input: PersonJsonLdInput) {
+  const url = input.url ? absolute(input.url) : undefined;
+  const id = input.id ?? (url ? `${url}#person` : undefined);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    ...(id ? { "@id": id } : {}),
+    name: input.name,
+    ...(url ? { url } : {}),
+    ...(input.image ? { image: absolute(input.image) } : {}),
+    ...(input.jobTitle ? { jobTitle: input.jobTitle } : {}),
+    ...(input.description ? { description: input.description } : {}),
+    ...(input.sameAs?.length ? { sameAs: input.sameAs } : {}),
+    worksFor: { "@id": ORGANIZATION_ID },
   };
 }
