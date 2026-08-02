@@ -9,6 +9,14 @@ import { assignUniqueImages } from "@/lib/dedupe-images";
 import { ELECTION_FEATURE_FLAGS } from "@/lib/elections";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionHomePage } from "@/pages/elections";
+import {
+  buildSeo,
+  organizationJsonLd,
+  SITE_NAME,
+  SITE_URL,
+  webPageJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo";
 
 function getLeadImage(): string | null {
   const lead = ARTICLES.filter((article) => isPublished(article)).sort(sortByDateDesc)[0];
@@ -17,44 +25,41 @@ function getLeadImage(): string | null {
 
 function homepageHead() {
   const electionTakeover = ELECTION_FEATURE_FLAGS.homepagePromotion;
+  const title = electionTakeover
+    ? "Texas Election Central 2026 | Races, Candidates, Polls & Voting"
+    : "Keep TX Red | Texas Living, Relocation Tools & News";
+  const description = electionTakeover
+    ? "Follow verified Texas 2026 election races, candidates, polling, forecasts, results, and voting information from Keep TX Red Election Central."
+    : "Keep TX Red helps people move to Texas, live well in Texas, use practical calculators, follow statewide news, and discover products made for proud Texans.";
+  const seo = buildSeo({
+    title,
+    description,
+    path: "/",
+    image: heroFlag,
+    imageAlt: electionTakeover
+      ? "Texas Election Central 2026 from Keep TX Red"
+      : "Keep TX Red Texas living, relocation tools, and news",
+    type: "website",
+  });
+  const organization = organizationJsonLd();
+  const website = websiteJsonLd();
+  const homepage = webPageJsonLd({
+    name: title,
+    description,
+    path: "/",
+    image: {
+      url: heroFlag,
+      caption: SITE_NAME,
+      alt: electionTakeover
+        ? "Texas Election Central 2026 from Keep TX Red"
+        : "Keep TX Red Texas living, relocation tools, and news",
+    },
+  });
+
   return {
-    meta: electionTakeover
-      ? [
-          { title: "Texas Election Central 2026 | Races, Candidates, Polls & Voting" },
-          {
-            name: "description",
-            content:
-              "Follow verified Texas 2026 election races, candidates, polling, forecasts, results, and voting information from Keep TX Red Election Central.",
-          },
-          { property: "og:title", content: "Texas Election Central 2026 | Keep TX Red" },
-          {
-            property: "og:description",
-            content:
-              "Texas race directories, sourced candidate profiles, weighted polling, forecasts, results, and voter guidance in one election hub.",
-          },
-          { property: "og:url", content: "/" },
-          { property: "og:image", content: heroFlag },
-          { name: "twitter:image", content: heroFlag },
-        ]
-      : [
-          { title: "Keep Texas Red | Texas Living, Relocation Tools & News" },
-          {
-            name: "description",
-            content:
-              "Keep TX Red helps people move to Texas, live well in Texas, use practical calculators, follow statewide news, and discover products made for proud Texans.",
-          },
-          { property: "og:title", content: "Keep Texas Red | Your Texas Living Platform" },
-          {
-            property: "og:description",
-            content:
-              "Texas relocation guides, resident resources, calculators, daily news, and the Keep TX Red shop in one place.",
-          },
-          { property: "og:url", content: "/" },
-          { property: "og:image", content: heroFlag },
-          { name: "twitter:image", content: heroFlag },
-        ],
+    meta: seo.meta,
     links: [
-      { rel: "canonical", href: "https://keeptxred.com/" },
+      ...seo.links,
       ...(!electionTakeover && getLeadImage()
         ? [{ rel: "preload", as: "image", href: getLeadImage() as string, fetchpriority: "high" }]
         : []),
@@ -64,27 +69,17 @@ function homepageHead() {
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "Keep Texas Red",
-          alternateName: ["Keep TX Red", "KeepTXRed"],
-          url: "https://keeptxred.com/",
-          potentialAction: {
-            "@type": "SearchAction",
-            target: "https://keeptxred.com/news?q={search_term_string}",
-            "query-input": "required name=search_term_string",
-          },
-        }),
-      },
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "Keep Texas Red",
-          alternateName: ["Keep TX Red", "KeepTXRed"],
-          url: "https://keeptxred.com/",
-          logo: "https://keeptxred.com/favicon.ico",
-          areaServed: { "@type": "State", name: "Texas" },
+          "@graph": [
+            { ...organization, "@context": undefined },
+            { ...website, "@context": undefined },
+            {
+              ...homepage,
+              "@context": undefined,
+              about: { "@id": organization["@id"] },
+              mainEntity: { "@id": organization["@id"] },
+              url: `${SITE_URL}/`,
+            },
+          ],
         }),
       },
     ],
