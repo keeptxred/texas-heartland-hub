@@ -18,15 +18,14 @@ const errorMiddleware = createMiddleware().server(async ({ next }) => {
   }
 });
 
-// SEO URL cleanup: consolidate legacy URLs, remove tracking parameters, and
-// noindex only recognized search/filter/sort states instead of every query URL.
-const REDIRECT_PATHS = new Set(["/texas-news", "/texas-business"]);
+// SEO URL cleanup: resolve hostname, legacy paths, trailing slashes, topic
+// routes, and tracking parameters into one final canonical redirect.
+const TOPIC_REDIRECT_PATHS = new Set(["/texas-news", "/texas-business"]);
 const LEGACY_ELECTION_PATHS = new Map([
   ["/election", "/elections/2026"],
   ["/election-central", "/elections/2026"],
   ["/texas-elections", "/elections/2026"],
   ["/elections-2026", "/elections/2026"],
-  ["/elections/2026/", "/elections/2026"],
   ["/elections/forecasts", "/elections/forecast"],
   ["/elections/statewide-races", "/elections/statewide"],
   ["/elections/legislative-races", "/elections/legislative"],
@@ -79,23 +78,46 @@ const NOINDEX_STATE_PARAMS = new Set([
   "year",
 ]);
 
-const slugify = (s: string) =>
-  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+const slugify = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 function isTrackingParam(name: string): boolean {
   const normalized = name.toLowerCase();
   return normalized.startsWith("utm_") || TRACKING_PARAMS.has(normalized);
 }
 
-function stripTrackingParams(url: URL): URL | null {
-  const cleaned = new URL(url.toString());
-  let changed = false;
-  for (const key of Array.from(cleaned.searchParams.keys())) {
-    if (!isTrackingParam(key)) continue;
-    cleaned.searchParams.delete(key);
-    changed = true;
+function isFileLikePath(pathname: string): boolean {
+  const finalSegment = pathname.split("/").pop() ?? "";
+  return finalSegment.includes(".");
+}
+
+function normalizePagePath(pathname: string): string {
+  if (pathname === "/" || isFileLikePath(pathname)) return pathname;
+  return pathname.endsWith("/") ? pathname.replace(/\/+$/, "") || "/" : pathname;
+}
+
+function resolveLegacyPath(pathname: string): string {
+  const normalized = normalizePagePath(pathname);
+  const lower = normalized.toLowerCase();
+  return LEGACY_CONTENT_PATHS.get(lower) ?? LEGACY_ELECTION_PATHS.get(lower) ?? normalized;
+}
+
+function buildCanonicalTarget(url: URL): URL {
+  const target = new URL(url.toString());
+  target.pathname = resolveLegacyPath(target.pathname);
+
+  const topic = target.searchParams.get("topic");
+  if (topic && TOPIC_REDIRECT_PATHS.has(target.pathname)) {
+    const slug = slugify(topic);
+    if (slug) target.pathname = `${target.pathname}/${slug}`;
+    target.searchParams.delete("topic");
   }
-  return changed ? cleaned : null;
+
+  for (const key of Array.from(target.searchParams.keys())) {
+    if (isTrackingParam(key)) target.searchParams.delete(key);
+  }
+
+  return target;
 }
 
 function hasNoindexState(url: URL): boolean {
@@ -110,97 +132,34 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const requestHost = (forwardedHost || url.host).toLowerCase();
   const canRedirect = request.method === "GET" || request.method === "HEAD";
+  const excludedPath = url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe";
 
-  // Consolidate every www URL into the non-www canonical host. Keep the full
-  // path and query so old links transfer their signals to the matching page.
-  if (canRedirect && requestHost === "www.keeptxred.com") {
-    return new Response(null, {
-      status: 301,
-      headers: {
-        location: `${CANONICAL_ORIGIN}${url.pathname}${url.search}`,
-        "cache-control": "public, max-age=86400",
-      },
-    });
-  }
+  if (canRedirect && !excludedPath) {
+    const target = buildCanonicalTarget(url);
+    const hostChanged = requestHost === "www.keeptxred.com";
+    const pathChanged = target.pathname !== url.pathname;
+    const queryChanged = target.search !== url.search;
 
-  const normalizedElectionPath =
-    url.pathname.startsWith("/elections/") && url.pathname.endsWith("/")
-      ? url.pathname.slice(0, -1)
-      : null;
-  if (canRedirect && normalizedElectionPath) {
-    return new Response(null, {
-      status: 301,
-      headers: {
-        location: `${normalizedElectionPath}${url.search}`,
-        "cache-control": "public, max-age=86400",
-      },
-    });
-  }
-
-  const legacyContentTarget = LEGACY_CONTENT_PATHS.get(url.pathname.toLowerCase());
-  if (canRedirect && legacyContentTarget) {
-    return new Response(null, {
-      status: 301,
-      headers: {
-        location: `${legacyContentTarget}${url.search}`,
-        "cache-control": "public, max-age=86400",
-      },
-    });
-  }
-
-  const legacyElectionTarget = LEGACY_ELECTION_PATHS.get(url.pathname.toLowerCase());
-  if (canRedirect && legacyElectionTarget) {
-    return new Response(null, {
-      status: 301,
-      headers: {
-        location: `${legacyElectionTarget}${url.search}`,
-        "cache-control": "public, max-age=86400",
-      },
-    });
-  }
-
-  if (url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe") {
-    return next();
-  }
-
-  const topic = url.searchParams.get("topic");
-  if (canRedirect && topic && REDIRECT_PATHS.has(url.pathname)) {
-    const slug = slugify(topic);
-    if (slug) {
-      const target = new URL(`${url.pathname}/${slug}`, CANONICAL_ORIGIN);
-      for (const [key, value] of url.searchParams.entries()) {
-        if (key.toLowerCase() !== "topic" && !isTrackingParam(key)) {
-          target.searchParams.append(key, value);
-        }
-      }
+    if (hostChanged || pathChanged || queryChanged) {
+      const location = hostChanged
+        ? `${CANONICAL_ORIGIN}${target.pathname}${target.search}`
+        : `${target.pathname}${target.search}`;
       return new Response(null, {
         status: 301,
         headers: {
-          location: `${target.pathname}${target.search}`,
+          location,
           "cache-control": "public, max-age=86400",
         },
       });
     }
   }
 
-  // Tracking parameters never change page content. Remove them in one hop
-  // while preserving legitimate functional parameters such as shop category.
-  const cleanedTrackingUrl = canRedirect ? stripTrackingParams(url) : null;
-  if (cleanedTrackingUrl) {
-    return new Response(null, {
-      status: 301,
-      headers: {
-        location: `${cleanedTrackingUrl.pathname}${cleanedTrackingUrl.search}`,
-        "cache-control": "public, max-age=86400",
-      },
-    });
-  }
+  if (excludedPath) return next();
 
   const result = await next();
 
-  // Shareable filters and UI states remain usable, but they should not compete
-  // with their clean canonical route in search results. Unknown parameters are
-  // no longer blanket-noindexed; route-level metadata can decide their policy.
+  // Shareable filters and UI states remain usable, but do not compete with
+  // their clean canonical route in search results.
   if (hasNoindexState(url)) {
     try {
       result.response.headers.set("X-Robots-Tag", "noindex, follow");
