@@ -12,29 +12,30 @@ export const WEBSITE_ID = `${SITE_URL}/#website`;
 export const TWITTER_HANDLE = "@KeepTXRed";
 export const DEFAULT_OG_IMAGE = `${SITE_URL}/og/default.jpg`;
 export const DEFAULT_OG_ALT = "Keep TX Red — Texas News, Politics & Conservative Commentary";
-// A dedicated publisher logo asset does not yet exist in the repository.
-// Use the existing branded 1200x630 image rather than favicon.ico until the
-// dedicated logo is added during the image/schema upgrade task.
-export const PUBLISHER_LOGO = DEFAULT_OG_IMAGE;
+export const PUBLISHER_LOGO = `${SITE_URL}/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png`;
+export const PUBLISHER_LOGO_ALT = "Keep TX Red red Texas logo";
 export const OFFICIAL_PROFILE_URLS = [
   "https://www.instagram.com/keeptxreddotcom/",
   "https://github.com/keeptxred",
 ] as const;
 
+const INVALID_IMAGE_PATTERN =
+  /(?:placeholder|spacer|blank(?:[-_.]?image)?|transparent(?:[-_.]?pixel)?|pixel\.gif|1x1)/i;
+
 type SeoInput = {
   title: string;
   description: string;
-  path: string;                     // e.g. "/news/foo"
-  image?: string;                   // absolute or path-relative
+  path: string;
+  image?: string;
   imageAlt?: string;
-  imageWidth?: number;              // include only when known
+  imageWidth?: number;
   imageHeight?: number;
   type?: "website" | "article";
   publishedTime?: string;
   modifiedTime?: string;
-  section?: string;                 // article category
+  section?: string;
   author?: string;
-  keywords?: string;                // retained for callers; not emitted as meta keywords
+  keywords?: string;
   noindex?: boolean;
 };
 
@@ -68,10 +69,27 @@ type WebPageJsonLdInput = {
 };
 
 function absolute(url: string | undefined, base = SITE_URL): string {
-  if (!url) return DEFAULT_OG_IMAGE;
+  if (!url) return base;
   if (/^https?:\/\//i.test(url)) return url;
   if (url.startsWith("/")) return `${base}${url}`;
   return `${base}/${url}`;
+}
+
+export function isUsableSeoImage(url: string | null | undefined): url is string {
+  if (!url) return false;
+  const value = url.trim();
+  if (!value || value.startsWith("data:") || value.startsWith("blob:")) return false;
+  if (INVALID_IMAGE_PATTERN.test(value)) return false;
+  try {
+    const parsed = new URL(value, SITE_URL);
+    return parsed.protocol === "https:" || parsed.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
+export function absoluteSeoImage(url: string | null | undefined): string {
+  return isUsableSeoImage(url) ? absolute(url) : DEFAULT_OG_IMAGE;
 }
 
 function normalizePath(path: string): string {
@@ -123,9 +141,9 @@ export function buildSeo(input: SeoInput) {
   const url = `${SITE_URL}${path === "/" ? "/" : path}`;
   const title = clampTitle(effectiveInput.title);
   const description = clampDescription(effectiveInput.description);
-  const image = absolute(effectiveInput.image);
+  const image = absoluteSeoImage(effectiveInput.image);
   const isArticle = effectiveInput.type === "article";
-  const imageAlt = effectiveInput.imageAlt ?? effectiveInput.title;
+  const imageAlt = effectiveInput.imageAlt?.trim() || effectiveInput.title;
 
   const meta: Array<Record<string, string>> = [
     { title },
@@ -136,7 +154,6 @@ export function buildSeo(input: SeoInput) {
         ? "noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
         : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
     },
-    // Open Graph
     { property: "og:type", content: isArticle ? "article" : "website" },
     { property: "og:site_name", content: SITE_NAME },
     { property: "og:locale", content: "en_US" },
@@ -147,7 +164,6 @@ export function buildSeo(input: SeoInput) {
     { property: "og:image:secure_url", content: image },
     { property: "og:image:alt", content: imageAlt },
     { property: "og:image:type", content: image.endsWith(".png") ? "image/png" : "image/jpeg" },
-    // Twitter
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:site", content: TWITTER_HANDLE },
     { name: "twitter:creator", content: TWITTER_HANDLE },
@@ -157,7 +173,7 @@ export function buildSeo(input: SeoInput) {
     { name: "twitter:image:alt", content: imageAlt },
   ];
 
-  if (effectiveInput.imageWidth && effectiveInput.imageHeight) {
+  if (effectiveInput.imageWidth && effectiveInput.imageHeight && image !== DEFAULT_OG_IMAGE) {
     meta.push(
       { property: "og:image:width", content: String(effectiveInput.imageWidth) },
       { property: "og:image:height", content: String(effectiveInput.imageHeight) },
@@ -177,12 +193,11 @@ export function buildSeo(input: SeoInput) {
   }
 
   const links = [{ rel: "canonical", href: url }];
-
   return { meta, links, url, image, title, description };
 }
 
 export function imageObjectJsonLd(input: ImageObjectInput = {}) {
-  const url = absolute(input.url ?? PUBLISHER_LOGO);
+  const url = absoluteSeoImage(input.url ?? PUBLISHER_LOGO);
   return {
     "@type": "ImageObject",
     url,
@@ -212,10 +227,8 @@ export function organizationJsonLd() {
     ethicsPolicy: `${SITE_URL}/editorial-standards`,
     logo: imageObjectJsonLd({
       url: PUBLISHER_LOGO,
-      width: 1200,
-      height: 630,
       caption: SITE_NAME,
-      alt: DEFAULT_OG_ALT,
+      alt: PUBLISHER_LOGO_ALT,
     }),
     image: imageObjectJsonLd({
       url: DEFAULT_OG_IMAGE,
@@ -278,7 +291,7 @@ export function personJsonLd(input: PersonJsonLdInput) {
     ...(id ? { "@id": id } : {}),
     name: input.name,
     ...(url ? { url } : {}),
-    ...(input.image ? { image: absolute(input.image) } : {}),
+    ...(input.image && isUsableSeoImage(input.image) ? { image: absoluteSeoImage(input.image) } : {}),
     ...(input.jobTitle ? { jobTitle: input.jobTitle } : {}),
     ...(input.description ? { description: input.description } : {}),
     ...(input.sameAs?.length ? { sameAs: input.sameAs } : {}),
