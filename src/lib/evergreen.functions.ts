@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { meetsArticleMainWordCount, sanitizeArticleFaqs } from "@/lib/article-length";
 
 export type EvergreenSection = {
   heading: string;
@@ -45,11 +45,80 @@ export type EvergreenArticle = {
   body: EvergreenBody | null;
 };
 
+const GENERIC_VISIBLE_CONTENT = [
+  /keep tx red is tracking this story/i,
+  /check back for updates/i,
+  /affects texans and is being tracked/i,
+  /this story is developing/i,
+  /more information will be added as it becomes available/i,
+];
+
 function client() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) return null;
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+}
+
+function cleanText(value: string): string {
+  return value.trim().replace(/\s+/g, " ");
+}
+
+function isGenericVisibleText(value: string): boolean {
+  return GENERIC_VISIBLE_CONTENT.some((pattern) => pattern.test(value));
+}
+
+function validDate(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed.toISOString();
+}
+
+function sanitizeEvergreenBody(body: EvergreenBody, publishedAt: string): EvergreenBody {
+  const published = validDate(publishedAt) ?? new Date().toISOString();
+  const candidateUpdated = validDate(body.updated) ?? published;
+  const updated = new Date(candidateUpdated).getTime() < new Date(published).getTime()
+    ? published
+    : candidateUpdated;
+  const intro = (Array.isArray(body.intro) ? body.intro : [])
+    .map(cleanText)
+    .filter((text) => text.length > 0 && !isGenericVisibleText(text));
+  const sections = (Array.isArray(body.sections) ? body.sections : [])
+    .map((section) => ({
+      ...section,
+      heading: cleanText(section.heading ?? ""),
+      paragraphs: (Array.isArray(section.paragraphs) ? section.paragraphs : [])
+        .map(cleanText)
+        .filter((text) => text.length > 0 && !isGenericVisibleText(text)),
+      bullets: (Array.isArray(section.bullets) ? section.bullets : [])
+        .map(cleanText)
+        .filter((text) => text.length > 0 && !isGenericVisibleText(text)),
+    }))
+    .filter((section) =>
+      section.heading.length > 0
+      && ((section.paragraphs?.length ?? 0) > 0 || (section.bullets?.length ?? 0) > 0),
+    );
+  const sources = (Array.isArray(body.sources) ? body.sources : [])
+    .map((source) => ({ label: cleanText(source.label ?? ""), url: cleanText(source.url ?? "") }))
+    .filter((source) => {
+      if (!source.label || !source.url) return false;
+      try {
+        const parsed = new URL(source.url);
+        return parsed.protocol === "https:" || parsed.protocol === "http:";
+      } catch {
+        return false;
+      }
+    });
+
+  return {
+    ...body,
+    updated,
+    intro,
+    sections,
+    faq: sanitizeArticleFaqs(body.faq).map((faq) => ({ q: cleanText(faq.q), a: cleanText(faq.a) })),
+    sources,
+    keyTakeaways: body.keyTakeaways?.map(cleanText).filter(Boolean),
+  };
 }
 
 export const getEvergreenBySlug = createServerFn({ method: "GET" })
@@ -64,7 +133,10 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
       .maybeSingle();
     if (error || !row) return null;
-    if (!meetsArticleMainWordCount(row.kind, (row as { body_json?: EvergreenBody | null }).body_json ?? null)) return null;
+    const rawBody = (row as { body_json?: EvergreenBody | null }).body_json ?? null;
+    if (!rawBody) return null;
+    const body = sanitizeEvergreenBody(rawBody, row.published_at);
+    if (!meetsArticleMainWordCount(row.kind, body)) return null;
     return {
       slug: row.slug,
       category: row.category,
@@ -86,7 +158,7 @@ export const getEvergreenBySlug = createServerFn({ method: "GET" })
       published_at: row.published_at,
       kind: row.kind,
       keywords: (row as { keywords?: string[] | null }).keywords ?? null,
-      body: (row as { body_json?: EvergreenBody | null }).body_json ?? null,
+      body,
     };
   });
 
@@ -127,7 +199,11 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     if (error || !data) return { articles: [] };
     return {
       articles: (data as (Omit<SitemapArticle, "updated_at"> & { body_json?: EvergreenBody | null })[])
-        .filter((a) => meetsArticleMainWordCount(a.kind, a.body_json ?? null))
+        .filter((a) => {
+          if (!a.body_json) return false;
+          const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);
+          return meetsArticleMainWordCount(a.kind, sanitized);
+        })
         .map(({ body_json: _bodyJson, ...a }) => ({
           ...a,
           updated_at: null,
