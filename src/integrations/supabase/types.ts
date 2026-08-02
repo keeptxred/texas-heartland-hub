@@ -3407,6 +3407,8 @@ export type Database = {
       }
       products: {
         Row: {
+          category: string | null
+          collections: string[]
           colors: string[]
           created_at: string
           currency: string
@@ -3414,7 +3416,11 @@ export type Database = {
           id: string
           image_url: string
           is_active: boolean
+          is_featured: boolean
+          is_new: boolean
+          is_on_sale: boolean
           price: number
+          printify_product_id: string | null
           product_url: string
           source: string
           synced_at: string
@@ -3424,6 +3430,8 @@ export type Database = {
           variants: Json
         }
         Insert: {
+          category?: string | null
+          collections?: string[]
           colors?: string[]
           created_at?: string
           currency?: string
@@ -3431,7 +3439,11 @@ export type Database = {
           id: string
           image_url?: string
           is_active?: boolean
+          is_featured?: boolean
+          is_new?: boolean
+          is_on_sale?: boolean
           price?: number
+          printify_product_id?: string | null
           product_url?: string
           source?: string
           synced_at?: string
@@ -3441,6 +3453,8 @@ export type Database = {
           variants?: Json
         }
         Update: {
+          category?: string | null
+          collections?: string[]
           colors?: string[]
           created_at?: string
           currency?: string
@@ -3448,7 +3462,11 @@ export type Database = {
           id?: string
           image_url?: string
           is_active?: boolean
+          is_featured?: boolean
+          is_new?: boolean
+          is_on_sale?: boolean
           price?: number
+          printify_product_id?: string | null
           product_url?: string
           source?: string
           synced_at?: string
