@@ -12,7 +12,6 @@ export const Route = createFileRoute("/keep-texas-red")({
     meta: [
       { title: TITLE },
       { name: "description", content: DESC },
-      { name: "keywords", content: "Keep Texas Red, Keep TX Red, Texas Politics, Texas Conservative News, Texas Elections, Texas Economy, Texas Border, Texas Energy, Texas Government" },
       { property: "og:title", content: TITLE },
       { property: "og:description", content: DESC },
       { property: "og:type", content: "article" },

@@ -38,11 +38,6 @@ export const Route = createFileRoute("/tax-calculator")({
           "Use our Texas Property Tax Calculator to estimate your 2026 property taxes, homestead exemption savings, and available Texas property tax relief programs.",
       },
       {
-        name: "keywords",
-        content:
-          "Texas property tax calculator, Texas property tax relief calculator, Texas property tax savings calculator, Texas homestead exemption calculator, Texas property tax estimate 2026",
-      },
-      {
         property: "og:title",
         content: "Texas Property Tax Relief Calculator 2026 — Estimate Your Tax Bill & Savings",
       },

@@ -168,7 +168,7 @@ export const Route = createFileRoute("/news/$slug")({
             url: seo.url,
             headline: article.title,
             description: seo.description,
-            image: articleImage,
+            image: { ...articleImage, "@type": "ImageObject" },
             thumbnailUrl: seo.image,
             datePublished: published,
             dateModified: modified,

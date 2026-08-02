@@ -36,7 +36,7 @@ type ProductRow = {
 };
 
 export const Route = createFileRoute("/admin/shop-products")({
-  head: () => ({ meta: [{ title: "Shop Products — Keep TX Red Admin" }, { name: "robots", content: "noindex, nofollow" }] }),
+  head: () => ({ meta: [{ title: "Shop Products — Keep TX Red Admin" }, { name: "robots", content: "noindex, follow" }] }),
   component: ShopProductsAdmin,
 });
 

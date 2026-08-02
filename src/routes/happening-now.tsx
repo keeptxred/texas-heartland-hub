@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
 import { isLowValueTitle } from "@/lib/low-value-titles";
+import { PUBLISHER_LOGO } from "@/lib/seo";
 
 const FAQS = [
   {
@@ -106,7 +107,12 @@ export const Route = createFileRoute("/happening-now")({
               "@id": "https://keeptxred.com/#org",
               name: "Keep TX Red",
               url: "https://keeptxred.com",
-              logo: "https://keeptxred.com/favicon.ico",
+              logo: {
+                "@type": "ImageObject",
+                url: PUBLISHER_LOGO,
+                contentUrl: PUBLISHER_LOGO,
+                caption: "Keep TX Red",
+              },
               sameAs: [],
               knowsAbout: [
                 "Texas Legislative Tracking",

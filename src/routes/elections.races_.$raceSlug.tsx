@@ -62,7 +62,7 @@ export const Route = createFileRoute("/elections/races_/$raceSlug")({
         { name: "description", content: recordDescription },
         {
           name: "robots",
-          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow",
         },
         ...(indexable
           ? [

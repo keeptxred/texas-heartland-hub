@@ -41,7 +41,7 @@ export const Route = createFileRoute("/elections/polls/$pollSlug")({
         { name: "description", content: description },
         {
           name: "robots",
-          content: indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow",
+          content: indexable ? "index, follow, max-image-preview:large" : "noindex, follow",
         },
         ...(indexable
           ? [
