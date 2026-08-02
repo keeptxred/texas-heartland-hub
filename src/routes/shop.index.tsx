@@ -98,7 +98,6 @@ export const Route = createFileRoute("/shop/")({
     meta: [
       { title: SHOP_TITLE },
       { name: "description", content: SHOP_DESC },
-      { name: "keywords", content: SHOP_KEYWORDS },
       { property: "og:title", content: SHOP_OG_TITLE },
       { property: "og:description", content: SHOP_OG_DESC },
       { property: "og:image", content: SHOP_OG_IMAGE },
