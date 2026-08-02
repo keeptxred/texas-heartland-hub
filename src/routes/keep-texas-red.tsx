@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroFlag from "@/assets/hero-flag.jpg";
+import { PUBLISHER_LOGO } from "@/lib/seo";
 
 const URL = "https://keeptxred.com/keep-texas-red";
 const TITLE = "Keep Texas Red | What It Means and Why Texans Support It";
@@ -37,7 +38,7 @@ export const Route = createFileRoute("/keep-texas-red")({
             "@type": "NewsMediaOrganization",
             name: "Keep TX Red",
             url: "https://keeptxred.com/",
-            logo: { "@type": "ImageObject", url: "https://keeptxred.com/favicon.ico" },
+            logo: { "@type": "ImageObject", url: PUBLISHER_LOGO },
           },
           mainEntityOfPage: { "@type": "WebPage", "@id": URL },
         }),
