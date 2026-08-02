@@ -37,7 +37,7 @@ describe("Election Central SEO audit", () => {
         "utf8",
       );
       expect(source).toContain('rel: "canonical"');
-      expect(source).toContain("noindex, nofollow");
+      expect(source).toContain("noindex, follow");
     },
   );
 });
