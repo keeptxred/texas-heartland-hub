@@ -205,6 +205,7 @@ import { Route as DmvCdlEndorsementsRouteImport } from './routes/dmv.cdl-endorse
 import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
 import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as AdminShopProductsRouteImport } from './routes/admin/shop-products'
 import { Route as TexasLegislatureSessionsIndexRouteImport } from './routes/texas-legislature.sessions.index'
 import { Route as TexasLegislatureCommitteesIndexRouteImport } from './routes/texas-legislature.committees.index'
 import { Route as ElectionsDistrictsIndexRouteImport } from './routes/elections.districts.index'
@@ -227,6 +228,7 @@ import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elec
 import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
 import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
+import { Route as ApiAdminShopProductsRouteImport } from './routes/api/admin/shop-products'
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
 import { Route as AdminElectionsPollsRouteImport } from './routes/admin/elections/polls'
@@ -1286,6 +1288,11 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminShopProductsRoute = AdminShopProductsRouteImport.update({
+  id: '/shop-products',
+  path: '/shop-products',
+  getParentRoute: () => AdminRoute,
+} as any)
 const TexasLegislatureSessionsIndexRoute =
   TexasLegislatureSessionsIndexRouteImport.update({
     id: '/',
@@ -1405,6 +1412,11 @@ const ApiPublicPropertyAddressLookupRoute =
     path: '/api/public/property-address-lookup',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiAdminShopProductsRoute = ApiAdminShopProductsRouteImport.update({
+  id: '/api/admin/shop-products',
+  path: '/api/admin/shop-products',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminElectionsResultsRoute = AdminElectionsResultsRouteImport.update({
   id: '/elections/results',
   path: '/elections/results',
@@ -1677,6 +1689,7 @@ export interface FileRoutesByFullPath {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/shop-products': typeof AdminShopProductsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
@@ -1781,6 +1794,7 @@ export interface FileRoutesByFullPath {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -1918,6 +1932,7 @@ export interface FileRoutesByTo {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/shop-products': typeof AdminShopProductsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
@@ -2019,6 +2034,7 @@ export interface FileRoutesByTo {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2166,6 +2182,7 @@ export interface FileRoutesById {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/shop-products': typeof AdminShopProductsRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
@@ -2270,6 +2287,7 @@ export interface FileRoutesById {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
   '/api/public/property-address-lookup': typeof ApiPublicPropertyAddressLookupRoute
   '/elections/candidates_/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2418,6 +2436,7 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/shop-products'
     | '/authors/$slug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
@@ -2522,6 +2541,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/shop-products'
     | '/api/public/property-address-lookup'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -2659,6 +2679,7 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/shop-products'
     | '/authors/$slug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
@@ -2760,6 +2781,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/shop-products'
     | '/api/public/property-address-lookup'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -2906,6 +2928,7 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/shop-products'
     | '/authors/$slug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
@@ -3010,6 +3033,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/shop-products'
     | '/api/public/property-address-lookup'
     | '/elections/candidates_/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3183,6 +3207,7 @@ export interface RootRouteChildren {
   VehiclesTemporaryTagsRoute: typeof VehiclesTemporaryTagsRoute
   VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
+  ApiAdminShopProductsRoute: typeof ApiAdminShopProductsRoute
   ApiPublicPropertyAddressLookupRoute: typeof ApiPublicPropertyAddressLookupRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
@@ -4584,6 +4609,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/shop-products': {
+      id: '/admin/shop-products'
+      path: '/shop-products'
+      fullPath: '/admin/shop-products'
+      preLoaderRoute: typeof AdminShopProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/texas-legislature/sessions/': {
       id: '/texas-legislature/sessions/'
       path: '/'
@@ -4736,6 +4768,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/property-address-lookup'
       fullPath: '/api/public/property-address-lookup'
       preLoaderRoute: typeof ApiPublicPropertyAddressLookupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/shop-products': {
+      id: '/api/admin/shop-products'
+      path: '/api/admin/shop-products'
+      fullPath: '/api/admin/shop-products'
+      preLoaderRoute: typeof ApiAdminShopProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/elections/results': {
@@ -4952,6 +4991,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminShopProductsRoute: typeof AdminShopProductsRoute
   AdminElectionsCandidatesRoute: typeof AdminElectionsCandidatesRoute
   AdminElectionsForecastRoute: typeof AdminElectionsForecastRoute
   AdminElectionsPollsRoute: typeof AdminElectionsPollsRoute
@@ -4962,6 +5002,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminShopProductsRoute: AdminShopProductsRoute,
   AdminElectionsCandidatesRoute: AdminElectionsCandidatesRoute,
   AdminElectionsForecastRoute: AdminElectionsForecastRoute,
   AdminElectionsPollsRoute: AdminElectionsPollsRoute,
@@ -5481,6 +5522,7 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesTemporaryTagsRoute: VehiclesTemporaryTagsRoute,
   VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
+  ApiAdminShopProductsRoute: ApiAdminShopProductsRoute,
   ApiPublicPropertyAddressLookupRoute: ApiPublicPropertyAddressLookupRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
