@@ -19,6 +19,10 @@ import {
   representativeSlug,
 } from "@/data/representatives";
 
+// Static routes do not have per-page modification timestamps. Use the last
+// verified sitewide content revision instead of changing lastmod on every hit.
+const STATIC_PAGE_LASTMOD = toIsoDate("2026-08-01T00:00:00-05:00");
+
 /** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
   "/",
@@ -114,17 +118,19 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const lastmod = toIsoDate(new Date());
         const paths = [...STATIC_PATHS];
         for (const league of ["nfl", "mlb", "nba"] as const) {
           if (await hasEnoughContent({ kind: `sports-${league}` }, MIN_ARTICLES_DEFAULT))
             paths.push(`/texas-sports/${league}`);
         }
-        for (const t of TEAMS) {
-          if (await hasEnoughContent({ teamSlug: t.slug, league: t.league }, MIN_ARTICLES_DEFAULT))
-            paths.push(`/texas-sports/team/${t.slug}`);
+        for (const team of TEAMS) {
+          if (await hasEnoughContent({ teamSlug: team.slug, league: team.league }, MIN_ARTICLES_DEFAULT))
+            paths.push(`/texas-sports/team/${team.slug}`);
         }
-        const entries: UrlEntry[] = paths.map((p) => ({ loc: `${BASE_URL}${p}`, lastmod }));
+        const entries: UrlEntry[] = paths.map((path) => ({
+          loc: `${BASE_URL}${path}`,
+          lastmod: STATIC_PAGE_LASTMOD,
+        }));
         return xmlResponse(renderUrlset(entries));
       },
     },
