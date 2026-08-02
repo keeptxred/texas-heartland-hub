@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { buildSeo } from "@/lib/seo";
+import { buildSeo, PUBLISHER_LOGO } from "@/lib/seo";
 
 export type PillarSection = { heading?: string; paragraphs: string[] };
 export type PillarLink = { to: string; label: string; description: string };
@@ -75,7 +75,7 @@ export function buildPillarHead(p: PillarArticleProps) {
             "@type": "NewsMediaOrganization",
             name: "Keep TX Red",
             url: "https://keeptxred.com/",
-            logo: { "@type": "ImageObject", url: "https://keeptxred.com/favicon.ico" },
+            logo: { "@type": "ImageObject", url: PUBLISHER_LOGO },
           },
           mainEntityOfPage: { "@type": "WebPage", "@id": seo.url },
           keywords: p.focusKeyword,
