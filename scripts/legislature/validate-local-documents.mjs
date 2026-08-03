@@ -13,12 +13,10 @@ await access(root);
 
 const normalize = (value) => value.split(sep).join('/');
 const categories = ['billhistory', 'billtext', 'analysis', 'fiscalnotes', 'reports', 'witlistbill'];
-const totals = Object.fromEntries(categories.map((name) => [name, {
-  files: 0, html: 0, xml: 0, pdf: 0, doc: 0, other: 0, matched_documents: 0, unmatched_text_documents: 0, bills: new Set(),
-}]));
+const totals = Object.fromEntries(categories.map((name) => [name, { files: 0, html: 0, xml: 0, pdf: 0, doc: 0, other: 0, matched_documents: 0, unmatched_text_documents: 0, bills: new Set() }]));
 const duplicates = new Map();
-const identityPattern = /(?:^|\/)(HB|SB|HJR|SJR|HCR|SCR|HR|SR|HJ|SJ)\s*0*(\d+)([A-Z])?\.[^.]+$/i;
-const typeAliases = { HJ: 'HJR', SJ: 'SJR' };
+const identityPattern = /(?:^|\/)(HB|SB|HJR|SJR|HCR|SCR|HR|SR|HJ|SJ|HC|SC)\s*0*(\d+)([A-Z])?\.[^.]+$/i;
+const typeAliases = { HJ: 'HJR', SJ: 'SJR', HC: 'HCR', SC: 'SCR' };
 
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -60,15 +58,10 @@ function inspect(fullPath) {
 await walk(root);
 const output = {};
 for (const [name, value] of Object.entries(totals)) {
-  output[name] = {
-    files: value.files, unique_bills: value.bills.size, matched_documents: value.matched_documents,
-    unmatched_text_documents: value.unmatched_text_documents, html: value.html, xml: value.xml,
-    pdf: value.pdf, doc: value.doc, other: value.other,
-  };
+  output[name] = { files: value.files, unique_bills: value.bills.size, matched_documents: value.matched_documents, unmatched_text_documents: value.unmatched_text_documents, html: value.html, xml: value.xml, pdf: value.pdf, doc: value.doc, other: value.other };
 }
 const duplicatePaths = [...duplicates.entries()].filter(([, count]) => count > 1);
 console.log(JSON.stringify({ root, categories: output, duplicate_paths: duplicatePaths.length }, null, 2));
-
 const required = ['billhistory', 'billtext', 'analysis', 'fiscalnotes'];
 const missing = required.filter((name) => !output[name].files);
 const unmatched = required.filter((name) => output[name].unmatched_text_documents > 0);
