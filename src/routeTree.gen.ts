@@ -205,6 +205,7 @@ import { Route as DmvCdlEndorsementsRouteImport } from './routes/dmv.cdl-endorse
 import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
 import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
 import { Route as AdminShopProductsRouteImport } from './routes/admin/shop-products'
 import { Route as TexasLegislatureSessionsIndexRouteImport } from './routes/texas-legislature.sessions.index'
 import { Route as TexasLegislatureCommitteesIndexRouteImport } from './routes/texas-legislature.committees.index'
@@ -234,6 +235,10 @@ import { Route as AdminElectionsRacesRouteImport } from './routes/admin/election
 import { Route as AdminElectionsPollsRouteImport } from './routes/admin/elections/polls'
 import { Route as AdminElectionsForecastRouteImport } from './routes/admin/elections/forecast'
 import { Route as AdminElectionsCandidatesRouteImport } from './routes/admin/elections/candidates'
+import { Route as AdminBillsRelationshipsRouteImport } from './routes/admin/bills/relationships'
+import { Route as AdminBillsOpportunitiesRouteImport } from './routes/admin/bills/opportunities'
+import { Route as AdminBillsEnrichmentRouteImport } from './routes/admin/bills/enrichment'
+import { Route as AdminBillsEditorialRouteImport } from './routes/admin/bills/editorial'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -1288,6 +1293,11 @@ const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
   path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ArticleSlugRoute = ArticleSlugRouteImport.update({
+  id: '/article/$slug',
+  path: '/article/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminShopProductsRoute = AdminShopProductsRouteImport.update({
   id: '/shop-products',
   path: '/shop-products',
@@ -1443,6 +1453,26 @@ const AdminElectionsCandidatesRoute =
     path: '/elections/candidates',
     getParentRoute: () => AdminRoute,
   } as any)
+const AdminBillsRelationshipsRoute = AdminBillsRelationshipsRouteImport.update({
+  id: '/bills/relationships',
+  path: '/bills/relationships',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBillsOpportunitiesRoute = AdminBillsOpportunitiesRouteImport.update({
+  id: '/bills/opportunities',
+  path: '/bills/opportunities',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBillsEnrichmentRoute = AdminBillsEnrichmentRouteImport.update({
+  id: '/bills/enrichment',
+  path: '/bills/enrichment',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBillsEditorialRoute = AdminBillsEditorialRouteImport.update({
+  id: '/bills/editorial',
+  path: '/bills/editorial',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminExploreImportsIndexRoute =
   AdminExploreImportsIndexRouteImport.update({
     id: '/explore/imports/',
@@ -1690,6 +1720,7 @@ export interface FileRoutesByFullPath {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
@@ -1789,6 +1820,10 @@ export interface FileRoutesByFullPath {
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
+  '/admin/bills/editorial': typeof AdminBillsEditorialRoute
+  '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
+  '/admin/bills/opportunities': typeof AdminBillsOpportunitiesRoute
+  '/admin/bills/relationships': typeof AdminBillsRelationshipsRoute
   '/admin/elections/candidates': typeof AdminElectionsCandidatesRoute
   '/admin/elections/forecast': typeof AdminElectionsForecastRoute
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
@@ -1933,6 +1968,7 @@ export interface FileRoutesByTo {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
@@ -2029,6 +2065,10 @@ export interface FileRoutesByTo {
   '/texas-news': typeof TexasNewsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
   '/texas': typeof TexasIndexRoute
+  '/admin/bills/editorial': typeof AdminBillsEditorialRoute
+  '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
+  '/admin/bills/opportunities': typeof AdminBillsOpportunitiesRoute
+  '/admin/bills/relationships': typeof AdminBillsRelationshipsRoute
   '/admin/elections/candidates': typeof AdminElectionsCandidatesRoute
   '/admin/elections/forecast': typeof AdminElectionsForecastRoute
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
@@ -2183,6 +2223,7 @@ export interface FileRoutesById {
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
   '/dmv/cdl-classes': typeof DmvCdlClassesRoute
@@ -2282,6 +2323,10 @@ export interface FileRoutesById {
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
   '/texas/': typeof TexasIndexRoute
+  '/admin/bills/editorial': typeof AdminBillsEditorialRoute
+  '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
+  '/admin/bills/opportunities': typeof AdminBillsOpportunitiesRoute
+  '/admin/bills/relationships': typeof AdminBillsRelationshipsRoute
   '/admin/elections/candidates': typeof AdminElectionsCandidatesRoute
   '/admin/elections/forecast': typeof AdminElectionsForecastRoute
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
@@ -2437,6 +2482,7 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/admin/shop-products'
+    | '/article/$slug'
     | '/authors/$slug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
@@ -2536,6 +2582,10 @@ export interface FileRouteTypes {
     | '/texas-news/'
     | '/texas-sports/'
     | '/texas/'
+    | '/admin/bills/editorial'
+    | '/admin/bills/enrichment'
+    | '/admin/bills/opportunities'
+    | '/admin/bills/relationships'
     | '/admin/elections/candidates'
     | '/admin/elections/forecast'
     | '/admin/elections/polls'
@@ -2680,6 +2730,7 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/admin/shop-products'
+    | '/article/$slug'
     | '/authors/$slug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
@@ -2776,6 +2827,10 @@ export interface FileRouteTypes {
     | '/texas-news'
     | '/texas-sports'
     | '/texas'
+    | '/admin/bills/editorial'
+    | '/admin/bills/enrichment'
+    | '/admin/bills/opportunities'
+    | '/admin/bills/relationships'
     | '/admin/elections/candidates'
     | '/admin/elections/forecast'
     | '/admin/elections/polls'
@@ -2929,6 +2984,7 @@ export interface FileRouteTypes {
     | '/unsubscribe'
     | '/voting-locations'
     | '/admin/shop-products'
+    | '/article/$slug'
     | '/authors/$slug'
     | '/dmv/cdl'
     | '/dmv/cdl-classes'
@@ -3028,6 +3084,10 @@ export interface FileRouteTypes {
     | '/texas-news/'
     | '/texas-sports/'
     | '/texas/'
+    | '/admin/bills/editorial'
+    | '/admin/bills/enrichment'
+    | '/admin/bills/opportunities'
+    | '/admin/bills/relationships'
     | '/admin/elections/candidates'
     | '/admin/elections/forecast'
     | '/admin/elections/polls'
@@ -3181,6 +3241,7 @@ export interface RootRouteChildren {
   TexasUtilityCostCalculatorRoute: typeof TexasUtilityCostCalculatorRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
+  ArticleSlugRoute: typeof ArticleSlugRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   VehiclesAutoInsuranceRequirementsRoute: typeof VehiclesAutoInsuranceRequirementsRoute
@@ -4609,6 +4670,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/article/$slug': {
+      id: '/article/$slug'
+      path: '/article/$slug'
+      fullPath: '/article/$slug'
+      preLoaderRoute: typeof ArticleSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/shop-products': {
       id: '/admin/shop-products'
       path: '/shop-products'
@@ -4812,6 +4880,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminElectionsCandidatesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/bills/relationships': {
+      id: '/admin/bills/relationships'
+      path: '/bills/relationships'
+      fullPath: '/admin/bills/relationships'
+      preLoaderRoute: typeof AdminBillsRelationshipsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bills/opportunities': {
+      id: '/admin/bills/opportunities'
+      path: '/bills/opportunities'
+      fullPath: '/admin/bills/opportunities'
+      preLoaderRoute: typeof AdminBillsOpportunitiesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bills/enrichment': {
+      id: '/admin/bills/enrichment'
+      path: '/bills/enrichment'
+      fullPath: '/admin/bills/enrichment'
+      preLoaderRoute: typeof AdminBillsEnrichmentRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bills/editorial': {
+      id: '/admin/bills/editorial'
+      path: '/bills/editorial'
+      fullPath: '/admin/bills/editorial'
+      preLoaderRoute: typeof AdminBillsEditorialRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/explore/imports/': {
       id: '/admin/explore/imports/'
       path: '/explore/imports'
@@ -4992,6 +5088,10 @@ declare module '@tanstack/react-router' {
 
 interface AdminRouteChildren {
   AdminShopProductsRoute: typeof AdminShopProductsRoute
+  AdminBillsEditorialRoute: typeof AdminBillsEditorialRoute
+  AdminBillsEnrichmentRoute: typeof AdminBillsEnrichmentRoute
+  AdminBillsOpportunitiesRoute: typeof AdminBillsOpportunitiesRoute
+  AdminBillsRelationshipsRoute: typeof AdminBillsRelationshipsRoute
   AdminElectionsCandidatesRoute: typeof AdminElectionsCandidatesRoute
   AdminElectionsForecastRoute: typeof AdminElectionsForecastRoute
   AdminElectionsPollsRoute: typeof AdminElectionsPollsRoute
@@ -5003,6 +5103,10 @@ interface AdminRouteChildren {
 
 const AdminRouteChildren: AdminRouteChildren = {
   AdminShopProductsRoute: AdminShopProductsRoute,
+  AdminBillsEditorialRoute: AdminBillsEditorialRoute,
+  AdminBillsEnrichmentRoute: AdminBillsEnrichmentRoute,
+  AdminBillsOpportunitiesRoute: AdminBillsOpportunitiesRoute,
+  AdminBillsRelationshipsRoute: AdminBillsRelationshipsRoute,
   AdminElectionsCandidatesRoute: AdminElectionsCandidatesRoute,
   AdminElectionsForecastRoute: AdminElectionsForecastRoute,
   AdminElectionsPollsRoute: AdminElectionsPollsRoute,
@@ -5494,6 +5598,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasUtilityCostCalculatorRoute: TexasUtilityCostCalculatorRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VotingLocationsRoute: VotingLocationsRoute,
+  ArticleSlugRoute: ArticleSlugRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   VehiclesAutoInsuranceRequirementsRoute:
