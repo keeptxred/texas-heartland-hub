@@ -1,5 +1,6 @@
 import type { SharedEntityType } from './entities';
 import { normalizeResourceSearchQuery } from './search-params';
+import { sanitizeSearchTelemetryQuery } from './search-telemetry-privacy';
 
 export type SharedSearchTelemetryEvent = {
   query: string;
@@ -7,6 +8,7 @@ export type SharedSearchTelemetryEvent = {
   selectedType: SharedEntityType | 'all';
   clickedEntityId?: string;
   occurredAt: string;
+  redacted?: boolean;
 };
 
 export type SharedSearchTelemetrySummary = {
@@ -14,17 +16,20 @@ export type SharedSearchTelemetrySummary = {
   zeroResultSearches: number;
   clickThroughSearches: number;
   clickThroughRate: number;
+  redactedSearches: number;
   topQueries: Array<{ query: string; count: number }>;
   topZeroResultQueries: Array<{ query: string; count: number }>;
 };
 
 export function createSharedSearchTelemetryEvent(
-  input: Omit<SharedSearchTelemetryEvent, 'query' | 'occurredAt'> & { query: string; occurredAt?: string },
+  input: Omit<SharedSearchTelemetryEvent, 'query' | 'occurredAt' | 'redacted'> & { query: string; occurredAt?: string },
 ): SharedSearchTelemetryEvent {
+  const privacy = sanitizeSearchTelemetryQuery(input.query);
   return {
     ...input,
-    query: normalizeResourceSearchQuery(input.query).toLowerCase(),
+    query: normalizeResourceSearchQuery(privacy.query).toLowerCase(),
     occurredAt: input.occurredAt ?? new Date().toISOString(),
+    ...(privacy.redacted ? { redacted: true } : {}),
   };
 }
 
@@ -36,6 +41,7 @@ export function summarizeSharedSearchTelemetry(
   const zeroResultCounts = new Map<string, number>();
   let zeroResultSearches = 0;
   let clickThroughSearches = 0;
+  let redactedSearches = 0;
 
   for (const event of events) {
     if (!event.query) continue;
@@ -45,6 +51,7 @@ export function summarizeSharedSearchTelemetry(
       zeroResultCounts.set(event.query, (zeroResultCounts.get(event.query) ?? 0) + 1);
     }
     if (event.clickedEntityId) clickThroughSearches += 1;
+    if (event.redacted) redactedSearches += 1;
   }
 
   const searches = [...queryCounts.values()].reduce((sum, count) => sum + count, 0);
@@ -53,6 +60,7 @@ export function summarizeSharedSearchTelemetry(
     zeroResultSearches,
     clickThroughSearches,
     clickThroughRate: searches ? Math.round((clickThroughSearches / searches) * 100) : 0,
+    redactedSearches,
     topQueries: rankedCounts(queryCounts, topLimit),
     topZeroResultQueries: rankedCounts(zeroResultCounts, topLimit),
   };
