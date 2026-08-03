@@ -1,7 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { searchEntities, type SharedEntityType } from "./entities";
+import {
+  SHARED_ENTITIES,
+  searchEntityCollection,
+  type SharedEntity,
+  type SharedEntityType,
+} from "./entities";
 import type { SharedSite } from "./registry";
 
 const TYPE_LABELS: Record<SharedEntityType, string> = {
@@ -22,13 +27,23 @@ export function SharedResourceSearch({
   site,
   title = "Search Texas resources",
   description = "Search guides, calculators, representatives, laws, government information and community resources.",
+  additionalEntities = [],
 }: {
   site: SharedSite;
   title?: string;
   description?: string;
+  additionalEntities?: ReadonlyArray<SharedEntity>;
 }) {
   const [query, setQuery] = useState("");
-  const results = useMemo(() => searchEntities(query, site, 12), [query, site]);
+  const searchableEntities = useMemo(() => {
+    const byId = new Map<string, SharedEntity>();
+    for (const entity of [...SHARED_ENTITIES, ...additionalEntities]) byId.set(entity.id, entity);
+    return [...byId.values()];
+  }, [additionalEntities]);
+  const results = useMemo(
+    () => searchEntityCollection(query, site, searchableEntities, 12),
+    [query, site, searchableEntities],
+  );
   const hasQuery = query.trim().length > 0;
 
   return (
