@@ -1,5 +1,5 @@
 import { mergeEntityCollections } from './adapters';
-import { SHARED_ENTITIES, type SharedEntity } from './entities';
+import { SHARED_ENTITIES, searchEntityCollection, type EntitySearchResult, type SharedEntity } from './entities';
 import type { SharedSite } from './registry';
 
 export type EntityProviderContext = {
@@ -38,9 +38,18 @@ export async function loadEntityProviders(context: EntityProviderContext) {
     }),
   );
 
-  return mergeEntityCollections(SHARED_ENTITIES, ...collections)
-    .filter((entity) => entity.sites.includes(context.site))
-    .slice(0, context.limit && context.limit > 0 ? context.limit : undefined);
+  const merged = mergeEntityCollections(SHARED_ENTITIES, ...collections).filter((entity) => entity.sites.includes(context.site));
+  if (context.query?.trim()) return searchEntityCollection(context.query, merged, context.site, context.limit ?? 12);
+  return merged.slice(0, context.limit && context.limit > 0 ? context.limit : undefined);
+}
+
+export async function searchEntityProviders(
+  query: string,
+  site: SharedSite,
+  limit = 12,
+): Promise<EntitySearchResult[]> {
+  const result = await loadEntityProviders({ site, query, limit });
+  return result as EntitySearchResult[];
 }
 
 export function clearEntityProvidersForTests() {
