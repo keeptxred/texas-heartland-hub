@@ -104,6 +104,7 @@ Deno.serve(async (request) => {
       const billId = billMap.get(`${text(record.bill_type)}:${integer(record.bill_number)}`);
       if (!sourceRecordKey || !allowedDocumentTypes.has(documentType)) { counts.errors = Number(counts.errors) + 1; errors.push({ source_record_key: sourceRecordKey, error: "Invalid document identity or type" }); continue; }
       if (!billId) { counts.missing_bill = Number(counts.missing_bill) + 1; continue; }
+      touchedBills.add(billId);
       const previousHash = existingDocuments.get(sourceRecordKey);
       if (previousHash === record.content_hash) { counts.skipped = Number(counts.skipped) + 1; continue; }
       if (previousHash) counts.updated = Number(counts.updated) + 1; else counts.imported = Number(counts.imported) + 1;
@@ -111,7 +112,6 @@ Deno.serve(async (request) => {
       byType[documentType] = Number(byType[documentType] || 0) + 1;
       const { kind: _kind, ...row } = record;
       documentUpserts.push({ ...row, bill_id: billId, last_seen_at: now, last_imported_at: now });
-      touchedBills.add(billId);
     }
     for (const record of reportRecords) {
       const sourceRecordKey = text(record.source_record_key);
@@ -144,6 +144,7 @@ Deno.serve(async (request) => {
     }
     return json({ mode, batch_index: integer(body.batch_index), counts, errors });
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : String(error), counts, errors }, 500);
+    const message = error instanceof Error ? error.message : isRecord(error) && typeof error.message === "string" ? error.message : JSON.stringify(error);
+    return json({ error: message, counts, errors }, 500);
   }
 });
