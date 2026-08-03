@@ -47,6 +47,7 @@ export function SharedResourceSearch({
   title = "Search Texas resources",
   description = "Search guides, calculators, representatives, laws, government information and community resources.",
   initialQuery = "",
+  initialType = "all",
 }: {
   site: SharedSite;
   entities?: ReadonlyArray<SharedEntity>;
@@ -54,9 +55,10 @@ export function SharedResourceSearch({
   title?: string;
   description?: string;
   initialQuery?: string;
+  initialType?: SharedEntityType | "all";
 }) {
   const [query, setQuery] = useState(initialQuery);
-  const [activeType, setActiveType] = useState<SharedEntityType | "all">("all");
+  const [activeType, setActiveType] = useState<SharedEntityType | "all">(initialType);
   const [visibleCount, setVisibleCount] = useState(SEARCH_PAGE_SIZE);
   const searchableEntities = useMemo(() => mergeEntityCollections(SHARED_ENTITIES, entities), [entities]);
   const results = useMemo(
@@ -72,9 +74,9 @@ export function SharedResourceSearch({
 
   useEffect(() => {
     setQuery(initialQuery);
-    setActiveType("all");
+    setActiveType(initialType);
     setVisibleCount(SEARCH_PAGE_SIZE);
-  }, [initialQuery]);
+  }, [initialQuery, initialType]);
 
   useEffect(() => {
     if (activeType !== "all" && !typeCounts.some((item) => item.type === activeType)) {
