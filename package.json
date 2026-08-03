@@ -41,7 +41,8 @@
     "legislature:validate": "node scripts/legislature/validate.mjs",
     "legislature:archive:validate": "node scripts/legislature/validate-local-documents.mjs",
     "legislature:archive:relationships": "node scripts/legislature/validate-document-relationships.mjs",
-    "legislature:archive:import": "node scripts/legislature/import-local-documents.mjs"
+    "legislature:archive:import": "node scripts/legislature/import-local-documents.mjs",
+    "legislature:archive:validate-imported": "node scripts/legislature/validate-imported-documents.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
