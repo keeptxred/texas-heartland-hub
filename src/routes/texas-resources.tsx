@@ -4,6 +4,7 @@ import { SharedEntityCard } from "@/shared/texas-platform/entity-components";
 import { entitiesForSite, type SharedEntityType } from "@/shared/texas-platform/entities";
 import { journeysForSite, topicsForSite } from "@/shared/texas-platform/registry";
 import { SharedResourceSearch } from "@/shared/texas-platform/search";
+import { normalizeResourceSearchParams } from "@/shared/texas-platform/search-params";
 
 const SITE = "keeptxred" as const;
 const TYPE_ORDER: SharedEntityType[] = [
@@ -35,13 +36,13 @@ const TYPE_LABELS: Record<SharedEntityType, string> = {
 };
 
 function TexasResourcesPage() {
-  const { q } = Route.useSearch();
+  const { q, type } = Route.useSearch();
   const entities = entitiesForSite(SITE);
   const topics = topicsForSite(SITE);
   const journeys = journeysForSite(SITE);
-  const groups = TYPE_ORDER.map((type) => ({
-    type,
-    entities: entities.filter((entity) => entity.type === type),
+  const groups = TYPE_ORDER.map((entityType) => ({
+    type: entityType,
+    entities: entities.filter((entity) => entity.type === entityType),
   })).filter((group) => group.entities.length > 0);
 
   return (
@@ -61,7 +62,7 @@ function TexasResourcesPage() {
           <Link to="/">Home</Link><span className="mx-2">/</span><Link to="/texas-living">Texas Living</Link><span className="mx-2">/</span><span>All Resources</span>
         </nav>
 
-        <SharedResourceSearch site={SITE} title="Search all Texas resources" initialQuery={q} />
+        <SharedResourceSearch site={SITE} title="Search all Texas resources" initialQuery={q} initialType={type} />
 
         <section className="mt-12 grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border bg-card p-6">
@@ -122,9 +123,7 @@ function TexasResourcesPage() {
 }
 
 export const Route = createFileRoute("/texas-resources")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    q: typeof search.q === "string" ? search.q.slice(0, 120) : "",
-  }),
+  validateSearch: normalizeResourceSearchParams,
   head: () => {
     const seo = buildSeo({
       title: "Texas Resources: Guides, Tools, Bills & Representatives",
