@@ -38,7 +38,15 @@
     "elections:qa": "node scripts/elections/qa.mjs && npm run elections:routes:qa && npm run elections:sitemap:qa && npm run elections:readiness",
     "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:resolve:fec && npm run elections:import:finance && npm run elections:import:polls && npm run elections:import:geography && npm run elections:normalize && npm run elections:migrate-sources && npm run elections:sources && npm run elections:polling-averages && npm run elections:forecast && npm run elections:validate && npm run elections:qa",
     "legislature:sync": "node scripts/legislature/sync-texas-legislation.mjs",
-    "legislature:validate": "node scripts/legislature/validate.mjs"
+    "legislature:validate": "node scripts/legislature/validate.mjs",
+    "legislature:archive:validate": "node scripts/legislature/validate-local-documents.mjs",
+    "legislature:archive:relationships": "node scripts/legislature/validate-document-relationships.mjs",
+    "legislature:archive:import": "node scripts/legislature/import-local-documents.mjs",
+    "legislature:archive:export-batches": "node scripts/legislature/export-local-document-batches.mjs",
+    "legislature:archive:send-batches": "node scripts/legislature/send-document-batches.mjs",
+    "legislature:bills:export-batches": "node scripts/legislature/export-local-bill-batches.mjs",
+    "legislature:archive:validate-imported": "node scripts/legislature/validate-imported-documents.mjs",
+    "legislature:archive:test-parser": "node scripts/legislature/test-official-document-parser.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

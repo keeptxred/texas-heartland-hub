@@ -1,8 +1,9 @@
 import { createFileRoute, Link, notFound, redirect } from '@tanstack/react-router';
-import { CalendarDays, ExternalLink, FileText, Landmark, Scale, Users } from 'lucide-react';
+import { CalendarDays, ExternalLink, Landmark, Scale, Users } from 'lucide-react';
 import { billJsonLd, canonicalBillPath, getBill, getBillRelations, SITE_URL } from '@/lib/bills';
 import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
 import { RelatedAuthorityContent } from '@/components/authority/RelatedAuthorityContent';
+import { BillDocumentsPanel } from '@/components/bills/BillDocumentsPanel';
 
 export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billNumber')({
   loader: async ({ params }) => {
@@ -51,6 +52,12 @@ function BillPage() {
   }, {});
   const latestAction = actions[0];
   const summary = bill.plain_language_summary || bill.summary || bill.description || bill.caption;
+  const fallbackDocumentLinks = [
+    bill.bill_text_url ? { href: bill.bill_text_url, label: 'Current bill text' } : null,
+    bill.analysis_url ? { href: bill.analysis_url, label: 'Bill analysis' } : null,
+    bill.fiscal_note_url ? { href: bill.fiscal_note_url, label: 'Fiscal note' } : null,
+  ].filter(Boolean) as Array<{ href: string; label: string }>;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb"><Link to="/">Home</Link> / <a href="/bills">Bills</a> / {bill.legislature_number}th Legislature / {bill.bill_identifier}</nav>
@@ -77,15 +84,11 @@ function BillPage() {
         </main>
 
         <aside className="space-y-6">
-          <section className="rounded-xl border bg-card p-5"><h2 className="font-bold">Official documents</h2><div className="mt-4 space-y-2">{bill.bill_text_url && <DocumentLink href={bill.bill_text_url} label="Current bill text"/>}{bill.analysis_url && <DocumentLink href={bill.analysis_url} label="Bill analysis"/>}{bill.fiscal_note_url && <DocumentLink href={bill.fiscal_note_url} label="Fiscal note"/>}{documents.map((document: any) => <DocumentLink key={document.id} href={document.document_url} label={document.document_title}/>) }{!bill.bill_text_url && !bill.analysis_url && !bill.fiscal_note_url && documents.length === 0 && <p className="text-sm text-muted-foreground">No documents have been synchronized.</p>}</div></section>
+          <BillDocumentsPanel documents={documents} fallbackLinks={fallbackDocumentLinks} />
           <section className="rounded-xl border bg-card p-5"><h2 className="font-bold">Key dates</h2><dl className="mt-4 space-y-3 text-sm">{[['Introduced', bill.introduced_date],['Passed House', bill.passed_house_date],['Passed Senate', bill.passed_senate_date],['Sent to governor', bill.sent_to_governor_date],['Signed', bill.signed_date],['Vetoed', bill.vetoed_date],['Effective', bill.effective_date]].filter(([,date]) => date).map(([label,date]) => <div key={label} className="flex justify-between gap-4"><dt className="text-muted-foreground">{label}</dt><dd className="text-right font-medium">{formatDate(date as string)}</dd></div>)}</dl></section>
           <section className="rounded-xl border bg-muted/30 p-5"><h2 className="font-bold">Source disclosure</h2><p className="mt-2 text-sm text-muted-foreground">Status and history are based on official Texas legislative information and may change as actions are recorded.</p>{bill.last_synced_at && <p className="mt-3 text-xs text-muted-foreground">Last synchronized {new Date(bill.last_synced_at).toLocaleString()}</p>}{bill.source_url && <a href={bill.source_url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline">View official bill page <ExternalLink className="h-4 w-4"/></a>}</section>
         </aside>
       </div>
     </div>
   );
-}
-
-function DocumentLink({ href, label }: { href: string; label: string }) {
-  return <a href={href} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-md border bg-background p-3 text-sm font-medium hover:border-primary"><span className="flex items-center gap-2"><FileText className="h-4 w-4 text-primary"/>{label}</span><ExternalLink className="h-3.5 w-3.5"/></a>;
 }

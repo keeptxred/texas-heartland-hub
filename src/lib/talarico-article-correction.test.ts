@@ -26,9 +26,10 @@ describe("Talarico super PAC article correction", () => {
   });
 
   it("keeps NewsArticle publication and correction dates separate", () => {
-    expect(articleRoute).toContain("publishedTime: article.publishedAt");
-    expect(articleRoute).toContain("datePublished: article.publishedAt");
-    expect(articleRoute).toContain("dateModified: body.updated");
+    expect(articleRoute).toContain("publishedTime: published");
+    expect(articleRoute).toContain("modifiedTime: modified");
+    expect(articleRoute).toContain("datePublished: published");
+    expect(articleRoute).toContain("dateModified: modified");
     expect(articleRoute).toContain("about: body.entities?.map");
   });
 });

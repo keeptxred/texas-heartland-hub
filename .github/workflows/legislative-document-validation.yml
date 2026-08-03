@@ -1,0 +1,39 @@
+name: Legislative document validation
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/legislature/**'
+      - 'src/lib/bill-documents.ts'
+      - 'src/lib/bill-documents.test.ts'
+      - 'src/routes/bills/texas/**'
+      - 'supabase/migrations/*legislative_document*'
+      - 'package.json'
+      - '.github/workflows/legislative-document-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run archive importer smoke test
+        run: bun scripts/legislature/test-local-documents.mjs
+
+      - name: Run official document parser tests
+        run: bun run legislature:archive:test-parser
+
+      - name: Run bill document grouping tests
+        run: bun test src/lib/bill-documents.test.ts
