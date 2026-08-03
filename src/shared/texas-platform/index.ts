@@ -15,6 +15,7 @@ export * from './search-fuzzy';
 export * from './adapters';
 export * from './providers';
 export * from './provider-health';
+export * from './provider-health-components';
 export * from './quality';
 export * from './collections';
 export * from './collection-ranking';
