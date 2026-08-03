@@ -13,6 +13,7 @@ export * from './search-aliases';
 export * from './search-matching';
 export * from './search-fuzzy';
 export * from './search-audit';
+export * from './search-telemetry';
 export * from './adapters';
 export * from './providers';
 export * from './provider-health';
