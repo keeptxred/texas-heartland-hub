@@ -36,20 +36,45 @@ export type Bill = {
   last_synced_at?: string | null;
 };
 
+export type BillListFilters = {
+  search?: string;
+  status?: string;
+  legislature?: number;
+  chamber?: string;
+  billType?: string;
+  limit?: number;
+  offset?: number;
+};
+
+const STATUS_GROUPS: Record<string, string[]> = {
+  filed: ['filed', 'introduced', 'received-by-secretary-of-senate'],
+  'in-committee': ['in-committee', 'referred-to-committee', 'scheduled-for-hearing', 'reported-from-committee'],
+  passed: ['passed-house', 'passed-senate', 'passed-both-chambers', 'enrolled'],
+  'sent-to-governor': ['sent-to-governor', 'presented-to-governor'],
+  signed: ['signed', 'became-law', 'effective'],
+  vetoed: ['vetoed'],
+};
+
 export const canonicalBillPath = (bill: Pick<Bill, 'legislature_number' | 'bill_type' | 'bill_number'>) =>
   `/bills/texas/${bill.legislature_number}/${bill.bill_type.toLowerCase()}/${Number(bill.bill_number)}`;
 
 export const normalizeBillType = (value: string) => value.trim().toLowerCase();
 export const normalizeStatus = (value: string) => value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-export async function listBills({ search = '', status = '', limit = 24, offset = 0 } = {}) {
+export async function listBills({ search = '', status = '', legislature, chamber = '', billType = '', limit = 24, offset = 0 }: BillListFilters = {}) {
   let query = db
     .from('bills')
     .select('id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law', { count: 'exact' })
     .eq('is_active', true)
     .order('last_action_date', { ascending: false, nullsFirst: false })
     .range(offset, offset + limit - 1);
-  if (status) query = query.eq('current_status_code', status);
+  if (status) {
+    const codes = STATUS_GROUPS[status];
+    query = codes?.length ? query.in('current_status_code', codes) : query.eq('current_status_code', status);
+  }
+  if (legislature) query = query.eq('legislature_number', legislature);
+  if (chamber) query = query.eq('chamber', chamber);
+  if (billType) query = query.eq('bill_type', normalizeBillType(billType));
   if (search) {
     const safe = search.replace(/[,%()]/g, ' ').trim();
     query = query.or(`bill_identifier.ilike.%${safe}%,caption.ilike.%${safe}%`);
@@ -57,6 +82,20 @@ export async function listBills({ search = '', status = '', limit = 24, offset =
   const { data, error, count } = await query;
   if (error) throw error;
   return { bills: (data ?? []) as Bill[], count: count ?? 0 };
+}
+
+export async function getBillFilterOptions() {
+  const { data, error } = await db
+    .from('bills')
+    .select('legislature_number,session_code,bill_type,chamber')
+    .eq('is_active', true)
+    .order('legislature_number', { ascending: false });
+  if (error) throw error;
+  const rows = data ?? [];
+  const legislatures = [...new Map(rows.map((row: any) => [row.legislature_number, { value: row.legislature_number, label: `${row.legislature_number}th Legislature${row.session_code ? ` · ${row.session_code}` : ''}` }])).values()];
+  const billTypes = [...new Set(rows.map((row: any) => row.bill_type).filter(Boolean))].sort();
+  const chambers = [...new Set(rows.map((row: any) => row.chamber).filter(Boolean))].sort();
+  return { legislatures, billTypes, chambers };
 }
 
 export async function getBill(legislature: number, billType: string, billNumber: number) {
@@ -72,7 +111,6 @@ export async function getBill(legislature: number, billType: string, billNumber:
 }
 
 export async function getBillRelations(billId: string) {
-  // Optional joined records must never take the bill page down: log and fall back to an empty list.
   const safe = async (label: string, build: () => any) => {
     try {
       const { data, error } = await build();
