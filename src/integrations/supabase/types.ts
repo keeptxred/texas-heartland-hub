@@ -309,39 +309,93 @@ export type Database = {
       bill_documents: {
         Row: {
           bill_id: string
+          bill_number: number | null
+          bill_type: string | null
+          content_hash: string | null
           created_at: string
           document_date: string | null
           document_title: string
           document_type: string
           document_url: string
+          extracted_text: string | null
+          extracted_text_hash: string | null
           file_format: string | null
           id: string
+          is_latest: boolean
+          last_imported_at: string | null
+          last_seen_at: string
+          legislature_number: number | null
+          metadata: Json
+          session_code: string | null
+          source_html_url: string | null
+          source_key: string
+          source_pdf_url: string | null
+          source_record_key: string
+          storage_path: string | null
           updated_at: string
+          version_code: string | null
           version_label: string | null
+          version_sequence: number | null
         }
         Insert: {
           bill_id: string
+          bill_number?: number | null
+          bill_type?: string | null
+          content_hash?: string | null
           created_at?: string
           document_date?: string | null
           document_title: string
           document_type: string
           document_url: string
+          extracted_text?: string | null
+          extracted_text_hash?: string | null
           file_format?: string | null
           id?: string
+          is_latest?: boolean
+          last_imported_at?: string | null
+          last_seen_at?: string
+          legislature_number?: number | null
+          metadata?: Json
+          session_code?: string | null
+          source_html_url?: string | null
+          source_key?: string
+          source_pdf_url?: string | null
+          source_record_key: string
+          storage_path?: string | null
           updated_at?: string
+          version_code?: string | null
           version_label?: string | null
+          version_sequence?: number | null
         }
         Update: {
           bill_id?: string
+          bill_number?: number | null
+          bill_type?: string | null
+          content_hash?: string | null
           created_at?: string
           document_date?: string | null
           document_title?: string
           document_type?: string
           document_url?: string
+          extracted_text?: string | null
+          extracted_text_hash?: string | null
           file_format?: string | null
           id?: string
+          is_latest?: boolean
+          last_imported_at?: string | null
+          last_seen_at?: string
+          legislature_number?: number | null
+          metadata?: Json
+          session_code?: string | null
+          source_html_url?: string | null
+          source_key?: string
+          source_pdf_url?: string | null
+          source_record_key?: string
+          storage_path?: string | null
           updated_at?: string
+          version_code?: string | null
           version_label?: string | null
+          version_sequence?: number | null
         }
         Relationships: [
           {
@@ -3201,6 +3255,57 @@ export type Database = {
         }
         Relationships: []
       }
+      legislative_report_indexes: {
+        Row: {
+          content_hash: string
+          extracted_text: string | null
+          id: string
+          last_imported_at: string
+          last_seen_at: string
+          legislature_number: number
+          metadata: Json
+          report_key: string | null
+          report_title: string
+          report_type: string
+          session_code: string
+          source_key: string
+          source_record_key: string
+          source_url: string
+        }
+        Insert: {
+          content_hash: string
+          extracted_text?: string | null
+          id?: string
+          last_imported_at?: string
+          last_seen_at?: string
+          legislature_number: number
+          metadata?: Json
+          report_key?: string | null
+          report_title: string
+          report_type: string
+          session_code: string
+          source_key?: string
+          source_record_key: string
+          source_url: string
+        }
+        Update: {
+          content_hash?: string
+          extracted_text?: string | null
+          id?: string
+          last_imported_at?: string
+          last_seen_at?: string
+          legislature_number?: number
+          metadata?: Json
+          report_key?: string | null
+          report_title?: string
+          report_type?: string
+          session_code?: string
+          source_key?: string
+          source_record_key?: string
+          source_url?: string
+        }
+        Relationships: []
+      }
       legislative_sessions: {
         Row: {
           created_at: string
@@ -3982,6 +4087,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      refresh_bill_document_latest_flags: {
+        Args: { p_bill_id?: string }
+        Returns: undefined
       }
       refresh_legislative_authority_graph: { Args: never; Returns: undefined }
       related_authority_content: {
