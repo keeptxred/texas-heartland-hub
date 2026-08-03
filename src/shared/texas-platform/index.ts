@@ -4,6 +4,7 @@ export * from './relationships';
 export * from './components';
 export * from './entity-components';
 export * from './search';
+export * from './search-filters';
 export * from './adapters';
 export * from './providers';
 export * from './quality';
