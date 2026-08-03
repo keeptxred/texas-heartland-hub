@@ -1,63 +1,34 @@
 import { Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
-import { resourcesForSite, type SharedResource, type SharedSite } from "./registry";
+import { searchEntities, type SharedEntityType } from "./entities";
+import type { SharedSite } from "./registry";
 
-function normalize(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
-}
-
-function scoreResource(resource: SharedResource, query: string) {
-  const normalizedQuery = normalize(query);
-  if (!normalizedQuery) return 0;
-
-  const title = normalize(resource.title);
-  const description = normalize(resource.description);
-  const topics = normalize(resource.topics.join(" "));
-  const journeys = normalize(resource.journeys.join(" "));
-  const terms = normalizedQuery.split(/\s+/).filter(Boolean);
-
-  let score = 0;
-  if (title === normalizedQuery) score += 100;
-  if (title.startsWith(normalizedQuery)) score += 60;
-  if (title.includes(normalizedQuery)) score += 40;
-  if (description.includes(normalizedQuery)) score += 20;
-
-  for (const term of terms) {
-    if (title.includes(term)) score += 12;
-    if (description.includes(term)) score += 5;
-    if (topics.includes(term)) score += 4;
-    if (journeys.includes(term)) score += 3;
-  }
-
-  if (resource.featured) score += 2;
-  if (resource.official) score += 1;
-  return score;
-}
-
-export function searchSharedResources(query: string, site: SharedSite, limit = 8) {
-  const normalizedQuery = normalize(query);
-  if (!normalizedQuery) return [];
-
-  return resourcesForSite(site)
-    .map((resource) => ({ resource, score: scoreResource(resource, normalizedQuery) }))
-    .filter((result) => result.score > 0)
-    .sort((a, b) => b.score - a.score || a.resource.title.localeCompare(b.resource.title))
-    .slice(0, limit)
-    .map((result) => result.resource);
-}
+const TYPE_LABELS: Record<SharedEntityType, string> = {
+  city: "City",
+  county: "County",
+  representative: "Representative",
+  bill: "Bill",
+  committee: "Committee",
+  agency: "Agency",
+  guide: "Guide",
+  calculator: "Calculator",
+  park: "Park",
+  "school-district": "School district",
+  resource: "Resource",
+};
 
 export function SharedResourceSearch({
   site,
   title = "Search Texas resources",
-  description = "Search guides, calculators, laws, government information and community resources.",
+  description = "Search guides, calculators, representatives, laws, government information and community resources.",
 }: {
   site: SharedSite;
   title?: string;
   description?: string;
 }) {
   const [query, setQuery] = useState("");
-  const results = useMemo(() => searchSharedResources(query, site), [query, site]);
+  const results = useMemo(() => searchEntities(query, site, 12), [query, site]);
   const hasQuery = query.trim().length > 0;
 
   return (
@@ -69,13 +40,13 @@ export function SharedResourceSearch({
       </div>
 
       <label className="relative mt-6 block">
-        <span className="sr-only">Search Texas resources</span>
+        <span className="sr-only">Search Texas resources and representatives</span>
         <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
         <input
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Try property taxes, moving, representative, mortgage or Texas laws"
+          placeholder="Try property taxes, Charles Schwertner, House District 132, mortgage or Texas laws"
           className="h-14 w-full rounded-xl border bg-background pl-12 pr-4 text-base outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           autoComplete="off"
         />
@@ -85,27 +56,32 @@ export function SharedResourceSearch({
         <div className="mt-5" aria-live="polite">
           {results.length ? (
             <div className="grid gap-3 md:grid-cols-2">
-              {results.map((resource) => (
+              {results.map((entity) => (
                 <Link
-                  key={resource.id}
-                  to={resource.route}
+                  key={entity.id}
+                  to={entity.route}
                   className="rounded-xl border bg-background p-4 transition hover:border-primary hover:shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="font-bold">{resource.title}</h3>
-                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{resource.description}</p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-bold">{entity.title}</h3>
+                        <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
+                          {TYPE_LABELS[entity.type]}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{entity.summary}</p>
                     </div>
-                    {resource.official && (
-                      <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary">Official</span>
-                    )}
+                    {entity.officialSources?.length ? (
+                      <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary">Official source</span>
+                    ) : null}
                   </div>
                 </Link>
               ))}
             </div>
           ) : (
             <div className="rounded-xl border border-dashed p-5 text-sm text-muted-foreground">
-              No matching shared resources yet. Try a broader term such as taxes, moving, home, government or laws.
+              No matching resources yet. Try a broader term such as taxes, moving, representative, district, government or laws.
             </div>
           )}
         </div>
