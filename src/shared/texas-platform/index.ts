@@ -17,6 +17,7 @@ export * from './search-telemetry';
 export * from './search-telemetry-store';
 export * from './search-insights';
 export * from './search-telemetry-components';
+export * from './search-content-gaps';
 export * from './adapters';
 export * from './providers';
 export * from './provider-health';
