@@ -8,6 +8,7 @@ export * from './search-filters';
 export * from './search-pagination';
 export * from './search-params';
 export * from './search-sharing';
+export * from './search-normalization';
 export * from './adapters';
 export * from './providers';
 export * from './quality';
