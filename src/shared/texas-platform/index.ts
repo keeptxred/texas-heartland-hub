@@ -7,3 +7,4 @@ export * from './search';
 export * from './adapters';
 export * from './providers';
 export * from './quality';
+export * from './collections';
