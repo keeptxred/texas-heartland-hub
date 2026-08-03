@@ -1,25 +1,12 @@
 import { Link } from '@tanstack/react-router';
-import type { SharedEntity, SharedEntityType } from './entities';
+import type { SharedEntity } from './entities';
 import type { SharedEntityCollection } from './collections';
-
-const ENTITY_LABELS: Record<SharedEntityType, string> = {
-  calculator: 'Calculator & Tool',
-  guide: 'Guide',
-  representative: 'Representative',
-  bill: 'Bill',
-  committee: 'Committee',
-  city: 'City',
-  county: 'County',
-  park: 'Park',
-  'school-district': 'School District',
-  agency: 'Agency',
-  resource: 'Resource',
-};
+import { ENTITY_TYPE_LABELS } from './search-filters';
 
 export function SharedEntityCard({ entity, cta = 'Learn more' }: { entity: SharedEntity; cta?: string }) {
   return (
     <Link to={entity.route} className="group rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
-      <span className="text-xs font-bold uppercase tracking-[0.16em] text-primary">{ENTITY_LABELS[entity.type]}</span>
+      <span className="text-xs font-bold uppercase tracking-[0.16em] text-primary">{ENTITY_TYPE_LABELS[entity.type]}</span>
       <h2 className="mt-3 text-lg font-bold">{entity.title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">{entity.summary}</p>
       <span className="mt-4 block text-sm font-semibold text-primary group-hover:underline">{cta} →</span>
@@ -31,7 +18,7 @@ export function SharedEntityHeader({ entity }: { entity: SharedEntity }) {
   return (
     <header className="border-b bg-muted/20">
       <div className="mx-auto max-w-6xl px-4 py-12">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">{ENTITY_LABELS[entity.type]}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">{ENTITY_TYPE_LABELS[entity.type]}</p>
         <h1 className="mt-3 max-w-4xl font-display text-4xl tracking-tight sm:text-5xl">{entity.title}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-muted-foreground">{entity.summary}</p>
         {entity.lastReviewed ? <p className="mt-4 text-xs font-semibold text-muted-foreground">Last reviewed {entity.lastReviewed}</p> : null}
