@@ -7,6 +7,7 @@ import {
   type SharedEntity,
   type SharedEntityType,
 } from "./entities";
+import { mergeEntityCollections } from "./adapters";
 import type { SharedSite } from "./registry";
 
 const TYPE_LABELS: Record<SharedEntityType, string> = {
@@ -25,24 +26,22 @@ const TYPE_LABELS: Record<SharedEntityType, string> = {
 
 export function SharedResourceSearch({
   site,
+  entities = [],
+  isLoading = false,
   title = "Search Texas resources",
   description = "Search guides, calculators, representatives, laws, government information and community resources.",
-  additionalEntities = [],
 }: {
   site: SharedSite;
+  entities?: ReadonlyArray<SharedEntity>;
+  isLoading?: boolean;
   title?: string;
   description?: string;
-  additionalEntities?: ReadonlyArray<SharedEntity>;
 }) {
   const [query, setQuery] = useState("");
-  const searchableEntities = useMemo(() => {
-    const byId = new Map<string, SharedEntity>();
-    for (const entity of [...SHARED_ENTITIES, ...additionalEntities]) byId.set(entity.id, entity);
-    return [...byId.values()];
-  }, [additionalEntities]);
+  const searchableEntities = useMemo(() => mergeEntityCollections(SHARED_ENTITIES, entities), [entities]);
   const results = useMemo(
-    () => searchEntityCollection(query, site, searchableEntities, 12),
-    [query, site, searchableEntities],
+    () => searchEntityCollection(query, searchableEntities, site, 12),
+    [query, searchableEntities, site],
   );
   const hasQuery = query.trim().length > 0;
 
@@ -68,8 +67,10 @@ export function SharedResourceSearch({
       </label>
 
       {hasQuery && (
-        <div className="mt-5" aria-live="polite">
-          {results.length ? (
+        <div className="mt-5" aria-live="polite" aria-busy={isLoading}>
+          {isLoading ? (
+            <div className="rounded-xl border border-dashed p-5 text-sm text-muted-foreground">Searching current Texas resources…</div>
+          ) : results.length ? (
             <div className="grid gap-3 md:grid-cols-2">
               {results.map((entity) => (
                 <Link
