@@ -32,9 +32,14 @@ from public.bills b
 where d.bill_id = b.id
   and (d.legislature_number is null or d.session_code is null or d.bill_type is null or d.bill_number is null or d.source_record_key is null);
 
-create unique index if not exists bill_documents_source_record_uidx
-  on public.bill_documents (source_key, source_record_key)
-  where source_record_key is not null;
+-- PostgREST's on_conflict=source_key,source_record_key requires an unconditional
+-- unique index that PostgreSQL can infer without a partial-index predicate.
+alter table public.bill_documents
+  alter column source_record_key set not null;
+
+drop index if exists public.bill_documents_source_record_uidx;
+create unique index bill_documents_source_record_uidx
+  on public.bill_documents (source_key, source_record_key);
 
 create index if not exists bill_documents_bill_type_version_idx
   on public.bill_documents (bill_id, document_type, version_sequence desc nulls last, document_date desc nulls last);
