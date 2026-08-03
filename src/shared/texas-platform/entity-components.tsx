@@ -19,8 +19,19 @@ export function SharedEntityHeader({ entity }: { entity: SharedEntity }) {
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">{entity.type.replace('-', ' ')}</p>
         <h1 className="mt-3 max-w-4xl font-display text-4xl tracking-tight sm:text-5xl">{entity.title}</h1>
         <p className="mt-4 max-w-3xl text-lg leading-8 text-muted-foreground">{entity.summary}</p>
+        {entity.lastReviewed ? <p className="mt-4 text-xs font-semibold text-muted-foreground">Last reviewed {entity.lastReviewed}</p> : null}
       </div>
     </header>
+  );
+}
+
+export function SharedWhyItMatters({ entity }: { entity: SharedEntity }) {
+  if (!entity.whyItMatters) return null;
+  return (
+    <section className="rounded-xl border bg-card p-6">
+      <h2 className="font-display text-3xl">Why it matters</h2>
+      <p className="mt-3 max-w-3xl leading-7 text-muted-foreground">{entity.whyItMatters}</p>
+    </section>
   );
 }
 
@@ -58,14 +69,38 @@ export function SharedOfficialSources({ entity }: { entity: SharedEntity }) {
   );
 }
 
-export function SharedRelatedEntities({ entities, title = 'Related resources' }: { entities: SharedEntity[]; title?: string }) {
+export function SharedRelatedEntities({ entities, title = 'Related resources', cta = 'Learn more' }: { entities: SharedEntity[]; title?: string; cta?: string }) {
   if (!entities.length) return null;
   return (
     <section>
       <h2 className="font-display text-3xl">{title}</h2>
       <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {entities.map((entity) => <SharedEntityCard key={entity.id} entity={entity} />)}
+        {entities.map((entity) => <SharedEntityCard key={entity.id} entity={entity} cta={cta} />)}
       </div>
     </section>
+  );
+}
+
+export function SharedNextSteps({ entities }: { entities: SharedEntity[] }) {
+  return <SharedRelatedEntities entities={entities} title="What to do next" cta="Continue" />;
+}
+
+export function SharedEntityDetails({
+  entity,
+  related = [],
+  nextSteps = [],
+}: {
+  entity: SharedEntity;
+  related?: SharedEntity[];
+  nextSteps?: SharedEntity[];
+}) {
+  return (
+    <div className="space-y-10">
+      <SharedWhyItMatters entity={entity} />
+      <SharedKeyFacts entity={entity} />
+      <SharedNextSteps entities={nextSteps} />
+      <SharedRelatedEntities entities={related} />
+      <SharedOfficialSources entity={entity} />
+    </div>
   );
 }
