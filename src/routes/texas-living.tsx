@@ -10,124 +10,49 @@ import {
   Search,
   Truck,
   WalletCards,
+  type LucideIcon,
 } from "lucide-react";
 import { buildSeo, SITE_URL } from "@/lib/seo";
+import {
+  journeysForSite,
+  resolveResources,
+  resourcesForSite,
+  topicsForSite,
+  type SharedResource,
+} from "@/shared/texas-platform/registry";
 
-const journeys = [
-  { title: "I am buying a home", description: "Estimate ownership costs, property taxes, insurance and mortgage options.", to: "/texas-homeownership-cost-calculator", icon: Home, cta: "Plan your purchase" },
-  { title: "I am moving to Texas", description: "Compare costs, prepare your move and find practical settling-in guidance.", to: "/moving-to-texas", icon: Truck, cta: "Start your move" },
-  { title: "I want to save money", description: "Review household costs, salary, budgeting, utilities and tax-saving resources.", to: "/texas-financial-tools", icon: WalletCards, cta: "Find money tools" },
-  { title: "I need government information", description: "Find representatives, bills, elections and official Texas resources.", to: "/find-representative", icon: Landmark, cta: "Find government help" },
-  { title: "I need to understand a Texas law", description: "Read plain-English explanations and continue to official sources.", to: "/laws", icon: Scale, cta: "Browse Texas laws" },
-  { title: "I want to explore Texas", description: "Discover communities, destinations, parks and trip-planning resources.", to: "/explore", icon: Compass, cta: "Explore Texas" },
-] as const;
+const SITE = "keeptxred" as const;
 
-const essentials = [
-  { title: "Property Taxes", description: "Estimate your taxes and find practical homeowner guidance.", to: "/tax-calculator", icon: Home },
-  { title: "Find My Representative", description: "Identify the elected officials who represent your area.", to: "/find-representative", icon: Landmark },
-  { title: "Moving to Texas", description: "Plan your move, compare costs and prepare for settling in.", to: "/moving-to-texas", icon: Truck },
-  { title: "Calculators & Tools", description: "Use Texas-focused tools for housing, salary, budgeting and utilities.", to: "/texas-financial-tools", icon: Calculator },
-  { title: "Texas Laws", description: "Understand important laws and what they mean for everyday life.", to: "/laws", icon: Scale },
-] as const;
+const ICONS: Record<SharedResource["icon"], LucideIcon> = {
+  home: Home,
+  landmark: Landmark,
+  truck: Truck,
+  calculator: Calculator,
+  scale: Scale,
+  wallet: WalletCards,
+  map: MapPinned,
+  compass: Compass,
+  building: Building2,
+  search: Search,
+};
 
-const featuredResources = [
-  { title: "Texas Property Tax Calculator", description: "Estimate a Texas property-tax bill using local rates and home value.", to: "/tax-calculator", label: "Most popular" },
-  { title: "Find Your Representative", description: "Find the elected officials connected to your Texas address or district.", to: "/find-representative", label: "Government" },
-  { title: "Texas Bills", description: "Search legislation, sponsors, status, committees and official bill history.", to: "/bills", label: "Legislature" },
-  { title: "Cost of Living Calculator", description: "Compare everyday expenses and household costs across Texas locations.", to: "/texas-cost-of-living-calculator", label: "Moving" },
-  { title: "Texas Mortgage Calculator", description: "Estimate monthly payments and major costs of buying a home in Texas.", to: "/texas-mortgage-calculator", label: "Home buying" },
-  { title: "Texas Financial Tools", description: "Browse the complete collection of Texas-focused calculators and planning tools.", to: "/texas-financial-tools", label: "All tools" },
-] as const;
+const journeys = journeysForSite(SITE);
+const topics = topicsForSite(SITE);
+const allResources = resourcesForSite(SITE);
+const essentials = allResources.filter((resource) => resource.featured).slice(0, 5);
+const popularResources = allResources.filter((resource) => resource.featured).slice(0, 6);
 
-const categories = [
-  {
-    title: "Home & Property",
-    description: "Understand property taxes, homestead exemptions, homeownership costs, insurance and utilities.",
-    icon: Home,
-    cta: "Explore Home & Property",
-    links: [["Property Tax Calculator", "/tax-calculator"], ["Homestead Resources", "/property-taxes"], ["Homeownership Tools", "/texas-financial-tools"]],
-  },
-  {
-    title: "Money & Taxes",
-    description: "Make informed decisions about salary, housing, household budgets and everyday expenses.",
-    icon: WalletCards,
-    cta: "Find Money Tools",
-    links: [["Texas Financial Tools", "/texas-financial-tools"], ["Salary Calculator", "/texas-salary-calculator"], ["Budget Planner", "/texas-budget-planner"]],
-  },
-  {
-    title: "Government & Elections",
-    description: "Find representatives, follow legislation, understand elections and connect with Texas government.",
-    icon: Landmark,
-    cta: "Find Government Resources",
-    links: [["Find Your Representative", "/find-representative"], ["Texas Bills", "/bills"], ["Texas Elections", "/elections"], ["Texas Legislature", "/texas-legislature"]],
-  },
-  {
-    title: "Texas Laws",
-    description: "Read plain-English explanations of important Texas laws, policies and resident responsibilities.",
-    icon: Scale,
-    cta: "Understand Texas Laws",
-    links: [["Texas Laws", "/laws"], ["Texas Laws Explained", "/texas-laws"], ["Texas Law and Policy", "/texas-law-policy"]],
-  },
-  {
-    title: "Cities & Counties",
-    description: "Explore information about Texas communities, counties, districts and local government.",
-    icon: MapPinned,
-    cta: "Explore Communities",
-    links: [["County Elections", "/county-elections"], ["District Information", "/elections/districts"], ["Explore Texas Communities", "/explore"]],
-  },
-  {
-    title: "Moving to Texas",
-    description: "Plan your move, compare communities and prepare for the costs and decisions ahead.",
-    icon: Truck,
-    cta: "Start Planning Your Move",
-    links: [["Moving to Texas Guide", "/moving-to-texas"], ["Cost of Living Calculator", "/texas-cost-of-living-calculator"], ["Moving Cost Calculator", "/texas-moving-cost-calculator"]],
-  },
-  {
-    title: "Calculators & Tools",
-    description: "Use practical tools for property taxes, mortgages, salaries, utilities and cost of living.",
-    icon: Calculator,
-    cta: "Use the Tools",
-    links: [["All Texas Tools", "/texas-financial-tools"], ["Property Tax Tools", "/tax-calculator"], ["Utility Cost Calculator", "/texas-utility-cost-calculator"]],
-  },
-  {
-    title: "Explore Texas",
-    description: "Discover Texas destinations, communities, parks and places worth knowing about.",
-    icon: Compass,
-    cta: "Explore Texas",
-    links: [["Explore Texas", "/explore"], ["Texas Communities", "/explore"], ["Trip Planner", "/explore/trip-planner"]],
-  },
-] as const;
-
-const referenceCards = [
-  {
-    title: "Compare Texas",
-    description: "Compare Texas communities, counties and topics using clear information, maps and side-by-side views.",
-    icon: Building2,
-    to: "/texas-data",
-    cta: "Start Comparing",
-  },
-  {
-    title: "Explore History",
-    description: "See how Texas has changed over time through historical information, major events and long-term trends.",
-    icon: Compass,
-    to: "/texas-data",
-    cta: "Explore History",
-  },
-  {
-    title: "Helpful Guides",
-    description: "Browse trusted guides, calculators and official resources for taxes, moving, voting and everyday life.",
-    icon: Calculator,
-    to: "/texas-financial-tools",
-    cta: "View Guides",
-  },
-  {
-    title: "Related Resources",
-    description: "Move easily between representatives, bills, laws, counties, cities, maps and connected topics.",
-    icon: Search,
-    to: "/texas-living#browse-by-topic",
-    cta: "Browse Resources",
-  },
-] as const;
+function ResourceCard({ resource, cta = "Open resource" }: { resource: SharedResource; cta?: string }) {
+  const Icon = ICONS[resource.icon];
+  return (
+    <Link to={resource.route} className="group rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+      <Icon className="size-6 text-primary" />
+      <h2 className="mt-4 text-lg font-bold">{resource.title}</h2>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">{resource.description}</p>
+      <span className="mt-4 block text-sm font-semibold text-primary group-hover:underline">{cta} →</span>
+    </Link>
+  );
+}
 
 function TexasLivingPage() {
   return (
@@ -152,50 +77,40 @@ function TexasLivingPage() {
         <section id="what-brings-you-here" className="scroll-mt-24">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Start with your goal</p>
           <h2 className="mt-2 font-display text-4xl">What brings you here today?</h2>
-          <p className="mt-3 max-w-3xl text-muted-foreground">Choose the task closest to what you need. Each path starts with the most useful guide or tool and leads to related next steps.</p>
+          <p className="mt-3 max-w-3xl text-muted-foreground">Choose the task closest to what you need. Each path starts with useful shared resources and leads to related next steps.</p>
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {journeys.map(({ title, description, to, icon: Icon, cta }) => (
-              <Link key={title} to={to} className="group rounded-xl border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
-                <Icon className="size-7 text-primary" />
-                <h2 className="mt-4 text-xl font-bold">{title}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-                <span className="mt-5 block text-sm font-bold text-primary group-hover:underline">{cta} →</span>
-              </Link>
-            ))}
+            {journeys.map((journey) => {
+              const resources = resolveResources(journey.resourceIds, SITE);
+              const first = resources[0];
+              if (!first) return null;
+              const Icon = ICONS[journey.icon];
+              return (
+                <Link key={journey.id} to={first.route} className="group rounded-xl border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+                  <Icon className="size-7 text-primary" />
+                  <h2 className="mt-4 text-xl font-bold">{journey.title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{journey.description}</p>
+                  <span className="mt-5 block text-sm font-bold text-primary group-hover:underline">Start this journey →</span>
+                </Link>
+              );
+            })}
           </div>
         </section>
 
         <section id="texas-essentials" className="mt-16 scroll-mt-24">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Quick access</p>
           <h2 className="mt-2 font-display text-4xl">Texas Essentials</h2>
-          <p className="mt-3 max-w-3xl text-muted-foreground">Go directly to the resources people use most when making decisions about life in Texas.</p>
+          <p className="mt-3 max-w-3xl text-muted-foreground">Go directly to the shared resources people use most when making decisions about life in Texas.</p>
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {essentials.map(({ title, description, to, icon: Icon }) => (
-              <Link key={to} to={to} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
-                <Icon className="size-6 text-primary" />
-                <h2 className="mt-4 text-lg font-bold">{title}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-                <span className="mt-4 block text-sm font-semibold text-primary">Start here →</span>
-              </Link>
-            ))}
+            {essentials.map((resource) => <ResourceCard key={resource.id} resource={resource} cta="Start here" />)}
           </div>
         </section>
 
         <section className="mt-16 rounded-2xl border bg-muted/20 p-6 sm:p-8">
-          <div className="max-w-3xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Popular resources</p>
-            <h2 className="mt-2 font-display text-4xl">Useful tools and answers</h2>
-            <p className="mt-3 text-muted-foreground">Start with the most practical calculators, lookups and government resources already available on the site.</p>
-          </div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Popular resources</p>
+          <h2 className="mt-2 font-display text-4xl">Useful tools and answers</h2>
+          <p className="mt-3 max-w-3xl text-muted-foreground">Start with practical calculators, lookups and government resources already available through the shared platform.</p>
           <div className="mt-7 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {featuredResources.map(({ title, description, to, label }) => (
-              <Link key={title} to={to} className="rounded-xl border bg-background p-5 transition hover:border-primary hover:shadow-sm">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{label}</span>
-                <h2 className="mt-4 text-xl font-bold">{title}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-                <span className="mt-4 block text-sm font-bold text-primary">Open resource →</span>
-              </Link>
-            ))}
+            {popularResources.map((resource) => <ResourceCard key={resource.id} resource={resource} />)}
           </div>
         </section>
 
@@ -203,32 +118,22 @@ function TexasLivingPage() {
           <h2 className="font-display text-4xl">Browse by Topic</h2>
           <p className="mt-3 max-w-3xl text-muted-foreground">Choose a broader topic to find useful guides, tools and official resources.</p>
           <div className="mt-8 grid gap-5 md:grid-cols-2">
-            {categories.map(({ title, description, icon: Icon, links, cta }) => (
-              <section key={title} className="flex min-h-full flex-col rounded-xl border bg-card p-6 transition hover:border-primary">
-                <Icon className="size-7 text-primary" />
-                <h2 className="mt-4 font-display text-2xl">{title}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {links.map(([label, to]) => <Link key={`${title}-${to}-${label}`} to={to} className="rounded-full border px-3 py-1.5 text-sm font-semibold hover:border-primary hover:text-primary">{label}</Link>)}
-                </div>
-                <Link to={links[0][1]} className="mt-auto pt-6 text-sm font-bold text-primary hover:underline">{cta} →</Link>
-              </section>
-            ))}
-          </div>
-        </section>
-
-        <section className="mt-16">
-          <h2 className="font-display text-4xl">More Ways to Explore</h2>
-          <p className="mt-3 max-w-3xl text-muted-foreground">Compare places, understand changes over time and discover connected information without navigating technical data pages.</p>
-          <div className="mt-7 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {referenceCards.map(({ title, description, icon: Icon, to, cta }) => (
-              <Link key={title} to={to} className="rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
-                <Icon className="size-6 text-primary" />
-                <h2 className="mt-4 font-display text-2xl">{title}</h2>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
-                <span className="mt-5 block text-sm font-bold text-primary">{cta} →</span>
-              </Link>
-            ))}
+            {topics.map((topic) => {
+              const resources = resolveResources(topic.resourceIds, SITE);
+              const Icon = ICONS[topic.icon];
+              if (!resources.length) return null;
+              return (
+                <section key={topic.id} className="flex min-h-full flex-col rounded-xl border bg-card p-6 transition hover:border-primary">
+                  <Icon className="size-7 text-primary" />
+                  <h2 className="mt-4 font-display text-2xl">{topic.title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{topic.description}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    {resources.map((resource) => <Link key={`${topic.id}-${resource.id}`} to={resource.route} className="rounded-full border px-3 py-1.5 text-sm font-semibold hover:border-primary hover:text-primary">{resource.title}</Link>)}
+                  </div>
+                  <Link to={resources[0].route} className="mt-auto pt-6 text-sm font-bold text-primary hover:underline">{topic.cta} →</Link>
+                </section>
+              );
+            })}
           </div>
         </section>
       </div>
