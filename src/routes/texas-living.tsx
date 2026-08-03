@@ -11,6 +11,7 @@ import {
   resourcesForSite,
   topicsForSite,
 } from "@/shared/texas-platform/registry";
+import { SharedResourceSearch } from "@/shared/texas-platform/search";
 
 const SITE = "keeptxred" as const;
 const journeys = journeysForSite(SITE);
@@ -30,8 +31,8 @@ function TexasLivingPage() {
             Find practical information about Texas—from property taxes and elections to cities, counties, schools and cost of living. Explore trusted guides, interactive tools, calculators and official resources designed to help Texans and future Texans quickly find reliable answers.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#what-brings-you-here" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Choose What You Need</a>
-            <a href="#texas-essentials" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold hover:bg-white/10">Texas Essentials</a>
+            <a href="#resource-search" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Search Texas Resources</a>
+            <a href="#what-brings-you-here" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold hover:bg-white/10">Choose What You Need</a>
           </div>
         </div>
       </section>
@@ -39,7 +40,11 @@ function TexasLivingPage() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <nav aria-label="Breadcrumb" className="mb-8 text-sm text-muted-foreground"><Link to="/">Home</Link><span className="mx-2">/</span><span>Texas Living</span></nav>
 
-        <section id="what-brings-you-here" className="scroll-mt-24">
+        <div id="resource-search" className="scroll-mt-24">
+          <SharedResourceSearch site={SITE} />
+        </div>
+
+        <section id="what-brings-you-here" className="mt-16 scroll-mt-24">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Start with your goal</p>
           <h2 className="mt-2 font-display text-4xl">What brings you here today?</h2>
           <p className="mt-3 max-w-3xl text-muted-foreground">Choose the task closest to what you need. Each path starts with useful shared resources and leads to related next steps.</p>
