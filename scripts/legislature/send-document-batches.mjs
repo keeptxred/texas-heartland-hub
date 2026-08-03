@@ -32,6 +32,24 @@ async function save() {
   await rename(temporary, checkpointPath);
 }
 
+async function send(payload, filename) {
+  let lastError;
+  for (let attempt = 1; attempt <= 5; attempt++) {
+    try {
+      const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-import-secret': secret }, body: JSON.stringify(payload) });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok && response.status < 500) throw Object.assign(new Error(`${filename}: ${response.status} ${JSON.stringify(result)}`), { retryable: false });
+      if (!response.ok) throw Object.assign(new Error(`${filename}: ${response.status} ${JSON.stringify(result)}`), { retryable: true });
+      return result;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 5 || error?.retryable === false) break;
+      await new Promise((resolveDelay) => setTimeout(resolveDelay, Math.min(10_000, 500 * 2 ** (attempt - 1))));
+    }
+  }
+  throw lastError;
+}
+
 for (let index = Number(checkpoint.next_batch_index || 0); index < manifest.batches.length; index++) {
   if (limit && processed >= limit) break;
   const descriptor = manifest.batches[index];
@@ -40,9 +58,7 @@ for (let index = Number(checkpoint.next_batch_index || 0); index < manifest.batc
   if (digest !== descriptor.sha256) throw new Error(`Checksum mismatch for ${descriptor.filename}.`);
   const payload = JSON.parse(raw);
   payload.mode = mode;
-  const response = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-import-secret': secret }, body: JSON.stringify(payload) });
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(`${descriptor.filename}: ${response.status} ${JSON.stringify(result)}`);
+  const result = await send(payload, descriptor.filename);
   const counts = result.counts || {};
   for (const key of ['imported', 'updated', 'skipped', 'missing_bill', 'errors', 'reports', 'bills']) totals[key] = Number(totals[key] || 0) + Number(counts[key] || 0);
   checkpoint.next_batch_index = index + 1;
