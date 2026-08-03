@@ -27,7 +27,7 @@
     "elections:import:candidates": "node --experimental-strip-types scripts/elections/import-candidates.ts && npm run elections:normalize && npm run elections:authority-registry",
     "elections:resolve:fec": "node --experimental-strip-types scripts/elections/resolve-fec-ids.ts",
     "elections:import:finance": "node --experimental-strip-types scripts/elections/import-finance.ts",
-    "elections:import:polls": "node --experimental-strip-types scripts/elections/import-tpor-may-poll.ts && node --experimental-strip-types scripts/elections/import-ut-june-poll.ts",
+    "elections:import:polls": "node scripts/elections/import-tpor-may-poll.ts && node --experimental-strip-types scripts/elections/import-ut-june-poll.ts",
     "elections:generate:geography": "node --experimental-strip-types scripts/elections/generate-official-geography.ts",
     "elections:import:geography": "npm run elections:generate:geography && node --experimental-strip-types scripts/elections/import-geography.ts",
     "elections:forecast": "node --experimental-strip-types scripts/elections/forecast.ts && npm run elections:sources && npm run elections:validate:forecast",
@@ -38,7 +38,9 @@
     "elections:qa": "node scripts/elections/qa.mjs && npm run elections:routes:qa && npm run elections:sitemap:qa && npm run elections:readiness",
     "elections:refresh": "npm run elections:import:races && npm run elections:import:candidates && npm run elections:resolve:fec && npm run elections:import:finance && npm run elections:import:polls && npm run elections:import:geography && npm run elections:normalize && npm run elections:migrate-sources && npm run elections:sources && npm run elections:polling-averages && npm run elections:forecast && npm run elections:validate && npm run elections:qa",
     "legislature:sync": "node scripts/legislature/sync-texas-legislation.mjs",
-    "legislature:validate": "node scripts/legislature/validate.mjs"
+    "legislature:validate": "node scripts/legislature/validate.mjs",
+    "legislature:archive:validate": "node scripts/legislature/validate-local-documents.mjs",
+    "legislature:archive:import": "node scripts/legislature/import-local-documents.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
@@ -52,7 +54,7 @@
     "@radix-ui/react-collapsible": "^1.1.12",
     "@radix-ui/react-context-menu": "^2.2.16",
     "@radix-ui/react-dialog": "^1.1.15",
-    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react/dropdown-menu": "^2.1.16",
     "@radix-ui/react-hover-card": "^1.1.15",
     "@radix-ui/react-label": "^2.1.8",
     "@radix-ui/react-menubar": "^1.1.16",
@@ -115,7 +117,7 @@
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
-    "eslint-plugin-react-hooks": "^6.1.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
     "nitro": "3.0.260603-beta",
