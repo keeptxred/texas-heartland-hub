@@ -4,6 +4,7 @@ import { billJsonLd, canonicalBillPath, getBill, getBillRelations, SITE_URL } fr
 import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
 import { RelatedAuthorityContent } from '@/components/authority/RelatedAuthorityContent';
 import { BillDocumentsPanel } from '@/components/bills/BillDocumentsPanel';
+import { BillEditorialExplanation } from '@/components/bills/BillEditorialExplanation';
 
 export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billNumber')({
   loader: async ({ params }) => {
@@ -46,7 +47,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
 const formatDate = (value?: string | null) => value ? new Date(`${value}T12:00:00`).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : null;
 
 const sectionLinks = [
-  ['Overview', 'overview'], ['Status', 'status'], ['Who may be affected', 'affected'], ['Sponsors', 'sponsors'],
+  ['Overview', 'overview'], ['Explanation', 'explanation'], ['Status', 'status'], ['Who may be affected', 'affected'], ['Sponsors', 'sponsors'],
   ['Committees', 'committees'], ['Timeline', 'timeline'], ['Documents', 'documents'], ['Related articles', 'articles'],
 ] as const;
 
@@ -81,6 +82,8 @@ function BillPage() {
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(280px,1fr)]">
         <main className="space-y-8">
           <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="overview"><h2 className="text-2xl font-bold">Bill overview</h2><p className="mt-4 text-lg leading-8">{summary}</p>{bill.description && bill.description !== summary && <p className="mt-4 text-muted-foreground">{bill.description}</p>}{subjects.length > 0 && <div className="mt-5 flex flex-wrap gap-2">{subjects.map((subject: any) => <a key={subject.id} href={`/bills/subject/${subject.slug}`} className="rounded-full border px-3 py-1 text-sm hover:border-primary">{subject.name}</a>)}</div>}</section>
+
+          <BillEditorialExplanation billId={bill.id} />
 
           <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="status"><div className="flex items-center gap-3"><Scale className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Current status</h2></div><p className="mt-4 text-xl font-semibold">{bill.current_status_label}</p><p className="mt-2 text-muted-foreground">{bill.current_status_description || latestAction?.action_text || 'No newer official action is currently available for this bill.'}</p>{latestAction && <div className="mt-4 rounded-lg bg-muted/50 p-4"><p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Latest official action</p><p className="mt-1 font-medium">{latestAction.action_text}</p><p className="mt-1 text-sm text-muted-foreground">{formatDate(latestAction.action_date)}{latestAction.chamber ? ` · ${latestAction.chamber}` : ''}</p></div>}</section>
 
