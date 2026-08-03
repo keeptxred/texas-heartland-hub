@@ -1,4 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
+import {
+  TEXAS_HOUSE_MEMBERS,
+  TEXAS_SENATE_MEMBERS,
+  representativeSlug,
+} from '@/data/representatives';
 
 const db = supabase as any;
 export const SITE_URL = 'https://keeptxred.com';
@@ -54,6 +59,63 @@ const STATUS_GROUPS: Record<string, string[]> = {
   signed: ['signed', 'became-law', 'effective'],
   vetoed: ['vetoed'],
 };
+
+const STATE_LEGISLATORS = [...TEXAS_HOUSE_MEMBERS, ...TEXAS_SENATE_MEMBERS];
+
+const normalizePersonToken = (value = '') =>
+  value
+    .trim()
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '');
+
+const districtNumber = (value?: string | null) => value?.match(/\d+/)?.[0] ?? null;
+
+function lastNameMatches(fullName: string, storedName: string) {
+  const full = normalizePersonToken(fullName);
+  const stored = normalizePersonToken(storedName);
+  return Boolean(stored) && (full.endsWith(stored) || representativeSlug(fullName).endsWith(`-${representativeSlug(storedName)}`));
+}
+
+function resolveSponsorIdentity(sponsor: any) {
+  if (!sponsor?.sponsor_name) return sponsor;
+
+  const storedSlug = sponsor.sponsor_slug || representativeSlug(sponsor.sponsor_name);
+  const exact = STATE_LEGISLATORS.find((member) => representativeSlug(member.name) === storedSlug);
+  if (exact) {
+    return {
+      ...sponsor,
+      sponsor_name: exact.name,
+      sponsor_slug: representativeSlug(exact.name),
+      party: sponsor.party || exact.party,
+      district: sponsor.district || exact.district,
+    };
+  }
+
+  const chamberMembers = sponsor.chamber === 'senate'
+    ? TEXAS_SENATE_MEMBERS
+    : sponsor.chamber === 'house'
+      ? TEXAS_HOUSE_MEMBERS
+      : STATE_LEGISLATORS;
+  const storedDistrict = districtNumber(sponsor.district);
+  let matches = chamberMembers.filter((member) => lastNameMatches(member.name, sponsor.sponsor_name));
+
+  if (storedDistrict) {
+    const districtMatches = matches.filter((member) => districtNumber(member.district) === storedDistrict);
+    if (districtMatches.length === 1) matches = districtMatches;
+  }
+
+  if (matches.length !== 1) return sponsor;
+  const match = matches[0];
+  return {
+    ...sponsor,
+    sponsor_name: match.name,
+    sponsor_slug: representativeSlug(match.name),
+    party: sponsor.party || match.party,
+    district: sponsor.district || match.district,
+  };
+}
 
 export const canonicalBillPath = (bill: Pick<Bill, 'legislature_number' | 'bill_type' | 'bill_number'>) =>
   `/bills/texas/${bill.legislature_number}/${bill.bill_type.toLowerCase()}/${Number(bill.bill_number)}`;
@@ -130,7 +192,7 @@ export async function getBillRelations(billId: string) {
     safe('articles', () => db.from('bill_article_relationships').select('relationship_type,confidence,is_manual,daily_articles(id,title,slug,dek,published_at,image_url)').eq('bill_id', billId).order('is_manual', { ascending: false }).order('confidence', { ascending: false }).limit(8)),
   ]);
   return {
-    sponsors: sponsors.data ?? [],
+    sponsors: (sponsors.data ?? []).map(resolveSponsorIdentity),
     actions: actions.data ?? [],
     committees: committees.data ?? [],
     documents: documents.data ?? [],
@@ -142,15 +204,28 @@ export async function getBillRelations(billId: string) {
 }
 
 export async function getRepresentativeLegislation(sponsorSlug: string) {
+  const directoryRepresentative = STATE_LEGISLATORS.find((member) => representativeSlug(member.name) === sponsorSlug);
+  const possibleSlugs = new Set([sponsorSlug]);
+  if (directoryRepresentative) {
+    const nameParts = directoryRepresentative.name.trim().split(/\s+/);
+    possibleSlugs.add(representativeSlug(nameParts[nameParts.length - 1]));
+  }
+
   const { data, error } = await db
     .from('bill_sponsors')
     .select('id,sponsor_name,sponsor_slug,sponsor_role,chamber,party,district,bills(id,legislature_number,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law)')
-    .eq('sponsor_slug', sponsorSlug)
+    .in('sponsor_slug', [...possibleSlugs])
     .order('date_added', { ascending: false })
     .limit(100);
   if (error) throw error;
-  const rows = data ?? [];
-  const identity = rows[0] ?? null;
+  const rows = (data ?? []).map(resolveSponsorIdentity);
+  const identity = rows[0] ?? (directoryRepresentative ? resolveSponsorIdentity({
+    sponsor_name: directoryRepresentative.name,
+    sponsor_slug: representativeSlug(directoryRepresentative.name),
+    chamber: directoryRepresentative.office === 'Texas Senate' ? 'senate' : 'house',
+    party: directoryRepresentative.party,
+    district: directoryRepresentative.district,
+  }) : null);
   const bills = [...new Map(
     rows
       .map((row: any) => row.bills)
