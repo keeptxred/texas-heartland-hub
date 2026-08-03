@@ -42,9 +42,21 @@ Deno.serve(async (request) => {
   let body: JsonRecord;
   try { body = await request.json(); } catch { return json({ error: "Invalid JSON" }, 400); }
   if (body.action === "refresh-latest") {
-    const { error } = await service.rpc("refresh_bill_document_latest_flags", { p_bill_id: null });
-    if (error) return json({ error: error.message }, 500);
-    return json({ action: "refresh-latest", status: "completed" });
+    const identities = Array.isArray(body.records) ? body.records.filter(isRecord) : [];
+    if (!identities.length || identities.length > 100) return json({ error: "refresh-latest requires between 1 and 100 bill records" }, 400);
+    const billIds: string[] = [];
+    for (const billType of [...new Set(identities.map((record) => text(record.bill_type)))]) {
+      const numbers = identities.filter((record) => record.bill_type === billType).map((record) => integer(record.bill_number)).filter((value): value is number => value !== null);
+      const { data, error } = await service.from("bills").select("id").eq("legislature_number", 89).eq("session_code", "R").eq("bill_type", billType).in("bill_number", numbers);
+      if (error) return json({ error: error.message }, 500);
+      for (const bill of data || []) billIds.push(bill.id);
+    }
+    for (let index = 0; index < billIds.length; index += 10) {
+      const results = await Promise.all(billIds.slice(index, index + 10).map((billId) => service.rpc("refresh_bill_document_latest_flags", { p_bill_id: billId })));
+      const failure = results.find((result) => result.error)?.error;
+      if (failure) return json({ error: failure.message, refreshed: index }, 500);
+    }
+    return json({ action: "refresh-latest", status: "completed", refreshed: billIds.length });
   }
   const mode = body.mode === "live" ? "live" : "dry-run";
   const records = Array.isArray(body.records) ? body.records.filter(isRecord) : [];
