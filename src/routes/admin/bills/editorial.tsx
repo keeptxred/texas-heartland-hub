@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { listBillEditorialEnrichments, saveBillEditorialEnrichment } from '@/services/billEditorialReview.functions';
 
 export const Route = createFileRoute('/admin/bills/editorial')({
-  head: () => ({ meta: [{ title: 'Bill Editorial Review — Keep TX Red' }, { name: 'robots', content: 'noindex, nofollow' }] }),
+  head: () => ({ meta: [{ title: 'Bill Editorial Review — Keep TX Red' }, { name: 'robots', content: 'noindex,follow' }] }),
   component: BillEditorialReviewPage,
 });
 

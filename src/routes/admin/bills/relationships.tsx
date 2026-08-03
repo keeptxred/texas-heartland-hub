@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { listBillRelationshipReviews, reviewBillRelationship } from '@/services/billRelationshipReview.functions';
 
 export const Route = createFileRoute('/admin/bills/relationships')({
-  head: () => ({ meta: [{ title: 'Bill Relationship Review — Keep TX Red' }, { name: 'robots', content: 'noindex, nofollow' }] }),
+  head: () => ({ meta: [{ title: 'Bill Relationship Review — Keep TX Red' }, { name: 'robots', content: 'noindex,follow' }] }),
   component: BillRelationshipReviewPage,
 });
 
