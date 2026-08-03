@@ -61,7 +61,7 @@ export function SharedResourceSearch({
   const [activeType, setActiveType] = useState<SharedEntityType | "all">(initialType);
   const [visibleCount, setVisibleCount] = useState(SEARCH_PAGE_SIZE);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
-  const previousTelemetryKey = useRef<string>();
+  const previousTelemetryKey = useRef<string | undefined>(undefined);
   const searchableEntities = useMemo(() => mergeEntityCollections(SHARED_ENTITIES, entities), [entities]);
   const results = useMemo(
     () => searchEntityCollection(query, searchableEntities, site, 80),
