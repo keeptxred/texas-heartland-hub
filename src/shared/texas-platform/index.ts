@@ -8,3 +8,4 @@ export * from './adapters';
 export * from './providers';
 export * from './quality';
 export * from './collections';
+export * from './collection-ranking';
