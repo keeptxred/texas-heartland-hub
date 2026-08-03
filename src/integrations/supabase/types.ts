@@ -177,6 +177,13 @@ export type Database = {
             foreignKeyName: "bill_actions_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_actions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },
@@ -227,6 +234,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "daily_articles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bill_article_relationships_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
           },
           {
             foreignKeyName: "bill_article_relationships_bill_id_fkey"
@@ -294,6 +308,13 @@ export type Database = {
             foreignKeyName: "bill_committee_history_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_committee_history_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },
@@ -309,41 +330,102 @@ export type Database = {
       bill_documents: {
         Row: {
           bill_id: string
+          bill_number: number | null
+          bill_type: string | null
+          content_hash: string | null
           created_at: string
           document_date: string | null
           document_title: string
           document_type: string
           document_url: string
+          extracted_text: string | null
+          extracted_text_hash: string | null
           file_format: string | null
           id: string
+          is_latest: boolean
+          last_imported_at: string | null
+          last_seen_at: string
+          legislature_number: number | null
+          metadata: Json
+          session_code: string | null
+          source_html_url: string | null
+          source_key: string
+          source_pdf_url: string | null
+          source_record_key: string
+          storage_path: string | null
           updated_at: string
+          version_code: string | null
           version_label: string | null
+          version_sequence: number | null
         }
         Insert: {
           bill_id: string
+          bill_number?: number | null
+          bill_type?: string | null
+          content_hash?: string | null
           created_at?: string
           document_date?: string | null
           document_title: string
           document_type: string
           document_url: string
+          extracted_text?: string | null
+          extracted_text_hash?: string | null
           file_format?: string | null
           id?: string
+          is_latest?: boolean
+          last_imported_at?: string | null
+          last_seen_at?: string
+          legislature_number?: number | null
+          metadata?: Json
+          session_code?: string | null
+          source_html_url?: string | null
+          source_key?: string
+          source_pdf_url?: string | null
+          source_record_key: string
+          storage_path?: string | null
           updated_at?: string
+          version_code?: string | null
           version_label?: string | null
+          version_sequence?: number | null
         }
         Update: {
           bill_id?: string
+          bill_number?: number | null
+          bill_type?: string | null
+          content_hash?: string | null
           created_at?: string
           document_date?: string | null
           document_title?: string
           document_type?: string
           document_url?: string
+          extracted_text?: string | null
+          extracted_text_hash?: string | null
           file_format?: string | null
           id?: string
+          is_latest?: boolean
+          last_imported_at?: string | null
+          last_seen_at?: string
+          legislature_number?: number | null
+          metadata?: Json
+          session_code?: string | null
+          source_html_url?: string | null
+          source_key?: string
+          source_pdf_url?: string | null
+          source_record_key?: string
+          storage_path?: string | null
           updated_at?: string
+          version_code?: string | null
           version_label?: string | null
+          version_sequence?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bill_documents_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
           {
             foreignKeyName: "bill_documents_bill_id_fkey"
             columns: ["bill_id"]
@@ -407,6 +489,13 @@ export type Database = {
             foreignKeyName: "bill_sponsors_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_sponsors_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },
@@ -426,6 +515,13 @@ export type Database = {
           subject_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "bill_subject_relationships_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
           {
             foreignKeyName: "bill_subject_relationships_bill_id_fkey"
             columns: ["bill_id"]
@@ -3201,6 +3297,57 @@ export type Database = {
         }
         Relationships: []
       }
+      legislative_report_indexes: {
+        Row: {
+          content_hash: string
+          extracted_text: string | null
+          id: string
+          last_imported_at: string
+          last_seen_at: string
+          legislature_number: number
+          metadata: Json
+          report_key: string | null
+          report_title: string
+          report_type: string
+          session_code: string
+          source_key: string
+          source_record_key: string
+          source_url: string
+        }
+        Insert: {
+          content_hash: string
+          extracted_text?: string | null
+          id?: string
+          last_imported_at?: string
+          last_seen_at?: string
+          legislature_number: number
+          metadata?: Json
+          report_key?: string | null
+          report_title: string
+          report_type: string
+          session_code: string
+          source_key?: string
+          source_record_key: string
+          source_url: string
+        }
+        Update: {
+          content_hash?: string
+          extracted_text?: string | null
+          id?: string
+          last_imported_at?: string
+          last_seen_at?: string
+          legislature_number?: number
+          metadata?: Json
+          report_key?: string | null
+          report_title?: string
+          report_type?: string
+          session_code?: string
+          source_key?: string
+          source_record_key?: string
+          source_url?: string
+        }
+        Relationships: []
+      }
       legislative_sessions: {
         Row: {
           created_at: string
@@ -3775,6 +3922,29 @@ export type Database = {
       }
     }
     Views: {
+      bill_document_completeness: {
+        Row: {
+          analysis_count: number | null
+          bill_id: string | null
+          bill_number: number | null
+          bill_text_count: number | null
+          bill_type: string | null
+          completeness_score: number | null
+          document_count: number | null
+          fiscal_note_count: number | null
+          has_analysis: boolean | null
+          has_bill_text: boolean | null
+          has_fiscal_note: boolean | null
+          has_history: boolean | null
+          has_witness_list: boolean | null
+          history_count: number | null
+          latest_document_imported_at: string | null
+          legislature_number: number | null
+          session_code: string | null
+          witness_list_count: number | null
+        }
+        Relationships: []
+      }
       explore_public_entities: {
         Row: {
           activities: string[] | null
@@ -3982,6 +4152,10 @@ export type Database = {
           msg_id: number
           read_ct: number
         }[]
+      }
+      refresh_bill_document_latest_flags: {
+        Args: { p_bill_id?: string }
+        Returns: undefined
       }
       refresh_legislative_authority_graph: { Args: never; Returns: undefined }
       related_authority_content: {
