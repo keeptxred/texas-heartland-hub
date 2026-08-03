@@ -93,21 +93,31 @@ function resolveSponsorIdentity(sponsor: any) {
     };
   }
 
-  const chamberMembers = sponsor.chamber === 'senate'
-    ? TEXAS_SENATE_MEMBERS
-    : sponsor.chamber === 'house'
-      ? TEXAS_HOUSE_MEMBERS
-      : STATE_LEGISLATORS;
+  const allMatches = STATE_LEGISLATORS.filter((member) => lastNameMatches(member.name, sponsor.sponsor_name));
   const storedDistrict = districtNumber(sponsor.district);
-  let matches = chamberMembers.filter((member) => lastNameMatches(member.name, sponsor.sponsor_name));
+  let match: (typeof STATE_LEGISLATORS)[number] | undefined;
 
   if (storedDistrict) {
-    const districtMatches = matches.filter((member) => districtNumber(member.district) === storedDistrict);
-    if (districtMatches.length === 1) matches = districtMatches;
+    const districtMatches = allMatches.filter((member) => districtNumber(member.district) === storedDistrict);
+    if (districtMatches.length === 1) match = districtMatches[0];
   }
 
-  if (matches.length !== 1) return sponsor;
-  const match = matches[0];
+  if (!match && sponsor.chamber) {
+    const chamberMatches = allMatches.filter((member) =>
+      sponsor.chamber === 'senate'
+        ? member.office === 'Texas Senate'
+        : sponsor.chamber === 'house'
+          ? member.office === 'Texas House'
+          : true,
+    );
+    if (chamberMatches.length === 1) match = chamberMatches[0];
+  }
+
+  // TLO sometimes assigns the originating bill chamber to cross-chamber sponsors.
+  // When the surname is unique statewide, trust the unique directory match instead.
+  if (!match && allMatches.length === 1) match = allMatches[0];
+  if (!match) return sponsor;
+
   return {
     ...sponsor,
     sponsor_name: match.name,
