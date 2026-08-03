@@ -11,6 +11,7 @@ import { SHARED_RESOURCES, type SharedResource, type SharedSite } from './regist
 import { normalizeSearchText, tokenizeSearchQuery } from './search-normalization';
 import { expandSearchTokens } from './search-aliases';
 import { allTokensMatch, countTokenMatches, tokenMatchesText } from './search-matching';
+import { countFuzzyTokenMatches } from './search-fuzzy';
 
 export type SharedEntityType =
   | 'city'
@@ -141,6 +142,12 @@ function scoreEntity(entity: SharedEntity, normalized: string, tokens: string[])
   const titleTokenMatches = countTokenMatches(tokens, title);
   if (tokens.length > 1 && allTokensMatch(tokens, title)) score += 20;
   if (titleTokenMatches > 0 && titleTokenMatches < tokens.length) score += titleTokenMatches * 2;
+
+  if (score === 0) {
+    const fuzzyTitleMatches = countFuzzyTokenMatches(tokens, title);
+    const fuzzyTermMatches = countFuzzyTokenMatches(tokens, terms);
+    score += fuzzyTitleMatches * 7 + fuzzyTermMatches * 3;
+  }
   return score;
 }
 
