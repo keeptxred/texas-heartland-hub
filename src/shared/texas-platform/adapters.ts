@@ -115,10 +115,38 @@ export function placeToSharedEntity(input: PlaceEntityInput, sites: SharedSite[]
   };
 }
 
+function unique<T>(values: readonly T[]) {
+  return [...new Set(values)];
+}
+
+function mergeEntities(previous: SharedEntity, incoming: SharedEntity): SharedEntity {
+  const facts = new Map<string, string>();
+  for (const fact of [...(previous.keyFacts ?? []), ...(incoming.keyFacts ?? [])]) facts.set(fact.label, fact.value);
+
+  const sources = new Map<string, { label: string; url: string }>();
+  for (const source of [...(previous.officialSources ?? []), ...(incoming.officialSources ?? [])]) sources.set(source.url, source);
+
+  return {
+    ...previous,
+    ...incoming,
+    sites: unique([...previous.sites, ...incoming.sites]),
+    topics: unique([...previous.topics, ...incoming.topics]),
+    journeys: unique([...previous.journeys, ...incoming.journeys]),
+    searchTerms: unique([...(previous.searchTerms ?? []), ...(incoming.searchTerms ?? [])]),
+    keyFacts: facts.size ? [...facts].map(([label, value]) => ({ label, value })) : undefined,
+    officialSources: sources.size ? [...sources.values()] : undefined,
+    whyItMatters: incoming.whyItMatters || previous.whyItMatters,
+    lastReviewed: incoming.lastReviewed || previous.lastReviewed,
+  };
+}
+
 export function mergeEntityCollections(...collections: ReadonlyArray<ReadonlyArray<SharedEntity>>) {
   const byId = new Map<string, SharedEntity>();
   for (const collection of collections) {
-    for (const entity of collection) byId.set(entity.id, entity);
+    for (const entity of collection) {
+      const previous = byId.get(entity.id);
+      byId.set(entity.id, previous ? mergeEntities(previous, entity) : entity);
+    }
   }
   return [...byId.values()];
 }
