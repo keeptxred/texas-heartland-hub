@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { SharedEntityCard } from "@/shared/texas-platform/entity-components";
 import { entitiesForSite, type SharedEntityType } from "@/shared/texas-platform/entities";
+import { journeysForSite, topicsForSite } from "@/shared/texas-platform/registry";
 import { SharedResourceSearch } from "@/shared/texas-platform/search";
 
 const SITE = "keeptxred" as const;
@@ -35,6 +36,8 @@ const TYPE_LABELS: Record<SharedEntityType, string> = {
 
 function TexasResourcesPage() {
   const entities = entitiesForSite(SITE);
+  const topics = topicsForSite(SITE);
+  const journeys = journeysForSite(SITE);
   const groups = TYPE_ORDER.map((type) => ({
     type,
     entities: entities.filter((entity) => entity.type === type),
@@ -58,6 +61,39 @@ function TexasResourcesPage() {
         </nav>
 
         <SharedResourceSearch site={SITE} title="Search all Texas resources" />
+
+        <section className="mt-12 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-2xl border bg-card p-6">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Start with your goal</p>
+            <h2 className="mt-2 font-display text-3xl">Guided journeys</h2>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {journeys.map((journey) => (
+                <Link key={journey.id} to={`/texas-resources/journey/${journey.id}`} className="rounded-full border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary">
+                  {journey.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border bg-card p-6">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Browse by subject</p>
+            <h2 className="mt-2 font-display text-3xl">Topics</h2>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {topics.map((topic) => (
+                <Link key={topic.id} to={`/texas-resources/topic/${topic.id}`} className="rounded-full border px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary">
+                  {topic.title}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <nav aria-label="Resource types" className="mt-10 flex gap-2 overflow-x-auto pb-2">
+          {groups.map((group) => (
+            <a key={group.type} href={`#${group.type}`} className="shrink-0 rounded-full border bg-background px-3 py-2 text-sm font-semibold hover:border-primary hover:text-primary">
+              {TYPE_LABELS[group.type]} ({group.entities.length})
+            </a>
+          ))}
+        </nav>
 
         <div className="mt-14 space-y-14">
           {groups.map((group) => (
