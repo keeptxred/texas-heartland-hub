@@ -4,6 +4,7 @@ import { SHARED_RELATIONSHIPS } from '../../src/shared/texas-platform/relationsh
 const errors: string[] = [];
 const ids = new Set<string>();
 const routes = new Map<string, string>();
+const relationshipKeys = new Set<string>();
 
 for (const entity of SHARED_ENTITIES) {
   if (!entity.id.trim()) errors.push('Entity has an empty id.');
@@ -41,6 +42,16 @@ for (const relationship of SHARED_RELATIONSHIPS) {
   if (relationship.weight !== undefined && (!Number.isFinite(relationship.weight) || relationship.weight < 0)) {
     errors.push(`Relationship ${relationship.fromId} -> ${relationship.toId} has an invalid weight.`);
   }
+  if (relationship.sites?.some((site) => !['keeptxred', 'texasdefined'].includes(site))) {
+    errors.push(`Relationship ${relationship.fromId} -> ${relationship.toId} has invalid site visibility.`);
+  }
+
+  const endpoints = relationship.bidirectional
+    ? [relationship.fromId, relationship.toId].sort().join('<->')
+    : `${relationship.fromId}->${relationship.toId}`;
+  const key = `${endpoints}:${relationship.type}:${(relationship.sites ?? []).slice().sort().join(',')}`;
+  if (relationshipKeys.has(key)) errors.push(`Duplicate relationship: ${key}`);
+  relationshipKeys.add(key);
 }
 
 if (errors.length) {
@@ -50,6 +61,7 @@ if (errors.length) {
 }
 
 const representativeCount = SHARED_ENTITIES.filter((entity) => entity.type === 'representative').length;
+const bidirectionalCount = SHARED_RELATIONSHIPS.filter((relationship) => relationship.bidirectional).length;
 console.log(
-  `Shared entity validation passed (${SHARED_ENTITIES.length} entities, ${representativeCount} representatives, ${SHARED_RELATIONSHIPS.length} relationships).`,
+  `Shared entity validation passed (${SHARED_ENTITIES.length} entities, ${representativeCount} representatives, ${SHARED_RELATIONSHIPS.length} relationships, ${bidirectionalCount} bidirectional).`,
 );
