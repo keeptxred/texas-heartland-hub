@@ -11,6 +11,7 @@ export type EntityProviderContext = {
 export type SharedEntityProvider = {
   id: string;
   timeoutMs?: number;
+  cacheTtlMs?: number;
   load: (context: EntityProviderContext) => Promise<ReadonlyArray<SharedEntity>> | ReadonlyArray<SharedEntity>;
 };
 
@@ -19,6 +20,7 @@ export type EntityProviderStatus = {
   status: 'ready' | 'failed' | 'timed-out';
   entityCount: number;
   durationMs: number;
+  cached: boolean;
 };
 
 export type EntityProviderLoadResult = {
@@ -26,8 +28,24 @@ export type EntityProviderLoadResult = {
   providers: EntityProviderStatus[];
 };
 
+type ProviderCacheEntry = {
+  expiresAt: number;
+  entities: SharedEntity[];
+};
+
 const DEFAULT_PROVIDER_TIMEOUT_MS = 5000;
 const PROVIDERS = new Map<string, SharedEntityProvider>();
+const PROVIDER_CACHE = new Map<string, ProviderCacheEntry>();
+const IN_FLIGHT_PROVIDER_LOADS = new Map<string, Promise<SharedEntity[]>>();
+
+function providerRequestKey(providerId: string, context: EntityProviderContext) {
+  return JSON.stringify([
+    providerId,
+    context.site,
+    context.query?.trim().toLowerCase() ?? '',
+    context.limit ?? null,
+  ]);
+}
 
 export function registerEntityProvider(provider: SharedEntityProvider) {
   const id = provider.id.trim();
@@ -36,16 +54,31 @@ export function registerEntityProvider(provider: SharedEntityProvider) {
   if (provider.timeoutMs !== undefined && (!Number.isFinite(provider.timeoutMs) || provider.timeoutMs <= 0)) {
     throw new Error(`Entity provider timeout must be greater than zero: ${id}`);
   }
+  if (provider.cacheTtlMs !== undefined && (!Number.isFinite(provider.cacheTtlMs) || provider.cacheTtlMs < 0)) {
+    throw new Error(`Entity provider cache TTL cannot be negative: ${id}`);
+  }
   PROVIDERS.set(id, { ...provider, id });
-  return () => PROVIDERS.delete(id);
+  return () => {
+    PROVIDERS.delete(id);
+    clearEntityProviderCache(id);
+  };
 }
 
 export function registeredEntityProviders() {
   return [...PROVIDERS.values()];
 }
 
-async function loadProvider(provider: SharedEntityProvider, context: EntityProviderContext) {
-  const startedAt = Date.now();
+function cachedProviderEntities(key: string) {
+  const entry = PROVIDER_CACHE.get(key);
+  if (!entry) return undefined;
+  if (entry.expiresAt <= Date.now()) {
+    PROVIDER_CACHE.delete(key);
+    return undefined;
+  }
+  return [...entry.entities];
+}
+
+async function executeProviderLoad(provider: SharedEntityProvider, context: EntityProviderContext) {
   const timeoutMs = provider.timeoutMs ?? DEFAULT_PROVIDER_TIMEOUT_MS;
   let timeoutHandle: ReturnType<typeof setTimeout> | undefined;
 
@@ -56,14 +89,53 @@ async function loadProvider(provider: SharedEntityProvider, context: EntityProvi
         timeoutHandle = setTimeout(() => reject(new Error(`timed out after ${timeoutMs}ms`)), timeoutMs);
       }),
     ]);
+    return [...entities];
+  } finally {
+    if (timeoutHandle) clearTimeout(timeoutHandle);
+  }
+}
+
+async function loadProvider(provider: SharedEntityProvider, context: EntityProviderContext) {
+  const startedAt = Date.now();
+  const key = providerRequestKey(provider.id, context);
+  const cached = cachedProviderEntities(key);
+
+  if (cached) {
+    return {
+      entities: cached,
+      status: {
+        id: provider.id,
+        status: 'ready' as const,
+        entityCount: cached.length,
+        durationMs: Date.now() - startedAt,
+        cached: true,
+      },
+    };
+  }
+
+  try {
+    let request = IN_FLIGHT_PROVIDER_LOADS.get(key);
+    if (!request) {
+      request = executeProviderLoad(provider, context);
+      IN_FLIGHT_PROVIDER_LOADS.set(key, request);
+    }
+    const entities = await request;
+    const cacheTtlMs = provider.cacheTtlMs ?? 0;
+    if (cacheTtlMs > 0) {
+      PROVIDER_CACHE.set(key, {
+        entities: [...entities],
+        expiresAt: Date.now() + cacheTtlMs,
+      });
+    }
 
     return {
-      entities: [...entities],
+      entities,
       status: {
         id: provider.id,
         status: 'ready' as const,
         entityCount: entities.length,
         durationMs: Date.now() - startedAt,
+        cached: false,
       },
     };
   } catch (error) {
@@ -76,10 +148,11 @@ async function loadProvider(provider: SharedEntityProvider, context: EntityProvi
         status: timedOut ? 'timed-out' as const : 'failed' as const,
         entityCount: 0,
         durationMs: Date.now() - startedAt,
+        cached: false,
       },
     };
   } finally {
-    if (timeoutHandle) clearTimeout(timeoutHandle);
+    IN_FLIGHT_PROVIDER_LOADS.delete(key);
   }
 }
 
@@ -115,6 +188,23 @@ export async function searchEntityProviders(
   return result as EntitySearchResult[];
 }
 
+export function clearEntityProviderCache(providerId?: string) {
+  if (!providerId) {
+    PROVIDER_CACHE.clear();
+    return;
+  }
+  const prefix = `["${providerId}",`;
+  for (const key of PROVIDER_CACHE.keys()) {
+    if (key.startsWith(prefix)) PROVIDER_CACHE.delete(key);
+  }
+}
+
+export function entityProviderCacheSize() {
+  return PROVIDER_CACHE.size;
+}
+
 export function clearEntityProvidersForTests() {
   PROVIDERS.clear();
+  PROVIDER_CACHE.clear();
+  IN_FLIGHT_PROVIDER_LOADS.clear();
 }
