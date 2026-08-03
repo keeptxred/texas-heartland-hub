@@ -9,7 +9,7 @@ import {
 } from '@/services/legislativeOpportunity.functions';
 
 export const Route = createFileRoute('/admin/bills/opportunities')({
-  head: () => ({ meta: [{ title: 'Legislative Opportunities — Keep TX Red' }, { name: 'robots', content: 'noindex, nofollow' }] }),
+  head: () => ({ meta: [{ title: 'Legislative Opportunities — Keep TX Red' }, { name: 'robots', content: 'noindex,follow' }] }),
   component: LegislativeOpportunityPage,
 });
 
