@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Search, X } from "lucide-react";
+import { Link2, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   SHARED_ENTITIES,
@@ -16,6 +16,7 @@ import {
   paginatedSearchResults,
   SEARCH_PAGE_SIZE,
 } from "./search-pagination";
+import { resourceSearchHref } from "./search-params";
 import type { SharedSite } from "./registry";
 
 const TYPE_LABELS: Record<SharedEntityType, string> = {
@@ -71,6 +72,7 @@ export function SharedResourceSearch({
     [activeType, results, visibleCount],
   );
   const hasQuery = query.trim().length > 0;
+  const shareHref = useMemo(() => resourceSearchHref(query, activeType), [activeType, query]);
 
   useEffect(() => {
     setQuery(initialQuery);
@@ -172,9 +174,18 @@ export function SharedResourceSearch({
                   </button>
                 ))}
               </div>
-              <p className="mb-3 text-sm text-muted-foreground">
-                Showing {page.visible.length} of {page.total} {activeType === "all" ? "matches" : SEARCH_TYPE_LABELS[activeType].toLowerCase()}
-              </p>
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                <p className="text-sm text-muted-foreground">
+                  Showing {page.visible.length} of {page.total} {activeType === "all" ? "matches" : SEARCH_TYPE_LABELS[activeType].toLowerCase()}
+                </p>
+                <Link
+                  to={shareHref}
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                  aria-label="Open a shareable link for this resource search"
+                >
+                  <Link2 className="size-4" /> Share this search
+                </Link>
+              </div>
               <div className="grid gap-3 md:grid-cols-2">
                 {page.visible.map((entity) => (
                   <Link
