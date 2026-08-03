@@ -13,12 +13,30 @@ import {
 } from "lucide-react";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 
+const journeys = [
+  { title: "I am buying a home", description: "Estimate ownership costs, property taxes, insurance and mortgage options.", to: "/texas-homeownership-cost-calculator", icon: Home, cta: "Plan your purchase" },
+  { title: "I am moving to Texas", description: "Compare costs, prepare your move and find practical settling-in guidance.", to: "/moving-to-texas", icon: Truck, cta: "Start your move" },
+  { title: "I want to save money", description: "Review household costs, salary, budgeting, utilities and tax-saving resources.", to: "/texas-financial-tools", icon: WalletCards, cta: "Find money tools" },
+  { title: "I need government information", description: "Find representatives, bills, elections and official Texas resources.", to: "/find-representative", icon: Landmark, cta: "Find government help" },
+  { title: "I need to understand a Texas law", description: "Read plain-English explanations and continue to official sources.", to: "/laws", icon: Scale, cta: "Browse Texas laws" },
+  { title: "I want to explore Texas", description: "Discover communities, destinations, parks and trip-planning resources.", to: "/explore", icon: Compass, cta: "Explore Texas" },
+] as const;
+
 const essentials = [
   { title: "Property Taxes", description: "Estimate your taxes and find practical homeowner guidance.", to: "/tax-calculator", icon: Home },
   { title: "Find My Representative", description: "Identify the elected officials who represent your area.", to: "/find-representative", icon: Landmark },
   { title: "Moving to Texas", description: "Plan your move, compare costs and prepare for settling in.", to: "/moving-to-texas", icon: Truck },
   { title: "Calculators & Tools", description: "Use Texas-focused tools for housing, salary, budgeting and utilities.", to: "/texas-financial-tools", icon: Calculator },
   { title: "Texas Laws", description: "Understand important laws and what they mean for everyday life.", to: "/laws", icon: Scale },
+] as const;
+
+const featuredResources = [
+  { title: "Texas Property Tax Calculator", description: "Estimate a Texas property-tax bill using local rates and home value.", to: "/tax-calculator", label: "Most popular" },
+  { title: "Find Your Representative", description: "Find the elected officials connected to your Texas address or district.", to: "/find-representative", label: "Government" },
+  { title: "Texas Bills", description: "Search legislation, sponsors, status, committees and official bill history.", to: "/bills", label: "Legislature" },
+  { title: "Cost of Living Calculator", description: "Compare everyday expenses and household costs across Texas locations.", to: "/texas-cost-of-living-calculator", label: "Moving" },
+  { title: "Texas Mortgage Calculator", description: "Estimate monthly payments and major costs of buying a home in Texas.", to: "/texas-mortgage-calculator", label: "Home buying" },
+  { title: "Texas Financial Tools", description: "Browse the complete collection of Texas-focused calculators and planning tools.", to: "/texas-financial-tools", label: "All tools" },
 ] as const;
 
 const categories = [
@@ -122,7 +140,7 @@ function TexasLivingPage() {
             Find practical information about Texas—from property taxes and elections to cities, counties, schools and cost of living. Explore trusted guides, interactive tools, calculators and official resources designed to help Texans and future Texans quickly find reliable answers.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#browse-by-topic" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Browse by Topic</a>
+            <a href="#what-brings-you-here" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Choose What You Need</a>
             <a href="#texas-essentials" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold hover:bg-white/10">Texas Essentials</a>
           </div>
         </div>
@@ -131,8 +149,24 @@ function TexasLivingPage() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <nav aria-label="Breadcrumb" className="mb-8 text-sm text-muted-foreground"><Link to="/">Home</Link><span className="mx-2">/</span><span>Texas Living</span></nav>
 
-        <section id="texas-essentials" className="scroll-mt-24">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Start Here</p>
+        <section id="what-brings-you-here" className="scroll-mt-24">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Start with your goal</p>
+          <h2 className="mt-2 font-display text-4xl">What brings you here today?</h2>
+          <p className="mt-3 max-w-3xl text-muted-foreground">Choose the task closest to what you need. Each path starts with the most useful guide or tool and leads to related next steps.</p>
+          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {journeys.map(({ title, description, to, icon: Icon, cta }) => (
+              <Link key={title} to={to} className="group rounded-xl border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+                <Icon className="size-7 text-primary" />
+                <h2 className="mt-4 text-xl font-bold">{title}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
+                <span className="mt-5 block text-sm font-bold text-primary group-hover:underline">{cta} →</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section id="texas-essentials" className="mt-16 scroll-mt-24">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Quick access</p>
           <h2 className="mt-2 font-display text-4xl">Texas Essentials</h2>
           <p className="mt-3 max-w-3xl text-muted-foreground">Go directly to the resources people use most when making decisions about life in Texas.</p>
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
@@ -147,9 +181,27 @@ function TexasLivingPage() {
           </div>
         </section>
 
+        <section className="mt-16 rounded-2xl border bg-muted/20 p-6 sm:p-8">
+          <div className="max-w-3xl">
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Popular resources</p>
+            <h2 className="mt-2 font-display text-4xl">Useful tools and answers</h2>
+            <p className="mt-3 text-muted-foreground">Start with the most practical calculators, lookups and government resources already available on the site.</p>
+          </div>
+          <div className="mt-7 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {featuredResources.map(({ title, description, to, label }) => (
+              <Link key={title} to={to} className="rounded-xl border bg-background p-5 transition hover:border-primary hover:shadow-sm">
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">{label}</span>
+                <h2 className="mt-4 text-xl font-bold">{title}</h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
+                <span className="mt-4 block text-sm font-bold text-primary">Open resource →</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
         <section id="browse-by-topic" className="mt-16 scroll-mt-24">
           <h2 className="font-display text-4xl">Browse by Topic</h2>
-          <p className="mt-3 max-w-3xl text-muted-foreground">Choose what you are trying to accomplish and move directly to the most useful guides, tools and official resources.</p>
+          <p className="mt-3 max-w-3xl text-muted-foreground">Choose a broader topic to find useful guides, tools and official resources.</p>
           <div className="mt-8 grid gap-5 md:grid-cols-2">
             {categories.map(({ title, description, icon: Icon, links, cta }) => (
               <section key={title} className="flex min-h-full flex-col rounded-xl border bg-card p-6 transition hover:border-primary">
