@@ -9,6 +9,7 @@ import {
 } from '../../data/representatives';
 import { SHARED_RESOURCES, type SharedResource, type SharedSite } from './registry';
 import { normalizeSearchText, tokenizeSearchQuery } from './search-normalization';
+import { expandSearchTokens } from './search-aliases';
 
 export type SharedEntityType =
   | 'city'
@@ -148,8 +149,9 @@ export function searchEntityCollection(
   limit = 12,
 ): EntitySearchResult[] {
   const normalized = normalizeSearchText(query);
-  const tokens = tokenizeSearchQuery(query);
-  if (!normalized || !tokens.length) return [];
+  const baseTokens = tokenizeSearchQuery(query);
+  if (!normalized || !baseTokens.length) return [];
+  const tokens = expandSearchTokens(query);
 
   return entities
     .filter((entity) => entity.sites.includes(site))
