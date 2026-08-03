@@ -173,10 +173,6 @@ export function buildSeo(input: SeoInput) {
     { name: "twitter:image:alt", content: imageAlt },
   ];
 
-  if (effectiveInput.keywords?.trim()) {
-    meta.push({ name: "keywords", content: effectiveInput.keywords.trim() });
-  }
-
   if (effectiveInput.imageWidth && effectiveInput.imageHeight && image !== DEFAULT_OG_IMAGE) {
     meta.push(
       { property: "og:image:width", content: String(effectiveInput.imageWidth) },
