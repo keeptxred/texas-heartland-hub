@@ -15,6 +15,12 @@ function isRecord(value: unknown): value is JsonRecord {
 }
 function text(value: unknown) { return typeof value === "string" ? value : ""; }
 function integer(value: unknown) { return Number.isInteger(value) ? Number(value) : null; }
+const sessionPattern = /^(\d{2})(R|\d+)$/;
+function parseSession(value: unknown) {
+  const match = sessionPattern.exec(text(value));
+  if (!match) return null;
+  return { legislature_number: Number(match[1]), session_code: match[2] };
+}
 
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -41,13 +47,15 @@ Deno.serve(async (request) => {
 
   let body: JsonRecord;
   try { body = await request.json(); } catch { return json({ error: "Invalid JSON" }, 400); }
+  const session = parseSession(body.session);
+  if (!session) return json({ error: "Unsupported session identifier" }, 400);
   if (body.action === "refresh-latest") {
     const identities = Array.isArray(body.records) ? body.records.filter(isRecord) : [];
     if (!identities.length || identities.length > 100) return json({ error: "refresh-latest requires between 1 and 100 bill records" }, 400);
     const billIds: string[] = [];
     for (const billType of [...new Set(identities.map((record) => text(record.bill_type)))]) {
       const numbers = identities.filter((record) => record.bill_type === billType).map((record) => integer(record.bill_number)).filter((value): value is number => value !== null);
-      const { data, error } = await service.from("bills").select("id").eq("legislature_number", 89).eq("session_code", "R").eq("bill_type", billType).in("bill_number", numbers);
+      const { data, error } = await service.from("bills").select("id").eq("legislature_number", session.legislature_number).eq("session_code", session.session_code).eq("bill_type", billType).in("bill_number", numbers);
       if (error) return json({ error: error.message }, 500);
       for (const bill of data || []) billIds.push(bill.id);
     }
@@ -61,7 +69,7 @@ Deno.serve(async (request) => {
   const mode = body.mode === "live" ? "live" : "dry-run";
   const records = Array.isArray(body.records) ? body.records.filter(isRecord) : [];
   if (!records.length || records.length > 100) return json({ error: "records must contain between 1 and 100 items" }, 400);
-  if (body.schema_version !== 1 || text(body.session) !== "89R") return json({ error: "Unsupported batch schema or session" }, 400);
+  if (body.schema_version !== 1) return json({ error: "Unsupported batch schema or session" }, 400);
 
   const counts: JsonRecord = { seen: records.length, imported: 0, updated: 0, skipped: 0, missing_bill: 0, errors: 0, reports: 0, bills: 0, by_document_type: {} };
   const errors: Array<{ source_record_key: string; error: string }> = [];
@@ -75,7 +83,7 @@ Deno.serve(async (request) => {
     const existingBills = new Set<string>();
     for (const billType of [...new Set(billRecords.map((record) => text(record.bill_type)))]) {
       const numbers = billRecords.filter((record) => record.bill_type === billType).map((record) => integer(record.bill_number)).filter((value): value is number => value !== null);
-      const { data, error } = await service.from("bills").select("bill_type,bill_number").eq("legislature_number", 89).eq("session_code", "R").eq("bill_type", billType).in("bill_number", numbers);
+      const { data, error } = await service.from("bills").select("bill_type,bill_number").eq("legislature_number", session.legislature_number).eq("session_code", session.session_code).eq("bill_type", billType).in("bill_number", numbers);
       if (error) return json({ error: error.message }, 500);
       for (const bill of data || []) existingBills.add(`${bill.bill_type}:${bill.bill_number}`);
     }
@@ -95,7 +103,7 @@ Deno.serve(async (request) => {
   for (const billType of [...new Set(documentRecords.map((record) => text(record.bill_type)))]) {
     const numbers = [...new Set(documentRecords.filter((record) => record.bill_type === billType).map((record) => integer(record.bill_number)).filter((value): value is number => value !== null))];
     if (!billType || !numbers.length) continue;
-    const { data, error } = await service.from("bills").select("id,bill_type,bill_number").eq("legislature_number", 89).eq("session_code", "R").eq("bill_type", billType).in("bill_number", numbers);
+    const { data, error } = await service.from("bills").select("id,bill_type,bill_number").eq("legislature_number", session.legislature_number).eq("session_code", session.session_code).eq("bill_type", billType).in("bill_number", numbers);
     if (error) return json({ error: error.message }, 500);
     for (const bill of data || []) billMap.set(`${bill.bill_type}:${bill.bill_number}`, bill.id);
   }
