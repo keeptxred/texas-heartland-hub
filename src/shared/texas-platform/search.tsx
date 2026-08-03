@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Search, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import {
   SHARED_ENTITIES,
   searchEntityCollection,
@@ -8,6 +8,11 @@ import {
   type SharedEntityType,
 } from "./entities";
 import { mergeEntityCollections } from "./adapters";
+import {
+  filterSearchResults,
+  searchTypeCounts,
+  SEARCH_TYPE_LABELS,
+} from "./search-filters";
 import type { SharedSite } from "./registry";
 
 const TYPE_LABELS: Record<SharedEntityType, string> = {
@@ -30,20 +35,39 @@ export function SharedResourceSearch({
   isLoading = false,
   title = "Search Texas resources",
   description = "Search guides, calculators, representatives, laws, government information and community resources.",
+  initialQuery = "",
 }: {
   site: SharedSite;
   entities?: ReadonlyArray<SharedEntity>;
   isLoading?: boolean;
   title?: string;
   description?: string;
+  initialQuery?: string;
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
+  const [activeType, setActiveType] = useState<SharedEntityType | "all">("all");
   const searchableEntities = useMemo(() => mergeEntityCollections(SHARED_ENTITIES, entities), [entities]);
   const results = useMemo(
-    () => searchEntityCollection(query, searchableEntities, site, 12),
+    () => searchEntityCollection(query, searchableEntities, site, 40),
     [query, searchableEntities, site],
   );
+  const typeCounts = useMemo(() => searchTypeCounts(results), [results]);
+  const visibleResults = useMemo(
+    () => filterSearchResults(results, activeType).slice(0, 12),
+    [activeType, results],
+  );
   const hasQuery = query.trim().length > 0;
+
+  useEffect(() => {
+    if (activeType !== "all" && !typeCounts.some((item) => item.type === activeType)) {
+      setActiveType("all");
+    }
+  }, [activeType, typeCounts]);
+
+  function clearSearch() {
+    setQuery("");
+    setActiveType("all");
+  }
 
   return (
     <section className="rounded-2xl border bg-card p-6 sm:p-8" aria-labelledby="shared-resource-search-title">
@@ -61,9 +85,19 @@ export function SharedResourceSearch({
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Try property taxes, Charles Schwertner, House District 132, mortgage or Texas laws"
-          className="h-14 w-full rounded-xl border bg-background pl-12 pr-4 text-base outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+          className="h-14 w-full rounded-xl border bg-background pl-12 pr-12 text-base outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           autoComplete="off"
         />
+        {hasQuery ? (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-2 text-muted-foreground hover:bg-muted hover:text-foreground"
+            aria-label="Clear resource search"
+          >
+            <X className="size-4" />
+          </button>
+        ) : null}
       </label>
 
       {hasQuery && (
@@ -71,30 +105,56 @@ export function SharedResourceSearch({
           {isLoading ? (
             <div className="rounded-xl border border-dashed p-5 text-sm text-muted-foreground">Searching current Texas resources…</div>
           ) : results.length ? (
-            <div className="grid gap-3 md:grid-cols-2">
-              {results.map((entity) => (
-                <Link
-                  key={entity.id}
-                  to={entity.route}
-                  className="rounded-xl border bg-background p-4 transition hover:border-primary hover:shadow-sm"
+            <>
+              <div className="mb-4 flex gap-2 overflow-x-auto pb-1" aria-label="Filter search results by type">
+                <button
+                  type="button"
+                  onClick={() => setActiveType("all")}
+                  aria-pressed={activeType === "all"}
+                  className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-semibold ${activeType === "all" ? "border-primary bg-primary text-primary-foreground" : "bg-background hover:border-primary hover:text-primary"}`}
                 >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <h3 className="font-bold">{entity.title}</h3>
-                        <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
-                          {TYPE_LABELS[entity.type]}
-                        </span>
+                  All ({results.length})
+                </button>
+                {typeCounts.map((item) => (
+                  <button
+                    key={item.type}
+                    type="button"
+                    onClick={() => setActiveType(item.type)}
+                    aria-pressed={activeType === item.type}
+                    className={`shrink-0 rounded-full border px-3 py-1.5 text-sm font-semibold ${activeType === item.type ? "border-primary bg-primary text-primary-foreground" : "bg-background hover:border-primary hover:text-primary"}`}
+                  >
+                    {item.label} ({item.count})
+                  </button>
+                ))}
+              </div>
+              <p className="mb-3 text-sm text-muted-foreground">
+                Showing {visibleResults.length} of {activeType === "all" ? results.length : typeCounts.find((item) => item.type === activeType)?.count ?? 0} {activeType === "all" ? "matches" : SEARCH_TYPE_LABELS[activeType].toLowerCase()}
+              </p>
+              <div className="grid gap-3 md:grid-cols-2">
+                {visibleResults.map((entity) => (
+                  <Link
+                    key={entity.id}
+                    to={entity.route}
+                    className="rounded-xl border bg-background p-4 transition hover:border-primary hover:shadow-sm"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <h3 className="font-bold">{entity.title}</h3>
+                          <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
+                            {TYPE_LABELS[entity.type]}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-sm leading-6 text-muted-foreground">{entity.summary}</p>
                       </div>
-                      <p className="mt-1 text-sm leading-6 text-muted-foreground">{entity.summary}</p>
+                      {entity.officialSources?.length ? (
+                        <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary">Official source</span>
+                      ) : null}
                     </div>
-                    {entity.officialSources?.length ? (
-                      <span className="shrink-0 rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-bold text-primary">Official source</span>
-                    ) : null}
-                  </div>
-                </Link>
-              ))}
-            </div>
+                  </Link>
+                ))}
+              </div>
+            </>
           ) : (
             <div className="rounded-xl border border-dashed p-5 text-sm text-muted-foreground">
               No matching resources yet. Try a broader term such as taxes, moving, representative, district, government or laws.
