@@ -33,12 +33,16 @@ try {
     'scripts/legislature/validate-local-documents.mjs', `--root=${root}`,
   ], { encoding: 'utf8' });
   const validationResult = JSON.parse(validation.stdout);
-  assert.equal(validationResult.unmatched_bill_files, 0);
-  assert.equal(validationResult.categories.billhistory.unique_bills, 5);
-  assert.equal(validationResult.categories.billtext.unique_bills, 1);
-  assert.equal(validationResult.categories.analysis.unique_bills, 1);
-  assert.equal(validationResult.categories.fiscalnotes.unique_bills, 1);
-  assert.equal(validationResult.categories.witlistbill.unique_bills, 1);
+  assert.equal(validationResult.validation_passed, true);
+  assert.equal(
+    Object.values(validationResult.datasets).reduce((total, dataset) => total + dataset.unmatched, 0),
+    0,
+  );
+  assert.equal(validationResult.datasets.billhistory.unique_bills, 5);
+  assert.equal(validationResult.datasets.billtext.unique_bills, 1);
+  assert.equal(validationResult.datasets.analysis.unique_bills, 1);
+  assert.equal(validationResult.datasets.fiscalnotes.unique_bills, 1);
+  assert.equal(validationResult.datasets.witlistbill.unique_bills, 1);
 
   const dryRun = await execFileAsync(process.execPath, [
     'scripts/legislature/import-local-documents.mjs', `--root=${root}`, '--session=89R', '--dry-run', '--fresh',

@@ -42,6 +42,8 @@
     "legislature:archive:validate": "node scripts/legislature/validate-local-documents.mjs",
     "legislature:archive:relationships": "node scripts/legislature/validate-document-relationships.mjs",
     "legislature:archive:import": "node scripts/legislature/import-local-documents.mjs",
+    "legislature:archive:export-batches": "node scripts/legislature/export-local-document-batches.mjs",
+    "legislature:archive:send-batches": "node scripts/legislature/send-document-batches.mjs",
     "legislature:archive:validate-imported": "node scripts/legislature/validate-imported-documents.mjs",
     "legislature:archive:test-parser": "node scripts/legislature/test-official-document-parser.mjs"
   },
