@@ -8,6 +8,7 @@ import {
   type Rep,
 } from '../../data/representatives';
 import { SHARED_RESOURCES, type SharedResource, type SharedSite } from './registry';
+import { normalizeSearchText, tokenizeSearchQuery } from './search-normalization';
 
 export type SharedEntityType =
   | 'city'
@@ -117,11 +118,11 @@ export function entityByRoute(route: string, site?: SharedSite) {
 export type EntitySearchResult = SharedEntity & { score: number };
 
 function scoreEntity(entity: SharedEntity, normalized: string, tokens: string[]) {
-  const title = entity.title.toLowerCase();
-  const summary = entity.summary.toLowerCase();
-  const terms = (entity.searchTerms ?? []).join(' ').toLowerCase();
-  const topicText = entity.topics.join(' ').toLowerCase();
-  const journeyText = entity.journeys.join(' ').toLowerCase();
+  const title = normalizeSearchText(entity.title);
+  const summary = normalizeSearchText(entity.summary);
+  const terms = normalizeSearchText((entity.searchTerms ?? []).join(' '));
+  const topicText = normalizeSearchText(entity.topics.join(' '));
+  const journeyText = normalizeSearchText(entity.journeys.join(' '));
   let score = 0;
   if (title === normalized) score += 100;
   if (title.startsWith(normalized)) score += 55;
@@ -135,6 +136,8 @@ function scoreEntity(entity: SharedEntity, normalized: string, tokens: string[])
     if (journeyText.includes(token)) score += 6;
     if (terms.includes(token)) score += 5;
   }
+  const titleTokenMatches = tokens.filter((token) => title.includes(token)).length;
+  if (tokens.length > 1 && titleTokenMatches === tokens.length) score += 20;
   return score;
 }
 
@@ -144,9 +147,9 @@ export function searchEntityCollection(
   site: SharedSite,
   limit = 12,
 ): EntitySearchResult[] {
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) return [];
-  const tokens = normalized.split(/\s+/).filter(Boolean);
+  const normalized = normalizeSearchText(query);
+  const tokens = tokenizeSearchQuery(query);
+  if (!normalized || !tokens.length) return [];
 
   return entities
     .filter((entity) => entity.sites.includes(site))
