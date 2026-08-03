@@ -5,6 +5,12 @@ export type SharedSearchTelemetrySink = {
   record: (event: SharedSearchTelemetryEvent) => void | Promise<void>;
 };
 
+export type SharedSearchTelemetryDelivery = {
+  id: string;
+  status: 'fulfilled' | 'rejected';
+  error?: string;
+};
+
 const SINKS = new Map<string, SharedSearchTelemetrySink>();
 
 export function registerSharedSearchTelemetrySink(sink: SharedSearchTelemetrySink) {
@@ -19,13 +25,17 @@ export function registeredSharedSearchTelemetrySinks() {
   return [...SINKS.values()];
 }
 
-export async function recordSharedSearchTelemetry(event: SharedSearchTelemetryEvent) {
-  const results = await Promise.allSettled(
-    registeredSharedSearchTelemetrySinks().map((sink) => Promise.resolve(sink.record(event))),
-  );
+export async function recordSharedSearchTelemetry(
+  event: SharedSearchTelemetryEvent,
+): Promise<SharedSearchTelemetryDelivery[]> {
+  const sinks = registeredSharedSearchTelemetrySinks();
+  const results = await Promise.allSettled(sinks.map((sink) => Promise.resolve(sink.record(event))));
   return results.map((result, index) => ({
-    id: registeredSharedSearchTelemetrySinks()[index]?.id ?? 'unknown',
+    id: sinks[index]?.id ?? 'unknown',
     status: result.status,
+    ...(result.status === 'rejected'
+      ? { error: result.reason instanceof Error ? result.reason.message : String(result.reason) }
+      : {}),
   }));
 }
 
