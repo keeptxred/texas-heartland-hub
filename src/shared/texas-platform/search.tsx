@@ -71,6 +71,12 @@ export function SharedResourceSearch({
   const hasQuery = query.trim().length > 0;
 
   useEffect(() => {
+    setQuery(initialQuery);
+    setActiveType("all");
+    setVisibleCount(SEARCH_PAGE_SIZE);
+  }, [initialQuery]);
+
+  useEffect(() => {
     if (activeType !== "all" && !typeCounts.some((item) => item.type === activeType)) {
       setActiveType("all");
     }
