@@ -25,8 +25,6 @@ export const Route = createFileRoute("/admin")({
 });
 
 const STORAGE_KEY = "ktr-admin-ok";
-const INGEST_VALIDATION_SOURCE_URL =
-  "https://www.breitbart.com/politics/2026/07/29/report-james-talarico-drives-enterprise-rental-truck-real-texan-campaign-ad/";
 const PASSCODE = (import.meta.env.VITE_ADMIN_PASSCODE as string) || "keeptxred";
 
 type FeedRow = {
@@ -102,34 +100,20 @@ function AdminDashboard() {
   const [feed, setFeed] = useState<FeedRow[]>([]);
   const [articles, setArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [ingestStatus, setIngestStatus] = useState<
-    "running" | "verified" | "missing" | "failed"
-  >("running");
-  const [ingestDetail, setIngestDetail] = useState("Refreshing feeds…");
 
   useEffect(() => {
     let active = true;
     async function load() {
-      let refreshOk = false;
       try {
-        const response = await fetch("/api/public/hooks/ingest-feeds", {
+        await fetch("/api/public/hooks/ingest-feeds", {
           method: "POST",
           headers: { Accept: "application/json" },
         });
-        const payload = (await response.json().catch(() => null)) as
-          | { ok?: boolean; inserted?: number; error?: string }
-          | null;
-        refreshOk = response.ok && payload?.ok === true;
-        if (!refreshOk) {
-          setIngestStatus("failed");
-          setIngestDetail(payload?.error || `Feed refresh failed (HTTP ${response.status})`);
-        }
-      } catch (error) {
-        setIngestStatus("failed");
-        setIngestDetail(error instanceof Error ? error.message : "Feed refresh failed");
+      } catch {
+        // Dashboard data still loads even when the on-open feed refresh fails.
       }
 
-      const [{ data: f }, { data: a }, validationResult] = await Promise.all([
+      const [{ data: f }, { data: a }] = await Promise.all([
         supabase
           .from("texas_news_feed")
           .select("id,title,source,internal_slug,pub_date")
@@ -140,30 +124,16 @@ function AdminDashboard() {
           .select("id,slug,title,category,is_breaking,published_at,created_at,source_name,featured_image_url,image_generation_status")
           .order("created_at", { ascending: false })
           .limit(50),
-        supabase
-          .from("texas_news_feed")
-          .select("id,title,source,pub_date")
-          .eq("link", INGEST_VALIDATION_SOURCE_URL)
-          .maybeSingle(),
       ]);
       if (!active) return;
       setFeed((f ?? []) as FeedRow[]);
       setArticles((a ?? []) as ArticleRow[]);
-      if (validationResult.data) {
-        setIngestStatus("verified");
-        setIngestDetail(
-          `Verified in Admin feed as item ${validationResult.data.id}: ${validationResult.data.title}`,
-        );
-      } else if (refreshOk) {
-        setIngestStatus("missing");
-        setIngestDetail(
-          validationResult.error?.message ||
-            "Feed refresh completed, but the requested Breitbart story is still missing.",
-        );
-      }
       setLoading(false);
     }
     load();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const missingSlug = feed.filter((r) => !r.internal_slug).length;
@@ -195,21 +165,6 @@ function AdminDashboard() {
             <p className="mt-2 text-sm text-white/90">Feed ingestion, article pipeline, and system health.</p>
           </div>
           <Button variant="outline" onClick={signOut}>Sign out</Button>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pt-8">
-        <div
-          role="status"
-          className={
-            ingestStatus === "verified"
-              ? "border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-900"
-              : ingestStatus === "running"
-                ? "border border-blue-300 bg-blue-50 p-3 text-sm text-blue-900"
-                : "border-2 border-red-400 bg-red-50 p-3 text-sm text-red-900"
-          }
-        >
-          <strong>Native feed validation:</strong> {ingestDetail}
         </div>
       </section>
 
