@@ -11,7 +11,7 @@ const NAV = [
   { to: "/happening-now", label: "Happening Now" },
   { to: "/elections/2026", label: "Elections" },
   { to: "/bills", label: "Bills" },
-  { to: "/texas-data", label: "Texas Data" },
+  { to: "/texas-data", label: "Texas Resources" },
   { to: "/texas-politics", label: "Politics" },
   { to: "/moving-to-texas", label: "Moving to Texas" },
   { to: "/living-in-texas", label: "Living in Texas" },
