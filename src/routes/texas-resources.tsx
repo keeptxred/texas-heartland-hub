@@ -35,6 +35,7 @@ const TYPE_LABELS: Record<SharedEntityType, string> = {
 };
 
 function TexasResourcesPage() {
+  const { q } = Route.useSearch();
   const entities = entitiesForSite(SITE);
   const topics = topicsForSite(SITE);
   const journeys = journeysForSite(SITE);
@@ -60,7 +61,7 @@ function TexasResourcesPage() {
           <Link to="/">Home</Link><span className="mx-2">/</span><Link to="/texas-living">Texas Living</Link><span className="mx-2">/</span><span>All Resources</span>
         </nav>
 
-        <SharedResourceSearch site={SITE} title="Search all Texas resources" />
+        <SharedResourceSearch site={SITE} title="Search all Texas resources" initialQuery={q} />
 
         <section className="mt-12 grid gap-6 lg:grid-cols-2">
           <div className="rounded-2xl border bg-card p-6">
@@ -121,6 +122,9 @@ function TexasResourcesPage() {
 }
 
 export const Route = createFileRoute("/texas-resources")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    q: typeof search.q === "string" ? search.q.slice(0, 120) : "",
+  }),
   head: () => {
     const seo = buildSeo({
       title: "Texas Resources: Guides, Tools, Bills & Representatives",
@@ -139,6 +143,11 @@ export const Route = createFileRoute("/texas-resources")({
           name: "Texas Resources",
           url: `${SITE_URL}/texas-resources`,
           isPartOf: { "@type": "WebSite", url: SITE_URL },
+          potentialAction: {
+            "@type": "SearchAction",
+            target: `${SITE_URL}/texas-resources?q={search_term_string}`,
+            "query-input": "required name=search_term_string",
+          },
         }).replace(/</g, "\\u003c"),
       }],
     };
