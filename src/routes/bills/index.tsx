@@ -12,7 +12,6 @@ export const Route = createFileRoute('/bills/')({
     page: Math.max(1, Number(search.page) || 1),
   }),
   loaderDeps: ({ search }) => search,
-  ssr: false,
   loader: async ({ deps }) => {
     const [results, options] = await Promise.all([
       listBills({
@@ -28,6 +27,20 @@ export const Route = createFileRoute('/bills/')({
     ]);
     return { ...results, options };
   },
+  pendingComponent: () => (
+    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="rounded-xl border bg-card p-8 text-center text-muted-foreground">Loading Texas bills…</div>
+    </div>
+  ),
+  errorComponent: ({ error }) => (
+    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="rounded-xl border border-destructive/40 bg-card p-8">
+        <h1 className="text-2xl font-bold">Texas bills are temporarily unavailable</h1>
+        <p className="mt-3 text-muted-foreground">The bills database could not be loaded in this environment. Refresh the page or open the published site.</p>
+        {import.meta.env.DEV ? <pre className="mt-4 overflow-auto rounded bg-muted p-3 text-xs">{error instanceof Error ? error.message : String(error)}</pre> : null}
+      </div>
+    </div>
+  ),
   head: () => ({
     meta: [
       { title: 'Texas Bills and Legislation | KeepTXRed' },
