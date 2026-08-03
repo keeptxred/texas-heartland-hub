@@ -39,10 +39,10 @@ export function SharedResourceCard({ resource, cta = 'Open resource' }: { resour
   );
 }
 
-export function SharedJourneyCard({ journey, firstResource }: { journey: SharedJourney; firstResource: SharedResource }) {
+export function SharedJourneyCard({ journey }: { journey: SharedJourney }) {
   const Icon = ICONS[journey.icon];
   return (
-    <Link to={firstResource.route} className="group rounded-xl border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
+    <Link to={`/texas-resources/journey/${journey.id}`} className="group rounded-xl border bg-card p-6 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-md">
       <Icon className="size-7 text-primary" />
       <h2 className="mt-4 text-xl font-bold">{journey.title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">{journey.description}</p>
@@ -65,7 +65,7 @@ export function SharedTopicCard({ topic, resources }: { topic: SharedTopic; reso
           </Link>
         ))}
       </div>
-      <Link to={resources[0].route} className="mt-auto pt-6 text-sm font-bold text-primary hover:underline">{topic.cta} →</Link>
+      <Link to={`/texas-resources/topic/${topic.id}`} className="mt-auto pt-6 text-sm font-bold text-primary hover:underline">{topic.cta} →</Link>
     </section>
   );
 }
