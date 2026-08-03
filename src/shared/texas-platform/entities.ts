@@ -10,6 +10,7 @@ import {
 import { SHARED_RESOURCES, type SharedResource, type SharedSite } from './registry';
 import { normalizeSearchText, tokenizeSearchQuery } from './search-normalization';
 import { expandSearchTokens } from './search-aliases';
+import { allTokensMatch, countTokenMatches, tokenMatchesText } from './search-matching';
 
 export type SharedEntityType =
   | 'city'
@@ -131,14 +132,15 @@ function scoreEntity(entity: SharedEntity, normalized: string, tokens: string[])
   if (summary.includes(normalized)) score += 15;
   if (terms.includes(normalized)) score += 18;
   for (const token of tokens) {
-    if (title.includes(token)) score += 12;
-    if (summary.includes(token)) score += 4;
-    if (topicText.includes(token)) score += 6;
-    if (journeyText.includes(token)) score += 6;
-    if (terms.includes(token)) score += 5;
+    if (tokenMatchesText(token, title)) score += 12;
+    if (tokenMatchesText(token, summary)) score += 4;
+    if (tokenMatchesText(token, topicText)) score += 6;
+    if (tokenMatchesText(token, journeyText)) score += 6;
+    if (tokenMatchesText(token, terms)) score += 5;
   }
-  const titleTokenMatches = tokens.filter((token) => title.includes(token)).length;
-  if (tokens.length > 1 && titleTokenMatches === tokens.length) score += 20;
+  const titleTokenMatches = countTokenMatches(tokens, title);
+  if (tokens.length > 1 && allTokensMatch(tokens, title)) score += 20;
+  if (titleTokenMatches > 0 && titleTokenMatches < tokens.length) score += titleTokenMatches * 2;
   return score;
 }
 
