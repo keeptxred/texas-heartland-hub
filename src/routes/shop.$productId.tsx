@@ -54,7 +54,7 @@ export const Route = createFileRoute("/shop/$productId")({
     <div className="mx-auto max-w-2xl px-6 py-24 text-center">
       <h1 className="font-display text-3xl mb-3">Product not found</h1>
       <p className="text-muted-foreground mb-6">This item may be sold out or no longer available.</p>
-      <Link to="/shop" className="text-primary font-semibold hover:underline">← Back to shop</Link>
+      <Link to="/shop" search={{ category: undefined, collection: undefined, q: undefined, sort: undefined }} className="text-primary font-semibold hover:underline">← Back to shop</Link>
     </div>
   ),
   errorComponent: ({ error, reset }) => (
@@ -198,7 +198,7 @@ function ProductPage() {
           <ol className="flex items-center gap-1 flex-wrap">
             <li><Link to="/" className="hover:text-primary">Home</Link></li>
             <li aria-hidden>/</li>
-            <li><Link to="/shop" className="hover:text-primary">Shop</Link></li>
+            <li><Link to="/shop" search={{ category: undefined, collection: undefined, q: undefined, sort: undefined }} className="hover:text-primary">Shop</Link></li>
             <li aria-hidden>/</li>
             <li className="text-foreground font-medium line-clamp-1">{displayTitle}</li>
           </ol>

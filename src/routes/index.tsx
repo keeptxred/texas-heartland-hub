@@ -394,6 +394,7 @@ function StandardHomepage() {
             </p>
             <Link
               to="/shop"
+              search={{ category: undefined, collection: undefined, q: undefined, sort: undefined }}
               className="mt-6 inline-flex rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
               Shop featured products

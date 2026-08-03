@@ -390,7 +390,10 @@ function ShopPage() {
             <p className="mt-2 text-muted-foreground">Try another search, category, collection, or sorting option.</p>
             <button
               type="button"
-              onClick={() => navigate({ search: {}, replace: true })}
+              onClick={() => navigate({
+                search: { category: undefined, collection: undefined, q: undefined, sort: undefined },
+                replace: true,
+              })}
               className="mt-5 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
             >
               View all products
