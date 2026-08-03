@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Link2, Search, X } from "lucide-react";
+import { Check, Copy, Link2, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   SHARED_ENTITIES,
@@ -9,6 +9,7 @@ import {
 } from "./entities";
 import { mergeEntityCollections } from "./adapters";
 import {
+  ENTITY_TYPE_LABELS,
   searchTypeCounts,
   SEARCH_TYPE_LABELS,
 } from "./search-filters";
@@ -18,20 +19,6 @@ import {
 } from "./search-pagination";
 import { resourceSearchHref } from "./search-params";
 import type { SharedSite } from "./registry";
-
-const TYPE_LABELS: Record<SharedEntityType, string> = {
-  city: "City",
-  county: "County",
-  representative: "Representative",
-  bill: "Bill",
-  committee: "Committee",
-  agency: "Agency",
-  guide: "Guide",
-  calculator: "Calculator",
-  park: "Park",
-  "school-district": "School district",
-  resource: "Resource",
-};
 
 const SUGGESTED_SEARCHES = [
   "Property taxes",
@@ -61,6 +48,7 @@ export function SharedResourceSearch({
   const [query, setQuery] = useState(initialQuery);
   const [activeType, setActiveType] = useState<SharedEntityType | "all">(initialType);
   const [visibleCount, setVisibleCount] = useState(SEARCH_PAGE_SIZE);
+  const [copied, setCopied] = useState(false);
   const searchableEntities = useMemo(() => mergeEntityCollections(SHARED_ENTITIES, entities), [entities]);
   const results = useMemo(
     () => searchEntityCollection(query, searchableEntities, site, 80),
@@ -88,6 +76,7 @@ export function SharedResourceSearch({
 
   useEffect(() => {
     setVisibleCount(SEARCH_PAGE_SIZE);
+    setCopied(false);
   }, [query, activeType]);
 
   function clearSearch() {
@@ -99,6 +88,13 @@ export function SharedResourceSearch({
   function chooseSuggestion(suggestion: string) {
     setQuery(suggestion);
     setActiveType("all");
+  }
+
+  async function copySearchLink() {
+    if (typeof window === "undefined" || !navigator.clipboard) return;
+    await navigator.clipboard.writeText(new URL(shareHref, window.location.origin).toString());
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
   }
 
   return (
@@ -119,6 +115,7 @@ export function SharedResourceSearch({
           placeholder="Try property taxes, Charles Schwertner, House District 132, mortgage or Texas laws"
           className="h-14 w-full rounded-xl border bg-background pl-12 pr-12 text-base outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           autoComplete="off"
+          aria-controls="shared-resource-search-results"
         />
         {hasQuery ? (
           <button
@@ -148,7 +145,7 @@ export function SharedResourceSearch({
       ) : null}
 
       {hasQuery && (
-        <div className="mt-5" aria-live="polite" aria-busy={isLoading}>
+        <div id="shared-resource-search-results" className="mt-5" aria-live="polite" aria-busy={isLoading}>
           {isLoading ? (
             <div className="rounded-xl border border-dashed p-5 text-sm text-muted-foreground">Searching current Texas resources…</div>
           ) : results.length ? (
@@ -178,13 +175,24 @@ export function SharedResourceSearch({
                 <p className="text-sm text-muted-foreground">
                   Showing {page.visible.length} of {page.total} {activeType === "all" ? "matches" : SEARCH_TYPE_LABELS[activeType].toLowerCase()}
                 </p>
-                <Link
-                  to={shareHref}
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
-                  aria-label="Open a shareable link for this resource search"
-                >
-                  <Link2 className="size-4" /> Share this search
-                </Link>
+                <div className="flex flex-wrap items-center gap-3">
+                  <Link
+                    to={shareHref}
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                    aria-label="Open a shareable link for this resource search"
+                  >
+                    <Link2 className="size-4" /> Share this search
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={copySearchLink}
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                    aria-label="Copy a shareable link for this resource search"
+                  >
+                    {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+                    {copied ? "Copied" : "Copy link"}
+                  </button>
+                </div>
               </div>
               <div className="grid gap-3 md:grid-cols-2">
                 {page.visible.map((entity) => (
@@ -198,7 +206,7 @@ export function SharedResourceSearch({
                         <div className="flex flex-wrap items-center gap-2">
                           <h3 className="font-bold">{entity.title}</h3>
                           <span className="rounded-full bg-muted px-2.5 py-1 text-[11px] font-semibold text-muted-foreground">
-                            {TYPE_LABELS[entity.type]}
+                            {ENTITY_TYPE_LABELS[entity.type]}
                           </span>
                         </div>
                         <p className="mt-1 text-sm leading-6 text-muted-foreground">{entity.summary}</p>
