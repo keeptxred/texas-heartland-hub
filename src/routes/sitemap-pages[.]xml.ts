@@ -19,91 +19,29 @@ import {
   representativeSlug,
 } from "@/data/representatives";
 
-// Static routes do not have per-page modification timestamps. Use the last
-// verified sitewide content revision instead of changing lastmod on every hit.
-const STATIC_PAGE_LASTMOD = toIsoDate("2026-08-01T00:00:00-05:00");
+const STATIC_PAGE_LASTMOD = toIsoDate("2026-08-03T00:00:00-05:00");
 
-/** Static, public, indexable app routes. */
 const STATIC_PATHS: string[] = [
-  "/",
-  "/news",
-  "/news/non-political",
-  "/happening-now",
-  "/keep-texas-red",
-  "/texas-news",
-  "/houston",
-  "/dallas-fort-worth",
-  "/san-antonio",
-  "/austin",
-  "/el-paso",
-  "/texas-sports",
-  "/texas-business",
-  "/elections",
-  "/texas-legislature",
-  "/texas-legislature/house",
-  "/texas-legislature/senate",
-  "/texas-legislature/current-session",
-  "/texas-legislature/sessions",
-  "/tax-calculator",
-  "/texas-property-tax-protest-guide",
-  "/texas-sales-tax-explained",
-  "/texas-first-time-homebuyer-programs",
-  "/moving-to-texas",
-  "/moving-to-texas-checklist",
-  "/find-my-dmv",
-  "/living-in-texas",
-  "/explore",
-  "/explore/trip-planner",
-  "/texas-financial-tools",
-  "/texas-mortgage-calculator",
-  "/texas-home-affordability-calculator",
-  "/texas-down-payment-calculator",
-  "/texas-closing-cost-calculator",
-  "/texas-home-equity-growth-calculator",
-  "/texas-mortgage-payoff-calculator",
-  "/texas-homeownership-cost-calculator",
-  "/texas-refinance-savings-calculator",
-  "/texas-home-equity-calculator",
-  "/texas-rent-vs-buy-calculator",
-  "/texas-cost-of-living-calculator",
-  "/texas-salary-calculator",
-  "/texas-budget-planner",
-  "/texas-home-insurance-calculator",
-  "/texas-utility-cost-calculator",
-  "/texas-moving-cost-calculator",
-  "/texas-property-tax-increase-calculator",
-  "/texas-down-payment-assistance-calculator",
-  "/texas-salary-comparison-by-city",
-  "/about",
-  "/representatives",
-  "/find-representative",
-  "/register-to-vote",
-  "/contact-legislators",
-  "/get-involved",
-  "/county-elections",
-  "/candidate-guides",
-  "/voting-locations",
-  "/laws",
-  "/texas-laws",
-  "/laws-to-know",
-  "/legislative-updates",
-  "/contact",
-  "/privacy",
-  "/terms",
-  "/terms-of-service",
-  "/shipping-policy",
-  "/return-refund-policy",
-  "/glossary",
-  "/editorial-standards",
-  "/texas-politics",
-  "/authors",
-  "/texas-economy",
-  "/texas-law-policy",
-  "/shop",
-  "/texas",
-  "/texas/property-taxes-2026",
-  "/texas/moving-to-texas-2026",
-  "/texas-data",
+  "/", "/news", "/news/non-political", "/happening-now", "/keep-texas-red", "/texas-news",
+  "/houston", "/dallas-fort-worth", "/san-antonio", "/austin", "/el-paso", "/texas-sports",
+  "/texas-business", "/elections", "/texas-legislature", "/texas-legislature/house",
+  "/texas-legislature/senate", "/texas-legislature/current-session", "/texas-legislature/sessions",
+  "/tax-calculator", "/texas-property-tax-protest-guide", "/texas-sales-tax-explained",
+  "/texas-first-time-homebuyer-programs", "/moving-to-texas", "/moving-to-texas-checklist",
+  "/find-my-dmv", "/texas-living", "/explore", "/explore/trip-planner", "/texas-financial-tools",
+  "/texas-mortgage-calculator", "/texas-home-affordability-calculator", "/texas-down-payment-calculator",
+  "/texas-closing-cost-calculator", "/texas-home-equity-growth-calculator", "/texas-mortgage-payoff-calculator",
+  "/texas-homeownership-cost-calculator", "/texas-refinance-savings-calculator", "/texas-home-equity-calculator",
+  "/texas-rent-vs-buy-calculator", "/texas-cost-of-living-calculator", "/texas-salary-calculator",
+  "/texas-budget-planner", "/texas-home-insurance-calculator", "/texas-utility-cost-calculator",
+  "/texas-moving-cost-calculator", "/texas-property-tax-increase-calculator",
+  "/texas-down-payment-assistance-calculator", "/texas-salary-comparison-by-city", "/about",
+  "/representatives", "/find-representative", "/register-to-vote", "/contact-legislators", "/get-involved",
+  "/county-elections", "/candidate-guides", "/voting-locations", "/laws", "/texas-laws", "/laws-to-know",
+  "/legislative-updates", "/contact", "/privacy", "/terms", "/terms-of-service", "/shipping-policy",
+  "/return-refund-policy", "/glossary", "/editorial-standards", "/texas-politics", "/authors",
+  "/texas-economy", "/texas-law-policy", "/shop", "/texas", "/texas/property-taxes-2026",
+  "/texas/moving-to-texas-2026", "/texas-data",
   ...TEXAS_DATASETS.map((dataset) => `/texas-data/${dataset.slug}`),
   ...[
     ...US_SENATORS,
@@ -120,17 +58,12 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
       GET: async () => {
         const paths = [...STATIC_PATHS];
         for (const league of ["nfl", "mlb", "nba"] as const) {
-          if (await hasEnoughContent({ kind: `sports-${league}` }, MIN_ARTICLES_DEFAULT))
-            paths.push(`/texas-sports/${league}`);
+          if (await hasEnoughContent({ kind: `sports-${league}` }, MIN_ARTICLES_DEFAULT)) paths.push(`/texas-sports/${league}`);
         }
         for (const team of TEAMS) {
-          if (await hasEnoughContent({ teamSlug: team.slug, league: team.league }, MIN_ARTICLES_DEFAULT))
-            paths.push(`/texas-sports/team/${team.slug}`);
+          if (await hasEnoughContent({ teamSlug: team.slug, league: team.league }, MIN_ARTICLES_DEFAULT)) paths.push(`/texas-sports/team/${team.slug}`);
         }
-        const entries: UrlEntry[] = paths.map((path) => ({
-          loc: `${BASE_URL}${path}`,
-          lastmod: STATIC_PAGE_LASTMOD,
-        }));
+        const entries: UrlEntry[] = paths.map((path) => ({ loc: `${BASE_URL}${path}`, lastmod: STATIC_PAGE_LASTMOD }));
         return xmlResponse(renderUrlset(entries));
       },
     },
