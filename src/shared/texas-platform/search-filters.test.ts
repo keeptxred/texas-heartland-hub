@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { EntitySearchResult } from './entities';
-import { filterSearchResults, searchTypeCounts } from './search-filters';
+import { ENTITY_TYPE_LABELS, filterSearchResults, searchTypeCounts } from './search-filters';
 
 const results: EntitySearchResult[] = [
   {
@@ -57,5 +57,11 @@ describe('shared search filters', () => {
       'calculator:tax',
       'calculator:mortgage',
     ]);
+  });
+
+  it('provides visitor-facing singular labels for every result card type', () => {
+    expect(ENTITY_TYPE_LABELS.calculator).toBe('Calculator & Tool');
+    expect(ENTITY_TYPE_LABELS['school-district']).toBe('School District');
+    expect(Object.keys(ENTITY_TYPE_LABELS)).toHaveLength(11);
   });
 });
