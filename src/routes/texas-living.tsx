@@ -48,12 +48,9 @@ function TexasLivingPage() {
         <section id="what-brings-you-here" className="mt-16 scroll-mt-24">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Start with your goal</p>
           <h2 className="mt-2 font-display text-4xl">What brings you here today?</h2>
-          <p className="mt-3 max-w-3xl text-muted-foreground">Choose the task closest to what you need. Each path starts with useful shared resources and leads to related next steps.</p>
+          <p className="mt-3 max-w-3xl text-muted-foreground">Choose the task closest to what you need. Each path opens a complete journey with practical resources and related next steps.</p>
           <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {journeys.map((journey) => {
-              const firstResource = resolveResources(journey.resourceIds, SITE)[0];
-              return firstResource ? <SharedJourneyCard key={journey.id} journey={journey} firstResource={firstResource} /> : null;
-            })}
+            {journeys.map((journey) => <SharedJourneyCard key={journey.id} journey={journey} />)}
           </div>
         </section>
 
