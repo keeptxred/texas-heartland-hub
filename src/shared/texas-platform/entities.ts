@@ -102,8 +102,8 @@ export const REPRESENTATIVE_ENTITIES: SharedEntity[] = ALL_REPRESENTATIVES.map((
 
 export const SHARED_ENTITIES: SharedEntity[] = [...RESOURCE_ENTITIES, ...REPRESENTATIVE_ENTITIES];
 
-export function entitiesForSite(site: SharedSite, entities: ReadonlyArray<SharedEntity> = SHARED_ENTITIES) {
-  return entities.filter((entity) => entity.sites.includes(site));
+export function entitiesForSite(site: SharedSite) {
+  return SHARED_ENTITIES.filter((entity) => entity.sites.includes(site));
 }
 
 export function entityById(id: string) {
@@ -116,43 +116,46 @@ export function entityByRoute(route: string, site?: SharedSite) {
 
 export type EntitySearchResult = SharedEntity & { score: number };
 
+function scoreEntity(entity: SharedEntity, normalized: string, tokens: string[]) {
+  const title = entity.title.toLowerCase();
+  const summary = entity.summary.toLowerCase();
+  const terms = (entity.searchTerms ?? []).join(' ').toLowerCase();
+  const topicText = entity.topics.join(' ').toLowerCase();
+  const journeyText = entity.journeys.join(' ').toLowerCase();
+  let score = 0;
+  if (title === normalized) score += 100;
+  if (title.startsWith(normalized)) score += 55;
+  if (title.includes(normalized)) score += 35;
+  if (summary.includes(normalized)) score += 15;
+  if (terms.includes(normalized)) score += 18;
+  for (const token of tokens) {
+    if (title.includes(token)) score += 12;
+    if (summary.includes(token)) score += 4;
+    if (topicText.includes(token)) score += 6;
+    if (journeyText.includes(token)) score += 6;
+    if (terms.includes(token)) score += 5;
+  }
+  return score;
+}
+
 export function searchEntityCollection(
   query: string,
-  site: SharedSite,
   entities: ReadonlyArray<SharedEntity>,
+  site: SharedSite,
   limit = 12,
 ): EntitySearchResult[] {
   const normalized = query.trim().toLowerCase();
   if (!normalized) return [];
   const tokens = normalized.split(/\s+/).filter(Boolean);
 
-  return entitiesForSite(site, entities)
-    .map((entity) => {
-      const title = entity.title.toLowerCase();
-      const summary = entity.summary.toLowerCase();
-      const terms = (entity.searchTerms ?? []).join(' ').toLowerCase();
-      const topicText = entity.topics.join(' ').toLowerCase();
-      const journeyText = entity.journeys.join(' ').toLowerCase();
-      let score = 0;
-      if (title === normalized) score += 100;
-      if (title.startsWith(normalized)) score += 55;
-      if (title.includes(normalized)) score += 35;
-      if (summary.includes(normalized)) score += 15;
-      if (terms.includes(normalized)) score += 18;
-      for (const token of tokens) {
-        if (title.includes(token)) score += 12;
-        if (summary.includes(token)) score += 4;
-        if (topicText.includes(token)) score += 6;
-        if (journeyText.includes(token)) score += 6;
-        if (terms.includes(token)) score += 5;
-      }
-      return { ...entity, score };
-    })
+  return entities
+    .filter((entity) => entity.sites.includes(site))
+    .map((entity) => ({ ...entity, score: scoreEntity(entity, normalized, tokens) }))
     .filter((entity) => entity.score > 0)
     .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
     .slice(0, limit);
 }
 
 export function searchEntities(query: string, site: SharedSite, limit = 12): EntitySearchResult[] {
-  return searchEntityCollection(query, site, SHARED_ENTITIES, limit);
+  return searchEntityCollection(query, SHARED_ENTITIES, site, limit);
 }
