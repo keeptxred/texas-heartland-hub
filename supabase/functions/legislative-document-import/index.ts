@@ -46,11 +46,33 @@ Deno.serve(async (request) => {
   if (!records.length || records.length > 100) return json({ error: "records must contain between 1 and 100 items" }, 400);
   if (body.schema_version !== 1 || text(body.session) !== "89R") return json({ error: "Unsupported batch schema or session" }, 400);
 
-  const counts: JsonRecord = { seen: records.length, imported: 0, updated: 0, skipped: 0, missing_bill: 0, errors: 0, reports: 0, by_document_type: {} };
+  const counts: JsonRecord = { seen: records.length, imported: 0, updated: 0, skipped: 0, missing_bill: 0, errors: 0, reports: 0, bills: 0, by_document_type: {} };
   const errors: Array<{ source_record_key: string; error: string }> = [];
   const documentRecords = records.filter((record) => record.kind === "document");
   const reportRecords = records.filter((record) => record.kind === "report");
-  if (documentRecords.length + reportRecords.length !== records.length) return json({ error: "Every record kind must be document or report" }, 400);
+  const billRecords = records.filter((record) => record.kind === "bill");
+  if (documentRecords.length + reportRecords.length + billRecords.length !== records.length) return json({ error: "Every record kind must be bill, document, or report" }, 400);
+
+  if (billRecords.length) {
+    if (documentRecords.length || reportRecords.length) return json({ error: "Bill batches cannot mix record kinds" }, 400);
+    const existingBills = new Set<string>();
+    for (const billType of [...new Set(billRecords.map((record) => text(record.bill_type)))]) {
+      const numbers = billRecords.filter((record) => record.bill_type === billType).map((record) => integer(record.bill_number)).filter((value): value is number => value !== null);
+      const { data, error } = await service.from("bills").select("bill_type,bill_number").eq("legislature_number", 89).eq("session_code", "R").eq("bill_type", billType).in("bill_number", numbers);
+      if (error) return json({ error: error.message }, 500);
+      for (const bill of data || []) existingBills.add(`${bill.bill_type}:${bill.bill_number}`);
+    }
+    const rows = billRecords.map(({ kind: _kind, source_record_key: _sourceRecordKey, ...row }) => row);
+    const missingRows = rows.filter((row) => !existingBills.has(`${row.bill_type}:${row.bill_number}`));
+    counts.imported = missingRows.length;
+    counts.skipped = rows.length - missingRows.length;
+    counts.bills = rows.length;
+    if (mode === "live" && missingRows.length) {
+      const { error } = await service.from("bills").insert(missingRows);
+      if (error) return json({ error: error.message, counts }, 500);
+    }
+    return json({ mode, batch_index: integer(body.batch_index), counts, errors });
+  }
 
   const billMap = new Map<string, string>();
   for (const billType of [...new Set(documentRecords.map((record) => text(record.bill_type)))]) {
@@ -100,6 +122,10 @@ Deno.serve(async (request) => {
       counts.reports = Number(counts.reports) + 1;
       const { kind: _kind, ...row } = record;
       reportUpserts.push({ ...row, last_seen_at: now, last_imported_at: now });
+    }
+
+    if (mode === "live" && Number(counts.missing_bill) > 0) {
+      return json({ error: "Batch rejected atomically because one or more bill records are missing", counts, errors }, 409);
     }
 
     if (mode === "live") {

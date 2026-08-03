@@ -44,7 +44,7 @@ for (let index = Number(checkpoint.next_batch_index || 0); index < manifest.batc
   const result = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(`${descriptor.filename}: ${response.status} ${JSON.stringify(result)}`);
   const counts = result.counts || {};
-  for (const key of ['imported', 'updated', 'skipped', 'missing_bill', 'errors', 'reports']) totals[key] = Number(totals[key] || 0) + Number(counts[key] || 0);
+  for (const key of ['imported', 'updated', 'skipped', 'missing_bill', 'errors', 'reports', 'bills']) totals[key] = Number(totals[key] || 0) + Number(counts[key] || 0);
   checkpoint.next_batch_index = index + 1;
   checkpoint.completed_batches.push({ index, filename: descriptor.filename, completed_at: new Date().toISOString(), counts });
   checkpoint.updated_at = new Date().toISOString();
