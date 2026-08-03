@@ -9,10 +9,13 @@ import {
 } from "./entities";
 import { mergeEntityCollections } from "./adapters";
 import {
-  filterSearchResults,
   searchTypeCounts,
   SEARCH_TYPE_LABELS,
 } from "./search-filters";
+import {
+  paginatedSearchResults,
+  SEARCH_PAGE_SIZE,
+} from "./search-pagination";
 import type { SharedSite } from "./registry";
 
 const TYPE_LABELS: Record<SharedEntityType, string> = {
@@ -28,6 +31,14 @@ const TYPE_LABELS: Record<SharedEntityType, string> = {
   "school-district": "School district",
   resource: "Resource",
 };
+
+const SUGGESTED_SEARCHES = [
+  "Property taxes",
+  "Moving to Texas",
+  "Find my representative",
+  "Mortgage calculator",
+  "Texas laws",
+];
 
 export function SharedResourceSearch({
   site,
@@ -46,15 +57,16 @@ export function SharedResourceSearch({
 }) {
   const [query, setQuery] = useState(initialQuery);
   const [activeType, setActiveType] = useState<SharedEntityType | "all">("all");
+  const [visibleCount, setVisibleCount] = useState(SEARCH_PAGE_SIZE);
   const searchableEntities = useMemo(() => mergeEntityCollections(SHARED_ENTITIES, entities), [entities]);
   const results = useMemo(
-    () => searchEntityCollection(query, searchableEntities, site, 40),
+    () => searchEntityCollection(query, searchableEntities, site, 80),
     [query, searchableEntities, site],
   );
   const typeCounts = useMemo(() => searchTypeCounts(results), [results]);
-  const visibleResults = useMemo(
-    () => filterSearchResults(results, activeType).slice(0, 12),
-    [activeType, results],
+  const page = useMemo(
+    () => paginatedSearchResults(results, activeType, visibleCount),
+    [activeType, results, visibleCount],
   );
   const hasQuery = query.trim().length > 0;
 
@@ -64,8 +76,18 @@ export function SharedResourceSearch({
     }
   }, [activeType, typeCounts]);
 
+  useEffect(() => {
+    setVisibleCount(SEARCH_PAGE_SIZE);
+  }, [query, activeType]);
+
   function clearSearch() {
     setQuery("");
+    setActiveType("all");
+    setVisibleCount(SEARCH_PAGE_SIZE);
+  }
+
+  function chooseSuggestion(suggestion: string) {
+    setQuery(suggestion);
     setActiveType("all");
   }
 
@@ -100,6 +122,21 @@ export function SharedResourceSearch({
         ) : null}
       </label>
 
+      {!hasQuery ? (
+        <div className="mt-4 flex flex-wrap gap-2" aria-label="Suggested searches">
+          {SUGGESTED_SEARCHES.map((suggestion) => (
+            <button
+              key={suggestion}
+              type="button"
+              onClick={() => chooseSuggestion(suggestion)}
+              className="rounded-full border bg-background px-3 py-1.5 text-sm font-semibold hover:border-primary hover:text-primary"
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      ) : null}
+
       {hasQuery && (
         <div className="mt-5" aria-live="polite" aria-busy={isLoading}>
           {isLoading ? (
@@ -128,10 +165,10 @@ export function SharedResourceSearch({
                 ))}
               </div>
               <p className="mb-3 text-sm text-muted-foreground">
-                Showing {visibleResults.length} of {activeType === "all" ? results.length : typeCounts.find((item) => item.type === activeType)?.count ?? 0} {activeType === "all" ? "matches" : SEARCH_TYPE_LABELS[activeType].toLowerCase()}
+                Showing {page.visible.length} of {page.total} {activeType === "all" ? "matches" : SEARCH_TYPE_LABELS[activeType].toLowerCase()}
               </p>
               <div className="grid gap-3 md:grid-cols-2">
-                {visibleResults.map((entity) => (
+                {page.visible.map((entity) => (
                   <Link
                     key={entity.id}
                     to={entity.route}
@@ -154,6 +191,15 @@ export function SharedResourceSearch({
                   </Link>
                 ))}
               </div>
+              {page.canLoadMore ? (
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount(page.nextVisibleCount)}
+                  className="mt-5 rounded-md border bg-background px-4 py-2.5 text-sm font-bold hover:border-primary hover:text-primary"
+                >
+                  Show more results
+                </button>
+              ) : null}
             </>
           ) : (
             <div className="rounded-xl border border-dashed p-5 text-sm text-muted-foreground">
