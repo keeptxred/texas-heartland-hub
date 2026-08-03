@@ -6,7 +6,7 @@ import {
   US_SENATORS,
   representativeSlug,
   type Rep,
-} from '@/data/representatives';
+} from '../../data/representatives';
 import { SHARED_RESOURCES, type SharedResource, type SharedSite } from './registry';
 
 export type SharedEntityType =
