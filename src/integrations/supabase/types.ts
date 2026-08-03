@@ -177,6 +177,13 @@ export type Database = {
             foreignKeyName: "bill_actions_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_actions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },
@@ -227,6 +234,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "daily_articles"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bill_article_relationships_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
           },
           {
             foreignKeyName: "bill_article_relationships_bill_id_fkey"
@@ -290,6 +304,13 @@ export type Database = {
           vote_date?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "bill_committee_history_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
           {
             foreignKeyName: "bill_committee_history_bill_id_fkey"
             columns: ["bill_id"]
@@ -402,6 +423,13 @@ export type Database = {
             foreignKeyName: "bill_documents_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_documents_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },
@@ -461,6 +489,13 @@ export type Database = {
             foreignKeyName: "bill_sponsors_bill_id_fkey"
             columns: ["bill_id"]
             isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_sponsors_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
             referencedRelation: "bills"
             referencedColumns: ["id"]
           },
@@ -480,6 +515,13 @@ export type Database = {
           subject_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "bill_subject_relationships_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
           {
             foreignKeyName: "bill_subject_relationships_bill_id_fkey"
             columns: ["bill_id"]
@@ -3880,6 +3922,29 @@ export type Database = {
       }
     }
     Views: {
+      bill_document_completeness: {
+        Row: {
+          analysis_count: number | null
+          bill_id: string | null
+          bill_number: number | null
+          bill_text_count: number | null
+          bill_type: string | null
+          completeness_score: number | null
+          document_count: number | null
+          fiscal_note_count: number | null
+          has_analysis: boolean | null
+          has_bill_text: boolean | null
+          has_fiscal_note: boolean | null
+          has_history: boolean | null
+          has_witness_list: boolean | null
+          history_count: number | null
+          latest_document_imported_at: string | null
+          legislature_number: number | null
+          session_code: string | null
+          witness_list_count: number | null
+        }
+        Relationships: []
+      }
       explore_public_entities: {
         Row: {
           activities: string[] | null
