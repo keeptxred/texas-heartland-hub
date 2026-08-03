@@ -103,9 +103,12 @@ function TexasResourcesPage() {
                   <h2 className="font-display text-3xl">{TYPE_LABELS[group.type]}</h2>
                   <p className="mt-2 text-sm text-muted-foreground">{group.entities.length} available</p>
                 </div>
+                <Link to={`/texas-resources/type/${group.type}`} className="text-sm font-bold text-primary hover:underline">
+                  View all {TYPE_LABELS[group.type].toLowerCase()} →
+                </Link>
               </div>
               <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {group.entities.slice(0, 18).map((entity) => (
+                {group.entities.slice(0, 6).map((entity) => (
                   <SharedEntityCard key={entity.id} entity={entity} />
                 ))}
               </div>
