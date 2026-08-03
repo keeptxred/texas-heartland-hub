@@ -30,8 +30,8 @@ async function request(path, init = {}) {
   return text ? JSON.parse(text) : null;
 }
 
-async function count(table, filters = '') {
-  const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=id${filters ? `&${filters}` : ''}`, {
+async function count(table, filters = '', selectColumn = 'id') {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=${selectColumn}${filters ? `&${filters}` : ''}`, {
     headers: { ...headers, Prefer: 'count=exact', Range: '0-0' },
   });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${await response.text()}`);
@@ -59,6 +59,17 @@ const totals = {
   latest_flags: await count('bill_documents', `${sessionFilter}&is_latest=eq.true`),
 };
 
+const completeness = {
+  score_100: await count('bill_document_completeness', `${sessionFilter}&completeness_score=eq.100`, 'bill_id'),
+  score_80: await count('bill_document_completeness', `${sessionFilter}&completeness_score=eq.80`, 'bill_id'),
+  score_60: await count('bill_document_completeness', `${sessionFilter}&completeness_score=eq.60`, 'bill_id'),
+  score_40: await count('bill_document_completeness', `${sessionFilter}&completeness_score=eq.40`, 'bill_id'),
+  score_20: await count('bill_document_completeness', `${sessionFilter}&completeness_score=eq.20`, 'bill_id'),
+  score_0: await count('bill_document_completeness', `${sessionFilter}&completeness_score=eq.0`, 'bill_id'),
+  missing_history: await count('bill_document_completeness', `${sessionFilter}&has_history=eq.false`, 'bill_id'),
+  missing_bill_text: await count('bill_document_completeness', `${sessionFilter}&has_bill_text=eq.false`, 'bill_id'),
+};
+
 const duplicates = await request(`bill_documents?select=source_key,source_record_key&${sessionFilter}`);
 const seen = new Set();
 let duplicateSourceRecords = 0;
@@ -74,7 +85,7 @@ for (const row of latestRows || []) {
   const key = `${row.bill_id}:${row.document_type}`;
   latestGroupCounts.set(key, (latestGroupCounts.get(key) || 0) + 1);
 }
-const duplicateLatestGroups = [...latestGroupCounts.values()].filter((count) => count > 1).length;
+const duplicateLatestGroups = [...latestGroupCounts.values()].filter((value) => value > 1).length;
 
 const failures = [];
 if (!totals.bills) failures.push('No bills found for session.');
@@ -84,11 +95,14 @@ if (totals.missing_source_keys) failures.push(`${totals.missing_source_keys} doc
 if (totals.missing_hashes) failures.push(`${totals.missing_hashes} documents are missing content hashes.`);
 if (duplicateSourceRecords) failures.push(`${duplicateSourceRecords} duplicate source records found.`);
 if (duplicateLatestGroups) failures.push(`${duplicateLatestGroups} bill/document groups have multiple latest rows.`);
+if (completeness.missing_history) failures.push(`${completeness.missing_history} bills are missing imported history documents.`);
+if (completeness.missing_bill_text) failures.push(`${completeness.missing_bill_text} bills are missing imported bill text.`);
 
 console.log(JSON.stringify({
   session,
   totals,
   document_counts: documentCounts,
+  completeness,
   duplicate_source_records: duplicateSourceRecords,
   duplicate_latest_groups: duplicateLatestGroups,
   status: failures.length ? 'failed' : 'passed',
