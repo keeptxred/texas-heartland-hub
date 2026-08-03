@@ -17,6 +17,7 @@ export * from './search-telemetry';
 export * from './search-telemetry-store';
 export * from './search-telemetry-session';
 export * from './search-telemetry-retention';
+export * from './search-telemetry-trends';
 export * from './search-insights';
 export * from './search-telemetry-components';
 export * from './search-content-gaps';
