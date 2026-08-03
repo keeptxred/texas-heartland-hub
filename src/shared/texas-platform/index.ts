@@ -15,6 +15,7 @@ export * from './search-fuzzy';
 export * from './search-audit';
 export * from './search-telemetry';
 export * from './search-telemetry-privacy';
+export * from './search-telemetry-policy';
 export * from './search-telemetry-store';
 export * from './search-telemetry-session';
 export * from './search-telemetry-retention';
