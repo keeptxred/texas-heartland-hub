@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Check, Copy, Link2, Search, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   SHARED_ENTITIES,
   searchEntityCollection,
@@ -19,6 +19,12 @@ import {
 } from "./search-pagination";
 import { resourceSearchHref } from "./search-params";
 import { absoluteResourceSearchUrl, copyText } from "./search-sharing";
+import { createSharedSearchTelemetryEvent } from "./search-telemetry";
+import { recordSharedSearchTelemetry } from "./search-telemetry-store";
+import {
+  createSearchResultClickEvent,
+  shouldRecordSearchTelemetry,
+} from "./search-telemetry-session";
 import type { SharedSite } from "./registry";
 
 const SUGGESTED_SEARCHES = [
@@ -29,6 +35,7 @@ const SUGGESTED_SEARCHES = [
   "Texas laws",
 ];
 
+const SEARCH_TELEMETRY_DELAY_MS = 600;
 type CopyStatus = "idle" | "copied" | "failed";
 
 export function SharedResourceSearch({
@@ -39,6 +46,7 @@ export function SharedResourceSearch({
   description = "Search guides, calculators, representatives, laws, government information and community resources.",
   initialQuery = "",
   initialType = "all",
+  telemetryEnabled = true,
 }: {
   site: SharedSite;
   entities?: ReadonlyArray<SharedEntity>;
@@ -47,11 +55,13 @@ export function SharedResourceSearch({
   description?: string;
   initialQuery?: string;
   initialType?: SharedEntityType | "all";
+  telemetryEnabled?: boolean;
 }) {
   const [query, setQuery] = useState(initialQuery);
   const [activeType, setActiveType] = useState<SharedEntityType | "all">(initialType);
   const [visibleCount, setVisibleCount] = useState(SEARCH_PAGE_SIZE);
   const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
+  const previousTelemetryKey = useRef<string>();
   const searchableEntities = useMemo(() => mergeEntityCollections(SHARED_ENTITIES, entities), [entities]);
   const results = useMemo(
     () => searchEntityCollection(query, searchableEntities, site, 80),
@@ -82,15 +92,40 @@ export function SharedResourceSearch({
     setCopyStatus("idle");
   }, [query, activeType]);
 
+  useEffect(() => {
+    if (!telemetryEnabled || isLoading) return;
+    const snapshot = { query, resultCount: results.length, selectedType: activeType };
+    const decision = shouldRecordSearchTelemetry(previousTelemetryKey.current, snapshot);
+    if (!decision.shouldRecord) return;
+
+    const timeout = window.setTimeout(() => {
+      previousTelemetryKey.current = decision.nextKey;
+      void recordSharedSearchTelemetry(createSharedSearchTelemetryEvent(snapshot));
+    }, SEARCH_TELEMETRY_DELAY_MS);
+
+    return () => window.clearTimeout(timeout);
+  }, [activeType, isLoading, query, results.length, telemetryEnabled]);
+
   function clearSearch() {
     setQuery("");
     setActiveType("all");
     setVisibleCount(SEARCH_PAGE_SIZE);
+    previousTelemetryKey.current = undefined;
   }
 
   function chooseSuggestion(suggestion: string) {
     setQuery(suggestion);
     setActiveType("all");
+  }
+
+  function recordResultClick(entityId: string) {
+    if (!telemetryEnabled) return;
+    void recordSharedSearchTelemetry(
+      createSearchResultClickEvent(
+        { query, resultCount: results.length, selectedType: activeType },
+        entityId,
+      ),
+    );
   }
 
   async function copySearchLink() {
@@ -213,6 +248,7 @@ export function SharedResourceSearch({
                   <Link
                     key={entity.id}
                     to={entity.route}
+                    onClick={() => recordResultClick(entity.id)}
                     role="listitem"
                     className="rounded-xl border bg-background p-4 transition hover:border-primary hover:shadow-sm"
                   >
