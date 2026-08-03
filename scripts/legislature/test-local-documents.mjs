@@ -16,9 +16,9 @@ const fixtures = [
   ['billhistory/house_concurrent_resolutions/HC00001_HC00099/HC 4.xml', '<billhistory bill="HCR 4" />'],
   ['billhistory/senate_concurrent_resolutions/SC00001_SC00099/SC 5.xml', '<billhistory bill="SCR 5" />'],
   ['billtext/html/house_bills/HB00001_HB00099/HB00001I.htm', '<html><body>Introduced text</body></html>'],
-  ['analysis/html/house_bills/HB00001_HB00099/HB00001H.htm', '<html><body>Committee analysis</body></html>'],
-  ['fiscalnotes/html/house_bills/HB00001_HB00099/HB00001E.htm', '<html><body>Fiscal note</body></html>'],
-  ['witlistbill/html/house_bills/HB00001_HB00099/HB00001H.htm', '<html><body>Witness list</body></html>'],
+  ['analysis/html/house_bills/HB00001_HB00099/HB00001H.htm', '<html><body><h1>BILL ANALYSIS</h1><h2>BACKGROUND AND PURPOSE</h2><p>Test purpose.</p><h2>RULEMAKING AUTHORITY</h2><p>Rulemaking is granted.</p></body></html>'],
+  ['fiscalnotes/html/house_bills/HB00001_HB00099/HB00001E.htm', '<html><body><div id="divSumStmt">Estimated cost is $1,000.</div><div id="divLocalGov">No fiscal implication to units of local government is anticipated.</div></body></html>'],
+  ['witlistbill/html/house_bills/HB00001_HB00099/HB00001H.htm', '<html><body><div>State Affairs Committee</div><div>January 1, 2026 - 10:00 AM</div><div>Testifying:</div><div>For:</div><div>Jane Doe (Example Organization)</div></body></html>'],
   ['reports/author/author001.htm', '<html><body>Author report</body></html>'],
 ];
 
@@ -45,9 +45,11 @@ try {
   ], { encoding: 'utf8' });
   const dryRunResult = JSON.parse(dryRun.stdout);
   assert.equal(dryRunResult.errors, 0);
+  assert.equal(dryRunResult.total, 10);
+  assert.equal(dryRunResult.imported, 9);
   assert.equal(dryRunResult.reports, 1);
-  assert.equal(dryRunResult.recognizedDocuments, 9);
-  assert.equal(dryRunResult.uniqueLegislativeItems, 5);
+  assert.equal(dryRunResult.parsed_structured, 3);
+  assert.equal(dryRunResult.touched_bills, 5);
   assert.equal(dryRunResult.complete, true);
 
   console.log('Legislative local archive smoke test passed.');
