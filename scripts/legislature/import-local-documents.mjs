@@ -2,6 +2,7 @@
 import { createHash } from 'node:crypto';
 import { access, readFile, readdir, rename, stat, unlink, writeFile } from 'node:fs/promises';
 import { extname, relative, resolve, sep } from 'node:path';
+import { parseOfficialDocument } from './parse-official-document.mjs';
 
 const args = Object.fromEntries(process.argv.slice(2).map((arg) => {
   const [key, ...value] = arg.replace(/^--/, '').split('=');
@@ -54,6 +55,10 @@ function decodeText(text) {
     .replace(/&#39;|&apos;/gi, "'").replace(/&lt;/gi, '<').replace(/&gt;/gi, '>').replace(/[ \t]+/g, ' ')
     .replace(/\n\s*\n+/g, '\n\n').trim();
 }
+function structuredMetadata(parsed) {
+  const { extracted_text: _ignored, ...structured } = parsed || {};
+  return structured;
+}
 async function request(path, init = {}) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...init, headers: { ...headers, ...(init.headers || {}) } });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${await response.text()}`);
@@ -104,7 +109,7 @@ files.sort((a, b) => a.key.localeCompare(b.key));
 const checkpoint = await loadCheckpoint();
 let startIndex = checkpoint?.last_key ? files.findIndex((file) => file.key > checkpoint.last_key) : 0;
 if (startIndex < 0) startIndex = files.length;
-const counts = { total: files.length, start_index: startIndex, seen: 0, imported: 0, reports: 0, skipped: 0, missing_bill: 0, errors: 0 };
+const counts = { total: files.length, start_index: startIndex, seen: 0, imported: 0, reports: 0, parsed_structured: 0, skipped: 0, missing_bill: 0, errors: 0 };
 const touchedBills = new Set();
 let lastKey = checkpoint?.last_key || null;
 
@@ -113,11 +118,11 @@ for (let index = startIndex; index < files.length; index++) {
   const file = files[index]; counts.seen++;
   try {
     const raw = await readFile(file.full, 'utf8');
-    const extractedText = decodeText(raw);
     const contentHash = sha256(raw);
     const sourceRecordKey = `${session}/${file.key}`;
     const officialUrl = `ftp://ftp.legis.state.tx.us/bills/${session}/${file.dataset}/${file.rel}`;
     if (file.dataset === 'reports') {
+      const extractedText = decodeText(raw);
       const parts = file.rel.split('/');
       const filename = parts.at(-1).replace(/\.[^.]+$/, '');
       const reportType = parts.length > 1 ? parts.at(-2) : 'general';
@@ -130,7 +135,11 @@ for (let index = startIndex; index < files.length; index++) {
       if (!bill) { counts.missing_bill++; lastKey = file.key; await atomicCheckpoint({ session, last_key: lastKey, index, total: files.length }); continue; }
       const [versionLabel, versionSequence] = VERSION_MAP[identity.versionCode] || [identity.versionCode || 'Official', null];
       const documentType = DOCUMENT_TYPES[file.dataset];
-      if (!dryRun) await request('bill_documents?on_conflict=source_key,source_record_key', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ bill_id: bill.id, source_key: 'texas-legislature-online-local', source_record_key: sourceRecordKey, legislature_number: legislatureNumber, session_code: sessionCode, bill_type: identity.billType, bill_number: identity.billNumber, document_type: documentType, document_title: `${identity.billType.toUpperCase()} ${identity.billNumber} — ${documentType.replaceAll('_', ' ')}`, document_url: officialUrl, source_html_url: ['htm', 'html'].includes(extname(file.full).slice(1).toLowerCase()) ? officialUrl : null, file_format: extname(file.full).slice(1).toLowerCase(), version_code: identity.versionCode, version_label: versionLabel, version_sequence: versionSequence, content_hash: contentHash, extracted_text: extractedText, extracted_text_hash: sha256(extractedText), metadata: { dataset: file.dataset, relative_path: file.rel }, last_seen_at: new Date().toISOString(), last_imported_at: new Date().toISOString() }) });
+      const parsed = parseOfficialDocument(documentType, raw);
+      const extractedText = parsed.extracted_text || decodeText(raw);
+      const structured = structuredMetadata(parsed);
+      if (['analysis', 'fiscal_note', 'witness_list'].includes(documentType)) counts.parsed_structured++;
+      if (!dryRun) await request('bill_documents?on_conflict=source_key,source_record_key', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify({ bill_id: bill.id, source_key: 'texas-legislature-online-local', source_record_key: sourceRecordKey, legislature_number: legislatureNumber, session_code: sessionCode, bill_type: identity.billType, bill_number: identity.billNumber, document_type: documentType, document_title: `${identity.billType.toUpperCase()} ${identity.billNumber} — ${documentType.replaceAll('_', ' ')}`, document_url: officialUrl, source_html_url: ['htm', 'html'].includes(extname(file.full).slice(1).toLowerCase()) ? officialUrl : null, file_format: extname(file.full).slice(1).toLowerCase(), version_code: identity.versionCode, version_label: versionLabel, version_sequence: versionSequence, content_hash: contentHash, extracted_text: extractedText, extracted_text_hash: sha256(extractedText), metadata: { dataset: file.dataset, relative_path: file.rel, parser_version: 1, structured }, last_seen_at: new Date().toISOString(), last_imported_at: new Date().toISOString() }) });
       touchedBills.add(bill.id); counts.imported++;
     }
   } catch (error) { counts.errors++; console.error(`ERROR ${file.key}: ${error.message}`); }
