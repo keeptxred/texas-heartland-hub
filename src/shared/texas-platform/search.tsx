@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Check, Copy, Link2, Search, X } from "lucide-react";
+import { AlertCircle, Check, Copy, Link2, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import {
   SHARED_ENTITIES,
@@ -18,6 +18,7 @@ import {
   SEARCH_PAGE_SIZE,
 } from "./search-pagination";
 import { resourceSearchHref } from "./search-params";
+import { absoluteResourceSearchUrl, copyText } from "./search-sharing";
 import type { SharedSite } from "./registry";
 
 const SUGGESTED_SEARCHES = [
@@ -27,6 +28,8 @@ const SUGGESTED_SEARCHES = [
   "Mortgage calculator",
   "Texas laws",
 ];
+
+type CopyStatus = "idle" | "copied" | "failed";
 
 export function SharedResourceSearch({
   site,
@@ -48,7 +51,7 @@ export function SharedResourceSearch({
   const [query, setQuery] = useState(initialQuery);
   const [activeType, setActiveType] = useState<SharedEntityType | "all">(initialType);
   const [visibleCount, setVisibleCount] = useState(SEARCH_PAGE_SIZE);
-  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<CopyStatus>("idle");
   const searchableEntities = useMemo(() => mergeEntityCollections(SHARED_ENTITIES, entities), [entities]);
   const results = useMemo(
     () => searchEntityCollection(query, searchableEntities, site, 80),
@@ -76,7 +79,7 @@ export function SharedResourceSearch({
 
   useEffect(() => {
     setVisibleCount(SEARCH_PAGE_SIZE);
-    setCopied(false);
+    setCopyStatus("idle");
   }, [query, activeType]);
 
   function clearSearch() {
@@ -91,10 +94,14 @@ export function SharedResourceSearch({
   }
 
   async function copySearchLink() {
-    if (typeof window === "undefined" || !navigator.clipboard) return;
-    await navigator.clipboard.writeText(new URL(shareHref, window.location.origin).toString());
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
+    if (typeof window === "undefined") return;
+    try {
+      const copied = await copyText(absoluteResourceSearchUrl(window.location.origin, query, activeType));
+      setCopyStatus(copied ? "copied" : "failed");
+    } catch {
+      setCopyStatus("failed");
+    }
+    window.setTimeout(() => setCopyStatus("idle"), 2500);
   }
 
   return (
@@ -112,10 +119,17 @@ export function SharedResourceSearch({
           type="search"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && hasQuery) {
+              event.preventDefault();
+              clearSearch();
+            }
+          }}
           placeholder="Try property taxes, Charles Schwertner, House District 132, mortgage or Texas laws"
           className="h-14 w-full rounded-xl border bg-background pl-12 pr-12 text-base outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           autoComplete="off"
           aria-controls="shared-resource-search-results"
+          aria-expanded={hasQuery}
         />
         {hasQuery ? (
           <button
@@ -189,16 +203,17 @@ export function SharedResourceSearch({
                     className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
                     aria-label="Copy a shareable link for this resource search"
                   >
-                    {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-                    {copied ? "Copied" : "Copy link"}
+                    {copyStatus === "copied" ? <Check className="size-4" /> : copyStatus === "failed" ? <AlertCircle className="size-4" /> : <Copy className="size-4" />}
+                    {copyStatus === "copied" ? "Copied" : copyStatus === "failed" ? "Copy failed" : "Copy link"}
                   </button>
                 </div>
               </div>
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-3 md:grid-cols-2" role="list" aria-label="Texas resource search results">
                 {page.visible.map((entity) => (
                   <Link
                     key={entity.id}
                     to={entity.route}
+                    role="listitem"
                     className="rounded-xl border bg-background p-4 transition hover:border-primary hover:shadow-sm"
                   >
                     <div className="flex items-start justify-between gap-4">
