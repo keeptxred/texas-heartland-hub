@@ -41,6 +41,11 @@ Deno.serve(async (request) => {
 
   let body: JsonRecord;
   try { body = await request.json(); } catch { return json({ error: "Invalid JSON" }, 400); }
+  if (body.action === "refresh-latest") {
+    const { error } = await service.rpc("refresh_bill_document_latest_flags", { p_bill_id: null });
+    if (error) return json({ error: error.message }, 500);
+    return json({ action: "refresh-latest", status: "completed" });
+  }
   const mode = body.mode === "live" ? "live" : "dry-run";
   const records = Array.isArray(body.records) ? body.records.filter(isRecord) : [];
   if (!records.length || records.length > 100) return json({ error: "records must contain between 1 and 100 items" }, 400);
@@ -95,7 +100,6 @@ Deno.serve(async (request) => {
     const existingReports = await existing("legislative_report_indexes", reportRecords.map((record) => text(record.source_record_key)));
     const documentUpserts: JsonRecord[] = [];
     const reportUpserts: JsonRecord[] = [];
-    const touchedBills = new Set<string>();
     const now = new Date().toISOString();
 
     for (const record of documentRecords) {
@@ -104,7 +108,6 @@ Deno.serve(async (request) => {
       const billId = billMap.get(`${text(record.bill_type)}:${integer(record.bill_number)}`);
       if (!sourceRecordKey || !allowedDocumentTypes.has(documentType)) { counts.errors = Number(counts.errors) + 1; errors.push({ source_record_key: sourceRecordKey, error: "Invalid document identity or type" }); continue; }
       if (!billId) { counts.missing_bill = Number(counts.missing_bill) + 1; continue; }
-      touchedBills.add(billId);
       const previousHash = existingDocuments.get(sourceRecordKey);
       if (previousHash === record.content_hash) { counts.skipped = Number(counts.skipped) + 1; continue; }
       if (previousHash) counts.updated = Number(counts.updated) + 1; else counts.imported = Number(counts.imported) + 1;
@@ -135,10 +138,6 @@ Deno.serve(async (request) => {
       }
       if (reportUpserts.length) {
         const { error } = await service.from("legislative_report_indexes").upsert(reportUpserts, { onConflict: "source_key,source_record_key" });
-        if (error) throw error;
-      }
-      for (const billId of touchedBills) {
-        const { error } = await service.rpc("refresh_bill_document_latest_flags", { p_bill_id: billId });
         if (error) throw error;
       }
     }
