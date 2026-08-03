@@ -102,8 +102,8 @@ export const REPRESENTATIVE_ENTITIES: SharedEntity[] = ALL_REPRESENTATIVES.map((
 
 export const SHARED_ENTITIES: SharedEntity[] = [...RESOURCE_ENTITIES, ...REPRESENTATIVE_ENTITIES];
 
-export function entitiesForSite(site: SharedSite) {
-  return SHARED_ENTITIES.filter((entity) => entity.sites.includes(site));
+export function entitiesForSite(site: SharedSite, entities: ReadonlyArray<SharedEntity> = SHARED_ENTITIES) {
+  return entities.filter((entity) => entity.sites.includes(site));
 }
 
 export function entityById(id: string) {
@@ -116,12 +116,17 @@ export function entityByRoute(route: string, site?: SharedSite) {
 
 export type EntitySearchResult = SharedEntity & { score: number };
 
-export function searchEntities(query: string, site: SharedSite, limit = 12): EntitySearchResult[] {
+export function searchEntityCollection(
+  query: string,
+  site: SharedSite,
+  entities: ReadonlyArray<SharedEntity>,
+  limit = 12,
+): EntitySearchResult[] {
   const normalized = query.trim().toLowerCase();
   if (!normalized) return [];
   const tokens = normalized.split(/\s+/).filter(Boolean);
 
-  return entitiesForSite(site)
+  return entitiesForSite(site, entities)
     .map((entity) => {
       const title = entity.title.toLowerCase();
       const summary = entity.summary.toLowerCase();
@@ -146,4 +151,8 @@ export function searchEntities(query: string, site: SharedSite, limit = 12): Ent
     .filter((entity) => entity.score > 0)
     .sort((a, b) => b.score - a.score || a.title.localeCompare(b.title))
     .slice(0, limit);
+}
+
+export function searchEntities(query: string, site: SharedSite, limit = 12): EntitySearchResult[] {
+  return searchEntityCollection(query, site, SHARED_ENTITIES, limit);
 }
