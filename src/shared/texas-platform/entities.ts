@@ -1,3 +1,12 @@
+import {
+  STATE_LEADERSHIP,
+  TEXAS_HOUSE_MEMBERS,
+  TEXAS_SENATE_MEMBERS,
+  US_HOUSE_DELEGATION,
+  US_SENATORS,
+  representativeSlug,
+  type Rep,
+} from '@/data/representatives';
 import { SHARED_RESOURCES, type SharedResource, type SharedSite } from './registry';
 
 export type SharedEntityType =
@@ -13,10 +22,7 @@ export type SharedEntityType =
   | 'school-district'
   | 'resource';
 
-export type SharedOfficialSource = {
-  label: string;
-  url: string;
-};
+export type SharedOfficialSource = { label: string; url: string };
 
 export type SharedEntity = {
   id: string;
@@ -56,7 +62,45 @@ export const RESOURCE_ENTITIES: SharedEntity[] = SHARED_RESOURCES.map((resource)
   searchTerms: [resource.id.replaceAll('-', ' '), ...resource.topics, ...resource.journeys],
 }));
 
-export const SHARED_ENTITIES: SharedEntity[] = [...RESOURCE_ENTITIES];
+const ALL_REPRESENTATIVES: Rep[] = [
+  ...US_SENATORS,
+  ...STATE_LEADERSHIP,
+  ...US_HOUSE_DELEGATION,
+  ...TEXAS_SENATE_MEMBERS,
+  ...TEXAS_HOUSE_MEMBERS,
+];
+
+export const REPRESENTATIVE_ENTITIES: SharedEntity[] = ALL_REPRESENTATIVES.map((representative) => {
+  const district = representative.district?.trim();
+  const party = representative.party === 'R' ? 'Republican' : 'Democrat';
+  return {
+    id: `representative:${representativeSlug(representative.name)}`,
+    type: 'representative',
+    title: representative.name,
+    summary: `${party} ${representative.office}${district ? ` representing ${district}` : ''}.`,
+    whyItMatters: 'This officeholder represents Texans in state or federal government and may vote on legislation, policy and public spending.',
+    route: `/representatives/${representativeSlug(representative.name)}`,
+    sites: ['keeptxred'],
+    topics: ['government-elections'],
+    journeys: ['government-help'],
+    keyFacts: [
+      { label: 'Office', value: representative.office },
+      { label: 'Party', value: representative.party },
+      ...(district ? [{ label: 'District', value: district }] : []),
+    ],
+    officialSources: representative.website ? [{ label: 'Official website', url: representative.website }] : undefined,
+    lastReviewed: '2026-08-03',
+    searchTerms: [
+      representative.office,
+      party,
+      representative.party,
+      district ?? '',
+      'representative legislator senator house government elected official',
+    ].filter(Boolean),
+  };
+});
+
+export const SHARED_ENTITIES: SharedEntity[] = [...RESOURCE_ENTITIES, ...REPRESENTATIVE_ENTITIES];
 
 export function entitiesForSite(site: SharedSite) {
   return SHARED_ENTITIES.filter((entity) => entity.sites.includes(site));
