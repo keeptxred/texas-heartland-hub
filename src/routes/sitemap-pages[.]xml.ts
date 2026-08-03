@@ -10,6 +10,7 @@ import {
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
 import { TEXAS_DATASETS } from "@/data/texas-data-center";
+import { journeysForSite, topicsForSite } from "@/shared/texas-platform/registry";
 import {
   STATE_LEADERSHIP,
   US_HOUSE_DELEGATION,
@@ -20,6 +21,7 @@ import {
 } from "@/data/representatives";
 
 const STATIC_PAGE_LASTMOD = toIsoDate("2026-08-03T00:00:00-05:00");
+const RESOURCE_SITE = "keeptxred" as const;
 
 const STATIC_PATHS: string[] = [
   "/", "/news", "/news/non-political", "/happening-now", "/keep-texas-red", "/texas-news",
@@ -42,6 +44,8 @@ const STATIC_PATHS: string[] = [
   "/return-refund-policy", "/glossary", "/editorial-standards", "/texas-politics", "/authors",
   "/texas-economy", "/texas-law-policy", "/shop", "/texas", "/texas/property-taxes-2026",
   "/texas/moving-to-texas-2026", "/texas-data",
+  ...topicsForSite(RESOURCE_SITE).map((topic) => `/texas-resources/topic/${topic.id}`),
+  ...journeysForSite(RESOURCE_SITE).map((journey) => `/texas-resources/journey/${journey.id}`),
   ...TEXAS_DATASETS.map((dataset) => `/texas-data/${dataset.slug}`),
   ...[
     ...US_SENATORS,
