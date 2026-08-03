@@ -33,6 +33,7 @@ function TexasLivingPage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#resource-search" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Search Texas Resources</a>
             <a href="#what-brings-you-here" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold hover:bg-white/10">Choose What You Need</a>
+            <Link to="/texas-resources" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold hover:bg-white/10">Browse Everything</Link>
           </div>
         </div>
       </section>
@@ -72,6 +73,9 @@ function TexasLivingPage() {
           <div className="mt-7 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {popularResources.map((resource) => <SharedResourceCard key={resource.id} resource={resource} />)}
           </div>
+          <Link to="/texas-resources" className="mt-7 inline-flex rounded-md border bg-background px-4 py-2.5 text-sm font-bold hover:border-primary hover:text-primary">
+            Browse the complete resource directory →
+          </Link>
         </section>
 
         <section id="browse-by-topic" className="mt-16 scroll-mt-24">
