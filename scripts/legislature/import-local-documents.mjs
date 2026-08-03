@@ -40,7 +40,7 @@ const decodeMarkup = (text) => text
   .replace(/&#39;|&apos;/gi, "'").replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
   .replace(/[ \t]+/g, ' ').replace(/\n\s*\n+/g, '\n\n').trim();
 
-const TYPE_ALIASES = { HJ: 'hjr', SJ: 'sjr' };
+const TYPE_ALIASES = { HJ: 'hjr', SJ: 'sjr', HC: 'hcr', SC: 'scr' };
 const VERSION_MAP = {
   A: ['Amended', 70], C: ['Committee substitute', 50], E: ['Engrossed', 80],
   F: ['Filed', 10], H: ['House committee report', 40], I: ['Introduced', 20],
@@ -49,14 +49,10 @@ const VERSION_MAP = {
 
 function parseIdentity(filePath) {
   const name = normalizePath(filePath);
-  const match = name.match(/(?:^|\/)(HB|SB|HJR|SJR|HCR|SCR|HR|SR|HJ|SJ)\s*0*(\d+)([A-Z])?\.(?:html?|xml|pdf|docx?|txt)$/i);
+  const match = name.match(/(?:^|\/)(HB|SB|HJR|SJR|HCR|SCR|HR|SR|HJ|SJ|HC|SC)\s*0*(\d+)([A-Z])?\.(?:html?|xml|pdf|docx?|txt)$/i);
   if (!match) return null;
   const rawType = match[1].toUpperCase();
-  return {
-    billType: TYPE_ALIASES[rawType] || rawType.toLowerCase(),
-    billNumber: Number(match[2]),
-    versionCode: match[3]?.toUpperCase() || null,
-  };
+  return { billType: TYPE_ALIASES[rawType] || rawType.toLowerCase(), billNumber: Number(match[2]), versionCode: match[3]?.toUpperCase() || null };
 }
 
 function classify(relativePath) {
@@ -97,11 +93,7 @@ async function findBill(identity) {
     billCache.set(key, synthetic);
     return synthetic;
   }
-  const query = new URLSearchParams({
-    legislature_number: `eq.${legislatureNumber}`, session_code: `eq.${sessionCode}`,
-    bill_type: `eq.${identity.billType}`, bill_number: `eq.${identity.billNumber}`,
-    select: 'id', limit: '1',
-  });
+  const query = new URLSearchParams({ legislature_number: `eq.${legislatureNumber}`, session_code: `eq.${sessionCode}`, bill_type: `eq.${identity.billType}`, bill_number: `eq.${identity.billNumber}`, select: 'id', limit: '1' });
   const bill = (await request(`bills?${query}`))?.[0] || null;
   billCache.set(key, bill);
   return bill;
@@ -109,9 +101,7 @@ async function findBill(identity) {
 
 async function upsert(table, row, conflict) {
   if (dryRun) return;
-  await request(`${table}?on_conflict=${conflict}`, {
-    method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(row),
-  });
+  await request(`${table}?on_conflict=${conflict}`, { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(row) });
 }
 
 async function readCheckpoint() {
@@ -151,16 +141,13 @@ for (const fullPath of files) {
     const contentHash = sha256(raw);
     const extractedText = decodeMarkup(raw);
     const sourceRecordKey = `${session}/${relativePath}`;
-
     if (documentType === 'report') {
       const filename = relativePath.split('/').at(-1).replace(/\.[^.]+$/, '');
       const reportType = relativePath.split('/').slice(-2, -1)[0] || 'general';
       await upsert('legislative_report_indexes', {
-        source_key: 'texas-legislature-online-local', source_record_key: sourceRecordKey,
-        legislature_number: legislatureNumber, session_code: sessionCode,
-        report_type: reportType, report_key: filename, report_title: filename.replace(/[_-]+/g, ' '),
-        source_url: `local://${sourceRecordKey}`, content_hash: contentHash, extracted_text: extractedText,
-        metadata: { relative_path: relativePath, file_format: extension },
+        source_key: 'texas-legislature-online-local', source_record_key: sourceRecordKey, legislature_number: legislatureNumber, session_code: sessionCode,
+        report_type: reportType, report_key: filename, report_title: filename.replace(/[_-]+/g, ' '), source_url: `local://${sourceRecordKey}`,
+        content_hash: contentHash, extracted_text: extractedText, metadata: { relative_path: relativePath, file_format: extension },
         last_seen_at: new Date().toISOString(), last_imported_at: new Date().toISOString(),
       }, 'source_key,source_record_key');
       counts.reports++;
@@ -175,9 +162,8 @@ for (const fullPath of files) {
         bill_id: bill.id, source_key: 'texas-legislature-online-local', source_record_key: sourceRecordKey,
         legislature_number: legislatureNumber, session_code: sessionCode, bill_type: identity.billType, bill_number: identity.billNumber,
         document_type: documentType, document_title: `${identity.billType.toUpperCase()} ${identity.billNumber} — ${documentType.replaceAll('_', ' ')}`,
-        document_url: `local://${sourceRecordKey}`, file_format: extension,
-        version_code: identity.versionCode, version_label: versionLabel, version_sequence: versionSequence,
-        content_hash: contentHash, extracted_text: extractedText, extracted_text_hash: sha256(extractedText),
+        document_url: `local://${sourceRecordKey}`, file_format: extension, version_code: identity.versionCode, version_label: versionLabel,
+        version_sequence: versionSequence, content_hash: contentHash, extracted_text: extractedText, extracted_text_hash: sha256(extractedText),
         metadata: { relative_path: relativePath }, last_seen_at: new Date().toISOString(), last_imported_at: new Date().toISOString(),
       }, 'source_key,source_record_key');
       touchedBills.add(bill.id); counts.imported++;
@@ -190,11 +176,8 @@ for (const fullPath of files) {
 }
 
 if (!dryRun) {
-  for (const billId of touchedBills) {
-    await request('rpc/refresh_bill_document_latest_flags', { method: 'POST', body: JSON.stringify({ p_bill_id: billId }) });
-  }
+  for (const billId of touchedBills) await request('rpc/refresh_bill_document_latest_flags', { method: 'POST', body: JSON.stringify({ p_bill_id: billId }) });
 }
-
 const complete = Boolean(lastPath && lastPath === normalizePath(relative(root, files.at(-1))));
 if (complete && !dryRun) await unlink(checkpointPath).catch(() => {});
 console.log(JSON.stringify({ root, session, dryRun, complete, timedOut: timedOut(), checkpoint: complete ? null : checkpointPath, lastPath, touchedBills: touchedBills.size, ...counts }, null, 2));
