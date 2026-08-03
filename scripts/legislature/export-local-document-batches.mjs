@@ -22,7 +22,7 @@ if (!Number.isFinite(legislatureNumber)) throw new Error('--session must look li
 const datasets = ['billhistory', 'billtext', 'analysis', 'fiscalnotes', 'reports', 'witlistbill'];
 const documentTypes = { billhistory: 'history', billtext: 'bill_text', analysis: 'analysis', fiscalnotes: 'fiscal_note', witlistbill: 'witness_list' };
 const aliases = { HJ: 'HJR', SJ: 'SJR', HC: 'HCR', SC: 'SCR' };
-const versionMap = { A: ['Amended', 70], C: ['Committee substitute', 50], E: ['Engrossed', 80], F: ['Filed', 10], H: ['House committee report', 40], I: ['Introduced', 20], S: ['Senate committee report', 60], R: ['Re-enrolled', 90], L: ['Enrolled', 100] };
+const versionMap = { A: ['Amended', 70], C: ['Committee substitute', 50], E: ['Engrossed', 80], F: ['Enrolled', 100], H: ['House committee report', 40], I: ['Introduced', 20], S: ['Senate committee report', 60], R: ['Re-enrolled', 110], L: ['Senate amendments printing', 90] };
 const normalize = (value) => value.split(sep).join('/');
 const sha256 = (value) => createHash('sha256').update(value).digest('hex');
 
