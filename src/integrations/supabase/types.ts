@@ -3552,6 +3552,60 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_governance_events: {
+        Row: {
+          candidate_fingerprint: string
+          canonical_owner: string
+          created_at: string
+          decision_fingerprint: string
+          disposition: string
+          domain: string
+          gate_status: string
+          id: string
+          kind: string
+          occurred_at: string
+          override_used: boolean
+          reason_codes: string[]
+          site: string
+          source_site: string
+          writer: string | null
+        }
+        Insert: {
+          candidate_fingerprint: string
+          canonical_owner: string
+          created_at?: string
+          decision_fingerprint: string
+          disposition: string
+          domain: string
+          gate_status: string
+          id: string
+          kind: string
+          occurred_at?: string
+          override_used?: boolean
+          reason_codes?: string[]
+          site: string
+          source_site: string
+          writer?: string | null
+        }
+        Update: {
+          candidate_fingerprint?: string
+          canonical_owner?: string
+          created_at?: string
+          decision_fingerprint?: string
+          disposition?: string
+          domain?: string
+          gate_status?: string
+          id?: string
+          kind?: string
+          occurred_at?: string
+          override_used?: boolean
+          reason_codes?: string[]
+          site?: string
+          source_site?: string
+          writer?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: string | null
@@ -4143,6 +4197,10 @@ export type Database = {
           payload: Json
           source_queue: string
         }
+        Returns: number
+      }
+      prune_platform_governance_events: {
+        Args: { retain_days?: number }
         Returns: number
       }
       read_email_batch: {
