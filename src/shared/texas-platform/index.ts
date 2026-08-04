@@ -20,6 +20,8 @@ export * from './texas-life-experience-components';
 export * from './texas-life-context';
 export * from './texas-life-tasks';
 export * from './texas-life-operations';
+export * from './texas-life-operations-components';
+export * from './texas-life-admin';
 export * from './texas-life-progress';
 export * from './texas-life-progress-components';
 export * from './search';
