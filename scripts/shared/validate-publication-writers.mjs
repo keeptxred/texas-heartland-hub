@@ -4,10 +4,11 @@ const writers = [
   'src/routes/api/public/hooks/generate-news.ts',
   'src/routes/api/public/hooks/generate-evergreen.ts',
   'src/routes/api/public/hooks/ingest-feeds.ts',
+  'src/routes/api/public/hooks/generate-sports.ts',
   'src/routes/api/public/hooks/publishing-safety-net.ts',
   'src/lib/ingest-and-normalize.functions.ts',
 ];
-const sharedWriters = new Set(writers.slice(0, 3));
+const sharedWriters = new Set(writers.slice(0, 4));
 const errors = [];
 
 const enrichment = read('src/lib/content-quality.ts');
