@@ -32,7 +32,7 @@ const STATIC_PATHS: string[] = [
   "/texas-legislature/senate", "/texas-legislature/current-session", "/texas-legislature/sessions",
   "/tax-calculator", "/texas-property-tax-protest-guide", "/texas-sales-tax-explained",
   "/texas-first-time-homebuyer-programs", "/moving-to-texas", "/moving-to-texas-checklist",
-  "/find-my-dmv", "/texas-living", "/texas-resources", "/explore", "/explore/trip-planner", "/texas-financial-tools",
+  "/find-my-dmv", "/texas-living", "/texas-resources", "/texas-financial-tools",
   "/texas-mortgage-calculator", "/texas-home-affordability-calculator", "/texas-down-payment-calculator",
   "/texas-closing-cost-calculator", "/texas-home-equity-growth-calculator", "/texas-mortgage-payoff-calculator",
   "/texas-homeownership-cost-calculator", "/texas-refinance-savings-calculator", "/texas-home-equity-calculator",
