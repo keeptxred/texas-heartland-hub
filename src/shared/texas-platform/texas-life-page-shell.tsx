@@ -2,26 +2,19 @@ import type { ReactNode } from 'react';
 import { ArrowRight, ExternalLink, ShieldCheck } from 'lucide-react';
 import type { TexasLifePageBlueprint } from './texas-life-page-blueprint';
 
-export function TexasLifePageShell({
-  blueprint,
-  children,
-}: {
-  blueprint: TexasLifePageBlueprint;
-  children?: ReactNode;
-}) {
+export function TexasLifePageShell({ blueprint, children }: { blueprint: TexasLifePageBlueprint; children?: ReactNode }) {
   return (
     <article className="mx-auto max-w-5xl px-4 py-10">
       <header>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">{blueprint.pillar}</p>
         <h1 className="mt-2 font-display text-4xl sm:text-5xl">{blueprint.title}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-8 text-muted-foreground">{blueprint.summary}</p>
       </header>
 
       <section className="mt-10 grid gap-5 md:grid-cols-2">
-        <QuestionCard title="What is it?" body={blueprint.answers.what} />
-        <QuestionCard title="Why should I care?" body={blueprint.answers.why} />
-        <QuestionCard title="What do I do next?" body={blueprint.answers.next} />
-        <QuestionCard title="What else should I know?" body={blueprint.answers.else} />
+        <QuestionCard title="What is it?" body={blueprint.what} />
+        <QuestionCard title="Why should I care?" body={blueprint.why} />
+        <QuestionCard title="What do I do next?" body={blueprint.next} />
+        <QuestionCard title="What else should I know?" body={blueprint.else} />
       </section>
 
       {children}
@@ -44,6 +37,7 @@ export function TexasLifePageShell({
                 Verify with {blueprint.trust.authorityName ?? 'the official source'} <ExternalLink className="size-4" />
               </a>
             ) : null}
+            <p className="mt-3 text-xs text-muted-foreground">{blueprint.verify}</p>
           </div>
         </div>
       </section>
@@ -54,7 +48,6 @@ export function TexasLifePageShell({
           {blueprint.nextSteps.map((step) => (
             <a key={step.href} href={step.href} className="group rounded-xl border bg-card p-5 transition hover:border-primary hover:shadow-sm">
               <h3 className="font-display text-2xl group-hover:text-primary">{step.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-muted-foreground">{step.description}</p>
               <span className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-primary">Continue <ArrowRight className="size-4" /></span>
             </a>
           ))}
