@@ -25,6 +25,7 @@ export * from './search-telemetry-validation';
 export * from './search-telemetry-export';
 export * from './search-telemetry-breakdown';
 export * from './search-telemetry-anomalies';
+export * from './search-telemetry-anomaly-history';
 export * from './search-insights';
 export * from './search-telemetry-components';
 export * from './search-content-gaps';
