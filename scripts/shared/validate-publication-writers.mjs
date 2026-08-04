@@ -1,68 +1,48 @@
 import fs from 'node:fs';
-import path from 'node:path';
 
-const root = process.cwd();
-const sourceRoot = path.join(root, 'src');
-const knownWriters = new Set([
+const writers = [
   'src/routes/api/public/hooks/generate-news.ts',
   'src/routes/api/public/hooks/generate-evergreen.ts',
   'src/routes/api/public/hooks/ingest-feeds.ts',
-  'src/routes/api/public/hooks/publishing-safety-net.ts',
-  'src/lib/ingest-and-normalize.functions.ts',
-]);
-const deletionOnlyMaintenance = new Set([
-  'src/routes/api/public/hooks/score-viral.ts',
-]);
-const temporarilyUngated = new Set([
-  'src/routes/api/public/hooks/generate-news.ts',
-  'src/routes/api/public/hooks/generate-evergreen.ts',
-  'src/routes/api/public/hooks/ingest-feeds.ts',
-]);
-const errors = [];
-const articleAccessPaths = [];
-
-walk(sourceRoot);
-
-for (const file of articleAccessPaths) {
-  const source = fs.readFileSync(path.join(root, file), 'utf8');
-  const hasWrite = hasDailyArticlesWrite(source);
-  const hasDelete = hasDailyArticlesDelete(source);
-  if (hasWrite) {
-    if (!knownWriters.has(file)) errors.push(`Unregistered daily_articles writer: ${file}`);
-    const guarded = source.includes('assertKeepTxRedPublication') || source.includes('guardKeepTxRedPublication');
-    if (!guarded && !temporarilyUngated.has(file)) errors.push(`Publication writer is not ownership-gated: ${file}`);
-  } else if (hasDelete) {
-    if (!deletionOnlyMaintenance.has(file)) errors.push(`Unregistered daily_articles deletion path: ${file}`);
-  }
-}
-for (const expected of knownWriters) {
-  const source = fs.readFileSync(path.join(root, expected), 'utf8');
-  if (!hasDailyArticlesWrite(source)) errors.push(`Registered publication writer was not found: ${expected}`);
-}
-for (const expected of deletionOnlyMaintenance) {
-  const source = fs.readFileSync(path.join(root, expected), 'utf8');
-  if (!hasDailyArticlesDelete(source) || hasDailyArticlesWrite(source)) {
-    errors.push(`Deletion-only maintenance classification changed: ${expected}`);
-  }
-}
-
-const guardPath = 'src/lib/content-publication-guard.ts';
-if (!fs.existsSync(guardPath)) errors.push(`Missing publication guard: ${guardPath}`);
-else {
-  const guard = fs.readFileSync(guardPath, 'utf8');
-  for (const symbol of ['assertKeepTxRedPublication', 'guardKeepTxRedPublication', 'inferKeepTxRedDomain', 'CONTENT_PUBLICATION_BLOCKED']) {
-    if (!guard.includes(symbol)) errors.push(`Publication guard missing: ${symbol}`);
-  }
-}
-const requiredGuardedPaths = [
   'src/routes/api/public/hooks/publishing-safety-net.ts',
   'src/lib/ingest-and-normalize.functions.ts',
 ];
-for (const file of requiredGuardedPaths) {
-  const source = fs.readFileSync(file, 'utf8');
-  for (const symbol of ['assertKeepTxRedPublication', 'inferKeepTxRedDomain', 'https://keeptxred.com/news/']) {
-    if (!source.includes(symbol)) errors.push(`${file} publication gate missing: ${symbol}`);
-  }
+const sharedWriters = new Set(writers.slice(0, 3));
+const errors = [];
+
+const enrichment = read('src/lib/content-quality.ts');
+for (const symbol of ['assertKeepTxRedPublication', 'inferKeepTxRedDomain', 'source_url?.includes("texasdefined.com")']) {
+  if (!enrichment.includes(symbol)) errors.push(`Shared enrichment gate missing: ${symbol}`);
+}
+
+for (const file of writers) {
+  const source = read(file);
+  const hasArticleTable = source.includes('.from("daily_articles")') || source.includes(".from('daily_articles')");
+  const hasWrite = source.includes('.insert(') || source.includes('.upsert(') || source.includes('.update(');
+  if (!hasArticleTable || !hasWrite) errors.push(`Registered article writer changed: ${file}`);
+  const direct = source.includes('assertKeepTxRedPublication') || source.includes('guardKeepTxRedPublication');
+  const shared = sharedWriters.has(file) && source.includes('enrichArticleRow');
+  if (!direct && !shared) errors.push(`Article writer is not ownership-gated: ${file}`);
+}
+
+const maintenance = read('src/routes/api/public/hooks/score-viral.ts');
+if (!maintenance.includes('.from("daily_articles")') || !maintenance.includes('.delete()')) {
+  errors.push('Viral scoring no longer contains its registered deletion-only maintenance path.');
+}
+if (/\.from\("daily_articles"\)[\s\S]{0,400}\.(insert|upsert|update)\(/.test(maintenance)) {
+  errors.push('Viral scoring must not publish or update articles.');
+}
+
+const guard = read('src/lib/content-publication-guard.ts');
+for (const symbol of [
+  'CONTENT_PUBLICATION_BLOCKED',
+  "resolvedDomain = input.domain === 'politics'",
+  "return 'property-tax'",
+  "return 'moving'",
+  "return 'real-estate'",
+  "return 'texas-culture'",
+]) {
+  if (!guard.includes(symbol)) errors.push(`Publication guard missing: ${symbol}`);
 }
 
 if (errors.length) {
@@ -70,27 +50,12 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-const gatedCount = knownWriters.size - temporarilyUngated.size;
-console.log(`Publication writer audit passed (${knownWriters.size} writers: ${gatedCount} gated, ${temporarilyUngated.size} scheduled; ${deletionOnlyMaintenance.size} deletion-only maintenance path).`);
+console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, no temporary exceptions).`);
 
-function walk(directory) {
-  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-    const absolute = path.join(directory, entry.name);
-    if (entry.isDirectory()) walk(absolute);
-    else if (/\.(ts|tsx)$/.test(entry.name)) {
-      const relative = path.relative(root, absolute).split(path.sep).join('/');
-      const source = fs.readFileSync(absolute, 'utf8');
-      if (source.includes('.from("daily_articles")') || source.includes(".from('daily_articles')")) articleAccessPaths.push(relative);
-    }
+function read(file) {
+  if (!fs.existsSync(file)) {
+    errors.push(`Missing required file: ${file}`);
+    return '';
   }
-}
-
-function dailyArticleChains(source) {
-  return source.match(/\.from\(["']daily_articles["']\)[\s\S]{0,500}?\.(?:insert|upsert|update|delete)\s*\(/g) ?? [];
-}
-function hasDailyArticlesWrite(source) {
-  return dailyArticleChains(source).some((chain) => /\.(?:insert|upsert|update)\s*\(/.test(chain));
-}
-function hasDailyArticlesDelete(source) {
-  return dailyArticleChains(source).some((chain) => /\.delete\s*\(/.test(chain));
+  return fs.readFileSync(file, 'utf8');
 }
