@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BarChart3, Database, Download, History, Landmark, MapPinned } from "lucide-react";
+import { BarChart3, BookOpen, Database, History, Landmark, MapPinned } from "lucide-react";
 import { TEXAS_DATASETS } from "@/data/texas-data-center";
 
 const canonical = "https://keeptxred.com/texas-data";
@@ -8,23 +8,23 @@ export const Route = createFileRoute("/texas-data")({
   head: () => ({
     meta: [
       { title: "Texas Resources: Guides, Tools & Trusted Information" },
-      { name: "description", content: "Find practical Texas information, guides, calculators, rankings, county comparisons, election resources and trusted reference tools." },
+      { name: "description", content: "Find practical Texas information, guides, calculators, community comparisons, county information, election resources and trusted reference tools." },
       { property: "og:title", content: "Texas Resources — Keep TX Red" },
       { property: "og:description", content: "Practical Texas guides, calculators and interactive resources for residents and future Texans." },
       { property: "og:url", content: canonical },
       { property: "og:type", content: "website" },
     ],
     links: [{ rel: "canonical", href: canonical }],
-    scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@graph": [{ "@type": ["WebPage", "CollectionPage"], name: "Texas Resources", description: "Practical Texas guides, calculators, interactive resources, rankings and trusted reference information.", url: canonical }, { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com" }, { "@type": "ListItem", position: 2, name: "Texas Resources", item: canonical }] }, { "@type": "ItemList", name: "Texas resources", itemListElement: TEXAS_DATASETS.map((dataset, index) => ({ "@type": "ListItem", position: index + 1, name: dataset.title, url: `${canonical}/${dataset.slug}` })) }] }).replace(/</g, "\\u003c") }],
+    scripts: [{ type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@graph": [{ "@type": ["WebPage", "CollectionPage"], name: "Texas Resources", description: "Practical Texas guides, calculators, interactive resources, community comparisons and trusted reference information.", url: canonical }, { "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://keeptxred.com" }, { "@type": "ListItem", position: 2, name: "Texas Resources", item: canonical }] }, { "@type": "ItemList", name: "Texas resources", itemListElement: TEXAS_DATASETS.map((dataset, index) => ({ "@type": "ListItem", position: index + 1, name: dataset.title, url: `${canonical}/${dataset.slug}` })) }] }).replace(/</g, "\\u003c") }],
   }),
   component: TexasResources,
 });
 
 const FEATURES = [
-  { icon: BarChart3, title: "Rankings", text: "Compare Texas communities and topics using clearly explained information." },
-  { icon: History, title: "Trends", text: "See how Texas has changed over time through easy-to-understand comparisons." },
-  { icon: Download, title: "Useful tables", text: "Review or download published information when you need a closer look." },
-  { icon: MapPinned, title: "Connected resources", text: "Move easily between counties, representatives, bills, laws and related guides." },
+  { icon: BarChart3, title: "Compare Texas", text: "Compare Texas communities and topics using clearly explained information." },
+  { icon: History, title: "Explore History", text: "See how Texas has changed over time through easy-to-understand comparisons." },
+  { icon: BookOpen, title: "Helpful Guides", text: "Find practical guides and trusted information that help you make informed decisions." },
+  { icon: MapPinned, title: "Related Resources", text: "Move easily between counties, representatives, bills, laws and other useful Texas resources." },
 ];
 
 function TexasResources() {
