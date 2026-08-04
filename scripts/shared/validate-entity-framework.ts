@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import { SHARED_ENTITIES } from '../../src/shared/texas-platform/entities.ts';
 import { SHARED_RELATIONSHIPS } from '../../src/shared/texas-platform/relationships.ts';
 import {
@@ -57,6 +58,15 @@ if (consumer.consumer !== 'KeepTXRed') errors.push('Unexpected platform core con
 if (consumer.repository !== 'keeptxred/texas-heartland-hub') errors.push('Unexpected platform core consumer repository.');
 if (consumer.coreCommit !== upstream.commit) errors.push('Consumer and upstream commit pins differ.');
 if (!/^fnv1a-[a-f0-9]{8}$/.test(KEEP_TX_RED_CORE_FINGERPRINT)) errors.push('Invalid shared core fingerprint.');
+
+const statusPath = 'src/routes/api.platform-core-status.ts';
+if (!fs.existsSync(statusPath)) errors.push('Missing platform core status API.');
+else {
+  const statusRoute = fs.readFileSync(statusPath, 'utf8');
+  for (const symbol of ["createFileRoute('/api/platform-core-status')", 'validateConsumerManifest', 'status: healthy ? 200 : 503', 'no-store', 'noindex, nofollow']) {
+    if (!statusRoute.includes(symbol)) errors.push(`Platform core status API missing: ${symbol}`);
+  }
+}
 
 const coreIds = new Set<string>();
 for (const entity of KEEP_TX_RED_CORE_ENTITIES) {
