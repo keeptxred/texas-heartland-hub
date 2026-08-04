@@ -28,6 +28,7 @@ export * from './search-telemetry-anomalies';
 export * from './search-telemetry-anomaly-history';
 export * from './search-telemetry-remediation';
 export * from './search-telemetry-alerts';
+export * from './search-telemetry-alert-delivery';
 export * from './search-telemetry-digest';
 export * from './search-insights';
 export * from './search-telemetry-components';
