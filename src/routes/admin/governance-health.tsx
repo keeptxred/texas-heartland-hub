@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { governanceHealth } from '@/platform/governance-event-store';
 
 export const Route = createFileRoute('/admin/governance-health')({
-  head: () => ({ meta: [{ title: 'Governance Health — Keep TX Red' }, { name: 'robots', content: 'noindex,nofollow' }] }),
+  head: () => ({ meta: [{ title: 'Governance Health — Keep TX Red' }, { name: 'robots', content: 'noindex,follow' }] }),
   loader: async () => governanceHealth(),
   component: Page,
 });
