@@ -1,7 +1,7 @@
 export const PLATFORM_CORE_CONTRACT = {
   packageName: '@keeptxred/texas-platform-core',
-  packageVersion: '0.2.0',
-  apiVersion: '1.0',
+  packageVersion: '0.3.0',
+  apiVersion: '1.1',
   releasedAt: '2026-08-04',
   capabilities: [
     'entity-contracts',
@@ -10,6 +10,13 @@ export const PLATFORM_CORE_CONTRACT = {
     'entity-set-diffs',
     'baseline-quarantine',
     'promotion-previews',
+    'content-ownership',
+    'duplicate-content-prevention',
+    'cross-site-disposition',
+  ],
+  prohibitedDependencies: [
+    'react', '@tanstack', '@supabase', 'process.env', 'import.meta.env',
+    'texasdefined.com', 'keeptxred.com',
   ],
 } as const;
 
