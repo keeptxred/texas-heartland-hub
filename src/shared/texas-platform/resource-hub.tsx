@@ -4,11 +4,15 @@ import {
   Calculator,
   Compass,
   DollarSign,
+  FileText,
   Home,
   Landmark,
   MapPinned,
   Scale,
+  Sparkles,
   Truck,
+  Users,
+  Vote,
 } from "lucide-react";
 
 export type ResourceHubOwner = "shared" | "keeptxred" | "texasdefined";
@@ -32,6 +36,11 @@ export type FeaturedResource = {
   title: string;
   description: string;
   href: string;
+  icon: LucideIcon;
+  owner: ResourceHubOwner;
+};
+
+export type BrowseResource = ResourceHubLink & {
   icon: LucideIcon;
   owner: ResourceHubOwner;
 };
@@ -133,7 +142,7 @@ export const RESOURCE_HUB_CATEGORIES: ResourceHubCategory[] = [
     description: "Use practical calculators and decision tools built around Texas taxes, housing and living costs.",
     icon: Calculator,
     owner: "shared",
-    exploreHref: "/texas-financial-tools",
+    exploreHref: "/texas-resources/type/calculator",
     links: [
       { label: "Property Tax Calculator", href: "/tax-calculator" },
       { label: "Mortgage Calculator", href: "/texas-mortgage-calculator" },
@@ -168,10 +177,49 @@ export const FEATURED_RESOURCES: FeaturedResource[] = [
   { title: "Mortgage Calculator", description: "Estimate a Texas home payment and total cost.", href: "/texas-mortgage-calculator", icon: DollarSign, owner: "texasdefined" },
 ];
 
+export const BROWSE_RESOURCES: BrowseResource[] = [
+  { label: "Counties", href: "/texas-resources/type/county", icon: MapPinned, owner: "texasdefined" },
+  { label: "Cities", href: "/texas-resources/type/city", icon: Building2, owner: "texasdefined" },
+  { label: "Representatives", href: "/representatives", icon: Users, owner: "keeptxred" },
+  { label: "Bills", href: "/bills", icon: FileText, owner: "keeptxred" },
+  { label: "Laws", href: "/laws", icon: Scale, owner: "keeptxred" },
+  { label: "Elections", href: "/elections", icon: Vote, owner: "keeptxred" },
+  { label: "Calculators", href: "/texas-resources/type/calculator", icon: Calculator, owner: "shared" },
+  { label: "Guides", href: "/texas-resources/type/guide", icon: Sparkles, owner: "shared" },
+];
+
+export const POPULAR_RESOURCES: ResourceHubLink[] = [
+  { label: "Texas Bills", href: "/bills" },
+  { label: "Find My Representative", href: "/representatives" },
+  { label: "Property Tax Calculator", href: "/tax-calculator" },
+];
+
+export const TRENDING_RESOURCES: ResourceHubLink[] = [
+  { label: "Election Central", href: "/elections" },
+  { label: "New Texas Laws", href: "/laws/texas-new-laws-2026" },
+  { label: "Texas Legislature", href: "/texas-legislature" },
+];
+
+export const NEW_RESOURCES: ResourceHubLink[] = [
+  { label: "Browse Texas Committees", href: "/committees" },
+  { label: "Texas Laws Hub", href: "/laws" },
+  { label: "All Calculators", href: "/texas-resources/type/calculator" },
+];
+
+export const TEXAS_ASSISTANT_EXAMPLES = [
+  "How much are property taxes in Katy?",
+  "Who represents District 132?",
+  "What laws changed this year?",
+] as const;
+
 export function resourceHubCategoriesForOwner(owner: "keeptxred" | "texasdefined") {
   return RESOURCE_HUB_CATEGORIES.filter((category) => category.owner === "shared" || category.owner === owner);
 }
 
 export function featuredResourcesForOwner(owner: "keeptxred" | "texasdefined") {
   return FEATURED_RESOURCES.filter((resource) => resource.owner === "shared" || resource.owner === owner);
+}
+
+export function browseResourcesForOwner(owner: "keeptxred" | "texasdefined") {
+  return BROWSE_RESOURCES.filter((resource) => resource.owner === "shared" || resource.owner === owner);
 }
