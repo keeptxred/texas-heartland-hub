@@ -4,6 +4,7 @@ import { SHARED_RELATIONSHIPS } from '../../src/shared/texas-platform/relationsh
 import {
   KEEP_TX_RED_CORE_ENTITIES,
   KEEP_TX_RED_CORE_FINGERPRINT,
+  KEEP_TX_RED_LOCALLY_OWNED_ENTITY_TYPES,
   unsupportedSharedEntityTypes,
 } from '../../src/shared/texas-platform/core-adapter.ts';
 import { PLATFORM_CORE_CONTRACT, validateConsumerManifest } from '../../src/shared/platform-core/contract.ts';
@@ -75,9 +76,10 @@ for (const entity of KEEP_TX_RED_CORE_ENTITIES) {
   if (!['city', 'county', 'agency', 'state-park', 'school-district'].includes(entity.kind)) errors.push(`Unsupported adapted core kind: ${entity.id} -> ${entity.kind}`);
   if (!entity.sourceId || !entity.name || !entity.slug) errors.push(`Incomplete adapted core entity: ${entity.id}`);
 }
+
 const intentionallyLocal = unsupportedSharedEntityTypes();
-for (const requiredType of ['representative', 'bill', 'committee', 'guide', 'calculator', 'resource']) {
-  if (!intentionallyLocal.includes(requiredType as never)) errors.push(`Expected KeepTXRed-owned entity type not excluded from core: ${requiredType}`);
+for (const requiredType of KEEP_TX_RED_LOCALLY_OWNED_ENTITY_TYPES) {
+  if (!intentionallyLocal.includes(requiredType)) errors.push(`Expected KeepTXRed-owned entity type not excluded from core: ${requiredType}`);
   if (!consumer.excludedDomains.includes(requiredType)) errors.push(`Consumer manifest does not document excluded domain: ${requiredType}`);
 }
 
