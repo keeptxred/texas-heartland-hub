@@ -6,12 +6,12 @@ import {
   US_SENATORS,
   representativeSlug,
   type Rep,
-} from '../../data/representatives';
-import { SHARED_RESOURCES, type SharedResource, type SharedSite } from './registry';
-import { normalizeSearchText, tokenizeSearchQuery } from './search-normalization';
-import { expandSearchTokens } from './search-aliases';
-import { allTokensMatch, countTokenMatches, tokenMatchesText } from './search-matching';
-import { countFuzzyTokenMatches } from './search-fuzzy';
+} from '../../data/representatives.ts';
+import { SHARED_RESOURCES, type SharedResource, type SharedSite } from './registry.ts';
+import { normalizeSearchText, tokenizeSearchQuery } from './search-normalization.ts';
+import { expandSearchTokens } from './search-aliases.ts';
+import { allTokensMatch, countTokenMatches, tokenMatchesText } from './search-matching.ts';
+import { countFuzzyTokenMatches } from './search-fuzzy.ts';
 
 export type SharedEntityType =
   | 'city'
