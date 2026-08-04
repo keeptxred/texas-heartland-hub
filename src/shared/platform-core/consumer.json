@@ -7,6 +7,6 @@
   "apiVersion": "1.3",
   "capabilities": ["entity-contracts", "entity-canonicalization", "deterministic-fingerprints", "content-ownership", "duplicate-content-prevention", "cross-site-disposition", "publication-gates", "reviewed-overrides", "governance-events", "governance-analytics", "ownership-drift-detection"],
   "localExtensions": ["political entity registry", "site visibility", "editorial search", "legacy entity relationships", "KeepTXRed publishing preview API", "reviewed publication gate API", "bounded governance event buffer", "governance health API"],
-  "excludedDomains": ["representatives", "bills", "committees", "guides", "calculators", "branding", "routes"],
+  "excludedDomains": ["representative", "bill", "committee", "guide", "calculator", "resource", "branding", "routes"],
   "reviewedAt": "2026-08-04"
 }
