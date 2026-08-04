@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { RESERVE_ARTICLES } from "@/data/reserve-articles";
 import { articleMainText, articleMainWordCount, INGESTED_MIN_MAIN_WORDS } from "@/lib/article-length";
 import { enrichArticleRow } from "@/lib/content-quality";
+import { assertKeepTxRedPublication, inferKeepTxRedDomain } from "@/lib/content-publication-guard";
 
 const STALL_MS = 24 * 60 * 60 * 1000;
 const RESERVE_SOURCE = "Keep TX Red Reserve Desk";
@@ -165,6 +166,15 @@ export async function runPublishingSafetyNet() {
           `Reserve article ${reserve.key} is below the ${INGESTED_MIN_MAIN_WORDS}-word visibility floor (${mainWordCount}).`,
         );
       }
+
+      assertKeepTxRedPublication({
+        id: `reserve:${reserve.key}`,
+        title: reserve.title,
+        domain: inferKeepTxRedDomain(reserve.category),
+        sourceSite: "KeepTXRed",
+        sourceCanonicalUrl: `https://keeptxred.com/news/${slug}`,
+        proposedUrl: `https://keeptxred.com/news/${slug}`,
+      });
 
       const row = {
         slug,
