@@ -1,5 +1,5 @@
-import type { SharedSite } from './registry';
-import { entityById, entitiesForSite, REPRESENTATIVE_ENTITIES, type SharedEntity } from './entities';
+import type { SharedSite } from './registry.ts';
+import { entityById, entitiesForSite, REPRESENTATIVE_ENTITIES, type SharedEntity } from './entities.ts';
 
 export type SharedRelationshipType =
   | 'related-to'
