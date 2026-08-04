@@ -17,6 +17,8 @@ export * from './texas-life-outcomes';
 export * from './texas-life-governance';
 export * from './texas-life-journeys';
 export * from './texas-life-directory';
+export * from './texas-life-agencies';
+export * from './texas-life-pillar-hubs';
 export * from './texas-life-experience';
 export * from './texas-life-experience-components';
 export * from './texas-life-context';
