@@ -11,6 +11,8 @@ export * from './texas-life-platform-components';
 export * from './texas-life-landing';
 export * from './texas-life-landing-components';
 export * from './texas-life-page-blueprint';
+export * from './texas-life-page-shell';
+export * from './texas-life-starter-blueprints';
 export * from './texas-life-outcomes';
 export * from './texas-life-governance';
 export * from './texas-life-journeys';
