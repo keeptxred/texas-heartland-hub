@@ -9,14 +9,14 @@ const CORE_KIND_BY_SHARED_TYPE: Partial<Record<SharedEntityType, TexasEntityKind
   'school-district': 'school-district',
 };
 
-const LOCALLY_OWNED_ENTITY_TYPES: SharedEntityType[] = [
+export const KEEP_TX_RED_LOCALLY_OWNED_ENTITY_TYPES = [
   'representative',
   'bill',
   'committee',
   'guide',
   'calculator',
   'resource',
-];
+] as const satisfies readonly SharedEntityType[];
 
 export function sharedEntityToCore(entity: SharedEntity): TexasEntityRecord | undefined {
   const kind = CORE_KIND_BY_SHARED_TYPE[entity.type];
@@ -50,9 +50,9 @@ export const KEEP_TX_RED_CORE_ENTITIES = SHARED_ENTITIES
 
 export const KEEP_TX_RED_CORE_FINGERPRINT = fingerprintEntities(KEEP_TX_RED_CORE_ENTITIES);
 
-export function unsupportedSharedEntityTypes() {
+export function unsupportedSharedEntityTypes(): SharedEntityType[] {
   const discovered = SHARED_ENTITIES
     .filter((entity) => !CORE_KIND_BY_SHARED_TYPE[entity.type])
     .map((entity) => entity.type);
-  return [...new Set([...LOCALLY_OWNED_ENTITY_TYPES, ...discovered])].sort();
+  return [...new Set<SharedEntityType>([...KEEP_TX_RED_LOCALLY_OWNED_ENTITY_TYPES, ...discovered])].sort();
 }
