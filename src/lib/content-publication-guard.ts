@@ -5,6 +5,7 @@ import {
   type ContentDomain,
   type PublicationOverride,
 } from '@/shared/platform-core';
+import { recordGovernanceDecision } from '@/platform/governance-event-store';
 
 export type KeepTxRedPublicationInput = {
   id: string;
@@ -17,6 +18,7 @@ export type KeepTxRedPublicationInput = {
   sourceFingerprint?: string;
   derivativePurpose?: ContentCandidate['derivativePurpose'];
   override?: PublicationOverride;
+  writer?: string;
 };
 
 export type KeepTxRedPublicationGuard = ReturnType<typeof guardKeepTxRedPublication>;
@@ -39,7 +41,14 @@ export function guardKeepTxRedPublication(input: KeepTxRedPublicationInput) {
   };
   const decision = decideCrossSiteContent(candidate);
   const gate = enforcePublicationDecision(candidate, decision, input.override);
-  return { candidate, decision, gate };
+  const governanceEventIds = recordGovernanceDecision({
+    candidate,
+    decision,
+    gate,
+    override: input.override,
+    writer: input.writer ?? 'internal-publication-guard',
+  });
+  return { candidate, decision, gate, governanceEventIds };
 }
 
 export function assertKeepTxRedPublication(input: KeepTxRedPublicationInput) {
@@ -52,6 +61,7 @@ export function assertKeepTxRedPublication(input: KeepTxRedPublicationInput) {
       disposition: result.decision.disposition,
       canonicalOwner: result.decision.canonicalOwner,
       canonicalUrl: result.decision.canonicalUrl,
+      governanceEventIds: result.governanceEventIds,
     });
     throw error;
   }
