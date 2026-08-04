@@ -7,7 +7,6 @@ const PRIMARY_LINKS = [
   { to: "/texas-politics", label: "Politics" },
   { to: "/elections/2026", label: "Election Central" },
   { to: "/texas-living", label: "Texas Living" },
-  { to: "/explore", label: "Explore Texas" },
   { to: "/texas-financial-tools", label: "Texas Tools" },
   { to: "/tax-calculator", label: "Property Taxes" },
   { to: "/shop", label: "Shop" },
