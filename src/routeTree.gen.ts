@@ -208,7 +208,12 @@ import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
 import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
 import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
+import { Route as ApiPublicationGateRouteImport } from './routes/api.publication-gate'
+import { Route as ApiPlatformCoreStatusRouteImport } from './routes/api.platform-core-status'
+import { Route as ApiGovernanceHealthRouteImport } from './routes/api.governance-health'
+import { Route as ApiContentDispositionRouteImport } from './routes/api.content-disposition'
 import { Route as AdminShopProductsRouteImport } from './routes/admin/shop-products'
+import { Route as AdminGovernanceHealthRouteImport } from './routes/admin/governance-health'
 import { Route as TexasLegislatureSessionsIndexRouteImport } from './routes/texas-legislature.sessions.index'
 import { Route as TexasLegislatureCommitteesIndexRouteImport } from './routes/texas-legislature.committees.index'
 import { Route as ElectionsDistrictsIndexRouteImport } from './routes/elections.districts.index'
@@ -1313,9 +1318,34 @@ const ArticleSlugRoute = ArticleSlugRouteImport.update({
   path: '/article/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicationGateRoute = ApiPublicationGateRouteImport.update({
+  id: '/api/publication-gate',
+  path: '/api/publication-gate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPlatformCoreStatusRoute = ApiPlatformCoreStatusRouteImport.update({
+  id: '/api/platform-core-status',
+  path: '/api/platform-core-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGovernanceHealthRoute = ApiGovernanceHealthRouteImport.update({
+  id: '/api/governance-health',
+  path: '/api/governance-health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiContentDispositionRoute = ApiContentDispositionRouteImport.update({
+  id: '/api/content-disposition',
+  path: '/api/content-disposition',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminShopProductsRoute = AdminShopProductsRouteImport.update({
   id: '/shop-products',
   path: '/shop-products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminGovernanceHealthRoute = AdminGovernanceHealthRouteImport.update({
+  id: '/governance-health',
+  path: '/governance-health',
   getParentRoute: () => AdminRoute,
 } as any)
 const TexasLegislatureSessionsIndexRoute =
@@ -1753,7 +1783,12 @@ export interface FileRoutesByFullPath {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/api/content-disposition': typeof ApiContentDispositionRoute
+  '/api/governance-health': typeof ApiGovernanceHealthRoute
+  '/api/platform-core-status': typeof ApiPlatformCoreStatusRoute
+  '/api/publication-gate': typeof ApiPublicationGateRoute
   '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
@@ -2006,7 +2041,12 @@ export interface FileRoutesByTo {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/api/content-disposition': typeof ApiContentDispositionRoute
+  '/api/governance-health': typeof ApiGovernanceHealthRoute
+  '/api/platform-core-status': typeof ApiPlatformCoreStatusRoute
+  '/api/publication-gate': typeof ApiPublicationGateRoute
   '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
@@ -2266,7 +2306,12 @@ export interface FileRoutesById {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
+  '/api/content-disposition': typeof ApiContentDispositionRoute
+  '/api/governance-health': typeof ApiGovernanceHealthRoute
+  '/api/platform-core-status': typeof ApiPlatformCoreStatusRoute
+  '/api/publication-gate': typeof ApiPublicationGateRoute
   '/article/$slug': typeof ArticleSlugRoute
   '/authors/$slug': typeof AuthorsSlugRoute
   '/dmv/cdl': typeof DmvCdlRoute
@@ -2530,7 +2575,12 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/governance-health'
     | '/admin/shop-products'
+    | '/api/content-disposition'
+    | '/api/governance-health'
+    | '/api/platform-core-status'
+    | '/api/publication-gate'
     | '/article/$slug'
     | '/authors/$slug'
     | '/dmv/cdl'
@@ -2783,7 +2833,12 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/governance-health'
     | '/admin/shop-products'
+    | '/api/content-disposition'
+    | '/api/governance-health'
+    | '/api/platform-core-status'
+    | '/api/publication-gate'
     | '/article/$slug'
     | '/authors/$slug'
     | '/dmv/cdl'
@@ -3042,7 +3097,12 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/governance-health'
     | '/admin/shop-products'
+    | '/api/content-disposition'
+    | '/api/governance-health'
+    | '/api/platform-core-status'
+    | '/api/publication-gate'
     | '/article/$slug'
     | '/authors/$slug'
     | '/dmv/cdl'
@@ -3305,6 +3365,10 @@ export interface RootRouteChildren {
   TexasUtilityCostCalculatorRoute: typeof TexasUtilityCostCalculatorRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VotingLocationsRoute: typeof VotingLocationsRoute
+  ApiContentDispositionRoute: typeof ApiContentDispositionRoute
+  ApiGovernanceHealthRoute: typeof ApiGovernanceHealthRoute
+  ApiPlatformCoreStatusRoute: typeof ApiPlatformCoreStatusRoute
+  ApiPublicationGateRoute: typeof ApiPublicationGateRoute
   ArticleSlugRoute: typeof ArticleSlugRoute
   AuthorsSlugRoute: typeof AuthorsSlugRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
@@ -4755,11 +4819,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ArticleSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/publication-gate': {
+      id: '/api/publication-gate'
+      path: '/api/publication-gate'
+      fullPath: '/api/publication-gate'
+      preLoaderRoute: typeof ApiPublicationGateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/platform-core-status': {
+      id: '/api/platform-core-status'
+      path: '/api/platform-core-status'
+      fullPath: '/api/platform-core-status'
+      preLoaderRoute: typeof ApiPlatformCoreStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/governance-health': {
+      id: '/api/governance-health'
+      path: '/api/governance-health'
+      fullPath: '/api/governance-health'
+      preLoaderRoute: typeof ApiGovernanceHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/content-disposition': {
+      id: '/api/content-disposition'
+      path: '/api/content-disposition'
+      fullPath: '/api/content-disposition'
+      preLoaderRoute: typeof ApiContentDispositionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/shop-products': {
       id: '/admin/shop-products'
       path: '/shop-products'
       fullPath: '/admin/shop-products'
       preLoaderRoute: typeof AdminShopProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/governance-health': {
+      id: '/admin/governance-health'
+      path: '/governance-health'
+      fullPath: '/admin/governance-health'
+      preLoaderRoute: typeof AdminGovernanceHealthRouteImport
       parentRoute: typeof AdminRoute
     }
     '/texas-legislature/sessions/': {
@@ -5186,6 +5285,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminGovernanceHealthRoute: typeof AdminGovernanceHealthRoute
   AdminShopProductsRoute: typeof AdminShopProductsRoute
   AdminBillsEditorialRoute: typeof AdminBillsEditorialRoute
   AdminBillsEnrichmentRoute: typeof AdminBillsEnrichmentRoute
@@ -5201,6 +5301,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminGovernanceHealthRoute: AdminGovernanceHealthRoute,
   AdminShopProductsRoute: AdminShopProductsRoute,
   AdminBillsEditorialRoute: AdminBillsEditorialRoute,
   AdminBillsEnrichmentRoute: AdminBillsEnrichmentRoute,
@@ -5715,6 +5816,10 @@ const rootRouteChildren: RootRouteChildren = {
   TexasUtilityCostCalculatorRoute: TexasUtilityCostCalculatorRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VotingLocationsRoute: VotingLocationsRoute,
+  ApiContentDispositionRoute: ApiContentDispositionRoute,
+  ApiGovernanceHealthRoute: ApiGovernanceHealthRoute,
+  ApiPlatformCoreStatusRoute: ApiPlatformCoreStatusRoute,
+  ApiPublicationGateRoute: ApiPublicationGateRoute,
   ArticleSlugRoute: ArticleSlugRoute,
   AuthorsSlugRoute: AuthorsSlugRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
