@@ -1,22 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { MovingChecklist } from "@/components/moving-checklist";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/moving-to-texas-checklist")({
-  head: () => ({
-    meta: [
-      { title: "Interactive Moving to Texas Checklist | Keep TX Red" },
-      {
-        name: "description",
-        content:
-          "Build a personalized Texas moving checklist with calculated target dates for vehicle registration, driver licensing, utilities, schools, voting, and homestead filing.",
-      },
-    ],
-    links: [
-      {
-        rel: "canonical",
-        href: "https://keeptxred.com/moving-to-texas-checklist",
-      },
-    ],
-  }),
-  component: MovingChecklist,
+  beforeLoad: ({ location }) => {
+    throw redirect({
+      href: `https://texasdefined.com${location.pathname}${location.searchStr || ""}`,
+      statusCode: 301,
+    });
+  },
 });
