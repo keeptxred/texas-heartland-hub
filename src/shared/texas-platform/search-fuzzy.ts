@@ -1,4 +1,4 @@
-import { normalizeSearchText } from './search-normalization';
+import { normalizeSearchText } from './search-normalization.ts';
 
 export function levenshteinDistance(left: string, right: string, maxDistance = Number.POSITIVE_INFINITY) {
   const a = normalizeSearchText(left);
