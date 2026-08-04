@@ -2,26 +2,11 @@
   "consumer": "KeepTXRed",
   "repository": "keeptxred/texas-heartland-hub",
   "coreRepository": "keeptxred/texas-common-core",
-  "coreCommit": "f3a6d271c59d1f9f4e30e5d399c17dbbfccca912",
+  "coreCommit": "1ff8a2f276b9536c729f67ee3d00e5a713ad1164",
   "packageVersion": "0.3.0",
   "apiVersion": "1.1",
-  "capabilities": [
-    "entity-contracts",
-    "entity-canonicalization",
-    "deterministic-fingerprints",
-    "content-ownership",
-    "duplicate-content-prevention",
-    "cross-site-disposition"
-  ],
-  "localExtensions": [
-    "political entity registry",
-    "site visibility",
-    "editorial search",
-    "legacy entity relationships",
-    "KeepTXRed publishing preview API"
-  ],
-  "excludedDomains": [
-    "representatives", "bills", "committees", "guides", "calculators", "branding", "routes"
-  ],
+  "capabilities": ["entity-contracts", "entity-canonicalization", "deterministic-fingerprints", "content-ownership", "duplicate-content-prevention", "cross-site-disposition"],
+  "localExtensions": ["political entity registry", "site visibility", "editorial search", "legacy entity relationships", "KeepTXRed publishing preview API"],
+  "excludedDomains": ["representatives", "bills", "committees", "guides", "calculators", "branding", "routes"],
   "reviewedAt": "2026-08-04"
 }
