@@ -16,6 +16,7 @@ import { Route as TexasSportsRouteImport } from './routes/texas-sports'
 import { Route as TexasSalesTaxExplainedRouteImport } from './routes/texas-sales-tax-explained'
 import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-salary-comparison-by-city'
 import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
+import { Route as TexasResourcesRouteImport } from './routes/texas-resources'
 import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
 import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/texas-refinance-savings-calculator'
 import { Route as TexasPropertyTaxProtestGuideRouteImport } from './routes/texas-property-tax-protest-guide'
@@ -25,6 +26,7 @@ import { Route as TexasNewsRouteImport } from './routes/texas-news'
 import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-moving-cost-calculator'
 import { Route as TexasMortgagePayoffCalculatorRouteImport } from './routes/texas-mortgage-payoff-calculator'
 import { Route as TexasMortgageCalculatorRouteImport } from './routes/texas-mortgage-calculator'
+import { Route as TexasLivingRouteImport } from './routes/texas-living'
 import { Route as TexasLegislatureRouteImport } from './routes/texas-legislature'
 import { Route as TexasLawsRouteImport } from './routes/texas-laws'
 import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
@@ -212,6 +214,9 @@ import { Route as TexasLegislatureCommitteesIndexRouteImport } from './routes/te
 import { Route as ElectionsDistrictsIndexRouteImport } from './routes/elections.districts.index'
 import { Route as AdminElectionsIndexRouteImport } from './routes/admin/elections/index'
 import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
+import { Route as TexasResourcesTypeTypeRouteImport } from './routes/texas-resources.type.$type'
+import { Route as TexasResourcesTopicTopicIdRouteImport } from './routes/texas-resources.topic.$topicId'
+import { Route as TexasResourcesJourneyJourneyIdRouteImport } from './routes/texas-resources.journey.$journeyId'
 import { Route as TexasLegislatureSessionsSessionSlugRouteImport } from './routes/texas-legislature.sessions.$sessionSlug'
 import { Route as TexasLegislatureCommitteesCommitteeSlugRouteImport } from './routes/texas-legislature.committees.$committeeSlug'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
@@ -302,6 +307,11 @@ const TexasSalaryCalculatorRoute = TexasSalaryCalculatorRouteImport.update({
   path: '/texas-salary-calculator',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TexasResourcesRoute = TexasResourcesRouteImport.update({
+  id: '/texas-resources',
+  path: '/texas-resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TexasRentVsBuyCalculatorRoute =
   TexasRentVsBuyCalculatorRouteImport.update({
     id: '/texas-rent-vs-buy-calculator',
@@ -351,6 +361,11 @@ const TexasMortgagePayoffCalculatorRoute =
 const TexasMortgageCalculatorRoute = TexasMortgageCalculatorRouteImport.update({
   id: '/texas-mortgage-calculator',
   path: '/texas-mortgage-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLivingRoute = TexasLivingRouteImport.update({
+  id: '/texas-living',
+  path: '/texas-living',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TexasLegislatureRoute = TexasLegislatureRouteImport.update({
@@ -1330,6 +1345,23 @@ const TexasSportsTeamTeamRoute = TexasSportsTeamTeamRouteImport.update({
   path: '/team/$team',
   getParentRoute: () => TexasSportsRoute,
 } as any)
+const TexasResourcesTypeTypeRoute = TexasResourcesTypeTypeRouteImport.update({
+  id: '/type/$type',
+  path: '/type/$type',
+  getParentRoute: () => TexasResourcesRoute,
+} as any)
+const TexasResourcesTopicTopicIdRoute =
+  TexasResourcesTopicTopicIdRouteImport.update({
+    id: '/topic/$topicId',
+    path: '/topic/$topicId',
+    getParentRoute: () => TexasResourcesRoute,
+  } as any)
+const TexasResourcesJourneyJourneyIdRoute =
+  TexasResourcesJourneyJourneyIdRouteImport.update({
+    id: '/journey/$journeyId',
+    path: '/journey/$journeyId',
+    getParentRoute: () => TexasResourcesRoute,
+  } as any)
 const TexasLegislatureSessionsSessionSlugRoute =
   TexasLegislatureSessionsSessionSlugRouteImport.update({
     id: '/$sessionSlug',
@@ -1703,6 +1735,7 @@ export interface FileRoutesByFullPath {
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
   '/texas-legislature': typeof TexasLegislatureRouteWithChildren
+  '/texas-living': typeof TexasLivingRoute
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
@@ -1712,6 +1745,7 @@ export interface FileRoutesByFullPath {
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
+  '/texas-resources': typeof TexasResourcesRouteWithChildren
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
@@ -1847,6 +1881,9 @@ export interface FileRoutesByFullPath {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
   '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
+  '/texas-resources/journey/$journeyId': typeof TexasResourcesJourneyJourneyIdRoute
+  '/texas-resources/topic/$topicId': typeof TexasResourcesTopicTopicIdRoute
+  '/texas-resources/type/$type': typeof TexasResourcesTypeTypeRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections/': typeof AdminElectionsIndexRoute
   '/elections/districts/': typeof ElectionsDistrictsIndexRoute
@@ -1953,6 +1990,7 @@ export interface FileRoutesByTo {
   '/texas-homeownership-cost-calculator': typeof TexasHomeownershipCostCalculatorRoute
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
+  '/texas-living': typeof TexasLivingRoute
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
@@ -1961,6 +1999,7 @@ export interface FileRoutesByTo {
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
+  '/texas-resources': typeof TexasResourcesRouteWithChildren
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
@@ -2092,6 +2131,9 @@ export interface FileRoutesByTo {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
   '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
+  '/texas-resources/journey/$journeyId': typeof TexasResourcesJourneyJourneyIdRoute
+  '/texas-resources/topic/$topicId': typeof TexasResourcesTopicTopicIdRoute
+  '/texas-resources/type/$type': typeof TexasResourcesTypeTypeRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections': typeof AdminElectionsIndexRoute
   '/elections/districts': typeof ElectionsDistrictsIndexRoute
@@ -2206,6 +2248,7 @@ export interface FileRoutesById {
   '/texas-law-policy': typeof TexasLawPolicyRoute
   '/texas-laws': typeof TexasLawsRoute
   '/texas-legislature': typeof TexasLegislatureRouteWithChildren
+  '/texas-living': typeof TexasLivingRoute
   '/texas-mortgage-calculator': typeof TexasMortgageCalculatorRoute
   '/texas-mortgage-payoff-calculator': typeof TexasMortgagePayoffCalculatorRoute
   '/texas-moving-cost-calculator': typeof TexasMovingCostCalculatorRoute
@@ -2215,6 +2258,7 @@ export interface FileRoutesById {
   '/texas-property-tax-protest-guide': typeof TexasPropertyTaxProtestGuideRoute
   '/texas-refinance-savings-calculator': typeof TexasRefinanceSavingsCalculatorRoute
   '/texas-rent-vs-buy-calculator': typeof TexasRentVsBuyCalculatorRoute
+  '/texas-resources': typeof TexasResourcesRouteWithChildren
   '/texas-salary-calculator': typeof TexasSalaryCalculatorRoute
   '/texas-salary-comparison-by-city': typeof TexasSalaryComparisonByCityRoute
   '/texas-sales-tax-explained': typeof TexasSalesTaxExplainedRoute
@@ -2350,6 +2394,9 @@ export interface FileRoutesById {
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/texas-legislature/committees/$committeeSlug': typeof TexasLegislatureCommitteesCommitteeSlugRoute
   '/texas-legislature/sessions/$sessionSlug': typeof TexasLegislatureSessionsSessionSlugRoute
+  '/texas-resources/journey/$journeyId': typeof TexasResourcesJourneyJourneyIdRoute
+  '/texas-resources/topic/$topicId': typeof TexasResourcesTopicTopicIdRoute
+  '/texas-resources/type/$type': typeof TexasResourcesTypeTypeRoute
   '/texas-sports/team/$team': typeof TexasSportsTeamTeamRoute
   '/admin/elections/': typeof AdminElectionsIndexRoute
   '/elections/districts/': typeof ElectionsDistrictsIndexRoute
@@ -2465,6 +2512,7 @@ export interface FileRouteTypes {
     | '/texas-law-policy'
     | '/texas-laws'
     | '/texas-legislature'
+    | '/texas-living'
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
     | '/texas-moving-cost-calculator'
@@ -2474,6 +2522,7 @@ export interface FileRouteTypes {
     | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
+    | '/texas-resources'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
@@ -2609,6 +2658,9 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-legislature/committees/$committeeSlug'
     | '/texas-legislature/sessions/$sessionSlug'
+    | '/texas-resources/journey/$journeyId'
+    | '/texas-resources/topic/$topicId'
+    | '/texas-resources/type/$type'
     | '/texas-sports/team/$team'
     | '/admin/elections/'
     | '/elections/districts/'
@@ -2715,6 +2767,7 @@ export interface FileRouteTypes {
     | '/texas-homeownership-cost-calculator'
     | '/texas-law-policy'
     | '/texas-laws'
+    | '/texas-living'
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
     | '/texas-moving-cost-calculator'
@@ -2723,6 +2776,7 @@ export interface FileRouteTypes {
     | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
+    | '/texas-resources'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
@@ -2854,6 +2908,9 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-legislature/committees/$committeeSlug'
     | '/texas-legislature/sessions/$sessionSlug'
+    | '/texas-resources/journey/$journeyId'
+    | '/texas-resources/topic/$topicId'
+    | '/texas-resources/type/$type'
     | '/texas-sports/team/$team'
     | '/admin/elections'
     | '/elections/districts'
@@ -2967,6 +3024,7 @@ export interface FileRouteTypes {
     | '/texas-law-policy'
     | '/texas-laws'
     | '/texas-legislature'
+    | '/texas-living'
     | '/texas-mortgage-calculator'
     | '/texas-mortgage-payoff-calculator'
     | '/texas-moving-cost-calculator'
@@ -2976,6 +3034,7 @@ export interface FileRouteTypes {
     | '/texas-property-tax-protest-guide'
     | '/texas-refinance-savings-calculator'
     | '/texas-rent-vs-buy-calculator'
+    | '/texas-resources'
     | '/texas-salary-calculator'
     | '/texas-salary-comparison-by-city'
     | '/texas-sales-tax-explained'
@@ -3111,6 +3170,9 @@ export interface FileRouteTypes {
     | '/lovable/email/suppression'
     | '/texas-legislature/committees/$committeeSlug'
     | '/texas-legislature/sessions/$sessionSlug'
+    | '/texas-resources/journey/$journeyId'
+    | '/texas-resources/topic/$topicId'
+    | '/texas-resources/type/$type'
     | '/texas-sports/team/$team'
     | '/admin/elections/'
     | '/elections/districts/'
@@ -3225,6 +3287,7 @@ export interface RootRouteChildren {
   TexasLawPolicyRoute: typeof TexasLawPolicyRoute
   TexasLawsRoute: typeof TexasLawsRoute
   TexasLegislatureRoute: typeof TexasLegislatureRouteWithChildren
+  TexasLivingRoute: typeof TexasLivingRoute
   TexasMortgageCalculatorRoute: typeof TexasMortgageCalculatorRoute
   TexasMortgagePayoffCalculatorRoute: typeof TexasMortgagePayoffCalculatorRoute
   TexasMovingCostCalculatorRoute: typeof TexasMovingCostCalculatorRoute
@@ -3234,6 +3297,7 @@ export interface RootRouteChildren {
   TexasPropertyTaxProtestGuideRoute: typeof TexasPropertyTaxProtestGuideRoute
   TexasRefinanceSavingsCalculatorRoute: typeof TexasRefinanceSavingsCalculatorRoute
   TexasRentVsBuyCalculatorRoute: typeof TexasRentVsBuyCalculatorRoute
+  TexasResourcesRoute: typeof TexasResourcesRouteWithChildren
   TexasSalaryCalculatorRoute: typeof TexasSalaryCalculatorRoute
   TexasSalaryComparisonByCityRoute: typeof TexasSalaryComparisonByCityRoute
   TexasSalesTaxExplainedRoute: typeof TexasSalesTaxExplainedRoute
@@ -3347,6 +3411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSalaryCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/texas-resources': {
+      id: '/texas-resources'
+      path: '/texas-resources'
+      fullPath: '/texas-resources'
+      preLoaderRoute: typeof TexasResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/texas-rent-vs-buy-calculator': {
       id: '/texas-rent-vs-buy-calculator'
       path: '/texas-rent-vs-buy-calculator'
@@ -3408,6 +3479,13 @@ declare module '@tanstack/react-router' {
       path: '/texas-mortgage-calculator'
       fullPath: '/texas-mortgage-calculator'
       preLoaderRoute: typeof TexasMortgageCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-living': {
+      id: '/texas-living'
+      path: '/texas-living'
+      fullPath: '/texas-living'
+      preLoaderRoute: typeof TexasLivingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/texas-legislature': {
@@ -4719,6 +4797,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TexasSportsTeamTeamRouteImport
       parentRoute: typeof TexasSportsRoute
     }
+    '/texas-resources/type/$type': {
+      id: '/texas-resources/type/$type'
+      path: '/type/$type'
+      fullPath: '/texas-resources/type/$type'
+      preLoaderRoute: typeof TexasResourcesTypeTypeRouteImport
+      parentRoute: typeof TexasResourcesRoute
+    }
+    '/texas-resources/topic/$topicId': {
+      id: '/texas-resources/topic/$topicId'
+      path: '/topic/$topicId'
+      fullPath: '/texas-resources/topic/$topicId'
+      preLoaderRoute: typeof TexasResourcesTopicTopicIdRouteImport
+      parentRoute: typeof TexasResourcesRoute
+    }
+    '/texas-resources/journey/$journeyId': {
+      id: '/texas-resources/journey/$journeyId'
+      path: '/journey/$journeyId'
+      fullPath: '/texas-resources/journey/$journeyId'
+      preLoaderRoute: typeof TexasResourcesJourneyJourneyIdRouteImport
+      parentRoute: typeof TexasResourcesRoute
+    }
     '/texas-legislature/sessions/$sessionSlug': {
       id: '/texas-legislature/sessions/$sessionSlug'
       path: '/$sessionSlug'
@@ -5482,6 +5581,22 @@ const TexasNewsRouteWithChildren = TexasNewsRoute._addFileChildren(
   TexasNewsRouteChildren,
 )
 
+interface TexasResourcesRouteChildren {
+  TexasResourcesJourneyJourneyIdRoute: typeof TexasResourcesJourneyJourneyIdRoute
+  TexasResourcesTopicTopicIdRoute: typeof TexasResourcesTopicTopicIdRoute
+  TexasResourcesTypeTypeRoute: typeof TexasResourcesTypeTypeRoute
+}
+
+const TexasResourcesRouteChildren: TexasResourcesRouteChildren = {
+  TexasResourcesJourneyJourneyIdRoute: TexasResourcesJourneyJourneyIdRoute,
+  TexasResourcesTopicTopicIdRoute: TexasResourcesTopicTopicIdRoute,
+  TexasResourcesTypeTypeRoute: TexasResourcesTypeTypeRoute,
+}
+
+const TexasResourcesRouteWithChildren = TexasResourcesRoute._addFileChildren(
+  TexasResourcesRouteChildren,
+)
+
 interface TexasSportsRouteChildren {
   TexasSportsLeagueRoute: typeof TexasSportsLeagueRoute
   TexasSportsIndexRoute: typeof TexasSportsIndexRoute
@@ -5581,6 +5696,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasLawPolicyRoute: TexasLawPolicyRoute,
   TexasLawsRoute: TexasLawsRoute,
   TexasLegislatureRoute: TexasLegislatureRouteWithChildren,
+  TexasLivingRoute: TexasLivingRoute,
   TexasMortgageCalculatorRoute: TexasMortgageCalculatorRoute,
   TexasMortgagePayoffCalculatorRoute: TexasMortgagePayoffCalculatorRoute,
   TexasMovingCostCalculatorRoute: TexasMovingCostCalculatorRoute,
@@ -5591,6 +5707,7 @@ const rootRouteChildren: RootRouteChildren = {
   TexasPropertyTaxProtestGuideRoute: TexasPropertyTaxProtestGuideRoute,
   TexasRefinanceSavingsCalculatorRoute: TexasRefinanceSavingsCalculatorRoute,
   TexasRentVsBuyCalculatorRoute: TexasRentVsBuyCalculatorRoute,
+  TexasResourcesRoute: TexasResourcesRouteWithChildren,
   TexasSalaryCalculatorRoute: TexasSalaryCalculatorRoute,
   TexasSalaryComparisonByCityRoute: TexasSalaryComparisonByCityRoute,
   TexasSalesTaxExplainedRoute: TexasSalesTaxExplainedRoute,
@@ -5659,3 +5776,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
