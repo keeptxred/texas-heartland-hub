@@ -8,7 +8,7 @@ import { AUTHORS } from "@/data/authors";
 import { ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 
-const INDEX_LASTMOD = toIsoDate("2026-08-01T00:00:00-05:00");
+const INDEX_LASTMOD = toIsoDate("2026-08-03T00:00:00-05:00");
 
 function isCompleteAuthor(author: (typeof AUTHORS)[number]): boolean {
   return Boolean(
@@ -74,7 +74,6 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         const candidates = [
           { file: "sitemap-pages.xml", count: 1 },
-          { file: "sitemap-explore.xml", count: 1 },
           { file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT },
           { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
           { file: "sitemap-bills.xml", count: 1 },
