@@ -1,5 +1,10 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/explore")({
-  component: () => <Outlet />,
+  beforeLoad: ({ location }) => {
+    throw redirect({
+      href: `https://texasdefined.com${location.pathname}${location.searchStr || ""}`,
+      statusCode: 301,
+    });
+  },
 });
