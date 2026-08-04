@@ -31,6 +31,8 @@ export * from './search-telemetry-alerts';
 export * from './search-telemetry-alert-delivery';
 export * from './search-telemetry-alert-state';
 export * from './search-telemetry-incidents';
+export * from './search-telemetry-incident-metrics';
+export * from './search-telemetry-incident-sla';
 export * from './search-telemetry-digest';
 export * from './search-insights';
 export * from './search-telemetry-components';
