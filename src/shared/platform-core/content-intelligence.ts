@@ -1,98 +1,19 @@
 export type PlatformSite = 'TexasDefined' | 'KeepTXRed';
-
-export type ContentDomain =
-  | 'travel' | 'food' | 'events' | 'history' | 'moving' | 'home-garden'
-  | 'real-estate' | 'property-tax' | 'shopping' | 'politics' | 'elections'
-  | 'legislation' | 'breaking-news' | 'government-accountability' | 'texas-culture';
-
-export type ContentOwnershipRule = {
-  domain: ContentDomain;
-  owner: PlatformSite;
-  secondarySite?: PlatformSite;
-  derivativeAllowed: boolean;
-  fullRepublicationAllowed: boolean;
-  crossSiteLinkPreferred: boolean;
-  rationale: string;
-};
-
-export type ContentCandidate = {
-  id: string;
-  title: string;
-  domain: ContentDomain;
-  sourceSite: PlatformSite;
-  targetSite: PlatformSite;
-  sourceCanonicalUrl: string;
-  proposedUrl?: string;
-  contentFingerprint?: string;
-  sourceFingerprint?: string;
-  derivativePurpose?: 'summary' | 'context' | 'guide' | 'news-update' | 'commerce';
-};
-
-export type ContentDisposition =
-  | 'publish-original' | 'publish-derivative-with-canonical-reference'
-  | 'cross-link-only' | 'reject-duplicate' | 'manual-review';
-
-export type ContentDecision = {
-  disposition: ContentDisposition;
-  canonicalOwner: PlatformSite;
-  canonicalUrl: string;
-  robots: 'index,follow' | 'noindex,follow';
-  requiredAttribution: boolean;
-  reasons: string[];
-};
-
-export const CONTENT_OWNERSHIP_RULES: ContentOwnershipRule[] = [
-  rule('travel', 'TexasDefined', true), rule('food', 'TexasDefined', true),
-  rule('events', 'TexasDefined', true), rule('history', 'TexasDefined', true),
-  rule('moving', 'TexasDefined', true), rule('home-garden', 'TexasDefined', true),
-  rule('real-estate', 'TexasDefined', true), rule('property-tax', 'TexasDefined', true),
-  rule('shopping', 'TexasDefined', true), rule('texas-culture', 'TexasDefined', true),
-  rule('politics', 'KeepTXRed', false), rule('elections', 'KeepTXRed', false),
-  rule('legislation', 'KeepTXRed', false), rule('breaking-news', 'KeepTXRed', true),
-  rule('government-accountability', 'KeepTXRed', false),
-];
-
-export function ownershipRuleFor(domain: ContentDomain): ContentOwnershipRule {
-  const found = CONTENT_OWNERSHIP_RULES.find((entry) => entry.domain === domain);
-  if (!found) throw new Error(`No content ownership rule for ${domain}.`);
-  return found;
-}
-
+export type ContentDomain = 'travel' | 'food' | 'events' | 'history' | 'moving' | 'home-garden' | 'real-estate' | 'property-tax' | 'shopping' | 'politics' | 'elections' | 'legislation' | 'breaking-news' | 'government-accountability' | 'texas-culture';
+export type ContentOwnershipRule = { domain: ContentDomain; owner: PlatformSite; secondarySite?: PlatformSite; derivativeAllowed: boolean; fullRepublicationAllowed: boolean; crossSiteLinkPreferred: boolean; rationale: string };
+export type ContentCandidate = { id: string; title: string; domain: ContentDomain; sourceSite: PlatformSite; targetSite: PlatformSite; sourceCanonicalUrl: string; proposedUrl?: string; contentFingerprint?: string; sourceFingerprint?: string; derivativePurpose?: 'summary' | 'context' | 'guide' | 'news-update' | 'commerce' };
+export type ContentDisposition = 'publish-original' | 'publish-derivative-with-canonical-reference' | 'cross-link-only' | 'reject-duplicate' | 'manual-review';
+export type ContentDecision = { disposition: ContentDisposition; canonicalOwner: PlatformSite; canonicalUrl: string; robots: 'index,follow' | 'noindex,follow'; requiredAttribution: boolean; reasons: string[] };
+export const CONTENT_OWNERSHIP_RULES: ContentOwnershipRule[] = [rule('travel','TexasDefined',true),rule('food','TexasDefined',true),rule('events','TexasDefined',true),rule('history','TexasDefined',true),rule('moving','TexasDefined',true),rule('home-garden','TexasDefined',true),rule('real-estate','TexasDefined',true),rule('property-tax','TexasDefined',true),rule('shopping','TexasDefined',true),rule('texas-culture','TexasDefined',true),rule('politics','KeepTXRed',false),rule('elections','KeepTXRed',false),rule('legislation','KeepTXRed',false),rule('breaking-news','KeepTXRed',true),rule('government-accountability','KeepTXRed',false)];
+export function ownershipRuleFor(domain: ContentDomain) { const found = CONTENT_OWNERSHIP_RULES.find((entry) => entry.domain === domain); if (!found) throw new Error(`No content ownership rule for ${domain}.`); return found; }
 export function decideCrossSiteContent(candidate: ContentCandidate): ContentDecision {
-  const rule = ownershipRuleFor(candidate.domain);
-  const reasons: string[] = [];
+  const rule = ownershipRuleFor(candidate.domain); const reasons: string[] = [];
   const exactDuplicate = Boolean(candidate.contentFingerprint && candidate.sourceFingerprint && candidate.contentFingerprint === candidate.sourceFingerprint);
-  if (candidate.targetSite === rule.owner) {
-    reasons.push(`${rule.owner} owns the ${candidate.domain} domain.`);
-    return { disposition: candidate.sourceSite === rule.owner ? 'publish-original' : 'manual-review', canonicalOwner: rule.owner, canonicalUrl: candidate.proposedUrl ?? candidate.sourceCanonicalUrl, robots: 'index,follow', requiredAttribution: candidate.sourceSite !== rule.owner, reasons };
-  }
-  if (exactDuplicate || !rule.fullRepublicationAllowed) {
-    reasons.push(exactDuplicate ? 'The proposed content matches the source fingerprint.' : 'Full republication is prohibited for this domain.');
-    reasons.push(`The canonical owner is ${rule.owner}.`);
-    return { disposition: exactDuplicate ? 'reject-duplicate' : 'cross-link-only', canonicalOwner: rule.owner, canonicalUrl: candidate.sourceCanonicalUrl, robots: 'noindex,follow', requiredAttribution: true, reasons };
-  }
-  if (rule.derivativeAllowed && candidate.derivativePurpose) {
-    reasons.push(`A distinct ${candidate.derivativePurpose} derivative is allowed.`);
-    reasons.push(`The original remains canonically owned by ${rule.owner}.`);
-    return { disposition: 'publish-derivative-with-canonical-reference', canonicalOwner: rule.owner, canonicalUrl: candidate.proposedUrl ?? candidate.sourceCanonicalUrl, robots: 'index,follow', requiredAttribution: true, reasons };
-  }
-  reasons.push('No approved derivative purpose was supplied.');
-  return { disposition: rule.crossSiteLinkPreferred ? 'cross-link-only' : 'manual-review', canonicalOwner: rule.owner, canonicalUrl: candidate.sourceCanonicalUrl, robots: 'noindex,follow', requiredAttribution: true, reasons };
+  if (candidate.targetSite === rule.owner) { reasons.push(`${rule.owner} owns the ${candidate.domain} domain.`); return { disposition: candidate.sourceSite === rule.owner ? 'publish-original' : 'manual-review', canonicalOwner: rule.owner, canonicalUrl: candidate.proposedUrl ?? candidate.sourceCanonicalUrl, robots: 'index,follow', requiredAttribution: candidate.sourceSite !== rule.owner, reasons }; }
+  if (exactDuplicate) { reasons.push('The proposed content matches the source fingerprint.', `The canonical owner is ${rule.owner}.`); return { disposition: 'reject-duplicate', canonicalOwner: rule.owner, canonicalUrl: candidate.sourceCanonicalUrl, robots: 'noindex,follow', requiredAttribution: true, reasons }; }
+  if (rule.derivativeAllowed && candidate.derivativePurpose) { reasons.push(`A distinct ${candidate.derivativePurpose} derivative is allowed.`, `The original remains canonically owned by ${rule.owner}.`); return { disposition: 'publish-derivative-with-canonical-reference', canonicalOwner: rule.owner, canonicalUrl: candidate.proposedUrl ?? candidate.sourceCanonicalUrl, robots: 'index,follow', requiredAttribution: true, reasons }; }
+  if (!rule.fullRepublicationAllowed) { reasons.push('Full republication is prohibited for this domain.', `The canonical owner is ${rule.owner}.`); return { disposition: 'cross-link-only', canonicalOwner: rule.owner, canonicalUrl: candidate.sourceCanonicalUrl, robots: 'noindex,follow', requiredAttribution: true, reasons }; }
+  reasons.push('No approved derivative purpose was supplied.'); return { disposition: rule.crossSiteLinkPreferred ? 'cross-link-only' : 'manual-review', canonicalOwner: rule.owner, canonicalUrl: candidate.sourceCanonicalUrl, robots: 'noindex,follow', requiredAttribution: true, reasons };
 }
-
-export function validateContentOwnershipRules(rules: ContentOwnershipRule[] = CONTENT_OWNERSHIP_RULES) {
-  const errors: string[] = [];
-  const domains = new Set<ContentDomain>();
-  for (const rule of rules) {
-    if (domains.has(rule.domain)) errors.push(`Duplicate content domain: ${rule.domain}`);
-    domains.add(rule.domain);
-    if (rule.secondarySite === rule.owner) errors.push(`Secondary site matches owner for ${rule.domain}.`);
-    if (rule.fullRepublicationAllowed && !rule.derivativeAllowed) errors.push(`Full republication requires derivative permission for ${rule.domain}.`);
-    if (!rule.rationale.trim()) errors.push(`Missing rationale for ${rule.domain}.`);
-  }
-  return { valid: errors.length === 0, errors };
-}
-
-function rule(domain: ContentDomain, owner: PlatformSite, derivativeAllowed: boolean): ContentOwnershipRule {
-  return { domain, owner, secondarySite: owner === 'TexasDefined' ? 'KeepTXRed' : 'TexasDefined', derivativeAllowed, fullRepublicationAllowed: false, crossSiteLinkPreferred: true, rationale: `${owner} is the canonical editorial owner for ${domain} content.` };
-}
+export function validateContentOwnershipRules(rules: ContentOwnershipRule[] = CONTENT_OWNERSHIP_RULES) { const errors: string[] = []; const domains = new Set<ContentDomain>(); for (const rule of rules) { if (domains.has(rule.domain)) errors.push(`Duplicate content domain: ${rule.domain}`); domains.add(rule.domain); if (rule.secondarySite === rule.owner) errors.push(`Secondary site matches owner for ${rule.domain}.`); if (rule.fullRepublicationAllowed && !rule.derivativeAllowed) errors.push(`Full republication requires derivative permission for ${rule.domain}.`); if (!rule.rationale.trim()) errors.push(`Missing rationale for ${rule.domain}.`); } return { valid: errors.length === 0, errors }; }
+function rule(domain: ContentDomain, owner: PlatformSite, derivativeAllowed: boolean): ContentOwnershipRule { return { domain, owner, secondarySite: owner === 'TexasDefined' ? 'KeepTXRed' : 'TexasDefined', derivativeAllowed, fullRepublicationAllowed: false, crossSiteLinkPreferred: true, rationale: `${owner} is the canonical editorial owner for ${domain} content.` }; }
