@@ -8,6 +8,7 @@ import {
   Home,
   Landmark,
   MapPinned,
+  Newspaper,
   Scale,
   Sparkles,
   Truck,
@@ -77,18 +78,73 @@ export const RESOURCE_HUB_CATEGORIES: ResourceHubCategory[] = [
     ],
   },
   {
-    id: "government-elections",
-    title: "Government & Elections",
-    description: "Find representatives, follow legislation and understand how Texas government works.",
+    id: "government",
+    title: "Texas Government",
+    description: "Understand state government, the Legislature, committees and the offices that make decisions for Texas.",
     icon: Landmark,
     owner: "keeptxred",
-    exploreHref: "/texas-resources/topic/government",
+    exploreHref: "/texas-legislature",
     links: [
-      { label: "Find My Representative", href: "/representatives" },
-      { label: "Texas Bills", href: "/bills" },
-      { label: "Election Central", href: "/elections" },
       { label: "Texas Legislature", href: "/texas-legislature" },
       { label: "Committees", href: "/committees" },
+      { label: "Representatives", href: "/representatives" },
+      { label: "Texas Bills", href: "/bills" },
+    ],
+  },
+  {
+    id: "elections",
+    title: "Texas Elections",
+    description: "Follow races, candidates, districts, polls, forecasts and election results across Texas.",
+    icon: Vote,
+    owner: "keeptxred",
+    exploreHref: "/elections",
+    links: [
+      { label: "Election Central", href: "/elections" },
+      { label: "Statewide Races", href: "/elections/statewide" },
+      { label: "Legislative Races", href: "/elections/legislative" },
+      { label: "Election Results", href: "/elections/results" },
+    ],
+  },
+  {
+    id: "representatives",
+    title: "Representatives",
+    description: "Find the elected officials who represent Texans and open their complete profiles.",
+    icon: Users,
+    owner: "keeptxred",
+    exploreHref: "/representatives",
+    links: [
+      { label: "Find My Representative", href: "/representatives" },
+      { label: "Texas House", href: "/representatives?chamber=house" },
+      { label: "Texas Senate", href: "/representatives?chamber=senate" },
+      { label: "Legislative Districts", href: "/elections/legislative" },
+    ],
+  },
+  {
+    id: "bills-legislation",
+    title: "Bills & Legislation",
+    description: "Search Texas bills, follow legislative activity and see the people and committees connected to each measure.",
+    icon: FileText,
+    owner: "keeptxred",
+    exploreHref: "/bills",
+    links: [
+      { label: "Search Texas Bills", href: "/bills" },
+      { label: "Texas Legislature", href: "/texas-legislature" },
+      { label: "Committees", href: "/committees" },
+      { label: "Representatives", href: "/representatives" },
+    ],
+  },
+  {
+    id: "texas-politics",
+    title: "Texas Politics",
+    description: "Read current political coverage and connect the news to races, officials, bills and government institutions.",
+    icon: Newspaper,
+    owner: "keeptxred",
+    exploreHref: "/texas-politics",
+    links: [
+      { label: "Texas Politics", href: "/texas-politics" },
+      { label: "Election Central", href: "/elections" },
+      { label: "Representatives", href: "/representatives" },
+      { label: "Texas Bills", href: "/bills" },
     ],
   },
   {
@@ -141,7 +197,7 @@ export const RESOURCE_HUB_CATEGORIES: ResourceHubCategory[] = [
     title: "Calculators & Tools",
     description: "Use practical calculators and decision tools built around Texas taxes, housing and living costs.",
     icon: Calculator,
-    owner: "shared",
+    owner: "texasdefined",
     exploreHref: "/texas-resources/type/calculator",
     links: [
       { label: "Property Tax Calculator", href: "/tax-calculator" },
@@ -169,9 +225,13 @@ export const RESOURCE_HUB_CATEGORIES: ResourceHubCategory[] = [
 ];
 
 export const FEATURED_RESOURCES: FeaturedResource[] = [
-  { title: "Property Tax Calculator", description: "Estimate your Texas property tax bill.", href: "/tax-calculator", icon: Calculator, owner: "shared" },
-  { title: "Find My Representative", description: "Find the officials who represent you.", href: "/representatives", icon: Landmark, owner: "keeptxred" },
-  { title: "Texas Bills", description: "Search and follow legislation in the Texas Legislature.", href: "/bills", icon: Scale, owner: "keeptxred" },
+  { title: "Find My Representative", description: "Find the officials who represent you.", href: "/representatives", icon: Users, owner: "keeptxred" },
+  { title: "Texas Bills", description: "Search and follow legislation in the Texas Legislature.", href: "/bills", icon: FileText, owner: "keeptxred" },
+  { title: "Election Central", description: "Follow Texas races, candidates, polls and results.", href: "/elections", icon: Vote, owner: "keeptxred" },
+  { title: "Texas Politics", description: "Read the latest Texas political coverage.", href: "/texas-politics", icon: Newspaper, owner: "keeptxred" },
+  { title: "Texas Laws", description: "Find plain-language explanations of Texas laws.", href: "/laws", icon: Scale, owner: "keeptxred" },
+  { title: "Texas Legislature", description: "Explore legislative institutions, bills and committees.", href: "/texas-legislature", icon: Landmark, owner: "keeptxred" },
+  { title: "Property Tax Calculator", description: "Estimate your Texas property tax bill.", href: "/tax-calculator", icon: Calculator, owner: "texasdefined" },
   { title: "Homestead Exemption Guide", description: "Understand eligibility, savings and how to apply.", href: "/texas-property-tax-protest-guide", icon: Home, owner: "texasdefined" },
   { title: "Cost of Living Calculator", description: "Compare household costs across Texas.", href: "/texas-cost-of-living-calculator", icon: MapPinned, owner: "texasdefined" },
   { title: "Mortgage Calculator", description: "Estimate a Texas home payment and total cost.", href: "/texas-mortgage-calculator", icon: DollarSign, owner: "texasdefined" },
@@ -182,20 +242,22 @@ export const BROWSE_RESOURCES: BrowseResource[] = [
   { label: "Cities", href: "/texas-resources/type/city", icon: Building2, owner: "texasdefined" },
   { label: "Representatives", href: "/representatives", icon: Users, owner: "keeptxred" },
   { label: "Bills", href: "/bills", icon: FileText, owner: "keeptxred" },
+  { label: "Politics", href: "/texas-politics", icon: Newspaper, owner: "keeptxred" },
+  { label: "Government", href: "/texas-legislature", icon: Landmark, owner: "keeptxred" },
   { label: "Laws", href: "/laws", icon: Scale, owner: "keeptxred" },
   { label: "Elections", href: "/elections", icon: Vote, owner: "keeptxred" },
-  { label: "Calculators", href: "/texas-resources/type/calculator", icon: Calculator, owner: "shared" },
+  { label: "Calculators", href: "/texas-resources/type/calculator", icon: Calculator, owner: "texasdefined" },
   { label: "Guides", href: "/texas-resources/type/guide", icon: Sparkles, owner: "shared" },
 ];
 
 export const POPULAR_RESOURCES: ResourceHubLink[] = [
   { label: "Texas Bills", href: "/bills" },
   { label: "Find My Representative", href: "/representatives" },
-  { label: "Property Tax Calculator", href: "/tax-calculator" },
+  { label: "Election Central", href: "/elections" },
 ];
 
 export const TRENDING_RESOURCES: ResourceHubLink[] = [
-  { label: "Election Central", href: "/elections" },
+  { label: "Texas Politics", href: "/texas-politics" },
   { label: "New Texas Laws", href: "/laws/texas-new-laws-2026" },
   { label: "Texas Legislature", href: "/texas-legislature" },
 ];
@@ -203,7 +265,7 @@ export const TRENDING_RESOURCES: ResourceHubLink[] = [
 export const NEW_RESOURCES: ResourceHubLink[] = [
   { label: "Browse Texas Committees", href: "/committees" },
   { label: "Texas Laws Hub", href: "/laws" },
-  { label: "All Calculators", href: "/texas-resources/type/calculator" },
+  { label: "Election Central", href: "/elections" },
 ];
 
 export const TEXAS_ASSISTANT_EXAMPLES = [
