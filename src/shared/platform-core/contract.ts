@@ -1,11 +1,12 @@
 export const PLATFORM_CORE_CONTRACT = {
   packageName: '@keeptxred/texas-platform-core',
-  packageVersion: '0.4.0',
-  apiVersion: '1.2',
+  packageVersion: '0.5.0',
+  apiVersion: '1.3',
   releasedAt: '2026-08-04',
   capabilities: [
     'entity-contracts','entity-canonicalization','deterministic-fingerprints','entity-set-diffs','baseline-quarantine','promotion-previews',
     'content-ownership','duplicate-content-prevention','cross-site-disposition','publication-gates','reviewed-overrides',
+    'governance-events','governance-analytics','ownership-drift-detection',
   ],
   prohibitedDependencies: ['react','@tanstack','@supabase','process.env','import.meta.env','texasdefined.com','keeptxred.com'],
 } as const;
