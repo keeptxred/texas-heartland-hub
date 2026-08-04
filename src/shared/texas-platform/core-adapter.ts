@@ -9,6 +9,15 @@ const CORE_KIND_BY_SHARED_TYPE: Partial<Record<SharedEntityType, TexasEntityKind
   'school-district': 'school-district',
 };
 
+const LOCALLY_OWNED_ENTITY_TYPES: SharedEntityType[] = [
+  'representative',
+  'bill',
+  'committee',
+  'guide',
+  'calculator',
+  'resource',
+];
+
 export function sharedEntityToCore(entity: SharedEntity): TexasEntityRecord | undefined {
   const kind = CORE_KIND_BY_SHARED_TYPE[entity.type];
   if (!kind) return undefined;
@@ -42,5 +51,8 @@ export const KEEP_TX_RED_CORE_ENTITIES = SHARED_ENTITIES
 export const KEEP_TX_RED_CORE_FINGERPRINT = fingerprintEntities(KEEP_TX_RED_CORE_ENTITIES);
 
 export function unsupportedSharedEntityTypes() {
-  return [...new Set(SHARED_ENTITIES.filter((entity) => !CORE_KIND_BY_SHARED_TYPE[entity.type]).map((entity) => entity.type))].sort();
+  const discovered = SHARED_ENTITIES
+    .filter((entity) => !CORE_KIND_BY_SHARED_TYPE[entity.type])
+    .map((entity) => entity.type);
+  return [...new Set([...LOCALLY_OWNED_ENTITY_TYPES, ...discovered])].sort();
 }
