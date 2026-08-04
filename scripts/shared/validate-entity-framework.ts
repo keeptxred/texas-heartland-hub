@@ -1,5 +1,11 @@
 import { SHARED_ENTITIES } from '../../src/shared/texas-platform/entities.ts';
 import { SHARED_RELATIONSHIPS } from '../../src/shared/texas-platform/relationships.ts';
+import {
+  KEEP_TX_RED_CORE_ENTITIES,
+  KEEP_TX_RED_CORE_FINGERPRINT,
+  unsupportedSharedEntityTypes,
+} from '../../src/shared/texas-platform/core-adapter.ts';
+import upstream from '../../src/shared/platform-core/upstream.json' with { type: 'json' };
 
 const errors: string[] = [];
 const ids = new Set<string>();
@@ -54,6 +60,23 @@ for (const relationship of SHARED_RELATIONSHIPS) {
   relationshipKeys.add(key);
 }
 
+if (!/^[a-f0-9]{40}$/.test(upstream.commit)) errors.push('Shared platform upstream must be pinned to a full commit SHA.');
+if (upstream.repository !== 'keeptxred/texas-common-core') errors.push('Unexpected shared platform upstream repository.');
+if (!/^fnv1a-[a-f0-9]{8}$/.test(KEEP_TX_RED_CORE_FINGERPRINT)) errors.push('Invalid shared core fingerprint.');
+const coreIds = new Set<string>();
+for (const entity of KEEP_TX_RED_CORE_ENTITIES) {
+  if (coreIds.has(entity.id)) errors.push(`Duplicate adapted core entity id: ${entity.id}`);
+  coreIds.add(entity.id);
+  if (!['city', 'county', 'agency', 'state-park', 'school-district'].includes(entity.kind)) {
+    errors.push(`Unsupported adapted core kind: ${entity.id} -> ${entity.kind}`);
+  }
+  if (!entity.sourceId || !entity.name || !entity.slug) errors.push(`Incomplete adapted core entity: ${entity.id}`);
+}
+const intentionallyLocal = unsupportedSharedEntityTypes();
+for (const requiredType of ['representative', 'bill', 'committee', 'guide', 'calculator', 'resource']) {
+  if (!intentionallyLocal.includes(requiredType as never)) errors.push(`Expected KeepTXRed-owned entity type not excluded from core: ${requiredType}`);
+}
+
 if (errors.length) {
   console.error(`Shared entity validation failed (${errors.length}):`);
   for (const error of errors) console.error(`  - ${error}`);
@@ -63,5 +86,5 @@ if (errors.length) {
 const representativeCount = SHARED_ENTITIES.filter((entity) => entity.type === 'representative').length;
 const bidirectionalCount = SHARED_RELATIONSHIPS.filter((relationship) => relationship.bidirectional).length;
 console.log(
-  `Shared entity validation passed (${SHARED_ENTITIES.length} entities, ${representativeCount} representatives, ${SHARED_RELATIONSHIPS.length} relationships, ${bidirectionalCount} bidirectional).`,
+  `Shared entity validation passed (${SHARED_ENTITIES.length} entities, ${representativeCount} representatives, ${SHARED_RELATIONSHIPS.length} relationships, ${bidirectionalCount} bidirectional, ${KEEP_TX_RED_CORE_ENTITIES.length} core-compatible, fingerprint ${KEEP_TX_RED_CORE_FINGERPRINT}).`,
 );
