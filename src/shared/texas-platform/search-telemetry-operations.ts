@@ -1,18 +1,19 @@
 import type { SharedSearchTelemetryEvent } from './search-telemetry';
 import { buildSearchTelemetryDigest, type SearchTelemetryDigest } from './search-telemetry-digest';
 import { reconcileSearchTelemetryIncidents, type SearchTelemetryIncident } from './search-telemetry-incidents';
-import { buildSearchTelemetryAlerts, type SearchTelemetryAlert } from './search-telemetry-alerts';
-import { reconcileSearchTelemetryAlertState, type SearchTelemetryAlertState } from './search-telemetry-alert-state';
-import { incidentMetrics, type SearchTelemetryIncidentMetrics } from './search-telemetry-incident-metrics';
-import { escalationPlanForSearchTelemetryIncidents, type SearchTelemetryEscalation } from './search-telemetry-incident-sla';
+import { createSearchTelemetryAlerts, type SearchTelemetryAlert, type SearchTelemetryAlertChannel } from './search-telemetry-alerts';
+import { evaluateSearchTelemetryAlert, resolveMissingSearchTelemetryAlerts, type SearchTelemetryAlertDecision, type SearchTelemetryAlertState } from './search-telemetry-alert-state';
+import { summarizeSearchTelemetryIncidents, type SearchTelemetryIncidentMetrics } from './search-telemetry-incident-metrics';
+import { breachedSearchTelemetryIncidentSlas, type SearchTelemetryIncidentSlaStatus } from './search-telemetry-incident-sla';
 
 export type SearchTelemetryOperationsState = {
   digest: SearchTelemetryDigest;
   incidents: SearchTelemetryIncident[];
   alerts: SearchTelemetryAlert[];
+  alertDecisions: SearchTelemetryAlertDecision[];
   alertState: SearchTelemetryAlertState[];
   metrics: SearchTelemetryIncidentMetrics;
-  escalations: SearchTelemetryEscalation[];
+  breachedSlas: SearchTelemetryIncidentSlaStatus[];
   evaluatedAt: string;
 };
 
@@ -24,33 +25,41 @@ export function evaluateSearchTelemetryOperations(
   } = {},
   options: {
     now?: string;
-    alertChannels?: ReadonlyArray<'admin' | 'email' | 'log'>;
+    alertChannels?: ReadonlyArray<SearchTelemetryAlertChannel>;
     cooldownMs?: number;
   } = {},
 ): SearchTelemetryOperationsState {
   const now = options.now ?? new Date().toISOString();
-  const digest = buildSearchTelemetryDigest(events);
+  const digest = buildSearchTelemetryDigest(events, { generatedAt: now });
   const incidents = reconcileSearchTelemetryIncidents(previous.incidents ?? [], digest.anomalies, now);
-  const alerts = buildSearchTelemetryAlerts(digest.anomalies, options.alertChannels);
-  const alertState = reconcileSearchTelemetryAlertState(
-    previous.alertState ?? [],
+  const alerts = createSearchTelemetryAlerts(digest.anomalies, { channels: options.alertChannels, createdAt: now });
+  const previousByKey = new Map((previous.alertState ?? []).map((state) => [state.key, state]));
+  const alertDecisions = alerts.map((alert) => evaluateSearchTelemetryAlert(
+    alert,
+    previousByKey.get(`${alert.key.replace(':', '|')}`),
+    { now, cooldownMs: options.cooldownMs },
+  ));
+  const activeState = alertDecisions.map((decision) => decision.state);
+  const alertState = resolveMissingSearchTelemetryAlerts(
+    [...activeState, ...(previous.alertState ?? []).filter((state) => !activeState.some((active) => active.key === state.key))],
     alerts,
     now,
-    options.cooldownMs,
   );
+
   return {
     digest,
     incidents,
     alerts,
+    alertDecisions,
     alertState,
-    metrics: incidentMetrics(incidents),
-    escalations: escalationPlanForSearchTelemetryIncidents(incidents, now),
+    metrics: summarizeSearchTelemetryIncidents(incidents),
+    breachedSlas: breachedSearchTelemetryIncidentSlas(incidents, {}, now),
     evaluatedAt: now,
   };
 }
 
 export function searchTelemetryOperationsHealthy(state: SearchTelemetryOperationsState) {
-  return state.digest.health === 'healthy'
-    && state.metrics.activeCritical === 0
-    && state.escalations.length === 0;
+  return state.digest.status === 'healthy'
+    && state.metrics.criticalActive === 0
+    && state.breachedSlas.length === 0;
 }
