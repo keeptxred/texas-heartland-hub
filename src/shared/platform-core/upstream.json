@@ -1,0 +1,9 @@
+{
+  "package": "@keeptxred/texas-platform-core",
+  "version": "0.1.0",
+  "repository": "keeptxred/texas-common-core",
+  "commit": "73610bb9850e11aeaa35a6ba2bb5da98214e2a7b",
+  "sourcePath": "packages/platform-core/src",
+  "vendoredAt": "2026-08-04",
+  "includedFiles": ["entities.ts", "fingerprint.ts"]
+}
