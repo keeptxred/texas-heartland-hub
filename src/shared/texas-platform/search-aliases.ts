@@ -1,4 +1,4 @@
-import { normalizeSearchText, tokenizeSearchQuery } from './search-normalization';
+import { normalizeSearchText, tokenizeSearchQuery } from './search-normalization.ts';
 
 const SEARCH_ALIASES: Record<string, string[]> = {
   rep: ['representative', 'legislator'],
