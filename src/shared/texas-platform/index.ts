@@ -6,6 +6,8 @@ export * from './entity-components';
 export * from './resource-hub';
 export * from './resource-hub-personalization';
 export * from './resource-hub-personalization-storage';
+export * from './texas-life-platform';
+export * from './texas-life-platform-components';
 export * from './search';
 export * from './search-filters';
 export * from './search-pagination';
