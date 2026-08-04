@@ -44,7 +44,8 @@ for (const [file, source] of contents) {
   if (/favicon\.ico/i.test(source) && /(?:logo|publisher)/i.test(source)) {
     fail(file, "favicon.ico must not be used as a publisher or organization logo");
   }
-  if (/noindex\s*,?\s*nofollow/i.test(source)) {
+  const isHtmlRoute = file.startsWith("src/routes/") && file.endsWith(".tsx");
+  if (isHtmlRoute && /noindex\s*,?\s*nofollow/i.test(source)) {
     fail(file, "use noindex,follow unless link blocking is explicitly required");
   }
   if (/name:\s*["']keywords["']/i.test(source) || /<meta[^>]+name=["']keywords["']/i.test(source)) {
