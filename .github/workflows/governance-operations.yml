@@ -1,0 +1,41 @@
+name: Validate Governance Operations
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/shared/platform-core/**'
+      - 'src/platform/governance-event-store.ts'
+      - 'src/lib/content-publication-guard.ts'
+      - 'src/routes/api.publication-gate.ts'
+      - 'src/routes/api.governance-health.ts'
+      - 'src/routes/admin/governance-health.tsx'
+      - 'scripts/shared/validate-governance-operations.mjs'
+      - '.github/workflows/governance-operations.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/shared/platform-core/**'
+      - 'src/platform/governance-event-store.ts'
+      - 'src/lib/content-publication-guard.ts'
+      - 'src/routes/api.publication-gate.ts'
+      - 'src/routes/api.governance-health.ts'
+      - 'src/routes/admin/governance-health.tsx'
+      - 'scripts/shared/validate-governance-operations.mjs'
+      - '.github/workflows/governance-operations.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Validate governance operations
+        run: node scripts/shared/validate-governance-operations.mjs
