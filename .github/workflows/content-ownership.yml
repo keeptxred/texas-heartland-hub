@@ -1,0 +1,39 @@
+name: Validate Cross-Site Content Ownership
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/shared/platform-core/**'
+      - 'src/routes/api.content-disposition.ts'
+      - 'scripts/shared/validate-content-ownership.ts'
+      - '.github/workflows/content-ownership.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/shared/platform-core/**'
+      - 'src/routes/api.content-disposition.ts'
+      - 'scripts/shared/validate-content-ownership.ts'
+      - '.github/workflows/content-ownership.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-content-ownership:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate content ownership behavior
+        run: node --experimental-strip-types scripts/shared/validate-content-ownership.ts
+      - name: Build application
+        run: npm run build
