@@ -3,6 +3,7 @@ export * from './entities';
 export * from './relationships';
 export * from './components';
 export * from './entity-components';
+export * from './resource-hub';
 export * from './search';
 export * from './search-filters';
 export * from './search-pagination';
