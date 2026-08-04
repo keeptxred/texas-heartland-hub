@@ -5,7 +5,7 @@ export const Route = createFileRoute('/api/governance-health')({
   server: {
     handlers: {
       GET: async () => {
-        const health = governanceHealth();
+        const health = await governanceHealth();
         return new Response(JSON.stringify(health), {
           status: health.healthy ? 200 : 503,
           headers: {
