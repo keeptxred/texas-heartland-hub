@@ -9,7 +9,6 @@ import {
   type PublicationGateResult,
   type PublicationOverride,
 } from '@/shared/platform-core';
-import { governancePersistenceConfigured, loadGovernanceEvents, persistGovernanceEvents } from './governance-persistence';
 
 const MAX_EVENTS = 2_000;
 const globalStore = globalThis as typeof globalThis & { __keepTxRedGovernanceEvents?: GovernanceEvent[] };
@@ -19,11 +18,7 @@ export function appendGovernanceEvent(event: GovernanceEvent) {
   const validation = validateGovernanceEvent(event);
   if (!validation.valid) throw new Error(`Invalid governance event: ${validation.errors.join(' ')}`);
   const events = store();
-  if (!events.some((existing) => existing.id === event.id)) {
-    const copy = structuredClone(event);
-    events.push(copy);
-    void persistGovernanceEvents([copy]).catch((error) => console.error('governance persistence failed', error));
-  }
+  if (!events.some((existing) => existing.id === event.id)) events.push(structuredClone(event));
   if (events.length > MAX_EVENTS) events.splice(0, events.length - MAX_EVENTS);
   return event.id;
 }
@@ -38,21 +33,17 @@ export function recordGovernanceDecision(input: { candidate: ContentCandidate; d
 }
 
 export async function governanceHealth() {
-  const memory = store().map((event) => structuredClone(event));
-  let durable: GovernanceEvent[] = [];
-  let persistenceError: string | null = null;
-  try { durable = await loadGovernanceEvents(); } catch (error) { persistenceError = error instanceof Error ? error.message : String(error); }
-  const merged = [...new Map([...durable, ...memory].map((event) => [event.id, event])).values()];
-  const drift = detectOwnershipDrift(merged);
+  const events = store().map((event) => structuredClone(event));
+  const drift = detectOwnershipDrift(events);
   return {
-    storage: governancePersistenceConfigured() ? 'supabase-with-memory-fallback' : 'bounded-process-memory',
-    persistent: governancePersistenceConfigured() && !persistenceError,
-    persistenceError,
+    storage: 'site-local-bounded-memory',
+    persistent: false,
+    persistenceError: null,
     maxMemoryEvents: MAX_EVENTS,
-    eventCount: merged.length,
-    summary: summarizeGovernanceEvents(merged),
+    eventCount: events.length,
+    summary: summarizeGovernanceEvents(events),
     ownershipDrift: drift,
-    healthy: drift.length === 0 && !persistenceError,
+    healthy: drift.length === 0,
     privacy: { storesArticleBodies: false, storesCaptions: false, storesReaderIdentifiers: false, storesCredentials: false },
   };
 }
