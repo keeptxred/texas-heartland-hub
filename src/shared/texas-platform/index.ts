@@ -10,6 +10,8 @@ export * from './texas-life-platform';
 export * from './texas-life-platform-components';
 export * from './texas-life-landing';
 export * from './texas-life-landing-components';
+export * from './texas-life-page-blueprint';
+export * from './texas-life-outcomes';
 export * from './search';
 export * from './search-filters';
 export * from './search-pagination';
