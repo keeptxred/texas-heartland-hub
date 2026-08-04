@@ -22,10 +22,13 @@ export type KeepTxRedPublicationInput = {
 export type KeepTxRedPublicationGuard = ReturnType<typeof guardKeepTxRedPublication>;
 
 export function guardKeepTxRedPublication(input: KeepTxRedPublicationInput) {
+  const resolvedDomain = input.domain === 'politics'
+    ? inferKeepTxRedDomain(input.domain, input.title)
+    : input.domain;
   const candidate: ContentCandidate = {
     id: input.id,
     title: input.title,
-    domain: input.domain,
+    domain: resolvedDomain,
     sourceSite: input.sourceSite ?? 'KeepTXRed',
     targetSite: 'KeepTXRed',
     sourceCanonicalUrl: input.sourceCanonicalUrl,
