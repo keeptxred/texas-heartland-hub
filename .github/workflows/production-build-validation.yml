@@ -1,0 +1,46 @@
+name: Production Build Validation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Shared platform validation
+        run: bun run shared:validate
+
+      - name: Shared entity validation
+        run: bun run shared:entities:validate
+
+      - name: Elections validation
+        run: bun run elections:validate
+
+      - name: SEO validation
+        run: bun run seo:validate
+
+      - name: Production build
+        run: bun run build
