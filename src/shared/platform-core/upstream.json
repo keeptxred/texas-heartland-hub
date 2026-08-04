@@ -1,10 +1,10 @@
 {
   "package": "@keeptxred/texas-platform-core",
-  "version": "0.4.0",
-  "apiVersion": "1.2",
+  "version": "0.5.0",
+  "apiVersion": "1.3",
   "repository": "keeptxred/texas-common-core",
-  "commit": "d1be8d321b312cd3349807eed61edf8cc917d0df",
+  "commit": "1611863809cedf1901d2bbf7833db2bc6c503424",
   "sourcePath": "packages/platform-core/src",
   "vendoredAt": "2026-08-04",
-  "includedFiles": ["contract.ts", "content-intelligence.ts", "publication-gate.ts", "entities.ts", "fingerprint.ts", "index.ts"]
+  "includedFiles": ["contract.ts", "content-intelligence.ts", "publication-gate.ts", "governance-events.ts", "entities.ts", "fingerprint.ts", "index.ts"]
 }
