@@ -1,0 +1,38 @@
+name: Backend separation
+
+on:
+  push:
+    paths:
+      - 'src/routes/explore.tsx'
+      - 'src/routes/tax-calculator.tsx'
+      - 'src/routes/texas-property-tax-increase-calculator.tsx'
+      - 'src/routes/texas-property-tax-protest-guide.tsx'
+      - 'src/routes/moving-to-texas-checklist.tsx'
+      - 'src/routes/sitemap-pages[.]xml.ts'
+      - 'src/platform/governance-persistence.ts'
+      - 'scripts/shared/validate-backend-separation.mjs'
+      - '.github/workflows/backend-separation.yml'
+  pull_request:
+    paths:
+      - 'src/routes/explore.tsx'
+      - 'src/routes/tax-calculator.tsx'
+      - 'src/routes/texas-property-tax-increase-calculator.tsx'
+      - 'src/routes/texas-property-tax-protest-guide.tsx'
+      - 'src/routes/moving-to-texas-checklist.tsx'
+      - 'src/routes/sitemap-pages[.]xml.ts'
+      - 'src/platform/governance-persistence.ts'
+      - 'scripts/shared/validate-backend-separation.mjs'
+      - '.github/workflows/backend-separation.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node scripts/shared/validate-backend-separation.mjs
