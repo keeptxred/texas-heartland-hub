@@ -29,6 +29,7 @@ export * from './texas-life-operations-components';
 export * from './texas-life-admin';
 export * from './texas-life-progress';
 export * from './texas-life-progress-components';
+export * from './texas-life-phase9-completion';
 export * from './search';
 export * from './search-filters';
 export * from './search-pagination';
