@@ -1,5 +1,8 @@
 import type { SharedSearchTelemetryEvent } from './search-telemetry';
-import { detectSearchTelemetryAnomalies, type SearchTelemetryAnomaly } from './search-telemetry-anomalies';
+import {
+  detectSharedSearchTelemetryAnomalies,
+  type SearchTelemetryAnomaly,
+} from './search-telemetry-anomalies';
 
 export type SearchTelemetryAnomalySnapshot = {
   capturedAt: string;
@@ -18,7 +21,7 @@ export function createSearchTelemetryAnomalySnapshot(
 ): SearchTelemetryAnomalySnapshot {
   return {
     capturedAt,
-    anomalies: detectSearchTelemetryAnomalies(events),
+    anomalies: detectSharedSearchTelemetryAnomalies(events),
   };
 }
 
