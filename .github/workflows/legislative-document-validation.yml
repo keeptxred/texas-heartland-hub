@@ -9,6 +9,7 @@ on:
       - 'src/routes/bills/texas/**'
       - 'supabase/migrations/*legislative_document*'
       - 'package.json'
+      - 'bun.lock*'
       - '.github/workflows/legislative-document-validation.yml'
   workflow_dispatch:
 
@@ -21,7 +22,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
