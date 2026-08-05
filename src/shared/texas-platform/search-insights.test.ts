@@ -38,7 +38,7 @@ describe('shared search insights', () => {
 describe('shared search telemetry sinks', () => {
   it('records through every registered sink and isolates failures', async () => {
     const recorded: string[] = [];
-    registerSharedSearchTelemetrySink({ id: 'memory', record: (value) => recorded.push(value.query) });
+    registerSharedSearchTelemetrySink({ id: 'memory', record: (value) => { recorded.push(value.query); } });
     registerSharedSearchTelemetrySink({ id: 'failure', record: () => { throw new Error('unavailable'); } });
     const result = await recordSharedSearchTelemetry(event('Texas laws', 2));
     expect(recorded).toEqual(['texas laws']);
