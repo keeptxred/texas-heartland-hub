@@ -27,7 +27,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: election-central-ci
+  group: election-central-ci-${{ github.sha }}
   cancel-in-progress: true
 
 jobs:
