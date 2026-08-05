@@ -1,4 +1,5 @@
 import type { ElectionRace } from '@/types/elections/race';
+import type { CandidateId } from '@/types/elections/identifiers';
 import {
   ELECTION_TYPE_LABELS,
   RACE_STATUS_LABELS,
@@ -10,13 +11,24 @@ import {
 
 const inactiveRaceStatuses = new Set(['cancelled', 'certified']);
 
-export function raceToAuthorityEntity(race: ElectionRace): AuthorityEntity {
+export type RaceAuthorityRelationshipResolution = {
+  candidateSlugById?: ReadonlyMap<CandidateId, string>;
+  districtSlug?: string | null;
+};
+
+export function raceToAuthorityEntity(
+  race: ElectionRace,
+  resolution: RaceAuthorityRelationshipResolution = {},
+): AuthorityEntity {
+  const candidateEntityIds = race.candidateIds
+    .map((candidateId) => resolution.candidateSlugById?.get(candidateId) ?? null)
+    .filter((slug): slug is string => Boolean(slug))
+    .map((slug) => createAuthorityEntityKey('candidate', slug));
+
   const relatedEntityIds = [
-    ...race.candidateIds.map((candidateId) =>
-      createAuthorityEntityKey('candidate', String(candidateId)),
-    ),
-    ...(race.districtId
-      ? [createAuthorityEntityKey('district', String(race.districtId))]
+    ...candidateEntityIds,
+    ...(resolution.districtSlug
+      ? [createAuthorityEntityKey('district', resolution.districtSlug)]
       : []),
   ];
 
