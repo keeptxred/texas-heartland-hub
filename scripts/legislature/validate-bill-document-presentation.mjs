@@ -8,10 +8,11 @@ const files = {
 };
 
 const required = [
-  [files.documents, "version_label"],
-  [files.documents, "Senate amendments printing"],
-  [files.panel, "Earlier versions and amendment printings"],
-  [files.panel, "legislativeDocumentLabel(document)"],
+  [files.documents, 'isLegislativeAmendmentPrinting'],
+  [files.documents, 'AMENDMENT_PRINTING_PATTERN'],
+  [files.panel, 'Earlier versions and amendment printings'],
+  [files.panel, 'amendmentCount'],
+  [files.panel, 'legislativeDocumentLabel(document)'],
 ];
 
 const errors = required
