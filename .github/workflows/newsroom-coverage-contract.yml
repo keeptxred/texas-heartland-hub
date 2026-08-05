@@ -15,6 +15,8 @@ on:
       - 'scripts/news/validate-coverage-contract.mjs'
       - 'supabase/migrations/*news*coverage*.sql'
       - 'supabase/migrations/*news*source*health*.sql'
+      - 'package.json'
+      - 'bun.lock*'
       - '.github/workflows/newsroom-coverage-contract.yml'
   pull_request:
     branches: [main]
@@ -30,6 +32,8 @@ on:
       - 'scripts/news/validate-coverage-contract.mjs'
       - 'supabase/migrations/*news*coverage*.sql'
       - 'supabase/migrations/*news*source*health*.sql'
+      - 'package.json'
+      - 'bun.lock*'
       - '.github/workflows/newsroom-coverage-contract.yml'
   workflow_dispatch:
 
@@ -41,17 +45,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: package.json
+          bun-version: latest
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: bun install --frozen-lockfile
       - name: Validate source, scoring, and reporting contract
-        run: node scripts/news/validate-coverage-contract.mjs
+        run: bun scripts/news/validate-coverage-contract.mjs
       - name: Run coverage regression tests
-        run: npx vitest run src/lib/viral-score.test.ts
+        run: bunx vitest run src/lib/viral-score.test.ts
       - name: Build application
-        run: npm run build
+        run: bun run build
