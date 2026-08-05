@@ -45,12 +45,25 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-function authorize(request: Request): boolean {
+// Import runs are privileged: an import secret, or a service-role credential
+// (verified against an Auth Admin endpoint), is required. Never anonymous.
+async function authorize(request: Request, supabaseUrl: string): Promise<boolean> {
   const configured = Deno.env.get("EXPLORE_IMPORT_SECRET");
-  if (!configured) return true;
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const direct = request.headers.get("x-import-secret");
   const bearer = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-  return direct === configured || bearer === configured;
+  if (configured && (direct === configured || bearer === configured)) return true;
+  if (serviceRoleKey && (direct === serviceRoleKey || bearer === serviceRoleKey)) return true;
+  const candidate = direct || bearer;
+  if (!candidate) return false;
+  try {
+    const probe = await fetch(`${supabaseUrl}/auth/v1/admin/users?page=1&per_page=1`, {
+      headers: { apikey: candidate, authorization: `Bearer ${candidate}` },
+    });
+    return probe.ok;
+  } catch {
+    return false;
+  }
 }
 
 function stableStringify(value: unknown): string {
@@ -276,12 +289,12 @@ async function fetchWithRetry(source: SourceRow): Promise<unknown> {
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!authorize(request)) return json({ error: "Unauthorized" }, 401);
-
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!supabaseUrl || !serviceRoleKey)
     return json({ error: "Supabase service configuration is missing" }, 500);
+  if (!(await authorize(request, supabaseUrl))) return json({ error: "Unauthorized" }, 401);
+
   const client = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
   let body: ImportRequest;
