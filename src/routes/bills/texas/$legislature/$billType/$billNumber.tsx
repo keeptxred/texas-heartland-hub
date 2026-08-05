@@ -7,6 +7,7 @@ import { getRelatedBills } from '@/lib/related-bills';
 import { RelatedAuthorityContent } from '@/components/authority/RelatedAuthorityContent';
 import { BillDocumentsPanel } from '@/components/bills/BillDocumentsPanel';
 import { BillEditorialExplanation } from '@/components/bills/BillEditorialExplanation';
+import { BillHearingsAndVotes } from '@/components/bills/BillHearingsAndVotes';
 import { RelatedBillsSection } from '@/components/bills/RelatedBillsSection';
 
 export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billNumber')({
@@ -55,7 +56,7 @@ const formatDate = (value?: string | null) => value ? new Date(`${value}T12:00:0
 
 const sectionLinks = [
   ['Overview', 'overview'], ['Explanation', 'explanation'], ['Status', 'status'], ['Who may be affected', 'affected'], ['Sponsors', 'sponsors'],
-  ['Committees', 'committees'], ['Timeline', 'timeline'], ['Documents', 'documents'], ['Related bills', 'related-bills'], ['Related articles', 'articles'],
+  ['Committees', 'committees'], ['Hearings & votes', 'hearings-votes'], ['Timeline', 'timeline'], ['Documents', 'documents'], ['Related bills', 'related-bills'], ['Related articles', 'articles'],
 ] as const;
 
 function BillPage() {
@@ -102,6 +103,8 @@ function BillPage() {
           <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="sponsors"><div className="flex items-center gap-3"><Users className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Sponsors</h2></div>{sponsors.length ? <div className="mt-5 space-y-5">{Object.entries(groupedSponsors).map(([role, people]) => <div key={role}><h3 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">{role}</h3><div className="mt-2 grid gap-3 sm:grid-cols-2">{(people as any[]).map((person) => person.sponsor_slug ? <a key={person.id} href={`/representatives/${person.sponsor_slug}`} className="rounded-lg border p-4 hover:border-primary"><strong>{person.sponsor_name}</strong><span className="mt-1 block text-sm text-muted-foreground">{[person.party, person.district].filter(Boolean).join(' · ')}</span></a> : <div key={person.id} className="rounded-lg border p-4"><strong>{person.sponsor_name}</strong><span className="mt-1 block text-sm text-muted-foreground">{[person.party, person.district].filter(Boolean).join(' · ') || 'Official sponsor record available; profile connection pending'}</span></div>)}</div></div>)}</div> : <p className="mt-4 text-muted-foreground">No sponsor has been matched to this record yet. Some resolutions and recently filed measures may not have complete sponsor data immediately.</p>}</section>
 
           <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="committees"><div className="flex items-center gap-3"><Landmark className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Committee history</h2></div>{committees.length ? <ol className="mt-5 space-y-4">{committees.map((item: any) => { const slug = item.legislative_committees?.committee_slug; const name = item.committee_name || item.legislative_committees?.committee_name; return <li key={item.id} className="border-l-2 border-primary pl-4">{slug ? <a href={`/texas-legislature/committees/${slug}`} className="font-semibold hover:text-primary hover:underline">{name}</a> : <p className="font-semibold">{name}</p>}<p className="text-sm text-muted-foreground">{item.action_description || item.action_type || 'Committee activity recorded'}</p><p className="mt-1 text-xs text-muted-foreground">{formatDate(item.referred_date || item.hearing_date || item.vote_date || item.reported_date)}</p></li>; })}</ol> : <p className="mt-4 text-muted-foreground">No committee referral or hearing has been recorded for this bill. That can be normal for newly filed measures or bills that did not advance.</p>}</section>
+
+          <BillHearingsAndVotes activities={committees} />
 
           <section className="scroll-mt-24 rounded-xl border bg-card p-6" id="timeline"><div className="flex items-center gap-3"><CalendarDays className="h-6 w-6 text-primary"/><h2 className="text-2xl font-bold">Legislative timeline</h2></div>{actions.length ? <ol className="mt-6 space-y-0">{actions.map((action: any, index: number) => <li key={action.id} className="relative border-l-2 border-border pb-6 pl-6 last:pb-0"><span className={`absolute -left-[7px] top-1 h-3 w-3 rounded-full ${index === 0 ? 'bg-primary' : 'bg-muted-foreground'}`}/><time className="text-sm font-semibold text-primary">{formatDate(action.action_date)}</time><p className="mt-1 font-medium">{action.action_text}</p><p className="mt-1 text-sm text-muted-foreground">{[action.chamber, action.normalized_status, action.legislative_committees?.committee_name].filter(Boolean).join(' · ')}</p>{action.source_url && <a href={action.source_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:underline">Official record <ExternalLink className="h-3.5 w-3.5"/></a>}</li>)}</ol> : <p className="mt-4 text-muted-foreground">No dated legislative actions are available yet. Newly filed measures can appear before their first action is posted.</p>}</section>
 
