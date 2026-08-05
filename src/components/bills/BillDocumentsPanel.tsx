@@ -1,6 +1,7 @@
 import { ExternalLink, FileText } from 'lucide-react';
 import {
   groupLegislativeDocuments,
+  isLegislativeAmendmentPrinting,
   legislativeDocumentHref,
   legislativeDocumentLabel,
   type LegislativeDocument,
@@ -27,6 +28,8 @@ export function BillDocumentsPanel({ documents, fallbackLinks = [] }: BillDocume
           {groups.map((group) => {
             const latestHref = legislativeDocumentHref(group.latest);
             if (!latestHref) return null;
+            const earlierVersions = group.versions.slice(1);
+            const amendmentCount = earlierVersions.filter(isLegislativeAmendmentPrinting).length;
             return (
               <div key={group.type} className="rounded-lg border bg-background p-3">
                 <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{group.label}</p>
@@ -37,13 +40,13 @@ export function BillDocumentsPanel({ documents, fallbackLinks = [] }: BillDocume
                   </span>
                   <ExternalLink className="h-3.5 w-3.5 shrink-0" />
                 </a>
-                {group.versions.length > 1 && (
+                {earlierVersions.length > 0 && (
                   <details className="mt-3 border-t pt-3">
                     <summary className="cursor-pointer text-sm font-medium text-primary">
-                      View {group.versions.length - 1} earlier {group.versions.length === 2 ? 'version' : 'versions'}
+                      Earlier versions and amendment printings ({earlierVersions.length}{amendmentCount ? ` · ${amendmentCount} amendment ${amendmentCount === 1 ? 'printing' : 'printings'}` : ''})
                     </summary>
                     <div className="mt-2 space-y-2">
-                      {group.versions.slice(1).map((document) => {
+                      {earlierVersions.map((document) => {
                         const href = legislativeDocumentHref(document);
                         if (!href) return null;
                         return (
