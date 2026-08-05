@@ -169,9 +169,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           published=false
-          for attempt in 1 2 3; do
+          max_attempts=10
+          for attempt in $(seq 1 "$max_attempts"); do
             git fetch origin main
             git reset --hard origin/main
+            git clean -fd
             mkdir -p src/data/elections/2026
             cp /tmp/election-ci-status.json src/data/elections/2026/ci-status.json
             git add src/data/elections/2026/ci-status.json
@@ -190,10 +192,14 @@ jobs:
               published=true
               break
             fi
-            echo "CI status push conflicted; retrying from the latest main branch ($attempt/3)."
+            if [[ "$attempt" -lt "$max_attempts" ]]; then
+              delay=$((attempt * 2))
+              echo "CI status push conflicted; retrying from latest main in ${delay}s ($attempt/$max_attempts)."
+              sleep "$delay"
+            fi
           done
           if [[ "$published" != "true" ]]; then
-            echo "Unable to publish Election Central CI status after three attempts."
+            echo "Unable to publish Election Central CI status after $max_attempts attempts."
             exit 1
           fi
           exit $result
