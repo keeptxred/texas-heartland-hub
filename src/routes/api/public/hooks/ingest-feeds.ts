@@ -194,6 +194,31 @@ type Item = {
   category?: string;
 };
 
+// ---------------------------------------------------------------------------
+// Texas Register significance gate.
+//
+// Every Texas Register record is still inserted into `texas_news_feed` and
+// stays visible on /happening-now. This helper only decides whether an item
+// deserves a native article, so routine agency notices (meetings, licensing
+// lists, procurement, corrections) never consume AI credits or become
+// low-value articles. Deterministic keyword matching only — no AI calls.
+// ---------------------------------------------------------------------------
+const REGISTER_SIGNIFICANT_RE =
+  /(tax(es|ation)?|property tax|election|voting|voter|candidate|campaign|redistrict|firearm|\bgun(s)?\b|weapon|constitutional carry|border security|immigration|energy|electricity|ercot|utilit(y|ies)|\boil\b|\bgas\b|pipeline|education|school|universit(y|ies)|curriculum|school choice|health ?care|medicaid|hospital|insurance|public health|business regulation|banking|financ(e|ial)|employment|wage(s)?|licens(ing|ure) rule|criminal|law enforcement|police|court(s)?|prison|public safety|constitutional|civil rights|religious liberty|free speech|emergency rule|disaster declaration|hurricane|flood|drought|wildfire|statewide emergency|environmental|water|transportation|infrastructure|housing|land ?use|land use|statewide|major|emergency|substantial|significant|material economic impact)/i;
+
+const REGISTER_ROUTINE_RE =
+  /(meeting notice|open meeting|advisory committee|licens(ing|e) list|disciplinary (list|action)|procurement|contract award|bid notice|request for (proposal|bid)|correction notice|miscellaneous notice|withdrawn rule|rule withdrawal|repeal|administrative update|housekeeping|appointment(s)?|calendar notice|public hearing notice)/i;
+
+export function isSignificantTexasRegisterItem(item: Item): boolean {
+  // Non-Register sources keep their existing behavior untouched.
+  if (!item.source.toLowerCase().includes("register")) return true;
+  const hay = `${item.title} ${item.description ?? ""}`.toLowerCase();
+  // Routine administrative filings are feed-only unless they also describe a
+  // meaningful statewide public-impact topic.
+  if (REGISTER_ROUTINE_RE.test(hay) && !REGISTER_SIGNIFICANT_RE.test(hay)) return false;
+  return REGISTER_SIGNIFICANT_RE.test(hay);
+}
+
 function slugify(s: string): string {
   return s
     .toLowerCase()
@@ -902,8 +927,15 @@ async function handler() {
   // Mint a native Keep TX Red article for every freshly ingested feed item so
   // Happening Now only ever links to internal /news/{slug} URLs.
   let nativeMinted = 0;
+  // Feed ingestion reporting keeps using `fresh`; only article generation is
+  // narrowed to significant items so routine Texas Register notices stay
+  // feed-only instead of consuming AI rewrite attempts.
+  const articleEligibleFresh = fresh.filter(isSignificantTexasRegisterItem);
+  const freshRegister = fresh.filter((i) => i.source.toLowerCase().includes("register"));
   const stageCounts = {
     fresh: fresh.length,
+    registerArticleEligible: freshRegister.filter(isSignificantTexasRegisterItem).length,
+    registerFeedOnly: freshRegister.filter((i) => !isSignificantTexasRegisterItem(i)).length,
     rewriteAttempted: 0,
     rewriteSucceeded: 0,
     rewriteFailed: 0,
@@ -913,22 +945,24 @@ async function handler() {
     articlesUpserted: 0,
     internalSlugsLinked: 0,
   };
-  if (fresh.length > 0) {
+  if (articleEligibleFresh.length > 0) {
     const lovableApiKey = process.env.LOVABLE_API_KEY;
     // Concurrency-limited so the Worker request budget can absorb large
     // ingestion bursts (Google News catch-up windows can produce 100+ fresh
     // items). Empirically 4 parallel Gemini calls complete comfortably inside
     // the request budget; unbounded Promise.all caused every fetch to abort.
-    stageCounts.rewriteAttempted = lovableApiKey ? fresh.length : 0;
+    stageCounts.rewriteAttempted = lovableApiKey ? articleEligibleFresh.length : 0;
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await mapWithConcurrency(fresh, 4, (it) => rewriteItemWithRetry(it, lovableApiKey!))
-      : fresh.map(() => null);
+      ? await mapWithConcurrency(articleEligibleFresh, 4, (it) =>
+          rewriteItemWithRetry(it, lovableApiKey!),
+        )
+      : articleEligibleFresh.map(() => null);
     for (const r of rewrites) {
       if (r) stageCounts.rewriteSucceeded++;
       else stageCounts.rewriteFailed++;
     }
     // Skip items whose AI rewrite failed — never publish empty stub articles.
-    const paired = fresh
+    const paired = articleEligibleFresh
       .map((it, i) => ({ it, rw: rewrites[i] }))
       .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
     const pairedRows = paired
@@ -1132,13 +1166,17 @@ async function handler() {
     .limit(25);
   if (orphans?.length) {
     const lovableApiKey = process.env.LOVABLE_API_KEY;
-    const items: Item[] = orphans!.map((row) => ({
-      title: row.title,
-      link: row.link,
-      source: row.source,
-      pub_date: row.pub_date,
-      description: row.description ?? "",
-    }));
+    // Routine Texas Register orphans stay feed-only forever — filtering here
+    // stops them from re-consuming AI rewrite attempts on every backfill run.
+    const items: Item[] = orphans!
+      .map((row) => ({
+        title: row.title,
+        link: row.link,
+        source: row.source,
+        pub_date: row.pub_date,
+        description: row.description ?? "",
+      }))
+      .filter(isSignificantTexasRegisterItem);
     const rewrites: (Rewrite | null)[] = lovableApiKey
       ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, lovableApiKey!))
       : items.map(() => null);
