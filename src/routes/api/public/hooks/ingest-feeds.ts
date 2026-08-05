@@ -927,8 +927,15 @@ async function handler() {
   // Mint a native Keep TX Red article for every freshly ingested feed item so
   // Happening Now only ever links to internal /news/{slug} URLs.
   let nativeMinted = 0;
+  // Feed ingestion reporting keeps using `fresh`; only article generation is
+  // narrowed to significant items so routine Texas Register notices stay
+  // feed-only instead of consuming AI rewrite attempts.
+  const articleEligibleFresh = fresh.filter(isSignificantTexasRegisterItem);
+  const freshRegister = fresh.filter((i) => i.source.toLowerCase().includes("register"));
   const stageCounts = {
     fresh: fresh.length,
+    registerArticleEligible: freshRegister.filter(isSignificantTexasRegisterItem).length,
+    registerFeedOnly: freshRegister.filter((i) => !isSignificantTexasRegisterItem(i)).length,
     rewriteAttempted: 0,
     rewriteSucceeded: 0,
     rewriteFailed: 0,
@@ -938,22 +945,24 @@ async function handler() {
     articlesUpserted: 0,
     internalSlugsLinked: 0,
   };
-  if (fresh.length > 0) {
+  if (articleEligibleFresh.length > 0) {
     const lovableApiKey = process.env.LOVABLE_API_KEY;
     // Concurrency-limited so the Worker request budget can absorb large
     // ingestion bursts (Google News catch-up windows can produce 100+ fresh
     // items). Empirically 4 parallel Gemini calls complete comfortably inside
     // the request budget; unbounded Promise.all caused every fetch to abort.
-    stageCounts.rewriteAttempted = lovableApiKey ? fresh.length : 0;
+    stageCounts.rewriteAttempted = lovableApiKey ? articleEligibleFresh.length : 0;
     const rewrites: (Rewrite | null)[] = lovableApiKey
-      ? await mapWithConcurrency(fresh, 4, (it) => rewriteItemWithRetry(it, lovableApiKey!))
-      : fresh.map(() => null);
+      ? await mapWithConcurrency(articleEligibleFresh, 4, (it) =>
+          rewriteItemWithRetry(it, lovableApiKey!),
+        )
+      : articleEligibleFresh.map(() => null);
     for (const r of rewrites) {
       if (r) stageCounts.rewriteSucceeded++;
       else stageCounts.rewriteFailed++;
     }
     // Skip items whose AI rewrite failed — never publish empty stub articles.
-    const paired = fresh
+    const paired = articleEligibleFresh
       .map((it, i) => ({ it, rw: rewrites[i] }))
       .filter((p): p is { it: Item; rw: Rewrite } => p.rw !== null);
     const pairedRows = paired
