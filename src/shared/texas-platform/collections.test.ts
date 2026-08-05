@@ -22,7 +22,7 @@ describe('shared entity collections', () => {
   });
 
   it('preserves configured journey order before alphabetical fallback items', () => {
-    const collection = journeyCollection('buying-home', 'keeptxred');
+    const collection = journeyCollection('buying-home', 'texasdefined');
     expect(collection?.entities.some((entity) => entity.type === 'calculator')).toBe(true);
     expect(collection?.entities[0]?.id).toBe('resource:mortgage-calculator');
     expect(collection?.entities[1]?.id).toBe('resource:property-tax-calculator');
@@ -44,7 +44,7 @@ describe('shared entity collections', () => {
   it('returns the related journeys, topics and type directory for an entity', () => {
     const entity = entityById('resource:mortgage-calculator');
     expect(entity).toBeDefined();
-    const collections = relatedCollections(entity!, 'keeptxred');
+    const collections = relatedCollections(entity!, 'texasdefined');
     expect(collections.some((collection) => collection.id === 'journey:buying-home')).toBe(true);
     expect(collections.some((collection) => collection.id === 'topic:home-property')).toBe(true);
     expect(collections.some((collection) => collection.id === 'type:calculator')).toBe(true);
