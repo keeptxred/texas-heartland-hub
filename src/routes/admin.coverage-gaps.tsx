@@ -1,5 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { NewsCoverageGapPanel } from "@/components/admin/NewsCoverageGapPanel";
+
+const STORAGE_KEY = "ktr-admin-ok";
 
 export const Route = createFileRoute("/admin/coverage-gaps")({
   head: () => ({
@@ -12,6 +15,21 @@ export const Route = createFileRoute("/admin/coverage-gaps")({
 });
 
 function CoverageGapsPage() {
+  const navigate = useNavigate();
+  const [authorized, setAuthorized] = useState(false);
+
+  useEffect(() => {
+    if (sessionStorage.getItem(STORAGE_KEY) === "1") {
+      setAuthorized(true);
+      return;
+    }
+    void navigate({ to: "/admin", replace: true });
+  }, [navigate]);
+
+  if (!authorized) {
+    return <main className="min-h-screen bg-muted/20" />;
+  }
+
   return (
     <main className="min-h-screen bg-muted/20">
       <header className="border-b-4 border-primary bg-secondary text-secondary-foreground">
