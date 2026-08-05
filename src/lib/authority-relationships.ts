@@ -36,6 +36,7 @@ const fallback = (row: any): RelatedAuthorityItem => {
     'statewide-office': 'Statewide office',
     legislator: 'Legislator',
     candidate: 'Candidate',
+    race: 'Election race',
     committee: 'Legislative committee',
     agency: 'Texas agency',
     district: 'District',
