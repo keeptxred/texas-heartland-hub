@@ -1,0 +1,54 @@
+name: Legislative relationship backfill
+
+on:
+  workflow_dispatch:
+    inputs:
+      passes:
+        description: Maximum official-subject passes for this run
+        required: false
+        default: "6"
+      subject_max_seconds:
+        description: Maximum seconds per subject pass
+        required: false
+        default: "600"
+  schedule:
+    - cron: "20 10 * * *"
+
+concurrency:
+  group: texas-legislative-relationship-backfill
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install --no-package-lock --ignore-scripts
+      - name: Report starting counts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/legislature/report-backfill-status.mjs --session=89R
+      - name: Resume official subject and relationship backfill
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: >-
+          node scripts/legislature/run-backfill.mjs
+          --session=89R
+          --passes=${{ inputs.passes || '6' }}
+          --subject-max-seconds=${{ inputs.subject_max_seconds || '600' }}
+      - name: Publish final counts
+        if: always()
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/legislature/report-backfill-status.mjs --session=89R
