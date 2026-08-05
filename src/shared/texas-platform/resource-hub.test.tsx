@@ -43,7 +43,11 @@ describe('Texas Resources hub configuration', () => {
     expect(RESOURCE_HUB_CATEGORIES.map((category) => category.title)).toEqual(expect.arrayContaining([
       'Home & Property',
       'Money & Taxes',
-      'Government & Elections',
+      'Texas Government',
+      'Texas Elections',
+      'Representatives',
+      'Bills & Legislation',
+      'Texas Politics',
       'Texas Laws',
       'Cities & Counties',
       'Moving to Texas',
@@ -62,7 +66,11 @@ describe('Texas Resources hub configuration', () => {
     const texasDefined = resourceHubCategoriesForOwner('texasdefined').map((category) => category.title);
 
     expect(keepTxRed).toEqual(expect.arrayContaining([
-      'Government & Elections',
+      'Texas Government',
+      'Texas Elections',
+      'Representatives',
+      'Bills & Legislation',
+      'Texas Politics',
       'Texas Laws',
     ]));
     expect(keepTxRed).not.toEqual(expect.arrayContaining([
@@ -78,7 +86,11 @@ describe('Texas Resources hub configuration', () => {
       'Moving to Texas',
       'Explore Texas',
     ]));
-    expect(texasDefined).not.toContain('Government & Elections');
+    expect(texasDefined).not.toEqual(expect.arrayContaining([
+      'Texas Government',
+      'Texas Elections',
+      'Bills & Legislation',
+    ]));
   });
 
   it('provides the approved featured resources', () => {
