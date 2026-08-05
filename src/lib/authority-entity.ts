@@ -2,6 +2,7 @@ export const AUTHORITY_ENTITY_TYPES = [
   'statewide-office',
   'legislator',
   'candidate',
+  'race',
   'committee',
   'agency',
   'district',
@@ -28,7 +29,7 @@ export type AuthoritySourceOfTruth = {
 };
 
 /**
- * Canonical identity and verification model shared by future authority pages.
+ * Canonical identity and verification model shared by authority pages.
  * Domain-specific data such as bills, elections, memberships, and news remains
  * outside this foundation and should be connected through entity relationships.
  */
