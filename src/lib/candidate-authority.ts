@@ -12,9 +12,19 @@ const inactiveCandidateStatuses = new Set([
   'defeated',
 ]);
 
+export type CandidateAuthorityResolvers = {
+  raceSlugById: ReadonlyMap<string, string>;
+};
+
 export function candidateToAuthorityEntity(
   candidate: ElectionCandidate,
+  resolvers: CandidateAuthorityResolvers,
 ): AuthorityEntity {
+  const relatedEntityIds = candidate.raceIds
+    .map((raceId) => resolvers.raceSlugById.get(String(raceId)))
+    .filter((slug): slug is string => Boolean(slug))
+    .map((slug) => createAuthorityEntityKey('race', slug));
+
   return {
     id: createAuthorityEntityKey('candidate', String(candidate.slug)),
     entityType: 'candidate',
@@ -31,9 +41,7 @@ export function candidateToAuthorityEntity(
     subtitle: `${candidate.partyLabel ?? candidate.party} · ${CANDIDATE_STATUS_LABELS[candidate.status]}`,
     summary: candidate.biography,
     imageUrl: candidate.imageUrl,
-    relatedEntityIds: candidate.raceIds.map((raceId) =>
-      createAuthorityEntityKey('race', String(raceId)),
-    ),
+    relatedEntityIds,
     createdAt: candidate.createdAt,
     updatedAt: candidate.updatedAt,
   };
