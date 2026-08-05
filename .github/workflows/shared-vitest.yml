@@ -3,7 +3,10 @@ name: Repository test and build health
 on:
   push:
     paths:
+      - 'src/components/**'
+      - 'src/routes/**'
       - 'src/shared/texas-platform/**'
+      - 'src/lib/**'
       - 'scripts/**'
       - 'vitest.config.*'
       - 'vite.config.*'
@@ -24,11 +27,11 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-      - run: bun install
+      - run: bun install --frozen-lockfile
       - name: Full Vitest suite
         run: bun run test
-      - name: TypeScript
-        run: bunx tsc --noEmit
+      - name: Route generation and TypeScript
+        run: bun run typecheck
       - name: Shared platform validation
         run: bun run shared:validate
       - name: Shared entity validation
