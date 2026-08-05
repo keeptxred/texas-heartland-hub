@@ -43,6 +43,7 @@ export async function getBillsForSubject(
       'bills(id,legislature_number,bill_type,bill_number,bill_identifier,caption,current_status_label,last_action_date,became_law,is_active)',
     )
     .eq('subject_id', subjectId)
+    .eq('review_status', 'approved')
     .limit(limit);
 
   if (error) throw error;
