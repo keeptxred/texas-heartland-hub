@@ -5,6 +5,10 @@ on:
     paths:
       - "src/data/elections/**"
       - "src/lib/elections/**"
+      - "src/lib/authority-entity.ts"
+      - "src/lib/authority-entity-paths.ts"
+      - "src/lib/candidate-authority.ts"
+      - "src/lib/race-authority.ts"
       - "src/types/elections/**"
       - "src/components/elections/**"
       - "src/components/admin/elections/**"
@@ -20,6 +24,10 @@ on:
     paths:
       - "src/data/elections/**"
       - "src/lib/elections/**"
+      - "src/lib/authority-entity.ts"
+      - "src/lib/authority-entity-paths.ts"
+      - "src/lib/candidate-authority.ts"
+      - "src/lib/race-authority.ts"
       - "src/types/elections/**"
       - "src/components/elections/**"
       - "src/components/admin/elections/**"
@@ -59,6 +67,9 @@ jobs:
 
       - name: Validate canonical election data
         run: pnpm elections:validate
+
+      - name: Validate race authority graph
+        run: node scripts/elections/validate-race-authority.mjs
 
       - name: Run election calculation fixtures
         run: pnpm exec vitest run src/lib/elections
