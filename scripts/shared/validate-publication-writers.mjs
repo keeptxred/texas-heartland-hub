@@ -9,7 +9,22 @@ const writers = [
   'src/routes/api/public/hooks/publishing-safety-net.ts',
   'src/lib/ingest-and-normalize.functions.ts',
 ];
+const maintenanceWriters = new Map([
+  [
+    'src/lib/ctr-loop.functions.ts',
+    ['headline_variants', 'variant_b_impressions', 'variant_b_clicks'],
+  ],
+  [
+    'src/lib/featured-image.functions.ts',
+    ['featured_image_url', 'image_generation_status'],
+  ],
+  [
+    'src/lib/gsc.ts',
+    ['gsc_impressions', 'gsc_clicks', 'gsc_last_update'],
+  ],
+]);
 const writerSet = new Set(writers);
+const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set(writers.slice(0, 4));
 const errors = [];
 
@@ -19,7 +34,7 @@ for (const symbol of ['assertKeepTxRedPublication', 'inferKeepTxRedDomain', 'sou
 }
 
 for (const file of discoverArticleWriters('src')) {
-  if (!writerSet.has(file)) errors.push(`Unregistered daily_articles writer: ${file}`);
+  if (!allowedWriterSet.has(file)) errors.push(`Unregistered daily_articles writer: ${file}`);
 }
 
 for (const file of writers) {
@@ -28,6 +43,14 @@ for (const file of writers) {
   const direct = source.includes('assertKeepTxRedPublication') || source.includes('guardKeepTxRedPublication');
   const shared = sharedWriters.has(file) && source.includes('enrichArticleRow');
   if (!direct && !shared) errors.push(`Article writer is not ownership-gated: ${file}`);
+}
+
+for (const [file, markers] of maintenanceWriters) {
+  const source = read(file);
+  if (!hasArticleWrite(source)) errors.push(`Registered article maintenance writer changed: ${file}`);
+  for (const marker of markers) {
+    if (!source.includes(marker)) errors.push(`Article maintenance writer missing ${marker}: ${file}`);
+  }
 }
 
 const maintenance = read('src/routes/api/public/hooks/score-viral.ts');
@@ -54,7 +77,7 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, no temporary exceptions or unregistered paths).`);
+console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, no temporary exceptions or unregistered paths).`);
 
 function read(file) {
   if (!fs.existsSync(file)) {
