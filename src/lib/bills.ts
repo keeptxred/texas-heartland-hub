@@ -182,6 +182,44 @@ export async function getBill(legislature: number, billType: string, billNumber:
   return data as Bill | null;
 }
 
+export type BillEditorialEnrichment = {
+  plain_language_summary?: string | null;
+  what_changes?: string | null;
+  who_is_affected?: string | null;
+  effective_date_explanation?: string | null;
+  limitations?: string | null;
+  source_urls?: string[] | null;
+  source_notes?: string | null;
+  reviewed_at?: string | null;
+};
+
+// Only approved editorial enrichments are ever exposed on public bill pages.
+export async function getBillEditorialEnrichment(billId: string) {
+  const { data, error } = await db
+    .from('bill_editorial_enrichments')
+    .select('plain_language_summary,what_changes,who_is_affected,effective_date_explanation,limitations,source_urls,source_notes,reviewed_at')
+    .eq('bill_id', billId)
+    .eq('review_status', 'approved')
+    .maybeSingle();
+  if (error) {
+    console.error(`getBillEditorialEnrichment failed for bill ${billId}:`, error.message ?? error);
+    return null;
+  }
+  return (data as BillEditorialEnrichment | null) ?? null;
+}
+
+async function getBillLegacy(legislature: number, billType: string, billNumber: number) {
+  const { data, error } = await db
+    .from('bills')
+    .select('*')
+    .eq('legislature_number', legislature)
+    .eq('bill_type', normalizeBillType(billType))
+    .eq('bill_number', billNumber)
+    .maybeSingle();
+  if (error) throw error;
+  return data as Bill | null;
+}
+
 export async function getBillRelations(billId: string) {
   const safe = async (label: string, build: () => any) => {
     try {
