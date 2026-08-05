@@ -27,8 +27,9 @@ type CandidateScore = {
 
 /**
  * Finds related bills from verified graph edges already stored in KeepTXRed.
- * Shared subjects are weighted above shared sponsors; title-keyword guessing is
- * intentionally excluded so unrelated bills are never linked by wording alone.
+ * Shared approved subjects are weighted above shared sponsors; title-keyword
+ * guessing is intentionally excluded so unrelated bills are never linked by
+ * wording alone.
  */
 export async function getRelatedBills(
   billId: string,
@@ -50,7 +51,8 @@ export async function getRelatedBills(
       db
         .from('bill_subject_relationships')
         .select('subject_id')
-        .eq('bill_id', billId),
+        .eq('bill_id', billId)
+        .eq('review_status', 'approved'),
     ),
     safe(() =>
       db
@@ -73,6 +75,7 @@ export async function getRelatedBills(
             .from('bill_subject_relationships')
             .select('bill_id,subject_id')
             .in('subject_id', subjectIds)
+            .eq('review_status', 'approved')
             .neq('bill_id', billId),
         )
       : [],
