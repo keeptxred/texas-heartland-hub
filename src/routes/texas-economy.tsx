@@ -3,6 +3,7 @@ import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
 
 const HUB = HUBS.find((h) => h.slug === "texas-economy")!;
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 const SECTIONS = [
   { title: "Energy & Oil", description: "Permian Basin, ERCOT, and state energy policy.", href: "/news/texas-energy-economy-overview" },
   { title: "Jobs & Employment", description: "Workforce policy, business conditions, and the Texas labor market.", href: "/texas-business" },
@@ -45,7 +46,7 @@ function TexasEconomyPage() {
           <p>
             Tax and spending coverage centers on proposals before the Legislature, adopted budgets,
             agency implementation, and local-government authority. Follow the
-            {" "}<Link to="/bills" className="underline text-primary">Texas bills database</Link>{" "}
+            {" "}<Link to="/bills" search={EMPTY_BILLS_SEARCH} className="underline text-primary">Texas bills database</Link>{" "}
             and our <Link to="/texas-legislature" className="underline text-primary">Legislature coverage</Link>
             {" "}for the measures and votes behind those changes.
           </p>
@@ -60,7 +61,7 @@ function TexasEconomyPage() {
           affects Texas employers, taxpayers, industries, and regional economies.
         </p>
         <div className="mt-5 flex flex-wrap gap-4">
-          <Link to="/bills" className="font-semibold text-primary hover:underline">Browse Texas bills</Link>
+          <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="font-semibold text-primary hover:underline">Browse Texas bills</Link>
           <Link to="/texas-business" className="font-semibold text-primary hover:underline">Read Texas business coverage</Link>
         </div>
       </section>
