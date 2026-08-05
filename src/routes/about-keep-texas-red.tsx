@@ -4,6 +4,7 @@ const URL_SELF = "https://keeptxred.com/about-keep-texas-red";
 const TITLE = "About Keep Texas Red | Texas Politics, Elections & News";
 const DESC =
   "Learn about Keep Texas Red (KeepTXRed), an independent Texas publication covering politics, elections, legislation, public officials, statewide news, business, and civic life.";
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
 export const Route = createFileRoute("/about-keep-texas-red")({
   head: () => ({
@@ -112,7 +113,7 @@ function AboutKeepTexasRed() {
         <ul className="mt-4 list-disc space-y-2 pl-6 text-muted-foreground">
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas politics</Link> and government accountability.</li>
           <li><Link to="/elections/2026" className="text-primary hover:underline">Election Central</Link>, including candidates, races, polls, forecasts, and results.</li>
-          <li><Link to="/bills" className="text-primary hover:underline">Texas bill tracking</Link> and legislative documents.</li>
+          <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas bill tracking</Link> and legislative documents.</li>
           <li><Link to="/texas-legislature" className="text-primary hover:underline">Texas Legislature</Link> coverage and session information.</li>
           <li><Link to="/representatives" className="text-primary hover:underline">Public-official profiles</Link> and representative lookup resources.</li>
           <li><Link to="/texas-news" className="text-primary hover:underline">Texas news</Link>, business, regional coverage, and major statewide developments.</li>
