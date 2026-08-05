@@ -1,17 +1,24 @@
 import { readFile } from 'node:fs/promises';
 
 const requiredFiles = [
+  'scripts/legislature/run-sync.mjs',
   'scripts/legislature/sync-texas-legislation.mjs',
+  'scripts/legislature/sync-bill-subjects.mjs',
+  'scripts/legislature/link-bill-relationships.mjs',
   'supabase/migrations/20260731190000_legislative_authority_graph.sql',
   'supabase/migrations/20260803204500_bill_relationship_automation.sql',
   'supabase/migrations/20260803223000_bill_editorial_enrichments.sql',
   'supabase/migrations/20260803231500_legislative_content_opportunities.sql',
+  'supabase/migrations/20260805044500_bill_subject_authority_sync.sql',
+  'supabase/migrations/20260805121500_bill_article_authority_sync.sql',
   'src/lib/authority-relationships.ts',
   'src/lib/bills.ts',
+  'src/lib/legislative-sitemaps.ts',
   'src/components/authority/RelatedAuthorityContent.tsx',
   'src/components/bills/BillDocumentsPanel.tsx',
   'src/components/bills/BillEditorialExplanation.tsx',
   'src/routes/bills/index.tsx',
+  'src/routes/bills/subject/$subjectSlug.tsx',
   'src/routes/bills/texas/$legislature/$billType/$billNumber.tsx',
   'src/routes/admin/bills/relationships.tsx',
   'src/routes/admin/bills/enrichment.tsx',
@@ -56,6 +63,21 @@ for (const token of [
   if (!relationshipMigration.includes(token)) errors.push(`Relationship migration missing ${token}`);
 }
 
+const subjectAuthorityMigration = sources.get('supabase/migrations/20260805044500_bill_subject_authority_sync.sql') || '';
+for (const token of ['sync_bill_subject_authority_relationship', 'bill-subject', 'official-bill-subject-record']) {
+  if (!subjectAuthorityMigration.includes(token)) errors.push(`Subject authority migration missing ${token}`);
+}
+
+const articleAuthorityMigration = sources.get('supabase/migrations/20260805121500_bill_article_authority_sync.sql') || '';
+for (const token of [
+  'preserve_official_bill_subject_relationship',
+  'sync_bill_article_authority_relationship',
+  'related-news',
+  "new.review_status <> 'approved'",
+]) {
+  if (!articleAuthorityMigration.includes(token)) errors.push(`Article authority migration missing ${token}`);
+}
+
 const editorialMigration = sources.get('supabase/migrations/20260803223000_bill_editorial_enrichments.sql') || '';
 for (const token of ['bill_editorial_enrichments', 'source_document_ids', 'review_status', 'approved']) {
   if (!editorialMigration.includes(token)) errors.push(`Editorial migration missing ${token}`);
@@ -66,14 +88,45 @@ for (const token of ['legislative_content_opportunities', 'dedupe_key', 'refresh
   if (!opportunityMigration.includes(token)) errors.push(`Opportunity migration missing ${token}`);
 }
 
+const orchestrator = sources.get('scripts/legislature/run-sync.mjs') || '';
+for (const token of [
+  'sync-texas-legislation.mjs',
+  'sync-bill-subjects.mjs',
+  'link-bill-relationships.mjs',
+  '--skip-relationships',
+]) {
+  if (!orchestrator.includes(token)) errors.push(`Legislative sync orchestrator missing ${token}`);
+}
+
 const importer = sources.get('scripts/legislature/sync-texas-legislation.mjs') || '';
 for (const token of ['ftp.legis.state.tx.us', 'history.xml', 'content_hash', 'SUPABASE_SERVICE_ROLE_KEY', 'refresh_legislative_authority_graph']) {
   if (!importer.includes(token)) errors.push(`Importer missing ${token}`);
 }
 
+const subjectImporter = sources.get('scripts/legislature/sync-bill-subjects.mjs') || '';
+for (const token of [
+  'official-tlo-subject-record-v1',
+  'subjectsImportedVersion',
+  'bill_subject_relationships',
+  "is_manual: false",
+  "review_status: 'approved'",
+]) {
+  if (!subjectImporter.includes(token)) errors.push(`Subject importer missing ${token}`);
+}
+
+const relationshipLinker = sources.get('scripts/legislature/link-bill-relationships.mjs') || '';
+if (!relationshipLinker.includes("rpc('refresh_bill_relationships'")) {
+  errors.push('Bill relationship linker does not call refresh_bill_relationships');
+}
+
 const sitemapIndex = await readFile('src/routes/sitemap[.]xml.ts', 'utf8');
 for (const name of ['bills', 'representatives', 'committees', 'districts', 'government', 'legislature']) {
   if (!sitemapIndex.includes(`sitemap-${name}.xml`)) errors.push(`Sitemap index missing ${name}`);
+}
+
+const legislativeSitemaps = sources.get('src/lib/legislative-sitemaps.ts') || '';
+for (const token of ['bill_subjects', '/bills/subject/']) {
+  if (!legislativeSitemaps.includes(token)) errors.push(`Legislative sitemap data missing ${token}`);
 }
 
 const billRoute = sources.get('src/routes/bills/texas/$legislature/$billType/$billNumber.tsx') || '';
@@ -89,6 +142,11 @@ for (const token of [
 }
 if (billRoute.includes('href={`/article/${article.slug}`}')) {
   errors.push('Bill page still links related articles to legacy /article URLs instead of /news URLs');
+}
+
+const subjectRoute = sources.get('src/routes/bills/subject/$subjectSlug.tsx') || '';
+for (const token of ['bill_subject_relationships', 'canonicalBillPath', 'CollectionPage', 'noindex']) {
+  if (!subjectRoute.includes(token)) errors.push(`Bill subject page missing ${token}`);
 }
 
 const billsIndex = sources.get('src/routes/bills/index.tsx') || '';
