@@ -28,8 +28,8 @@ jobs:
           from pathlib import Path
 
           deprecated = {
-              'actions/checkout@v4': 'actions/checkout@v5',
-              'actions/setup-node@v4': 'actions/setup-node@v5',
+              'actions/' + 'checkout@v4': 'actions/checkout@v5',
+              'actions/' + 'setup-node@v4': 'actions/setup-node@v5',
           }
           findings = []
           for path in sorted(Path('.github/workflows').glob('*.y*ml')):
