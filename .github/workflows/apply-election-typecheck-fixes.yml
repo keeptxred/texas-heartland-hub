@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 25
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
@@ -112,7 +112,6 @@ jobs:
             passed=false
           fi
 
-          # Build may regenerate the route tree; it is validation output, not an approved patch artifact.
           git restore src/routeTree.gen.ts || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
