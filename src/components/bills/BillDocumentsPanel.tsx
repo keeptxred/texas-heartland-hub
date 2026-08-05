@@ -63,6 +63,15 @@ export function BillDocumentsPanel({ documents, fallbackLinks = [] }: BillDocume
           {fiscalImpact.sourceAgencies ? (
             <p className="mt-3 text-xs text-muted-foreground"><strong>Source agencies:</strong> {fiscalImpact.sourceAgencies}</p>
           ) : null}
+          {fiscalImpact.verifiedSourceAgencies.length ? (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {fiscalImpact.verifiedSourceAgencies.map((agency) => (
+                <a key={agency.slug} href={agency.officialUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-full border bg-background px-2.5 py-1 text-xs font-semibold hover:border-primary">
+                  {agency.shortName}<ExternalLink className="h-3 w-3" />
+                </a>
+              ))}
+            </div>
+          ) : null}
           <p className="mt-3 text-xs text-muted-foreground">This summary is extracted from the official fiscal note and does not replace the complete document.</p>
         </div>
       ) : null}
