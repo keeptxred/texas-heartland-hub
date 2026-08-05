@@ -29,7 +29,9 @@ export async function recordSharedSearchTelemetry(
   event: SharedSearchTelemetryEvent,
 ): Promise<SharedSearchTelemetryDelivery[]> {
   const sinks = registeredSharedSearchTelemetrySinks();
-  const results = await Promise.allSettled(sinks.map((sink) => Promise.resolve(sink.record(event))));
+  const results = await Promise.allSettled(
+    sinks.map((sink) => Promise.resolve().then(() => sink.record(event))),
+  );
   return results.map((result, index) => ({
     id: sinks[index]?.id ?? 'unknown',
     status: result.status,
