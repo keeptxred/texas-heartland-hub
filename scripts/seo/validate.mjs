@@ -138,7 +138,21 @@ for (const validator of [
   "scripts/shared/validate-backend-separation.mjs",
   "scripts/shared/validate-retired-lifestyle-code.mjs",
 ]) {
-  execFileSync(process.execPath, [validator], { cwd: ROOT, stdio: "inherit" });
+  try {
+    const output = execFileSync(process.execPath, [validator], {
+      cwd: ROOT,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    if (output) process.stdout.write(output);
+  } catch (error) {
+    const stdout = typeof error?.stdout === "string" ? error.stdout : error?.stdout?.toString?.() ?? "";
+    const stderr = typeof error?.stderr === "string" ? error.stderr : error?.stderr?.toString?.() ?? "";
+    if (stdout) process.stdout.write(stdout);
+    if (stderr) process.stdout.write(stderr);
+    console.log(`Nested validator failed: ${validator}`);
+    process.exit(typeof error?.status === "number" ? error.status : 1);
+  }
 }
 
 console.log(`SEO/AEO validation passed across ${files.length} source files${warnings.length ? ` with ${warnings.length} warning(s)` : ""}.`);
