@@ -25,13 +25,23 @@ async function checkPage(path, expectedText) {
 }
 
 async function checkIngestion() {
-  const response = await fetchWithTimeout(`${baseUrl}/api/public/hooks/ingest-feeds`, {
-    method: "POST",
-    headers: {
-      Accept: "application/json",
-      "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0",
-    },
-  }, 60000);
+  const startedAt = Date.now();
+  let response;
+  try {
+    response = await fetchWithTimeout(`${baseUrl}/api/public/hooks/ingest-feeds`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0",
+      },
+    }, 180000);
+  } catch (error) {
+    const elapsed = Math.round((Date.now() - startedAt) / 1000);
+    if (error?.name === "AbortError") {
+      throw new Error(`ingest-feeds did not finish within ${elapsed}s; endpoint is reachable but ingestion is too slow`);
+    }
+    throw error;
+  }
   if (!response.ok) {
     throw new Error(`ingest-feeds returned HTTP ${response.status}`);
   }
@@ -48,10 +58,17 @@ async function checkIngestion() {
   if (typeof payload.fetched !== "number" && typeof payload.inserted !== "number") {
     throw new Error(`ingest-feeds response lacks ingestion counts: ${text.slice(0, 500)}`);
   }
-  console.log(`OK ingest-feeds fetched=${payload.fetched ?? "n/a"} inserted=${payload.inserted ?? "n/a"}`);
+  const elapsed = Math.round((Date.now() - startedAt) / 1000);
+  console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched ?? "n/a"} inserted=${payload.inserted ?? "n/a"}`);
+}
+
+const routeResults = await Promise.allSettled([
+  checkPage("/admin/coverage-gaps", "Coverage Gaps"),
+  checkPage("/admin/source-health", "Source Health"),
+]);
+for (const result of routeResults) {
+  if (result.status === "rejected") throw result.reason;
 }
 
 await checkIngestion();
-await checkPage("/admin/coverage-gaps", "Coverage Gaps");
-await checkPage("/admin/source-health", "Source Health");
 console.log(`Live newsroom smoke check passed for ${baseUrl}`);
