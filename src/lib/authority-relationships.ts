@@ -1,6 +1,10 @@
 import { supabase } from '@/integrations/supabase/client';
 import { canonicalBillPath } from '@/lib/bills';
-import type { AuthorityEntityType } from '@/lib/authority-entity';
+import {
+  isAuthorityEntityType,
+  type AuthorityEntityType,
+} from '@/lib/authority-entity';
+import { authorityEntityPath } from '@/lib/authority-entity-paths';
 
 const db = supabase as any;
 
@@ -43,13 +47,7 @@ const fallback = (row: any): RelatedAuthorityItem => {
     article: 'Related news',
     bill: 'Related bill',
   };
-  const paths: Partial<Record<AuthorityRelationshipType, string>> = {
-    'statewide-office': '/texas-government/offices/',
-    legislator: '/representatives/',
-    candidate: '/elections/candidates/',
-    committee: '/texas-legislature/committees/',
-    agency: '/texas-government/agencies/',
-    district: '/elections/districts/',
+  const legacyPaths: Partial<Record<AuthorityRelationshipType, string>> = {
     representative: '/representatives/',
     election: '/elections/races/',
     government: '/texas-government/',
@@ -58,6 +56,9 @@ const fallback = (row: any): RelatedAuthorityItem => {
     article: '/article/',
   };
   const type = row.target_type as AuthorityRelationshipType;
+  const href = isAuthorityEntityType(type)
+    ? authorityEntityPath(type, row.target_key)
+    : `${legacyPaths[type] || '/'}${row.target_key}`;
 
   return {
     type,
@@ -65,7 +66,7 @@ const fallback = (row: any): RelatedAuthorityItem => {
     relationship: row.relationship_type,
     score: row.score,
     title: `${labels[type] || 'Related content'}: ${row.target_key.replaceAll('-', ' ')}`,
-    href: `${paths[type] || '/'}${row.target_key}`,
+    href,
   };
 };
 
