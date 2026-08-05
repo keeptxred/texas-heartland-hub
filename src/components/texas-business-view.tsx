@@ -7,6 +7,15 @@ import boardroom from "@/assets/article-boardroom.jpg";
 import rotunda from "@/assets/article-rotunda.jpg";
 import openmeeting from "@/assets/article-openmeeting.jpg";
 
+const EMPTY_BILLS_SEARCH = {
+  q: "",
+  status: "",
+  legislature: 0,
+  chamber: "",
+  billType: "",
+  page: 1,
+} as const;
+
 export const BUSINESS_SLUGS: Record<string, string[]> = {
   energy: [
     "texas-energy-economy-overview",
@@ -84,10 +93,10 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           <div className="shrink-0 lg:max-w-xs">
             <h2 className="font-sans text-lg font-semibold tracking-tight text-foreground">Government resources</h2>
             <ul className="mt-3 space-y-2 text-sm">
-              <li><Link to="/bills" className="text-primary hover:underline">Search Texas bills →</Link></li>
+              <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Search Texas bills →</Link></li>
               <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economic policy →</Link></li>
               <li><Link to="/texas-legislature" className="text-primary hover:underline">Texas Legislature →</Link></li>
-              <li><Link to="/committees" className="text-primary hover:underline">Legislative committees →</Link></li>
+              <li><Link to="/texas-legislature/committees" className="text-primary hover:underline">Legislative committees →</Link></li>
             </ul>
           </div>
         </div>
@@ -168,7 +177,7 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           <li><Link to="/houston" className="text-primary hover:underline">Houston News →</Link></li>
           <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>
           <li><Link to="/elections" className="text-primary hover:underline">Elections →</Link></li>
-          <li><Link to="/bills" className="text-primary hover:underline">Texas Bills →</Link></li>
+          <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas Bills →</Link></li>
         </ul>
       </section>
     </div>
