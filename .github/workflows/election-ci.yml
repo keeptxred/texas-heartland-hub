@@ -19,7 +19,7 @@ on:
       - "tests/elections/**"
       - "playwright.elections.config.ts"
       - "package.json"
-      - "pnpm-lock.yaml"
+      - "bun.lock"
       - "tsconfig.json"
       - "vite.config.ts"
       - "vitest.config.ts"
@@ -41,20 +41,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+          bun-version: latest
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --reporter=silent
+        run: bun install --frozen-lockfile
 
       - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: bun x playwright install --with-deps chromium
 
       - name: Validate election records
         id: validate
@@ -62,7 +60,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          pnpm elections:validate 2>&1 | tee /tmp/election-ci-validate.log
+          bun run elections:validate 2>&1 | tee /tmp/election-ci-validate.log
 
       - name: Build production application and generate routes
         id: build
@@ -72,7 +70,7 @@ jobs:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
         run: |
           set -o pipefail
-          pnpm build 2>&1 | tee /tmp/election-ci-build.log
+          bun run build 2>&1 | tee /tmp/election-ci-build.log
 
       - name: Typecheck application
         id: typecheck
@@ -80,7 +78,7 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          pnpm typecheck 2>&1 | tee /tmp/election-ci-typecheck.log
+          bun run typecheck 2>&1 | tee /tmp/election-ci-typecheck.log
 
       - name: Run unit tests
         id: tests
@@ -88,7 +86,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          pnpm test 2>&1 | tee /tmp/election-ci-tests.log
+          bun run test 2>&1 | tee /tmp/election-ci-tests.log
           status=${PIPESTATUS[0]}
           grep -E "FAIL|failed|AssertionError|Error:|Test Files|Tests  " /tmp/election-ci-tests.log | tail -160 > /tmp/election-ci-test-failures.log || true
           exit $status
@@ -101,7 +99,7 @@ jobs:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
         run: |
           set -o pipefail
-          pnpm elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile.log
+          bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile.log
 
       - name: Run mobile browser smoke tests (Election Central homepage)
         id: mobile_homepage
@@ -111,7 +109,7 @@ jobs:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "true"
         run: |
           set -o pipefail
-          pnpm elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile-homepage.log
+          bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile-homepage.log
 
       - name: Record verification result
         if: always()
@@ -180,6 +178,12 @@ jobs:
             if git diff --cached --quiet; then
               published=true
               break
+            fi
+            unexpected=$(git diff --cached --name-only | grep -v '^src/data/elections/2026/ci-status.json$' || true)
+            if [[ -n "$unexpected" ]]; then
+              echo "Refusing to publish unexpected files:"
+              echo "$unexpected"
+              exit 1
             fi
             git commit -m "Record Election Central build verification"
             if git push origin HEAD:main; then
