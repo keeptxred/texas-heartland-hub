@@ -26,7 +26,7 @@ jobs:
           bun-version: latest
       - run: bun install
       - name: Full Vitest suite
-        run: bun test
+        run: bun run test
       - name: TypeScript
         run: bunx tsc --noEmit
       - name: Shared platform validation
