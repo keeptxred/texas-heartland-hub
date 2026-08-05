@@ -2,6 +2,8 @@
 import { spawn } from 'node:child_process';
 
 const forwardedArgs = process.argv.slice(2);
+const skipRelationships = forwardedArgs.includes('--skip-relationships');
+const childArgs = forwardedArgs.filter((arg) => arg !== '--skip-relationships');
 
 function run(script, args) {
   return new Promise((resolve, reject) => {
@@ -18,5 +20,8 @@ function run(script, args) {
   });
 }
 
-await run('scripts/legislature/sync-texas-legislation.mjs', forwardedArgs);
-await run('scripts/legislature/sync-bill-subjects.mjs', forwardedArgs);
+await run('scripts/legislature/sync-texas-legislation.mjs', childArgs);
+await run('scripts/legislature/sync-bill-subjects.mjs', childArgs);
+if (!skipRelationships) {
+  await run('scripts/legislature/link-bill-relationships.mjs', childArgs);
+}
