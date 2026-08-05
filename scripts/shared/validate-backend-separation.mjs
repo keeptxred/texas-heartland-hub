@@ -48,11 +48,24 @@ for(const file of navigationFiles){
   const source=fs.readFileSync(file,'utf8');
   for(const token of ['/texas-living','/texas-financial-tools','/tax-calculator','Texas Living','Texas Tools'])if(source.includes(token))errors.push(`${file} still advertises migrated lifestyle destination ${token}.`);
 }
-const aboutPath='src/routes/about-keep-texas-red.tsx';
-if(!fs.existsSync(aboutPath))errors.push(`Missing ${aboutPath}`);else{
-  const source=fs.readFileSync(aboutPath,'utf8');
-  for(const token of ['/find-my-dmv','/find-my-school-district','/tax-calculator','relocation tools','people moving to Texas'])if(source.includes(token))errors.push(`${aboutPath} still presents KeepTXRed as the lifestyle platform: ${token}.`);
-  for(const required of ['/bills','/texas-legislature','/representatives','NewsMediaOrganization'])if(!source.includes(required))errors.push(`${aboutPath} missing KeepTXRed mission token ${required}.`);
+const authorityFiles=['src/routes/about-keep-texas-red.tsx','src/routes/about.tsx'];
+for(const file of authorityFiles){
+  if(!fs.existsSync(file)){errors.push(`Missing ${file}`);continue}
+  const source=fs.readFileSync(file,'utf8');
+  for(const token of ['/find-my-dmv','/find-my-school-district','/tax-calculator','relocation tools','people moving to Texas','property tax calculator'])if(source.includes(token))errors.push(`${file} still presents KeepTXRed as the lifestyle platform: ${token}.`);
+  for(const required of ['Texas Legislature','election','government'])if(!source.toLowerCase().includes(required.toLowerCase()))errors.push(`${file} missing KeepTXRed mission token ${required}.`);
+}
+const homepage='src/routes/index.tsx';
+if(!fs.existsSync(homepage))errors.push(`Missing ${homepage}`);else{
+  const source=fs.readFileSync(homepage,'utf8');
+  for(const token of ['MOVING_LINKS','LIVING_LINKS','POPULAR_TOOLS','Start your move','Explore Texas living','Use Texas tools','Your guide to moving to and living in Texas'])if(source.includes(token))errors.push(`${homepage} still contains retired lifestyle homepage token ${token}.`);
+  for(const required of ['/elections/2026','/bills','/texas-legislature','Government accountability'])if(!source.includes(required))errors.push(`${homepage} missing political homepage token ${required}.`);
+}
+const llms='public/llms.txt';
+if(!fs.existsSync(llms))errors.push(`Missing ${llms}`);else{
+  const source=fs.readFileSync(llms,'utf8');
+  for(const token of ['/tax-calculator','property tax calculator by county','## Taxpayer Tools'])if(source.includes(token))errors.push(`${llms} still claims migrated calculator ownership: ${token}.`);
+  for(const required of ['/bills','/texas-legislature','government accountability'])if(!source.toLowerCase().includes(required.toLowerCase()))errors.push(`${llms} missing KeepTXRed authority token ${required}.`);
 }
 const normalizedIngest='src/lib/ingest-and-normalize.functions.ts';
 if(!fs.existsSync(normalizedIngest))errors.push(`Missing ${normalizedIngest}`);else{
@@ -69,4 +82,4 @@ if(fs.existsSync(platformDir)){
 }
 if(fs.existsSync('src/platform/governance-persistence.ts'))errors.push('Cross-site governance database adapter must not return.');
 if(errors.length){console.error(`KeepTXRed backend-separation validation failed (${errors.length}):`);for(const error of errors)console.error(`- ${error}`);process.exit(1)}
-console.log(`KeepTXRed ${redirects.size+dynamic.length+1} lifestyle, platform, namespace, navigation, and ingestion boundaries are protected.`);
+console.log(`KeepTXRed ${redirects.size+dynamic.length+1} lifestyle, platform, namespace, navigation, ingestion, homepage, and authority boundaries are protected.`);
