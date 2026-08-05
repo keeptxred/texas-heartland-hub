@@ -42,9 +42,14 @@ function CoverageGapsPage() {
                 Important Texas stories that reached the feed but did not become native Keep TX Red articles.
               </p>
             </div>
-            <Link to="/admin" className="border border-white/40 px-3 py-2 text-sm font-semibold hover:bg-white/10">
-              Back to dashboard
-            </Link>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/admin/source-health" className="border border-white/40 px-3 py-2 text-sm font-semibold hover:bg-white/10">
+                Source health
+              </Link>
+              <Link to="/admin" className="border border-white/40 px-3 py-2 text-sm font-semibold hover:bg-white/10">
+                Back to dashboard
+              </Link>
+            </div>
           </div>
         </div>
       </header>
