@@ -1,12 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/texas-data')({
-  beforeLoad: () => {
-    if (typeof window !== 'undefined') {
-      const target = new URL('https://texasdefined.com/texas-data');
-      target.search = window.location.search;
-      window.location.replace(target.toString());
-    }
-    throw new Response(null, { status: 301, headers: { Location: 'https://texasdefined.com/texas-data' } });
+export const Route = createFileRoute("/texas-data")({
+  beforeLoad: ({ location }) => {
+    throw redirect({
+      href: `https://texasdefined.com${location.pathname}${location.searchStr || ""}`,
+      statusCode: 301,
+    });
   },
 });
