@@ -1,11 +1,13 @@
-name: Shared platform Vitest
+name: Repository test and build health
 
 on:
   push:
     paths:
       - 'src/shared/texas-platform/**'
+      - 'scripts/**'
       - 'vitest.config.*'
       - 'vite.config.*'
+      - 'tsconfig*.json'
       - 'package.json'
       - 'bun.lock*'
       - '.github/workflows/shared-vitest.yml'
@@ -15,7 +17,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -23,4 +25,19 @@ jobs:
         with:
           bun-version: latest
       - run: bun install
-      - run: bunx vitest run src/shared/texas-platform --reporter=verbose
+      - name: Full Vitest suite
+        run: bun test
+      - name: TypeScript
+        run: bunx tsc --noEmit
+      - name: Shared platform validation
+        run: bun run shared:validate
+      - name: Shared entity validation
+        run: bun run shared:entities:validate
+      - name: SEO validation
+        run: bun run seo:validate
+      - name: Election validation
+        run: bun run elections:validate
+      - name: Legislature validation
+        run: bun run legislature:validate
+      - name: Production build
+        run: bun run build
