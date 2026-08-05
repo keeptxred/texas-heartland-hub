@@ -38,56 +38,46 @@ jobs:
     timeout-minutes: 360
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
 
       - name: Apply direct verified web findings
         run: node scripts/elections/apply-direct-web-photo-findings.mjs
-
       - name: Discover directory candidate portraits
         run: node scripts/elections/discover-candidate-photos-directories.mjs
-
       - name: Discover linked and public-source candidate portraits
         run: node scripts/elections/discover-candidate-photos.mjs
-
       - name: Discover alternate search-provider candidate portraits
         run: node scripts/elections/discover-candidate-photos-search-providers.mjs
-
       - name: Discover expanded voter-guide and public-directory portraits
         run: node scripts/elections/discover-candidate-photos-expanded.mjs
-
       - name: Discover race-aware multi-engine portraits
         run: node scripts/elections/discover-candidate-photos-race-aware.mjs
-
       - name: Discover county media finance and professional portraits
         run: node scripts/elections/discover-candidate-photos-source-wave.mjs
-
       - name: Discover deep-web document image and archived portraits
         run: node scripts/elections/discover-candidate-photos-deep-web.mjs
-
       - name: Discover local public-record and biography portraits
         run: node scripts/elections/discover-candidate-photos-local-records.mjs
-
       - name: Discover verified Wikidata and Wikimedia Commons portraits
         run: node scripts/elections/discover-candidate-photos-wikimedia.mjs
-
       - name: Discover portraits from previously unused domains only
         run: node scripts/elections/discover-candidate-photos-new-domains.mjs
-
       - name: Discover second-wave portraits from unused campaign and local domains
         run: node scripts/elections/discover-candidate-photos-new-domains-wave2.mjs
-
       - name: Apply approved candidate photos
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
       - name: Commit enriched candidate records and reports
+        shell: bash
         run: |
+          set -euo pipefail
           TRACKED=(
             src/data/elections/2026/candidate-photos.json
             src/data/elections/2026/candidates.json
@@ -109,8 +99,19 @@ jobs:
             echo "No candidate photo changes to commit."
             exit 0
           fi
+          git add "${TRACKED[@]}"
+          unexpected_files="$(git diff --cached --name-only | grep -vE '^(src/data/elections/2026/(candidate-photos|candidates)\.json|artifacts/elections/candidate-photo-[a-z0-9-]+\.json)$' || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Refusing to publish files outside the candidate-photo allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
+          git fetch origin main
+          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+            echo "main advanced during candidate-photo enrichment; refusing to publish stale data." >&2
+            exit 1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add "${TRACKED[@]}"
           git commit -m "Discover and apply candidate photos from expanded sources"
-          git push
+          git push origin HEAD:main
