@@ -9,6 +9,19 @@ export const AUTHORITY_ENTITY_TYPES = [
 
 export type AuthorityEntityType = (typeof AUTHORITY_ENTITY_TYPES)[number];
 
+const AUTHORITY_ENTITY_TYPE_SET = new Set<string>(AUTHORITY_ENTITY_TYPES);
+
+export function isAuthorityEntityType(value: unknown): value is AuthorityEntityType {
+  return typeof value === 'string' && AUTHORITY_ENTITY_TYPE_SET.has(value);
+}
+
+export function createAuthorityEntityKey(
+  entityType: AuthorityEntityType,
+  slug: string,
+): string {
+  return `${entityType}:${slug}`;
+}
+
 export type AuthoritySourceOfTruth = {
   label: string;
   url: string;
