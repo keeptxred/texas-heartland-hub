@@ -9,6 +9,8 @@ on:
       - 'src/lib/nlp.ts'
       - 'src/routes/api/public/hooks/ingest-feeds.ts'
       - 'supabase/migrations/*news*coverage*.sql'
+      - 'package.json'
+      - 'bun.lock*'
       - '.github/workflows/news-coverage-validation.yml'
   pull_request:
     branches: [main]
@@ -18,6 +20,8 @@ on:
       - 'src/lib/nlp.ts'
       - 'src/routes/api/public/hooks/ingest-feeds.ts'
       - 'supabase/migrations/*news*coverage*.sql'
+      - 'package.json'
+      - 'bun.lock*'
       - '.github/workflows/news-coverage-validation.yml'
   workflow_dispatch:
 
@@ -29,13 +33,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: package.json
+          bun-version: latest
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: bun install --frozen-lockfile
       - name: Run statewide coverage regression tests
-        run: npx vitest run src/lib/viral-score.test.ts
+        run: bunx vitest run src/lib/viral-score.test.ts
