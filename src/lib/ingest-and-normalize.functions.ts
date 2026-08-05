@@ -31,7 +31,7 @@ function slugify(title: string): string {
 }
 
 export const ingestStory = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => RawStorySchema.parse(input))
+  .validator((input: unknown) => RawStorySchema.parse(input))
   .handler(async ({ data: story }) => {
     const { createClient } = await import("@supabase/supabase-js");
     const supabaseUrl = process.env.SUPABASE_URL;
