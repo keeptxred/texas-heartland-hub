@@ -7,7 +7,7 @@ import { STATE_LEADERSHIP, US_HOUSE_DELEGATION, US_SENATORS, TEXAS_HOUSE_MEMBERS
 
 const STATIC_PAGE_LASTMOD=toIsoDate("2026-08-03T00:00:00-05:00");
 const STATIC_PATHS:string[]=[
-  "/","/news","/news/non-political","/happening-now","/keep-texas-red","/texas-news",
+  "/","/news","/happening-now","/keep-texas-red","/texas-news",
   "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
   "/texas-business","/elections","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
@@ -15,7 +15,7 @@ const STATIC_PATHS:string[]=[
   "/get-involved","/county-elections","/candidate-guides","/voting-locations","/laws","/texas-laws",
   "/laws-to-know","/legislative-updates","/contact","/privacy","/terms","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/texas-politics",
-  "/authors","/texas-economy","/texas-law-policy","/shop","/texas",
+  "/authors","/texas-economy","/texas-law-policy","/shop",
   ...[...US_SENATORS,...STATE_LEADERSHIP,...US_HOUSE_DELEGATION,...TEXAS_SENATE_MEMBERS,...TEXAS_HOUSE_MEMBERS].map((representative)=>`/representatives/${representativeSlug(representative.name)}`),
 ];
 export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS];for(const league of ["nfl","mlb","nba"] as const){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD}));return xmlResponse(renderUrlset(entries))}}}});
