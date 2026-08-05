@@ -45,9 +45,9 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 20
-      - run: node scripts/shared/validate-backend-separation.mjs
-      - run: node scripts/shared/validate-retired-lifestyle-code.mjs
+          bun-version: latest
+      - run: bun scripts/shared/validate-backend-separation.mjs
+      - run: bun scripts/shared/validate-retired-lifestyle-code.mjs
