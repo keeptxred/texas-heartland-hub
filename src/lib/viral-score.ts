@@ -37,7 +37,7 @@ export function classifySourceReputation(source: string): { score: number; reaso
   const s = source ?? "";
   if (HIGH_REP.test(s)) return { score: 90, reason: "Official/major outlet" };
   if (TEXAS_DISCOVERY_SOURCE.test(s)) return { score: 75, reason: "Configured Texas discovery feed" };
-  if (OFFICIAL_LOCAL_SOURCE.test(s)) return { score: 75, reason: "Official Texas local-government source" };
+  if (OFFICIAL_LOCAL_SOURCE.test(s)) return { score: 75, reason: "Official local-government source" };
   if (MED_REP.test(s)) return { score: 65, reason: "Established local or institutional source" };
   if (!s.trim()) return { score: 30, reason: "Unknown source" };
   return { score: 45, reason: "Unclassified source" };
@@ -50,7 +50,7 @@ export const TEXAS_RELEVANCE_AUTO = 75;
 const TEXAS_STRONG = /\btexas\b|\btexans?\b|\bt\.x\.\b/i;
 const TEXAS_CITIES = /\b(houston|dallas|austin|san antonio|fort worth|el paso|rgv|rio grande valley|rio grande|mcallen|brownsville|laredo|lubbock|amarillo|corpus christi|waco|arlington|plano|frisco|mckinney|denton|irving|garland|richardson|round rock|tyler|abilene|midland|odessa|beaumont|galveston|killeen|college station|bryan|san marcos|new braunfels|conroe|the woodlands|sugar land|katy|pearland|pasadena|humble|spring|harlingen|lampasas|pecos|fort stockton|san angelo|big spring)\b/i;
 const TEXAS_COUNTIES = /\b(harris county|dallas county|tarrant county|bexar county|travis county|collin county|denton county|fort bend county|montgomery county|williamson county|hidalgo county|el paso county|nueces county|cameron county|galveston county|brazoria county|jefferson county|lubbock county|mclennan county|pecos county|howard county|glasscock county|lampasas county)\b/i;
-const OFFICIAL_SOURCE = /(governor|texas\.gov|office of the governor|attorney general|state of texas|texas department|texas commission|texas division|texas workforce|tdlr|tdem|dps|county|city of |\bisd\b)/i;
+const OFFICIAL_SOURCE = /(governor|texas\.gov|office of the governor|attorney general|state of texas|texas department|texas commission|texas division|texas workforce|tdlr|tdem|dps)/i;
 const TEXAS_OFFICIALS = /\b(abbott|greg abbott|dan patrick|lt\.? gov(?:ernor)? patrick|ken paxton|ted cruz|john cornyn|dade phelan|dustin burrows|glenn hegar|sid miller|wayne christian|chip roy|dan crenshaw|colin allred|wesley hunt|ronny jackson|jodey arrington|beto o'?rourke|john whitmire|eric johnson|kirk watson|ron nirenberg|mattie parker|lina hidalgo|clay jenkins|tim o'?hare)\b/i;
 const TEXAS_AGENCIES = /\b(txdot|tceq|tea\b|twdb|tdcj|tabc|tdi|tpwd|tdlr|tdem|puc(?: of texas)?|ercot|texas dps|department of public safety|texas national guard|texas military department|texas workforce commission|workforce solutions|texas health and human services|hhsc|texas education agency|texas department of transportation|texas division of emergency management|texas a&m forest service|texas commission on environmental quality|texas legislature|texas house|texas senate|texas supreme court|court of criminal appeals of texas|texas a&m|university of texas|ut austin|ut southwestern|texas tech|tdlr)\b/i;
 const TEXAS_INSTITUTIONS = /\b(houston methodist|baylor university medical center|perot museum|whataburger|space ?x|lampasas isd|tarrant county commissioners|dallas police|houston texans|dallas cowboys|fc dallas|texas hospital|texas university|texas school district)\b/i;
@@ -72,7 +72,7 @@ const TEXAS_CATEGORIES = new Set([
   "Non-Political",
 ]);
 
-const BREAKING_WORDS = /\b(breaking|signs|declares|activates|announces|emergency|ruling|sues?|lawsuit|indicted|arrested|veto|appoints|filed|passes|approves|dies|killed|shooting|storm|hurricane|flood|tornado|wildfire|evacuation|recall|impeach|tops?|ranks?|awards?|bans?|fires?|lays? off|expands?|turns?|marks?|considers?|proposes?|reduces?|cuts?)\b/i;
+const BREAKING_WORDS = /\b(breaking|signs|declares|activates|announces|emergency|ruling|sues?|lawsuit|indicted|arrested|veto|appoints|filed|passes|approves|dies|killed|shooting|storm|hurricane|flood|tornado|wildfire|evacuation|recall|impeach|tops?|ranks?|awards?|bans?|fires?|lays? off|expands?|plans?|turns?|marks?|considers?|proposes?|reduces?|cuts?)\b/i;
 const SOCIAL_HOOK_WORDS = /\b(election|elections|abbott|paxton|border|tax|taxes|shooting|hurricane|storm|flood|wildfire|crime|police|ice|migrant|migration|school|parents|hospital|jobs|layoffs|guns|gun|abortion|trump|biden|harris|whataburger|cowboys|texans)\b/i;
 
 function hoursSince(iso: string): number {
@@ -105,7 +105,14 @@ export function scoreFeedItem(item: {
   else if (TEXAS_STRONG.test(desc)) { texas += 10; reasons.push("Texas in body"); }
   if (TEXAS_CITIES.test(hay)) { texas += 12; reasons.push("Texas city named"); }
   if (TEXAS_COUNTIES.test(hay)) { texas += 10; reasons.push("Texas county named"); }
-  if (OFFICIAL_SOURCE.test(sourceHay) || TEXAS_STRONG.test(sourceHay) || TEXAS_AGENCIES.test(sourceHay)) {
+  const confirmedTexasLocalSource =
+    TEXAS_CITIES.test(sourceHay) || TEXAS_COUNTIES.test(sourceHay) || TEXAS_INSTITUTIONS.test(sourceHay);
+  if (
+    OFFICIAL_SOURCE.test(sourceHay) ||
+    TEXAS_STRONG.test(sourceHay) ||
+    TEXAS_AGENCIES.test(sourceHay) ||
+    confirmedTexasLocalSource
+  ) {
     texas += 20; reasons.push("Texas government/agency source");
   }
   if (TEXAS_OFFICIALS.test(hay)) { texas += 20; reasons.push("Texas official named"); }
