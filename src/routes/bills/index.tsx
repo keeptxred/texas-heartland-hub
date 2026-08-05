@@ -75,6 +75,7 @@ function BillsPage() {
   const pages = Math.max(1, Math.ceil(count / 24));
   const hasFilters = Boolean(search.q || search.status || search.legislature || search.chamber || search.billType);
   const preserved = { q: search.q, status: search.status, legislature: search.legislature, chamber: search.chamber, billType: search.billType };
+  const legislatures = options.legislatures as Array<{ value: number; label: string }>;
   const chambers = options.chambers as string[];
   const billTypes = options.billTypes as string[];
 
@@ -91,7 +92,7 @@ function BillsPage() {
             <button className="h-12 rounded-md bg-primary px-6 font-semibold text-primary-foreground">Search bills</button>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Legislature</span><select name="legislature" defaultValue={search.legislature || ''} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All legislatures</option>{options.legislatures.map((item: { value: number; label: string }) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
+            <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Legislature</span><select name="legislature" defaultValue={search.legislature || ''} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All legislatures</option>{legislatures.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select></label>
             <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Chamber</span><select name="chamber" defaultValue={search.chamber} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All chambers</option>{chambers.map((value) => <option key={value} value={value}>{chamberLabel(value)}</option>)}</select></label>
             <label><span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-muted-foreground">Bill type</span><select name="billType" defaultValue={search.billType} className="h-11 w-full rounded-md border bg-background px-3"><option value="">All bill types</option>{billTypes.map((value) => <option key={value} value={value}>{billTypeLabel(value)}</option>)}</select></label>
           </div>
