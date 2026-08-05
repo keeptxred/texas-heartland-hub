@@ -1,40 +1,45 @@
 # Keep TX Red
 
-> Conservative Texas political news, election coverage, legislative tracking, and taxpayer tools — including a property tax calculator by county with school district rates.
+> Independent Texas political news, election coverage, legislative tracking, government accountability, statewide reporting, and civic resources.
 
-Keep TX Red is an independent Texas news site covering state politics, elections, the Legislature, and the issues that matter to Texas conservatives. We publish evergreen explainers on how Texas government works alongside daily news coverage.
+Keep TX Red covers Texas politics, elections, public officials, the Legislature, bills, state agencies, government accountability, major statewide developments, business, sports, and the policy debates affecting Texans. Nonpolitical lifestyle, relocation, travel, property-tax planning, and household calculators are owned by TexasDefined.com.
 
 ## News & Coverage
 
-- [Latest News](/news): Daily Texas political news and analysis.
-- [Elections](/elections): Texas election coverage and candidate ratings.
-- [County Elections](/county-elections): County-level race tracking.
-- [Candidate Guides](/candidate-guides): Conservative scorecards on Texas candidates.
-- [Legislative Updates](/legislative-updates): Bills and votes from the Texas Capitol.
+- [Latest News](/news): Current Texas reporting and analysis.
+- [Texas Politics](/texas-politics): State political coverage and policy analysis.
+- [Happening Now](/happening-now): Fast-moving Texas developments.
+- [Texas Business](/texas-business): Business, regulation, energy, and economic policy.
+- [Texas Sports](/texas-sports): Texas professional and statewide sports coverage.
 
-## Voter Tools
+## Elections & Government
 
-- [Find Your Representative](/find-representative): Look up your Texas state and federal reps.
-- [Register to Vote](/register-to-vote): How to register to vote in Texas.
-- [Contact Legislators](/contact-legislators): Reach your Texas legislators.
-- [Voting Locations](/voting-locations): Find polling places in Texas.
-- [Get Involved](/get-involved): Ways to engage in Texas politics.
+- [Election Central](/elections/2026): Texas races, candidates, polling, forecasts, voting information, and results.
+- [County Elections](/county-elections): County-level election resources.
+- [Candidate Guides](/candidate-guides): Plain-language candidate and race guides.
+- [Texas Legislature](/texas-legislature): Chambers, sessions, committees, and lawmakers.
+- [Bills](/bills): Texas legislation, actions, sponsors, and documents.
+- [Legislative Updates](/legislative-updates): Legislative reporting and analysis.
 
-## Taxpayer Tools
+## Civic Resources
 
-- [Texas Property Tax Calculator](/tax-calculator): Estimate property tax by Texas county, including school district rates.
+- [Find Your Representative](/find-representative): Identify Texas state and federal representatives.
+- [Texas Representatives](/representatives): Statewide leaders and legislative delegations.
+- [Register to Vote](/register-to-vote): Texas voter-registration guidance.
+- [Contact Legislators](/contact-legislators): Contact Texas lawmakers.
+- [Voting Locations](/voting-locations): Texas polling-place resources.
+- [Get Involved](/get-involved): Civic participation resources.
 
 ## Reference
 
-- [Texas Representatives](/representatives): U.S. senators, statewide leaders, House delegation.
-- [Texas Laws](/texas-laws): Major Texas statutes explained.
-- [Laws You Should Know](/laws-to-know): Plain-English guides to key Texas laws.
-- [Laws Explained](/laws): Deep-dive explainers on Texas law.
-- [Glossary](/glossary): Texas political terminology, A–Z.
+- [Texas Laws](/texas-laws): Major Texas statutes and legal topics.
+- [Laws You Should Know](/laws-to-know): Plain-English legal guidance.
+- [Laws Explained](/laws): Detailed Texas law explainers.
+- [Glossary](/glossary): Texas political and government terminology.
 
 ## About
 
-- [About](/about): Who we are.
-- [Editorial Standards](/editorial-standards): Our mission, accuracy standards, and AI usage policy.
-- [Contact](/contact): Get in touch, send tips, or report a correction.
-- [Privacy Policy](/privacy): How we handle your data.
+- [About](/about): Mission and newsroom information.
+- [Editorial Standards](/editorial-standards): Accuracy, sourcing, corrections, and AI-use standards.
+- [Contact](/contact): Send tips, questions, or correction requests.
+- [Privacy Policy](/privacy): Data-handling practices.
