@@ -1,5 +1,4 @@
 name: Verify Election Central build
-# Final verification revision: populated forecasts, mobile rendering, and retry-safe status publication.
 
 on:
   workflow_dispatch:
@@ -9,7 +8,6 @@ on:
     paths:
       - "src/components/elections/**"
       - "src/data/elections/**"
-      - "!src/data/elections/2026/ci-status.json"
       - "src/lib/elections/**"
       - "src/pages/elections/**"
       - "src/routes/elections*.tsx"
@@ -26,7 +24,7 @@ on:
       - ".github/workflows/election-ci.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: election-central-ci
@@ -39,9 +37,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          ref: main
-          fetch-depth: 0
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -111,7 +106,7 @@ jobs:
           set -o pipefail
           bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile-homepage.log
 
-      - name: Record verification result
+      - name: Create verification report
         if: always()
         shell: bash
         env:
@@ -161,45 +156,50 @@ jobs:
             homepageEnabledMobileSummary: compactLog("/tmp/election-ci-mobile-homepage.log", 160, 20000),
           };
           fs.writeFileSync("/tmp/election-ci-status.json", `${JSON.stringify(status, null, 2)}\n`);
+
+          const symbol = (value) => value === "success" ? "✅" : "❌";
+          const summary = [
+            "## Election Central verification",
+            "",
+            `**Conclusion:** ${passed ? "PASS" : "FAIL"}`,
+            "",
+            "| Check | Result |",
+            "|---|---|",
+            ...Object.entries(checks).map(([name, value]) => `| ${name} | ${symbol(value)} ${value} |`),
+            "",
+            `Commit: \`${process.env.RUN_SHA}\``,
+          ].join("\n");
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
           NODE
-          result=0
+
+      - name: Upload verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: election-central-verification-${{ github.run_id }}
+          path: |
+            /tmp/election-ci-status.json
+            /tmp/election-ci-validate.log
+            /tmp/election-ci-build.log
+            /tmp/election-ci-typecheck.log
+            /tmp/election-ci-tests.log
+            /tmp/election-ci-test-failures.log
+            /tmp/election-ci-mobile.log
+            /tmp/election-ci-mobile-homepage.log
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Enforce verification result
+        if: always()
+        shell: bash
+        env:
+          VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          MOBILE_OUTCOME: ${{ steps.mobile.outcome }}
+          MOBILE_HOMEPAGE_OUTCOME: ${{ steps.mobile_homepage.outcome }}
+        run: |
           if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" || "$MOBILE_HOMEPAGE_OUTCOME" != "success" ]]; then
-            result=1
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          published=false
-          max_attempts=10
-          for attempt in $(seq 1 "$max_attempts"); do
-            git fetch origin main
-            git reset --hard origin/main
-            git clean -fd
-            mkdir -p src/data/elections/2026
-            cp /tmp/election-ci-status.json src/data/elections/2026/ci-status.json
-            git add src/data/elections/2026/ci-status.json
-            if git diff --cached --quiet; then
-              published=true
-              break
-            fi
-            unexpected=$(git diff --cached --name-only | grep -v '^src/data/elections/2026/ci-status.json$' || true)
-            if [[ -n "$unexpected" ]]; then
-              echo "Refusing to publish unexpected files:"
-              echo "$unexpected"
-              exit 1
-            fi
-            git commit -m "Record Election Central build verification"
-            if git push origin HEAD:main; then
-              published=true
-              break
-            fi
-            if [[ "$attempt" -lt "$max_attempts" ]]; then
-              delay=$((attempt * 2))
-              echo "CI status push conflicted; retrying from latest main in ${delay}s ($attempt/$max_attempts)."
-              sleep "$delay"
-            fi
-          done
-          if [[ "$published" != "true" ]]; then
-            echo "Unable to publish Election Central CI status after $max_attempts attempts."
             exit 1
           fi
-          exit $result
