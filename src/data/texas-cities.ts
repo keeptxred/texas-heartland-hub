@@ -10,19 +10,17 @@ export type TexasCityConfig = {
   communities: string[];
   coverage: { title: string; description: string }[];
   industries: string[];
-  relocationNotes: string[];
+  policyNotes: string[];
   fallbackSlugs: string[];
 };
 
-const RELOCATION_FALLBACKS = [
-  "texas-property-tax-laws-explained",
-  "homestead-exemption-explained",
-  "appraisal-protest-playbook",
+const REGIONAL_POLICY_FALLBACKS = [
   "texas-school-board-powers",
   "texas-school-finance-explained",
   "what-local-governments-control",
   "texas-voting-guide-2026",
   "why-texas-has-no-income-tax",
+  "how-a-bill-becomes-texas-law",
 ];
 
 export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
@@ -31,38 +29,37 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
     name: "Houston",
     region: "houston",
     eyebrow: "Houston and the Gulf Coast",
-    title: "Moving to Houston",
+    title: "Houston News, Politics & Public Policy",
     description:
-      "Understand the Houston region through its neighborhoods, energy economy, property-tax structure, school districts, flood considerations, and fast-changing suburban communities.",
+      "Follow Houston-area government, elections, energy, infrastructure, public safety, schools, and major regional policy decisions.",
     communities: ["Houston", "Katy", "Sugar Land", "Pearland", "Cypress", "The Woodlands"],
     coverage: [
       {
-        title: "Property taxes and local districts",
+        title: "County and municipal government",
         description:
-          "Harris County, neighboring counties, ISDs, MUDs, and other special districts can all affect the final bill.",
+          "Track decisions by Houston, Harris County, neighboring counties, school districts, and special-purpose governments.",
       },
       {
-        title: "Commutes and regional scale",
+        title: "Infrastructure and resilience",
         description:
-          "The metro covers a very large area, so compare job location, toll roads, and peak travel before choosing a home.",
+          "Follow flood-control projects, transportation policy, port investment, drainage, and regional emergency planning.",
       },
       {
-        title: "Flood and insurance planning",
+        title: "Elections and public accountability",
         description:
-          "Review official flood maps, drainage history, wind coverage, and insurance quotes for a specific property.",
+          "Monitor local races, public spending, ethics questions, and actions by elected officials across the metro area.",
       },
     ],
     industries: ["Energy", "Health care", "Aerospace", "Port and logistics", "Manufacturing"],
-    relocationNotes: [
-      "Compare Harris, Fort Bend, Montgomery, Brazoria, and Galveston county services.",
-      "Confirm the assigned school district using the exact street address.",
-      "Price homeowners, wind, and flood coverage before finalizing a housing budget.",
+    policyNotes: [
+      "Harris County and the City of Houston frequently make separate policy and budget decisions.",
+      "Regional infrastructure involves county, municipal, state, federal, and special-district authorities.",
+      "School-board, bond, county, and municipal elections can materially affect local policy and taxation.",
     ],
     fallbackSlugs: [
-      "moving-to-houston-address-checklist",
       "texas-energy-economy-overview",
       "texas-grid-ercot-explained",
-      ...RELOCATION_FALLBACKS,
+      ...REGIONAL_POLICY_FALLBACKS,
     ],
   },
   dfw: {
@@ -70,38 +67,37 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
     name: "Dallas–Fort Worth",
     region: "dfw",
     eyebrow: "North Texas",
-    title: "Moving to Dallas–Fort Worth",
+    title: "Dallas–Fort Worth News, Politics & Public Policy",
     description:
-      "Compare one connected North Texas economy with two central cities, many employment centers, multiple counties, and distinct suburban communities.",
+      "Follow government, elections, transportation, development, public safety, and economic-policy decisions across North Texas.",
     communities: ["Dallas", "Fort Worth", "Arlington", "Plano", "Frisco", "McKinney"],
     coverage: [
       {
-        title: "One metro, many job centers",
+        title: "Regional government and growth",
         description:
-          "Employment is distributed across Dallas, Fort Worth, Irving, Plano, Arlington, and other hubs rather than one downtown.",
+          "Track how Dallas, Fort Worth, surrounding cities, and fast-growing counties address development and public services.",
       },
       {
-        title: "County and city differences",
+        title: "Transportation and infrastructure",
         description:
-          "Dallas, Tarrant, Collin, and Denton counties have different tax offices, local services, and development patterns.",
+          "Follow highway, toll-road, transit, airport, water, and major capital-project decisions across the metroplex.",
       },
       {
-        title: "Transportation choices",
+        title: "Local elections and accountability",
         description:
-          "Compare toll-road exposure, transit access, airport access, and actual rush-hour travel from a candidate address.",
+          "Monitor city councils, county governments, school boards, bond proposals, and regional public spending.",
       },
     ],
     industries: ["Finance", "Technology", "Aviation", "Logistics", "Health care"],
-    relocationNotes: [
-      "Choose a side of the metro based on the likely work commute rather than mileage alone.",
-      "Compare county, city, ISD, and special-district rates for each property.",
-      "Check fast-growth school-district boundaries before signing a lease or contract.",
+    policyNotes: [
+      "Dallas, Tarrant, Collin, and Denton counties often face different election calendars and policy priorities.",
+      "Regional transportation decisions can involve cities, counties, TxDOT, transit agencies, and toll authorities.",
+      "Rapid population growth places continued pressure on schools, water, roads, and local budgets.",
     ],
     fallbackSlugs: [
-      "moving-to-dallas-fort-worth-guide",
       "texas-voting-guide-2026",
-      "texas-property-tax-guide",
-      ...RELOCATION_FALLBACKS,
+      "texas-school-finance-explained",
+      ...REGIONAL_POLICY_FALLBACKS,
     ],
   },
   "san-antonio": {
@@ -109,38 +105,37 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
     name: "San Antonio",
     region: "san-antonio",
     eyebrow: "South Central Texas",
-    title: "Moving to San Antonio",
+    title: "San Antonio News, Politics & Public Policy",
     description:
-      "Explore San Antonio and the surrounding Hill Country corridor through military, health-care, tourism, housing, water, and local-government considerations.",
+      "Follow San Antonio-area government, military policy, growth, water, infrastructure, elections, and public accountability.",
     communities: ["San Antonio", "Alamo Heights", "Helotes", "Boerne", "Schertz", "New Braunfels"],
     coverage: [
       {
-        title: "Military and civic connections",
+        title: "City and county government",
         description:
-          "Joint Base San Antonio and related employers shape the region’s economy, housing demand, and community services.",
+          "Track decisions by San Antonio, Bexar County, neighboring counties, school districts, and regional authorities.",
       },
       {
-        title: "Growth beyond Loop 1604",
+        title: "Military and federal policy",
         description:
-          "Northern and northeastern growth connects Bexar County with Comal and Guadalupe county communities.",
+          "Follow policy and funding affecting Joint Base San Antonio, veterans, defense employers, and connected communities.",
       },
       {
-        title: "Water and development",
+        title: "Water, growth, and infrastructure",
         description:
-          "Review utility providers, water restrictions, special districts, and infrastructure plans for the exact address.",
+          "Monitor water policy, roads, development, utility governance, and fast growth across the I-35 corridor.",
       },
     ],
     industries: ["Military", "Health care", "Cybersecurity", "Tourism", "Manufacturing"],
-    relocationNotes: [
-      "Compare Bexar, Comal, and Guadalupe county offices and taxing units.",
-      "Check commute conditions around Loop 1604, I-10, I-35, and US 281.",
-      "Verify school districts and utility providers at the street-address level.",
+    policyNotes: [
+      "Bexar County and the City of San Antonio have separate elected leadership and budget authority.",
+      "Military and veteran policy has an outsized regional impact.",
+      "Growth into Comal and Guadalupe counties creates cross-jurisdiction infrastructure and school-policy questions.",
     ],
     fallbackSlugs: [
-      "moving-to-san-antonio-guide",
       "texas-water-rights-explained",
       "texas-school-finance-explained",
-      ...RELOCATION_FALLBACKS,
+      ...REGIONAL_POLICY_FALLBACKS,
     ],
   },
   austin: {
@@ -148,44 +143,37 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
     name: "Austin",
     region: "austin",
     eyebrow: "Central Texas",
-    title: "Moving to Austin",
+    title: "Austin News, Politics & Public Policy",
     description:
-      "Plan for the Austin region’s technology economy, housing costs, traffic, state-government footprint, school districts, and fast-growing neighboring communities.",
+      "Follow state government, Austin City Hall, regional elections, transportation, development, schools, and public accountability.",
     communities: ["Austin", "Round Rock", "Cedar Park", "Pflugerville", "Georgetown", "Buda"],
     coverage: [
       {
-        title: "Housing and total monthly cost",
+        title: "Texas government and the Capitol",
         description:
-          "Compare mortgage or rent, taxes, insurance, utilities, tolls, and commute time rather than headline price alone.",
+          "Track the Legislature, statewide officials, agencies, courts, and policy decisions centered in Austin.",
       },
       {
-        title: "Regional job corridors",
+        title: "City and regional government",
         description:
-          "Downtown, North Austin, Round Rock, and southern corridors can create very different daily travel patterns.",
+          "Follow Austin, Travis County, surrounding cities, and fast-growing Williamson and Hays county communities.",
       },
       {
-        title: "Growth and infrastructure",
+        title: "Transportation, water, and development",
         description:
-          "Water, roads, transit, and school capacity are central issues across Travis, Williamson, and Hays counties.",
+          "Monitor transit, roads, utilities, water supply, land use, public spending, and regional growth policy.",
       },
     ],
-    industries: [
-      "Technology",
-      "State government",
-      "Education",
-      "Semiconductors",
-      "Creative industries",
-    ],
-    relocationNotes: [
-      "Compare Travis, Williamson, and Hays county taxes and services.",
-      "Test the commute during the actual hours you expect to travel.",
-      "Confirm utility territory and school assignment for the exact address.",
+    industries: ["Technology", "State government", "Education", "Semiconductors", "Creative industries"],
+    policyNotes: [
+      "State and local government decisions frequently overlap but are made by separate elected bodies.",
+      "Transportation and land-use debates involve city, county, regional, and state authorities.",
+      "Growth across Travis, Williamson, and Hays counties creates distinct election and policy environments.",
     ],
     fallbackSlugs: [
-      "moving-to-austin-guide",
       "how-a-bill-becomes-texas-law",
       "texas-water-rights-explained",
-      ...RELOCATION_FALLBACKS,
+      ...REGIONAL_POLICY_FALLBACKS,
     ],
   },
   "el-paso": {
@@ -193,39 +181,38 @@ export const TEXAS_CITIES: Record<CityRegion, TexasCityConfig> = {
     name: "El Paso",
     region: "el-paso",
     eyebrow: "Far West Texas",
-    title: "Moving to El Paso",
+    title: "El Paso News, Politics & Public Policy",
     description:
-      "Learn how El Paso’s border location, Fort Bliss, logistics economy, desert climate, property taxes, and regional connections shape day-to-day life.",
+      "Follow El Paso-area government, border policy, Fort Bliss, trade, infrastructure, elections, and regional public accountability.",
     communities: ["El Paso", "Horizon City", "Socorro", "San Elizario", "Canutillo", "Anthony"],
     coverage: [
       {
-        title: "Border and binational economy",
+        title: "Border and federal policy",
         description:
-          "International trade, ports of entry, manufacturing, and cross-border family ties are central to the region.",
+          "Track ports of entry, immigration enforcement, trade, customs, federal funding, and cross-border policy.",
       },
       {
         title: "Fort Bliss and defense",
         description:
-          "The installation and connected employers influence housing, services, and population movement.",
+          "Follow military policy, federal spending, veterans issues, and the installation's regional impact.",
       },
       {
-        title: "Desert climate and utilities",
+        title: "Local government and infrastructure",
         description:
-          "Plan for summer cooling, water conservation, elevation, and the property-specific cost of utilities.",
+          "Monitor city, county, school, water, transportation, and public-safety decisions across the region.",
       },
     ],
     industries: ["Defense", "International trade", "Logistics", "Health care", "Government"],
-    relocationNotes: [
-      "Vehicles registered in El Paso County remain subject to emissions testing.",
-      "Compare eastside, westside, central, and lower-valley travel patterns.",
-      "Review school districts, water service, and property taxes for the exact address.",
+    policyNotes: [
+      "Border policy can involve federal, state, county, municipal, and binational institutions.",
+      "Fort Bliss decisions affect regional employment, infrastructure, and public services.",
+      "Water, transportation, public safety, and trade infrastructure remain central policy issues.",
     ],
     fallbackSlugs: [
-      "moving-to-el-paso-guide",
       "texas-border-geography-101",
       "texas-border-policy-full-guide",
       "texas-water-rights-explained",
-      ...RELOCATION_FALLBACKS,
+      ...REGIONAL_POLICY_FALLBACKS,
     ],
   },
 };
