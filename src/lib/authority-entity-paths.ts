@@ -4,6 +4,7 @@ export const AUTHORITY_ENTITY_PATH_PREFIXES: Record<AuthorityEntityType, string>
   'statewide-office': '/texas-government/offices/',
   legislator: '/representatives/',
   candidate: '/elections/candidates/',
+  race: '/elections/races/',
   committee: '/texas-legislature/committees/',
   agency: '/texas-government/agencies/',
   district: '/elections/districts/',
