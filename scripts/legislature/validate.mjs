@@ -5,7 +5,7 @@ const requiredFiles = [
   'supabase/migrations/20260731190000_legislative_authority_graph.sql',
   'supabase/migrations/20260803204500_bill_relationship_automation.sql',
   'supabase/migrations/20260803223000_bill_editorial_enrichments.sql',
-  'supabase/migrations/20260803230000_legislative_content_opportunities.sql',
+  'supabase/migrations/20260803231500_legislative_content_opportunities.sql',
   'src/lib/authority-relationships.ts',
   'src/lib/bills.ts',
   'src/components/authority/RelatedAuthorityContent.tsx',
@@ -61,7 +61,7 @@ for (const token of ['bill_editorial_enrichments', 'source_document_ids', 'revie
   if (!editorialMigration.includes(token)) errors.push(`Editorial migration missing ${token}`);
 }
 
-const opportunityMigration = sources.get('supabase/migrations/20260803230000_legislative_content_opportunities.sql') || '';
+const opportunityMigration = sources.get('supabase/migrations/20260803231500_legislative_content_opportunities.sql') || '';
 for (const token of ['legislative_content_opportunities', 'dedupe_key', 'refresh_legislative_content_opportunities']) {
   if (!opportunityMigration.includes(token)) errors.push(`Opportunity migration missing ${token}`);
 }
