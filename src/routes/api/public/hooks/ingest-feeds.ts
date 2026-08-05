@@ -1166,13 +1166,17 @@ async function handler() {
     .limit(25);
   if (orphans?.length) {
     const lovableApiKey = process.env.LOVABLE_API_KEY;
-    const items: Item[] = orphans!.map((row) => ({
-      title: row.title,
-      link: row.link,
-      source: row.source,
-      pub_date: row.pub_date,
-      description: row.description ?? "",
-    }));
+    // Routine Texas Register orphans stay feed-only forever — filtering here
+    // stops them from re-consuming AI rewrite attempts on every backfill run.
+    const items: Item[] = orphans!
+      .map((row) => ({
+        title: row.title,
+        link: row.link,
+        source: row.source,
+        pub_date: row.pub_date,
+        description: row.description ?? "",
+      }))
+      .filter(isSignificantTexasRegisterItem);
     const rewrites: (Rewrite | null)[] = lovableApiKey
       ? await mapWithConcurrency(items, 4, (it) => rewriteItemWithRetry(it, lovableApiKey!))
       : items.map(() => null);
