@@ -9,7 +9,7 @@ const requiredFiles = [
   'supabase/migrations/20260803204500_bill_relationship_automation.sql',
   'supabase/migrations/20260803223000_bill_editorial_enrichments.sql',
   'supabase/migrations/20260803231500_legislative_content_opportunities.sql',
-  'supabase/migrations/20260805044500_bill_subject_authority_sync.sql',
+  'supabase/migrations/20260805050000_bill_subject_authority_edges.sql',
   'supabase/migrations/20260805121500_bill_article_authority_sync.sql',
   'src/lib/authority-relationships.ts',
   'src/lib/bills.ts',
@@ -63,7 +63,7 @@ for (const token of [
   if (!relationshipMigration.includes(token)) errors.push(`Relationship migration missing ${token}`);
 }
 
-const subjectAuthorityMigration = sources.get('supabase/migrations/20260805044500_bill_subject_authority_sync.sql') || '';
+const subjectAuthorityMigration = sources.get('supabase/migrations/20260805050000_bill_subject_authority_edges.sql') || '';
 for (const token of ['sync_bill_subject_authority_relationship', 'bill-subject', 'official-bill-subject-record']) {
   if (!subjectAuthorityMigration.includes(token)) errors.push(`Subject authority migration missing ${token}`);
 }
