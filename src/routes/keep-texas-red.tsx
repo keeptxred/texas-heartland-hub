@@ -6,6 +6,7 @@ const URL = "https://keeptxred.com/keep-texas-red";
 const TITLE = "Keep Texas Red | Elections, Policy and Conservative Government";
 const DESC =
   "What Keep Texas Red means in Texas politics: elections, legislation, border policy, energy, constitutional rights, education policy and government accountability.";
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
 export const Route = createFileRoute("/keep-texas-red")({
   head: () => ({
@@ -116,7 +117,7 @@ function KeepTexasRedPage() {
           The Texas Legislature meets in regular session every two years, with special sessions called by the governor. The House and Senate consider thousands of bills, but committee chairs, calendars, deadlines and procedural rules determine which proposals receive a vote. The lieutenant governor exercises substantial control over the Senate, while the House speaker shapes committee assignments and floor access in the lower chamber.
         </p>
         <p>
-          Readers can search legislation in the <Link to="/bills" className="text-primary underline">Texas bills database</Link>, review the <Link to="/texas-legislature" className="text-primary underline">Texas Legislature guide</Link> and follow the committees that decide whether legislation advances.
+          Readers can search legislation in the <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary underline">Texas bills database</Link>, review the <Link to="/texas-legislature" className="text-primary underline">Texas Legislature guide</Link> and follow the committees that decide whether legislation advances.
         </p>
       </Section>
 
@@ -181,7 +182,7 @@ function KeepTexasRedPage() {
           <li><Link to="/texas-politics" className="text-primary hover:underline">Texas politics →</Link></li>
           <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economic policy →</Link></li>
           <li><Link to="/elections" className="text-primary hover:underline">Election Central →</Link></li>
-          <li><Link to="/bills" className="text-primary hover:underline">Search Texas bills →</Link></li>
+          <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Search Texas bills →</Link></li>
           <li><Link to="/about" className="text-primary hover:underline">About Keep TX Red →</Link></li>
         </ul>
       </section>
