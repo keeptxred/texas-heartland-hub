@@ -28,16 +28,28 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-// Service-role / import-secret only. Never anonymous: when a secret is
-// configured every request must present it (batch approval included).
-function authorized(request: Request): boolean {
+// Service-role / import-secret only. Never anonymous: an import secret, or a
+// credential that can read the service-role-only import tables, is required.
+async function authorized(request: Request, supabaseUrl: string): Promise<boolean> {
   const configured = Deno.env.get("EXPLORE_IMPORT_SECRET");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const direct = request.headers.get("x-import-secret");
   const bearer = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+  if (configured && (direct === configured || bearer === configured)) return true;
   if (serviceRoleKey && (direct === serviceRoleKey || bearer === serviceRoleKey)) return true;
-  if (!configured) return !direct && !bearer ? true : false;
-  return direct === configured || bearer === configured;
+
+  // Fall back to proving the presented credential has privileged Data API
+  // access (service-role-only table). Anonymous/publishable keys fail this.
+  const candidate = direct || bearer;
+  if (!candidate) return false;
+  try {
+    const probe = await fetch(`${supabaseUrl}/rest/v1/explore_import_jobs?select=id&limit=1`, {
+      headers: { apikey: candidate, authorization: `Bearer ${candidate}` },
+    });
+    return probe.ok;
+  } catch {
+    return false;
+  }
 }
 
 type Client = ReturnType<typeof createClient>;
@@ -356,12 +368,12 @@ async function promoteRecord(
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!authorized(request)) return json({ error: "Unauthorized" }, 401);
-
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!supabaseUrl || !serviceRoleKey)
     return json({ error: "Supabase service configuration is missing" }, 500);
+  if (!(await authorized(request, supabaseUrl))) return json({ error: "Unauthorized" }, 401);
+
   const client = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
   let body: ReviewRequest;
