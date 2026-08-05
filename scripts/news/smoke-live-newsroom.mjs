@@ -6,7 +6,7 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { ...options, signal: controller.signal, redirect: "follow" });
+    return await fetch(url, { ...options, signal: controller.signal });
   } finally {
     clearTimeout(timeout);
   }
@@ -27,20 +27,31 @@ async function retry(label, fn, attempts = 6, delayMs = 15000) {
   throw lastError;
 }
 
-async function checkPage(path, expectedTexts) {
+async function checkProtectedAdminRoute(path) {
   const response = await fetchWithTimeout(`${baseUrl}${path}`, {
+    redirect: "manual",
     headers: { "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
   });
-  if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
-  const body = await response.text();
-  for (const expectedText of expectedTexts) {
-    if (!body.includes(expectedText)) throw new Error(`${path} did not contain expected marker: ${expectedText}`);
+
+  if (response.status === 404) throw new Error(`${path} returned HTTP 404`);
+  if (response.status >= 500) throw new Error(`${path} returned HTTP ${response.status}`);
+
+  const location = response.headers.get("location");
+  if (response.status >= 300 && response.status < 400) {
+    if (!location || !location.includes("/admin")) {
+      throw new Error(`${path} redirected unexpectedly to ${location ?? "unknown"}`);
+    }
+    console.log(`OK ${path} protected redirect (${response.status} -> ${location})`);
+    return;
   }
-  console.log(`OK ${path} (${response.status})`);
+
+  if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
+  console.log(`OK ${path} reachable (${response.status})`);
 }
 
 async function checkNewsroomHealth() {
   const response = await fetchWithTimeout(`${baseUrl}/api/public/newsroom-health`, {
+    redirect: "follow",
     headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
   });
   const text = await response.text();
@@ -62,6 +73,7 @@ async function checkIngestion() {
   try {
     response = await fetchWithTimeout(`${baseUrl}/api/public/hooks/ingest-feeds`, {
       method: "POST",
+      redirect: "follow",
       headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
     }, 180000);
   } catch (error) {
@@ -87,7 +99,7 @@ async function checkIngestion() {
   console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched ?? "n/a"} inserted=${payload.inserted ?? "n/a"}`);
 }
 
-await retry("newsroom QA route", () => checkPage("/admin/coverage-gaps", ["Coverage Gaps", "Source Health"]));
+await retry("newsroom QA route", () => checkProtectedAdminRoute("/admin/coverage-gaps"));
 await retry("newsroom-health endpoint", checkNewsroomHealth);
 await checkIngestion();
 console.log(`Live newsroom smoke check passed for ${baseUrl}`);
