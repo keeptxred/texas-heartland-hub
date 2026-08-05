@@ -1,12 +1,2 @@
-import { createFileRoute } from "@tanstack/react-router";
-import TexasHomeOwnershipCostPage from "@/pages/home/TexasHomeOwnershipCostPage";
-import { calculatorRouteSeo } from "@/lib/calculator-route-seo";
-import { withFinancialTrust } from "@/components/calculators/FinancialTrustPanel";
-
-const title = "Texas Homeownership Cost Calculator";
-const description = "Estimate the full monthly and annual cost of owning a Texas home, including mortgage, property taxes, insurance, utilities, maintenance, HOA fees, and reserves.";
-
-export const Route = createFileRoute("/texas-homeownership-cost-calculator")({
-  head: () => calculatorRouteSeo({ title, description, path: "/texas-homeownership-cost-calculator" }),
-  component: withFinancialTrust(TexasHomeOwnershipCostPage, title, true),
-});
+import { createFileRoute, redirect } from "@tanstack/react-router";
+export const Route = createFileRoute("/texas-homeownership-cost-calculator")({ beforeLoad: ({ location }) => { throw redirect({ href: `https://texasdefined.com${location.pathname}${location.searchStr || ""}`, statusCode: 301 }); } });
