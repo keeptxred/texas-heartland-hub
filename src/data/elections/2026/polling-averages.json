@@ -4,7 +4,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-04T17:06:17.347Z",
+    "recalculatedAt": "2026-08-05T02:56:21.726Z",
     "weightedMargin": 5,
     "uncertaintyRange": {
       "low": 2.1,
@@ -14,13 +14,13 @@
       {
         "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
         "candidateName": "MAYES MIDDLETON",
-        "averagePercentage": 42.1,
+        "averagePercentage": 42.2,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
         "candidateName": "NATHAN JOHNSON",
-        "averagePercentage": 37.1,
+        "averagePercentage": 37.2,
         "pollCount": 2
       },
       {
@@ -45,7 +45,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "68 day(s) old",
+          "69 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -56,9 +56,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-attorney-general",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.188,
+        "finalWeight": 0.185,
         "factors": {
-          "recency": 0.173,
+          "recency": 0.17,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -66,7 +66,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "53 day(s) old",
+          "54 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -80,7 +80,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-04T17:06:17.347Z",
+    "recalculatedAt": "2026-08-05T02:56:21.726Z",
     "weightedMargin": 6,
     "uncertaintyRange": {
       "low": 2,
@@ -111,9 +111,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-comptroller",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.188,
+        "finalWeight": 0.185,
         "factors": {
-          "recency": 0.173,
+          "recency": 0.17,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -121,7 +121,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "53 day(s) old",
+          "54 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -135,7 +135,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-04T17:06:17.347Z",
+    "recalculatedAt": "2026-08-05T02:56:21.726Z",
     "weightedMargin": 6.2,
     "uncertaintyRange": {
       "low": 3.3,
@@ -176,7 +176,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "68 day(s) old",
+          "69 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -187,9 +187,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.188,
+        "finalWeight": 0.185,
         "factors": {
-          "recency": 0.173,
+          "recency": 0.17,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -197,7 +197,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "53 day(s) old",
+          "54 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -211,7 +211,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-04T17:06:17.347Z",
+    "recalculatedAt": "2026-08-05T02:56:21.726Z",
     "weightedMargin": 7,
     "uncertaintyRange": {
       "low": 3,
@@ -248,9 +248,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-lieutenant-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.188,
+        "finalWeight": 0.185,
         "factors": {
-          "recency": 0.173,
+          "recency": 0.17,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -258,7 +258,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "53 day(s) old",
+          "54 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -272,7 +272,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-04T17:06:17.347Z",
+    "recalculatedAt": "2026-08-05T02:56:21.726Z",
     "weightedMargin": 0.5,
     "uncertaintyRange": {
       "low": -2.4,
@@ -313,7 +313,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "68 day(s) old",
+          "69 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -324,9 +324,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-us-senate",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.188,
+        "finalWeight": 0.185,
         "factors": {
-          "recency": 0.173,
+          "recency": 0.17,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -334,7 +334,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "53 day(s) old",
+          "54 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
