@@ -244,14 +244,7 @@ jobs:
             exit 0
           fi
           if [[ "$JOB_STATUS" != "success" ]]; then
-            git restore \
-              src/data/elections/2026 \
-              src/components/elections/navigation/ElectionNavigation.tsx \
-              src/lib/elections/repositories/static.ts \
-              src/routes/elections.tsx \
-              src/routes/elections.2026.tsx \
-              src/routeTree.gen.ts \
-              scripts/elections/import-candidates.ts || true
+            git restore src/data/elections/2026 || true
           fi
           node --input-type=module <<'NODE'
           import fs from "node:fs";
@@ -283,15 +276,19 @@ jobs:
           NODE
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Source fixes and route generation are validation-only. Scheduled refreshes
+          # may publish election data artifacts, never application or generated code.
+          git restore \
+            src/components/elections/navigation/ElectionNavigation.tsx \
+            src/lib/elections/repositories/static.ts \
+            src/routes/elections.tsx \
+            src/routes/elections.2026.tsx \
+            src/routeTree.gen.ts \
+            scripts/elections/import-candidates.ts || true
+
           if [[ "$JOB_STATUS" == "success" ]]; then
-            git add \
-              src/data/elections/2026 \
-              src/components/elections/navigation/ElectionNavigation.tsx \
-              src/lib/elections/repositories/static.ts \
-              src/routes/elections.tsx \
-              src/routes/elections.2026.tsx \
-              src/routeTree.gen.ts \
-              scripts/elections/import-candidates.ts
+            git add src/data/elections/2026
             message="Refresh verified 2026 election data"
           else
             git add src/data/elections/2026/workflow-status.json
@@ -299,8 +296,14 @@ jobs:
           fi
           git restore --worktree .
           if git diff --cached --quiet; then
-            echo "No refresh status, source, or election data changes to commit."
+            echo "No refresh status or election data changes to commit."
             exit 0
+          fi
+          unexpected_files="$(git diff --cached --name-only | grep -v '^src/data/elections/2026/' || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Refusing to publish files outside the election-data allowlist:"
+            echo "$unexpected_files"
+            exit 1
           fi
           git commit -m "$message"
           git fetch origin main
