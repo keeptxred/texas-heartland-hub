@@ -1,4 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import {
+  classify,
+  distanceKm,
+  inTexas,
+  isRecord as isPlainRecord,
+  normalizedName,
+  pick as pickField,
+  slugify,
+} from "../_shared/explore-classify.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,6 +19,7 @@ interface ImportRequest {
   jobId?: string;
   sourceId?: string;
   executionMode?: "live" | "dry-run" | "preview";
+  limit?: number;
 }
 
 interface SourceRow {
