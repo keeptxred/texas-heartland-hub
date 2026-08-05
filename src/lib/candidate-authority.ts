@@ -32,7 +32,7 @@ export function candidateToAuthorityEntity(
     summary: candidate.biography,
     imageUrl: candidate.imageUrl,
     relatedEntityIds: candidate.raceIds.map((raceId) =>
-      `election:${String(raceId)}`,
+      createAuthorityEntityKey('race', String(raceId)),
     ),
     createdAt: candidate.createdAt,
     updatedAt: candidate.updatedAt,
