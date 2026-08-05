@@ -25,18 +25,16 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
+          import re
           from pathlib import Path
 
-          deprecated = {
-              'actions/' + 'checkout@v4': 'actions/checkout@v5',
-              'actions/' + 'setup-node@v4': 'actions/setup-node@v5',
-          }
+          pattern = re.compile(r'^\s*-?\s*uses:\s*actions/(checkout|setup-node)@v4(?:\s|$)', re.MULTILINE)
           findings = []
           for path in sorted(Path('.github/workflows').glob('*.y*ml')):
               text = path.read_text(encoding='utf-8')
-              for old, replacement in deprecated.items():
-                  if old in text:
-                      findings.append(f'{path}: replace {old} with {replacement}')
+              for match in pattern.finditer(text):
+                  action = match.group(1)
+                  findings.append(f'{path}: upgrade actions/{action}@v4 to actions/{action}@v5')
           if findings:
               raise SystemExit('Deprecated GitHub Actions remain:\n' + '\n'.join(findings))
           print('No deprecated official action runtimes found.')
