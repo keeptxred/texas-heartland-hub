@@ -56,7 +56,7 @@ export type SavedPackage = {
 };
 
 export const saveContentPackageFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => SavePkgInput.parse(d))
+  .validator((d: unknown) => SavePkgInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; id: string } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -88,7 +88,7 @@ export const saveContentPackageFn = createServerFn({ method: "POST" })
 const TokenInput = z.object({ token: z.string().min(1) });
 
 export const listContentPackagesFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => TokenInput.parse(d))
+  .validator((d: unknown) => TokenInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; rows: SavedPackage[] } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -104,7 +104,7 @@ export const listContentPackagesFn = createServerFn({ method: "POST" })
 const DeleteInput = z.object({ token: z.string().min(1), id: z.string().uuid() });
 
 export const deleteContentPackageFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => DeleteInput.parse(d))
+  .validator((d: unknown) => DeleteInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -123,7 +123,7 @@ const AssetInput = z.object({
 });
 
 export const updateContentPackageAssetFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => AssetInput.parse(d))
+  .validator((d: unknown) => AssetInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -146,7 +146,7 @@ const WorkflowInput = z.object({
 });
 
 export const updateContentPackageWorkflowFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => WorkflowInput.parse(d))
+  .validator((d: unknown) => WorkflowInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
