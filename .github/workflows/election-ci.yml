@@ -54,8 +54,12 @@ jobs:
         continue-on-error: true
         shell: bash
         run: |
+          set +e
           set -o pipefail
           bun run elections:validate 2>&1 | tee /tmp/election-ci-validate.log
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
 
       - name: Build production application and generate routes
         id: build
@@ -64,16 +68,24 @@ jobs:
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
         run: |
+          set +e
           set -o pipefail
           bun run build 2>&1 | tee /tmp/election-ci-build.log
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
 
       - name: Typecheck application
         id: typecheck
         continue-on-error: true
         shell: bash
         run: |
+          set +e
           set -o pipefail
           bun run typecheck 2>&1 | tee /tmp/election-ci-typecheck.log
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
 
       - name: Run unit tests
         id: tests
@@ -81,10 +93,12 @@ jobs:
         shell: bash
         run: |
           set +e
+          set -o pipefail
           bun run test 2>&1 | tee /tmp/election-ci-tests.log
           status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
           grep -E "FAIL|failed|AssertionError|Error:|Test Files|Tests  " /tmp/election-ci-tests.log | tail -160 > /tmp/election-ci-test-failures.log || true
-          exit $status
+          exit "$status"
 
       - name: Run mobile browser smoke tests (standard homepage)
         id: mobile
@@ -93,8 +107,12 @@ jobs:
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
         run: |
+          set +e
           set -o pipefail
           bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile.log
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
 
       - name: Run mobile browser smoke tests (Election Central homepage)
         id: mobile_homepage
@@ -103,19 +121,23 @@ jobs:
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "true"
         run: |
+          set +e
           set -o pipefail
           bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile-homepage.log
+          status=${PIPESTATUS[0]}
+          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          exit "$status"
 
       - name: Create verification report
         if: always()
         shell: bash
         env:
-          VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
-          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
-          TEST_OUTCOME: ${{ steps.tests.outcome }}
-          BUILD_OUTCOME: ${{ steps.build.outcome }}
-          MOBILE_OUTCOME: ${{ steps.mobile.outcome }}
-          MOBILE_HOMEPAGE_OUTCOME: ${{ steps.mobile_homepage.outcome }}
+          VALIDATE_EXIT_CODE: ${{ steps.validate.outputs.exit_code }}
+          TYPECHECK_EXIT_CODE: ${{ steps.typecheck.outputs.exit_code }}
+          TEST_EXIT_CODE: ${{ steps.tests.outputs.exit_code }}
+          BUILD_EXIT_CODE: ${{ steps.build.outputs.exit_code }}
+          MOBILE_EXIT_CODE: ${{ steps.mobile.outputs.exit_code }}
+          MOBILE_HOMEPAGE_EXIT_CODE: ${{ steps.mobile_homepage.outputs.exit_code }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           RUN_SHA: ${{ github.sha }}
@@ -130,15 +152,24 @@ jobs:
             return lines.slice(-lineLimit).join("\n").slice(-characterLimit) || null;
           }
 
+          const result = (code) => code === "0" ? "success" : "failure";
           const checks = {
-            validation: process.env.VALIDATE_OUTCOME,
-            build: process.env.BUILD_OUTCOME,
-            typecheck: process.env.TYPECHECK_OUTCOME,
-            tests: process.env.TEST_OUTCOME,
-            mobile: process.env.MOBILE_OUTCOME,
-            homepageEnabledMobile: process.env.MOBILE_HOMEPAGE_OUTCOME,
+            validation: result(process.env.VALIDATE_EXIT_CODE),
+            build: result(process.env.BUILD_EXIT_CODE),
+            typecheck: result(process.env.TYPECHECK_EXIT_CODE),
+            tests: result(process.env.TEST_EXIT_CODE),
+            mobile: result(process.env.MOBILE_EXIT_CODE),
+            homepageEnabledMobile: result(process.env.MOBILE_HOMEPAGE_EXIT_CODE),
           };
-          const passed = Object.values(checks).every((outcome) => outcome === "success");
+          const exitCodes = {
+            validation: process.env.VALIDATE_EXIT_CODE || null,
+            build: process.env.BUILD_EXIT_CODE || null,
+            typecheck: process.env.TYPECHECK_EXIT_CODE || null,
+            tests: process.env.TEST_EXIT_CODE || null,
+            mobile: process.env.MOBILE_EXIT_CODE || null,
+            homepageEnabledMobile: process.env.MOBILE_HOMEPAGE_EXIT_CODE || null,
+          };
+          const passed = Object.values(exitCodes).every((code) => code === "0");
           const status = {
             updatedAt: new Date().toISOString(),
             conclusion: passed ? "success" : "failure",
@@ -147,6 +178,7 @@ jobs:
             triggerCommit: process.env.RUN_SHA,
             runUrl: process.env.RUN_URL,
             checks,
+            exitCodes,
             validationSummary: compactLog("/tmp/election-ci-validate.log"),
             buildSummary: compactLog("/tmp/election-ci-build.log"),
             typecheckSummary: compactLog("/tmp/election-ci-typecheck.log"),
@@ -163,9 +195,9 @@ jobs:
             "",
             `**Conclusion:** ${passed ? "PASS" : "FAIL"}`,
             "",
-            "| Check | Result |",
-            "|---|---|",
-            ...Object.entries(checks).map(([name, value]) => `| ${name} | ${symbol(value)} ${value} |`),
+            "| Check | Result | Exit code |",
+            "|---|---|---|",
+            ...Object.entries(checks).map(([name, value]) => `| ${name} | ${symbol(value)} ${value} | ${exitCodes[name] ?? "missing"} |`),
             "",
             `Commit: \`${process.env.RUN_SHA}\``,
           ].join("\n");
@@ -193,13 +225,21 @@ jobs:
         if: always()
         shell: bash
         env:
-          VALIDATE_OUTCOME: ${{ steps.validate.outcome }}
-          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
-          TEST_OUTCOME: ${{ steps.tests.outcome }}
-          BUILD_OUTCOME: ${{ steps.build.outcome }}
-          MOBILE_OUTCOME: ${{ steps.mobile.outcome }}
-          MOBILE_HOMEPAGE_OUTCOME: ${{ steps.mobile_homepage.outcome }}
+          VALIDATE_EXIT_CODE: ${{ steps.validate.outputs.exit_code }}
+          TYPECHECK_EXIT_CODE: ${{ steps.typecheck.outputs.exit_code }}
+          TEST_EXIT_CODE: ${{ steps.tests.outputs.exit_code }}
+          BUILD_EXIT_CODE: ${{ steps.build.outputs.exit_code }}
+          MOBILE_EXIT_CODE: ${{ steps.mobile.outputs.exit_code }}
+          MOBILE_HOMEPAGE_EXIT_CODE: ${{ steps.mobile_homepage.outputs.exit_code }}
         run: |
-          if [[ "$VALIDATE_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" || "$MOBILE_HOMEPAGE_OUTCOME" != "success" ]]; then
-            exit 1
-          fi
+          for code in \
+            "$VALIDATE_EXIT_CODE" \
+            "$BUILD_EXIT_CODE" \
+            "$TYPECHECK_EXIT_CODE" \
+            "$TEST_EXIT_CODE" \
+            "$MOBILE_EXIT_CODE" \
+            "$MOBILE_HOMEPAGE_EXIT_CODE"; do
+            if [[ "$code" != "0" ]]; then
+              exit 1
+            fi
+          done
