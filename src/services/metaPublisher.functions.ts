@@ -30,7 +30,7 @@ async function checkConnection(platform: "facebook" | "instagram"): Promise<{ co
 }
 
 export const publishFacebookPostFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => Input.parse(d))
+  .validator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<PublishResult> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const c = await checkConnection("facebook");
@@ -40,7 +40,7 @@ export const publishFacebookPostFn = createServerFn({ method: "POST" })
   });
 
 export const publishInstagramPostFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => Input.parse(d))
+  .validator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<PublishResult> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const c = await checkConnection("instagram");
