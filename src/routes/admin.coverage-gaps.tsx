@@ -1,13 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { NewsCoverageGapPanel } from "@/components/admin/NewsCoverageGapPanel";
+import { NewsSourceHealthPanel } from "@/components/admin/NewsSourceHealthPanel";
 
 const STORAGE_KEY = "ktr-admin-ok";
 
 export const Route = createFileRoute("/admin/coverage-gaps")({
   head: () => ({
     meta: [
-      { title: "Coverage Gaps — Keep TX Red Admin" },
+      { title: "Newsroom Coverage QA — Keep TX Red Admin" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -37,24 +38,26 @@ function CoverageGapsPage() {
           <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">★ Newsroom QA</div>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 className="font-display text-3xl md:text-5xl">Coverage Gaps</h1>
+              <h1 className="font-display text-3xl md:text-5xl">Coverage &amp; Source Health</h1>
               <p className="mt-2 text-sm text-white/80">
-                Important Texas stories that reached the feed but did not become native Keep TX Red articles.
+                See important Texas stories that did not become articles and identify feeds that are quiet, stale, or failing.
               </p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <Link to="/admin/source-health" className="border border-white/40 px-3 py-2 text-sm font-semibold hover:bg-white/10">
-                Source health
-              </Link>
-              <Link to="/admin" className="border border-white/40 px-3 py-2 text-sm font-semibold hover:bg-white/10">
-                Back to dashboard
-              </Link>
-            </div>
+            <Link to="/admin" className="border border-white/40 px-3 py-2 text-sm font-semibold hover:bg-white/10">
+              Back to dashboard
+            </Link>
           </div>
         </div>
       </header>
-      <div className="mx-auto max-w-6xl px-4 py-8">
-        <NewsCoverageGapPanel />
+      <div className="mx-auto max-w-6xl space-y-12 px-4 py-8">
+        <section aria-labelledby="coverage-gaps-heading">
+          <h2 id="coverage-gaps-heading" className="mb-4 font-display text-2xl">Coverage Gaps</h2>
+          <NewsCoverageGapPanel />
+        </section>
+        <section aria-labelledby="source-health-heading" className="border-t pt-10">
+          <h2 id="source-health-heading" className="mb-4 font-display text-2xl">Source Health</h2>
+          <NewsSourceHealthPanel />
+        </section>
       </div>
     </main>
   );
