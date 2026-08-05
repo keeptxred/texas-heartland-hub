@@ -115,7 +115,7 @@ function normalize(
       "objectid",
     ]) ?? "",
   );
-  const name = String(
+  const rawName = String(
     pick(properties, [
       "name",
       "title",
@@ -126,6 +126,16 @@ function normalize(
       "location_name",
     ]) ?? "",
   ).trim();
+  // Some authoritative feeds publish a bare place name plus a separate
+  // designation field ("Abilene" + "State Park"). Compose a display name so
+  // slugs and titles are unambiguous.
+  const designation = String(
+    pick(properties, ["Type", "type", "designation", "unit_type", "park_type"]) ?? "",
+  ).trim();
+  const name =
+    rawName && designation && !rawName.toLowerCase().includes(designation.toLowerCase())
+      ? `${rawName} ${designation}`
+      : rawName;
   // Record-aware classification: feature/facility type and designation first,
   // then the record name, and only then a per-source fallback (which is always
   // reported as unconfident so the record stays pending for human review).
