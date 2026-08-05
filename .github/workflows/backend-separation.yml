@@ -3,25 +3,39 @@ name: Backend separation
 on:
   push:
     paths:
-      - 'src/routes/explore.tsx'
-      - 'src/routes/tax-calculator.tsx'
-      - 'src/routes/texas-property-tax-increase-calculator.tsx'
-      - 'src/routes/texas-property-tax-protest-guide.tsx'
-      - 'src/routes/moving-to-texas-checklist.tsx'
-      - 'src/routes/sitemap-pages[.]xml.ts'
+      - 'src/routes/**'
+      - 'src/pages/tools/**'
+      - 'src/components/moving-checklist.tsx'
+      - 'src/components/vehicle-registration-guide.tsx'
+      - 'src/lib/moving-checklist.ts'
+      - 'src/lib/vehicle-registration.ts'
+      - 'src/lib/content-quality.ts'
+      - 'src/data/texas-cities.ts'
+      - 'src/components/city-page.tsx'
+      - 'src/shared/texas-platform/registry.ts'
+      - 'src/shared/texas-platform/texas-life-*'
       - 'src/platform/governance-persistence.ts'
+      - 'public/llms.txt'
       - 'scripts/shared/validate-backend-separation.mjs'
+      - 'scripts/shared/validate-retired-lifestyle-code.mjs'
       - '.github/workflows/backend-separation.yml'
   pull_request:
     paths:
-      - 'src/routes/explore.tsx'
-      - 'src/routes/tax-calculator.tsx'
-      - 'src/routes/texas-property-tax-increase-calculator.tsx'
-      - 'src/routes/texas-property-tax-protest-guide.tsx'
-      - 'src/routes/moving-to-texas-checklist.tsx'
-      - 'src/routes/sitemap-pages[.]xml.ts'
+      - 'src/routes/**'
+      - 'src/pages/tools/**'
+      - 'src/components/moving-checklist.tsx'
+      - 'src/components/vehicle-registration-guide.tsx'
+      - 'src/lib/moving-checklist.ts'
+      - 'src/lib/vehicle-registration.ts'
+      - 'src/lib/content-quality.ts'
+      - 'src/data/texas-cities.ts'
+      - 'src/components/city-page.tsx'
+      - 'src/shared/texas-platform/registry.ts'
+      - 'src/shared/texas-platform/texas-life-*'
       - 'src/platform/governance-persistence.ts'
+      - 'public/llms.txt'
       - 'scripts/shared/validate-backend-separation.mjs'
+      - 'scripts/shared/validate-retired-lifestyle-code.mjs'
       - '.github/workflows/backend-separation.yml'
 
 permissions:
@@ -36,3 +50,4 @@ jobs:
         with:
           node-version: 20
       - run: node scripts/shared/validate-backend-separation.mjs
+      - run: node scripts/shared/validate-retired-lifestyle-code.mjs
