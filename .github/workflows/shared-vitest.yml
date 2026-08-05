@@ -1,0 +1,26 @@
+name: Shared platform Vitest
+
+on:
+  push:
+    paths:
+      - 'src/shared/texas-platform/**'
+      - 'vitest.config.*'
+      - 'vite.config.*'
+      - 'package.json'
+      - 'bun.lock*'
+      - '.github/workflows/shared-vitest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - run: bun install --frozen-lockfile
+      - run: bunx vitest run src/shared/texas-platform --reporter=verbose
