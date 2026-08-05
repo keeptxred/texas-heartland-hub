@@ -55,7 +55,7 @@ jobs:
     timeout-minutes: 65
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
@@ -277,8 +277,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # Source fixes and route generation are validation-only. Scheduled refreshes
-          # may publish election data artifacts, never application or generated code.
           git restore \
             src/components/elections/navigation/ElectionNavigation.tsx \
             src/lib/elections/repositories/static.ts \
