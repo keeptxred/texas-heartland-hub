@@ -29,7 +29,7 @@ const AddInput = z.object({
 });
 
 export const addReelCandidateFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => AddInput.parse(d))
+  .validator((d: unknown) => AddInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; row: ReelCandidate } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -60,7 +60,7 @@ export const addReelCandidateFn = createServerFn({ method: "POST" })
 const TokenInput = z.object({ token: z.string().min(1) });
 
 export const listReelCandidatesFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => TokenInput.parse(d))
+  .validator((d: unknown) => TokenInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; rows: ReelCandidate[] } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -89,7 +89,7 @@ const StatusInput = z.object({
 });
 
 export const updateReelCandidateStatusFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => StatusInput.parse(d))
+  .validator((d: unknown) => StatusInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -111,7 +111,7 @@ export const updateReelCandidateStatusFn = createServerFn({ method: "POST" })
 const DeleteInput = z.object({ token: z.string().min(1), id: z.string().uuid() });
 
 export const deleteReelCandidateFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => DeleteInput.parse(d))
+  .validator((d: unknown) => DeleteInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
