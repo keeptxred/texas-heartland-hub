@@ -339,29 +339,75 @@ Deno.serve(async (request) => {
     duplicates: 0,
     validationErrors: 0,
     failed: 0,
+    pendingReview: 0,
+    unconfidentClassification: 0,
   };
   const warnings: string[] = [];
 
   try {
+    const { data: typeRows } = await client
+      .from("explore_entity_types")
+      .select("key")
+      .eq("is_active", true);
+    const allowedTypeKeys = new Set((typeRows ?? []).map((row) => String(row.key)));
+
     const payload = await fetchWithRetry(source as SourceRow);
     statistics.downloaded = 1;
-    const records = getRecords(payload);
+    const allRecords = getRecords(payload);
+    // `limit` bounds a smoke test / limited live run without touching the source config.
+    const cap = Number(body.limit ?? 0);
+    const records = cap > 0 ? allRecords.slice(0, cap) : allRecords;
     statistics.parsed = records.length;
 
     for (let index = 0; index < records.length; index += 1) {
-      const normalized = normalize(records[index], source as SourceRow);
+      const normalized = normalize(records[index], source as SourceRow, allowedTypeKeys);
       statistics.normalized += 1;
       const issues = validate(normalized);
       const digest = await checksum(normalized);
       const externalId = String(normalized.externalId);
       const { data: previous } = await client
         .from("explore_import_records")
-        .select("checksum")
+        .select("checksum,entity_id")
         .eq("source_id", sourceId)
         .eq("external_id", externalId)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      // Dedup: same normalized name + entity type, or a public entity within
+      // 1km of the same name. Never merged automatically — recorded as a
+      // candidate so the record stays pending for a human decision.
+      const duplicateCandidates: Array<Record<string, unknown>> = [];
+      if (!issues.length && !previous) {
+        const { data: nameMatches } = await client
+          .from("explore_entities")
+          .select("id,name,slug,status,visibility,explore_locations(latitude,longitude)")
+          .ilike("name", String(normalized.name))
+          .limit(5);
+        for (const match of nameMatches ?? []) {
+          const location = Array.isArray(match.explore_locations)
+            ? match.explore_locations[0]
+            : match.explore_locations;
+          const km =
+            location && normalized.latitude && normalized.longitude
+              ? distanceKm(
+                  Number(normalized.latitude),
+                  Number(normalized.longitude),
+                  Number(location.latitude),
+                  Number(location.longitude),
+                )
+              : null;
+          duplicateCandidates.push({
+            entityId: match.id,
+            slug: match.slug,
+            matchedOn: km !== null && km <= 1 ? "name_and_proximity" : "name",
+            distanceKm: km,
+          });
+        }
+      }
+      if (duplicateCandidates.length) statistics.duplicates += 1;
+      if (!normalized.classificationConfident) statistics.unconfidentClassification += 1;
+
       const action = issues.length
         ? "reject"
         : previous?.checksum === digest
@@ -374,17 +420,47 @@ Deno.serve(async (request) => {
       else if (action === "update") statistics.updated += 1;
       else statistics.unchanged += 1;
 
+      // Approval state: invalid -> rejected. Duplicate candidates or an
+      // unconfident classification -> pending. Clean authoritative records ->
+      // pending only until the batch approval path promotes them.
+      const reviewStatus =
+        action === "reject"
+          ? "rejected"
+          : action === "unchanged"
+            ? "approved"
+            : "pending";
+      if (reviewStatus === "pending") statistics.pendingReview += 1;
+
+      // Dry runs inspect normalization without writing import records.
+      if ((body.executionMode ?? "live") !== "live") {
+        if (index < 10) warnings.push(`dry-run sample: ${JSON.stringify({
+          externalId,
+          name: normalized.name,
+          entityType: normalized.entityType,
+          confident: normalized.classificationConfident,
+          signal: normalized.classificationSignal,
+          latitude: normalized.latitude,
+          longitude: normalized.longitude,
+          county: (normalized.address as Record<string, unknown>)?.county ?? null,
+          action,
+          reviewStatus,
+        })}`);
+        continue;
+      }
+
       const { error } = await client.from("explore_import_records").insert({
         job_id: jobId,
         source_id: sourceId,
         external_id: externalId || `invalid-${index}`,
         action,
         checksum: digest,
+        previous_checksum: previous?.checksum ?? null,
         normalized_payload: normalized,
         raw_payload: records[index],
         validation_issues: issues,
-        duplicate_candidates: [],
-        review_status: action === "unchanged" ? "approved" : "pending",
+        duplicate_candidates: duplicateCandidates,
+        review_status: reviewStatus,
+        entity_id: previous?.entity_id ?? null,
       });
       if (error) {
         statistics.failed += 1;
