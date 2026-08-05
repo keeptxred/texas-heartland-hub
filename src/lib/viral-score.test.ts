@@ -82,4 +82,26 @@ describe("Texas statewide coverage scoring", () => {
     expect(classifySourceReputation("Tarrant County").score).toBeGreaterThanOrEqual(55);
     expect(classifySourceReputation("Lampasas ISD").score).toBeGreaterThanOrEqual(55);
   });
+
+  it("does not promote an unrelated national hospital story", () => {
+    const result = scoreFeedItem({
+      title: "Regional hospital receives national quality award",
+      source: "Unknown News Network",
+      description: "The hospital serves residents in another state and has no Texas connection.",
+      pub_date: fresh(),
+    });
+    expect(result.texasRelevanceScore).toBeLessThan(50);
+    expect(result.routingType).toBe("FACEBOOK_ONLY");
+  });
+
+  it("does not treat a generic county source as Texas without Texas context", () => {
+    const result = scoreFeedItem({
+      title: "County commissioners approve routine meeting minutes",
+      source: "Washington County",
+      description: "Commissioners approved minutes and adjourned the meeting.",
+      pub_date: fresh(),
+    });
+    expect(result.texasRelevanceScore).toBeLessThan(50);
+    expect(result.routingType).not.toBe("SEO_ARTICLE");
+  });
 });
