@@ -7,38 +7,39 @@ import { resolveArticleImage } from "@/lib/seo-headline";
 
 export const TEXAS_NEWS_SECTIONS = [
   {
+    id: "government",
+    title: "Government",
+    description: "State agencies, public officials, local government, and accountability across Texas.",
+  },
+  {
     id: "economy",
-    title: "Economy",
-    description: "Texas economy trends, jobs, and cost-of-living updates.",
-  },
-  {
-    id: "housing",
-    title: "Housing",
-    description: "Texas housing market trends, affordability, and suburban growth.",
-  },
-  {
-    id: "migration",
-    title: "Growth & Migration",
-    description: "Population growth and why people keep moving to Texas.",
-  },
-  {
-    id: "culture",
-    title: "Culture & Identity",
-    description: "Texas culture, identity, and community life across the state.",
+    title: "Economic Policy",
+    description: "Jobs, energy, taxes, state spending, and policies affecting the Texas economy.",
   },
   {
     id: "education",
-    title: "Education Trends",
-    description: "School performance, education trends, and long-term shifts.",
+    title: "Education Policy",
+    description: "School finance, school choice, boards, universities, and state education decisions.",
   },
   {
-    id: "sports-culture",
-    title: "Sports Culture",
-    description: "High school, college, and pro sports as part of Texas life.",
+    id: "public-safety",
+    title: "Public Safety",
+    description: "Border enforcement, emergency policy, courts, policing, and public-safety institutions.",
+  },
+  {
+    id: "sports",
+    title: "Sports",
+    description: "Texas professional, college, and high-school sports coverage.",
   },
 ];
 
 const TEXAS_NEWS_SLUGS: Record<string, string[]> = {
+  government: [
+    "what-local-governments-control",
+    "how-texas-counties-spend",
+    "texas-school-board-powers",
+    "how-a-bill-becomes-texas-law",
+  ],
   economy: [
     "texas-energy-economy-overview",
     "why-texas-has-no-income-tax",
@@ -47,36 +48,17 @@ const TEXAS_NEWS_SLUGS: Record<string, string[]> = {
     "texas-energy-policy-guide",
     "property-tax-relief-package",
   ],
-  housing: [
-    "texas-property-tax-guide",
-    "homestead-exemption-explained",
-    "appraisal-protest-playbook",
-    "county-appraisal-districts-explained",
-    "isd-tax-burdens",
-    "property-tax-relief-package",
-  ],
-  migration: [
-    "why-texas-has-no-income-tax",
-    "what-local-governments-control",
-    "texas-water-rights-explained",
-    "texas-border-geography-101",
-    "texas-property-tax-guide",
-  ],
-  culture: [
-    // Culture retains only true culture/identity pieces. Government, laws,
-    // voting, and infrastructure articles moved to Politics / Elections /
-    // Economy per the taxonomy cleanup.
-  ],
   education: [
     "school-choice-esa-guide",
     "texas-school-board-powers",
     "texas-school-finance-explained",
   ],
-  "sports-culture": [
-    // Sports Culture stays empty until we publish true sports-culture
-    // coverage. Elections, border, and energy stories moved to their
-    // correct sections.
+  "public-safety": [
+    "texas-border-policy-full-guide",
+    "texas-border-geography-101",
+    "what-local-governments-control",
   ],
+  sports: [],
 };
 
 const TEXAS_NEWS_EXCLUDED_SLUGS = new Set(["gracie-the-giraffe"]);
@@ -101,7 +83,6 @@ export function TexasNewsView({
   topic: string;
   liveArticles?: CategoryFeedItem[];
 }) {
-  // Use UTC to avoid SSR/client hydration mismatch across timezones.
   const lastUpdated = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -118,8 +99,6 @@ export function TexasNewsView({
     (a) => a.category ?? null,
   );
 
-  // Live rows from the DB for the active filter. De-dup against curated
-  // static slugs so an article never renders twice on the same page.
   const staticSlugSet = new Set(articles.map((a) => a.slug));
   const liveOnly = liveArticles.filter((r) => !staticSlugSet.has(r.slug));
   const liveImg = assignUniqueImages(
@@ -129,8 +108,6 @@ export function TexasNewsView({
     (r) => r.category ?? null,
   );
 
-  // Scroll to top when the active filter changes so mobile users see the
-  // updated header + section title instead of appearing to sit in place.
   useEffect(() => {
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }, [topic]);
@@ -139,15 +116,15 @@ export function TexasNewsView({
     <div className="mx-auto max-w-[1200px] px-6 py-14">
       <header className="border-b border-border pb-6 mb-10">
         <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Texas News &amp; Insights
+          Statewide reporting
         </span>
         <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight mt-2 text-foreground">
-          {activeSection ? `${activeSection.title} — Texas News` : "Texas News, Culture & Economy"}
+          {activeSection ? `${activeSection.title} — Texas News` : "Texas News, Government & Public Policy"}
         </h1>
         <p className="mt-4 max-w-3xl text-base text-muted-foreground leading-relaxed">
           {activeSection
             ? activeSection.description
-            : "Ongoing coverage of Texas culture, economy, housing, jobs, and lifestyle trends. Not breaking news — long-term insights into what makes Texas grow. For breaking political and government updates, see Happening Now."}
+            : "Statewide reporting on Texas government, economic policy, education, public safety, elections, and major institutions. TexasDefined separately owns travel, relocation, lifestyle, household tools, and place guides."}
         </p>
         <p className="mt-3 text-xs text-muted-foreground">Last updated: {lastUpdated}</p>
       </header>
@@ -156,7 +133,7 @@ export function TexasNewsView({
         <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground mb-4">
           What we cover
         </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {TEXAS_NEWS_SECTIONS.map((s) => {
             const active = topic === s.id;
             return (
@@ -189,12 +166,10 @@ export function TexasNewsView({
         <div className="flex flex-wrap items-end justify-between gap-3 mb-6">
           <div>
             <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">
-              {activeSection ? `${activeSection.title} coverage` : "Latest Texas coverage"}
+              {activeSection ? `${activeSection.title} coverage` : "Latest statewide coverage"}
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              {activeSection
-                ? activeSection.description
-                : "The newest reporting from across the state."}
+              {activeSection ? activeSection.description : "The newest reporting from across Texas."}
             </p>
           </div>
           {activeSection && (
@@ -207,15 +182,15 @@ export function TexasNewsView({
           {articles.length === 0 && liveOnly.length === 0 && (
             <div className="col-span-full border-2 border-dashed border-border p-8 text-center">
               <p className="text-sm text-muted-foreground">
-                {topic === "sports-culture"
+                {topic === "sports"
                   ? "No sports articles are available in this feed yet. Browse Texas teams and league coverage."
                   : "No articles currently available in this topic. Browse related Texas coverage."}
               </p>
               <Link
-                to={topic === "sports-culture" ? "/texas-sports" : "/texas-news"}
+                to={topic === "sports" ? "/texas-sports" : "/texas-news"}
                 className="mt-3 inline-block text-sm text-primary hover:underline"
               >
-                {topic === "sports-culture" ? "Browse Texas Sports →" : "← Back to all Texas news"}
+                {topic === "sports" ? "Browse Texas Sports →" : "← Back to all Texas news"}
               </Link>
             </div>
           )}
@@ -283,39 +258,15 @@ export function TexasNewsView({
       {!activeSection && (
         <section className="mt-16 border-t border-border pt-10">
           <h2 className="font-sans text-2xl font-semibold tracking-tight text-foreground">
-            Texas Pillar Guides
+            Civic reference guides
           </h2>
           <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
-            The evergreen references we recommend to every new and longtime Texan.
+            Background resources connecting current reporting to Texas government and public policy.
           </p>
           <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-            <li>
-              <Link
-                to="/news/$slug"
-                params={{ slug: "why-texas-has-no-income-tax" }}
-                className="text-primary hover:underline"
-              >
-                Why Texas Has No State Income Tax →
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/texas/$slug"
-                params={{ slug: "property-taxes-2026" }}
-                className="text-primary hover:underline"
-              >
-                Texas Property Taxes in 2026 →
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/texas/$slug"
-                params={{ slug: "moving-to-texas-2026" }}
-                className="text-primary hover:underline"
-              >
-                Moving to Texas in 2026 →
-              </Link>
-            </li>
+            <li><Link to="/bills" className="text-primary hover:underline">Search Texas bills →</Link></li>
+            <li><Link to="/texas-legislature" className="text-primary hover:underline">Texas Legislature →</Link></li>
+            <li><Link to="/representatives" className="text-primary hover:underline">Texas representatives →</Link></li>
           </ul>
         </section>
       )}
@@ -325,36 +276,12 @@ export function TexasNewsView({
           More from Keep Texas Red
         </h2>
         <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-          <li>
-            <Link to="/texas-politics" className="text-primary hover:underline">
-              Texas Politics →
-            </Link>
-          </li>
-          <li>
-            <Link to="/houston" className="text-primary hover:underline">
-              Houston News →
-            </Link>
-          </li>
-          <li>
-            <Link to="/texas-sports" className="text-primary hover:underline">
-              Texas Sports →
-            </Link>
-          </li>
-          <li>
-            <Link to="/texas-business" className="text-primary hover:underline">
-              Texas Business →
-            </Link>
-          </li>
-          <li>
-            <Link to="/elections" className="text-primary hover:underline">
-              Elections →
-            </Link>
-          </li>
-          <li>
-            <Link to="/tax-calculator" className="text-primary hover:underline">
-              Property Tax Calculator →
-            </Link>
-          </li>
+          <li><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link></li>
+          <li><Link to="/houston" className="text-primary hover:underline">Houston News →</Link></li>
+          <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>
+          <li><Link to="/texas-business" className="text-primary hover:underline">Texas Business →</Link></li>
+          <li><Link to="/elections" className="text-primary hover:underline">Elections →</Link></li>
+          <li><Link to="/bills" className="text-primary hover:underline">Texas Bills →</Link></li>
         </ul>
       </section>
     </div>
