@@ -1,0 +1,39 @@
+name: Live Newsroom Smoke Check
+
+on:
+  schedule:
+    - cron: '17 13 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/lib/viral-score.ts'
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'src/routes/admin.coverage-gaps.tsx'
+      - 'src/routes/admin.source-health.tsx'
+      - 'src/components/admin/NewsCoverageGapPanel.tsx'
+      - 'src/components/admin/NewsSourceHealthPanel.tsx'
+      - 'supabase/migrations/*news*.sql'
+      - 'scripts/news/smoke-live-newsroom.mjs'
+      - '.github/workflows/live-newsroom-smoke.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-newsroom-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke-live-newsroom:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Check live ingestion and newsroom QA routes
+        env:
+          KTR_BASE_URL: https://keeptxred.com
+        run: node scripts/news/smoke-live-newsroom.mjs
