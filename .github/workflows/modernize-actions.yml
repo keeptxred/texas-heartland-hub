@@ -1,61 +1,46 @@
-name: Modernize GitHub Actions Runtimes
+name: Validate GitHub Actions Runtimes
 
 on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/modernize-actions.yml'
+      - '.github/workflows/**'
+  pull_request:
+    paths:
+      - '.github/workflows/**'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  modernize:
+  validate:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
-        with:
-          ref: main
-          fetch-depth: 0
       - uses: oven-sh/setup-bun@v2
-      - name: Upgrade official Node 24 actions
+      - name: Reject deprecated official action runtimes
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           from pathlib import Path
 
-          replacements = {
+          deprecated = {
               'actions/checkout@v4': 'actions/checkout@v5',
               'actions/setup-node@v4': 'actions/setup-node@v5',
           }
-          changed = []
-          for path in sorted(Path('.github/workflows').glob('*.y*ml')):
-              original = path.read_text(encoding='utf-8')
-              updated = original
-              for old, new in replacements.items():
-                  updated = updated.replace(old, new)
-              if updated != original:
-                  path.write_text(updated, encoding='utf-8')
-                  changed.append(str(path))
-          print(f'Updated {len(changed)} workflow files')
-          for path in changed:
-              print(path)
-          remaining = []
+          findings = []
           for path in sorted(Path('.github/workflows').glob('*.y*ml')):
               text = path.read_text(encoding='utf-8')
-              for old in replacements:
+              for old, replacement in deprecated.items():
                   if old in text:
-                      remaining.append(f'{path}: {old}')
-          if remaining:
-              raise SystemExit('Deprecated actions remain:\n' + '\n'.join(remaining))
-          if not changed:
-              raise SystemExit('Expected deprecated action references, but no files changed')
+                      findings.append(f'{path}: replace {old} with {replacement}')
+          if findings:
+              raise SystemExit('Deprecated GitHub Actions remain:\n' + '\n'.join(findings))
+          print('No deprecated official action runtimes found.')
           PY
-          git diff --check
-          git status --short
       - name: Validate workflow YAML
         shell: bash
         run: |
@@ -78,17 +63,3 @@ jobs:
           bun run legislature:validate
       - name: Production build
         run: bun run build
-      - name: Commit workflow modernization
-        shell: bash
-        run: |
-          set -euo pipefail
-          git status --short
-          if git diff --quiet -- .github/workflows; then
-            echo 'Expected workflow updates are missing.' >&2
-            exit 1
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add .github/workflows
-          git commit -m 'ci: upgrade official actions to Node 24 runtimes'
-          git push origin HEAD:main
