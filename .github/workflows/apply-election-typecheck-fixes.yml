@@ -2,34 +2,32 @@ name: Apply Election Central typecheck fixes
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "scripts/elections/apply-typecheck-fixes.mjs"
-      - ".github/workflows/apply-election-typecheck-fixes.yml"
 
 permissions:
   contents: write
 
 concurrency:
   group: apply-election-typecheck-fixes
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   apply:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           ref: main
+          fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
 
       - name: Apply strict source patches
         id: patch
@@ -39,44 +37,122 @@ jobs:
           set -o pipefail
           node scripts/elections/apply-typecheck-fixes.mjs 2>&1 | tee /tmp/election-type-fix.log
 
-      - name: Commit patched source files and diagnostics
+      - name: Typecheck patched application
+        id: typecheck
+        if: steps.patch.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          bun run typecheck 2>&1 | tee /tmp/election-typecheck.log
+
+      - name: Run unit tests
+        id: tests
+        if: steps.patch.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -o pipefail
+          bun run test 2>&1 | tee /tmp/election-type-tests.log
+
+      - name: Build production application
+        id: build
+        if: steps.patch.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        env:
+          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
+        run: |
+          set -o pipefail
+          bun run build 2>&1 | tee /tmp/election-type-build.log
+
+      - name: Commit validated source patches and diagnostics
         if: always()
         shell: bash
         env:
           PATCH_OUTCOME: ${{ steps.patch.outcome }}
+          TYPECHECK_OUTCOME: ${{ steps.typecheck.outcome }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
           RUN_ID: ${{ github.run_id }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
           node --input-type=module <<'NODE'
           import fs from "node:fs";
-          const log = fs.existsSync("/tmp/election-type-fix.log")
-            ? fs.readFileSync("/tmp/election-type-fix.log", "utf8").trim().slice(-12000)
-            : null;
+          function compact(file) {
+            return fs.existsSync(file)
+              ? fs.readFileSync(file, "utf8").trim().slice(-12000) || null
+              : null;
+          }
+          const checks = {
+            patch: process.env.PATCH_OUTCOME,
+            typecheck: process.env.TYPECHECK_OUTCOME,
+            tests: process.env.TEST_OUTCOME,
+            build: process.env.BUILD_OUTCOME,
+          };
+          const passed = Object.values(checks).every((value) => value === "success");
           fs.writeFileSync(
             "src/data/elections/2026/type-fix-status.json",
             `${JSON.stringify({
               updatedAt: new Date().toISOString(),
-              conclusion: process.env.PATCH_OUTCOME,
+              conclusion: passed ? "success" : "failure",
               runId: process.env.RUN_ID,
               runUrl: process.env.RUN_URL,
-              summary: log,
+              checks,
+              patchSummary: compact("/tmp/election-type-fix.log"),
+              typecheckSummary: compact("/tmp/election-typecheck.log"),
+              testSummary: compact("/tmp/election-type-tests.log"),
+              buildSummary: compact("/tmp/election-type-build.log"),
             }, null, 2)}\n`,
           );
           NODE
+
+          passed=true
+          if [[ "$PATCH_OUTCOME" != "success" || "$TYPECHECK_OUTCOME" != "success" || "$TEST_OUTCOME" != "success" || "$BUILD_OUTCOME" != "success" ]]; then
+            passed=false
+          fi
+
+          # Build may regenerate the route tree; it is validation output, not an approved patch artifact.
+          git restore src/routeTree.gen.ts || true
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add \
-            src/components/elections/navigation/ElectionNavigation.tsx \
-            src/lib/elections/repositories/static.ts \
-            src/routes/elections.tsx \
-            src/routes/elections.2026.tsx \
-            scripts/elections/import-candidates.ts \
-            src/data/elections/2026/type-fix-status.json
+
+          if [[ "$passed" == "true" ]]; then
+            git add \
+              src/components/elections/navigation/ElectionNavigation.tsx \
+              src/lib/elections/repositories/static.ts \
+              src/routes/elections.tsx \
+              src/routes/elections.2026.tsx \
+              scripts/elections/import-candidates.ts \
+              src/data/elections/2026/type-fix-status.json
+            message="Apply validated Election Central type fixes"
+          else
+            git restore \
+              src/components/elections/navigation/ElectionNavigation.tsx \
+              src/lib/elections/repositories/static.ts \
+              src/routes/elections.tsx \
+              src/routes/elections.2026.tsx \
+              scripts/elections/import-candidates.ts || true
+            git add src/data/elections/2026/type-fix-status.json
+            message="Record failed Election Central type-fix validation"
+          fi
+
+          allowed='^(src/components/elections/navigation/ElectionNavigation.tsx|src/lib/elections/repositories/static.ts|src/routes/elections.tsx|src/routes/elections.2026.tsx|scripts/elections/import-candidates.ts|src/data/elections/2026/type-fix-status.json)$'
+          unexpected=$(git diff --cached --name-only | grep -Ev "$allowed" || true)
+          if [[ -n "$unexpected" ]]; then
+            echo "Refusing to publish unexpected files:"
+            echo "$unexpected"
+            exit 1
+          fi
           if ! git diff --cached --quiet; then
-            git commit -m "Apply Election Central type fixes"
-            git pull --rebase origin main
+            git commit -m "$message"
+            git fetch origin main
+            if [[ "$(git rev-parse HEAD^)" != "$(git rev-parse origin/main)" ]]; then
+              echo "Main advanced during type-fix validation; refusing stale source publication."
+              exit 1
+            fi
             git push origin HEAD:main
           fi
-          if [[ "$PATCH_OUTCOME" != "success" ]]; then
+          if [[ "$passed" != "true" ]]; then
             exit 1
           fi
