@@ -43,7 +43,7 @@ function isMissingBypassRpc(error: { message?: string } | null): boolean {
 }
 
 export const publishFeedItemFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => InputSchema.parse(d))
+  .validator((d: unknown) => InputSchema.parse(d))
   .handler(async ({ data }): Promise<PublishArticleResult> => {
     const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
     if (data.token !== expected) return { ok: false, error: "Unauthorized" };
