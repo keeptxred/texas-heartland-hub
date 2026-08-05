@@ -18,7 +18,7 @@ const ListInput = z.object({
 });
 
 export const listBillEditorialEnrichments = createServerFn({ method: 'POST' })
-  .inputValidator((input: unknown) => ListInput.parse(input))
+  .validator((input: unknown) => ListInput.parse(input))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     const admin = await getAdmin();
@@ -38,7 +38,7 @@ const CandidateInput = z.object({
 });
 
 export const listBillEditorialCandidates = createServerFn({ method: 'POST' })
-  .inputValidator((input: unknown) => CandidateInput.parse(input))
+  .validator((input: unknown) => CandidateInput.parse(input))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     const admin = await getAdmin();
@@ -79,7 +79,7 @@ const SaveInput = z.object({
 });
 
 export const saveBillEditorialEnrichment = createServerFn({ method: 'POST' })
-  .inputValidator((input: unknown) => SaveInput.parse(input))
+  .validator((input: unknown) => SaveInput.parse(input))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     if (data.reviewStatus === 'approved' && data.sourceDocumentIds.length === 0 && data.sourceUrls.length === 0) {
