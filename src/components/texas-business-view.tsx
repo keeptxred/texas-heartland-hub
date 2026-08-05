@@ -15,12 +15,10 @@ export const BUSINESS_SLUGS: Record<string, string[]> = {
     "texas-grid-ercot-explained",
   ],
   jobs: ["texas-energy-economy-overview", "why-texas-has-no-income-tax"],
-  relocations: ["why-texas-has-no-income-tax", "what-local-governments-control"],
-  "real-estate": [
-    "texas-water-rights-explained",
+  regulation: ["texas-energy-policy-guide", "what-local-governments-control"],
+  taxation: [
     "property-tax-relief-package",
     "county-appraisal-districts-explained",
-    "texas-property-tax-guide",
     "isd-tax-burdens",
     "how-texas-counties-spend",
   ],
@@ -42,17 +40,15 @@ const IMAGE_OVERRIDES: Record<string, string> = {
 };
 
 export const BUSINESS_SECTIONS = [
-  { id: "energy", title: "Energy", description: "Oil and gas, the ERCOT grid, renewables, and Permian production." },
-  { id: "jobs", title: "Jobs & Workforce", description: "Hiring trends, wages, and the Texas labor market." },
-  { id: "relocations", title: "Relocations", description: "Corporate HQ moves to Austin, Dallas-Fort Worth, and Houston." },
-  { id: "real-estate", title: "Real Estate", description: "Commercial development, housing supply, and property taxes." },
-  { id: "policy", title: "Policy", description: "Legislative changes that affect Texas businesses and small employers." },
+  { id: "energy", title: "Energy", description: "Oil and gas, ERCOT, generation policy, and Permian production." },
+  { id: "jobs", title: "Jobs & Workforce", description: "Employment policy, wages, workforce programs, and the Texas labor market." },
+  { id: "regulation", title: "Regulation", description: "State agencies, permitting, local authority, and rules affecting employers." },
+  { id: "taxation", title: "Taxes & Spending", description: "Business taxes, property-tax policy, appropriations, and local government finance." },
+  { id: "policy", title: "Legislation", description: "Bills and state decisions affecting Texas businesses and workers." },
 ];
 
 export function TexasBusinessView({ topic }: { topic: string }) {
   const lastUpdated = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
-  // Prefer the curated per-topic slug lists (hand-picked evergreen coverage);
-  // fall back to the shared keyword filter so newly-tagged articles show up.
   const curated = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_BUSINESS_SLUGS;
   const curatedArticles = curated
     .map((s) => ARTICLES.find((a) => a.slug === s))
@@ -76,22 +72,22 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           <div className="max-w-3xl">
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Texas Business</span>
             <h1 className="font-sans text-4xl md:text-5xl font-semibold tracking-tight mt-2 text-foreground">
-              {activeSection ? `${activeSection.title} — Texas Business` : "Texas Business News & Economy"}
+              {activeSection ? `${activeSection.title} — Texas Business` : "Texas Business, Regulation & Economic Policy"}
             </h1>
             <p className="mt-4 max-w-3xl text-base text-muted-foreground leading-relaxed">
               {activeSection
                 ? activeSection.description
-                : "Coverage of the Texas economy, jobs, and the companies driving growth across the state — oil and gas, manufacturing, technology, finance, and the corporate relocations bringing capital and headcount to Houston, Dallas, Austin, and San Antonio."}
+                : "Reporting on Texas energy, jobs, regulation, taxation, state spending, and legislation affecting employers and workers. TexasDefined separately owns household calculators, relocation guidance, real-estate planning, and cost-of-living tools."}
             </p>
             <p className="mt-3 text-xs text-muted-foreground">Last updated: {lastUpdated}</p>
           </div>
           <div className="shrink-0 lg:max-w-xs">
-            <h2 className="font-sans text-lg font-semibold tracking-tight text-foreground">Related Tools</h2>
+            <h2 className="font-sans text-lg font-semibold tracking-tight text-foreground">Government resources</h2>
             <ul className="mt-3 space-y-2 text-sm">
-              <li><Link to="/tax-calculator" className="text-primary hover:underline">Property tax calculator by county →</Link></li>
-              <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economy section →</Link></li>
-              <li><Link to="/legislative-updates" className="text-primary hover:underline">Legislative updates →</Link></li>
-              <li><Link to="/texas-laws" className="text-primary hover:underline">Texas laws explained →</Link></li>
+              <li><Link to="/bills" className="text-primary hover:underline">Search Texas bills →</Link></li>
+              <li><Link to="/texas-economy" className="text-primary hover:underline">Texas economic policy →</Link></li>
+              <li><Link to="/texas-legislature" className="text-primary hover:underline">Texas Legislature →</Link></li>
+              <li><Link to="/committees" className="text-primary hover:underline">Legislative committees →</Link></li>
             </ul>
           </div>
         </div>
@@ -131,7 +127,7 @@ export function TexasBusinessView({ topic }: { topic: string }) {
               {activeSection ? `${activeSection.title} coverage` : "Latest Texas business coverage"}
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              {activeSection ? activeSection.description : "Energy, taxes, jobs, and the policy stories shaping the Texas economy."}
+              {activeSection ? activeSection.description : "Energy, taxes, jobs, regulation, and legislation shaping the Texas economy."}
             </p>
           </div>
           {activeSection && (
@@ -172,6 +168,7 @@ export function TexasBusinessView({ topic }: { topic: string }) {
           <li><Link to="/houston" className="text-primary hover:underline">Houston News →</Link></li>
           <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>
           <li><Link to="/elections" className="text-primary hover:underline">Elections →</Link></li>
+          <li><Link to="/bills" className="text-primary hover:underline">Texas Bills →</Link></li>
         </ul>
       </section>
     </div>
