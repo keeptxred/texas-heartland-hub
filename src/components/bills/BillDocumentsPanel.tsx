@@ -6,6 +6,7 @@ import {
   legislativeDocumentLabel,
   type LegislativeDocument,
 } from '@/lib/bill-documents';
+import { getLatestBillAnalysisSummary } from '@/lib/bill-analysis-summary';
 import { getLatestBillFiscalImpact } from '@/lib/bill-fiscal-impact';
 
 type BillDocumentsPanelProps = {
@@ -15,12 +16,33 @@ type BillDocumentsPanelProps = {
 
 export function BillDocumentsPanel({ documents, fallbackLinks = [] }: BillDocumentsPanelProps) {
   const groups = groupLegislativeDocuments(documents);
+  const analysisSummary = getLatestBillAnalysisSummary(documents);
   const fiscalImpact = getLatestBillFiscalImpact(documents);
   const hasDocuments = groups.length > 0 || fallbackLinks.length > 0;
 
   return (
     <section id="documents" className="scroll-mt-24 rounded-xl border bg-card p-5">
       <h2 className="font-bold">Official documents</h2>
+      {analysisSummary ? (
+        <div className="mt-4 rounded-lg border bg-muted/30 p-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-primary">Committee analysis at a glance</p>
+          <p className="mt-1 text-xs text-muted-foreground">{analysisSummary.label}</p>
+          {analysisSummary.backgroundAndPurpose ? <p className="mt-3 text-sm leading-relaxed">{analysisSummary.backgroundAndPurpose}</p> : null}
+          {analysisSummary.rulemakingAuthority ? (
+            <p className="mt-3 text-sm leading-relaxed"><strong>Rulemaking authority:</strong> {analysisSummary.rulemakingAuthority}</p>
+          ) : null}
+          {analysisSummary.criminalJusticeImpact ? (
+            <p className="mt-3 text-sm leading-relaxed"><strong>Criminal justice impact:</strong> {analysisSummary.criminalJusticeImpact}</p>
+          ) : null}
+          {analysisSummary.committeeAmendments ? (
+            <details className="mt-3 border-t pt-3">
+              <summary className="cursor-pointer text-sm font-medium text-primary">Committee amendments or substitute comparison</summary>
+              <p className="mt-2 text-sm leading-relaxed">{analysisSummary.committeeAmendments}</p>
+            </details>
+          ) : null}
+          <p className="mt-3 text-xs text-muted-foreground">This summary is extracted from the official committee analysis and does not replace the complete document.</p>
+        </div>
+      ) : null}
       {fiscalImpact ? (
         <div className="mt-4 rounded-lg border border-primary/30 bg-primary/5 p-4">
           <p className="text-xs font-bold uppercase tracking-wide text-primary">Fiscal impact at a glance</p>
