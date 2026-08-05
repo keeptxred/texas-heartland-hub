@@ -37,12 +37,12 @@ export function NewsSourceHealthPanel() {
     let active = true;
     (async () => {
       const { data, error: queryError } = await supabase
-        .from("news_source_health")
+        .from("news_source_health" as never)
         .select("source_name,rss_url,category,latest_item_at,items_24h,items_7d,covered_7d,health_status,coverage_rate_7d")
         .order("source_name", { ascending: true });
       if (!active) return;
       if (queryError) setError(queryError.message);
-      else setRows((data ?? []) as SourceHealthRow[]);
+      else setRows((data ?? []) as unknown as SourceHealthRow[]);
       setLoading(false);
     })();
     return () => {
@@ -66,7 +66,9 @@ export function NewsSourceHealthPanel() {
   if (error) {
     return (
       <div role="alert" className="border-2 border-red-300 bg-red-50 p-4 text-sm text-red-900">
-        Source health could not be loaded: {error}
+        Source-health reporting is not active yet. Apply the latest database migrations to create the
+        <code className="mx-1">news_source_health</code> view.
+        <div className="mt-1 text-xs opacity-75">{error}</div>
       </div>
     );
   }
