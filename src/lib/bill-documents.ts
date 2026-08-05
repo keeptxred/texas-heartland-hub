@@ -31,6 +31,7 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 const TYPE_ORDER = ['bill_text', 'analysis', 'fiscal_note', 'witness_list', 'history'];
+const AMENDMENT_PRINTING_PATTERN = /amendment/i;
 
 const safeTime = (value?: string | null) => {
   if (!value) return 0;
@@ -40,6 +41,12 @@ const safeTime = (value?: string | null) => {
 
 export function legislativeDocumentHref(document: LegislativeDocument) {
   return document.source_html_url || document.source_pdf_url || document.document_url || null;
+}
+
+export function isLegislativeAmendmentPrinting(document: LegislativeDocument) {
+  return AMENDMENT_PRINTING_PATTERN.test(
+    [document.version_label, document.document_title, document.version_code].filter(Boolean).join(' '),
+  );
 }
 
 export function legislativeDocumentLabel(document: LegislativeDocument) {
