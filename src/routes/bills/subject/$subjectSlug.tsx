@@ -1,6 +1,10 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { canonicalBillPath, SITE_URL } from '@/lib/bills';
-import { getBillSubjectBySlug, getBillsForSubject } from '@/lib/bill-subjects';
+import {
+  getBillSubjectBySlug,
+  getBillsForSubject,
+  type BillSubjectBill,
+} from '@/lib/bill-subjects';
 
 const EMPTY_BILLS_SEARCH = {
   q: '',
@@ -96,7 +100,7 @@ function BillSubjectPage() {
         <h2 className="text-2xl font-bold">Bills in this subject</h2>
         {bills.length ? (
           <div className="mt-5 grid gap-4 md:grid-cols-2">
-            {bills.map((bill) => (
+            {bills.map((bill: BillSubjectBill) => (
               <a key={bill.id} href={canonicalBillPath(bill)} className="rounded-lg border p-5 hover:border-primary">
                 <div className="flex flex-wrap items-center gap-2">
                   <strong>{bill.bill_identifier}</strong>

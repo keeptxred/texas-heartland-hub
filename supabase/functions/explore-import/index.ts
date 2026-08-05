@@ -1,4 +1,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import {
+  classify,
+  distanceKm,
+  inTexas,
+  isRecord as isPlainRecord,
+  normalizedName,
+  pick as pickField,
+  slugify,
+} from "../_shared/explore-classify.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -10,6 +19,7 @@ interface ImportRequest {
   jobId?: string;
   sourceId?: string;
   executionMode?: "live" | "dry-run" | "preview";
+  limit?: number;
 }
 
 interface SourceRow {
@@ -35,12 +45,25 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-function authorize(request: Request): boolean {
+// Import runs are privileged: an import secret, or a service-role credential
+// (verified against an Auth Admin endpoint), is required. Never anonymous.
+async function authorize(request: Request, supabaseUrl: string): Promise<boolean> {
   const configured = Deno.env.get("EXPLORE_IMPORT_SECRET");
-  if (!configured) return true;
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   const direct = request.headers.get("x-import-secret");
   const bearer = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
-  return direct === configured || bearer === configured;
+  if (configured && (direct === configured || bearer === configured)) return true;
+  if (serviceRoleKey && (direct === serviceRoleKey || bearer === serviceRoleKey)) return true;
+  const candidate = direct || bearer;
+  if (!candidate) return false;
+  try {
+    const probe = await fetch(`${supabaseUrl}/auth/v1/admin/users?page=1&per_page=1`, {
+      headers: { apikey: candidate, authorization: `Bearer ${candidate}` },
+    });
+    return probe.ok;
+  } catch {
+    return false;
+  }
 }
 
 function stableStringify(value: unknown): string {
@@ -76,27 +99,27 @@ function getRecords(payload: unknown): Record<string, unknown>[] {
   return [payload];
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
+const isRecord = isPlainRecord;
+const pick = pickField;
 
-function pick(record: Record<string, unknown>, fields: string[]): unknown {
-  for (const field of fields) {
-    const value = record[field];
-    if (value !== undefined && value !== null && value !== "") return value;
-  }
-  return undefined;
-}
-
-function normalize(raw: Record<string, unknown>, source: SourceRow): Record<string, unknown> {
+function normalize(
+  raw: Record<string, unknown>,
+  source: SourceRow,
+  allowedTypeKeys: Set<string>,
+): Record<string, unknown> {
   const properties = isRecord(raw.properties) ? raw.properties : raw;
   const geometry = isRecord(raw.geometry) ? raw.geometry : null;
   const coordinates = Array.isArray(geometry?.coordinates) ? geometry.coordinates : [];
-  const longitude = Number(pick(properties, ["longitude", "lon", "lng", "x"]) ?? coordinates[0]);
-  const latitude = Number(pick(properties, ["latitude", "lat", "y"]) ?? coordinates[1]);
+  const longitude = Number(
+    pick(properties, ["longitude", "lon", "lng", "ddx", "x"]) ?? coordinates[0],
+  );
+  const latitude = Number(pick(properties, ["latitude", "lat", "ddy", "y"]) ?? coordinates[1]);
   const externalId = String(
     pick(properties, [
       "external_id",
+      "locode",
+      "parkcode",
+      "unit_code",
       "facility_id",
       "site_id",
       "park_id",
@@ -105,44 +128,58 @@ function normalize(raw: Record<string, unknown>, source: SourceRow): Record<stri
       "objectid",
     ]) ?? "",
   );
-  const name = String(
+  const rawName = String(
     pick(properties, [
       "name",
       "title",
+      "fullname",
       "park_name",
       "site_name",
       "facility_name",
       "location_name",
     ]) ?? "",
   ).trim();
-  const entityTypeBySource: Record<string, string> = {
-    tpwd: "park",
-    nps: "park",
-    usace: "recreation_area",
-    usfs: "public_land",
-    thc: "historic_site",
-    usgs: "natural_feature",
-    noaa: "observation_station",
-    twdb: "water_resource",
-    osm: "place",
-    county_gis: "place",
-    municipality: "place",
-    tourism: "attraction",
-    custom: "place",
-  };
+  // Some authoritative feeds publish a bare place name plus a separate
+  // designation field ("Abilene" + "State Park"). Compose a display name so
+  // slugs and titles are unambiguous.
+  const designation = String(
+    pick(properties, ["Type", "type", "designation", "unit_type", "park_type"]) ?? "",
+  ).trim();
+  const name =
+    rawName && designation && !rawName.toLowerCase().includes(designation.toLowerCase())
+      ? `${rawName} ${designation}`
+      : rawName;
+  // Record-aware classification: feature/facility type and designation first,
+  // then the record name, and only then a per-source fallback (which is always
+  // reported as unconfident so the record stays pending for human review).
+  const classification = classify(properties, source.source_type, allowedTypeKeys);
+  const lat = Number.isFinite(latitude) ? latitude : null;
+  const lng = Number.isFinite(longitude) ? longitude : null;
   return {
     externalId,
-    entityType: entityTypeBySource[source.source_type] ?? "place",
+    entityType: classification.entityType,
+    classificationConfident: classification.confident,
+    classificationSignal: classification.signal,
     name,
+    normalizedName: normalizedName(name),
+    slug: name ? slugify(name) : undefined,
     description: pick(properties, ["description", "summary", "details"]) ?? null,
-    latitude: Number.isFinite(latitude) ? latitude : null,
-    longitude: Number.isFinite(longitude) ? longitude : null,
-    address: pick(properties, ["address", "street_address"]) ?? null,
-    taxonomy: [source.source_type],
+    latitude: lat,
+    longitude: lng,
+    inTexas: inTexas(lat, lng),
+    address: {
+      line1: pick(properties, ["address", "street_address", "street", "address_line_1"]) ?? null,
+      city: pick(properties, ["city", "municipality", "town"]) ?? null,
+      county: pick(properties, ["county", "county_name"]) ?? null,
+      postalCode: pick(properties, ["zip", "zipcode", "postal_code", "postalcode"]) ?? null,
+      phone: pick(properties, ["phone", "telephone", "phone_number"]) ?? null,
+    },
+    officialUrl: pick(properties, ["url", "website", "web", "link"]) ?? null,
+    taxonomy: [source.source_type, classification.entityType],
     relationships: [],
     media: [],
     sourceUpdatedAt: pick(properties, ["updated_at", "modified", "last_updated"]) ?? null,
-    sourceUrl: source.endpoint,
+    sourceUrl: pick(properties, ["url", "website", "link"]) ?? source.endpoint,
     metadata: properties,
     raw,
   };
@@ -184,6 +221,14 @@ function validate(
       code: "invalid_longitude",
       message: "Longitude must be between -180 and 180",
       path: "longitude",
+      severity: "error",
+    });
+  }
+  if (!record.inTexas) {
+    issues.push({
+      code: "coordinates_outside_texas",
+      message: "Coordinates are missing, 0,0, or outside Texas bounds",
+      path: "latitude",
       severity: "error",
     });
   }
@@ -244,12 +289,12 @@ async function fetchWithRetry(source: SourceRow): Promise<unknown> {
 Deno.serve(async (request) => {
   if (request.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (request.method !== "POST") return json({ error: "Method not allowed" }, 405);
-  if (!authorize(request)) return json({ error: "Unauthorized" }, 401);
-
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!supabaseUrl || !serviceRoleKey)
     return json({ error: "Supabase service configuration is missing" }, 500);
+  if (!(await authorize(request, supabaseUrl))) return json({ error: "Unauthorized" }, 401);
+
   const client = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
   let body: ImportRequest;
@@ -317,29 +362,93 @@ Deno.serve(async (request) => {
     duplicates: 0,
     validationErrors: 0,
     failed: 0,
+    pendingReview: 0,
+    unconfidentClassification: 0,
   };
   const warnings: string[] = [];
 
   try {
+    const { data: typeRows } = await client
+      .from("explore_entity_types")
+      .select("key")
+      .eq("is_active", true);
+    const allowedTypeKeys = new Set((typeRows ?? []).map((row) => String(row.key)));
+
     const payload = await fetchWithRetry(source as SourceRow);
     statistics.downloaded = 1;
-    const records = getRecords(payload);
+    const allRecords = getRecords(payload);
+    // `limit` bounds a smoke test / limited live run without touching the source config.
+    const cap = Number(body.limit ?? 0);
+    // Some feeds publish several points per destination (headquarters plus
+    // access points). Process the headquarters/primary point first so the
+    // canonical record wins, then skip the rest of that external id in-run.
+    const ordered = [...allRecords].sort((a, b) => {
+      const rank = (record: Record<string, unknown>) => {
+        const properties = isRecord(record.properties) ? record.properties : record;
+        const note = String(pick(properties, ["Comments", "comments", "note"]) ?? "").toLowerCase();
+        return note.includes("headquarter") ? 0 : 1;
+      };
+      return rank(a) - rank(b);
+    });
+    const records = cap > 0 ? ordered.slice(0, cap) : ordered;
     statistics.parsed = records.length;
+    const seenExternalIds = new Set<string>();
 
     for (let index = 0; index < records.length; index += 1) {
-      const normalized = normalize(records[index], source as SourceRow);
+      const normalized = normalize(records[index], source as SourceRow, allowedTypeKeys);
       statistics.normalized += 1;
       const issues = validate(normalized);
       const digest = await checksum(normalized);
       const externalId = String(normalized.externalId);
+      if (externalId && seenExternalIds.has(externalId)) {
+        // Secondary point for a destination already handled in this run.
+        statistics.duplicates += 1;
+        continue;
+      }
+      if (externalId) seenExternalIds.add(externalId);
       const { data: previous } = await client
         .from("explore_import_records")
-        .select("checksum")
+        .select("checksum,entity_id")
         .eq("source_id", sourceId)
         .eq("external_id", externalId)
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      // Dedup: same normalized name + entity type, or a public entity within
+      // 1km of the same name. Never merged automatically — recorded as a
+      // candidate so the record stays pending for a human decision.
+      const duplicateCandidates: Array<Record<string, unknown>> = [];
+      if (!issues.length && !previous) {
+        const { data: nameMatches } = await client
+          .from("explore_entities")
+          .select("id,name,slug,status,visibility,explore_locations(latitude,longitude)")
+          .ilike("name", String(normalized.name))
+          .limit(5);
+        for (const match of nameMatches ?? []) {
+          const location = Array.isArray(match.explore_locations)
+            ? match.explore_locations[0]
+            : match.explore_locations;
+          const km =
+            location && normalized.latitude && normalized.longitude
+              ? distanceKm(
+                  Number(normalized.latitude),
+                  Number(normalized.longitude),
+                  Number(location.latitude),
+                  Number(location.longitude),
+                )
+              : null;
+          duplicateCandidates.push({
+            entityId: match.id,
+            slug: match.slug,
+            matchedOn: km !== null && km <= 1 ? "name_and_proximity" : "name",
+            distanceKm: km,
+          });
+        }
+      }
+      if (duplicateCandidates.length) statistics.duplicates += 1;
+      if (!normalized.classificationConfident) statistics.unconfidentClassification += 1;
+
       const action = issues.length
         ? "reject"
         : previous?.checksum === digest
@@ -352,17 +461,47 @@ Deno.serve(async (request) => {
       else if (action === "update") statistics.updated += 1;
       else statistics.unchanged += 1;
 
+      // Approval state: invalid -> rejected. Duplicate candidates or an
+      // unconfident classification -> pending. Clean authoritative records ->
+      // pending only until the batch approval path promotes them.
+      const reviewStatus =
+        action === "reject"
+          ? "rejected"
+          : action === "unchanged"
+            ? "approved"
+            : "pending";
+      if (reviewStatus === "pending") statistics.pendingReview += 1;
+
+      // Dry runs inspect normalization without writing import records.
+      if ((body.executionMode ?? "live") !== "live") {
+        if (index < 10) warnings.push(`dry-run sample: ${JSON.stringify({
+          externalId,
+          name: normalized.name,
+          entityType: normalized.entityType,
+          confident: normalized.classificationConfident,
+          signal: normalized.classificationSignal,
+          latitude: normalized.latitude,
+          longitude: normalized.longitude,
+          county: (normalized.address as Record<string, unknown>)?.county ?? null,
+          action,
+          reviewStatus,
+        })}`);
+        continue;
+      }
+
       const { error } = await client.from("explore_import_records").insert({
         job_id: jobId,
         source_id: sourceId,
         external_id: externalId || `invalid-${index}`,
         action,
         checksum: digest,
+        previous_checksum: previous?.checksum ?? null,
         normalized_payload: normalized,
         raw_payload: records[index],
         validation_issues: issues,
-        duplicate_candidates: [],
-        review_status: action === "unchanged" ? "approved" : "pending",
+        duplicate_candidates: duplicateCandidates,
+        review_status: reviewStatus,
+        entity_id: previous?.entity_id ?? null,
       });
       if (error) {
         statistics.failed += 1;

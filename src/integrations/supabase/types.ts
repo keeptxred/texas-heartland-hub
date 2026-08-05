@@ -2271,6 +2271,7 @@ export type Database = {
           normalized_payload: Json
           previous_checksum: string | null
           raw_payload: Json | null
+          review_notes: string | null
           review_status: string
           reviewed_at: string | null
           reviewed_by: string | null
@@ -2289,6 +2290,7 @@ export type Database = {
           normalized_payload: Json
           previous_checksum?: string | null
           raw_payload?: Json | null
+          review_notes?: string | null
           review_status?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -2307,6 +2309,7 @@ export type Database = {
           normalized_payload?: Json
           previous_checksum?: string | null
           raw_payload?: Json | null
+          review_notes?: string | null
           review_status?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
