@@ -1,5 +1,4 @@
 import { createFileRoute, Link, notFound } from '@tanstack/react-router';
-import { ExternalLink } from 'lucide-react';
 import { SITE_URL } from '@/lib/bills';
 import { getBillSubjectBySlug, getBillsForSubject } from '@/lib/bill-subjects';
 
@@ -14,7 +13,7 @@ export const Route = createFileRoute('/bills/subject/$subjectSlug')({
     if (!loaderData) return {};
     const { subject, bills } = loaderData;
     const canonical = `${SITE_URL}/bills/subject/${subject.slug}`;
-    const description = subject.description || `Track ${bills.length} active Texas bills classified under ${subject.name}, with current status and official legislative links.`;
+    const description = `Track ${bills.length} active Texas bills classified under ${subject.name}, with current status and official legislative records.`;
     return {
       meta: [
         { title: `${subject.name} Texas Bills | KeepTXRed` },
@@ -74,13 +73,7 @@ function BillSubjectPage() {
       <header className="mt-6 rounded-2xl border bg-card p-8">
         <p className="text-sm font-bold uppercase tracking-wide text-primary">Texas legislation subject</p>
         <h1 className="mt-2 text-4xl font-bold">{subject.name}</h1>
-        {subject.description ? <p className="mt-4 max-w-3xl text-lg text-muted-foreground">{subject.description}</p> : null}
-        <p className="mt-4 text-sm text-muted-foreground">{bills.length} active bill{bills.length === 1 ? '' : 's'} currently classified under this verified subject.</p>
-        {subject.source_url ? (
-          <a className="mt-5 inline-flex items-center gap-1 font-semibold text-primary hover:underline" href={subject.source_url} target="_blank" rel="noopener noreferrer">
-            Official subject source <ExternalLink className="h-4 w-4" />
-          </a>
-        ) : null}
+        <p className="mt-4 text-sm text-muted-foreground">{bills.length} active bill{bills.length === 1 ? '' : 's'} currently classified under this verified legislative subject.</p>
       </header>
 
       <section className="mt-8 rounded-xl border bg-card p-6">
