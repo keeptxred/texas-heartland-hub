@@ -3,6 +3,7 @@ name: Legislative platform validation
 on:
   pull_request:
     paths:
+      - 'package.json'
       - 'src/routes/bills/**'
       - 'src/routes/admin/bills/**'
       - 'src/components/bills/**'
@@ -16,6 +17,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'package.json'
       - 'src/routes/bills/**'
       - 'src/routes/admin/bills/**'
       - 'src/components/bills/**'
