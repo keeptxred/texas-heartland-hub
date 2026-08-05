@@ -9,676 +9,375 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
-import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
-import { Route as TexasUtilityCostCalculatorRouteImport } from './routes/texas-utility-cost-calculator'
-import { Route as TexasSportsRouteImport } from './routes/texas-sports'
-import { Route as TexasSalesTaxExplainedRouteImport } from './routes/texas-sales-tax-explained'
-import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-salary-comparison-by-city'
-import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
-import { Route as TexasResourcesRouteImport } from './routes/texas-resources'
-import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
-import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/texas-refinance-savings-calculator'
-import { Route as TexasPropertyTaxProtestGuideRouteImport } from './routes/texas-property-tax-protest-guide'
-import { Route as TexasPropertyTaxIncreaseCalculatorRouteImport } from './routes/texas-property-tax-increase-calculator'
-import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
-import { Route as TexasNewsRouteImport } from './routes/texas-news'
-import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-moving-cost-calculator'
-import { Route as TexasMortgagePayoffCalculatorRouteImport } from './routes/texas-mortgage-payoff-calculator'
-import { Route as TexasMortgageCalculatorRouteImport } from './routes/texas-mortgage-calculator'
-import { Route as TexasLivingRouteImport } from './routes/texas-living'
-import { Route as TexasLegislatureRouteImport } from './routes/texas-legislature'
-import { Route as TexasLawsRouteImport } from './routes/texas-laws'
-import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
-import { Route as TexasHomeownershipCostCalculatorRouteImport } from './routes/texas-homeownership-cost-calculator'
-import { Route as TexasHomeInsuranceCalculatorRouteImport } from './routes/texas-home-insurance-calculator'
-import { Route as TexasHomeEquityGrowthCalculatorRouteImport } from './routes/texas-home-equity-growth-calculator'
-import { Route as TexasHomeEquityCalculatorRouteImport } from './routes/texas-home-equity-calculator'
-import { Route as TexasHomeAffordabilityCalculatorRouteImport } from './routes/texas-home-affordability-calculator'
-import { Route as TexasGovernmentRouteImport } from './routes/texas-government'
-import { Route as TexasFirstTimeHomebuyerProgramsRouteImport } from './routes/texas-first-time-homebuyer-programs'
-import { Route as TexasFinancialToolsRouteImport } from './routes/texas-financial-tools'
-import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
-import { Route as TexasDownPaymentCalculatorRouteImport } from './routes/texas-down-payment-calculator'
-import { Route as TexasDownPaymentAssistanceCalculatorRouteImport } from './routes/texas-down-payment-assistance-calculator'
-import { Route as TexasDataRouteImport } from './routes/texas-data'
-import { Route as TexasCostOfLivingCalculatorRouteImport } from './routes/texas-cost-of-living-calculator'
-import { Route as TexasClosingCostCalculatorRouteImport } from './routes/texas-closing-cost-calculator'
-import { Route as TexasBusinessRouteImport } from './routes/texas-business'
-import { Route as TexasBudgetPlannerRouteImport } from './routes/texas-budget-planner'
-import { Route as TexasRouteImport } from './routes/texas'
-import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SitemapRepresentativesDotxmlRouteImport } from './routes/sitemap-representatives[.]xml'
-import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-products[.]xml'
-import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
-import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
-import { Route as SitemapLegislatureDotxmlRouteImport } from './routes/sitemap-legislature[.]xml'
-import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
-import { Route as SitemapGovernmentDotxmlRouteImport } from './routes/sitemap-government[.]xml'
-import { Route as SitemapExploreDotxmlRouteImport } from './routes/sitemap-explore[.]xml'
-import { Route as SitemapExploreLocationsDotxmlRouteImport } from './routes/sitemap-explore-locations[.]xml'
-import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
-import { Route as SitemapElectionsDotxmlRouteImport } from './routes/sitemap-elections[.]xml'
-import { Route as SitemapDistrictsDotxmlRouteImport } from './routes/sitemap-districts[.]xml'
-import { Route as SitemapCommitteesDotxmlRouteImport } from './routes/sitemap-committees[.]xml'
-import { Route as SitemapBillsDotxmlRouteImport } from './routes/sitemap-bills[.]xml'
-import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
-import { Route as ShopRouteImport } from './routes/shop'
-import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
-import { Route as SanAntonioRouteImport } from './routes/san-antonio'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as ReturnRefundPolicyRouteImport } from './routes/return-refund-policy'
-import { Route as RepresentativesRouteImport } from './routes/representatives'
-import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as NewsSitemapDotxmlRouteImport } from './routes/news-sitemap[.]xml'
-import { Route as NewsRouteImport } from './routes/news'
-import { Route as MovingToTexasChecklistRouteImport } from './routes/moving-to-texas-checklist'
-import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
-import { Route as LivingInTexasRouteImport } from './routes/living-in-texas'
-import { Route as LegislatureRouteImport } from './routes/legislature'
-import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
-import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
-import { Route as LawsRouteImport } from './routes/laws'
-import { Route as KeepTexasRedRouteImport } from './routes/keep-texas-red'
-import { Route as HoustonRouteImport } from './routes/houston'
-import { Route as HappeningNowRouteImport } from './routes/happening-now'
-import { Route as GoogleMerchantFeedDotxmlRouteImport } from './routes/google-merchant-feed[.]xml'
-import { Route as GlossaryRouteImport } from './routes/glossary'
-import { Route as GetInvolvedRouteImport } from './routes/get-involved'
-import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
-import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-school-district'
-import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
-import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as ElectionsRouteImport } from './routes/elections'
-import { Route as ElPasoRouteImport } from './routes/el-paso'
-import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
-import { Route as DmvRouteImport } from './routes/dmv'
-import { Route as DallasFortWorthRouteImport } from './routes/dallas-fort-worth'
-import { Route as CountyElectionsRouteImport } from './routes/county-elections'
-import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
-import { Route as BillsRouteImport } from './routes/bills'
-import { Route as AustinRouteImport } from './routes/austin'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as TexasIndexRouteImport } from './routes/texas.index'
-import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
-import { Route as TexasNewsIndexRouteImport } from './routes/texas-news/index'
-import { Route as TexasLegislatureIndexRouteImport } from './routes/texas-legislature.index'
-import { Route as ShopIndexRouteImport } from './routes/shop.index'
-import { Route as NewsIndexRouteImport } from './routes/news.index'
-import { Route as ExploreIndexRouteImport } from './routes/explore.index'
-import { Route as ElectionsIndexRouteImport } from './routes/elections.index'
-import { Route as BillsIndexRouteImport } from './routes/bills/index'
-import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
-import { Route as VehiclesTitleTransferRouteImport } from './routes/vehicles.title-transfer'
-import { Route as VehiclesTemporaryTagsRouteImport } from './routes/vehicles.temporary-tags'
-import { Route as VehiclesSellingACarRouteImport } from './routes/vehicles.selling-a-car'
-import { Route as VehiclesSalvageRebuiltTitlesRouteImport } from './routes/vehicles.salvage-rebuilt-titles'
-import { Route as VehiclesRenewalRouteImport } from './routes/vehicles.renewal'
-import { Route as VehiclesRegistrationFeesTaxesRouteImport } from './routes/vehicles.registration-fees-taxes'
-import { Route as VehiclesRegistrationRouteImport } from './routes/vehicles.registration'
-import { Route as VehiclesPrivatePartySalesRouteImport } from './routes/vehicles.private-party-sales'
-import { Route as VehiclesPlatesRouteImport } from './routes/vehicles.plates'
-import { Route as VehiclesPersonalizedPlatesRouteImport } from './routes/vehicles.personalized-plates'
-import { Route as VehiclesNewResidentsRouteImport } from './routes/vehicles.new-residents'
-import { Route as VehiclesLiensDuplicateCorrectedTitlesRouteImport } from './routes/vehicles.liens-duplicate-corrected-titles'
-import { Route as VehiclesInspectionsEmissionsRouteImport } from './routes/vehicles.inspections-emissions'
-import { Route as VehiclesInspectionsRouteImport } from './routes/vehicles.inspections'
-import { Route as VehiclesFinancialResponsibilityRouteImport } from './routes/vehicles.financial-responsibility'
-import { Route as VehiclesFarmAntiqueSpecialtyRouteImport } from './routes/vehicles.farm-antique-specialty'
-import { Route as VehiclesDuplicateTitlesRouteImport } from './routes/vehicles.duplicate-titles'
-import { Route as VehiclesDisabledParkingRouteImport } from './routes/vehicles.disabled-parking'
-import { Route as VehiclesCommercialFleetIrpRouteImport } from './routes/vehicles.commercial-fleet-irp'
-import { Route as VehiclesBuyingSellingRouteImport } from './routes/vehicles.buying-selling'
-import { Route as VehiclesBuyingACarRouteImport } from './routes/vehicles.buying-a-car'
-import { Route as VehiclesBondedTitlesRouteImport } from './routes/vehicles.bonded-titles'
-import { Route as VehiclesAutoInsuranceRequirementsRouteImport } from './routes/vehicles.auto-insurance-requirements'
-import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
-import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
-import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
-import { Route as TexasLegislatureSessionsRouteImport } from './routes/texas-legislature.sessions'
-import { Route as TexasLegislatureSenateRouteImport } from './routes/texas-legislature.senate'
-import { Route as TexasLegislatureHouseRouteImport } from './routes/texas-legislature.house'
-import { Route as TexasLegislatureCurrentSessionRouteImport } from './routes/texas-legislature.current-session'
-import { Route as TexasLegislatureCommitteesRouteImport } from './routes/texas-legislature.committees'
-import { Route as TexasGovernmentEntitySlugRouteImport } from './routes/texas-government.$entitySlug'
-import { Route as TexasDataDatasetSlugRouteImport } from './routes/texas-data.$datasetSlug'
-import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
-import { Route as ShopCheckoutReturnRouteImport } from './routes/shop.checkout-return'
-import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
-import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
-import { Route as RepresentativesRepresentativeSlugRouteImport } from './routes/representatives.$representativeSlug'
-import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
-import { Route as NewsSlugRouteImport } from './routes/news.$slug'
-import { Route as ExploreWildlifeManagementAreasRouteImport } from './routes/explore.wildlife-management-areas'
-import { Route as ExploreTripPlannerRouteImport } from './routes/explore.trip-planner'
-import { Route as ExploreTexasWildflowerSeasonsRouteImport } from './routes/explore.texas-wildflower-seasons'
-import { Route as ExploreTexasStateParksGuideRouteImport } from './routes/explore.texas-state-parks-guide'
-import { Route as ExploreTexasScenicDrivesRouteImport } from './routes/explore.texas-scenic-drives'
-import { Route as ExploreTexasLakesGuideRouteImport } from './routes/explore.texas-lakes-guide'
-import { Route as ExploreTexasDarkSkyStargazingRouteImport } from './routes/explore.texas-dark-sky-stargazing'
-import { Route as ExploreTexasCampingGuideRouteImport } from './routes/explore.texas-camping-guide'
-import { Route as ExploreStateParksRouteImport } from './routes/explore.state-parks'
-import { Route as ExploreSpringFedSwimmingRouteImport } from './routes/explore.spring-fed-swimming'
-import { Route as ExploreSpringConservationAndEducationRouteImport } from './routes/explore.spring-conservation-and-education'
-import { Route as ExploreSearchRouteImport } from './routes/explore.search'
-import { Route as ExploreScenicRiversRouteImport } from './routes/explore.scenic-rivers'
-import { Route as ExploreNationalWildlifeRefugesRouteImport } from './routes/explore.national-wildlife-refuges'
-import { Route as ExploreNationalParksRouteImport } from './routes/explore.national-parks'
-import { Route as ExploreMajorSpringsRouteImport } from './routes/explore.major-springs'
-import { Route as ExploreLighthousesRouteImport } from './routes/explore.lighthouses'
-import { Route as ExploreHistoricSitesRouteImport } from './routes/explore.historic-sites'
-import { Route as ExploreHillCountrySpringsRouteImport } from './routes/explore.hill-country-springs'
-import { Route as ExploreCavernsRouteImport } from './routes/explore.caverns'
-import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
-import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
-import { Route as ElectionsVotingRouteImport } from './routes/elections.voting'
-import { Route as ElectionsStatewideRouteImport } from './routes/elections.statewide'
-import { Route as ElectionsResultsRouteImport } from './routes/elections.results'
-import { Route as ElectionsRacesRouteImport } from './routes/elections.races'
-import { Route as ElectionsPollsRouteImport } from './routes/elections.polls'
-import { Route as ElectionsMethodologyRouteImport } from './routes/elections.methodology'
-import { Route as ElectionsLegislativeRouteImport } from './routes/elections.legislative'
-import { Route as ElectionsForecastRouteImport } from './routes/elections.forecast'
-import { Route as ElectionsDistrictsRouteImport } from './routes/elections.districts'
-import { Route as ElectionsCorrectionsRouteImport } from './routes/elections.corrections'
-import { Route as ElectionsCandidatesRouteImport } from './routes/elections.candidates'
-import { Route as Elections2026RouteImport } from './routes/elections.2026'
-import { Route as DmvTexasDmvVsDpsRouteImport } from './routes/dmv.texas-dmv-vs-dps'
-import { Route as DmvReplaceLostLicenseRouteImport } from './routes/dmv.replace-lost-license'
-import { Route as DmvRealIdRouteImport } from './routes/dmv.real-id'
-import { Route as DmvLicenseStatusRouteImport } from './routes/dmv.license-status'
-import { Route as DmvIdentificationCardRouteImport } from './routes/dmv.identification-card'
-import { Route as DmvFormsDownloadsRouteImport } from './routes/dmv.forms-downloads'
-import { Route as DmvDriverLicenseRenewalRouteImport } from './routes/dmv.driver-license-renewal'
-import { Route as DmvDriverLicenseDocumentsRouteImport } from './routes/dmv.driver-license-documents'
-import { Route as DmvDriverLicenseRouteImport } from './routes/dmv.driver-license'
-import { Route as DmvDpsAppointmentsRouteImport } from './routes/dmv.dps-appointments'
-import { Route as DmvChangeAddressRouteImport } from './routes/dmv.change-address'
-import { Route as DmvCdlEndorsementsRouteImport } from './routes/dmv.cdl-endorsements'
-import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
-import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
-import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
-import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
-import { Route as ApiPublicationGateRouteImport } from './routes/api.publication-gate'
-import { Route as ApiPlatformCoreStatusRouteImport } from './routes/api.platform-core-status'
-import { Route as ApiGovernanceHealthRouteImport } from './routes/api.governance-health'
-import { Route as ApiContentDispositionRouteImport } from './routes/api.content-disposition'
-import { Route as AdminShopProductsRouteImport } from './routes/admin/shop-products'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AboutKeepTexasRedRouteImport } from './routes/about-keep-texas-red'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AustinRouteImport } from './routes/austin'
+import { Route as BillsRouteImport } from './routes/bills'
+import { Route as CandidateGuidesRouteImport } from './routes/candidate-guides'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as ContactLegislatorsRouteImport } from './routes/contact-legislators'
+import { Route as CountyElectionsRouteImport } from './routes/county-elections'
+import { Route as DallasFortWorthRouteImport } from './routes/dallas-fort-worth'
+import { Route as DmvRouteImport } from './routes/dmv'
+import { Route as EditorialStandardsRouteImport } from './routes/editorial-standards'
+import { Route as ElPasoRouteImport } from './routes/el-paso'
+import { Route as ElectionsRouteImport } from './routes/elections'
+import { Route as ExploreRouteImport } from './routes/explore'
+import { Route as FindMyDmvRouteImport } from './routes/find-my-dmv'
+import { Route as FindMySchoolDistrictRouteImport } from './routes/find-my-school-district'
+import { Route as FindRepresentativeRouteImport } from './routes/find-representative'
+import { Route as GetInvolvedRouteImport } from './routes/get-involved'
+import { Route as GlossaryRouteImport } from './routes/glossary'
+import { Route as GoogleMerchantFeedDotxmlRouteImport } from './routes/google-merchant-feed[.]xml'
+import { Route as HappeningNowRouteImport } from './routes/happening-now'
+import { Route as HoustonRouteImport } from './routes/houston'
+import { Route as KeepTexasRedRouteImport } from './routes/keep-texas-red'
+import { Route as LawsRouteImport } from './routes/laws'
+import { Route as LawsToKnowRouteImport } from './routes/laws-to-know'
+import { Route as LegislativeUpdatesRouteImport } from './routes/legislative-updates'
+import { Route as LegislatureRouteImport } from './routes/legislature'
+import { Route as LivingInTexasRouteImport } from './routes/living-in-texas'
+import { Route as MovingToTexasRouteImport } from './routes/moving-to-texas'
+import { Route as MovingToTexasChecklistRouteImport } from './routes/moving-to-texas-checklist'
+import { Route as NewsRouteImport } from './routes/news'
+import { Route as NewsSitemapDotxmlRouteImport } from './routes/news-sitemap[.]xml'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RegisterToVoteRouteImport } from './routes/register-to-vote'
+import { Route as RepresentativesRouteImport } from './routes/representatives'
+import { Route as ReturnRefundPolicyRouteImport } from './routes/return-refund-policy'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SanAntonioRouteImport } from './routes/san-antonio'
+import { Route as ShippingPolicyRouteImport } from './routes/shipping-policy'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SitemapAuthorsDotxmlRouteImport } from './routes/sitemap-authors[.]xml'
+import { Route as SitemapBillsDotxmlRouteImport } from './routes/sitemap-bills[.]xml'
+import { Route as SitemapCommitteesDotxmlRouteImport } from './routes/sitemap-committees[.]xml'
+import { Route as SitemapDistrictsDotxmlRouteImport } from './routes/sitemap-districts[.]xml'
+import { Route as SitemapElectionsDotxmlRouteImport } from './routes/sitemap-elections[.]xml'
+import { Route as SitemapEvergreenDotxmlRouteImport } from './routes/sitemap-evergreen[.]xml'
+import { Route as SitemapExploreLocationsDotxmlRouteImport } from './routes/sitemap-explore-locations[.]xml'
+import { Route as SitemapExploreDotxmlRouteImport } from './routes/sitemap-explore[.]xml'
+import { Route as SitemapGovernmentDotxmlRouteImport } from './routes/sitemap-government[.]xml'
+import { Route as SitemapImagesDotxmlRouteImport } from './routes/sitemap-images[.]xml'
+import { Route as SitemapLegislatureDotxmlRouteImport } from './routes/sitemap-legislature[.]xml'
+import { Route as SitemapNewsDotxmlRouteImport } from './routes/sitemap-news[.]xml'
+import { Route as SitemapPagesDotxmlRouteImport } from './routes/sitemap-pages[.]xml'
+import { Route as SitemapProductsDotxmlRouteImport } from './routes/sitemap-products[.]xml'
+import { Route as SitemapRepresentativesDotxmlRouteImport } from './routes/sitemap-representatives[.]xml'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TaxCalculatorRouteImport } from './routes/tax-calculator'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TermsOfServiceRouteImport } from './routes/terms-of-service'
+import { Route as TexasRouteImport } from './routes/texas'
+import { Route as TexasBudgetPlannerRouteImport } from './routes/texas-budget-planner'
+import { Route as TexasBusinessRouteImport } from './routes/texas-business'
+import { Route as TexasClosingCostCalculatorRouteImport } from './routes/texas-closing-cost-calculator'
+import { Route as TexasCostOfLivingCalculatorRouteImport } from './routes/texas-cost-of-living-calculator'
+import { Route as TexasDataRouteImport } from './routes/texas-data'
+import { Route as TexasDownPaymentAssistanceCalculatorRouteImport } from './routes/texas-down-payment-assistance-calculator'
+import { Route as TexasDownPaymentCalculatorRouteImport } from './routes/texas-down-payment-calculator'
+import { Route as TexasEconomyRouteImport } from './routes/texas-economy'
+import { Route as TexasFinancialToolsRouteImport } from './routes/texas-financial-tools'
+import { Route as TexasFirstTimeHomebuyerProgramsRouteImport } from './routes/texas-first-time-homebuyer-programs'
+import { Route as TexasGovernmentRouteImport } from './routes/texas-government'
+import { Route as TexasHomeAffordabilityCalculatorRouteImport } from './routes/texas-home-affordability-calculator'
+import { Route as TexasHomeEquityCalculatorRouteImport } from './routes/texas-home-equity-calculator'
+import { Route as TexasHomeEquityGrowthCalculatorRouteImport } from './routes/texas-home-equity-growth-calculator'
+import { Route as TexasHomeInsuranceCalculatorRouteImport } from './routes/texas-home-insurance-calculator'
+import { Route as TexasHomeownershipCostCalculatorRouteImport } from './routes/texas-homeownership-cost-calculator'
+import { Route as TexasLawPolicyRouteImport } from './routes/texas-law-policy'
+import { Route as TexasLawsRouteImport } from './routes/texas-laws'
+import { Route as TexasLegislatureRouteImport } from './routes/texas-legislature'
+import { Route as TexasLivingRouteImport } from './routes/texas-living'
+import { Route as TexasMortgageCalculatorRouteImport } from './routes/texas-mortgage-calculator'
+import { Route as TexasMortgagePayoffCalculatorRouteImport } from './routes/texas-mortgage-payoff-calculator'
+import { Route as TexasMovingCostCalculatorRouteImport } from './routes/texas-moving-cost-calculator'
+import { Route as TexasNewsRouteImport } from './routes/texas-news'
+import { Route as TexasPoliticsRouteImport } from './routes/texas-politics'
+import { Route as TexasPropertyTaxIncreaseCalculatorRouteImport } from './routes/texas-property-tax-increase-calculator'
+import { Route as TexasPropertyTaxProtestGuideRouteImport } from './routes/texas-property-tax-protest-guide'
+import { Route as TexasRefinanceSavingsCalculatorRouteImport } from './routes/texas-refinance-savings-calculator'
+import { Route as TexasRentVsBuyCalculatorRouteImport } from './routes/texas-rent-vs-buy-calculator'
+import { Route as TexasResourcesRouteImport } from './routes/texas-resources'
+import { Route as TexasSalaryCalculatorRouteImport } from './routes/texas-salary-calculator'
+import { Route as TexasSalaryComparisonByCityRouteImport } from './routes/texas-salary-comparison-by-city'
+import { Route as TexasSalesTaxExplainedRouteImport } from './routes/texas-sales-tax-explained'
+import { Route as TexasSportsRouteImport } from './routes/texas-sports'
+import { Route as TexasUtilityCostCalculatorRouteImport } from './routes/texas-utility-cost-calculator'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as VotingLocationsRouteImport } from './routes/voting-locations'
 import { Route as AdminGovernanceHealthRouteImport } from './routes/admin/governance-health'
-import { Route as TexasLegislatureSessionsIndexRouteImport } from './routes/texas-legislature.sessions.index'
-import { Route as TexasLegislatureCommitteesIndexRouteImport } from './routes/texas-legislature.committees.index'
-import { Route as ElectionsDistrictsIndexRouteImport } from './routes/elections.districts.index'
-import { Route as AdminElectionsIndexRouteImport } from './routes/admin/elections/index'
-import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
-import { Route as TexasResourcesTypeTypeRouteImport } from './routes/texas-resources.type.$type'
-import { Route as TexasResourcesTopicTopicIdRouteImport } from './routes/texas-resources.topic.$topicId'
-import { Route as TexasResourcesJourneyJourneyIdRouteImport } from './routes/texas-resources.journey.$journeyId'
-import { Route as TexasLegislatureSessionsSessionSlugRouteImport } from './routes/texas-legislature.sessions.$sessionSlug'
-import { Route as TexasLegislatureCommitteesCommitteeSlugRouteImport } from './routes/texas-legislature.committees.$committeeSlug'
-import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
-import { Route as ExploreTripTokenRouteImport } from './routes/explore.trip.$token'
-import { Route as ExploreStateParkSlugRouteImport } from './routes/explore.state-park.$slug'
-import { Route as ExploreRiverSlugRouteImport } from './routes/explore.river.$slug'
-import { Route as ExploreRegionRegionRouteImport } from './routes/explore.region.$region'
-import { Route as ExploreLakeSlugRouteImport } from './routes/explore.lake.$slug'
-import { Route as ExploreCountyCountyRouteImport } from './routes/explore.county.$county'
-import { Route as ExploreCavernSlugRouteImport } from './routes/explore.cavern.$slug'
-import { Route as ElectionsResultsResultSlugRouteImport } from './routes/elections.results.$resultSlug'
-import { Route as ElectionsRacesRaceSlugRouteImport } from './routes/elections.races_.$raceSlug'
-import { Route as ElectionsPollsPollSlugRouteImport } from './routes/elections.polls.$pollSlug'
-import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elections.forecast.$forecastSlug'
-import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
-import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
-import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
-import { Route as ApiAdminShopProductsRouteImport } from './routes/api/admin/shop-products'
-import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
-import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
-import { Route as AdminElectionsPollsRouteImport } from './routes/admin/elections/polls'
-import { Route as AdminElectionsForecastRouteImport } from './routes/admin/elections/forecast'
-import { Route as AdminElectionsCandidatesRouteImport } from './routes/admin/elections/candidates'
-import { Route as AdminBillsRelationshipsRouteImport } from './routes/admin/bills/relationships'
-import { Route as AdminBillsOpportunitiesRouteImport } from './routes/admin/bills/opportunities'
-import { Route as AdminBillsEnrichmentRouteImport } from './routes/admin/bills/enrichment'
+import { Route as AdminShopProductsRouteImport } from './routes/admin/shop-products'
+import { Route as ApiContentDispositionRouteImport } from './routes/api.content-disposition'
+import { Route as ApiGovernanceHealthRouteImport } from './routes/api.governance-health'
+import { Route as ApiPlatformCoreStatusRouteImport } from './routes/api.platform-core-status'
+import { Route as ApiPublicationGateRouteImport } from './routes/api.publication-gate'
+import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
+import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
+import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
+import { Route as BillsIndexRouteImport } from './routes/bills/index'
+import { Route as DmvCdlRouteImport } from './routes/dmv.cdl'
+import { Route as DmvCdlClassesRouteImport } from './routes/dmv.cdl-classes'
+import { Route as DmvCdlEndorsementsRouteImport } from './routes/dmv.cdl-endorsements'
+import { Route as DmvChangeAddressRouteImport } from './routes/dmv.change-address'
+import { Route as DmvDpsAppointmentsRouteImport } from './routes/dmv.dps-appointments'
+import { Route as DmvDriverLicenseRouteImport } from './routes/dmv.driver-license'
+import { Route as DmvDriverLicenseDocumentsRouteImport } from './routes/dmv.driver-license-documents'
+import { Route as DmvDriverLicenseRenewalRouteImport } from './routes/dmv.driver-license-renewal'
+import { Route as DmvFormsDownloadsRouteImport } from './routes/dmv.forms-downloads'
+import { Route as DmvIdentificationCardRouteImport } from './routes/dmv.identification-card'
+import { Route as DmvLicenseStatusRouteImport } from './routes/dmv.license-status'
+import { Route as DmvRealIdRouteImport } from './routes/dmv.real-id'
+import { Route as DmvReplaceLostLicenseRouteImport } from './routes/dmv.replace-lost-license'
+import { Route as DmvTexasDmvVsDpsRouteImport } from './routes/dmv.texas-dmv-vs-dps'
+import { Route as ElectionsIndexRouteImport } from './routes/elections.index'
+import { Route as Elections2026RouteImport } from './routes/elections.2026'
+import { Route as ElectionsCandidatesRouteImport } from './routes/elections.candidates'
+import { Route as ElectionsCorrectionsRouteImport } from './routes/elections.corrections'
+import { Route as ElectionsDistrictsRouteImport } from './routes/elections.districts'
+import { Route as ElectionsForecastRouteImport } from './routes/elections.forecast'
+import { Route as ElectionsLegislativeRouteImport } from './routes/elections.legislative'
+import { Route as ElectionsMethodologyRouteImport } from './routes/elections.methodology'
+import { Route as ElectionsPollsRouteImport } from './routes/elections.polls'
+import { Route as ElectionsRacesRouteImport } from './routes/elections.races'
+import { Route as ElectionsResultsRouteImport } from './routes/elections.results'
+import { Route as ElectionsStatewideRouteImport } from './routes/elections.statewide'
+import { Route as ElectionsVotingRouteImport } from './routes/elections.voting'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as ExploreIndexRouteImport } from './routes/explore.index'
+import { Route as ExploreSlugRouteImport } from './routes/explore.$slug'
+import { Route as ExploreCavernsRouteImport } from './routes/explore.caverns'
+import { Route as ExploreHillCountrySpringsRouteImport } from './routes/explore.hill-country-springs'
+import { Route as ExploreHistoricSitesRouteImport } from './routes/explore.historic-sites'
+import { Route as ExploreLighthousesRouteImport } from './routes/explore.lighthouses'
+import { Route as ExploreMajorSpringsRouteImport } from './routes/explore.major-springs'
+import { Route as ExploreNationalParksRouteImport } from './routes/explore.national-parks'
+import { Route as ExploreNationalWildlifeRefugesRouteImport } from './routes/explore.national-wildlife-refuges'
+import { Route as ExploreScenicRiversRouteImport } from './routes/explore.scenic-rivers'
+import { Route as ExploreSearchRouteImport } from './routes/explore.search'
+import { Route as ExploreSpringConservationAndEducationRouteImport } from './routes/explore.spring-conservation-and-education'
+import { Route as ExploreSpringFedSwimmingRouteImport } from './routes/explore.spring-fed-swimming'
+import { Route as ExploreStateParksRouteImport } from './routes/explore.state-parks'
+import { Route as ExploreTexasCampingGuideRouteImport } from './routes/explore.texas-camping-guide'
+import { Route as ExploreTexasDarkSkyStargazingRouteImport } from './routes/explore.texas-dark-sky-stargazing'
+import { Route as ExploreTexasLakesGuideRouteImport } from './routes/explore.texas-lakes-guide'
+import { Route as ExploreTexasScenicDrivesRouteImport } from './routes/explore.texas-scenic-drives'
+import { Route as ExploreTexasStateParksGuideRouteImport } from './routes/explore.texas-state-parks-guide'
+import { Route as ExploreTexasWildflowerSeasonsRouteImport } from './routes/explore.texas-wildflower-seasons'
+import { Route as ExploreTripPlannerRouteImport } from './routes/explore.trip-planner'
+import { Route as ExploreWildlifeManagementAreasRouteImport } from './routes/explore.wildlife-management-areas'
+import { Route as NewsIndexRouteImport } from './routes/news.index'
+import { Route as NewsSlugRouteImport } from './routes/news.$slug'
+import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
+import { Route as RepresentativesRepresentativeSlugRouteImport } from './routes/representatives.$representativeSlug'
+import { Route as ShopIndexRouteImport } from './routes/shop.index'
+import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
+import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
+import { Route as ShopCheckoutReturnRouteImport } from './routes/shop.checkout-return'
+import { Route as TexasBusinessTopicRouteImport } from './routes/texas-business.$topic'
+import { Route as TexasDataDatasetSlugRouteImport } from './routes/texas-data.$datasetSlug'
+import { Route as TexasGovernmentEntitySlugRouteImport } from './routes/texas-government.$entitySlug'
+import { Route as TexasLegislatureIndexRouteImport } from './routes/texas-legislature.index'
+import { Route as TexasLegislatureCommitteesRouteImport } from './routes/texas-legislature.committees'
+import { Route as TexasLegislatureCurrentSessionRouteImport } from './routes/texas-legislature.current-session'
+import { Route as TexasLegislatureHouseRouteImport } from './routes/texas-legislature.house'
+import { Route as TexasLegislatureSenateRouteImport } from './routes/texas-legislature.senate'
+import { Route as TexasLegislatureSessionsRouteImport } from './routes/texas-legislature.sessions'
+import { Route as TexasNewsIndexRouteImport } from './routes/texas-news/index'
+import { Route as TexasNewsTopicRouteImport } from './routes/texas-news.$topic'
+import { Route as TexasSportsIndexRouteImport } from './routes/texas-sports.index'
+import { Route as TexasSportsLeagueRouteImport } from './routes/texas-sports.$league'
+import { Route as TexasIndexRouteImport } from './routes/texas.index'
+import { Route as TexasSlugRouteImport } from './routes/texas.$slug'
+import { Route as VehiclesAutoInsuranceRequirementsRouteImport } from './routes/vehicles.auto-insurance-requirements'
+import { Route as VehiclesBondedTitlesRouteImport } from './routes/vehicles.bonded-titles'
+import { Route as VehiclesBuyingACarRouteImport } from './routes/vehicles.buying-a-car'
+import { Route as VehiclesBuyingSellingRouteImport } from './routes/vehicles.buying-selling'
+import { Route as VehiclesCommercialFleetIrpRouteImport } from './routes/vehicles.commercial-fleet-irp'
+import { Route as VehiclesDisabledParkingRouteImport } from './routes/vehicles.disabled-parking'
+import { Route as VehiclesDuplicateTitlesRouteImport } from './routes/vehicles.duplicate-titles'
+import { Route as VehiclesFarmAntiqueSpecialtyRouteImport } from './routes/vehicles.farm-antique-specialty'
+import { Route as VehiclesFinancialResponsibilityRouteImport } from './routes/vehicles.financial-responsibility'
+import { Route as VehiclesInspectionsRouteImport } from './routes/vehicles.inspections'
+import { Route as VehiclesInspectionsEmissionsRouteImport } from './routes/vehicles.inspections-emissions'
+import { Route as VehiclesLiensDuplicateCorrectedTitlesRouteImport } from './routes/vehicles.liens-duplicate-corrected-titles'
+import { Route as VehiclesNewResidentsRouteImport } from './routes/vehicles.new-residents'
+import { Route as VehiclesPersonalizedPlatesRouteImport } from './routes/vehicles.personalized-plates'
+import { Route as VehiclesPlatesRouteImport } from './routes/vehicles.plates'
+import { Route as VehiclesPrivatePartySalesRouteImport } from './routes/vehicles.private-party-sales'
+import { Route as VehiclesRegistrationRouteImport } from './routes/vehicles.registration'
+import { Route as VehiclesRegistrationFeesTaxesRouteImport } from './routes/vehicles.registration-fees-taxes'
+import { Route as VehiclesRenewalRouteImport } from './routes/vehicles.renewal'
+import { Route as VehiclesSalvageRebuiltTitlesRouteImport } from './routes/vehicles.salvage-rebuilt-titles'
+import { Route as VehiclesSellingACarRouteImport } from './routes/vehicles.selling-a-car'
+import { Route as VehiclesTemporaryTagsRouteImport } from './routes/vehicles.temporary-tags'
+import { Route as VehiclesTitleTransferRouteImport } from './routes/vehicles.title-transfer'
 import { Route as AdminBillsEditorialRouteImport } from './routes/admin/bills/editorial'
+import { Route as AdminBillsEnrichmentRouteImport } from './routes/admin/bills/enrichment'
+import { Route as AdminBillsOpportunitiesRouteImport } from './routes/admin/bills/opportunities'
+import { Route as AdminBillsRelationshipsRouteImport } from './routes/admin/bills/relationships'
+import { Route as AdminElectionsIndexRouteImport } from './routes/admin/elections/index'
+import { Route as AdminElectionsCandidatesRouteImport } from './routes/admin/elections/candidates'
+import { Route as AdminElectionsForecastRouteImport } from './routes/admin/elections/forecast'
+import { Route as AdminElectionsPollsRouteImport } from './routes/admin/elections/polls'
+import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
+import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
+import { Route as ApiAdminShopProductsRouteImport } from './routes/api/admin/shop-products'
+import { Route as ApiPublicPropertyAddressLookupRouteImport } from './routes/api/public/property-address-lookup'
+import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
+import { Route as ElectionsDistrictsIndexRouteImport } from './routes/elections.districts.index'
+import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
+import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elections.forecast.$forecastSlug'
+import { Route as ElectionsPollsPollSlugRouteImport } from './routes/elections.polls.$pollSlug'
+import { Route as ElectionsRacesRaceSlugRouteImport } from './routes/elections.races_.$raceSlug'
+import { Route as ElectionsResultsResultSlugRouteImport } from './routes/elections.results.$resultSlug'
+import { Route as ExploreCavernSlugRouteImport } from './routes/explore.cavern.$slug'
+import { Route as ExploreCountyCountyRouteImport } from './routes/explore.county.$county'
+import { Route as ExploreLakeSlugRouteImport } from './routes/explore.lake.$slug'
+import { Route as ExploreRegionRegionRouteImport } from './routes/explore.region.$region'
+import { Route as ExploreRiverSlugRouteImport } from './routes/explore.river.$slug'
+import { Route as ExploreStateParkSlugRouteImport } from './routes/explore.state-park.$slug'
+import { Route as ExploreTripTokenRouteImport } from './routes/explore.trip.$token'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as TexasLegislatureCommitteesIndexRouteImport } from './routes/texas-legislature.committees.index'
+import { Route as TexasLegislatureCommitteesCommitteeSlugRouteImport } from './routes/texas-legislature.committees.$committeeSlug'
+import { Route as TexasLegislatureSessionsIndexRouteImport } from './routes/texas-legislature.sessions.index'
+import { Route as TexasLegislatureSessionsSessionSlugRouteImport } from './routes/texas-legislature.sessions.$sessionSlug'
+import { Route as TexasResourcesJourneyJourneyIdRouteImport } from './routes/texas-resources.journey.$journeyId'
+import { Route as TexasResourcesTopicTopicIdRouteImport } from './routes/texas-resources.topic.$topicId'
+import { Route as TexasResourcesTypeTypeRouteImport } from './routes/texas-resources.type.$type'
+import { Route as TexasSportsTeamTeamRouteImport } from './routes/texas-sports.team.$team'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
-import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
-import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
-import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
-import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
-import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
-import { Route as ApiPublicHooksScoreViralBackfillRouteImport } from './routes/api/public/hooks/score-viral-backfill'
-import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
-import { Route as ApiPublicHooksPublishingSafetyNetRouteImport } from './routes/api/public/hooks/publishing-safety-net'
-import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
-import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
-import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
-import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
-import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
-import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
-import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
-import { Route as ApiPublicExploreRecommendationsRouteImport } from './routes/api/public/explore/recommendations'
-import { Route as ApiPublicExploreMapRouteImport } from './routes/api/public/explore/map'
-import { Route as ApiPublicExploreEntitiesRouteImport } from './routes/api/public/explore/entities'
-import { Route as ApiPublicExploreAutocompleteRouteImport } from './routes/api/public/explore/autocomplete'
 import { Route as ApiPublicArticleImageFilenameRouteImport } from './routes/api/public/article-image.$filename'
-import { Route as BillsTexasLegislatureBillTypeBillNumberRouteImport } from './routes/bills/texas/$legislature/$billType/$billNumber'
-import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
+import { Route as ApiPublicExploreAutocompleteRouteImport } from './routes/api/public/explore/autocomplete'
+import { Route as ApiPublicExploreEntitiesRouteImport } from './routes/api/public/explore/entities'
+import { Route as ApiPublicExploreMapRouteImport } from './routes/api/public/explore/map'
+import { Route as ApiPublicExploreRecommendationsRouteImport } from './routes/api/public/explore/recommendations'
+import { Route as ApiPublicHooksBackfillFeaturedImagesRouteImport } from './routes/api/public/hooks/backfill-featured-images'
+import { Route as ApiPublicHooksGenerateEvergreenRouteImport } from './routes/api/public/hooks/generate-evergreen'
+import { Route as ApiPublicHooksGenerateNewsRouteImport } from './routes/api/public/hooks/generate-news'
+import { Route as ApiPublicHooksGenerateSportsRouteImport } from './routes/api/public/hooks/generate-sports'
+import { Route as ApiPublicHooksHealthRouteImport } from './routes/api/public/hooks/health'
+import { Route as ApiPublicHooksIngestFeedsRouteImport } from './routes/api/public/hooks/ingest-feeds'
+import { Route as ApiPublicHooksListShopsRouteImport } from './routes/api/public/hooks/list-shops'
+import { Route as ApiPublicHooksPublishingSafetyNetRouteImport } from './routes/api/public/hooks/publishing-safety-net'
+import { Route as ApiPublicHooksScoreViralRouteImport } from './routes/api/public/hooks/score-viral'
+import { Route as ApiPublicHooksScoreViralBackfillRouteImport } from './routes/api/public/hooks/score-viral-backfill'
+import { Route as ApiPublicHooksSyncPrintifyRouteImport } from './routes/api/public/hooks/sync-printify'
+import { Route as ApiPublicHooksTrackVariantRouteImport } from './routes/api/public/hooks/track-variant'
+import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as ApiPublicOauthFacebookCallbackRouteImport } from './routes/api/public/oauth/facebook/callback'
+import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
+import { Route as BillsTexasLegislatureBillTypeBillNumberRouteImport } from './routes/bills/texas/$legislature/$billType/$billNumber'
 
-const VotingLocationsRoute = VotingLocationsRouteImport.update({
-  id: '/voting-locations',
-  path: '/voting-locations',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const UnsubscribeRoute = UnsubscribeRouteImport.update({
-  id: '/unsubscribe',
-  path: '/unsubscribe',
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasUtilityCostCalculatorRoute =
-  TexasUtilityCostCalculatorRouteImport.update({
-    id: '/texas-utility-cost-calculator',
-    path: '/texas-utility-cost-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasSportsRoute = TexasSportsRouteImport.update({
-  id: '/texas-sports',
-  path: '/texas-sports',
+const AboutKeepTexasRedRoute = AboutKeepTexasRedRouteImport.update({
+  id: '/about-keep-texas-red',
+  path: '/about-keep-texas-red',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasSalesTaxExplainedRoute = TexasSalesTaxExplainedRouteImport.update({
-  id: '/texas-sales-tax-explained',
-  path: '/texas-sales-tax-explained',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasSalaryComparisonByCityRoute =
-  TexasSalaryComparisonByCityRouteImport.update({
-    id: '/texas-salary-comparison-by-city',
-    path: '/texas-salary-comparison-by-city',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasSalaryCalculatorRoute = TexasSalaryCalculatorRouteImport.update({
-  id: '/texas-salary-calculator',
-  path: '/texas-salary-calculator',
+const AustinRoute = AustinRouteImport.update({
+  id: '/austin',
+  path: '/austin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasResourcesRoute = TexasResourcesRouteImport.update({
-  id: '/texas-resources',
-  path: '/texas-resources',
+const BillsRoute = BillsRouteImport.update({
+  id: '/bills',
+  path: '/bills',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasRentVsBuyCalculatorRoute =
-  TexasRentVsBuyCalculatorRouteImport.update({
-    id: '/texas-rent-vs-buy-calculator',
-    path: '/texas-rent-vs-buy-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasRefinanceSavingsCalculatorRoute =
-  TexasRefinanceSavingsCalculatorRouteImport.update({
-    id: '/texas-refinance-savings-calculator',
-    path: '/texas-refinance-savings-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasPropertyTaxProtestGuideRoute =
-  TexasPropertyTaxProtestGuideRouteImport.update({
-    id: '/texas-property-tax-protest-guide',
-    path: '/texas-property-tax-protest-guide',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasPropertyTaxIncreaseCalculatorRoute =
-  TexasPropertyTaxIncreaseCalculatorRouteImport.update({
-    id: '/texas-property-tax-increase-calculator',
-    path: '/texas-property-tax-increase-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
-  id: '/texas-politics',
-  path: '/texas-politics',
+const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
+  id: '/candidate-guides',
+  path: '/candidate-guides',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasNewsRoute = TexasNewsRouteImport.update({
-  id: '/texas-news',
-  path: '/texas-news',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasMovingCostCalculatorRoute =
-  TexasMovingCostCalculatorRouteImport.update({
-    id: '/texas-moving-cost-calculator',
-    path: '/texas-moving-cost-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasMortgagePayoffCalculatorRoute =
-  TexasMortgagePayoffCalculatorRouteImport.update({
-    id: '/texas-mortgage-payoff-calculator',
-    path: '/texas-mortgage-payoff-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasMortgageCalculatorRoute = TexasMortgageCalculatorRouteImport.update({
-  id: '/texas-mortgage-calculator',
-  path: '/texas-mortgage-calculator',
+const ContactLegislatorsRoute = ContactLegislatorsRouteImport.update({
+  id: '/contact-legislators',
+  path: '/contact-legislators',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasLivingRoute = TexasLivingRouteImport.update({
-  id: '/texas-living',
-  path: '/texas-living',
+const CountyElectionsRoute = CountyElectionsRouteImport.update({
+  id: '/county-elections',
+  path: '/county-elections',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasLegislatureRoute = TexasLegislatureRouteImport.update({
-  id: '/texas-legislature',
-  path: '/texas-legislature',
+const DallasFortWorthRoute = DallasFortWorthRouteImport.update({
+  id: '/dallas-fort-worth',
+  path: '/dallas-fort-worth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasLawsRoute = TexasLawsRouteImport.update({
-  id: '/texas-laws',
-  path: '/texas-laws',
+const DmvRoute = DmvRouteImport.update({
+  id: '/dmv',
+  path: '/dmv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasLawPolicyRoute = TexasLawPolicyRouteImport.update({
-  id: '/texas-law-policy',
-  path: '/texas-law-policy',
+const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
+  id: '/editorial-standards',
+  path: '/editorial-standards',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasHomeownershipCostCalculatorRoute =
-  TexasHomeownershipCostCalculatorRouteImport.update({
-    id: '/texas-homeownership-cost-calculator',
-    path: '/texas-homeownership-cost-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasHomeInsuranceCalculatorRoute =
-  TexasHomeInsuranceCalculatorRouteImport.update({
-    id: '/texas-home-insurance-calculator',
-    path: '/texas-home-insurance-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasHomeEquityGrowthCalculatorRoute =
-  TexasHomeEquityGrowthCalculatorRouteImport.update({
-    id: '/texas-home-equity-growth-calculator',
-    path: '/texas-home-equity-growth-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasHomeEquityCalculatorRoute =
-  TexasHomeEquityCalculatorRouteImport.update({
-    id: '/texas-home-equity-calculator',
-    path: '/texas-home-equity-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasHomeAffordabilityCalculatorRoute =
-  TexasHomeAffordabilityCalculatorRouteImport.update({
-    id: '/texas-home-affordability-calculator',
-    path: '/texas-home-affordability-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasGovernmentRoute = TexasGovernmentRouteImport.update({
-  id: '/texas-government',
-  path: '/texas-government',
+const ElPasoRoute = ElPasoRouteImport.update({
+  id: '/el-paso',
+  path: '/el-paso',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasFirstTimeHomebuyerProgramsRoute =
-  TexasFirstTimeHomebuyerProgramsRouteImport.update({
-    id: '/texas-first-time-homebuyer-programs',
-    path: '/texas-first-time-homebuyer-programs',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasFinancialToolsRoute = TexasFinancialToolsRouteImport.update({
-  id: '/texas-financial-tools',
-  path: '/texas-financial-tools',
+const ElectionsRoute = ElectionsRouteImport.update({
+  id: '/elections',
+  path: '/elections',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasEconomyRoute = TexasEconomyRouteImport.update({
-  id: '/texas-economy',
-  path: '/texas-economy',
+const ExploreRoute = ExploreRouteImport.update({
+  id: '/explore',
+  path: '/explore',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasDownPaymentCalculatorRoute =
-  TexasDownPaymentCalculatorRouteImport.update({
-    id: '/texas-down-payment-calculator',
-    path: '/texas-down-payment-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasDownPaymentAssistanceCalculatorRoute =
-  TexasDownPaymentAssistanceCalculatorRouteImport.update({
-    id: '/texas-down-payment-assistance-calculator',
-    path: '/texas-down-payment-assistance-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasDataRoute = TexasDataRouteImport.update({
-  id: '/texas-data',
-  path: '/texas-data',
+const FindMyDmvRoute = FindMyDmvRouteImport.update({
+  id: '/find-my-dmv',
+  path: '/find-my-dmv',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasCostOfLivingCalculatorRoute =
-  TexasCostOfLivingCalculatorRouteImport.update({
-    id: '/texas-cost-of-living-calculator',
-    path: '/texas-cost-of-living-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasClosingCostCalculatorRoute =
-  TexasClosingCostCalculatorRouteImport.update({
-    id: '/texas-closing-cost-calculator',
-    path: '/texas-closing-cost-calculator',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasBusinessRoute = TexasBusinessRouteImport.update({
-  id: '/texas-business',
-  path: '/texas-business',
+const FindMySchoolDistrictRoute = FindMySchoolDistrictRouteImport.update({
+  id: '/find-my-school-district',
+  path: '/find-my-school-district',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasBudgetPlannerRoute = TexasBudgetPlannerRouteImport.update({
-  id: '/texas-budget-planner',
-  path: '/texas-budget-planner',
+const FindRepresentativeRoute = FindRepresentativeRouteImport.update({
+  id: '/find-representative',
+  path: '/find-representative',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasRoute = TexasRouteImport.update({
-  id: '/texas',
-  path: '/texas',
+const GetInvolvedRoute = GetInvolvedRouteImport.update({
+  id: '/get-involved',
+  path: '/get-involved',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
-  id: '/terms-of-service',
-  path: '/terms-of-service',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TaxCalculatorRoute = TaxCalculatorRouteImport.update({
-  id: '/tax-calculator',
-  path: '/tax-calculator',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapRepresentativesDotxmlRoute =
-  SitemapRepresentativesDotxmlRouteImport.update({
-    id: '/sitemap-representatives.xml',
-    path: '/sitemap-representatives.xml',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const SitemapProductsDotxmlRoute = SitemapProductsDotxmlRouteImport.update({
-  id: '/sitemap-products.xml',
-  path: '/sitemap-products.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
-  id: '/sitemap-pages.xml',
-  path: '/sitemap-pages.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapNewsDotxmlRoute = SitemapNewsDotxmlRouteImport.update({
-  id: '/sitemap-news.xml',
-  path: '/sitemap-news.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapLegislatureDotxmlRoute =
-  SitemapLegislatureDotxmlRouteImport.update({
-    id: '/sitemap-legislature.xml',
-    path: '/sitemap-legislature.xml',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
-  id: '/sitemap-images.xml',
-  path: '/sitemap-images.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapGovernmentDotxmlRoute = SitemapGovernmentDotxmlRouteImport.update({
-  id: '/sitemap-government.xml',
-  path: '/sitemap-government.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapExploreDotxmlRoute = SitemapExploreDotxmlRouteImport.update({
-  id: '/sitemap-explore.xml',
-  path: '/sitemap-explore.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapExploreLocationsDotxmlRoute =
-  SitemapExploreLocationsDotxmlRouteImport.update({
-    id: '/sitemap-explore-locations.xml',
-    path: '/sitemap-explore-locations.xml',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const SitemapEvergreenDotxmlRoute = SitemapEvergreenDotxmlRouteImport.update({
-  id: '/sitemap-evergreen.xml',
-  path: '/sitemap-evergreen.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapElectionsDotxmlRoute = SitemapElectionsDotxmlRouteImport.update({
-  id: '/sitemap-elections.xml',
-  path: '/sitemap-elections.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDistrictsDotxmlRoute = SitemapDistrictsDotxmlRouteImport.update({
-  id: '/sitemap-districts.xml',
-  path: '/sitemap-districts.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapCommitteesDotxmlRoute = SitemapCommitteesDotxmlRouteImport.update({
-  id: '/sitemap-committees.xml',
-  path: '/sitemap-committees.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapBillsDotxmlRoute = SitemapBillsDotxmlRouteImport.update({
-  id: '/sitemap-bills.xml',
-  path: '/sitemap-bills.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapAuthorsDotxmlRoute = SitemapAuthorsDotxmlRouteImport.update({
-  id: '/sitemap-authors.xml',
-  path: '/sitemap-authors.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShopRoute = ShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
-  id: '/shipping-policy',
-  path: '/shipping-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SanAntonioRoute = SanAntonioRouteImport.update({
-  id: '/san-antonio',
-  path: '/san-antonio',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
-  id: '/robots.txt',
-  path: '/robots.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReturnRefundPolicyRoute = ReturnRefundPolicyRouteImport.update({
-  id: '/return-refund-policy',
-  path: '/return-refund-policy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RepresentativesRoute = RepresentativesRouteImport.update({
-  id: '/representatives',
-  path: '/representatives',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
-  id: '/register-to-vote',
-  path: '/register-to-vote',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsSitemapDotxmlRoute = NewsSitemapDotxmlRouteImport.update({
-  id: '/news-sitemap.xml',
-  path: '/news-sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NewsRoute = NewsRouteImport.update({
-  id: '/news',
-  path: '/news',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MovingToTexasChecklistRoute = MovingToTexasChecklistRouteImport.update({
-  id: '/moving-to-texas-checklist',
-  path: '/moving-to-texas-checklist',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MovingToTexasRoute = MovingToTexasRouteImport.update({
-  id: '/moving-to-texas',
-  path: '/moving-to-texas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LivingInTexasRoute = LivingInTexasRouteImport.update({
-  id: '/living-in-texas',
-  path: '/living-in-texas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LegislatureRoute = LegislatureRouteImport.update({
-  id: '/legislature',
-  path: '/legislature',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LegislativeUpdatesRoute = LegislativeUpdatesRouteImport.update({
-  id: '/legislative-updates',
-  path: '/legislative-updates',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LawsToKnowRoute = LawsToKnowRouteImport.update({
-  id: '/laws-to-know',
-  path: '/laws-to-know',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LawsRoute = LawsRouteImport.update({
-  id: '/laws',
-  path: '/laws',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const KeepTexasRedRoute = KeepTexasRedRouteImport.update({
-  id: '/keep-texas-red',
-  path: '/keep-texas-red',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HoustonRoute = HoustonRouteImport.update({
-  id: '/houston',
-  path: '/houston',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HappeningNowRoute = HappeningNowRouteImport.update({
-  id: '/happening-now',
-  path: '/happening-now',
+const GlossaryRoute = GlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GoogleMerchantFeedDotxmlRoute =
@@ -687,589 +386,490 @@ const GoogleMerchantFeedDotxmlRoute =
     path: '/google-merchant-feed.xml',
     getParentRoute: () => rootRouteImport,
   } as any)
-const GlossaryRoute = GlossaryRouteImport.update({
-  id: '/glossary',
-  path: '/glossary',
+const HappeningNowRoute = HappeningNowRouteImport.update({
+  id: '/happening-now',
+  path: '/happening-now',
   getParentRoute: () => rootRouteImport,
 } as any)
-const GetInvolvedRoute = GetInvolvedRouteImport.update({
-  id: '/get-involved',
-  path: '/get-involved',
+const HoustonRoute = HoustonRouteImport.update({
+  id: '/houston',
+  path: '/houston',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FindRepresentativeRoute = FindRepresentativeRouteImport.update({
-  id: '/find-representative',
-  path: '/find-representative',
+const KeepTexasRedRoute = KeepTexasRedRouteImport.update({
+  id: '/keep-texas-red',
+  path: '/keep-texas-red',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FindMySchoolDistrictRoute = FindMySchoolDistrictRouteImport.update({
-  id: '/find-my-school-district',
-  path: '/find-my-school-district',
+const LawsRoute = LawsRouteImport.update({
+  id: '/laws',
+  path: '/laws',
   getParentRoute: () => rootRouteImport,
 } as any)
-const FindMyDmvRoute = FindMyDmvRouteImport.update({
-  id: '/find-my-dmv',
-  path: '/find-my-dmv',
+const LawsToKnowRoute = LawsToKnowRouteImport.update({
+  id: '/laws-to-know',
+  path: '/laws-to-know',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreRoute = ExploreRouteImport.update({
-  id: '/explore',
-  path: '/explore',
+const LegislativeUpdatesRoute = LegislativeUpdatesRouteImport.update({
+  id: '/legislative-updates',
+  path: '/legislative-updates',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ElectionsRoute = ElectionsRouteImport.update({
-  id: '/elections',
-  path: '/elections',
+const LegislatureRoute = LegislatureRouteImport.update({
+  id: '/legislature',
+  path: '/legislature',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ElPasoRoute = ElPasoRouteImport.update({
-  id: '/el-paso',
-  path: '/el-paso',
+const LivingInTexasRoute = LivingInTexasRouteImport.update({
+  id: '/living-in-texas',
+  path: '/living-in-texas',
   getParentRoute: () => rootRouteImport,
 } as any)
-const EditorialStandardsRoute = EditorialStandardsRouteImport.update({
-  id: '/editorial-standards',
-  path: '/editorial-standards',
+const MovingToTexasRoute = MovingToTexasRouteImport.update({
+  id: '/moving-to-texas',
+  path: '/moving-to-texas',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DmvRoute = DmvRouteImport.update({
-  id: '/dmv',
-  path: '/dmv',
+const MovingToTexasChecklistRoute = MovingToTexasChecklistRouteImport.update({
+  id: '/moving-to-texas-checklist',
+  path: '/moving-to-texas-checklist',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DallasFortWorthRoute = DallasFortWorthRouteImport.update({
-  id: '/dallas-fort-worth',
-  path: '/dallas-fort-worth',
+const NewsRoute = NewsRouteImport.update({
+  id: '/news',
+  path: '/news',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CountyElectionsRoute = CountyElectionsRouteImport.update({
-  id: '/county-elections',
-  path: '/county-elections',
+const NewsSitemapDotxmlRoute = NewsSitemapDotxmlRouteImport.update({
+  id: '/news-sitemap.xml',
+  path: '/news-sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ContactLegislatorsRoute = ContactLegislatorsRouteImport.update({
-  id: '/contact-legislators',
-  path: '/contact-legislators',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
+const RegisterToVoteRoute = RegisterToVoteRouteImport.update({
+  id: '/register-to-vote',
+  path: '/register-to-vote',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CandidateGuidesRoute = CandidateGuidesRouteImport.update({
-  id: '/candidate-guides',
-  path: '/candidate-guides',
+const RepresentativesRoute = RepresentativesRouteImport.update({
+  id: '/representatives',
+  path: '/representatives',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BillsRoute = BillsRouteImport.update({
-  id: '/bills',
-  path: '/bills',
+const ReturnRefundPolicyRoute = ReturnRefundPolicyRouteImport.update({
+  id: '/return-refund-policy',
+  path: '/return-refund-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AustinRoute = AustinRouteImport.update({
-  id: '/austin',
-  path: '/austin',
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const SanAntonioRoute = SanAntonioRouteImport.update({
+  id: '/san-antonio',
+  path: '/san-antonio',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutKeepTexasRedRoute = AboutKeepTexasRedRouteImport.update({
-  id: '/about-keep-texas-red',
-  path: '/about-keep-texas-red',
+const ShippingPolicyRoute = ShippingPolicyRouteImport.update({
+  id: '/shipping-policy',
+  path: '/shipping-policy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const SitemapAuthorsDotxmlRoute = SitemapAuthorsDotxmlRouteImport.update({
+  id: '/sitemap-authors.xml',
+  path: '/sitemap-authors.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TexasIndexRoute = TexasIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TexasRoute,
+const SitemapBillsDotxmlRoute = SitemapBillsDotxmlRouteImport.update({
+  id: '/sitemap-bills.xml',
+  path: '/sitemap-bills.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TexasSportsRoute,
+const SitemapCommitteesDotxmlRoute = SitemapCommitteesDotxmlRouteImport.update({
+  id: '/sitemap-committees.xml',
+  path: '/sitemap-committees.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const TexasNewsIndexRoute = TexasNewsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TexasNewsRoute,
+const SitemapDistrictsDotxmlRoute = SitemapDistrictsDotxmlRouteImport.update({
+  id: '/sitemap-districts.xml',
+  path: '/sitemap-districts.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const TexasLegislatureIndexRoute = TexasLegislatureIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => TexasLegislatureRoute,
+const SitemapElectionsDotxmlRoute = SitemapElectionsDotxmlRouteImport.update({
+  id: '/sitemap-elections.xml',
+  path: '/sitemap-elections.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const ShopIndexRoute = ShopIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ShopRoute,
+const SitemapEvergreenDotxmlRoute = SitemapEvergreenDotxmlRouteImport.update({
+  id: '/sitemap-evergreen.xml',
+  path: '/sitemap-evergreen.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const NewsIndexRoute = NewsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => NewsRoute,
+const SitemapExploreLocationsDotxmlRoute =
+  SitemapExploreLocationsDotxmlRouteImport.update({
+    id: '/sitemap-explore-locations.xml',
+    path: '/sitemap-explore-locations.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapExploreDotxmlRoute = SitemapExploreDotxmlRouteImport.update({
+  id: '/sitemap-explore.xml',
+  path: '/sitemap-explore.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreIndexRoute = ExploreIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ExploreRoute,
+const SitemapGovernmentDotxmlRoute = SitemapGovernmentDotxmlRouteImport.update({
+  id: '/sitemap-government.xml',
+  path: '/sitemap-government.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const ElectionsIndexRoute = ElectionsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ElectionsRoute,
+const SitemapImagesDotxmlRoute = SitemapImagesDotxmlRouteImport.update({
+  id: '/sitemap-images.xml',
+  path: '/sitemap-images.xml',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const BillsIndexRoute = BillsIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => BillsRoute,
+const SitemapLegislatureDotxmlRoute =
+  SitemapLegislatureDotxmlRouteImport.update({
+    id: '/sitemap-legislature.xml',
+    path: '/sitemap-legislature.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapNewsDotxmlRoute = SitemapNewsDotxmlRouteImport.update({
+  id: '/sitemap-news.xml',
+  path: '/sitemap-news.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapPagesDotxmlRoute = SitemapPagesDotxmlRouteImport.update({
+  id: '/sitemap-pages.xml',
+  path: '/sitemap-pages.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapProductsDotxmlRoute = SitemapProductsDotxmlRouteImport.update({
+  id: '/sitemap-products.xml',
+  path: '/sitemap-products.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapRepresentativesDotxmlRoute =
+  SitemapRepresentativesDotxmlRouteImport.update({
+    id: '/sitemap-representatives.xml',
+    path: '/sitemap-representatives.xml',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaxCalculatorRoute = TaxCalculatorRouteImport.update({
+  id: '/tax-calculator',
+  path: '/tax-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsOfServiceRoute = TermsOfServiceRouteImport.update({
+  id: '/terms-of-service',
+  path: '/terms-of-service',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasRoute = TexasRouteImport.update({
+  id: '/texas',
+  path: '/texas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasBudgetPlannerRoute = TexasBudgetPlannerRouteImport.update({
+  id: '/texas-budget-planner',
+  path: '/texas-budget-planner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasBusinessRoute = TexasBusinessRouteImport.update({
+  id: '/texas-business',
+  path: '/texas-business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasClosingCostCalculatorRoute =
+  TexasClosingCostCalculatorRouteImport.update({
+    id: '/texas-closing-cost-calculator',
+    path: '/texas-closing-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasCostOfLivingCalculatorRoute =
+  TexasCostOfLivingCalculatorRouteImport.update({
+    id: '/texas-cost-of-living-calculator',
+    path: '/texas-cost-of-living-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasDataRoute = TexasDataRouteImport.update({
+  id: '/texas-data',
+  path: '/texas-data',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasDownPaymentAssistanceCalculatorRoute =
+  TexasDownPaymentAssistanceCalculatorRouteImport.update({
+    id: '/texas-down-payment-assistance-calculator',
+    path: '/texas-down-payment-assistance-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasDownPaymentCalculatorRoute =
+  TexasDownPaymentCalculatorRouteImport.update({
+    id: '/texas-down-payment-calculator',
+    path: '/texas-down-payment-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasEconomyRoute = TexasEconomyRouteImport.update({
+  id: '/texas-economy',
+  path: '/texas-economy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasFinancialToolsRoute = TexasFinancialToolsRouteImport.update({
+  id: '/texas-financial-tools',
+  path: '/texas-financial-tools',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasFirstTimeHomebuyerProgramsRoute =
+  TexasFirstTimeHomebuyerProgramsRouteImport.update({
+    id: '/texas-first-time-homebuyer-programs',
+    path: '/texas-first-time-homebuyer-programs',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasGovernmentRoute = TexasGovernmentRouteImport.update({
+  id: '/texas-government',
+  path: '/texas-government',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasHomeAffordabilityCalculatorRoute =
+  TexasHomeAffordabilityCalculatorRouteImport.update({
+    id: '/texas-home-affordability-calculator',
+    path: '/texas-home-affordability-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasHomeEquityCalculatorRoute =
+  TexasHomeEquityCalculatorRouteImport.update({
+    id: '/texas-home-equity-calculator',
+    path: '/texas-home-equity-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasHomeEquityGrowthCalculatorRoute =
+  TexasHomeEquityGrowthCalculatorRouteImport.update({
+    id: '/texas-home-equity-growth-calculator',
+    path: '/texas-home-equity-growth-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasHomeInsuranceCalculatorRoute =
+  TexasHomeInsuranceCalculatorRouteImport.update({
+    id: '/texas-home-insurance-calculator',
+    path: '/texas-home-insurance-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasHomeownershipCostCalculatorRoute =
+  TexasHomeownershipCostCalculatorRouteImport.update({
+    id: '/texas-homeownership-cost-calculator',
+    path: '/texas-homeownership-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasLawPolicyRoute = TexasLawPolicyRouteImport.update({
+  id: '/texas-law-policy',
+  path: '/texas-law-policy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLawsRoute = TexasLawsRouteImport.update({
+  id: '/texas-laws',
+  path: '/texas-laws',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLegislatureRoute = TexasLegislatureRouteImport.update({
+  id: '/texas-legislature',
+  path: '/texas-legislature',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLivingRoute = TexasLivingRouteImport.update({
+  id: '/texas-living',
+  path: '/texas-living',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasMortgageCalculatorRoute = TexasMortgageCalculatorRouteImport.update({
+  id: '/texas-mortgage-calculator',
+  path: '/texas-mortgage-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasMortgagePayoffCalculatorRoute =
+  TexasMortgagePayoffCalculatorRouteImport.update({
+    id: '/texas-mortgage-payoff-calculator',
+    path: '/texas-mortgage-payoff-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasMovingCostCalculatorRoute =
+  TexasMovingCostCalculatorRouteImport.update({
+    id: '/texas-moving-cost-calculator',
+    path: '/texas-moving-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasNewsRoute = TexasNewsRouteImport.update({
+  id: '/texas-news',
+  path: '/texas-news',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasPoliticsRoute = TexasPoliticsRouteImport.update({
+  id: '/texas-politics',
+  path: '/texas-politics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasPropertyTaxIncreaseCalculatorRoute =
+  TexasPropertyTaxIncreaseCalculatorRouteImport.update({
+    id: '/texas-property-tax-increase-calculator',
+    path: '/texas-property-tax-increase-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasPropertyTaxProtestGuideRoute =
+  TexasPropertyTaxProtestGuideRouteImport.update({
+    id: '/texas-property-tax-protest-guide',
+    path: '/texas-property-tax-protest-guide',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasRefinanceSavingsCalculatorRoute =
+  TexasRefinanceSavingsCalculatorRouteImport.update({
+    id: '/texas-refinance-savings-calculator',
+    path: '/texas-refinance-savings-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasRentVsBuyCalculatorRoute =
+  TexasRentVsBuyCalculatorRouteImport.update({
+    id: '/texas-rent-vs-buy-calculator',
+    path: '/texas-rent-vs-buy-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasResourcesRoute = TexasResourcesRouteImport.update({
+  id: '/texas-resources',
+  path: '/texas-resources',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSalaryCalculatorRoute = TexasSalaryCalculatorRouteImport.update({
+  id: '/texas-salary-calculator',
+  path: '/texas-salary-calculator',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSalaryComparisonByCityRoute =
+  TexasSalaryComparisonByCityRouteImport.update({
+    id: '/texas-salary-comparison-by-city',
+    path: '/texas-salary-comparison-by-city',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const TexasSalesTaxExplainedRoute = TexasSalesTaxExplainedRouteImport.update({
+  id: '/texas-sales-tax-explained',
+  path: '/texas-sales-tax-explained',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasSportsRoute = TexasSportsRouteImport.update({
+  id: '/texas-sports',
+  path: '/texas-sports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasUtilityCostCalculatorRoute =
+  TexasUtilityCostCalculatorRouteImport.update({
+    id: '/texas-utility-cost-calculator',
+    path: '/texas-utility-cost-calculator',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VotingLocationsRoute = VotingLocationsRouteImport.update({
+  id: '/voting-locations',
+  path: '/voting-locations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminGovernanceHealthRoute = AdminGovernanceHealthRouteImport.update({
+  id: '/governance-health',
+  path: '/governance-health',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminShopProductsRoute = AdminShopProductsRouteImport.update({
+  id: '/shop-products',
+  path: '/shop-products',
+  getParentRoute: () => AdminRoute,
+} as any)
+const ApiContentDispositionRoute = ApiContentDispositionRouteImport.update({
+  id: '/api/content-disposition',
+  path: '/api/content-disposition',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGovernanceHealthRoute = ApiGovernanceHealthRouteImport.update({
+  id: '/api/governance-health',
+  path: '/api/governance-health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPlatformCoreStatusRoute = ApiPlatformCoreStatusRouteImport.update({
+  id: '/api/platform-core-status',
+  path: '/api/platform-core-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicationGateRoute = ApiPublicationGateRouteImport.update({
+  id: '/api/publication-gate',
+  path: '/api/publication-gate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArticleSlugRoute = ArticleSlugRouteImport.update({
+  id: '/article/$slug',
+  path: '/article/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthorsIndexRoute = AuthorsIndexRouteImport.update({
   id: '/authors/',
   path: '/authors/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VehiclesTitleTransferRoute = VehiclesTitleTransferRouteImport.update({
-  id: '/vehicles/title-transfer',
-  path: '/vehicles/title-transfer',
+const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
+  id: '/authors/$slug',
+  path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VehiclesTemporaryTagsRoute = VehiclesTemporaryTagsRouteImport.update({
-  id: '/vehicles/temporary-tags',
-  path: '/vehicles/temporary-tags',
-  getParentRoute: () => rootRouteImport,
+const BillsIndexRoute = BillsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BillsRoute,
 } as any)
-const VehiclesSellingACarRoute = VehiclesSellingACarRouteImport.update({
-  id: '/vehicles/selling-a-car',
-  path: '/vehicles/selling-a-car',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesSalvageRebuiltTitlesRoute =
-  VehiclesSalvageRebuiltTitlesRouteImport.update({
-    id: '/vehicles/salvage-rebuilt-titles',
-    path: '/vehicles/salvage-rebuilt-titles',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesRenewalRoute = VehiclesRenewalRouteImport.update({
-  id: '/vehicles/renewal',
-  path: '/vehicles/renewal',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesRegistrationFeesTaxesRoute =
-  VehiclesRegistrationFeesTaxesRouteImport.update({
-    id: '/vehicles/registration-fees-taxes',
-    path: '/vehicles/registration-fees-taxes',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesRegistrationRoute = VehiclesRegistrationRouteImport.update({
-  id: '/vehicles/registration',
-  path: '/vehicles/registration',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesPrivatePartySalesRoute =
-  VehiclesPrivatePartySalesRouteImport.update({
-    id: '/vehicles/private-party-sales',
-    path: '/vehicles/private-party-sales',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesPlatesRoute = VehiclesPlatesRouteImport.update({
-  id: '/vehicles/plates',
-  path: '/vehicles/plates',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesPersonalizedPlatesRoute =
-  VehiclesPersonalizedPlatesRouteImport.update({
-    id: '/vehicles/personalized-plates',
-    path: '/vehicles/personalized-plates',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesNewResidentsRoute = VehiclesNewResidentsRouteImport.update({
-  id: '/vehicles/new-residents',
-  path: '/vehicles/new-residents',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesLiensDuplicateCorrectedTitlesRoute =
-  VehiclesLiensDuplicateCorrectedTitlesRouteImport.update({
-    id: '/vehicles/liens-duplicate-corrected-titles',
-    path: '/vehicles/liens-duplicate-corrected-titles',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesInspectionsEmissionsRoute =
-  VehiclesInspectionsEmissionsRouteImport.update({
-    id: '/vehicles/inspections-emissions',
-    path: '/vehicles/inspections-emissions',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesInspectionsRoute = VehiclesInspectionsRouteImport.update({
-  id: '/vehicles/inspections',
-  path: '/vehicles/inspections',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesFinancialResponsibilityRoute =
-  VehiclesFinancialResponsibilityRouteImport.update({
-    id: '/vehicles/financial-responsibility',
-    path: '/vehicles/financial-responsibility',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesFarmAntiqueSpecialtyRoute =
-  VehiclesFarmAntiqueSpecialtyRouteImport.update({
-    id: '/vehicles/farm-antique-specialty',
-    path: '/vehicles/farm-antique-specialty',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesDuplicateTitlesRoute = VehiclesDuplicateTitlesRouteImport.update({
-  id: '/vehicles/duplicate-titles',
-  path: '/vehicles/duplicate-titles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesDisabledParkingRoute = VehiclesDisabledParkingRouteImport.update({
-  id: '/vehicles/disabled-parking',
-  path: '/vehicles/disabled-parking',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesCommercialFleetIrpRoute =
-  VehiclesCommercialFleetIrpRouteImport.update({
-    id: '/vehicles/commercial-fleet-irp',
-    path: '/vehicles/commercial-fleet-irp',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const VehiclesBuyingSellingRoute = VehiclesBuyingSellingRouteImport.update({
-  id: '/vehicles/buying-selling',
-  path: '/vehicles/buying-selling',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesBuyingACarRoute = VehiclesBuyingACarRouteImport.update({
-  id: '/vehicles/buying-a-car',
-  path: '/vehicles/buying-a-car',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesBondedTitlesRoute = VehiclesBondedTitlesRouteImport.update({
-  id: '/vehicles/bonded-titles',
-  path: '/vehicles/bonded-titles',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VehiclesAutoInsuranceRequirementsRoute =
-  VehiclesAutoInsuranceRequirementsRouteImport.update({
-    id: '/vehicles/auto-insurance-requirements',
-    path: '/vehicles/auto-insurance-requirements',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const TexasSlugRoute = TexasSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => TexasRoute,
-} as any)
-const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
-  id: '/$league',
-  path: '/$league',
-  getParentRoute: () => TexasSportsRoute,
-} as any)
-const TexasNewsTopicRoute = TexasNewsTopicRouteImport.update({
-  id: '/$topic',
-  path: '/$topic',
-  getParentRoute: () => TexasNewsRoute,
-} as any)
-const TexasLegislatureSessionsRoute =
-  TexasLegislatureSessionsRouteImport.update({
-    id: '/sessions',
-    path: '/sessions',
-    getParentRoute: () => TexasLegislatureRoute,
-  } as any)
-const TexasLegislatureSenateRoute = TexasLegislatureSenateRouteImport.update({
-  id: '/senate',
-  path: '/senate',
-  getParentRoute: () => TexasLegislatureRoute,
-} as any)
-const TexasLegislatureHouseRoute = TexasLegislatureHouseRouteImport.update({
-  id: '/house',
-  path: '/house',
-  getParentRoute: () => TexasLegislatureRoute,
-} as any)
-const TexasLegislatureCurrentSessionRoute =
-  TexasLegislatureCurrentSessionRouteImport.update({
-    id: '/current-session',
-    path: '/current-session',
-    getParentRoute: () => TexasLegislatureRoute,
-  } as any)
-const TexasLegislatureCommitteesRoute =
-  TexasLegislatureCommitteesRouteImport.update({
-    id: '/committees',
-    path: '/committees',
-    getParentRoute: () => TexasLegislatureRoute,
-  } as any)
-const TexasGovernmentEntitySlugRoute =
-  TexasGovernmentEntitySlugRouteImport.update({
-    id: '/$entitySlug',
-    path: '/$entitySlug',
-    getParentRoute: () => TexasGovernmentRoute,
-  } as any)
-const TexasDataDatasetSlugRoute = TexasDataDatasetSlugRouteImport.update({
-  id: '/$datasetSlug',
-  path: '/$datasetSlug',
-  getParentRoute: () => TexasDataRoute,
-} as any)
-const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
-  id: '/$topic',
-  path: '/$topic',
-  getParentRoute: () => TexasBusinessRoute,
-} as any)
-const ShopCheckoutReturnRoute = ShopCheckoutReturnRouteImport.update({
-  id: '/checkout-return',
-  path: '/checkout-return',
-  getParentRoute: () => ShopRoute,
-} as any)
-const ShopCheckoutRoute = ShopCheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
-  getParentRoute: () => ShopRoute,
-} as any)
-const ShopProductIdRoute = ShopProductIdRouteImport.update({
-  id: '/$productId',
-  path: '/$productId',
-  getParentRoute: () => ShopRoute,
-} as any)
-const RepresentativesRepresentativeSlugRoute =
-  RepresentativesRepresentativeSlugRouteImport.update({
-    id: '/$representativeSlug',
-    path: '/$representativeSlug',
-    getParentRoute: () => RepresentativesRoute,
-  } as any)
-const NewsNonPoliticalRoute = NewsNonPoliticalRouteImport.update({
-  id: '/non-political',
-  path: '/non-political',
-  getParentRoute: () => NewsRoute,
-} as any)
-const NewsSlugRoute = NewsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => NewsRoute,
-} as any)
-const ExploreWildlifeManagementAreasRoute =
-  ExploreWildlifeManagementAreasRouteImport.update({
-    id: '/wildlife-management-areas',
-    path: '/wildlife-management-areas',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreTripPlannerRoute = ExploreTripPlannerRouteImport.update({
-  id: '/trip-planner',
-  path: '/trip-planner',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreTexasWildflowerSeasonsRoute =
-  ExploreTexasWildflowerSeasonsRouteImport.update({
-    id: '/texas-wildflower-seasons',
-    path: '/texas-wildflower-seasons',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreTexasStateParksGuideRoute =
-  ExploreTexasStateParksGuideRouteImport.update({
-    id: '/texas-state-parks-guide',
-    path: '/texas-state-parks-guide',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreTexasScenicDrivesRoute =
-  ExploreTexasScenicDrivesRouteImport.update({
-    id: '/texas-scenic-drives',
-    path: '/texas-scenic-drives',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreTexasLakesGuideRoute = ExploreTexasLakesGuideRouteImport.update({
-  id: '/texas-lakes-guide',
-  path: '/texas-lakes-guide',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreTexasDarkSkyStargazingRoute =
-  ExploreTexasDarkSkyStargazingRouteImport.update({
-    id: '/texas-dark-sky-stargazing',
-    path: '/texas-dark-sky-stargazing',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreTexasCampingGuideRoute =
-  ExploreTexasCampingGuideRouteImport.update({
-    id: '/texas-camping-guide',
-    path: '/texas-camping-guide',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreStateParksRoute = ExploreStateParksRouteImport.update({
-  id: '/state-parks',
-  path: '/state-parks',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreSpringFedSwimmingRoute =
-  ExploreSpringFedSwimmingRouteImport.update({
-    id: '/spring-fed-swimming',
-    path: '/spring-fed-swimming',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreSpringConservationAndEducationRoute =
-  ExploreSpringConservationAndEducationRouteImport.update({
-    id: '/spring-conservation-and-education',
-    path: '/spring-conservation-and-education',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreSearchRoute = ExploreSearchRouteImport.update({
-  id: '/search',
-  path: '/search',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreScenicRiversRoute = ExploreScenicRiversRouteImport.update({
-  id: '/scenic-rivers',
-  path: '/scenic-rivers',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreNationalWildlifeRefugesRoute =
-  ExploreNationalWildlifeRefugesRouteImport.update({
-    id: '/national-wildlife-refuges',
-    path: '/national-wildlife-refuges',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreNationalParksRoute = ExploreNationalParksRouteImport.update({
-  id: '/national-parks',
-  path: '/national-parks',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreMajorSpringsRoute = ExploreMajorSpringsRouteImport.update({
-  id: '/major-springs',
-  path: '/major-springs',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreLighthousesRoute = ExploreLighthousesRouteImport.update({
-  id: '/lighthouses',
-  path: '/lighthouses',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreHistoricSitesRoute = ExploreHistoricSitesRouteImport.update({
-  id: '/historic-sites',
-  path: '/historic-sites',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreHillCountrySpringsRoute =
-  ExploreHillCountrySpringsRouteImport.update({
-    id: '/hill-country-springs',
-    path: '/hill-country-springs',
-    getParentRoute: () => ExploreRoute,
-  } as any)
-const ExploreCavernsRoute = ExploreCavernsRouteImport.update({
-  id: '/caverns',
-  path: '/caverns',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreSlugRoute = ExploreSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
-  id: '/email/unsubscribe',
-  path: '/email/unsubscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ElectionsVotingRoute = ElectionsVotingRouteImport.update({
-  id: '/voting',
-  path: '/voting',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsStatewideRoute = ElectionsStatewideRouteImport.update({
-  id: '/statewide',
-  path: '/statewide',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsResultsRoute = ElectionsResultsRouteImport.update({
-  id: '/results',
-  path: '/results',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsRacesRoute = ElectionsRacesRouteImport.update({
-  id: '/races',
-  path: '/races',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsPollsRoute = ElectionsPollsRouteImport.update({
-  id: '/polls',
-  path: '/polls',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsMethodologyRoute = ElectionsMethodologyRouteImport.update({
-  id: '/methodology',
-  path: '/methodology',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsLegislativeRoute = ElectionsLegislativeRouteImport.update({
-  id: '/legislative',
-  path: '/legislative',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsForecastRoute = ElectionsForecastRouteImport.update({
-  id: '/forecast',
-  path: '/forecast',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsDistrictsRoute = ElectionsDistrictsRouteImport.update({
-  id: '/districts',
-  path: '/districts',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsCorrectionsRoute = ElectionsCorrectionsRouteImport.update({
-  id: '/corrections',
-  path: '/corrections',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsCandidatesRoute = ElectionsCandidatesRouteImport.update({
-  id: '/candidates',
-  path: '/candidates',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const Elections2026Route = Elections2026RouteImport.update({
-  id: '/2026',
-  path: '/2026',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const DmvTexasDmvVsDpsRoute = DmvTexasDmvVsDpsRouteImport.update({
-  id: '/texas-dmv-vs-dps',
-  path: '/texas-dmv-vs-dps',
+const DmvCdlRoute = DmvCdlRouteImport.update({
+  id: '/cdl',
+  path: '/cdl',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvReplaceLostLicenseRoute = DmvReplaceLostLicenseRouteImport.update({
-  id: '/replace-lost-license',
-  path: '/replace-lost-license',
+const DmvCdlClassesRoute = DmvCdlClassesRouteImport.update({
+  id: '/cdl-classes',
+  path: '/cdl-classes',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvRealIdRoute = DmvRealIdRouteImport.update({
-  id: '/real-id',
-  path: '/real-id',
+const DmvCdlEndorsementsRoute = DmvCdlEndorsementsRouteImport.update({
+  id: '/cdl-endorsements',
+  path: '/cdl-endorsements',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvLicenseStatusRoute = DmvLicenseStatusRouteImport.update({
-  id: '/license-status',
-  path: '/license-status',
+const DmvChangeAddressRoute = DmvChangeAddressRouteImport.update({
+  id: '/change-address',
+  path: '/change-address',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvIdentificationCardRoute = DmvIdentificationCardRouteImport.update({
-  id: '/identification-card',
-  path: '/identification-card',
+const DmvDpsAppointmentsRoute = DmvDpsAppointmentsRouteImport.update({
+  id: '/dps-appointments',
+  path: '/dps-appointments',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvFormsDownloadsRoute = DmvFormsDownloadsRouteImport.update({
-  id: '/forms-downloads',
-  path: '/forms-downloads',
-  getParentRoute: () => DmvRoute,
-} as any)
-const DmvDriverLicenseRenewalRoute = DmvDriverLicenseRenewalRouteImport.update({
-  id: '/driver-license-renewal',
-  path: '/driver-license-renewal',
+const DmvDriverLicenseRoute = DmvDriverLicenseRouteImport.update({
+  id: '/driver-license',
+  path: '/driver-license',
   getParentRoute: () => DmvRoute,
 } as any)
 const DmvDriverLicenseDocumentsRoute =
@@ -1278,235 +878,499 @@ const DmvDriverLicenseDocumentsRoute =
     path: '/driver-license-documents',
     getParentRoute: () => DmvRoute,
   } as any)
-const DmvDriverLicenseRoute = DmvDriverLicenseRouteImport.update({
-  id: '/driver-license',
-  path: '/driver-license',
+const DmvDriverLicenseRenewalRoute = DmvDriverLicenseRenewalRouteImport.update({
+  id: '/driver-license-renewal',
+  path: '/driver-license-renewal',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvDpsAppointmentsRoute = DmvDpsAppointmentsRouteImport.update({
-  id: '/dps-appointments',
-  path: '/dps-appointments',
+const DmvFormsDownloadsRoute = DmvFormsDownloadsRouteImport.update({
+  id: '/forms-downloads',
+  path: '/forms-downloads',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvChangeAddressRoute = DmvChangeAddressRouteImport.update({
-  id: '/change-address',
-  path: '/change-address',
+const DmvIdentificationCardRoute = DmvIdentificationCardRouteImport.update({
+  id: '/identification-card',
+  path: '/identification-card',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvCdlEndorsementsRoute = DmvCdlEndorsementsRouteImport.update({
-  id: '/cdl-endorsements',
-  path: '/cdl-endorsements',
+const DmvLicenseStatusRoute = DmvLicenseStatusRouteImport.update({
+  id: '/license-status',
+  path: '/license-status',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvCdlClassesRoute = DmvCdlClassesRouteImport.update({
-  id: '/cdl-classes',
-  path: '/cdl-classes',
+const DmvRealIdRoute = DmvRealIdRouteImport.update({
+  id: '/real-id',
+  path: '/real-id',
   getParentRoute: () => DmvRoute,
 } as any)
-const DmvCdlRoute = DmvCdlRouteImport.update({
-  id: '/cdl',
-  path: '/cdl',
+const DmvReplaceLostLicenseRoute = DmvReplaceLostLicenseRouteImport.update({
+  id: '/replace-lost-license',
+  path: '/replace-lost-license',
   getParentRoute: () => DmvRoute,
 } as any)
-const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
-  id: '/authors/$slug',
-  path: '/authors/$slug',
-  getParentRoute: () => rootRouteImport,
+const DmvTexasDmvVsDpsRoute = DmvTexasDmvVsDpsRouteImport.update({
+  id: '/texas-dmv-vs-dps',
+  path: '/texas-dmv-vs-dps',
+  getParentRoute: () => DmvRoute,
 } as any)
-const ArticleSlugRoute = ArticleSlugRouteImport.update({
-  id: '/article/$slug',
-  path: '/article/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicationGateRoute = ApiPublicationGateRouteImport.update({
-  id: '/api/publication-gate',
-  path: '/api/publication-gate',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPlatformCoreStatusRoute = ApiPlatformCoreStatusRouteImport.update({
-  id: '/api/platform-core-status',
-  path: '/api/platform-core-status',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiGovernanceHealthRoute = ApiGovernanceHealthRouteImport.update({
-  id: '/api/governance-health',
-  path: '/api/governance-health',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiContentDispositionRoute = ApiContentDispositionRouteImport.update({
-  id: '/api/content-disposition',
-  path: '/api/content-disposition',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminShopProductsRoute = AdminShopProductsRouteImport.update({
-  id: '/shop-products',
-  path: '/shop-products',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminGovernanceHealthRoute = AdminGovernanceHealthRouteImport.update({
-  id: '/governance-health',
-  path: '/governance-health',
-  getParentRoute: () => AdminRoute,
-} as any)
-const TexasLegislatureSessionsIndexRoute =
-  TexasLegislatureSessionsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => TexasLegislatureSessionsRoute,
-  } as any)
-const TexasLegislatureCommitteesIndexRoute =
-  TexasLegislatureCommitteesIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => TexasLegislatureCommitteesRoute,
-  } as any)
-const ElectionsDistrictsIndexRoute = ElectionsDistrictsIndexRouteImport.update({
+const ElectionsIndexRoute = ElectionsIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ElectionsDistrictsRoute,
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const Elections2026Route = Elections2026RouteImport.update({
+  id: '/2026',
+  path: '/2026',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsCandidatesRoute = ElectionsCandidatesRouteImport.update({
+  id: '/candidates',
+  path: '/candidates',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsCorrectionsRoute = ElectionsCorrectionsRouteImport.update({
+  id: '/corrections',
+  path: '/corrections',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsDistrictsRoute = ElectionsDistrictsRouteImport.update({
+  id: '/districts',
+  path: '/districts',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsForecastRoute = ElectionsForecastRouteImport.update({
+  id: '/forecast',
+  path: '/forecast',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsLegislativeRoute = ElectionsLegislativeRouteImport.update({
+  id: '/legislative',
+  path: '/legislative',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsMethodologyRoute = ElectionsMethodologyRouteImport.update({
+  id: '/methodology',
+  path: '/methodology',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsPollsRoute = ElectionsPollsRouteImport.update({
+  id: '/polls',
+  path: '/polls',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsRacesRoute = ElectionsRacesRouteImport.update({
+  id: '/races',
+  path: '/races',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsResultsRoute = ElectionsResultsRouteImport.update({
+  id: '/results',
+  path: '/results',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsStatewideRoute = ElectionsStatewideRouteImport.update({
+  id: '/statewide',
+  path: '/statewide',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsVotingRoute = ElectionsVotingRouteImport.update({
+  id: '/voting',
+  path: '/voting',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExploreIndexRoute = ExploreIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreSlugRoute = ExploreSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreCavernsRoute = ExploreCavernsRouteImport.update({
+  id: '/caverns',
+  path: '/caverns',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreHillCountrySpringsRoute =
+  ExploreHillCountrySpringsRouteImport.update({
+    id: '/hill-country-springs',
+    path: '/hill-country-springs',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreHistoricSitesRoute = ExploreHistoricSitesRouteImport.update({
+  id: '/historic-sites',
+  path: '/historic-sites',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreLighthousesRoute = ExploreLighthousesRouteImport.update({
+  id: '/lighthouses',
+  path: '/lighthouses',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreMajorSpringsRoute = ExploreMajorSpringsRouteImport.update({
+  id: '/major-springs',
+  path: '/major-springs',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreNationalParksRoute = ExploreNationalParksRouteImport.update({
+  id: '/national-parks',
+  path: '/national-parks',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreNationalWildlifeRefugesRoute =
+  ExploreNationalWildlifeRefugesRouteImport.update({
+    id: '/national-wildlife-refuges',
+    path: '/national-wildlife-refuges',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreScenicRiversRoute = ExploreScenicRiversRouteImport.update({
+  id: '/scenic-rivers',
+  path: '/scenic-rivers',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreSearchRoute = ExploreSearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreSpringConservationAndEducationRoute =
+  ExploreSpringConservationAndEducationRouteImport.update({
+    id: '/spring-conservation-and-education',
+    path: '/spring-conservation-and-education',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreSpringFedSwimmingRoute =
+  ExploreSpringFedSwimmingRouteImport.update({
+    id: '/spring-fed-swimming',
+    path: '/spring-fed-swimming',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreStateParksRoute = ExploreStateParksRouteImport.update({
+  id: '/state-parks',
+  path: '/state-parks',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreTexasCampingGuideRoute =
+  ExploreTexasCampingGuideRouteImport.update({
+    id: '/texas-camping-guide',
+    path: '/texas-camping-guide',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTexasDarkSkyStargazingRoute =
+  ExploreTexasDarkSkyStargazingRouteImport.update({
+    id: '/texas-dark-sky-stargazing',
+    path: '/texas-dark-sky-stargazing',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTexasLakesGuideRoute = ExploreTexasLakesGuideRouteImport.update({
+  id: '/texas-lakes-guide',
+  path: '/texas-lakes-guide',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreTexasScenicDrivesRoute =
+  ExploreTexasScenicDrivesRouteImport.update({
+    id: '/texas-scenic-drives',
+    path: '/texas-scenic-drives',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTexasStateParksGuideRoute =
+  ExploreTexasStateParksGuideRouteImport.update({
+    id: '/texas-state-parks-guide',
+    path: '/texas-state-parks-guide',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTexasWildflowerSeasonsRoute =
+  ExploreTexasWildflowerSeasonsRouteImport.update({
+    id: '/texas-wildflower-seasons',
+    path: '/texas-wildflower-seasons',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const ExploreTripPlannerRoute = ExploreTripPlannerRouteImport.update({
+  id: '/trip-planner',
+  path: '/trip-planner',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreWildlifeManagementAreasRoute =
+  ExploreWildlifeManagementAreasRouteImport.update({
+    id: '/wildlife-management-areas',
+    path: '/wildlife-management-areas',
+    getParentRoute: () => ExploreRoute,
+  } as any)
+const NewsIndexRoute = NewsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => NewsRoute,
+} as any)
+const NewsSlugRoute = NewsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => NewsRoute,
+} as any)
+const NewsNonPoliticalRoute = NewsNonPoliticalRouteImport.update({
+  id: '/non-political',
+  path: '/non-political',
+  getParentRoute: () => NewsRoute,
+} as any)
+const RepresentativesRepresentativeSlugRoute =
+  RepresentativesRepresentativeSlugRouteImport.update({
+    id: '/$representativeSlug',
+    path: '/$representativeSlug',
+    getParentRoute: () => RepresentativesRoute,
+  } as any)
+const ShopIndexRoute = ShopIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopProductIdRoute = ShopProductIdRouteImport.update({
+  id: '/$productId',
+  path: '/$productId',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopCheckoutRoute = ShopCheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => ShopRoute,
+} as any)
+const ShopCheckoutReturnRoute = ShopCheckoutReturnRouteImport.update({
+  id: '/checkout-return',
+  path: '/checkout-return',
+  getParentRoute: () => ShopRoute,
+} as any)
+const TexasBusinessTopicRoute = TexasBusinessTopicRouteImport.update({
+  id: '/$topic',
+  path: '/$topic',
+  getParentRoute: () => TexasBusinessRoute,
+} as any)
+const TexasDataDatasetSlugRoute = TexasDataDatasetSlugRouteImport.update({
+  id: '/$datasetSlug',
+  path: '/$datasetSlug',
+  getParentRoute: () => TexasDataRoute,
+} as any)
+const TexasGovernmentEntitySlugRoute =
+  TexasGovernmentEntitySlugRouteImport.update({
+    id: '/$entitySlug',
+    path: '/$entitySlug',
+    getParentRoute: () => TexasGovernmentRoute,
+  } as any)
+const TexasLegislatureIndexRoute = TexasLegislatureIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasLegislatureRoute,
+} as any)
+const TexasLegislatureCommitteesRoute =
+  TexasLegislatureCommitteesRouteImport.update({
+    id: '/committees',
+    path: '/committees',
+    getParentRoute: () => TexasLegislatureRoute,
+  } as any)
+const TexasLegislatureCurrentSessionRoute =
+  TexasLegislatureCurrentSessionRouteImport.update({
+    id: '/current-session',
+    path: '/current-session',
+    getParentRoute: () => TexasLegislatureRoute,
+  } as any)
+const TexasLegislatureHouseRoute = TexasLegislatureHouseRouteImport.update({
+  id: '/house',
+  path: '/house',
+  getParentRoute: () => TexasLegislatureRoute,
+} as any)
+const TexasLegislatureSenateRoute = TexasLegislatureSenateRouteImport.update({
+  id: '/senate',
+  path: '/senate',
+  getParentRoute: () => TexasLegislatureRoute,
+} as any)
+const TexasLegislatureSessionsRoute =
+  TexasLegislatureSessionsRouteImport.update({
+    id: '/sessions',
+    path: '/sessions',
+    getParentRoute: () => TexasLegislatureRoute,
+  } as any)
+const TexasNewsIndexRoute = TexasNewsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasNewsRoute,
+} as any)
+const TexasNewsTopicRoute = TexasNewsTopicRouteImport.update({
+  id: '/$topic',
+  path: '/$topic',
+  getParentRoute: () => TexasNewsRoute,
+} as any)
+const TexasSportsIndexRoute = TexasSportsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasSportsRoute,
+} as any)
+const TexasSportsLeagueRoute = TexasSportsLeagueRouteImport.update({
+  id: '/$league',
+  path: '/$league',
+  getParentRoute: () => TexasSportsRoute,
+} as any)
+const TexasIndexRoute = TexasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => TexasRoute,
+} as any)
+const TexasSlugRoute = TexasSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => TexasRoute,
+} as any)
+const VehiclesAutoInsuranceRequirementsRoute =
+  VehiclesAutoInsuranceRequirementsRouteImport.update({
+    id: '/vehicles/auto-insurance-requirements',
+    path: '/vehicles/auto-insurance-requirements',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesBondedTitlesRoute = VehiclesBondedTitlesRouteImport.update({
+  id: '/vehicles/bonded-titles',
+  path: '/vehicles/bonded-titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesBuyingACarRoute = VehiclesBuyingACarRouteImport.update({
+  id: '/vehicles/buying-a-car',
+  path: '/vehicles/buying-a-car',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesBuyingSellingRoute = VehiclesBuyingSellingRouteImport.update({
+  id: '/vehicles/buying-selling',
+  path: '/vehicles/buying-selling',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesCommercialFleetIrpRoute =
+  VehiclesCommercialFleetIrpRouteImport.update({
+    id: '/vehicles/commercial-fleet-irp',
+    path: '/vehicles/commercial-fleet-irp',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesDisabledParkingRoute = VehiclesDisabledParkingRouteImport.update({
+  id: '/vehicles/disabled-parking',
+  path: '/vehicles/disabled-parking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesDuplicateTitlesRoute = VehiclesDuplicateTitlesRouteImport.update({
+  id: '/vehicles/duplicate-titles',
+  path: '/vehicles/duplicate-titles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesFarmAntiqueSpecialtyRoute =
+  VehiclesFarmAntiqueSpecialtyRouteImport.update({
+    id: '/vehicles/farm-antique-specialty',
+    path: '/vehicles/farm-antique-specialty',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesFinancialResponsibilityRoute =
+  VehiclesFinancialResponsibilityRouteImport.update({
+    id: '/vehicles/financial-responsibility',
+    path: '/vehicles/financial-responsibility',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesInspectionsRoute = VehiclesInspectionsRouteImport.update({
+  id: '/vehicles/inspections',
+  path: '/vehicles/inspections',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesInspectionsEmissionsRoute =
+  VehiclesInspectionsEmissionsRouteImport.update({
+    id: '/vehicles/inspections-emissions',
+    path: '/vehicles/inspections-emissions',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesLiensDuplicateCorrectedTitlesRoute =
+  VehiclesLiensDuplicateCorrectedTitlesRouteImport.update({
+    id: '/vehicles/liens-duplicate-corrected-titles',
+    path: '/vehicles/liens-duplicate-corrected-titles',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesNewResidentsRoute = VehiclesNewResidentsRouteImport.update({
+  id: '/vehicles/new-residents',
+  path: '/vehicles/new-residents',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesPersonalizedPlatesRoute =
+  VehiclesPersonalizedPlatesRouteImport.update({
+    id: '/vehicles/personalized-plates',
+    path: '/vehicles/personalized-plates',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesPlatesRoute = VehiclesPlatesRouteImport.update({
+  id: '/vehicles/plates',
+  path: '/vehicles/plates',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesPrivatePartySalesRoute =
+  VehiclesPrivatePartySalesRouteImport.update({
+    id: '/vehicles/private-party-sales',
+    path: '/vehicles/private-party-sales',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesRegistrationRoute = VehiclesRegistrationRouteImport.update({
+  id: '/vehicles/registration',
+  path: '/vehicles/registration',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesRegistrationFeesTaxesRoute =
+  VehiclesRegistrationFeesTaxesRouteImport.update({
+    id: '/vehicles/registration-fees-taxes',
+    path: '/vehicles/registration-fees-taxes',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesRenewalRoute = VehiclesRenewalRouteImport.update({
+  id: '/vehicles/renewal',
+  path: '/vehicles/renewal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesSalvageRebuiltTitlesRoute =
+  VehiclesSalvageRebuiltTitlesRouteImport.update({
+    id: '/vehicles/salvage-rebuilt-titles',
+    path: '/vehicles/salvage-rebuilt-titles',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const VehiclesSellingACarRoute = VehiclesSellingACarRouteImport.update({
+  id: '/vehicles/selling-a-car',
+  path: '/vehicles/selling-a-car',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesTemporaryTagsRoute = VehiclesTemporaryTagsRouteImport.update({
+  id: '/vehicles/temporary-tags',
+  path: '/vehicles/temporary-tags',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VehiclesTitleTransferRoute = VehiclesTitleTransferRouteImport.update({
+  id: '/vehicles/title-transfer',
+  path: '/vehicles/title-transfer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminBillsEditorialRoute = AdminBillsEditorialRouteImport.update({
+  id: '/bills/editorial',
+  path: '/bills/editorial',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBillsEnrichmentRoute = AdminBillsEnrichmentRouteImport.update({
+  id: '/bills/enrichment',
+  path: '/bills/enrichment',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBillsOpportunitiesRoute = AdminBillsOpportunitiesRouteImport.update({
+  id: '/bills/opportunities',
+  path: '/bills/opportunities',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBillsRelationshipsRoute = AdminBillsRelationshipsRouteImport.update({
+  id: '/bills/relationships',
+  path: '/bills/relationships',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AdminElectionsIndexRoute = AdminElectionsIndexRouteImport.update({
   id: '/elections/',
   path: '/elections/',
-  getParentRoute: () => AdminRoute,
-} as any)
-const TexasSportsTeamTeamRoute = TexasSportsTeamTeamRouteImport.update({
-  id: '/team/$team',
-  path: '/team/$team',
-  getParentRoute: () => TexasSportsRoute,
-} as any)
-const TexasResourcesTypeTypeRoute = TexasResourcesTypeTypeRouteImport.update({
-  id: '/type/$type',
-  path: '/type/$type',
-  getParentRoute: () => TexasResourcesRoute,
-} as any)
-const TexasResourcesTopicTopicIdRoute =
-  TexasResourcesTopicTopicIdRouteImport.update({
-    id: '/topic/$topicId',
-    path: '/topic/$topicId',
-    getParentRoute: () => TexasResourcesRoute,
-  } as any)
-const TexasResourcesJourneyJourneyIdRoute =
-  TexasResourcesJourneyJourneyIdRouteImport.update({
-    id: '/journey/$journeyId',
-    path: '/journey/$journeyId',
-    getParentRoute: () => TexasResourcesRoute,
-  } as any)
-const TexasLegislatureSessionsSessionSlugRoute =
-  TexasLegislatureSessionsSessionSlugRouteImport.update({
-    id: '/$sessionSlug',
-    path: '/$sessionSlug',
-    getParentRoute: () => TexasLegislatureSessionsRoute,
-  } as any)
-const TexasLegislatureCommitteesCommitteeSlugRoute =
-  TexasLegislatureCommitteesCommitteeSlugRouteImport.update({
-    id: '/$committeeSlug',
-    path: '/$committeeSlug',
-    getParentRoute: () => TexasLegislatureCommitteesRoute,
-  } as any)
-const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
-  id: '/lovable/email/suppression',
-  path: '/lovable/email/suppression',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ExploreTripTokenRoute = ExploreTripTokenRouteImport.update({
-  id: '/trip/$token',
-  path: '/trip/$token',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreStateParkSlugRoute = ExploreStateParkSlugRouteImport.update({
-  id: '/state-park/$slug',
-  path: '/state-park/$slug',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreRiverSlugRoute = ExploreRiverSlugRouteImport.update({
-  id: '/river/$slug',
-  path: '/river/$slug',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreRegionRegionRoute = ExploreRegionRegionRouteImport.update({
-  id: '/region/$region',
-  path: '/region/$region',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreLakeSlugRoute = ExploreLakeSlugRouteImport.update({
-  id: '/lake/$slug',
-  path: '/lake/$slug',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreCountyCountyRoute = ExploreCountyCountyRouteImport.update({
-  id: '/county/$county',
-  path: '/county/$county',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ExploreCavernSlugRoute = ExploreCavernSlugRouteImport.update({
-  id: '/cavern/$slug',
-  path: '/cavern/$slug',
-  getParentRoute: () => ExploreRoute,
-} as any)
-const ElectionsResultsResultSlugRoute =
-  ElectionsResultsResultSlugRouteImport.update({
-    id: '/$resultSlug',
-    path: '/$resultSlug',
-    getParentRoute: () => ElectionsResultsRoute,
-  } as any)
-const ElectionsRacesRaceSlugRoute = ElectionsRacesRaceSlugRouteImport.update({
-  id: '/races_/$raceSlug',
-  path: '/races/$raceSlug',
-  getParentRoute: () => ElectionsRoute,
-} as any)
-const ElectionsPollsPollSlugRoute = ElectionsPollsPollSlugRouteImport.update({
-  id: '/$pollSlug',
-  path: '/$pollSlug',
-  getParentRoute: () => ElectionsPollsRoute,
-} as any)
-const ElectionsForecastForecastSlugRoute =
-  ElectionsForecastForecastSlugRouteImport.update({
-    id: '/$forecastSlug',
-    path: '/$forecastSlug',
-    getParentRoute: () => ElectionsForecastRoute,
-  } as any)
-const ElectionsDistrictsDistrictSlugRoute =
-  ElectionsDistrictsDistrictSlugRouteImport.update({
-    id: '/$districtSlug',
-    path: '/$districtSlug',
-    getParentRoute: () => ElectionsDistrictsRoute,
-  } as any)
-const ElectionsCandidatesCandidateSlugRoute =
-  ElectionsCandidatesCandidateSlugRouteImport.update({
-    id: '/candidates_/$candidateSlug',
-    path: '/candidates/$candidateSlug',
-    getParentRoute: () => ElectionsRoute,
-  } as any)
-const ApiPublicPropertyAddressLookupRoute =
-  ApiPublicPropertyAddressLookupRouteImport.update({
-    id: '/api/public/property-address-lookup',
-    path: '/api/public/property-address-lookup',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiAdminShopProductsRoute = ApiAdminShopProductsRouteImport.update({
-  id: '/api/admin/shop-products',
-  path: '/api/admin/shop-products',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminElectionsResultsRoute = AdminElectionsResultsRouteImport.update({
-  id: '/elections/results',
-  path: '/elections/results',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminElectionsRacesRoute = AdminElectionsRacesRouteImport.update({
-  id: '/elections/races',
-  path: '/elections/races',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminElectionsPollsRoute = AdminElectionsPollsRouteImport.update({
-  id: '/elections/polls',
-  path: '/elections/polls',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminElectionsForecastRoute = AdminElectionsForecastRouteImport.update({
-  id: '/elections/forecast',
-  path: '/elections/forecast',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminElectionsCandidatesRoute =
@@ -1515,25 +1379,161 @@ const AdminElectionsCandidatesRoute =
     path: '/elections/candidates',
     getParentRoute: () => AdminRoute,
   } as any)
-const AdminBillsRelationshipsRoute = AdminBillsRelationshipsRouteImport.update({
-  id: '/bills/relationships',
-  path: '/bills/relationships',
+const AdminElectionsForecastRoute = AdminElectionsForecastRouteImport.update({
+  id: '/elections/forecast',
+  path: '/elections/forecast',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminBillsOpportunitiesRoute = AdminBillsOpportunitiesRouteImport.update({
-  id: '/bills/opportunities',
-  path: '/bills/opportunities',
+const AdminElectionsPollsRoute = AdminElectionsPollsRouteImport.update({
+  id: '/elections/polls',
+  path: '/elections/polls',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminBillsEnrichmentRoute = AdminBillsEnrichmentRouteImport.update({
-  id: '/bills/enrichment',
-  path: '/bills/enrichment',
+const AdminElectionsRacesRoute = AdminElectionsRacesRouteImport.update({
+  id: '/elections/races',
+  path: '/elections/races',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminBillsEditorialRoute = AdminBillsEditorialRouteImport.update({
-  id: '/bills/editorial',
-  path: '/bills/editorial',
+const AdminElectionsResultsRoute = AdminElectionsResultsRouteImport.update({
+  id: '/elections/results',
+  path: '/elections/results',
   getParentRoute: () => AdminRoute,
+} as any)
+const ApiAdminShopProductsRoute = ApiAdminShopProductsRouteImport.update({
+  id: '/api/admin/shop-products',
+  path: '/api/admin/shop-products',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPropertyAddressLookupRoute =
+  ApiPublicPropertyAddressLookupRouteImport.update({
+    id: '/api/public/property-address-lookup',
+    path: '/api/public/property-address-lookup',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ElectionsCandidatesCandidateSlugRoute =
+  ElectionsCandidatesCandidateSlugRouteImport.update({
+    id: '/candidates_/$candidateSlug',
+    path: '/candidates/$candidateSlug',
+    getParentRoute: () => ElectionsRoute,
+  } as any)
+const ElectionsDistrictsIndexRoute = ElectionsDistrictsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ElectionsDistrictsRoute,
+} as any)
+const ElectionsDistrictsDistrictSlugRoute =
+  ElectionsDistrictsDistrictSlugRouteImport.update({
+    id: '/$districtSlug',
+    path: '/$districtSlug',
+    getParentRoute: () => ElectionsDistrictsRoute,
+  } as any)
+const ElectionsForecastForecastSlugRoute =
+  ElectionsForecastForecastSlugRouteImport.update({
+    id: '/$forecastSlug',
+    path: '/$forecastSlug',
+    getParentRoute: () => ElectionsForecastRoute,
+  } as any)
+const ElectionsPollsPollSlugRoute = ElectionsPollsPollSlugRouteImport.update({
+  id: '/$pollSlug',
+  path: '/$pollSlug',
+  getParentRoute: () => ElectionsPollsRoute,
+} as any)
+const ElectionsRacesRaceSlugRoute = ElectionsRacesRaceSlugRouteImport.update({
+  id: '/races_/$raceSlug',
+  path: '/races/$raceSlug',
+  getParentRoute: () => ElectionsRoute,
+} as any)
+const ElectionsResultsResultSlugRoute =
+  ElectionsResultsResultSlugRouteImport.update({
+    id: '/$resultSlug',
+    path: '/$resultSlug',
+    getParentRoute: () => ElectionsResultsRoute,
+  } as any)
+const ExploreCavernSlugRoute = ExploreCavernSlugRouteImport.update({
+  id: '/cavern/$slug',
+  path: '/cavern/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreCountyCountyRoute = ExploreCountyCountyRouteImport.update({
+  id: '/county/$county',
+  path: '/county/$county',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreLakeSlugRoute = ExploreLakeSlugRouteImport.update({
+  id: '/lake/$slug',
+  path: '/lake/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreRegionRegionRoute = ExploreRegionRegionRouteImport.update({
+  id: '/region/$region',
+  path: '/region/$region',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreRiverSlugRoute = ExploreRiverSlugRouteImport.update({
+  id: '/river/$slug',
+  path: '/river/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreStateParkSlugRoute = ExploreStateParkSlugRouteImport.update({
+  id: '/state-park/$slug',
+  path: '/state-park/$slug',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const ExploreTripTokenRoute = ExploreTripTokenRouteImport.update({
+  id: '/trip/$token',
+  path: '/trip/$token',
+  getParentRoute: () => ExploreRoute,
+} as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TexasLegislatureCommitteesIndexRoute =
+  TexasLegislatureCommitteesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => TexasLegislatureCommitteesRoute,
+  } as any)
+const TexasLegislatureCommitteesCommitteeSlugRoute =
+  TexasLegislatureCommitteesCommitteeSlugRouteImport.update({
+    id: '/$committeeSlug',
+    path: '/$committeeSlug',
+    getParentRoute: () => TexasLegislatureCommitteesRoute,
+  } as any)
+const TexasLegislatureSessionsIndexRoute =
+  TexasLegislatureSessionsIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => TexasLegislatureSessionsRoute,
+  } as any)
+const TexasLegislatureSessionsSessionSlugRoute =
+  TexasLegislatureSessionsSessionSlugRouteImport.update({
+    id: '/$sessionSlug',
+    path: '/$sessionSlug',
+    getParentRoute: () => TexasLegislatureSessionsRoute,
+  } as any)
+const TexasResourcesJourneyJourneyIdRoute =
+  TexasResourcesJourneyJourneyIdRouteImport.update({
+    id: '/journey/$journeyId',
+    path: '/journey/$journeyId',
+    getParentRoute: () => TexasResourcesRoute,
+  } as any)
+const TexasResourcesTopicTopicIdRoute =
+  TexasResourcesTopicTopicIdRouteImport.update({
+    id: '/topic/$topicId',
+    path: '/topic/$topicId',
+    getParentRoute: () => TexasResourcesRoute,
+  } as any)
+const TexasResourcesTypeTypeRoute = TexasResourcesTypeTypeRouteImport.update({
+  id: '/type/$type',
+  path: '/type/$type',
+  getParentRoute: () => TexasResourcesRoute,
+} as any)
+const TexasSportsTeamTeamRoute = TexasSportsTeamTeamRouteImport.update({
+  id: '/team/$team',
+  path: '/team/$team',
+  getParentRoute: () => TexasSportsRoute,
 } as any)
 const AdminExploreImportsIndexRoute =
   AdminExploreImportsIndexRouteImport.update({
@@ -1541,115 +1541,10 @@ const AdminExploreImportsIndexRoute =
     path: '/explore/imports/',
     getParentRoute: () => AdminRoute,
   } as any)
-const LovableEmailTransactionalSendRoute =
-  LovableEmailTransactionalSendRouteImport.update({
-    id: '/lovable/email/transactional/send',
-    path: '/lovable/email/transactional/send',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailTransactionalPreviewRoute =
-  LovableEmailTransactionalPreviewRouteImport.update({
-    id: '/lovable/email/transactional/preview',
-    path: '/lovable/email/transactional/preview',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicPaymentsWebhookRoute =
-  ApiPublicPaymentsWebhookRouteImport.update({
-    id: '/api/public/payments/webhook',
-    path: '/api/public/payments/webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksTrackVariantRoute =
-  ApiPublicHooksTrackVariantRouteImport.update({
-    id: '/api/public/hooks/track-variant',
-    path: '/api/public/hooks/track-variant',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksSyncPrintifyRoute =
-  ApiPublicHooksSyncPrintifyRouteImport.update({
-    id: '/api/public/hooks/sync-printify',
-    path: '/api/public/hooks/sync-printify',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksScoreViralBackfillRoute =
-  ApiPublicHooksScoreViralBackfillRouteImport.update({
-    id: '/api/public/hooks/score-viral-backfill',
-    path: '/api/public/hooks/score-viral-backfill',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksScoreViralRoute =
-  ApiPublicHooksScoreViralRouteImport.update({
-    id: '/api/public/hooks/score-viral',
-    path: '/api/public/hooks/score-viral',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksPublishingSafetyNetRoute =
-  ApiPublicHooksPublishingSafetyNetRouteImport.update({
-    id: '/api/public/hooks/publishing-safety-net',
-    path: '/api/public/hooks/publishing-safety-net',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksListShopsRoute = ApiPublicHooksListShopsRouteImport.update({
-  id: '/api/public/hooks/list-shops',
-  path: '/api/public/hooks/list-shops',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksIngestFeedsRoute =
-  ApiPublicHooksIngestFeedsRouteImport.update({
-    id: '/api/public/hooks/ingest-feeds',
-    path: '/api/public/hooks/ingest-feeds',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksHealthRoute = ApiPublicHooksHealthRouteImport.update({
-  id: '/api/public/hooks/health',
-  path: '/api/public/hooks/health',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicHooksGenerateSportsRoute =
-  ApiPublicHooksGenerateSportsRouteImport.update({
-    id: '/api/public/hooks/generate-sports',
-    path: '/api/public/hooks/generate-sports',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksGenerateNewsRoute =
-  ApiPublicHooksGenerateNewsRouteImport.update({
-    id: '/api/public/hooks/generate-news',
-    path: '/api/public/hooks/generate-news',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksGenerateEvergreenRoute =
-  ApiPublicHooksGenerateEvergreenRouteImport.update({
-    id: '/api/public/hooks/generate-evergreen',
-    path: '/api/public/hooks/generate-evergreen',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicHooksBackfillFeaturedImagesRoute =
-  ApiPublicHooksBackfillFeaturedImagesRouteImport.update({
-    id: '/api/public/hooks/backfill-featured-images',
-    path: '/api/public/hooks/backfill-featured-images',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicExploreRecommendationsRoute =
-  ApiPublicExploreRecommendationsRouteImport.update({
-    id: '/api/public/explore/recommendations',
-    path: '/api/public/explore/recommendations',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicExploreMapRoute = ApiPublicExploreMapRouteImport.update({
-  id: '/api/public/explore/map',
-  path: '/api/public/explore/map',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicExploreEntitiesRoute =
-  ApiPublicExploreEntitiesRouteImport.update({
-    id: '/api/public/explore/entities',
-    path: '/api/public/explore/entities',
+const ApiPublicArticleImageFilenameRoute =
+  ApiPublicArticleImageFilenameRouteImport.update({
+    id: '/api/public/article-image/$filename',
+    path: '/api/public/article-image/$filename',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicExploreAutocompleteRoute =
@@ -1658,22 +1553,115 @@ const ApiPublicExploreAutocompleteRoute =
     path: '/api/public/explore/autocomplete',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicArticleImageFilenameRoute =
-  ApiPublicArticleImageFilenameRouteImport.update({
-    id: '/api/public/article-image/$filename',
-    path: '/api/public/article-image/$filename',
+const ApiPublicExploreEntitiesRoute =
+  ApiPublicExploreEntitiesRouteImport.update({
+    id: '/api/public/explore/entities',
+    path: '/api/public/explore/entities',
     getParentRoute: () => rootRouteImport,
   } as any)
-const BillsTexasLegislatureBillTypeBillNumberRoute =
-  BillsTexasLegislatureBillTypeBillNumberRouteImport.update({
-    id: '/texas/$legislature/$billType/$billNumber',
-    path: '/texas/$legislature/$billType/$billNumber',
-    getParentRoute: () => BillsRoute,
+const ApiPublicExploreMapRoute = ApiPublicExploreMapRouteImport.update({
+  id: '/api/public/explore/map',
+  path: '/api/public/explore/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicExploreRecommendationsRoute =
+  ApiPublicExploreRecommendationsRouteImport.update({
+    id: '/api/public/explore/recommendations',
+    path: '/api/public/explore/recommendations',
+    getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicOauthFacebookStartRoute =
-  ApiPublicOauthFacebookStartRouteImport.update({
-    id: '/api/public/oauth/facebook/start',
-    path: '/api/public/oauth/facebook/start',
+const ApiPublicHooksBackfillFeaturedImagesRoute =
+  ApiPublicHooksBackfillFeaturedImagesRouteImport.update({
+    id: '/api/public/hooks/backfill-featured-images',
+    path: '/api/public/hooks/backfill-featured-images',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateEvergreenRoute =
+  ApiPublicHooksGenerateEvergreenRouteImport.update({
+    id: '/api/public/hooks/generate-evergreen',
+    path: '/api/public/hooks/generate-evergreen',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateNewsRoute =
+  ApiPublicHooksGenerateNewsRouteImport.update({
+    id: '/api/public/hooks/generate-news',
+    path: '/api/public/hooks/generate-news',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksGenerateSportsRoute =
+  ApiPublicHooksGenerateSportsRouteImport.update({
+    id: '/api/public/hooks/generate-sports',
+    path: '/api/public/hooks/generate-sports',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksHealthRoute = ApiPublicHooksHealthRouteImport.update({
+  id: '/api/public/hooks/health',
+  path: '/api/public/hooks/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksIngestFeedsRoute =
+  ApiPublicHooksIngestFeedsRouteImport.update({
+    id: '/api/public/hooks/ingest-feeds',
+    path: '/api/public/hooks/ingest-feeds',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksListShopsRoute = ApiPublicHooksListShopsRouteImport.update({
+  id: '/api/public/hooks/list-shops',
+  path: '/api/public/hooks/list-shops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicHooksPublishingSafetyNetRoute =
+  ApiPublicHooksPublishingSafetyNetRouteImport.update({
+    id: '/api/public/hooks/publishing-safety-net',
+    path: '/api/public/hooks/publishing-safety-net',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksScoreViralRoute =
+  ApiPublicHooksScoreViralRouteImport.update({
+    id: '/api/public/hooks/score-viral',
+    path: '/api/public/hooks/score-viral',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksScoreViralBackfillRoute =
+  ApiPublicHooksScoreViralBackfillRouteImport.update({
+    id: '/api/public/hooks/score-viral-backfill',
+    path: '/api/public/hooks/score-viral-backfill',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksSyncPrintifyRoute =
+  ApiPublicHooksSyncPrintifyRouteImport.update({
+    id: '/api/public/hooks/sync-printify',
+    path: '/api/public/hooks/sync-printify',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicHooksTrackVariantRoute =
+  ApiPublicHooksTrackVariantRouteImport.update({
+    id: '/api/public/hooks/track-variant',
+    path: '/api/public/hooks/track-variant',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicPaymentsWebhookRoute =
+  ApiPublicPaymentsWebhookRouteImport.update({
+    id: '/api/public/payments/webhook',
+    path: '/api/public/payments/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicOauthFacebookCallbackRoute =
@@ -1681,6 +1669,18 @@ const ApiPublicOauthFacebookCallbackRoute =
     id: '/api/public/oauth/facebook/callback',
     path: '/api/public/oauth/facebook/callback',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicOauthFacebookStartRoute =
+  ApiPublicOauthFacebookStartRouteImport.update({
+    id: '/api/public/oauth/facebook/start',
+    path: '/api/public/oauth/facebook/start',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const BillsTexasLegislatureBillTypeBillNumberRoute =
+  BillsTexasLegislatureBillTypeBillNumberRouteImport.update({
+    id: '/texas/$legislature/$billType/$billNumber',
+    path: '/texas/$legislature/$billType/$billNumber',
+    getParentRoute: () => BillsRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -3426,683 +3426,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/voting-locations': {
-      id: '/voting-locations'
-      path: '/voting-locations'
-      fullPath: '/voting-locations'
-      preLoaderRoute: typeof VotingLocationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/unsubscribe': {
-      id: '/unsubscribe'
-      path: '/unsubscribe'
-      fullPath: '/unsubscribe'
-      preLoaderRoute: typeof UnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-utility-cost-calculator': {
-      id: '/texas-utility-cost-calculator'
-      path: '/texas-utility-cost-calculator'
-      fullPath: '/texas-utility-cost-calculator'
-      preLoaderRoute: typeof TexasUtilityCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-sports': {
-      id: '/texas-sports'
-      path: '/texas-sports'
-      fullPath: '/texas-sports'
-      preLoaderRoute: typeof TexasSportsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-sales-tax-explained': {
-      id: '/texas-sales-tax-explained'
-      path: '/texas-sales-tax-explained'
-      fullPath: '/texas-sales-tax-explained'
-      preLoaderRoute: typeof TexasSalesTaxExplainedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-salary-comparison-by-city': {
-      id: '/texas-salary-comparison-by-city'
-      path: '/texas-salary-comparison-by-city'
-      fullPath: '/texas-salary-comparison-by-city'
-      preLoaderRoute: typeof TexasSalaryComparisonByCityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-salary-calculator': {
-      id: '/texas-salary-calculator'
-      path: '/texas-salary-calculator'
-      fullPath: '/texas-salary-calculator'
-      preLoaderRoute: typeof TexasSalaryCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-resources': {
-      id: '/texas-resources'
-      path: '/texas-resources'
-      fullPath: '/texas-resources'
-      preLoaderRoute: typeof TexasResourcesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-rent-vs-buy-calculator': {
-      id: '/texas-rent-vs-buy-calculator'
-      path: '/texas-rent-vs-buy-calculator'
-      fullPath: '/texas-rent-vs-buy-calculator'
-      preLoaderRoute: typeof TexasRentVsBuyCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-refinance-savings-calculator': {
-      id: '/texas-refinance-savings-calculator'
-      path: '/texas-refinance-savings-calculator'
-      fullPath: '/texas-refinance-savings-calculator'
-      preLoaderRoute: typeof TexasRefinanceSavingsCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-property-tax-protest-guide': {
-      id: '/texas-property-tax-protest-guide'
-      path: '/texas-property-tax-protest-guide'
-      fullPath: '/texas-property-tax-protest-guide'
-      preLoaderRoute: typeof TexasPropertyTaxProtestGuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-property-tax-increase-calculator': {
-      id: '/texas-property-tax-increase-calculator'
-      path: '/texas-property-tax-increase-calculator'
-      fullPath: '/texas-property-tax-increase-calculator'
-      preLoaderRoute: typeof TexasPropertyTaxIncreaseCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-politics': {
-      id: '/texas-politics'
-      path: '/texas-politics'
-      fullPath: '/texas-politics'
-      preLoaderRoute: typeof TexasPoliticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-news': {
-      id: '/texas-news'
-      path: '/texas-news'
-      fullPath: '/texas-news'
-      preLoaderRoute: typeof TexasNewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-moving-cost-calculator': {
-      id: '/texas-moving-cost-calculator'
-      path: '/texas-moving-cost-calculator'
-      fullPath: '/texas-moving-cost-calculator'
-      preLoaderRoute: typeof TexasMovingCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-mortgage-payoff-calculator': {
-      id: '/texas-mortgage-payoff-calculator'
-      path: '/texas-mortgage-payoff-calculator'
-      fullPath: '/texas-mortgage-payoff-calculator'
-      preLoaderRoute: typeof TexasMortgagePayoffCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-mortgage-calculator': {
-      id: '/texas-mortgage-calculator'
-      path: '/texas-mortgage-calculator'
-      fullPath: '/texas-mortgage-calculator'
-      preLoaderRoute: typeof TexasMortgageCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-living': {
-      id: '/texas-living'
-      path: '/texas-living'
-      fullPath: '/texas-living'
-      preLoaderRoute: typeof TexasLivingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-legislature': {
-      id: '/texas-legislature'
-      path: '/texas-legislature'
-      fullPath: '/texas-legislature'
-      preLoaderRoute: typeof TexasLegislatureRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-laws': {
-      id: '/texas-laws'
-      path: '/texas-laws'
-      fullPath: '/texas-laws'
-      preLoaderRoute: typeof TexasLawsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-law-policy': {
-      id: '/texas-law-policy'
-      path: '/texas-law-policy'
-      fullPath: '/texas-law-policy'
-      preLoaderRoute: typeof TexasLawPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-homeownership-cost-calculator': {
-      id: '/texas-homeownership-cost-calculator'
-      path: '/texas-homeownership-cost-calculator'
-      fullPath: '/texas-homeownership-cost-calculator'
-      preLoaderRoute: typeof TexasHomeownershipCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-home-insurance-calculator': {
-      id: '/texas-home-insurance-calculator'
-      path: '/texas-home-insurance-calculator'
-      fullPath: '/texas-home-insurance-calculator'
-      preLoaderRoute: typeof TexasHomeInsuranceCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-home-equity-growth-calculator': {
-      id: '/texas-home-equity-growth-calculator'
-      path: '/texas-home-equity-growth-calculator'
-      fullPath: '/texas-home-equity-growth-calculator'
-      preLoaderRoute: typeof TexasHomeEquityGrowthCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-home-equity-calculator': {
-      id: '/texas-home-equity-calculator'
-      path: '/texas-home-equity-calculator'
-      fullPath: '/texas-home-equity-calculator'
-      preLoaderRoute: typeof TexasHomeEquityCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-home-affordability-calculator': {
-      id: '/texas-home-affordability-calculator'
-      path: '/texas-home-affordability-calculator'
-      fullPath: '/texas-home-affordability-calculator'
-      preLoaderRoute: typeof TexasHomeAffordabilityCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-government': {
-      id: '/texas-government'
-      path: '/texas-government'
-      fullPath: '/texas-government'
-      preLoaderRoute: typeof TexasGovernmentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-first-time-homebuyer-programs': {
-      id: '/texas-first-time-homebuyer-programs'
-      path: '/texas-first-time-homebuyer-programs'
-      fullPath: '/texas-first-time-homebuyer-programs'
-      preLoaderRoute: typeof TexasFirstTimeHomebuyerProgramsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-financial-tools': {
-      id: '/texas-financial-tools'
-      path: '/texas-financial-tools'
-      fullPath: '/texas-financial-tools'
-      preLoaderRoute: typeof TexasFinancialToolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-economy': {
-      id: '/texas-economy'
-      path: '/texas-economy'
-      fullPath: '/texas-economy'
-      preLoaderRoute: typeof TexasEconomyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-down-payment-calculator': {
-      id: '/texas-down-payment-calculator'
-      path: '/texas-down-payment-calculator'
-      fullPath: '/texas-down-payment-calculator'
-      preLoaderRoute: typeof TexasDownPaymentCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-down-payment-assistance-calculator': {
-      id: '/texas-down-payment-assistance-calculator'
-      path: '/texas-down-payment-assistance-calculator'
-      fullPath: '/texas-down-payment-assistance-calculator'
-      preLoaderRoute: typeof TexasDownPaymentAssistanceCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-data': {
-      id: '/texas-data'
-      path: '/texas-data'
-      fullPath: '/texas-data'
-      preLoaderRoute: typeof TexasDataRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-cost-of-living-calculator': {
-      id: '/texas-cost-of-living-calculator'
-      path: '/texas-cost-of-living-calculator'
-      fullPath: '/texas-cost-of-living-calculator'
-      preLoaderRoute: typeof TexasCostOfLivingCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-closing-cost-calculator': {
-      id: '/texas-closing-cost-calculator'
-      path: '/texas-closing-cost-calculator'
-      fullPath: '/texas-closing-cost-calculator'
-      preLoaderRoute: typeof TexasClosingCostCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-business': {
-      id: '/texas-business'
-      path: '/texas-business'
-      fullPath: '/texas-business'
-      preLoaderRoute: typeof TexasBusinessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas-budget-planner': {
-      id: '/texas-budget-planner'
-      path: '/texas-budget-planner'
-      fullPath: '/texas-budget-planner'
-      preLoaderRoute: typeof TexasBudgetPlannerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/texas': {
-      id: '/texas'
-      path: '/texas'
-      fullPath: '/texas'
-      preLoaderRoute: typeof TexasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms-of-service': {
-      id: '/terms-of-service'
-      path: '/terms-of-service'
-      fullPath: '/terms-of-service'
-      preLoaderRoute: typeof TermsOfServiceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tax-calculator': {
-      id: '/tax-calculator'
-      path: '/tax-calculator'
-      fullPath: '/tax-calculator'
-      preLoaderRoute: typeof TaxCalculatorRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-representatives.xml': {
-      id: '/sitemap-representatives.xml'
-      path: '/sitemap-representatives.xml'
-      fullPath: '/sitemap-representatives.xml'
-      preLoaderRoute: typeof SitemapRepresentativesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-products.xml': {
-      id: '/sitemap-products.xml'
-      path: '/sitemap-products.xml'
-      fullPath: '/sitemap-products.xml'
-      preLoaderRoute: typeof SitemapProductsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-pages.xml': {
-      id: '/sitemap-pages.xml'
-      path: '/sitemap-pages.xml'
-      fullPath: '/sitemap-pages.xml'
-      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-news.xml': {
-      id: '/sitemap-news.xml'
-      path: '/sitemap-news.xml'
-      fullPath: '/sitemap-news.xml'
-      preLoaderRoute: typeof SitemapNewsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-legislature.xml': {
-      id: '/sitemap-legislature.xml'
-      path: '/sitemap-legislature.xml'
-      fullPath: '/sitemap-legislature.xml'
-      preLoaderRoute: typeof SitemapLegislatureDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-images.xml': {
-      id: '/sitemap-images.xml'
-      path: '/sitemap-images.xml'
-      fullPath: '/sitemap-images.xml'
-      preLoaderRoute: typeof SitemapImagesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-government.xml': {
-      id: '/sitemap-government.xml'
-      path: '/sitemap-government.xml'
-      fullPath: '/sitemap-government.xml'
-      preLoaderRoute: typeof SitemapGovernmentDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-explore.xml': {
-      id: '/sitemap-explore.xml'
-      path: '/sitemap-explore.xml'
-      fullPath: '/sitemap-explore.xml'
-      preLoaderRoute: typeof SitemapExploreDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-explore-locations.xml': {
-      id: '/sitemap-explore-locations.xml'
-      path: '/sitemap-explore-locations.xml'
-      fullPath: '/sitemap-explore-locations.xml'
-      preLoaderRoute: typeof SitemapExploreLocationsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-evergreen.xml': {
-      id: '/sitemap-evergreen.xml'
-      path: '/sitemap-evergreen.xml'
-      fullPath: '/sitemap-evergreen.xml'
-      preLoaderRoute: typeof SitemapEvergreenDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-elections.xml': {
-      id: '/sitemap-elections.xml'
-      path: '/sitemap-elections.xml'
-      fullPath: '/sitemap-elections.xml'
-      preLoaderRoute: typeof SitemapElectionsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-districts.xml': {
-      id: '/sitemap-districts.xml'
-      path: '/sitemap-districts.xml'
-      fullPath: '/sitemap-districts.xml'
-      preLoaderRoute: typeof SitemapDistrictsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-committees.xml': {
-      id: '/sitemap-committees.xml'
-      path: '/sitemap-committees.xml'
-      fullPath: '/sitemap-committees.xml'
-      preLoaderRoute: typeof SitemapCommitteesDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-bills.xml': {
-      id: '/sitemap-bills.xml'
-      path: '/sitemap-bills.xml'
-      fullPath: '/sitemap-bills.xml'
-      preLoaderRoute: typeof SitemapBillsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap-authors.xml': {
-      id: '/sitemap-authors.xml'
-      path: '/sitemap-authors.xml'
-      fullPath: '/sitemap-authors.xml'
-      preLoaderRoute: typeof SitemapAuthorsDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shop': {
-      id: '/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shipping-policy': {
-      id: '/shipping-policy'
-      path: '/shipping-policy'
-      fullPath: '/shipping-policy'
-      preLoaderRoute: typeof ShippingPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/san-antonio': {
-      id: '/san-antonio'
-      path: '/san-antonio'
-      fullPath: '/san-antonio'
-      preLoaderRoute: typeof SanAntonioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/robots.txt': {
-      id: '/robots.txt'
-      path: '/robots.txt'
-      fullPath: '/robots.txt'
-      preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/return-refund-policy': {
-      id: '/return-refund-policy'
-      path: '/return-refund-policy'
-      fullPath: '/return-refund-policy'
-      preLoaderRoute: typeof ReturnRefundPolicyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/representatives': {
-      id: '/representatives'
-      path: '/representatives'
-      fullPath: '/representatives'
-      preLoaderRoute: typeof RepresentativesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register-to-vote': {
-      id: '/register-to-vote'
-      path: '/register-to-vote'
-      fullPath: '/register-to-vote'
-      preLoaderRoute: typeof RegisterToVoteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/news-sitemap.xml': {
-      id: '/news-sitemap.xml'
-      path: '/news-sitemap.xml'
-      fullPath: '/news-sitemap.xml'
-      preLoaderRoute: typeof NewsSitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/news': {
-      id: '/news'
-      path: '/news'
-      fullPath: '/news'
-      preLoaderRoute: typeof NewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/moving-to-texas-checklist': {
-      id: '/moving-to-texas-checklist'
-      path: '/moving-to-texas-checklist'
-      fullPath: '/moving-to-texas-checklist'
-      preLoaderRoute: typeof MovingToTexasChecklistRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/moving-to-texas': {
-      id: '/moving-to-texas'
-      path: '/moving-to-texas'
-      fullPath: '/moving-to-texas'
-      preLoaderRoute: typeof MovingToTexasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/living-in-texas': {
-      id: '/living-in-texas'
-      path: '/living-in-texas'
-      fullPath: '/living-in-texas'
-      preLoaderRoute: typeof LivingInTexasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/legislature': {
-      id: '/legislature'
-      path: '/legislature'
-      fullPath: '/legislature'
-      preLoaderRoute: typeof LegislatureRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/legislative-updates': {
-      id: '/legislative-updates'
-      path: '/legislative-updates'
-      fullPath: '/legislative-updates'
-      preLoaderRoute: typeof LegislativeUpdatesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/laws-to-know': {
-      id: '/laws-to-know'
-      path: '/laws-to-know'
-      fullPath: '/laws-to-know'
-      preLoaderRoute: typeof LawsToKnowRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/laws': {
-      id: '/laws'
-      path: '/laws'
-      fullPath: '/laws'
-      preLoaderRoute: typeof LawsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/keep-texas-red': {
-      id: '/keep-texas-red'
-      path: '/keep-texas-red'
-      fullPath: '/keep-texas-red'
-      preLoaderRoute: typeof KeepTexasRedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/houston': {
-      id: '/houston'
-      path: '/houston'
-      fullPath: '/houston'
-      preLoaderRoute: typeof HoustonRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/happening-now': {
-      id: '/happening-now'
-      path: '/happening-now'
-      fullPath: '/happening-now'
-      preLoaderRoute: typeof HappeningNowRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/google-merchant-feed.xml': {
-      id: '/google-merchant-feed.xml'
-      path: '/google-merchant-feed.xml'
-      fullPath: '/google-merchant-feed.xml'
-      preLoaderRoute: typeof GoogleMerchantFeedDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/glossary': {
-      id: '/glossary'
-      path: '/glossary'
-      fullPath: '/glossary'
-      preLoaderRoute: typeof GlossaryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/get-involved': {
-      id: '/get-involved'
-      path: '/get-involved'
-      fullPath: '/get-involved'
-      preLoaderRoute: typeof GetInvolvedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/find-representative': {
-      id: '/find-representative'
-      path: '/find-representative'
-      fullPath: '/find-representative'
-      preLoaderRoute: typeof FindRepresentativeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/find-my-school-district': {
-      id: '/find-my-school-district'
-      path: '/find-my-school-district'
-      fullPath: '/find-my-school-district'
-      preLoaderRoute: typeof FindMySchoolDistrictRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/find-my-dmv': {
-      id: '/find-my-dmv'
-      path: '/find-my-dmv'
-      fullPath: '/find-my-dmv'
-      preLoaderRoute: typeof FindMyDmvRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/explore': {
-      id: '/explore'
-      path: '/explore'
-      fullPath: '/explore'
-      preLoaderRoute: typeof ExploreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/elections': {
-      id: '/elections'
-      path: '/elections'
-      fullPath: '/elections'
-      preLoaderRoute: typeof ElectionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/el-paso': {
-      id: '/el-paso'
-      path: '/el-paso'
-      fullPath: '/el-paso'
-      preLoaderRoute: typeof ElPasoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/editorial-standards': {
-      id: '/editorial-standards'
-      path: '/editorial-standards'
-      fullPath: '/editorial-standards'
-      preLoaderRoute: typeof EditorialStandardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dmv': {
-      id: '/dmv'
-      path: '/dmv'
-      fullPath: '/dmv'
-      preLoaderRoute: typeof DmvRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dallas-fort-worth': {
-      id: '/dallas-fort-worth'
-      path: '/dallas-fort-worth'
-      fullPath: '/dallas-fort-worth'
-      preLoaderRoute: typeof DallasFortWorthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/county-elections': {
-      id: '/county-elections'
-      path: '/county-elections'
-      fullPath: '/county-elections'
-      preLoaderRoute: typeof CountyElectionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact-legislators': {
-      id: '/contact-legislators'
-      path: '/contact-legislators'
-      fullPath: '/contact-legislators'
-      preLoaderRoute: typeof ContactLegislatorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/candidate-guides': {
-      id: '/candidate-guides'
-      path: '/candidate-guides'
-      fullPath: '/candidate-guides'
-      preLoaderRoute: typeof CandidateGuidesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/bills': {
-      id: '/bills'
-      path: '/bills'
-      fullPath: '/bills'
-      preLoaderRoute: typeof BillsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/austin': {
-      id: '/austin'
-      path: '/austin'
-      fullPath: '/austin'
-      preLoaderRoute: typeof AustinRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about-keep-texas-red': {
-      id: '/about-keep-texas-red'
-      path: '/about-keep-texas-red'
-      fullPath: '/about-keep-texas-red'
-      preLoaderRoute: typeof AboutKeepTexasRedRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -4112,725 +3440,704 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/about-keep-texas-red': {
+      id: '/about-keep-texas-red'
+      path: '/about-keep-texas-red'
+      fullPath: '/about-keep-texas-red'
+      preLoaderRoute: typeof AboutKeepTexasRedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/texas/': {
-      id: '/texas/'
-      path: '/'
-      fullPath: '/texas/'
-      preLoaderRoute: typeof TexasIndexRouteImport
-      parentRoute: typeof TexasRoute
-    }
-    '/texas-sports/': {
-      id: '/texas-sports/'
-      path: '/'
-      fullPath: '/texas-sports/'
-      preLoaderRoute: typeof TexasSportsIndexRouteImport
-      parentRoute: typeof TexasSportsRoute
-    }
-    '/texas-news/': {
-      id: '/texas-news/'
-      path: '/'
-      fullPath: '/texas-news/'
-      preLoaderRoute: typeof TexasNewsIndexRouteImport
-      parentRoute: typeof TexasNewsRoute
-    }
-    '/texas-legislature/': {
-      id: '/texas-legislature/'
-      path: '/'
-      fullPath: '/texas-legislature/'
-      preLoaderRoute: typeof TexasLegislatureIndexRouteImport
-      parentRoute: typeof TexasLegislatureRoute
-    }
-    '/shop/': {
-      id: '/shop/'
-      path: '/'
-      fullPath: '/shop/'
-      preLoaderRoute: typeof ShopIndexRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/news/': {
-      id: '/news/'
-      path: '/'
-      fullPath: '/news/'
-      preLoaderRoute: typeof NewsIndexRouteImport
-      parentRoute: typeof NewsRoute
-    }
-    '/explore/': {
-      id: '/explore/'
-      path: '/'
-      fullPath: '/explore/'
-      preLoaderRoute: typeof ExploreIndexRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/elections/': {
-      id: '/elections/'
-      path: '/'
-      fullPath: '/elections/'
-      preLoaderRoute: typeof ElectionsIndexRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/bills/': {
-      id: '/bills/'
-      path: '/'
-      fullPath: '/bills/'
-      preLoaderRoute: typeof BillsIndexRouteImport
-      parentRoute: typeof BillsRoute
-    }
-    '/authors/': {
-      id: '/authors/'
-      path: '/authors'
-      fullPath: '/authors/'
-      preLoaderRoute: typeof AuthorsIndexRouteImport
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/title-transfer': {
-      id: '/vehicles/title-transfer'
-      path: '/vehicles/title-transfer'
-      fullPath: '/vehicles/title-transfer'
-      preLoaderRoute: typeof VehiclesTitleTransferRouteImport
+    '/austin': {
+      id: '/austin'
+      path: '/austin'
+      fullPath: '/austin'
+      preLoaderRoute: typeof AustinRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/temporary-tags': {
-      id: '/vehicles/temporary-tags'
-      path: '/vehicles/temporary-tags'
-      fullPath: '/vehicles/temporary-tags'
-      preLoaderRoute: typeof VehiclesTemporaryTagsRouteImport
+    '/bills': {
+      id: '/bills'
+      path: '/bills'
+      fullPath: '/bills'
+      preLoaderRoute: typeof BillsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/selling-a-car': {
-      id: '/vehicles/selling-a-car'
-      path: '/vehicles/selling-a-car'
-      fullPath: '/vehicles/selling-a-car'
-      preLoaderRoute: typeof VehiclesSellingACarRouteImport
+    '/candidate-guides': {
+      id: '/candidate-guides'
+      path: '/candidate-guides'
+      fullPath: '/candidate-guides'
+      preLoaderRoute: typeof CandidateGuidesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/salvage-rebuilt-titles': {
-      id: '/vehicles/salvage-rebuilt-titles'
-      path: '/vehicles/salvage-rebuilt-titles'
-      fullPath: '/vehicles/salvage-rebuilt-titles'
-      preLoaderRoute: typeof VehiclesSalvageRebuiltTitlesRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/renewal': {
-      id: '/vehicles/renewal'
-      path: '/vehicles/renewal'
-      fullPath: '/vehicles/renewal'
-      preLoaderRoute: typeof VehiclesRenewalRouteImport
+    '/contact-legislators': {
+      id: '/contact-legislators'
+      path: '/contact-legislators'
+      fullPath: '/contact-legislators'
+      preLoaderRoute: typeof ContactLegislatorsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/registration-fees-taxes': {
-      id: '/vehicles/registration-fees-taxes'
-      path: '/vehicles/registration-fees-taxes'
-      fullPath: '/vehicles/registration-fees-taxes'
-      preLoaderRoute: typeof VehiclesRegistrationFeesTaxesRouteImport
+    '/county-elections': {
+      id: '/county-elections'
+      path: '/county-elections'
+      fullPath: '/county-elections'
+      preLoaderRoute: typeof CountyElectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/registration': {
-      id: '/vehicles/registration'
-      path: '/vehicles/registration'
-      fullPath: '/vehicles/registration'
-      preLoaderRoute: typeof VehiclesRegistrationRouteImport
+    '/dallas-fort-worth': {
+      id: '/dallas-fort-worth'
+      path: '/dallas-fort-worth'
+      fullPath: '/dallas-fort-worth'
+      preLoaderRoute: typeof DallasFortWorthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/private-party-sales': {
-      id: '/vehicles/private-party-sales'
-      path: '/vehicles/private-party-sales'
-      fullPath: '/vehicles/private-party-sales'
-      preLoaderRoute: typeof VehiclesPrivatePartySalesRouteImport
+    '/dmv': {
+      id: '/dmv'
+      path: '/dmv'
+      fullPath: '/dmv'
+      preLoaderRoute: typeof DmvRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/plates': {
-      id: '/vehicles/plates'
-      path: '/vehicles/plates'
-      fullPath: '/vehicles/plates'
-      preLoaderRoute: typeof VehiclesPlatesRouteImport
+    '/editorial-standards': {
+      id: '/editorial-standards'
+      path: '/editorial-standards'
+      fullPath: '/editorial-standards'
+      preLoaderRoute: typeof EditorialStandardsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/personalized-plates': {
-      id: '/vehicles/personalized-plates'
-      path: '/vehicles/personalized-plates'
-      fullPath: '/vehicles/personalized-plates'
-      preLoaderRoute: typeof VehiclesPersonalizedPlatesRouteImport
+    '/el-paso': {
+      id: '/el-paso'
+      path: '/el-paso'
+      fullPath: '/el-paso'
+      preLoaderRoute: typeof ElPasoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/new-residents': {
-      id: '/vehicles/new-residents'
-      path: '/vehicles/new-residents'
-      fullPath: '/vehicles/new-residents'
-      preLoaderRoute: typeof VehiclesNewResidentsRouteImport
+    '/elections': {
+      id: '/elections'
+      path: '/elections'
+      fullPath: '/elections'
+      preLoaderRoute: typeof ElectionsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/liens-duplicate-corrected-titles': {
-      id: '/vehicles/liens-duplicate-corrected-titles'
-      path: '/vehicles/liens-duplicate-corrected-titles'
-      fullPath: '/vehicles/liens-duplicate-corrected-titles'
-      preLoaderRoute: typeof VehiclesLiensDuplicateCorrectedTitlesRouteImport
+    '/explore': {
+      id: '/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof ExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/inspections-emissions': {
-      id: '/vehicles/inspections-emissions'
-      path: '/vehicles/inspections-emissions'
-      fullPath: '/vehicles/inspections-emissions'
-      preLoaderRoute: typeof VehiclesInspectionsEmissionsRouteImport
+    '/find-my-dmv': {
+      id: '/find-my-dmv'
+      path: '/find-my-dmv'
+      fullPath: '/find-my-dmv'
+      preLoaderRoute: typeof FindMyDmvRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/inspections': {
-      id: '/vehicles/inspections'
-      path: '/vehicles/inspections'
-      fullPath: '/vehicles/inspections'
-      preLoaderRoute: typeof VehiclesInspectionsRouteImport
+    '/find-my-school-district': {
+      id: '/find-my-school-district'
+      path: '/find-my-school-district'
+      fullPath: '/find-my-school-district'
+      preLoaderRoute: typeof FindMySchoolDistrictRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/financial-responsibility': {
-      id: '/vehicles/financial-responsibility'
-      path: '/vehicles/financial-responsibility'
-      fullPath: '/vehicles/financial-responsibility'
-      preLoaderRoute: typeof VehiclesFinancialResponsibilityRouteImport
+    '/find-representative': {
+      id: '/find-representative'
+      path: '/find-representative'
+      fullPath: '/find-representative'
+      preLoaderRoute: typeof FindRepresentativeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/farm-antique-specialty': {
-      id: '/vehicles/farm-antique-specialty'
-      path: '/vehicles/farm-antique-specialty'
-      fullPath: '/vehicles/farm-antique-specialty'
-      preLoaderRoute: typeof VehiclesFarmAntiqueSpecialtyRouteImport
+    '/get-involved': {
+      id: '/get-involved'
+      path: '/get-involved'
+      fullPath: '/get-involved'
+      preLoaderRoute: typeof GetInvolvedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/duplicate-titles': {
-      id: '/vehicles/duplicate-titles'
-      path: '/vehicles/duplicate-titles'
-      fullPath: '/vehicles/duplicate-titles'
-      preLoaderRoute: typeof VehiclesDuplicateTitlesRouteImport
+    '/glossary': {
+      id: '/glossary'
+      path: '/glossary'
+      fullPath: '/glossary'
+      preLoaderRoute: typeof GlossaryRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/disabled-parking': {
-      id: '/vehicles/disabled-parking'
-      path: '/vehicles/disabled-parking'
-      fullPath: '/vehicles/disabled-parking'
-      preLoaderRoute: typeof VehiclesDisabledParkingRouteImport
+    '/google-merchant-feed.xml': {
+      id: '/google-merchant-feed.xml'
+      path: '/google-merchant-feed.xml'
+      fullPath: '/google-merchant-feed.xml'
+      preLoaderRoute: typeof GoogleMerchantFeedDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/commercial-fleet-irp': {
-      id: '/vehicles/commercial-fleet-irp'
-      path: '/vehicles/commercial-fleet-irp'
-      fullPath: '/vehicles/commercial-fleet-irp'
-      preLoaderRoute: typeof VehiclesCommercialFleetIrpRouteImport
+    '/happening-now': {
+      id: '/happening-now'
+      path: '/happening-now'
+      fullPath: '/happening-now'
+      preLoaderRoute: typeof HappeningNowRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/buying-selling': {
-      id: '/vehicles/buying-selling'
-      path: '/vehicles/buying-selling'
-      fullPath: '/vehicles/buying-selling'
-      preLoaderRoute: typeof VehiclesBuyingSellingRouteImport
+    '/houston': {
+      id: '/houston'
+      path: '/houston'
+      fullPath: '/houston'
+      preLoaderRoute: typeof HoustonRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/buying-a-car': {
-      id: '/vehicles/buying-a-car'
-      path: '/vehicles/buying-a-car'
-      fullPath: '/vehicles/buying-a-car'
-      preLoaderRoute: typeof VehiclesBuyingACarRouteImport
+    '/keep-texas-red': {
+      id: '/keep-texas-red'
+      path: '/keep-texas-red'
+      fullPath: '/keep-texas-red'
+      preLoaderRoute: typeof KeepTexasRedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/bonded-titles': {
-      id: '/vehicles/bonded-titles'
-      path: '/vehicles/bonded-titles'
-      fullPath: '/vehicles/bonded-titles'
-      preLoaderRoute: typeof VehiclesBondedTitlesRouteImport
+    '/laws': {
+      id: '/laws'
+      path: '/laws'
+      fullPath: '/laws'
+      preLoaderRoute: typeof LawsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/vehicles/auto-insurance-requirements': {
-      id: '/vehicles/auto-insurance-requirements'
-      path: '/vehicles/auto-insurance-requirements'
-      fullPath: '/vehicles/auto-insurance-requirements'
-      preLoaderRoute: typeof VehiclesAutoInsuranceRequirementsRouteImport
+    '/laws-to-know': {
+      id: '/laws-to-know'
+      path: '/laws-to-know'
+      fullPath: '/laws-to-know'
+      preLoaderRoute: typeof LawsToKnowRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/texas/$slug': {
-      id: '/texas/$slug'
-      path: '/$slug'
-      fullPath: '/texas/$slug'
-      preLoaderRoute: typeof TexasSlugRouteImport
-      parentRoute: typeof TexasRoute
-    }
-    '/texas-sports/$league': {
-      id: '/texas-sports/$league'
-      path: '/$league'
-      fullPath: '/texas-sports/$league'
-      preLoaderRoute: typeof TexasSportsLeagueRouteImport
-      parentRoute: typeof TexasSportsRoute
-    }
-    '/texas-news/$topic': {
-      id: '/texas-news/$topic'
-      path: '/$topic'
-      fullPath: '/texas-news/$topic'
-      preLoaderRoute: typeof TexasNewsTopicRouteImport
-      parentRoute: typeof TexasNewsRoute
-    }
-    '/texas-legislature/sessions': {
-      id: '/texas-legislature/sessions'
-      path: '/sessions'
-      fullPath: '/texas-legislature/sessions'
-      preLoaderRoute: typeof TexasLegislatureSessionsRouteImport
-      parentRoute: typeof TexasLegislatureRoute
-    }
-    '/texas-legislature/senate': {
-      id: '/texas-legislature/senate'
-      path: '/senate'
-      fullPath: '/texas-legislature/senate'
-      preLoaderRoute: typeof TexasLegislatureSenateRouteImport
-      parentRoute: typeof TexasLegislatureRoute
-    }
-    '/texas-legislature/house': {
-      id: '/texas-legislature/house'
-      path: '/house'
-      fullPath: '/texas-legislature/house'
-      preLoaderRoute: typeof TexasLegislatureHouseRouteImport
-      parentRoute: typeof TexasLegislatureRoute
-    }
-    '/texas-legislature/current-session': {
-      id: '/texas-legislature/current-session'
-      path: '/current-session'
-      fullPath: '/texas-legislature/current-session'
-      preLoaderRoute: typeof TexasLegislatureCurrentSessionRouteImport
-      parentRoute: typeof TexasLegislatureRoute
-    }
-    '/texas-legislature/committees': {
-      id: '/texas-legislature/committees'
-      path: '/committees'
-      fullPath: '/texas-legislature/committees'
-      preLoaderRoute: typeof TexasLegislatureCommitteesRouteImport
-      parentRoute: typeof TexasLegislatureRoute
-    }
-    '/texas-government/$entitySlug': {
-      id: '/texas-government/$entitySlug'
-      path: '/$entitySlug'
-      fullPath: '/texas-government/$entitySlug'
-      preLoaderRoute: typeof TexasGovernmentEntitySlugRouteImport
-      parentRoute: typeof TexasGovernmentRoute
-    }
-    '/texas-data/$datasetSlug': {
-      id: '/texas-data/$datasetSlug'
-      path: '/$datasetSlug'
-      fullPath: '/texas-data/$datasetSlug'
-      preLoaderRoute: typeof TexasDataDatasetSlugRouteImport
-      parentRoute: typeof TexasDataRoute
-    }
-    '/texas-business/$topic': {
-      id: '/texas-business/$topic'
-      path: '/$topic'
-      fullPath: '/texas-business/$topic'
-      preLoaderRoute: typeof TexasBusinessTopicRouteImport
-      parentRoute: typeof TexasBusinessRoute
-    }
-    '/shop/checkout-return': {
-      id: '/shop/checkout-return'
-      path: '/checkout-return'
-      fullPath: '/shop/checkout-return'
-      preLoaderRoute: typeof ShopCheckoutReturnRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/shop/checkout': {
-      id: '/shop/checkout'
-      path: '/checkout'
-      fullPath: '/shop/checkout'
-      preLoaderRoute: typeof ShopCheckoutRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/shop/$productId': {
-      id: '/shop/$productId'
-      path: '/$productId'
-      fullPath: '/shop/$productId'
-      preLoaderRoute: typeof ShopProductIdRouteImport
-      parentRoute: typeof ShopRoute
-    }
-    '/representatives/$representativeSlug': {
-      id: '/representatives/$representativeSlug'
-      path: '/$representativeSlug'
-      fullPath: '/representatives/$representativeSlug'
-      preLoaderRoute: typeof RepresentativesRepresentativeSlugRouteImport
-      parentRoute: typeof RepresentativesRoute
-    }
-    '/news/non-political': {
-      id: '/news/non-political'
-      path: '/non-political'
-      fullPath: '/news/non-political'
-      preLoaderRoute: typeof NewsNonPoliticalRouteImport
-      parentRoute: typeof NewsRoute
-    }
-    '/news/$slug': {
-      id: '/news/$slug'
-      path: '/$slug'
-      fullPath: '/news/$slug'
-      preLoaderRoute: typeof NewsSlugRouteImport
-      parentRoute: typeof NewsRoute
-    }
-    '/explore/wildlife-management-areas': {
-      id: '/explore/wildlife-management-areas'
-      path: '/wildlife-management-areas'
-      fullPath: '/explore/wildlife-management-areas'
-      preLoaderRoute: typeof ExploreWildlifeManagementAreasRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/trip-planner': {
-      id: '/explore/trip-planner'
-      path: '/trip-planner'
-      fullPath: '/explore/trip-planner'
-      preLoaderRoute: typeof ExploreTripPlannerRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/texas-wildflower-seasons': {
-      id: '/explore/texas-wildflower-seasons'
-      path: '/texas-wildflower-seasons'
-      fullPath: '/explore/texas-wildflower-seasons'
-      preLoaderRoute: typeof ExploreTexasWildflowerSeasonsRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/texas-state-parks-guide': {
-      id: '/explore/texas-state-parks-guide'
-      path: '/texas-state-parks-guide'
-      fullPath: '/explore/texas-state-parks-guide'
-      preLoaderRoute: typeof ExploreTexasStateParksGuideRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/texas-scenic-drives': {
-      id: '/explore/texas-scenic-drives'
-      path: '/texas-scenic-drives'
-      fullPath: '/explore/texas-scenic-drives'
-      preLoaderRoute: typeof ExploreTexasScenicDrivesRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/texas-lakes-guide': {
-      id: '/explore/texas-lakes-guide'
-      path: '/texas-lakes-guide'
-      fullPath: '/explore/texas-lakes-guide'
-      preLoaderRoute: typeof ExploreTexasLakesGuideRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/texas-dark-sky-stargazing': {
-      id: '/explore/texas-dark-sky-stargazing'
-      path: '/texas-dark-sky-stargazing'
-      fullPath: '/explore/texas-dark-sky-stargazing'
-      preLoaderRoute: typeof ExploreTexasDarkSkyStargazingRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/texas-camping-guide': {
-      id: '/explore/texas-camping-guide'
-      path: '/texas-camping-guide'
-      fullPath: '/explore/texas-camping-guide'
-      preLoaderRoute: typeof ExploreTexasCampingGuideRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/state-parks': {
-      id: '/explore/state-parks'
-      path: '/state-parks'
-      fullPath: '/explore/state-parks'
-      preLoaderRoute: typeof ExploreStateParksRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/spring-fed-swimming': {
-      id: '/explore/spring-fed-swimming'
-      path: '/spring-fed-swimming'
-      fullPath: '/explore/spring-fed-swimming'
-      preLoaderRoute: typeof ExploreSpringFedSwimmingRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/spring-conservation-and-education': {
-      id: '/explore/spring-conservation-and-education'
-      path: '/spring-conservation-and-education'
-      fullPath: '/explore/spring-conservation-and-education'
-      preLoaderRoute: typeof ExploreSpringConservationAndEducationRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/search': {
-      id: '/explore/search'
-      path: '/search'
-      fullPath: '/explore/search'
-      preLoaderRoute: typeof ExploreSearchRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/scenic-rivers': {
-      id: '/explore/scenic-rivers'
-      path: '/scenic-rivers'
-      fullPath: '/explore/scenic-rivers'
-      preLoaderRoute: typeof ExploreScenicRiversRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/national-wildlife-refuges': {
-      id: '/explore/national-wildlife-refuges'
-      path: '/national-wildlife-refuges'
-      fullPath: '/explore/national-wildlife-refuges'
-      preLoaderRoute: typeof ExploreNationalWildlifeRefugesRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/national-parks': {
-      id: '/explore/national-parks'
-      path: '/national-parks'
-      fullPath: '/explore/national-parks'
-      preLoaderRoute: typeof ExploreNationalParksRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/major-springs': {
-      id: '/explore/major-springs'
-      path: '/major-springs'
-      fullPath: '/explore/major-springs'
-      preLoaderRoute: typeof ExploreMajorSpringsRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/lighthouses': {
-      id: '/explore/lighthouses'
-      path: '/lighthouses'
-      fullPath: '/explore/lighthouses'
-      preLoaderRoute: typeof ExploreLighthousesRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/historic-sites': {
-      id: '/explore/historic-sites'
-      path: '/historic-sites'
-      fullPath: '/explore/historic-sites'
-      preLoaderRoute: typeof ExploreHistoricSitesRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/hill-country-springs': {
-      id: '/explore/hill-country-springs'
-      path: '/hill-country-springs'
-      fullPath: '/explore/hill-country-springs'
-      preLoaderRoute: typeof ExploreHillCountrySpringsRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/caverns': {
-      id: '/explore/caverns'
-      path: '/caverns'
-      fullPath: '/explore/caverns'
-      preLoaderRoute: typeof ExploreCavernsRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/$slug': {
-      id: '/explore/$slug'
-      path: '/$slug'
-      fullPath: '/explore/$slug'
-      preLoaderRoute: typeof ExploreSlugRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/email/unsubscribe': {
-      id: '/email/unsubscribe'
-      path: '/email/unsubscribe'
-      fullPath: '/email/unsubscribe'
-      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+    '/legislative-updates': {
+      id: '/legislative-updates'
+      path: '/legislative-updates'
+      fullPath: '/legislative-updates'
+      preLoaderRoute: typeof LegislativeUpdatesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/elections/voting': {
-      id: '/elections/voting'
-      path: '/voting'
-      fullPath: '/elections/voting'
-      preLoaderRoute: typeof ElectionsVotingRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/statewide': {
-      id: '/elections/statewide'
-      path: '/statewide'
-      fullPath: '/elections/statewide'
-      preLoaderRoute: typeof ElectionsStatewideRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/results': {
-      id: '/elections/results'
-      path: '/results'
-      fullPath: '/elections/results'
-      preLoaderRoute: typeof ElectionsResultsRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/races': {
-      id: '/elections/races'
-      path: '/races'
-      fullPath: '/elections/races'
-      preLoaderRoute: typeof ElectionsRacesRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/polls': {
-      id: '/elections/polls'
-      path: '/polls'
-      fullPath: '/elections/polls'
-      preLoaderRoute: typeof ElectionsPollsRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/methodology': {
-      id: '/elections/methodology'
-      path: '/methodology'
-      fullPath: '/elections/methodology'
-      preLoaderRoute: typeof ElectionsMethodologyRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/legislative': {
-      id: '/elections/legislative'
-      path: '/legislative'
-      fullPath: '/elections/legislative'
-      preLoaderRoute: typeof ElectionsLegislativeRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/forecast': {
-      id: '/elections/forecast'
-      path: '/forecast'
-      fullPath: '/elections/forecast'
-      preLoaderRoute: typeof ElectionsForecastRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/districts': {
-      id: '/elections/districts'
-      path: '/districts'
-      fullPath: '/elections/districts'
-      preLoaderRoute: typeof ElectionsDistrictsRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/corrections': {
-      id: '/elections/corrections'
-      path: '/corrections'
-      fullPath: '/elections/corrections'
-      preLoaderRoute: typeof ElectionsCorrectionsRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/candidates': {
-      id: '/elections/candidates'
-      path: '/candidates'
-      fullPath: '/elections/candidates'
-      preLoaderRoute: typeof ElectionsCandidatesRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/2026': {
-      id: '/elections/2026'
-      path: '/2026'
-      fullPath: '/elections/2026'
-      preLoaderRoute: typeof Elections2026RouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/dmv/texas-dmv-vs-dps': {
-      id: '/dmv/texas-dmv-vs-dps'
-      path: '/texas-dmv-vs-dps'
-      fullPath: '/dmv/texas-dmv-vs-dps'
-      preLoaderRoute: typeof DmvTexasDmvVsDpsRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/replace-lost-license': {
-      id: '/dmv/replace-lost-license'
-      path: '/replace-lost-license'
-      fullPath: '/dmv/replace-lost-license'
-      preLoaderRoute: typeof DmvReplaceLostLicenseRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/real-id': {
-      id: '/dmv/real-id'
-      path: '/real-id'
-      fullPath: '/dmv/real-id'
-      preLoaderRoute: typeof DmvRealIdRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/license-status': {
-      id: '/dmv/license-status'
-      path: '/license-status'
-      fullPath: '/dmv/license-status'
-      preLoaderRoute: typeof DmvLicenseStatusRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/identification-card': {
-      id: '/dmv/identification-card'
-      path: '/identification-card'
-      fullPath: '/dmv/identification-card'
-      preLoaderRoute: typeof DmvIdentificationCardRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/forms-downloads': {
-      id: '/dmv/forms-downloads'
-      path: '/forms-downloads'
-      fullPath: '/dmv/forms-downloads'
-      preLoaderRoute: typeof DmvFormsDownloadsRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/driver-license-renewal': {
-      id: '/dmv/driver-license-renewal'
-      path: '/driver-license-renewal'
-      fullPath: '/dmv/driver-license-renewal'
-      preLoaderRoute: typeof DmvDriverLicenseRenewalRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/driver-license-documents': {
-      id: '/dmv/driver-license-documents'
-      path: '/driver-license-documents'
-      fullPath: '/dmv/driver-license-documents'
-      preLoaderRoute: typeof DmvDriverLicenseDocumentsRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/driver-license': {
-      id: '/dmv/driver-license'
-      path: '/driver-license'
-      fullPath: '/dmv/driver-license'
-      preLoaderRoute: typeof DmvDriverLicenseRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/dps-appointments': {
-      id: '/dmv/dps-appointments'
-      path: '/dps-appointments'
-      fullPath: '/dmv/dps-appointments'
-      preLoaderRoute: typeof DmvDpsAppointmentsRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/change-address': {
-      id: '/dmv/change-address'
-      path: '/change-address'
-      fullPath: '/dmv/change-address'
-      preLoaderRoute: typeof DmvChangeAddressRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/cdl-endorsements': {
-      id: '/dmv/cdl-endorsements'
-      path: '/cdl-endorsements'
-      fullPath: '/dmv/cdl-endorsements'
-      preLoaderRoute: typeof DmvCdlEndorsementsRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/cdl-classes': {
-      id: '/dmv/cdl-classes'
-      path: '/cdl-classes'
-      fullPath: '/dmv/cdl-classes'
-      preLoaderRoute: typeof DmvCdlClassesRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/dmv/cdl': {
-      id: '/dmv/cdl'
-      path: '/cdl'
-      fullPath: '/dmv/cdl'
-      preLoaderRoute: typeof DmvCdlRouteImport
-      parentRoute: typeof DmvRoute
-    }
-    '/authors/$slug': {
-      id: '/authors/$slug'
-      path: '/authors/$slug'
-      fullPath: '/authors/$slug'
-      preLoaderRoute: typeof AuthorsSlugRouteImport
+    '/legislature': {
+      id: '/legislature'
+      path: '/legislature'
+      fullPath: '/legislature'
+      preLoaderRoute: typeof LegislatureRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/article/$slug': {
-      id: '/article/$slug'
-      path: '/article/$slug'
-      fullPath: '/article/$slug'
-      preLoaderRoute: typeof ArticleSlugRouteImport
+    '/living-in-texas': {
+      id: '/living-in-texas'
+      path: '/living-in-texas'
+      fullPath: '/living-in-texas'
+      preLoaderRoute: typeof LivingInTexasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/publication-gate': {
-      id: '/api/publication-gate'
-      path: '/api/publication-gate'
-      fullPath: '/api/publication-gate'
-      preLoaderRoute: typeof ApiPublicationGateRouteImport
+    '/moving-to-texas': {
+      id: '/moving-to-texas'
+      path: '/moving-to-texas'
+      fullPath: '/moving-to-texas'
+      preLoaderRoute: typeof MovingToTexasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/platform-core-status': {
-      id: '/api/platform-core-status'
-      path: '/api/platform-core-status'
-      fullPath: '/api/platform-core-status'
-      preLoaderRoute: typeof ApiPlatformCoreStatusRouteImport
+    '/moving-to-texas-checklist': {
+      id: '/moving-to-texas-checklist'
+      path: '/moving-to-texas-checklist'
+      fullPath: '/moving-to-texas-checklist'
+      preLoaderRoute: typeof MovingToTexasChecklistRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news': {
+      id: '/news'
+      path: '/news'
+      fullPath: '/news'
+      preLoaderRoute: typeof NewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/news-sitemap.xml': {
+      id: '/news-sitemap.xml'
+      path: '/news-sitemap.xml'
+      fullPath: '/news-sitemap.xml'
+      preLoaderRoute: typeof NewsSitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register-to-vote': {
+      id: '/register-to-vote'
+      path: '/register-to-vote'
+      fullPath: '/register-to-vote'
+      preLoaderRoute: typeof RegisterToVoteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/representatives': {
+      id: '/representatives'
+      path: '/representatives'
+      fullPath: '/representatives'
+      preLoaderRoute: typeof RepresentativesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/return-refund-policy': {
+      id: '/return-refund-policy'
+      path: '/return-refund-policy'
+      fullPath: '/return-refund-policy'
+      preLoaderRoute: typeof ReturnRefundPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/san-antonio': {
+      id: '/san-antonio'
+      path: '/san-antonio'
+      fullPath: '/san-antonio'
+      preLoaderRoute: typeof SanAntonioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shipping-policy': {
+      id: '/shipping-policy'
+      path: '/shipping-policy'
+      fullPath: '/shipping-policy'
+      preLoaderRoute: typeof ShippingPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-authors.xml': {
+      id: '/sitemap-authors.xml'
+      path: '/sitemap-authors.xml'
+      fullPath: '/sitemap-authors.xml'
+      preLoaderRoute: typeof SitemapAuthorsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-bills.xml': {
+      id: '/sitemap-bills.xml'
+      path: '/sitemap-bills.xml'
+      fullPath: '/sitemap-bills.xml'
+      preLoaderRoute: typeof SitemapBillsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-committees.xml': {
+      id: '/sitemap-committees.xml'
+      path: '/sitemap-committees.xml'
+      fullPath: '/sitemap-committees.xml'
+      preLoaderRoute: typeof SitemapCommitteesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-districts.xml': {
+      id: '/sitemap-districts.xml'
+      path: '/sitemap-districts.xml'
+      fullPath: '/sitemap-districts.xml'
+      preLoaderRoute: typeof SitemapDistrictsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-elections.xml': {
+      id: '/sitemap-elections.xml'
+      path: '/sitemap-elections.xml'
+      fullPath: '/sitemap-elections.xml'
+      preLoaderRoute: typeof SitemapElectionsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-evergreen.xml': {
+      id: '/sitemap-evergreen.xml'
+      path: '/sitemap-evergreen.xml'
+      fullPath: '/sitemap-evergreen.xml'
+      preLoaderRoute: typeof SitemapEvergreenDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-explore-locations.xml': {
+      id: '/sitemap-explore-locations.xml'
+      path: '/sitemap-explore-locations.xml'
+      fullPath: '/sitemap-explore-locations.xml'
+      preLoaderRoute: typeof SitemapExploreLocationsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-explore.xml': {
+      id: '/sitemap-explore.xml'
+      path: '/sitemap-explore.xml'
+      fullPath: '/sitemap-explore.xml'
+      preLoaderRoute: typeof SitemapExploreDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-government.xml': {
+      id: '/sitemap-government.xml'
+      path: '/sitemap-government.xml'
+      fullPath: '/sitemap-government.xml'
+      preLoaderRoute: typeof SitemapGovernmentDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-images.xml': {
+      id: '/sitemap-images.xml'
+      path: '/sitemap-images.xml'
+      fullPath: '/sitemap-images.xml'
+      preLoaderRoute: typeof SitemapImagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-legislature.xml': {
+      id: '/sitemap-legislature.xml'
+      path: '/sitemap-legislature.xml'
+      fullPath: '/sitemap-legislature.xml'
+      preLoaderRoute: typeof SitemapLegislatureDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-news.xml': {
+      id: '/sitemap-news.xml'
+      path: '/sitemap-news.xml'
+      fullPath: '/sitemap-news.xml'
+      preLoaderRoute: typeof SitemapNewsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-pages.xml': {
+      id: '/sitemap-pages.xml'
+      path: '/sitemap-pages.xml'
+      fullPath: '/sitemap-pages.xml'
+      preLoaderRoute: typeof SitemapPagesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-products.xml': {
+      id: '/sitemap-products.xml'
+      path: '/sitemap-products.xml'
+      fullPath: '/sitemap-products.xml'
+      preLoaderRoute: typeof SitemapProductsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap-representatives.xml': {
+      id: '/sitemap-representatives.xml'
+      path: '/sitemap-representatives.xml'
+      fullPath: '/sitemap-representatives.xml'
+      preLoaderRoute: typeof SitemapRepresentativesDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tax-calculator': {
+      id: '/tax-calculator'
+      path: '/tax-calculator'
+      fullPath: '/tax-calculator'
+      preLoaderRoute: typeof TaxCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms-of-service': {
+      id: '/terms-of-service'
+      path: '/terms-of-service'
+      fullPath: '/terms-of-service'
+      preLoaderRoute: typeof TermsOfServiceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas': {
+      id: '/texas'
+      path: '/texas'
+      fullPath: '/texas'
+      preLoaderRoute: typeof TexasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-budget-planner': {
+      id: '/texas-budget-planner'
+      path: '/texas-budget-planner'
+      fullPath: '/texas-budget-planner'
+      preLoaderRoute: typeof TexasBudgetPlannerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-business': {
+      id: '/texas-business'
+      path: '/texas-business'
+      fullPath: '/texas-business'
+      preLoaderRoute: typeof TexasBusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-closing-cost-calculator': {
+      id: '/texas-closing-cost-calculator'
+      path: '/texas-closing-cost-calculator'
+      fullPath: '/texas-closing-cost-calculator'
+      preLoaderRoute: typeof TexasClosingCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-cost-of-living-calculator': {
+      id: '/texas-cost-of-living-calculator'
+      path: '/texas-cost-of-living-calculator'
+      fullPath: '/texas-cost-of-living-calculator'
+      preLoaderRoute: typeof TexasCostOfLivingCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-data': {
+      id: '/texas-data'
+      path: '/texas-data'
+      fullPath: '/texas-data'
+      preLoaderRoute: typeof TexasDataRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-down-payment-assistance-calculator': {
+      id: '/texas-down-payment-assistance-calculator'
+      path: '/texas-down-payment-assistance-calculator'
+      fullPath: '/texas-down-payment-assistance-calculator'
+      preLoaderRoute: typeof TexasDownPaymentAssistanceCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-down-payment-calculator': {
+      id: '/texas-down-payment-calculator'
+      path: '/texas-down-payment-calculator'
+      fullPath: '/texas-down-payment-calculator'
+      preLoaderRoute: typeof TexasDownPaymentCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-economy': {
+      id: '/texas-economy'
+      path: '/texas-economy'
+      fullPath: '/texas-economy'
+      preLoaderRoute: typeof TexasEconomyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-financial-tools': {
+      id: '/texas-financial-tools'
+      path: '/texas-financial-tools'
+      fullPath: '/texas-financial-tools'
+      preLoaderRoute: typeof TexasFinancialToolsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-first-time-homebuyer-programs': {
+      id: '/texas-first-time-homebuyer-programs'
+      path: '/texas-first-time-homebuyer-programs'
+      fullPath: '/texas-first-time-homebuyer-programs'
+      preLoaderRoute: typeof TexasFirstTimeHomebuyerProgramsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-government': {
+      id: '/texas-government'
+      path: '/texas-government'
+      fullPath: '/texas-government'
+      preLoaderRoute: typeof TexasGovernmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-home-affordability-calculator': {
+      id: '/texas-home-affordability-calculator'
+      path: '/texas-home-affordability-calculator'
+      fullPath: '/texas-home-affordability-calculator'
+      preLoaderRoute: typeof TexasHomeAffordabilityCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-home-equity-calculator': {
+      id: '/texas-home-equity-calculator'
+      path: '/texas-home-equity-calculator'
+      fullPath: '/texas-home-equity-calculator'
+      preLoaderRoute: typeof TexasHomeEquityCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-home-equity-growth-calculator': {
+      id: '/texas-home-equity-growth-calculator'
+      path: '/texas-home-equity-growth-calculator'
+      fullPath: '/texas-home-equity-growth-calculator'
+      preLoaderRoute: typeof TexasHomeEquityGrowthCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-home-insurance-calculator': {
+      id: '/texas-home-insurance-calculator'
+      path: '/texas-home-insurance-calculator'
+      fullPath: '/texas-home-insurance-calculator'
+      preLoaderRoute: typeof TexasHomeInsuranceCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-homeownership-cost-calculator': {
+      id: '/texas-homeownership-cost-calculator'
+      path: '/texas-homeownership-cost-calculator'
+      fullPath: '/texas-homeownership-cost-calculator'
+      preLoaderRoute: typeof TexasHomeownershipCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-law-policy': {
+      id: '/texas-law-policy'
+      path: '/texas-law-policy'
+      fullPath: '/texas-law-policy'
+      preLoaderRoute: typeof TexasLawPolicyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-laws': {
+      id: '/texas-laws'
+      path: '/texas-laws'
+      fullPath: '/texas-laws'
+      preLoaderRoute: typeof TexasLawsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-legislature': {
+      id: '/texas-legislature'
+      path: '/texas-legislature'
+      fullPath: '/texas-legislature'
+      preLoaderRoute: typeof TexasLegislatureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-living': {
+      id: '/texas-living'
+      path: '/texas-living'
+      fullPath: '/texas-living'
+      preLoaderRoute: typeof TexasLivingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-mortgage-calculator': {
+      id: '/texas-mortgage-calculator'
+      path: '/texas-mortgage-calculator'
+      fullPath: '/texas-mortgage-calculator'
+      preLoaderRoute: typeof TexasMortgageCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-mortgage-payoff-calculator': {
+      id: '/texas-mortgage-payoff-calculator'
+      path: '/texas-mortgage-payoff-calculator'
+      fullPath: '/texas-mortgage-payoff-calculator'
+      preLoaderRoute: typeof TexasMortgagePayoffCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-moving-cost-calculator': {
+      id: '/texas-moving-cost-calculator'
+      path: '/texas-moving-cost-calculator'
+      fullPath: '/texas-moving-cost-calculator'
+      preLoaderRoute: typeof TexasMovingCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-news': {
+      id: '/texas-news'
+      path: '/texas-news'
+      fullPath: '/texas-news'
+      preLoaderRoute: typeof TexasNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-politics': {
+      id: '/texas-politics'
+      path: '/texas-politics'
+      fullPath: '/texas-politics'
+      preLoaderRoute: typeof TexasPoliticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-property-tax-increase-calculator': {
+      id: '/texas-property-tax-increase-calculator'
+      path: '/texas-property-tax-increase-calculator'
+      fullPath: '/texas-property-tax-increase-calculator'
+      preLoaderRoute: typeof TexasPropertyTaxIncreaseCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-property-tax-protest-guide': {
+      id: '/texas-property-tax-protest-guide'
+      path: '/texas-property-tax-protest-guide'
+      fullPath: '/texas-property-tax-protest-guide'
+      preLoaderRoute: typeof TexasPropertyTaxProtestGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-refinance-savings-calculator': {
+      id: '/texas-refinance-savings-calculator'
+      path: '/texas-refinance-savings-calculator'
+      fullPath: '/texas-refinance-savings-calculator'
+      preLoaderRoute: typeof TexasRefinanceSavingsCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-rent-vs-buy-calculator': {
+      id: '/texas-rent-vs-buy-calculator'
+      path: '/texas-rent-vs-buy-calculator'
+      fullPath: '/texas-rent-vs-buy-calculator'
+      preLoaderRoute: typeof TexasRentVsBuyCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-resources': {
+      id: '/texas-resources'
+      path: '/texas-resources'
+      fullPath: '/texas-resources'
+      preLoaderRoute: typeof TexasResourcesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-salary-calculator': {
+      id: '/texas-salary-calculator'
+      path: '/texas-salary-calculator'
+      fullPath: '/texas-salary-calculator'
+      preLoaderRoute: typeof TexasSalaryCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-salary-comparison-by-city': {
+      id: '/texas-salary-comparison-by-city'
+      path: '/texas-salary-comparison-by-city'
+      fullPath: '/texas-salary-comparison-by-city'
+      preLoaderRoute: typeof TexasSalaryComparisonByCityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-sales-tax-explained': {
+      id: '/texas-sales-tax-explained'
+      path: '/texas-sales-tax-explained'
+      fullPath: '/texas-sales-tax-explained'
+      preLoaderRoute: typeof TexasSalesTaxExplainedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-sports': {
+      id: '/texas-sports'
+      path: '/texas-sports'
+      fullPath: '/texas-sports'
+      preLoaderRoute: typeof TexasSportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-utility-cost-calculator': {
+      id: '/texas-utility-cost-calculator'
+      path: '/texas-utility-cost-calculator'
+      fullPath: '/texas-utility-cost-calculator'
+      preLoaderRoute: typeof TexasUtilityCostCalculatorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/voting-locations': {
+      id: '/voting-locations'
+      path: '/voting-locations'
+      fullPath: '/voting-locations'
+      preLoaderRoute: typeof VotingLocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/governance-health': {
+      id: '/admin/governance-health'
+      path: '/governance-health'
+      fullPath: '/admin/governance-health'
+      preLoaderRoute: typeof AdminGovernanceHealthRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/shop-products': {
+      id: '/admin/shop-products'
+      path: '/shop-products'
+      fullPath: '/admin/shop-products'
+      preLoaderRoute: typeof AdminShopProductsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/content-disposition': {
+      id: '/api/content-disposition'
+      path: '/api/content-disposition'
+      fullPath: '/api/content-disposition'
+      preLoaderRoute: typeof ApiContentDispositionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/governance-health': {
@@ -4840,256 +4147,725 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGovernanceHealthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/content-disposition': {
-      id: '/api/content-disposition'
-      path: '/api/content-disposition'
-      fullPath: '/api/content-disposition'
-      preLoaderRoute: typeof ApiContentDispositionRouteImport
+    '/api/platform-core-status': {
+      id: '/api/platform-core-status'
+      path: '/api/platform-core-status'
+      fullPath: '/api/platform-core-status'
+      preLoaderRoute: typeof ApiPlatformCoreStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/shop-products': {
-      id: '/admin/shop-products'
-      path: '/shop-products'
-      fullPath: '/admin/shop-products'
-      preLoaderRoute: typeof AdminShopProductsRouteImport
-      parentRoute: typeof AdminRoute
+    '/api/publication-gate': {
+      id: '/api/publication-gate'
+      path: '/api/publication-gate'
+      fullPath: '/api/publication-gate'
+      preLoaderRoute: typeof ApiPublicationGateRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/governance-health': {
-      id: '/admin/governance-health'
-      path: '/governance-health'
-      fullPath: '/admin/governance-health'
-      preLoaderRoute: typeof AdminGovernanceHealthRouteImport
-      parentRoute: typeof AdminRoute
+    '/article/$slug': {
+      id: '/article/$slug'
+      path: '/article/$slug'
+      fullPath: '/article/$slug'
+      preLoaderRoute: typeof ArticleSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/texas-legislature/sessions/': {
-      id: '/texas-legislature/sessions/'
+    '/authors/': {
+      id: '/authors/'
+      path: '/authors'
+      fullPath: '/authors/'
+      preLoaderRoute: typeof AuthorsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/authors/$slug': {
+      id: '/authors/$slug'
+      path: '/authors/$slug'
+      fullPath: '/authors/$slug'
+      preLoaderRoute: typeof AuthorsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bills/': {
+      id: '/bills/'
       path: '/'
-      fullPath: '/texas-legislature/sessions/'
-      preLoaderRoute: typeof TexasLegislatureSessionsIndexRouteImport
-      parentRoute: typeof TexasLegislatureSessionsRoute
+      fullPath: '/bills/'
+      preLoaderRoute: typeof BillsIndexRouteImport
+      parentRoute: typeof BillsRoute
     }
-    '/texas-legislature/committees/': {
-      id: '/texas-legislature/committees/'
+    '/dmv/cdl': {
+      id: '/dmv/cdl'
+      path: '/cdl'
+      fullPath: '/dmv/cdl'
+      preLoaderRoute: typeof DmvCdlRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/cdl-classes': {
+      id: '/dmv/cdl-classes'
+      path: '/cdl-classes'
+      fullPath: '/dmv/cdl-classes'
+      preLoaderRoute: typeof DmvCdlClassesRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/cdl-endorsements': {
+      id: '/dmv/cdl-endorsements'
+      path: '/cdl-endorsements'
+      fullPath: '/dmv/cdl-endorsements'
+      preLoaderRoute: typeof DmvCdlEndorsementsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/change-address': {
+      id: '/dmv/change-address'
+      path: '/change-address'
+      fullPath: '/dmv/change-address'
+      preLoaderRoute: typeof DmvChangeAddressRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/dps-appointments': {
+      id: '/dmv/dps-appointments'
+      path: '/dps-appointments'
+      fullPath: '/dmv/dps-appointments'
+      preLoaderRoute: typeof DmvDpsAppointmentsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license': {
+      id: '/dmv/driver-license'
+      path: '/driver-license'
+      fullPath: '/dmv/driver-license'
+      preLoaderRoute: typeof DmvDriverLicenseRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license-documents': {
+      id: '/dmv/driver-license-documents'
+      path: '/driver-license-documents'
+      fullPath: '/dmv/driver-license-documents'
+      preLoaderRoute: typeof DmvDriverLicenseDocumentsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/driver-license-renewal': {
+      id: '/dmv/driver-license-renewal'
+      path: '/driver-license-renewal'
+      fullPath: '/dmv/driver-license-renewal'
+      preLoaderRoute: typeof DmvDriverLicenseRenewalRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/forms-downloads': {
+      id: '/dmv/forms-downloads'
+      path: '/forms-downloads'
+      fullPath: '/dmv/forms-downloads'
+      preLoaderRoute: typeof DmvFormsDownloadsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/identification-card': {
+      id: '/dmv/identification-card'
+      path: '/identification-card'
+      fullPath: '/dmv/identification-card'
+      preLoaderRoute: typeof DmvIdentificationCardRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/license-status': {
+      id: '/dmv/license-status'
+      path: '/license-status'
+      fullPath: '/dmv/license-status'
+      preLoaderRoute: typeof DmvLicenseStatusRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/real-id': {
+      id: '/dmv/real-id'
+      path: '/real-id'
+      fullPath: '/dmv/real-id'
+      preLoaderRoute: typeof DmvRealIdRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/replace-lost-license': {
+      id: '/dmv/replace-lost-license'
+      path: '/replace-lost-license'
+      fullPath: '/dmv/replace-lost-license'
+      preLoaderRoute: typeof DmvReplaceLostLicenseRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/dmv/texas-dmv-vs-dps': {
+      id: '/dmv/texas-dmv-vs-dps'
+      path: '/texas-dmv-vs-dps'
+      fullPath: '/dmv/texas-dmv-vs-dps'
+      preLoaderRoute: typeof DmvTexasDmvVsDpsRouteImport
+      parentRoute: typeof DmvRoute
+    }
+    '/elections/': {
+      id: '/elections/'
       path: '/'
-      fullPath: '/texas-legislature/committees/'
-      preLoaderRoute: typeof TexasLegislatureCommitteesIndexRouteImport
-      parentRoute: typeof TexasLegislatureCommitteesRoute
+      fullPath: '/elections/'
+      preLoaderRoute: typeof ElectionsIndexRouteImport
+      parentRoute: typeof ElectionsRoute
     }
-    '/elections/districts/': {
-      id: '/elections/districts/'
+    '/elections/2026': {
+      id: '/elections/2026'
+      path: '/2026'
+      fullPath: '/elections/2026'
+      preLoaderRoute: typeof Elections2026RouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/candidates': {
+      id: '/elections/candidates'
+      path: '/candidates'
+      fullPath: '/elections/candidates'
+      preLoaderRoute: typeof ElectionsCandidatesRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/corrections': {
+      id: '/elections/corrections'
+      path: '/corrections'
+      fullPath: '/elections/corrections'
+      preLoaderRoute: typeof ElectionsCorrectionsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/districts': {
+      id: '/elections/districts'
+      path: '/districts'
+      fullPath: '/elections/districts'
+      preLoaderRoute: typeof ElectionsDistrictsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/forecast': {
+      id: '/elections/forecast'
+      path: '/forecast'
+      fullPath: '/elections/forecast'
+      preLoaderRoute: typeof ElectionsForecastRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/legislative': {
+      id: '/elections/legislative'
+      path: '/legislative'
+      fullPath: '/elections/legislative'
+      preLoaderRoute: typeof ElectionsLegislativeRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/methodology': {
+      id: '/elections/methodology'
+      path: '/methodology'
+      fullPath: '/elections/methodology'
+      preLoaderRoute: typeof ElectionsMethodologyRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/polls': {
+      id: '/elections/polls'
+      path: '/polls'
+      fullPath: '/elections/polls'
+      preLoaderRoute: typeof ElectionsPollsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/races': {
+      id: '/elections/races'
+      path: '/races'
+      fullPath: '/elections/races'
+      preLoaderRoute: typeof ElectionsRacesRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/results': {
+      id: '/elections/results'
+      path: '/results'
+      fullPath: '/elections/results'
+      preLoaderRoute: typeof ElectionsResultsRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/statewide': {
+      id: '/elections/statewide'
+      path: '/statewide'
+      fullPath: '/elections/statewide'
+      preLoaderRoute: typeof ElectionsStatewideRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/voting': {
+      id: '/elections/voting'
+      path: '/voting'
+      fullPath: '/elections/voting'
+      preLoaderRoute: typeof ElectionsVotingRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explore/': {
+      id: '/explore/'
       path: '/'
-      fullPath: '/elections/districts/'
-      preLoaderRoute: typeof ElectionsDistrictsIndexRouteImport
-      parentRoute: typeof ElectionsDistrictsRoute
+      fullPath: '/explore/'
+      preLoaderRoute: typeof ExploreIndexRouteImport
+      parentRoute: typeof ExploreRoute
     }
-    '/admin/elections/': {
-      id: '/admin/elections/'
-      path: '/elections'
-      fullPath: '/admin/elections/'
-      preLoaderRoute: typeof AdminElectionsIndexRouteImport
-      parentRoute: typeof AdminRoute
+    '/explore/$slug': {
+      id: '/explore/$slug'
+      path: '/$slug'
+      fullPath: '/explore/$slug'
+      preLoaderRoute: typeof ExploreSlugRouteImport
+      parentRoute: typeof ExploreRoute
     }
-    '/texas-sports/team/$team': {
-      id: '/texas-sports/team/$team'
-      path: '/team/$team'
-      fullPath: '/texas-sports/team/$team'
-      preLoaderRoute: typeof TexasSportsTeamTeamRouteImport
+    '/explore/caverns': {
+      id: '/explore/caverns'
+      path: '/caverns'
+      fullPath: '/explore/caverns'
+      preLoaderRoute: typeof ExploreCavernsRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/hill-country-springs': {
+      id: '/explore/hill-country-springs'
+      path: '/hill-country-springs'
+      fullPath: '/explore/hill-country-springs'
+      preLoaderRoute: typeof ExploreHillCountrySpringsRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/historic-sites': {
+      id: '/explore/historic-sites'
+      path: '/historic-sites'
+      fullPath: '/explore/historic-sites'
+      preLoaderRoute: typeof ExploreHistoricSitesRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/lighthouses': {
+      id: '/explore/lighthouses'
+      path: '/lighthouses'
+      fullPath: '/explore/lighthouses'
+      preLoaderRoute: typeof ExploreLighthousesRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/major-springs': {
+      id: '/explore/major-springs'
+      path: '/major-springs'
+      fullPath: '/explore/major-springs'
+      preLoaderRoute: typeof ExploreMajorSpringsRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/national-parks': {
+      id: '/explore/national-parks'
+      path: '/national-parks'
+      fullPath: '/explore/national-parks'
+      preLoaderRoute: typeof ExploreNationalParksRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/national-wildlife-refuges': {
+      id: '/explore/national-wildlife-refuges'
+      path: '/national-wildlife-refuges'
+      fullPath: '/explore/national-wildlife-refuges'
+      preLoaderRoute: typeof ExploreNationalWildlifeRefugesRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/scenic-rivers': {
+      id: '/explore/scenic-rivers'
+      path: '/scenic-rivers'
+      fullPath: '/explore/scenic-rivers'
+      preLoaderRoute: typeof ExploreScenicRiversRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/search': {
+      id: '/explore/search'
+      path: '/search'
+      fullPath: '/explore/search'
+      preLoaderRoute: typeof ExploreSearchRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/spring-conservation-and-education': {
+      id: '/explore/spring-conservation-and-education'
+      path: '/spring-conservation-and-education'
+      fullPath: '/explore/spring-conservation-and-education'
+      preLoaderRoute: typeof ExploreSpringConservationAndEducationRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/spring-fed-swimming': {
+      id: '/explore/spring-fed-swimming'
+      path: '/spring-fed-swimming'
+      fullPath: '/explore/spring-fed-swimming'
+      preLoaderRoute: typeof ExploreSpringFedSwimmingRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/state-parks': {
+      id: '/explore/state-parks'
+      path: '/state-parks'
+      fullPath: '/explore/state-parks'
+      preLoaderRoute: typeof ExploreStateParksRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-camping-guide': {
+      id: '/explore/texas-camping-guide'
+      path: '/texas-camping-guide'
+      fullPath: '/explore/texas-camping-guide'
+      preLoaderRoute: typeof ExploreTexasCampingGuideRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-dark-sky-stargazing': {
+      id: '/explore/texas-dark-sky-stargazing'
+      path: '/texas-dark-sky-stargazing'
+      fullPath: '/explore/texas-dark-sky-stargazing'
+      preLoaderRoute: typeof ExploreTexasDarkSkyStargazingRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-lakes-guide': {
+      id: '/explore/texas-lakes-guide'
+      path: '/texas-lakes-guide'
+      fullPath: '/explore/texas-lakes-guide'
+      preLoaderRoute: typeof ExploreTexasLakesGuideRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-scenic-drives': {
+      id: '/explore/texas-scenic-drives'
+      path: '/texas-scenic-drives'
+      fullPath: '/explore/texas-scenic-drives'
+      preLoaderRoute: typeof ExploreTexasScenicDrivesRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-state-parks-guide': {
+      id: '/explore/texas-state-parks-guide'
+      path: '/texas-state-parks-guide'
+      fullPath: '/explore/texas-state-parks-guide'
+      preLoaderRoute: typeof ExploreTexasStateParksGuideRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/texas-wildflower-seasons': {
+      id: '/explore/texas-wildflower-seasons'
+      path: '/texas-wildflower-seasons'
+      fullPath: '/explore/texas-wildflower-seasons'
+      preLoaderRoute: typeof ExploreTexasWildflowerSeasonsRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/trip-planner': {
+      id: '/explore/trip-planner'
+      path: '/trip-planner'
+      fullPath: '/explore/trip-planner'
+      preLoaderRoute: typeof ExploreTripPlannerRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/wildlife-management-areas': {
+      id: '/explore/wildlife-management-areas'
+      path: '/wildlife-management-areas'
+      fullPath: '/explore/wildlife-management-areas'
+      preLoaderRoute: typeof ExploreWildlifeManagementAreasRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/news/': {
+      id: '/news/'
+      path: '/'
+      fullPath: '/news/'
+      preLoaderRoute: typeof NewsIndexRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/$slug': {
+      id: '/news/$slug'
+      path: '/$slug'
+      fullPath: '/news/$slug'
+      preLoaderRoute: typeof NewsSlugRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/news/non-political': {
+      id: '/news/non-political'
+      path: '/non-political'
+      fullPath: '/news/non-political'
+      preLoaderRoute: typeof NewsNonPoliticalRouteImport
+      parentRoute: typeof NewsRoute
+    }
+    '/representatives/$representativeSlug': {
+      id: '/representatives/$representativeSlug'
+      path: '/$representativeSlug'
+      fullPath: '/representatives/$representativeSlug'
+      preLoaderRoute: typeof RepresentativesRepresentativeSlugRouteImport
+      parentRoute: typeof RepresentativesRoute
+    }
+    '/shop/': {
+      id: '/shop/'
+      path: '/'
+      fullPath: '/shop/'
+      preLoaderRoute: typeof ShopIndexRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/$productId': {
+      id: '/shop/$productId'
+      path: '/$productId'
+      fullPath: '/shop/$productId'
+      preLoaderRoute: typeof ShopProductIdRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/checkout': {
+      id: '/shop/checkout'
+      path: '/checkout'
+      fullPath: '/shop/checkout'
+      preLoaderRoute: typeof ShopCheckoutRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/shop/checkout-return': {
+      id: '/shop/checkout-return'
+      path: '/checkout-return'
+      fullPath: '/shop/checkout-return'
+      preLoaderRoute: typeof ShopCheckoutReturnRouteImport
+      parentRoute: typeof ShopRoute
+    }
+    '/texas-business/$topic': {
+      id: '/texas-business/$topic'
+      path: '/$topic'
+      fullPath: '/texas-business/$topic'
+      preLoaderRoute: typeof TexasBusinessTopicRouteImport
+      parentRoute: typeof TexasBusinessRoute
+    }
+    '/texas-data/$datasetSlug': {
+      id: '/texas-data/$datasetSlug'
+      path: '/$datasetSlug'
+      fullPath: '/texas-data/$datasetSlug'
+      preLoaderRoute: typeof TexasDataDatasetSlugRouteImport
+      parentRoute: typeof TexasDataRoute
+    }
+    '/texas-government/$entitySlug': {
+      id: '/texas-government/$entitySlug'
+      path: '/$entitySlug'
+      fullPath: '/texas-government/$entitySlug'
+      preLoaderRoute: typeof TexasGovernmentEntitySlugRouteImport
+      parentRoute: typeof TexasGovernmentRoute
+    }
+    '/texas-legislature/': {
+      id: '/texas-legislature/'
+      path: '/'
+      fullPath: '/texas-legislature/'
+      preLoaderRoute: typeof TexasLegislatureIndexRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/committees': {
+      id: '/texas-legislature/committees'
+      path: '/committees'
+      fullPath: '/texas-legislature/committees'
+      preLoaderRoute: typeof TexasLegislatureCommitteesRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/current-session': {
+      id: '/texas-legislature/current-session'
+      path: '/current-session'
+      fullPath: '/texas-legislature/current-session'
+      preLoaderRoute: typeof TexasLegislatureCurrentSessionRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/house': {
+      id: '/texas-legislature/house'
+      path: '/house'
+      fullPath: '/texas-legislature/house'
+      preLoaderRoute: typeof TexasLegislatureHouseRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/senate': {
+      id: '/texas-legislature/senate'
+      path: '/senate'
+      fullPath: '/texas-legislature/senate'
+      preLoaderRoute: typeof TexasLegislatureSenateRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-legislature/sessions': {
+      id: '/texas-legislature/sessions'
+      path: '/sessions'
+      fullPath: '/texas-legislature/sessions'
+      preLoaderRoute: typeof TexasLegislatureSessionsRouteImport
+      parentRoute: typeof TexasLegislatureRoute
+    }
+    '/texas-news/': {
+      id: '/texas-news/'
+      path: '/'
+      fullPath: '/texas-news/'
+      preLoaderRoute: typeof TexasNewsIndexRouteImport
+      parentRoute: typeof TexasNewsRoute
+    }
+    '/texas-news/$topic': {
+      id: '/texas-news/$topic'
+      path: '/$topic'
+      fullPath: '/texas-news/$topic'
+      preLoaderRoute: typeof TexasNewsTopicRouteImport
+      parentRoute: typeof TexasNewsRoute
+    }
+    '/texas-sports/': {
+      id: '/texas-sports/'
+      path: '/'
+      fullPath: '/texas-sports/'
+      preLoaderRoute: typeof TexasSportsIndexRouteImport
       parentRoute: typeof TexasSportsRoute
     }
-    '/texas-resources/type/$type': {
-      id: '/texas-resources/type/$type'
-      path: '/type/$type'
-      fullPath: '/texas-resources/type/$type'
-      preLoaderRoute: typeof TexasResourcesTypeTypeRouteImport
-      parentRoute: typeof TexasResourcesRoute
+    '/texas-sports/$league': {
+      id: '/texas-sports/$league'
+      path: '/$league'
+      fullPath: '/texas-sports/$league'
+      preLoaderRoute: typeof TexasSportsLeagueRouteImport
+      parentRoute: typeof TexasSportsRoute
     }
-    '/texas-resources/topic/$topicId': {
-      id: '/texas-resources/topic/$topicId'
-      path: '/topic/$topicId'
-      fullPath: '/texas-resources/topic/$topicId'
-      preLoaderRoute: typeof TexasResourcesTopicTopicIdRouteImport
-      parentRoute: typeof TexasResourcesRoute
+    '/texas/': {
+      id: '/texas/'
+      path: '/'
+      fullPath: '/texas/'
+      preLoaderRoute: typeof TexasIndexRouteImport
+      parentRoute: typeof TexasRoute
     }
-    '/texas-resources/journey/$journeyId': {
-      id: '/texas-resources/journey/$journeyId'
-      path: '/journey/$journeyId'
-      fullPath: '/texas-resources/journey/$journeyId'
-      preLoaderRoute: typeof TexasResourcesJourneyJourneyIdRouteImport
-      parentRoute: typeof TexasResourcesRoute
+    '/texas/$slug': {
+      id: '/texas/$slug'
+      path: '/$slug'
+      fullPath: '/texas/$slug'
+      preLoaderRoute: typeof TexasSlugRouteImport
+      parentRoute: typeof TexasRoute
     }
-    '/texas-legislature/sessions/$sessionSlug': {
-      id: '/texas-legislature/sessions/$sessionSlug'
-      path: '/$sessionSlug'
-      fullPath: '/texas-legislature/sessions/$sessionSlug'
-      preLoaderRoute: typeof TexasLegislatureSessionsSessionSlugRouteImport
-      parentRoute: typeof TexasLegislatureSessionsRoute
-    }
-    '/texas-legislature/committees/$committeeSlug': {
-      id: '/texas-legislature/committees/$committeeSlug'
-      path: '/$committeeSlug'
-      fullPath: '/texas-legislature/committees/$committeeSlug'
-      preLoaderRoute: typeof TexasLegislatureCommitteesCommitteeSlugRouteImport
-      parentRoute: typeof TexasLegislatureCommitteesRoute
-    }
-    '/lovable/email/suppression': {
-      id: '/lovable/email/suppression'
-      path: '/lovable/email/suppression'
-      fullPath: '/lovable/email/suppression'
-      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+    '/vehicles/auto-insurance-requirements': {
+      id: '/vehicles/auto-insurance-requirements'
+      path: '/vehicles/auto-insurance-requirements'
+      fullPath: '/vehicles/auto-insurance-requirements'
+      preLoaderRoute: typeof VehiclesAutoInsuranceRequirementsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/explore/trip/$token': {
-      id: '/explore/trip/$token'
-      path: '/trip/$token'
-      fullPath: '/explore/trip/$token'
-      preLoaderRoute: typeof ExploreTripTokenRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/state-park/$slug': {
-      id: '/explore/state-park/$slug'
-      path: '/state-park/$slug'
-      fullPath: '/explore/state-park/$slug'
-      preLoaderRoute: typeof ExploreStateParkSlugRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/river/$slug': {
-      id: '/explore/river/$slug'
-      path: '/river/$slug'
-      fullPath: '/explore/river/$slug'
-      preLoaderRoute: typeof ExploreRiverSlugRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/region/$region': {
-      id: '/explore/region/$region'
-      path: '/region/$region'
-      fullPath: '/explore/region/$region'
-      preLoaderRoute: typeof ExploreRegionRegionRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/lake/$slug': {
-      id: '/explore/lake/$slug'
-      path: '/lake/$slug'
-      fullPath: '/explore/lake/$slug'
-      preLoaderRoute: typeof ExploreLakeSlugRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/county/$county': {
-      id: '/explore/county/$county'
-      path: '/county/$county'
-      fullPath: '/explore/county/$county'
-      preLoaderRoute: typeof ExploreCountyCountyRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/explore/cavern/$slug': {
-      id: '/explore/cavern/$slug'
-      path: '/cavern/$slug'
-      fullPath: '/explore/cavern/$slug'
-      preLoaderRoute: typeof ExploreCavernSlugRouteImport
-      parentRoute: typeof ExploreRoute
-    }
-    '/elections/results/$resultSlug': {
-      id: '/elections/results/$resultSlug'
-      path: '/$resultSlug'
-      fullPath: '/elections/results/$resultSlug'
-      preLoaderRoute: typeof ElectionsResultsResultSlugRouteImport
-      parentRoute: typeof ElectionsResultsRoute
-    }
-    '/elections/races_/$raceSlug': {
-      id: '/elections/races_/$raceSlug'
-      path: '/races/$raceSlug'
-      fullPath: '/elections/races/$raceSlug'
-      preLoaderRoute: typeof ElectionsRacesRaceSlugRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/elections/polls/$pollSlug': {
-      id: '/elections/polls/$pollSlug'
-      path: '/$pollSlug'
-      fullPath: '/elections/polls/$pollSlug'
-      preLoaderRoute: typeof ElectionsPollsPollSlugRouteImport
-      parentRoute: typeof ElectionsPollsRoute
-    }
-    '/elections/forecast/$forecastSlug': {
-      id: '/elections/forecast/$forecastSlug'
-      path: '/$forecastSlug'
-      fullPath: '/elections/forecast/$forecastSlug'
-      preLoaderRoute: typeof ElectionsForecastForecastSlugRouteImport
-      parentRoute: typeof ElectionsForecastRoute
-    }
-    '/elections/districts/$districtSlug': {
-      id: '/elections/districts/$districtSlug'
-      path: '/$districtSlug'
-      fullPath: '/elections/districts/$districtSlug'
-      preLoaderRoute: typeof ElectionsDistrictsDistrictSlugRouteImport
-      parentRoute: typeof ElectionsDistrictsRoute
-    }
-    '/elections/candidates_/$candidateSlug': {
-      id: '/elections/candidates_/$candidateSlug'
-      path: '/candidates/$candidateSlug'
-      fullPath: '/elections/candidates/$candidateSlug'
-      preLoaderRoute: typeof ElectionsCandidatesCandidateSlugRouteImport
-      parentRoute: typeof ElectionsRoute
-    }
-    '/api/public/property-address-lookup': {
-      id: '/api/public/property-address-lookup'
-      path: '/api/public/property-address-lookup'
-      fullPath: '/api/public/property-address-lookup'
-      preLoaderRoute: typeof ApiPublicPropertyAddressLookupRouteImport
+    '/vehicles/bonded-titles': {
+      id: '/vehicles/bonded-titles'
+      path: '/vehicles/bonded-titles'
+      fullPath: '/vehicles/bonded-titles'
+      preLoaderRoute: typeof VehiclesBondedTitlesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/admin/shop-products': {
-      id: '/api/admin/shop-products'
-      path: '/api/admin/shop-products'
-      fullPath: '/api/admin/shop-products'
-      preLoaderRoute: typeof ApiAdminShopProductsRouteImport
+    '/vehicles/buying-a-car': {
+      id: '/vehicles/buying-a-car'
+      path: '/vehicles/buying-a-car'
+      fullPath: '/vehicles/buying-a-car'
+      preLoaderRoute: typeof VehiclesBuyingACarRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/elections/results': {
-      id: '/admin/elections/results'
-      path: '/elections/results'
-      fullPath: '/admin/elections/results'
-      preLoaderRoute: typeof AdminElectionsResultsRouteImport
-      parentRoute: typeof AdminRoute
+    '/vehicles/buying-selling': {
+      id: '/vehicles/buying-selling'
+      path: '/vehicles/buying-selling'
+      fullPath: '/vehicles/buying-selling'
+      preLoaderRoute: typeof VehiclesBuyingSellingRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/elections/races': {
-      id: '/admin/elections/races'
-      path: '/elections/races'
-      fullPath: '/admin/elections/races'
-      preLoaderRoute: typeof AdminElectionsRacesRouteImport
-      parentRoute: typeof AdminRoute
+    '/vehicles/commercial-fleet-irp': {
+      id: '/vehicles/commercial-fleet-irp'
+      path: '/vehicles/commercial-fleet-irp'
+      fullPath: '/vehicles/commercial-fleet-irp'
+      preLoaderRoute: typeof VehiclesCommercialFleetIrpRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/elections/polls': {
-      id: '/admin/elections/polls'
-      path: '/elections/polls'
-      fullPath: '/admin/elections/polls'
-      preLoaderRoute: typeof AdminElectionsPollsRouteImport
-      parentRoute: typeof AdminRoute
+    '/vehicles/disabled-parking': {
+      id: '/vehicles/disabled-parking'
+      path: '/vehicles/disabled-parking'
+      fullPath: '/vehicles/disabled-parking'
+      preLoaderRoute: typeof VehiclesDisabledParkingRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/elections/forecast': {
-      id: '/admin/elections/forecast'
-      path: '/elections/forecast'
-      fullPath: '/admin/elections/forecast'
-      preLoaderRoute: typeof AdminElectionsForecastRouteImport
-      parentRoute: typeof AdminRoute
+    '/vehicles/duplicate-titles': {
+      id: '/vehicles/duplicate-titles'
+      path: '/vehicles/duplicate-titles'
+      fullPath: '/vehicles/duplicate-titles'
+      preLoaderRoute: typeof VehiclesDuplicateTitlesRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/elections/candidates': {
-      id: '/admin/elections/candidates'
-      path: '/elections/candidates'
-      fullPath: '/admin/elections/candidates'
-      preLoaderRoute: typeof AdminElectionsCandidatesRouteImport
-      parentRoute: typeof AdminRoute
+    '/vehicles/farm-antique-specialty': {
+      id: '/vehicles/farm-antique-specialty'
+      path: '/vehicles/farm-antique-specialty'
+      fullPath: '/vehicles/farm-antique-specialty'
+      preLoaderRoute: typeof VehiclesFarmAntiqueSpecialtyRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/bills/relationships': {
-      id: '/admin/bills/relationships'
-      path: '/bills/relationships'
-      fullPath: '/admin/bills/relationships'
-      preLoaderRoute: typeof AdminBillsRelationshipsRouteImport
-      parentRoute: typeof AdminRoute
+    '/vehicles/financial-responsibility': {
+      id: '/vehicles/financial-responsibility'
+      path: '/vehicles/financial-responsibility'
+      fullPath: '/vehicles/financial-responsibility'
+      preLoaderRoute: typeof VehiclesFinancialResponsibilityRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/admin/bills/opportunities': {
-      id: '/admin/bills/opportunities'
-      path: '/bills/opportunities'
-      fullPath: '/admin/bills/opportunities'
-      preLoaderRoute: typeof AdminBillsOpportunitiesRouteImport
+    '/vehicles/inspections': {
+      id: '/vehicles/inspections'
+      path: '/vehicles/inspections'
+      fullPath: '/vehicles/inspections'
+      preLoaderRoute: typeof VehiclesInspectionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/inspections-emissions': {
+      id: '/vehicles/inspections-emissions'
+      path: '/vehicles/inspections-emissions'
+      fullPath: '/vehicles/inspections-emissions'
+      preLoaderRoute: typeof VehiclesInspectionsEmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/liens-duplicate-corrected-titles': {
+      id: '/vehicles/liens-duplicate-corrected-titles'
+      path: '/vehicles/liens-duplicate-corrected-titles'
+      fullPath: '/vehicles/liens-duplicate-corrected-titles'
+      preLoaderRoute: typeof VehiclesLiensDuplicateCorrectedTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/new-residents': {
+      id: '/vehicles/new-residents'
+      path: '/vehicles/new-residents'
+      fullPath: '/vehicles/new-residents'
+      preLoaderRoute: typeof VehiclesNewResidentsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/personalized-plates': {
+      id: '/vehicles/personalized-plates'
+      path: '/vehicles/personalized-plates'
+      fullPath: '/vehicles/personalized-plates'
+      preLoaderRoute: typeof VehiclesPersonalizedPlatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/plates': {
+      id: '/vehicles/plates'
+      path: '/vehicles/plates'
+      fullPath: '/vehicles/plates'
+      preLoaderRoute: typeof VehiclesPlatesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/private-party-sales': {
+      id: '/vehicles/private-party-sales'
+      path: '/vehicles/private-party-sales'
+      fullPath: '/vehicles/private-party-sales'
+      preLoaderRoute: typeof VehiclesPrivatePartySalesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/registration': {
+      id: '/vehicles/registration'
+      path: '/vehicles/registration'
+      fullPath: '/vehicles/registration'
+      preLoaderRoute: typeof VehiclesRegistrationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/registration-fees-taxes': {
+      id: '/vehicles/registration-fees-taxes'
+      path: '/vehicles/registration-fees-taxes'
+      fullPath: '/vehicles/registration-fees-taxes'
+      preLoaderRoute: typeof VehiclesRegistrationFeesTaxesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/renewal': {
+      id: '/vehicles/renewal'
+      path: '/vehicles/renewal'
+      fullPath: '/vehicles/renewal'
+      preLoaderRoute: typeof VehiclesRenewalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/salvage-rebuilt-titles': {
+      id: '/vehicles/salvage-rebuilt-titles'
+      path: '/vehicles/salvage-rebuilt-titles'
+      fullPath: '/vehicles/salvage-rebuilt-titles'
+      preLoaderRoute: typeof VehiclesSalvageRebuiltTitlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/selling-a-car': {
+      id: '/vehicles/selling-a-car'
+      path: '/vehicles/selling-a-car'
+      fullPath: '/vehicles/selling-a-car'
+      preLoaderRoute: typeof VehiclesSellingACarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/temporary-tags': {
+      id: '/vehicles/temporary-tags'
+      path: '/vehicles/temporary-tags'
+      fullPath: '/vehicles/temporary-tags'
+      preLoaderRoute: typeof VehiclesTemporaryTagsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vehicles/title-transfer': {
+      id: '/vehicles/title-transfer'
+      path: '/vehicles/title-transfer'
+      fullPath: '/vehicles/title-transfer'
+      preLoaderRoute: typeof VehiclesTitleTransferRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/bills/editorial': {
+      id: '/admin/bills/editorial'
+      path: '/bills/editorial'
+      fullPath: '/admin/bills/editorial'
+      preLoaderRoute: typeof AdminBillsEditorialRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/bills/enrichment': {
@@ -5099,12 +4875,236 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBillsEnrichmentRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/bills/editorial': {
-      id: '/admin/bills/editorial'
-      path: '/bills/editorial'
-      fullPath: '/admin/bills/editorial'
-      preLoaderRoute: typeof AdminBillsEditorialRouteImport
+    '/admin/bills/opportunities': {
+      id: '/admin/bills/opportunities'
+      path: '/bills/opportunities'
+      fullPath: '/admin/bills/opportunities'
+      preLoaderRoute: typeof AdminBillsOpportunitiesRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/admin/bills/relationships': {
+      id: '/admin/bills/relationships'
+      path: '/bills/relationships'
+      fullPath: '/admin/bills/relationships'
+      preLoaderRoute: typeof AdminBillsRelationshipsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/': {
+      id: '/admin/elections/'
+      path: '/elections'
+      fullPath: '/admin/elections/'
+      preLoaderRoute: typeof AdminElectionsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/candidates': {
+      id: '/admin/elections/candidates'
+      path: '/elections/candidates'
+      fullPath: '/admin/elections/candidates'
+      preLoaderRoute: typeof AdminElectionsCandidatesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/forecast': {
+      id: '/admin/elections/forecast'
+      path: '/elections/forecast'
+      fullPath: '/admin/elections/forecast'
+      preLoaderRoute: typeof AdminElectionsForecastRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/polls': {
+      id: '/admin/elections/polls'
+      path: '/elections/polls'
+      fullPath: '/admin/elections/polls'
+      preLoaderRoute: typeof AdminElectionsPollsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/races': {
+      id: '/admin/elections/races'
+      path: '/elections/races'
+      fullPath: '/admin/elections/races'
+      preLoaderRoute: typeof AdminElectionsRacesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/elections/results': {
+      id: '/admin/elections/results'
+      path: '/elections/results'
+      fullPath: '/admin/elections/results'
+      preLoaderRoute: typeof AdminElectionsResultsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/api/admin/shop-products': {
+      id: '/api/admin/shop-products'
+      path: '/api/admin/shop-products'
+      fullPath: '/api/admin/shop-products'
+      preLoaderRoute: typeof ApiAdminShopProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/property-address-lookup': {
+      id: '/api/public/property-address-lookup'
+      path: '/api/public/property-address-lookup'
+      fullPath: '/api/public/property-address-lookup'
+      preLoaderRoute: typeof ApiPublicPropertyAddressLookupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/elections/candidates_/$candidateSlug': {
+      id: '/elections/candidates_/$candidateSlug'
+      path: '/candidates/$candidateSlug'
+      fullPath: '/elections/candidates/$candidateSlug'
+      preLoaderRoute: typeof ElectionsCandidatesCandidateSlugRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/districts/': {
+      id: '/elections/districts/'
+      path: '/'
+      fullPath: '/elections/districts/'
+      preLoaderRoute: typeof ElectionsDistrictsIndexRouteImport
+      parentRoute: typeof ElectionsDistrictsRoute
+    }
+    '/elections/districts/$districtSlug': {
+      id: '/elections/districts/$districtSlug'
+      path: '/$districtSlug'
+      fullPath: '/elections/districts/$districtSlug'
+      preLoaderRoute: typeof ElectionsDistrictsDistrictSlugRouteImport
+      parentRoute: typeof ElectionsDistrictsRoute
+    }
+    '/elections/forecast/$forecastSlug': {
+      id: '/elections/forecast/$forecastSlug'
+      path: '/$forecastSlug'
+      fullPath: '/elections/forecast/$forecastSlug'
+      preLoaderRoute: typeof ElectionsForecastForecastSlugRouteImport
+      parentRoute: typeof ElectionsForecastRoute
+    }
+    '/elections/polls/$pollSlug': {
+      id: '/elections/polls/$pollSlug'
+      path: '/$pollSlug'
+      fullPath: '/elections/polls/$pollSlug'
+      preLoaderRoute: typeof ElectionsPollsPollSlugRouteImport
+      parentRoute: typeof ElectionsPollsRoute
+    }
+    '/elections/races_/$raceSlug': {
+      id: '/elections/races_/$raceSlug'
+      path: '/races/$raceSlug'
+      fullPath: '/elections/races/$raceSlug'
+      preLoaderRoute: typeof ElectionsRacesRaceSlugRouteImport
+      parentRoute: typeof ElectionsRoute
+    }
+    '/elections/results/$resultSlug': {
+      id: '/elections/results/$resultSlug'
+      path: '/$resultSlug'
+      fullPath: '/elections/results/$resultSlug'
+      preLoaderRoute: typeof ElectionsResultsResultSlugRouteImport
+      parentRoute: typeof ElectionsResultsRoute
+    }
+    '/explore/cavern/$slug': {
+      id: '/explore/cavern/$slug'
+      path: '/cavern/$slug'
+      fullPath: '/explore/cavern/$slug'
+      preLoaderRoute: typeof ExploreCavernSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/county/$county': {
+      id: '/explore/county/$county'
+      path: '/county/$county'
+      fullPath: '/explore/county/$county'
+      preLoaderRoute: typeof ExploreCountyCountyRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/lake/$slug': {
+      id: '/explore/lake/$slug'
+      path: '/lake/$slug'
+      fullPath: '/explore/lake/$slug'
+      preLoaderRoute: typeof ExploreLakeSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/region/$region': {
+      id: '/explore/region/$region'
+      path: '/region/$region'
+      fullPath: '/explore/region/$region'
+      preLoaderRoute: typeof ExploreRegionRegionRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/river/$slug': {
+      id: '/explore/river/$slug'
+      path: '/river/$slug'
+      fullPath: '/explore/river/$slug'
+      preLoaderRoute: typeof ExploreRiverSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/state-park/$slug': {
+      id: '/explore/state-park/$slug'
+      path: '/state-park/$slug'
+      fullPath: '/explore/state-park/$slug'
+      preLoaderRoute: typeof ExploreStateParkSlugRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/explore/trip/$token': {
+      id: '/explore/trip/$token'
+      path: '/trip/$token'
+      fullPath: '/explore/trip/$token'
+      preLoaderRoute: typeof ExploreTripTokenRouteImport
+      parentRoute: typeof ExploreRoute
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/texas-legislature/committees/': {
+      id: '/texas-legislature/committees/'
+      path: '/'
+      fullPath: '/texas-legislature/committees/'
+      preLoaderRoute: typeof TexasLegislatureCommitteesIndexRouteImport
+      parentRoute: typeof TexasLegislatureCommitteesRoute
+    }
+    '/texas-legislature/committees/$committeeSlug': {
+      id: '/texas-legislature/committees/$committeeSlug'
+      path: '/$committeeSlug'
+      fullPath: '/texas-legislature/committees/$committeeSlug'
+      preLoaderRoute: typeof TexasLegislatureCommitteesCommitteeSlugRouteImport
+      parentRoute: typeof TexasLegislatureCommitteesRoute
+    }
+    '/texas-legislature/sessions/': {
+      id: '/texas-legislature/sessions/'
+      path: '/'
+      fullPath: '/texas-legislature/sessions/'
+      preLoaderRoute: typeof TexasLegislatureSessionsIndexRouteImport
+      parentRoute: typeof TexasLegislatureSessionsRoute
+    }
+    '/texas-legislature/sessions/$sessionSlug': {
+      id: '/texas-legislature/sessions/$sessionSlug'
+      path: '/$sessionSlug'
+      fullPath: '/texas-legislature/sessions/$sessionSlug'
+      preLoaderRoute: typeof TexasLegislatureSessionsSessionSlugRouteImport
+      parentRoute: typeof TexasLegislatureSessionsRoute
+    }
+    '/texas-resources/journey/$journeyId': {
+      id: '/texas-resources/journey/$journeyId'
+      path: '/journey/$journeyId'
+      fullPath: '/texas-resources/journey/$journeyId'
+      preLoaderRoute: typeof TexasResourcesJourneyJourneyIdRouteImport
+      parentRoute: typeof TexasResourcesRoute
+    }
+    '/texas-resources/topic/$topicId': {
+      id: '/texas-resources/topic/$topicId'
+      path: '/topic/$topicId'
+      fullPath: '/texas-resources/topic/$topicId'
+      preLoaderRoute: typeof TexasResourcesTopicTopicIdRouteImport
+      parentRoute: typeof TexasResourcesRoute
+    }
+    '/texas-resources/type/$type': {
+      id: '/texas-resources/type/$type'
+      path: '/type/$type'
+      fullPath: '/texas-resources/type/$type'
+      preLoaderRoute: typeof TexasResourcesTypeTypeRouteImport
+      parentRoute: typeof TexasResourcesRoute
+    }
+    '/texas-sports/team/$team': {
+      id: '/texas-sports/team/$team'
+      path: '/team/$team'
+      fullPath: '/texas-sports/team/$team'
+      preLoaderRoute: typeof TexasSportsTeamTeamRouteImport
+      parentRoute: typeof TexasSportsRoute
     }
     '/admin/explore/imports/': {
       id: '/admin/explore/imports/'
@@ -5113,137 +5113,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminExploreImportsIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/lovable/email/transactional/send': {
-      id: '/lovable/email/transactional/send'
-      path: '/lovable/email/transactional/send'
-      fullPath: '/lovable/email/transactional/send'
-      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/transactional/preview': {
-      id: '/lovable/email/transactional/preview'
-      path: '/lovable/email/transactional/preview'
-      fullPath: '/lovable/email/transactional/preview'
-      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/payments/webhook': {
-      id: '/api/public/payments/webhook'
-      path: '/api/public/payments/webhook'
-      fullPath: '/api/public/payments/webhook'
-      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/track-variant': {
-      id: '/api/public/hooks/track-variant'
-      path: '/api/public/hooks/track-variant'
-      fullPath: '/api/public/hooks/track-variant'
-      preLoaderRoute: typeof ApiPublicHooksTrackVariantRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/sync-printify': {
-      id: '/api/public/hooks/sync-printify'
-      path: '/api/public/hooks/sync-printify'
-      fullPath: '/api/public/hooks/sync-printify'
-      preLoaderRoute: typeof ApiPublicHooksSyncPrintifyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/score-viral-backfill': {
-      id: '/api/public/hooks/score-viral-backfill'
-      path: '/api/public/hooks/score-viral-backfill'
-      fullPath: '/api/public/hooks/score-viral-backfill'
-      preLoaderRoute: typeof ApiPublicHooksScoreViralBackfillRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/score-viral': {
-      id: '/api/public/hooks/score-viral'
-      path: '/api/public/hooks/score-viral'
-      fullPath: '/api/public/hooks/score-viral'
-      preLoaderRoute: typeof ApiPublicHooksScoreViralRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/publishing-safety-net': {
-      id: '/api/public/hooks/publishing-safety-net'
-      path: '/api/public/hooks/publishing-safety-net'
-      fullPath: '/api/public/hooks/publishing-safety-net'
-      preLoaderRoute: typeof ApiPublicHooksPublishingSafetyNetRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/list-shops': {
-      id: '/api/public/hooks/list-shops'
-      path: '/api/public/hooks/list-shops'
-      fullPath: '/api/public/hooks/list-shops'
-      preLoaderRoute: typeof ApiPublicHooksListShopsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/ingest-feeds': {
-      id: '/api/public/hooks/ingest-feeds'
-      path: '/api/public/hooks/ingest-feeds'
-      fullPath: '/api/public/hooks/ingest-feeds'
-      preLoaderRoute: typeof ApiPublicHooksIngestFeedsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/health': {
-      id: '/api/public/hooks/health'
-      path: '/api/public/hooks/health'
-      fullPath: '/api/public/hooks/health'
-      preLoaderRoute: typeof ApiPublicHooksHealthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/generate-sports': {
-      id: '/api/public/hooks/generate-sports'
-      path: '/api/public/hooks/generate-sports'
-      fullPath: '/api/public/hooks/generate-sports'
-      preLoaderRoute: typeof ApiPublicHooksGenerateSportsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/generate-news': {
-      id: '/api/public/hooks/generate-news'
-      path: '/api/public/hooks/generate-news'
-      fullPath: '/api/public/hooks/generate-news'
-      preLoaderRoute: typeof ApiPublicHooksGenerateNewsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/generate-evergreen': {
-      id: '/api/public/hooks/generate-evergreen'
-      path: '/api/public/hooks/generate-evergreen'
-      fullPath: '/api/public/hooks/generate-evergreen'
-      preLoaderRoute: typeof ApiPublicHooksGenerateEvergreenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/hooks/backfill-featured-images': {
-      id: '/api/public/hooks/backfill-featured-images'
-      path: '/api/public/hooks/backfill-featured-images'
-      fullPath: '/api/public/hooks/backfill-featured-images'
-      preLoaderRoute: typeof ApiPublicHooksBackfillFeaturedImagesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/explore/recommendations': {
-      id: '/api/public/explore/recommendations'
-      path: '/api/public/explore/recommendations'
-      fullPath: '/api/public/explore/recommendations'
-      preLoaderRoute: typeof ApiPublicExploreRecommendationsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/explore/map': {
-      id: '/api/public/explore/map'
-      path: '/api/public/explore/map'
-      fullPath: '/api/public/explore/map'
-      preLoaderRoute: typeof ApiPublicExploreMapRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/explore/entities': {
-      id: '/api/public/explore/entities'
-      path: '/api/public/explore/entities'
-      fullPath: '/api/public/explore/entities'
-      preLoaderRoute: typeof ApiPublicExploreEntitiesRouteImport
+    '/api/public/article-image/$filename': {
+      id: '/api/public/article-image/$filename'
+      path: '/api/public/article-image/$filename'
+      fullPath: '/api/public/article-image/$filename'
+      preLoaderRoute: typeof ApiPublicArticleImageFilenameRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/explore/autocomplete': {
@@ -5253,25 +5127,137 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicExploreAutocompleteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/article-image/$filename': {
-      id: '/api/public/article-image/$filename'
-      path: '/api/public/article-image/$filename'
-      fullPath: '/api/public/article-image/$filename'
-      preLoaderRoute: typeof ApiPublicArticleImageFilenameRouteImport
+    '/api/public/explore/entities': {
+      id: '/api/public/explore/entities'
+      path: '/api/public/explore/entities'
+      fullPath: '/api/public/explore/entities'
+      preLoaderRoute: typeof ApiPublicExploreEntitiesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/bills/texas/$legislature/$billType/$billNumber': {
-      id: '/bills/texas/$legislature/$billType/$billNumber'
-      path: '/texas/$legislature/$billType/$billNumber'
-      fullPath: '/bills/texas/$legislature/$billType/$billNumber'
-      preLoaderRoute: typeof BillsTexasLegislatureBillTypeBillNumberRouteImport
-      parentRoute: typeof BillsRoute
+    '/api/public/explore/map': {
+      id: '/api/public/explore/map'
+      path: '/api/public/explore/map'
+      fullPath: '/api/public/explore/map'
+      preLoaderRoute: typeof ApiPublicExploreMapRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/api/public/oauth/facebook/start': {
-      id: '/api/public/oauth/facebook/start'
-      path: '/api/public/oauth/facebook/start'
-      fullPath: '/api/public/oauth/facebook/start'
-      preLoaderRoute: typeof ApiPublicOauthFacebookStartRouteImport
+    '/api/public/explore/recommendations': {
+      id: '/api/public/explore/recommendations'
+      path: '/api/public/explore/recommendations'
+      fullPath: '/api/public/explore/recommendations'
+      preLoaderRoute: typeof ApiPublicExploreRecommendationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/backfill-featured-images': {
+      id: '/api/public/hooks/backfill-featured-images'
+      path: '/api/public/hooks/backfill-featured-images'
+      fullPath: '/api/public/hooks/backfill-featured-images'
+      preLoaderRoute: typeof ApiPublicHooksBackfillFeaturedImagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-evergreen': {
+      id: '/api/public/hooks/generate-evergreen'
+      path: '/api/public/hooks/generate-evergreen'
+      fullPath: '/api/public/hooks/generate-evergreen'
+      preLoaderRoute: typeof ApiPublicHooksGenerateEvergreenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-news': {
+      id: '/api/public/hooks/generate-news'
+      path: '/api/public/hooks/generate-news'
+      fullPath: '/api/public/hooks/generate-news'
+      preLoaderRoute: typeof ApiPublicHooksGenerateNewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/generate-sports': {
+      id: '/api/public/hooks/generate-sports'
+      path: '/api/public/hooks/generate-sports'
+      fullPath: '/api/public/hooks/generate-sports'
+      preLoaderRoute: typeof ApiPublicHooksGenerateSportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/health': {
+      id: '/api/public/hooks/health'
+      path: '/api/public/hooks/health'
+      fullPath: '/api/public/hooks/health'
+      preLoaderRoute: typeof ApiPublicHooksHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/ingest-feeds': {
+      id: '/api/public/hooks/ingest-feeds'
+      path: '/api/public/hooks/ingest-feeds'
+      fullPath: '/api/public/hooks/ingest-feeds'
+      preLoaderRoute: typeof ApiPublicHooksIngestFeedsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/list-shops': {
+      id: '/api/public/hooks/list-shops'
+      path: '/api/public/hooks/list-shops'
+      fullPath: '/api/public/hooks/list-shops'
+      preLoaderRoute: typeof ApiPublicHooksListShopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/publishing-safety-net': {
+      id: '/api/public/hooks/publishing-safety-net'
+      path: '/api/public/hooks/publishing-safety-net'
+      fullPath: '/api/public/hooks/publishing-safety-net'
+      preLoaderRoute: typeof ApiPublicHooksPublishingSafetyNetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/score-viral': {
+      id: '/api/public/hooks/score-viral'
+      path: '/api/public/hooks/score-viral'
+      fullPath: '/api/public/hooks/score-viral'
+      preLoaderRoute: typeof ApiPublicHooksScoreViralRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/score-viral-backfill': {
+      id: '/api/public/hooks/score-viral-backfill'
+      path: '/api/public/hooks/score-viral-backfill'
+      fullPath: '/api/public/hooks/score-viral-backfill'
+      preLoaderRoute: typeof ApiPublicHooksScoreViralBackfillRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/sync-printify': {
+      id: '/api/public/hooks/sync-printify'
+      path: '/api/public/hooks/sync-printify'
+      fullPath: '/api/public/hooks/sync-printify'
+      preLoaderRoute: typeof ApiPublicHooksSyncPrintifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/hooks/track-variant': {
+      id: '/api/public/hooks/track-variant'
+      path: '/api/public/hooks/track-variant'
+      fullPath: '/api/public/hooks/track-variant'
+      preLoaderRoute: typeof ApiPublicHooksTrackVariantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/payments/webhook': {
+      id: '/api/public/payments/webhook'
+      path: '/api/public/payments/webhook'
+      fullPath: '/api/public/payments/webhook'
+      preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/oauth/facebook/callback': {
@@ -5280,6 +5266,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/oauth/facebook/callback'
       preLoaderRoute: typeof ApiPublicOauthFacebookCallbackRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/public/oauth/facebook/start': {
+      id: '/api/public/oauth/facebook/start'
+      path: '/api/public/oauth/facebook/start'
+      fullPath: '/api/public/oauth/facebook/start'
+      preLoaderRoute: typeof ApiPublicOauthFacebookStartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bills/texas/$legislature/$billType/$billNumber': {
+      id: '/bills/texas/$legislature/$billType/$billNumber'
+      path: '/texas/$legislature/$billType/$billNumber'
+      fullPath: '/bills/texas/$legislature/$billType/$billNumber'
+      preLoaderRoute: typeof BillsTexasLegislatureBillTypeBillNumberRouteImport
+      parentRoute: typeof BillsRoute
     }
   }
 }
@@ -5881,13 +5881,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
