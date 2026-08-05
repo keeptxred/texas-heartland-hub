@@ -39,7 +39,8 @@ if (hasArticleWrite(maintenance)) errors.push('Viral scoring must not publish or
 const guard = read('src/lib/content-publication-guard.ts');
 for (const symbol of [
   'CONTENT_PUBLICATION_BLOCKED',
-  "resolvedDomain = input.domain === 'politics'",
+  'resolveKeepTxRedPublicationDomain(input.domain, input.title)',
+  "return domain === 'politics' ? inferKeepTxRedDomain(domain, context) : domain;",
   "return 'property-tax'",
   "return 'moving'",
   "return 'real-estate'",
@@ -64,9 +65,18 @@ function read(file) {
 }
 
 function hasArticleWrite(source) {
-  const table = source.includes('.from("daily_articles")') || source.includes(".from('daily_articles')");
-  if (!table) return false;
-  return /\.from\(["']daily_articles["']\)[\s\S]{0,700}\.(insert|upsert|update)\s*\(/.test(source);
+  const tablePattern = /\.from\(["']daily_articles["']\)/g;
+  for (const match of source.matchAll(tablePattern)) {
+    const start = (match.index ?? 0) + match[0].length;
+    const remainder = source.slice(start);
+    const nextTable = remainder.search(/\.from\(/);
+    const statementEnd = remainder.indexOf(';');
+    const boundaries = [nextTable, statementEnd].filter((value) => value >= 0);
+    const end = boundaries.length ? Math.min(...boundaries) : remainder.length;
+    const chain = remainder.slice(0, end);
+    if (/\.(insert|upsert|update)\s*\(/.test(chain)) return true;
+  }
+  return false;
 }
 
 function discoverArticleWriters(directory) {
