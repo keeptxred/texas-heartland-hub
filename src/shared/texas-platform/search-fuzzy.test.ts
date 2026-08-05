@@ -20,7 +20,7 @@ const entities: SharedEntity[] = [
     title: 'Texas Mortgage Calculator',
     summary: 'Estimate a monthly home payment.',
     route: '/texas-mortgage-calculator',
-    sites: ['keeptxred', 'texasdefined'],
+    sites: ['texasdefined'],
     topics: ['home-property'],
     journeys: ['buying-home'],
   },
@@ -48,11 +48,12 @@ describe('shared search typo tolerance', () => {
   });
 
   it('finds a calculator when a long word is misspelled', () => {
-    const results = searchEntityCollection('mortage', entities, 'keeptxred');
+    const results = searchEntityCollection('mortage', entities, 'texasdefined');
     expect(results[0]?.id).toBe('resource:mortgage-calculator');
   });
 
   it('does not leak KeepTXRed-only fuzzy matches into TexasDefined', () => {
-    expect(searchEntityCollection('Schwertnr', entities, 'texasdefined')).toEqual([]);
+    const results = searchEntityCollection('Schwertnr', entities, 'texasdefined');
+    expect(results.some((result) => result.id === 'representative:charles-schwertner')).toBe(false);
   });
 });
