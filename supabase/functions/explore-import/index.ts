@@ -86,27 +86,27 @@ function getRecords(payload: unknown): Record<string, unknown>[] {
   return [payload];
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
+const isRecord = isPlainRecord;
+const pick = pickField;
 
-function pick(record: Record<string, unknown>, fields: string[]): unknown {
-  for (const field of fields) {
-    const value = record[field];
-    if (value !== undefined && value !== null && value !== "") return value;
-  }
-  return undefined;
-}
-
-function normalize(raw: Record<string, unknown>, source: SourceRow): Record<string, unknown> {
+function normalize(
+  raw: Record<string, unknown>,
+  source: SourceRow,
+  allowedTypeKeys: Set<string>,
+): Record<string, unknown> {
   const properties = isRecord(raw.properties) ? raw.properties : raw;
   const geometry = isRecord(raw.geometry) ? raw.geometry : null;
   const coordinates = Array.isArray(geometry?.coordinates) ? geometry.coordinates : [];
-  const longitude = Number(pick(properties, ["longitude", "lon", "lng", "x"]) ?? coordinates[0]);
-  const latitude = Number(pick(properties, ["latitude", "lat", "y"]) ?? coordinates[1]);
+  const longitude = Number(
+    pick(properties, ["longitude", "lon", "lng", "ddx", "x"]) ?? coordinates[0],
+  );
+  const latitude = Number(pick(properties, ["latitude", "lat", "ddy", "y"]) ?? coordinates[1]);
   const externalId = String(
     pick(properties, [
       "external_id",
+      "locode",
+      "parkcode",
+      "unit_code",
       "facility_id",
       "site_id",
       "park_id",
@@ -119,40 +119,44 @@ function normalize(raw: Record<string, unknown>, source: SourceRow): Record<stri
     pick(properties, [
       "name",
       "title",
+      "fullname",
       "park_name",
       "site_name",
       "facility_name",
       "location_name",
     ]) ?? "",
   ).trim();
-  const entityTypeBySource: Record<string, string> = {
-    tpwd: "park",
-    nps: "park",
-    usace: "recreation_area",
-    usfs: "public_land",
-    thc: "historic_site",
-    usgs: "natural_feature",
-    noaa: "observation_station",
-    twdb: "water_resource",
-    osm: "place",
-    county_gis: "place",
-    municipality: "place",
-    tourism: "attraction",
-    custom: "place",
-  };
+  // Record-aware classification: feature/facility type and designation first,
+  // then the record name, and only then a per-source fallback (which is always
+  // reported as unconfident so the record stays pending for human review).
+  const classification = classify(properties, source.source_type, allowedTypeKeys);
+  const lat = Number.isFinite(latitude) ? latitude : null;
+  const lng = Number.isFinite(longitude) ? longitude : null;
   return {
     externalId,
-    entityType: entityTypeBySource[source.source_type] ?? "place",
+    entityType: classification.entityType,
+    classificationConfident: classification.confident,
+    classificationSignal: classification.signal,
     name,
+    normalizedName: normalizedName(name),
+    slug: name ? slugify(name) : undefined,
     description: pick(properties, ["description", "summary", "details"]) ?? null,
-    latitude: Number.isFinite(latitude) ? latitude : null,
-    longitude: Number.isFinite(longitude) ? longitude : null,
-    address: pick(properties, ["address", "street_address"]) ?? null,
-    taxonomy: [source.source_type],
+    latitude: lat,
+    longitude: lng,
+    inTexas: inTexas(lat, lng),
+    address: {
+      line1: pick(properties, ["address", "street_address", "street", "address_line_1"]) ?? null,
+      city: pick(properties, ["city", "municipality", "town"]) ?? null,
+      county: pick(properties, ["county", "county_name"]) ?? null,
+      postalCode: pick(properties, ["zip", "zipcode", "postal_code", "postalcode"]) ?? null,
+      phone: pick(properties, ["phone", "telephone", "phone_number"]) ?? null,
+    },
+    officialUrl: pick(properties, ["url", "website", "web", "link"]) ?? null,
+    taxonomy: [source.source_type, classification.entityType],
     relationships: [],
     media: [],
     sourceUpdatedAt: pick(properties, ["updated_at", "modified", "last_updated"]) ?? null,
-    sourceUrl: source.endpoint,
+    sourceUrl: pick(properties, ["url", "website", "link"]) ?? source.endpoint,
     metadata: properties,
     raw,
   };
