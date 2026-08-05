@@ -36,7 +36,7 @@ export function evaluateSearchTelemetryOperations(
   const previousByKey = new Map((previous.alertState ?? []).map((state) => [state.key, state]));
   const alertDecisions = alerts.map((alert) => evaluateSearchTelemetryAlert(
     alert,
-    previousByKey.get(`${alert.key.replace(':', '|')}`),
+    previousByKey.get(`${(alert.key ?? alert.id).replace(":", "|")}`),
     { now, cooldownMs: options.cooldownMs },
   ));
   const activeState = alertDecisions.map((decision) => decision.state);
