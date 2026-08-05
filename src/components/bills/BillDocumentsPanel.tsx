@@ -8,6 +8,7 @@ import {
 } from '@/lib/bill-documents';
 import { getLatestBillAnalysisSummary } from '@/lib/bill-analysis-summary';
 import { getLatestBillFiscalImpact } from '@/lib/bill-fiscal-impact';
+import { getLatestBillWitnessSummary } from '@/lib/bill-witness-summary';
 
 type BillDocumentsPanelProps = {
   documents: LegislativeDocument[];
@@ -18,6 +19,7 @@ export function BillDocumentsPanel({ documents, fallbackLinks = [] }: BillDocume
   const groups = groupLegislativeDocuments(documents);
   const analysisSummary = getLatestBillAnalysisSummary(documents);
   const fiscalImpact = getLatestBillFiscalImpact(documents);
+  const witnessSummary = getLatestBillWitnessSummary(documents);
   const hasDocuments = groups.length > 0 || fallbackLinks.length > 0;
 
   return (
@@ -62,6 +64,36 @@ export function BillDocumentsPanel({ documents, fallbackLinks = [] }: BillDocume
             <p className="mt-3 text-xs text-muted-foreground"><strong>Source agencies:</strong> {fiscalImpact.sourceAgencies}</p>
           ) : null}
           <p className="mt-3 text-xs text-muted-foreground">This summary is extracted from the official fiscal note and does not replace the complete document.</p>
+        </div>
+      ) : null}
+      {witnessSummary ? (
+        <div className="mt-4 rounded-lg border bg-background p-4">
+          <p className="text-xs font-bold uppercase tracking-wide text-primary">Committee witness record</p>
+          <p className="mt-1 text-xs text-muted-foreground">{[witnessSummary.committee, witnessSummary.hearingDate].filter(Boolean).join(' · ') || witnessSummary.label}</p>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
+            <span className="rounded-full border px-2.5 py-1">{witnessSummary.total} recorded</span>
+            {witnessSummary.forCount ? <span className="rounded-full border px-2.5 py-1">{witnessSummary.forCount} for</span> : null}
+            {witnessSummary.againstCount ? <span className="rounded-full border px-2.5 py-1">{witnessSummary.againstCount} against</span> : null}
+            {witnessSummary.onCount ? <span className="rounded-full border px-2.5 py-1">{witnessSummary.onCount} on</span> : null}
+            {witnessSummary.testifyingCount ? <span className="rounded-full border px-2.5 py-1">{witnessSummary.testifyingCount} testifying</span> : null}
+            {witnessSummary.registeringCount ? <span className="rounded-full border px-2.5 py-1">{witnessSummary.registeringCount} registering only</span> : null}
+          </div>
+          {witnessSummary.witnesses.length ? (
+            <details className="mt-3 border-t pt-3">
+              <summary className="cursor-pointer text-sm font-medium text-primary">View official witness roster</summary>
+              <ul className="mt-3 space-y-2 text-sm">
+                {witnessSummary.witnesses.slice(0, 50).map((witness, index) => (
+                  <li key={`${witness.name}:${index}`} className="rounded-md border p-2">
+                    <strong>{witness.name}</strong>
+                    {witness.organization ? <span className="text-muted-foreground"> · {witness.organization}</span> : null}
+                    <span className="mt-1 block text-xs uppercase tracking-wide text-muted-foreground">{witness.position}{witness.testimonyType ? ` · ${witness.testimonyType}` : ''}</span>
+                  </li>
+                ))}
+              </ul>
+              {witnessSummary.witnesses.length > 50 ? <p className="mt-3 text-xs text-muted-foreground">Showing the first 50 records. Open the official witness list below for the complete roster.</p> : null}
+            </details>
+          ) : null}
+          <p className="mt-3 text-xs text-muted-foreground">Positions and testimony types are reproduced from the official witness list. Registration does not establish the committee vote or final outcome.</p>
         </div>
       ) : null}
       {!hasDocuments ? (
