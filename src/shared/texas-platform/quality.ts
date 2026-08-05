@@ -75,6 +75,11 @@ export function entityQuality(entity: SharedEntity, now = new Date()): EntityQua
 export function entitiesNeedingReview(entities: readonly SharedEntity[], now = new Date()) {
   return entities
     .map((entity) => ({ entity, quality: entityQuality(entity, now) }))
-    .filter(({ quality }) => quality.freshness === 'stale' || quality.freshness === 'review-soon' || quality.score < 75)
+    .filter(({ quality }) =>
+      quality.freshness === 'unknown' ||
+      quality.freshness === 'stale' ||
+      quality.freshness === 'review-soon' ||
+      quality.score < 75,
+    )
     .sort((a, b) => a.quality.score - b.quality.score || a.entity.title.localeCompare(b.entity.title));
 }
