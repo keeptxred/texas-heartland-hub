@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-03T18:34:30.811Z",
+  "generatedAt": "2026-08-05T13:03:40.131Z",
   "authoritySources": [
     "Texas Secretary of State Qualified Candidate Listing",
     "Keep TX Red verified election race registry"
@@ -2332,6 +2332,26 @@
           "districtId": "district-texas-house-86",
           "districtName": "Texas House District 86",
           "districtNumber": "86"
+        }
+      ]
+    },
+    {
+      "id": "candidate-dan-barrios-democratic-race-2026-us-house-32",
+      "aliases": [
+        "DAN BARRIOS",
+        "Dan Barrios"
+      ],
+      "party": "democratic",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-32",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-32",
+          "districtName": "U.S. House District 32",
+          "districtNumber": "32"
         }
       ]
     },
