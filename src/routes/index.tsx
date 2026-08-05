@@ -9,6 +9,9 @@ import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { ElectionHomePage } from "@/pages/elections";
 import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } from "@/lib/seo";
 
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
+const EMPTY_SHOP_SEARCH = { category: undefined, collection: undefined, q: undefined, sort: undefined } as const;
+
 function homepageHead() {
   const electionTakeover = ELECTION_FEATURE_FLAGS.homepagePromotion;
   const title = electionTakeover
@@ -60,7 +63,7 @@ function PoliticalHomepage() {
             <p className="mt-6 max-w-2xl text-lg leading-relaxed text-white/80">Keep TX Red covers elections, bills, the Legislature, public officials, government accountability, statewide breaking news, and the policy debates that affect Texans.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link to="/elections/2026" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Election Central</Link>
-              <Link to="/bills" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">Track Texas bills</Link>
+              <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">Track Texas bills</Link>
               <Link to="/texas-politics" className="rounded-md border border-white/25 px-5 py-3 text-sm font-semibold">Texas politics</Link>
             </div>
           </div>
@@ -81,9 +84,14 @@ function PoliticalHomepage() {
         <AdSlot placement="banner" />
       </section>
 
-      <section className="border-y bg-muted/40"><div className="mx-auto grid max-w-[1200px] gap-5 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">{[["Elections", "/elections/2026", "Candidates, races, polling, forecasts, voting information, and results."], ["Texas Legislature", "/texas-legislature", "Sessions, chambers, committees, lawmakers, and legislative resources."], ["Bills", "/bills", "Search and follow Texas legislation, actions, sponsors, and documents."], ["Government accountability", "/texas-politics", "Reporting and analysis of public officials, agencies, ethics, and policy."]].map(([title, to, text]) => <Link key={to} to={to} className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">{title}</h3><p className="mt-2 text-sm text-muted-foreground">{text}</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>)}</div></section>
+      <section className="border-y bg-muted/40"><div className="mx-auto grid max-w-[1200px] gap-5 px-6 py-14 sm:grid-cols-2 lg:grid-cols-4">
+        <Link to="/elections/2026" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Elections</h3><p className="mt-2 text-sm text-muted-foreground">Candidates, races, polling, forecasts, voting information, and results.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
+        <Link to="/texas-legislature" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Texas Legislature</h3><p className="mt-2 text-sm text-muted-foreground">Sessions, chambers, committees, lawmakers, and legislative resources.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
+        <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Bills</h3><p className="mt-2 text-sm text-muted-foreground">Search and follow Texas legislation, actions, sponsors, and documents.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
+        <Link to="/texas-politics" className="rounded-xl border bg-card p-5 hover:shadow-md"><h3 className="font-semibold">Government accountability</h3><p className="mt-2 text-sm text-muted-foreground">Reporting and analysis of public officials, agencies, ethics, and policy.</p><span className="mt-4 block text-sm font-semibold text-primary">Open →</span></Link>
+      </div></section>
 
-      <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-16 md:grid-cols-[1fr_0.8fr] md:items-center"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Support independent coverage</p><h2 className="mt-2 font-display text-4xl">Stay informed and support the newsroom</h2><p className="mt-4 max-w-2xl text-muted-foreground">Subscribe for important Texas updates and visit the Keep TX Red shop. Store purchases support independent reporting and platform operations.</p><div className="mt-6"><Link to="/shop" className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Visit the shop</Link></div></div><NewsletterSignup /></section>
+      <section className="mx-auto grid max-w-[1200px] gap-8 px-6 py-16 md:grid-cols-[1fr_0.8fr] md:items-center"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Support independent coverage</p><h2 className="mt-2 font-display text-4xl">Stay informed and support the newsroom</h2><p className="mt-4 max-w-2xl text-muted-foreground">Subscribe for important Texas updates and visit the Keep TX Red shop. Store purchases support independent reporting and platform operations.</p><div className="mt-6"><Link to="/shop" search={EMPTY_SHOP_SEARCH} className="rounded-md bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground">Visit the shop</Link></div></div><NewsletterSignup /></section>
     </main>
   );
 }
