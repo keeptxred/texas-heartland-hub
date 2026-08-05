@@ -6,6 +6,9 @@ on:
     paths:
       - 'src/lib/content-publication-guard.ts'
       - 'src/lib/content-quality.ts'
+      - 'src/lib/ctr-loop.functions.ts'
+      - 'src/lib/featured-image.functions.ts'
+      - 'src/lib/gsc.ts'
       - 'src/routes/api/public/hooks/**'
       - 'src/lib/ingest-and-normalize.functions.ts'
       - 'scripts/shared/validate-publication-writers.mjs'
@@ -15,6 +18,9 @@ on:
     paths:
       - 'src/lib/content-publication-guard.ts'
       - 'src/lib/content-quality.ts'
+      - 'src/lib/ctr-loop.functions.ts'
+      - 'src/lib/featured-image.functions.ts'
+      - 'src/lib/gsc.ts'
       - 'src/routes/api/public/hooks/**'
       - 'src/lib/ingest-and-normalize.functions.ts'
       - 'scripts/shared/validate-publication-writers.mjs'
