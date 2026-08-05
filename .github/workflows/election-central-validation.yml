@@ -7,8 +7,10 @@ on:
       - "src/lib/elections/**"
       - "src/lib/authority-entity.ts"
       - "src/lib/authority-entity-paths.ts"
+      - "src/lib/authority-entity-registry.ts"
       - "src/lib/candidate-authority.ts"
       - "src/lib/race-authority.ts"
+      - "src/lib/election-authority-registry.ts"
       - "src/types/elections/**"
       - "src/components/elections/**"
       - "src/components/admin/elections/**"
@@ -26,8 +28,10 @@ on:
       - "src/lib/elections/**"
       - "src/lib/authority-entity.ts"
       - "src/lib/authority-entity-paths.ts"
+      - "src/lib/authority-entity-registry.ts"
       - "src/lib/candidate-authority.ts"
       - "src/lib/race-authority.ts"
+      - "src/lib/election-authority-registry.ts"
       - "src/types/elections/**"
       - "src/components/elections/**"
       - "src/components/admin/elections/**"
@@ -70,6 +74,9 @@ jobs:
 
       - name: Validate race authority graph
         run: node scripts/elections/validate-race-authority.mjs
+
+      - name: Validate complete Phase 3 graph
+        run: node scripts/elections/validate-phase-3-authority-graph.mjs
 
       - name: Run election calculation fixtures
         run: pnpm exec vitest run src/lib/elections
