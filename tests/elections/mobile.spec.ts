@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 const HOMEPAGE_TAKEOVER_ENABLED =
   process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE === "true";
+const STANDARD_HOMEPAGE_HEADING = /follow the decisions shaping texas/i;
 
 const ROUTES = [
   "/elections/2026",
@@ -25,11 +26,11 @@ test(`homepage renders the ${HOMEPAGE_TAKEOVER_ENABLED ? "Election Central" : "s
       page.getByRole("heading", { name: /texas election central/i }).first(),
     ).toBeVisible({ timeout: 20_000 });
     await expect(
-      page.getByRole("heading", { name: /your guide to moving to and living in texas/i }),
+      page.getByRole("heading", { name: STANDARD_HOMEPAGE_HEADING }),
     ).toHaveCount(0);
   } else {
     await expect(
-      page.getByRole("heading", { name: /your guide to moving to and living in texas/i }),
+      page.getByRole("heading", { name: STANDARD_HOMEPAGE_HEADING }),
     ).toBeVisible({ timeout: 20_000 });
     await expect(page.getByRole("heading", { name: /texas election central/i })).toHaveCount(0);
   }
