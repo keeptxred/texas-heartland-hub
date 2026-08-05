@@ -1,0 +1,55 @@
+name: Validate Newsroom Coverage Contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/lib/viral-score.ts'
+      - 'src/lib/viral-score.test.ts'
+      - 'src/components/admin/NewsCoverageGapPanel.tsx'
+      - 'src/components/admin/NewsSourceHealthPanel.tsx'
+      - 'src/routes/admin.coverage-gaps.tsx'
+      - 'src/routes/admin.source-health.tsx'
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'scripts/news/validate-coverage-contract.mjs'
+      - 'supabase/migrations/*news*coverage*.sql'
+      - 'supabase/migrations/*news*source*health*.sql'
+      - '.github/workflows/newsroom-coverage-contract.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/lib/viral-score.ts'
+      - 'src/lib/viral-score.test.ts'
+      - 'src/components/admin/NewsCoverageGapPanel.tsx'
+      - 'src/components/admin/NewsSourceHealthPanel.tsx'
+      - 'src/routes/admin.coverage-gaps.tsx'
+      - 'src/routes/admin.source-health.tsx'
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'scripts/news/validate-coverage-contract.mjs'
+      - 'supabase/migrations/*news*coverage*.sql'
+      - 'supabase/migrations/*news*source*health*.sql'
+      - '.github/workflows/newsroom-coverage-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-newsroom-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Validate source, scoring, and reporting contract
+        run: node scripts/news/validate-coverage-contract.mjs
+      - name: Run coverage regression tests
+        run: npx vitest run src/lib/viral-score.test.ts
+      - name: Build application
+        run: npm run build
