@@ -1,5 +1,5 @@
 -- Protect official TLO subject evidence from the lower-confidence text matcher,
--- and synchronize approved bill/article rows with the authority graph.
+-- harden bill-subject graph triggers, and synchronize approved bill/article rows.
 
 create or replace function public.preserve_official_bill_subject_relationship()
 returns trigger
@@ -21,6 +21,64 @@ create trigger preserve_official_bill_subject_relationship
 before update on public.bill_subject_relationships
 for each row execute function public.preserve_official_bill_subject_relationship();
 
+-- Replace the earlier subject graph trigger with operation-safe NEW/OLD handling.
+create or replace function public.sync_bill_subject_authority_relationship()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_bill_id uuid;
+  v_subject_id uuid;
+  v_subject_slug text;
+begin
+  if tg_op = 'DELETE' then
+    v_bill_id := old.bill_id;
+    v_subject_id := old.subject_id;
+  else
+    v_bill_id := new.bill_id;
+    v_subject_id := new.subject_id;
+  end if;
+
+  select slug into v_subject_slug
+  from public.bill_subjects
+  where id = v_subject_id;
+
+  if tg_op in ('UPDATE', 'DELETE') then
+    delete from public.authority_relationships
+    where is_manual = false
+      and relationship_type = 'bill-subject'
+      and (
+        (source_type = 'bill' and source_key = v_bill_id::text
+          and target_type = 'subject' and target_key = v_subject_slug)
+        or
+        (source_type = 'subject' and source_key = v_subject_slug
+          and target_type = 'bill' and target_key = v_bill_id::text)
+      );
+  end if;
+
+  if tg_op = 'DELETE' then
+    return old;
+  end if;
+
+  if v_subject_slug is not null and new.review_status = 'approved' then
+    perform public.upsert_bidirectional_authority_relationship(
+      'bill', new.bill_id::text, 'subject', v_subject_slug,
+      'bill-subject',
+      greatest(10, least(40, round(coalesce(new.confidence, 0.85) * 40)::integer)),
+      coalesce(new.evidence, '{}'::jsonb) || jsonb_build_object(
+        'source', coalesce(new.source, 'bill-subject-relationship'),
+        'review_status', new.review_status
+      ),
+      false
+    );
+  end if;
+
+  return new;
+end
+$$;
+
 create or replace function public.sync_bill_article_authority_relationship()
 returns trigger
 language plpgsql
@@ -33,8 +91,13 @@ declare
   v_score integer;
   v_evidence jsonb;
 begin
-  v_bill_id := coalesce(new.bill_id, old.bill_id);
-  v_article_id := coalesce(new.article_id, old.article_id);
+  if tg_op = 'DELETE' then
+    v_bill_id := old.bill_id;
+    v_article_id := old.article_id;
+  else
+    v_bill_id := new.bill_id;
+    v_article_id := new.article_id;
+  end if;
 
   -- Remove only automated graph rows. Manual authority edges always survive.
   if tg_op in ('UPDATE', 'DELETE') then
@@ -67,14 +130,8 @@ begin
   );
 
   perform public.upsert_bidirectional_authority_relationship(
-    'bill',
-    new.bill_id::text,
-    'article',
-    new.article_id::text,
-    'related-news',
-    v_score,
-    v_evidence,
-    false
+    'bill', new.bill_id::text, 'article', new.article_id::text,
+    'related-news', v_score, v_evidence, false
   );
 
   return new;
