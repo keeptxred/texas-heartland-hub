@@ -201,6 +201,14 @@ function validate(
       severity: "error",
     });
   }
+  if (!record.inTexas) {
+    issues.push({
+      code: "coordinates_outside_texas",
+      message: "Coordinates are missing, 0,0, or outside Texas bounds",
+      path: "latitude",
+      severity: "error",
+    });
+  }
   return issues;
 }
 
