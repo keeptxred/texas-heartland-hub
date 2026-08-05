@@ -44,7 +44,7 @@ describe('shared search telemetry sinks', () => {
     expect(recorded).toEqual(['texas laws']);
     expect(result).toEqual([
       { id: 'memory', status: 'fulfilled' },
-      { id: 'failure', status: 'rejected' },
+      { id: 'failure', status: 'rejected', error: 'unavailable' },
     ]);
   });
 
