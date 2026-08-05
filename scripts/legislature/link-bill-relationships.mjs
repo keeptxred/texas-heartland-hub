@@ -24,6 +24,16 @@ if (error) {
   process.exit(1);
 }
 
+const { data: committeeActivity, error: committeeActivityError } = await supabase.rpc(
+  'refresh_bill_committee_activity_edges',
+  { p_bill_id: billId },
+);
+
+if (committeeActivityError) {
+  console.error('Bill committee activity-edge refresh failed:', committeeActivityError.message);
+  process.exit(1);
+}
+
 const { data: pruned, error: pruneError } = await supabase.rpc(
   'prune_unapproved_bill_article_authority_edges',
   { p_bill_id: billId },
@@ -34,4 +44,10 @@ if (pruneError) {
   process.exit(1);
 }
 
-console.log(JSON.stringify({ ok: true, billId, result: data, prunedAuthorityEdges: pruned }, null, 2));
+console.log(JSON.stringify({
+  ok: true,
+  billId,
+  result: data,
+  committeeActivity,
+  prunedAuthorityEdges: pruned,
+}, null, 2));
