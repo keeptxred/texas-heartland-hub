@@ -1,7 +1,8 @@
 export function tokenMatchesText(token: string, text: string) {
-  if (text.includes(token)) return true;
+  const words = text.split(' ').filter(Boolean);
+  if (words.includes(token)) return true;
   if (token.length < 4) return false;
-  return text.split(' ').some((word) => word.startsWith(token) || token.startsWith(word));
+  return words.some((word) => word.startsWith(token) || token.startsWith(word));
 }
 
 export function countTokenMatches(tokens: readonly string[], text: string) {
