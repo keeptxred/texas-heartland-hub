@@ -3,24 +3,31 @@ import type { SearchTelemetryAnomaly } from './search-telemetry-anomalies';
 export type SearchTelemetryAlertChannel = 'admin' | 'email' | 'log';
 
 export type SearchTelemetryAlert = {
-  key: string;
+  id: string;
+  anomalyCode: SearchTelemetryAnomaly['code'];
+  /** Legacy delivery key kept for dedupe callers; equals `id`. */
+  key?: string;
   title: string;
   message: string;
   severity: SearchTelemetryAnomaly['severity'];
   channel: SearchTelemetryAlertChannel;
-  createdAt: string;
+  createdAt?: string;
 };
 
 export function createSearchTelemetryAlerts(
   anomalies: ReadonlyArray<SearchTelemetryAnomaly>,
   options: { channels?: ReadonlyArray<SearchTelemetryAlertChannel>; createdAt?: string } = {},
 ): SearchTelemetryAlert[] {
-  const channels = options.channels?.length ? [...new Set(options.channels)] : ['admin'];
+  const channels: SearchTelemetryAlertChannel[] = options.channels?.length
+    ? [...new Set(options.channels)]
+    : ['admin'];
   const createdAt = options.createdAt ?? new Date().toISOString();
 
   return anomalies.flatMap((anomaly) =>
     channels.map((channel) => ({
+      id: `${anomaly.code}:${channel}`,
       key: `${anomaly.code}:${channel}`,
+      anomalyCode: anomaly.code,
       title: alertTitle(anomaly),
       message: anomaly.message,
       severity: anomaly.severity,
@@ -34,7 +41,7 @@ export function deduplicateSearchTelemetryAlerts(
   alerts: ReadonlyArray<SearchTelemetryAlert>,
   existingKeys: ReadonlySet<string>,
 ) {
-  return alerts.filter((alert) => !existingKeys.has(alert.key));
+  return alerts.filter((alert) => !existingKeys.has(alert.key ?? alert.id));
 }
 
 export function sortSearchTelemetryAlerts(alerts: ReadonlyArray<SearchTelemetryAlert>) {
@@ -44,8 +51,8 @@ export function sortSearchTelemetryAlerts(alerts: ReadonlyArray<SearchTelemetryA
   };
   return [...alerts].sort(
     (a, b) => severityPriority[a.severity] - severityPriority[b.severity]
-      || Date.parse(b.createdAt) - Date.parse(a.createdAt)
-      || a.key.localeCompare(b.key),
+      || Date.parse(b.createdAt ?? '') - Date.parse(a.createdAt ?? '')
+      || (a.key ?? a.id).localeCompare(b.key ?? b.id),
   );
 }
 
