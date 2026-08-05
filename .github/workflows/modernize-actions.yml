@@ -24,18 +24,38 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mapfile -t workflows < <(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) -print | sort)
-          for file in "${workflows[@]}"; do
-            sed -i \
-              -e 's#actions/checkout@v4#actions/checkout@v5#g' \
-              -e 's#actions/setup-node@v4#actions/setup-node@v5#g' \
-              "$file"
-          done
-          if grep -R -n -E 'actions/(checkout|setup-node)@v4' .github/workflows; then
-            echo 'Deprecated official action runtime remains.' >&2
-            exit 1
-          fi
+          python3 - <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              'actions/checkout@v4': 'actions/checkout@v5',
+              'actions/setup-node@v4': 'actions/setup-node@v5',
+          }
+          changed = []
+          for path in sorted(Path('.github/workflows').glob('*.y*ml')):
+              original = path.read_text(encoding='utf-8')
+              updated = original
+              for old, new in replacements.items():
+                  updated = updated.replace(old, new)
+              if updated != original:
+                  path.write_text(updated, encoding='utf-8')
+                  changed.append(str(path))
+          print(f'Updated {len(changed)} workflow files')
+          for path in changed:
+              print(path)
+          remaining = []
+          for path in sorted(Path('.github/workflows').glob('*.y*ml')):
+              text = path.read_text(encoding='utf-8')
+              for old in replacements:
+                  if old in text:
+                      remaining.append(f'{path}: {old}')
+          if remaining:
+              raise SystemExit('Deprecated actions remain:\n' + '\n'.join(remaining))
+          if not changed:
+              raise SystemExit('Expected deprecated action references, but no files changed')
+          PY
           git diff --check
+          git status --short
       - name: Validate workflow YAML
         shell: bash
         run: |
@@ -62,9 +82,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          git status --short
           if git diff --quiet -- .github/workflows; then
-            echo 'No action upgrades were needed.'
-            exit 0
+            echo 'Expected workflow updates are missing.' >&2
+            exit 1
           fi
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
