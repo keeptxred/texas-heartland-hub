@@ -1,5 +1,7 @@
 const baseUrl = (process.env.KTR_BASE_URL || "https://keeptxred.com").replace(/\/$/, "");
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 async function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -8,6 +10,21 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function retry(label, fn, attempts = 6, delayMs = 15000) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) break;
+      console.warn(`WAIT ${label} attempt ${attempt}/${attempts}: ${error instanceof Error ? error.message : String(error)}`);
+      await sleep(delayMs);
+    }
+  }
+  throw lastError;
 }
 
 async function checkPage(path, expectedText) {
@@ -68,14 +85,10 @@ async function checkIngestion() {
   console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched ?? "n/a"} inserted=${payload.inserted ?? "n/a"}`);
 }
 
-const routeResults = await Promise.allSettled([
-  checkPage("/admin/coverage-gaps", "Coverage Gaps"),
-  checkPage("/admin/source-health", "Source Health"),
+await Promise.all([
+  retry("coverage-gaps route", () => checkPage("/admin/coverage-gaps", "Coverage Gaps")),
+  retry("source-health route", () => checkPage("/admin/source-health", "Source Health")),
 ]);
-for (const result of routeResults) {
-  if (result.status === "rejected") throw result.reason;
-}
-
-await checkNewsroomHealth();
+await retry("newsroom-health endpoint", checkNewsroomHealth);
 await checkIngestion();
 console.log(`Live newsroom smoke check passed for ${baseUrl}`);
