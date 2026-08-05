@@ -26,13 +26,15 @@ export type ViralResult = {
 export type RoutingType = "SEO_ARTICLE" | "FACEBOOK_ONLY" | "REEL_CANDIDATE" | "BOTH";
 
 const HIGH_REP =
-  /\b(governor|texas\.gov|attorney general|state of texas|dps|department of public safety|sheriff|police department|police dept|city of |county of |texas tribune|houston chronicle|dallas morning news|austin american-statesman|san antonio express|fort worth star-telegram|texas monthly|texas standard|community impact|kxan|khou|wfaa|kens5|abc13|nbc dfw|cbs austin|fox 4|fox 7|associated press|reuters|u\.s\. news|us news|houston methodist|ut southwestern|baylor university medical center|texas a&m|university of texas|texas tech|u-haul|tdlr|texas workforce commission|workforce solutions|espn|mlb\.com|nba\.com|nfl\.com|nhl\.com)\b/i;
+  /\b(governor|texas\.gov|attorney general|state of texas|dps|department of public safety|sheriff|police department|police dept|city of |county of |texas tribune|houston chronicle|dallas morning news|austin american-statesman|san antonio express|fort worth star-telegram|texas monthly|texas standard|community impact|kxan|khou|wfaa|kens5|abc13|nbc dfw|cbs austin|fox 4|fox 7|associated press|reuters|u\.s\. news|us news|houston methodist|ut southwestern|baylor university medical center|texas a&m|university of texas|texas tech|u-haul|whataburger|tdlr|texas workforce commission|workforce solutions|espn|mlb\.com|nba\.com|nfl\.com|nhl\.com)\b/i;
 const MED_REP =
   /\b(patch\.com|local ?news|gazette|herald|tribune|chronicle|journal|star|times|post|record|observer|beacon|weekly|kut|kera|tpr|museum|hospital|university|college|school district|isd)\b/i;
+const LOCAL_GOV_SOURCE = /\b([a-z][a-z .'-]+ county|[a-z][a-z .'-]+ isd|city of [a-z][a-z .'-]+)\b/i;
 
 export function classifySourceReputation(source: string): { score: number; reason: string } {
   const s = source ?? "";
   if (HIGH_REP.test(s)) return { score: 90, reason: "Official/major outlet" };
+  if (LOCAL_GOV_SOURCE.test(s)) return { score: 85, reason: "Official local government source" };
   if (MED_REP.test(s)) return { score: 65, reason: "Established local or institutional source" };
   if (!s.trim()) return { score: 30, reason: "Unknown source" };
   return { score: 45, reason: "Unclassified source" };
@@ -50,7 +52,7 @@ const TEXAS_OFFICIALS = /\b(abbott|greg abbott|dan patrick|lt\.? gov(?:ernor)? p
 const TEXAS_AGENCIES = /\b(txdot|tceq|tea\b|twdb|tdcj|tabc|tdi|tpwd|tdlr|tdem|puc(?: of texas)?|ercot|texas dps|department of public safety|texas national guard|texas military department|texas workforce commission|workforce solutions|texas health and human services|hhsc|texas education agency|texas department of transportation|texas division of emergency management|texas a&m forest service|texas commission on environmental quality|texas legislature|texas house|texas senate|texas supreme court|court of criminal appeals of texas|texas a&m|university of texas|ut austin|ut southwestern|texas tech|tdlr)\b/i;
 const TEXAS_INSTITUTIONS = /\b(houston methodist|baylor university medical center|perot museum|whataburger|space ?x|lampasas isd|tarrant county commissioners|dallas police|houston texans|dallas cowboys|fc dallas|texas hospital|texas university|texas school district)\b/i;
 const TEXAS_SPORTS = /\b(astros|cowboys|texans|rangers baseball|texas rangers|mavericks|mavs|rockets|spurs|stars|fc dallas|houston dynamo|longhorns|aggies|red raiders|horned frogs|baylor bears|smu mustangs|utep miners|dallas wings)\b/i;
-const STATEWIDE_PUBLIC_INTEREST = /\b(hospital ranking|best hospitals?|migration report|moving destination|moves? to texas|wildfire|fire danger|teaching restrictions?|first amendment|ten commandments|religious freedom|polling locations?|voting sites?|skills development fund|workforce grant|museum expansion|jobs?|layoffs?|back wages|child labor|public safety|school policy|healthcare workers?)\b/i;
+const STATEWIDE_PUBLIC_INTEREST = /\b(hospital ranking|best hospitals?|migration report|moving destination|moves? to texas|wildfire|fire danger|teaching restrictions?|first amendment|ten commandments|religious freedom|polling locations?|voting sites?|skills development fund|workforce grant|museum expansion|jobs?|layoffs?|back wages|child labor|public safety|school policy|healthcare workers?|anniversary|birthday)\b/i;
 const TEXAS_CATEGORIES = new Set([
   "Texas Politics",
   "Texas Economy",
@@ -67,7 +69,7 @@ const TEXAS_CATEGORIES = new Set([
   "Non-Political",
 ]);
 
-const BREAKING_WORDS = /\b(breaking|signs|declares|activates|announces|emergency|ruling|sues?|lawsuit|indicted|arrested|veto|appoints|filed|passes|approves|dies|killed|shooting|storm|hurricane|flood|tornado|wildfire|evacuation|recall|impeach|tops?|ranks?|awards?|bans?|fires?|lays? off|expands?)\b/i;
+const BREAKING_WORDS = /\b(breaking|signs|declares|activates|announces|emergency|ruling|sues?|lawsuit|indicted|arrested|veto|appoints|filed|passes|approves|considers|cuts?|reduces?|dies|killed|shooting|storm|hurricane|flood|tornado|wildfire|evacuation|recall|impeach|tops?|ranks?|awards?|bans?|fires?|lays? off|expands?|anniversary|birthday)\b/i;
 const SOCIAL_HOOK_WORDS = /\b(election|elections|abbott|paxton|border|tax|taxes|shooting|hurricane|storm|flood|wildfire|crime|police|ice|migrant|migration|school|parents|hospital|jobs|layoffs|guns|gun|abortion|trump|biden|harris|whataburger|cowboys|texans)\b/i;
 
 function hoursSince(iso: string): number {
@@ -100,7 +102,7 @@ export function scoreFeedItem(item: {
   else if (TEXAS_STRONG.test(desc)) { texas += 10; reasons.push("Texas in body"); }
   if (TEXAS_CITIES.test(hay)) { texas += 12; reasons.push("Texas city named"); }
   if (TEXAS_COUNTIES.test(hay)) { texas += 10; reasons.push("Texas county named"); }
-  if (OFFICIAL_SOURCE.test(sourceHay) || TEXAS_STRONG.test(sourceHay) || TEXAS_AGENCIES.test(sourceHay)) {
+  if (OFFICIAL_SOURCE.test(sourceHay) || LOCAL_GOV_SOURCE.test(sourceHay) || TEXAS_STRONG.test(sourceHay) || TEXAS_AGENCIES.test(sourceHay)) {
     texas += 20; reasons.push("Texas government/agency source");
   }
   if (TEXAS_OFFICIALS.test(hay)) { texas += 20; reasons.push("Texas official named"); }
@@ -109,7 +111,7 @@ export function scoreFeedItem(item: {
     texas += 15; reasons.push("Texas institution named");
   }
   if (TEXAS_SPORTS.test(hay)) { texas += 15; reasons.push("Texas sports team"); }
-  if (STATEWIDE_PUBLIC_INTEREST.test(hay) && (TEXAS_STRONG.test(hay) || TEXAS_CITIES.test(hay) || TEXAS_AGENCIES.test(hay))) {
+  if (STATEWIDE_PUBLIC_INTEREST.test(hay) && (TEXAS_STRONG.test(hay) || TEXAS_CITIES.test(hay) || TEXAS_AGENCIES.test(hay) || TEXAS_INSTITUTIONS.test(hay))) {
     texas += 10; reasons.push("Statewide public-interest topic");
   }
   if (TEXAS_CATEGORIES.has(category)) { texas += 8; reasons.push(`TX category: ${category}`); }
