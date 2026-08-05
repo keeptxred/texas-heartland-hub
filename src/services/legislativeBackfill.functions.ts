@@ -117,7 +117,7 @@ const StatusInput = z.object({
 });
 
 export const getLegislativeBackfillStatus = createServerFn({ method: 'POST' })
-  .inputValidator((input: unknown) => StatusInput.parse(input))
+  .validator((input: unknown) => StatusInput.parse(input))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     try {
@@ -134,7 +134,7 @@ const RunInput = StatusInput.extend({
 });
 
 export const runLegislativeBackfillPass = createServerFn({ method: 'POST' })
-  .inputValidator((input: unknown) => RunInput.parse(input))
+  .validator((input: unknown) => RunInput.parse(input))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
 
