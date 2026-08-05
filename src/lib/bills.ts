@@ -208,18 +208,6 @@ export async function getBillEditorialEnrichment(billId: string) {
   return (data as BillEditorialEnrichment | null) ?? null;
 }
 
-async function getBillLegacy(legislature: number, billType: string, billNumber: number) {
-  const { data, error } = await db
-    .from('bills')
-    .select('*')
-    .eq('legislature_number', legislature)
-    .eq('bill_type', normalizeBillType(billType))
-    .eq('bill_number', billNumber)
-    .maybeSingle();
-  if (error) throw error;
-  return data as Bill | null;
-}
-
 export async function getBillRelations(billId: string) {
   const safe = async (label: string, build: () => any) => {
     try {
