@@ -1,4 +1,5 @@
 import type { LegislativeDocument } from '@/lib/bill-documents';
+import { resolveVerifiedBillSourceAgencies, type VerifiedBillSourceAgency } from '@/lib/bill-source-agencies';
 
 type FiscalStructured = {
   summary?: string | null;
@@ -16,6 +17,7 @@ export type BillFiscalImpact = {
   summary: string | null;
   localGovernmentImpact: string | null;
   sourceAgencies: string | null;
+  verifiedSourceAgencies: VerifiedBillSourceAgency[];
   monetaryAmounts: string[];
   noStateFiscalImplication: boolean;
   noLocalFiscalImplication: boolean;
@@ -42,13 +44,15 @@ export function getLatestBillFiscalImpact(documents: LegislativeDocument[]): Bil
   if (!document) return null;
   const structured = fiscalStructured(document)!;
   const summary = structured.summary || structured.general_description || null;
+  const sourceAgencies = structured.source_agencies || null;
 
   return {
     documentId: document.id,
     label: document.version_label || document.document_title || 'Latest fiscal note',
     summary,
     localGovernmentImpact: structured.local_government_impact || null,
-    sourceAgencies: structured.source_agencies || null,
+    sourceAgencies,
+    verifiedSourceAgencies: resolveVerifiedBillSourceAgencies(sourceAgencies),
     monetaryAmounts: [...new Set(structured.monetary_amounts || [])].slice(0, 8),
     noStateFiscalImplication: Boolean(structured.no_state_fiscal_implication),
     noLocalFiscalImplication: Boolean(structured.no_local_fiscal_implication),
