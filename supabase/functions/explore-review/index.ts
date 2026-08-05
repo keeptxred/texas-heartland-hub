@@ -66,6 +66,19 @@ const PARK_TYPES = new Set([
 ]);
 const LAKE_TYPES = new Set(["lake", "reservoir"]);
 
+// explore_park_profiles.park_type accepts a fixed vocabulary, so entity type
+// keys are mapped onto it rather than written through verbatim.
+const PARK_TYPE_BY_ENTITY_TYPE: Record<string, string> = {
+  state_park: "state",
+  national_park: "national",
+  national_monument: "national",
+  national_preserve: "national",
+  national_seashore: "national",
+  natural_area: "recreation_area",
+  wildlife_refuge: "wildlife_refuge",
+  historic_site: "historic",
+};
+
 async function uniqueSlug(client: Client, base: string, entityId: string | null): Promise<string> {
   let slug = base;
   for (let suffix = 2; suffix < 1000; suffix += 1) {
@@ -264,7 +277,7 @@ async function promoteRecord(
     await client.from("explore_park_profiles").upsert(
       {
         entity_id: entityId,
-        park_type: entityType.name,
+        park_type: PARK_TYPE_BY_ENTITY_TYPE[entityTypeKey] ?? "other",
         managing_authority: String(
           (record.explore_import_sources as Record<string, unknown> | null)?.name ?? "",
         ) || null,
