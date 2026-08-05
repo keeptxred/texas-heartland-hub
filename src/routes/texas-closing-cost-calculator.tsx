@@ -1,12 +1,2 @@
-import { createFileRoute } from "@tanstack/react-router";
-import TexasClosingCostCalculatorPage from "@/pages/closingCosts/TexasClosingCostCalculatorPage";
-import { calculatorRouteSeo } from "@/lib/calculator-route-seo";
-import { withFinancialTrust } from "@/components/calculators/FinancialTrustPanel";
-
-const title = "Texas Closing Cost Calculator";
-const description = "Estimate Texas buyer and seller closing costs, prepaid expenses, lender charges, title-related fees, cash to close, and net proceeds.";
-
-export const Route = createFileRoute("/texas-closing-cost-calculator")({
-  head: () => calculatorRouteSeo({ title, description, path: "/texas-closing-cost-calculator" }),
-  component: withFinancialTrust(TexasClosingCostCalculatorPage, title, true),
-});
+import { createFileRoute, redirect } from "@tanstack/react-router";
+export const Route = createFileRoute("/texas-closing-cost-calculator")({ beforeLoad: ({ location }) => { throw redirect({ href: `https://texasdefined.com${location.pathname}${location.searchStr || ""}`, statusCode: 301 }); } });
