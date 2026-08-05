@@ -366,8 +366,20 @@ Deno.serve(async (request) => {
     const allRecords = getRecords(payload);
     // `limit` bounds a smoke test / limited live run without touching the source config.
     const cap = Number(body.limit ?? 0);
-    const records = cap > 0 ? allRecords.slice(0, cap) : allRecords;
+    // Some feeds publish several points per destination (headquarters plus
+    // access points). Process the headquarters/primary point first so the
+    // canonical record wins, then skip the rest of that external id in-run.
+    const ordered = [...allRecords].sort((a, b) => {
+      const rank = (record: Record<string, unknown>) => {
+        const properties = isRecord(record.properties) ? record.properties : record;
+        const note = String(pick(properties, ["Comments", "comments", "note"]) ?? "").toLowerCase();
+        return note.includes("headquarter") ? 0 : 1;
+      };
+      return rank(a) - rank(b);
+    });
+    const records = cap > 0 ? ordered.slice(0, cap) : ordered;
     statistics.parsed = records.length;
+    const seenExternalIds = new Set<string>();
 
     for (let index = 0; index < records.length; index += 1) {
       const normalized = normalize(records[index], source as SourceRow, allowedTypeKeys);
@@ -375,6 +387,12 @@ Deno.serve(async (request) => {
       const issues = validate(normalized);
       const digest = await checksum(normalized);
       const externalId = String(normalized.externalId);
+      if (externalId && seenExternalIds.has(externalId)) {
+        // Secondary point for a destination already handled in this run.
+        statistics.duplicates += 1;
+        continue;
+      }
+      if (externalId) seenExternalIds.add(externalId);
       const { data: previous } = await client
         .from("explore_import_records")
         .select("checksum,entity_id")
