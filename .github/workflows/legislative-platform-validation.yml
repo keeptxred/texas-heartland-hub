@@ -14,6 +14,7 @@ on:
       - 'src/lib/article-bills.ts'
       - 'src/lib/bill-analysis-summary.ts'
       - 'src/lib/bill-fiscal-impact.ts'
+      - 'src/lib/bill-witness-summary.ts'
       - 'src/lib/legislative-sitemaps.ts'
       - 'scripts/legislature/**'
       - 'supabase/migrations/**bill**'
@@ -33,6 +34,7 @@ on:
       - 'src/lib/article-bills.ts'
       - 'src/lib/bill-analysis-summary.ts'
       - 'src/lib/bill-fiscal-impact.ts'
+      - 'src/lib/bill-witness-summary.ts'
       - 'src/lib/legislative-sitemaps.ts'
       - 'scripts/legislature/**'
       - 'supabase/migrations/**bill**'
@@ -61,6 +63,8 @@ jobs:
         run: node scripts/legislature/validate-bill-analysis-summary.mjs
       - name: Validate bill fiscal impact display
         run: node scripts/legislature/validate-bill-fiscal-impact.mjs
+      - name: Validate bill witness summaries
+        run: node scripts/legislature/validate-bill-witness-summary.mjs
       - name: Generate routes and typecheck
         run: bun run typecheck
       - name: Production build
