@@ -17,6 +17,10 @@ const retiredFiles = [
   'src/components/vehicle-registration-guide.tsx',
   'src/lib/vehicle-registration.ts',
   'src/lib/__tests__/moving-resources.test.ts',
+  'src/data/texas-data-center.ts',
+  'src/data/seo/mortgageCalculatorSEO.ts',
+  'src/data/sitemap/mortgageCalculatorSitemap.ts',
+  'src/lib/analytics/mortgageCalculatorAnalytics.ts',
 ];
 
 for (const file of retiredFiles) {
@@ -71,10 +75,45 @@ if (!fs.existsSync(registryPath)) {
   }
 }
 
+const publicOwnershipFiles = [
+  {
+    path: 'src/components/texas-news-view.tsx',
+    forbidden: [
+      'cost-of-living updates',
+      'Housing',
+      'Growth & Migration',
+      'Culture & Identity',
+      '/texas/property-taxes-2026',
+      '/texas/moving-to-texas-2026',
+      '/tax-calculator',
+    ],
+    required: ['Texas News, Government & Public Policy', 'Statewide reporting', '/bills', '/representatives'],
+  },
+  {
+    path: 'src/components/texas-business-view.tsx',
+    forbidden: ['/tax-calculator', 'Related Tools', 'Relocations', 'Real Estate'],
+    required: ['Texas Business, Regulation & Economic Policy', '/bills', '/texas-legislature', '/committees'],
+  },
+];
+
+for (const entry of publicOwnershipFiles) {
+  if (!fs.existsSync(entry.path)) {
+    errors.push(`Missing public ownership file: ${entry.path}`);
+    continue;
+  }
+  const source = fs.readFileSync(entry.path, 'utf8');
+  for (const token of entry.forbidden) {
+    if (source.includes(token)) errors.push(`${entry.path} restored TexasDefined-owned content: ${token}`);
+  }
+  for (const token of entry.required) {
+    if (!source.includes(token)) errors.push(`${entry.path} missing KeepTXRed ownership token: ${token}`);
+  }
+}
+
 if (errors.length) {
   console.error(`Retired lifestyle-code validation failed (${errors.length}):`);
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
 
-console.log(`Retired lifestyle implementations remain absent and registry ownership is site-specific.`);
+console.log(`Retired lifestyle implementations remain absent and public ownership is site-specific.`);
