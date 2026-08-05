@@ -10,11 +10,22 @@ on:
       - "src/pages/**"
       - "src/routes/**"
       - "package.json"
+      - "bun.lock"
       - "tsconfig.calculators.json"
       - ".github/workflows/calculator-validation.yml"
   push:
-    branches:
-      - agent/chat-calculators-through-tool-56
+    branches: [main]
+    paths:
+      - "src/lib/**"
+      - "src/types/**"
+      - "src/data/**"
+      - "src/components/**"
+      - "src/pages/**"
+      - "src/routes/**"
+      - "package.json"
+      - "bun.lock"
+      - "tsconfig.calculators.json"
+      - ".github/workflows/calculator-validation.yml"
 
 permissions:
   contents: read
@@ -26,24 +37,21 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+          bun-version: latest
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --reporter=silent
+        run: bun install --frozen-lockfile
 
       - name: Build production application and generate routes
-        run: pnpm build
+        run: bun run build
 
       - name: Typecheck calculator code
-        run: pnpm exec tsc -p tsconfig.calculators.json --pretty false
+        run: bunx tsc -p tsconfig.calculators.json --pretty false
 
       - name: Capture calculator test output
         id: tests
@@ -51,7 +59,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          pnpm exec vitest run src/lib/calculators/__tests__/financialEngines.test.ts > calculator-tests.log 2>&1
+          bunx vitest run src/lib/calculators/__tests__/financialEngines.test.ts > calculator-tests.log 2>&1
           status=$?
           cat calculator-tests.log
           exit $status
@@ -74,7 +82,7 @@ jobs:
         shell: bash
         run: |
           set +e
-          pnpm exec eslint --rule 'prettier/prettier: off' \
+          bunx eslint --rule 'prettier/prettier: off' \
             src/components/calculators \
             src/components/budget \
             src/components/closingCosts \
