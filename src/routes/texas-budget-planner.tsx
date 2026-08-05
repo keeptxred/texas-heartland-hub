@@ -1,12 +1,2 @@
-import { createFileRoute } from "@tanstack/react-router";
-import TexasBudgetPlannerPage from "@/pages/budget/TexasBudgetPlannerPage";
-import { calculatorRouteSeo } from "@/lib/calculator-route-seo";
-import { withFinancialTrust } from "@/components/calculators/FinancialTrustPanel";
-
-const title = "Texas Budget Planner";
-const description = "Build a practical monthly Texas household budget for housing, utilities, transportation, food, insurance, debt, savings, childcare, and discretionary spending.";
-
-export const Route = createFileRoute("/texas-budget-planner")({
-  head: () => calculatorRouteSeo({ title, description, path: "/texas-budget-planner" }),
-  component: withFinancialTrust(TexasBudgetPlannerPage, title, false),
-});
+import { createFileRoute, redirect } from "@tanstack/react-router";
+export const Route = createFileRoute("/texas-budget-planner")({ beforeLoad: ({ location }) => { throw redirect({ href: `https://texasdefined.com${location.pathname}${location.searchStr || ""}`, statusCode: 301 }); } });
