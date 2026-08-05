@@ -194,6 +194,31 @@ type Item = {
   category?: string;
 };
 
+// ---------------------------------------------------------------------------
+// Texas Register significance gate.
+//
+// Every Texas Register record is still inserted into `texas_news_feed` and
+// stays visible on /happening-now. This helper only decides whether an item
+// deserves a native article, so routine agency notices (meetings, licensing
+// lists, procurement, corrections) never consume AI credits or become
+// low-value articles. Deterministic keyword matching only — no AI calls.
+// ---------------------------------------------------------------------------
+const REGISTER_SIGNIFICANT_RE =
+  /(tax(es|ation)?|property tax|election|voting|voter|candidate|campaign|redistrict|firearm|\bgun(s)?\b|weapon|constitutional carry|border security|immigration|energy|electricity|ercot|utilit(y|ies)|\boil\b|\bgas\b|pipeline|education|school|universit(y|ies)|curriculum|school choice|health ?care|medicaid|hospital|insurance|public health|business regulation|banking|financ(e|ial)|employment|wage(s)?|licens(ing|ure) rule|criminal|law enforcement|police|court(s)?|prison|public safety|constitutional|civil rights|religious liberty|free speech|emergency rule|disaster declaration|hurricane|flood|drought|wildfire|statewide emergency|environmental|water|transportation|infrastructure|housing|land ?use|land use|statewide|major|emergency|substantial|significant|material economic impact)/i;
+
+const REGISTER_ROUTINE_RE =
+  /(meeting notice|open meeting|advisory committee|licens(ing|e) list|disciplinary (list|action)|procurement|contract award|bid notice|request for (proposal|bid)|correction notice|miscellaneous notice|withdrawn rule|rule withdrawal|repeal|administrative update|housekeeping|appointment(s)?|calendar notice|public hearing notice)/i;
+
+export function isSignificantTexasRegisterItem(item: Item): boolean {
+  // Non-Register sources keep their existing behavior untouched.
+  if (!item.source.toLowerCase().includes("register")) return true;
+  const hay = `${item.title} ${item.description ?? ""}`.toLowerCase();
+  // Routine administrative filings are feed-only unless they also describe a
+  // meaningful statewide public-impact topic.
+  if (REGISTER_ROUTINE_RE.test(hay) && !REGISTER_SIGNIFICANT_RE.test(hay)) return false;
+  return REGISTER_SIGNIFICANT_RE.test(hay);
+}
+
 function slugify(s: string): string {
   return s
     .toLowerCase()
