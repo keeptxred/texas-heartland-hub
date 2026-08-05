@@ -50,7 +50,6 @@ jobs:
         run: bun x playwright install --with-deps chromium
 
       - name: Validate election records
-        id: validate
         continue-on-error: true
         shell: bash
         run: |
@@ -58,11 +57,10 @@ jobs:
           set -o pipefail
           bun run elections:validate 2>&1 | tee /tmp/election-ci-validate.log
           status=${PIPESTATUS[0]}
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$status" > /tmp/election-ci-validate.exit
           exit "$status"
 
       - name: Build production application and generate routes
-        id: build
         continue-on-error: true
         shell: bash
         env:
@@ -72,11 +70,10 @@ jobs:
           set -o pipefail
           bun run build 2>&1 | tee /tmp/election-ci-build.log
           status=${PIPESTATUS[0]}
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$status" > /tmp/election-ci-build.exit
           exit "$status"
 
       - name: Typecheck application
-        id: typecheck
         continue-on-error: true
         shell: bash
         run: |
@@ -84,11 +81,10 @@ jobs:
           set -o pipefail
           bun run typecheck 2>&1 | tee /tmp/election-ci-typecheck.log
           status=${PIPESTATUS[0]}
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$status" > /tmp/election-ci-typecheck.exit
           exit "$status"
 
       - name: Run unit tests
-        id: tests
         continue-on-error: true
         shell: bash
         run: |
@@ -96,12 +92,11 @@ jobs:
           set -o pipefail
           bun run test 2>&1 | tee /tmp/election-ci-tests.log
           status=${PIPESTATUS[0]}
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$status" > /tmp/election-ci-tests.exit
           grep -E "FAIL|failed|AssertionError|Error:|Test Files|Tests  " /tmp/election-ci-tests.log | tail -160 > /tmp/election-ci-test-failures.log || true
           exit "$status"
 
       - name: Run mobile browser smoke tests (standard homepage)
-        id: mobile
         continue-on-error: true
         shell: bash
         env:
@@ -111,11 +106,10 @@ jobs:
           set -o pipefail
           bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile.log
           status=${PIPESTATUS[0]}
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$status" > /tmp/election-ci-mobile.exit
           exit "$status"
 
       - name: Run mobile browser smoke tests (Election Central homepage)
-        id: mobile_homepage
         continue-on-error: true
         shell: bash
         env:
@@ -125,19 +119,13 @@ jobs:
           set -o pipefail
           bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile-homepage.log
           status=${PIPESTATUS[0]}
-          echo "exit_code=$status" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$status" > /tmp/election-ci-mobile-homepage.exit
           exit "$status"
 
       - name: Create verification report
         if: always()
         shell: bash
         env:
-          VALIDATE_EXIT_CODE: ${{ steps.validate.outputs.exit_code }}
-          TYPECHECK_EXIT_CODE: ${{ steps.typecheck.outputs.exit_code }}
-          TEST_EXIT_CODE: ${{ steps.tests.outputs.exit_code }}
-          BUILD_EXIT_CODE: ${{ steps.build.outputs.exit_code }}
-          MOBILE_EXIT_CODE: ${{ steps.mobile.outputs.exit_code }}
-          MOBILE_HOMEPAGE_EXIT_CODE: ${{ steps.mobile_homepage.outputs.exit_code }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           RUN_SHA: ${{ github.sha }}
@@ -152,23 +140,23 @@ jobs:
             return lines.slice(-lineLimit).join("\n").slice(-characterLimit) || null;
           }
 
-          const result = (code) => code === "0" ? "success" : "failure";
-          const checks = {
-            validation: result(process.env.VALIDATE_EXIT_CODE),
-            build: result(process.env.BUILD_EXIT_CODE),
-            typecheck: result(process.env.TYPECHECK_EXIT_CODE),
-            tests: result(process.env.TEST_EXIT_CODE),
-            mobile: result(process.env.MOBILE_EXIT_CODE),
-            homepageEnabledMobile: result(process.env.MOBILE_HOMEPAGE_EXIT_CODE),
-          };
+          function readExitCode(file) {
+            if (!fs.existsSync(file)) return null;
+            const value = fs.readFileSync(file, "utf8").trim();
+            return /^\d+$/.test(value) ? value : null;
+          }
+
           const exitCodes = {
-            validation: process.env.VALIDATE_EXIT_CODE || null,
-            build: process.env.BUILD_EXIT_CODE || null,
-            typecheck: process.env.TYPECHECK_EXIT_CODE || null,
-            tests: process.env.TEST_EXIT_CODE || null,
-            mobile: process.env.MOBILE_EXIT_CODE || null,
-            homepageEnabledMobile: process.env.MOBILE_HOMEPAGE_EXIT_CODE || null,
+            validation: readExitCode("/tmp/election-ci-validate.exit"),
+            build: readExitCode("/tmp/election-ci-build.exit"),
+            typecheck: readExitCode("/tmp/election-ci-typecheck.exit"),
+            tests: readExitCode("/tmp/election-ci-tests.exit"),
+            mobile: readExitCode("/tmp/election-ci-mobile.exit"),
+            homepageEnabledMobile: readExitCode("/tmp/election-ci-mobile-homepage.exit"),
           };
+          const checks = Object.fromEntries(
+            Object.entries(exitCodes).map(([name, code]) => [name, code === "0" ? "success" : "failure"]),
+          );
           const passed = Object.values(exitCodes).every((code) => code === "0");
           const status = {
             updatedAt: new Date().toISOString(),
@@ -212,34 +200,42 @@ jobs:
           path: |
             /tmp/election-ci-status.json
             /tmp/election-ci-validate.log
+            /tmp/election-ci-validate.exit
             /tmp/election-ci-build.log
+            /tmp/election-ci-build.exit
             /tmp/election-ci-typecheck.log
+            /tmp/election-ci-typecheck.exit
             /tmp/election-ci-tests.log
+            /tmp/election-ci-tests.exit
             /tmp/election-ci-test-failures.log
             /tmp/election-ci-mobile.log
+            /tmp/election-ci-mobile.exit
             /tmp/election-ci-mobile-homepage.log
+            /tmp/election-ci-mobile-homepage.exit
           if-no-files-found: warn
           retention-days: 14
 
       - name: Enforce verification result
         if: always()
         shell: bash
-        env:
-          VALIDATE_EXIT_CODE: ${{ steps.validate.outputs.exit_code }}
-          TYPECHECK_EXIT_CODE: ${{ steps.typecheck.outputs.exit_code }}
-          TEST_EXIT_CODE: ${{ steps.tests.outputs.exit_code }}
-          BUILD_EXIT_CODE: ${{ steps.build.outputs.exit_code }}
-          MOBILE_EXIT_CODE: ${{ steps.mobile.outputs.exit_code }}
-          MOBILE_HOMEPAGE_EXIT_CODE: ${{ steps.mobile_homepage.outputs.exit_code }}
         run: |
-          for code in \
-            "$VALIDATE_EXIT_CODE" \
-            "$BUILD_EXIT_CODE" \
-            "$TYPECHECK_EXIT_CODE" \
-            "$TEST_EXIT_CODE" \
-            "$MOBILE_EXIT_CODE" \
-            "$MOBILE_HOMEPAGE_EXIT_CODE"; do
+          files=(
+            /tmp/election-ci-validate.exit
+            /tmp/election-ci-build.exit
+            /tmp/election-ci-typecheck.exit
+            /tmp/election-ci-tests.exit
+            /tmp/election-ci-mobile.exit
+            /tmp/election-ci-mobile-homepage.exit
+          )
+
+          for file in "${files[@]}"; do
+            if [[ ! -f "$file" ]]; then
+              echo "Missing verification result: $file"
+              exit 1
+            fi
+            code=$(tr -d '[:space:]' < "$file")
             if [[ "$code" != "0" ]]; then
+              echo "Verification failed: $file reported exit code ${code:-missing}"
               exit 1
             fi
           done
