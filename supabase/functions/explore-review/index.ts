@@ -38,12 +38,12 @@ async function authorized(request: Request, supabaseUrl: string): Promise<boolea
   if (configured && (direct === configured || bearer === configured)) return true;
   if (serviceRoleKey && (direct === serviceRoleKey || bearer === serviceRoleKey)) return true;
 
-  // Fall back to proving the presented credential has privileged Data API
-  // access (service-role-only table). Anonymous/publishable keys fail this.
+  // Fall back to proving the presented credential is a service-role credential
+  // by calling an Auth Admin endpoint. Anonymous/publishable keys fail this.
   const candidate = direct || bearer;
   if (!candidate) return false;
   try {
-    const probe = await fetch(`${supabaseUrl}/rest/v1/explore_import_jobs?select=id&limit=1`, {
+    const probe = await fetch(`${supabaseUrl}/auth/v1/admin/users?page=1&per_page=1`, {
       headers: { apikey: candidate, authorization: `Bearer ${candidate}` },
     });
     return probe.ok;
