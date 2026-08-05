@@ -5,60 +5,45 @@ import { EVERGREEN_MIN_MAIN_WORDS, articleMainWordCount } from "@/lib/article-le
 import { EDITORIAL_SYSTEM_ADDENDUM, validateArticle } from "@/lib/editorial-pipeline";
 
 const TOPICS: { category: string; topic: string }[] = [
-  { category: "Tax & Spending", topic: "How Texas keeps property taxes high and what homeowners can do about it" },
-  { category: "Tax & Spending", topic: "Why Texas has no state income tax and how the state actually funds itself" },
-  { category: "Energy", topic: "How the Permian Basin powers Texas and the United States" },
-  { category: "Energy", topic: "ERCOT explained: how the Texas power grid works and where it fails" },
-  { category: "Border", topic: "Texas border policy explained: Operation Lone Star, federal limits, and what changed" },
+  { category: "Tax & Spending", topic: "How Texas property-tax policy is set and what the Legislature can change" },
+  { category: "Tax & Spending", topic: "Why Texas has no state income tax and how state government is funded" },
+  { category: "Tax & Spending", topic: "How the Texas budget process works from revenue estimate to appropriations" },
+  { category: "Tax & Spending", topic: "How local taxing entities and the Texas Legislature divide property-tax authority" },
+  { category: "Energy", topic: "How the Permian Basin shapes Texas energy policy and state revenue" },
+  { category: "Energy", topic: "ERCOT explained: governance, reliability rules, and legislative oversight" },
+  { category: "Energy", topic: "What the Public Utility Commission of Texas regulates" },
+  { category: "Energy", topic: "What the Texas Railroad Commission regulates and why its elections matter" },
+  { category: "Energy", topic: "Winter Storm Uri reforms and the continuing Texas grid policy debate" },
+  { category: "Border", topic: "Operation Lone Star explained: state authority, spending, and federal limits" },
+  { category: "Border", topic: "How Texas border policy moves through courts, agencies, and the Legislature" },
+  { category: "Border", topic: "Texas DPS and National Guard roles at the border" },
+  { category: "Border", topic: "How federal asylum and immigration enforcement decisions affect Texas government" },
   { category: "Legislature", topic: "How a bill becomes law in the Texas Legislature" },
-  { category: "Legislature", topic: "The powers of the Texas Lieutenant Governor explained" },
-  { category: "Elections", topic: "How to verify your Texas voter registration and what ID you need at the polls" },
+  { category: "Legislature", topic: "The powers of the Texas lieutenant governor explained" },
+  { category: "Legislature", topic: "How Texas legislative committees control the fate of bills" },
+  { category: "Legislature", topic: "Texas constitutional amendments: how lawmakers and voters approve them" },
+  { category: "Legislature", topic: "How special sessions of the Texas Legislature work" },
   { category: "Elections", topic: "Texas primary elections explained: open primaries, runoffs, and party rules" },
-  { category: "Education", topic: "School choice in Texas: ESAs, vouchers, and the 2025 legislation explained" },
-  { category: "Education", topic: "How Texas funds public schools and why property taxes matter" },
-  { category: "Tax & Spending", topic: "Texas homestead exemption explained: who qualifies and how to file" },
-  { category: "Legislature", topic: "Texas constitutional amendments: how they pass and why they matter" },
-  { category: "Border", topic: "The geography of the Texas border with Mexico, county by county" },
-  { category: "Energy", topic: "Texas wind and solar: how renewables fit alongside oil and gas" },
-  // Border policy depth
-  { category: "Border", topic: "Title 42 and Title 8 explained: how federal border authorities affect Texas" },
-  { category: "Border", topic: "Texas border wall construction: funding, mileage, and what landowners should know" },
-  { category: "Border", topic: "Texas DPS at the border: how state troopers enforce Operation Lone Star" },
-  { category: "Border", topic: "Asylum process at the Texas border: how claims are filed and processed" },
-  // Energy regulation explainers
-  { category: "Energy", topic: "The Public Utility Commission of Texas explained: what the PUC regulates" },
-  { category: "Energy", topic: "Texas Railroad Commission explained: what it actually regulates" },
-  { category: "Energy", topic: "How Texas electricity bills are calculated and what the charges mean" },
-  { category: "Energy", topic: "Winter Storm Uri and ERCOT reforms: what changed in Texas after 2021" },
-  // Election process guides
-  { category: "Elections", topic: "How early voting works in Texas: dates, locations, and what to bring" },
-  { category: "Elections", topic: "Mail-in ballots in Texas: who qualifies and how to apply" },
-  { category: "Elections", topic: "Texas voter ID requirements: accepted IDs and what to do without one" },
+  { category: "Elections", topic: "How early voting and Election Day administration work in Texas" },
+  { category: "Elections", topic: "Texas voter ID, mail-ballot, and ballot-security rules explained" },
   { category: "Elections", topic: "How precinct chairs and county party conventions work in Texas" },
-  { category: "Elections", topic: "Texas election audits and ballot security explained" },
-
-  // ── Texas News (culture / economy / lifestyle) — evergreen, NOT breaking ──
-  { category: "Economy", topic: "Why Texas is growing so fast in 2026" },
-  { category: "Economy", topic: "What is driving jobs in Texas in 2026" },
-  { category: "Economy", topic: "The real cost of living in Texas right now" },
-  { category: "Economy", topic: "Texas business climate 2026: why companies keep relocating" },
-  { category: "Housing", topic: "Texas housing market trends explained" },
-  { category: "Housing", topic: "Texas suburbs expansion: how the metros keep spreading" },
-  { category: "Housing", topic: "Renting vs buying in Texas in 2026: what actually pencils out" },
-  { category: "Growth & Migration", topic: "Why more people are moving to Texas" },
-  { category: "Growth & Migration", topic: "Where Texas newcomers are actually settling in 2026" },
-  { category: "Growth & Migration", topic: "The Texas triangle: how DFW, Houston, Austin, and San Antonio anchor growth" },
-  { category: "Culture & Identity", topic: "What Texas identity actually means in 2026" },
-  { category: "Culture & Identity", topic: "Small-town Texas: how rural communities are changing" },
-  { category: "Culture & Identity", topic: "Texas food culture: BBQ, Tex-Mex, and what defines the state's table" },
-  { category: "Education Trends", topic: "Texas school performance trends: what the numbers actually show" },
-  { category: "Education Trends", topic: "How Texas universities became a magnet for out-of-state students" },
-  { category: "Sports Culture", topic: "Why Friday night football still defines Texas towns" },
-  { category: "Sports Culture", topic: "College football culture in Texas: what makes it different" },
+  { category: "Elections", topic: "How Texas election audits, recounts, and contests work" },
+  { category: "Education", topic: "School choice in Texas: legislation, oversight, and public accountability" },
+  { category: "Education", topic: "How Texas funds public schools and how lawmakers set the formula" },
+  { category: "Education", topic: "What Texas school boards control and how voters hold them accountable" },
+  { category: "Government Accountability", topic: "How Texans can track state agency rules, meetings, and public records" },
+  { category: "Government Accountability", topic: "How the Texas Public Information Act works and where disputes arise" },
+  { category: "Government Accountability", topic: "How state appointments, confirmations, and oversight work in Texas" },
+  { category: "Business Policy", topic: "How Texas regulation, taxes, and legislation affect employers and workers" },
+  { category: "Business Policy", topic: "How state economic-development incentives are approved and monitored in Texas" },
 ];
 
-function slugify(s: string): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 90);
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 90);
 }
 
 type GeneratedBody = {
@@ -72,99 +57,83 @@ type GeneratedBody = {
   keyTakeaways: string[];
 };
 
-const TEXAS_NEWS_CATEGORIES = new Set([
-  "Economy",
-  "Housing",
-  "Growth & Migration",
-  "Culture & Identity",
-  "Education Trends",
-  "Sports Culture",
-]);
-
 async function generate(topic: string, category: string, lovableApiKey: string): Promise<GeneratedBody> {
-  const isTexasNews = TEXAS_NEWS_CATEGORIES.has(category);
+  const system = `You are the senior editor of Keep TX Red, a Texas political news, elections, legislation, and government-accountability publication.
 
-  const toneBlock = isTexasNews
-    ? `TONE: Texas pride, neutral-to-proud, informational. This is an evergreen Texas News piece about culture, economy, housing, jobs, migration, or lifestyle — NOT breaking news, NOT emergency alerts, NOT government announcements, NOT legislative updates. Do not cover police scenes, urgent weather warnings, or partisan political figures. Keep the framing on long-term Texas identity, growth, and daily life. Length target: minimum ${EVERGREEN_MIN_MAIN_WORDS} words of main story prose.`
-    : `TONE: neutral, factual, educational. Avoid opinionated or partisan language.`;
+Write a long-form evergreen explainer about the assigned Texas government or public-policy topic. KeepTXRed does not publish travel, food, culture, relocation, household-planning, real-estate-planning, mortgage, insurance, utility, moving, or cost-of-living guides. Do not drift into those subjects. When a topic touches taxes, education, energy, business, or the border, frame it through legislation, elections, regulation, government spending, official authority, or public accountability.
 
-  const internalLinksBlock = isTexasNews
-    ? `INTERNAL LINKS (REQUIRED): Include 3–5 internal links in body paragraphs using markdown syntax [anchor text](/path). MUST include at least ONE link to each of these pillar guides where natural:
-- /news/why-texas-has-no-income-tax
-- /texas/property-taxes-2026
-- /texas/moving-to-texas-2026
-Also acceptable: /texas-news, /texas-business, /texas-economy, /houston, /glossary. Do not force links — weave them in naturally.`
-    : `INTERNAL LINKS (REQUIRED): Include 3-5 internal links in body paragraphs using markdown syntax [anchor text](/path). Use natural anchor text. Pick from these real internal paths:
-- Category pages: /texas-politics, /texas-news, /texas-laws, /elections, /texas-business, /texas-economy, /tax-calculator
-- Glossary: /glossary (link the first mention of any specialized term, e.g. [homestead exemption](/glossary))
-- Related evergreen guides: /news (newsroom index)
-- Pillar: /keep-texas-red
-Link at least one glossary term, at least one related category page, and at least one other internal page. Do not force links — weave them in naturally.`;
+Stay factual. Never invent statistics, quotes, interviews, filings, or internal analysis. Cite official and primary sources whenever possible, including Texas Legislature Online, Texas Secretary of State, Texas Comptroller, Texas courts, Texas agencies, ERCOT, county election offices, and federal government sources.
 
-  const system = `You are the senior editor of Keep TX Red, a Texas-focused news and civic-education site. Write a long-form evergreen explainer. ${toneBlock} Stay factual — never invent statistics, names, or quotes. Cite only well-known public sources (Texas Comptroller, Texas Secretary of State, Texas Legislature Online, ERCOT, U.S. Census, official agency sites).
+SEO AND EDITORIAL REQUIREMENTS:
+- Title under 75 characters and specific to Texas government, elections, legislation, or policy.
+- Dek between 140 and 220 characters.
+- At least ${EVERGREEN_MIN_MAIN_WORDS} words across intro and article sections. FAQ, sources, and takeaways do not count.
+- 8 to 14 keywords.
+- 3 to 6 official source links.
+- 4 to 6 useful FAQ entries.
+- No breaking-news language such as “breaking,” “today,” “this week,” or “just announced.”
+- No partisan persuasion presented as fact.
+- Explain who has legal authority, what process applies, what records voters can verify, and what remains disputed or uncertain.
 
-SEO REQUIREMENTS:
-- Title: keyword-rich, under 75 characters, must include "Texas" (or a Texas city/region/institution).
-- CTR BOOST: strongly prefer one of these framings in the title when natural: "What This Means for Texans", "The Real Reason Behind …", "… Explained Simply", "Most People Don't Realize …", or "What's Actually Changing in Texas in 2026". Use Texas-identity language. FORBIDDEN: generic informational titles ("A Guide to X", "Overview of Y"), repetitive/templated headlines, or stale news phrasing ("Breaking:", "Update:").
-- dek: 140-220 characters, naturally include 1-2 Texas keywords, summarize the actual content.
-- OPENING HOOK (REQUIRED): the FIRST sentence of intro[0] must be an emotional-curiosity hook using Texas-identity language. Good examples: "Texas is changing faster than most people realize.", "The reality in Texas is more complex than it looks.", "Here's what actually matters in Texas in 2026.". Do NOT start with "In this article" or a dry definition.
- - MAIN STORY LENGTH: at least ${EVERGREEN_MIN_MAIN_WORDS} words across intro + article sections only. Do NOT count FAQ, keyTakeaways, sources, source attribution, Texas relevance boilerplate, title, or dek toward the minimum. There is no upper word limit. Reject your own draft and add substantial sections if the main story prose is shorter.
-- 8-14 keywords.
-- 3-5 official .gov / well-known source links.
-- 4-6 FAQ entries (real questions Texans ask).
+REQUIRED SECTION ORDER:
+1. Overview
+2. Why This Matters to Texas Voters
+3. Who Has Authority
+4. How the Process Works
+5. Current Policy Debate
+6. Historical Context
+7. Accountability and Public Records
+8. What Texans Should Watch Next
+9. Reader Questions
 
-REQUIRED SECTIONS (in this order, use these exact headings):
-1. An opening explainer section ("Overview" or similar).
-2. "Why This Matters" — explain the significance for Texas voters, Texas politics, or Texas governance.
-3. "Impact on Texans" — 2-3 concrete examples (use bullets where helpful).
-4. "Historical Context" — relevant Texas/U.S. history; include only when applicable.
-5. One topical-authority section chosen from: "How This Affects Texas Elections", "How This Fits Into Texas Political History", or "How This Impacts Texas Policy Debates".
-6. Plus 6-10 additional explanatory sections relevant to the topic so the main story body clears ${EVERGREEN_MIN_MAIN_WORDS} words without filler.
-7. "The Texas Angle" — ONE original perspective block (100-150 words): Texas-specific analysis, contrarian viewpoint with evidence, a unique framework, or an on-the-ground reporting summary. Use phrases like "According to internal analysis…", "Our review of county-level filings shows…", or "Local interviews indicate…" where appropriate. This block is REQUIRED.
-8. "Reader Questions" — 2-3 short answers (60-100 words each) covering mid-funnel and bottom-funnel concerns where relevant: implementation ("how do I file…"), cost/ROI ("what does this save Texans…"), or differentiators ("how Texas differs from other states"). Skip questions that do not fit the topic.
+Add additional substantive sections as needed to meet the minimum length without filler.
 
-${internalLinksBlock}
+INTERNAL LINKS:
+Include 3 to 5 natural markdown links using only relevant KeepTXRed-owned destinations:
+- /bills
+- /texas-legislature
+- /committees
+- /representatives
+- /elections
+- /texas-politics
+- /texas-economy
+- /texas-business
+- /laws
+- /news
+- /glossary
+- /keep-texas-red
 
-PILLAR LINK WEIGHTING (REQUIRED): Every article MUST link to ALL THREE pillar guides at least once, using natural anchor text: /news/why-texas-has-no-income-tax, /texas/property-taxes-2026, /texas/moving-to-texas-2026. Also include one link back to the Texas News hub (/texas-news). Avoid isolated pages — every article must feed the pillar/hub graph.
+Never link to /tax-calculator, /texas-financial-tools, /moving-to-texas, /texas-living, /texas-data, /texas-resources, /explore, or any /texas/* lifestyle guide.
 
-CONTENT ROTATION (REQUIRED — NO CANNIBALIZATION):
-- Do NOT repeat the search intent of an existing pillar. If the topic overlaps a pillar (income tax, property tax, moving to Texas), take a DIFFERENT angle (e.g. a subtopic, a county-level cut, a comparison, an FAQ deep-dive) and link to the pillar instead of rewriting it.
-- Do NOT frame this as breaking news. No "today", "this week", "just announced" language. Evergreen only.
-- Each article must own a UNIQUE search intent (one primary question answered). State that intent implicitly in the title.
+Return only valid JSON with this shape:
+{"title":"...","dek":"...","keywords":["..."],"intro":["paragraph 1","paragraph 2"],"sections":[{"heading":"Overview","paragraphs":["..."]}],"keyTakeaways":["..."],"faq":[{"q":"...","a":"..."}],"sources":[{"label":"Texas Legislature Online","url":"https://capitol.texas.gov/"}]}
 
-GOOGLE DISCOVER READINESS:
-- Take a fresh angle on the evergreen topic (comparison, contrarian, "what most people miss", county-level, cost breakdown, etc.).
-- Use emotional-curiosity phrasing in the title without clickbait.
-- Weave Texas-identity language ("Lone Star", "Texans", specific city/county names) into the intro and at least two sections.
+Markdown links inside paragraph strings are allowed.`;
 
-KEY TAKEAWAYS: Provide 4-6 concise bullet points summarizing the article.
-
-Return ONLY valid JSON, no markdown:
-{"title":"...","dek":"...","keywords":["..."],"intro":["paragraph 1","paragraph 2"],"sections":[{"heading":"Overview","paragraphs":["..."]},{"heading":"Why This Matters","paragraphs":["..."]},{"heading":"Impact on Texans","paragraphs":["..."],"bullets":["..."]},{"heading":"Historical Context","paragraphs":["..."]},{"heading":"How This Affects Texas Elections","paragraphs":["..."]}],"keyTakeaways":["...","..."],"faq":[{"q":"...","a":"..."}],"sources":[{"label":"Texas Comptroller","url":"https://comptroller.texas.gov/"}]}
-
-The "bullets" field is optional per section. Use either paragraphs, bullets, or both. Markdown links inside paragraph strings are allowed and encouraged.`;
-
-  const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
     body: JSON.stringify({
       model: "google/gemini-3-flash-preview",
       messages: [
         { role: "system", content: system + EDITORIAL_SYSTEM_ADDENDUM },
-        { role: "user", content: `Topic: ${topic}\nCategory: ${category}\n\nWrite the full long-form evergreen article now.` },
+        { role: "user", content: `Topic: ${topic}\nCategory: ${category}\n\nWrite the complete evergreen explainer.` },
       ],
       response_format: { type: "json_object" },
       max_tokens: 16000,
     }),
   });
-  if (!r.ok) throw new Error(`AI gateway ${r.status}: ${(await r.text()).slice(0, 300)}`);
-  const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+
+  if (!response.ok) {
+    throw new Error(`AI gateway ${response.status}: ${(await response.text()).slice(0, 300)}`);
+  }
+
+  const data = (await response.json()) as { choices?: { message?: { content?: string } }[] };
   const parsed = JSON.parse(data.choices?.[0]?.message?.content ?? "{}") as GeneratedBody & {
     brief?: import("@/lib/editorial-pipeline").StoryBrief;
   };
-  // Evergreen: run the same editorial validation, but do not block on
-  // hasClearNewsEvent (these are explainers, not breaking news).
-  const v = validateArticle(
+
+  const validation = validateArticle(
     {
       title: parsed.title,
       dek: parsed.dek,
@@ -175,18 +144,16 @@ The "bullets" field is optional per section. Use either paragraphs, bullets, or 
     },
     parsed.brief,
   );
-  if (!v.ok) {
-    // Filter fatal-only reasons; evergreen tolerates a missing hard news
-    // event and a soft headline/body overlap (the topic itself is the hook).
-    const fatal = v.reasons.filter(
-      (r) =>
-        !r.startsWith("brief_no_clear_news_event") &&
-        !r.startsWith("headline_does_not_match_body"),
+
+  if (!validation.ok) {
+    const fatal = validation.reasons.filter(
+      (reason) =>
+        !reason.startsWith("brief_no_clear_news_event") &&
+        !reason.startsWith("headline_does_not_match_body"),
     );
-    if (fatal.length > 0) {
-      throw new Error(`Editorial validation failed: ${fatal.join(", ")}`);
-    }
+    if (fatal.length > 0) throw new Error(`Editorial validation failed: ${fatal.join(", ")}`);
   }
+
   delete (parsed as { brief?: unknown }).brief;
   return parsed;
 }
@@ -206,53 +173,60 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           auth: { persistSession: false, autoRefreshToken: false },
         });
 
-        // Avoid repeating recent topics — pull recent evergreen titles and skip overlap.
         const { data: recent } = await supabase
           .from("daily_articles")
           .select("title")
           .eq("kind", "evergreen")
           .order("published_at", { ascending: false })
           .limit(20);
-        const recentTitles = new Set((recent ?? []).map((r) => (r.title ?? "").toLowerCase()));
-        const available = TOPICS.filter((t) => !Array.from(recentTitles).some((rt) => rt.includes(t.topic.slice(0, 25).toLowerCase())));
-        const pick = (available.length > 0 ? available : TOPICS)[Math.floor(Math.random() * (available.length > 0 ? available.length : TOPICS.length))];
 
-        let gen: GeneratedBody;
+        const recentTitles = new Set((recent ?? []).map((row) => (row.title ?? "").toLowerCase()));
+        const available = TOPICS.filter(
+          (candidate) =>
+            !Array.from(recentTitles).some((title) =>
+              title.includes(candidate.topic.slice(0, 25).toLowerCase()),
+            ),
+        );
+        const pool = available.length > 0 ? available : TOPICS;
+        const pick = pool[Math.floor(Math.random() * pool.length)];
+
+        let generated: GeneratedBody;
         try {
-          gen = await generate(pick.topic, pick.category, lovableApiKey);
-        } catch (err) {
-          console.error("evergreen AI failed", err);
-          return Response.json({ error: "AI failed", details: String(err) }, { status: 500 });
+          generated = await generate(pick.topic, pick.category, lovableApiKey);
+        } catch (error) {
+          console.error("evergreen AI failed", error);
+          return Response.json({ error: "AI failed", details: String(error) }, { status: 500 });
         }
-        if (!gen?.title || !gen?.dek || !Array.isArray(gen.sections) || gen.sections.length < 3) {
-          return Response.json({ error: "Bad AI output", gen }, { status: 500 });
+
+        if (!generated?.title || !generated?.dek || !Array.isArray(generated.sections) || generated.sections.length < 3) {
+          return Response.json({ error: "Bad AI output", generated }, { status: 500 });
         }
 
         const now = new Date();
         const { dedupeArticleBody, hasDuplicateContent } = await import("@/lib/article-dedupe");
-        const slug = `${now.toISOString().slice(0, 10)}-${slugify(gen.title)}`;
+        const slug = `${now.toISOString().slice(0, 10)}-${slugify(generated.title)}`;
         const cleanBody = dedupeArticleBody({
           updated: now.toISOString().slice(0, 10),
-          intro: gen.intro ?? [gen.dek],
-          sections: gen.sections,
-          faq: gen.faq ?? [],
-          sources: gen.sources ?? [],
-          keyTakeaways: (gen.keyTakeaways ?? []).slice(0, 6),
+          intro: generated.intro ?? [generated.dek],
+          sections: generated.sections,
+          faq: generated.faq ?? [],
+          sources: generated.sources ?? [],
+          keyTakeaways: (generated.keyTakeaways ?? []).slice(0, 6),
         });
-        // Block publish if dedupe still detects repetition (it shouldn't, but
-        // hasDuplicateContent re-runs to enforce the quality gate).
+
         if (hasDuplicateContent(cleanBody)) {
           return Response.json({ error: "Duplicate content detected; not published", slug }, { status: 422 });
         }
+
         const mainWordCount = articleMainWordCount(cleanBody);
         if (mainWordCount < EVERGREEN_MIN_MAIN_WORDS) {
-          return Response.json({ error: "Evergreen article below 5,000-word main-body minimum; not published", slug, mainWordCount }, { status: 422 });
+          return Response.json(
+            { error: "Evergreen article below main-body minimum; not published", slug, mainWordCount },
+            { status: 422 },
+          );
         }
 
-        // Quality filter: pre-publish gate.
-        // 1) Unique title angle — reject if an existing evergreen already has a
-        //    near-identical title (first 40 chars, case-insensitive).
-        const titleKey = gen.title.toLowerCase().slice(0, 40);
+        const titleKey = generated.title.toLowerCase().slice(0, 40);
         const { data: titleDupes } = await supabase
           .from("daily_articles")
           .select("slug,title")
@@ -260,20 +234,21 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           .ilike("title", `${titleKey}%`)
           .limit(1);
         if (titleDupes && titleDupes.length > 0) {
-          return Response.json({ error: "Duplicate title angle; not published", slug, existing: titleDupes[0].slug }, { status: 422 });
+          return Response.json(
+            { error: "Duplicate title angle; not published", slug, existing: titleDupes[0].slug },
+            { status: 422 },
+          );
         }
 
-        // 2) Texas context must be present in title or dek.
-        const hasTexasContext = /texas|houston|dallas|austin|san antonio|fort worth|lone star/i.test(
-          `${gen.title} ${gen.dek}`
-        );
-        if (!hasTexasContext) {
-          return Response.json({ error: "Missing Texas context in title/dek", slug }, { status: 422 });
+        const combinedText = `${generated.title} ${generated.dek} ${JSON.stringify(cleanBody)}`;
+        if (!/texas|houston|dallas|austin|san antonio|fort worth|lone star/i.test(combinedText)) {
+          return Response.json({ error: "Missing Texas context", slug }, { status: 422 });
         }
-
-        // 3) No breaking-news framing in evergreen.
-        if (/\b(breaking|just announced|today|this week|developing)\b/i.test(`${gen.title} ${gen.dek}`)) {
+        if (/\b(breaking|just announced|today|this week|developing)\b/i.test(`${generated.title} ${generated.dek}`)) {
           return Response.json({ error: "Breaking-news framing not allowed in evergreen", slug }, { status: 422 });
+        }
+        if (/\b(travel|vacation|restaurant|barbecue|tex-mex|moving guide|cost of living|mortgage calculator|home affordability|utility calculator|insurance calculator)\b/i.test(combinedText)) {
+          return Response.json({ error: "TexasDefined-owned lifestyle subject detected", slug }, { status: 422 });
         }
 
         const row = {
@@ -282,15 +257,16 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           is_ingested: true,
           kind: "evergreen",
           category: pick.category,
-          title: gen.title.slice(0, 200),
-          dek: gen.dek.slice(0, 400),
-          author: "Keep Texas Red Editorial Staff",
+          title: generated.title.slice(0, 200),
+          dek: generated.dek.slice(0, 400),
+          author: "Keep TX Red Editorial Staff",
           source_name: null as string | null,
           source_url: null as string | null,
           published_at: now.toISOString(),
-          keywords: (gen.keywords ?? []).slice(0, 20),
+          keywords: (generated.keywords ?? []).slice(0, 20),
           body_json: cleanBody,
         };
+
         enrichArticleRow(row);
 
         const { error } = await supabase.from("daily_articles").upsert(row, { onConflict: "slug" });
@@ -298,7 +274,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-evergreen")({
           console.error("evergreen insert failed", error);
           return Response.json({ error: error.message }, { status: 500 });
         }
-        return Response.json({ ok: true, slug });
+
+        return Response.json({ ok: true, slug, category: pick.category });
       },
     },
   },
