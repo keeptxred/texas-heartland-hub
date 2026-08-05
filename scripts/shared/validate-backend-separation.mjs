@@ -73,6 +73,31 @@ if(!fs.existsSync(normalizedIngest))errors.push(`Missing ${normalizedIngest}`);e
   if(!source.includes('inferKeepTxRedDomain(category, haystack)'))errors.push(`${normalizedIngest} must classify ownership from full story context.`);
   if(source.includes('inferKeepTxRedDomain(category),'))errors.push(`${normalizedIngest} must not classify ownership from the category label alone.`);
 }
+const qualityPath='src/lib/content-quality.ts';
+if(!fs.existsSync(qualityPath))errors.push(`Missing ${qualityPath}`);else{
+  const source=fs.readFileSync(qualityPath,'utf8');
+  for(const token of ['/tax-calculator','/texas/property-taxes-2026','/texas/moving-to-texas-2026'])if(source.includes(token))errors.push(`${qualityPath} still creates internal links to migrated lifestyle content: ${token}.`);
+  if(!source.includes('inferKeepTxRedDomain(row.category, text)'))errors.push(`${qualityPath} must classify publication ownership from full article text.`);
+  if(source.includes('inferKeepTxRedDomain(row.category),'))errors.push(`${qualityPath} must not classify publication ownership from category alone.`);
+}
+const economyPath='src/routes/texas-economy.tsx';
+if(!fs.existsSync(economyPath))errors.push(`Missing ${economyPath}`);else{
+  const source=fs.readFileSync(economyPath,'utf8');
+  for(const token of ['/tax-calculator','/texas-sales-tax-explained','property tax calculator'])if(source.includes(token))errors.push(`${economyPath} still promotes migrated lifestyle content: ${token}.`);
+  for(const required of ['/bills','/texas-legislature','economic policy'])if(!source.toLowerCase().includes(required.toLowerCase()))errors.push(`${economyPath} missing policy-coverage token ${required}.`);
+}
+const cityConfig='src/data/texas-cities.ts';
+const cityPage='src/components/city-page.tsx';
+if(!fs.existsSync(cityConfig))errors.push(`Missing ${cityConfig}`);else{
+  const source=fs.readFileSync(cityConfig,'utf8');
+  for(const token of ['relocationNotes','RELOCATION_FALLBACKS','Moving to Houston','Moving to Dallas','Moving to San Antonio','Moving to Austin','Moving to El Paso'])if(source.includes(token))errors.push(`${cityConfig} still defines metro pages as relocation content: ${token}.`);
+  for(const required of ['policyNotes','News, Politics & Public Policy'])if(!source.includes(required))errors.push(`${cityConfig} missing regional-policy token ${required}.`);
+}
+if(!fs.existsSync(cityPage))errors.push(`Missing ${cityPage}`);else{
+  const source=fs.readFileSync(cityPage,'utf8');
+  for(const token of ['What to evaluate before moving','Relocation notes','Tools for your','/moving-to-texas-checklist','/tax-calculator','/find-my-dmv','/find-my-school-district','All moving resources'])if(source.includes(token))errors.push(`${cityPage} still renders relocation or calculator content: ${token}.`);
+  for(const required of ['Key regional issues','Public-policy watchlist','Government and civic resources','/bills','/representatives'])if(!source.includes(required))errors.push(`${cityPage} missing regional-news token ${required}.`);
+}
 const platformDir='src/shared/texas-platform';
 if(fs.existsSync(platformDir)){
   const retired=fs.readdirSync(platformDir).filter((name)=>name.startsWith('texas-life-'));
@@ -82,4 +107,4 @@ if(fs.existsSync(platformDir)){
 }
 if(fs.existsSync('src/platform/governance-persistence.ts'))errors.push('Cross-site governance database adapter must not return.');
 if(errors.length){console.error(`KeepTXRed backend-separation validation failed (${errors.length}):`);for(const error of errors)console.error(`- ${error}`);process.exit(1)}
-console.log(`KeepTXRed ${redirects.size+dynamic.length+1} lifestyle, platform, namespace, navigation, ingestion, homepage, and authority boundaries are protected.`);
+console.log(`KeepTXRed ${redirects.size+dynamic.length+1} lifestyle, platform, namespace, navigation, ingestion, homepage, authority, economy, and metro boundaries are protected.`);
