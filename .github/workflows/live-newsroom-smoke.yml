@@ -9,6 +9,7 @@ on:
     paths:
       - 'src/lib/viral-score.ts'
       - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'src/routes/api/public/newsroom-health.ts'
       - 'src/routes/admin.coverage-gaps.tsx'
       - 'src/routes/admin.source-health.tsx'
       - 'src/components/admin/NewsCoverageGapPanel.tsx'
@@ -27,7 +28,7 @@ concurrency:
 jobs:
   smoke-live-newsroom:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
