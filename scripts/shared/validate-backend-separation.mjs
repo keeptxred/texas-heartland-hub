@@ -42,6 +42,24 @@ if(!fs.existsSync(sitemapPath))errors.push(`Missing ${sitemapPath}`);else{
   for(const path of ['/news/non-political','/texas','/texas-resources','/texas-data','/texas/property-taxes-2026','/texas/moving-to-texas-2026',...calculatorSlugs.map((s)=>`/${s}`),...lifestyleSlugs.map((s)=>`/${s}`)])if(sitemap.includes(`\"${path}\"`))errors.push(`Migrated lifestyle URL remains in sitemap: ${path}`);
   for(const token of ['topicsForSite(','journeysForSite(','TEXAS_DATASETS','RESOURCE_TYPES'])if(sitemap.includes(token))errors.push(`Sitemap still generates retired lifestyle platform URLs: ${token}`);
 }
+const navigationFiles=['src/components/site-header.tsx','src/components/site-footer.tsx'];
+for(const file of navigationFiles){
+  if(!fs.existsSync(file)){errors.push(`Missing navigation file: ${file}`);continue}
+  const source=fs.readFileSync(file,'utf8');
+  for(const token of ['/texas-living','/texas-financial-tools','/tax-calculator','Texas Living','Texas Tools'])if(source.includes(token))errors.push(`${file} still advertises migrated lifestyle destination ${token}.`);
+}
+const aboutPath='src/routes/about-keep-texas-red.tsx';
+if(!fs.existsSync(aboutPath))errors.push(`Missing ${aboutPath}`);else{
+  const source=fs.readFileSync(aboutPath,'utf8');
+  for(const token of ['/find-my-dmv','/find-my-school-district','/tax-calculator','relocation tools','people moving to Texas'])if(source.includes(token))errors.push(`${aboutPath} still presents KeepTXRed as the lifestyle platform: ${token}.`);
+  for(const required of ['/bills','/texas-legislature','/representatives','NewsMediaOrganization'])if(!source.includes(required))errors.push(`${aboutPath} missing KeepTXRed mission token ${required}.`);
+}
+const normalizedIngest='src/lib/ingest-and-normalize.functions.ts';
+if(!fs.existsSync(normalizedIngest))errors.push(`Missing ${normalizedIngest}`);else{
+  const source=fs.readFileSync(normalizedIngest,'utf8');
+  if(!source.includes('inferKeepTxRedDomain(category, haystack)'))errors.push(`${normalizedIngest} must classify ownership from full story context.`);
+  if(source.includes('inferKeepTxRedDomain(category),'))errors.push(`${normalizedIngest} must not classify ownership from the category label alone.`);
+}
 const platformDir='src/shared/texas-platform';
 if(fs.existsSync(platformDir)){
   const retired=fs.readdirSync(platformDir).filter((name)=>name.startsWith('texas-life-'));
@@ -51,4 +69,4 @@ if(fs.existsSync(platformDir)){
 }
 if(fs.existsSync('src/platform/governance-persistence.ts'))errors.push('Cross-site governance database adapter must not return.');
 if(errors.length){console.error(`KeepTXRed backend-separation validation failed (${errors.length}):`);for(const error of errors)console.error(`- ${error}`);process.exit(1)}
-console.log(`KeepTXRed ${redirects.size+dynamic.length+1} lifestyle, platform, and namespace redirects are protected; retired Texas-life modules are absent.`);
+console.log(`KeepTXRed ${redirects.size+dynamic.length+1} lifestyle, platform, namespace, navigation, and ingestion boundaries are protected.`);
