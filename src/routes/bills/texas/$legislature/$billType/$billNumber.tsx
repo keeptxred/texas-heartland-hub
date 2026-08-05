@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound, redirect } from '@tanstack/react-router';
 import { CalendarDays, ExternalLink, Landmark, Scale, Users } from 'lucide-react';
-import { billJsonLd, canonicalBillPath, getBill, getBillRelations, SITE_URL } from '@/lib/bills';
+import { billJsonLd, canonicalBillPath, getBill, SITE_URL } from '@/lib/bills';
+import { getPublicBillRelations } from '@/lib/public-bill-relations';
 import { getRelatedAuthorityContent } from '@/lib/authority-relationships';
 import { getRelatedBills } from '@/lib/related-bills';
 import { RelatedAuthorityContent } from '@/components/authority/RelatedAuthorityContent';
@@ -19,7 +20,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/$billN
     const bill = await getBill(legislature, billType, billNumber);
     if (!bill) throw notFound();
     const [relations, relatedContent, relatedBills] = await Promise.all([
-      getBillRelations(bill.id),
+      getPublicBillRelations(bill.id),
       getRelatedAuthorityContent('bill', bill.id).catch((error: any) => {
         console.error(`getRelatedAuthorityContent failed for bill ${bill.id}:`, error?.message ?? error);
         return [] as any;
