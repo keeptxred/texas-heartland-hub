@@ -13,6 +13,7 @@ const requiredFiles = [
   'supabase/migrations/20260805121500_bill_article_authority_sync.sql',
   'src/lib/authority-relationships.ts',
   'src/lib/bills.ts',
+  'src/lib/bill-subjects.ts',
   'src/lib/legislative-sitemaps.ts',
   'src/components/authority/RelatedAuthorityContent.tsx',
   'src/components/bills/BillDocumentsPanel.tsx',
@@ -144,8 +145,13 @@ if (billRoute.includes('href={`/article/${article.slug}`}')) {
   errors.push('Bill page still links related articles to legacy /article URLs instead of /news URLs');
 }
 
+const subjectData = sources.get('src/lib/bill-subjects.ts') || '';
+for (const token of ['bill_subject_relationships', "review_status', 'approved'", 'canonicalBillPath']) {
+  if (!subjectData.includes(token)) errors.push(`Bill subject data layer missing ${token}`);
+}
+
 const subjectRoute = sources.get('src/routes/bills/subject/$subjectSlug.tsx') || '';
-for (const token of ['bill_subject_relationships', 'canonicalBillPath', 'CollectionPage', 'noindex']) {
+for (const token of ['canonicalBillPath', 'CollectionPage', 'noindex']) {
   if (!subjectRoute.includes(token)) errors.push(`Bill subject page missing ${token}`);
 }
 
