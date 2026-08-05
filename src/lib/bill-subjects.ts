@@ -7,9 +7,6 @@ export type BillSubject = {
   id: string;
   name: string;
   slug: string;
-  description?: string | null;
-  source_url?: string | null;
-  updated_at?: string | null;
 };
 
 export type BillSubjectBill = Pick<
@@ -28,7 +25,7 @@ export type BillSubjectBill = Pick<
 export async function getBillSubjectBySlug(slug: string): Promise<BillSubject | null> {
   const { data, error } = await db
     .from('bill_subjects')
-    .select('id,name,slug,description,source_url,updated_at')
+    .select('id,name,slug')
     .eq('slug', slug)
     .maybeSingle();
 
