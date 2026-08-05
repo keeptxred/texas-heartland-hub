@@ -12,6 +12,8 @@ const retiredFiles = [
   'src/pages/tools/HomeAffordabilityCalculator.tsx',
   'src/pages/tools/ClosingCostCalculator.tsx',
   'src/pages/tools/TexasUtilitiesCalculator.tsx',
+  'src/components/calculators/AdditionalCalculator.tsx',
+  'src/components/calculators/CalculatorAuthorityContent.tsx',
   'src/components/moving-checklist.tsx',
   'src/lib/moving-checklist.ts',
   'src/components/vehicle-registration-guide.tsx',
@@ -97,6 +99,11 @@ const publicOwnershipFiles = [
     forbidden: ['/tax-calculator', 'Related Tools', 'Relocations', 'Real Estate'],
     required: ['Texas Business, Regulation & Economic Policy', '/bills', '/texas-legislature', '/committees'],
   },
+  {
+    path: 'src/routes/keep-texas-red.tsx',
+    forbidden: ['/tax-calculator', 'Property tax calculator by county', 'moving to Texas'],
+    required: ['/elections', '/bills', '/texas-legislature', 'government accountability'],
+  },
 ];
 
 for (const entry of publicOwnershipFiles) {
@@ -106,10 +113,46 @@ for (const entry of publicOwnershipFiles) {
   }
   const source = fs.readFileSync(entry.path, 'utf8');
   for (const token of entry.forbidden) {
-    if (source.includes(token)) errors.push(`${entry.path} restored TexasDefined-owned content: ${token}`);
+    if (source.toLowerCase().includes(token.toLowerCase())) {
+      errors.push(`${entry.path} restored TexasDefined-owned content: ${token}`);
+    }
   }
   for (const token of entry.required) {
-    if (!source.includes(token)) errors.push(`${entry.path} missing KeepTXRed ownership token: ${token}`);
+    if (!source.toLowerCase().includes(token.toLowerCase())) {
+      errors.push(`${entry.path} missing KeepTXRed ownership token: ${token}`);
+    }
+  }
+}
+
+const generatorPath = 'src/routes/api/public/hooks/generate-evergreen.ts';
+if (!fs.existsSync(generatorPath)) {
+  errors.push(`Missing ${generatorPath}`);
+} else {
+  const source = fs.readFileSync(generatorPath, 'utf8');
+  const forbidden = [
+    'Growth & Migration',
+    'Culture & Identity',
+    'Sports Culture',
+    'Texas food culture',
+    'Why more people are moving to Texas',
+    '/texas/property-taxes-2026',
+    '/texas/moving-to-texas-2026',
+    '- /tax-calculator',
+    'This is an evergreen Texas News piece about culture',
+  ];
+  for (const token of forbidden) {
+    if (source.includes(token)) errors.push(`${generatorPath} restored lifestyle generation token: ${token}`);
+  }
+  const required = [
+    'Government Accountability',
+    'Business Policy',
+    '/bills',
+    '/texas-legislature',
+    '/committees',
+    'TexasDefined-owned lifestyle subject detected',
+  ];
+  for (const token of required) {
+    if (!source.includes(token)) errors.push(`${generatorPath} missing policy-only generation token: ${token}`);
   }
 }
 
@@ -119,4 +162,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`Retired lifestyle implementations remain absent and public ownership is site-specific.`);
+console.log(`Retired lifestyle implementations remain absent and public generation ownership is site-specific.`);
