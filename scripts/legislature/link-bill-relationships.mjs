@@ -24,4 +24,14 @@ if (error) {
   process.exit(1);
 }
 
-console.log(JSON.stringify({ ok: true, billId, result: data }, null, 2));
+const { data: pruned, error: pruneError } = await supabase.rpc(
+  'prune_unapproved_bill_article_authority_edges',
+  { p_bill_id: billId },
+);
+
+if (pruneError) {
+  console.error('Unapproved bill/article authority-edge cleanup failed:', pruneError.message);
+  process.exit(1);
+}
+
+console.log(JSON.stringify({ ok: true, billId, result: data, prunedAuthorityEdges: pruned }, null, 2));
