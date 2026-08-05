@@ -13,6 +13,12 @@ const agencyEntityTypes = new Set<GovernmentEntity['entityType']>([
   'commission',
 ]);
 
+const agencySlugs = new Set(
+  GOVERNMENT_ENTITIES.filter((entity) => agencyEntityTypes.has(entity.entityType)).map(
+    (entity) => entity.slug,
+  ),
+);
+
 export function governmentEntityToAgencyAuthorityEntity(
   agency: GovernmentEntity,
 ): AuthorityEntity {
@@ -35,9 +41,9 @@ export function governmentEntityToAgencyAuthorityEntity(
     subtitle: agency.branch,
     summary: agency.overview,
     imageUrl: null,
-    relatedEntityIds: agency.relatedEntities.map((slug) =>
-      createAuthorityEntityKey('agency', slug),
-    ),
+    relatedEntityIds: agency.relatedEntities
+      .filter((slug) => agencySlugs.has(slug))
+      .map((slug) => createAuthorityEntityKey('agency', slug)),
     createdAt: null,
     updatedAt: null,
   };
