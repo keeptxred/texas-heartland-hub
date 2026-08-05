@@ -72,7 +72,7 @@ function flatten(row: QueueRow): QueueEntry {
 const SELECT = "*, content_packages(source_title, category)";
 
 export const addQueueEntryFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => AddInput.parse(d))
+  .validator((d: unknown) => AddInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; row: QueueEntry } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const client = await getAdmin();
@@ -91,7 +91,7 @@ export const addQueueEntryFn = createServerFn({ method: "POST" })
   });
 
 export const listQueueEntriesFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => TokenInput.parse(d))
+  .validator((d: unknown) => TokenInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; rows: QueueEntry[] } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const client = await getAdmin();
@@ -104,7 +104,7 @@ export const listQueueEntriesFn = createServerFn({ method: "POST" })
   });
 
 export const updateQueueStatusFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => StatusInput.parse(d))
+  .validator((d: unknown) => StatusInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const client = await getAdmin();
@@ -116,7 +116,7 @@ export const updateQueueStatusFn = createServerFn({ method: "POST" })
   });
 
 export const deleteQueueEntryFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => DeleteInput.parse(d))
+  .validator((d: unknown) => DeleteInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const client = await getAdmin();
