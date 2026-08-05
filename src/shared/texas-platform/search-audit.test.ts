@@ -4,8 +4,10 @@ import { auditSearchCases, failedSearchAuditCases } from './search-audit';
 
 describe('shared search audits', () => {
   it('summarizes passing and failing search cases', () => {
+    const representative = REPRESENTATIVE_ENTITIES.find((entity) => entity.title.includes('Schwertner'));
+    expect(representative).toBeDefined();
     const summary = auditSearchCases([
-      { query: 'mortgage calculator', minimumResults: 1 },
+      { query: representative!.title, minimumResults: 1 },
       { query: 'definitely-no-match-query', minimumResults: 1 },
     ], SHARED_ENTITIES, 'keeptxred');
 
