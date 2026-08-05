@@ -72,7 +72,7 @@ export function CityPage({
       <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
-            <h2 className="text-3xl font-bold">What to evaluate before moving</h2>
+            <h2 className="text-3xl font-bold">Key regional issues</h2>
             <div className="mt-6 grid gap-4">
               {config.coverage.map((item) => (
                 <article key={item.title} className="rounded-xl border bg-card p-5">
@@ -94,9 +94,9 @@ export function CityPage({
               </ul>
             </div>
             <div className="rounded-xl border bg-card p-6">
-              <h2 className="text-xl font-bold">Relocation notes</h2>
+              <h2 className="text-xl font-bold">Public-policy watchlist</h2>
               <ul className="mt-4 space-y-3 text-sm leading-relaxed text-muted-foreground">
-                {config.relocationNotes.map((note) => (
+                {config.policyNotes.map((note) => (
                   <li key={note}>• {note}</li>
                 ))}
               </ul>
@@ -107,12 +107,12 @@ export function CityPage({
 
       <section className="border-y bg-muted/30">
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <h2 className="text-2xl font-bold">Tools for your {config.name} move</h2>
+          <h2 className="text-2xl font-bold">Government and civic resources</h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <ToolLink href="/moving-to-texas-checklist" label="Interactive moving checklist" />
-            <ToolLink href="/tax-calculator" label="Property tax calculator" />
-            <ToolLink href="/find-my-dmv" label="Vehicle registration estimator" />
-            <ToolLink href="/find-my-school-district" label="School district finder" />
+            <ResourceLink href="/elections/2026" label="Election Central" />
+            <ResourceLink href="/bills" label="Texas bills" />
+            <ResourceLink href="/representatives" label="Texas officials" />
+            <ResourceLink href="/contact-legislators" label="Contact legislators" />
           </div>
         </div>
       </section>
@@ -122,8 +122,8 @@ export function CityPage({
           <div>
             <h2 className="text-3xl font-bold">Latest {config.name} coverage</h2>
             <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-              New regional articles appear first. Relevant archive guides fill the page only until
-              newer local coverage replaces them.
+              New regional reporting appears first. Relevant archive explainers fill remaining space
+              until newer local coverage replaces them.
             </p>
           </div>
           <Link to="/texas-news" className="text-sm font-semibold text-primary hover:underline">
@@ -164,7 +164,7 @@ export function CityPage({
 
       <section className="border-t">
         <div className="mx-auto max-w-6xl px-4 py-12">
-          <h2 className="text-2xl font-bold">Compare other Texas destinations</h2>
+          <h2 className="text-2xl font-bold">Other Texas regional coverage</h2>
           <div className="mt-5 flex flex-wrap gap-3">
             {CITY_NAVIGATION.filter((city) => city.region !== config.region).map((city) => (
               <a
@@ -176,10 +176,10 @@ export function CityPage({
               </a>
             ))}
             <a
-              href="/moving-to-texas"
+              href="/texas-news"
               className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
-              All moving resources
+              Statewide Texas news
             </a>
           </div>
         </div>
@@ -188,11 +188,11 @@ export function CityPage({
   );
 }
 
-function ToolLink({ href, label }: { href: string; label: string }) {
+function ResourceLink({ href, label }: { href: string; label: string }) {
   return (
     <a href={href} className="rounded-xl border bg-card p-5 font-semibold hover:shadow-md">
       {label}
-      <span className="mt-3 block text-sm text-primary">Open tool →</span>
+      <span className="mt-3 block text-sm text-primary">Open resource →</span>
     </a>
   );
 }
@@ -226,7 +226,7 @@ function ArticleCard({
       </div>
       <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-primary">
         <span>{category}</span>
-        {archive && <span className="text-muted-foreground">Archive guide</span>}
+        {archive && <span className="text-muted-foreground">Archive explainer</span>}
       </div>
       <h3 className="mt-2 text-lg font-bold leading-snug group-hover:text-primary">{title}</h3>
       <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">{dek}</p>
