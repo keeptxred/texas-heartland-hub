@@ -5,13 +5,24 @@ import { absUrl, toIsoDate, type UrlEntry } from '@/lib/sitemap-shared';
 const db = supabase as any;
 
 export async function billSitemapEntries(): Promise<UrlEntry[]> {
-  const { data, error } = await db.from('bills')
-    .select('legislature_number,bill_type,bill_number,last_action_date,updated_at')
-    .eq('is_active', true).order('legislature_number', { ascending: false }).limit(50000);
-  if (error) throw error;
-  return [{ loc: absUrl('/bills'), lastmod: toIsoDate(new Date()) }, ...(data ?? []).map((bill: Bill & { updated_at?: string }) => ({
-    loc: absUrl(canonicalBillPath(bill)), lastmod: toIsoDate(bill.last_action_date || bill.updated_at || new Date()),
-  }))];
+  const [{ data: bills, error: billsError }, { data: subjects, error: subjectsError }] = await Promise.all([
+    db.from('bills')
+      .select('legislature_number,bill_type,bill_number,last_action_date,updated_at')
+      .eq('is_active', true).order('legislature_number', { ascending: false }).limit(50000),
+    db.from('bill_subjects')
+      .select('slug,updated_at').order('slug').limit(5000),
+  ]);
+  if (billsError) throw billsError;
+  if (subjectsError) throw subjectsError;
+  return [
+    { loc: absUrl('/bills'), lastmod: toIsoDate(new Date()) },
+    ...(bills ?? []).map((bill: Bill & { updated_at?: string }) => ({
+      loc: absUrl(canonicalBillPath(bill)), lastmod: toIsoDate(bill.last_action_date || bill.updated_at || new Date()),
+    })),
+    ...(subjects ?? []).map((subject: any) => ({
+      loc: absUrl(`/bills/subject/${subject.slug}`), lastmod: toIsoDate(subject.updated_at || new Date()),
+    })),
+  ];
 }
 
 export async function committeeSitemapEntries(): Promise<UrlEntry[]> {
