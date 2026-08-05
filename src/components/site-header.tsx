@@ -12,7 +12,7 @@ const NAV = [
   { to: "/elections/2026", label: "Elections" },
   { to: "/bills", label: "Bills" },
   { to: "/texas-politics", label: "Politics" },
-  { to: "/texas-living", label: "Texas Living" },
+  { to: "/texas-business", label: "Business" },
   { to: "/shop", label: "Shop" },
 ] as const;
 
