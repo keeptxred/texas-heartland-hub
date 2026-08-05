@@ -20,11 +20,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
 
@@ -35,7 +35,9 @@ jobs:
         run: node scripts/elections/candidate-photo-enrichment.mjs --apply
 
       - name: Commit validated results
+        shell: bash
         run: |
+          set -euo pipefail
           TRACKED=(
             src/data/elections/2026/candidate-photos.json
             src/data/elections/2026/candidates.json
@@ -49,5 +51,16 @@ jobs:
             echo "No direct candidate photo changes."
             exit 0
           fi
+          unexpected_files="$(git diff --cached --name-only | grep -vE '^(src/data/elections/2026/(candidate-photos|candidates)\.json|artifacts/elections/candidate-photo-(report|review-queue)\.json)$' || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Refusing to publish files outside the candidate-photo allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
+          git fetch origin main
+          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
+            echo "main advanced during candidate-photo generation; refusing to publish stale data." >&2
+            exit 1
+          fi
           git commit -m "Apply verified direct candidate photos"
-          git push
+          git push origin HEAD:main
