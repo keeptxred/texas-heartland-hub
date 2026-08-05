@@ -11,6 +11,14 @@ on:
         description: Maximum seconds per subject pass
         required: false
         default: "600"
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/legislative-relationship-backfill.yml'
+      - 'scripts/legislature/run-backfill.mjs'
+      - 'scripts/legislature/report-backfill-status.mjs'
+      - 'scripts/legislature/sync-bill-subjects.mjs'
+      - 'scripts/legislature/link-bill-relationships.mjs'
   schedule:
     - cron: "20 10 * * *"
 
