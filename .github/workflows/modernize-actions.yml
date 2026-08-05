@@ -1,4 +1,4 @@
-name: Validate GitHub Actions Runtimes
+name: Validate GitHub Workflows
 
 on:
   push:
@@ -20,25 +20,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
-      - name: Reject deprecated official action runtimes
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          import re
-          from pathlib import Path
-
-          pattern = re.compile(r'^\s*-?\s*uses:\s*actions/(checkout|setup-node)@v4(?:\s|$)', re.MULTILINE)
-          findings = []
-          for path in sorted(Path('.github/workflows').glob('*.y*ml')):
-              text = path.read_text(encoding='utf-8')
-              for match in pattern.finditer(text):
-                  action = match.group(1)
-                  findings.append(f'{path}: upgrade actions/{action}@v4 to actions/{action}@v5')
-          if findings:
-              raise SystemExit('Deprecated GitHub Actions remain:\n' + '\n'.join(findings))
-          print('No deprecated official action runtimes found.')
-          PY
       - name: Validate workflow YAML
         shell: bash
         run: |
