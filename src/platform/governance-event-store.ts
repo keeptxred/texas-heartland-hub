@@ -9,6 +9,7 @@ import {
   type PublicationGateResult,
   type PublicationOverride,
 } from '@/shared/platform-core';
+import { governancePersistenceConfigured, loadGovernanceEvents, persistGovernanceEvents } from './governance-persistence';
 
 const MAX_EVENTS = 2_000;
 const globalStore = globalThis as typeof globalThis & { __keepTxRedGovernanceEvents?: GovernanceEvent[] };
@@ -18,7 +19,11 @@ export function appendGovernanceEvent(event: GovernanceEvent) {
   const validation = validateGovernanceEvent(event);
   if (!validation.valid) throw new Error(`Invalid governance event: ${validation.errors.join(' ')}`);
   const events = store();
-  if (!events.some((existing) => existing.id === event.id)) events.push(structuredClone(event));
+  if (!events.some((existing) => existing.id === event.id)) {
+    const copy = structuredClone(event);
+    events.push(copy);
+    void persistGovernanceEvents([copy]).catch((error) => console.error('governance persistence failed', error));
+  }
   if (events.length > MAX_EVENTS) events.splice(0, events.length - MAX_EVENTS);
   return event.id;
 }
