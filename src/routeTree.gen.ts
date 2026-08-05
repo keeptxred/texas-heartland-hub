@@ -212,6 +212,7 @@ import { Route as ApiGovernanceHealthRouteImport } from './routes/api.governance
 import { Route as ApiContentDispositionRouteImport } from './routes/api.content-disposition'
 import { Route as AdminShopProductsRouteImport } from './routes/admin/shop-products'
 import { Route as AdminGovernanceHealthRouteImport } from './routes/admin/governance-health'
+import { Route as AdminCoverageGapsRouteImport } from './routes/admin.coverage-gaps'
 import { Route as TexasLegislatureSessionsIndexRouteImport } from './routes/texas-legislature.sessions.index'
 import { Route as TexasLegislatureCommitteesIndexRouteImport } from './routes/texas-legislature.committees.index'
 import { Route as ElectionsDistrictsIndexRouteImport } from './routes/elections.districts.index'
@@ -237,6 +238,7 @@ import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elec
 import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
 import { Route as BillsSubjectSubjectSlugRouteImport } from './routes/bills/subject/$subjectSlug'
+import { Route as ApiPublicNewsroomHealthRouteImport } from './routes/api/public/newsroom-health'
 import { Route as ApiAdminShopProductsRouteImport } from './routes/api/admin/shop-products'
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
@@ -247,6 +249,7 @@ import { Route as AdminBillsRelationshipsRouteImport } from './routes/admin/bill
 import { Route as AdminBillsOpportunitiesRouteImport } from './routes/admin/bills/opportunities'
 import { Route as AdminBillsEnrichmentRouteImport } from './routes/admin/bills/enrichment'
 import { Route as AdminBillsEditorialRouteImport } from './routes/admin/bills/editorial'
+import { Route as AdminBillsBackfillRouteImport } from './routes/admin/bills/backfill'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -1336,6 +1339,11 @@ const AdminGovernanceHealthRoute = AdminGovernanceHealthRouteImport.update({
   path: '/governance-health',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminCoverageGapsRoute = AdminCoverageGapsRouteImport.update({
+  id: '/coverage-gaps',
+  path: '/coverage-gaps',
+  getParentRoute: () => AdminRoute,
+} as any)
 const TexasLegislatureSessionsIndexRoute =
   TexasLegislatureSessionsIndexRouteImport.update({
     id: '/',
@@ -1471,6 +1479,11 @@ const BillsSubjectSubjectSlugRoute = BillsSubjectSubjectSlugRouteImport.update({
   path: '/subject/$subjectSlug',
   getParentRoute: () => BillsRoute,
 } as any)
+const ApiPublicNewsroomHealthRoute = ApiPublicNewsroomHealthRouteImport.update({
+  id: '/api/public/newsroom-health',
+  path: '/api/public/newsroom-health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAdminShopProductsRoute = ApiAdminShopProductsRouteImport.update({
   id: '/api/admin/shop-products',
   path: '/api/admin/shop-products',
@@ -1520,6 +1533,11 @@ const AdminBillsEnrichmentRoute = AdminBillsEnrichmentRouteImport.update({
 const AdminBillsEditorialRoute = AdminBillsEditorialRouteImport.update({
   id: '/bills/editorial',
   path: '/bills/editorial',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBillsBackfillRoute = AdminBillsBackfillRouteImport.update({
+  id: '/bills/backfill',
+  path: '/bills/backfill',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminExploreImportsIndexRoute =
@@ -1770,6 +1788,7 @@ export interface FileRoutesByFullPath {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
   '/api/content-disposition': typeof ApiContentDispositionRoute
@@ -1874,6 +1893,7 @@ export interface FileRoutesByFullPath {
   '/texas-legislature/': typeof TexasLegislatureIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
+  '/admin/bills/backfill': typeof AdminBillsBackfillRoute
   '/admin/bills/editorial': typeof AdminBillsEditorialRoute
   '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
   '/admin/bills/opportunities': typeof AdminBillsOpportunitiesRoute
@@ -1884,6 +1904,7 @@ export interface FileRoutesByFullPath {
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
+  '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2027,6 +2048,7 @@ export interface FileRoutesByTo {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
   '/api/content-disposition': typeof ApiContentDispositionRoute
@@ -2128,6 +2150,7 @@ export interface FileRoutesByTo {
   '/texas-legislature': typeof TexasLegislatureIndexRoute
   '/texas-news': typeof TexasNewsIndexRoute
   '/texas-sports': typeof TexasSportsIndexRoute
+  '/admin/bills/backfill': typeof AdminBillsBackfillRoute
   '/admin/bills/editorial': typeof AdminBillsEditorialRoute
   '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
   '/admin/bills/opportunities': typeof AdminBillsOpportunitiesRoute
@@ -2138,6 +2161,7 @@ export interface FileRoutesByTo {
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
+  '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2290,6 +2314,7 @@ export interface FileRoutesById {
   '/texas-utility-cost-calculator': typeof TexasUtilityCostCalculatorRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/voting-locations': typeof VotingLocationsRoute
+  '/admin/coverage-gaps': typeof AdminCoverageGapsRoute
   '/admin/governance-health': typeof AdminGovernanceHealthRoute
   '/admin/shop-products': typeof AdminShopProductsRoute
   '/api/content-disposition': typeof ApiContentDispositionRoute
@@ -2394,6 +2419,7 @@ export interface FileRoutesById {
   '/texas-legislature/': typeof TexasLegislatureIndexRoute
   '/texas-news/': typeof TexasNewsIndexRoute
   '/texas-sports/': typeof TexasSportsIndexRoute
+  '/admin/bills/backfill': typeof AdminBillsBackfillRoute
   '/admin/bills/editorial': typeof AdminBillsEditorialRoute
   '/admin/bills/enrichment': typeof AdminBillsEnrichmentRoute
   '/admin/bills/opportunities': typeof AdminBillsOpportunitiesRoute
@@ -2404,6 +2430,7 @@ export interface FileRoutesById {
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
+  '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates_/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2557,6 +2584,7 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/coverage-gaps'
     | '/admin/governance-health'
     | '/admin/shop-products'
     | '/api/content-disposition'
@@ -2661,6 +2689,7 @@ export interface FileRouteTypes {
     | '/texas-legislature/'
     | '/texas-news/'
     | '/texas-sports/'
+    | '/admin/bills/backfill'
     | '/admin/bills/editorial'
     | '/admin/bills/enrichment'
     | '/admin/bills/opportunities'
@@ -2671,6 +2700,7 @@ export interface FileRouteTypes {
     | '/admin/elections/races'
     | '/admin/elections/results'
     | '/api/admin/shop-products'
+    | '/api/public/newsroom-health'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -2814,6 +2844,7 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/coverage-gaps'
     | '/admin/governance-health'
     | '/admin/shop-products'
     | '/api/content-disposition'
@@ -2915,6 +2946,7 @@ export interface FileRouteTypes {
     | '/texas-legislature'
     | '/texas-news'
     | '/texas-sports'
+    | '/admin/bills/backfill'
     | '/admin/bills/editorial'
     | '/admin/bills/enrichment'
     | '/admin/bills/opportunities'
@@ -2925,6 +2957,7 @@ export interface FileRouteTypes {
     | '/admin/elections/races'
     | '/admin/elections/results'
     | '/api/admin/shop-products'
+    | '/api/public/newsroom-health'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3076,6 +3109,7 @@ export interface FileRouteTypes {
     | '/texas-utility-cost-calculator'
     | '/unsubscribe'
     | '/voting-locations'
+    | '/admin/coverage-gaps'
     | '/admin/governance-health'
     | '/admin/shop-products'
     | '/api/content-disposition'
@@ -3180,6 +3214,7 @@ export interface FileRouteTypes {
     | '/texas-legislature/'
     | '/texas-news/'
     | '/texas-sports/'
+    | '/admin/bills/backfill'
     | '/admin/bills/editorial'
     | '/admin/bills/enrichment'
     | '/admin/bills/opportunities'
@@ -3190,6 +3225,7 @@ export interface FileRouteTypes {
     | '/admin/elections/races'
     | '/admin/elections/results'
     | '/api/admin/shop-products'
+    | '/api/public/newsroom-health'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates_/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3374,6 +3410,7 @@ export interface RootRouteChildren {
   VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
   ApiAdminShopProductsRoute: typeof ApiAdminShopProductsRoute
+  ApiPublicNewsroomHealthRoute: typeof ApiPublicNewsroomHealthRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
   ApiPublicExploreAutocompleteRoute: typeof ApiPublicExploreAutocompleteRoute
@@ -4823,6 +4860,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGovernanceHealthRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/coverage-gaps': {
+      id: '/admin/coverage-gaps'
+      path: '/coverage-gaps'
+      fullPath: '/admin/coverage-gaps'
+      preLoaderRoute: typeof AdminCoverageGapsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/texas-legislature/sessions/': {
       id: '/texas-legislature/sessions/'
       path: '/'
@@ -4998,6 +5042,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BillsSubjectSubjectSlugRouteImport
       parentRoute: typeof BillsRoute
     }
+    '/api/public/newsroom-health': {
+      id: '/api/public/newsroom-health'
+      path: '/api/public/newsroom-health'
+      fullPath: '/api/public/newsroom-health'
+      preLoaderRoute: typeof ApiPublicNewsroomHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/admin/shop-products': {
       id: '/api/admin/shop-products'
       path: '/api/admin/shop-products'
@@ -5066,6 +5117,13 @@ declare module '@tanstack/react-router' {
       path: '/bills/editorial'
       fullPath: '/admin/bills/editorial'
       preLoaderRoute: typeof AdminBillsEditorialRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/bills/backfill': {
+      id: '/admin/bills/backfill'
+      path: '/bills/backfill'
+      fullPath: '/admin/bills/backfill'
+      preLoaderRoute: typeof AdminBillsBackfillRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/explore/imports/': {
@@ -5247,8 +5305,10 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminCoverageGapsRoute: typeof AdminCoverageGapsRoute
   AdminGovernanceHealthRoute: typeof AdminGovernanceHealthRoute
   AdminShopProductsRoute: typeof AdminShopProductsRoute
+  AdminBillsBackfillRoute: typeof AdminBillsBackfillRoute
   AdminBillsEditorialRoute: typeof AdminBillsEditorialRoute
   AdminBillsEnrichmentRoute: typeof AdminBillsEnrichmentRoute
   AdminBillsOpportunitiesRoute: typeof AdminBillsOpportunitiesRoute
@@ -5263,8 +5323,10 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCoverageGapsRoute: AdminCoverageGapsRoute,
   AdminGovernanceHealthRoute: AdminGovernanceHealthRoute,
   AdminShopProductsRoute: AdminShopProductsRoute,
+  AdminBillsBackfillRoute: AdminBillsBackfillRoute,
   AdminBillsEditorialRoute: AdminBillsEditorialRoute,
   AdminBillsEnrichmentRoute: AdminBillsEnrichmentRoute,
   AdminBillsOpportunitiesRoute: AdminBillsOpportunitiesRoute,
@@ -5802,6 +5864,7 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
   ApiAdminShopProductsRoute: ApiAdminShopProductsRoute,
+  ApiPublicNewsroomHealthRoute: ApiPublicNewsroomHealthRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
   ApiPublicExploreAutocompleteRoute: ApiPublicExploreAutocompleteRoute,
