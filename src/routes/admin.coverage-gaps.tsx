@@ -9,7 +9,7 @@ export const Route = createFileRoute("/admin/coverage-gaps")({
   head: () => ({
     meta: [
       { title: "Newsroom Coverage QA — Keep TX Red Admin" },
-      { name: "robots", content: "noindex, nofollow" },
+      { name: "robots", content: "noindex, follow" },
     ],
   }),
   component: CoverageGapsPage,
