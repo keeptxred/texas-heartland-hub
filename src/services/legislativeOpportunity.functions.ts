@@ -20,7 +20,7 @@ const ListInput = z.object({
 });
 
 export const listLegislativeOpportunities = createServerFn({ method: 'POST' })
-  .inputValidator((input) => ListInput.parse(input))
+  .validator((input) => ListInput.parse(input))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     const admin = await getAdmin();
@@ -42,7 +42,7 @@ const UpdateInput = z.object({
 });
 
 export const updateLegislativeOpportunity = createServerFn({ method: 'POST' })
-  .inputValidator((input) => UpdateInput.parse(input))
+  .validator((input) => UpdateInput.parse(input))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     const admin = await getAdmin();
@@ -55,7 +55,7 @@ export const updateLegislativeOpportunity = createServerFn({ method: 'POST' })
   });
 
 export const refreshLegislativeOpportunities = createServerFn({ method: 'POST' })
-  .inputValidator((input) => z.object({ token: z.string().min(1), sinceDays: z.number().int().positive().max(365).default(30) }).parse(input))
+  .validator((input) => z.object({ token: z.string().min(1), sinceDays: z.number().int().positive().max(365).default(30) }).parse(input))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     const admin = await getAdmin();
