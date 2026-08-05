@@ -13,6 +13,7 @@ on:
       - "tests/elections/**"
       - "playwright.elections.config.ts"
       - "package.json"
+      - "bun.lock"
       - ".github/workflows/election-central-mobile.yml"
   push:
     branches:
@@ -28,6 +29,7 @@ on:
       - "tests/elections/**"
       - "playwright.elections.config.ts"
       - "package.json"
+      - "bun.lock"
       - ".github/workflows/election-central-mobile.yml"
   workflow_dispatch:
 
@@ -45,34 +47,33 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
         with:
-          node-version: 22
+          fetch-depth: 0
 
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --reporter=silent
+        run: bun install --frozen-lockfile
 
       - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
+        run: bun x playwright install --with-deps chromium
 
       - name: Build production application
         id: build
         continue-on-error: true
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
-        run: pnpm build
+        run: bun run build
 
       - name: Run mobile browser smoke tests
         id: mobile_tests
         continue-on-error: true
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
-        run: pnpm elections:test:mobile
+        run: bun run elections:test:mobile
 
       - name: Record and enforce mobile QA result
         if: always()
@@ -91,7 +92,6 @@ jobs:
             result=1
           fi
           if [[ "$EVENT_NAME" == "push" || "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            git restore --worktree .
             node --input-type=module <<'NODE'
             import fs from "node:fs";
             const checks = {
@@ -99,7 +99,7 @@ jobs:
               mobileTests: process.env.MOBILE_OUTCOME,
             };
             fs.writeFileSync(
-              ".github/election-mobile-status.json",
+              "/tmp/election-mobile-status.json",
               `${JSON.stringify({
                 updatedAt: new Date().toISOString(),
                 conclusion: Object.values(checks).every((value) => value === "success")
@@ -114,14 +114,35 @@ jobs:
                 homepageTakeoverEnabledDuringTest: false,
               }, null, 2)}\n`,
             );
-          NODE
+            NODE
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add .github/election-mobile-status.json
-            if ! git diff --cached --quiet; then
+            published=false
+            for attempt in 1 2 3; do
+              git fetch origin main
+              git reset --hard origin/main
+              cp /tmp/election-mobile-status.json .github/election-mobile-status.json
+              git add .github/election-mobile-status.json
+              if git diff --cached --quiet; then
+                published=true
+                break
+              fi
+              unexpected=$(git diff --cached --name-only | grep -v '^.github/election-mobile-status.json$' || true)
+              if [[ -n "$unexpected" ]]; then
+                echo "Refusing to publish unexpected files:"
+                echo "$unexpected"
+                exit 1
+              fi
               git commit -m "Record Election Central mobile QA"
-              git pull --rebase origin main
-              git push origin HEAD:main
+              if git push origin HEAD:main; then
+                published=true
+                break
+              fi
+              echo "Mobile QA status push conflicted; retrying from latest main ($attempt/3)."
+            done
+            if [[ "$published" != "true" ]]; then
+              echo "Unable to publish Election Central mobile QA status after three attempts."
+              exit 1
             fi
           fi
           exit $result
