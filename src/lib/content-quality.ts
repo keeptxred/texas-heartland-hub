@@ -65,8 +65,8 @@ export type InternalLink = {
 
 const CATEGORY_HUB: Record<string, InternalLink[]> = {
   "Tax & Spending": [
-    { label: "Texas Property Tax Calculator", href: "/tax-calculator", kind: "resource" },
-    { label: "Property Taxes in Texas (2026)", href: "/texas/property-taxes-2026", kind: "evergreen" },
+    { label: "Texas Legislature", href: "/texas-legislature", kind: "hub" },
+    { label: "Texas Bills", href: "/bills", kind: "resource" },
   ],
   Elections: [
     { label: "Register to Vote in Texas", href: "/register-to-vote", kind: "resource" },
@@ -87,8 +87,8 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
     { label: "Texas Economy", href: "/texas-economy", kind: "hub" },
   ],
   Economy: [{ label: "Texas Economy", href: "/texas-economy", kind: "hub" }],
-  Housing: [{ label: "Moving to Texas (2026)", href: "/texas/moving-to-texas-2026", kind: "evergreen" }],
-  "Growth & Migration": [{ label: "Moving to Texas (2026)", href: "/texas/moving-to-texas-2026", kind: "evergreen" }],
+  Housing: [{ label: "Texas Economy", href: "/texas-economy", kind: "hub" }],
+  "Growth & Migration": [{ label: "Texas Economy", href: "/texas-economy", kind: "hub" }],
   Education: [{ label: "Laws to Know", href: "/laws-to-know", kind: "resource" }],
   Politics: [{ label: "Texas Politics", href: "/texas-politics", kind: "hub" }],
   Laws: [
@@ -99,7 +99,7 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
   NFL: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
   MLB: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
   NBA: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
-  "Non-Political": [{ label: "Texas News", href: "/texas-news", kind: "hub" }],
+  "Non-Political": [{ label: "Latest Texas News", href: "/news", kind: "hub" }],
 };
 
 const ALWAYS_AVAILABLE: InternalLink[] = [
@@ -123,11 +123,11 @@ export function pickInternalLinks(input: {
   (CATEGORY_HUB[cat] ?? []).forEach(push);
   const hay = `${input.title ?? ""} ${(input.keywords ?? []).join(" ")}`.toLowerCase();
   if (/property tax|appraisal|homestead/.test(hay)) {
-    push({ label: "Texas Property Tax Calculator", href: "/tax-calculator", kind: "resource" });
-    push({ label: "Property Taxes in Texas (2026)", href: "/texas/property-taxes-2026", kind: "evergreen" });
+    push({ label: "Texas Legislature", href: "/texas-legislature", kind: "hub" });
+    push({ label: "Texas Bills", href: "/bills", kind: "resource" });
   }
   if (/vote|ballot|election|primary/.test(hay)) push({ label: "Register to Vote in Texas", href: "/register-to-vote", kind: "resource" });
-  if (/moving|relocat|newcomer/.test(hay)) push({ label: "Moving to Texas (2026)", href: "/texas/moving-to-texas-2026", kind: "evergreen" });
+  if (/moving|relocat|newcomer|housing market/.test(hay)) push({ label: "Texas Economy", href: "/texas-economy", kind: "hub" });
   ALWAYS_AVAILABLE.forEach(push);
   return out.slice(0, 5);
 }
@@ -223,16 +223,18 @@ export function enrichArticleRow<T extends QualityRow>(row: T): T {
   const proposedUrl = row.internal_url?.startsWith("http")
     ? row.internal_url
     : `https://keeptxred.com${row.internal_url ?? `/news/${row.slug}`}`;
+  const text = `${row.title ?? ""} ${row.dek ?? ""} ${bodyToText(row)}`;
+
   assertKeepTxRedPublication({
     id: row.slug,
     title: row.title ?? row.slug,
-    domain: inferKeepTxRedDomain(row.category),
+    domain: inferKeepTxRedDomain(row.category, text),
     sourceSite: row.source_url?.includes("texasdefined.com") ? "TexasDefined" : "KeepTXRed",
     sourceCanonicalUrl: row.source_url ?? proposedUrl,
     proposedUrl,
+    writer: `content-quality:${row.kind ?? "unknown"}`,
   });
 
-  const text = `${row.title ?? ""} ${row.dek ?? ""} ${bodyToText(row)}`;
   const regions = classifyRegions(text);
   const impact = buildTexasImpactSummary(text, regions);
   const affiliate = detectAffiliateCategory(text);
