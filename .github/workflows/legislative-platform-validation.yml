@@ -6,9 +6,12 @@ on:
       - 'package.json'
       - 'src/routes/bills/**'
       - 'src/routes/admin/bills/**'
+      - 'src/routes/news.$slug.tsx'
       - 'src/components/bills/**'
+      - 'src/components/newsletter-signup.tsx'
       - 'src/lib/bills.ts'
       - 'src/lib/bill-subjects.ts'
+      - 'src/lib/article-bills.ts'
       - 'src/lib/legislative-sitemaps.ts'
       - 'scripts/legislature/**'
       - 'supabase/migrations/**bill**'
@@ -20,9 +23,12 @@ on:
       - 'package.json'
       - 'src/routes/bills/**'
       - 'src/routes/admin/bills/**'
+      - 'src/routes/news.$slug.tsx'
       - 'src/components/bills/**'
+      - 'src/components/newsletter-signup.tsx'
       - 'src/lib/bills.ts'
       - 'src/lib/bill-subjects.ts'
+      - 'src/lib/article-bills.ts'
       - 'src/lib/legislative-sitemaps.ts'
       - 'scripts/legislature/**'
       - 'supabase/migrations/**bill**'
@@ -45,6 +51,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Validate legislative architecture
         run: bun run legislature:validate
+      - name: Validate article-to-bill display
+        run: node scripts/legislature/validate-article-bill-display.mjs
       - name: Generate routes and typecheck
         run: bun run typecheck
       - name: Production build
