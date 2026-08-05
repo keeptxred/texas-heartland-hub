@@ -12,6 +12,7 @@ on:
       - 'src/lib/bills.ts'
       - 'src/lib/bill-subjects.ts'
       - 'src/lib/article-bills.ts'
+      - 'src/lib/bill-fiscal-impact.ts'
       - 'src/lib/legislative-sitemaps.ts'
       - 'scripts/legislature/**'
       - 'supabase/migrations/**bill**'
@@ -29,6 +30,7 @@ on:
       - 'src/lib/bills.ts'
       - 'src/lib/bill-subjects.ts'
       - 'src/lib/article-bills.ts'
+      - 'src/lib/bill-fiscal-impact.ts'
       - 'src/lib/legislative-sitemaps.ts'
       - 'scripts/legislature/**'
       - 'supabase/migrations/**bill**'
@@ -53,6 +55,8 @@ jobs:
         run: bun run legislature:validate
       - name: Validate article-to-bill display
         run: node scripts/legislature/validate-article-bill-display.mjs
+      - name: Validate bill fiscal impact display
+        run: node scripts/legislature/validate-bill-fiscal-impact.mjs
       - name: Generate routes and typecheck
         run: bun run typecheck
       - name: Production build
