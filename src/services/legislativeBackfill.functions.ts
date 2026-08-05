@@ -1,5 +1,4 @@
 import { createServerFn } from '@tanstack/react-start';
-import { spawn } from 'node:child_process';
 import { z } from 'zod';
 
 type LooseClient = {
@@ -77,7 +76,9 @@ async function getStatus(admin: LooseClient, session: string) {
   };
 }
 
-function runSubjectPass(session: string, maxSeconds: number, limit: number): Promise<{ stdout: string; stderr: string }> {
+async function runSubjectPass(session: string, maxSeconds: number, limit: number): Promise<{ stdout: string; stderr: string }> {
+  const { spawn } = await import('node:child_process');
+
   return new Promise((resolve, reject) => {
     const args = [
       'scripts/legislature/sync-bill-subjects.mjs',
