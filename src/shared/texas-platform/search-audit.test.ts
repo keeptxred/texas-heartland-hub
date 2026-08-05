@@ -8,7 +8,7 @@ describe('shared search audits', () => {
     expect(representative).toBeDefined();
     const summary = auditSearchCases([
       { query: representative!.title, minimumResults: 1 },
-      { query: 'definitely-no-match-query', minimumResults: 1 },
+      { query: 'definitely-no-match-query', expectedEntityIds: ['resource:intentionally-missing'] },
     ], SHARED_ENTITIES, 'keeptxred');
 
     expect(summary.total).toBe(2);
