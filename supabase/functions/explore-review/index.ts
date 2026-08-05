@@ -229,11 +229,12 @@ async function promoteRecord(
       source_external_id: record.external_id,
     },
   };
-  if (existingLocation) {
-    await client.from("explore_locations").update(locationValues).eq("id", existingLocation.id);
-  } else {
-    await client.from("explore_locations").insert(locationValues);
-  }
+  const locationWrite = existingLocation
+    ? await client.from("explore_locations").update(locationValues).eq("id", existingLocation.id)
+    : await client.from("explore_locations").insert(locationValues);
+  // Coordinates in explore_locations are part of the public contract, so a
+  // failed location write is a hard failure rather than a silent gap.
+  if (locationWrite.error) throw new Error(`location write failed: ${locationWrite.error.message}`);
 
   // Provenance: authoritative source + retrieval/verification timestamps.
   const source = record.explore_import_sources as Record<string, unknown> | null;
@@ -274,7 +275,7 @@ async function promoteRecord(
 
   // Profile tables for park-like and lake-like destinations.
   if (PARK_TYPES.has(entityTypeKey)) {
-    await client.from("explore_park_profiles").upsert(
+    const parkWrite = await client.from("explore_park_profiles").upsert(
       {
         entity_id: entityId,
         park_type: PARK_TYPE_BY_ENTITY_TYPE[entityTypeKey] ?? "other",
@@ -287,8 +288,9 @@ async function promoteRecord(
       },
       { onConflict: "entity_id" },
     );
+    if (parkWrite.error) console.error("park profile write failed", parkWrite.error.message);
   } else if (LAKE_TYPES.has(entityTypeKey)) {
-    await client.from("explore_lake_profiles").upsert(
+    const lakeWrite = await client.from("explore_lake_profiles").upsert(
       {
         entity_id: entityId,
         reservoir: entityTypeKey === "reservoir",
@@ -299,6 +301,7 @@ async function promoteRecord(
       },
       { onConflict: "entity_id" },
     );
+    if (lakeWrite.error) console.error("lake profile write failed", lakeWrite.error.message);
   }
 
   // Category: one per entity type key, created on demand and marked primary.
