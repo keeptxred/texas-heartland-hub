@@ -1,0 +1,41 @@
+name: Validate Texas News Coverage
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/lib/viral-score.ts'
+      - 'src/lib/viral-score.test.ts'
+      - 'src/lib/nlp.ts'
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'supabase/migrations/*news*coverage*.sql'
+      - '.github/workflows/news-coverage-validation.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/lib/viral-score.ts'
+      - 'src/lib/viral-score.test.ts'
+      - 'src/lib/nlp.ts'
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'supabase/migrations/*news*coverage*.sql'
+      - '.github/workflows/news-coverage-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-news-coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Run statewide coverage regression tests
+        run: npx vitest run src/lib/viral-score.test.ts
