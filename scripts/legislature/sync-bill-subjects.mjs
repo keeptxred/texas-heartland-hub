@@ -7,8 +7,9 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
-const IMPORT_VERSION = 1;
+const IMPORT_VERSION = 2;
 const SOURCE_KEY = 'texas-legislature-online';
+const SUBJECT_SOURCE = 'official-tlo-subject-record-v1';
 const execFileAsync = promisify(execFile);
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
 const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -178,7 +179,20 @@ for (const session of sessions) {
       const savedSubjects = await upsert('bill_subjects', subjects, 'slug');
       const relationships = savedSubjects
         .filter((subject) => subject.id)
-        .map((subject) => ({ bill_id: bill.id, subject_id: subject.id }));
+        .map((subject) => ({
+          bill_id: bill.id,
+          subject_id: subject.id,
+          confidence: 1.000,
+          source: SUBJECT_SOURCE,
+          is_manual: false,
+          review_status: 'approved',
+          evidence: {
+            source: 'official-tlo-bill-history',
+            source_url: record.source_url,
+            subject_name: subject.name,
+          },
+          updated_at: new Date().toISOString(),
+        }));
       await upsert('bill_subject_relationships', relationships, 'bill_id,subject_id');
       await markChecked(record, relationships.length);
 
