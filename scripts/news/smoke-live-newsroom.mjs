@@ -27,13 +27,15 @@ async function retry(label, fn, attempts = 6, delayMs = 15000) {
   throw lastError;
 }
 
-async function checkPage(path, expectedText) {
+async function checkPage(path, expectedTexts) {
   const response = await fetchWithTimeout(`${baseUrl}${path}`, {
     headers: { "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
   });
   if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
   const body = await response.text();
-  if (!body.includes(expectedText)) throw new Error(`${path} did not contain expected marker: ${expectedText}`);
+  for (const expectedText of expectedTexts) {
+    if (!body.includes(expectedText)) throw new Error(`${path} did not contain expected marker: ${expectedText}`);
+  }
   console.log(`OK ${path} (${response.status})`);
 }
 
@@ -85,10 +87,7 @@ async function checkIngestion() {
   console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched ?? "n/a"} inserted=${payload.inserted ?? "n/a"}`);
 }
 
-await Promise.all([
-  retry("coverage-gaps route", () => checkPage("/admin/coverage-gaps", "Coverage Gaps")),
-  retry("source-health route", () => checkPage("/admin/source-health", "Source Health")),
-]);
+await retry("newsroom QA route", () => checkPage("/admin/coverage-gaps", ["Coverage Gaps", "Source Health"]));
 await retry("newsroom-health endpoint", checkNewsroomHealth);
 await checkIngestion();
 console.log(`Live newsroom smoke check passed for ${baseUrl}`);
