@@ -19,7 +19,7 @@ const ListInput = z.object({
 });
 
 export const listBillRelationshipReviews = createServerFn({ method: 'POST' })
-  .inputValidator((data: unknown) => ListInput.parse(data))
+  .validator((data: unknown) => ListInput.parse(data))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     const admin = await getAdmin();
@@ -59,7 +59,7 @@ const ReviewInput = z.object({
 });
 
 export const reviewBillRelationship = createServerFn({ method: 'POST' })
-  .inputValidator((data: unknown) => ReviewInput.parse(data))
+  .validator((data: unknown) => ReviewInput.parse(data))
   .handler(async ({ data }) => {
     if (!authOk(data.token)) return { ok: false as const, error: 'Unauthorized' };
     const admin = await getAdmin();
