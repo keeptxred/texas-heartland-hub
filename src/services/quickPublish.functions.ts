@@ -84,7 +84,7 @@ function validateArticleUrl(raw: unknown): string | null {
 }
 
 export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => Input.parse(d))
+  .validator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<QuickPublishResult> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     console.log("[quickPublish] incoming", {
