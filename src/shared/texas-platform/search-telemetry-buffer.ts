@@ -56,7 +56,8 @@ export function createBufferedSearchTelemetrySink(
 
     const batch = queue.slice(0, batchSize);
     queue = queue.slice(batch.length);
-    inFlight = Promise.resolve(options.write(batch))
+    inFlight = Promise.resolve()
+      .then(() => options.write(batch))
       .then(() => batch.length)
       .catch((error) => {
         queue = [...batch, ...queue];
