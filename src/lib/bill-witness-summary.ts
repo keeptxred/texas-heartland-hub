@@ -13,6 +13,8 @@ type WitnessMetadata = {
   witnesses?: WitnessRecord[] | null;
 };
 
+type WitnessPosition = 'for' | 'against' | 'on' | 'other';
+
 export type BillWitnessSummary = {
   label: string;
   committee: string | null;
@@ -26,7 +28,7 @@ export type BillWitnessSummary = {
   witnesses: Array<{
     name: string;
     organization: string | null;
-    position: 'for' | 'against' | 'on' | 'other';
+    position: WitnessPosition;
     testimonyType: string | null;
   }>;
 };
@@ -49,9 +51,10 @@ export function getLatestBillWitnessSummary(documents: LegislativeDocument[]): B
       const name = String(row?.name ?? '').trim();
       if (!name) return null;
       const rawPosition = String(row?.position ?? '').trim().toLowerCase();
-      const position = rawPosition === 'for' || rawPosition === 'against' || rawPosition === 'on'
-        ? rawPosition
-        : 'other';
+      const position: WitnessPosition =
+        rawPosition === 'for' || rawPosition === 'against' || rawPosition === 'on'
+          ? rawPosition
+          : 'other';
       return {
         name,
         organization: String(row?.organization ?? '').trim() || null,
