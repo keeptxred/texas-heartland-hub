@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { readFile, readdir } from "node:fs/promises";
 import { extname, join } from "node:path";
 import process from "node:process";
@@ -131,6 +132,13 @@ if (errors.length) {
   console.error(`SEO/AEO validation failed (${errors.length}):`);
   for (const error of errors) console.error(`  - ${error}`);
   process.exit(1);
+}
+
+for (const validator of [
+  "scripts/shared/validate-backend-separation.mjs",
+  "scripts/shared/validate-retired-lifestyle-code.mjs",
+]) {
+  execFileSync(process.execPath, [validator], { cwd: ROOT, stdio: "inherit" });
 }
 
 console.log(`SEO/AEO validation passed across ${files.length} source files${warnings.length ? ` with ${warnings.length} warning(s)` : ""}.`);
