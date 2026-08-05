@@ -7,6 +7,7 @@ on:
       - 'src/routes/admin/bills/**'
       - 'src/components/bills/**'
       - 'src/lib/bills.ts'
+      - 'src/lib/bill-subjects.ts'
       - 'src/lib/legislative-sitemaps.ts'
       - 'scripts/legislature/**'
       - 'supabase/migrations/**bill**'
@@ -19,6 +20,7 @@ on:
       - 'src/routes/admin/bills/**'
       - 'src/components/bills/**'
       - 'src/lib/bills.ts'
+      - 'src/lib/bill-subjects.ts'
       - 'src/lib/legislative-sitemaps.ts'
       - 'scripts/legislature/**'
       - 'supabase/migrations/**bill**'
@@ -35,12 +37,13 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+          bun-version: latest
+      - run: bun install --frozen-lockfile
       - name: Validate legislative architecture
-        run: npm run legislature:validate
-      - name: Build application and generated routes
-        run: npm run build:dev
+        run: bun run legislature:validate
+      - name: Generate routes and typecheck
+        run: bun run typecheck
+      - name: Production build
+        run: bun run build
