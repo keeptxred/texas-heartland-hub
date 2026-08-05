@@ -34,7 +34,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: election-central-mobile-${{ github.ref }}
@@ -47,8 +47,6 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
@@ -75,74 +73,67 @@ jobs:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
         run: bun run elections:test:mobile
 
-      - name: Record and enforce mobile QA result
+      - name: Create mobile QA report
         if: always()
         shell: bash
         env:
           BUILD_OUTCOME: ${{ steps.build.outcome }}
           MOBILE_OUTCOME: ${{ steps.mobile_tests.outcome }}
-          EVENT_NAME: ${{ github.event_name }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           RUN_SHA: ${{ github.sha }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          result=0
+          node --input-type=module <<'NODE'
+          import fs from "node:fs";
+          const checks = {
+            build: process.env.BUILD_OUTCOME,
+            mobileTests: process.env.MOBILE_OUTCOME,
+          };
+          const passed = Object.values(checks).every((value) => value === "success");
+          const report = {
+            updatedAt: new Date().toISOString(),
+            conclusion: passed ? "success" : "failure",
+            runId: process.env.RUN_ID,
+            runAttempt: process.env.RUN_ATTEMPT,
+            triggerCommit: process.env.RUN_SHA,
+            runUrl: process.env.RUN_URL,
+            checks,
+            viewport: { width: 390, height: 844 },
+            homepageTakeoverEnabledDuringTest: false,
+          };
+          fs.writeFileSync("/tmp/election-mobile-status.json", `${JSON.stringify(report, null, 2)}\n`);
+          fs.appendFileSync(
+            process.env.GITHUB_STEP_SUMMARY,
+            [
+              "## Election Central mobile QA",
+              "",
+              `**Conclusion:** ${passed ? "PASS" : "FAIL"}`,
+              "",
+              `- Production build: ${checks.build === "success" ? "✅" : "❌"} ${checks.build}`,
+              `- Mobile browser tests: ${checks.mobileTests === "success" ? "✅" : "❌"} ${checks.mobileTests}`,
+              "- Viewport: 390 × 844",
+              "",
+            ].join("\n"),
+          );
+          NODE
+
+      - name: Upload mobile QA report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: election-central-mobile-qa-${{ github.run_id }}
+          path: /tmp/election-mobile-status.json
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Enforce mobile QA result
+        if: always()
+        shell: bash
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          MOBILE_OUTCOME: ${{ steps.mobile_tests.outcome }}
+        run: |
           if [[ "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" ]]; then
-            result=1
+            exit 1
           fi
-          if [[ "$EVENT_NAME" == "push" || "$EVENT_NAME" == "workflow_dispatch" ]]; then
-            node --input-type=module <<'NODE'
-            import fs from "node:fs";
-            const checks = {
-              build: process.env.BUILD_OUTCOME,
-              mobileTests: process.env.MOBILE_OUTCOME,
-            };
-            fs.writeFileSync(
-              "/tmp/election-mobile-status.json",
-              `${JSON.stringify({
-                updatedAt: new Date().toISOString(),
-                conclusion: Object.values(checks).every((value) => value === "success")
-                  ? "success"
-                  : "failure",
-                runId: process.env.RUN_ID,
-                runAttempt: process.env.RUN_ATTEMPT,
-                triggerCommit: process.env.RUN_SHA,
-                runUrl: process.env.RUN_URL,
-                checks,
-                viewport: { width: 390, height: 844 },
-                homepageTakeoverEnabledDuringTest: false,
-              }, null, 2)}\n`,
-            );
-            NODE
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            published=false
-            for attempt in 1 2 3; do
-              git fetch origin main
-              git reset --hard origin/main
-              cp /tmp/election-mobile-status.json .github/election-mobile-status.json
-              git add .github/election-mobile-status.json
-              if git diff --cached --quiet; then
-                published=true
-                break
-              fi
-              unexpected=$(git diff --cached --name-only | grep -v '^.github/election-mobile-status.json$' || true)
-              if [[ -n "$unexpected" ]]; then
-                echo "Refusing to publish unexpected files:"
-                echo "$unexpected"
-                exit 1
-              fi
-              git commit -m "Record Election Central mobile QA"
-              if git push origin HEAD:main; then
-                published=true
-                break
-              fi
-              echo "Mobile QA status push conflicted; retrying from latest main ($attempt/3)."
-            done
-            if [[ "$published" != "true" ]]; then
-              echo "Unable to publish Election Central mobile QA status after three attempts."
-              exit 1
-            fi
-          fi
-          exit $result
