@@ -1,30 +1,15 @@
 import { useEffect, useState } from 'react';
 import { ExternalLink, Info } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { getBillEditorialEnrichment, type BillEditorialEnrichment } from '@/lib/bills';
 
-type Editorial = {
-  plain_language_summary?: string | null;
-  what_changes?: string | null;
-  who_is_affected?: string | null;
-  effective_date_explanation?: string | null;
-  limitations?: string | null;
-  source_urls?: string[] | null;
-  source_notes?: string | null;
-  reviewed_at?: string | null;
-};
+type Editorial = BillEditorialEnrichment;
 
 export function BillEditorialExplanation({ billId }: { billId: string }) {
   const [item, setItem] = useState<Editorial | null>(null);
 
   useEffect(() => {
     let active = true;
-    supabase
-      .from('bill_editorial_enrichments' as any)
-      .select('plain_language_summary,what_changes,who_is_affected,effective_date_explanation,limitations,source_urls,source_notes,reviewed_at')
-      .eq('bill_id', billId)
-      .eq('review_status', 'approved')
-      .maybeSingle()
-      .then(({ data }) => { if (active) setItem((data as Editorial | null) ?? null); });
+    getBillEditorialEnrichment(billId).then((data) => { if (active) setItem(data); });
     return () => { active = false; };
   }, [billId]);
 

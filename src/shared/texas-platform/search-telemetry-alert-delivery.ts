@@ -40,11 +40,11 @@ export async function deliverSearchTelemetryAlerts(
   return Promise.all(deliveries.map(async ({ alert, handler }) => {
     try {
       await handler.deliver(alert);
-      return { handlerId: handler.id, alertKey: alert.key, status: 'fulfilled' as const };
+      return { handlerId: handler.id, alertKey: alert.key ?? alert.id, status: 'fulfilled' as const };
     } catch (error) {
       return {
         handlerId: handler.id,
-        alertKey: alert.key,
+        alertKey: alert.key ?? alert.id,
         status: 'rejected' as const,
         error: error instanceof Error ? error.message : String(error),
       };

@@ -16,7 +16,7 @@ describe('buffered search telemetry sink', () => {
       id: 'batch-test',
       batchSize: 2,
       flushIntervalMs: 1000,
-      write: (events) => batches.push(events.map((item) => item.query)),
+      write: (events) => { batches.push(events.map((item) => item.query)); },
     });
 
     await buffered.sink.record(event('property taxes'));

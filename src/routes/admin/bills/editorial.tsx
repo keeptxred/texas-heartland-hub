@@ -92,7 +92,7 @@ function EditorialCard({ item, token, onSaved }: { item: any; token: string; onS
     whoIsAffected: item.who_is_affected || '',
     effectiveDateExplanation: item.effective_date_explanation || '',
     limitations: item.limitations || '',
-    sourceUrls: (item.source_urls || []).join('\n'),
+    sourceUrls: ((item.source_urls ?? []) as string[]).join('\n'),
     sourceNotes: item.source_notes || '',
     confidence: item.confidence == null ? '' : String(item.confidence),
   });
