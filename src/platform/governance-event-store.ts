@@ -38,17 +38,21 @@ export function recordGovernanceDecision(input: { candidate: ContentCandidate; d
 }
 
 export async function governanceHealth() {
-  const events = store().map((event) => structuredClone(event));
-  const drift = detectOwnershipDrift(events);
+  const memory = store().map((event) => structuredClone(event));
+  let durable: GovernanceEvent[] = [];
+  let persistenceError: string | null = null;
+  try { durable = await loadGovernanceEvents(); } catch (error) { persistenceError = error instanceof Error ? error.message : String(error); }
+  const merged = [...new Map([...durable, ...memory].map((event) => [event.id, event])).values()];
+  const drift = detectOwnershipDrift(merged);
   return {
-    storage: 'site-local-bounded-memory',
-    persistent: false,
-    persistenceError: null,
+    storage: governancePersistenceConfigured() ? 'supabase-with-memory-fallback' : 'bounded-process-memory',
+    persistent: governancePersistenceConfigured() && !persistenceError,
+    persistenceError,
     maxMemoryEvents: MAX_EVENTS,
-    eventCount: events.length,
-    summary: summarizeGovernanceEvents(events),
+    eventCount: merged.length,
+    summary: summarizeGovernanceEvents(merged),
     ownershipDrift: drift,
-    healthy: drift.length === 0,
+    healthy: drift.length === 0 && !persistenceError,
     privacy: { storesArticleBodies: false, storesCaptions: false, storesReaderIdentifiers: false, storesCredentials: false },
   };
 }
