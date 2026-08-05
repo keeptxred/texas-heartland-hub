@@ -5,6 +5,8 @@ import { assignUniqueImages } from "@/lib/dedupe-images";
 import type { CategoryFeedItem } from "@/lib/category-feed.functions";
 import { resolveArticleImage } from "@/lib/seo-headline";
 
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
+
 export const TEXAS_NEWS_SECTIONS = [
   {
     id: "government",
@@ -264,7 +266,7 @@ export function TexasNewsView({
             Background resources connecting current reporting to Texas government and public policy.
           </p>
           <ul className="mt-4 grid sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
-            <li><Link to="/bills" className="text-primary hover:underline">Search Texas bills →</Link></li>
+            <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Search Texas bills →</Link></li>
             <li><Link to="/texas-legislature" className="text-primary hover:underline">Texas Legislature →</Link></li>
             <li><Link to="/representatives" className="text-primary hover:underline">Texas representatives →</Link></li>
           </ul>
@@ -281,7 +283,7 @@ export function TexasNewsView({
           <li><Link to="/texas-sports" className="text-primary hover:underline">Texas Sports →</Link></li>
           <li><Link to="/texas-business" className="text-primary hover:underline">Texas Business →</Link></li>
           <li><Link to="/elections" className="text-primary hover:underline">Elections →</Link></li>
-          <li><Link to="/bills" className="text-primary hover:underline">Texas Bills →</Link></li>
+          <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas Bills →</Link></li>
         </ul>
       </section>
     </div>
