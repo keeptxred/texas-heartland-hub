@@ -41,5 +41,9 @@ WHERE (internal_slug IS NULL OR btrim(internal_slug) = '')
 COMMENT ON VIEW public.news_coverage_gaps IS
   'Recent Texas-relevant feed items without a native article slug, with deterministic failure reasons.';
 
+-- Admin currently uses the browser Supabase client after its passcode gate.
+-- The underlying texas_news_feed rows are already public newsroom metadata;
+-- this view exposes only the fields required for coverage QA.
+GRANT SELECT ON public.news_coverage_gaps TO anon;
 GRANT SELECT ON public.news_coverage_gaps TO authenticated;
 GRANT SELECT ON public.news_coverage_gaps TO service_role;
