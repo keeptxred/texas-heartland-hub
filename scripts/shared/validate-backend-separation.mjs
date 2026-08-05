@@ -4,6 +4,7 @@ const calculatorSlugs=[
   'texas-mortgage-calculator','texas-home-affordability-calculator','texas-rent-vs-buy-calculator','texas-cost-of-living-calculator','texas-salary-calculator','texas-moving-cost-calculator','texas-utility-cost-calculator','texas-home-insurance-calculator',
   'texas-down-payment-calculator','texas-closing-cost-calculator','texas-home-equity-calculator','texas-home-equity-growth-calculator','texas-mortgage-payoff-calculator','texas-refinance-savings-calculator','texas-homeownership-cost-calculator','texas-budget-planner','texas-down-payment-assistance-calculator','texas-salary-comparison-by-city',
 ];
+const lifestyleSlugs=['texas-first-time-homebuyer-programs','texas-sales-tax-explained','find-my-dmv','find-my-school-district','texas-living'];
 const redirects=new Map([
   ['src/routes/explore.tsx','https://texasdefined.com${location.pathname}'],
   ['src/routes/tax-calculator.tsx','https://texasdefined.com/decide/property-taxes'],
@@ -13,6 +14,7 @@ const redirects=new Map([
   ['src/routes/moving-to-texas.tsx','https://texasdefined.com/moving-to-texas'],
   ['src/routes/texas-financial-tools.tsx','https://texasdefined.com/decide/financial-tools'],
   ...calculatorSlugs.map((slug)=>[`src/routes/${slug}.tsx`,`https://texasdefined.com/${slug}`]),
+  ...lifestyleSlugs.map((slug)=>[`src/routes/${slug}.tsx`,`https://texasdefined.com/${slug}`]),
 ]);
 const errors=[];
 for(const [file,target] of redirects){
@@ -20,12 +22,12 @@ for(const [file,target] of redirects){
   const source=fs.readFileSync(file,'utf8');
   if(!source.includes('statusCode: 301'))errors.push(`${file} must remain a permanent 301 redirect.`);
   if(!source.includes(target))errors.push(`${file} must redirect to ${target}.`);
-  for(const forbidden of ['component:','canonicalLink(','buildMeta(','TaxCalculator','MovingChecklist','TexasFinancialToolsPage','MovingToTexasPage','AdditionalCalculator','withFinancialTrust'])if(source.includes(forbidden))errors.push(`${file} contains duplicate page implementation token ${forbidden}.`);
+  for(const forbidden of ['component:','canonicalLink(','buildMeta(','TaxCalculator','MovingChecklist','TexasFinancialToolsPage','MovingToTexasPage','AdditionalCalculator','withFinancialTrust','VehicleRegistrationGuide','FindMySchoolDistrict','TexasLivingPage'])if(source.includes(forbidden))errors.push(`${file} contains duplicate page implementation token ${forbidden}.`);
 }
 const sitemapPath='src/routes/sitemap-pages[.]xml.ts';
 if(!fs.existsSync(sitemapPath))errors.push(`Missing ${sitemapPath}`);else{
   const sitemap=fs.readFileSync(sitemapPath,'utf8');
-  const explicit=['/tax-calculator','/texas-property-tax-protest-guide','/texas-property-tax-increase-calculator','/moving-to-texas-checklist','/moving-to-texas','/texas-financial-tools',...calculatorSlugs.map((slug)=>`/${slug}`)];
+  const explicit=['/tax-calculator','/texas-property-tax-protest-guide','/texas-property-tax-increase-calculator','/moving-to-texas-checklist','/moving-to-texas','/texas-financial-tools',...calculatorSlugs.map((slug)=>`/${slug}`),...lifestyleSlugs.map((slug)=>`/${slug}`)];
   for(const path of explicit)if(sitemap.includes(`\"${path}\"`))errors.push(`Redirected lifestyle URL remains in KeepTXRed sitemap: ${path}`);
 }
 if(fs.existsSync('src/platform/governance-persistence.ts'))errors.push('KeepTXRed must not restore the cross-site governance database adapter.');
