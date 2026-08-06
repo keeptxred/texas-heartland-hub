@@ -3623,12 +3623,22 @@ export type Database = {
           is_featured: boolean
           is_new: boolean
           is_on_sale: boolean
+          keeptxred_category: string | null
+          keeptxred_collections: string[]
+          keeptxred_display_order: number
+          keeptxred_featured: boolean
           price: number
           printify_product_id: string | null
           product_url: string
+          publish_keeptxred: boolean
+          publish_texasdefined: boolean
           source: string
           synced_at: string
           tags: string[]
+          texasdefined_category: string | null
+          texasdefined_collections: string[]
+          texasdefined_display_order: number
+          texasdefined_featured: boolean
           title: string
           updated_at: string
           variants: Json
@@ -3646,12 +3656,22 @@ export type Database = {
           is_featured?: boolean
           is_new?: boolean
           is_on_sale?: boolean
+          keeptxred_category?: string | null
+          keeptxred_collections?: string[]
+          keeptxred_display_order?: number
+          keeptxred_featured?: boolean
           price?: number
           printify_product_id?: string | null
           product_url?: string
+          publish_keeptxred?: boolean
+          publish_texasdefined?: boolean
           source?: string
           synced_at?: string
           tags?: string[]
+          texasdefined_category?: string | null
+          texasdefined_collections?: string[]
+          texasdefined_display_order?: number
+          texasdefined_featured?: boolean
           title: string
           updated_at?: string
           variants?: Json
@@ -3669,12 +3689,22 @@ export type Database = {
           is_featured?: boolean
           is_new?: boolean
           is_on_sale?: boolean
+          keeptxred_category?: string | null
+          keeptxred_collections?: string[]
+          keeptxred_display_order?: number
+          keeptxred_featured?: boolean
           price?: number
           printify_product_id?: string | null
           product_url?: string
+          publish_keeptxred?: boolean
+          publish_texasdefined?: boolean
           source?: string
           synced_at?: string
           tags?: string[]
+          texasdefined_category?: string | null
+          texasdefined_collections?: string[]
+          texasdefined_display_order?: number
+          texasdefined_featured?: boolean
           title?: string
           updated_at?: string
           variants?: Json
