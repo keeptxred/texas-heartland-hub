@@ -15,6 +15,10 @@ const ALLOWED_COLLECTIONS = [
   "texas",
   "floral",
   "conservative",
+  "texas-pride",
+  "outdoors",
+  "home",
+  "gifts",
 ] as const;
 
 type Category = (typeof ALLOWED_CATEGORIES)[number];
@@ -22,10 +26,16 @@ type Collection = (typeof ALLOWED_COLLECTIONS)[number];
 
 type ProductUpdate = {
   id: string;
-  is_active?: boolean;
-  category?: Category | null;
-  collections?: Collection[];
-  is_featured?: boolean;
+  publish_keeptxred?: boolean;
+  publish_texasdefined?: boolean;
+  keeptxred_category?: Category | null;
+  texasdefined_category?: Category | null;
+  keeptxred_collections?: Collection[];
+  texasdefined_collections?: Collection[];
+  keeptxred_featured?: boolean;
+  texasdefined_featured?: boolean;
+  keeptxred_display_order?: number;
+  texasdefined_display_order?: number;
   is_new?: boolean;
   is_on_sale?: boolean;
 };
@@ -36,17 +46,25 @@ function isAuthorized(request: Request) {
   return supplied.length > 0 && supplied === expected;
 }
 
+function validCategory(value: unknown) {
+  return value === undefined || value === null || (typeof value === "string" && ALLOWED_CATEGORIES.includes(value as Category));
+}
+
+function validCollections(value: unknown) {
+  return value === undefined || (Array.isArray(value) && value.every((item) => typeof item === "string" && ALLOWED_COLLECTIONS.includes(item as Collection)));
+}
+
 function validUpdate(value: unknown): value is ProductUpdate {
   if (!value || typeof value !== "object") return false;
   const input = value as Record<string, unknown>;
   if (typeof input.id !== "string" || !input.id) return false;
-  if (input.category !== undefined && input.category !== null && !ALLOWED_CATEGORIES.includes(input.category as Category)) return false;
-  if (input.collections !== undefined) {
-    if (!Array.isArray(input.collections)) return false;
-    if (!input.collections.every((item) => typeof item === "string" && ALLOWED_COLLECTIONS.includes(item as Collection))) return false;
-  }
-  for (const key of ["is_active", "is_featured", "is_new", "is_on_sale"] as const) {
+  if (!validCategory(input.keeptxred_category) || !validCategory(input.texasdefined_category)) return false;
+  if (!validCollections(input.keeptxred_collections) || !validCollections(input.texasdefined_collections)) return false;
+  for (const key of ["publish_keeptxred", "publish_texasdefined", "keeptxred_featured", "texasdefined_featured", "is_new", "is_on_sale"] as const) {
     if (input[key] !== undefined && typeof input[key] !== "boolean") return false;
+  }
+  for (const key of ["keeptxred_display_order", "texasdefined_display_order"] as const) {
+    if (input[key] !== undefined && (!Number.isInteger(input[key]) || Number(input[key]) < 0 || Number(input[key]) > 9999)) return false;
   }
   return true;
 }
@@ -59,7 +77,7 @@ export const Route = createFileRoute("/api/admin/shop-products")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data, error } = await supabaseAdmin
           .from("products")
-          .select("id,printify_product_id,title,price,currency,image_url,is_active,category,collections,is_featured,is_new,is_on_sale,synced_at")
+          .select("id,printify_product_id,title,price,currency,image_url,synced_at,publish_keeptxred,publish_texasdefined,keeptxred_category,texasdefined_category,keeptxred_collections,texasdefined_collections,keeptxred_featured,texasdefined_featured,keeptxred_display_order,texasdefined_display_order,is_new,is_on_sale")
           .eq("source", "printify")
           .order("synced_at", { ascending: false })
           .limit(500);
@@ -78,7 +96,14 @@ export const Route = createFileRoute("/api/admin/shop-products")({
         const failures: Array<{ id: string; error: string }> = [];
         for (const update of updates as ProductUpdate[]) {
           const { id, ...fields } = update;
-          const { error } = await supabaseAdmin.from("products").update(fields).eq("id", id).eq("source", "printify");
+          const compatibilityFields = {
+            ...fields,
+            ...(fields.publish_keeptxred !== undefined ? { is_active: fields.publish_keeptxred } : {}),
+            ...(fields.keeptxred_category !== undefined ? { category: fields.keeptxred_category } : {}),
+            ...(fields.keeptxred_collections !== undefined ? { collections: fields.keeptxred_collections } : {}),
+            ...(fields.keeptxred_featured !== undefined ? { is_featured: fields.keeptxred_featured } : {}),
+          };
+          const { error } = await supabaseAdmin.from("products").update(compatibilityFields).eq("id", id).eq("source", "printify");
           if (error) failures.push({ id, error: error.message });
         }
         if (failures.length > 0) return Response.json({ ok: false, error: "Some updates failed", failures }, { status: 500 });
