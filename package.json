@@ -14,6 +14,7 @@
     "format": "prettier --write .",
     "shared:validate": "bun scripts/shared/validate-texas-platform.ts",
     "shared:entities:validate": "bun scripts/shared/validate-entity-framework.ts",
+    "publication:validate": "bun scripts/shared/validate-publication-writers.mjs",
     "seo:validate": "node scripts/seo/validate.mjs",
     "elections:normalize": "node scripts/elections/normalize-imports.mjs",
     "elections:authority-registry": "node scripts/elections/generate-political-authority-registry.mjs",
