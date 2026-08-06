@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
     paths:
+      - 'package.json'
       - 'src/lib/content-publication-guard.ts'
       - 'src/lib/content-quality.ts'
       - 'src/lib/ctr-loop.functions.ts'
@@ -16,6 +17,7 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - 'package.json'
       - 'src/lib/content-publication-guard.ts'
       - 'src/lib/content-quality.ts'
       - 'src/lib/ctr-loop.functions.ts'
@@ -39,5 +41,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
       - name: Audit article publication writers
-        run: bun scripts/shared/validate-publication-writers.mjs
+        run: bun run publication:validate
