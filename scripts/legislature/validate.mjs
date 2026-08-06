@@ -156,12 +156,52 @@ for (const token of ['canonicalBillPath', 'CollectionPage', 'noindex']) {
 }
 
 const billsIndex = sources.get('src/routes/bills/index.tsx') || '';
-for (const token of ['legislature', 'chamber', 'billType', 'status', 'Clear filters']) {
-  if (!billsIndex.includes(token)) errors.push(`Bills index missing ${token} filter support`);
+const billsIndexContracts = [
+  ["q: typeof search.q === 'string'", 'validated search query'],
+  ["status: typeof search.status === 'string'", 'validated status query'],
+  ['legislature: Math.max(0, Number(search.legislature) || 0)', 'validated legislature query'],
+  ["chamber: typeof search.chamber === 'string'", 'validated chamber query'],
+  ["billType: typeof search.billType === 'string'", 'validated bill-type query'],
+  ['page: Math.max(1, Number(search.page) || 1)', 'validated page query'],
+  ['status: deps.status', 'status query forwarding'],
+  ['legislature: deps.legislature || undefined', 'legislature query forwarding'],
+  ['chamber: deps.chamber', 'chamber query forwarding'],
+  ['billType: deps.billType', 'bill-type query forwarding'],
+  ['offset: (deps.page - 1) * 24', 'pagination offset'],
+  ['name="legislature"', 'legislature control'],
+  ['name="chamber"', 'chamber control'],
+  ['name="billType"', 'bill-type control'],
+  ['name="status"', 'status preservation during form submission'],
+  ["status: value, page: 1", 'status links resetting pagination'],
+  ['search={{ ...search, page: search.page - 1 }}', 'previous-page filter preservation'],
+  ['search={{ ...search, page: search.page + 1 }}', 'next-page filter preservation'],
+  ['Clear filters', 'clear-filter control'],
+];
+for (const [token, label] of billsIndexContracts) {
+  if (!billsIndex.includes(token)) errors.push(`Bills index missing ${label}`);
 }
 
 const billsLib = sources.get('src/lib/bills.ts') || '';
-for (const token of ['review_status', 'approved', 'getBillFilterOptions', 'STATUS_GROUPS']) {
+const statusContracts = [
+  ["filed: ['filed', 'introduced', 'received-by-secretary-of-senate']", 'Filed status group'],
+  ["'in-committee': ['in-committee', 'referred-to-committee', 'scheduled-for-hearing', 'reported-from-committee']", 'In Committee status group'],
+  ["passed: ['passed-house', 'passed-senate', 'passed-both-chambers', 'enrolled']", 'Passed status group'],
+  ["'sent-to-governor': ['sent-to-governor', 'presented-to-governor']", 'Sent to Governor status group'],
+  ["signed: ['signed', 'became-law', 'effective']", 'Signed status group'],
+  ["vetoed: ['vetoed']", 'Vetoed status group'],
+  ["query.in('current_status_code', codes)", 'grouped-status database query'],
+  ["query.eq('legislature_number', legislature)", 'legislature database query'],
+  ["query.eq('chamber', chamber)", 'chamber database query'],
+  ["query.eq('bill_type', normalizeBillType(billType))", 'bill-type database query'],
+  ['getBillFilterOptions', 'filter-option loader'],
+  ["select('legislature_number,session_code,bill_type,chamber')", 'session-aware filter-option query'],
+  ['new Map(rows.map', 'legislature/session option deduplication'],
+];
+for (const [token, label] of statusContracts) {
+  if (!billsLib.includes(token)) errors.push(`Bills data layer missing ${label}`);
+}
+
+for (const token of ['review_status', 'approved']) {
   if (!billsLib.includes(token)) errors.push(`Bills data layer missing ${token}`);
 }
 
