@@ -111,24 +111,28 @@ export const Route = createFileRoute('/bills/subject/$subjectSlug')({
 });
 
 function BillSubjectPage() {
-  const { subject, bills } = Route.useLoaderData();
+  const loaderData = Route.useLoaderData() as { subject: { name: string; slug: string }; bills: BillSubjectBill[] };
+  const subject = loaderData.subject;
+  const bills: BillSubjectBill[] = loaderData.bills;
   const search = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const legislatures = Array.from(new Set(bills.map((bill) => bill.legislature_number))).sort((a, b) => b - a);
-  const statuses = Array.from(new Set(bills.map((bill) => bill.current_status_label).filter(Boolean))).sort();
-  const filteredBills = bills.filter((bill) => {
+  const legislatures: number[] = Array.from(new Set(bills.map((bill) => bill.legislature_number))).sort((a, b) => b - a);
+  const statuses: string[] = Array.from(
+    new Set(bills.map((bill) => bill.current_status_label).filter((label): label is string => Boolean(label))),
+  ).sort();
+  const filteredBills = bills.filter((bill: BillSubjectBill) => {
     if (search.legislature && bill.legislature_number !== search.legislature) return false;
     if (search.status && bill.current_status_label !== search.status) return false;
     if (search.law && !bill.became_law) return false;
     return true;
   });
-  const latestActivity = filteredBills.find((bill) => bill.last_action_date);
+  const latestActivity = filteredBills.find((bill: BillSubjectBill) => bill.last_action_date);
   const hasFilters = search.legislature > 0 || Boolean(search.status) || search.law;
 
   const updateSearch = (patch: Partial<SubjectSearch>) => {
     void navigate({
-      search: (previous) => ({ ...previous, ...patch }),
+      search: (previous: SubjectSearch) => ({ ...previous, ...patch }),
       replace: true,
       resetScroll: false,
     });
