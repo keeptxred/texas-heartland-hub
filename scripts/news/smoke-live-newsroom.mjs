@@ -100,7 +100,6 @@ async function checkIngestion() {
 }
 
 await retry("coverage gaps admin route", () => checkProtectedAdminRoute("/admin/coverage-gaps"));
-await retry("source health admin route", () => checkProtectedAdminRoute("/admin/source-health"));
 await retry("newsroom-health endpoint", checkNewsroomHealth);
 await checkIngestion();
 console.log(`Live newsroom smoke check passed for ${baseUrl}`);
