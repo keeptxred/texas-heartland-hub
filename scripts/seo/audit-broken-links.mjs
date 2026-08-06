@@ -1,4 +1,5 @@
 // Repository and production-site broken-link audit for KeepTXRed.
+// This file is intentionally touched to trigger the initial GitHub Actions crawl.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
