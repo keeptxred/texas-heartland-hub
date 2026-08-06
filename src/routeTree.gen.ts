@@ -238,7 +238,9 @@ import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elec
 import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
 import { Route as BillsSubjectSubjectSlugRouteImport } from './routes/bills/subject/$subjectSlug'
+import { Route as ApiPublicStoreProductsRouteImport } from './routes/api/public/store-products'
 import { Route as ApiPublicNewsroomHealthRouteImport } from './routes/api/public/newsroom-health'
+import { Route as ApiPublicDeploymentFingerprintRouteImport } from './routes/api/public/deployment-fingerprint'
 import { Route as ApiAdminShopProductsRouteImport } from './routes/api/admin/shop-products'
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
@@ -1479,11 +1481,22 @@ const BillsSubjectSubjectSlugRoute = BillsSubjectSubjectSlugRouteImport.update({
   path: '/subject/$subjectSlug',
   getParentRoute: () => BillsRoute,
 } as any)
+const ApiPublicStoreProductsRoute = ApiPublicStoreProductsRouteImport.update({
+  id: '/api/public/store-products',
+  path: '/api/public/store-products',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicNewsroomHealthRoute = ApiPublicNewsroomHealthRouteImport.update({
   id: '/api/public/newsroom-health',
   path: '/api/public/newsroom-health',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicDeploymentFingerprintRoute =
+  ApiPublicDeploymentFingerprintRouteImport.update({
+    id: '/api/public/deployment-fingerprint',
+    path: '/api/public/deployment-fingerprint',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiAdminShopProductsRoute = ApiAdminShopProductsRouteImport.update({
   id: '/api/admin/shop-products',
   path: '/api/admin/shop-products',
@@ -1904,7 +1917,9 @@ export interface FileRoutesByFullPath {
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
+  '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2161,7 +2176,9 @@ export interface FileRoutesByTo {
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
+  '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2430,7 +2447,9 @@ export interface FileRoutesById {
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
+  '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
+  '/api/public/store-products': typeof ApiPublicStoreProductsRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates_/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2700,7 +2719,9 @@ export interface FileRouteTypes {
     | '/admin/elections/races'
     | '/admin/elections/results'
     | '/api/admin/shop-products'
+    | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
+    | '/api/public/store-products'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -2957,7 +2978,9 @@ export interface FileRouteTypes {
     | '/admin/elections/races'
     | '/admin/elections/results'
     | '/api/admin/shop-products'
+    | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
+    | '/api/public/store-products'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3225,7 +3248,9 @@ export interface FileRouteTypes {
     | '/admin/elections/races'
     | '/admin/elections/results'
     | '/api/admin/shop-products'
+    | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
+    | '/api/public/store-products'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates_/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3410,7 +3435,9 @@ export interface RootRouteChildren {
   VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
   ApiAdminShopProductsRoute: typeof ApiAdminShopProductsRoute
+  ApiPublicDeploymentFingerprintRoute: typeof ApiPublicDeploymentFingerprintRoute
   ApiPublicNewsroomHealthRoute: typeof ApiPublicNewsroomHealthRoute
+  ApiPublicStoreProductsRoute: typeof ApiPublicStoreProductsRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
   ApiPublicExploreAutocompleteRoute: typeof ApiPublicExploreAutocompleteRoute
@@ -5042,11 +5069,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BillsSubjectSubjectSlugRouteImport
       parentRoute: typeof BillsRoute
     }
+    '/api/public/store-products': {
+      id: '/api/public/store-products'
+      path: '/api/public/store-products'
+      fullPath: '/api/public/store-products'
+      preLoaderRoute: typeof ApiPublicStoreProductsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/newsroom-health': {
       id: '/api/public/newsroom-health'
       path: '/api/public/newsroom-health'
       fullPath: '/api/public/newsroom-health'
       preLoaderRoute: typeof ApiPublicNewsroomHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/deployment-fingerprint': {
+      id: '/api/public/deployment-fingerprint'
+      path: '/api/public/deployment-fingerprint'
+      fullPath: '/api/public/deployment-fingerprint'
+      preLoaderRoute: typeof ApiPublicDeploymentFingerprintRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin/shop-products': {
@@ -5864,7 +5905,9 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
   ApiAdminShopProductsRoute: ApiAdminShopProductsRoute,
+  ApiPublicDeploymentFingerprintRoute: ApiPublicDeploymentFingerprintRoute,
   ApiPublicNewsroomHealthRoute: ApiPublicNewsroomHealthRoute,
+  ApiPublicStoreProductsRoute: ApiPublicStoreProductsRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
   ApiPublicExploreAutocompleteRoute: ApiPublicExploreAutocompleteRoute,
