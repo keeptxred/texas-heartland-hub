@@ -117,6 +117,7 @@ import { Route as ExploreIndexRouteImport } from './routes/explore.index'
 import { Route as ElectionsIndexRouteImport } from './routes/elections.index'
 import { Route as BillsIndexRouteImport } from './routes/bills/index'
 import { Route as AuthorsIndexRouteImport } from './routes/authors.index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as VehiclesTitleTransferRouteImport } from './routes/vehicles.title-transfer'
 import { Route as VehiclesTemporaryTagsRouteImport } from './routes/vehicles.temporary-tags'
 import { Route as VehiclesSellingACarRouteImport } from './routes/vehicles.selling-a-car'
@@ -839,6 +840,11 @@ const AuthorsIndexRoute = AuthorsIndexRouteImport.update({
   id: '/authors/',
   path: '/authors/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const VehiclesTitleTransferRoute = VehiclesTitleTransferRouteImport.update({
   id: '/vehicles/title-transfer',
@@ -1897,6 +1903,7 @@ export interface FileRoutesByFullPath {
   '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
   '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
   '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
+  '/admin/': typeof AdminIndexRoute
   '/authors/': typeof AuthorsIndexRoute
   '/bills/': typeof BillsIndexRoute
   '/elections/': typeof ElectionsIndexRoute
@@ -1975,7 +1982,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/about-keep-texas-red': typeof AboutKeepTexasRedRoute
-  '/admin': typeof AdminRouteWithChildren
   '/austin': typeof AustinRoute
   '/candidate-guides': typeof CandidateGuidesRoute
   '/contact': typeof ContactRoute
@@ -2156,6 +2162,7 @@ export interface FileRoutesByTo {
   '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
   '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
   '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
+  '/admin': typeof AdminIndexRoute
   '/authors': typeof AuthorsIndexRoute
   '/bills': typeof BillsIndexRoute
   '/elections': typeof ElectionsIndexRoute
@@ -2427,6 +2434,7 @@ export interface FileRoutesById {
   '/vehicles/selling-a-car': typeof VehiclesSellingACarRoute
   '/vehicles/temporary-tags': typeof VehiclesTemporaryTagsRoute
   '/vehicles/title-transfer': typeof VehiclesTitleTransferRoute
+  '/admin/': typeof AdminIndexRoute
   '/authors/': typeof AuthorsIndexRoute
   '/bills/': typeof BillsIndexRoute
   '/elections/': typeof ElectionsIndexRoute
@@ -2699,6 +2707,7 @@ export interface FileRouteTypes {
     | '/vehicles/selling-a-car'
     | '/vehicles/temporary-tags'
     | '/vehicles/title-transfer'
+    | '/admin/'
     | '/authors/'
     | '/bills/'
     | '/elections/'
@@ -2777,7 +2786,6 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/about-keep-texas-red'
-    | '/admin'
     | '/austin'
     | '/candidate-guides'
     | '/contact'
@@ -2958,6 +2966,7 @@ export interface FileRouteTypes {
     | '/vehicles/selling-a-car'
     | '/vehicles/temporary-tags'
     | '/vehicles/title-transfer'
+    | '/admin'
     | '/authors'
     | '/bills'
     | '/elections'
@@ -3228,6 +3237,7 @@ export interface FileRouteTypes {
     | '/vehicles/selling-a-car'
     | '/vehicles/temporary-tags'
     | '/vehicles/title-transfer'
+    | '/admin/'
     | '/authors/'
     | '/bills/'
     | '/elections/'
@@ -4221,6 +4231,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/authors/'
       preLoaderRoute: typeof AuthorsIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/vehicles/title-transfer': {
       id: '/vehicles/title-transfer'
@@ -5349,6 +5366,7 @@ interface AdminRouteChildren {
   AdminCoverageGapsRoute: typeof AdminCoverageGapsRoute
   AdminGovernanceHealthRoute: typeof AdminGovernanceHealthRoute
   AdminShopProductsRoute: typeof AdminShopProductsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   AdminBillsBackfillRoute: typeof AdminBillsBackfillRoute
   AdminBillsEditorialRoute: typeof AdminBillsEditorialRoute
   AdminBillsEnrichmentRoute: typeof AdminBillsEnrichmentRoute
@@ -5367,6 +5385,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminCoverageGapsRoute: AdminCoverageGapsRoute,
   AdminGovernanceHealthRoute: AdminGovernanceHealthRoute,
   AdminShopProductsRoute: AdminShopProductsRoute,
+  AdminIndexRoute: AdminIndexRoute,
   AdminBillsBackfillRoute: AdminBillsBackfillRoute,
   AdminBillsEditorialRoute: AdminBillsEditorialRoute,
   AdminBillsEnrichmentRoute: AdminBillsEnrichmentRoute,
