@@ -5,9 +5,27 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/**'
+      - 'package.json'
+      - 'scripts/shared/validate-publication-writers.mjs'
+      - 'src/lib/content-publication-guard.ts'
+      - 'src/lib/content-quality.ts'
+      - 'src/lib/ctr-loop.functions.ts'
+      - 'src/lib/featured-image.functions.ts'
+      - 'src/lib/gsc.ts'
+      - 'src/lib/ingest-and-normalize.functions.ts'
+      - 'src/routes/api/public/hooks/**'
   pull_request:
     paths:
       - '.github/workflows/**'
+      - 'package.json'
+      - 'scripts/shared/validate-publication-writers.mjs'
+      - 'src/lib/content-publication-guard.ts'
+      - 'src/lib/content-quality.ts'
+      - 'src/lib/ctr-loop.functions.ts'
+      - 'src/lib/featured-image.functions.ts'
+      - 'src/lib/gsc.ts'
+      - 'src/lib/ingest-and-normalize.functions.ts'
+      - 'src/routes/api/public/hooks/**'
   workflow_dispatch:
 
 permissions:
@@ -48,6 +66,7 @@ jobs:
           set -euo pipefail
           bun run shared:validate
           bun run shared:entities:validate
+          bun run publication:validate
           bun run seo:validate
           bun run elections:validate
           bun run legislature:validate
