@@ -99,7 +99,24 @@ async function checkIngestion() {
   console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched ?? "n/a"} inserted=${payload.inserted ?? "n/a"}`);
 }
 
-await retry("coverage gaps admin route", () => checkProtectedAdminRoute("/admin/coverage-gaps"));
-await retry("newsroom-health endpoint", checkNewsroomHealth);
-await checkIngestion();
+const failures = [];
+
+for (const [label, check] of [
+  ["coverage gaps admin route", () => retry("coverage gaps admin route", () => checkProtectedAdminRoute("/admin/coverage-gaps"))],
+  ["newsroom-health endpoint", () => retry("newsroom-health endpoint", checkNewsroomHealth)],
+  ["feed ingestion", checkIngestion],
+]) {
+  try {
+    await check();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    failures.push(`${label}: ${message}`);
+    console.error(`FAIL ${label}: ${message}`);
+  }
+}
+
+if (failures.length > 0) {
+  throw new Error(`Live newsroom smoke check found ${failures.length} failure(s):\n- ${failures.join("\n- ")}`);
+}
+
 console.log(`Live newsroom smoke check passed for ${baseUrl}`);
