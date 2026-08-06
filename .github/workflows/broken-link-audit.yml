@@ -2,23 +2,20 @@ name: Broken link audit
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'src/**'
-      - 'public/**'
-      - 'supabase/migrations/**'
-      - 'scripts/seo/audit-broken-links.mjs'
-      - '.github/workflows/broken-link-audit.yml'
   schedule:
     - cron: '17 11 * * 1'
 
 permissions:
   contents: read
 
+concurrency:
+  group: broken-link-audit
+  cancel-in-progress: true
+
 jobs:
   audit:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -47,7 +44,7 @@ jobs:
         with:
           name: broken-link-audit
           path: artifacts/broken-link-audit.json
-          retention-days: 30
+          retention-days: 14
       - name: Fail on confirmed findings
         run: |
           node - <<'NODE'
