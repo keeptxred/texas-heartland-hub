@@ -11,6 +11,7 @@ on:
       - 'vitest.config.*'
       - 'vite.config.*'
       - 'tsconfig*.json'
+      - 'eslint.config.*'
       - 'package.json'
       - 'bun.lock*'
       - '.github/workflows/shared-vitest.yml'
@@ -28,6 +29,8 @@ jobs:
         with:
           bun-version: latest
       - run: bun install --frozen-lockfile
+      - name: ESLint
+        run: bun run lint
       - name: Full Vitest suite
         run: bun run test
       - name: Route generation and TypeScript
@@ -36,6 +39,8 @@ jobs:
         run: bun run shared:validate
       - name: Shared entity validation
         run: bun run shared:entities:validate
+      - name: Publication boundary validation
+        run: bun run publication:validate
       - name: SEO validation
         run: bun run seo:validate
       - name: Election validation
