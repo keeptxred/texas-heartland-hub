@@ -16,10 +16,9 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v5
+      - uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-          cache: npm
+          bun-version: latest
       - name: Apply focused ownership patches
         run: |
           python3 <<'PY'
@@ -72,9 +71,9 @@ jobs:
           test = Path('src/lib/brand-source-routing.test.ts')
           test.write_text('''import { describe, expect, it } from "vitest";\nimport {\n  isTexasDefinedOwnedSource,\n  isTexasDefinedOwnedSourceRecord,\n  TEXAS_DEFINED_OWNED_SOURCE_NAMES,\n} from "./brand-source-ownership";\nimport { qualifiesForAutoRewrite, scoreFeedItem } from "./viral-score";\n\ndescribe("TexasDefined source ownership", () => {\n  it("recognizes exact source names and ownership notes", () => {\n    for (const source of TEXAS_DEFINED_OWNED_SOURCE_NAMES) {\n      expect(isTexasDefinedOwnedSource(source)).toBe(true);\n      expect(isTexasDefinedOwnedSource(source.toUpperCase())).toBe(true);\n    }\n    expect(isTexasDefinedOwnedSource("Texas Tribune")).toBe(false);\n    expect(isTexasDefinedOwnedSourceRecord("Other Feed", "TexasDefined-owned lifestyle source")).toBe(true);\n    expect(isTexasDefinedOwnedSourceRecord("Texas Tribune", "KeepTXRed statewide source")).toBe(false);\n  });\n\n  it("blocks TexasDefined sources from KeepTXRed article and rewrite routing", () => {\n    for (const source of TEXAS_DEFINED_OWNED_SOURCE_NAMES) {\n      const result = scoreFeedItem({\n        title: "Texas institution announces major statewide expansion",\n        description: "A major development affects residents across Texas.",\n        source,\n        category: "Non-Political",\n        pubDate: new Date().toISOString(),\n      });\n      expect(result.sourceReputationScore).toBe(0);\n      expect(result.sourceReputationReason).toContain("TexasDefined-owned");\n      expect(result.routingType).toBe("FACEBOOK_ONLY");\n      expect(qualifiesForAutoRewrite(result)).toBe(false);\n    }\n  });\n});\n''')
           PY
-      - run: npm ci
-      - run: npx vitest run src/lib/brand-source-routing.test.ts src/lib/viral-score.test.ts
-      - run: npm run build
+      - run: bun install --frozen-lockfile
+      - run: bunx vitest run src/lib/brand-source-routing.test.ts src/lib/viral-score.test.ts
+      - run: bun run build
       - name: Commit validated changes
         run: |
           if git diff --quiet; then
