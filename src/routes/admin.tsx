@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -150,6 +150,7 @@ function AdminDashboard() {
 
   function signOut() {
     sessionStorage.removeItem(STORAGE_KEY);
+    sessionStorage.removeItem("ktr-admin-passcode");
     window.location.reload();
   }
 
@@ -169,8 +170,8 @@ function AdminDashboard() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-8">
-        <a
-          href="/admin/shop-products"
+        <Link
+          to="/admin/shop-products"
           className="block border-2 border-primary bg-primary/5 p-5 transition-colors hover:bg-primary/10"
         >
           <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Shop</div>
@@ -183,7 +184,7 @@ function AdminDashboard() {
             </div>
             <span className="text-sm font-bold text-primary">Open catalog →</span>
           </div>
-        </a>
+        </Link>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
