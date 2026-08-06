@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 type SourceHealthRow = {
   source_name: string;
@@ -11,6 +10,12 @@ type SourceHealthRow = {
   covered_7d: number;
   health_status: "healthy" | "quiet" | "stale" | "never_seen";
   coverage_rate_7d: number;
+};
+
+type HealthPayload = {
+  ok: boolean;
+  sources?: SourceHealthRow[];
+  errors?: string[];
 };
 
 const statusLabel: Record<SourceHealthRow["health_status"], string> = {
@@ -36,14 +41,24 @@ export function NewsSourceHealthPanel() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const { data, error: queryError } = await supabase
-        .from("news_source_health" as never)
-        .select("source_name,rss_url,category,latest_item_at,items_24h,items_7d,covered_7d,health_status,coverage_rate_7d")
-        .order("source_name", { ascending: true });
-      if (!active) return;
-      if (queryError) setError(queryError.message);
-      else setRows((data ?? []) as unknown as SourceHealthRow[]);
-      setLoading(false);
+      try {
+        const response = await fetch("/api/public/newsroom-health", {
+          headers: { Accept: "application/json" },
+          cache: "no-store",
+        });
+        const payload = (await response.json()) as HealthPayload;
+        if (!active) return;
+        if (!response.ok || payload.ok !== true) {
+          setError(payload.errors?.join("; ") || `Source-health request failed with HTTP ${response.status}`);
+        } else {
+          setRows(payload.sources ?? []);
+        }
+      } catch (requestError) {
+        if (!active) return;
+        setError(requestError instanceof Error ? requestError.message : "Unable to load source health");
+      } finally {
+        if (active) setLoading(false);
+      }
     })();
     return () => {
       active = false;
@@ -66,8 +81,7 @@ export function NewsSourceHealthPanel() {
   if (error) {
     return (
       <div role="alert" className="border-2 border-red-300 bg-red-50 p-4 text-sm text-red-900">
-        Source-health reporting is not active yet. Apply the latest database migrations to create the
-        <code className="mx-1">news_source_health</code> view.
+        Source-health reporting could not load from the newsroom health endpoint.
         <div className="mt-1 text-xs opacity-75">{error}</div>
       </div>
     );
@@ -111,7 +125,7 @@ export function NewsSourceHealthPanel() {
                     {row.category || "Uncategorized"}
                   </div>
                   <h2 className="font-display text-xl leading-tight">{row.source_name}</h2>
-                  <div className="mt-1 text-xs text-muted-foreground break-all">{row.rss_url}</div>
+                  <div className="mt-1 break-all text-xs text-muted-foreground">{row.rss_url}</div>
                 </div>
                 <span className={`border px-2 py-1 text-[10px] font-bold uppercase tracking-widest ${statusClass[row.health_status]}`}>
                   {statusLabel[row.health_status]}
@@ -142,7 +156,7 @@ function Summary({ label, value }: { label: string; value: number }) {
   return (
     <div className="border-2 border-foreground/10 bg-white p-4">
       <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</div>
-      <div className="font-display text-3xl mt-1">{value}</div>
+      <div className="mt-1 font-display text-3xl">{value}</div>
     </div>
   );
 }
