@@ -1,0 +1,88 @@
+name: Apply Brand Source Ownership Guard
+
+on:
+  push:
+    paths:
+      - .github/workflows/apply-brand-source-ownership.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - name: Apply focused ownership patches
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          ownership = Path('src/lib/brand-source-ownership.ts')
+          text = ownership.read_text()
+          if 'isTexasDefinedOwnedSourceRecord' not in text:
+              text += '''\nexport function isTexasDefinedOwnedSourceRecord(\n  source: string | null | undefined,\n  notes: string | null | undefined,\n): boolean {\n  return (\n    isTexasDefinedOwnedSource(source) ||\n    String(notes ?? "").toLowerCase().includes("texasdefined-owned")\n  );\n}\n'''
+              ownership.write_text(text)
+
+          ingest = Path('src/routes/api/public/hooks/ingest-feeds.ts')
+          text = ingest.read_text()
+          import_line = 'import { isTexasDefinedOwnedSourceRecord } from "@/lib/brand-source-ownership";\n'
+          anchor = 'import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";\n'
+          if import_line not in text:
+              if anchor not in text:
+                  raise SystemExit('ingest import anchor missing')
+              text = text.replace(anchor, anchor + import_line, 1)
+          old_select = '.select("source_name, rss_url, category, enabled")'
+          new_select = '.select("source_name, rss_url, category, notes, enabled")'
+          if old_select in text:
+              text = text.replace(old_select, new_select, 1)
+          elif new_select not in text:
+              raise SystemExit('content_sources select anchor missing')
+          old_type = '''      const rows = data as {\n        source_name: string;\n        rss_url: string | null;\n        category: string | null;\n      }[];\n      enabledDbCount = rows.length;\n      for (const r of rows) {\n'''
+          new_type = '''      const rows = data as {\n        source_name: string;\n        rss_url: string | null;\n        category: string | null;\n        notes: string | null;\n      }[];\n      const keepTxRedRows = rows.filter(\n        (row) => !isTexasDefinedOwnedSourceRecord(row.source_name, row.notes),\n      );\n      enabledDbCount = keepTxRedRows.length;\n      for (const r of keepTxRedRows) {\n'''
+          if old_type in text:
+              text = text.replace(old_type, new_type, 1)
+          elif 'const keepTxRedRows = rows.filter(' not in text:
+              raise SystemExit('content_sources row block anchor missing')
+          ingest.write_text(text)
+
+          scorer = Path('src/lib/viral-score.ts')
+          text = scorer.read_text()
+          import_line = 'import { isTexasDefinedOwnedSource } from "@/lib/brand-source-ownership";\n'
+          anchor = 'import { extractEntities, inferCategory } from "@/lib/nlp";\n'
+          if import_line not in text:
+              if anchor not in text:
+                  raise SystemExit('viral scorer import anchor missing')
+              text = text.replace(anchor, anchor + import_line, 1)
+          fn = 'export function classifySourceReputation(source: string): { score: number; reason: string } {\n  const s = source ?? "";\n'
+          replacement = 'export function classifySourceReputation(source: string): { score: number; reason: string } {\n  if (isTexasDefinedOwnedSource(source)) {\n    return { score: 0, reason: "TexasDefined-owned source blocked from KeepTXRed publication" };\n  }\n  const s = source ?? "";\n'
+          if fn in text:
+              text = text.replace(fn, replacement, 1)
+          elif 'TexasDefined-owned source blocked from KeepTXRed publication' not in text:
+              raise SystemExit('source reputation function anchor missing')
+          scorer.write_text(text)
+
+          test = Path('src/lib/brand-source-routing.test.ts')
+          test.write_text('''import { describe, expect, it } from "vitest";\nimport {\n  isTexasDefinedOwnedSource,\n  isTexasDefinedOwnedSourceRecord,\n  TEXAS_DEFINED_OWNED_SOURCE_NAMES,\n} from "./brand-source-ownership";\nimport { qualifiesForAutoRewrite, scoreFeedItem } from "./viral-score";\n\ndescribe("TexasDefined source ownership", () => {\n  it("recognizes exact source names and ownership notes", () => {\n    for (const source of TEXAS_DEFINED_OWNED_SOURCE_NAMES) {\n      expect(isTexasDefinedOwnedSource(source)).toBe(true);\n      expect(isTexasDefinedOwnedSource(source.toUpperCase())).toBe(true);\n    }\n    expect(isTexasDefinedOwnedSource("Texas Tribune")).toBe(false);\n    expect(isTexasDefinedOwnedSourceRecord("Other Feed", "TexasDefined-owned lifestyle source")).toBe(true);\n    expect(isTexasDefinedOwnedSourceRecord("Texas Tribune", "KeepTXRed statewide source")).toBe(false);\n  });\n\n  it("blocks TexasDefined sources from KeepTXRed article and rewrite routing", () => {\n    for (const source of TEXAS_DEFINED_OWNED_SOURCE_NAMES) {\n      const result = scoreFeedItem({\n        title: "Texas institution announces major statewide expansion",\n        description: "A major development affects residents across Texas.",\n        source,\n        category: "Non-Political",\n        pubDate: new Date().toISOString(),\n      });\n      expect(result.sourceReputationScore).toBe(0);\n      expect(result.sourceReputationReason).toContain("TexasDefined-owned");\n      expect(result.routingType).toBe("FACEBOOK_ONLY");\n      expect(qualifiesForAutoRewrite(result)).toBe(false);\n    }\n  });\n});\n''')
+          PY
+      - run: npm ci
+      - run: npx vitest run src/lib/brand-source-routing.test.ts src/lib/viral-score.test.ts
+      - run: npm run build
+      - name: Commit validated changes
+        run: |
+          if git diff --quiet; then
+            echo "Ownership guard already applied"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/lib/brand-source-ownership.ts src/lib/brand-source-routing.test.ts src/lib/viral-score.ts src/routes/api/public/hooks/ingest-feeds.ts
+          git commit -m "fix(news): enforce brand-owned source routing"
+          git push origin HEAD:main
