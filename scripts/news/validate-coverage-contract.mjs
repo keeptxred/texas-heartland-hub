@@ -76,11 +76,19 @@ for (const token of [
   if (!health.includes(token)) throw new Error(`Source-health view contract missing: ${token}`);
 }
 
-for (const token of ["databaseViewsReady", "coverageGapCount", "sourceStatusCounts", "news_coverage_gaps", "news_source_health"]) {
+for (const token of [
+  "databaseViewsReady",
+  "coverageGapCount",
+  "sourceStatusCounts",
+  "news_coverage_gaps",
+  "content_sources",
+  "texas_news_feed",
+  "sources",
+]) {
   if (!healthEndpoint.includes(token)) throw new Error(`Newsroom health endpoint contract missing: ${token}`);
 }
 for (const token of ["/admin/coverage-gaps", "/admin/source-health", "/api/public/newsroom-health", "/api/public/hooks/ingest-feeds"]) {
   if (!smoke.includes(token)) throw new Error(`Live newsroom smoke contract missing: ${token}`);
 }
 
-console.log(`Newsroom coverage contract valid: ${configuredSources.length} discovery sources, scoring, gap reporting, source health, server health, and live smoke monitoring.`);
+console.log(`Newsroom coverage contract valid: ${configuredSources.length} discovery sources, scoring, gap reporting, source health, server aggregation, and live smoke monitoring.`);
