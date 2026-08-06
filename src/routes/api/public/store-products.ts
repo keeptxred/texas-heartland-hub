@@ -27,6 +27,7 @@ export const Route = createFileRoute("/api/public/store-products")({
         }
 
         const collection = url.searchParams.get("collection")?.trim() || null;
+        const productId = url.searchParams.get("id")?.trim() || null;
         const requestedLimit = Number(url.searchParams.get("limit") || 100);
         const limit = Number.isFinite(requestedLimit) ? Math.min(Math.max(Math.floor(requestedLimit), 1), 250) : 100;
         const prefix = site === "keeptxred" ? "keeptxred" : "texasdefined";
@@ -34,15 +35,16 @@ export const Route = createFileRoute("/api/public/store-products")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         let query = supabaseAdmin
           .from("products")
-          .select(`id,printify_product_id,title,description,price,currency,image_url,product_url,tags,is_new,is_on_sale,${prefix}_category,${prefix}_collections,${prefix}_featured,${prefix}_display_order,synced_at`)
+          .select(`id,printify_product_id,title,description,price,currency,image_url,tags,colors,variants,is_new,is_on_sale,${prefix}_category,${prefix}_collections,${prefix}_featured,${prefix}_display_order,synced_at`)
           .eq("source", "printify")
           .eq(`publish_${prefix}`, true)
           .order(`${prefix}_featured`, { ascending: false })
           .order(`${prefix}_display_order`, { ascending: true })
           .order("synced_at", { ascending: false })
-          .limit(limit);
+          .limit(productId ? 1 : limit);
 
         if (collection) query = query.contains(`${prefix}_collections`, [collection]);
+        if (productId) query = query.eq("id", productId);
         const { data, error } = await query;
         if (error) return Response.json({ ok: false, error: error.message }, { status: 500, headers: corsHeaders(request) });
 
@@ -54,14 +56,16 @@ export const Route = createFileRoute("/api/public/store-products")({
           price: row.price,
           currency: row.currency,
           imageUrl: row.image_url,
-          productUrl: row.product_url,
           tags: row.tags ?? [],
+          colors: row.colors ?? [],
+          variants: row.variants ?? [],
           category: row[`${prefix}_category`],
           collections: row[`${prefix}_collections`] ?? [],
           featured: row[`${prefix}_featured`] ?? false,
           displayOrder: row[`${prefix}_display_order`] ?? 0,
           isNew: row.is_new ?? false,
           isOnSale: row.is_on_sale ?? false,
+          productUrl: site === "keeptxred" ? `/shop/${row.id}` : `/shop/${row.id}`,
         }));
 
         return Response.json({ ok: true, site, products }, { headers: corsHeaders(request) });
