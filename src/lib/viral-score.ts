@@ -161,7 +161,8 @@ export function scoreFeedItem(item: {
   if (texas >= 20) confidence += 0.25;
   confidence = Math.min(1, Number(confidence.toFixed(2)));
 
-  const rep = isTexasDefinedOwnedSource(source)
+  const ownedByTexasDefined = isTexasDefinedOwnedSource(source);
+  const rep = ownedByTexasDefined
     ? classifySourceReputation(source)
     : item.source_reputation_score != null
       ? { score: item.source_reputation_score, reason: item.source_reputation_reason || "From content_sources" }
@@ -172,7 +173,12 @@ export function scoreFeedItem(item: {
   if (rep.score >= 85) reasons.push("High-reputation source");
   else if (rep.score < SOURCE_REPUTATION_FLOOR) reasons.push("Low-reputation source");
 
-  const texasRelevanceScore = Math.round((texas / 40) * 100);
+  // KeepTXRed ingestion uses this field as its pre-storage Texas relevance gate.
+  // A TexasDefined-owned source must therefore score zero here, not merely fail
+  // native article qualification later in the pipeline.
+  const texasRelevanceScore = ownedByTexasDefined
+    ? 0
+    : Math.round((texas / 40) * 100);
   const hasVideo = !!item.has_video;
   // Texas culture, health, education, migration, business and institutions are
   // valid native articles. Category must never be used as a political-only veto.
