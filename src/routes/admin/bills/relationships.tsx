@@ -106,6 +106,7 @@ function ReviewDashboard() {
         <div className="mt-3 flex flex-wrap gap-2">
           {(['all', 'subject', 'article'] as ReviewType[]).map((value) => <button key={value} onClick={() => setType(value)} className={`rounded-md border px-3 py-1.5 text-sm capitalize ${type === value ? 'border-primary text-primary' : ''}`}>{value}</button>)}
           <Button variant="outline" size="sm" onClick={load}>Refresh</Button>
+          <Button variant="outline" size="sm" asChild><a href="/admin/bills/backfill">Backfill status</a></Button>
         </div>
 
         {message && <p className="mt-4 border bg-muted/30 p-3 text-sm">{message}</p>}
