@@ -4,19 +4,6 @@ on:
   schedule:
     - cron: '17 13 * * *'
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - 'src/lib/viral-score.ts'
-      - 'src/routes/api/public/hooks/ingest-feeds.ts'
-      - 'src/routes/api/public/newsroom-health.ts'
-      - 'src/routes/admin.coverage-gaps.tsx'
-      - 'src/routes/admin.source-health.tsx'
-      - 'src/components/admin/NewsCoverageGapPanel.tsx'
-      - 'src/components/admin/NewsSourceHealthPanel.tsx'
-      - 'supabase/migrations/*news*.sql'
-      - 'scripts/news/smoke-live-newsroom.mjs'
-      - '.github/workflows/live-newsroom-smoke.yml'
 
 permissions:
   contents: read
