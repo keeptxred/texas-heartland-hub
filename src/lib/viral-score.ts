@@ -2,6 +2,7 @@
 // The scorer is used both by ingestion and Viral Radar, so coverage decisions
 // must be based on Texas public interest rather than political category alone.
 
+import { isTexasDefinedOwnedSource } from "@/lib/brand-source-ownership";
 import { extractEntities, inferCategory } from "@/lib/nlp";
 
 export type ViralSignals = {
@@ -34,6 +35,12 @@ const TEXAS_DISCOVERY_SOURCE =
 const OFFICIAL_LOCAL_SOURCE = /\b(?:city of [a-z .'-]+|[a-z .'-]+ county|[a-z .'-]+ isd)\b/i;
 
 export function classifySourceReputation(source: string): { score: number; reason: string } {
+  if (isTexasDefinedOwnedSource(source)) {
+    return {
+      score: 0,
+      reason: "TexasDefined-owned source blocked from KeepTXRed publication",
+    };
+  }
   const s = source ?? "";
   if (HIGH_REP.test(s)) return { score: 90, reason: "Official/major outlet" };
   if (TEXAS_DISCOVERY_SOURCE.test(s)) return { score: 75, reason: "Configured Texas discovery feed" };
@@ -154,9 +161,11 @@ export function scoreFeedItem(item: {
   if (texas >= 20) confidence += 0.25;
   confidence = Math.min(1, Number(confidence.toFixed(2)));
 
-  const rep = item.source_reputation_score != null
-    ? { score: item.source_reputation_score, reason: item.source_reputation_reason || "From content_sources" }
-    : classifySourceReputation(source);
+  const rep = isTexasDefinedOwnedSource(source)
+    ? classifySourceReputation(source)
+    : item.source_reputation_score != null
+      ? { score: item.source_reputation_score, reason: item.source_reputation_reason || "From content_sources" }
+      : classifySourceReputation(source);
   const repMultiplier = 0.5 + Math.max(0, Math.min(100, rep.score)) / 200;
   const rawScore = texas + velocity + social;
   const viralScore = Math.min(100, Math.round(rawScore * repMultiplier));
