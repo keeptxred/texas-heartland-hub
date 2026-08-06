@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -70,7 +70,7 @@ function Dashboard() {
   const [form, setForm] = useState<any>({});
   const [message, setMessage] = useState('');
 
-  async function load() {
+  const load = useCallback(async () => {
     setMessage('');
     const result =
       mode === 'candidates'
@@ -78,13 +78,16 @@ function Dashboard() {
         : await listBillEditorialEnrichments({
             data: { token, status: mode, limit: 50 },
           });
-    if (!result.ok) return setMessage(result.error);
+    if (!result.ok) {
+      setMessage(result.error);
+      return;
+    }
     setItems(result.items);
-  }
+  }, [mode, token]);
 
   useEffect(() => {
-    load();
-  }, [mode]);
+    void load();
+  }, [load]);
 
   function edit(item: any) {
     const bill = item.bills || item;
@@ -117,10 +120,13 @@ function Dashboard() {
         reviewStatus: status,
       },
     });
-    if (!result.ok) return setMessage(result.error);
+    if (!result.ok) {
+      setMessage(result.error);
+      return;
+    }
     setMessage(`Saved as ${status}.`);
     setSelected(null);
-    load();
+    await load();
   }
 
   return (
