@@ -168,6 +168,24 @@ function AdminDashboard() {
         </div>
       </section>
 
+      <section className="mx-auto max-w-6xl px-4 pt-8">
+        <a
+          href="/admin/shop-products"
+          className="block border-2 border-primary bg-primary/5 p-5 transition-colors hover:bg-primary/10"
+        >
+          <div className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Shop</div>
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="font-display text-2xl">Store Catalog</h2>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Choose which Printify products appear on KeepTXRed, TexasDefined, both stores, or neither.
+              </p>
+            </div>
+            <span className="text-sm font-bold text-primary">Open catalog →</span>
+          </div>
+        </a>
+      </section>
+
       <section className="mx-auto max-w-6xl px-4 py-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Feed items (last 50)" value={feed.length} />
         <Stat label="Missing internal slug" value={missingSlug} tone={missingSlug > 0 ? "warn" : "ok"} />
