@@ -35,6 +35,16 @@ type WebsiteSettings = {
   is_featured: boolean;
   is_new: boolean;
   is_on_sale: boolean;
+  publish_keeptxred: boolean;
+  publish_texasdefined: boolean;
+  keeptxred_category: string | null;
+  texasdefined_category: string | null;
+  keeptxred_collections: string[];
+  texasdefined_collections: string[];
+  keeptxred_featured: boolean;
+  texasdefined_featured: boolean;
+  keeptxred_display_order: number;
+  texasdefined_display_order: number;
 };
 
 function stripHtml(value: string): string {
@@ -168,6 +178,19 @@ function mapProduct(product: PrintifyProduct, settings?: WebsiteSettings) {
     is_featured: settings?.is_featured ?? false,
     is_new: settings?.is_new ?? false,
     is_on_sale: settings?.is_on_sale ?? false,
+
+    // Storefront assignments are never overwritten by Printify.
+    // New products start hidden from both storefronts.
+    publish_keeptxred: settings?.publish_keeptxred ?? false,
+    publish_texasdefined: settings?.publish_texasdefined ?? false,
+    keeptxred_category: settings?.keeptxred_category ?? null,
+    texasdefined_category: settings?.texasdefined_category ?? null,
+    keeptxred_collections: settings?.keeptxred_collections ?? [],
+    texasdefined_collections: settings?.texasdefined_collections ?? [],
+    keeptxred_featured: settings?.keeptxred_featured ?? false,
+    texasdefined_featured: settings?.texasdefined_featured ?? false,
+    keeptxred_display_order: settings?.keeptxred_display_order ?? 0,
+    texasdefined_display_order: settings?.texasdefined_display_order ?? 0,
   };
 }
 
@@ -216,7 +239,7 @@ async function runSync(): Promise<Response> {
 
     const { data: existingRows, error: existingError } = await supabaseAdmin
       .from("products")
-      .select("id,is_active,category,collections,is_featured,is_new,is_on_sale")
+      .select("id,is_active,category,collections,is_featured,is_new,is_on_sale,publish_keeptxred,publish_texasdefined,keeptxred_category,texasdefined_category,keeptxred_collections,texasdefined_collections,keeptxred_featured,texasdefined_featured,keeptxred_display_order,texasdefined_display_order")
       .eq("source", "printify");
 
     if (existingError) {
@@ -232,6 +255,16 @@ async function runSync(): Promise<Response> {
         is_featured: row.is_featured ?? false,
         is_new: row.is_new ?? false,
         is_on_sale: row.is_on_sale ?? false,
+        publish_keeptxred: row.publish_keeptxred ?? false,
+        publish_texasdefined: row.publish_texasdefined ?? false,
+        keeptxred_category: row.keeptxred_category ?? null,
+        texasdefined_category: row.texasdefined_category ?? null,
+        keeptxred_collections: Array.isArray(row.keeptxred_collections) ? row.keeptxred_collections : [],
+        texasdefined_collections: Array.isArray(row.texasdefined_collections) ? row.texasdefined_collections : [],
+        keeptxred_featured: row.keeptxred_featured ?? false,
+        texasdefined_featured: row.texasdefined_featured ?? false,
+        keeptxred_display_order: row.keeptxred_display_order ?? 0,
+        texasdefined_display_order: row.texasdefined_display_order ?? 0,
       });
     }
 
