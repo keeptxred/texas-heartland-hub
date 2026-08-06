@@ -1,4 +1,5 @@
 const baseUrl = (process.env.KTR_BASE_URL || "https://keeptxred.com").replace(/\/$/, "");
+const expectedFingerprint = "newsroom-coverage-2026-08-05-v1";
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -47,6 +48,27 @@ async function checkProtectedAdminRoute(path) {
 
   if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
   console.log(`OK ${path} reachable (${response.status})`);
+}
+
+async function checkDeploymentFingerprint() {
+  const response = await fetchWithTimeout(`${baseUrl}/api/public/deployment-fingerprint`, {
+    redirect: "follow",
+    headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
+  });
+  if (response.status === 404) {
+    throw new Error(`production is stale: deployment fingerprint route is missing; expected ${expectedFingerprint}`);
+  }
+  const text = await response.text();
+  let payload;
+  try {
+    payload = JSON.parse(text);
+  } catch {
+    throw new Error(`deployment fingerprint did not return JSON: ${text.slice(0, 300)}`);
+  }
+  if (!response.ok || payload?.fingerprint !== expectedFingerprint) {
+    throw new Error(`production fingerprint mismatch: expected ${expectedFingerprint}, received ${String(payload?.fingerprint ?? "missing")}`);
+  }
+  console.log(`OK deployment fingerprint=${payload.fingerprint} mode=${payload.newsroomHealthMode}`);
 }
 
 async function checkNewsroomHealth() {
@@ -103,6 +125,7 @@ const failures = [];
 
 for (const [label, check] of [
   ["coverage gaps admin route", () => retry("coverage gaps admin route", () => checkProtectedAdminRoute("/admin/coverage-gaps"))],
+  ["deployment fingerprint", () => retry("deployment fingerprint", checkDeploymentFingerprint)],
   ["newsroom-health endpoint", () => retry("newsroom-health endpoint", checkNewsroomHealth)],
   ["feed ingestion", checkIngestion],
 ]) {
