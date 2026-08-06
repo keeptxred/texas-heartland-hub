@@ -55,9 +55,10 @@ export const Route = createFileRoute("/admin/shop-products")({
 
 function ShopProductsAdmin() {
   const [passcode, setPasscode] = useState("");
+  const [authenticated, setAuthenticated] = useState(false);
   const [products, setProducts] = useState<ProductRow[]>([]);
   const [selected, setSelected] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [query, setQuery] = useState("");
@@ -65,23 +66,47 @@ function ShopProductsAdmin() {
 
   useEffect(() => {
     const saved = sessionStorage.getItem("ktr-admin-passcode") ?? "";
-    if (saved) { setPasscode(saved); void loadProducts(saved); }
+    const adminUnlocked = sessionStorage.getItem("ktr-admin-ok") === "1";
+    const fallback = (import.meta.env.VITE_ADMIN_PASSCODE as string) || "keeptxred";
+    const token = saved || (adminUnlocked ? fallback : "");
+
+    if (token) {
+      setPasscode(token);
+      setAuthenticated(true);
+      void loadProducts(token);
+      return;
+    }
+
+    setLoading(false);
   }, []);
 
   async function loadProducts(token = passcode) {
-    setLoading(true); setError("");
+    if (!token) {
+      setAuthenticated(false);
+      setLoading(false);
+      return;
+    }
+
+    setAuthenticated(true);
+    setLoading(true);
+    setError("");
     try {
       const response = await fetch("/api/admin/shop-products", { headers: { "x-admin-passcode": token } });
       const payload = await response.json() as { ok?: boolean; products?: ProductRow[]; error?: string };
       if (!response.ok || !payload.ok) throw new Error(payload.error || "Unable to load products");
       sessionStorage.setItem("ktr-admin-passcode", token);
+      sessionStorage.setItem("ktr-admin-ok", "1");
       setProducts(payload.products ?? []);
-    } catch (err) { setError(err instanceof Error ? err.message : "Unable to load products"); }
-    finally { setLoading(false); }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to load products");
+    } finally {
+      setLoading(false);
+    }
   }
 
   async function saveUpdates(updates: Array<Partial<ProductRow> & { id: string }>, key: string) {
-    setSaving(key); setError("");
+    setSaving(key);
+    setError("");
     try {
       const response = await fetch("/api/admin/shop-products", {
         method: "PATCH",
@@ -90,8 +115,11 @@ function ShopProductsAdmin() {
       });
       const payload = await response.json() as { ok?: boolean; error?: string };
       if (!response.ok || !payload.ok) throw new Error(payload.error || "Unable to save products");
-    } catch (err) { setError(err instanceof Error ? err.message : "Unable to save products"); }
-    finally { setSaving(null); }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unable to save products");
+    } finally {
+      setSaving(null);
+    }
   }
 
   function patchLocal(id: string, changes: Partial<ProductRow>) {
@@ -135,7 +163,8 @@ function ShopProductsAdmin() {
 
   async function bulkAssign(target: "keeptxred" | "texasdefined" | "both" | "hidden") {
     const ids = selected.length ? selected : filtered.map((product) => product.id);
-    const updates = ids.map((id) => ({ id,
+    const updates = ids.map((id) => ({
+      id,
       publish_keeptxred: target === "keeptxred" || target === "both",
       publish_texasdefined: target === "texasdefined" || target === "both",
     }));
@@ -144,11 +173,11 @@ function ShopProductsAdmin() {
     setSelected([]);
   }
 
-  if (products.length === 0 && !loading) return (
+  if (!authenticated && !loading) return (
     <main className="mx-auto max-w-md px-6 py-20">
       <Link to="/admin" className="text-sm font-semibold text-primary hover:underline">← Admin dashboard</Link>
       <h1 className="mt-6 text-3xl font-bold">Store Catalog</h1>
-      <p className="mt-2 text-sm text-muted-foreground">Manage products for KeepTXRed and TexasDefined from one place.</p>
+      <p className="mt-2 text-sm text-muted-foreground">Enter the regular admin passcode.</p>
       <form className="mt-6 space-y-3" onSubmit={(event) => { event.preventDefault(); void loadProducts(); }}>
         <input type="password" value={passcode} onChange={(event) => setPasscode(event.target.value)} placeholder="Admin passcode" className="h-11 w-full rounded-md border border-border px-3" />
         <button type="submit" className="h-11 w-full rounded-md bg-primary font-semibold text-primary-foreground">Open store catalog</button>
@@ -163,7 +192,10 @@ function ShopProductsAdmin() {
         <div className="mx-auto max-w-7xl px-4 py-6">
           <Link to="/admin" className="text-sm font-semibold text-primary hover:underline">← Admin dashboard</Link>
           <div className="mt-3 flex flex-wrap items-end justify-between gap-4">
-            <div><h1 className="text-3xl font-bold">Store Catalog</h1><p className="mt-1 text-sm text-muted-foreground">Choose KeepTXRed, TexasDefined, both, or hidden for every Printify product.</p></div>
+            <div>
+              <h1 className="text-3xl font-bold">Store Catalog</h1>
+              <p className="mt-1 text-sm text-muted-foreground">Choose KeepTXRed, TexasDefined, both, or hidden for every Printify product.</p>
+            </div>
             <button onClick={() => void loadProducts()} className="rounded-md border border-border bg-background px-4 py-2 text-sm font-semibold">Refresh</button>
           </div>
         </div>
@@ -172,16 +204,40 @@ function ShopProductsAdmin() {
       <section className="mx-auto max-w-7xl px-4 py-6">
         <div className="grid gap-3 lg:grid-cols-[1fr_auto]">
           <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search name, product ID, or Printify ID" className="h-11 rounded-md border border-border bg-background px-3" />
-          <div className="flex gap-2 overflow-x-auto">{(["all", "keeptxred", "texasdefined", "both", "hidden"] as ViewKey[]).map((option) => <button key={option} onClick={() => setView(option)} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold ${view === option ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"}`}>{option === "keeptxred" ? "KeepTXRed" : option === "texasdefined" ? "TexasDefined" : option[0].toUpperCase() + option.slice(1)}</button>)}</div>
+          <div className="flex gap-2 overflow-x-auto">
+            {(["all", "keeptxred", "texasdefined", "both", "hidden"] as ViewKey[]).map((option) => (
+              <button key={option} onClick={() => setView(option)} className={`shrink-0 rounded-full border px-4 py-2 text-sm font-semibold ${view === option ? "border-primary bg-primary text-primary-foreground" : "border-border bg-background"}`}>
+                {option === "keeptxred" ? "KeepTXRed" : option === "texasdefined" ? "TexasDefined" : option[0].toUpperCase() + option.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mt-4 flex flex-wrap items-center gap-2 rounded-lg border bg-background p-3">
           <span className="mr-2 text-sm font-semibold">{selected.length ? `${selected.length} selected` : `Bulk action applies to ${filtered.length} visible`}</span>
-          {(["keeptxred", "texasdefined", "both", "hidden"] as const).map((target) => <button key={target} disabled={saving === "bulk"} onClick={() => void bulkAssign(target)} className="rounded-md border px-3 py-1.5 text-sm font-semibold">{target === "keeptxred" ? "Set KeepTXRed" : target === "texasdefined" ? "Set TexasDefined" : target === "both" ? "Set Both" : "Hide"}</button>)}
+          {(["keeptxred", "texasdefined", "both", "hidden"] as const).map((target) => (
+            <button key={target} disabled={saving === "bulk" || filtered.length === 0} onClick={() => void bulkAssign(target)} className="rounded-md border px-3 py-1.5 text-sm font-semibold disabled:opacity-50">
+              {target === "keeptxred" ? "Set KeepTXRed" : target === "texasdefined" ? "Set TexasDefined" : target === "both" ? "Set Both" : "Hide"}
+            </button>
+          ))}
         </div>
 
-        {error ? <div className="mt-4 border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</div> : null}
-        <p className="mt-4 text-sm font-semibold">{loading ? "Loading…" : `${filtered.length} products`}</p>
+        {error ? (
+          <div className="mt-4 border border-destructive/30 bg-destructive/10 p-4 text-sm text-destructive">
+            <p className="font-semibold">The catalog could not load.</p>
+            <p className="mt-1">{error}</p>
+            <button onClick={() => void loadProducts()} className="mt-3 rounded-md border border-destructive/30 bg-background px-3 py-1.5 font-semibold">Try again</button>
+          </div>
+        ) : null}
+
+        <p className="mt-4 text-sm font-semibold">{loading ? "Loading products…" : `${filtered.length} products`}</p>
+
+        {!loading && !error && products.length === 0 ? (
+          <div className="mt-4 rounded-lg border bg-background p-8 text-center">
+            <h2 className="text-lg font-semibold">No Printify products found</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Run the Printify sync or confirm the product migration and environment settings are active.</p>
+          </div>
+        ) : null}
 
         <div className="mt-4 grid gap-4">
           {filtered.map((product) => (
@@ -189,21 +245,27 @@ function ShopProductsAdmin() {
               <div className="grid gap-4 lg:grid-cols-[28px_96px_minmax(0,1fr)]">
                 <input type="checkbox" checked={selected.includes(product.id)} onChange={(event) => setSelected((current) => event.target.checked ? [...current, product.id] : current.filter((id) => id !== product.id))} aria-label={`Select ${product.title}`} />
                 <img src={product.image_url} alt="" className="h-24 w-24 rounded-lg bg-muted object-cover" />
-                <div><h2 className="font-semibold">{product.title}</h2><p className="mt-1 text-sm text-muted-foreground">{new Intl.NumberFormat("en-US", { style: "currency", currency: product.currency || "USD" }).format(product.price)} · Printify {product.printify_product_id || "not linked"}</p></div>
+                <div>
+                  <h2 className="font-semibold">{product.title}</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">{new Intl.NumberFormat("en-US", { style: "currency", currency: product.currency || "USD" }).format(product.price)} · Printify {product.printify_product_id || "not linked"}</p>
+                </div>
               </div>
 
               <div className="mt-5 grid gap-4 xl:grid-cols-2">
                 {(["keeptxred", "texasdefined"] as StoreKey[]).map((store) => {
                   const fields = storeFields(product, store);
-                  return <fieldset key={store} className="rounded-lg border p-4"><legend className="px-2 text-sm font-bold">{store === "keeptxred" ? "KeepTXRed.com" : "TexasDefined.com"}</legend>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      <label className="flex items-center justify-between gap-3 text-sm font-semibold sm:col-span-2"><span>Show for sale</span><input type="checkbox" checked={fields.enabled} onChange={(event) => patchStore(product, store, { enabled: event.target.checked })} /></label>
-                      <label className="text-sm font-semibold">Category<select value={fields.category ?? ""} onChange={(event) => patchStore(product, store, { category: event.target.value || null })} className="mt-1 h-10 w-full rounded-md border bg-background px-2 font-normal">{CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-                      <label className="text-sm font-semibold">Display order<input type="number" min={0} max={9999} value={fields.order} onChange={(event) => patchStore(product, store, { order: Number(event.target.value) || 0 })} className="mt-1 h-10 w-full rounded-md border bg-background px-2 font-normal" /></label>
-                      <label className="flex items-center justify-between gap-3 text-sm"><span>Featured</span><input type="checkbox" checked={fields.featured} onChange={(event) => patchStore(product, store, { featured: event.target.checked })} /></label>
-                      <div className="sm:col-span-2"><p className="text-sm font-semibold">Collections</p><div className="mt-2 flex flex-wrap gap-3">{COLLECTIONS.map(([value, label]) => <label key={value} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={fields.collections.includes(value)} onChange={(event) => patchStore(product, store, { collections: event.target.checked ? [...fields.collections, value] : fields.collections.filter((item) => item !== value) })} />{label}</label>)}</div></div>
-                    </div>
-                  </fieldset>;
+                  return (
+                    <fieldset key={store} className="rounded-lg border p-4">
+                      <legend className="px-2 text-sm font-bold">{store === "keeptxred" ? "KeepTXRed.com" : "TexasDefined.com"}</legend>
+                      <div className="grid gap-3 sm:grid-cols-2">
+                        <label className="flex items-center justify-between gap-3 text-sm font-semibold sm:col-span-2"><span>Show for sale</span><input type="checkbox" checked={fields.enabled} onChange={(event) => patchStore(product, store, { enabled: event.target.checked })} /></label>
+                        <label className="text-sm font-semibold">Category<select value={fields.category ?? ""} onChange={(event) => patchStore(product, store, { category: event.target.value || null })} className="mt-1 h-10 w-full rounded-md border bg-background px-2 font-normal">{CATEGORIES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+                        <label className="text-sm font-semibold">Display order<input type="number" min={0} max={9999} value={fields.order} onChange={(event) => patchStore(product, store, { order: Number(event.target.value) || 0 })} className="mt-1 h-10 w-full rounded-md border bg-background px-2 font-normal" /></label>
+                        <label className="flex items-center justify-between gap-3 text-sm"><span>Featured</span><input type="checkbox" checked={fields.featured} onChange={(event) => patchStore(product, store, { featured: event.target.checked })} /></label>
+                        <div className="sm:col-span-2"><p className="text-sm font-semibold">Collections</p><div className="mt-2 flex flex-wrap gap-3">{COLLECTIONS.map(([value, label]) => <label key={value} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={fields.collections.includes(value)} onChange={(event) => patchStore(product, store, { collections: event.target.checked ? [...fields.collections, value] : fields.collections.filter((item) => item !== value) })} />{label}</label>)}</div></div>
+                      </div>
+                    </fieldset>
+                  );
                 })}
               </div>
 
