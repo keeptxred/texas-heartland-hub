@@ -14,3 +14,13 @@ export function isTexasDefinedOwnedSource(source: string | null | undefined): bo
     (name) => name.toLowerCase() === normalized,
   );
 }
+
+export function isTexasDefinedOwnedSourceRecord(
+  source: string | null | undefined,
+  notes: string | null | undefined,
+): boolean {
+  return (
+    isTexasDefinedOwnedSource(source) ||
+    String(notes ?? "").toLowerCase().includes("texasdefined-owned")
+  );
+}
