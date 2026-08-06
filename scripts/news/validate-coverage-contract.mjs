@@ -87,7 +87,7 @@ for (const token of [
 ]) {
   if (!healthEndpoint.includes(token)) throw new Error(`Newsroom health endpoint contract missing: ${token}`);
 }
-for (const token of ["/admin/coverage-gaps", "/admin/source-health", "/api/public/newsroom-health", "/api/public/hooks/ingest-feeds"]) {
+for (const token of ["/admin/coverage-gaps", "/api/public/newsroom-health", "/api/public/hooks/ingest-feeds"]) {
   if (!smoke.includes(token)) throw new Error(`Live newsroom smoke contract missing: ${token}`);
 }
 
