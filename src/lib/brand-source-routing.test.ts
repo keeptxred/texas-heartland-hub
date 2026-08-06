@@ -28,7 +28,7 @@ describe("TexasDefined source ownership", () => {
     ).toBe(false);
   });
 
-  it("blocks TexasDefined sources from KeepTXRed article and rewrite routing", () => {
+  it("blocks TexasDefined sources before KeepTXRed storage, article, and rewrite routing", () => {
     for (const source of TEXAS_DEFINED_OWNED_SOURCE_NAMES) {
       const result = scoreFeedItem({
         title: "Texas institution announces major statewide expansion",
@@ -40,6 +40,7 @@ describe("TexasDefined source ownership", () => {
         source_reputation_reason: "Database override must not bypass ownership",
       });
 
+      expect(result.texasRelevanceScore).toBe(0);
       expect(result.sourceReputationScore).toBe(0);
       expect(result.sourceReputationReason).toContain("TexasDefined-owned");
       expect(result.routingType).toBe("FACEBOOK_ONLY");
