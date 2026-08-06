@@ -1,0 +1,57 @@
+name: Broken link audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'public/**'
+      - 'supabase/migrations/**'
+      - 'scripts/seo/audit-broken-links.mjs'
+      - '.github/workflows/broken-link-audit.yml'
+  schedule:
+    - cron: '17 11 * * 1'
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Audit repository and production site
+        run: node scripts/seo/audit-broken-links.mjs --live
+        continue-on-error: true
+      - name: Publish audit summary
+        if: always()
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('artifacts/broken-link-audit.json', 'utf8'));
+          const out = process.env.GITHUB_STEP_SUMMARY;
+          fs.appendFileSync(out, '# KeepTXRed broken-link audit\n\n');
+          fs.appendFileSync(out, `- Static findings: **${report.summary.staticFindings}**\n`);
+          fs.appendFileSync(out, `- Live pages checked: **${report.summary.livePagesChecked}**\n`);
+          fs.appendFileSync(out, `- Live failures: **${report.summary.liveFailures}**\n\n`);
+          for (const item of [...report.staticFindings, ...report.liveFailures].slice(0, 200)) {
+            fs.appendFileSync(out, `- \`${item.type}\`: ${item.file || item.source || item.url || ''}${item.line ? `:${item.line}` : ''} ${item.pathname || item.raw || item.status || item.error || ''}\n`);
+          }
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: broken-link-audit
+          path: artifacts/broken-link-audit.json
+          retention-days: 30
+      - name: Fail on confirmed findings
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('artifacts/broken-link-audit.json', 'utf8'));
+          if (report.summary.staticFindings || report.summary.liveFailures) process.exit(1);
+          NODE
