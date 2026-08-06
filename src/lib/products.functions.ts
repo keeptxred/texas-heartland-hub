@@ -106,9 +106,12 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
     });
     const { data, error } = await supabase
       .from("products")
-      .select("id,title,price,currency,image_url,product_url,description,tags,colors,variants,category,collections,is_featured,is_new,is_on_sale")
-      .eq("is_active", true)
-      .order("is_featured", { ascending: false })
+      // KeepTXRed shows only products assigned to KeepTXRed or Both, using its own
+      // category/collections/featured/display-order columns.
+      .select("id,title,price,currency,image_url,product_url,description,tags,colors,variants,keeptxred_category,keeptxred_collections,keeptxred_featured,keeptxred_display_order,is_new,is_on_sale")
+      .eq("publish_keeptxred", true)
+      .order("keeptxred_featured", { ascending: false })
+      .order("keeptxred_display_order", { ascending: true })
       .order("synced_at", { ascending: false })
       .limit(120);
     if (error || !data || (Array.isArray(data) && data.length === 0)) {
@@ -129,9 +132,9 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       tags: string[] | null;
       colors: string[] | null;
       variants: ProductVariant[] | null;
-      category: string | null;
-      collections: string[] | null;
-      is_featured: boolean | null;
+      keeptxred_category: string | null;
+      keeptxred_collections: string[] | null;
+      keeptxred_featured: boolean | null;
       is_new: boolean | null;
       is_on_sale: boolean | null;
     }>).map((r) => ({
@@ -145,9 +148,9 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       tags: r.tags ?? [],
       colors: r.colors ?? [],
       variants: Array.isArray(r.variants) ? r.variants : [],
-      category: r.category,
-      collections: r.collections ?? [],
-      isFeatured: Boolean(r.is_featured),
+      category: r.keeptxred_category,
+      collections: r.keeptxred_collections ?? [],
+      isFeatured: Boolean(r.keeptxred_featured),
       isNew: Boolean(r.is_new),
       isOnSale: Boolean(r.is_on_sale),
     }));
