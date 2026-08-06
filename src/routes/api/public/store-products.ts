@@ -35,7 +35,7 @@ export const Route = createFileRoute("/api/public/store-products")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         let query = supabaseAdmin
           .from("products")
-          .select(`id,printify_product_id,title,description,price,currency,image_url,tags,colors,variants,is_new,is_on_sale,${prefix}_category,${prefix}_collections,${prefix}_featured,${prefix}_display_order,synced_at`)
+          .select(`id,printify_product_id,title,description,price,currency,image_url,tags,colors,variants,is_new,is_on_sale,${prefix}_title,${prefix}_description,${prefix}_image_url,${prefix}_category,${prefix}_collections,${prefix}_featured,${prefix}_display_order,synced_at`)
           .eq("source", "printify")
           .eq(`publish_${prefix}`, true)
           .order(`${prefix}_featured`, { ascending: false })
@@ -51,11 +51,11 @@ export const Route = createFileRoute("/api/public/store-products")({
         const products = (data ?? []).map((row: Record<string, unknown>) => ({
           id: row.id,
           printifyProductId: row.printify_product_id,
-          title: row.title,
-          description: row.description,
+          title: row[`${prefix}_title`] || row.title,
+          description: row[`${prefix}_description`] || row.description,
           price: row.price,
           currency: row.currency,
-          imageUrl: row.image_url,
+          imageUrl: row[`${prefix}_image_url`] || row.image_url,
           tags: row.tags ?? [],
           colors: row.colors ?? [],
           variants: row.variants ?? [],
@@ -65,7 +65,7 @@ export const Route = createFileRoute("/api/public/store-products")({
           displayOrder: row[`${prefix}_display_order`] ?? 0,
           isNew: row.is_new ?? false,
           isOnSale: row.is_on_sale ?? false,
-          productUrl: site === "keeptxred" ? `/shop/${row.id}` : `/shop/${row.id}`,
+          productUrl: site === "keeptxred" ? `/shop/${row.id}` : `/shop/product/${row.id}`,
         }));
 
         return Response.json({ ok: true, site, products }, { headers: corsHeaders(request) });
