@@ -4,7 +4,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-06T00:30:17.920Z",
+    "recalculatedAt": "2026-08-06T13:03:44.051Z",
     "weightedMargin": 5,
     "uncertaintyRange": {
       "low": 2.1,
@@ -56,9 +56,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-attorney-general",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.18,
+        "finalWeight": 0.177,
         "factors": {
-          "recency": 0.165,
+          "recency": 0.163,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -80,7 +80,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-06T00:30:17.920Z",
+    "recalculatedAt": "2026-08-06T13:03:44.051Z",
     "weightedMargin": 6,
     "uncertaintyRange": {
       "low": 2,
@@ -111,9 +111,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-comptroller",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.18,
+        "finalWeight": 0.177,
         "factors": {
-          "recency": 0.165,
+          "recency": 0.163,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -135,7 +135,7 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-06T00:30:17.920Z",
+    "recalculatedAt": "2026-08-06T13:03:44.051Z",
     "weightedMargin": 6.2,
     "uncertaintyRange": {
       "low": 3.3,
@@ -187,9 +187,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.18,
+        "finalWeight": 0.177,
         "factors": {
-          "recency": 0.165,
+          "recency": 0.163,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -211,7 +211,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-06T00:30:17.920Z",
+    "recalculatedAt": "2026-08-06T13:03:44.051Z",
     "weightedMargin": 7,
     "uncertaintyRange": {
       "low": 3,
@@ -248,9 +248,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-lieutenant-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.18,
+        "finalWeight": 0.177,
         "factors": {
-          "recency": 0.165,
+          "recency": 0.163,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -272,17 +272,17 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-06T00:30:17.920Z",
-    "weightedMargin": 0.5,
+    "recalculatedAt": "2026-08-06T13:03:44.051Z",
+    "weightedMargin": 0.6,
     "uncertaintyRange": {
-      "low": -2.4,
-      "high": 3.4
+      "low": -2.3,
+      "high": 3.5
     },
     "candidates": [
       {
         "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
         "candidateName": "JAMES TALARICO",
-        "averagePercentage": 43.9,
+        "averagePercentage": 44,
         "pollCount": 2
       },
       {
@@ -324,9 +324,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-us-senate",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.18,
+        "finalWeight": 0.177,
         "factors": {
-          "recency": 0.165,
+          "recency": 0.163,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
