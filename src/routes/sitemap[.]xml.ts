@@ -1,6 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { BASE_URL, isRealImage, toIsoDate, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
+import {
+  BASE_URL,
+  isRealImage,
+  isArticleSlugDateConsistent,
+  toIsoDate,
+  xmlEscape,
+  xmlResponse,
+} from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
@@ -8,7 +15,7 @@ import { AUTHORS } from "@/data/authors";
 import { ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 
-const INDEX_LASTMOD = toIsoDate("2026-08-03T00:00:00-05:00");
+const INDEX_LASTMOD = toIsoDate("2026-08-07T00:00:00-05:00");
 
 function isCompleteAuthor(author: (typeof AUTHORS)[number]): boolean {
   return Boolean(
@@ -26,7 +33,9 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const cutoff = Date.now() - 48 * 60 * 60 * 1000;
-        const localArticles = ARTICLES.filter((article) => isPublished(article));
+        const localArticles = ARTICLES.filter((article) =>
+          isPublished(article) && isArticleSlugDateConsistent(article.slug, article.publishedAt),
+        );
         let cloudArticles: Array<{
           published_at: string;
           image_url: string | null;
@@ -36,7 +45,9 @@ export const Route = createFileRoute("/sitemap.xml")({
           updated_at: string | null;
         }> = [];
         try {
-          cloudArticles = (await listSitemapArticles()).articles;
+          cloudArticles = (await listSitemapArticles()).articles.filter((article) =>
+            isArticleSlugDateConsistent(article.slug, article.published_at),
+          );
         } catch (error) {
           console.error("sitemap index: cloud articles fetch failed", error);
         }
