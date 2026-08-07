@@ -1,0 +1,220 @@
+name: Patch rewrite diagnostics
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/patch-rewrite-diagnostics.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Patch rewrite failure diagnostics
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("src/routes/api/public/hooks/ingest-feeds.ts")
+          text = path.read_text()
+
+          def replace_once(old: str, new: str) -> None:
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f"Expected exactly one match, found {count}: {old[:100]!r}")
+              text = text.replace(old, new, 1)
+
+          replace_once(
+          '''async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {''',
+          '''const rewriteFailureReasons = new WeakMap<Item, string>();
+
+          function setRewriteFailure(it: Item, reason: string): void {
+            rewriteFailureReasons.set(it, `AI rewrite failed — ${reason}`);
+          }
+
+          function getRewriteFailure(it: Item): string {
+            return rewriteFailureReasons.get(it) ?? "AI rewrite failed — unknown failure after AI generation";
+          }
+
+          async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {''')
+
+          old_gateway = '''  const result = await runEditorialRewrite<Rewrite>(async (addendum) => {
+            try {
+              const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+                body: JSON.stringify({
+                  model: "google/gemini-3-flash-preview",
+                  messages: [
+                    { role: "system", content: REWRITE_SYSTEM + addendum },
+                    { role: "user", content: userMessage },
+                  ],
+                  response_format: { type: "json_object" },
+                  max_tokens: 9000,
+                }),
+                signal: AbortSignal.timeout(90000),
+              });
+              if (!r.ok) return { raw: null };
+              const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+              return { raw: data.choices?.[0]?.message?.content ?? null };
+            } catch {
+              return { raw: null };
+            }
+          });'''
+
+          new_gateway = '''  let gatewayFailureReason: string | null = null;
+          const result = await runEditorialRewrite<Rewrite>(async (addendum, attempt) => {
+            gatewayFailureReason = null;
+            try {
+              const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Lovable-API-Key": lovableApiKey },
+                body: JSON.stringify({
+                  model: "google/gemini-3-flash-preview",
+                  messages: [
+                    { role: "system", content: REWRITE_SYSTEM + addendum },
+                    { role: "user", content: userMessage },
+                  ],
+                  response_format: { type: "json_object" },
+                  max_tokens: 9000,
+                }),
+                signal: AbortSignal.timeout(90000),
+              });
+              if (!r.ok) {
+                gatewayFailureReason = `AI gateway HTTP ${r.status} during ${attempt}`;
+                return { raw: null };
+              }
+
+              let data: { choices?: { message?: { content?: string } }[] };
+              try {
+                data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+              } catch {
+                gatewayFailureReason = `AI gateway returned invalid response JSON during ${attempt}`;
+                return { raw: null };
+              }
+
+              const raw = data.choices?.[0]?.message?.content ?? null;
+              if (!raw?.trim()) {
+                gatewayFailureReason = `AI gateway returned an empty response during ${attempt}`;
+                return { raw: null };
+              }
+              try {
+                JSON.parse(raw);
+              } catch {
+                gatewayFailureReason = `AI gateway returned invalid article JSON during ${attempt}`;
+              }
+              return { raw };
+            } catch (error) {
+              const name = error instanceof Error ? error.name : "";
+              gatewayFailureReason = name === "TimeoutError" || name === "AbortError"
+                ? `AI gateway timed out during ${attempt}`
+                : `AI gateway request failed during ${attempt}: ${error instanceof Error ? error.message : "unknown error"}`;
+              return { raw: null };
+            }
+          });'''
+          replace_once(old_gateway, new_gateway)
+
+          replace_once(
+          '''    return null;
+            }
+            if (!parsed.title || !parsed.summary || !parsed.dek) return null;
+            if (!parsed.relevance || parsed.relevance.trim().length < 40) return null;''',
+          '''    const validationDetail = result.validation.reasons.length
+                ? result.validation.reasons.join(", ")
+                : result.droppedReason ?? "unknown editorial rejection";
+              setRewriteFailure(
+                it,
+                gatewayFailureReason ??
+                  (result.droppedReason === "no_clear_news_event"
+                    ? "editorial analysis found no clear news event"
+                    : `editorial validation rejected the draft: ${validationDetail}`),
+              );
+              return null;
+            }
+            if (!parsed.title || !parsed.summary || !parsed.dek) {
+              setRewriteFailure(it, "editorial output was missing title, summary, or dek");
+              return null;
+            }
+            if (!parsed.relevance || parsed.relevance.trim().length < 40) {
+              setRewriteFailure(it, "editorial output was missing a usable Texas relevance explanation");
+              return null;
+            }''')
+
+          replace_once(
+          '''    .select("result_json,status")
+            .eq("content_fingerprint", fingerprint)
+            .maybeSingle();
+          const cached = cachedRow as unknown as { result_json?: Rewrite | null; status?: string } | null;
+          let rw = cached?.status === "completed" && cached.result_json ? cached.result_json : null;''',
+          '''    .select("result_json,status,failure_reason")
+            .eq("content_fingerprint", fingerprint)
+            .maybeSingle();
+          const cached = cachedRow as unknown as {
+            result_json?: Rewrite | null;
+            status?: string;
+            failure_reason?: string | null;
+          } | null;
+          let rw = cached?.status === "completed" && cached.result_json ? cached.result_json : null;
+          let rewriteFailureReason = cached?.failure_reason ?? null;''')
+
+          replace_once(
+          '''      const { data: refreshedRow } = await cacheClient
+                .from("ai_rewrite_cache")
+                .select("result_json")
+                .eq("content_fingerprint", fingerprint)
+                .maybeSingle();
+              rw =
+                (refreshedRow as unknown as { result_json?: Rewrite | null } | null)?.result_json ?? null;
+            } else {
+              rw = await rewriteItemWithRetry(item, lovableApiKey);
+              const cacheUpdate = rw''',
+          '''      const { data: refreshedRow } = await cacheClient
+                .from("ai_rewrite_cache")
+                .select("result_json,failure_reason")
+                .eq("content_fingerprint", fingerprint)
+                .maybeSingle();
+              const refreshed = refreshedRow as unknown as {
+                result_json?: Rewrite | null;
+                failure_reason?: string | null;
+              } | null;
+              rw = refreshed?.result_json ?? null;
+              rewriteFailureReason = refreshed?.failure_reason ?? rewriteFailureReason;
+            } else {
+              rw = await rewriteItemWithRetry(item, lovableApiKey);
+              rewriteFailureReason = rw ? null : getRewriteFailure(item);
+              const cacheUpdate = rw''')
+
+          replace_once(
+          '''            failure_reason: "AI rewrite failed",
+                completed_at: null,''',
+          '''            failure_reason: rewriteFailureReason ?? getRewriteFailure(item),
+                completed_at: null,''')
+
+          replace_once(
+          '''  if (!rw) return { ok: false, error: "AI rewrite failed" };''',
+          '''  if (!rw) {
+            return {
+              ok: false,
+              error: rewriteFailureReason ?? getRewriteFailure(item),
+            };
+          }''')
+
+          path.write_text(text)
+      - name: Verify typecheck
+        run: npm ci && npm run typecheck
+      - name: Commit patch and remove temporary workflow
+        run: |
+          rm .github/workflows/patch-rewrite-diagnostics.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/routes/api/public/hooks/ingest-feeds.ts .github/workflows/patch-rewrite-diagnostics.yml
+          git commit -m "Preserve AI rewrite failure diagnostics"
+          git push origin HEAD:main
