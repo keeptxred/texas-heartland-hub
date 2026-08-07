@@ -41,6 +41,36 @@ const LEGACY_CONTENT_PATHS = new Map([
   ["/houston-news", "/houston"],
   ["/property-taxes", "/texas/property-taxes-2026"],
 ]);
+const BAD_YEAR_NEWS_REDIRECTS = new Map([
+  ["live-2001-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8", "live-2026-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8"],
+  ["live-2001-02-11-texas-mail-in-ballot-deadlines-approach-for-march-2026-primary-electio-76tc0a", "live-2026-02-11-texas-mail-in-ballot-deadlines-approach-for-march-2026-primary-electio-76tc0a"],
+  ["live-2001-02-17-texas-reaches-record-voter-registration-levels-ahead-of-march-primary--xy6p6f", "live-2026-02-17-texas-reaches-record-voter-registration-levels-ahead-of-march-primary--xy6p6f"],
+  ["live-2001-02-24-state-election-officials-record-high-engagement-as-early-voting-for-ma-t31b6w", "live-2026-02-24-state-election-officials-record-high-engagement-as-early-voting-for-ma-t31b6w"],
+  ["live-2001-04-29-streamlined-economic-growth-secretary-of-state-launches-texas-express--ovz2ap", "live-2026-04-29-streamlined-economic-growth-secretary-of-state-launches-texas-express--ovz2ap"],
+  ["live-2001-05-12-empowering-texas-military-families-secretary-nelson-outlines-direct-vo-ftq1iy", "live-2026-05-12-empowering-texas-military-families-secretary-nelson-outlines-direct-vo-ftq1iy"],
+  ["live-2001-05-13-everything-texas-voters-need-to-know-before-the-2026-primary-runoff-el-e2dz9h", "live-2026-05-13-everything-texas-voters-need-to-know-before-the-2026-primary-runoff-el-e2dz9h"],
+  ["live-2001-05-22-secretary-of-state-jane-nelson-issues-guidelines-for-upcoming-texas-pr-ckq2qh", "live-2026-05-22-secretary-of-state-jane-nelson-issues-guidelines-for-upcoming-texas-pr-ckq2qh"],
+  ["live-2001-06-02-texas-secretary-of-state-jane-nelson-announces-departure-from-governor-an4w84", "live-2026-06-02-texas-secretary-of-state-jane-nelson-announces-departure-from-governor-an4w84"],
+  ["live-2001-06-05-secretary-of-state-refers-potential-noncitizen-vote-cases-for-investig-zfcqnz", "live-2025-06-05-secretary-of-state-refers-potential-noncitizen-vote-cases-for-investig-zfcqnz"],
+  ["live-2001-06-18-secretary-of-state-jane-nelson-unveils-multi-million-dollar-election-s-dj4rhd", "live-2025-06-18-secretary-of-state-jane-nelson-unveils-multi-million-dollar-election-s-dj4rhd"],
+  ["live-2001-06-23-texas-secretary-of-state-finalizes-ballot-order-for-upcoming-constitut-hogsor", "live-2025-06-23-texas-secretary-of-state-finalizes-ballot-order-for-upcoming-constitut-hogsor"],
+  ["live-2001-06-25-official-ballot-order-set-for-upcoming-texas-constitutional-amendment--sxct31", "live-2025-06-25-official-ballot-order-set-for-upcoming-texas-constitutional-amendment--sxct31"],
+  ["live-2001-07-02-international-consular-leaders-honor-texas-role-in-upcoming-america250-uo497h", "live-2026-07-02-international-consular-leaders-honor-texas-role-in-upcoming-america250-uo497h"],
+  ["live-2001-07-14-texas-secretary-of-state-launches-rapid-business-registration-system-s-wd3r5u", "live-2026-07-14-texas-secretary-of-state-launches-rapid-business-registration-system-s-wd3r5u"],
+  ["live-2001-07-16-final-oversight-secretary-nelson-reinforces-texas-election-security-pr-l47qrk", "live-2026-07-16-final-oversight-secretary-nelson-reinforces-texas-election-security-pr-l47qrk"],
+  ["live-2001-07-17-a-legacy-of-reform-jane-nelson-concludes-tenure-as-texas-secretary-of--k0saf5", "live-2026-07-17-a-legacy-of-reform-jane-nelson-concludes-tenure-as-texas-secretary-of--k0saf5"],
+  ["live-2001-07-23-streamlined-documents-texas-secretary-of-state-jane-nelson-launches-ap-c1e3us", "live-2025-07-23-streamlined-documents-texas-secretary-of-state-jane-nelson-launches-ap-c1e3us"],
+  ["live-2001-08-12-secretary-of-state-jane-nelson-leads-critical-border-trade-discussions-8m50tf", "live-2025-08-12-secretary-of-state-jane-nelson-leads-critical-border-trade-discussions-8m50tf"],
+  ["live-2001-10-03-october-6-deadline-secretary-of-state-nelson-issues-final-call-for-tex-r43bxj", "live-2025-10-03-october-6-deadline-secretary-of-state-nelson-issues-final-call-for-tex-r43bxj"],
+  ["live-2001-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp", "live-2025-10-17-a-guide-to-texas-early-voting-secretary-jane-nelson-outlines-key-deadl-arwqgp"],
+  ["live-2001-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t", "live-2025-10-20-secretary-jane-nelson-enhances-texas-election-integrity-with-federal-d-3ocr9t"],
+  ["live-2001-10-29-texas-voter-turnout-surges-with-half-a-million-early-ballots-recorded--irss2i", "live-2025-10-29-texas-voter-turnout-surges-with-half-a-million-early-ballots-recorded--irss2i"],
+  ["live-2001-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc", "live-2025-10-30-texas-secretary-of-state-defends-constitutionality-of-state-primary-el-fcshc"],
+  ["live-2001-10-31-voter-preparation-guide-for-the-texas-constitutional-amendment-electio-tgr8b3", "live-2025-10-31-voter-preparation-guide-for-the-texas-constitutional-amendment-electio-tgr8b3"],
+  ["live-2001-11-06-texas-breaks-all-time-record-with-3-million-active-business-entities-a-qxu7on", "live-2025-11-06-texas-breaks-all-time-record-with-3-million-active-business-entities-a-qxu7on"],
+  ["live-2001-11-25-harris-county-election-procedures-under-fire-after-texas-secretary-of--xfu59l", "live-2025-11-25-harris-county-election-procedures-under-fire-after-texas-secretary-of--xfu59l"],
+  ["live-2001-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr", "live-2025-12-18-texas-secretary-of-state-announces-temporary-relocation-of-public-serv-mdazcr"],
+]);
 const CANONICAL_ORIGIN = "https://keeptxred.com";
 
 const TRACKING_PARAMS = new Set([
@@ -107,6 +137,11 @@ function normalizePagePath(pathname: string): string {
 function resolveLegacyPath(pathname: string): string {
   const normalized = normalizePagePath(pathname);
   const lower = normalized.toLowerCase();
+  const newsMatch = normalized.match(/^\/news\/([^/]+)$/);
+  if (newsMatch) {
+    const replacement = BAD_YEAR_NEWS_REDIRECTS.get(newsMatch[1]);
+    if (replacement) return `/news/${replacement}`;
+  }
   return LEGACY_CONTENT_PATHS.get(lower) ?? LEGACY_ELECTION_PATHS.get(lower) ?? normalized;
 }
 
