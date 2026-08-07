@@ -4,7 +4,6 @@ import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import {
   buildSeo,
   ORGANIZATION_ID,
-  personJsonLd,
   SITE_URL,
   WEBSITE_ID,
 } from "@/lib/seo";
@@ -32,7 +31,7 @@ export const Route = createFileRoute("/authors/$slug")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Author not found — Keep TX Red" },
+          { title: "Newsroom desk not found — Keep TX Red" },
           { name: "robots", content: "noindex,follow" },
         ],
       };
@@ -41,22 +40,21 @@ export const Route = createFileRoute("/authors/$slug")({
     const { author } = loaderData;
     const path = `/authors/${author.slug}`;
     const url = `${SITE_URL}${path}`;
+    const deskId = `${url}#desk`;
     const description = `${author.name} covers ${author.beats.join(", ")} for Keep TX Red. ${author.bio[0]}`;
     const seo = buildSeo({
-      title: `${author.name} | Author`,
+      title: `${author.name} | Newsroom Desk`,
       description,
       path,
       type: "website",
     });
-    const person = {
-      ...personJsonLd({
-        name: author.name,
-        url,
-        id: `${url}#person`,
-        jobTitle: author.role,
-        description: author.bio.join(" "),
-      }),
-      "@context": undefined,
+    const desk = {
+      "@type": "Organization",
+      "@id": deskId,
+      name: author.name,
+      url,
+      description: author.bio.join(" "),
+      parentOrganization: { "@id": ORGANIZATION_ID },
       knowsAbout: author.beats,
     };
     const profilePage = {
@@ -67,8 +65,8 @@ export const Route = createFileRoute("/authors/$slug")({
       description: seo.description,
       isPartOf: { "@id": WEBSITE_ID },
       publisher: { "@id": ORGANIZATION_ID },
-      mainEntity: { "@id": `${url}#person` },
-      about: { "@id": `${url}#person` },
+      mainEntity: { "@id": deskId },
+      about: { "@id": deskId },
       inLanguage: "en-US",
     };
 
@@ -84,7 +82,7 @@ export const Route = createFileRoute("/authors/$slug")({
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@graph": [person, profilePage],
+            "@graph": [desk, profilePage],
           }),
         },
         {
@@ -104,7 +102,7 @@ export const Route = createFileRoute("/authors/$slug")({
   },
   notFoundComponent: () => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-      <h1 className="font-display text-4xl mb-3">Author Not Found</h1>
+      <h1 className="font-display text-4xl mb-3">Newsroom Desk Not Found</h1>
       <Link to="/news" className="text-primary underline">Back to the newsroom</Link>
     </div>
   ),
@@ -128,7 +126,7 @@ function AuthorPage() {
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
         <Link to="/news" className="hover:text-primary">Newsroom</Link>
         <span className="mx-2">/</span>
-        <span className="text-primary">Author</span>
+        <span className="text-primary">Newsroom Desk</span>
       </nav>
       <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Keep TX Red</span>
       <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-2">{author.name}</h1>
@@ -167,7 +165,7 @@ function AuthorPage() {
       </section>
 
       <p className="mt-12 text-xs italic text-muted-foreground border-t border-border pt-4">
-        Opinions and analysis published under this byline are editorial content and reflect the views of the author and Keep TX Red's editors — not statements of fact.
+        Opinions and analysis published under this byline are editorial content produced by this newsroom desk and reviewed under Keep TX Red's editorial standards — not statements of fact.
       </p>
     </div>
   );
