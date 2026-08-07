@@ -6,6 +6,7 @@ import { getArticleImage } from "@/lib/fallback-images";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
+import { newsClusterKey, resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { articleMainWordCount } from "@/lib/article-length";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
@@ -834,7 +835,10 @@ function parseFeed(xml: string, source: string): Item[] {
       items.push({
         title: title.slice(0, 500),
         link,
-        pub_date: new Date(isNaN(ts) ? Date.now() : ts).toISOString(),
+        // Feeds sometimes emit wildly wrong pubDates (e.g. 2001 for a 2026
+        // story). Clamp implausible dates to ingestion time so they can never
+        // leak into published_at or the slug's date prefix.
+        pub_date: resolvePublishTimestamp(isNaN(ts) ? null : ts),
         source,
         description: description.slice(0, 1000),
       });
