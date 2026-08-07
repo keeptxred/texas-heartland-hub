@@ -91,7 +91,10 @@ export const Route = createFileRoute("/sitemap.xml")({
           { file: "sitemap-representatives.xml", count: 1 },
           { file: "sitemap-committees.xml", count: 1 },
           { file: "sitemap-districts.xml", count: ELECTION_DISTRICT_PATHS.length },
-          { file: "sitemap-legislature.xml", count: 3 },
+          // One or more session-detail pages are emitted dynamically from the
+          // legislative_sessions table; the three shared Legislature hubs live
+          // in sitemap-pages.xml and are intentionally not duplicated here.
+          { file: "sitemap-legislature.xml", count: 1 },
           { file: "sitemap-news.xml", count: newsCount },
           { file: "sitemap-evergreen.xml", count: evergreenCount },
           { file: "sitemap-products.xml", count: productCount },
