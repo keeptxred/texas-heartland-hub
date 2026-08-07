@@ -150,14 +150,12 @@ export async function sessionSitemapEntries(): Promise<UrlEntry[]> {
   const { data, error } = await db.from('legislative_sessions').select('legislature_number,session_code,updated_at').order('legislature_number', { ascending: false }).limit(500);
   if (error) throw error;
   const rows = (data ?? []) as Array<{ legislature_number: number; session_code: string; updated_at?: string | null }>;
-  const lastmod = newestDate(rows.map((item) => item.updated_at));
-  return [
-    { loc: absUrl('/texas-legislature'), lastmod },
-    { loc: absUrl('/texas-legislature/current-session'), lastmod },
-    { loc: absUrl('/texas-legislature/sessions'), lastmod },
-    ...rows.map((item) => ({
-      loc: absUrl(`/texas-legislature/sessions/${item.legislature_number}${String(item.session_code).toLowerCase()}`),
-      lastmod: toIsoDate(item.updated_at) || undefined,
-    })),
-  ];
+
+  // The shared Legislature hub, current-session page, and sessions index live in
+  // sitemap-pages.xml. Keep this child sitemap focused on session detail pages so
+  // canonical URLs are never duplicated across the sitemap set.
+  return rows.map((item) => ({
+    loc: absUrl(`/texas-legislature/sessions/${item.legislature_number}${String(item.session_code).toLowerCase()}`),
+    lastmod: toIsoDate(item.updated_at) || undefined,
+  }));
 }
