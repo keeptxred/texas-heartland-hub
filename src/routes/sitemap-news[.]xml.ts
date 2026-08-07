@@ -1,6 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { BASE_URL, xmlEscape, xmlResponse, toIsoDate, canonicalize } from "@/lib/sitemap-shared";
+import {
+  BASE_URL,
+  xmlEscape,
+  xmlResponse,
+  toIsoDate,
+  canonicalize,
+  isArticleSlugDateConsistent,
+} from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 
@@ -19,7 +26,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
 
         for (const a of ARTICLES.filter((a) => isPublished(a))) {
           const t = new Date(a.publishedAt).getTime();
-          if (isNaN(t) || t < cutoff) continue;
+          if (isNaN(t) || t < cutoff || !isArticleSlugDateConsistent(a.slug, a.publishedAt)) continue;
           items.push({
             loc: `${BASE_URL}/news/${a.slug}`,
             title: a.title,
@@ -32,7 +39,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
           for (const a of articles) {
             if (a.kind !== "ingested" && a.kind !== "news") continue;
             const t = new Date(a.published_at).getTime();
-            if (isNaN(t) || t < cutoff) continue;
+            if (isNaN(t) || t < cutoff || !isArticleSlugDateConsistent(a.slug, a.published_at)) continue;
             items.push({
               loc: `${BASE_URL}/news/${a.slug}`,
               title: a.title,
@@ -47,10 +54,10 @@ export const Route = createFileRoute("/sitemap-news.xml")({
         const rows: string[] = [];
         for (const it of items) {
           const key = canonicalize(it.loc);
-          if (seen.has(key)) continue;
+          if (!key || seen.has(key)) continue;
           seen.add(key);
           rows.push(
-            `  <url>\n    <loc>${xmlEscape(it.loc)}</loc>\n    <lastmod>${it.pubDate}</lastmod>\n    <news:news>\n      <news:publication>\n        <news:name>Keep Texas Red</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>${it.pubDate}</news:publication_date>\n      <news:title>${xmlEscape(it.title)}</news:title>\n    </news:news>\n  </url>`,
+            `  <url>\n    <loc>${xmlEscape(key)}</loc>\n    <lastmod>${it.pubDate}</lastmod>\n    <news:news>\n      <news:publication>\n        <news:name>Keep Texas Red</news:name>\n        <news:language>en</news:language>\n      </news:publication>\n      <news:publication_date>${it.pubDate}</news:publication_date>\n      <news:title>${xmlEscape(it.title)}</news:title>\n    </news:news>\n  </url>`,
           );
         }
 
