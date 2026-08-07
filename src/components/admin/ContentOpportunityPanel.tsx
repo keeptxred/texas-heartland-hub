@@ -122,6 +122,44 @@ function effectivePreflight(item: FeedItem): RewritePreflightResult {
   });
 }
 
+function normalizeOpportunityTitle(value: string | null | undefined): string {
+  return String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function normalizeOpportunityUrl(value: string | null | undefined): string {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  try {
+    const url = new URL(raw);
+    url.hash = "";
+    url.search = "";
+    return `${url.origin}${url.pathname.replace(/\/+$/, "")}`.toLowerCase();
+  } catch {
+    return raw.replace(/[?#].*$/, "").replace(/\/+$/, "").toLowerCase();
+  }
+}
+
+function dedupeFeedOpportunities(feed: FeedItem[]): FeedItem[] {
+  const seenLinks = new Set<string>();
+  const seenSlugs = new Set<string>();
+  const seenTitles = new Set<string>();
+  const result: FeedItem[] = [];
+
+  for (const item of feed) {
+    const link = normalizeOpportunityUrl(item.link);
+    const slug = String(item.internal_slug ?? item.article_slug ?? "").toLowerCase().trim();
+    const title = normalizeOpportunityTitle(item.title);
+    if ((link && seenLinks.has(link)) || (slug && seenSlugs.has(slug)) || (title && seenTitles.has(title))) {
+      continue;
+    }
+    if (link) seenLinks.add(link);
+    if (slug) seenSlugs.add(slug);
+    if (title) seenTitles.add(title);
+    result.push(item);
+  }
+  return result;
+}
+
 function shouldShowOpportunity(item: FeedItem): boolean {
   if (item.id < 0 || item.internal_slug) return true;
   if (!item.preflight_json) return true;
@@ -369,7 +407,7 @@ export function ContentOpportunityPanel() {
           .limit(500),
         supabase
           .from("daily_articles")
-          .select("slug,title,category,source_name,published_at,featured_image_url")
+          .select("slug,title,category,source_name,published_at,featured_image_url,source_url")
           .in("kind", ["sports-nfl", "sports-mlb", "sports-nba", "evergreen"])
           .order("published_at", { ascending: false })
           .limit(50),
@@ -387,6 +425,7 @@ export function ContentOpportunityPanel() {
         source_name: string | null;
         published_at: string;
         featured_image_url: string | null;
+        source_url: string | null;
       }>;
 
       const publishedSlugs = new Set<string>();
@@ -401,11 +440,26 @@ export function ContentOpportunityPanel() {
         },
       );
 
+      // Canonicalize the real feed first. If ingestion inserted the same source
+      // more than once, keep the newest real feed row so actions/status attach
+      // to a single record.
+      const canonicalFeed = dedupeFeedOpportunities(rawFeed);
+      const feedLinks = new Set(canonicalFeed.map((f) => normalizeOpportunityUrl(f.link)).filter(Boolean));
+      const feedSlugs = new Set(
+        canonicalFeed
+          .map((f) => String(f.internal_slug ?? f.article_slug ?? "").toLowerCase().trim())
+          .filter(Boolean),
+      );
+      const feedTitles = new Set(canonicalFeed.map((f) => normalizeOpportunityTitle(f.title)).filter(Boolean));
+
       const articleFeed: FeedItem[] = rawArticles
         .filter(
           (a) =>
             !publishedSlugs.has(a.slug.toLowerCase()) &&
-            !publishedTitles.has(a.title.toLowerCase().trim()),
+            !publishedTitles.has(a.title.toLowerCase().trim()) &&
+            !feedSlugs.has(a.slug.toLowerCase()) &&
+            !feedTitles.has(normalizeOpportunityTitle(a.title)) &&
+            !(a.source_url && feedLinks.has(normalizeOpportunityUrl(a.source_url))),
         )
         .map((a, i) => ({
           id: -(i + 1),
@@ -421,7 +475,11 @@ export function ContentOpportunityPanel() {
           article_title: a.title,
         }));
 
-      const feed = [...rawFeed, ...articleFeed].filter((f) => !isLowValueTitle(f.title));
+      // Real texas_news_feed rows win over synthetic daily_articles rows. A final
+      // dedupe protects against title/slug/link overlap across both sources.
+      const feed = dedupeFeedOpportunities([...canonicalFeed, ...articleFeed]).filter(
+        (f) => !isLowValueTitle(f.title),
+      );
       setItems(feed);
 
       const links = feed.map((f) => f.link).filter(Boolean) as string[];

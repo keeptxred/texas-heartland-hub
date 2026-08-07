@@ -136,8 +136,30 @@ function canAttemptPublish(result: RewritePreflightResult, alreadyPublished: boo
   return alreadyPublished || result.rewriteable || result.reason === "PENDING_EXTRACTION";
 }
 
+export function isViralRadarCandidate(row: Pick<Row,
+  "viral_score" | "classification_confidence" | "trend_velocity" | "source_count" | "viral_signals"
+>): boolean {
+  const score = row.viral_score ?? 0;
+  const confidence = row.classification_confidence ?? 0;
+  const velocity = row.trend_velocity ?? 0;
+  const sources = row.source_count ?? 1;
+  const hasVideo = Boolean(row.viral_signals?.has_video);
+
+  // Primary viral gate used by the automated rewrite system.
+  if (score >= VIRAL_AUTO_REWRITE_MIN_SCORE && confidence >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE) {
+    return true;
+  }
+
+  // Strong corroborating signals can surface a story slightly below the main
+  // score threshold, but ordinary editorial-feed items stay out of Viral Radar.
+  if (score >= 55 && velocity >= 20) return true;
+  if (score >= 55 && sources >= 2) return true;
+  if (score >= 60 && hasVideo) return true;
+  return false;
+}
+
 function shouldShowRow(row: Row): boolean {
-  if (row.internal_slug) return true;
+  if (!isViralRadarCandidate(row)) return false;
   return (
     (row.texas_relevance_score ?? 0) >= MANUAL_TEXAS_MIN &&
     (row.source_reputation_score ?? 0) >= MANUAL_REPUTATION_MIN
