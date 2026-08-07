@@ -155,6 +155,11 @@ function RepresentativesPage() {
 
   return (
     <>
+      {/* Self-canonical for the directory itself. It lives here rather than in
+          head() because this route is also the layout for detail pages. */}
+      <Helmet>
+        <link rel="canonical" href="https://keeptxred.com/representatives" />
+      </Helmet>
       <PageHero
         eyebrow="Directory"
         title="TEXAS"
