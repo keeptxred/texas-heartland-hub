@@ -1,4 +1,5 @@
 import { Outlet, createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { Helmet } from "react-helmet-async";
 import { PageHero } from "@/components/page-hero";
 import {
   US_SENATORS,
