@@ -40,6 +40,18 @@ export const Route = createFileRoute("/robots.txt")({
           "Disallow: /email/",
           "Disallow: /hubs",
           "Disallow: /hubs/",
+          // Cart / checkout and low-value filter, search and sort URLs must
+          // never enter the crawl queue; they are noindex and non-canonical.
+          "Disallow: /cart",
+          "Disallow: /shop/checkout",
+          "Disallow: /shop/checkout-return",
+          "Disallow: /*?topic=",
+          "Disallow: /*?q=",
+          "Disallow: /*?query=",
+          "Disallow: /*?search=",
+          "Disallow: /*?sort=",
+          "Disallow: /*?page=",
+          "Disallow: /*?filter=",
           "",
           `Sitemap: ${BASE_URL}/sitemap.xml`,
           "",
