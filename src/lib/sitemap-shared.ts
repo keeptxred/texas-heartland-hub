@@ -11,6 +11,7 @@ const CANONICAL_HOST = "keeptxred.com";
 const SITE_HOSTS = new Set([CANONICAL_HOST, `www.${CANONICAL_HOST}`]);
 const INVALID_IMAGE_PATTERN =
   /(?:placeholder|spacer|blank(?:[-_.]?image)?|transparent(?:[-_.]?pixel)?|pixel\.gif|1x1)/i;
+const LIVE_SLUG_DATE = /^live-(\d{4})-(\d{2})-(\d{2})-/i;
 
 export function xmlEscape(s: string): string {
   return s
@@ -62,6 +63,28 @@ export function toIsoDate(d: string | Date | null | undefined): string {
   const dt = typeof d === "string" ? new Date(d) : d;
   if (Number.isNaN(dt.getTime())) return "";
   return dt.toISOString();
+}
+
+/**
+ * Guard against the historical ingestion bug that created URLs such as
+ * live-2001-... for articles actually published in 2026. A dated live slug is
+ * only sitemap-worthy when the date encoded in the slug agrees with the
+ * article's publication date. Non-live slugs are unaffected.
+ */
+export function isArticleSlugDateConsistent(
+  slug: string | null | undefined,
+  publishedAt: string | Date | null | undefined,
+): boolean {
+  if (!slug) return false;
+  const match = slug.match(LIVE_SLUG_DATE);
+  if (!match) return true;
+  if (!publishedAt) return false;
+  const published = typeof publishedAt === "string" ? new Date(publishedAt) : publishedAt;
+  if (Number.isNaN(published.getTime())) return false;
+  const slugDate = new Date(`${match[1]}-${match[2]}-${match[3]}T00:00:00Z`);
+  if (Number.isNaN(slugDate.getTime())) return false;
+  const diffDays = Math.abs(slugDate.getTime() - published.getTime()) / 86_400_000;
+  return diffDays <= 2;
 }
 
 export type UrlEntry = {
