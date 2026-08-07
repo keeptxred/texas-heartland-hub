@@ -2,6 +2,15 @@ import { Link } from "@tanstack/react-router";
 
 export type LegislaturePageKey = "hub" | "house" | "senate" | "current" | "past";
 
+const EMPTY_BILLS_SEARCH = {
+  q: "",
+  status: "",
+  legislature: 0,
+  chamber: "",
+  billType: "",
+  page: 1,
+} as const;
+
 const pages = {
   hub: {
     eyebrow: "Texas government",
@@ -76,7 +85,7 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-white/85">{content.intro}</p>
           <nav aria-label="Texas Legislature" className="mt-7 flex flex-wrap gap-3 text-sm font-semibold">
             <Link to="/texas-legislature" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">Legislature</Link>
-            <Link to="/bills" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">Bills</Link>
+            <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">Bills</Link>
             <Link to="/texas-legislature/house" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">House</Link>
             <Link to="/texas-legislature/senate" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">Senate</Link>
             <Link to="/texas-legislature/current-session" className="rounded-full border border-white/30 px-4 py-2 hover:bg-white/10">Current Session</Link>
@@ -115,7 +124,7 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
                   <li>Both chambers approve identical text and send it to the governor.</li>
                 </ol>
                 <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-semibold">
-                  <Link to="/bills" className="text-primary hover:underline">Browse Texas bills →</Link>
+                  <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Browse Texas bills →</Link>
                   <a href="https://capitol.texas.gov/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Verify with Texas Legislature Online →</a>
                 </div>
               </div>
@@ -143,7 +152,7 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
           <h2 className="text-xl font-bold">Texas Legislature resources</h2>
           <p className="mt-2 leading-7 text-muted-foreground">KeepTXRed connects legislative information with Texas lawmakers, elections, laws, policy coverage, and practical voter resources.</p>
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-semibold text-primary">
-            <Link to="/bills">Bills</Link><Link to="/representatives">Representatives</Link><Link to="/elections/legislative">Legislative elections</Link><Link to="/texas-law-policy">Texas law and policy</Link><Link to="/get-involved">Get involved</Link>
+            <Link to="/bills" search={EMPTY_BILLS_SEARCH}>Bills</Link><Link to="/representatives">Representatives</Link><Link to="/elections/legislative">Legislative elections</Link><Link to="/texas-law-policy">Texas law and policy</Link><Link to="/get-involved">Get involved</Link>
           </div>
         </aside>
       </section>
