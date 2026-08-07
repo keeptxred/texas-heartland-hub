@@ -1,5 +1,6 @@
 from pathlib import Path
 
+# One-time guarded patch for published article/Facebook linkage.
 path = Path('src/components/admin/ContentOpportunityPanel.tsx')
 text = path.read_text()
 
