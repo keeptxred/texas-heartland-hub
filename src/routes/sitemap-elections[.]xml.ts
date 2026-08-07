@@ -17,7 +17,6 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
           races: publicRecords(races, "/elections/races/"),
           candidates: publicRecords(candidates, "/elections/candidates/"),
           additionalPages: [
-            ...publicDistrictRecords(races),
             ...publicRecords(polls, "/elections/polls/"),
             ...publicRecords(forecasts, "/elections/forecast/"),
             ...publicRecords(results, "/elections/results/"),
