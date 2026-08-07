@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { meetsArticleMainWordCount, sanitizeArticleFaqs } from "@/lib/article-length";
+import { isSitemapEligibleSlug, newsClusterKey } from "@/lib/article-slug-integrity";
 
 export type EvergreenSection = {
   heading: string;
@@ -197,17 +198,50 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
       .order("published_at", { ascending: false })
       .limit(5000);
     if (error || !data) return { articles: [] };
-    return {
-      articles: (data as (Omit<SitemapArticle, "updated_at"> & { body_json?: EvergreenBody | null })[])
-        .filter((a) => {
-          if (!a.body_json) return false;
-          const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);
-          return meetsArticleMainWordCount(a.kind, sanitized);
-        })
-        .map(({ body_json: _bodyJson, ...a }) => ({
-          ...a,
-          updated_at: null,
-        })),
-    };
+    const eligible = (data as (Omit<SitemapArticle, "updated_at"> & { body_json?: EvergreenBody | null })[])
+      .filter((a) => {
+        if (!a.body_json) return false;
+        // Never advertise a URL whose date prefix disagrees with its real
+        // publish date — those are legacy bad-year aliases.
+        if (!isSitemapEligibleSlug(a.slug, a.published_at)) return false;
+        const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);
+        return meetsArticleMainWordCount(a.kind, sanitized);
+      })
+      .map(({ body_json: _bodyJson, ...a }) => ({
+        ...a,
+        updated_at: null,
+      }));
+
+    // Collapse same-event near-duplicate clusters: keep only the newest URL
+    // for a given story fingerprint so Google is not offered five versions
+    // of the same flood/appointment/game. Rows stay published and reachable.
+    const seenCluster = new Set<string>();
+    const articles = eligible.filter((a) => {
+      const key = newsClusterKey(a.title);
+      if (!key) return true;
+      if (seenCluster.has(key)) return false;
+      seenCluster.add(key);
+      return true;
+    });
+    return { articles };
   },
 );
+
+/**
+ * Resolves a legacy article URL by its slug tail (descriptive words + link
+ * hash). Used to 301 bad-year URLs like `/news/live-2001-…` onto the
+ * corrected date-prefixed slug.
+ */
+export const resolveArticleSlugByTail = createServerFn({ method: "GET" })
+  .inputValidator((data: unknown) => z.object({ tail: z.string().min(4).max(200) }).parse(data))
+  .handler(async ({ data }): Promise<{ slug: string | null }> => {
+    const supabase = client();
+    if (!supabase) return { slug: null };
+    const { data: rows, error } = await supabase
+      .from("daily_articles")
+      .select("slug")
+      .like("slug", `%-${data.tail}`)
+      .limit(2);
+    if (error || !rows || rows.length !== 1) return { slug: null };
+    return { slug: (rows[0] as { slug: string }).slug };
+  });
