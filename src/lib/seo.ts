@@ -2,6 +2,7 @@
 // Every shareable page should call buildSeo({...}) and spread the returned
 // `meta`, `links`, and `scripts` arrays into its TanStack `head()` return.
 
+import { getAuthor } from "@/data/authors";
 import { getCavernSeoOverride } from "@/lib/explore/cavern-seo";
 
 export const SITE_URL = "https://keeptxred.com";
@@ -284,6 +285,22 @@ export function webPageJsonLd(input: WebPageJsonLdInput) {
 
 export function personJsonLd(input: PersonJsonLdInput) {
   const url = input.url ? absolute(input.url) : undefined;
+  const newsroomDesk = getAuthor(input.name);
+  if (newsroomDesk) {
+    const deskId = url ? `${url}#desk` : input.id?.replace(/#person$/, "#desk");
+    return {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      ...(deskId ? { "@id": deskId } : {}),
+      name: newsroomDesk.name,
+      ...(url ? { url } : {}),
+      ...(input.description ? { description: input.description } : {}),
+      ...(input.sameAs?.length ? { sameAs: input.sameAs } : {}),
+      parentOrganization: { "@id": ORGANIZATION_ID },
+      knowsAbout: newsroomDesk.beats,
+    };
+  }
+
   const id = input.id ?? (url ? `${url}#person` : undefined);
   return {
     "@context": "https://schema.org",
