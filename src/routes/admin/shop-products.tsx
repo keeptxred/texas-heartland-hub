@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 
-const CATEGORIES = [["", "Unassigned"], ["shirts", "T-Shirts"], ["hoodies", "Hoodies"], ["hats", "Hats"], ["drinkware", "Drinkware"], ["stickers", "Stickers"], ["tote-bags", "Tote Bags"], ["accessories", "Accessories"]] as const;
-const COLLECTIONS = [["patriotic", "Patriotic"], ["texas", "Texas"], ["floral", "Floral"], ["conservative", "Conservative"], ["texas-pride", "Texas Pride"], ["outdoors", "Outdoors"], ["home", "Home"], ["gifts", "Gifts"], ["texas-wildlife", "Texas Wildlife"], ["hill-country", "Hill Country"], ["gulf-coast", "Gulf Coast"], ["bbq", "BBQ"], ["state-parks", "State Parks"], ["small-town-texas", "Small Town Texas"], ["texas-christmas", "Texas Christmas"]] as const;
+const CATEGORIES = [["", "Unassigned"], ["shirts", "T-Shirts"], ["hoodies", "Sweatshirts"], ["hats", "Hats"], ["drinkware", "Drinkware"], ["stickers", "Stickers"], ["tote-bags", "Tote Bags"], ["accessories", "Accessories"]] as const;
+const COLLECTIONS = [["patriotic", "Patriotic"], ["texas", "Texas"], ["floral", "Floral"], ["conservative", "Conservative"], ["texas-pride", "Texas Pride"], ["outdoors", "Outdoors"], ["home", "Home"], ["gifts", "Gifts"], ["texas-wildlife", "Texas Wildlife"], ["gulf-coast", "Gulf Coast"], ["bbq", "BBQ"], ["holiday", "Holiday Collection"]] as const;
 
 type StoreKey = "keeptxred" | "texasdefined";
 type ViewKey = "all" | "keeptxred" | "texasdefined" | "both" | "hidden";
