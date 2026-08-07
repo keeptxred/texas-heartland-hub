@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
-import { meetsArticleMainWordCount, sanitizeArticleFaqs } from "@/lib/article-length";
-import { isSitemapEligibleSlug, newsClusterKey } from "@/lib/article-slug-integrity";
+import { articleMainWordCount, meetsArticleMainWordCount, sanitizeArticleFaqs } from "@/lib/article-length";
+import { isSitemapEligibleSlug } from "@/lib/article-slug-integrity";
+import { hasSeoDuplicateFlag, selectCanonicalArticles } from "@/lib/article-canonical";
 
 export type EvergreenSection = {
   heading: string;
@@ -185,6 +186,35 @@ export type SitemapArticle = {
   kind: string;
 };
 
+/**
+ * Resolves an `article_slug_redirects` mapping (old_slug -> new_slug),
+ * following short chains and refusing self-redirects / loops.
+ */
+export const resolveArticleSlugRedirect = createServerFn({ method: "GET" })
+  .validator((d: unknown) => z.object({ slug: z.string().min(1).max(240) }).parse(d))
+  .handler(async ({ data }): Promise<{ slug: string | null }> => {
+    const supabase = client();
+    if (!supabase) return { slug: null };
+    const { resolveRedirectChain, MAX_REDIRECT_HOPS } = await import("@/lib/article-canonical");
+
+    const map = new Map<string, string>();
+    let current = data.slug;
+    for (let hop = 0; hop < MAX_REDIRECT_HOPS; hop++) {
+      const { data: row, error } = await supabase
+        .from("article_slug_redirects")
+        .select("old_slug,new_slug")
+        .eq("old_slug", current)
+        .maybeSingle();
+      if (error || !row) break;
+      const next = (row as { new_slug: string }).new_slug;
+      map.set(current, next);
+      if (map.has(next)) break;
+      current = next;
+    }
+    if (map.size === 0) return { slug: null };
+    return { slug: resolveRedirectChain(map, data.slug) };
+  });
+
 /** Returns all indexable cloud articles (evergreen + ingested news/sports) with data
  *  needed to build page, news, evergreen, and image sitemaps in one query. */
 export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
@@ -193,36 +223,42 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     if (!supabase) return { articles: [] };
     const { data, error } = await supabase
       .from("daily_articles")
-      .select("slug,title,published_at,image_url,kind,body_json")
+      .select("slug,title,published_at,image_url,kind,body_json,quality_flags,content_quality_score")
       .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
       .order("published_at", { ascending: false })
       .limit(5000);
     if (error || !data) return { articles: [] };
-    const eligible = (data as (Omit<SitemapArticle, "updated_at"> & { body_json?: EvergreenBody | null })[])
+    type Row = Omit<SitemapArticle, "updated_at"> & {
+      body_json?: EvergreenBody | null;
+      quality_flags?: string[] | null;
+      content_quality_score?: number | null;
+    };
+    const eligible = (data as Row[])
       .filter((a) => {
         if (!a.body_json) return false;
         // Never advertise a URL whose date prefix disagrees with its real
         // publish date — those are legacy bad-year aliases.
         if (!isSitemapEligibleSlug(a.slug, a.published_at)) return false;
+        // Rows already flagged as SEO duplicates / noindex stay reachable but
+        // are never advertised to search engines.
+        if (hasSeoDuplicateFlag(a.quality_flags)) return false;
         const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);
         return meetsArticleMainWordCount(a.kind, sanitized);
       })
-      .map(({ body_json: _bodyJson, ...a }) => ({
+      .map(({ body_json, quality_flags: _flags, ...a }) => ({
         ...a,
         updated_at: null,
+        main_word_count: articleMainWordCount(sanitizeEvergreenBody(body_json!, a.published_at)),
       }));
 
-    // Collapse same-event near-duplicate clusters: keep only the newest URL
-    // for a given story fingerprint so Google is not offered five versions
-    // of the same flood/appointment/game. Rows stay published and reachable.
-    const seenCluster = new Set<string>();
-    const articles = eligible.filter((a) => {
-      const key = newsClusterKey(a.title);
-      if (!key) return true;
-      if (seenCluster.has(key)) return false;
-      seenCluster.add(key);
-      return true;
-    });
+    // Collapse same-event near-duplicate clusters to the *strongest* article
+    // (quality score, then substantive length, then recency) so Google is not
+    // offered five versions of the same flood/appointment/game. Routine
+    // follow-up developments are preserved. Rows stay published and reachable.
+    const canonical = selectCanonicalArticles(eligible);
+    const articles = canonical.map(
+      ({ main_word_count: _wc, content_quality_score: _score, ...a }) => a,
+    );
     return { articles };
   },
 );
