@@ -9,7 +9,9 @@ const STATIC_PAGE_LASTMOD=toIsoDate("2026-08-03T00:00:00-05:00");
 const STATIC_PATHS:string[]=[
   "/","/news","/happening-now","/keep-texas-red","/texas-news",
   "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
-  "/texas-business","/elections","/texas-legislature","/texas-legislature/house",
+  // NOTE: /elections is a 307 to /elections/2026 and is intentionally absent —
+  // the canonical election hub ships in sitemap-elections.xml.
+  "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/candidate-guides","/voting-locations","/laws","/texas-laws",
