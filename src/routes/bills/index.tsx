@@ -147,6 +147,30 @@ function BillsPage() {
         {[['Current status', 'See where legislation stands now.', Scale], ['Sponsors', 'Connect bills to Texas representatives.', Landmark], ['Official history', 'Review each recorded legislative action.', FileCheck2]].map(([title, text, Icon]: any) => <div key={title} className="rounded-xl border bg-card p-5"><Icon className="h-6 w-6 text-primary"/><h2 className="mt-3 font-bold">{title}</h2><p className="mt-1 text-sm text-muted-foreground">{text}</p></div>)}
       </section>
 
+      {legislatures.length > 0 ? (
+        <section className="mt-10 rounded-2xl border bg-muted/20 p-6" aria-labelledby="browse-legislature-heading">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Bill directory</p>
+              <h2 id="browse-legislature-heading" className="mt-1 text-2xl font-bold">Browse by Legislature</h2>
+              <p className="mt-2 max-w-3xl text-sm text-muted-foreground">Open a Legislature to browse its House, Senate and joint measures by bill type before drilling into individual bill histories.</p>
+            </div>
+          </div>
+          <div className="mt-5 flex flex-wrap gap-3">
+            {legislatures.map((item) => (
+              <Link
+                key={item.value}
+                to="/bills/texas/$legislature"
+                params={{ legislature: String(item.value) }}
+                className="rounded-lg border bg-card px-4 py-3 font-semibold transition hover:border-primary hover:text-primary"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <section className="mt-10">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div><h2 className="text-2xl font-bold">{hasFilters ? 'Matching bills' : 'Recently updated bills'}</h2><p className="text-sm text-muted-foreground">{count.toLocaleString()} bill{count === 1 ? '' : 's'}</p></div>
