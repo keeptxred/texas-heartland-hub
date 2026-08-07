@@ -7,9 +7,7 @@ const checks = [
       "import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router'",
       'middlewares: [stripSearchParams(DEFAULT_SEARCH)]',
       "? `${SITE_URL}/bills?page=${search.page}`",
-      "Disallow: /*?q=",
     ],
-    ignoreMissing: ["Disallow: /*?q="],
   },
   {
     file: 'src/routes/bills/texas/$legislature/$billType/index.tsx',
@@ -26,7 +24,6 @@ const errors = [];
 for (const check of checks) {
   const source = await readFile(check.file, 'utf8');
   for (const token of check.required) {
-    if (check.ignoreMissing?.includes(token)) continue;
     if (!source.includes(token)) errors.push(`${check.file} missing crawl URL contract: ${token}`);
   }
 }
