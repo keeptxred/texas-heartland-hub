@@ -239,6 +239,7 @@ import { Route as ElectionsForecastForecastSlugRouteImport } from './routes/elec
 import { Route as ElectionsDistrictsDistrictSlugRouteImport } from './routes/elections.districts.$districtSlug'
 import { Route as ElectionsCandidatesCandidateSlugRouteImport } from './routes/elections.candidates_.$candidateSlug'
 import { Route as BillsSubjectSubjectSlugRouteImport } from './routes/bills/subject/$subjectSlug'
+import { Route as ApiPublicTexasdefinedCheckoutRouteImport } from './routes/api/public/texasdefined-checkout'
 import { Route as ApiPublicStoreProductsRouteImport } from './routes/api/public/store-products'
 import { Route as ApiPublicNewsroomHealthRouteImport } from './routes/api/public/newsroom-health'
 import { Route as ApiPublicDeploymentFingerprintRouteImport } from './routes/api/public/deployment-fingerprint'
@@ -1487,6 +1488,12 @@ const BillsSubjectSubjectSlugRoute = BillsSubjectSubjectSlugRouteImport.update({
   path: '/subject/$subjectSlug',
   getParentRoute: () => BillsRoute,
 } as any)
+const ApiPublicTexasdefinedCheckoutRoute =
+  ApiPublicTexasdefinedCheckoutRouteImport.update({
+    id: '/api/public/texasdefined-checkout',
+    path: '/api/public/texasdefined-checkout',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicStoreProductsRoute = ApiPublicStoreProductsRouteImport.update({
   id: '/api/public/store-products',
   path: '/api/public/store-products',
@@ -1927,6 +1934,7 @@ export interface FileRoutesByFullPath {
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
+  '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2186,6 +2194,7 @@ export interface FileRoutesByTo {
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
+  '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2458,6 +2467,7 @@ export interface FileRoutesById {
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
   '/api/public/store-products': typeof ApiPublicStoreProductsRoute
+  '/api/public/texasdefined-checkout': typeof ApiPublicTexasdefinedCheckoutRoute
   '/bills/subject/$subjectSlug': typeof BillsSubjectSubjectSlugRoute
   '/elections/candidates_/$candidateSlug': typeof ElectionsCandidatesCandidateSlugRoute
   '/elections/districts/$districtSlug': typeof ElectionsDistrictsDistrictSlugRoute
@@ -2731,6 +2741,7 @@ export interface FileRouteTypes {
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
     | '/api/public/store-products'
+    | '/api/public/texasdefined-checkout'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -2990,6 +3001,7 @@ export interface FileRouteTypes {
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
     | '/api/public/store-products'
+    | '/api/public/texasdefined-checkout'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3261,6 +3273,7 @@ export interface FileRouteTypes {
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
     | '/api/public/store-products'
+    | '/api/public/texasdefined-checkout'
     | '/bills/subject/$subjectSlug'
     | '/elections/candidates_/$candidateSlug'
     | '/elections/districts/$districtSlug'
@@ -3448,6 +3461,7 @@ export interface RootRouteChildren {
   ApiPublicDeploymentFingerprintRoute: typeof ApiPublicDeploymentFingerprintRoute
   ApiPublicNewsroomHealthRoute: typeof ApiPublicNewsroomHealthRoute
   ApiPublicStoreProductsRoute: typeof ApiPublicStoreProductsRoute
+  ApiPublicTexasdefinedCheckoutRoute: typeof ApiPublicTexasdefinedCheckoutRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   ApiPublicArticleImageFilenameRoute: typeof ApiPublicArticleImageFilenameRoute
   ApiPublicExploreAutocompleteRoute: typeof ApiPublicExploreAutocompleteRoute
@@ -5086,6 +5100,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BillsSubjectSubjectSlugRouteImport
       parentRoute: typeof BillsRoute
     }
+    '/api/public/texasdefined-checkout': {
+      id: '/api/public/texasdefined-checkout'
+      path: '/api/public/texasdefined-checkout'
+      fullPath: '/api/public/texasdefined-checkout'
+      preLoaderRoute: typeof ApiPublicTexasdefinedCheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/store-products': {
       id: '/api/public/store-products'
       path: '/api/public/store-products'
@@ -5927,6 +5948,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicDeploymentFingerprintRoute: ApiPublicDeploymentFingerprintRoute,
   ApiPublicNewsroomHealthRoute: ApiPublicNewsroomHealthRoute,
   ApiPublicStoreProductsRoute: ApiPublicStoreProductsRoute,
+  ApiPublicTexasdefinedCheckoutRoute: ApiPublicTexasdefinedCheckoutRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   ApiPublicArticleImageFilenameRoute: ApiPublicArticleImageFilenameRoute,
   ApiPublicExploreAutocompleteRoute: ApiPublicExploreAutocompleteRoute,
@@ -5957,3 +5979,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
