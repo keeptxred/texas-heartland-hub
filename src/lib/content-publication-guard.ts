@@ -86,6 +86,13 @@ export function inferKeepTxRedDomain(
   context?: string | null,
 ): ContentDomain {
   const value = `${category ?? ''} ${context ?? ''}`.toLowerCase();
+
+  // Official state/local government releases are newsroom content even when
+  // the text contains lifestyle words such as fair, event, housing, travel,
+  // food, or property tax. Those keywords describe the subject of the news;
+  // they do not transfer canonical ownership to TexasDefined.
+  if (isGovernmentAuthorityNews(value)) return 'breaking-news';
+
   if (isCurrentSportsNews(value)) return 'breaking-news';
   if (isEvergreenSportsFeature(value)) return 'texas-culture';
   if (value.includes('election') || value.includes('ballot') || value.includes('voter')) return 'elections';
@@ -103,6 +110,10 @@ export function inferKeepTxRedDomain(
   if (value.includes('culture') || value.includes('identity') || value.includes('small-town texas')) return 'texas-culture';
   if (value.includes('breaking') || value.includes('news') || value.includes('non-political')) return 'breaking-news';
   return 'politics';
+}
+
+function isGovernmentAuthorityNews(value: string): boolean {
+  return /\b(office of the governor|governor (greg )?abbott|governor of texas|texas secretary of state|office of the attorney general|texas attorney general|texas legislature|texas house of representatives|texas senate|texas ethics commission|texas legislative council|state agency|state officials?|county officials?|commissioners court|city council|mayor(?:'s)? office|official (statement|release)|public release from the)\b/.test(value);
 }
 
 function isCurrentSportsNews(value: string): boolean {
