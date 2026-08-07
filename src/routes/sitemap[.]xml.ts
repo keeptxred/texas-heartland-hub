@@ -11,7 +11,8 @@ import {
 import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
-import { AUTHORS } from "@/data/authors";
+import { AUTHORS, authorSlug } from "@/data/authors";
+import { getDailyArticles } from "@/lib/daily-news.functions";
 import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 
@@ -77,7 +78,21 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("sitemap index: products fetch failed", error);
         }
 
-        const authorCount = AUTHORS.filter(isCompleteAuthor).length;
+        const activeAuthorSlugs = new Set(
+          localArticles.map((article) => authorSlug(article.author)).filter(Boolean),
+        );
+        try {
+          const { articles: liveArticles } = await getDailyArticles();
+          for (const article of liveArticles) {
+            if (article.slug && article.author) activeAuthorSlugs.add(authorSlug(article.author));
+          }
+        } catch (error) {
+          console.error("sitemap index: live author bylines fetch failed", error);
+        }
+        const authorCount = AUTHORS.filter(
+          (author) => isCompleteAuthor(author) && activeAuthorSlugs.has(author.slug),
+        ).length;
+
         const imageCount =
           localArticles.filter((article) => isRealImage(article.image)).length
           + cloudArticles.filter((article) => isRealImage(article.image_url)).length
