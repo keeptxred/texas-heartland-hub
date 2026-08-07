@@ -18,6 +18,7 @@ const STATIC_PATHS:string[]=[
   "/laws-to-know","/legislative-updates","/contact","/privacy","/terms","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/texas-politics",
   "/authors","/texas-economy","/texas-law-policy","/shop",
-  ...[...US_SENATORS,...STATE_LEADERSHIP,...US_HOUSE_DELEGATION,...TEXAS_SENATE_MEMBERS,...TEXAS_HOUSE_MEMBERS].map((representative)=>`/representatives/${representativeSlug(representative.name)}`),
+  // Representative detail pages live only in sitemap-representatives.xml —
+  // listing them here duplicated 250+ URLs across two sitemaps.
 ];
 export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS];for(const league of ["nfl","mlb","nba"] as const){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD}));return xmlResponse(renderUrlset(entries))}}}});
