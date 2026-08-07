@@ -105,8 +105,11 @@ for (const [file, source] of contents) {
 }
 
 const authorRoute = contents.get("src/routes/authors.$slug.tsx") ?? "";
-if (!/ProfilePage/.test(authorRoute) || !/personJsonLd/.test(authorRoute)) {
-  fail("src/routes/authors.$slug.tsx", "author pages must connect ProfilePage and Person entities");
+if (!/ProfilePage/.test(authorRoute) || !/["']@type["']:\s*["']Organization["']/.test(authorRoute) || !/parentOrganization/.test(authorRoute)) {
+  fail("src/routes/authors.$slug.tsx", "newsroom desk pages must connect ProfilePage and Organization entities to the publisher");
+}
+if (/personJsonLd/.test(authorRoute)) {
+  fail("src/routes/authors.$slug.tsx", "collective newsroom desk pages must not masquerade as Person entities");
 }
 
 const start = contents.get("src/start.ts") ?? "";
