@@ -1,0 +1,47 @@
+import { readFile } from 'node:fs/promises';
+
+const checks = [
+  {
+    file: 'src/routes/bills/index.tsx',
+    required: [
+      "import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router'",
+      'middlewares: [stripSearchParams(DEFAULT_SEARCH)]',
+      "? `${SITE_URL}/bills?page=${search.page}`",
+      "Disallow: /*?q=",
+    ],
+    ignoreMissing: ["Disallow: /*?q="],
+  },
+  {
+    file: 'src/routes/bills/texas/$legislature/$billType/index.tsx',
+    required: [
+      'stripSearchParams',
+      'const DEFAULT_SEARCH = { page: 1 } as const;',
+      'middlewares: [stripSearchParams(DEFAULT_SEARCH)]',
+      '? `${baseUrl}?page=${page}`',
+    ],
+  },
+];
+
+const errors = [];
+for (const check of checks) {
+  const source = await readFile(check.file, 'utf8');
+  for (const token of check.required) {
+    if (check.ignoreMissing?.includes(token)) continue;
+    if (!source.includes(token)) errors.push(`${check.file} missing crawl URL contract: ${token}`);
+  }
+}
+
+const robots = await readFile('src/routes/robots[.]txt.ts', 'utf8');
+if (robots.includes('Disallow: /*?page=')) {
+  errors.push('robots.txt must not block bill pagination with ?page=');
+}
+if (!robots.includes('Disallow: /*?q=')) {
+  errors.push('robots.txt should continue blocking search-query crawl variants');
+}
+
+if (errors.length) {
+  console.error(errors.map((error) => `- ${error}`).join('\n'));
+  process.exit(1);
+}
+
+console.log('Bill crawl URL validation passed.');
