@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { canonicalBillPath, SITE_URL } from '@/lib/bills';
 import { getLegislatureBillDirectory } from '@/lib/bill-hierarchy';
 
+const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 } as const;
 const billTypeLabel = (value: string) => value.toUpperCase();
 const chamberLabel = (value: string) => value === 'house' ? 'Texas House' : value === 'senate' ? 'Texas Senate' : 'Joint measures';
 
@@ -68,7 +69,7 @@ function LegislatureBillHub() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <Link to="/">Home</Link> / <Link to="/bills">Bills</Link> / {legislature}th Legislature
+        <Link to="/">Home</Link> / <Link to="/bills" search={EMPTY_BILLS_SEARCH}>Bills</Link> / {legislature}th Legislature
       </nav>
 
       <header className="rounded-2xl border bg-card p-6 md:p-10">
@@ -87,6 +88,7 @@ function LegislatureBillHub() {
               key={item.billType}
               to="/bills/texas/$legislature/$billType"
               params={{ legislature: String(legislature), billType: item.billType }}
+              search={{ page: 1 }}
               className="rounded-xl border bg-card p-5 transition hover:border-primary hover:shadow-sm"
             >
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">{chamberLabel(item.chamber)}</p>
