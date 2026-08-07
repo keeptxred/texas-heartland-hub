@@ -8,6 +8,7 @@ import {
   VIRAL_READY_MIN_SCORE,
 } from "@/lib/viral-score";
 import { isLowValueTitle } from "@/lib/low-value-titles";
+import { publishSingleFeedItem } from "./ingest-feeds";
 
 const DISCOVERY_FEEDS = [
   {
@@ -27,6 +28,8 @@ const DISCOVERY_FEEDS = [
     url: "https://www.texastribune.org/topics/energy/feed",
   },
 ] as const;
+
+const AUTO_PUBLISH_PER_RUN = 6;
 
 function decodeXml(value: string): string {
   return value
@@ -114,7 +117,10 @@ async function ingestDiscoveryFeeds(
   return { fetched, inserted, feedsOk, errors };
 }
 
-// Refreshes ingestion first, then recomputes viral + editorial scoring for recent feed rows.
+// Refreshes ingestion, scores recent stories with both viral and editorial
+// models, and automatically publishes only the highest-confidence newsroom
+// candidates. Risk-sensitive stories remain in REVIEW and never bypass the
+// existing extraction, rewrite, validation, dedupe, authority and image gates.
 export const Route = createFileRoute("/api/public/hooks/score-viral")({
   server: {
     handlers: {
@@ -200,6 +206,7 @@ async function scoreRecent(request: Request) {
   let reviewFlagged = 0;
   let reelsQueued = 0;
   let removedMediaStubs = 0;
+  const autoPublishCandidates: Array<{ id: number; score: number; pubDate: string }> = [];
 
   const VIDEO_RE = /(youtube\.com|youtu\.be|tiktok\.com|instagram\.com\/reel|twitter\.com\/.+\/status|x\.com\/.+\/status|\.mp4|video)/i;
 
@@ -242,6 +249,9 @@ async function scoreRecent(request: Request) {
     if (readyForRewrite) readyFlagged += 1;
     if (autoPublish) autoPublishFlagged += 1;
     if (result.editorialLane === "REVIEW") reviewFlagged += 1;
+    if (autoPublish && !row.internal_slug) {
+      autoPublishCandidates.push({ id: row.id, score: result.editorialValueScore, pubDate: row.pub_date });
+    }
 
     const { error: updateError } = await supabase
       .from("texas_news_feed")
@@ -289,6 +299,35 @@ async function scoreRecent(request: Request) {
     }
   }
 
+  // Highest editorial value first; freshness breaks ties. The existing
+  // publishSingleFeedItem pipeline still performs source extraction, preflight,
+  // AI editorial validation, political-authority validation, word-count gates,
+  // dedupe and featured-image generation. A failed candidate is reported and
+  // does not block the rest of the batch.
+  autoPublishCandidates.sort((a, b) =>
+    b.score - a.score || Date.parse(b.pubDate) - Date.parse(a.pubDate),
+  );
+  const selectedForAutoPublish = autoPublishCandidates.slice(0, AUTO_PUBLISH_PER_RUN);
+  const autoPublishResults: Array<{
+    id: number;
+    ok: boolean;
+    slug?: string;
+    error?: string;
+    alreadyPublished?: boolean;
+  }> = [];
+  for (const candidate of selectedForAutoPublish) {
+    try {
+      const result = await publishSingleFeedItem(candidate.id);
+      autoPublishResults.push({ id: candidate.id, ...result });
+    } catch (error) {
+      autoPublishResults.push({
+        id: candidate.id,
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }
+
   return json({
     ok: true,
     ingest,
@@ -298,6 +337,9 @@ async function scoreRecent(request: Request) {
     readyFlagged,
     autoPublishFlagged,
     reviewFlagged,
+    autoPublishAttempted: selectedForAutoPublish.length,
+    autoPublished: autoPublishResults.filter((r) => r.ok && !r.alreadyPublished).length,
+    autoPublishResults,
     reelsQueued,
     removedMediaStubs,
   });
