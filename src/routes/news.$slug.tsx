@@ -2,7 +2,12 @@ import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-route
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
-import { getEvergreenBySlug, resolveArticleSlugByTail, type EvergreenBody } from "@/lib/evergreen.functions";
+import {
+  getEvergreenBySlug,
+  resolveArticleSlugByTail,
+  resolveArticleSlugRedirect,
+  type EvergreenBody,
+} from "@/lib/evergreen.functions";
 import { isBadYearSlug, parseArticleSlug } from "@/lib/article-slug-integrity";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
@@ -62,6 +67,12 @@ export const Route = createFileRoute("/news/$slug")({
       const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
       const body = dedupeArticleBody(rawBody) as ArticleBody;
       return { article, body, ctr: null };
+    }
+    // Canonical slug mapping (article_slug_redirects): single 301, never to
+    // ourselves and never into a loop (guarded in resolveRedirectChain).
+    const mapped = await resolveArticleSlugRedirect({ data: { slug: params.slug } });
+    if (mapped.slug && mapped.slug !== params.slug) {
+      throw redirect({ href: `/news/${encodeURIComponent(mapped.slug)}`, statusCode: 301 });
     }
     // Fallback: AI-generated evergreen article stored in daily_articles.
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
