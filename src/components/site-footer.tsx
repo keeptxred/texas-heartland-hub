@@ -31,6 +31,17 @@ const TRUST_LINKS = [
   { to: "/contact", label: "Contact Us" },
 ] as const;
 
+// Priority crawl targets: authority pages that need durable internal links
+// from every page of the site.
+const CIVIC_LINKS = [
+  { to: "/find-representative", label: "Find My Representative" },
+  { to: "/contact-legislators", label: "Contact Legislators" },
+  { to: "/candidate-guides", label: "Candidate Guides" },
+  { to: "/laws-to-know", label: "Laws To Know" },
+  { to: "/legislative-updates", label: "Legislative Updates" },
+  { to: "/authors", label: "Our Journalists" },
+] as const;
+
 const SHOP_POLICY_LINKS = [
   { to: "/return-refund-policy", label: "Returns & Refunds" },
   { to: "/shipping-policy", label: "Shipping Policy" },
@@ -43,7 +54,7 @@ export function SiteFooter() {
   return (
     <footer className="mt-16 bg-secondary text-secondary-foreground">
       <div className="mx-auto max-w-7xl px-4 py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr]">
           <div>
             <div className="mb-5 grid size-12 place-items-center rounded-full border border-white/20" aria-hidden>
               <span className="font-display text-2xl leading-none text-accent">★</span>
@@ -55,6 +66,7 @@ export function SiteFooter() {
           </div>
           <FooterColumn heading="Explore" links={PRIMARY_LINKS} />
           <FooterColumn heading="Texas News" links={NEWS_LINKS} />
+          <FooterColumn heading="Civic Tools" links={CIVIC_LINKS} />
           <FooterColumn heading="About" links={TRUST_LINKS} />
           <FooterColumn heading="Shop Policies" links={SHOP_POLICY_LINKS} />
         </div>
