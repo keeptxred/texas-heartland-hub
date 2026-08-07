@@ -532,6 +532,16 @@ async function fetchLinkedArticleText(url: string): Promise<string | null> {
   }
 }
 
+const rewriteFailureReasons = new WeakMap<Item, string>();
+
+function setRewriteFailure(it: Item, reason: string): void {
+  rewriteFailureReasons.set(it, `AI rewrite failed — ${reason}`);
+}
+
+function getRewriteFailure(it: Item): string {
+  return rewriteFailureReasons.get(it) ?? "AI rewrite failed — unknown failure after AI generation";
+}
+
 async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | null> {
   // Neutralize first-person / personal-experience headlines BEFORE the AI
   // sees them so the model never echoes "I visited…" / "My parents…" back
@@ -550,7 +560,9 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
   // instead of a fabricated article.
   const userMessage = `SOURCE: ${it.source}\nORIGINAL HEADLINE: ${it.title}\nORIGINAL SUMMARY: ${it.description}\nLINK: ${it.link}\nDATE: ${it.pub_date}\n\nRewrite per the rules. Return JSON only.`;
 
-  const result = await runEditorialRewrite<Rewrite>(async (addendum) => {
+  let gatewayFailureReason: string | null = null;
+  const result = await runEditorialRewrite<Rewrite>(async (addendum, attempt) => {
+    gatewayFailureReason = null;
     try {
       const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -566,10 +578,35 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
         }),
         signal: AbortSignal.timeout(90000),
       });
-      if (!r.ok) return { raw: null };
-      const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-      return { raw: data.choices?.[0]?.message?.content ?? null };
-    } catch {
+      if (!r.ok) {
+        gatewayFailureReason = `AI gateway HTTP ${r.status} during ${attempt}`;
+        return { raw: null };
+      }
+
+      let data: { choices?: { message?: { content?: string } }[] };
+      try {
+        data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
+      } catch {
+        gatewayFailureReason = `AI gateway returned invalid response JSON during ${attempt}`;
+        return { raw: null };
+      }
+
+      const raw = data.choices?.[0]?.message?.content ?? null;
+      if (!raw?.trim()) {
+        gatewayFailureReason = `AI gateway returned an empty response during ${attempt}`;
+        return { raw: null };
+      }
+      try {
+        JSON.parse(raw);
+      } catch {
+        gatewayFailureReason = `AI gateway returned invalid article JSON during ${attempt}`;
+      }
+      return { raw };
+    } catch (error) {
+      const name = error instanceof Error ? error.name : "";
+      gatewayFailureReason = name === "TimeoutError" || name === "AbortError"
+        ? `AI gateway timed out during ${attempt}`
+        : `AI gateway request failed during ${attempt}: ${error instanceof Error ? error.message : "unknown error"}`;
       return { raw: null };
     }
   });
@@ -584,10 +621,26 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
         validation: result.validation.reasons,
       });
     }
+    const validationDetail = result.validation.reasons.length
+      ? result.validation.reasons.join(", ")
+      : result.droppedReason ?? "unknown editorial rejection";
+    setRewriteFailure(
+      it,
+      gatewayFailureReason ??
+        (result.droppedReason === "no_clear_news_event"
+          ? "editorial analysis found no clear news event"
+          : `editorial validation rejected the draft: ${validationDetail}`),
+    );
     return null;
   }
-  if (!parsed.title || !parsed.summary || !parsed.dek) return null;
-  if (!parsed.relevance || parsed.relevance.trim().length < 40) return null;
+  if (!parsed.title || !parsed.summary || !parsed.dek) {
+    setRewriteFailure(it, "editorial output was missing title, summary, or dek");
+    return null;
+  }
+  if (!parsed.relevance || parsed.relevance.trim().length < 40) {
+    setRewriteFailure(it, "editorial output was missing a usable Texas relevance explanation");
+    return null;
+  }
   parsed.dek = parsed.dek.slice(0, 155);
   parsed.keywords = (parsed.keywords ?? []).slice(0, 10).map((k) => String(k).toLowerCase());
   parsed.keyTakeaways = (parsed.keyTakeaways ?? []).slice(0, 5);
@@ -1453,11 +1506,16 @@ export async function publishSingleFeedItem(
   const cacheClient = supabaseAdmin as any;
   const { data: cachedRow } = await cacheClient
     .from("ai_rewrite_cache")
-    .select("result_json,status")
+    .select("result_json,status,failure_reason")
     .eq("content_fingerprint", fingerprint)
     .maybeSingle();
-  const cached = cachedRow as unknown as { result_json?: Rewrite | null; status?: string } | null;
+  const cached = cachedRow as unknown as {
+    result_json?: Rewrite | null;
+    status?: string;
+    failure_reason?: string | null;
+  } | null;
   let rw = cached?.status === "completed" && cached.result_json ? cached.result_json : null;
+  let rewriteFailureReason = cached?.failure_reason ?? null;
 
   if (!rw) {
     const configuredLimit = Number.parseInt(process.env.DAILY_AI_REWRITE_LIMIT ?? "8", 10);
@@ -1491,13 +1549,18 @@ export async function publishSingleFeedItem(
     if (claim === "cached") {
       const { data: refreshedRow } = await cacheClient
         .from("ai_rewrite_cache")
-        .select("result_json")
+        .select("result_json,failure_reason")
         .eq("content_fingerprint", fingerprint)
         .maybeSingle();
-      rw =
-        (refreshedRow as unknown as { result_json?: Rewrite | null } | null)?.result_json ?? null;
+      const refreshed = refreshedRow as unknown as {
+        result_json?: Rewrite | null;
+        failure_reason?: string | null;
+      } | null;
+      rw = refreshed?.result_json ?? null;
+      rewriteFailureReason = refreshed?.failure_reason ?? rewriteFailureReason;
     } else {
       rw = await rewriteItemWithRetry(item, lovableApiKey);
+      rewriteFailureReason = rw ? null : getRewriteFailure(item);
       const cacheUpdate = rw
         ? {
             status: "completed",
@@ -1509,7 +1572,7 @@ export async function publishSingleFeedItem(
         : {
             status: "failed",
             result_json: null,
-            failure_reason: "AI rewrite failed",
+            failure_reason: rewriteFailureReason ?? getRewriteFailure(item),
             completed_at: null,
             updated_at: new Date().toISOString(),
           };
@@ -1520,7 +1583,12 @@ export async function publishSingleFeedItem(
     }
   }
 
-  if (!rw) return { ok: false, error: "AI rewrite failed" };
+  if (!rw) {
+    return {
+      ok: false,
+      error: rewriteFailureReason ?? getRewriteFailure(item),
+    };
+  }
   void PreflightBlockedError; // keep type import referenced for downstream callers
 
   const articleRow = buildArticleRow(item, rw);
