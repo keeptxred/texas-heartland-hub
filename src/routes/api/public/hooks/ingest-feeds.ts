@@ -6,7 +6,8 @@ import { getArticleImage } from "@/lib/fallback-images";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { isDuplicateTitle, dedupeByTitle } from "@/lib/title-similarity";
-import { newsClusterKey, resolvePublishTimestamp } from "@/lib/article-slug-integrity";
+import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
+import { isSameEventRewrite } from "@/lib/article-canonical";
 import { articleMainWordCount } from "@/lib/article-length";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
 import { neutralizeFirstPersonTitle } from "@/lib/neutralize-headline";
@@ -1150,18 +1151,12 @@ async function handler() {
       .select("title")
       .gte("published_at", sinceIso);
     const recentTitles = (recent ?? []).map((r: { title: string }) => r.title);
-    // Same-event fingerprints from the last 7 days: blocks same-story clusters
-    // (same flood, same appointment, same game) even when wording differs.
-    const recentClusters = new Set(
-      recentTitles.map((t) => newsClusterKey(t)).filter((key) => key.length > 0),
-    );
+    // Same-event rewrites from the last 7 days are blocked before insertion
+    // (same flood, same appointment, same game restated by another source),
+    // while materially new follow-up developments stay publishable.
     const dedupedSlugs = new Set(
       withinBatch
-        .filter((r) => {
-          if (recentTitles.some((t) => isDuplicateTitle(t, r.title))) return false;
-          const key = newsClusterKey(r.title);
-          return !(key.length > 0 && recentClusters.has(key));
-        })
+        .filter((r) => !recentTitles.some((t) => isSameEventRewrite(t, r.title)))
         .map((r) => r.slug),
     );
     stageCounts.dedupedVsRecent = withinBatch.length - dedupedSlugs.size;
