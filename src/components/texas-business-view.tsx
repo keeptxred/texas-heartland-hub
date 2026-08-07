@@ -48,6 +48,13 @@ const IMAGE_OVERRIDES: Record<string, string> = {
   "what-local-governments-control": openmeeting,
 };
 
+const COPY_OVERRIDES: Record<string, { title: string; dek: string }> = {
+  "isd-tax-burdens": {
+    title: "Texas School Tax Rates: What the 2025 Data Shows — and Why 2026 Is Not Final Yet",
+    dek: "The latest complete statewide school-district tax-rate data is for 2025. Here is what changed for 2026 and why a final 2026 ranking would be premature.",
+  },
+};
+
 export const BUSINESS_SECTIONS = [
   { id: "energy", title: "Energy", description: "Oil and gas, ERCOT, generation policy, and Permian production." },
   { id: "jobs", title: "Jobs & Workforce", description: "Employment policy, wages, workforce programs, and the Texas labor market." },
@@ -156,16 +163,21 @@ export function TexasBusinessView({ topic }: { topic: string }) {
               </Link>
             </div>
           )}
-          {businessArticles.map((a) => (
-            <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
-              <div className="aspect-[4/3] overflow-hidden bg-muted mb-3">
-                <img src={uniqImg.get(a.slug) ?? IMAGE_OVERRIDES[a.slug] ?? a.image} alt={a.title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{a.category}</span>
-              <h3 className="font-serif text-base font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h3>
-              <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{a.dek}</p>
-            </Link>
-          ))}
+          {businessArticles.map((a) => {
+            const copy = COPY_OVERRIDES[a.slug];
+            const title = copy?.title ?? a.title;
+            const dek = copy?.dek ?? a.dek;
+            return (
+              <Link key={a.slug} to="/news/$slug" params={{ slug: a.slug }} className="group block">
+                <div className="aspect-[4/3] overflow-hidden bg-muted mb-3">
+                  <img src={uniqImg.get(a.slug) ?? IMAGE_OVERRIDES[a.slug] ?? a.image} alt={title} loading="lazy" className="size-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                </div>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{a.category}</span>
+                <h3 className="font-serif text-base font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{title}</h3>
+                <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{dek}</p>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
