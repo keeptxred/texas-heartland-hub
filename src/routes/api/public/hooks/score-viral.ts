@@ -4,6 +4,7 @@ import {
   scoreFeedItem,
   classifySourceReputation,
   qualifiesReadyForRewrite,
+  qualifiesForAutoRewrite,
   VIRAL_READY_MIN_SCORE,
 } from "@/lib/viral-score";
 import { isLowValueTitle } from "@/lib/low-value-titles";
@@ -113,9 +114,7 @@ async function ingestDiscoveryFeeds(
   return { fetched, inserted, feedsOk, errors };
 }
 
-// Refreshes ingestion first, then recomputes viral scoring for recent feed rows.
-// This makes the admin "Rescore Now" action a true newsroom refresh instead of
-// merely recalculating stale rows that were already in texas_news_feed.
+// Refreshes ingestion first, then recomputes viral + editorial scoring for recent feed rows.
 export const Route = createFileRoute("/api/public/hooks/score-viral")({
   server: {
     handlers: {
@@ -143,8 +142,6 @@ async function scoreRecent(request: Request) {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  // Import verified direct publisher RSS feeds during every manual newsroom refresh.
-  // This does not depend on Supabase migrations or content_sources being populated.
   const discovery = await ingestDiscoveryFeeds(supabase);
 
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
@@ -199,6 +196,8 @@ async function scoreRecent(request: Request) {
   const now = new Date().toISOString();
   let updated = 0;
   let readyFlagged = 0;
+  let autoPublishFlagged = 0;
+  let reviewFlagged = 0;
   let reelsQueued = 0;
   let removedMediaStubs = 0;
 
@@ -239,7 +238,10 @@ async function scoreRecent(request: Request) {
     const trendVelocity = Number(((result.viralScore - prior) + (sourceCount - 1) * 5).toFixed(2));
 
     const readyForRewrite = qualifiesReadyForRewrite(result);
+    const autoPublish = qualifiesForAutoRewrite(result) && result.editorialLane === "AUTO_PUBLISH";
     if (readyForRewrite) readyFlagged += 1;
+    if (autoPublish) autoPublishFlagged += 1;
+    if (result.editorialLane === "REVIEW") reviewFlagged += 1;
 
     const { error: updateError } = await supabase
       .from("texas_news_feed")
@@ -250,6 +252,10 @@ async function scoreRecent(request: Request) {
           ...result.signals,
           source_reputation_reason: result.sourceReputationReason,
           has_video: hasVideo,
+          editorial_value_score: result.editorialValueScore,
+          editorial_lane: result.editorialLane,
+          editorial_signals: result.editorialSignals,
+          auto_publish_eligible: autoPublish,
         },
         texas_relevance_score: result.texasRelevanceScore,
         source_reputation_score: result.sourceReputationScore,
@@ -275,7 +281,7 @@ async function scoreRecent(request: Request) {
           source_url: row.link || "",
           title: row.title,
           topic: result.signals.category,
-          notes: `Auto-added from Viral Radar (score ${result.viralScore})`,
+          notes: `Auto-added from Viral Radar (viral ${result.viralScore}, editorial ${result.editorialValueScore}, lane ${result.editorialLane})`,
           status: "queued",
         });
         reelsQueued += 1;
@@ -290,6 +296,8 @@ async function scoreRecent(request: Request) {
     scanned: rows.length,
     updated,
     readyFlagged,
+    autoPublishFlagged,
+    reviewFlagged,
     reelsQueued,
     removedMediaStubs,
   });
