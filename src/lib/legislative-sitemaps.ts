@@ -78,11 +78,11 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
       .select('id,legislature_number,bill_type,bill_number,last_action_date,updated_at,summary,description,plain_language_summary,became_law,bill_text_url,analysis_url,fiscal_note_url')
       .eq('is_active', true).order('legislature_number', { ascending: false }).limit(50000),
     db.from('bill_subjects')
-      .select('slug,updated_at').order('slug').limit(5000),
+      .select('id,slug,updated_at').order('slug').limit(5000),
     db.from('bill_actions').select('bill_id').limit(50000),
     db.from('bill_sponsors').select('bill_id').limit(50000),
     db.from('bill_documents').select('bill_id').limit(50000),
-    db.from('bill_subject_relationships').select('bill_id').eq('review_status', 'approved').limit(50000),
+    db.from('bill_subject_relationships').select('bill_id,subject_id').eq('review_status', 'approved').limit(50000),
     db.from('bill_article_relationships').select('bill_id').eq('review_status', 'approved').limit(50000),
     db.from('bill_editorial_enrichments').select('bill_id').eq('review_status', 'approved').limit(50000),
   ]);
@@ -100,7 +100,11 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
   }
 
   const billRows = (bills ?? []) as SitemapBill[];
-  const subjectRows = (subjects ?? []) as Array<{ slug: string; updated_at?: string | null }>;
+  const subjectRows = (subjects ?? []) as Array<{ id: string; slug: string; updated_at?: string | null }>;
+  const linkedSubjectIds = new Set(
+    (subjectRelationshipRows ?? []).map((row: any) => String(row.subject_id ?? '')).filter(Boolean),
+  );
+  const sitemapSubjects = subjectRows.filter((subject) => linkedSubjectIds.has(subject.id));
   const evidence = {
     actions: idSet(actionRows),
     sponsors: idSet(sponsorRows),
@@ -112,7 +116,7 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
   const sitemapBills = billRows.filter((bill) => isSitemapWorthyBill(bill, evidence));
   const billsLastmod = newestDate([
     ...sitemapBills.map((bill) => bill.last_action_date || bill.updated_at),
-    ...subjectRows.map((subject) => subject.updated_at),
+    ...sitemapSubjects.map((subject) => subject.updated_at),
   ]);
 
   return [
@@ -121,7 +125,7 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
       loc: absUrl(canonicalBillPath(bill)),
       lastmod: toIsoDate(bill.last_action_date || bill.updated_at) || undefined,
     })),
-    ...subjectRows.map((subject) => ({
+    ...sitemapSubjects.map((subject) => ({
       loc: absUrl(`/bills/subject/${subject.slug}`),
       lastmod: toIsoDate(subject.updated_at) || undefined,
     })),
