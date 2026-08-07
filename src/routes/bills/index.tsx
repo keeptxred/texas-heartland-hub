@@ -2,8 +2,30 @@ import { createFileRoute, Link } from '@tanstack/react-router';
 import { Search, Landmark, Scale, FileCheck2 } from 'lucide-react';
 import { listBills, getBillFilterOptions, SITE_URL, canonicalBillPath } from '@/lib/bills';
 
+type BillSearch = {
+  q: string;
+  status: string;
+  legislature: number;
+  chamber: string;
+  billType: string;
+  page: number;
+};
+
+const DEFAULT_SEARCH: BillSearch = {
+  q: '',
+  status: '',
+  legislature: 0,
+  chamber: '',
+  billType: '',
+  page: 1,
+};
+
+function hasBillFilters(search: BillSearch) {
+  return Boolean(search.q || search.status || search.legislature || search.chamber || search.billType);
+}
+
 export const Route = createFileRoute('/bills/')({
-  validateSearch: (search: Record<string, unknown>) => ({
+  validateSearch: (search: Record<string, unknown>): BillSearch => ({
     q: typeof search.q === 'string' ? search.q.slice(0, 100) : '',
     status: typeof search.status === 'string' ? search.status.slice(0, 60) : '',
     legislature: Math.max(0, Number(search.legislature) || 0),
@@ -25,7 +47,7 @@ export const Route = createFileRoute('/bills/')({
       }),
       getBillFilterOptions(),
     ]);
-    return { ...results, options };
+    return { ...results, options, search: deps };
   },
   pendingComponent: () => (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -41,23 +63,44 @@ export const Route = createFileRoute('/bills/')({
       </div>
     </div>
   ),
-  head: () => ({
-    meta: [
-      { title: 'Texas Bills and Legislation | KeepTXRed' },
-      { name: 'description', content: 'Search and track Texas bills, sponsors, committees, legislative actions, current status, official documents and related Texas news.' },
-      { property: 'og:title', content: 'Texas Bills and Legislation | KeepTXRed' },
-      { property: 'og:description', content: 'Track Texas legislation by bill number, status, sponsor, committee and subject.' },
-      { property: 'og:url', content: `${SITE_URL}/bills` },
-    ],
-    links: [{ rel: 'canonical', href: `${SITE_URL}/bills` }],
-    scripts: [{ type: 'application/ld+json', children: JSON.stringify({
-      '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Texas Bills and Legislation', url: `${SITE_URL}/bills`,
-      breadcrumb: { '@type': 'BreadcrumbList', itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-        { '@type': 'ListItem', position: 2, name: 'Bills', item: `${SITE_URL}/bills` },
-      ] },
-    }) }],
-  }),
+  head: ({ loaderData }) => {
+    const search = loaderData?.search ?? DEFAULT_SEARCH;
+    const filtered = hasBillFilters(search);
+    const canonical = !filtered && search.page > 1
+      ? `${SITE_URL}/bills?page=${search.page}`
+      : `${SITE_URL}/bills`;
+    const title = !filtered && search.page > 1
+      ? `Texas Bills and Legislation — Page ${search.page} | KeepTXRed`
+      : 'Texas Bills and Legislation | KeepTXRed';
+    const description = 'Search and track Texas bills, sponsors, committees, legislative actions, current status, official documents and related Texas news.';
+
+    return {
+      meta: [
+        { title },
+        { name: 'description', content: description },
+        {
+          name: 'robots',
+          content: filtered
+            ? 'noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
+            : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
+        },
+        { property: 'og:title', content: title },
+        { property: 'og:description', content: 'Track Texas legislation by bill number, status, sponsor, committee and subject.' },
+        { property: 'og:url', content: canonical },
+      ],
+      links: [{ rel: 'canonical', href: canonical }],
+      scripts: [{ type: 'application/ld+json', children: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: !filtered && search.page > 1 ? `Texas Bills and Legislation — Page ${search.page}` : 'Texas Bills and Legislation',
+        url: canonical,
+        breadcrumb: { '@type': 'BreadcrumbList', itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'Bills', item: `${SITE_URL}/bills` },
+        ] },
+      }) }],
+    };
+  },
   component: BillsPage,
 });
 
@@ -73,7 +116,7 @@ function BillsPage() {
   const { bills, count, options } = Route.useLoaderData();
   const search = Route.useSearch();
   const pages = Math.max(1, Math.ceil(count / 24));
-  const hasFilters = Boolean(search.q || search.status || search.legislature || search.chamber || search.billType);
+  const hasFilters = hasBillFilters(search);
   const preserved = { q: search.q, status: search.status, legislature: search.legislature, chamber: search.chamber, billType: search.billType };
   const legislatures = options.legislatures as Array<{ value: number; label: string }>;
   const chambers = options.chambers as string[];
