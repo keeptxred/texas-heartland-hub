@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router';
 import { Search, Landmark, Scale, FileCheck2 } from 'lucide-react';
 import { listBills, getBillFilterOptions, SITE_URL, canonicalBillPath } from '@/lib/bills';
 
@@ -33,6 +33,9 @@ export const Route = createFileRoute('/bills/')({
     billType: typeof search.billType === 'string' ? search.billType.slice(0, 20) : '',
     page: Math.max(1, Number(search.page) || 1),
   }),
+  search: {
+    middlewares: [stripSearchParams(DEFAULT_SEARCH)],
+  },
   loaderDeps: ({ search }) => search,
   loader: async ({ deps }) => {
     const [results, options] = await Promise.all([
