@@ -1,0 +1,84 @@
+name: Fix Editorial Source Support
+
+on:
+  push:
+    paths:
+      - '.github/workflows/fix-editorial-source-support.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-test-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Patch source-supported subject validation
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          editorial = Path('src/lib/editorial-pipeline.ts')
+          text = editorial.read_text()
+
+          old_sig = 'export function validateArticle(article: ArticleShape, brief?: StoryBrief): ValidationResult {'
+          new_sig = 'export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourceText?: string): ValidationResult {'
+          if old_sig not in text:
+              raise SystemExit('validateArticle signature anchor not found')
+          text = text.replace(old_sig, new_sig, 1)
+
+          old_secondary = '''        const secondary = secondaryRaw?.trim();\n        if (!secondary || secondary.toLowerCase() === primary.toLowerCase()) continue;\n        const assertedTogether = sentences.some((sentence) =>\n          sentenceHasBoth(sentence, primary, secondary),\n        );'''
+          new_secondary = '''        const secondary = secondaryRaw?.trim();\n        if (!secondary || secondary.toLowerCase() === primary.toLowerCase()) continue;\n\n        // A subject named explicitly in the source headline/body is source-supported.\n        // Do not demand a separate AI-generated relationship record for it; that\n        // would turn omissions in the brief.relationships array into false\n        // `unrelated_subject` rejections (for example, QTS Data Centers in an\n        // Office of the Governor release whose headline names QTS directly).\n        if (sourceText && containsName(sourceText, secondary)) continue;\n\n        const assertedTogether = sentences.some((sentence) =>\n          sentenceHasBoth(sentence, primary, secondary),\n        );'''
+          if old_secondary not in text:
+              raise SystemExit('secondary-subject anchor not found')
+          text = text.replace(old_secondary, new_secondary, 1)
+
+          old_run_sig = '''export async function runEditorialRewrite<T extends ArticleShape>(\n  generate: GeneratorFn<T>,\n): Promise<EditorialResult<T>> {'''
+          new_run_sig = '''export async function runEditorialRewrite<T extends ArticleShape>(\n  generate: GeneratorFn<T>,\n  sourceText?: string,\n): Promise<EditorialResult<T>> {'''
+          if old_run_sig not in text:
+              raise SystemExit('runEditorialRewrite signature anchor not found')
+          text = text.replace(old_run_sig, new_run_sig, 1)
+
+          old_first = '''  const firstValidation = validateArticle(\n    parsedFirst.article ?? {},\n    parsedFirst.brief ?? undefined,\n  );'''
+          new_first = '''  const firstValidation = validateArticle(\n    parsedFirst.article ?? {},\n    parsedFirst.brief ?? undefined,\n    sourceText,\n  );'''
+          if old_first not in text:
+              raise SystemExit('first validation anchor not found')
+          text = text.replace(old_first, new_first, 1)
+
+          old_second = '''  const secondValidation = validateArticle(\n    parsedSecond.article ?? {},\n    parsedSecond.brief ?? undefined,\n  );'''
+          new_second = '''  const secondValidation = validateArticle(\n    parsedSecond.article ?? {},\n    parsedSecond.brief ?? undefined,\n    sourceText,\n  );'''
+          if old_second not in text:
+              raise SystemExit('second validation anchor not found')
+          text = text.replace(old_second, new_second, 1)
+
+          editorial.write_text(text)
+
+          ingest = Path('src/routes/api/public/hooks/ingest-feeds.ts')
+          text = ingest.read_text()
+          old_close = '''    }\n  });\n\n  const parsed = result.article;'''
+          new_close = '''    }\n  }, `${it.title}\\n${it.description ?? ""}`);\n\n  const parsed = result.article;'''
+          if old_close not in text:
+              raise SystemExit('runEditorialRewrite invocation close anchor not found')
+          text = text.replace(old_close, new_close, 1)
+          ingest.write_text(text)
+
+          test = Path('src/lib/editorial-pipeline.source-support.test.ts')
+          test.write_text('''import { describe, expect, it } from "vitest";\nimport { validateArticle, type StoryBrief } from "./editorial-pipeline";\n\nconst article = {\n  title: "Governor Abbott Announces QTS Data Centers Will Meet Texas Standards",\n  summary:\n    "Governor Greg Abbott announced that QTS Data Centers will meet new Texas standards as the company expands major data-center operations in the state. The announcement addresses infrastructure expectations, power reliability, and the state's requirements for large computing facilities, giving Texans a concrete update on how the project will proceed.",\n  relevance:\n    "The decision matters in Texas because large data centers can affect power demand, infrastructure planning, and economic development across the communities where they operate.",\n};\n\nconst brief: StoryBrief = {\n  hasClearNewsEvent: true,\n  primarySubject: "Governor Greg Abbott",\n  secondarySubjects: ["QTS Data Centers"],\n  relationships: [],\n};\n\ndescribe("editorial source-supported subjects", () => {\n  it("does not reject a secondary subject explicitly named in the source", () => {\n    const source =\n      "Governor Abbott Announces QTS Data Centers Will Meet Texas Standards. QTS Data Centers will meet Texas standards under the announcement from the Office of the Governor.";\n    const result = validateArticle(article, brief, source);\n    expect(result.reasons).not.toContain("unrelated_subject:QTS Data Centers");\n  });\n\n  it("still rejects a subject that is not in the source and lacks a relationship", () => {\n    const unsupportedBrief: StoryBrief = {\n      ...brief,\n      secondarySubjects: ["Unrelated Cloud Company"],\n    };\n    const unsupportedArticle = {\n      ...article,\n      summary:\n        "Governor Greg Abbott announced Texas data-center standards while Unrelated Cloud Company was described as participating in the same initiative. The announcement addresses infrastructure expectations, power reliability, and statewide requirements for large computing facilities, giving Texans a concrete update on how the project will proceed.",\n    };\n    const result = validateArticle(unsupportedArticle, unsupportedBrief, "Governor Abbott announced Texas data-center standards.");\n    expect(result.reasons).toContain("unrelated_subject:Unrelated Cloud Company");\n  });\n});\n''')
+          PY
+      - run: bun install --frozen-lockfile
+      - run: bunx vitest run src/lib/editorial-pipeline.source-support.test.ts
+      - run: bun run build
+      - name: Commit validated fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/lib/editorial-pipeline.ts src/routes/api/public/hooks/ingest-feeds.ts src/lib/editorial-pipeline.source-support.test.ts
+          git commit -m "fix(editorial): trust subjects explicitly named in source"
+          git push origin HEAD:main
