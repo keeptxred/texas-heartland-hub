@@ -14,12 +14,15 @@ const requiredFiles = [
   'src/lib/authority-relationships.ts',
   'src/lib/bills.ts',
   'src/lib/bill-subjects.ts',
+  'src/lib/bill-hierarchy.ts',
   'src/lib/legislative-sitemaps.ts',
   'src/components/authority/RelatedAuthorityContent.tsx',
   'src/components/bills/BillDocumentsPanel.tsx',
   'src/components/bills/BillEditorialExplanation.tsx',
   'src/routes/bills/index.tsx',
   'src/routes/bills/subject/$subjectSlug.tsx',
+  'src/routes/bills/texas/$legislature/index.tsx',
+  'src/routes/bills/texas/$legislature/$billType/index.tsx',
   'src/routes/bills/texas/$legislature/$billType/$billNumber.tsx',
   'src/routes/admin/bills/relationships.tsx',
   'src/routes/admin/bills/enrichment.tsx',
@@ -126,7 +129,7 @@ for (const name of ['bills', 'representatives', 'committees', 'districts', 'gove
 }
 
 const legislativeSitemaps = sources.get('src/lib/legislative-sitemaps.ts') || '';
-for (const token of ['bill_subjects', '/bills/subject/']) {
+for (const token of ['bill_subjects', '/bills/subject/', 'hierarchyEntries', '/bills/texas/${legislature}', '/bills/texas/${legislature}/${billType}']) {
   if (!legislativeSitemaps.includes(token)) errors.push(`Legislative sitemap data missing ${token}`);
 }
 
@@ -175,10 +178,48 @@ const billsIndexContracts = [
   ['status: value, page: 1', 'status links resetting pagination'],
   ['search={{ ...search, page: search.page - 1 }}', 'previous-page filter preservation'],
   ['search={{ ...search, page: search.page + 1 }}', 'next-page filter preservation'],
+  ['Browse by Legislature', 'crawlable Legislature hierarchy section'],
+  ['to="/bills/texas/$legislature"', 'Legislature hierarchy links'],
   ['Clear filters', 'clear-filter control'],
 ];
 for (const [token, label] of billsIndexContracts) {
   if (!billsIndex.includes(token)) errors.push(`Bills index missing ${label}`);
+}
+
+const billHierarchy = sources.get('src/lib/bill-hierarchy.ts') || '';
+for (const [token, label] of [
+  ['getLegislatureBillDirectory', 'Legislature hierarchy loader'],
+  ['getBillTypePage', 'bill-type hierarchy loader'],
+  [".eq('legislature_number', legislature)", 'Legislature-scoped hierarchy query'],
+  ['normalizeBillType', 'normalized bill-type hierarchy'],
+  ['offset: (safePage - 1) * limit', 'bill-type hierarchy pagination'],
+]) {
+  if (!billHierarchy.includes(token)) errors.push(`Bill hierarchy data layer missing ${label}`);
+}
+
+const legislatureHub = sources.get('src/routes/bills/texas/$legislature/index.tsx') || '';
+for (const [token, label] of [
+  ['getLegislatureBillDirectory', 'Legislature hub loader'],
+  ["createFileRoute('/bills/texas/$legislature/')", 'Legislature hub route'],
+  ["to=\"/bills/texas/$legislature/$billType\"", 'bill-type child links'],
+  ['search={{ page: 1 }}', 'bill-type child default pagination'],
+  ["rel: 'canonical'", 'Legislature hub canonical'],
+  ["'@type': 'CollectionPage'", 'Legislature hub structured data'],
+]) {
+  if (!legislatureHub.includes(token)) errors.push(`Legislature bill hub missing ${label}`);
+}
+
+const billTypeHub = sources.get('src/routes/bills/texas/$legislature/$billType/index.tsx') || '';
+for (const [token, label] of [
+  ['getBillTypePage', 'bill-type hub loader'],
+  ["createFileRoute('/bills/texas/$legislature/$billType/')", 'bill-type hub route'],
+  ['canonicalBillPath', 'bill detail child links'],
+  ['search={{ page: page - 1 }}', 'previous bill-type page link'],
+  ['search={{ page: page + 1 }}', 'next bill-type page link'],
+  ["rel: 'canonical'", 'bill-type hub canonical'],
+  ["'@type': 'CollectionPage'", 'bill-type hub structured data'],
+]) {
+  if (!billTypeHub.includes(token)) errors.push(`Bill-type hub missing ${label}`);
 }
 
 const billsLib = sources.get('src/lib/bills.ts') || '';
