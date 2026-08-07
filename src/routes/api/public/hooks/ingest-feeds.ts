@@ -740,7 +740,9 @@ async function rewriteItemWithRetry(it: Item, lovableApiKey: string): Promise<Re
 }
 
 function buildArticleRow(it: Item, rw: Rewrite | null) {
-  const datePrefix = it.pub_date.slice(0, 10);
+  // Second guard: never build a slug or published_at from an implausible date.
+  const publishIso = resolvePublishTimestamp(it.pub_date);
+  const datePrefix = publishIso.slice(0, 10);
   const baseTitle = rw?.title ?? it.title;
   const descriptiveSlug = slugify(baseTitle).split("-").filter(Boolean).slice(0, 12).join("-");
   const slug = `${datePrefix}-${descriptiveSlug}-${hashStr(it.link)}`;
@@ -1148,9 +1150,18 @@ async function handler() {
       .select("title")
       .gte("published_at", sinceIso);
     const recentTitles = (recent ?? []).map((r: { title: string }) => r.title);
+    // Same-event fingerprints from the last 7 days: blocks same-story clusters
+    // (same flood, same appointment, same game) even when wording differs.
+    const recentClusters = new Set(
+      recentTitles.map((t) => newsClusterKey(t)).filter((key) => key.length > 0),
+    );
     const dedupedSlugs = new Set(
       withinBatch
-        .filter((r) => !recentTitles.some((t) => isDuplicateTitle(t, r.title)))
+        .filter((r) => {
+          if (recentTitles.some((t) => isDuplicateTitle(t, r.title))) return false;
+          const key = newsClusterKey(r.title);
+          return !(key.length > 0 && recentClusters.has(key));
+        })
         .map((r) => r.slug),
     );
     stageCounts.dedupedVsRecent = withinBatch.length - dedupedSlugs.size;
