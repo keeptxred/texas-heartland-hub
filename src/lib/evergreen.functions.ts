@@ -233,7 +233,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
  * corrected date-prefixed slug.
  */
 export const resolveArticleSlugByTail = createServerFn({ method: "GET" })
-  .inputValidator((data: unknown) => z.object({ tail: z.string().min(4).max(200) }).parse(data))
+  .validator((d: unknown) => z.object({ tail: z.string().min(4).max(200) }).parse(d))
   .handler(async ({ data }): Promise<{ slug: string | null }> => {
     const supabase = client();
     if (!supabase) return { slug: null };
