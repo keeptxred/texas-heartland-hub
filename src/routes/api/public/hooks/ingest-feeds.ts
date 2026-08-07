@@ -776,7 +776,7 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
   });
 
   const bodyJson = dedupeArticleBody({
-    updated: it.pub_date.slice(0, 10),
+    updated: datePrefix,
     intro: [rw?.summary ?? it.description ?? `${it.source} released a new update for Texans.`],
     sections,
     faq: rw?.faq ?? [],
@@ -801,7 +801,7 @@ function buildArticleRow(it: Item, rw: Rewrite | null) {
     author: "Keep TX Red Newsroom",
     source_name: it.source,
     source_url: it.link,
-    published_at: it.pub_date,
+    published_at: publishIso,
     kind: "ingested",
     is_breaking: false,
     score: 0,
