@@ -4,7 +4,6 @@ import {
   BASE_URL,
   isRealImage,
   isArticleSlugDateConsistent,
-  toIsoDate,
   xmlEscape,
   xmlResponse,
 } from "@/lib/sitemap-shared";
@@ -15,8 +14,6 @@ import { AUTHORS, authorSlug } from "@/data/authors";
 import { getDailyArticles } from "@/lib/daily-news.functions";
 import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
-
-const INDEX_LASTMOD = toIsoDate("2026-08-07T00:00:00-05:00");
 
 function isCompleteAuthor(author: (typeof AUTHORS)[number]): boolean {
   return Boolean(
@@ -123,8 +120,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           seen.add(file);
           return true;
         });
+        // A sitemap index lastmod is optional. Omitting it is more truthful than
+        // hard-coding a sitewide date that quickly becomes stale and cannot
+        // represent each child sitemap's independent update cadence.
         const entries = included.map(({ file }) =>
-          `  <sitemap>\n    <loc>${xmlEscape(`${BASE_URL}/${file}`)}</loc>\n    <lastmod>${INDEX_LASTMOD}</lastmod>\n  </sitemap>`,
+          `  <sitemap>\n    <loc>${xmlEscape(`${BASE_URL}/${file}`)}</loc>\n  </sitemap>`,
         ).join("\n");
         const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</sitemapindex>`;
         return xmlResponse(xml);
