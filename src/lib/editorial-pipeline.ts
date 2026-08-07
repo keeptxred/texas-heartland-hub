@@ -170,7 +170,7 @@ function headlineMatchesBody(article: ArticleShape, brief?: StoryBrief): boolean
 
 export type ValidationResult = { ok: boolean; reasons: string[] };
 
-export function validateArticle(article: ArticleShape, brief?: StoryBrief): ValidationResult {
+export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourceText?: string): ValidationResult {
   const reasons: string[] = [];
   const prose = articleProse(article);
   const proseAndTitle = `${article.title ?? ""} \n ${prose}`;
@@ -202,6 +202,14 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief): Vali
       for (const secondaryRaw of brief.secondarySubjects ?? []) {
         const secondary = secondaryRaw?.trim();
         if (!secondary || secondary.toLowerCase() === primary.toLowerCase()) continue;
+
+        // A subject named explicitly in the source headline/body is source-supported.
+        // Do not demand a separate AI-generated relationship record for it; that
+        // would turn omissions in the brief.relationships array into false
+        // `unrelated_subject` rejections (for example, QTS Data Centers in an
+        // Office of the Governor release whose headline names QTS directly).
+        if (sourceText && containsName(sourceText, secondary)) continue;
+
         const assertedTogether = sentences.some((sentence) =>
           sentenceHasBoth(sentence, primary, secondary),
         );
@@ -270,6 +278,7 @@ export type EditorialResult<T extends ArticleShape> = {
 
 export async function runEditorialRewrite<T extends ArticleShape>(
   generate: GeneratorFn<T>,
+  sourceText?: string,
 ): Promise<EditorialResult<T>> {
   const first = await generate(EDITORIAL_SYSTEM_ADDENDUM, "initial");
   if (!first?.raw) {
@@ -296,6 +305,7 @@ export async function runEditorialRewrite<T extends ArticleShape>(
   const firstValidation = validateArticle(
     parsedFirst.article ?? {},
     parsedFirst.brief ?? undefined,
+    sourceText,
   );
   if (firstValidation.ok && parsedFirst.article) {
     return {
@@ -334,6 +344,7 @@ export async function runEditorialRewrite<T extends ArticleShape>(
   const secondValidation = validateArticle(
     parsedSecond.article ?? {},
     parsedSecond.brief ?? undefined,
+    sourceText,
   );
   if (secondValidation.ok && parsedSecond.article) {
     return {

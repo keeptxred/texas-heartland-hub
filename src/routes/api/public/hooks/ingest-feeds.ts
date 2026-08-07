@@ -609,7 +609,7 @@ async function rewriteItem(it: Item, lovableApiKey: string): Promise<Rewrite | n
         : `AI gateway request failed during ${attempt}: ${error instanceof Error ? error.message : "unknown error"}`;
       return { raw: null };
     }
-  });
+  }, `${it.title}\n${it.description ?? ""}`);
 
   const parsed = result.article;
   if (!parsed) {
