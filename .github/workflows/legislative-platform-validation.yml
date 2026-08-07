@@ -59,6 +59,8 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Validate legislative architecture
         run: bun run legislature:validate
+      - name: Validate bill crawl URLs
+        run: node scripts/legislature/validate-bill-crawl-urls.mjs
       - name: Validate article-to-bill display
         run: node scripts/legislature/validate-article-bill-display.mjs
       - name: Validate bill analysis summaries
