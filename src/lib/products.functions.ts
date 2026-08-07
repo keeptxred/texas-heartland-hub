@@ -26,6 +26,7 @@ export type Product = {
   isFeatured?: boolean;
   isNew?: boolean;
   isOnSale?: boolean;
+  syncedAt?: string | null;
 };
 
 const MOCK_PRODUCTS: Product[] = [
@@ -108,7 +109,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       .from("products")
       // KeepTXRed shows only products assigned to KeepTXRed or Both, using its own
       // category/collections/featured/display-order columns.
-      .select("id,title,price,currency,image_url,product_url,description,tags,colors,variants,keeptxred_category,keeptxred_collections,keeptxred_featured,keeptxred_display_order,is_new,is_on_sale")
+      .select("id,title,price,currency,image_url,product_url,description,tags,colors,variants,keeptxred_category,keeptxred_collections,keeptxred_featured,keeptxred_display_order,is_new,is_on_sale,synced_at")
       .eq("publish_keeptxred", true)
       .order("keeptxred_featured", { ascending: false })
       .order("keeptxred_display_order", { ascending: true })
@@ -137,6 +138,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       keeptxred_featured: boolean | null;
       is_new: boolean | null;
       is_on_sale: boolean | null;
+      synced_at: string | null;
     }>).map((r) => ({
       id: r.id,
       title: r.title,
@@ -153,6 +155,7 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       isFeatured: Boolean(r.keeptxred_featured),
       isNew: Boolean(r.is_new),
       isOnSale: Boolean(r.is_on_sale),
+      syncedAt: r.synced_at,
     }));
     return { products, isFallback: false };
   } catch (error) {
