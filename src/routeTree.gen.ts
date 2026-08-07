@@ -156,6 +156,7 @@ import { Route as ShopCheckoutRouteImport } from './routes/shop.checkout'
 import { Route as ShopProductIdRouteImport } from './routes/shop.$productId'
 import { Route as RepresentativesRepresentativeSlugRouteImport } from './routes/representatives.$representativeSlug'
 import { Route as NewsNonPoliticalRouteImport } from './routes/news.non-political'
+import { Route as NewsIsdTaxBurdensRouteImport } from './routes/news.isd-tax-burdens'
 import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as ExploreWildlifeManagementAreasRouteImport } from './routes/explore.wildlife-management-areas'
 import { Route as ExploreTripPlannerRouteImport } from './routes/explore.trip-planner'
@@ -1052,6 +1053,11 @@ const NewsNonPoliticalRoute = NewsNonPoliticalRouteImport.update({
   path: '/non-political',
   getParentRoute: () => NewsRoute,
 } as any)
+const NewsIsdTaxBurdensRoute = NewsIsdTaxBurdensRouteImport.update({
+  id: '/isd-tax-burdens',
+  path: '/isd-tax-burdens',
+  getParentRoute: () => NewsRoute,
+} as any)
 const NewsSlugRoute = NewsSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -1872,6 +1878,7 @@ export interface FileRoutesByFullPath {
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/news/isd-tax-burdens': typeof NewsIsdTaxBurdensRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/representatives/$representativeSlug': typeof RepresentativesRepresentativeSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -2134,6 +2141,7 @@ export interface FileRoutesByTo {
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/news/isd-tax-burdens': typeof NewsIsdTaxBurdensRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/representatives/$representativeSlug': typeof RepresentativesRepresentativeSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -2405,6 +2413,7 @@ export interface FileRoutesById {
   '/explore/trip-planner': typeof ExploreTripPlannerRoute
   '/explore/wildlife-management-areas': typeof ExploreWildlifeManagementAreasRoute
   '/news/$slug': typeof NewsSlugRoute
+  '/news/isd-tax-burdens': typeof NewsIsdTaxBurdensRoute
   '/news/non-political': typeof NewsNonPoliticalRoute
   '/representatives/$representativeSlug': typeof RepresentativesRepresentativeSlugRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -2679,6 +2688,7 @@ export interface FileRouteTypes {
     | '/explore/trip-planner'
     | '/explore/wildlife-management-areas'
     | '/news/$slug'
+    | '/news/isd-tax-burdens'
     | '/news/non-political'
     | '/representatives/$representativeSlug'
     | '/shop/$productId'
@@ -2941,6 +2951,7 @@ export interface FileRouteTypes {
     | '/explore/trip-planner'
     | '/explore/wildlife-management-areas'
     | '/news/$slug'
+    | '/news/isd-tax-burdens'
     | '/news/non-political'
     | '/representatives/$representativeSlug'
     | '/shop/$productId'
@@ -3211,6 +3222,7 @@ export interface FileRouteTypes {
     | '/explore/trip-planner'
     | '/explore/wildlife-management-areas'
     | '/news/$slug'
+    | '/news/isd-tax-burdens'
     | '/news/non-political'
     | '/representatives/$representativeSlug'
     | '/shop/$productId'
@@ -4519,6 +4531,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewsNonPoliticalRouteImport
       parentRoute: typeof NewsRoute
     }
+    '/news/isd-tax-burdens': {
+      id: '/news/isd-tax-burdens'
+      path: '/isd-tax-burdens'
+      fullPath: '/news/isd-tax-burdens'
+      preLoaderRoute: typeof NewsIsdTaxBurdensRouteImport
+      parentRoute: typeof NewsRoute
+    }
     '/news/$slug': {
       id: '/news/$slug'
       path: '/$slug'
@@ -5631,12 +5650,14 @@ const ExploreRouteWithChildren =
 
 interface NewsRouteChildren {
   NewsSlugRoute: typeof NewsSlugRoute
+  NewsIsdTaxBurdensRoute: typeof NewsIsdTaxBurdensRoute
   NewsNonPoliticalRoute: typeof NewsNonPoliticalRoute
   NewsIndexRoute: typeof NewsIndexRoute
 }
 
 const NewsRouteChildren: NewsRouteChildren = {
   NewsSlugRoute: NewsSlugRoute,
+  NewsIsdTaxBurdensRoute: NewsIsdTaxBurdensRoute,
   NewsNonPoliticalRoute: NewsNonPoliticalRoute,
   NewsIndexRoute: NewsIndexRoute,
 }
@@ -5979,3 +6000,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
