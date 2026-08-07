@@ -22,15 +22,31 @@ export function isIndexableAuthor(author: Author | null | undefined): author is 
   );
 }
 
+function hasStaticByline(author: Author): boolean {
+  return ARTICLES.some(
+    (article) => isPublished(article) && authorSlug(article.author) === author.slug,
+  );
+}
+
+type AuthorLoaderData = {
+  author: Author;
+  liveArticles: DailyArticle[];
+  hasPublishedArticles: boolean;
+};
+
 export const Route = createFileRoute("/authors/$slug")({
-  loader: async ({ params }): Promise<{ author: Author; liveArticles: DailyArticle[] }> => {
+  loader: async ({ params }): Promise<AuthorLoaderData> => {
     const author = AUTHORS.find((candidate) => candidate.slug === params.slug);
     if (!isIndexableAuthor(author)) throw notFound();
     const { articles } = await getDailyArticles();
     const liveArticles = articles
       .filter((article) => article.slug && authorSlug(article.author) === author.slug)
       .slice(0, 12);
-    return { author, liveArticles };
+    return {
+      author,
+      liveArticles,
+      hasPublishedArticles: liveArticles.length > 0 || hasStaticByline(author),
+    };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -42,7 +58,7 @@ export const Route = createFileRoute("/authors/$slug")({
       };
     }
 
-    const { author } = loaderData;
+    const { author, hasPublishedArticles } = loaderData;
     const path = `/authors/${author.slug}`;
     const url = `${SITE_URL}${path}`;
     const deskId = `${url}#desk`;
@@ -52,6 +68,7 @@ export const Route = createFileRoute("/authors/$slug")({
       description,
       path,
       type: "website",
+      noindex: !hasPublishedArticles,
     });
     const desk = {
       "@type": "Organization",
@@ -125,7 +142,7 @@ type ProfileArticle = {
 };
 
 function AuthorPage() {
-  const { author, liveArticles } = Route.useLoaderData() as { author: Author; liveArticles: DailyArticle[] };
+  const { author, liveArticles } = Route.useLoaderData() as AuthorLoaderData;
 
   const staticArticles: ProfileArticle[] = ARTICLES.filter(
     (article) => isPublished(article) && authorSlug(article.author) === author.slug,
@@ -178,7 +195,7 @@ function AuthorPage() {
       <section className="mt-12 pt-6 border-t-2 border-foreground">
         <h2 className="font-display text-2xl tracking-tight mb-4">Recent Articles</h2>
         {byAuthor.length === 0 ? (
-          <p className="text-muted-foreground">No published articles yet.</p>
+          <p className="text-muted-foreground">This desk has not published under this byline yet.</p>
         ) : (
           <ul className="space-y-5">
             {byAuthor.map((article) => (
