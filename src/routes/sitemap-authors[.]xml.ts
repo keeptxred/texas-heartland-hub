@@ -17,23 +17,32 @@ function isCompleteAuthor(author: Author): boolean {
   );
 }
 
-function authorLastModified(author: Author, liveArticles: DailyArticle[]): string {
-  const articleDates = [
+function authorArticleDates(author: Author, liveArticles: DailyArticle[]): string[] {
+  return [
     ...ARTICLES.filter(
       (article) => isPublished(article) && authorSlug(article.author) === author.slug,
     )
       .map((article) => article.publishedAt)
       .filter((value): value is string => Boolean(value)),
     ...liveArticles
-      .filter((article) => authorSlug(article.author) === author.slug)
+      .filter((article) => article.slug && authorSlug(article.author) === author.slug)
       .map((article) => article.published_at)
       .filter(Boolean),
   ];
+}
 
-  const latestArticleDate = articleDates
+function activeAuthorEntry(author: Author, liveArticles: DailyArticle[]): UrlEntry | null {
+  if (!isCompleteAuthor(author)) return null;
+  const dates = authorArticleDates(author, liveArticles);
+  if (dates.length === 0) return null;
+
+  const latestArticleDate = dates
     .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
 
-  return toIsoDate(latestArticleDate ?? "2026-07-01T00:00:00.000Z");
+  return {
+    loc: `${BASE_URL}/authors/${author.slug}`,
+    lastmod: toIsoDate(latestArticleDate),
+  };
 }
 
 export const Route = createFileRoute("/sitemap-authors.xml")({
@@ -41,10 +50,9 @@ export const Route = createFileRoute("/sitemap-authors.xml")({
     handlers: {
       GET: async () => {
         const { articles: liveArticles } = await getDailyArticles();
-        const entries: UrlEntry[] = AUTHORS.filter(isCompleteAuthor).map((author) => ({
-          loc: `${BASE_URL}/authors/${author.slug}`,
-          lastmod: authorLastModified(author, liveArticles),
-        }));
+        const entries = AUTHORS
+          .map((author) => activeAuthorEntry(author, liveArticles))
+          .filter((entry): entry is UrlEntry => entry !== null);
         return xmlResponse(renderUrlset(entries));
       },
     },
