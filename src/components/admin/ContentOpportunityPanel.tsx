@@ -616,8 +616,11 @@ export function ContentOpportunityPanel() {
                 const alreadyPublished = !!status?.rewritten;
                 const isDailyArticle = r.id < 0;
                 const preflight = preflightById[r.id];
+                const resolvedArticleSlug = r.article_slug ?? r.internal_slug ?? null;
+                const resolvedArticleUrl =
+                  r.article_url ?? (resolvedArticleSlug ? `https://keeptxred.com/news/${resolvedArticleSlug}` : null);
                 const canPostToFacebook =
-                  isDailyArticle || (!!r.internal_slug && !!status?.rewritten);
+                  isDailyArticle || (!!status?.rewritten && !!(resolvedArticleSlug || resolvedArticleUrl));
                 const hasImage = !!status?.imageReady;
                 const readiness = readinessLabel(r, status, preflight ?? {
                   rewriteable: false,
@@ -845,7 +848,9 @@ export function ContentOpportunityPanel() {
                       {statuses[previewRow.id]?.rewritten ? "Republish" : "Publish to Keep Texas Red"}
                     </button>
                   ) : null}
-                  {(previewRow.id < 0 || (!!previewRow.internal_slug && !!statuses[previewRow.id]?.rewritten)) ? (
+                  {(previewRow.id < 0 ||
+                    (!!statuses[previewRow.id]?.rewritten &&
+                      !!(previewRow.article_slug ?? previewRow.internal_slug ?? previewRow.article_url))) ? (
                     statuses[previewRow.id]?.imageReady ? (
                       <button
                         type="button"
