@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from '@tanstack/react-router';
 import { canonicalBillPath, SITE_URL } from '@/lib/bills';
 import { getBillTypePage } from '@/lib/bill-hierarchy';
 
+const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 } as const;
 const label = (value: string) => value.toUpperCase();
 
 export const Route = createFileRoute('/bills/texas/$legislature/$billType/')({
@@ -62,7 +63,7 @@ function BillTypeHub() {
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb">
-        <Link to="/">Home</Link> / <Link to="/bills">Bills</Link> /{' '}
+        <Link to="/">Home</Link> / <Link to="/bills" search={EMPTY_BILLS_SEARCH}>Bills</Link> /{' '}
         <Link to="/bills/texas/$legislature" params={{ legislature: String(legislature) }}>{legislature}th Legislature</Link> / {label(billType)}
       </nav>
 
