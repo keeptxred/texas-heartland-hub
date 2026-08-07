@@ -12,7 +12,7 @@ import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 import { AUTHORS } from "@/data/authors";
-import { ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
+import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 
 const INDEX_LASTMOD = toIsoDate("2026-08-07T00:00:00-05:00");
@@ -90,8 +90,11 @@ export const Route = createFileRoute("/sitemap.xml")({
           { file: "sitemap-bills.xml", count: 1 },
           { file: "sitemap-representatives.xml", count: 1 },
           { file: "sitemap-committees.xml", count: 1 },
-          { file: "sitemap-districts.xml", count: 205 },
-          { file: "sitemap-legislature.xml", count: 3 },
+          { file: "sitemap-districts.xml", count: ELECTION_DISTRICT_PATHS.length },
+          // One or more session-detail pages are emitted dynamically from the
+          // legislative_sessions table; the three shared Legislature hubs live
+          // in sitemap-pages.xml and are intentionally not duplicated here.
+          { file: "sitemap-legislature.xml", count: 1 },
           { file: "sitemap-news.xml", count: newsCount },
           { file: "sitemap-evergreen.xml", count: evergreenCount },
           { file: "sitemap-products.xml", count: productCount },

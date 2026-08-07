@@ -13,6 +13,8 @@ import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 
+const PRODUCT_CATALOG_LASTMOD = toIsoDate("2026-07-01T00:00:00-05:00");
+
 /** Image sitemap: one <image:image> per indexable page with a primary image.
  * Dedupes by image URL so the same asset never appears twice. */
 export const Route = createFileRoute("/sitemap-images.xml")({
@@ -70,16 +72,21 @@ export const Route = createFileRoute("/sitemap-images.xml")({
         }
 
         try {
-          const { products } = await getProducts();
-          const lastmod = toIsoDate(new Date());
-          for (const p of products) {
-            push(
-              `${BASE_URL}/shop/${p.id}`,
-              p.image,
-              p.title,
-              lastmod,
-              `${p.title} from the Keep TX Red shop`,
-            );
+          const { products, isFallback } = await getProducts();
+          if (isFallback) {
+            console.error("sitemap-images: live catalog unavailable; omitting demo product images");
+          } else {
+            for (const p of products) {
+              const id = String(p.id ?? "").trim();
+              if (!id) continue;
+              push(
+                `${BASE_URL}/shop/${encodeURIComponent(id)}`,
+                p.image,
+                p.title,
+                toIsoDate(p.syncedAt) || PRODUCT_CATALOG_LASTMOD,
+                `${p.title} from the Keep TX Red shop`,
+              );
+            }
           }
         } catch (e) {
           console.error("sitemap-images: products fetch failed", e);
