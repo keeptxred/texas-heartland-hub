@@ -1,6 +1,7 @@
-// Pure, dependency-free viral scoring for texas_news_feed rows.
-// The scorer is used both by ingestion and Viral Radar, so coverage decisions
-// must be based on Texas public interest rather than political category alone.
+// Pure, dependency-free viral + editorial scoring for texas_news_feed rows.
+// The scorer is used both by ingestion and Viral Radar. Coverage decisions are
+// based on Texas public interest and newsroom value, not political category or
+// raw virality alone.
 
 import { isTexasDefinedOwnedSource } from "@/lib/brand-source-ownership";
 import { extractEntities, inferCategory } from "@/lib/nlp";
@@ -14,14 +15,29 @@ export type ViralSignals = {
   category: string;
 };
 
+export type EditorialSignals = {
+  texasRelevance: number;
+  sourceQuality: number;
+  publicInterest: number;
+  usefulness: number;
+  curiosity: number;
+  freshness: number;
+  localUniqueness: number;
+};
+
+export type EditorialLane = "AUTO_PUBLISH" | "REVIEW" | "SOCIAL_ONLY";
+
 export type ViralResult = {
   viralScore: number;
+  editorialValueScore: number;
+  editorialLane: EditorialLane;
   classificationConfidence: number;
   texasRelevanceScore: number;
   sourceReputationScore: number;
   sourceReputationReason: string;
   routingType: RoutingType;
   signals: ViralSignals;
+  editorialSignals: EditorialSignals;
 };
 
 export type RoutingType = "SEO_ARTICLE" | "FACEBOOK_ONLY" | "REEL_CANDIDATE" | "BOTH";
@@ -52,17 +68,17 @@ export function classifySourceReputation(source: string): { score: number; reaso
 
 export const SOURCE_REPUTATION_FLOOR = 55;
 export const TEXAS_RELEVANCE_MIN = 40;
-export const TEXAS_RELEVANCE_AUTO = 75;
+export const TEXAS_RELEVANCE_AUTO = 60;
 
 const TEXAS_STRONG = /\btexas\b|\btexans?\b|\bt\.x\.\b/i;
-const TEXAS_CITIES = /\b(houston|dallas|austin|san antonio|fort worth|el paso|rgv|rio grande valley|rio grande|mcallen|brownsville|laredo|lubbock|amarillo|corpus christi|waco|arlington|plano|frisco|mckinney|denton|irving|garland|richardson|round rock|tyler|abilene|midland|odessa|beaumont|galveston|killeen|college station|bryan|san marcos|new braunfels|conroe|the woodlands|sugar land|katy|pearland|pasadena|humble|spring|harlingen|lampasas|pecos|fort stockton|san angelo|big spring)\b/i;
-const TEXAS_COUNTIES = /\b(harris county|dallas county|tarrant county|bexar county|travis county|collin county|denton county|fort bend county|montgomery county|williamson county|hidalgo county|el paso county|nueces county|cameron county|galveston county|brazoria county|jefferson county|lubbock county|mclennan county|pecos county|howard county|glasscock county|lampasas county)\b/i;
+const TEXAS_CITIES = /\b(houston|dallas|austin|san antonio|fort worth|el paso|rgv|rio grande valley|rio grande|mcallen|brownsville|laredo|lubbock|amarillo|corpus christi|waco|arlington|plano|frisco|mckinney|denton|irving|garland|richardson|round rock|tyler|abilene|midland|odessa|beaumont|galveston|killeen|college station|bryan|san marcos|new braunfels|conroe|the woodlands|sugar land|katy|pearland|pasadena|humble|spring|harlingen|lampasas|pecos|fort stockton|san angelo|big spring|grimes county|terrell county|lyford)\b/i;
+const TEXAS_COUNTIES = /\b(harris county|dallas county|tarrant county|bexar county|travis county|collin county|denton county|fort bend county|montgomery county|williamson county|hidalgo county|el paso county|nueces county|cameron county|galveston county|brazoria county|jefferson county|lubbock county|mclennan county|pecos county|howard county|glasscock county|lampasas county|grimes county|terrell county)\b/i;
 const OFFICIAL_SOURCE = /(governor|texas\.gov|office of the governor|attorney general|state of texas|texas department|texas commission|texas division|texas workforce|tdlr|tdem|dps)/i;
 const TEXAS_OFFICIALS = /\b(abbott|greg abbott|dan patrick|lt\.? gov(?:ernor)? patrick|ken paxton|ted cruz|john cornyn|dade phelan|dustin burrows|glenn hegar|sid miller|wayne christian|chip roy|dan crenshaw|colin allred|wesley hunt|ronny jackson|jodey arrington|beto o'?rourke|john whitmire|eric johnson|kirk watson|ron nirenberg|mattie parker|lina hidalgo|clay jenkins|tim o'?hare)\b/i;
-const TEXAS_AGENCIES = /\b(txdot|tceq|tea\b|twdb|tdcj|tabc|tdi|tpwd|tdlr|tdem|puc(?: of texas)?|ercot|texas dps|department of public safety|texas national guard|texas military department|texas workforce commission|workforce solutions|texas health and human services|hhsc|texas education agency|texas department of transportation|texas division of emergency management|texas a&m forest service|texas commission on environmental quality|texas legislature|texas house|texas senate|texas supreme court|court of criminal appeals of texas|texas a&m|university of texas|ut austin|ut southwestern|texas tech|tdlr)\b/i;
-const TEXAS_INSTITUTIONS = /\b(houston methodist|baylor university medical center|perot museum|whataburger|space ?x|lampasas isd|tarrant county commissioners|dallas police|houston texans|dallas cowboys|fc dallas|texas hospital|texas university|texas school district)\b/i;
-const TEXAS_SPORTS = /\b(astros|cowboys|texans|rangers baseball|texas rangers|mavericks|mavs|rockets|spurs|stars|fc dallas|houston dynamo|longhorns|aggies|red raiders|horned frogs|baylor bears|smu mustangs|utep miners|dallas wings)\b/i;
-const STATEWIDE_PUBLIC_INTEREST = /\b(hospital ranking|best hospitals?|migration report|moving destination|moves? to texas|wildfire|fire danger|teaching restrictions?|first amendment|ten commandments|religious freedom|polling locations?|voting sites?|skills development fund|workforce grant|museum expansion|anniversary|birthday deals?|jobs?|layoffs?|back wages|child labor|public safety|school policy|healthcare workers?|commissioners?|city council|county judge|proposed reduction|cuts? the number)\b/i;
+const TEXAS_AGENCIES = /\b(txdot|tceq|tea\b|twdb|tdcj|tabc|tdi|tpwd|tdlr|tdem|puc(?: of texas)?|ercot|texas dps|department of public safety|texas national guard|texas military department|texas workforce commission|workforce solutions|texas health and human services|hhsc|texas education agency|texas department of transportation|texas division of emergency management|texas a&m forest service|texas commission on environmental quality|texas legislature|texas house|texas senate|texas supreme court|court of criminal appeals of texas|texas a&m|university of texas|ut austin|ut southwestern|texas tech|tdlr|comptroller|dallas fed)\b/i;
+const TEXAS_INSTITUTIONS = /\b(houston methodist|baylor university medical center|perot museum|whataburger|space ?x|tesla|buc-ee'?s|seaworld san antonio|state fair of texas|big tex|camp mystic|lampasas isd|richardson isd|dallas isd|tarrant county commissioners|dallas police|houston texans|dallas cowboys|fc dallas|texas hospital|texas university|texas school district)\b/i;
+const TEXAS_SPORTS = /\b(astros|cowboys|texans|rangers baseball|texas rangers|mavericks|mavs|rockets|spurs|stars|fc dallas|houston dynamo|longhorns|aggies|red raiders|horned frogs|baylor bears|smu mustangs|utep miners|dallas wings|tyler guyton|vince young|kyler murray)\b/i;
+const STATEWIDE_PUBLIC_INTEREST = /\b(hospital ranking|best hospitals?|migration report|moving destination|moves? to texas|wildfire|fire danger|teaching restrictions?|first amendment|ten commandments|religious freedom|polling locations?|voting sites?|skills development fund|workforce grant|museum expansion|anniversary|birthday deals?|jobs?|layoffs?|back wages|child labor|public safety|school policy|healthcare workers?|commissioners?|city council|county judge|proposed reduction|cuts? the number|sales tax|tax-free|tax holiday|back-to-school|outbreak|salmonella|screwworm|whole blood|transfusion|fraud|skimmer|income growth|household income|semiconductor|factory|plant|investment|state fair|food finalist|lawsuit|trademark|donation|curriculum)\b/i;
 const TEXAS_CATEGORIES = new Set([
   "Texas Politics",
   "Texas Economy",
@@ -80,12 +96,20 @@ const TEXAS_CATEGORIES = new Set([
 ]);
 
 const BREAKING_WORDS = /\b(breaking|signs|declares|activates|announces|emergency|ruling|sues?|lawsuit|indicted|arrested|veto|appoints|filed|passes|approves|dies|killed|shooting|storm|hurricane|flood|tornado|wildfire|evacuation|recall|impeach|tops?|ranks?|awards?|bans?|fires?|lays? off|expands?|plans?|turns?|marks?|considers?|proposes?|reduces?|cuts?)\b/i;
-const SOCIAL_HOOK_WORDS = /\b(election|elections|abbott|paxton|border|tax|taxes|shooting|hurricane|storm|flood|wildfire|crime|police|ice|migrant|migration|school|parents|hospital|jobs|layoffs|guns|gun|abortion|trump|biden|harris|whataburger|cowboys|texans)\b/i;
+const SOCIAL_HOOK_WORDS = /\b(election|elections|abbott|paxton|border|tax|taxes|shooting|hurricane|storm|flood|wildfire|crime|police|ice|migrant|migration|school|parents|hospital|jobs|layoffs|guns|gun|abortion|trump|biden|harris|whataburger|cowboys|texans|buc-ee'?s|state fair|spacex|tesla)\b/i;
+const USEFULNESS_WORDS = /\b(deadline|weekend|qualif(?:y|ies)|eligible|free|save|savings|tax-free|tax holiday|seminar|schedule|opens?|closes?|how to|what to know|warning|alert|recall|outbreak|health|safety|fraud|skimmer|school supplies|backpack|diapers|jobs?|hiring|grant|benefit|program)\b/i;
+const CURIOSITY_WORDS = /\b(first|largest|record|finalists?|new|opens?|opening|line out the door|beluga|bees?|candy|food|fair|buc-ee'?s|mascot|lawsuit|birthday|donat(?:e|ion)|wild|unusual|only|ranked|top|viral)\b/i;
+const HIGH_RISK_REVIEW = /\b(alleged|accused|indicted|arrested|charged|suspect|murder|homicide|sexual|rape|abuse|threaten(?:ed|ing)?|shooting|killed|dead|death|dies|lawsuit|sues?|election|candidate|poll|ballot|fraud claim|unverified|developing|breaking)\b/i;
 
 function hoursSince(iso: string): number {
   const t = new Date(iso).getTime();
   if (Number.isNaN(t)) return Infinity;
   return (Date.now() - t) / 3_600_000;
+}
+
+function scale(value: number, max: number, weight: number): number {
+  if (max <= 0) return 0;
+  return Math.round((Math.max(0, Math.min(max, value)) / max) * weight);
 }
 
 export function scoreFeedItem(item: {
@@ -128,7 +152,7 @@ export function scoreFeedItem(item: {
     texas += 15; reasons.push("Texas institution named");
   }
   if (TEXAS_SPORTS.test(hay)) { texas += 15; reasons.push("Texas sports team"); }
-  if (STATEWIDE_PUBLIC_INTEREST.test(hay) && (TEXAS_STRONG.test(hay) || TEXAS_CITIES.test(hay) || TEXAS_AGENCIES.test(hay))) {
+  if (STATEWIDE_PUBLIC_INTEREST.test(hay) && (TEXAS_STRONG.test(hay) || TEXAS_CITIES.test(hay) || TEXAS_AGENCIES.test(hay) || TEXAS_INSTITUTIONS.test(hay))) {
     texas += 10; reasons.push("Statewide public-interest topic");
   }
   if (TEXAS_CATEGORIES.has(category)) { texas += 8; reasons.push(`TX category: ${category}`); }
@@ -173,16 +197,43 @@ export function scoreFeedItem(item: {
   if (rep.score >= 85) reasons.push("High-reputation source");
   else if (rep.score < SOURCE_REPUTATION_FLOOR) reasons.push("Low-reputation source");
 
-  // KeepTXRed ingestion uses this field as its pre-storage Texas relevance gate.
-  // A TexasDefined-owned source must therefore score zero here, not merely fail
-  // native article qualification later in the pipeline.
   const texasRelevanceScore = ownedByTexasDefined
     ? 0
     : Math.round((texas / 40) * 100);
+
+  const editorialSignals: EditorialSignals = {
+    texasRelevance: scale(texas, 40, 25),
+    sourceQuality: scale(rep.score, 100, 20),
+    publicInterest: STATEWIDE_PUBLIC_INTEREST.test(hay) ? 15 : (category !== "Non-Political" ? 10 : 5),
+    usefulness: USEFULNESS_WORDS.test(hay) ? 10 : 3,
+    curiosity: CURIOSITY_WORDS.test(hay) ? 10 : (social > 0 ? 7 : 3),
+    freshness: hrs <= 12 ? 10 : hrs <= 24 ? 8 : hrs <= 48 ? 5 : hrs <= 72 ? 3 : 0,
+    localUniqueness: (TEXAS_CITIES.test(hay) || TEXAS_COUNTIES.test(hay)) && !TEXAS_STRONG.test(title) ? 10 : 5,
+  };
+  const editorialValueScore = ownedByTexasDefined
+    ? 0
+    : Math.min(100, Object.values(editorialSignals).reduce((sum, value) => sum + value, 0));
+
   const hasVideo = !!item.has_video;
-  // Texas culture, health, education, migration, business and institutions are
-  // valid native articles. Category must never be used as a political-only veto.
-  const searchWorthy = viralScore >= 55 && texasRelevanceScore >= 50 && rep.score >= SOURCE_REPUTATION_FLOOR;
+  const risky = HIGH_RISK_REVIEW.test(hay);
+  const autoPublishEligible =
+    editorialValueScore >= 72 &&
+    texasRelevanceScore >= TEXAS_RELEVANCE_AUTO &&
+    rep.score >= 65 &&
+    confidence >= 0.6 &&
+    !risky;
+  const reviewEligible =
+    editorialValueScore >= 58 &&
+    texasRelevanceScore >= TEXAS_RELEVANCE_MIN &&
+    rep.score >= SOURCE_REPUTATION_FLOOR;
+
+  const editorialLane: EditorialLane = autoPublishEligible
+    ? "AUTO_PUBLISH"
+    : reviewEligible
+      ? "REVIEW"
+      : "SOCIAL_ONLY";
+
+  const searchWorthy = editorialLane !== "SOCIAL_ONLY";
   let routingType: RoutingType;
   if (hasVideo && viralScore >= 70 && searchWorthy) routingType = "BOTH";
   else if (hasVideo && viralScore >= 70) routingType = "REEL_CANDIDATE";
@@ -191,12 +242,15 @@ export function scoreFeedItem(item: {
 
   return {
     viralScore,
+    editorialValueScore,
+    editorialLane,
     classificationConfidence: confidence,
     texasRelevanceScore,
     sourceReputationScore: rep.score,
     sourceReputationReason: rep.reason,
     routingType,
     signals: { reasons, texasRelevance: texas, breakoutVelocity: velocity, socialHooks: social, entities, category },
+    editorialSignals,
   };
 }
 
@@ -204,17 +258,23 @@ export const VIRAL_AUTO_REWRITE_MIN_SCORE = 65;
 export const VIRAL_AUTO_REWRITE_MIN_CONFIDENCE = 0.6;
 export const VIRAL_READY_MIN_SCORE = 60;
 export const VIRAL_READY_MIN_CONFIDENCE = 0.6;
+export const EDITORIAL_AUTO_PUBLISH_MIN_SCORE = 72;
+export const EDITORIAL_REVIEW_MIN_SCORE = 58;
 
 export function qualifiesForAutoRewrite(r: ViralResult): boolean {
-  return r.viralScore >= VIRAL_AUTO_REWRITE_MIN_SCORE &&
+  return r.editorialLane === "AUTO_PUBLISH" || (
+    r.viralScore >= VIRAL_AUTO_REWRITE_MIN_SCORE &&
     r.classificationConfidence >= VIRAL_AUTO_REWRITE_MIN_CONFIDENCE &&
     r.texasRelevanceScore >= TEXAS_RELEVANCE_MIN &&
-    r.sourceReputationScore >= SOURCE_REPUTATION_FLOOR;
+    r.sourceReputationScore >= SOURCE_REPUTATION_FLOOR
+  );
 }
 
 export function qualifiesReadyForRewrite(r: ViralResult): boolean {
-  return r.viralScore >= VIRAL_READY_MIN_SCORE &&
+  return r.editorialLane !== "SOCIAL_ONLY" || (
+    r.viralScore >= VIRAL_READY_MIN_SCORE &&
     r.classificationConfidence >= VIRAL_READY_MIN_CONFIDENCE &&
     r.texasRelevanceScore >= TEXAS_RELEVANCE_AUTO &&
-    r.sourceReputationScore >= SOURCE_REPUTATION_FLOOR;
+    r.sourceReputationScore >= SOURCE_REPUTATION_FLOOR
+  );
 }
