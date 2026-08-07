@@ -63,6 +63,44 @@ function isSitemapWorthyBill(
   return score >= 2;
 }
 
+function hierarchyEntries(bills: SitemapBill[]): UrlEntry[] {
+  const legislatureDates = new Map<number, Array<string | null | undefined>>();
+  const typeDates = new Map<string, Array<string | null | undefined>>();
+
+  for (const bill of bills) {
+    const billType = String(bill.bill_type ?? '').trim().toLowerCase();
+    if (!bill.legislature_number || !billType) continue;
+    const date = bill.last_action_date || bill.updated_at;
+    const legislatureValues = legislatureDates.get(bill.legislature_number) ?? [];
+    legislatureValues.push(date);
+    legislatureDates.set(bill.legislature_number, legislatureValues);
+
+    const typeKey = `${bill.legislature_number}:${billType}`;
+    const typeValues = typeDates.get(typeKey) ?? [];
+    typeValues.push(date);
+    typeDates.set(typeKey, typeValues);
+  }
+
+  const legislatureEntries = [...legislatureDates.entries()]
+    .sort(([a], [b]) => b - a)
+    .map(([legislature, dates]) => ({
+      loc: absUrl(`/bills/texas/${legislature}`),
+      lastmod: newestDate(dates),
+    }));
+
+  const typeEntries = [...typeDates.entries()]
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([key, dates]) => {
+      const [legislature, billType] = key.split(':');
+      return {
+        loc: absUrl(`/bills/texas/${legislature}/${billType}`),
+        lastmod: newestDate(dates),
+      };
+    });
+
+  return [...legislatureEntries, ...typeEntries];
+}
+
 export async function billSitemapEntries(): Promise<UrlEntry[]> {
   const [
     { data: bills, error: billsError },
@@ -121,6 +159,7 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
 
   return [
     { loc: absUrl('/bills'), lastmod: billsLastmod },
+    ...hierarchyEntries(billRows),
     ...sitemapBills.map((bill) => ({
       loc: absUrl(canonicalBillPath(bill)),
       lastmod: toIsoDate(bill.last_action_date || bill.updated_at) || undefined,
