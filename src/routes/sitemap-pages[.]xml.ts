@@ -3,7 +3,6 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
-import { STATE_LEADERSHIP, US_HOUSE_DELEGATION, US_SENATORS, TEXAS_HOUSE_MEMBERS, TEXAS_SENATE_MEMBERS, representativeSlug } from "@/data/representatives";
 
 const STATIC_PAGE_LASTMOD=toIsoDate("2026-08-03T00:00:00-05:00");
 const STATIC_PATHS:string[]=[

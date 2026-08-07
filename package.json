@@ -15,7 +15,7 @@
     "shared:validate": "bun scripts/shared/validate-texas-platform.ts",
     "shared:entities:validate": "bun scripts/shared/validate-entity-framework.ts",
     "publication:validate": "bun scripts/shared/validate-publication-writers.mjs",
-    "seo:validate": "node scripts/seo/validate.mjs",
+    "seo:validate": "node scripts/seo/validate.mjs && node --experimental-strip-types scripts/seo/validate-indexability.mjs",
     "elections:normalize": "node scripts/elections/normalize-imports.mjs",
     "elections:authority-registry": "node scripts/elections/generate-political-authority-registry.mjs",
     "elections:migrate-sources": "node scripts/elections/migrate-source-urls.mjs",
@@ -49,7 +49,8 @@
     "legislature:archive:send-batches": "node scripts/legislature/send-document-batches.mjs",
     "legislature:bills:export-batches": "node scripts/legislature/export-local-bill-batches.mjs",
     "legislature:archive:validate-imported": "node scripts/legislature/validate-imported-documents.mjs",
-    "legislature:archive:test-parser": "node scripts/legislature/test-official-document-parser.mjs"
+    "legislature:archive:test-parser": "node scripts/legislature/test-official-document-parser.mjs",
+    "seo:indexability": "node --experimental-strip-types scripts/seo/validate-indexability.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
