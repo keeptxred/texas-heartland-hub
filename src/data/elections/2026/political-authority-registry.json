@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-06T16:00:23.910Z",
+  "generatedAt": "2026-08-07T13:43:17.044Z",
   "authoritySources": [
     "Texas Secretary of State Qualified Candidate Listing",
     "Keep TX Red verified election race registry"
@@ -2636,6 +2636,26 @@
       ]
     },
     {
+      "id": "candidate-demetra-jefferson-wysinger-independent-race-2026-governor",
+      "aliases": [
+        "DEMETRA JEFFERSON WYSINGER",
+        "Demetra Jefferson Wysinger"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-governor",
+          "electionYear": 2026,
+          "office": "Governor",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-denise-villalobos-republican-race-2026-texas-house-34",
       "aliases": [
         "DENISE VILLALOBOS",
@@ -3508,6 +3528,26 @@
       ]
     },
     {
+      "id": "candidate-gerard-anthony-villalobos-independent-race-2026-us-house-20",
+      "aliases": [
+        "GERARD ANTHONY VILLALOBOS",
+        "Gerard Anthony Villalobos"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-20",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-20",
+          "districtName": "U.S. House District 20",
+          "districtNumber": "20"
+        }
+      ]
+    },
+    {
       "id": "candidate-gina-hinojosa-democratic-race-2026-governor",
       "aliases": [
         "GINA HINOJOSA",
@@ -3950,6 +3990,26 @@
           "districtId": "district-texas-house-21",
           "districtName": "Texas House District 21",
           "districtNumber": "21"
+        }
+      ]
+    },
+    {
+      "id": "candidate-jade-simmons-independent-race-2026-us-senate",
+      "aliases": [
+        "JADE SIMMONS",
+        "Jade Simmons"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-senate",
+          "electionYear": 2026,
+          "office": "U.S. Senate",
+          "officeLevel": "federal",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
         }
       ]
     },
@@ -5286,6 +5346,26 @@
       ]
     },
     {
+      "id": "candidate-kelly-hall-democratic-race-2026-texas-house-19",
+      "aliases": [
+        "KELLY HALL",
+        "Kelly Hall"
+      ],
+      "party": "democratic",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-texas-house-19",
+          "electionYear": 2026,
+          "office": "Texas House",
+          "officeLevel": "state",
+          "districtId": "district-texas-house-19",
+          "districtName": "Texas House District 19",
+          "districtNumber": "19"
+        }
+      ]
+    },
+    {
       "id": "candidate-ken-king-republican-race-2026-texas-house-88",
       "aliases": [
         "KEN KING",
@@ -5592,6 +5672,26 @@
       ]
     },
     {
+      "id": "candidate-l-d-howard-independent-race-2026-texas-house-124",
+      "aliases": [
+        "L.D. HOWARD",
+        "L.d. Howard"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-texas-house-124",
+          "electionYear": 2026,
+          "office": "Texas House",
+          "officeLevel": "state",
+          "districtId": "district-texas-house-124",
+          "districtName": "Texas House District 124",
+          "districtNumber": "124"
+        }
+      ]
+    },
+    {
       "id": "candidate-lacey-hull-republican-race-2026-texas-house-138",
       "aliases": [
         "LACEY HULL",
@@ -5868,6 +5968,26 @@
           "districtId": "district-texas-house-76",
           "districtName": "Texas House District 76",
           "districtNumber": "76"
+        }
+      ]
+    },
+    {
+      "id": "candidate-lisa-emerson-independent-race-2026-texas-house-126",
+      "aliases": [
+        "LISA EMERSON",
+        "Lisa Emerson"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-texas-house-126",
+          "electionYear": 2026,
+          "office": "Texas House",
+          "officeLevel": "state",
+          "districtId": "district-texas-house-126",
+          "districtName": "Texas House District 126",
+          "districtNumber": "126"
         }
       ]
     },
@@ -6638,6 +6758,26 @@
           "districtId": "district-texas-house-70",
           "districtName": "Texas House District 70",
           "districtNumber": "70"
+        }
+      ]
+    },
+    {
+      "id": "candidate-mike-collier-independent-race-2026-lieutenant-governor",
+      "aliases": [
+        "MIKE COLLIER",
+        "Mike Collier"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-lieutenant-governor",
+          "electionYear": 2026,
+          "office": "Lieutenant Governor",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
         }
       ]
     },
@@ -7760,6 +7900,26 @@
       ]
     },
     {
+      "id": "candidate-roy-morales-independent-race-2026-us-house-9",
+      "aliases": [
+        "ROY MORALES",
+        "Roy Morales"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-9",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-9",
+          "districtName": "U.S. House District 9",
+          "districtNumber": "9"
+        }
+      ]
+    },
+    {
       "id": "candidate-ryan-guillen-republican-race-2026-texas-house-31",
       "aliases": [
         "RYAN GUILLEN",
@@ -7880,6 +8040,26 @@
       ]
     },
     {
+      "id": "candidate-sarah-bowman-cunningham-independent-race-2026-governor",
+      "aliases": [
+        "SARAH BOWMAN CUNNINGHAM",
+        "Sarah Bowman Cunningham"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-governor",
+          "electionYear": 2026,
+          "office": "Governor",
+          "officeLevel": "state",
+          "districtId": null,
+          "districtName": null,
+          "districtNumber": null
+        }
+      ]
+    },
+    {
       "id": "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
       "aliases": [
         "SARAH ECKHARDT",
@@ -7916,6 +8096,26 @@
           "districtId": "district-texas-house-129",
           "districtName": "Texas House District 129",
           "districtNumber": "129"
+        }
+      ]
+    },
+    {
+      "id": "candidate-scott-cubbler-independent-race-2026-us-house-38",
+      "aliases": [
+        "SCOTT CUBBLER",
+        "Scott Cubbler"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-38",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-38",
+          "districtName": "U.S. House District 38",
+          "districtNumber": "38"
         }
       ]
     },
@@ -8298,6 +8498,26 @@
           "districtId": "district-texas-house-113",
           "districtName": "Texas House District 113",
           "districtNumber": "113"
+        }
+      ]
+    },
+    {
+      "id": "candidate-steve-clugston-independent-race-2026-texas-senate-1",
+      "aliases": [
+        "STEVE CLUGSTON",
+        "Steve Clugston"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-texas-senate-1",
+          "electionYear": 2026,
+          "office": "Texas Senate",
+          "officeLevel": "state",
+          "districtId": "district-texas-senate-1",
+          "districtName": "Texas Senate District 1",
+          "districtNumber": "1"
         }
       ]
     },
@@ -9076,6 +9296,26 @@
       ]
     },
     {
+      "id": "candidate-valencia-williams-independent-race-2026-us-house-18",
+      "aliases": [
+        "VALENCIA WILLIAMS",
+        "Valencia Williams"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-18",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-18",
+          "districtName": "U.S. House District 18",
+          "districtNumber": "18"
+        }
+      ]
+    },
+    {
       "id": "candidate-valoree-swanson-republican-race-2026-texas-house-150",
       "aliases": [
         "VALOREE SWANSON",
@@ -9316,6 +9556,26 @@
           "districtId": "district-texas-house-16",
           "districtName": "Texas House District 16",
           "districtNumber": "16"
+        }
+      ]
+    },
+    {
+      "id": "candidate-william-taggart-independent-race-2026-us-house-38",
+      "aliases": [
+        "WILLIAM TAGGART",
+        "William Taggart"
+      ],
+      "party": "independent",
+      "externalIds": {},
+      "contests": [
+        {
+          "raceId": "race-2026-us-house-38",
+          "electionYear": 2026,
+          "office": "U.S. House",
+          "officeLevel": "federal",
+          "districtId": "district-us-house-38",
+          "districtName": "U.S. House District 38",
+          "districtNumber": "38"
         }
       ]
     },
