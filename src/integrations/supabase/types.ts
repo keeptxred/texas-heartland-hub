@@ -3625,8 +3625,11 @@ export type Database = {
           is_on_sale: boolean
           keeptxred_category: string | null
           keeptxred_collections: string[]
+          keeptxred_description: string | null
           keeptxred_display_order: number
           keeptxred_featured: boolean
+          keeptxred_image_url: string | null
+          keeptxred_title: string | null
           price: number
           printify_product_id: string | null
           product_url: string
@@ -3637,8 +3640,11 @@ export type Database = {
           tags: string[]
           texasdefined_category: string | null
           texasdefined_collections: string[]
+          texasdefined_description: string | null
           texasdefined_display_order: number
           texasdefined_featured: boolean
+          texasdefined_image_url: string | null
+          texasdefined_title: string | null
           title: string
           updated_at: string
           variants: Json
@@ -3658,8 +3664,11 @@ export type Database = {
           is_on_sale?: boolean
           keeptxred_category?: string | null
           keeptxred_collections?: string[]
+          keeptxred_description?: string | null
           keeptxred_display_order?: number
           keeptxred_featured?: boolean
+          keeptxred_image_url?: string | null
+          keeptxred_title?: string | null
           price?: number
           printify_product_id?: string | null
           product_url?: string
@@ -3670,8 +3679,11 @@ export type Database = {
           tags?: string[]
           texasdefined_category?: string | null
           texasdefined_collections?: string[]
+          texasdefined_description?: string | null
           texasdefined_display_order?: number
           texasdefined_featured?: boolean
+          texasdefined_image_url?: string | null
+          texasdefined_title?: string | null
           title: string
           updated_at?: string
           variants?: Json
@@ -3691,8 +3703,11 @@ export type Database = {
           is_on_sale?: boolean
           keeptxred_category?: string | null
           keeptxred_collections?: string[]
+          keeptxred_description?: string | null
           keeptxred_display_order?: number
           keeptxred_featured?: boolean
+          keeptxred_image_url?: string | null
+          keeptxred_title?: string | null
           price?: number
           printify_product_id?: string | null
           product_url?: string
@@ -3703,8 +3718,11 @@ export type Database = {
           tags?: string[]
           texasdefined_category?: string | null
           texasdefined_collections?: string[]
+          texasdefined_description?: string | null
           texasdefined_display_order?: number
           texasdefined_featured?: boolean
+          texasdefined_image_url?: string | null
+          texasdefined_title?: string | null
           title?: string
           updated_at?: string
           variants?: Json
