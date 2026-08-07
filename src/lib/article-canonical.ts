@@ -49,7 +49,9 @@ export function resolveRedirectChain(
   maxHops: number = MAX_REDIRECT_HOPS,
 ): string | null {
   const get = (key: string): string | undefined =>
-    redirects instanceof Map ? redirects.get(key) : redirects[key];
+    redirects instanceof Map
+      ? redirects.get(key)
+      : (redirects as Record<string, string>)[key];
 
   const start = (slug ?? "").trim();
   if (!start) return null;
