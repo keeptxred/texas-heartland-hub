@@ -35,7 +35,10 @@ export const Route = createFileRoute("/representatives")({
         content: "Contact your Texas elected officials — federal and state.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/representatives" }],
+    // Canonical intentionally omitted: this is the layout route for
+    // /representatives/$representativeSlug. A canonical here was emitted on
+    // every representative page, pointing all 250+ detail pages at the
+    // directory. The leaf routes set their own self-canonical.
     scripts: [
       {
         type: "application/ld+json",
