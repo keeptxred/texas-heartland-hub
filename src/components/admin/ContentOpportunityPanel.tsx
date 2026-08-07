@@ -429,19 +429,27 @@ export function ContentOpportunityPanel() {
       const titles = feed.map((f) => f.title).filter(Boolean) as string[];
 
       const [articlesRes, reelsRes] = await Promise.all([
-        slugs.length > 0
-          ? supabase
-              .from("daily_articles")
-              .select("slug,title,featured_image_url")
-              .in("slug", slugs)
-          : Promise.resolve({ data: [] as { slug: string; title: string; featured_image_url: string | null }[] }),
+        // Load a recent published-article window instead of only rows whose feed
+        // item already has internal_slug populated. Older/manual publication paths
+        // can leave texas_news_feed.internal_slug null even though daily_articles
+        // contains the finished story. Title matching below repairs that linkage in
+        // the admin UI so Facebook can use the real KeepTXRed slug/URL/image.
+        supabase
+          .from("daily_articles")
+          .select("slug,title,featured_image_url,published_at")
+          .order("published_at", { ascending: false })
+          .limit(750),
         links.length > 0 || titles.length > 0
           ? supabase.from("reel_candidates").select("source_url,title")
           : Promise.resolve({ data: [] as { source_url: string | null; title: string | null }[] }),
       ]);
 
-      const articleMap = new Map<string, { title: string; featured_image_url: string | null }>();
-      (articlesRes.data ?? []).forEach((a) => articleMap.set(a.slug, a));
+      const articleMap = new Map<string, { slug: string; title: string; featured_image_url: string | null }>();
+      const articleTitleMap = new Map<string, { slug: string; title: string; featured_image_url: string | null }>();
+      (articlesRes.data ?? []).forEach((a) => {
+        articleMap.set(a.slug, a);
+        articleTitleMap.set(a.title.toLowerCase().trim(), a);
+      });
 
       const normalizedTitles = new Set(titles.map((t) => t.toLowerCase().trim()));
       const normalizedLinks = new Set(links.map((l) => l.toLowerCase().trim()));
@@ -465,7 +473,22 @@ export function ContentOpportunityPanel() {
 
       const statusMap: Record<number, OpportunityStatus> = {};
       feed.forEach((f) => {
-        const article = f.internal_slug ? articleMap.get(f.internal_slug) : null;
+        const article =
+          (f.internal_slug ? articleMap.get(f.internal_slug) : null) ??
+          articleTitleMap.get(f.title.toLowerCase().trim()) ??
+          null;
+
+        // Repair the client-side publication linkage when the article exists but
+        // the feed row's internal_slug was never backfilled. quickPost and image
+        // generation can then use the canonical KeepTXRed article instead of
+        // incorrectly disabling Facebook.
+        if (f.id > 0 && article && !f.internal_slug) {
+          f.internal_slug = article.slug;
+          f.article_slug = article.slug;
+          f.article_url = `https://keeptxred.com/news/${article.slug}`;
+          f.article_asset_url = article.featured_image_url;
+        }
+
         if (f.id < 0) {
           statusMap[f.id] = {
             rewritten: true,
