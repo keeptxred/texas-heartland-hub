@@ -12,12 +12,10 @@ function readBooleanFlag(value: string | boolean | undefined, fallback: boolean)
   return fallback;
 }
 
-const homepageTakeoverReady = Boolean(
-  electionReadiness.ready && electionReadiness.homepageTakeoverEnabled,
-);
+const electionCentralReady = Boolean(electionReadiness.ready);
 
 export const ELECTION_FEATURE_FLAGS = {
-  homepagePromotion: homepageTakeoverReady && readBooleanFlag(
+  homepagePromotion: electionCentralReady && readBooleanFlag(
     import.meta.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE,
     true,
   ),
