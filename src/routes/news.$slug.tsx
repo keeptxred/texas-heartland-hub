@@ -1,8 +1,9 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
-import { getEvergreenBySlug, type EvergreenBody } from "@/lib/evergreen.functions";
+import { getEvergreenBySlug, resolveArticleSlugByTail, type EvergreenBody } from "@/lib/evergreen.functions";
+import { isBadYearSlug, parseArticleSlug } from "@/lib/article-slug-integrity";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import {
@@ -64,7 +65,18 @@ export const Route = createFileRoute("/news/$slug")({
     }
     // Fallback: AI-generated evergreen article stored in daily_articles.
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
-    if (!ever || !ever.body) throw notFound();
+    if (!ever || !ever.body) {
+      // Legacy bad-year URL (e.g. /news/live-2001-… minted from a broken feed
+      // date). The corrected slug keeps the same tail, so resolve it and 301.
+      const parsed = parseArticleSlug(params.slug);
+      if (parsed && isBadYearSlug(params.slug)) {
+        const { slug } = await resolveArticleSlugByTail({ data: { tail: parsed.tail } });
+        if (slug && slug !== params.slug) {
+          throw redirect({ href: `/news/${slug}`, statusCode: 301 });
+        }
+      }
+      throw notFound();
+    }
     // Safety net: never render a stub article. If the body is only the
     // "affects Texans and is being tracked" boilerplate with a one-line
     // intro, treat it as missing rather than serve an empty page.
