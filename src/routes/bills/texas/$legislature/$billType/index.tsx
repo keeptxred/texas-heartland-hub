@@ -1,14 +1,18 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router';
+import { createFileRoute, Link, notFound, stripSearchParams } from '@tanstack/react-router';
 import { canonicalBillPath, SITE_URL } from '@/lib/bills';
 import { getBillTypePage } from '@/lib/bill-hierarchy';
 
 const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', billType: '', page: 1 } as const;
+const DEFAULT_SEARCH = { page: 1 } as const;
 const label = (value: string) => value.toUpperCase();
 
 export const Route = createFileRoute('/bills/texas/$legislature/$billType/')({
   validateSearch: (search: Record<string, unknown>) => ({
     page: Math.max(1, Number(search.page) || 1),
   }),
+  search: {
+    middlewares: [stripSearchParams(DEFAULT_SEARCH)],
+  },
   loaderDeps: ({ search }) => search,
   loader: async ({ params, deps }) => {
     const legislature = Number(params.legislature);
