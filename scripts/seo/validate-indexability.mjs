@@ -4,8 +4,11 @@
  * Google should never be offered:
  *  - article slugs whose date prefix is a bad/implausible year
  *  - sitemap URLs that redirect, 404, are noindex, or are non-canonical
- *  - duplicate <loc> values across the whole sitemap set
- *  - obvious duplicate news clusters (same story fingerprint) in the sitemap
+ *  - duplicate canonical ownership across primary URL sitemaps
+ *  - obvious duplicate news clusters (same story fingerprint) in the long-term article sitemap
+ *
+ * Google News and image sitemaps are derivative discovery feeds: their page
+ * <loc> values may intentionally repeat canonical URLs owned by a primary sitemap.
  *
  * Usage: node scripts/seo/validate-indexability.mjs [--base http://localhost:8080]
  * Live checks are skipped (with a warning) when the base URL is unreachable.
@@ -16,6 +19,7 @@ const baseArg = process.argv.indexOf("--base");
 const BASE = baseArg > -1 ? process.argv[baseArg + 1] : process.env.SEO_BASE || "http://localhost:8080";
 const CANONICAL_HOST = "https://keeptxred.com";
 const SAMPLE = Number(process.env.SEO_SAMPLE || 60);
+const DERIVATIVE_SITEMAPS = new Set(["/sitemap-news.xml", "/sitemap-images.xml"]);
 const DISALLOWED = [/\?/, /#/, /^\/admin/, /^\/api\//, /^\/cart/, /^\/shop\/checkout/, /^\/preview\//, /^\/lovable\//, /^\/hubs/, /^\/email\//];
 const errors = [];
 const warnings = [];
@@ -58,10 +62,13 @@ for (const child of childSitemaps) {
   for (const loc of locs(res.body)) all.push({ sitemap: child, loc });
 }
 
-// 1. duplicates across the whole set
+const primary = all.filter((entry) => !DERIVATIVE_SITEMAPS.has(entry.sitemap));
+
+// 1. duplicate canonical ownership across primary URL sitemaps. Google News and
+// image sitemaps intentionally repeat page URLs and are excluded from ownership.
 const seen = new Map();
-for (const { sitemap, loc } of all) {
-  if (seen.has(loc)) errors.push(`Duplicate sitemap URL ${loc} (${seen.get(loc)} and ${sitemap})`);
+for (const { sitemap, loc } of primary) {
+  if (seen.has(loc)) errors.push(`Duplicate primary sitemap URL ${loc} (${seen.get(loc)} and ${sitemap})`);
   else seen.set(loc, sitemap);
 }
 
@@ -77,8 +84,9 @@ for (const { loc } of all) {
   }
 }
 
-// 3. bad-year article slugs
-for (const { loc } of all) {
+// 3. bad-year article slugs. Check unique page URLs so derivative sitemap
+// repetition cannot duplicate the same diagnostic.
+for (const loc of new Set(all.map((entry) => entry.loc))) {
   const path = loc.slice(CANONICAL_HOST.length);
   const match = /^\/news\/(.+)$/.exec(path);
   if (!match) continue;
@@ -88,9 +96,10 @@ for (const { loc } of all) {
   }
 }
 
-// 4. duplicate news clusters (same-story fingerprint from the slug words)
+// 4. duplicate news clusters in the long-term article sitemap only. The Google
+// News sitemap intentionally repeats the freshest canonical article URLs.
 const clusters = new Map();
-for (const { loc } of all) {
+for (const { loc } of all.filter((entry) => entry.sitemap === "/sitemap-evergreen.xml")) {
   const match = /^\/news\/(.+)$/.exec(loc.slice(CANONICAL_HOST.length));
   if (!match) continue;
   const parsed = parseArticleSlug(match[1]);
@@ -104,10 +113,14 @@ for (const { loc } of all) {
   }
 }
 
-// 5. live status / canonical / robots on a sample plus every static page URL
-const pageUrls = all.filter((entry) => entry.sitemap === "/sitemap-pages.xml").map((e) => e.loc);
-const others = all.filter((entry) => entry.sitemap !== "/sitemap-pages.xml").map((e) => e.loc);
-const sample = [...pageUrls, ...others.sort(() => Math.random() - 0.5).slice(0, SAMPLE)];
+// 5. live status / canonical / robots on a sample plus every static page URL.
+// Sample unique canonical page URLs so the same article is not fetched twice
+// merely because it also appears in a derivative sitemap.
+const pageUrls = primary.filter((entry) => entry.sitemap === "/sitemap-pages.xml").map((e) => e.loc);
+const otherPrimaryUrls = [...new Set(
+  primary.filter((entry) => entry.sitemap !== "/sitemap-pages.xml").map((e) => e.loc),
+)];
+const sample = [...pageUrls, ...otherPrimaryUrls.sort(() => Math.random() - 0.5).slice(0, SAMPLE)];
 
 for (const loc of sample) {
   const path = loc.slice(CANONICAL_HOST.length) || "/";
@@ -139,12 +152,12 @@ for (const priority of ["/candidate-guides", "/contact-legislators", "/find-repr
   if (new RegExp(`^\\s*Disallow:\\s*${priority}`, "m").test(robots.body)) {
     errors.push(`robots.txt blocks priority page ${priority}`);
   }
-  if (!all.some((entry) => entry.loc === `${CANONICAL_HOST}${priority}`)) {
-    errors.push(`Priority page ${priority} is missing from the sitemaps.`);
+  if (!primary.some((entry) => entry.loc === `${CANONICAL_HOST}${priority}`)) {
+    errors.push(`Priority page ${priority} is missing from the primary sitemaps.`);
   }
 }
 
-console.log(`[seo:indexability] ${all.length} sitemap URLs across ${childSitemaps.length} sitemaps; ${sample.length} live-checked.`);
+console.log(`[seo:indexability] ${all.length} sitemap entries (${primary.length} primary) across ${childSitemaps.length} sitemaps; ${sample.length} live-checked.`);
 for (const warning of warnings) console.warn(`  warn: ${warning}`);
 if (errors.length) {
   console.error(`[seo:indexability] FAILED with ${errors.length} error(s):`);
