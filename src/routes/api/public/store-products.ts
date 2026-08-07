@@ -48,7 +48,8 @@ export const Route = createFileRoute("/api/public/store-products")({
         const { data, error } = await query;
         if (error) return Response.json({ ok: false, error: error.message }, { status: 500, headers: corsHeaders(request) });
 
-        const products = (data ?? []).map((row: Record<string, unknown>) => ({
+        const rows = (data ?? []) as unknown as Record<string, unknown>[];
+        const products = rows.map((row) => ({
           id: row.id,
           printifyProductId: row.printify_product_id,
           title: row[`${prefix}_title`] || row.title,
