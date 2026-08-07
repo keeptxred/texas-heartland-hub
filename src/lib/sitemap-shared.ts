@@ -2,7 +2,7 @@
  * Shared helpers for XML sitemap generation. Keep pure — no side effects.
  * All sitemaps must:
  *  - be UTF-8, absolute canonical HTTPS URLs on keeptxred.com
- *  - include a valid <lastmod> for every entry
+ *  - include <lastmod> only when a trustworthy modification date is known
  *  - omit query strings, fragments, redirects, and duplicate canonicals
  *  - omit <priority>/<changefreq> (Google ignores them)
  */
@@ -89,7 +89,7 @@ export function isArticleSlugDateConsistent(
 
 export type UrlEntry = {
   loc: string;
-  lastmod: string;
+  lastmod?: string;
   image?: { loc: string; title?: string; caption?: string };
 };
 
@@ -99,7 +99,7 @@ export function renderUrlset(entries: UrlEntry[], opts?: { image?: boolean }): s
   for (const entry of entries) {
     const loc = canonicalize(entry.loc);
     const lastmod = toIsoDate(entry.lastmod);
-    if (!loc || !lastmod || seen.has(loc)) continue;
+    if (!loc || seen.has(loc)) continue;
     seen.add(loc);
 
     const imageLoc = opts?.image && isRealImage(entry.image?.loc)
@@ -114,9 +114,10 @@ export function renderUrlset(entries: UrlEntry[], opts?: { image?: boolean }): s
     const image = imageLoc
       ? `\n    <image:image><image:loc>${xmlEscape(imageLoc)}</image:loc>${imageTitle}${imageCaption}</image:image>`
       : "";
+    const lastmodXml = lastmod ? `\n    <lastmod>${lastmod}</lastmod>` : "";
 
     rows.push(
-      `  <url>\n    <loc>${xmlEscape(loc)}</loc>\n    <lastmod>${lastmod}</lastmod>${image}\n  </url>`,
+      `  <url>\n    <loc>${xmlEscape(loc)}</loc>${lastmodXml}${image}\n  </url>`,
     );
   }
   const ns = opts?.image
