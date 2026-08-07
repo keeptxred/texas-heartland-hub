@@ -3,6 +3,7 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
 import { AUTHORS, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 
 function isCompleteAuthor(author: Author): boolean {
   const biography = author.bio.join(" ").trim();
@@ -16,12 +17,20 @@ function isCompleteAuthor(author: Author): boolean {
   );
 }
 
-function authorLastModified(author: Author): string {
-  const latestArticleDate = ARTICLES.filter(
-    (article) => isPublished(article) && authorSlug(article.author) === author.slug,
-  )
-    .map((article) => article.publishedAt)
-    .filter((value): value is string => Boolean(value))
+function authorLastModified(author: Author, liveArticles: DailyArticle[]): string {
+  const articleDates = [
+    ...ARTICLES.filter(
+      (article) => isPublished(article) && authorSlug(article.author) === author.slug,
+    )
+      .map((article) => article.publishedAt)
+      .filter((value): value is string => Boolean(value)),
+    ...liveArticles
+      .filter((article) => authorSlug(article.author) === author.slug)
+      .map((article) => article.published_at)
+      .filter(Boolean),
+  ];
+
+  const latestArticleDate = articleDates
     .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
 
   return toIsoDate(latestArticleDate ?? "2026-07-01T00:00:00.000Z");
@@ -31,9 +40,10 @@ export const Route = createFileRoute("/sitemap-authors.xml")({
   server: {
     handlers: {
       GET: async () => {
+        const { articles: liveArticles } = await getDailyArticles();
         const entries: UrlEntry[] = AUTHORS.filter(isCompleteAuthor).map((author) => ({
           loc: `${BASE_URL}/authors/${author.slug}`,
-          lastmod: authorLastModified(author),
+          lastmod: authorLastModified(author, liveArticles),
         }));
         return xmlResponse(renderUrlset(entries));
       },
