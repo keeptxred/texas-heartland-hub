@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AUTHORS, authorSlug, type Author } from "@/data/authors";
-import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import { ARTICLES, isPublished } from "@/data/articles";
+import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import {
   buildSeo,
   ORGANIZATION_ID,
@@ -22,10 +23,14 @@ export function isIndexableAuthor(author: Author | null | undefined): author is 
 }
 
 export const Route = createFileRoute("/authors/$slug")({
-  loader: ({ params }): { author: Author } => {
+  loader: async ({ params }): Promise<{ author: Author; liveArticles: DailyArticle[] }> => {
     const author = AUTHORS.find((candidate) => candidate.slug === params.slug);
     if (!isIndexableAuthor(author)) throw notFound();
-    return { author };
+    const { articles } = await getDailyArticles();
+    const liveArticles = articles
+      .filter((article) => article.slug && authorSlug(article.author) === author.slug)
+      .slice(0, 12);
+    return { author, liveArticles };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -71,11 +76,7 @@ export const Route = createFileRoute("/authors/$slug")({
     };
 
     return {
-      meta: [
-        ...seo.meta,
-        { property: "og:type", content: "profile" },
-        { property: "profile:username", content: author.slug },
-      ],
+      meta: seo.meta,
       links: seo.links,
       scripts: [
         {
@@ -115,11 +116,40 @@ export const Route = createFileRoute("/authors/$slug")({
   component: AuthorPage,
 });
 
+type ProfileArticle = {
+  slug: string;
+  category: string;
+  title: string;
+  dek: string;
+  publishedAt: string;
+};
+
 function AuthorPage() {
-  const { author } = Route.useLoaderData() as { author: Author };
-  const byAuthor = ARTICLES.filter(
+  const { author, liveArticles } = Route.useLoaderData() as { author: Author; liveArticles: DailyArticle[] };
+
+  const staticArticles: ProfileArticle[] = ARTICLES.filter(
     (article) => isPublished(article) && authorSlug(article.author) === author.slug,
-  ).sort(sortByDateDesc);
+  ).map((article) => ({
+    slug: article.slug,
+    category: article.category,
+    title: article.title,
+    dek: article.dek,
+    publishedAt: article.publishedAt ?? article.date,
+  }));
+
+  const currentArticles: ProfileArticle[] = liveArticles.map((article) => ({
+    slug: article.slug,
+    category: article.category,
+    title: article.seo_headline?.trim() || article.title,
+    dek: article.dek,
+    publishedAt: article.published_at,
+  }));
+
+  const byAuthor = [...new Map(
+    [...currentArticles, ...staticArticles].map((article) => [article.slug, article]),
+  ).values()]
+    .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+    .slice(0, 20);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-14">
