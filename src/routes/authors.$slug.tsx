@@ -1,10 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AUTHORS, authorSlug, type Author } from "@/data/authors";
-import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import { ARTICLES, isPublished } from "@/data/articles";
+import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import {
   buildSeo,
   ORGANIZATION_ID,
-  personJsonLd,
   SITE_URL,
   WEBSITE_ID,
 } from "@/lib/seo";
@@ -23,16 +23,20 @@ export function isIndexableAuthor(author: Author | null | undefined): author is 
 }
 
 export const Route = createFileRoute("/authors/$slug")({
-  loader: ({ params }): { author: Author } => {
+  loader: async ({ params }): Promise<{ author: Author; liveArticles: DailyArticle[] }> => {
     const author = AUTHORS.find((candidate) => candidate.slug === params.slug);
     if (!isIndexableAuthor(author)) throw notFound();
-    return { author };
+    const { articles } = await getDailyArticles();
+    const liveArticles = articles
+      .filter((article) => article.slug && authorSlug(article.author) === author.slug)
+      .slice(0, 12);
+    return { author, liveArticles };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
       return {
         meta: [
-          { title: "Author not found — Keep TX Red" },
+          { title: "Newsroom desk not found — Keep TX Red" },
           { name: "robots", content: "noindex,follow" },
         ],
       };
@@ -41,22 +45,21 @@ export const Route = createFileRoute("/authors/$slug")({
     const { author } = loaderData;
     const path = `/authors/${author.slug}`;
     const url = `${SITE_URL}${path}`;
+    const deskId = `${url}#desk`;
     const description = `${author.name} covers ${author.beats.join(", ")} for Keep TX Red. ${author.bio[0]}`;
     const seo = buildSeo({
-      title: `${author.name} | Author`,
+      title: `${author.name} | Newsroom Desk`,
       description,
       path,
       type: "website",
     });
-    const person = {
-      ...personJsonLd({
-        name: author.name,
-        url,
-        id: `${url}#person`,
-        jobTitle: author.role,
-        description: author.bio.join(" "),
-      }),
-      "@context": undefined,
+    const desk = {
+      "@type": "Organization",
+      "@id": deskId,
+      name: author.name,
+      url,
+      description: author.bio.join(" "),
+      parentOrganization: { "@id": ORGANIZATION_ID },
       knowsAbout: author.beats,
     };
     const profilePage = {
@@ -67,24 +70,20 @@ export const Route = createFileRoute("/authors/$slug")({
       description: seo.description,
       isPartOf: { "@id": WEBSITE_ID },
       publisher: { "@id": ORGANIZATION_ID },
-      mainEntity: { "@id": `${url}#person` },
-      about: { "@id": `${url}#person` },
+      mainEntity: { "@id": deskId },
+      about: { "@id": deskId },
       inLanguage: "en-US",
     };
 
     return {
-      meta: [
-        ...seo.meta,
-        { property: "og:type", content: "profile" },
-        { property: "profile:username", content: author.slug },
-      ],
+      meta: seo.meta,
       links: seo.links,
       scripts: [
         {
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@graph": [person, profilePage],
+            "@graph": [desk, profilePage],
           }),
         },
         {
@@ -104,7 +103,7 @@ export const Route = createFileRoute("/authors/$slug")({
   },
   notFoundComponent: () => (
     <div className="mx-auto max-w-3xl px-4 py-24 text-center">
-      <h1 className="font-display text-4xl mb-3">Author Not Found</h1>
+      <h1 className="font-display text-4xl mb-3">Newsroom Desk Not Found</h1>
       <Link to="/news" className="text-primary underline">Back to the newsroom</Link>
     </div>
   ),
@@ -117,18 +116,47 @@ export const Route = createFileRoute("/authors/$slug")({
   component: AuthorPage,
 });
 
+type ProfileArticle = {
+  slug: string;
+  category: string;
+  title: string;
+  dek: string;
+  publishedAt: string;
+};
+
 function AuthorPage() {
-  const { author } = Route.useLoaderData() as { author: Author };
-  const byAuthor = ARTICLES.filter(
+  const { author, liveArticles } = Route.useLoaderData() as { author: Author; liveArticles: DailyArticle[] };
+
+  const staticArticles: ProfileArticle[] = ARTICLES.filter(
     (article) => isPublished(article) && authorSlug(article.author) === author.slug,
-  ).sort(sortByDateDesc);
+  ).map((article) => ({
+    slug: article.slug,
+    category: article.category,
+    title: article.title,
+    dek: article.dek,
+    publishedAt: article.publishedAt ?? article.date,
+  }));
+
+  const currentArticles: ProfileArticle[] = liveArticles.map((article) => ({
+    slug: article.slug,
+    category: article.category,
+    title: article.seo_headline?.trim() || article.title,
+    dek: article.dek,
+    publishedAt: article.published_at,
+  }));
+
+  const byAuthor = [...new Map(
+    [...currentArticles, ...staticArticles].map((article) => [article.slug, article]),
+  ).values()]
+    .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+    .slice(0, 20);
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-14">
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
         <Link to="/news" className="hover:text-primary">Newsroom</Link>
         <span className="mx-2">/</span>
-        <span className="text-primary">Author</span>
+        <span className="text-primary">Newsroom Desk</span>
       </nav>
       <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Keep TX Red</span>
       <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-2">{author.name}</h1>
@@ -167,7 +195,7 @@ function AuthorPage() {
       </section>
 
       <p className="mt-12 text-xs italic text-muted-foreground border-t border-border pt-4">
-        Opinions and analysis published under this byline are editorial content and reflect the views of the author and Keep TX Red's editors — not statements of fact.
+        Opinions and analysis published under this byline are editorial content produced by this newsroom desk and reviewed under Keep TX Red's editorial standards — not statements of fact.
       </p>
     </div>
   );
