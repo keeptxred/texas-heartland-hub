@@ -424,7 +424,6 @@ export function ContentOpportunityPanel() {
       const feed = [...rawFeed, ...articleFeed].filter((f) => !isLowValueTitle(f.title));
       setItems(feed);
 
-      const slugs = feed.map((f) => f.internal_slug).filter(Boolean) as string[];
       const links = feed.map((f) => f.link).filter(Boolean) as string[];
       const titles = feed.map((f) => f.title).filter(Boolean) as string[];
 
@@ -436,7 +435,7 @@ export function ContentOpportunityPanel() {
         // the admin UI so Facebook can use the real KeepTXRed slug/URL/image.
         supabase
           .from("daily_articles")
-          .select("slug,title,featured_image_url,published_at")
+          .select("slug,title,source_url,featured_image_url,published_at")
           .order("published_at", { ascending: false })
           .limit(750),
         links.length > 0 || titles.length > 0
@@ -444,10 +443,18 @@ export function ContentOpportunityPanel() {
           : Promise.resolve({ data: [] as { source_url: string | null; title: string | null }[] }),
       ]);
 
-      const articleMap = new Map<string, { slug: string; title: string; featured_image_url: string | null }>();
-      const articleTitleMap = new Map<string, { slug: string; title: string; featured_image_url: string | null }>();
+      type PublishedArticleRef = {
+        slug: string;
+        title: string;
+        source_url: string | null;
+        featured_image_url: string | null;
+      };
+      const articleMap = new Map<string, PublishedArticleRef>();
+      const articleSourceMap = new Map<string, PublishedArticleRef>();
+      const articleTitleMap = new Map<string, PublishedArticleRef>();
       (articlesRes.data ?? []).forEach((a) => {
         articleMap.set(a.slug, a);
+        if (a.source_url) articleSourceMap.set(a.source_url.toLowerCase().trim(), a);
         articleTitleMap.set(a.title.toLowerCase().trim(), a);
       });
 
@@ -475,6 +482,7 @@ export function ContentOpportunityPanel() {
       feed.forEach((f) => {
         const article =
           (f.internal_slug ? articleMap.get(f.internal_slug) : null) ??
+          (f.link ? articleSourceMap.get(f.link.toLowerCase().trim()) : null) ??
           articleTitleMap.get(f.title.toLowerCase().trim()) ??
           null;
 
