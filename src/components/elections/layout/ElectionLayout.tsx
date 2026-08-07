@@ -81,8 +81,8 @@ export function ElectionLayout({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        {indexable && canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-        {indexable && canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+        {indexable && isCanonicalPage && <link rel="canonical" href={canonicalUrl} />}
+        {indexable && isCanonicalPage && <meta property="og:url" content={canonicalUrl} />}
         <script type="application/ld+json">{JSON.stringify(schema ?? defaultSchema)}</script>
       </Helmet>
 
