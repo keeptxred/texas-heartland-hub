@@ -1,0 +1,158 @@
+export type ClusterableFeedItem = {
+  id?: number;
+  title: string;
+  link: string;
+  source: string;
+  description?: string | null;
+  pub_date?: string | null;
+  extracted_body?: string | null;
+  internal_slug?: string | null;
+};
+
+export type ClusterCandidate = ClusterableFeedItem & {
+  combinationScore: number;
+  overlapTerms: string[];
+};
+
+export type StoryCluster = {
+  primary: ClusterableFeedItem;
+  members: ClusterCandidate[];
+  score: number;
+  sourceCount: number;
+  strongMerge: boolean;
+};
+
+const STOP = new Set([
+  "the","a","an","and","or","but","for","to","of","in","on","at","by","with","from","as","is","are","was","were","be","been","being","this","that","these","those","it","its","texas","tx","new","says","said","after","before","over","more","about","into","amid","during","will","would","could","should","today","friday","monday","tuesday","wednesday","thursday","saturday","sunday",
+]);
+
+const IMPORTANT = [
+  /\b(abbott|ercot|trump|buc-?ee'?s|comptroller|uil|spurs|mavericks|cowboys|texans|rangers|astros|stars|longhorns|aggies|texas tech)\b/gi,
+  /\b(data center|data centers|tax[- ]free|sales tax|heat index|wet bulb|moratorium|water supply|power grid|counterfeit|trademark|immigration|ice detention|border|parkland|graduation)\b/gi,
+  /\b(houston|dallas|fort worth|san antonio|austin|laredo|amarillo|killeen|temple|waco|hereford|galveston|lubbock|midland)\b/gi,
+];
+
+function normalize(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/[^a-z0-9' -]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function tokens(item: ClusterableFeedItem): Set<string> {
+  const raw = normalize(`${item.title} ${item.description ?? ""}`);
+  const out = new Set<string>();
+  for (const token of raw.split(/\s+/)) {
+    if (token.length < 4 || STOP.has(token)) continue;
+    out.add(token);
+  }
+  for (const re of IMPORTANT) {
+    re.lastIndex = 0;
+    for (const m of raw.matchAll(re)) out.add(m[0].toLowerCase());
+  }
+  return out;
+}
+
+function host(link: string): string {
+  try {
+    return new URL(link).hostname.replace(/^www\./, "");
+  } catch {
+    return "";
+  }
+}
+
+export function sourceFamily(item: ClusterableFeedItem): string {
+  const source = normalize(item.source).replace(/[^a-z0-9]+/g, " ").trim();
+  const domain = host(item.link);
+  if (/google news/.test(source) && domain) return domain;
+  return domain || source;
+}
+
+function hoursApart(a?: string | null, b?: string | null): number {
+  const ta = Date.parse(a ?? "");
+  const tb = Date.parse(b ?? "");
+  if (!Number.isFinite(ta) || !Number.isFinite(tb)) return 24;
+  return Math.abs(ta - tb) / 3_600_000;
+}
+
+export function combinationScore(primary: ClusterableFeedItem, candidate: ClusterableFeedItem): { score: number; overlapTerms: string[] } {
+  if (primary.link === candidate.link) return { score: 0, overlapTerms: [] };
+  const a = tokens(primary);
+  const b = tokens(candidate);
+  const overlap = [...a].filter((t) => b.has(t));
+  let score = 0;
+
+  const titleA = tokens({ ...primary, description: "" });
+  const titleB = tokens({ ...candidate, description: "" });
+  const titleOverlap = [...titleA].filter((t) => titleB.has(t));
+  score += Math.min(40, titleOverlap.length * 10);
+  score += Math.min(25, overlap.length * 5);
+
+  const importantOverlap = overlap.filter((t) => t.includes(" ") || IMPORTANT.some((re) => { re.lastIndex = 0; return re.test(t); }));
+  score += Math.min(20, importantOverlap.length * 10);
+
+  const apart = hoursApart(primary.pub_date, candidate.pub_date);
+  if (apart <= 12) score += 15;
+  else if (apart <= 36) score += 10;
+  else if (apart <= 72) score += 5;
+  else score -= 15;
+
+  if (sourceFamily(primary) && sourceFamily(primary) !== sourceFamily(candidate)) score += 15;
+  else score -= 20;
+
+  const primaryText = normalize(`${primary.title} ${primary.description ?? ""}`);
+  const candidateText = normalize(`${candidate.title} ${candidate.description ?? ""}`);
+  const locations = ["houston","dallas","fort worth","san antonio","austin","laredo","amarillo","killeen","temple","waco","hereford","galveston","lubbock","midland"];
+  if (locations.some((loc) => primaryText.includes(loc) && candidateText.includes(loc))) score += 10;
+
+  return { score: Math.max(0, Math.min(100, score)), overlapTerms: overlap.slice(0, 12) };
+}
+
+export function buildStoryCluster(primary: ClusterableFeedItem, recent: ClusterableFeedItem[], maxMembers = 5): StoryCluster {
+  const ranked = recent
+    .filter((row) => row.link !== primary.link)
+    .map((row) => ({ ...row, ...combinationScore(primary, row) }))
+    .filter((row) => row.score >= 45)
+    .sort((a, b) => b.score - a.score);
+
+  const members: ClusterCandidate[] = [];
+  const families = new Set<string>([sourceFamily(primary)]);
+  for (const row of ranked) {
+    const family = sourceFamily(row);
+    if (families.has(family)) continue;
+    members.push({ ...row, combinationScore: row.score, overlapTerms: row.overlapTerms });
+    families.add(family);
+    if (members.length >= Math.max(1, maxMembers - 1)) break;
+  }
+
+  const score = members.length ? Math.max(...members.map((m) => m.combinationScore)) : 0;
+  return {
+    primary,
+    members,
+    score,
+    sourceCount: 1 + members.length,
+    strongMerge: members.some((m) => m.combinationScore >= 65),
+  };
+}
+
+export function buildSourcePacket(cluster: StoryCluster): string {
+  const rows = [cluster.primary, ...cluster.members];
+  return rows
+    .map((row, index) => {
+      const body = (row.extracted_body ?? row.description ?? "").trim().slice(0, 6500);
+      return [
+        `SOURCE ${index + 1}: ${row.source}`,
+        `HEADLINE: ${row.title}`,
+        `URL: ${row.link}`,
+        `DATE: ${row.pub_date ?? "unknown"}`,
+        `SOURCE MATERIAL: ${body}`,
+      ].join("\n");
+    })
+    .join("\n\n---\n\n");
+}
+
+export function clusterSourceList(cluster: StoryCluster): Array<{ label: string; url: string }> {
+  return [cluster.primary, ...cluster.members].map((row) => ({ label: row.source, url: row.link }));
+}
