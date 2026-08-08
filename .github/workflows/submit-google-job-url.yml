@@ -12,7 +12,7 @@ on:
           - single_url
           - job_manifest
       url:
-        description: "For single_url mode: full https://keeptxred.com/jobs/... URL"
+        description: "For single_url mode: full qualifying https://keeptxred.com URL"
         required: false
         type: string
       notification_type:

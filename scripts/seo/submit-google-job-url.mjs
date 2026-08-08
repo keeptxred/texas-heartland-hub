@@ -1,99 +1,137 @@
-import { readFile } from "node:fs/promises";
-import { spawn } from "node:child_process";
+import { createSign } from "node:crypto";
 
-const MANIFEST_PATH = new URL("../../src/data/google-job-posting-urls.json", import.meta.url);
+const INDEXING_ENDPOINT = "https://indexing.googleapis.com/v3/urlNotifications:publish";
+const TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
+const INDEXING_SCOPE = "https://www.googleapis.com/auth/indexing";
 const ALLOWED_ORIGIN = "https://keeptxred.com";
 const ALLOWED_TYPES = new Set(["URL_UPDATED", "URL_DELETED"]);
-const MAX_URLS = 200;
+
+function base64Url(value) {
+  return Buffer.from(value).toString("base64url");
+}
 
 function parseArguments(argv) {
   const args = [...argv];
   const dryRunIndex = args.indexOf("--dry-run");
   const dryRun = dryRunIndex !== -1;
-
   if (dryRun) args.splice(dryRunIndex, 1);
 
-  const [type = "URL_UPDATED"] = args;
+  const [url, type = "URL_UPDATED"] = args;
+  if (!url) {
+    throw new Error(
+      "Usage: node scripts/seo/submit-google-job-url.mjs <url> [URL_UPDATED|URL_DELETED] [--dry-run]",
+    );
+  }
   if (!ALLOWED_TYPES.has(type)) {
     throw new Error(`Unsupported notification type: ${type}`);
   }
 
-  return { type, dryRun };
+  const parsed = new URL(url);
+  if (parsed.origin !== ALLOWED_ORIGIN || parsed.username || parsed.password || parsed.hash) {
+    throw new Error(`Only valid ${ALLOWED_ORIGIN} URLs may be submitted`);
+  }
+  return { url: parsed.href, type, dryRun };
 }
 
-function validateManifest(manifest) {
-  if (manifest.type !== "JobPosting" || !Array.isArray(manifest.urls)) {
-    throw new Error("Invalid JobPosting URL manifest");
-  }
-  if (manifest.urls.length > MAX_URLS) {
-    throw new Error(`The manifest cannot exceed ${MAX_URLS} URLs`);
+function readCredentials() {
+  const raw = process.env.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON;
+  if (!raw) {
+    throw new Error("GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON is not configured");
   }
 
-  const uniqueUrls = [...new Set(manifest.urls)];
-  if (uniqueUrls.length !== manifest.urls.length) {
-    throw new Error("The manifest contains duplicate URLs");
+  let credentials;
+  try {
+    credentials = JSON.parse(raw);
+  } catch {
+    throw new Error("GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON is not valid JSON");
   }
 
-  return uniqueUrls.map((url) => {
-    const parsed = new URL(url);
-    if (
-      parsed.origin !== ALLOWED_ORIGIN ||
-      !parsed.pathname.startsWith("/jobs/") ||
-      parsed.username ||
-      parsed.password ||
-      parsed.hash
-    ) {
-      throw new Error(`Invalid KeepTXRed JobPosting URL: ${url}`);
-    }
-    return parsed.href;
-  });
+  if (
+    credentials.type !== "service_account" ||
+    credentials.project_id !== "keeptxred" ||
+    credentials.client_email !== "seo-indexing@keeptxred.iam.gserviceaccount.com" ||
+    !credentials.private_key
+  ) {
+    throw new Error("The configured credential is not the KeepTXRed indexing service account");
+  }
+  return credentials;
 }
 
-function runSubmission(url, type, dryRun) {
-  const args = ["scripts/seo/submit-google-job-url.mjs", url, type];
-  if (dryRun) args.push("--dry-run");
-
-  return new Promise((resolve, reject) => {
-    const child = spawn(process.execPath, args, {
-      stdio: "inherit",
-      env: process.env,
-    });
-
-    child.once("error", reject);
-    child.once("exit", (code) => {
-      if (code === 0) resolve();
-      else reject(new Error(`Submission failed for ${url}`));
-    });
-  });
-}
-
-const options = parseArguments(process.argv.slice(2));
-const manifest = JSON.parse(await readFile(MANIFEST_PATH, "utf8"));
-const urls = validateManifest(manifest);
-
-if (urls.length === 0) {
-  console.log(
+async function createAccessToken(credentials) {
+  const issuedAt = Math.floor(Date.now() / 1000);
+  const header = base64Url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
+  const claims = base64Url(
     JSON.stringify({
-      submitted: 0,
-      message: "No JobPosting URLs are configured in the manifest",
+      iss: credentials.client_email,
+      scope: INDEXING_SCOPE,
+      aud: TOKEN_ENDPOINT,
+      iat: issuedAt,
+      exp: issuedAt + 3600,
     }),
   );
-  process.exit(0);
-}
+  const unsignedToken = `${header}.${claims}`;
+  const signer = createSign("RSA-SHA256");
+  signer.update(unsignedToken);
+  signer.end();
+  const assertion = `${unsignedToken}.${signer.sign(credentials.private_key, "base64url")}`;
 
-for (const url of urls) {
-  await runSubmission(url, options.type, options.dryRun);
-
-  if (!options.dryRun) {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+  const response = await fetch(TOKEN_ENDPOINT, {
+    method: "POST",
+    headers: { "content-type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+      assertion,
+    }),
+  });
+  if (!response.ok) {
+    throw new Error(`Google OAuth token exchange failed with HTTP ${response.status}`);
   }
+
+  const body = await response.json();
+  if (!body.access_token) throw new Error("Google OAuth returned no access token");
+  return body.access_token;
 }
 
-console.log(
-  JSON.stringify({
-    submitted: options.dryRun ? 0 : urls.length,
-    dryRunValidated: options.dryRun ? urls.length : 0,
-    type: options.type,
-  }),
-);
+async function main() {
+  const request = parseArguments(process.argv.slice(2));
+  if (request.dryRun) {
+    console.log(
+      JSON.stringify({
+        dryRun: true,
+        endpoint: INDEXING_ENDPOINT,
+        url: request.url,
+        type: request.type,
+      }),
+    );
+    return;
+  }
 
+  const accessToken = await createAccessToken(readCredentials());
+  const response = await fetch(INDEXING_ENDPOINT, {
+    method: "POST",
+    headers: {
+      authorization: `Bearer ${accessToken}`,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ url: request.url, type: request.type }),
+  });
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const message = body?.error?.message || "Google returned no error message";
+    throw new Error(`Indexing API request failed with HTTP ${response.status}: ${message}`);
+  }
+
+  console.log(
+    JSON.stringify({
+      submitted: true,
+      url: request.url,
+      type: request.type,
+      notifyTime: body?.urlNotificationMetadata?.latestUpdate?.notifyTime ?? null,
+    }),
+  );
+}
+
+main().catch((error) => {
+  console.error(error.message);
+  process.exitCode = 1;
+});
