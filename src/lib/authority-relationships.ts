@@ -54,7 +54,7 @@ const fallback = (row: any): RelatedAuthorityItem => {
     government: '/texas-government/',
     session: '/texas-legislature/sessions/',
     subject: '/bills/subject/',
-    article: '/article/',
+    article: '/news/',
   };
   const type = row.target_type as AuthorityRelationshipType;
   const href = isAuthorityEntityType(type)
@@ -129,7 +129,7 @@ export async function getRelatedAuthorityContent(
         score: row.score,
         title: article.title,
         description: article.dek,
-        href: `/article/${article.slug}`,
+        href: `/news/${article.slug}`,
       };
     }
     return fallback(row);
