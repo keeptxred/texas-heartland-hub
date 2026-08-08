@@ -35,7 +35,6 @@ on:
       - 'src/routes/api/public/hooks/generate-evergreen.ts'
 
       # Validator/workflow changes must validate themselves.
-      - 'scripts/shared/validate-backend-separation.mjs'
       - 'scripts/shared/validate-retired-lifestyle-code.mjs'
       - '.github/workflows/backend-separation.yml'
   pull_request:
@@ -67,7 +66,6 @@ on:
       - 'src/components/texas-business-view.tsx'
       - 'src/routes/keep-texas-red.tsx'
       - 'src/routes/api/public/hooks/generate-evergreen.ts'
-      - 'scripts/shared/validate-backend-separation.mjs'
       - 'scripts/shared/validate-retired-lifestyle-code.mjs'
       - '.github/workflows/backend-separation.yml'
   workflow_dispatch:
