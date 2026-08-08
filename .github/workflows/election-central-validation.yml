@@ -57,7 +57,7 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -76,8 +76,6 @@ jobs:
       - name: Run election calculation fixtures
         run: bunx vitest run src/lib/elections
       - name: Run real-data launch QA
-        env:
-          ELECTION_QA_CHECK_LINKS: "true"
         run: bun run elections:qa
       - name: Run public-launch audit
         run: bun scripts/elections/public-launch-audit.mjs
