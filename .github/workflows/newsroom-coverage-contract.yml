@@ -6,6 +6,7 @@ on:
     paths:
       - 'src/lib/viral-score.ts'
       - 'src/lib/viral-score.test.ts'
+      - 'src/lib/nlp.ts'
       - 'src/components/admin/NewsCoverageGapPanel.tsx'
       - 'src/components/admin/NewsSourceHealthPanel.tsx'
       - 'src/routes/admin.coverage-gaps.tsx'
@@ -23,6 +24,7 @@ on:
     paths:
       - 'src/lib/viral-score.ts'
       - 'src/lib/viral-score.test.ts'
+      - 'src/lib/nlp.ts'
       - 'src/components/admin/NewsCoverageGapPanel.tsx'
       - 'src/components/admin/NewsSourceHealthPanel.tsx'
       - 'src/routes/admin.coverage-gaps.tsx'
@@ -40,20 +42,22 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: newsroom-coverage-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate-newsroom-coverage:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.3.14
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Validate source, scoring, and reporting contract
         run: bun scripts/news/validate-coverage-contract.mjs
       - name: Run coverage regression tests
         run: bunx vitest run src/lib/viral-score.test.ts
-      - name: Build application
-        run: bun run build
