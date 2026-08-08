@@ -112,7 +112,12 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
       meta: [
         { title: `${name} — ${office} | KeepTXRed` },
         { name: "description", content: description },
-        { name: "robots", content: "index, follow, max-image-preview:large" },
+        {
+          name: "robots",
+          content: representative
+            ? "index,follow,max-image-preview:large"
+            : "noindex,follow,max-image-preview:large",
+        },
         { property: "og:title", content: `${name} — ${office}` },
         { property: "og:description", content: description },
         { property: "og:url", content: canonical },
