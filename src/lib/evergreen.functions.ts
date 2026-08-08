@@ -215,25 +215,38 @@ export const resolveArticleSlugRedirect = createServerFn({ method: "GET" })
     return { slug: resolveRedirectChain(map, data.slug) };
   });
 
-/** Returns all indexable cloud articles (evergreen + ingested news/sports) with data
- *  needed to build page, news, evergreen, and image sitemaps in one query. */
+const SITEMAP_ARTICLE_PAGE_SIZE = 1000;
+const MAX_CLOUD_SITEMAP_ARTICLES = 45000;
+
+/** Returns indexable cloud articles (evergreen + ingested news/sports) with data
+ * needed to build page, news, evergreen, and image sitemaps. Reads are paged so
+ * PostgREST response caps cannot silently truncate sitemap inventory. */
 export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ articles: SitemapArticle[] }> => {
     const supabase = client();
     if (!supabase) return { articles: [] };
-    const { data, error } = await supabase
-      .from("daily_articles")
-      .select("slug,title,published_at,image_url,kind,body_json,quality_flags,content_quality_score")
-      .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
-      .order("published_at", { ascending: false })
-      .limit(5000);
-    if (error || !data) return { articles: [] };
-    type Row = Omit<SitemapArticle, "updated_at"> & {
+
+    type Row = SitemapArticle & {
       body_json?: EvergreenBody | null;
       quality_flags?: string[] | null;
       content_quality_score?: number | null;
     };
-    const eligible = (data as Row[])
+    const rows: Row[] = [];
+    for (let from = 0; from < MAX_CLOUD_SITEMAP_ARTICLES; from += SITEMAP_ARTICLE_PAGE_SIZE) {
+      const { data, error } = await supabase
+        .from("daily_articles")
+        .select("slug,title,published_at,updated_at,image_url,kind,body_json,quality_flags,content_quality_score")
+        .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
+        .order("published_at", { ascending: false })
+        .order("slug", { ascending: true })
+        .range(from, from + SITEMAP_ARTICLE_PAGE_SIZE - 1);
+      if (error || !data) return { articles: [] };
+      const page = data as Row[];
+      rows.push(...page);
+      if (page.length < SITEMAP_ARTICLE_PAGE_SIZE) break;
+    }
+
+    const eligible = rows
       .filter((a) => {
         if (!a.body_json) return false;
         // Never advertise a URL whose date prefix disagrees with its real
@@ -247,7 +260,6 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
       })
       .map(({ body_json, quality_flags: _flags, ...a }) => ({
         ...a,
-        updated_at: null,
         main_word_count: articleMainWordCount(sanitizeEvergreenBody(body_json!, a.published_at)),
       }));
 
