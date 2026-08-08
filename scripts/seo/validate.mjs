@@ -108,6 +108,21 @@ for (const [file, source] of contents) {
   }
 }
 
+const sitemapArticleLoader = contents.get("src/lib/evergreen.functions.ts") ?? "";
+for (const required of [
+  "const SITEMAP_ARTICLE_PAGE_SIZE = 1000;",
+  "const MAX_CLOUD_SITEMAP_ARTICLES = 45000;",
+  ".select(\"slug,title,published_at,updated_at,image_url,kind,body_json,quality_flags,content_quality_score\")",
+  ".range(from, from + SITEMAP_ARTICLE_PAGE_SIZE - 1)",
+]) {
+  if (!sitemapArticleLoader.includes(required)) {
+    fail("src/lib/evergreen.functions.ts", `cloud sitemap loader missing completeness/freshness contract: ${required}`);
+  }
+}
+if (/updated_at:\s*null/.test(sitemapArticleLoader)) {
+  fail("src/lib/evergreen.functions.ts", "cloud sitemap loader must preserve real updated_at values");
+}
+
 const authorRoute = contents.get("src/routes/authors.$slug.tsx") ?? "";
 if (!/ProfilePage/.test(authorRoute) || !/["']@type["']:\s*["']Organization["']/.test(authorRoute) || !/parentOrganization/.test(authorRoute)) {
   fail("src/routes/authors.$slug.tsx", "newsroom desk pages must connect ProfilePage and Organization entities to the publisher");
