@@ -3,7 +3,7 @@ import { SocialLinks } from "@/components/social-links";
 
 const PRIMARY_LINKS = [
   { to: "/", label: "Home" },
-  { to: "/texas-news", label: "Texas News" },
+  { to: "/news", label: "Texas News" },
   { to: "/texas-politics", label: "Politics" },
   { to: "/elections/2026", label: "Election Central" },
   { to: "/bills", label: "Bills" },
@@ -13,9 +13,8 @@ const PRIMARY_LINKS = [
 ] as const;
 
 const NEWS_LINKS = [
-  { to: "/texas-news/economy", label: "Economy" },
-  { to: "/texas-news/housing", label: "Housing" },
-  { to: "/texas-news/education", label: "Education" },
+  { to: "/news", label: "Latest News" },
+  { to: "/texas-economy", label: "Economy" },
   { to: "/texas-business", label: "Business" },
   { to: "/texas-sports", label: "Sports" },
   { to: "/houston", label: "Houston" },
@@ -36,10 +35,10 @@ const TRUST_LINKS = [
 const CIVIC_LINKS = [
   { to: "/find-representative", label: "Find My Representative" },
   { to: "/contact-legislators", label: "Contact Legislators" },
-  { to: "/candidate-guides", label: "Candidate Guides" },
-  { to: "/laws-to-know", label: "Laws To Know" },
-  { to: "/legislative-updates", label: "Legislative Updates" },
-  { to: "/authors", label: "Our Journalists" },
+  { to: "/elections/candidates", label: "Candidates" },
+  { to: "/laws", label: "Texas Laws" },
+  { to: "/bills", label: "Track Legislation" },
+  { to: "/authors", label: "Newsroom Desks" },
 ] as const;
 
 const SHOP_POLICY_LINKS = [
