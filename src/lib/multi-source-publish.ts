@@ -65,10 +65,7 @@ async function enrichClusterBodies(cluster: StoryCluster, supabaseAdmin: any): P
     if (!body && wordCount(description) < 180 && /^https?:\/\//i.test(row.link)) {
       body = (await fetchReadableText(row.link)) ?? "";
       if (body && row.id) {
-        await supabaseAdmin
-          .from("texas_news_feed")
-          .update({ extracted_body: body })
-          .eq("id", row.id);
+        await supabaseAdmin.from("texas_news_feed").update({ extracted_body: body }).eq("id", row.id);
       }
     }
     enriched.push({ ...row, extracted_body: body || description });
@@ -80,7 +77,9 @@ async function enrichClusterBodies(cluster: StoryCluster, supabaseAdmin: any): P
 }
 
 async function writeClusterMetadata(supabaseAdmin: any, cluster: StoryCluster, slug?: string): Promise<void> {
-  const ids = [cluster.primary, ...cluster.members].map((row) => row.id).filter((id): id is number => typeof id === "number");
+  const ids = [cluster.primary, ...cluster.members]
+    .map((row) => row.id)
+    .filter((id): id is number => typeof id === "number");
   if (!ids.length) return;
   const metadata = {
     cluster_score: cluster.score,
@@ -88,16 +87,29 @@ async function writeClusterMetadata(supabaseAdmin: any, cluster: StoryCluster, s
     source_links: clusterSourceList(cluster),
     clustered_at: new Date().toISOString(),
   };
-  // Keep this best-effort because deployments may not yet have optional cluster
-  // columns. The core pipeline does not depend on these diagnostics existing.
-  try {
-    await supabaseAdmin.from("texas_news_feed").update({ cluster_json: metadata }).in("id", ids);
-  } catch {
-    // no-op: migration is optional for runtime synthesis
-  }
+  const { error } = await supabaseAdmin.from("texas_news_feed").update({ cluster_json: metadata }).in("id", ids);
+  if (error) console.warn("[multi-source] cluster metadata not persisted", error.message);
   if (slug) {
     await supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).in("id", ids);
   }
+}
+
+async function updateArticleAttribution(supabaseAdmin: any, slug: string, cluster: StoryCluster): Promise<void> {
+  const sources = clusterSourceList(cluster).map((source) => ({
+    label: `${source.label} — source`,
+    url: source.url,
+  }));
+  const { data: article } = await supabaseAdmin
+    .from("daily_articles")
+    .select("body_json")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (!article?.body_json || typeof article.body_json !== "object") return;
+  const bodyJson = { ...(article.body_json as Record<string, unknown>), sources };
+  await supabaseAdmin
+    .from("daily_articles")
+    .update({ body_json: bodyJson, source_name: "Multiple independent sources" })
+    .eq("slug", slug);
 }
 
 export async function publishSingleFeedItem(feedItemId: number): Promise<PublishResult> {
@@ -126,14 +138,15 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     return publishLegacySingleFeedItem(feedItemId);
   }
 
-  // When a very strong same-event match has already been published, connect the
-  // new feed row to the existing article instead of spending another AI call.
+  // A near-certain same-event match already has an article: connect the new
+  // source to that article and spend zero additional AI credits.
   const existing = cluster.members
     .filter((row) => row.internal_slug && row.combinationScore >= SAME_EVENT_SCORE)
     .sort((a, b) => b.combinationScore - a.combinationScore)[0];
   if (existing?.internal_slug) {
     await db.from("texas_news_feed").update({ internal_slug: existing.internal_slug }).eq("id", feedItemId);
     await writeClusterMetadata(db, cluster, existing.internal_slug);
+    await updateArticleAttribution(db, existing.internal_slug, cluster);
     return {
       ok: true,
       slug: existing.internal_slug,
@@ -152,10 +165,9 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     "Treat this as one developing Texas story when the evidence supports it; do not invent a connection that is not supported.",
   ].join("\n");
 
-  // The legacy rewrite path already caches extracted_body and performs exactly
-  // one budgeted editorial rewrite. By staging the combined packet here, the AI
-  // sees 2-5 independent sources in that one call without adding an AI-based
-  // clustering step or increasing Lovable-agent usage.
+  // Clustering itself is deterministic and free. The existing editorial path
+  // receives one combined packet and therefore performs one budgeted rewrite
+  // for the whole story rather than one rewrite per source.
   await db
     .from("texas_news_feed")
     .update({ extracted_body: `${synthesisHeader}\n\n${packet}`.slice(0, 26000) })
@@ -165,6 +177,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   const result = await publishLegacySingleFeedItem(feedItemId);
   if (result.ok && result.slug) {
     await writeClusterMetadata(db, cluster, result.slug);
+    await updateArticleAttribution(db, result.slug, cluster);
     return { ...result, clusteredSources: cluster.sourceCount };
   }
   return { ...result, clusteredSources: cluster.sourceCount };
