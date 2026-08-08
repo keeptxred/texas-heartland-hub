@@ -2,6 +2,7 @@ name: Election Central mobile browser QA
 
 on:
   pull_request:
+    branches: [main]
     paths:
       - "src/data/elections/**"
       - "src/lib/elections/**"
@@ -16,8 +17,7 @@ on:
       - "bun.lock"
       - ".github/workflows/election-central-mobile.yml"
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - "src/data/elections/**"
       - "src/lib/elections/**"
@@ -37,7 +37,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: election-central-mobile-${{ github.ref }}
+  group: election-central-mobile-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -47,32 +47,26 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
-
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
-
+          bun-version: 1.3.14
       - name: Install dependencies
         run: bun install --frozen-lockfile
-
       - name: Install Chromium
         run: bun x playwright install --with-deps chromium
-
       - name: Build production application
         id: build
         continue-on-error: true
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
         run: bun run build
-
       - name: Run mobile browser smoke tests
         id: mobile_tests
         continue-on-error: true
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
         run: bun run elections:test:mobile
-
       - name: Create mobile QA report
         if: always()
         shell: bash
@@ -86,38 +80,22 @@ jobs:
         run: |
           node --input-type=module <<'NODE'
           import fs from "node:fs";
-          const checks = {
-            build: process.env.BUILD_OUTCOME,
-            mobileTests: process.env.MOBILE_OUTCOME,
-          };
+          const checks = { build: process.env.BUILD_OUTCOME, mobileTests: process.env.MOBILE_OUTCOME };
           const passed = Object.values(checks).every((value) => value === "success");
           const report = {
-            updatedAt: new Date().toISOString(),
-            conclusion: passed ? "success" : "failure",
-            runId: process.env.RUN_ID,
-            runAttempt: process.env.RUN_ATTEMPT,
-            triggerCommit: process.env.RUN_SHA,
-            runUrl: process.env.RUN_URL,
-            checks,
-            viewport: { width: 390, height: 844 },
-            homepageTakeoverEnabledDuringTest: false,
+            updatedAt: new Date().toISOString(), conclusion: passed ? "success" : "failure",
+            runId: process.env.RUN_ID, runAttempt: process.env.RUN_ATTEMPT,
+            triggerCommit: process.env.RUN_SHA, runUrl: process.env.RUN_URL,
+            checks, viewport: { width: 390, height: 844 }, homepageTakeoverEnabledDuringTest: false,
           };
           fs.writeFileSync("/tmp/election-mobile-status.json", `${JSON.stringify(report, null, 2)}\n`);
-          fs.appendFileSync(
-            process.env.GITHUB_STEP_SUMMARY,
-            [
-              "## Election Central mobile QA",
-              "",
-              `**Conclusion:** ${passed ? "PASS" : "FAIL"}`,
-              "",
-              `- Production build: ${checks.build === "success" ? "✅" : "❌"} ${checks.build}`,
-              `- Mobile browser tests: ${checks.mobileTests === "success" ? "✅" : "❌"} ${checks.mobileTests}`,
-              "- Viewport: 390 × 844",
-              "",
-            ].join("\n"),
-          );
+          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
+            "## Election Central mobile QA", "", `**Conclusion:** ${passed ? "PASS" : "FAIL"}`, "",
+            `- Production build: ${checks.build === "success" ? "✅" : "❌"} ${checks.build}`,
+            `- Mobile browser tests: ${checks.mobileTests === "success" ? "✅" : "❌"} ${checks.mobileTests}`,
+            "- Viewport: 390 × 844", "",
+          ].join("\n"));
           NODE
-
       - name: Upload mobile QA report
         if: always()
         uses: actions/upload-artifact@v4
@@ -126,7 +104,6 @@ jobs:
           path: /tmp/election-mobile-status.json
           if-no-files-found: error
           retention-days: 14
-
       - name: Enforce mobile QA result
         if: always()
         shell: bash

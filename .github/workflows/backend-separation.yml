@@ -2,6 +2,7 @@ name: Backend separation
 
 on:
   push:
+    branches: [main]
     paths:
       - 'src/routes/**'
       - 'src/pages/tools/**'
@@ -20,6 +21,7 @@ on:
       - 'scripts/shared/validate-retired-lifestyle-code.mjs'
       - '.github/workflows/backend-separation.yml'
   pull_request:
+    branches: [main]
     paths:
       - 'src/routes/**'
       - 'src/pages/tools/**'
@@ -37,22 +39,23 @@ on:
       - 'scripts/shared/validate-backend-separation.mjs'
       - 'scripts/shared/validate-retired-lifestyle-code.mjs'
       - '.github/workflows/backend-separation.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: backend-separation-${{ github.ref }}
+  group: backend-separation-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.3.14
       - run: bun scripts/shared/validate-backend-separation.mjs
       - run: bun scripts/shared/validate-retired-lifestyle-code.mjs

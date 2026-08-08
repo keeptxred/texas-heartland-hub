@@ -1,15 +1,15 @@
 import fs from 'node:fs';
 import { CONTENT_OWNERSHIP_RULES, decideCrossSiteContent, validateContentOwnershipRules } from '../../src/shared/platform-core/content-intelligence.ts';
 import { enforcePublicationDecision, createPublicationOverride } from '../../src/shared/platform-core/publication-gate.ts';
-import { PLATFORM_CORE_CONTRACT } from '../../src/shared/platform-core/contract.ts';
+import { PLATFORM_CORE_CONTRACT, validateConsumerManifest } from '../../src/shared/platform-core/contract.ts';
 import upstream from '../../src/shared/platform-core/upstream.json' with { type: 'json' };
 import consumer from '../../src/shared/platform-core/consumer.json' with { type: 'json' };
 
 const errors: string[] = [];
-if (upstream.commit !== 'd1be8d321b312cd3349807eed61edf8cc917d0df') errors.push('KeepTXRed is not pinned to the publication-gate release.');
-if (upstream.version !== '0.4.0' || upstream.apiVersion !== '1.2') errors.push('KeepTXRed is not on core 0.4.0/API 1.2.');
+if (!/^[0-9a-f]{40}$/.test(upstream.commit)) errors.push('Upstream core pin must be a full 40-character commit SHA.');
 if (upstream.version !== PLATFORM_CORE_CONTRACT.packageVersion || upstream.apiVersion !== PLATFORM_CORE_CONTRACT.apiVersion) errors.push('Upstream and contract versions differ.');
 if (consumer.coreCommit !== upstream.commit || consumer.packageVersion !== upstream.version || consumer.apiVersion !== upstream.apiVersion) errors.push('Consumer and upstream release pins differ.');
+errors.push(...validateConsumerManifest(consumer as Parameters<typeof validateConsumerManifest>[0]).errors);
 for (const capability of ['content-ownership','duplicate-content-prevention','cross-site-disposition','publication-gates','reviewed-overrides']) if (!consumer.capabilities.includes(capability)) errors.push(`KeepTXRed capability missing: ${capability}`);
 errors.push(...validateContentOwnershipRules().errors);
 if (CONTENT_OWNERSHIP_RULES.some((rule) => rule.fullRepublicationAllowed)) errors.push('Full cross-site republication must remain disabled.');
@@ -40,4 +40,4 @@ for (const symbol of ["createFileRoute('/api/publication-gate')","targetSite: 'K
 if (gateRoute.includes('writeFile') || gateRoute.includes('publish: true')) errors.push('Publication gate API must not write or publish directly.');
 
 if (errors.length) { console.error(`KeepTXRed content ownership validation failed (${errors.length}):`); for (const error of errors) console.error(`  - ${error}`); process.exit(1); }
-console.log(`KeepTXRed publication-gate validation passed (${CONTENT_OWNERSHIP_RULES.length} domains, core ${upstream.version}/${upstream.apiVersion}).`);
+console.log(`KeepTXRed publication-gate validation passed (${CONTENT_OWNERSHIP_RULES.length} domains, core ${upstream.version}/${upstream.apiVersion}, ${upstream.commit.slice(0, 12)}).`);

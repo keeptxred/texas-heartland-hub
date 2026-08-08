@@ -2,44 +2,23 @@ name: Candidate photo enrichment
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "src/data/elections/2026/candidate-photos.json"
-      - "src/data/elections/2026/candidates.json"
-      - "scripts/elections/candidate-photo-enrichment.mjs"
-      - "scripts/elections/apply-direct-web-photo-findings.mjs"
-      - "scripts/elections/discover-candidate-photos.mjs"
-      - "scripts/elections/discover-candidate-photos-directories.mjs"
-      - "scripts/elections/discover-candidate-photos-search-providers.mjs"
-      - "scripts/elections/discover-candidate-photos-expanded.mjs"
-      - "scripts/elections/discover-candidate-photos-race-aware.mjs"
-      - "scripts/elections/discover-candidate-photos-source-wave.mjs"
-      - "scripts/elections/discover-candidate-photos-deep-web.mjs"
-      - "scripts/elections/discover-candidate-photos-local-records.mjs"
-      - "scripts/elections/discover-candidate-photos-wikimedia.mjs"
-      - "scripts/elections/discover-candidate-photos-new-domains.mjs"
-      - "scripts/elections/discover-candidate-photos-new-domains-wave2.mjs"
-      - ".github/workflows/candidate-photo-enrichment.yml"
 
 permissions:
   contents: write
 
 concurrency:
   group: candidate-photo-enrichment
-  cancel-in-progress: false
-
-env:
-  SEARCH_RUN_REQUESTED_AT: "2026-07-30T20:14:00-05:00"
+  cancel-in-progress: true
 
 jobs:
   discover-and-apply-photos:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 90
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Set up Node
