@@ -1,4 +1,4 @@
-import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router';
+import { createFileRoute, Link, notFound, stripSearchParams } from '@tanstack/react-router';
 import { Search, Landmark, Scale, FileCheck2 } from 'lucide-react';
 import { listBills, getBillFilterOptions, SITE_URL, canonicalBillPath } from '@/lib/bills';
 
@@ -56,6 +56,8 @@ export const Route = createFileRoute('/bills/')({
       }),
       getBillFilterOptions(),
     ]);
+    const maxPage = Math.max(1, Math.ceil(results.count / 24));
+    if (deps.page > maxPage) throw notFound();
     return { ...results, options, search: deps };
   },
   pendingComponent: () => (
