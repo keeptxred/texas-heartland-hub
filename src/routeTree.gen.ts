@@ -255,6 +255,7 @@ import { Route as AdminBillsOpportunitiesRouteImport } from './routes/admin/bill
 import { Route as AdminBillsEnrichmentRouteImport } from './routes/admin/bills/enrichment'
 import { Route as AdminBillsEditorialRouteImport } from './routes/admin/bills/editorial'
 import { Route as AdminBillsBackfillRouteImport } from './routes/admin/bills/backfill'
+import { Route as BillsTexasLegislatureIndexRouteImport } from './routes/bills/texas/$legislature/index'
 import { Route as AdminExploreImportsIndexRouteImport } from './routes/admin/explore/imports/index'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -277,6 +278,7 @@ import { Route as ApiPublicExploreMapRouteImport } from './routes/api/public/exp
 import { Route as ApiPublicExploreEntitiesRouteImport } from './routes/api/public/explore/entities'
 import { Route as ApiPublicExploreAutocompleteRouteImport } from './routes/api/public/explore/autocomplete'
 import { Route as ApiPublicArticleImageFilenameRouteImport } from './routes/api/public/article-image.$filename'
+import { Route as BillsTexasLegislatureBillTypeIndexRouteImport } from './routes/bills/texas/$legislature/$billType/index'
 import { Route as BillsTexasLegislatureBillTypeBillNumberRouteImport } from './routes/bills/texas/$legislature/$billType/$billNumber'
 import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
 import { Route as ApiPublicOauthFacebookCallbackRouteImport } from './routes/api/public/oauth/facebook/callback'
@@ -1572,6 +1574,12 @@ const AdminBillsBackfillRoute = AdminBillsBackfillRouteImport.update({
   path: '/bills/backfill',
   getParentRoute: () => AdminRoute,
 } as any)
+const BillsTexasLegislatureIndexRoute =
+  BillsTexasLegislatureIndexRouteImport.update({
+    id: '/texas/$legislature/',
+    path: '/texas/$legislature/',
+    getParentRoute: () => BillsRoute,
+  } as any)
 const AdminExploreImportsIndexRoute =
   AdminExploreImportsIndexRouteImport.update({
     id: '/explore/imports/',
@@ -1700,6 +1708,12 @@ const ApiPublicArticleImageFilenameRoute =
     id: '/api/public/article-image/$filename',
     path: '/api/public/article-image/$filename',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const BillsTexasLegislatureBillTypeIndexRoute =
+  BillsTexasLegislatureBillTypeIndexRouteImport.update({
+    id: '/texas/$legislature/$billType/',
+    path: '/texas/$legislature/$billType/',
+    getParentRoute: () => BillsRoute,
   } as any)
 const BillsTexasLegislatureBillTypeBillNumberRoute =
   BillsTexasLegislatureBillTypeBillNumberRouteImport.update({
@@ -1989,9 +2003,11 @@ export interface FileRoutesByFullPath {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/explore/imports/': typeof AdminExploreImportsIndexRoute
+  '/bills/texas/$legislature/': typeof BillsTexasLegislatureIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
   '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
+  '/bills/texas/$legislature/$billType/': typeof BillsTexasLegislatureBillTypeIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -2250,9 +2266,11 @@ export interface FileRoutesByTo {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/explore/imports': typeof AdminExploreImportsIndexRoute
+  '/bills/texas/$legislature': typeof BillsTexasLegislatureIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
   '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
+  '/bills/texas/$legislature/$billType': typeof BillsTexasLegislatureBillTypeIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -2524,9 +2542,11 @@ export interface FileRoutesById {
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
   '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
   '/admin/explore/imports/': typeof AdminExploreImportsIndexRoute
+  '/bills/texas/$legislature/': typeof BillsTexasLegislatureIndexRoute
   '/api/public/oauth/facebook/callback': typeof ApiPublicOauthFacebookCallbackRoute
   '/api/public/oauth/facebook/start': typeof ApiPublicOauthFacebookStartRoute
   '/bills/texas/$legislature/$billType/$billNumber': typeof BillsTexasLegislatureBillTypeBillNumberRoute
+  '/bills/texas/$legislature/$billType/': typeof BillsTexasLegislatureBillTypeIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -2799,9 +2819,11 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/explore/imports/'
+    | '/bills/texas/$legislature/'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
     | '/bills/texas/$legislature/$billType/$billNumber'
+    | '/bills/texas/$legislature/$billType/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -3060,9 +3082,11 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/explore/imports'
+    | '/bills/texas/$legislature'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
     | '/bills/texas/$legislature/$billType/$billNumber'
+    | '/bills/texas/$legislature/$billType'
   id:
     | '__root__'
     | '/'
@@ -3333,9 +3357,11 @@ export interface FileRouteTypes {
     | '/lovable/email/transactional/preview'
     | '/lovable/email/transactional/send'
     | '/admin/explore/imports/'
+    | '/bills/texas/$legislature/'
     | '/api/public/oauth/facebook/callback'
     | '/api/public/oauth/facebook/start'
     | '/bills/texas/$legislature/$billType/$billNumber'
+    | '/bills/texas/$legislature/$billType/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -5224,6 +5250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBillsBackfillRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/bills/texas/$legislature/': {
+      id: '/bills/texas/$legislature/'
+      path: '/texas/$legislature'
+      fullPath: '/bills/texas/$legislature/'
+      preLoaderRoute: typeof BillsTexasLegislatureIndexRouteImport
+      parentRoute: typeof BillsRoute
+    }
     '/admin/explore/imports/': {
       id: '/admin/explore/imports/'
       path: '/explore/imports'
@@ -5378,6 +5411,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicArticleImageFilenameRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/bills/texas/$legislature/$billType/': {
+      id: '/bills/texas/$legislature/$billType/'
+      path: '/texas/$legislature/$billType'
+      fullPath: '/bills/texas/$legislature/$billType/'
+      preLoaderRoute: typeof BillsTexasLegislatureBillTypeIndexRouteImport
+      parentRoute: typeof BillsRoute
+    }
     '/bills/texas/$legislature/$billType/$billNumber': {
       id: '/bills/texas/$legislature/$billType/$billNumber'
       path: '/texas/$legislature/$billType/$billNumber'
@@ -5445,14 +5485,19 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface BillsRouteChildren {
   BillsIndexRoute: typeof BillsIndexRoute
   BillsSubjectSubjectSlugRoute: typeof BillsSubjectSubjectSlugRoute
+  BillsTexasLegislatureIndexRoute: typeof BillsTexasLegislatureIndexRoute
   BillsTexasLegislatureBillTypeBillNumberRoute: typeof BillsTexasLegislatureBillTypeBillNumberRoute
+  BillsTexasLegislatureBillTypeIndexRoute: typeof BillsTexasLegislatureBillTypeIndexRoute
 }
 
 const BillsRouteChildren: BillsRouteChildren = {
   BillsIndexRoute: BillsIndexRoute,
   BillsSubjectSubjectSlugRoute: BillsSubjectSubjectSlugRoute,
+  BillsTexasLegislatureIndexRoute: BillsTexasLegislatureIndexRoute,
   BillsTexasLegislatureBillTypeBillNumberRoute:
     BillsTexasLegislatureBillTypeBillNumberRoute,
+  BillsTexasLegislatureBillTypeIndexRoute:
+    BillsTexasLegislatureBillTypeIndexRoute,
 }
 
 const BillsRouteWithChildren = BillsRoute._addFileChildren(BillsRouteChildren)
@@ -6000,3 +6045,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
