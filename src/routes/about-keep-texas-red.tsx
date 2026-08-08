@@ -116,7 +116,7 @@ function AboutKeepTexasRed() {
           <li><Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary hover:underline">Texas bill tracking</Link> and legislative documents.</li>
           <li><Link to="/texas-legislature" className="text-primary hover:underline">Texas Legislature</Link> coverage and session information.</li>
           <li><Link to="/representatives" className="text-primary hover:underline">Public-official profiles</Link> and representative lookup resources.</li>
-          <li><Link to="/texas-news" className="text-primary hover:underline">Texas news</Link>, business, regional coverage, and major statewide developments.</li>
+          <li><Link to="/news" className="text-primary hover:underline">Texas news</Link>, business, regional coverage, and major statewide developments.</li>
         </ul>
       </section>
 
@@ -138,8 +138,8 @@ function AboutKeepTexasRed() {
           <li><Link to="/find-representative" className="text-primary hover:underline">Find My Representative</Link>.</li>
           <li><Link to="/register-to-vote" className="text-primary hover:underline">Register to Vote in Texas</Link>.</li>
           <li><Link to="/county-elections" className="text-primary hover:underline">County Elections</Link>.</li>
-          <li><Link to="/candidate-guides" className="text-primary hover:underline">Candidate Guides</Link>.</li>
-          <li><Link to="/voting-locations" className="text-primary hover:underline">Voting Locations</Link>.</li>
+          <li><Link to="/elections/candidates" className="text-primary hover:underline">Candidate Profiles</Link>.</li>
+          <li><Link to="/elections/voting" className="text-primary hover:underline">Voting Information</Link>.</li>
           <li><Link to="/contact-legislators" className="text-primary hover:underline">Contact Texas Legislators</Link>.</li>
         </ul>
       </section>

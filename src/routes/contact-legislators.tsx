@@ -72,7 +72,7 @@ function ContactPage() {
           related={[
             { to: "/find-representative", label: "Find your Texas representative" },
             { to: "/representatives", label: "Full directory of Texas representatives" },
-            { to: "/legislative-updates", label: "Latest legislative updates" },
+            { to: "/bills", label: "Track Texas legislation" },
             { to: "/register-to-vote", label: "Register to vote in Texas" },
           ]}
         />

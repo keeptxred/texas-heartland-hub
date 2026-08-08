@@ -54,7 +54,7 @@ const pages = {
     intro: "Use this page as the starting point for current Texas legislative activity, including session status, House and Senate coverage, lawmakers, bills, laws, and election context.",
     sections: [
       ["Search current Texas bills", "Open the bill database to follow current status, sponsors, committee activity, legislative actions and official documents.", "/bills"],
-      ["Legislative updates", "Read the latest KeepTXRed coverage of Texas legislative activity and policy developments.", "/legislative-updates"],
+      ["Track current Texas bills", "Follow current Texas legislative activity, bill status, sponsors, actions, and documents.", "/bills"],
       ["Texas laws hub", "Review major Texas laws, new-law explainers, and policy guides.", "/laws"],
       ["Texas House", "Understand the chamber, districts, elections, and representative resources.", "/texas-legislature/house"],
       ["Texas Senate", "Understand the chamber, districts, elections, and senator resources.", "/texas-legislature/senate"],
@@ -68,7 +68,7 @@ const pages = {
       ["Search Texas bills", "Browse legislation across available Texas legislative sessions and open the complete history for individual bills.", "/bills"],
       ["Current session", "Return to the active Texas legislative session hub.", "/texas-legislature/current-session"],
       ["Texas laws", "Connect legislation from prior sessions with current Texas law explainers.", "/texas-laws"],
-      ["Legislative updates", "Review KeepTXRed legislative and policy coverage.", "/legislative-updates"],
+      ["Browse Texas legislation", "Review Texas bills and legislative history across available sessions.", "/bills"],
       ["Election Central", "See the elections that determine the membership of the Texas House and Senate.", "/elections/legislative"],
     ],
   },
