@@ -33,6 +33,7 @@ type StoredVariant = {
   title?: string;
   price?: number;
   image?: string | null;
+  is_enabled?: boolean;
 };
 
 export const Route = createFileRoute("/api/public/texasdefined-checkout")({
@@ -97,19 +98,20 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
           const resolved = items.map((item) => {
             const row = rows.get(item.productId)!;
             const variants = Array.isArray(row.variants) ? row.variants as StoredVariant[] : [];
-            const variant = item.variantId == null ? null : variants.find((entry) => Number(entry.id) === Number(item.variantId));
-            if (item.variantId != null && !variant) throw new Error(`Selected option is unavailable for ${row.title}`);
-            const price = Number(variant?.price ?? row.price);
+            if (!Number.isInteger(item.variantId)) throw new Error(`Choose an available option for ${row.title}`);
+            const variant = variants.find((entry) => Number(entry.id) === Number(item.variantId) && entry.is_enabled !== false);
+            if (!variant) throw new Error(`Selected option is unavailable for ${row.title}`);
+            const price = Number(variant.price ?? row.price);
             if (!Number.isFinite(price) || price <= 0) throw new Error(`Invalid price for ${row.title}`);
             return {
               productId: row.id as string,
-              variantId: variant?.id ?? null,
+              variantId: variant.id,
               quantity: item.quantity,
               title: row.title as string,
-              variantTitle: variant?.title ?? null,
+              variantTitle: variant.title ?? null,
               price,
               currency: String(row.currency || "USD").toLowerCase(),
-              image: variant?.image || row.image_url || undefined,
+              image: variant.image || row.image_url || undefined,
             };
           });
 
