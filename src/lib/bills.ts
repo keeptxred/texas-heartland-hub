@@ -61,6 +61,7 @@ const STATUS_GROUPS: Record<string, string[]> = {
 };
 
 const STATE_LEGISLATORS = [...TEXAS_HOUSE_MEMBERS, ...TEXAS_SENATE_MEMBERS];
+const BILL_DIRECTORY_PAGE_SIZE = 1000;
 
 const normalizePersonToken = (value = '') =>
   value
@@ -139,6 +140,7 @@ export async function listBills({ search = '', status = '', legislature, chamber
     .select('id,legislature_number,session_code,bill_type,bill_number,bill_identifier,chamber,caption,current_status_code,current_status_label,last_action_date,became_law', { count: 'exact' })
     .eq('is_active', true)
     .order('last_action_date', { ascending: false, nullsFirst: false })
+    .order('id', { ascending: true })
     .range(offset, offset + limit - 1);
   if (status) {
     const codes = STATUS_GROUPS[status];
@@ -157,13 +159,20 @@ export async function listBills({ search = '', status = '', legislature, chamber
 }
 
 export async function getBillFilterOptions() {
-  const { data, error } = await db
-    .from('bills')
-    .select('legislature_number,session_code,bill_type,chamber')
-    .eq('is_active', true)
-    .order('legislature_number', { ascending: false });
-  if (error) throw error;
-  const rows = data ?? [];
+  const rows: any[] = [];
+  for (let from = 0; ; from += BILL_DIRECTORY_PAGE_SIZE) {
+    const { data, error } = await db
+      .from('bills')
+      .select('id,legislature_number,session_code,bill_type,chamber')
+      .eq('is_active', true)
+      .order('legislature_number', { ascending: false })
+      .order('id', { ascending: true })
+      .range(from, from + BILL_DIRECTORY_PAGE_SIZE - 1);
+    if (error) throw error;
+    const page = data ?? [];
+    rows.push(...page);
+    if (page.length < BILL_DIRECTORY_PAGE_SIZE) break;
+  }
   const legislatures = [...new Map(rows.map((row: any) => [row.legislature_number, { value: row.legislature_number, label: `${row.legislature_number}th Legislature${row.session_code ? ` · ${row.session_code}` : ''}` }])).values()];
   const billTypes = [...new Set(rows.map((row: any) => row.bill_type).filter(Boolean))].sort();
   const chambers = [...new Set(rows.map((row: any) => row.chamber).filter(Boolean))].sort();
@@ -273,6 +282,7 @@ export async function getRepresentativeLegislation(sponsorSlug: string) {
 
 export function billJsonLd(bill: Bill, sponsors: any[], actions: any[]) {
   const url = `${SITE_URL}${canonicalBillPath(bill)}`;
+  const billType = bill.bill_type.toLowerCase();
   const people = sponsors.map((sponsor) => ({
     '@type': 'Person',
     '@id': sponsor.sponsor_slug ? `${SITE_URL}/representatives/${sponsor.sponsor_slug}#person` : undefined,
@@ -309,8 +319,9 @@ export function billJsonLd(bill: Bill, sponsors: any[], actions: any[]) {
         '@type': 'BreadcrumbList', '@id': `${url}#breadcrumb`, itemListElement: [
           { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
           { '@type': 'ListItem', position: 2, name: 'Bills', item: `${SITE_URL}/bills` },
-          { '@type': 'ListItem', position: 3, name: `${bill.legislature_number}th Legislature`, item: `${SITE_URL}/bills?legislature=${bill.legislature_number}` },
-          { '@type': 'ListItem', position: 4, name: bill.bill_identifier, item: url },
+          { '@type': 'ListItem', position: 3, name: `${bill.legislature_number}th Legislature`, item: `${SITE_URL}/bills/texas/${bill.legislature_number}` },
+          { '@type': 'ListItem', position: 4, name: `${bill.bill_type.toUpperCase()} bills`, item: `${SITE_URL}/bills/texas/${bill.legislature_number}/${billType}` },
+          { '@type': 'ListItem', position: 5, name: bill.bill_identifier, item: url },
         ],
       },
       ...(faq.length ? [{ '@type': 'FAQPage', mainEntity: faq.map(([question, answer]) => ({ '@type': 'Question', name: question, acceptedAnswer: { '@type': 'Answer', text: answer } })) }] : []),
