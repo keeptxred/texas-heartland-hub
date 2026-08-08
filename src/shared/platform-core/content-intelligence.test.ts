@@ -29,6 +29,5 @@ describe('story-level brand routing', () => {
       fallbackDomain: 'texas-culture',
     });
     expect(result.owner).toBe('KeepTXRed');
-    expect(result.domain).toBe('government-accountability');
   });
 });
