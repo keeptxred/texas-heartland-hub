@@ -15,7 +15,10 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
 };
 
 const STATIC_PATHS:string[]=[
-  "/","/news","/happening-now","/keep-texas-red","/texas-news",
+  "/","/news","/happening-now","/keep-texas-red",
+  // /texas-news remains reachable for compatibility, but it is no longer
+  // promoted as a first-class sitemap target because its culture/lifestyle
+  // framing belongs on TexasDefined after the site split.
   "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
   // NOTE: /elections is a 307 to /elections/2026 and is intentionally absent —
   // the canonical election hub ships in sitemap-elections.xml.
