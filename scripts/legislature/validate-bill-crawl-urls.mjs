@@ -7,6 +7,9 @@ const checks = [
       "import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router'",
       'middlewares: [stripSearchParams(DEFAULT_SEARCH)]',
       "? `${SITE_URL}/bills?page=${search.page}`",
+      'function paginationPages(current: number, total: number): number[]',
+      'const visiblePages = paginationPages(search.page, pages);',
+      'visiblePages.map((target, index) =>',
     ],
   },
   {
@@ -16,6 +19,9 @@ const checks = [
       'const DEFAULT_SEARCH = { page: 1 } as const;',
       'middlewares: [stripSearchParams(DEFAULT_SEARCH)]',
       '? `${baseUrl}?page=${page}`',
+      'function paginationPages(current: number, total: number): number[]',
+      'const visiblePages = paginationPages(page, pages);',
+      'visiblePages.map((target, index) =>',
     ],
   },
 ];
