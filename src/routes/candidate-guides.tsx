@@ -7,6 +7,7 @@ export const Route = createFileRoute("/candidate-guides")({
     meta: [
       { title: "Texas Candidate Guides — Keep TX Red" },
       { name: "description", content: "Conservative candidate guides for Texas federal, state, and local races. Positions, endorsements, and voting records." },
+      { name: "robots", content: "noindex,follow,max-image-preview:large" },
       { property: "og:title", content: "Texas Candidate Guides" },
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/candidate-guides" }],
