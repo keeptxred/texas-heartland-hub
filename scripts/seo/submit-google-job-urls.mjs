@@ -41,7 +41,12 @@ function validateManifest(manifest) {
 
   return uniqueUrls.map((url) => {
     const parsed = new URL(url);
-    if (parsed.origin !== ALLOWED_ORIGIN || parsed.username || parsed.password || parsed.hash) {
+    if (
+      parsed.origin !== ALLOWED_ORIGIN ||
+      parsed.username ||
+      parsed.password ||
+      parsed.hash
+    ) {
       throw new Error(`Invalid KeepTXRed JobPosting URL: ${url}`);
     }
     return parsed.href;
