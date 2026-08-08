@@ -45,6 +45,7 @@ const VERIFIED_YOUTUBE = new Map<string, string>([
 
 const TRANSIENT_STATUS = new Set([408, 425, 429, 500, 502, 503, 504]);
 const GOOGLE_NEWS_RE = /^https:\/\/news\.google\.com\/rss\/search/i;
+const GOOGLE_FEEDS_PER_RUN = 10;
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -156,10 +157,15 @@ function parseTexasStandardHtml(html: string): Item[] {
   return out;
 }
 
-async function fetchText(url: string, accept: string): Promise<{ status: number; text: string | null; attempts: number; error?: string }> {
+async function fetchText(
+  url: string,
+  accept: string,
+  maxAttempts = 3,
+  timeoutMs = 25000,
+): Promise<{ status: number; text: string | null; attempts: number; error?: string }> {
   let lastStatus = 0;
   let lastError = "request failed";
-  for (let attempt = 1; attempt <= 3; attempt++) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       const response = await fetch(url, {
         headers: {
@@ -169,7 +175,7 @@ async function fetchText(url: string, accept: string): Promise<{ status: number;
           "Cache-Control": "no-cache",
         },
         redirect: "follow",
-        signal: AbortSignal.timeout(25000),
+        signal: AbortSignal.timeout(timeoutMs),
       });
       lastStatus = response.status;
       if (response.ok) return { status: response.status, text: await response.text(), attempts: attempt };
@@ -178,9 +184,9 @@ async function fetchText(url: string, accept: string): Promise<{ status: number;
     } catch (error) {
       lastError = error instanceof Error ? `${error.name}: ${error.message}` : String(error);
     }
-    if (attempt < 3) await sleep(800 * attempt + Math.floor(Math.random() * 350));
+    if (attempt < maxAttempts) await sleep(500 * attempt + Math.floor(Math.random() * 250));
   }
-  return { status: lastStatus, text: null, attempts: 3, error: lastError };
+  return { status: lastStatus, text: null, attempts: maxAttempts, error: lastError };
 }
 
 async function mapWithConcurrency<T, R>(items: T[], limit: number, fn: (item: T) => Promise<R>): Promise<R[]> {
@@ -252,15 +258,24 @@ function isTexasRelevant(item: Item): boolean {
   return result.texasRelevanceScore >= TEXAS_RELEVANCE_MIN;
 }
 
+function rotateGoogleSources(sources: Source[]): Source[] {
+  if (sources.length <= GOOGLE_FEEDS_PER_RUN) return sources;
+  const window = Math.floor(Date.now() / (30 * 60 * 1000));
+  const start = (window * GOOGLE_FEEDS_PER_RUN) % sources.length;
+  const selected: Source[] = [];
+  for (let i = 0; i < GOOGLE_FEEDS_PER_RUN; i++) selected.push(sources[(start + i) % sources.length]);
+  return selected;
+}
+
 async function fetchSource(source: Source): Promise<FetchResult> {
   const isGoogle = GOOGLE_NEWS_RE.test(source.url);
   const accept = source.mode === "rss"
     ? "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*"
     : "text/html,application/xhtml+xml,*/*";
-  const fetched = await fetchText(source.url, accept);
+  const fetched = await fetchText(source.url, accept, isGoogle ? 2 : 3, isGoogle ? 10000 : 25000);
 
   if (!fetched.text && source.name === "Texas Standard" && source.mode === "rss") {
-    const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*");
+    const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*", 2, 15000);
     return {
       source: source.name,
       url: "https://texasstandard.org/",
@@ -294,12 +309,11 @@ async function handler() {
   const { sources, skippedLegacyYoutube } = await loadSources();
 
   const direct = sources.filter((source) => !GOOGLE_NEWS_RE.test(source.url));
-  const google = sources.filter((source) => GOOGLE_NEWS_RE.test(source.url));
+  const allGoogle = sources.filter((source) => GOOGLE_NEWS_RE.test(source.url));
+  const google = rotateGoogleSources(allGoogle);
 
-  // Direct publishers can tolerate moderate concurrency. Google News is kept to
-  // two concurrent requests so dozens of query feeds do not trigger 503 bursts.
   const directResults = await mapWithConcurrency(direct, 6, fetchSource);
-  const googleResults = await mapWithConcurrency(google, 2, fetchSource);
+  const googleResults = await mapWithConcurrency(google, 4, fetchSource);
   const results = [...directResults, ...googleResults];
 
   const unique = new Map<string, Item>();
@@ -330,7 +344,8 @@ async function handler() {
     aiCalls: 0,
     sourceCount: sources.length,
     directSources: direct.length,
-    googleNewsSources: google.length,
+    googleNewsSourcesConfigured: allGoogle.length,
+    googleNewsSourcesChecked: google.length,
     skippedLegacyYoutube,
     healthySources: results.filter((result) => result.status >= 200 && result.status < 300 && result.items.length > 0).length,
     failedSources: results.filter((result) => !(result.status >= 200 && result.status < 300) || result.items.length === 0).length,
