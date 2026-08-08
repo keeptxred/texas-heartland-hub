@@ -123,6 +123,35 @@ export function sourceFamily(item: ClusterableFeedItem): string {
   return domain || source;
 }
 
+function meaningfulWords(item: ClusterableFeedItem): Set<string> {
+  const raw = normalize(`${item.description ?? ""} ${item.extracted_body ?? ""}`);
+  const out = new Set<string>();
+  for (const word of raw.split(/\s+/)) {
+    if (word.length < 4 || STOP.has(word)) continue;
+    out.add(word);
+  }
+  return out;
+}
+
+function jaccard(a: Set<string>, b: Set<string>): number {
+  if (!a.size || !b.size) return 0;
+  let shared = 0;
+  for (const value of a) if (b.has(value)) shared += 1;
+  return shared / (a.size + b.size - shared);
+}
+
+export function likelySameLineage(a: ClusterableFeedItem, b: ClusterableFeedItem): boolean {
+  if (sourceFamily(a) && sourceFamily(a) === sourceFamily(b)) return true;
+  const titleA = normalize(a.title);
+  const titleB = normalize(b.title);
+  if (titleA && titleA === titleB) return true;
+
+  const wordsA = meaningfulWords(a);
+  const wordsB = meaningfulWords(b);
+  if (Math.min(wordsA.size, wordsB.size) < 18) return false;
+  return jaccard(wordsA, wordsB) >= 0.82;
+}
+
 function hoursApart(a?: string | null, b?: string | null): number {
   const ta = Date.parse(a ?? "");
   const tb = Date.parse(b ?? "");
@@ -189,6 +218,7 @@ export function buildStoryCluster(primary: ClusterableFeedItem, recent: Clustera
   for (const row of ranked) {
     const family = sourceFamily(row);
     if (families.has(family)) continue;
+    if ([primary, ...members].some((selected) => likelySameLineage(selected, row))) continue;
     members.push({ ...row, combinationScore: row.score, overlapTerms: row.overlapTerms });
     families.add(family);
     if (members.length >= Math.max(1, maxMembers - 1)) break;
