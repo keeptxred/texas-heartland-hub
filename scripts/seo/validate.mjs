@@ -98,6 +98,14 @@ const sitemapNames = [...sitemapIndex.matchAll(/file:\s*["']([^"']+\.xml)["']/g)
 const duplicateSitemaps = sitemapNames.filter((name, index) => sitemapNames.indexOf(name) !== index);
 for (const name of new Set(duplicateSitemaps)) fail("src/routes/sitemap[.]xml.ts", `duplicate sitemap index entry: ${name}`);
 
+const staticSitemap = contents.get("src/routes/sitemap-pages[.]xml.ts") ?? "";
+if (/DEFAULT_STATIC_PAGE_LASTMOD/.test(staticSitemap)) {
+  fail("src/routes/sitemap-pages[.]xml.ts", "static sitemap must not assign one blanket lastmod to unrelated pages");
+}
+if (!/lastmod:STATIC_PAGE_LASTMOD_OVERRIDES\[path\]\s*\|\|\s*undefined/.test(staticSitemap)) {
+  fail("src/routes/sitemap-pages[.]xml.ts", "static sitemap must omit lastmod when no trustworthy page revision date is known");
+}
+
 for (const [file, source] of contents) {
   if (file === VALIDATOR_PATH || !/sitemap/i.test(file)) continue;
   if (/loc:\s*`[^`]*\?/.test(source) || /<loc>[^<]*\?/.test(source)) {
