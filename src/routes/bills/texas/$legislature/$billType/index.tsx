@@ -6,6 +6,12 @@ const EMPTY_BILLS_SEARCH = { q: '', status: '', legislature: 0, chamber: '', bil
 const DEFAULT_SEARCH = { page: 1 } as const;
 const label = (value: string) => value.toUpperCase();
 
+function paginationPages(current: number, total: number): number[] {
+  return [...new Set([1, current - 2, current - 1, current, current + 1, current + 2, total])]
+    .filter((page) => page >= 1 && page <= total)
+    .sort((a, b) => a - b);
+}
+
 export const Route = createFileRoute('/bills/texas/$legislature/$billType/')({
   validateSearch: (search: Record<string, unknown>) => ({
     page: Math.max(1, Number(search.page) || 1),
@@ -64,6 +70,7 @@ export const Route = createFileRoute('/bills/texas/$legislature/$billType/')({
 
 function BillTypeHub() {
   const { legislature, billType, bills, count, page, pages } = Route.useLoaderData();
+  const visiblePages = paginationPages(page, pages);
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <nav className="mb-5 text-sm text-muted-foreground" aria-label="Breadcrumb">
@@ -102,7 +109,7 @@ function BillTypeHub() {
         </div>
 
         {pages > 1 ? (
-          <nav className="mt-8 flex items-center justify-center gap-3" aria-label={`${label(billType)} bill pages`}>
+          <nav className="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label={`${label(billType)} bill pages`}>
             {page > 1 ? (
               <Link
                 to="/bills/texas/$legislature/$billType"
@@ -111,7 +118,25 @@ function BillTypeHub() {
                 className="rounded-md border px-4 py-2"
               >Previous</Link>
             ) : <span className="rounded-md border px-4 py-2 opacity-50">Previous</span>}
-            <span className="text-sm">Page {page} of {pages}</span>
+            {visiblePages.map((target, index) => {
+              const previousTarget = visiblePages[index - 1];
+              return (
+                <span key={target} className="contents">
+                  {previousTarget && target - previousTarget > 1 ? <span aria-hidden="true" className="px-1 text-muted-foreground">…</span> : null}
+                  {target === page ? (
+                    <span aria-current="page" className="rounded-md border border-primary bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">{target}</span>
+                  ) : (
+                    <Link
+                      to="/bills/texas/$legislature/$billType"
+                      params={{ legislature: String(legislature), billType }}
+                      search={{ page: target }}
+                      aria-label={`Page ${target}`}
+                      className="rounded-md border px-3 py-2 text-sm hover:border-primary"
+                    >{target}</Link>
+                  )}
+                </span>
+              );
+            })}
             {page < pages ? (
               <Link
                 to="/bills/texas/$legislature/$billType"
