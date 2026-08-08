@@ -11,7 +11,7 @@ import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 import { AUTHORS, authorSlug } from "@/data/authors";
-import { getDailyArticles } from "@/lib/daily-news.functions";
+import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
 import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 
@@ -79,7 +79,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           localArticles.map((article) => authorSlug(article.author)).filter(Boolean),
         );
         try {
-          const { articles: liveArticles } = await getDailyArticles();
+          const { articles: liveArticles } = await getPublishedAuthorArticles();
           for (const article of liveArticles) {
             if (article.slug && article.author) activeAuthorSlugs.add(authorSlug(article.author));
           }
