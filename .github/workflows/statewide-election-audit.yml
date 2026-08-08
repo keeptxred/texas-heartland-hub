@@ -31,13 +31,32 @@ jobs:
       - name: Install Playwright Chromium
         run: bunx playwright install --with-deps chromium
       - name: Scrape official qualified candidates
+        id: candidate_scrape
+        continue-on-error: true
         env:
-          ELECTION_CANDIDATE_SCRAPE_OUTPUT: scripts/elections/import/official-candidates.json
+          ELECTION_CANDIDATE_SCRAPE_OUTPUT: /tmp/official-candidates.json
         run: bun run elections:scrape:candidates
-      - name: Import official candidates
-        env:
-          ELECTION_CANDIDATE_IMPORT: scripts/elections/import/official-candidates.json
-        run: bun run elections:import:candidates
+      - name: Use fresh official candidate extract when available
+        if: steps.candidate_scrape.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -s /tmp/official-candidates.json ]]; then
+            echo "Candidate extraction reported success but produced no usable file." >&2
+            exit 1
+          fi
+          cp /tmp/official-candidates.json scripts/elections/import/official-candidates.json
+          ELECTION_CANDIDATE_IMPORT=scripts/elections/import/official-candidates.json bun run elections:import:candidates
+      - name: Record upstream candidate-source outage
+        if: steps.candidate_scrape.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "## Statewide election audit source warning" >> "$GITHUB_STEP_SUMMARY"
+          echo "The official qualified-candidate source was unavailable. The audit is continuing against the last repository-maintained official candidate snapshot; no fresh candidate data will be committed from this run." >> "$GITHUB_STEP_SUMMARY"
+          if [[ ! -s scripts/elections/import/official-candidates.json ]]; then
+            echo "No usable fallback official candidate snapshot exists." >&2
+            exit 1
+          fi
       - name: Audit every statewide race
         env:
           ELECTION_OFFICIAL_CANDIDATES: scripts/elections/import/official-candidates.json
@@ -45,6 +64,7 @@ jobs:
       - name: Run full election validation
         run: bun run elections:validate
       - name: Commit refreshed election data
+        if: steps.candidate_scrape.outcome == 'success'
         shell: bash
         run: |
           set -euo pipefail
