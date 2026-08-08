@@ -9,14 +9,15 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: editorial-auto-publish-acceptance
+  cancel-in-progress: true
+
 jobs:
   acceptance:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Wait briefly for production deployment
-        run: sleep 90
-
       - name: Trigger editorial scoring and auto-publish
         shell: bash
         run: |
