@@ -53,9 +53,6 @@ for (const [file, source] of contents) {
   if (/name:\s*["']keywords["']/i.test(source) || /<meta[^>]+name=["']keywords["']/i.test(source)) {
     fail(file, "obsolete meta keywords output detected");
   }
-  // API routes may contain editorial prompt text or CORS-origin allowlists.
-  // Those strings are not rendered search output, so page-output checks do not
-  // apply there. Actual stored/rendered article and route content remains guarded.
   if (!isApiRoute && /Where can I read more on this topic\??/i.test(source)) {
     fail(file, "generic FAQ question detected");
   }
@@ -104,6 +101,18 @@ if (/DEFAULT_STATIC_PAGE_LASTMOD/.test(staticSitemap)) {
 }
 if (!/lastmod:STATIC_PAGE_LASTMOD_OVERRIDES\[path\]\s*\|\|\s*undefined/.test(staticSitemap)) {
   fail("src/routes/sitemap-pages[.]xml.ts", "static sitemap must omit lastmod when no trustworthy page revision date is known");
+}
+for (const retiredPath of [
+  "/texas-news",
+  "/candidate-guides",
+  "/legislative-updates",
+  "/laws-to-know",
+  "/voting-locations",
+  "/terms",
+]) {
+  if (staticSitemap.includes(`"${retiredPath}"`)) {
+    fail("src/routes/sitemap-pages[.]xml.ts", `redirected or noindex legacy route must not be promoted in the static sitemap: ${retiredPath}`);
+  }
 }
 
 for (const [file, source] of contents) {
