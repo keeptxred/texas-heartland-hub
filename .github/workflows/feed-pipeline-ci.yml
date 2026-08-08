@@ -6,6 +6,9 @@ on:
     paths:
       - 'src/routes/api/public/hooks/ingest-feeds.ts'
       - 'src/lib/ingest-feeds-legacy.ts'
+      - 'src/lib/story-clustering.ts'
+      - 'src/lib/multi-source-publish.ts'
+      - 'supabase/migrations/*story_cluster*.sql'
       - '.github/workflows/feed-pipeline-ci.yml'
   workflow_dispatch:
 
