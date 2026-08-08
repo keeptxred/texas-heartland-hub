@@ -42,13 +42,14 @@ for (const source of configuredSources) {
   if (!sources.includes(source)) throw new Error(`Discovery source missing from migration: ${source}`);
 }
 
+// Verify stable scoring primitives here. Behavioral routing rules belong in
+// viral-score.test.ts, which the workflow runs immediately after this contract check.
 for (const token of [
   "SEO_ARTICLE",
   "SOURCE_REPUTATION_FLOOR",
   "TEXAS_RELEVANCE_MIN",
   "Statewide public-interest topic",
   "Texas institution named",
-  "Category must never be used as a political-only veto",
 ]) {
   if (!scorer.includes(token)) throw new Error(`Coverage scorer contract missing: ${token}`);
 }
