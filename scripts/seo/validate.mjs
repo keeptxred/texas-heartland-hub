@@ -136,6 +136,28 @@ for (const [file, source] of contents) {
   }
 }
 
+const robots = contents.get("src/routes/robots[.]txt.ts") ?? "";
+const robotAgents = [...robots.matchAll(/["']User-agent:\s*([^"']+)["']/g)].map((match) => match[1].trim());
+if (robotAgents.length !== 1 || robotAgents[0] !== "*") {
+  fail(
+    "src/routes/robots[.]txt.ts",
+    "robots.txt must use one shared wildcard user-agent group so named crawlers cannot bypass common crawl restrictions",
+  );
+}
+for (const required of [
+  '"Disallow: /api/"',
+  '"Disallow: /admin"',
+  '"Disallow: /cart"',
+  '"Disallow: /*?q="',
+  '"Disallow: /*?search="',
+  '"Disallow: /*?filter="',
+  '`Sitemap: ${BASE_URL}/sitemap.xml`',
+]) {
+  if (!robots.includes(required)) {
+    fail("src/routes/robots[.]txt.ts", `robots.txt missing required shared crawl boundary: ${required}`);
+  }
+}
+
 const sitemapArticleLoader = contents.get("src/lib/evergreen.functions.ts") ?? "";
 for (const required of [
   "const SITEMAP_ARTICLE_PAGE_SIZE = 1000;",

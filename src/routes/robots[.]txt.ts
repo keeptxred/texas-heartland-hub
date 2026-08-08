@@ -9,25 +9,10 @@ export const Route = createFileRoute("/robots.txt")({
     handlers: {
       GET: async () => {
         const body = [
-          "# Keep TX Red — allow product quality, image, search, and AI crawlers.",
-          "User-agent: Googlebot",
-          "Allow: /",
-          "",
-          "User-agent: Googlebot-Image",
-          "Allow: /",
-          "",
-          "User-agent: OAI-SearchBot",
-          "Allow: /",
-          "",
-          "User-agent: GPTBot",
-          "Allow: /",
-          "",
-          "User-agent: PerplexityBot",
-          "Allow: /",
-          "",
-          "User-agent: ClaudeBot",
-          "Allow: /",
-          "",
+          "# Keep TX Red — public pages are crawlable; private, operational, checkout, and low-value query states are excluded for every crawler.",
+          // Keep one shared group so Googlebot, Googlebot-Image, search crawlers,
+          // and AI crawlers inherit the same crawl boundaries. A bot-specific
+          // Allow group can otherwise bypass wildcard-group restrictions.
           "User-agent: *",
           "Allow: /",
           "Disallow: /api/",
