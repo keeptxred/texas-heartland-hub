@@ -60,15 +60,19 @@ jobs:
         run: bun run test
       - name: Route generation and TypeScript
         run: bun run build:dev && bun run typecheck
-      - name: Required validators
-        shell: bash
-        run: |
-          set -euo pipefail
-          bun run shared:validate
-          bun run shared:entities:validate
-          bun run publication:validate
-          bun run seo:validate
-          bun run elections:validate
-          bun run legislature:validate
+      - name: Shared validation
+        run: bun run shared:validate
+      - name: Shared entity validation
+        run: bun run shared:entities:validate
+      - name: Publication validation
+        run: bun run publication:validate
+      - name: SEO structural validation
+        run: node scripts/seo/validate.mjs
+      - name: SEO indexability validation
+        run: node --experimental-strip-types scripts/seo/validate-indexability.mjs
+      - name: Elections validation
+        run: bun run elections:validate
+      - name: Legislature validation
+        run: bun run legislature:validate
       - name: Production build
         run: bun run build
