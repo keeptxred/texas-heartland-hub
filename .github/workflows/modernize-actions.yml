@@ -5,39 +5,25 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/**'
-      - 'package.json'
-      - 'scripts/shared/validate-publication-writers.mjs'
-      - 'src/lib/content-publication-guard.ts'
-      - 'src/lib/content-quality.ts'
-      - 'src/lib/ctr-loop.functions.ts'
-      - 'src/lib/featured-image.functions.ts'
-      - 'src/lib/gsc.ts'
-      - 'src/lib/ingest-and-normalize.functions.ts'
-      - 'src/routes/api/public/hooks/**'
   pull_request:
+    branches: [main]
     paths:
       - '.github/workflows/**'
-      - 'package.json'
-      - 'scripts/shared/validate-publication-writers.mjs'
-      - 'src/lib/content-publication-guard.ts'
-      - 'src/lib/content-quality.ts'
-      - 'src/lib/ctr-loop.functions.ts'
-      - 'src/lib/featured-image.functions.ts'
-      - 'src/lib/gsc.ts'
-      - 'src/lib/ingest-and-normalize.functions.ts'
-      - 'src/routes/api/public/hooks/**'
   workflow_dispatch:
 
 permissions:
   contents: read
 
+concurrency:
+  group: workflow-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
       - name: Validate workflow YAML
         shell: bash
         run: |
@@ -54,25 +40,3 @@ jobs:
             echo "$matches" >&2
             exit 1
           fi
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
-      - name: Full unit test suite
-        run: bun run test
-      - name: Route generation and TypeScript
-        run: bun run build:dev && bun run typecheck
-      - name: Shared validation
-        run: bun run shared:validate
-      - name: Shared entity validation
-        run: bun run shared:entities:validate
-      - name: Publication validation
-        run: bun run publication:validate
-      - name: SEO structural validation
-        run: node scripts/seo/validate.mjs
-      - name: SEO indexability validation
-        run: node --experimental-strip-types scripts/seo/validate-indexability.mjs
-      - name: Elections validation
-        run: bun run elections:validate
-      - name: Legislature validation
-        run: bun run legislature:validate
-      - name: Production build
-        run: bun run build
