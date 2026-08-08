@@ -24,9 +24,10 @@ const STATIC_PATHS:string[]=[
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
-  "/get-involved","/county-elections","/voting-locations","/laws","/texas-laws",
+  "/get-involved","/county-elections","/laws","/texas-laws",
   // Legacy candidate guides are noindex until rebuilt on verified Election Central data.
   // /legislative-updates permanently redirects to the live /bills platform.
+  // /voting-locations permanently redirects to the verified Election Central voting page.
   "/laws-to-know","/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/texas-politics",
   "/authors","/texas-economy","/texas-law-policy","/shop",
