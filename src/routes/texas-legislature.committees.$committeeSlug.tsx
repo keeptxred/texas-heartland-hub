@@ -18,10 +18,17 @@ const safeCanonicalBillPath = (bill: any) =>
 
 export const Route = createFileRoute('/texas-legislature/committees/$committeeSlug')({
   loader: async ({ params }) => {
+    // committee_slug is unique only within legislature/session/chamber. Public
+    // committee URLs omit those dimensions, so prefer the newest matching record
+    // instead of maybeSingle() across every historical session.
     const { data: committee, error } = await db
       .from('legislative_committees')
       .select('*')
       .eq('committee_slug', params.committeeSlug)
+      .order('legislature_number', { ascending: false })
+      .order('updated_at', { ascending: false })
+      .order('chamber', { ascending: true })
+      .limit(1)
       .maybeSingle();
 
     if (error) throw error;
