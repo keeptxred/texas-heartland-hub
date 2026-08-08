@@ -27,7 +27,8 @@ const STATIC_PATHS:string[]=[
   "/get-involved","/county-elections","/voting-locations","/laws","/texas-laws",
   // /candidate-guides remains reachable but is noindex until rebuilt on the
   // verified Election Central data model; do not promote the legacy fixture page.
-  "/laws-to-know","/legislative-updates","/contact","/privacy","/terms-of-service",
+  // /laws-to-know permanently redirects to the richer /laws authority hub.
+  "/legislative-updates","/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/texas-politics",
   "/authors","/texas-economy","/texas-law-policy","/shop",
   // Representative detail pages live only in sitemap-representatives.xml —
