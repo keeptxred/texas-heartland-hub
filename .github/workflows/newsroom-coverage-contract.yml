@@ -1,24 +1,6 @@
 name: Validate Newsroom Coverage Contract
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/lib/viral-score.ts'
-      - 'src/lib/viral-score.test.ts'
-      - 'src/lib/nlp.ts'
-      - 'src/components/admin/NewsCoverageGapPanel.tsx'
-      - 'src/components/admin/NewsSourceHealthPanel.tsx'
-      - 'src/routes/admin.coverage-gaps.tsx'
-      - 'src/routes/admin.source-health.tsx'
-      - 'src/routes/api/public/hooks/ingest-feeds.ts'
-      - 'src/routes/api/public/newsroom-health.ts'
-      - 'scripts/news/validate-coverage-contract.mjs'
-      - 'supabase/migrations/*news*coverage*.sql'
-      - 'supabase/migrations/*news*source*health*.sql'
-      - 'package.json'
-      - 'bun.lock*'
-      - '.github/workflows/newsroom-coverage-contract.yml'
   pull_request:
     branches: [main]
     paths:
