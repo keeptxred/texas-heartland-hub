@@ -5,34 +5,22 @@ on:
     branches:
       - main
     paths:
-      - 'src/components/**'
-      - 'src/routes/**'
-      - 'src/shared/texas-platform/**'
-      - 'src/lib/**'
-      - 'scripts/**'
-      - 'vitest.config.*'
-      - 'vite.config.*'
-      - 'tsconfig*.json'
-      - 'eslint.config.*'
-      - 'package.json'
-      - 'bun.lock*'
-      - '.github/workflows/shared-vitest.yml'
+      - "src/components/**"
+      - "src/routes/**"
+      - "src/shared/platform-core/**"
+      - "src/shared/texas-platform/**"
+      - "src/lib/**"
+      - "scripts/**"
+      - "vitest.config.*"
+      - "vite.config.*"
+      - "tsconfig*.json"
+      - "eslint.config.*"
+      - "package.json"
+      - "bun.lock*"
+      - ".github/workflows/shared-vitest.yml"
   pull_request:
     branches:
       - main
-    paths:
-      - 'src/components/**'
-      - 'src/routes/**'
-      - 'src/shared/texas-platform/**'
-      - 'src/lib/**'
-      - 'scripts/**'
-      - 'vitest.config.*'
-      - 'vite.config.*'
-      - 'tsconfig*.json'
-      - 'eslint.config.*'
-      - 'package.json'
-      - 'bun.lock*'
-      - '.github/workflows/shared-vitest.yml'
   workflow_dispatch:
 
 permissions:
@@ -70,26 +58,20 @@ jobs:
       - name: SEO validation
         run: bun run seo:validate
 
-      # Pull requests already have a dedicated Production Build Validation workflow.
-      # Build here only on main/manual runs so the same PR is not built twice.
+      # The required repository-health check validates the final accumulated PR
+      # diff. A missing or path-skipped companion workflow must not create a gap.
       - name: Production build
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run build
 
-      # Expensive repository-wide domain validations run once on main (or manually),
-      # rather than on every feature-branch push and again after merge.
+      # Run repository-wide policy validators before merge as part of the same
+      # required check, not only after changes have already landed on main.
       - name: Shared platform validation
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run shared:validate
       - name: Shared entity validation
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run shared:entities:validate
       - name: Publication boundary validation
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run publication:validate
       - name: Election validation
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run elections:validate
       - name: Legislature validation
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run legislature:validate

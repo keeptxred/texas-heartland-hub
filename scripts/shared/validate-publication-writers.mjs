@@ -4,12 +4,16 @@ import path from 'node:path';
 const writers = [
   'src/routes/api/public/hooks/generate-news.ts',
   'src/routes/api/public/hooks/generate-evergreen.ts',
-  'src/routes/api/public/hooks/ingest-feeds.ts',
   'src/routes/api/public/hooks/generate-sports.ts',
   'src/routes/api/public/hooks/publishing-safety-net.ts',
+  'src/lib/ingest-feeds-legacy.ts',
   'src/lib/ingest-and-normalize.functions.ts',
 ];
 const maintenanceWriters = new Map([
+  [
+    'src/lib/multi-source-publish.ts',
+    ['body_json', 'source_name'],
+  ],
   [
     'src/lib/ctr-loop.functions.ts',
     ['headline_variants', 'variant_b_impressions', 'variant_b_clicks'],
@@ -23,9 +27,14 @@ const maintenanceWriters = new Map([
     ['gsc_impressions', 'gsc_clicks', 'gsc_last_update'],
   ],
 ]);
-const writerSet = new Set(writers);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
-const sharedWriters = new Set(writers.slice(0, 4));
+const sharedWriters = new Set([
+  'src/routes/api/public/hooks/generate-news.ts',
+  'src/routes/api/public/hooks/generate-evergreen.ts',
+  'src/routes/api/public/hooks/generate-sports.ts',
+  'src/routes/api/public/hooks/publishing-safety-net.ts',
+  'src/lib/ingest-feeds-legacy.ts',
+]);
 const errors = [];
 
 const enrichment = read('src/lib/content-quality.ts');
@@ -62,7 +71,8 @@ if (hasArticleWrite(maintenance)) errors.push('Viral scoring must not publish or
 const guard = read('src/lib/content-publication-guard.ts');
 for (const symbol of [
   'CONTENT_PUBLICATION_BLOCKED',
-  'resolveKeepTxRedPublicationDomain(input.domain, input.title)',
+  'classifyStoryOwnership',
+  'fallbackDomain: resolveKeepTxRedPublicationDomain',
   "return domain === 'politics' ? inferKeepTxRedDomain(domain, context) : domain;",
   "return 'property-tax'",
   "return 'moving'",
