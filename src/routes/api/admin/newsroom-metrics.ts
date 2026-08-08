@@ -25,7 +25,11 @@ export const Route = createFileRoute("/api/admin/newsroom-metrics")({
         const hours = windowHours(request);
         const since = new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data, error } = await supabaseAdmin
+        // cluster_json is deployed by migration but is not yet represented in
+        // the generated Supabase TypeScript schema, so use the runtime client
+        // shape here until generated types are refreshed.
+        const db = supabaseAdmin as any;
+        const { data, error } = await db
           .from("texas_news_feed")
           .select("id,pub_date,internal_slug,cluster_json,viral_signals")
           .gte("pub_date", since)
