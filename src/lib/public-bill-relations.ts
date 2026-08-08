@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { findRepresentativeBySlug } from '@/data/representatives';
 import { getBillRelations } from '@/lib/bills';
 
 const db = supabase as any;
@@ -7,7 +8,9 @@ const db = supabase as any;
  * Public bill pages may expose only approved editorial relationships.
  * Official sponsors, actions, committees, and documents continue to use the
  * established bill relation loader; subjects and articles are replaced with
- * approved-only queries here.
+ * approved-only queries here. Sponsor identity data is preserved, but a public
+ * representative-profile link is exposed only when the slug resolves to the
+ * verified representative directory.
  */
 export async function getPublicBillRelations(billId: string) {
   const base = await getBillRelations(billId);
@@ -46,8 +49,15 @@ export async function getPublicBillRelations(billId: string) {
     ),
   ]);
 
+  const sponsors = (base.sponsors ?? []).map((sponsor: any) => {
+    const slug = String(sponsor.sponsor_slug ?? '').trim();
+    if (!slug || findRepresentativeBySlug(slug)) return sponsor;
+    return { ...sponsor, sponsor_slug: null };
+  });
+
   return {
     ...base,
+    sponsors,
     subjects: subjectRows.map((row: any) => row.bill_subjects).filter(Boolean),
     articles: articleRows
       .map((row: any) =>
