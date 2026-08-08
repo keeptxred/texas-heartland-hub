@@ -2,6 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { listBills, normalizeBillType, type Bill } from '@/lib/bills';
 
 const db = supabase as any;
+const DIRECTORY_PAGE_SIZE = 1000;
 
 export type BillTypeSummary = {
   billType: string;
@@ -18,26 +19,42 @@ export type LegislatureBillDirectory = {
   lastActionDate: string | null;
 };
 
+type DirectoryRow = {
+  id: string;
+  bill_type: string;
+  chamber: Bill['chamber'];
+  last_action_date?: string | null;
+};
+
 function validLegislature(value: number) {
   return Number.isInteger(value) && value > 0 && value < 200;
+}
+
+async function getLegislatureDirectoryRows(legislature: number): Promise<DirectoryRow[]> {
+  const rows: DirectoryRow[] = [];
+  for (let from = 0; ; from += DIRECTORY_PAGE_SIZE) {
+    const { data, error } = await db
+      .from('bills')
+      .select('id,bill_type,chamber,last_action_date')
+      .eq('is_active', true)
+      .eq('legislature_number', legislature)
+      .order('last_action_date', { ascending: false, nullsFirst: false })
+      .order('id')
+      .range(from, from + DIRECTORY_PAGE_SIZE - 1);
+    if (error) throw error;
+    const page = (data ?? []) as DirectoryRow[];
+    rows.push(...page);
+    if (page.length < DIRECTORY_PAGE_SIZE) return rows;
+  }
 }
 
 export async function getLegislatureBillDirectory(legislature: number): Promise<LegislatureBillDirectory | null> {
   if (!validLegislature(legislature)) return null;
 
-  const [{ data, error }, recent] = await Promise.all([
-    db
-      .from('bills')
-      .select('bill_type,chamber,last_action_date')
-      .eq('is_active', true)
-      .eq('legislature_number', legislature)
-      .order('last_action_date', { ascending: false, nullsFirst: false })
-      .limit(50000),
+  const [rows, recent] = await Promise.all([
+    getLegislatureDirectoryRows(legislature),
     listBills({ legislature, limit: 24, offset: 0 }),
   ]);
-
-  if (error) throw error;
-  const rows = (data ?? []) as Array<{ bill_type: string; chamber: Bill['chamber']; last_action_date?: string | null }>;
   if (rows.length === 0) return null;
 
   const grouped = new Map<string, BillTypeSummary>();
