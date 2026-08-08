@@ -3,19 +3,27 @@ name: Production Build Validation
 on:
   pull_request:
     branches: [main]
+    paths:
+      - 'src/**'
+      - 'scripts/**'
+      - 'vite.config.*'
+      - 'tsconfig*.json'
+      - 'package.json'
+      - 'bun.lock*'
+      - '.github/workflows/production-build-validation.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: production-build-${{ github.ref }}
+  group: production-build-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -23,7 +31,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.3.14
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
