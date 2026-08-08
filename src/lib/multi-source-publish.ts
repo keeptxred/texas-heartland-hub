@@ -91,7 +91,8 @@ async function writeClusterMetadata(
   slug?: string,
   development?: { kind: "confirmation" | "follow_up"; novelty?: StoryNovelty },
 ): Promise<void> {
-  const ids = [cluster.primary, ...cluster.members]
+  const rows = [cluster.primary, ...cluster.members];
+  const ids = rows
     .map((row) => row.id)
     .filter((id): id is number => typeof id === "number");
   if (!ids.length) return;
@@ -108,7 +109,16 @@ async function writeClusterMetadata(
   const { error } = await supabaseAdmin.from("texas_news_feed").update({ cluster_json: metadata }).in("id", ids);
   if (error) console.warn("[multi-source] cluster metadata not persisted", error.message);
   if (slug) {
-    await supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).in("id", ids);
+    // Never repoint a feed item that already belongs to an earlier published
+    // article. On a material follow-up only the new/unpublished cluster rows
+    // should link to the follow-up slug; the original article keeps its sources.
+    const linkableIds = rows
+      .filter((row) => !row.internal_slug)
+      .map((row) => row.id)
+      .filter((id): id is number => typeof id === "number");
+    if (linkableIds.length) {
+      await supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).in("id", linkableIds);
+    }
   }
 }
 
