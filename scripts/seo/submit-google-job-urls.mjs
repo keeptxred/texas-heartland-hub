@@ -38,7 +38,6 @@ function validateManifest(manifest) {
     const parsed = new URL(url);
     if (
       parsed.origin !== ALLOWED_ORIGIN ||
-      !parsed.pathname.startsWith("/jobs/") ||
       parsed.username ||
       parsed.password ||
       parsed.hash
