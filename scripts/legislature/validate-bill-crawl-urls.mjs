@@ -27,6 +27,17 @@ const checks = [
     ],
   },
   {
+    file: 'src/routes/bills/subject/$subjectSlug.tsx',
+    required: [
+      "import { createFileRoute, Link, notFound, stripSearchParams } from '@tanstack/react-router'",
+      'middlewares: [stripSearchParams(DEFAULT_SUBJECT_SEARCH)]',
+      'loaderDeps: ({ search }) => search',
+      'function hasSubjectFilters(search: SubjectSearch): boolean',
+      'bills.length === 0 || hasSubjectFilters(search)',
+      "'noindex,follow,max-image-preview:large'",
+    ],
+  },
+  {
     file: 'src/start.ts',
     required: [
       'function isIndexableBillPagination(url: URL): boolean',

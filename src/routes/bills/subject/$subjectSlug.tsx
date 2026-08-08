@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound } from '@tanstack/react-router';
+import { createFileRoute, Link, notFound, stripSearchParams } from '@tanstack/react-router';
 import { canonicalBillPath, SITE_URL } from '@/lib/bills';
 import {
   getBillSubjectBySlug,
@@ -36,6 +36,10 @@ function normalizeSubjectSearch(search: Record<string, unknown>): SubjectSearch 
   };
 }
 
+function hasSubjectFilters(search: SubjectSearch): boolean {
+  return search.legislature > 0 || Boolean(search.status) || search.law;
+}
+
 const formatDate = (value?: string | null) => value
   ? new Date(`${value}T12:00:00`).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -46,15 +50,19 @@ const formatDate = (value?: string | null) => value
 
 export const Route = createFileRoute('/bills/subject/$subjectSlug')({
   validateSearch: normalizeSubjectSearch,
-  loader: async ({ params }) => {
+  search: {
+    middlewares: [stripSearchParams(DEFAULT_SUBJECT_SEARCH)],
+  },
+  loaderDeps: ({ search }) => search,
+  loader: async ({ params, deps }) => {
     const subject = await getBillSubjectBySlug(params.subjectSlug);
     if (!subject) throw notFound();
     const bills = await getBillsForSubject(subject.id);
-    return { subject, bills };
+    return { subject, bills, search: deps };
   },
   head: ({ loaderData }) => {
     if (!loaderData) return {};
-    const { subject, bills } = loaderData;
+    const { subject, bills, search } = loaderData;
     const canonical = `${SITE_URL}/bills/subject/${subject.slug}`;
     const description = `Track ${bills.length} active Texas bills classified under ${subject.name}, with current status and official legislative records.`;
     const meta = [
@@ -65,8 +73,8 @@ export const Route = createFileRoute('/bills/subject/$subjectSlug')({
       { property: 'og:url', content: canonical },
     ];
 
-    if (bills.length === 0) {
-      meta.push({ name: 'robots', content: 'noindex,follow' });
+    if (bills.length === 0 || hasSubjectFilters(search)) {
+      meta.push({ name: 'robots', content: 'noindex,follow,max-image-preview:large' });
     }
 
     return {
@@ -128,7 +136,7 @@ function BillSubjectPage() {
     return true;
   });
   const latestActivity = filteredBills.find((bill: BillSubjectBill) => bill.last_action_date);
-  const hasFilters = search.legislature > 0 || Boolean(search.status) || search.law;
+  const hasFilters = hasSubjectFilters(search);
 
   const updateSearch = (patch: Partial<SubjectSearch>) => {
     void navigate({
