@@ -5,6 +5,7 @@ import {
   renderUrlset,
   xmlResponse,
   toIsoDate,
+  latestIsoDate,
   absUrl,
   isRealImage,
   type UrlEntry,
@@ -63,7 +64,7 @@ export const Route = createFileRoute("/sitemap-images.xml")({
               `${BASE_URL}/news/${a.slug}`,
               a.image_url,
               a.title,
-              toIsoDate(a.updated_at || a.published_at),
+              latestIsoDate(a.published_at, a.updated_at),
               a.title,
             );
           }
