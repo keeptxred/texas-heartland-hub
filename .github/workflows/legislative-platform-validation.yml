@@ -24,29 +24,6 @@ on:
       - 'supabase/migrations/**bill**'
       - 'supabase/migrations/**legislative**'
       - '.github/workflows/legislative-platform-validation.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'package.json'
-      - 'src/start.ts'
-      - 'src/routes/bills/**'
-      - 'src/routes/admin/bills/**'
-      - 'src/routes/news.$slug.tsx'
-      - 'src/components/bills/**'
-      - 'src/components/newsletter-signup.tsx'
-      - 'src/lib/bills.ts'
-      - 'src/lib/bill-hierarchy.ts'
-      - 'src/lib/bill-subjects.ts'
-      - 'src/lib/article-bills.ts'
-      - 'src/lib/bill-analysis-summary.ts'
-      - 'src/lib/bill-fiscal-impact.ts'
-      - 'src/lib/bill-source-agencies.ts'
-      - 'src/lib/bill-witness-summary.ts'
-      - 'src/lib/legislative-sitemaps.ts'
-      - 'scripts/legislature/**'
-      - 'supabase/migrations/**bill**'
-      - 'supabase/migrations/**legislative**'
-      - '.github/workflows/legislative-platform-validation.yml'
   workflow_dispatch:
 
 permissions:
