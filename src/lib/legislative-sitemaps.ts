@@ -89,7 +89,7 @@ function hierarchyEntries(bills: SitemapBill[]): UrlEntry[] {
   for (const bill of bills) {
     const billType = String(bill.bill_type ?? '').trim().toLowerCase();
     if (!bill.legislature_number || !billType) continue;
-    const date = bill.last_action_date || bill.updated_at;
+    const date = newestDate([bill.last_action_date, bill.updated_at]);
     const legislatureValues = legislatureDates.get(bill.legislature_number) ?? [];
     legislatureValues.push(date);
     legislatureDates.set(bill.legislature_number, legislatureValues);
@@ -188,16 +188,16 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
   };
   const sitemapBills = billRows.filter((bill) => isSitemapWorthyBill(bill, evidence));
   const billsLastmod = newestDate([
-    ...sitemapBills.map((bill) => bill.last_action_date || bill.updated_at),
+    ...sitemapBills.flatMap((bill) => [bill.last_action_date, bill.updated_at]),
     ...sitemapSubjects.map((subject) => subject.updated_at),
   ]);
 
   return [
     { loc: absUrl('/bills'), lastmod: billsLastmod },
-    ...hierarchyEntries(billRows),
+    ...hierarchyEntries(sitemapBills),
     ...sitemapBills.map((bill) => ({
       loc: absUrl(canonicalBillPath(bill)),
-      lastmod: toIsoDate(bill.last_action_date || bill.updated_at) || undefined,
+      lastmod: newestDate([bill.last_action_date, bill.updated_at]),
     })),
     ...sitemapSubjects.map((subject) => ({
       loc: absUrl(`/bills/subject/${subject.slug}`),
