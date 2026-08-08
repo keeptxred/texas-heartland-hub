@@ -29,13 +29,17 @@ async function createPrintifyOrder(
     console.error("Printify credentials missing — cannot create order", externalId);
     return null;
   }
-  const line_items = cart
-    .filter((i) => i.v != null)
-    .map((i) => ({
-      product_id: i.p,
-      variant_id: i.v,
-      quantity: i.q,
-    }));
+
+  if (cart.some((item) => !item.p || item.v == null || !Number.isInteger(item.v) || !Number.isInteger(item.q) || item.q < 1)) {
+    console.error("Malformed or unfulfillable cart — refusing partial Printify order", externalId, cart);
+    return null;
+  }
+
+  const line_items = cart.map((i) => ({
+    product_id: i.p,
+    variant_id: i.v as number,
+    quantity: i.q,
+  }));
 
   if (line_items.length === 0) {
     console.error("No fulfillable line items for Printify order", externalId);
