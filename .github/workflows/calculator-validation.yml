@@ -22,27 +22,7 @@ on:
       - "bun.lock"
       - "tsconfig.calculators.json"
       - ".github/workflows/calculator-validation.yml"
-  push:
-    branches: [main]
-    paths:
-      - "src/components/calculators/**"
-      - "src/components/budget/**"
-      - "src/components/closingCosts/**"
-      - "src/components/cost/**"
-      - "src/components/downPayment/**"
-      - "src/components/equity/**"
-      - "src/components/home/**"
-      - "src/components/homeAffordability/**"
-      - "src/components/income/**"
-      - "src/components/mortgage/**"
-      - "src/data/{budget,closingCosts,cost,downPayment,equity,home,homeAffordability,income,mortgage}/**"
-      - "src/lib/{budget,closingCosts,cost,downPayment,equity,home,homeAffordability,income,mortgage,calculators}/**"
-      - "src/pages/{budget,closingCosts,cost,downPayment,equity,home,homeAffordability,income,mortgage}/**"
-      - "src/types/{budget,closingCosts,cost,downPayment,equity,home,homeAffordability,income,mortgage}/**"
-      - "package.json"
-      - "bun.lock"
-      - "tsconfig.calculators.json"
-      - ".github/workflows/calculator-validation.yml"
+  workflow_dispatch:
 
 permissions:
   contents: read
