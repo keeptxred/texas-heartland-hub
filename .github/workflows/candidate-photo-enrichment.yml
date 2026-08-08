@@ -2,6 +2,8 @@ name: Candidate photo enrichment
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "30 13 * * 1"
 
 permissions:
   contents: write
