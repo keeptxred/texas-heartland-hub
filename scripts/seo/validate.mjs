@@ -102,16 +102,21 @@ if (/DEFAULT_STATIC_PAGE_LASTMOD/.test(staticSitemap)) {
 if (!/lastmod:STATIC_PAGE_LASTMOD_OVERRIDES\[path\]\s*\|\|\s*undefined/.test(staticSitemap)) {
   fail("src/routes/sitemap-pages[.]xml.ts", "static sitemap must omit lastmod when no trustworthy page revision date is known");
 }
-for (const retiredPath of [
-  "/texas-news",
-  "/candidate-guides",
-  "/legislative-updates",
-  "/laws-to-know",
-  "/voting-locations",
-  "/terms",
-]) {
-  if (staticSitemap.includes(`"${retiredPath}"`)) {
-    fail("src/routes/sitemap-pages[.]xml.ts", `redirected or noindex legacy route must not be promoted in the static sitemap: ${retiredPath}`);
+
+for (const [file, source] of contents) {
+  if (!file.startsWith("src/routes/") || !file.endsWith(".tsx")) continue;
+  const routeMatch = source.match(/createFileRoute\(["']([^"']+)["']\)/);
+  if (!routeMatch) continue;
+  const routePath = routeMatch[1];
+  if (!routePath.startsWith("/") || routePath.includes("$") || routePath.includes("*")) continue;
+
+  const redirects = /\bredirect\s*\(\s*\{/.test(source);
+  const explicitlyNoindex = /name:\s*["']robots["'][\s\S]{0,160}content:\s*["'][^"']*noindex/i.test(source);
+  if ((redirects || explicitlyNoindex) && staticSitemap.includes(`"${routePath}"`)) {
+    fail(
+      "src/routes/sitemap-pages[.]xml.ts",
+      `static sitemap must not promote a route that redirects or explicitly noindexes itself: ${routePath} (${file})`,
+    );
   }
 }
 
