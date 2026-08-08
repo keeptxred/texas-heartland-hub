@@ -29,27 +29,38 @@ export type DailyArticle = {
 
 type DailyArticleRow = DailyArticle & { body_json?: unknown };
 
+const ARTICLE_PAGE_SIZE = 1000;
+
 async function loadPublishedDailyArticles(limit: number): Promise<DailyArticle[]> {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !key) return [];
+  if (!url || !key || limit <= 0) return [];
 
   const supabase = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  const { data, error } = await supabase
-    .from("daily_articles")
-    .select("slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json")
-    .order("published_at", { ascending: false })
-    .limit(limit);
+  const rows: DailyArticleRow[] = [];
+  for (let from = 0; from < limit; from += ARTICLE_PAGE_SIZE) {
+    const pageSize = Math.min(ARTICLE_PAGE_SIZE, limit - from);
+    const { data, error } = await supabase
+      .from("daily_articles")
+      .select("slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json")
+      .order("published_at", { ascending: false })
+      .order("slug", { ascending: true })
+      .range(from, from + pageSize - 1);
 
-  if (error) {
-    console.error("loadPublishedDailyArticles failed", error);
-    return [];
+    if (error) {
+      console.error("loadPublishedDailyArticles failed", error);
+      return [];
+    }
+
+    const page = (data ?? []) as DailyArticleRow[];
+    rows.push(...page);
+    if (page.length < pageSize) break;
   }
 
-  return ((data ?? []) as DailyArticleRow[])
+  return rows
     .filter((article) => meetsArticleMainWordCount(article.kind, article.body_json as never))
     .map(({ body_json: _bodyJson, ...article }) => article);
 }
@@ -76,8 +87,8 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
 
 export const getPublishedAuthorArticles = createServerFn({ method: "GET" }).handler(async () => {
   // Author discovery must not depend on the homepage's 30-story display window.
-  // Pull a broad publication history so active desks with older recent bylines
-  // remain indexable and discoverable even when they are not in today's feed.
-  const articles = dedupeByTitle(await loadPublishedDailyArticles(1000));
+  // Page through a broad publication history so active desks with older bylines
+  // remain indexable and discoverable even after the newsroom exceeds one API page.
+  const articles = dedupeByTitle(await loadPublishedDailyArticles(5000));
   return { articles };
 });
