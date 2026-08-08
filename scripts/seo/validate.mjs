@@ -111,11 +111,17 @@ for (const [file, source] of contents) {
   if (!routePath.startsWith("/") || routePath.includes("$") || routePath.includes("*")) continue;
 
   const redirects = /\bredirect\s*\(\s*\{/.test(source);
-  const explicitlyNoindex = /name:\s*["']robots["'][\s\S]{0,160}content:\s*["'][^"']*noindex/i.test(source);
-  if ((redirects || explicitlyNoindex) && staticSitemap.includes(`"${routePath}"`)) {
+  // Only treat a static no-argument head as an always-noindex page. Dynamic
+  // heads such as `head: ({ match }) => ...` legitimately noindex filtered
+  // query states while keeping the clean route itself indexable.
+  const staticHeadMatch = source.match(/head:\s*\(\)\s*=>\s*\(\{([\s\S]*?)\n\s*\}\),/);
+  const alwaysNoindex = staticHeadMatch
+    ? /name:\s*["']robots["'][\s\S]{0,160}content:\s*["'][^"']*noindex/i.test(staticHeadMatch[1])
+    : false;
+  if ((redirects || alwaysNoindex) && staticSitemap.includes(`"${routePath}"`)) {
     fail(
       "src/routes/sitemap-pages[.]xml.ts",
-      `static sitemap must not promote a route that redirects or explicitly noindexes itself: ${routePath} (${file})`,
+      `static sitemap must not promote a route that redirects or is always noindex: ${routePath} (${file})`,
     );
   }
 }
