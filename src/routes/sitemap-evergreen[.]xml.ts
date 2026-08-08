@@ -5,6 +5,7 @@ import {
   renderUrlset,
   xmlResponse,
   toIsoDate,
+  latestIsoDate,
   isArticleSlugDateConsistent,
   type UrlEntry,
 } from "@/lib/sitemap-shared";
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/sitemap-evergreen.xml")({
             if (!isArticleSlugDateConsistent(a.slug, a.published_at)) continue;
             entries.push({
               loc: `${BASE_URL}/news/${a.slug}`,
-              lastmod: toIsoDate(a.updated_at || a.published_at),
+              lastmod: latestIsoDate(a.published_at, a.updated_at),
             });
           }
         } catch (e) {
