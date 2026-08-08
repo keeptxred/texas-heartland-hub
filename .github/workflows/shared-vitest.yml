@@ -64,7 +64,11 @@ jobs:
         run: bun run test
       - name: Route generation and TypeScript
         run: bun run typecheck
+
+      # Pull requests already have a dedicated Production Build Validation workflow.
+      # Build here only on main/manual runs so the same PR is not built twice.
       - name: Production build
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run build
 
       # Repository-wide domain validations run once on main (or manually), rather
