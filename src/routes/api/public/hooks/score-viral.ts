@@ -317,7 +317,6 @@ async function scoreRecent(request: Request) {
   autoPublishCandidates.sort((a, b) =>
     b.score - a.score || Date.parse(b.pubDate) - Date.parse(a.pubDate),
   );
-  const selectedForAutoPublish = autoPublishCandidates.slice(0, AUTO_PUBLISH_PER_RUN);
   const autoPublishResults: Array<{
     id: number;
     ok: boolean;
@@ -326,8 +325,17 @@ async function scoreRecent(request: Request) {
     alreadyPublished?: boolean;
     reviewRequired?: boolean;
   }> = [];
+  let successfulAutoPublishes = 0;
+  let autoPublishAttempted = 0;
+  let autoPublishStoppedReason: "target_reached" | "budget_exhausted" | "candidates_exhausted" = "candidates_exhausted";
 
-  for (const candidate of selectedForAutoPublish) {
+  for (const candidate of autoPublishCandidates) {
+    if (successfulAutoPublishes >= AUTO_PUBLISH_PER_RUN) {
+      autoPublishStoppedReason = "target_reached";
+      break;
+    }
+
+    autoPublishAttempted += 1;
     try {
       const result = await publishSingleFeedItem(candidate.id);
 
@@ -382,6 +390,12 @@ async function scoreRecent(request: Request) {
       }
 
       autoPublishResults.push({ id: candidate.id, ...result });
+      if (result.ok && !result.alreadyPublished) successfulAutoPublishes += 1;
+
+      if (!result.ok && /daily ai rewrite budget reached/i.test(result.error ?? "")) {
+        autoPublishStoppedReason = "budget_exhausted";
+        break;
+      }
     } catch (error) {
       autoPublishResults.push({
         id: candidate.id,
@@ -389,6 +403,10 @@ async function scoreRecent(request: Request) {
         error: error instanceof Error ? error.message : String(error),
       });
     }
+  }
+
+  if (successfulAutoPublishes >= AUTO_PUBLISH_PER_RUN) {
+    autoPublishStoppedReason = "target_reached";
   }
 
   return json({
@@ -400,8 +418,11 @@ async function scoreRecent(request: Request) {
     readyFlagged,
     autoPublishFlagged,
     reviewFlagged,
-    autoPublishAttempted: selectedForAutoPublish.length,
-    autoPublished: autoPublishResults.filter((r) => r.ok && !r.alreadyPublished).length,
+    autoPublishCandidatePool: autoPublishCandidates.length,
+    autoPublishTarget: AUTO_PUBLISH_PER_RUN,
+    autoPublishAttempted,
+    autoPublished: successfulAutoPublishes,
+    autoPublishStoppedReason,
     postRewriteReviewBlocked,
     autoPublishResults,
     reelsQueued,
