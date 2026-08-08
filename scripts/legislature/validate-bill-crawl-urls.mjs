@@ -34,6 +34,17 @@ const checks = [
       'result.response.headers.set("X-Robots-Tag", "noindex, follow")',
     ],
   },
+  {
+    file: 'src/lib/bills.ts',
+    required: [
+      "const BILL_DIRECTORY_PAGE_SIZE = 1000;",
+      ".order('last_action_date', { ascending: false, nullsFirst: false })",
+      ".order('id', { ascending: true })",
+      ".range(from, from + BILL_DIRECTORY_PAGE_SIZE - 1)",
+      '`${SITE_URL}/bills/texas/${bill.legislature_number}`',
+      '`${SITE_URL}/bills/texas/${bill.legislature_number}/${billType}`',
+    ],
+  },
 ];
 
 const errors = [];
@@ -42,6 +53,11 @@ for (const check of checks) {
   for (const token of check.required) {
     if (!source.includes(token)) errors.push(`${check.file} missing crawl URL contract: ${token}`);
   }
+}
+
+const bills = await readFile('src/lib/bills.ts', 'utf8');
+if (bills.includes('`${SITE_URL}/bills?legislature=${bill.legislature_number}`')) {
+  errors.push('bill structured breadcrumbs must not point to the filtered/noindex legislature URL');
 }
 
 const robots = await readFile('src/routes/robots[.]txt.ts', 'utf8');
