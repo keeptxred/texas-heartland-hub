@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
-export { publishSingleFeedItem, isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
+export { publishSingleFeedItem } from "@/lib/multi-source-publish";
+export { isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
 type Item = {
   title: string;
@@ -35,26 +36,18 @@ type FetchResult = {
 // rotating supplemental discovery layer below so a Google outage cannot blind
 // KeepTXRed to the statewide/local stories readers expect.
 const DIRECT_SOURCES: Source[] = [
-  // State government / institutions
   { name: "Office of the Governor", url: "https://gov.texas.gov/news/rss", mode: "rss" },
   { name: "Texas Secretary of State", url: "https://www.sos.state.tx.us/rss/press.xml", mode: "rss" },
   { name: "Texas Register", url: "https://www.sos.state.tx.us/texreg/texreg.xml", mode: "rss" },
   { name: "Texas Comptroller", url: "https://public.govdelivery.com/topics/TXCOMPT_1/feed.rss", mode: "rss" },
   { name: "UIL Press Releases", url: "https://feeds.feedburner.com/uil-press-releases", category: "Sports", mode: "rss" },
   { name: "Texas Parks & Wildlife", url: "https://tpwd.texas.gov/newsmedia/releases/", category: "Non-Political", mode: "tpwd-html" },
-
-  // Statewide / major Texas newsrooms
   { name: "Texas Monthly", url: "https://www.texasmonthly.com/feed/", category: "Non-Political", mode: "rss" },
   { name: "Texas Standard", url: "https://www.texasstandard.org/feed/", category: "Non-Political", mode: "rss" },
   { name: "Texas Tribune", url: "https://feeds.texastribune.org/feeds/main/", mode: "rss" },
   { name: "Houston Public Media", url: "https://www.houstonpublicmedia.org/feed/", mode: "rss" },
-
-  // San Antonio: direct RSS for local news and Spurs coverage
   { name: "KSAT San Antonio Local", url: "https://www.ksat.com/arc/outboundfeeds/rss/category/news/local/?outputType=xml&size=25", mode: "rss" },
   { name: "KSAT Spurs", url: "https://www.ksat.com/arc/outboundfeeds/rss/tags_slug/spurs/?outputType=xml&size=25", category: "Sports", mode: "rss" },
-
-  // Federal releases with a Texas filter. This catches airport/border/customs
-  // stories at the primary source before they are rewritten by local outlets.
   {
     name: "CBP Texas Local Releases",
     url: "https://www.cbp.gov/newsroom/media-releases/all?combine=&field_date_release_value=All&field_newsroom_type_target_id_1=54&items_per_page=25&sort_bef_combine=sort_by_DESC&tid_1=All",
@@ -62,27 +55,13 @@ const DIRECT_SOURCES: Source[] = [
     include: "^/newsroom/(local-media-release|media-releases)/",
     texasOnly: true,
   },
-
-  // South Texas / Laredo
   { name: "Laredo Morning Times", url: "https://www.lmtonline.com/local/", mode: "html-links", include: "^/local/" },
-
-  // Panhandle / Amarillo
   { name: "NewsChannel 10 Amarillo", url: "https://www.newschannel10.com/news/", mode: "html-links", include: "^/20\\d{2}/" },
-
-  // Killeen / Temple / Waco / Central Texas
   { name: "KCEN Central Texas", url: "https://www.kcentv.com/", mode: "html-links", include: "^/article/news/(local|community|education|military)/" },
-
-  // Dallas civic/community: official City Hall source plus a broad local outlet
   { name: "City of Dallas News", url: "https://www.dallascitynews.net/", mode: "html-links", include: "^/20\\d{2}/" },
   { name: "WFAA Dallas Local", url: "https://www.wfaa.com/", mode: "html-links", include: "^/article/news/local/" },
-
-  // Existing direct pro-football feeds
   { name: "Dallas Cowboys", url: "https://www.dallascowboys.com/rss/news", category: "Sports", mode: "rss" },
   { name: "Houston Texans", url: "https://www.houstontexans.com/rss/news", category: "Sports", mode: "rss" },
-
-  // Texas sports expansion. Official team/school newsrooms are scraped only for
-  // article links; article bodies are still fetched later by the normal rewrite
-  // pipeline, so these remain discovery sources rather than copied content.
   { name: "Dallas Mavericks", url: "https://www.mavs.com/news/", category: "Sports", mode: "html-links", include: "^/news/" },
   { name: "San Antonio Spurs", url: "https://www.nba.com/spurs/news", category: "Sports", mode: "html-links", include: "^/spurs/news/" },
   { name: "Texas Rangers", url: "https://www.mlb.com/rangers/news", category: "Sports", mode: "html-links", include: "^/rangers/news/" },
@@ -91,8 +70,6 @@ const DIRECT_SOURCES: Source[] = [
   { name: "Texas Longhorns", url: "https://texaslonghorns.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
   { name: "Texas A&M Aggies", url: "https://12thman.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
   { name: "Texas Tech Athletics", url: "https://texastech.com/news/", category: "Sports", mode: "html-links", include: "^/news/20\\d{2}/" },
-
-  // Severe weather/tropical first-party source
   { name: "National Hurricane Center", url: "https://www.nhc.noaa.gov/index-at.xml", category: "Weather", mode: "rss" },
 ];
 
@@ -145,7 +122,6 @@ function parseFeed(xml: string, fallbackSource: string): Item[] {
     const rawDate = pick(block, "pubDate") || pick(block, "updated") || pick(block, "published");
     const description = pick(block, "description") || pick(block, "summary") || pick(block, "content");
     if (!title || !link || isLowValueTitle(title)) continue;
-
     let source = fallbackSource;
     if (GOOGLE_NEWS_RE.test(link) || /news\.google\.com/i.test(link)) {
       const parts = title.split(" - ");
@@ -154,7 +130,6 @@ function parseFeed(xml: string, fallbackSource: string): Item[] {
         title = parts.join(" - ").trim() || title;
       }
     }
-
     items.push({
       title: title.slice(0, 500),
       link,
@@ -180,14 +155,12 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
   const include = source.include ? new RegExp(source.include, "i") : null;
   const base = new URL(source.url);
   const re = /<a\b[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi;
-
   for (const match of html.matchAll(re)) {
     const href = match[1].trim();
     const link = absoluteUrl(href, source.url);
     const title = decode(match[2]);
     if (!link || !title || title.length < 18 || title.length > 240 || isLowValueTitle(title)) continue;
     if (HTML_NAV_RE.test(title) && title.split(/\s+/).length <= 5) continue;
-
     let parsed: URL;
     try {
       parsed = new URL(link);
@@ -197,7 +170,6 @@ function parseHtmlLinks(html: string, source: Source): Item[] {
     if (parsed.hostname !== base.hostname && !parsed.hostname.endsWith(`.${base.hostname}`)) continue;
     if (include && !include.test(parsed.pathname)) continue;
     if (source.texasOnly && !TEXAS_LOCATION_RE.test(`${title} ${parsed.pathname}`)) continue;
-
     const cleanLink = `${parsed.origin}${parsed.pathname}${parsed.search}`;
     if (seen.has(cleanLink)) continue;
     seen.add(cleanLink);
@@ -222,13 +194,7 @@ function parseTpwdHtml(html: string): Item[] {
     const title = decode(match[2]);
     if (!link || !title || title.length < 12 || seen.has(link) || isLowValueTitle(title)) continue;
     seen.add(link);
-    out.push({
-      title: title.slice(0, 500),
-      link,
-      pub_date: new Date().toISOString(),
-      source: "Texas Parks & Wildlife",
-      description: title,
-    });
+    out.push({ title: title.slice(0, 500), link, pub_date: new Date().toISOString(), source: "Texas Parks & Wildlife", description: title });
     if (out.length >= 25) break;
   }
   return out;
@@ -244,24 +210,13 @@ function parseTexasStandardHtml(html: string): Item[] {
     if (!link.includes("texasstandard.org/") || /\/(about|contact|archive|subscribe|faq)\/?$/i.test(link)) continue;
     if (!title || title.length < 25 || title.length > 220 || seen.has(link) || isLowValueTitle(title)) continue;
     seen.add(link);
-    out.push({
-      title: title.slice(0, 500),
-      link,
-      pub_date: new Date().toISOString(),
-      source: "Texas Standard",
-      description: title,
-    });
+    out.push({ title: title.slice(0, 500), link, pub_date: new Date().toISOString(), source: "Texas Standard", description: title });
     if (out.length >= 20) break;
   }
   return out;
 }
 
-async function fetchText(
-  url: string,
-  accept: string,
-  maxAttempts = 3,
-  timeoutMs = 25000,
-): Promise<{ status: number; text: string | null; attempts: number; error?: string }> {
+async function fetchText(url: string, accept: string, maxAttempts = 3, timeoutMs = 25000): Promise<{ status: number; text: string | null; attempts: number; error?: string }> {
   let lastStatus = 0;
   let lastError = "request failed";
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -306,17 +261,14 @@ function normalizeDbSource(row: { source_name: string; rss_url: string | null; c
   const name = row.source_name;
   let url = (row.rss_url ?? "").trim();
   if (!url) return null;
-
   if (/tpwd\.texas\.gov\/newsmedia\/releases\/rss\/?/i.test(url)) {
     return { name: "Texas Parks & Wildlife", url: "https://tpwd.texas.gov/newsmedia/releases/", category: row.category, mode: "tpwd-html" };
   }
-
   if (/youtube\.com\/feeds\/videos\.xml\?user=/i.test(url)) {
     const verified = VERIFIED_YOUTUBE.get(name);
     if (!verified) return null;
     url = verified;
   }
-
   return { name, url, category: row.category, mode: "rss" };
 }
 
@@ -325,14 +277,8 @@ async function loadSources(): Promise<{ sources: Source[]; skippedLegacyYoutube:
   const list: Source[] = [...DIRECT_SOURCES];
   const seen = new Set(list.map((source) => `${source.mode}:${source.url.toLowerCase()}`));
   let skippedLegacyYoutube = 0;
-
-  const { data, error } = await supabaseAdmin
-    .from("content_sources")
-    .select("source_name,rss_url,category,enabled")
-    .eq("enabled", true)
-    .not("rss_url", "is", null);
+  const { data, error } = await supabaseAdmin.from("content_sources").select("source_name,rss_url,category,enabled").eq("enabled", true).not("rss_url", "is", null);
   if (error) console.warn("[ingest-feeds] content_sources read failed", error.message);
-
   for (const row of (data ?? []) as Array<{ source_name: string; rss_url: string | null; category: string | null }>) {
     const normalized = normalizeDbSource(row);
     if (!normalized) {
@@ -348,12 +294,7 @@ async function loadSources(): Promise<{ sources: Source[]; skippedLegacyYoutube:
 }
 
 function isTexasRelevant(item: Item): boolean {
-  const result = scoreFeedItem({
-    title: item.title,
-    source: item.source,
-    pub_date: item.pub_date,
-    description: item.description,
-  });
+  const result = scoreFeedItem({ title: item.title, source: item.source, pub_date: item.pub_date, description: item.description });
   return result.texasRelevanceScore >= TEXAS_RELEVANCE_MIN;
 }
 
@@ -369,62 +310,26 @@ function rotateGoogleSources(sources: Source[]): Source[] {
 async function fetchSource(source: Source): Promise<FetchResult> {
   const isGoogle = GOOGLE_NEWS_RE.test(source.url);
   const isHtmlLinks = source.mode === "html-links";
-  const accept = source.mode === "rss"
-    ? "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*"
-    : "text/html,application/xhtml+xml,*/*";
-  const fetched = await fetchText(
-    source.url,
-    accept,
-    isGoogle ? 2 : isHtmlLinks ? 1 : 3,
-    isGoogle ? 10000 : isHtmlLinks ? 12000 : 25000,
-  );
-
+  const accept = source.mode === "rss" ? "application/rss+xml,application/atom+xml,application/xml,text/xml,*/*" : "text/html,application/xhtml+xml,*/*";
+  const fetched = await fetchText(source.url, accept, isGoogle ? 2 : isHtmlLinks ? 1 : 3, isGoogle ? 10000 : isHtmlLinks ? 12000 : 25000);
   if (!fetched.text && source.name === "Texas Standard" && source.mode === "rss") {
     const fallback = await fetchText("https://texasstandard.org/", "text/html,application/xhtml+xml,*/*", 2, 15000);
-    return {
-      source: source.name,
-      url: "https://texasstandard.org/",
-      status: fallback.status,
-      attempts: fetched.attempts + fallback.attempts,
-      mode: "texas-standard-html",
-      items: fallback.text ? parseTexasStandardHtml(fallback.text) : [],
-      error: fallback.text ? undefined : fallback.error,
-    };
+    return { source: source.name, url: "https://texasstandard.org/", status: fallback.status, attempts: fetched.attempts + fallback.attempts, mode: "texas-standard-html", items: fallback.text ? parseTexasStandardHtml(fallback.text) : [], error: fallback.text ? undefined : fallback.error };
   }
-
-  if (!fetched.text) {
-    return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: [], error: fetched.error };
-  }
-
-  const items = source.mode === "tpwd-html"
-    ? parseTpwdHtml(fetched.text)
-    : source.mode === "html-links"
-      ? parseHtmlLinks(fetched.text, source)
-      : parseFeed(fetched.text, source.name);
-  return {
-    source: source.name,
-    url: source.url,
-    status: fetched.status,
-    attempts: fetched.attempts,
-    mode: source.mode,
-    items: items.slice(0, isGoogle ? 20 : 30),
-  };
+  if (!fetched.text) return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: [], error: fetched.error };
+  const items = source.mode === "tpwd-html" ? parseTpwdHtml(fetched.text) : source.mode === "html-links" ? parseHtmlLinks(fetched.text, source) : parseFeed(fetched.text, source.name);
+  return { source: source.name, url: source.url, status: fetched.status, attempts: fetched.attempts, mode: source.mode, items: items.slice(0, isGoogle ? 20 : 30) };
 }
 
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { sources, skippedLegacyYoutube } = await loadSources();
-
   const direct = sources.filter((source) => !GOOGLE_NEWS_RE.test(source.url));
   const allGoogle = sources.filter((source) => GOOGLE_NEWS_RE.test(source.url));
   const google = rotateGoogleSources(allGoogle);
-
-  // Direct publishers run every cycle. HTML discovery gets one bounded request
-  // per source, while Google News remains capped and rotated.
   const directResults = await mapWithConcurrency(direct, 8, fetchSource);
   const googleResults = await mapWithConcurrency(google, 4, fetchSource);
   const results = [...directResults, ...googleResults];
-
   const unique = new Map<string, Item>();
   for (const result of results) {
     for (const item of result.items) {
@@ -433,16 +338,12 @@ async function handler() {
     }
   }
   const rows = [...unique.values()];
-
   let inserted = 0;
   if (rows.length > 0) {
-    const { count, error } = await supabaseAdmin
-      .from("texas_news_feed")
-      .upsert(rows, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
+    const { count, error } = await supabaseAdmin.from("texas_news_feed").upsert(rows, { onConflict: "link", ignoreDuplicates: true, count: "exact" });
     if (error) return Response.json({ ok: false, error: error.message }, { status: 500 });
     inserted = count ?? 0;
   }
-
   const diag = results.map(({ items, ...rest }) => ({ ...rest, count: items.length }));
   return Response.json({
     ok: true,
@@ -463,10 +364,5 @@ async function handler() {
 }
 
 export const Route = createFileRoute("/api/public/hooks/ingest-feeds")({
-  server: {
-    handlers: {
-      GET: handler,
-      POST: handler,
-    },
-  },
+  server: { handlers: { GET: handler, POST: handler } },
 });
