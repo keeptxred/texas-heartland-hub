@@ -30,6 +30,7 @@ const DISCOVERY_FEEDS = [
 ] as const;
 
 const AUTO_PUBLISH_PER_RUN = 6;
+const MAX_AUTO_PUBLISH_ATTEMPTS_PER_RUN = 18;
 
 const POST_REWRITE_REVIEW_RE =
   /\b(election|elections|candidate|candidates|campaign|campaigns|ballot|ballots|voter|voters|voting|primary|runoff|poll|polls|polling|redistrict(?:ing)?|lawsuit|sues?|sued|court|judge|ruling|injunction|indicted|indictment|arrested|charged|charges|suspect|murder|homicide|shooting|killed|dead|death|dies|sexual assault|rape|abuse|fraud claim|unverified|threat(?:en|ened|ening)?|swatting)\b/i;
@@ -317,7 +318,6 @@ async function scoreRecent(request: Request) {
   autoPublishCandidates.sort((a, b) =>
     b.score - a.score || Date.parse(b.pubDate) - Date.parse(a.pubDate),
   );
-  const selectedForAutoPublish = autoPublishCandidates.slice(0, AUTO_PUBLISH_PER_RUN);
   const autoPublishResults: Array<{
     id: number;
     ok: boolean;
@@ -326,8 +326,13 @@ async function scoreRecent(request: Request) {
     alreadyPublished?: boolean;
     reviewRequired?: boolean;
   }> = [];
+  let autoPublishSucceeded = 0;
+  let autoPublishAttempted = 0;
 
-  for (const candidate of selectedForAutoPublish) {
+  for (const candidate of autoPublishCandidates) {
+    if (autoPublishSucceeded >= AUTO_PUBLISH_PER_RUN) break;
+    if (autoPublishAttempted >= MAX_AUTO_PUBLISH_ATTEMPTS_PER_RUN) break;
+    autoPublishAttempted += 1;
     try {
       const result = await publishSingleFeedItem(candidate.id);
 
@@ -382,6 +387,7 @@ async function scoreRecent(request: Request) {
       }
 
       autoPublishResults.push({ id: candidate.id, ...result });
+      if (result.ok && result.slug && !result.alreadyPublished) autoPublishSucceeded += 1;
     } catch (error) {
       autoPublishResults.push({
         id: candidate.id,
@@ -400,8 +406,8 @@ async function scoreRecent(request: Request) {
     readyFlagged,
     autoPublishFlagged,
     reviewFlagged,
-    autoPublishAttempted: selectedForAutoPublish.length,
-    autoPublished: autoPublishResults.filter((r) => r.ok && !r.alreadyPublished).length,
+    autoPublishAttempted,
+    autoPublished: autoPublishSucceeded,
     postRewriteReviewBlocked,
     autoPublishResults,
     reelsQueued,
