@@ -84,7 +84,6 @@ function sanitizeFilename(slug: string): string {
   );
 }
 
-/** Pull the first paragraph out of the article's body_json.intro (array of strings). */
 function firstParagraph(bodyJson: unknown): string {
   if (!bodyJson || typeof bodyJson !== "object") return "";
   const bj = bodyJson as { intro?: unknown; sections?: unknown };
@@ -117,12 +116,14 @@ type Domain =
   | "culture"
   | "general";
 
+const MILITARY_HONORS_RE = /\b(purple heart|medal of honor|military honor(?:s)?|military award(?:s)?|service member(?:s)?|servicemember(?:s)?|armed forces|fallen (?:service member|servicemember|soldier|marine|airman|sailor|troop|hero)(?:s)?|memorial day|veterans day|veteran(?:s)?|remembrance|military remembrance|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia)\b/i;
+
 const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|migration|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine|coastal wildlife)\b/i],
   ["weather", /\b(hurricane|tornado|flood|drought|storm|heat wave|freeze|blizzard|wildfire|rainfall|weather)\b/i],
   ["energy", /\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig)\b/i],
   ["sports", /\b(cowboys|texans|rangers|astros|mavericks|spurs|rockets|stars|nfl|nba|mlb|football|basketball|baseball|playoff)\b/i],
-  ["military", /\b(military|army|navy|air force|marines|fort hood|fort cavazos|base|installation|soldier|veteran)\b/i],
+  ["military", /\b(military|army|navy|air force|airman|marines?|marine corps|coast guard|soldier|sailor|troop|veteran(?:s)?|service member(?:s)?|servicemember(?:s)?|armed forces|purple heart|medal of honor|military honor(?:s)?|military award(?:s)?|remembrance|memorial|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia|fort hood|fort cavazos|base|installation)\b/i],
   ["education", /\b(school|isd|university|college|teacher|classroom|student|curriculum)\b/i],
   ["health", /\b(hospital|clinic|doctor|nurse|patient|disease|virus|outbreak|medicaid|healthcare)\b/i],
   ["transportation", /\b(highway|interstate|traffic|txdot|airport|rail|transit|bridge|road construction)\b/i],
@@ -144,7 +145,7 @@ type SubjectExtract = {
   entities: string[];
   locations: string[];
   domain: Domain;
-  concreteSubject: string; // one-line description of the actual thing to depict
+  concreteSubject: string;
 };
 
 function extractImageSubject(row: ArticleRow): SubjectExtract {
@@ -160,16 +161,10 @@ function extractImageSubject(row: ArticleRow): SubjectExtract {
     ),
   ].filter((v, i, a) => a.indexOf(v) === i);
   const domain = inferDomain(haystack);
-
   const terms = topArticleTerms(haystack);
-
-  // First-pass concrete subject = the title itself, refined by the first
-  // paragraph and concrete article terms. The category is never used as the
-  // visual subject because it causes generic "news" imagery.
   const concreteSubject = intro
     ? `${title}. Context: ${intro}. Concrete subjects to show if present: ${terms.join(", ") || "the specific event, place, animal, object, or people described"}.`
     : title;
-
   return { title, firstParagraph: intro, entities, locations, domain, concreteSubject };
 }
 
@@ -183,7 +178,7 @@ const DOMAIN_STEER: Record<Domain, string> = {
   sports:
     "Depict a game-day sports scene — stadium, playing field, generic athletic action — with no identifiable player faces, jerseys with names, or team logos.",
   military:
-    "Depict a military installation scene: hangars, training grounds, aircraft, or personnel in silhouette. No identifiable faces, no unit insignia.",
+    "Depict the actual military subject named in the article. For medals, honors, remembrance days, wounded-service-member recognition, or memorial stories, make the specific medal, decoration, folded flag, memorial element, or respectful remembrance setting the main subject; do not default to bases, aircraft, hangars, or generic troops. For operational/base stories, depict the relevant installation, equipment, or anonymous personnel. No identifiable faces and no unit insignia.",
   education:
     "Depict a school setting: classroom, hallway, playground, or campus exterior. No identifiable children's faces.",
   health: "Depict a hospital or clinical setting relevant to the story. No identifiable patients or staff.",
@@ -199,18 +194,15 @@ const DOMAIN_STEER: Record<Domain, string> = {
     "Depict a specific, believable real-world Texas scene tied directly to the article's subject.",
 };
 
-/** Build a detailed editorial image prompt from article context.
- *  Leads with the concrete subject (title + first paragraph), applies
- *  domain-specific steering, and hard-blocks generic newsroom imagery
- *  unless the article is literally about it. */
 export function buildImagePrompt(
   subject: SubjectExtract,
   extraGuidance = "",
 ): string {
   const t = `${subject.title} ${subject.firstParagraph}`;
+  const isMilitaryHonors = MILITARY_HONORS_RE.test(t);
   const capitolAllowed =
-    /capitol|legislature|governor|abbott|patrick|session|state house|state senate/i.test(t);
-  const flagAllowed = /flag|patriot|independence|texas day/i.test(t);
+    !isMilitaryHonors && /capitol|legislature|governor|abbott|patrick|session|state house|state senate/i.test(t);
+  const flagAllowed = /flag|patriot|independence|texas day|purple heart|medal of honor|memorial|veteran|remembrance/i.test(t);
   const newsroomAllowed =
     /newspaper|journalism|reporter|press freedom|media industry|newsroom/i.test(t);
 
@@ -221,6 +213,9 @@ export function buildImagePrompt(
     "no copyrighted characters or celebrities",
     "no text, letters, watermarks, or captions anywhere in the image",
     "no AI hands with extra fingers, no distorted anatomy",
+    isMilitaryHonors
+      ? "for military honors or remembrance stories, do not show the governor, politicians, a press conference, the Capitol, a government signing ceremony, generic military bases, aircraft, hangars, or unrelated combat action; center the specific honor, medal, memorial, or remembrance subject"
+      : "",
     !newsroomAllowed
       ? "absolutely no newspapers, no stacks of paper, no printing presses, no reporters, no microphones, no press conferences, no news anchor desks, no TV studios, no laptops or computers, no generic office or desk scenes, no 'breaking news' graphics"
       : "",
@@ -234,16 +229,18 @@ export function buildImagePrompt(
 
   const style =
     "Professional editorial photography, natural lighting, realistic composition, cinematic depth of field, 16:9 landscape, muted editorial color palette with warm Texas tones.";
-
   const loc = subject.locations.slice(0, 2).join(", ");
 
   return [
     `Create a specific featured image for this exact article, not a generic news illustration. Ignore broad categories such as news, politics, non-political, or business unless they are the literal topic.`,
     `PRIMARY SUBJECT (must be clearly the main focus of the image): ${subject.concreteSubject}`,
     loc ? `Location context: ${loc}, Texas.` : "",
+    isMilitaryHonors
+      ? `MILITARY HONORS OVERRIDE: This is a military honors/remembrance story. The honor, medal, memorial, or remembrance subject must dominate the image even if a governor or other official appears in the headline.`
+      : "",
     DOMAIN_STEER[subject.domain],
     `The image must visually depict the primary subject above — a viewer glancing at the image should immediately understand it is about this specific story, not a generic news topic.`,
-    `Do not use symbolic substitutes when the story names a concrete thing. If the article names an animal, species, location, facility, road, storm, event, or object, that concrete thing must dominate the image.`,
+    `Do not use symbolic substitutes when the story names a concrete thing. If the article names an animal, species, location, facility, road, storm, event, medal, honor, memorial, or object, that concrete thing must dominate the image.`,
     `If people appear, show anonymous everyday Texans from behind or in silhouette, faces obscured or out of frame. Do not depict identifiable real politicians or celebrities.`,
     style,
     `Strict rules: ${avoid}.`,
@@ -287,8 +284,6 @@ async function generateImageBytes(prompt: string): Promise<Uint8Array> {
   return bytes;
 }
 
-/** Ask a vision model: does this image actually match the article subject?
- *  Fails open (returns matches=true) if the validator call itself errors. */
 async function validateImageMatchesArticle(
   bytes: Uint8Array,
   subject: SubjectExtract,
@@ -321,6 +316,7 @@ async function validateImageMatchesArticle(
                   `{"matches": boolean, "reason": "one short sentence"}\n\n` +
                   `matches=false if the image is generic news imagery (newspapers, reporters, microphones, laptops, offices, "breaking news" graphics) unless the article is literally about journalism.\n` +
                   `matches=false if the image does not clearly depict the primary subject above.\n` +
+                  `For military honors/remembrance stories, matches=false if the image centers a politician, government building, press event, generic base, aircraft, or unrelated combat instead of the named honor, medal, memorial, or remembrance subject.\n` +
                   `matches=true only if a reader would immediately recognize the image is about the primary subject.`,
               },
               { type: "image_url", image_url: { url: `data:image/png;base64,${b64}` } },
@@ -356,11 +352,9 @@ async function generateAndStore(
   opts: { overwrite?: boolean } = {},
 ): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
   const supabase = await serviceClient();
-
   if (!opts.overwrite && row.featured_image_url) {
     return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
   }
-
   const subject = extractImageSubject(row);
   const prompt = buildImagePrompt(subject);
   const alt = buildAltText(row);
@@ -398,10 +392,7 @@ async function generateAndStore(
         upsert: true,
       });
     if (upErr) throw upErr;
-
-    // Public passthrough URL — private bucket served via our own route.
     const url = `/api/public/article-image/${filename}`;
-
     await supabase
       .from("daily_articles")
       .update({
@@ -412,7 +403,6 @@ async function generateAndStore(
         image_validation_note: `${verdict.matches ? "ok" : "weak"}: ${verdict.reason}`,
       })
       .eq("slug", row.slug);
-
     return { ok: true, url, alt };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -427,7 +417,6 @@ async function generateAndStore(
 const SELECT_COLS =
   "slug,title,dek,category,keywords,seo_keywords,affected_regions,seo_headline,discover_category,texas_impact_summary,featured_image_url,image_generation_status,body_json";
 
-/** Generate featured image for one slug (idempotent unless overwrite=true). */
 export const generateFeaturedImageForSlug = createServerFn({ method: "POST" })
   .validator((d) =>
     z
@@ -459,7 +448,6 @@ export async function generateFeaturedImageForSlugDirect(
   return generateAndStore(row as ArticleRow, { overwrite });
 }
 
-/** Admin-gated regenerate (checks shared passcode header). */
 export const regenerateFeaturedImage = createServerFn({ method: "POST" })
   .validator((d) =>
     z.object({ slug: z.string().min(1).max(200), token: z.string().min(1) }).parse(d),
@@ -477,8 +465,6 @@ export const regenerateFeaturedImage = createServerFn({ method: "POST" })
     return generateAndStore(row as ArticleRow, { overwrite: true });
   });
 
-/** Backfill helper: pull N articles missing a featured image and generate them.
- *  Pass overwrite=true to also regenerate articles that already have one. */
 export async function backfillBatch(
   limit = 5,
   overwrite = false,
@@ -500,7 +486,6 @@ export async function backfillBatch(
     q = q.is("featured_image_url", null).in("image_generation_status", ["pending", "failed"]);
   }
   const { data: rows } = await q;
-
   const results: { slug: string; ok: boolean; error?: string }[] = [];
   for (const row of (rows ?? []) as ArticleRow[]) {
     const r = await generateAndStore(row, { overwrite });
