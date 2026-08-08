@@ -5,9 +5,18 @@ import {
   type ClusterableFeedItem,
   type StoryCluster,
 } from "@/lib/story-clustering";
+import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
 
-type PublishResult = { ok: boolean; slug?: string; error?: string; alreadyPublished?: boolean; clusteredSources?: number };
+type PublishResult = {
+  ok: boolean;
+  slug?: string;
+  error?: string;
+  alreadyPublished?: boolean;
+  clusteredSources?: number;
+  developingStory?: "confirmation" | "follow_up";
+  noveltyScore?: number;
+};
 
 const CLUSTER_LOOKBACK_HOURS = 72;
 const STRONG_MERGE_SCORE = 65;
@@ -76,8 +85,14 @@ async function enrichClusterBodies(cluster: StoryCluster, supabaseAdmin: any): P
   return { ...cluster, primary, members };
 }
 
-async function writeClusterMetadata(supabaseAdmin: any, cluster: StoryCluster, slug?: string): Promise<void> {
-  const ids = [cluster.primary, ...cluster.members]
+async function writeClusterMetadata(
+  supabaseAdmin: any,
+  cluster: StoryCluster,
+  slug?: string,
+  development?: { kind: "confirmation" | "follow_up"; novelty?: StoryNovelty },
+): Promise<void> {
+  const rows = [cluster.primary, ...cluster.members];
+  const ids = rows
     .map((row) => row.id)
     .filter((id): id is number => typeof id === "number");
   if (!ids.length) return;
@@ -86,11 +101,24 @@ async function writeClusterMetadata(supabaseAdmin: any, cluster: StoryCluster, s
     source_count: cluster.sourceCount,
     source_links: clusterSourceList(cluster),
     clustered_at: new Date().toISOString(),
+    development_kind: development?.kind ?? null,
+    novelty_score: development?.novelty?.score ?? null,
+    novelty_actions: development?.novelty?.newActions ?? [],
+    novelty_numbers: development?.novelty?.newNumbers ?? [],
   };
   const { error } = await supabaseAdmin.from("texas_news_feed").update({ cluster_json: metadata }).in("id", ids);
   if (error) console.warn("[multi-source] cluster metadata not persisted", error.message);
   if (slug) {
-    await supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).in("id", ids);
+    // Never repoint a feed item that already belongs to an earlier published
+    // article. On a material follow-up only the new/unpublished cluster rows
+    // should link to the follow-up slug; the original article keeps its sources.
+    const linkableIds = rows
+      .filter((row) => !row.internal_slug)
+      .map((row) => row.id)
+      .filter((id): id is number => typeof id === "number");
+    if (linkableIds.length) {
+      await supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).in("id", linkableIds);
+    }
   }
 }
 
@@ -105,11 +133,37 @@ async function updateArticleAttribution(supabaseAdmin: any, slug: string, cluste
     .eq("slug", slug)
     .maybeSingle();
   if (!article?.body_json || typeof article.body_json !== "object") return;
-  const bodyJson = { ...(article.body_json as Record<string, unknown>), sources };
+
+  const existingSources = Array.isArray((article.body_json as Record<string, unknown>).sources)
+    ? ((article.body_json as Record<string, unknown>).sources as Array<{ label?: string; url?: string }>)
+    : [];
+  const byUrl = new Map<string, { label?: string; url?: string }>();
+  for (const source of [...existingSources, ...sources]) {
+    if (source.url) byUrl.set(source.url, source);
+  }
+  const bodyJson = {
+    ...(article.body_json as Record<string, unknown>),
+    sources: [...byUrl.values()],
+  };
   await supabaseAdmin
     .from("daily_articles")
     .update({ body_json: bodyJson, source_name: "Multiple independent sources" })
     .eq("slug", slug);
+}
+
+async function assessExistingStory(
+  supabaseAdmin: any,
+  slug: string,
+  incoming: ClusterableFeedItem,
+): Promise<StoryNovelty | null> {
+  const { data: article, error } = await supabaseAdmin
+    .from("daily_articles")
+    .select("title,dek,body")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error || !article) return null;
+  const existingText = `${article.title ?? ""} ${article.dek ?? ""} ${article.body ?? ""}`;
+  return assessStoryNovelty(incoming, existingText);
 }
 
 export async function publishSingleFeedItem(feedItemId: number): Promise<PublishResult> {
@@ -138,21 +192,33 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     return publishLegacySingleFeedItem(feedItemId);
   }
 
-  // A near-certain same-event match already has an article: connect the new
-  // source to that article and spend zero additional AI credits.
   const existing = cluster.members
     .filter((row) => row.internal_slug && row.combinationScore >= SAME_EVENT_SCORE)
     .sort((a, b) => b.combinationScore - a.combinationScore)[0];
+
+  let existingNovelty: StoryNovelty | null = null;
   if (existing?.internal_slug) {
-    await db.from("texas_news_feed").update({ internal_slug: existing.internal_slug }).eq("id", feedItemId);
-    await writeClusterMetadata(db, cluster, existing.internal_slug);
-    await updateArticleAttribution(db, existing.internal_slug, cluster);
-    return {
-      ok: true,
-      slug: existing.internal_slug,
-      alreadyPublished: true,
-      clusteredSources: cluster.sourceCount,
-    };
+    existingNovelty = await assessExistingStory(db, existing.internal_slug, primary);
+
+    // Confirmation coverage strengthens the existing article without spending
+    // another AI credit. Materially new actions, figures or facts instead
+    // proceed through synthesis so readers get a distinct follow-up article.
+    if (!existingNovelty?.material) {
+      await db.from("texas_news_feed").update({ internal_slug: existing.internal_slug }).eq("id", feedItemId);
+      await writeClusterMetadata(db, cluster, existing.internal_slug, {
+        kind: "confirmation",
+        novelty: existingNovelty ?? undefined,
+      });
+      await updateArticleAttribution(db, existing.internal_slug, cluster);
+      return {
+        ok: true,
+        slug: existing.internal_slug,
+        alreadyPublished: true,
+        clusteredSources: cluster.sourceCount,
+        developingStory: "confirmation",
+        noveltyScore: existingNovelty?.score ?? 0,
+      };
+    }
   }
 
   cluster = await enrichClusterBodies(cluster, db);
@@ -163,22 +229,38 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     "Use only facts supported by the sources below. Reconcile duplicate facts. Attribute claims when sources differ. Do not copy source wording.",
     `Independent sources: ${sourceNames.join(" | ")}.`,
     "Treat this as one developing Texas story when the evidence supports it; do not invent a connection that is not supported.",
-  ].join("\n");
+    existingNovelty?.material
+      ? `MATERIAL FOLLOW-UP DETECTED. Emphasize the new development rather than re-reporting the earlier story. Novelty score: ${existingNovelty.score}. New actions: ${existingNovelty.newActions.join(", ") || "none"}. New figures: ${existingNovelty.newNumbers.join(", ") || "none"}.`
+      : "",
+  ].filter(Boolean).join("\n");
 
-  // Clustering itself is deterministic and free. The existing editorial path
-  // receives one combined packet and therefore performs one budgeted rewrite
-  // for the whole story rather than one rewrite per source.
   await db
     .from("texas_news_feed")
     .update({ extracted_body: `${synthesisHeader}\n\n${packet}`.slice(0, 26000) })
     .eq("id", feedItemId);
 
-  await writeClusterMetadata(db, cluster);
+  await writeClusterMetadata(db, cluster, undefined, existingNovelty?.material ? {
+    kind: "follow_up",
+    novelty: existingNovelty,
+  } : undefined);
   const result = await publishLegacySingleFeedItem(feedItemId);
   if (result.ok && result.slug) {
-    await writeClusterMetadata(db, cluster, result.slug);
+    await writeClusterMetadata(db, cluster, result.slug, existingNovelty?.material ? {
+      kind: "follow_up",
+      novelty: existingNovelty,
+    } : undefined);
     await updateArticleAttribution(db, result.slug, cluster);
-    return { ...result, clusteredSources: cluster.sourceCount };
+    return {
+      ...result,
+      clusteredSources: cluster.sourceCount,
+      developingStory: existingNovelty?.material ? "follow_up" : undefined,
+      noveltyScore: existingNovelty?.score,
+    };
   }
-  return { ...result, clusteredSources: cluster.sourceCount };
+  return {
+    ...result,
+    clusteredSources: cluster.sourceCount,
+    developingStory: existingNovelty?.material ? "follow_up" : undefined,
+    noveltyScore: existingNovelty?.score,
+  };
 }
