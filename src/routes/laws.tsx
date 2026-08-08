@@ -3,6 +3,8 @@ import { PageHero } from "@/components/page-hero";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { SITE_URL } from "@/lib/seo";
 
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
+
 export const Route = createFileRoute("/laws")({
   head: () => ({
     meta: [
@@ -248,7 +250,7 @@ function LawsHubPage() {
           For a working reader, three habits cover most of it: watch the November constitutional-amendment
           ballot, review the appraisal notice that arrives in April, and follow ongoing coverage from a
           state-focused newsroom during session. Keep TX Red maintains the{" "}
-          <Link to="/bills" className="text-primary underline underline-offset-4">
+          <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary underline underline-offset-4">
             Texas bill tracker
           </Link>{" "}
           during and after each session and maintains the evergreen guides below.
@@ -278,7 +280,15 @@ function LawsHubPage() {
               ))}
             </div>
 
-            {section.hubHref ? (
+            {section.hubHref === "/bills" ? (
+              <Link
+                to="/bills"
+                search={EMPTY_BILLS_SEARCH}
+                className="mt-6 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline"
+              >
+                Full {section.heading} hub →
+              </Link>
+            ) : section.hubHref ? (
               <Link
                 to={section.hubHref}
                 className="mt-6 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline"
