@@ -137,8 +137,8 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
   const printifyOrderId = await createPrintifyOrder(cart, address, session.id);
 
   // Persist the order and dispatch notifications. Never let this crash the
-  // webhook — Stripe retries for 3 days and we've already fulfilled with
-  // Printify above.
+  // webhook — Stripe retries for 3 days and we've already attempted
+  // Printify fulfillment above.
   try {
     const fullName = ship?.name || customer.name || `${first} ${last}`.trim();
     const lineItems = (session as any).line_items?.data ?? [];
@@ -175,12 +175,13 @@ async function handleCheckoutCompleted(sessionObj: any, env: StripeEnv) {
         subtotal_cents: session.amount_subtotal ?? 0,
         total_cents: session.amount_total ?? 0,
         currency: (session.currency || "usd").toUpperCase(),
-        status: "paid",
+        status: printifyOrderId ? "paid" : "fulfillment_failed",
         environment: env,
       },
       { onConflict: "stripe_session_id" },
     );
     if (insertError) console.error("Failed to persist order", session.id, insertError);
+    if (!printifyOrderId) console.error("Paid order requires fulfillment attention", session.id);
 
     await sendOrderEmails({
       request: (globalThis as any).__ktrWebhookRequest as Request | undefined,
