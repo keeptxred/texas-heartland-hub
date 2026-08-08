@@ -291,11 +291,6 @@ export function billJsonLd(bill: Bill, sponsors: any[], actions: any[]) {
     name: sponsor.sponsor_name,
     url: sponsor.sponsor_slug ? `${SITE_URL}/representatives/${sponsor.sponsor_slug}` : undefined,
   }));
-  const faq = [
-    ['What is ' + bill.bill_identifier + '?', bill.plain_language_summary || bill.summary || bill.caption],
-    ['What is the current status of ' + bill.bill_identifier + '?', bill.current_status_description || bill.current_status_label],
-    sponsors.length ? ['Who sponsors ' + bill.bill_identifier + '?', sponsors.map((s) => `${s.sponsor_name} (${s.sponsor_role})`).join(', ')] : null,
-  ].filter(Boolean) as string[][];
   return {
     '@context': 'https://schema.org',
     '@graph': [
@@ -326,7 +321,6 @@ export function billJsonLd(bill: Bill, sponsors: any[], actions: any[]) {
           { '@type': 'ListItem', position: 5, name: bill.bill_identifier, item: url },
         ],
       },
-      ...(faq.length ? [{ '@type': 'FAQPage', mainEntity: faq.map(([question, answer]) => ({ '@type': 'Question', name: question, acceptedAnswer: { '@type': 'Answer', text: answer } })) }] : []),
       ...people,
     ].map((entry) => Object.fromEntries(Object.entries(entry).filter(([, value]) => value !== undefined))),
   };
