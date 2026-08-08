@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AUTHORS, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
-import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import {
   buildSeo,
   ORGANIZATION_ID,
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/authors/$slug")({
   loader: async ({ params }): Promise<AuthorLoaderData> => {
     const author = AUTHORS.find((candidate) => candidate.slug === params.slug);
     if (!isIndexableAuthor(author)) throw notFound();
-    const { articles } = await getDailyArticles();
+    const { articles } = await getPublishedAuthorArticles();
     const liveArticles = articles
       .filter((article) => article.slug && authorSlug(article.author) === author.slug)
       .slice(0, 12);
