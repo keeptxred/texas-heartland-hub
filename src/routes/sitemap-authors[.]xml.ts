@@ -3,7 +3,7 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
 import { AUTHORS, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
-import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
 
 function isCompleteAuthor(author: Author): boolean {
   const biography = author.bio.join(" ").trim();
@@ -49,7 +49,7 @@ export const Route = createFileRoute("/sitemap-authors.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const { articles: liveArticles } = await getDailyArticles();
+        const { articles: liveArticles } = await getPublishedAuthorArticles();
         const entries = AUTHORS
           .map((author) => activeAuthorEntry(author, liveArticles))
           .filter((entry): entry is UrlEntry => entry !== null);
