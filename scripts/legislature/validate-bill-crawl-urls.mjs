@@ -59,6 +59,15 @@ const checks = [
     ],
   },
   {
+    file: 'src/lib/public-bill-relations.ts',
+    required: [
+      "import { findRepresentativeBySlug } from '@/data/representatives';",
+      "const slug = String(sponsor.sponsor_slug ?? '').trim();",
+      'if (!slug || findRepresentativeBySlug(slug)) return sponsor;',
+      'return { ...sponsor, sponsor_slug: null };',
+    ],
+  },
+  {
     file: 'src/lib/legislative-sitemaps.ts',
     required: [
       'const sitemapBills = billRows.filter((bill) => isSitemapWorthyBill(bill, evidence));',
