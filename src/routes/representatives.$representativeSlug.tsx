@@ -376,7 +376,7 @@ function RepresentativeProfile() {
                     {news.map((article: any) => (
                       <a
                         key={article.slug}
-                        href={`/article/${article.slug}`}
+                        href={`/news/${article.slug}`}
                         className="rounded-lg border p-4 hover:border-primary"
                       >
                         <p className="text-xs font-bold uppercase tracking-wide text-primary">
