@@ -65,6 +65,24 @@ export function toIsoDate(d: string | Date | null | undefined): string {
   return dt.toISOString();
 }
 
+/** Return the newest valid timestamp from trustworthy content dates. */
+export function latestIsoDate(
+  ...values: Array<string | Date | null | undefined>
+): string {
+  let newest = "";
+  let newestTime = Number.NEGATIVE_INFINITY;
+  for (const value of values) {
+    const iso = toIsoDate(value);
+    if (!iso) continue;
+    const time = Date.parse(iso);
+    if (time > newestTime) {
+      newest = iso;
+      newestTime = time;
+    }
+  }
+  return newest;
+}
+
 /**
  * Guard against the historical ingestion bug that created URLs such as
  * live-2001-... for articles actually published in 2026. A dated live slug is
