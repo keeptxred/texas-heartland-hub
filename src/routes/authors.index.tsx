@@ -1,7 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AUTHORS } from "@/data/authors";
+import { AUTHORS, authorSlug } from "@/data/authors";
+import { ARTICLES, isPublished } from "@/data/articles";
+import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
 
 export const Route = createFileRoute("/authors/")({
+  loader: async () => {
+    const { articles } = await getPublishedAuthorArticles();
+    const activeSlugs = new Set(
+      articles
+        .filter((article) => article.slug)
+        .map((article) => authorSlug(article.author)),
+    );
+
+    for (const article of ARTICLES) {
+      if (isPublished(article)) activeSlugs.add(authorSlug(article.author));
+    }
+
+    return { activeSlugs: [...activeSlugs] };
+  },
   head: () => ({
     meta: [
       { title: "Authors & Desks — Keep TX Red" },
@@ -17,6 +33,9 @@ export const Route = createFileRoute("/authors/")({
 });
 
 function AuthorsIndex() {
+  const { activeSlugs } = Route.useLoaderData();
+  const activeAuthors = AUTHORS.filter((author) => activeSlugs.includes(author.slug));
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-14">
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
@@ -31,16 +50,16 @@ function AuthorsIndex() {
       </p>
 
       <ul className="mt-10 grid gap-6 md:grid-cols-2">
-        {AUTHORS.map((a) => (
-          <li key={a.slug} className="border border-border p-5">
-            <Link to="/authors/$slug" params={{ slug: a.slug }} className="group block">
-              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{a.role}</span>
-              <h2 className="font-display text-2xl tracking-tight mt-1 group-hover:underline underline-offset-4">{a.name}</h2>
-              <p className="font-serif text-sm text-muted-foreground mt-2 line-clamp-3">{a.bio[0]}</p>
-              {a.beats.length > 0 ? (
+        {activeAuthors.map((author) => (
+          <li key={author.slug} className="border border-border p-5">
+            <Link to="/authors/$slug" params={{ slug: author.slug }} className="group block">
+              <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{author.role}</span>
+              <h2 className="font-display text-2xl tracking-tight mt-1 group-hover:underline underline-offset-4">{author.name}</h2>
+              <p className="font-serif text-sm text-muted-foreground mt-2 line-clamp-3">{author.bio[0]}</p>
+              {author.beats.length > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-1.5">
-                  {a.beats.slice(0, 4).map((b) => (
-                    <span key={b} className="text-[10px] border border-border px-2 py-0.5">{b}</span>
+                  {author.beats.slice(0, 4).map((beat) => (
+                    <span key={beat} className="text-[10px] border border-border px-2 py-0.5">{beat}</span>
                   ))}
                 </div>
               ) : null}
