@@ -3,6 +3,7 @@ import { canonicalBillPath, type Bill } from '@/lib/bills';
 import { absUrl, toIsoDate, type UrlEntry } from '@/lib/sitemap-shared';
 
 const db = supabase as any;
+const SITEMAP_PAGE_SIZE = 1000;
 
 type SitemapBill = Bill & {
   updated_at?: string | null;
@@ -10,6 +11,24 @@ type SitemapBill = Bill & {
   description?: string | null;
   plain_language_summary?: string | null;
 };
+
+type PageResult<T> = {
+  data: T[] | null;
+  error: unknown;
+};
+
+async function fetchAllPages<T>(
+  loadPage: (from: number, to: number) => PromiseLike<PageResult<T>>,
+): Promise<T[]> {
+  const rows: T[] = [];
+  for (let from = 0; ; from += SITEMAP_PAGE_SIZE) {
+    const { data, error } = await loadPage(from, from + SITEMAP_PAGE_SIZE - 1);
+    if (error) throw error;
+    const page = data ?? [];
+    rows.push(...page);
+    if (page.length < SITEMAP_PAGE_SIZE) return rows;
+  }
+}
 
 function newestDate(values: Array<string | null | undefined>): string | undefined {
   const newest = values
@@ -102,45 +121,61 @@ function hierarchyEntries(bills: SitemapBill[]): UrlEntry[] {
 }
 
 export async function billSitemapEntries(): Promise<UrlEntry[]> {
+  // PostgREST installations commonly cap a single response at 1,000 rows even
+  // when a larger .limit() is requested. Page every evidence source explicitly
+  // so sitemap eligibility cannot silently depend on an API row cap.
   const [
-    { data: bills, error: billsError },
-    { data: subjects, error: subjectsError },
-    { data: actionRows, error: actionsError },
-    { data: sponsorRows, error: sponsorsError },
-    { data: documentRows, error: documentsError },
-    { data: subjectRelationshipRows, error: subjectRelationshipsError },
-    { data: articleRows, error: articlesError },
-    { data: enrichmentRows, error: enrichmentsError },
+    billRows,
+    subjectRows,
+    actionRows,
+    sponsorRows,
+    documentRows,
+    subjectRelationshipRows,
+    articleRows,
+    enrichmentRows,
   ] = await Promise.all([
-    db.from('bills')
+    fetchAllPages<SitemapBill>((from, to) => db.from('bills')
       .select('id,legislature_number,bill_type,bill_number,last_action_date,updated_at,summary,description,plain_language_summary,became_law,bill_text_url,analysis_url,fiscal_note_url')
-      .eq('is_active', true).order('legislature_number', { ascending: false }).limit(50000),
-    db.from('bill_subjects')
-      .select('id,slug,updated_at').order('slug').limit(5000),
-    db.from('bill_actions').select('bill_id').limit(50000),
-    db.from('bill_sponsors').select('bill_id').limit(50000),
-    db.from('bill_documents').select('bill_id').limit(50000),
-    db.from('bill_subject_relationships').select('bill_id,subject_id').eq('review_status', 'approved').limit(50000),
-    db.from('bill_article_relationships').select('bill_id').eq('review_status', 'approved').limit(50000),
-    db.from('bill_editorial_enrichments').select('bill_id').eq('review_status', 'approved').limit(50000),
+      .eq('is_active', true)
+      .order('legislature_number', { ascending: false })
+      .order('id')
+      .range(from, to)),
+    fetchAllPages<{ id: string; slug: string; updated_at?: string | null }>((from, to) => db.from('bill_subjects')
+      .select('id,slug,updated_at')
+      .order('slug')
+      .order('id')
+      .range(from, to)),
+    fetchAllPages<{ bill_id: string }>((from, to) => db.from('bill_actions')
+      .select('bill_id')
+      .order('bill_id')
+      .range(from, to)),
+    fetchAllPages<{ bill_id: string }>((from, to) => db.from('bill_sponsors')
+      .select('bill_id')
+      .order('bill_id')
+      .range(from, to)),
+    fetchAllPages<{ bill_id: string }>((from, to) => db.from('bill_documents')
+      .select('bill_id')
+      .order('bill_id')
+      .range(from, to)),
+    fetchAllPages<{ bill_id: string; subject_id: string }>((from, to) => db.from('bill_subject_relationships')
+      .select('bill_id,subject_id')
+      .eq('review_status', 'approved')
+      .order('bill_id')
+      .range(from, to)),
+    fetchAllPages<{ bill_id: string }>((from, to) => db.from('bill_article_relationships')
+      .select('bill_id')
+      .eq('review_status', 'approved')
+      .order('bill_id')
+      .range(from, to)),
+    fetchAllPages<{ bill_id: string }>((from, to) => db.from('bill_editorial_enrichments')
+      .select('bill_id')
+      .eq('review_status', 'approved')
+      .order('bill_id')
+      .range(from, to)),
   ]);
-  for (const error of [
-    billsError,
-    subjectsError,
-    actionsError,
-    sponsorsError,
-    documentsError,
-    subjectRelationshipsError,
-    articlesError,
-    enrichmentsError,
-  ]) {
-    if (error) throw error;
-  }
 
-  const billRows = (bills ?? []) as SitemapBill[];
-  const subjectRows = (subjects ?? []) as Array<{ id: string; slug: string; updated_at?: string | null }>;
   const linkedSubjectIds = new Set(
-    (subjectRelationshipRows ?? []).map((row: any) => String(row.subject_id ?? '')).filter(Boolean),
+    subjectRelationshipRows.map((row) => String(row.subject_id ?? '')).filter(Boolean),
   );
   const sitemapSubjects = subjectRows.filter((subject) => linkedSubjectIds.has(subject.id));
   const evidence = {
