@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/editorial-acceptance.yml'
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'src/lib/ingest-feeds-legacy.ts'
 
 permissions:
   contents: read
@@ -18,6 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
+      - name: Wait for production deployment
+        run: sleep 90
+
       - name: Trigger editorial scoring and auto-publish
         shell: bash
         run: |
@@ -33,6 +38,11 @@ jobs:
             exit 1
           fi
           jq -e '.ok == true' "$response_file" >/dev/null
+          jq -e '.ingest.ok == true' "$response_file" >/dev/null
+          jq -e '.ingest.sourceCount >= 10' "$response_file" >/dev/null
+          jq -e '.ingest.directSources >= 8' "$response_file" >/dev/null
+          jq -e '.ingest.healthySources >= 5' "$response_file" >/dev/null
+          jq -e '.ingest.skippedLegacyYoutube >= 0' "$response_file" >/dev/null
           jq -e '.scanned >= 0 and .updated >= 0' "$response_file" >/dev/null
           jq -e '.autoPublishAttempted >= 0 and .autoPublishAttempted <= 6' "$response_file" >/dev/null
           jq -e '.autoPublished >= 0 and .autoPublished <= .autoPublishAttempted' "$response_file" >/dev/null
