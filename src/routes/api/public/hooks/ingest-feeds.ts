@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { resolvePublishTimestamp } from "@/lib/article-slug-integrity";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { scoreFeedItem, TEXAS_RELEVANCE_MIN } from "@/lib/viral-score";
-export { publishSingleFeedItem } from "@/lib/ingest-feeds-legacy";
+export { publishSingleFeedItem, isPuzzleTitle } from "@/lib/ingest-feeds-legacy";
 
 type Item = {
   title: string;
