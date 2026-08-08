@@ -48,6 +48,15 @@ const checks = [
     ],
   },
   {
+    file: 'src/lib/legislative-sitemaps.ts',
+    required: [
+      'const sitemapBills = billRows.filter((bill) => isSitemapWorthyBill(bill, evidence));',
+      '...hierarchyEntries(sitemapBills)',
+      'newestDate([bill.last_action_date, bill.updated_at])',
+      '...sitemapBills.flatMap((bill) => [bill.last_action_date, bill.updated_at])',
+    ],
+  },
+  {
     file: 'src/lib/authority-relationships.ts',
     required: [
       "article: '/news/'",
@@ -81,6 +90,11 @@ for (const check of checks) {
 const bills = await readFile('src/lib/bills.ts', 'utf8');
 if (bills.includes('`${SITE_URL}/bills?legislature=${bill.legislature_number}`')) {
   errors.push('bill structured breadcrumbs must not point to the filtered/noindex legislature URL');
+}
+
+const legislativeSitemaps = await readFile('src/lib/legislative-sitemaps.ts', 'utf8');
+if (legislativeSitemaps.includes('...hierarchyEntries(billRows)')) {
+  errors.push('bill hierarchy sitemap hubs must derive from sitemap-worthy bills, not every active bill');
 }
 
 for (const file of [
