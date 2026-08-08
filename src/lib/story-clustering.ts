@@ -32,6 +32,46 @@ const IMPORTANT = [
   /\b(houston|dallas|fort worth|san antonio|austin|laredo|amarillo|killeen|temple|waco|hereford|galveston|lubbock|midland)\b/gi,
 ];
 
+const TOPIC_BRIDGES: Array<{ tag: string; patterns: RegExp[] }> = [
+  {
+    tag: "data-center-grid",
+    patterns: [
+      /\bdata cent(er|ers)\b/i,
+      /\bercot\b/i,
+      /\bgrid connection/i,
+      /\bpower demand\b/i,
+      /\blarge load\b/i,
+      /\bdata center moratorium\b/i,
+    ],
+  },
+  {
+    tag: "back-to-school-heat",
+    patterns: [
+      /\btax[- ]free\b/i,
+      /\bsales[- ]tax holiday\b/i,
+      /\bback[- ]to[- ]school\b/i,
+      /\bschool supplies\b/i,
+      /\buil\b/i,
+      /\bwet bulb\b/i,
+      /\bfall practice/i,
+      /\bfootball practice/i,
+      /\bheat index\b/i,
+    ],
+  },
+  {
+    tag: "water-infrastructure",
+    patterns: [/\bwater supply\b/i, /\bwater agreement/i, /\bwater needs\b/i, /\breservoir\b/i, /\bgroundwater\b/i],
+  },
+  {
+    tag: "buc-ees-trademark",
+    patterns: [/\bbuc-?ee'?s\b/i, /\bbeaver'?s mini mart\b/i, /\bbeavermart/i, /\btrademark suit\b/i, /\bbeaver logo\b/i],
+  },
+  {
+    tag: "border-enforcement",
+    patterns: [/\bcbp\b/i, /\bcustoms\b/i, /\bice detention\b/i, /\bborder\b/i, /\bcounterfeit goods\b/i],
+  },
+];
+
 function normalize(text: string): string {
   return text
     .toLowerCase()
@@ -41,8 +81,21 @@ function normalize(text: string): string {
     .trim();
 }
 
+function textFor(item: ClusterableFeedItem): string {
+  return normalize(`${item.title} ${item.description ?? ""}`);
+}
+
+function topicTags(item: ClusterableFeedItem): Set<string> {
+  const text = textFor(item);
+  const tags = new Set<string>();
+  for (const bridge of TOPIC_BRIDGES) {
+    if (bridge.patterns.some((pattern) => pattern.test(text))) tags.add(bridge.tag);
+  }
+  return tags;
+}
+
 function tokens(item: ClusterableFeedItem): Set<string> {
-  const raw = normalize(`${item.title} ${item.description ?? ""}`);
+  const raw = textFor(item);
   const out = new Set<string>();
   for (const token of raw.split(/\s+/)) {
     if (token.length < 4 || STOP.has(token)) continue;
@@ -90,8 +143,19 @@ export function combinationScore(primary: ClusterableFeedItem, candidate: Cluste
   score += Math.min(40, titleOverlap.length * 10);
   score += Math.min(25, overlap.length * 5);
 
-  const importantOverlap = overlap.filter((t) => t.includes(" ") || IMPORTANT.some((re) => { re.lastIndex = 0; return re.test(t); }));
+  const importantOverlap = overlap.filter((t) => {
+    if (t.includes(" ")) return true;
+    return IMPORTANT.some((re) => {
+      re.lastIndex = 0;
+      return re.test(t);
+    });
+  });
   score += Math.min(20, importantOverlap.length * 10);
+
+  const primaryTopics = topicTags(primary);
+  const candidateTopics = topicTags(candidate);
+  const sharedTopics = [...primaryTopics].filter((tag) => candidateTopics.has(tag));
+  if (sharedTopics.length) score += Math.min(35, sharedTopics.length * 35);
 
   const apart = hoursApart(primary.pub_date, candidate.pub_date);
   if (apart <= 12) score += 15;
@@ -102,12 +166,15 @@ export function combinationScore(primary: ClusterableFeedItem, candidate: Cluste
   if (sourceFamily(primary) && sourceFamily(primary) !== sourceFamily(candidate)) score += 15;
   else score -= 20;
 
-  const primaryText = normalize(`${primary.title} ${primary.description ?? ""}`);
-  const candidateText = normalize(`${candidate.title} ${candidate.description ?? ""}`);
+  const primaryText = textFor(primary);
+  const candidateText = textFor(candidate);
   const locations = ["houston","dallas","fort worth","san antonio","austin","laredo","amarillo","killeen","temple","waco","hereford","galveston","lubbock","midland"];
   if (locations.some((loc) => primaryText.includes(loc) && candidateText.includes(loc))) score += 10;
 
-  return { score: Math.max(0, Math.min(100, score)), overlapTerms: overlap.slice(0, 12) };
+  return {
+    score: Math.max(0, Math.min(100, score)),
+    overlapTerms: [...overlap, ...sharedTopics.map((tag) => `topic:${tag}`)].slice(0, 12),
+  };
 }
 
 export function buildStoryCluster(primary: ClusterableFeedItem, recent: ClusterableFeedItem[], maxMembers = 5): StoryCluster {
