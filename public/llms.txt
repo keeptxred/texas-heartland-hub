@@ -16,10 +16,9 @@ Keep TX Red covers Texas politics, elections, public officials, the Legislature,
 
 - [Election Central](/elections/2026): Texas races, candidates, polling, forecasts, voting information, and results.
 - [County Elections](/county-elections): County-level election resources.
-- [Candidate Guides](/candidate-guides): Plain-language candidate and race guides.
+- [Candidates](/elections/candidates): Candidate profiles and race information.
 - [Texas Legislature](/texas-legislature): Chambers, sessions, committees, and lawmakers.
-- [Bills](/bills): Texas legislation, actions, sponsors, and documents.
-- [Legislative Updates](/legislative-updates): Legislative reporting and analysis.
+- [Bills](/bills): Texas legislation, actions, sponsors, documents, and legislative updates.
 
 ## Civic Resources
 
@@ -27,14 +26,13 @@ Keep TX Red covers Texas politics, elections, public officials, the Legislature,
 - [Texas Representatives](/representatives): Statewide leaders and legislative delegations.
 - [Register to Vote](/register-to-vote): Texas voter-registration guidance.
 - [Contact Legislators](/contact-legislators): Contact Texas lawmakers.
-- [Voting Locations](/voting-locations): Texas polling-place resources.
+- [Voting Information](/elections/voting): Texas voting and polling-place resources.
 - [Get Involved](/get-involved): Civic participation resources.
 
 ## Reference
 
 - [Texas Laws](/texas-laws): Major Texas statutes and legal topics.
-- [Laws You Should Know](/laws-to-know): Plain-English legal guidance.
-- [Laws Explained](/laws): Detailed Texas law explainers.
+- [Laws Explained](/laws): Detailed Texas law explainers and practical guidance.
 - [Glossary](/glossary): Texas political and government terminology.
 
 ## About
