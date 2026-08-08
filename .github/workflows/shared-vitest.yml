@@ -65,14 +65,19 @@ jobs:
       - name: Route generation and TypeScript
         run: bun run typecheck
 
+      # SEO validation is lightweight and must run before merge because the SEO
+      # validator itself and sitemap/canonical rules are part of this PR gate.
+      - name: SEO validation
+        run: bun run seo:validate
+
       # Pull requests already have a dedicated Production Build Validation workflow.
       # Build here only on main/manual runs so the same PR is not built twice.
       - name: Production build
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run build
 
-      # Repository-wide domain validations run once on main (or manually), rather
-      # than on every feature-branch push and again after merge.
+      # Expensive repository-wide domain validations run once on main (or manually),
+      # rather than on every feature-branch push and again after merge.
       - name: Shared platform validation
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run shared:validate
@@ -82,9 +87,6 @@ jobs:
       - name: Publication boundary validation
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run publication:validate
-      - name: SEO validation
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        run: bun run seo:validate
       - name: Election validation
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: bun run elections:validate
