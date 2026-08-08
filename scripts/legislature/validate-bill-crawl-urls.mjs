@@ -47,6 +47,27 @@ const checks = [
       '`${SITE_URL}/bills/texas/${bill.legislature_number}/${billType}`',
     ],
   },
+  {
+    file: 'src/lib/authority-relationships.ts',
+    required: [
+      "article: '/news/'",
+      'href: `/news/${article.slug}`',
+    ],
+  },
+  {
+    file: 'src/routes/representatives.$representativeSlug.tsx',
+    required: [
+      'href={`/news/${article.slug}`}',
+      'content: representative',
+      '"noindex,follow,max-image-preview:large"',
+    ],
+  },
+  {
+    file: 'src/routes/texas-government.$entitySlug.tsx',
+    required: [
+      'href={`/news/${article.slug}`}',
+    ],
+  },
 ];
 
 const errors = [];
@@ -60,6 +81,17 @@ for (const check of checks) {
 const bills = await readFile('src/lib/bills.ts', 'utf8');
 if (bills.includes('`${SITE_URL}/bills?legislature=${bill.legislature_number}`')) {
   errors.push('bill structured breadcrumbs must not point to the filtered/noindex legislature URL');
+}
+
+for (const file of [
+  'src/lib/authority-relationships.ts',
+  'src/routes/representatives.$representativeSlug.tsx',
+  'src/routes/texas-government.$entitySlug.tsx',
+]) {
+  const source = await readFile(file, 'utf8');
+  if (source.includes('/article/${article.slug}') || source.includes("article: '/article/'")) {
+    errors.push(`${file} must use canonical /news/ article links`);
+  }
 }
 
 const robots = await readFile('src/routes/robots[.]txt.ts', 'utf8');
