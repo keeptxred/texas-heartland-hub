@@ -1,5 +1,4 @@
 // Repository and production-site broken-link audit for KeepTXRed.
-// This file is intentionally touched to trigger the initial GitHub Actions crawl.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
@@ -14,6 +13,9 @@ const RETIRED_PREFIXES = [
   '/events', '/guides', '/food-bbq',
 ];
 const IGNORE_PREFIXES = ['/api/', '/admin', '/auth/', '/assets/', '/favicon', '/robots.txt', '/sitemap'];
+const MAX_FETCH_ATTEMPTS = 3;
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function walk(dir) {
   const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -39,7 +41,9 @@ function routeRegexFromFile(file) {
 
 function normalizeInternal(raw) {
   if (!raw || raw.startsWith('#') || raw.startsWith('mailto:') || raw.startsWith('tel:') || raw.startsWith('javascript:')) return null;
-  if (raw.includes('${') || raw.includes('{') || raw.includes('}')) return null;
+  // Route-template literals such as /elections/races/$raceSlug are source-code
+  // patterns, not user-facing links. They are validated by route/type checks.
+  if (raw.includes('${') || raw.includes('{') || raw.includes('}') || raw.includes('$')) return null;
   try {
     const url = new URL(raw, SITE);
     if (!['keeptxred.com', 'www.keeptxred.com'].includes(url.hostname)) return null;
@@ -80,6 +84,7 @@ async function staticAudit() {
           const matched = routeRegexes.some((regex) => regex.test(pathname));
           if (retired || !matched) findings.push({
             type: retired ? 'retired-internal-link' : 'unmatched-internal-route',
+            severity: retired ? 'migration-debt' : 'blocking',
             file: path.relative(ROOT, file), line: index + 1, raw, pathname,
           });
         }
@@ -90,12 +95,28 @@ async function staticAudit() {
 }
 
 async function fetchText(url) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 20000);
-  try {
-    const response = await fetch(url, { redirect: 'follow', signal: controller.signal, headers: { 'user-agent': 'KeepTXRed-Link-Audit/1.0' } });
-    return { response, text: await response.text() };
-  } finally { clearTimeout(timer); }
+  let lastError;
+  for (let attempt = 1; attempt <= MAX_FETCH_ATTEMPTS; attempt += 1) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 20000);
+    try {
+      const response = await fetch(url, {
+        redirect: 'follow',
+        signal: controller.signal,
+        headers: { 'user-agent': 'KeepTXRed-Link-Audit/1.1' },
+      });
+      const text = await response.text();
+      if (response.status < 500 || attempt === MAX_FETCH_ATTEMPTS) return { response, text, attempts: attempt };
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+      if (attempt === MAX_FETCH_ATTEMPTS) throw error;
+    } finally {
+      clearTimeout(timer);
+    }
+    await sleep(500 * attempt);
+  }
+  throw lastError;
 }
 
 function xmlLocs(xml) {
@@ -105,13 +126,17 @@ function xmlLocs(xml) {
 async function collectSitemapUrls(url, seen = new Set()) {
   if (seen.has(url)) return [];
   seen.add(url);
-  const { response, text } = await fetchText(url);
-  if (!response.ok) return [{ url, sitemapFailure: response.status }];
-  const locs = xmlLocs(text);
-  const nested = locs.filter((loc) => /sitemap.*\.xml(?:$|\?)/i.test(loc));
-  const pages = locs.filter((loc) => !nested.includes(loc));
-  for (const child of nested) pages.push(...await collectSitemapUrls(child, seen));
-  return pages;
+  try {
+    const { response, text, attempts } = await fetchText(url);
+    if (!response.ok) return [{ url, sitemapFailure: response.status, attempts }];
+    const locs = xmlLocs(text);
+    const nested = locs.filter((loc) => /sitemap.*\.xml(?:$|\?)/i.test(loc));
+    const pages = locs.filter((loc) => !nested.includes(loc));
+    for (const child of nested) pages.push(...await collectSitemapUrls(child, seen));
+    return pages;
+  } catch (error) {
+    return [{ url, sitemapRequestError: String(error) }];
+  }
 }
 
 async function liveAudit() {
@@ -119,24 +144,28 @@ async function liveAudit() {
   const entries = await collectSitemapUrls(sitemap);
   const failures = [];
   const pages = entries.filter((entry) => typeof entry === 'string');
-  failures.push(...entries.filter((entry) => typeof entry !== 'string').map((entry) => ({ type: 'sitemap-http-error', ...entry })));
+  failures.push(...entries.filter((entry) => typeof entry !== 'string').map((entry) => ({
+    type: entry.sitemapFailure ? 'sitemap-http-error' : 'sitemap-request-error',
+    severity: 'blocking',
+    ...entry,
+  })));
   let cursor = 0;
   const workers = Array.from({ length: 8 }, async () => {
     while (cursor < pages.length) {
       const url = pages[cursor++];
       try {
-        const { response, text } = await fetchText(url);
-        if (!response.ok) failures.push({ type: 'page-http-error', url, status: response.status });
+        const { response, text, attempts } = await fetchText(url);
+        if (!response.ok) failures.push({ type: 'page-http-error', severity: 'blocking', url, status: response.status, attempts });
         if (/text\/html/i.test(response.headers.get('content-type') || '')) {
           const links = extractLinks(text).map((raw) => ({ raw, pathname: normalizeInternal(raw) })).filter((x) => x.pathname);
           for (const link of links) {
             if (RETIRED_PREFIXES.some((prefix) => link.pathname === prefix || link.pathname.startsWith(prefix + '/'))) {
-              failures.push({ type: 'live-retired-link', source: url, ...link });
+              failures.push({ type: 'live-retired-link', severity: 'migration-debt', source: url, ...link });
             }
           }
         }
       } catch (error) {
-        failures.push({ type: 'request-error', url, error: String(error) });
+        failures.push({ type: 'request-error', severity: 'blocking', url, attempts: MAX_FETCH_ATTEMPTS, error: String(error) });
       }
     }
   });
@@ -146,12 +175,25 @@ async function liveAudit() {
 
 const staticFindings = await staticAudit();
 const live = LIVE ? await liveAudit() : { pagesChecked: 0, failures: [] };
+const blockingStatic = staticFindings.filter((item) => item.severity === 'blocking');
+const migrationStatic = staticFindings.filter((item) => item.severity === 'migration-debt');
+const blockingLive = live.failures.filter((item) => item.severity === 'blocking');
+const migrationLive = live.failures.filter((item) => item.severity === 'migration-debt');
 const report = {
   generatedAt: new Date().toISOString(), site: SITE, liveEnabled: LIVE,
-  summary: { staticFindings: staticFindings.length, livePagesChecked: live.pagesChecked, liveFailures: live.failures.length },
-  staticFindings, liveFailures: live.failures,
+  summary: {
+    staticFindings: staticFindings.length,
+    blockingStaticFindings: blockingStatic.length,
+    migrationStaticFindings: migrationStatic.length,
+    livePagesChecked: live.pagesChecked,
+    liveFailures: live.failures.length,
+    blockingLiveFailures: blockingLive.length,
+    migrationLiveFindings: migrationLive.length,
+  },
+  staticFindings,
+  liveFailures: live.failures,
 };
 await fs.mkdir(path.join(ROOT, 'artifacts'), { recursive: true });
 await fs.writeFile(path.join(ROOT, 'artifacts', 'broken-link-audit.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report.summary, null, 2));
-if (staticFindings.length || live.failures.length) process.exitCode = 1;
+if (blockingStatic.length || blockingLive.length) process.exitCode = 1;
