@@ -2,6 +2,24 @@ name: Repository test and build health
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - 'src/components/**'
+      - 'src/routes/**'
+      - 'src/shared/texas-platform/**'
+      - 'src/lib/**'
+      - 'scripts/**'
+      - 'vitest.config.*'
+      - 'vite.config.*'
+      - 'tsconfig*.json'
+      - 'eslint.config.*'
+      - 'package.json'
+      - 'bun.lock*'
+      - '.github/workflows/shared-vitest.yml'
+  pull_request:
+    branches:
+      - main
     paths:
       - 'src/components/**'
       - 'src/routes/**'
@@ -21,36 +39,51 @@ permissions:
   contents: read
 
 concurrency:
-  group: repository-health-${{ github.ref }}
+  group: repository-health-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
-      - run: bun install --frozen-lockfile
+          # Pin CI to the repository's known-good runtime instead of allowing
+          # a new Bun release to change behavior between otherwise identical runs.
+          bun-version: 1.3.14
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Fast blocking gate for pull requests and main. These checks catch the
+      # problems most likely to break the application before expensive domain work.
       - name: ESLint
         run: bun run lint
       - name: Full Vitest suite
         run: bun run test
       - name: Route generation and TypeScript
         run: bun run typecheck
-      - name: Shared platform validation
-        run: bun run shared:validate
-      - name: Shared entity validation
-        run: bun run shared:entities:validate
-      - name: Publication boundary validation
-        run: bun run publication:validate
-      - name: SEO validation
-        run: bun run seo:validate
-      - name: Election validation
-        run: bun run elections:validate
-      - name: Legislature validation
-        run: bun run legislature:validate
       - name: Production build
         run: bun run build
+
+      # Repository-wide domain validations run once on main (or manually), rather
+      # than on every feature-branch push and again after merge.
+      - name: Shared platform validation
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: bun run shared:validate
+      - name: Shared entity validation
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: bun run shared:entities:validate
+      - name: Publication boundary validation
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: bun run publication:validate
+      - name: SEO validation
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: bun run seo:validate
+      - name: Election validation
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: bun run elections:validate
+      - name: Legislature validation
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: bun run legislature:validate
