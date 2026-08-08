@@ -24,7 +24,9 @@ const STATIC_PATHS:string[]=[
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
-  "/get-involved","/county-elections","/candidate-guides","/voting-locations","/laws","/texas-laws",
+  "/get-involved","/county-elections","/voting-locations","/laws","/texas-laws",
+  // /candidate-guides remains reachable but is noindex until rebuilt on the
+  // verified Election Central data model; do not promote the legacy fixture page.
   "/laws-to-know","/legislative-updates","/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/texas-politics",
   "/authors","/texas-economy","/texas-law-policy","/shop",
