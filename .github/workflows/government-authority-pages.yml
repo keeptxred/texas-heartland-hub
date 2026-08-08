@@ -12,17 +12,6 @@ on:
       - "package.json"
       - "bun.lock"
       - ".github/workflows/government-authority-pages.yml"
-  push:
-    branches: [main]
-    paths:
-      - "src/lib/texas-government.ts"
-      - "src/routes/texas-government*"
-      - "src/routes/sitemap-government*"
-      - "src/routes/sitemap*.ts"
-      - "scripts/government/**"
-      - "package.json"
-      - "bun.lock"
-      - ".github/workflows/government-authority-pages.yml"
   workflow_dispatch:
 
 permissions:
