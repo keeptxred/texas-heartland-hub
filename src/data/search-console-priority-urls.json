@@ -1,6 +1,10 @@
 {
-  "type": "JobPosting",
-  "urls": [
+  "siteUrl": "https://keeptxred.com",
+  "searchConsoleProperty": "sc-domain:keeptxred.com",
+  "purpose": "Priority canonical URLs for Search Console URL Inspection monitoring and sitemap management",
+  "maxUrls": 200,
+  "urlCount": 51,
+  "priorityUrls": [
     "https://keeptxred.com/",
     "https://keeptxred.com/news",
     "https://keeptxred.com/happening-now",
@@ -69,6 +73,4 @@
     "https://keeptxred.com/sitemap-authors.xml",
     "https://keeptxred.com/sitemap-images.xml"
   ]
-
 }
-

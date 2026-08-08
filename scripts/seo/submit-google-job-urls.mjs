@@ -22,7 +22,12 @@ function parseArguments(argv) {
 }
 
 function validateManifest(manifest) {
-  if (manifest.type !== "JobPosting" || !Array.isArray(manifest.urls)) {
+  if (
+    manifest.siteUrl !== ALLOWED_ORIGIN ||
+    manifest.type !== "JobPosting" ||
+    manifest.maxUrls !== MAX_URLS ||
+    !Array.isArray(manifest.urls)
+  ) {
     throw new Error("Invalid JobPosting URL manifest");
   }
   if (manifest.urls.length > MAX_URLS) {
