@@ -1,0 +1,3 @@
+import type { RelocationLocation } from "@/types/relocation/location";
+import { isCoordinate, isNonEmptyString } from "./validators";
+export function validateRelocationLocation(location:RelocationLocation):string[]{ const errors:string[]=[]; if(!isNonEmptyString(location.id))errors.push("id is required"); if(!isNonEmptyString(location.name))errors.push("name is required"); if(!isNonEmptyString(location.slug))errors.push("slug is required"); if(location.state!=="TX")errors.push("state must be TX"); if(location.coordinates&&!isCoordinate(location.coordinates.latitude,location.coordinates.longitude))errors.push("coordinates are invalid"); return errors; }

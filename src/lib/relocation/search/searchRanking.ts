@@ -1,0 +1,2 @@
+import { normalizeSearchText, tokenizeSearchText } from "./searchNormalizer";
+export function rankSearchText(query: string, candidate: string): number { const q=normalizeSearchText(query), c=normalizeSearchText(candidate); if(!q) return 1; if(c===q) return 100; if(c.startsWith(q)) return 75; if(c.includes(q)) return 50; const tokens=tokenizeSearchText(q); return tokens.length ? tokens.filter(token=>c.includes(token)).length/tokens.length*40 : 0; }
