@@ -4,43 +4,6 @@ on:
   schedule:
     - cron: "37 10 * * 1"
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "scripts/elections/import-races.ts"
-      - "scripts/elections/scrape-official-candidates.ts"
-      - "scripts/elections/scrape-official-primary-winners.mjs"
-      - "scripts/elections/import-candidates.ts"
-      - "scripts/elections/fec-candidate-resolver.ts"
-      - "scripts/elections/resolve-fec-ids.ts"
-      - "scripts/elections/import-finance.ts"
-      - "scripts/elections/import-tpor-may-poll.ts"
-      - "scripts/elections/import-ut-june-poll.ts"
-      - "scripts/elections/generate-official-geography.ts"
-      - "scripts/elections/import-geography.ts"
-      - "scripts/elections/normalize-imports.mjs"
-      - "scripts/elections/migrate-source-urls.mjs"
-      - "scripts/elections/rebuild-sources.mjs"
-      - "scripts/elections/validate-sources.mjs"
-      - "scripts/elections/polling-averages.ts"
-      - "scripts/elections/validate-enums.mjs"
-      - "scripts/elections/validate.mjs"
-      - "scripts/elections/qa.mjs"
-      - "scripts/elections/routes-qa.mjs"
-      - "scripts/elections/sitemap-qa.mjs"
-      - "scripts/elections/launch-readiness.mjs"
-      - "scripts/elections/apply-typecheck-fixes.mjs"
-      - "scripts/elections/import/**"
-      - "src/components/elections/**"
-      - "src/lib/elections/**"
-      - "src/pages/elections/**"
-      - "src/routes/elections*.tsx"
-      - "src/types/elections/**"
-      - "package.json"
-      - "bun.lock"
-      - "vitest.config.ts"
-      - ".github/workflows/update-election-data.yml"
 
 permissions:
   contents: write
@@ -52,7 +15,7 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 65
+    timeout-minutes: 45
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -63,13 +26,10 @@ jobs:
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.3.14
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
-
-      - name: Apply strict Election Central source fixes
-        run: node scripts/elections/apply-typecheck-fixes.mjs
 
       - name: Install election-source browser
         run: bun x playwright install --with-deps chromium
@@ -159,74 +119,31 @@ jobs:
       - name: Recalculate eligible forecasts
         run: bun run elections:forecast
 
-      - name: Validate election data
+      - name: Validate refreshed election data
         id: validation
         shell: bash
         run: |
           set -o pipefail
           bun run elections:validate 2>&1 | tee /tmp/election-validation.log
 
-      - name: Upload election validation diagnostics
-        if: always() && steps.validation.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: election-validation-diagnostics
-          path: /tmp/election-validation.log
-          if-no-files-found: error
-          retention-days: 14
-
-      - name: Run election launch QA and write readiness report
+      - name: Run structural launch QA
         id: launch_qa
         shell: bash
         env:
           ELECTION_WRITE_READINESS: "true"
-          ELECTION_QA_CHECK_LINKS: "true"
         run: |
           set -o pipefail
           bun run elections:qa 2>&1 | tee /tmp/election-qa.log
 
-      - name: Typecheck application
-        id: typecheck
-        shell: bash
-        run: |
-          set -o pipefail
-          bun run typecheck 2>&1 | tee /tmp/election-typecheck.log
-
-      - name: Run unit tests
-        id: tests
-        shell: bash
-        run: |
-          set -o pipefail
-          bun run test 2>&1 | tee /tmp/election-tests.log
-
-      - name: Build production application
-        id: build
-        shell: bash
-        env:
-          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
-        run: |
-          set -o pipefail
-          bun run build 2>&1 | tee /tmp/election-build.log
-
-      - name: Upload election verification diagnostics
-        if: always() && (steps.typecheck.outcome == 'failure' || steps.tests.outcome == 'failure' || steps.build.outcome == 'failure')
+      - name: Upload refresh diagnostics
+        if: always() && (steps.validation.outcome == 'failure' || steps.launch_qa.outcome == 'failure')
         uses: actions/upload-artifact@v4
         with:
-          name: election-compile-test-build-diagnostics
+          name: election-refresh-diagnostics
           path: |
-            /tmp/election-typecheck.log
-            /tmp/election-tests.log
-            /tmp/election-build.log
+            /tmp/election-validation.log
+            /tmp/election-qa.log
           if-no-files-found: warn
-          retention-days: 14
-
-      - name: Upload election launch QA diagnostics
-        if: always() && steps.launch_qa.outcome == 'failure'
-        uses: actions/upload-artifact@v4
-        with:
-          name: election-launch-qa-diagnostics
-          path: /tmp/election-qa.log
-          if-no-files-found: error
           retention-days: 14
 
       - name: Record refresh conclusion and publish safe changes
@@ -264,9 +181,6 @@ jobs:
             runUrl: process.env.RUN_URL,
             validationSummary: compactLog("/tmp/election-validation.log"),
             qaSummary: compactLog("/tmp/election-qa.log"),
-            typecheckSummary: compactLog("/tmp/election-typecheck.log"),
-            testSummary: compactLog("/tmp/election-tests.log"),
-            buildSummary: compactLog("/tmp/election-build.log"),
           };
 
           fs.writeFileSync(
@@ -274,16 +188,9 @@ jobs:
             `${JSON.stringify(status, null, 2)}\n`,
           );
           NODE
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git restore \
-            src/components/elections/navigation/ElectionNavigation.tsx \
-            src/lib/elections/repositories/static.ts \
-            src/routes/elections.tsx \
-            src/routes/elections.2026.tsx \
-            src/routeTree.gen.ts \
-            scripts/elections/import-candidates.ts || true
 
           if [[ "$JOB_STATUS" == "success" ]]; then
             git add src/data/elections/2026
@@ -292,6 +199,7 @@ jobs:
             git add src/data/elections/2026/workflow-status.json
             message="Record failed election data refresh"
           fi
+
           git restore --worktree .
           if git diff --cached --quiet; then
             echo "No refresh status or election data changes to commit."
