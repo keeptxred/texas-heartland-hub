@@ -16,21 +16,6 @@ on:
       - "package.json"
       - "bun.lock"
       - ".github/workflows/election-central-mobile.yml"
-  push:
-    branches: [main]
-    paths:
-      - "src/data/elections/**"
-      - "src/lib/elections/**"
-      - "src/types/elections/**"
-      - "src/components/elections/**"
-      - "src/pages/elections/**"
-      - "src/routes/elections*"
-      - "src/routes/index.tsx"
-      - "tests/elections/**"
-      - "playwright.elections.config.ts"
-      - "package.json"
-      - "bun.lock"
-      - ".github/workflows/election-central-mobile.yml"
   workflow_dispatch:
 
 permissions:
@@ -43,7 +28,7 @@ concurrency:
 jobs:
   mobile:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
@@ -55,12 +40,6 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Install Chromium
         run: bun x playwright install --with-deps chromium
-      - name: Build production application
-        id: build
-        continue-on-error: true
-        env:
-          VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
-        run: bun run build
       - name: Run mobile browser smoke tests
         id: mobile_tests
         continue-on-error: true
@@ -71,7 +50,6 @@ jobs:
         if: always()
         shell: bash
         env:
-          BUILD_OUTCOME: ${{ steps.build.outcome }}
           MOBILE_OUTCOME: ${{ steps.mobile_tests.outcome }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
@@ -80,8 +58,8 @@ jobs:
         run: |
           node --input-type=module <<'NODE'
           import fs from "node:fs";
-          const checks = { build: process.env.BUILD_OUTCOME, mobileTests: process.env.MOBILE_OUTCOME };
-          const passed = Object.values(checks).every((value) => value === "success");
+          const checks = { mobileTests: process.env.MOBILE_OUTCOME };
+          const passed = checks.mobileTests === "success";
           const report = {
             updatedAt: new Date().toISOString(), conclusion: passed ? "success" : "failure",
             runId: process.env.RUN_ID, runAttempt: process.env.RUN_ATTEMPT,
@@ -91,8 +69,8 @@ jobs:
           fs.writeFileSync("/tmp/election-mobile-status.json", `${JSON.stringify(report, null, 2)}\n`);
           fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, [
             "## Election Central mobile QA", "", `**Conclusion:** ${passed ? "PASS" : "FAIL"}`, "",
-            `- Production build: ${checks.build === "success" ? "✅" : "❌"} ${checks.build}`,
             `- Mobile browser tests: ${checks.mobileTests === "success" ? "✅" : "❌"} ${checks.mobileTests}`,
+            "- Production build is validated by the dedicated Production Build Validation workflow.",
             "- Viewport: 390 × 844", "",
           ].join("\n"));
           NODE
@@ -108,9 +86,8 @@ jobs:
         if: always()
         shell: bash
         env:
-          BUILD_OUTCOME: ${{ steps.build.outcome }}
           MOBILE_OUTCOME: ${{ steps.mobile_tests.outcome }}
         run: |
-          if [[ "$BUILD_OUTCOME" != "success" || "$MOBILE_OUTCOME" != "success" ]]; then
+          if [[ "$MOBILE_OUTCOME" != "success" ]]; then
             exit 1
           fi
