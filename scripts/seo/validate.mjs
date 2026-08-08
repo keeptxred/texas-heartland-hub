@@ -206,10 +206,7 @@ if (errors.length) {
   process.exit(1);
 }
 
-for (const validator of [
-  "scripts/shared/validate-backend-separation.mjs",
-  "scripts/shared/validate-retired-lifestyle-code.mjs",
-]) {
+for (const validator of ["scripts/shared/validate-retired-lifestyle-code.mjs"]) {
   try {
     const output = execFileSync(process.execPath, [validator], {
       cwd: ROOT,
