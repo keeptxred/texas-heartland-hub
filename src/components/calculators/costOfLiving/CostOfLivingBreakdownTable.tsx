@@ -1,0 +1,3 @@
+import React from "react";
+import type { PhaseCalculatorResult } from "@/types/calculators/phaseCalculator";
+export default function CostOfLivingBreakdownTable({ results }: { results: PhaseCalculatorResult[] }) { return <div className="overflow-hidden rounded-xl border"><table className="w-full text-sm"><tbody>{results.map(row => <tr className="border-b last:border-0" key={row.label}><th className="px-4 py-3 text-left">{row.label}</th><td className="px-4 py-3 text-right">{row.value.toLocaleString("en-US", { style: row.type === "percent" ? "decimal" : "currency", currency:"USD", maximumFractionDigits:2 })}{row.type === "percent" ? "%" : ""}</td></tr>)}</tbody></table></div>; }
