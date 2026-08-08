@@ -160,9 +160,19 @@ function buildCanonicalTarget(url: URL): URL {
   return target;
 }
 
+function isIndexableBillPagination(url: URL): boolean {
+  const pathname = normalizePagePath(url.pathname);
+  const page = url.searchParams.get("page") ?? "";
+  if (!/^[2-9]\d*$/.test(page)) return false;
+  return pathname === "/bills" || /^\/bills\/texas\/\d+\/[a-z]{1,8}$/i.test(pathname);
+}
+
 function hasNoindexState(url: URL): boolean {
+  const allowBillPage = isIndexableBillPagination(url);
   for (const key of url.searchParams.keys()) {
-    if (NOINDEX_STATE_PARAMS.has(key.toLowerCase())) return true;
+    const normalized = key.toLowerCase();
+    if (normalized === "page" && allowBillPage) continue;
+    if (NOINDEX_STATE_PARAMS.has(normalized)) return true;
   }
   return false;
 }
@@ -199,8 +209,11 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const result = await next();
 
   // Shareable filters and UI states remain usable, but do not compete with
-  // their clean canonical route in search results.
-  if (hasNoindexState(url)) {
+  // their clean canonical route in search results. Clean bill page 2+ URLs are
+  // an explicit exception because those routes self-canonicalize and are part
+  // of the bill discovery hierarchy.
+  const shouldNoindex = hasNoindexState(url) || result.response.status === 404 || result.response.status === 410;
+  if (shouldNoindex) {
     try {
       result.response.headers.set("X-Robots-Tag", "noindex, follow");
     } catch {

@@ -24,6 +24,16 @@ const checks = [
       'visiblePages.map((target, index) =>',
     ],
   },
+  {
+    file: 'src/start.ts',
+    required: [
+      'function isIndexableBillPagination(url: URL): boolean',
+      'pathname === "/bills" || /^\\/bills\\/texas\\/\\d+\\/[a-z]{1,8}$/i.test(pathname)',
+      'if (normalized === "page" && allowBillPage) continue;',
+      'result.response.status === 404 || result.response.status === 410',
+      'result.response.headers.set("X-Robots-Tag", "noindex, follow")',
+    ],
+  },
 ];
 
 const errors = [];
