@@ -24,6 +24,12 @@ function hasBillFilters(search: BillSearch) {
   return Boolean(search.q || search.status || search.legislature || search.chamber || search.billType);
 }
 
+function paginationPages(current: number, total: number): number[] {
+  return [...new Set([1, current - 2, current - 1, current, current + 1, current + 2, total])]
+    .filter((page) => page >= 1 && page <= total)
+    .sort((a, b) => a - b);
+}
+
 export const Route = createFileRoute('/bills/')({
   validateSearch: (search: Record<string, unknown>): BillSearch => ({
     q: typeof search.q === 'string' ? search.q.slice(0, 100) : '',
@@ -119,6 +125,7 @@ function BillsPage() {
   const { bills, count, options } = Route.useLoaderData();
   const search = Route.useSearch();
   const pages = Math.max(1, Math.ceil(count / 24));
+  const visiblePages = paginationPages(search.page, pages);
   const hasFilters = hasBillFilters(search);
   const preserved = { q: search.q, status: search.status, legislature: search.legislature, chamber: search.chamber, billType: search.billType };
   const legislatures = options.legislatures as Array<{ value: number; label: string }>;
@@ -184,7 +191,25 @@ function BillsPage() {
           </div>
         </div>
         {bills.length ? <div className="mt-6 grid gap-4 lg:grid-cols-2">{bills.map((bill: any) => <article key={bill.id} className="rounded-xl border bg-card p-5 transition hover:border-primary"><div className="flex items-start justify-between gap-4"><div><a href={canonicalBillPath(bill)} className="text-xl font-bold text-primary hover:underline">{bill.bill_identifier}</a><p className="mt-2 font-medium leading-snug">{bill.caption}</p></div><span className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-semibold">{bill.current_status_label}</span></div><div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground"><span>{bill.chamber === 'house' ? 'Texas House' : bill.chamber === 'senate' ? 'Texas Senate' : 'Joint'}</span><span>{bill.legislature_number}th Legislature</span><span>{bill.bill_type.toUpperCase()}</span>{bill.last_action_date && <span>Updated {new Date(`${bill.last_action_date}T12:00:00`).toLocaleDateString()}</span>}</div></article>)}</div> : <div className="mt-6 rounded-xl border border-dashed p-10 text-center"><h3 className="font-semibold">No matching bills</h3><p className="mt-2 text-sm text-muted-foreground">Clear one or more filters or try a broader bill number or caption search.</p></div>}
-        {pages > 1 && <nav className="mt-8 flex items-center justify-center gap-3" aria-label="Bill results pages">{search.page > 1 ? <Link to="/bills" search={{ ...search, page: search.page - 1 }} className="rounded-md border px-4 py-2">Previous</Link> : <span className="rounded-md border px-4 py-2 opacity-50">Previous</span>}<span className="text-sm">Page {search.page} of {pages}</span>{search.page < pages ? <Link to="/bills" search={{ ...search, page: search.page + 1 }} className="rounded-md border px-4 py-2">Next</Link> : <span className="rounded-md border px-4 py-2 opacity-50">Next</span>}</nav>}
+        {pages > 1 && (
+          <nav className="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label="Bill results pages">
+            {search.page > 1 ? <Link to="/bills" search={{ ...search, page: search.page - 1 }} className="rounded-md border px-4 py-2">Previous</Link> : <span className="rounded-md border px-4 py-2 opacity-50">Previous</span>}
+            {visiblePages.map((target, index) => {
+              const previousTarget = visiblePages[index - 1];
+              return (
+                <span key={target} className="contents">
+                  {previousTarget && target - previousTarget > 1 ? <span aria-hidden="true" className="px-1 text-muted-foreground">…</span> : null}
+                  {target === search.page ? (
+                    <span aria-current="page" className="rounded-md border border-primary bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground">{target}</span>
+                  ) : (
+                    <Link to="/bills" search={{ ...search, page: target }} aria-label={`Page ${target}`} className="rounded-md border px-3 py-2 text-sm hover:border-primary">{target}</Link>
+                  )}
+                </span>
+              );
+            })}
+            {search.page < pages ? <Link to="/bills" search={{ ...search, page: search.page + 1 }} className="rounded-md border px-4 py-2">Next</Link> : <span className="rounded-md border px-4 py-2 opacity-50">Next</span>}
+          </nav>
+        )}
       </section>
     </div>
   );
