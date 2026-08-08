@@ -57,7 +57,7 @@ function FindRepPage() {
         <div className="mt-10 grid sm:grid-cols-3 gap-4 text-sm">
           <Link to="/contact-legislators" className="border-2 border-foreground/10 p-5 hover:border-primary"><strong className="font-display text-xl">Contact</strong><br /><span className="text-muted-foreground text-xs">Scripts & numbers</span></Link>
           <Link to="/register-to-vote" className="border-2 border-foreground/10 p-5 hover:border-primary"><strong className="font-display text-xl">Register</strong><br /><span className="text-muted-foreground text-xs">Get on the rolls</span></Link>
-          <Link to="/voting-locations" className="border-2 border-foreground/10 p-5 hover:border-primary"><strong className="font-display text-xl">Vote</strong><br /><span className="text-muted-foreground text-xs">Find your polling place</span></Link>
+          <Link to="/elections/voting" className="border-2 border-foreground/10 p-5 hover:border-primary"><strong className="font-display text-xl">Vote</strong><br /><span className="text-muted-foreground text-xs">Research your ballot</span></Link>
         </div>
       </div>
     </>
