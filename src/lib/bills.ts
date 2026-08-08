@@ -163,10 +163,12 @@ export async function getBillFilterOptions() {
   for (let from = 0; ; from += BILL_DIRECTORY_PAGE_SIZE) {
     const { data, error } = await db
       .from('bills')
-      .select('id,legislature_number,session_code,bill_type,chamber')
+      .select('legislature_number,session_code,bill_type,chamber')
       .eq('is_active', true)
       .order('legislature_number', { ascending: false })
-      .order('id', { ascending: true })
+      .order('session_code', { ascending: true })
+      .order('bill_type', { ascending: true })
+      .order('chamber', { ascending: true })
       .range(from, from + BILL_DIRECTORY_PAGE_SIZE - 1);
     if (error) throw error;
     const page = data ?? [];
