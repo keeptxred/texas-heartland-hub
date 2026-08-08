@@ -142,7 +142,7 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
             shipping_address_collection: { allowed_countries: ["US"] },
             phone_number_collection: { enabled: true },
             success_url: "https://texasdefined.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url: "https://texasdefined.com/cart",
+            cancel_url: "https://texasdefined.com/shop/cart",
             payment_intent_data: {
               description: "Texas Defined — Shop Order",
               metadata: { cart: cartJson, source: "texasdefined_shop" },
