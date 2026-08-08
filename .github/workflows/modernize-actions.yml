@@ -66,8 +66,10 @@ jobs:
         run: bun run shared:entities:validate
       - name: Publication validation
         run: bun run publication:validate
-      - name: SEO validation
-        run: bun run seo:validate
+      - name: SEO structural validation
+        run: node scripts/seo/validate.mjs
+      - name: SEO indexability validation
+        run: node --experimental-strip-types scripts/seo/validate-indexability.mjs
       - name: Elections validation
         run: bun run elections:validate
       - name: Legislature validation
