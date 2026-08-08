@@ -4,10 +4,12 @@ const checks = [
   {
     file: 'src/routes/bills/index.tsx',
     required: [
-      "import { createFileRoute, Link, stripSearchParams } from '@tanstack/react-router'",
+      "import { createFileRoute, Link, notFound, stripSearchParams } from '@tanstack/react-router'",
       'middlewares: [stripSearchParams(DEFAULT_SEARCH)]',
       "? `${SITE_URL}/bills?page=${search.page}`",
       'function paginationPages(current: number, total: number): number[]',
+      'const maxPage = Math.max(1, Math.ceil(results.count / 24));',
+      'if (deps.page > maxPage) throw notFound();',
       'const visiblePages = paginationPages(search.page, pages);',
       'visiblePages.map((target, index) =>',
     ],
