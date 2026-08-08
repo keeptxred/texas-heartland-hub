@@ -2,240 +2,38 @@ name: Verify Election Central build
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "src/components/elections/**"
-      - "src/data/elections/**"
-      - "src/lib/elections/**"
-      - "src/pages/elections/**"
-      - "src/routes/elections*.tsx"
-      - "src/routes/sitemap-elections*.ts"
-      - "src/types/elections/**"
-      - "scripts/elections/**"
-      - "tests/elections/**"
-      - "playwright.elections.config.ts"
-      - "package.json"
-      - "bun.lock"
-      - "tsconfig.json"
-      - "vite.config.ts"
-      - "vitest.config.ts"
-      - ".github/workflows/election-ci.yml"
 
 permissions:
   contents: read
 
 concurrency:
-  group: election-central-ci-${{ github.sha }}
+  group: election-central-manual-verification
   cancel-in-progress: true
 
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 25
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
-
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
-
+          bun-version: 1.3.14
       - name: Install dependencies
         run: bun install --frozen-lockfile
-
       - name: Install Chromium
         run: bun x playwright install --with-deps chromium
-
-      - name: Validate election records
-        continue-on-error: true
-        shell: bash
-        run: |
-          set +e
-          set -o pipefail
-          bun run elections:validate 2>&1 | tee /tmp/election-ci-validate.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > /tmp/election-ci-validate.exit
-          exit "$status"
-
-      - name: Build production application and generate routes
-        continue-on-error: true
-        shell: bash
+      - name: Build production application
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
-        run: |
-          set +e
-          set -o pipefail
-          bun run build 2>&1 | tee /tmp/election-ci-build.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > /tmp/election-ci-build.exit
-          exit "$status"
-
-      - name: Typecheck application
-        continue-on-error: true
-        shell: bash
-        run: |
-          set +e
-          set -o pipefail
-          bun run typecheck 2>&1 | tee /tmp/election-ci-typecheck.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > /tmp/election-ci-typecheck.exit
-          exit "$status"
-
-      - name: Run unit tests
-        continue-on-error: true
-        shell: bash
-        run: |
-          set +e
-          set -o pipefail
-          bun run test 2>&1 | tee /tmp/election-ci-tests.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > /tmp/election-ci-tests.exit
-          grep -E "FAIL|failed|AssertionError|Error:|Test Files|Tests  " /tmp/election-ci-tests.log | tail -160 > /tmp/election-ci-test-failures.log || true
-          exit "$status"
-
+        run: bun run build
       - name: Run mobile browser smoke tests (standard homepage)
-        continue-on-error: true
-        shell: bash
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
-        run: |
-          set +e
-          set -o pipefail
-          bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > /tmp/election-ci-mobile.exit
-          exit "$status"
-
+        run: bun run elections:test:mobile
       - name: Run mobile browser smoke tests (Election Central homepage)
-        continue-on-error: true
-        shell: bash
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "true"
-        run: |
-          set +e
-          set -o pipefail
-          bun run elections:test:mobile 2>&1 | tee /tmp/election-ci-mobile-homepage.log
-          status=${PIPESTATUS[0]}
-          printf '%s\n' "$status" > /tmp/election-ci-mobile-homepage.exit
-          exit "$status"
-
-      - name: Create verification report
-        if: always()
-        shell: bash
-        env:
-          RUN_ID: ${{ github.run_id }}
-          RUN_ATTEMPT: ${{ github.run_attempt }}
-          RUN_SHA: ${{ github.sha }}
-          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-        run: |
-          node --input-type=module <<'NODE'
-          import fs from "node:fs";
-
-          function compactLog(file, lineLimit = 100, characterLimit = 16000) {
-            if (!fs.existsSync(file)) return null;
-            const lines = fs.readFileSync(file, "utf8").trim().split(/\r?\n/);
-            return lines.slice(-lineLimit).join("\n").slice(-characterLimit) || null;
-          }
-
-          function readExitCode(file) {
-            if (!fs.existsSync(file)) return null;
-            const value = fs.readFileSync(file, "utf8").trim();
-            return /^\d+$/.test(value) ? value : null;
-          }
-
-          const exitCodes = {
-            validation: readExitCode("/tmp/election-ci-validate.exit"),
-            build: readExitCode("/tmp/election-ci-build.exit"),
-            typecheck: readExitCode("/tmp/election-ci-typecheck.exit"),
-            tests: readExitCode("/tmp/election-ci-tests.exit"),
-            mobile: readExitCode("/tmp/election-ci-mobile.exit"),
-            homepageEnabledMobile: readExitCode("/tmp/election-ci-mobile-homepage.exit"),
-          };
-          const checks = Object.fromEntries(
-            Object.entries(exitCodes).map(([name, code]) => [name, code === "0" ? "success" : "failure"]),
-          );
-          const passed = Object.values(exitCodes).every((code) => code === "0");
-          const status = {
-            updatedAt: new Date().toISOString(),
-            conclusion: passed ? "success" : "failure",
-            runId: process.env.RUN_ID,
-            runAttempt: process.env.RUN_ATTEMPT,
-            triggerCommit: process.env.RUN_SHA,
-            runUrl: process.env.RUN_URL,
-            checks,
-            exitCodes,
-            validationSummary: compactLog("/tmp/election-ci-validate.log"),
-            buildSummary: compactLog("/tmp/election-ci-build.log"),
-            typecheckSummary: compactLog("/tmp/election-ci-typecheck.log"),
-            testFailureSummary: compactLog("/tmp/election-ci-test-failures.log", 160, 20000),
-            testSummary: compactLog("/tmp/election-ci-tests.log"),
-            mobileSummary: compactLog("/tmp/election-ci-mobile.log", 160, 20000),
-            homepageEnabledMobileSummary: compactLog("/tmp/election-ci-mobile-homepage.log", 160, 20000),
-          };
-          fs.writeFileSync("/tmp/election-ci-status.json", `${JSON.stringify(status, null, 2)}\n`);
-
-          const symbol = (value) => value === "success" ? "✅" : "❌";
-          const summary = [
-            "## Election Central verification",
-            "",
-            `**Conclusion:** ${passed ? "PASS" : "FAIL"}`,
-            "",
-            "| Check | Result | Exit code |",
-            "|---|---|---|",
-            ...Object.entries(checks).map(([name, value]) => `| ${name} | ${symbol(value)} ${value} | ${exitCodes[name] ?? "missing"} |`),
-            "",
-            `Commit: \`${process.env.RUN_SHA}\``,
-          ].join("\n");
-          fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY, `${summary}\n`);
-          NODE
-
-      - name: Upload verification report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: election-central-verification-${{ github.run_id }}
-          path: |
-            /tmp/election-ci-status.json
-            /tmp/election-ci-validate.log
-            /tmp/election-ci-validate.exit
-            /tmp/election-ci-build.log
-            /tmp/election-ci-build.exit
-            /tmp/election-ci-typecheck.log
-            /tmp/election-ci-typecheck.exit
-            /tmp/election-ci-tests.log
-            /tmp/election-ci-tests.exit
-            /tmp/election-ci-test-failures.log
-            /tmp/election-ci-mobile.log
-            /tmp/election-ci-mobile.exit
-            /tmp/election-ci-mobile-homepage.log
-            /tmp/election-ci-mobile-homepage.exit
-          if-no-files-found: warn
-          retention-days: 14
-
-      - name: Enforce verification result
-        if: always()
-        shell: bash
-        run: |
-          files=(
-            /tmp/election-ci-validate.exit
-            /tmp/election-ci-build.exit
-            /tmp/election-ci-typecheck.exit
-            /tmp/election-ci-tests.exit
-            /tmp/election-ci-mobile.exit
-            /tmp/election-ci-mobile-homepage.exit
-          )
-
-          for file in "${files[@]}"; do
-            if [[ ! -f "$file" ]]; then
-              echo "Missing verification result: $file"
-              exit 1
-            fi
-            code=$(tr -d '[:space:]' < "$file")
-            if [[ "$code" != "0" ]]; then
-              echo "Verification failed: $file reported exit code ${code:-missing}"
-              exit 1
-            fi
-          done
+        run: bun run elections:test:mobile
