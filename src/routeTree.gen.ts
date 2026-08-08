@@ -245,6 +245,7 @@ import { Route as ApiPublicStoreProductsRouteImport } from './routes/api/public/
 import { Route as ApiPublicNewsroomHealthRouteImport } from './routes/api/public/newsroom-health'
 import { Route as ApiPublicDeploymentFingerprintRouteImport } from './routes/api/public/deployment-fingerprint'
 import { Route as ApiAdminShopProductsRouteImport } from './routes/api/admin/shop-products'
+import { Route as ApiAdminLegislationSyncProxyRouteImport } from './routes/api/admin/legislation-sync-proxy'
 import { Route as AdminElectionsResultsRouteImport } from './routes/admin/elections/results'
 import { Route as AdminElectionsRacesRouteImport } from './routes/admin/elections/races'
 import { Route as AdminElectionsPollsRouteImport } from './routes/admin/elections/polls'
@@ -278,6 +279,7 @@ import { Route as ApiPublicExploreMapRouteImport } from './routes/api/public/exp
 import { Route as ApiPublicExploreEntitiesRouteImport } from './routes/api/public/explore/entities'
 import { Route as ApiPublicExploreAutocompleteRouteImport } from './routes/api/public/explore/autocomplete'
 import { Route as ApiPublicArticleImageFilenameRouteImport } from './routes/api/public/article-image.$filename'
+import { Route as ApiAdminLegislationSyncProxySplatRouteImport } from './routes/api/admin/legislation-sync-proxy.$'
 import { Route as BillsTexasLegislatureBillTypeIndexRouteImport } from './routes/bills/texas/$legislature/$billType/index'
 import { Route as BillsTexasLegislatureBillTypeBillNumberRouteImport } from './routes/bills/texas/$legislature/$billType/$billNumber'
 import { Route as ApiPublicOauthFacebookStartRouteImport } from './routes/api/public/oauth/facebook/start'
@@ -1523,6 +1525,12 @@ const ApiAdminShopProductsRoute = ApiAdminShopProductsRouteImport.update({
   path: '/api/admin/shop-products',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAdminLegislationSyncProxyRoute =
+  ApiAdminLegislationSyncProxyRouteImport.update({
+    id: '/api/admin/legislation-sync-proxy',
+    path: '/api/admin/legislation-sync-proxy',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AdminElectionsResultsRoute = AdminElectionsResultsRouteImport.update({
   id: '/elections/results',
   path: '/elections/results',
@@ -1708,6 +1716,12 @@ const ApiPublicArticleImageFilenameRoute =
     id: '/api/public/article-image/$filename',
     path: '/api/public/article-image/$filename',
     getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiAdminLegislationSyncProxySplatRoute =
+  ApiAdminLegislationSyncProxySplatRouteImport.update({
+    id: '/$',
+    path: '/$',
+    getParentRoute: () => ApiAdminLegislationSyncProxyRoute,
   } as any)
 const BillsTexasLegislatureBillTypeIndexRoute =
   BillsTexasLegislatureBillTypeIndexRouteImport.update({
@@ -1951,6 +1965,7 @@ export interface FileRoutesByFullPath {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/legislation-sync-proxy': typeof ApiAdminLegislationSyncProxyRouteWithChildren
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
@@ -1981,6 +1996,7 @@ export interface FileRoutesByFullPath {
   '/elections/districts/': typeof ElectionsDistrictsIndexRoute
   '/texas-legislature/committees/': typeof TexasLegislatureCommitteesIndexRoute
   '/texas-legislature/sessions/': typeof TexasLegislatureSessionsIndexRoute
+  '/api/admin/legislation-sync-proxy/$': typeof ApiAdminLegislationSyncProxySplatRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -2214,6 +2230,7 @@ export interface FileRoutesByTo {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/legislation-sync-proxy': typeof ApiAdminLegislationSyncProxyRouteWithChildren
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
@@ -2244,6 +2261,7 @@ export interface FileRoutesByTo {
   '/elections/districts': typeof ElectionsDistrictsIndexRoute
   '/texas-legislature/committees': typeof TexasLegislatureCommitteesIndexRoute
   '/texas-legislature/sessions': typeof TexasLegislatureSessionsIndexRoute
+  '/api/admin/legislation-sync-proxy/$': typeof ApiAdminLegislationSyncProxySplatRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -2490,6 +2508,7 @@ export interface FileRoutesById {
   '/admin/elections/polls': typeof AdminElectionsPollsRoute
   '/admin/elections/races': typeof AdminElectionsRacesRoute
   '/admin/elections/results': typeof AdminElectionsResultsRoute
+  '/api/admin/legislation-sync-proxy': typeof ApiAdminLegislationSyncProxyRouteWithChildren
   '/api/admin/shop-products': typeof ApiAdminShopProductsRoute
   '/api/public/deployment-fingerprint': typeof ApiPublicDeploymentFingerprintRoute
   '/api/public/newsroom-health': typeof ApiPublicNewsroomHealthRoute
@@ -2520,6 +2539,7 @@ export interface FileRoutesById {
   '/elections/districts/': typeof ElectionsDistrictsIndexRoute
   '/texas-legislature/committees/': typeof TexasLegislatureCommitteesIndexRoute
   '/texas-legislature/sessions/': typeof TexasLegislatureSessionsIndexRoute
+  '/api/admin/legislation-sync-proxy/$': typeof ApiAdminLegislationSyncProxySplatRoute
   '/api/public/article-image/$filename': typeof ApiPublicArticleImageFilenameRoute
   '/api/public/explore/autocomplete': typeof ApiPublicExploreAutocompleteRoute
   '/api/public/explore/entities': typeof ApiPublicExploreEntitiesRoute
@@ -2767,6 +2787,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/legislation-sync-proxy'
     | '/api/admin/shop-products'
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
@@ -2797,6 +2818,7 @@ export interface FileRouteTypes {
     | '/elections/districts/'
     | '/texas-legislature/committees/'
     | '/texas-legislature/sessions/'
+    | '/api/admin/legislation-sync-proxy/$'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -3030,6 +3052,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/legislation-sync-proxy'
     | '/api/admin/shop-products'
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
@@ -3060,6 +3083,7 @@ export interface FileRouteTypes {
     | '/elections/districts'
     | '/texas-legislature/committees'
     | '/texas-legislature/sessions'
+    | '/api/admin/legislation-sync-proxy/$'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -3305,6 +3329,7 @@ export interface FileRouteTypes {
     | '/admin/elections/polls'
     | '/admin/elections/races'
     | '/admin/elections/results'
+    | '/api/admin/legislation-sync-proxy'
     | '/api/admin/shop-products'
     | '/api/public/deployment-fingerprint'
     | '/api/public/newsroom-health'
@@ -3335,6 +3360,7 @@ export interface FileRouteTypes {
     | '/elections/districts/'
     | '/texas-legislature/committees/'
     | '/texas-legislature/sessions/'
+    | '/api/admin/legislation-sync-proxy/$'
     | '/api/public/article-image/$filename'
     | '/api/public/explore/autocomplete'
     | '/api/public/explore/entities'
@@ -3495,6 +3521,7 @@ export interface RootRouteChildren {
   VehiclesTemporaryTagsRoute: typeof VehiclesTemporaryTagsRoute
   VehiclesTitleTransferRoute: typeof VehiclesTitleTransferRoute
   AuthorsIndexRoute: typeof AuthorsIndexRoute
+  ApiAdminLegislationSyncProxyRoute: typeof ApiAdminLegislationSyncProxyRouteWithChildren
   ApiAdminShopProductsRoute: typeof ApiAdminShopProductsRoute
   ApiPublicDeploymentFingerprintRoute: typeof ApiPublicDeploymentFingerprintRoute
   ApiPublicNewsroomHealthRoute: typeof ApiPublicNewsroomHealthRoute
@@ -5180,6 +5207,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminShopProductsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/admin/legislation-sync-proxy': {
+      id: '/api/admin/legislation-sync-proxy'
+      path: '/api/admin/legislation-sync-proxy'
+      fullPath: '/api/admin/legislation-sync-proxy'
+      preLoaderRoute: typeof ApiAdminLegislationSyncProxyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/elections/results': {
       id: '/admin/elections/results'
       path: '/elections/results'
@@ -5410,6 +5444,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/article-image/$filename'
       preLoaderRoute: typeof ApiPublicArticleImageFilenameRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/admin/legislation-sync-proxy/$': {
+      id: '/api/admin/legislation-sync-proxy/$'
+      path: '/$'
+      fullPath: '/api/admin/legislation-sync-proxy/$'
+      preLoaderRoute: typeof ApiAdminLegislationSyncProxySplatRouteImport
+      parentRoute: typeof ApiAdminLegislationSyncProxyRoute
     }
     '/bills/texas/$legislature/$billType/': {
       id: '/bills/texas/$legislature/$billType/'
@@ -5875,6 +5916,21 @@ const TexasSportsRouteWithChildren = TexasSportsRoute._addFileChildren(
   TexasSportsRouteChildren,
 )
 
+interface ApiAdminLegislationSyncProxyRouteChildren {
+  ApiAdminLegislationSyncProxySplatRoute: typeof ApiAdminLegislationSyncProxySplatRoute
+}
+
+const ApiAdminLegislationSyncProxyRouteChildren: ApiAdminLegislationSyncProxyRouteChildren =
+  {
+    ApiAdminLegislationSyncProxySplatRoute:
+      ApiAdminLegislationSyncProxySplatRoute,
+  }
+
+const ApiAdminLegislationSyncProxyRouteWithChildren =
+  ApiAdminLegislationSyncProxyRoute._addFileChildren(
+    ApiAdminLegislationSyncProxyRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -6010,6 +6066,8 @@ const rootRouteChildren: RootRouteChildren = {
   VehiclesTemporaryTagsRoute: VehiclesTemporaryTagsRoute,
   VehiclesTitleTransferRoute: VehiclesTitleTransferRoute,
   AuthorsIndexRoute: AuthorsIndexRoute,
+  ApiAdminLegislationSyncProxyRoute:
+    ApiAdminLegislationSyncProxyRouteWithChildren,
   ApiAdminShopProductsRoute: ApiAdminShopProductsRoute,
   ApiPublicDeploymentFingerprintRoute: ApiPublicDeploymentFingerprintRoute,
   ApiPublicNewsroomHealthRoute: ApiPublicNewsroomHealthRoute,

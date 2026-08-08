@@ -68,7 +68,7 @@ export function classifyStoryOwnership(input: StoryRoutingInput): StoryRoutingDe
   if (/\b(real estate|housing market|homebuyer|mortgage|home value|property market)/.test(text)) {
     return route('real-estate', 'TexasDefined', 'medium', ['Consumer housing/real-estate story.'], 'context');
   }
-  if (/\b(cowboys|texans|astros|rangers|mavericks|spurs|stars|fc dallas|dynamo|austin fc|longhorns|aggies|red raiders|horned frogs|sports)/.test(text)) {
+  if (/\b(cowboys|texans|astros|rangers|mavericks|spurs|stars|fc dallas|dynamo|austin fc|longhorns|aggies|red raiders|horned frogs|sports?|football|baseball|basketball|hockey|soccer)/.test(text)) {
     if (/\b(today|tonight|game|match|score|win|loss|injury|roster|contract|trade|draft|coach|player|season|playoffs?|standings|schedule|opens? play|ownership stake)/.test(text)) {
       return route('breaking-news', 'KeepTXRed', 'medium', ['Current Texas sports news.'], 'context');
     }

@@ -11,7 +11,10 @@
 
 ## Validation
 
-- [ ] Relevant automated checks passed
+- [ ] Targeted tests for every changed behavior passed locally
+- [ ] The full test suite, typecheck, production build, and relevant policy validators passed
+- [ ] The required Repository test and build health check passed for this PR's final commit
+- [ ] No required check is missing, skipped, cancelled, queued, or attached only to an earlier commit
 - [ ] I reviewed the affected routes or workflows
 - [ ] No secrets, credentials, or local environment files were committed
 - [ ] This pull request contains one related batch of work
