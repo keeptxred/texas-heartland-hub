@@ -42,6 +42,7 @@ const contents = new Map(await Promise.all(files.map(async (file) => [file, awai
 
 for (const [file, source] of contents) {
   if (file === VALIDATOR_PATH) continue;
+  const isApiRoute = file.startsWith("src/routes/api/");
   if (/favicon\.ico/i.test(source) && /(?:logo|publisher)/i.test(source)) {
     fail(file, "favicon.ico must not be used as a publisher or organization logo");
   }
@@ -52,13 +53,16 @@ for (const [file, source] of contents) {
   if (/name:\s*["']keywords["']/i.test(source) || /<meta[^>]+name=["']keywords["']/i.test(source)) {
     fail(file, "obsolete meta keywords output detected");
   }
-  if (/Where can I read more on this topic\??/i.test(source)) {
+  // API routes may contain editorial prompt text or CORS-origin allowlists.
+  // Those strings are not rendered search output, so page-output checks do not
+  // apply there. Actual stored/rendered article and route content remains guarded.
+  if (!isApiRoute && /Where can I read more on this topic\??/i.test(source)) {
     fail(file, "generic FAQ question detected");
   }
   if (/check back for updates/i.test(source) && !file.endsWith("article-length.ts")) {
     warn(file, "generic freshness boilerplate detected");
   }
-  if (/https:\/\/www\.keeptxred\.com/i.test(source)) {
+  if (!isApiRoute && /https:\/\/www\.keeptxred\.com/i.test(source)) {
     fail(file, "noncanonical www hostname detected");
   }
 }
