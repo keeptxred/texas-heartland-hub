@@ -21,6 +21,27 @@ describe("content pillar classification", () => {
     expect(classifyContentPillar({ title: "A weekend guide to swimming holes near Austin" })).toBeNull();
   });
 
+  it("does not let body boilerplate override a clear headline and dek", () => {
+    expect(
+      classifyContentPillar({
+        title: "Governor announces state agency appointment",
+        description: "The governor named a new commissioner to lead a statewide agency.",
+        body: "Related coverage: election results, candidates, voter registration, ballot rules, early voting and polling places.",
+        category: "Legislature",
+      }),
+    ).toBe("texas-politics-government");
+  });
+
+  it("uses only the article lead when headline and dek are ambiguous", () => {
+    expect(
+      classifyContentPillar({
+        title: "Texas officials issue new update",
+        description: null,
+        body: "ERCOT said the electric grid has sufficient reserves for the afternoon. Later in the article, related election coverage appears in a footer.",
+      }),
+    ).toBe("texas-energy-oil");
+  });
+
   it("prefers a valid persisted decision over later keyword drift", () => {
     expect(
       resolveContentPillarSlug("texas-agriculture-rural", {
