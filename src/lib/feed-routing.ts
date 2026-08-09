@@ -39,7 +39,8 @@ export function classifyFeedItem(item: { title: string; description: string | nu
     description: item.description,
     category: item.source,
   });
-  return PILLAR_TO_FEED_SECTION[pillar] ?? "news";
+  if (!pillar) return "news";
+  return PILLAR_TO_FEED_SECTION[pillar];
 }
 
 export const SECTION_LABELS: Record<FeedSection, string> = {
