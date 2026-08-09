@@ -7,12 +7,10 @@ export const SPORTS_ANALYSIS_MIN_MAIN_WORDS = 1200;
 export const SPORTS_MIN_MAIN_WORDS = SPORTS_ANALYSIS_MIN_MAIN_WORDS;
 // Automated ingested RSS rewrites keep the stricter breaking-news floor.
 export const INGESTED_MIN_MAIN_WORDS = 800;
-// Curated newsroom articles created directly as kind="news" use the editorial
-// floor used by the manual/chat publication pipeline. They may intentionally
-// use one long narrative section rather than the ingestion pipeline's two-
-// section structure, so the read gate must not turn valid published rows into
-// 404s after publication.
-export const CURATED_NEWS_MIN_MAIN_WORDS = 400;
+// Curated newsroom briefs are source-backed editorial items and may be much
+// shorter than automated ingested rewrites. Keep a substantive floor while
+// allowing both narrative-section and intro-only brief formats.
+export const CURATED_NEWS_MIN_MAIN_WORDS = 150;
 
 const EXCLUDED_SECTION_RE =
   /\b(texas\s+relevance|source\s+attribution|sources?|faq|frequently\s+asked\s+questions|key\s+takeaways?|reader\s+questions?)\b/i;
@@ -132,6 +130,9 @@ export function hasMeaningfulArticleStructure(body: ArticleBodyShape | null | un
 
 function hasMeaningfulCuratedNewsStructure(body: ArticleBodyShape | null | undefined): boolean {
   if (!body || typeof body !== "object") return false;
+  const intro = (Array.isArray(body.intro) ? body.intro : [])
+    .map(normalizedText)
+    .filter((p) => p && !isGenericText(p));
   const meaningfulSections = (Array.isArray(body.sections) ? body.sections : []).filter((section) => {
     if (!section || isExcludedSectionHeading(section.heading)) return false;
     const paragraphs = (Array.isArray(section.paragraphs) ? section.paragraphs : [])
@@ -142,7 +143,8 @@ function hasMeaningfulCuratedNewsStructure(body: ArticleBodyShape | null | undef
       .filter((p) => p && !isGenericText(p));
     return paragraphs.join(" ").length >= 180 || bullets.join(" ").length >= 120;
   });
-  return meaningfulSections.length >= 1;
+  const introWords = wordCount(intro.join(" "));
+  return meaningfulSections.length >= 1 || introWords >= 120;
 }
 
 export function hasValidArticleSources(body: ArticleBodyShape | null | undefined): boolean {
@@ -183,7 +185,7 @@ export function assertArticleMainWordCount(kind: string | null | undefined, body
     : hasMeaningfulArticleStructure(body);
   if (!hasRequiredStructure) {
     throw new Error(kind === "news"
-      ? "Curated news body lacks a substantive article section"
+      ? "Curated news body lacks a substantive section or intro"
       : "Article body lacks a substantive introduction and at least two meaningful sections");
   }
   if (!hasValidArticleSources(body)) {
