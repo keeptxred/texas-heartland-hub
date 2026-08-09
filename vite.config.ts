@@ -7,6 +7,16 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  vite: {
+    // Lovable injects VITE_* variables into the bundled runtime. A few older
+    // SSR helpers still read process.env directly; map the two public Supabase
+    // connection values to the injected equivalents so those helpers query the
+    // same Lovable-managed database instead of silently falling back.
+    define: {
+      "process.env.SUPABASE_URL": "import.meta.env.VITE_SUPABASE_URL",
+      "process.env.SUPABASE_PUBLISHABLE_KEY": "import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY",
+    },
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
