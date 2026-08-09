@@ -11,6 +11,7 @@ on:
     branches: [main]
     paths:
       - 'supabase/migrations/**'
+      - '.github/workflows/daily-news-publication-verification.yml'
   workflow_dispatch:
 
 permissions:
@@ -72,38 +73,46 @@ jobs:
     if: github.event_name == 'push'
     needs: migration-contract
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
-      - name: Extract article slugs from changed migrations
-        id: slugs
+      - name: Extract article slugs and image URLs from changed migrations
+        id: publication
         shell: bash
         run: |
           set -euo pipefail
           RANGE="${{ github.event.before }}..${{ github.sha }}"
           mapfile -t files < <(git diff --name-only --diff-filter=AM "$RANGE" -- 'supabase/migrations/*.sql' || true)
           : > /tmp/article-slugs.txt
+          : > /tmp/article-images.txt
           for file in "${files[@]}"; do
             [[ -f "$file" ]] || continue
             grep -Eo "\('20[0-9]{2}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+'[[:space:]]*," "$file" \
               | sed -E "s/^\('//; s/'[[:space:]]*,$//" >> /tmp/article-slugs.txt || true
             grep -Eio "SELECT[[:space:]]+'20[0-9]{2}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+'[[:space:]]*::[[:space:]]*text[[:space:]]+slug" "$file" \
               | sed -E "s/^SELECT[[:space:]]+'//I; s/'[[:space:]]*::[[:space:]]*text[[:space:]]+slug$//I" >> /tmp/article-slugs.txt || true
+            grep -Eo "https://[^'[:space:]]+\.(png|jpg|jpeg|webp|svg)|/images/news/[^'[:space:]]+\.(png|jpg|jpeg|webp|svg)" "$file" >> /tmp/article-images.txt || true
           done
           sort -u -o /tmp/article-slugs.txt /tmp/article-slugs.txt
+          sort -u -o /tmp/article-images.txt /tmp/article-images.txt
           if [[ -s /tmp/article-slugs.txt ]]; then
             echo "found=true" >> "$GITHUB_OUTPUT"
+            echo 'Article slugs:'
             cat /tmp/article-slugs.txt
           else
             echo "found=false" >> "$GITHUB_OUTPUT"
             echo 'No daily news slugs found in this push.'
           fi
+          if [[ -s /tmp/article-images.txt ]]; then
+            echo 'Image URLs:'
+            cat /tmp/article-images.txt
+          fi
 
       - name: Verify every published article resolves on Keep TX Red
-        if: steps.slugs.outputs.found == 'true'
+        if: steps.publication.outputs.found == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -132,6 +141,48 @@ jobs:
             exit 1
           fi
 
+      - name: Verify every published hero image resolves as an image
+        if: steps.publication.outputs.found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -s /tmp/article-images.txt ]]; then
+            echo 'ERROR: no hero image URLs were found in the changed publication migrations.' >&2
+            exit 1
+          fi
+          failed=0
+          while IFS= read -r image; do
+            if [[ "$image" == /* ]]; then
+              url="https://keeptxred.com$image"
+            else
+              url="$image"
+            fi
+            ok=0
+            for attempt in {1..10}; do
+              headers=$(mktemp)
+              code=$(curl -L -sS -D "$headers" -o /tmp/hero-image.bin -w '%{http_code}' --max-time 20 "$url" || echo 000)
+              content_type=$(tr -d '\r' < "$headers" | awk 'BEGIN{IGNORECASE=1} /^content-type:/ {value=$0} END{sub(/^[^:]+:[[:space:]]*/,"",value); print tolower(value)}')
+              bytes=$(wc -c < /tmp/hero-image.bin 2>/dev/null || echo 0)
+              rm -f "$headers"
+              if [[ "$code" == "200" && "$content_type" == image/* && "$bytes" -gt 100 ]]; then
+                echo "IMAGE LIVE: $url ($content_type, $bytes bytes)"
+                ok=1
+                break
+              fi
+              echo "Waiting for hero image ($attempt/10): $url returned $code, content-type='$content_type', bytes=$bytes"
+              sleep 30
+            done
+            if [[ "$ok" != "1" ]]; then
+              echo "ERROR: hero image did not become renderable: $url" >&2
+              failed=1
+            fi
+          done < /tmp/article-images.txt
+
+          if [[ "$failed" != "0" ]]; then
+            echo 'One or more published hero images are missing or not renderable. Do not report this publication batch as successful.' >&2
+            exit 1
+          fi
+
       - name: Publication verified
-        if: steps.slugs.outputs.found == 'true'
-        run: echo 'All article rows are reachable on the production site. This batch may be reported as successfully published.'
+        if: steps.publication.outputs.found == 'true'
+        run: echo 'All article rows and hero images are reachable on the production site. This batch may be reported as successfully published.'
