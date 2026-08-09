@@ -1,4 +1,16 @@
-export type FeedSection = "elections" | "laws" | "politics" | "news";
+import { classifyContentPillar, type ContentPillarSlug } from "@/lib/content-pillars";
+
+export type FeedSection =
+  | "elections"
+  | "laws"
+  | "politics"
+  | "border"
+  | "energy"
+  | "economy"
+  | "agriculture"
+  | "veterans"
+  | "law-enforcement"
+  | "news";
 
 export type FeedRow = {
   id: number;
@@ -9,22 +21,37 @@ export type FeedRow = {
   pub_date: string;
 };
 
-const ELECTION_RE = /(election|ballot|\bvote\b|voter|primary|candidate|polling|precinct|runoff|early voting)/i;
-const LAW_RE = /(register|rule|regulation|rulemaking|statute|\blaw\b|legal|attorney general|\bbill\b|legislat|senate bill|house bill|\bsb \d|\bhb \d|amendment)/i;
-const POLITICS_RE = /(governor|abbott|lt\.? governor|patrick|paxton|agency|commission|appoint|proclamation|disaster declaration|press release|secretary of state)/i;
+const PILLAR_TO_FEED_SECTION: Record<ContentPillarSlug, Exclude<FeedSection, "news">> = {
+  "texas-politics-government": "politics",
+  "texas-elections": "elections",
+  "texas-border-immigration": "border",
+  "texas-energy-oil": "energy",
+  "texas-economy-small-business": "economy",
+  "texas-agriculture-rural": "agriculture",
+  "texas-veterans-military": "veterans",
+  "texas-law-enforcement-public-safety": "law-enforcement",
+  "texas-laws-legislature": "laws",
+};
 
 export function classifyFeedItem(item: { title: string; description: string | null; source: string }): FeedSection {
-  const hay = `${item.source} ${item.title} ${item.description ?? ""}`;
-  if (ELECTION_RE.test(hay)) return "elections";
-  if (LAW_RE.test(hay)) return "laws";
-  if (POLITICS_RE.test(hay)) return "politics";
-  return "news";
+  const pillar = classifyContentPillar({
+    title: item.title,
+    description: item.description,
+    category: item.source,
+  });
+  return PILLAR_TO_FEED_SECTION[pillar] ?? "news";
 }
 
 export const SECTION_LABELS: Record<FeedSection, string> = {
   elections: "Elections & Voting",
-  laws: "Laws & Legislation",
-  politics: "Government & Politics",
+  laws: "Laws & Legislature",
+  politics: "Politics & Government",
+  border: "Border & Immigration",
+  energy: "Energy & Oil",
+  economy: "Economy & Small Business",
+  agriculture: "Agriculture & Rural Texas",
+  veterans: "Veterans & Military",
+  "law-enforcement": "Law Enforcement & Public Safety",
   news: "Texas News",
 };
 
