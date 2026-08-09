@@ -74,7 +74,7 @@ jobs:
     if: github.event_name == 'push'
     needs: migration-contract
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
         with:
@@ -89,17 +89,41 @@ jobs:
           mapfile -t files < <(git diff --name-only --diff-filter=AM "$RANGE" -- 'supabase/migrations/*.sql' || true)
           : > /tmp/article-slugs.txt
           : > /tmp/article-images.txt
-          for file in "${files[@]}"; do
-            [[ -f "$file" ]] || continue
+          bulk=0
+
+          extract_from_file() {
+            local file="$1"
             grep -Eo "\('20[0-9]{2}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+'[[:space:]]*," "$file" \
               | sed -E "s/^\('//; s/'[[:space:]]*,$//" >> /tmp/article-slugs.txt || true
             grep -Eio "SELECT[[:space:]]+'20[0-9]{2}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+'[[:space:]]*::[[:space:]]*text[[:space:]]+slug" "$file" \
               | sed -E "s/^SELECT[[:space:]]+'//I; s/'[[:space:]]*::[[:space:]]*text[[:space:]]+slug$//I" >> /tmp/article-slugs.txt || true
             grep -Eio 'SELECT[[:space:]]+\$slug\$20[0-9]{2}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+\$slug\$[[:space:]]*::[[:space:]]*text[[:space:]]+slug' "$file" \
               | sed -E 's/^SELECT[[:space:]]+\$slug\$//I; s/\$slug\$[[:space:]]*::[[:space:]]*text[[:space:]]+slug$//I' >> /tmp/article-slugs.txt || true
+          }
+
+          for file in "${files[@]}"; do
+            [[ -f "$file" ]] || continue
+            extract_from_file "$file"
+            if grep -Eq '^\s*--\s*BULK_IMAGE_REMEDIATION\s*$' "$file"; then
+              bulk=1
+            fi
             grep -Eo "https://[^'[:space:]]+|/images/news/[^'[:space:]]+" "$file" \
               | grep -Ei '\.(png|jpg|jpeg|webp)([?#&].*)?$' >> /tmp/article-images.txt || true
           done
+
+          # A bulk image repair updates existing rows rather than spelling out every
+          # slug. Audit the complete current Aug. 8-9 publication window so the push
+          # is not considered successful until the live site emits raster heroes for
+          # the existing ChatGPT-era news set as well.
+          if [[ "$bulk" == "1" ]]; then
+            echo 'Bulk image remediation detected; expanding live audit to Aug. 8-9 daily news migrations.'
+            for file in supabase/migrations/20260808*.sql supabase/migrations/20260809*.sql; do
+              [[ -f "$file" ]] || continue
+              grep -Eqi '(INSERT[[:space:]]+INTO|UPDATE)[[:space:]]+public\.daily_articles' "$file" || continue
+              extract_from_file "$file"
+            done
+          fi
+
           sort -u -o /tmp/article-slugs.txt /tmp/article-slugs.txt
           sort -u -o /tmp/article-images.txt /tmp/article-images.txt
           if [[ -s /tmp/article-slugs.txt ]]; then
@@ -111,37 +135,68 @@ jobs:
             echo 'No daily news slugs found in this push.'
           fi
           if [[ -s /tmp/article-images.txt ]]; then
-            echo 'Image URLs:'
+            echo 'Migration-declared raster image URLs:'
             cat /tmp/article-images.txt
           fi
 
-      - name: Verify every published article resolves on Keep TX Red
+      - name: Verify every published article resolves and emits a raster social image
         if: steps.publication.outputs.found == 'true'
         shell: bash
         run: |
           set -euo pipefail
           failed=0
+          : > /tmp/live-article-images.txt
           while IFS= read -r slug; do
             url="https://keeptxred.com/news/$slug"
             ok=0
             for attempt in {1..10}; do
               code=$(curl -L -sS -o /tmp/article.html -w '%{http_code}' --max-time 20 "$url" || echo 000)
+              social_image=""
               if [[ "$code" == "200" ]] && ! grep -Eqi '(^|>)404([^0-9]|<)|page not found|article not found' /tmp/article.html; then
-                echo "LIVE: $url"
-                ok=1
-                break
+                social_image=$(python3 - <<'PY'
+from html.parser import HTMLParser
+
+class MetaParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.image = ''
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() != 'meta' or self.image:
+            return
+        values = {str(k).lower(): str(v or '') for k, v in attrs}
+        key = (values.get('property') or values.get('name') or '').lower()
+        if key in {'og:image', 'twitter:image'}:
+            self.image = values.get('content', '').strip()
+
+p = MetaParser()
+with open('/tmp/article.html', 'r', encoding='utf-8', errors='ignore') as f:
+    p.feed(f.read())
+print(p.image)
+PY
+                )
+                if [[ -n "$social_image" && ! "$social_image" =~ \.svg([?#].*)?$ ]]; then
+                  echo "LIVE WITH RASTER SOCIAL IMAGE: $url -> $social_image"
+                  printf '%s\n' "$social_image" >> /tmp/live-article-images.txt
+                  ok=1
+                  break
+                fi
               fi
-              echo "Waiting for live article ($attempt/10): $url returned $code"
+              echo "Waiting for live raster article state ($attempt/10): $url returned $code, social_image='$social_image'"
               sleep 30
             done
             if [[ "$ok" != "1" ]]; then
-              echo "ERROR: article did not become live: $url" >&2
+              echo "ERROR: article missing or still emits a missing/SVG social image: $url" >&2
               failed=1
             fi
           done < /tmp/article-slugs.txt
 
+          if [[ -s /tmp/live-article-images.txt ]]; then
+            cat /tmp/live-article-images.txt >> /tmp/article-images.txt
+            sort -u -o /tmp/article-images.txt /tmp/article-images.txt
+          fi
+
           if [[ "$failed" != "0" ]]; then
-            echo 'One or more database-backed news articles are missing from production. Do not report this publication batch as successful.' >&2
+            echo 'One or more database-backed news articles are missing from production or still expose a non-raster social image. Do not report this publication batch as successful.' >&2
             exit 1
           fi
 
@@ -151,7 +206,7 @@ jobs:
         run: |
           set -euo pipefail
           if [[ ! -s /tmp/article-images.txt ]]; then
-            echo 'ERROR: no raster hero image URLs were found in the changed publication migrations.' >&2
+            echo 'ERROR: no raster hero image URLs were found from the migration or live article metadata.' >&2
             exit 1
           fi
           failed=0
@@ -192,4 +247,4 @@ jobs:
 
       - name: Publication verified
         if: steps.publication.outputs.found == 'true'
-        run: echo 'All article rows and raster hero images are reachable on the production site. This batch may be reported as successfully published.'
+        run: echo 'All article rows and live social hero images are reachable as real raster images on the production site. This batch may be reported as successfully published.'
