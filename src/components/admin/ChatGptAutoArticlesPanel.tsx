@@ -6,6 +6,8 @@ import { ignoreChatGptArticle } from "@/lib/chatgpt-admin.functions";
 import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
 import { EyeOff, Facebook, Image as ImageIcon } from "lucide-react";
 
+const IGNORE_FLAG = "chatgpt-admin-ignored";
+
 type ChatGptArticle = {
   id: string;
   slug: string;
@@ -16,6 +18,7 @@ type ChatGptArticle = {
   published_at: string;
   featured_image_url: string | null;
   image_generation_status: string | null;
+  quality_flags: string[] | null;
 };
 
 type PostState =
@@ -42,11 +45,10 @@ export function ChatGptAutoArticlesPanel() {
       const { data, error: queryError } = await supabase
         .from("daily_articles")
         .select(
-          "id,slug,title,category,source_name,source_url,published_at,featured_image_url,image_generation_status",
+          "id,slug,title,category,source_name,source_url,published_at,featured_image_url,image_generation_status,quality_flags",
         )
         .eq("author", "Keep TX Red Newsroom")
         .eq("is_ingested", false)
-        .eq("chatgpt_admin_ignored", false)
         .order("published_at", { ascending: false })
         .limit(100);
 
@@ -56,7 +58,10 @@ export function ChatGptAutoArticlesPanel() {
         setError(queryError.message);
         setArticles([]);
       } else {
-        setArticles((data ?? []) as ChatGptArticle[]);
+        const visibleArticles = ((data ?? []) as ChatGptArticle[]).filter(
+          (article) => !(article.quality_flags ?? []).includes(IGNORE_FLAG),
+        );
+        setArticles(visibleArticles);
       }
       setLoading(false);
     }
