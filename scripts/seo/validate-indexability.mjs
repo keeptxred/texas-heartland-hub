@@ -21,12 +21,31 @@ const CANONICAL_HOST = "https://keeptxred.com";
 const SAMPLE = Number(process.env.SEO_SAMPLE || 60);
 const DERIVATIVE_SITEMAPS = new Set(["/sitemap-news.xml", "/sitemap-images.xml"]);
 const DISALLOWED = [/\?/, /#/, /^\/admin/, /^\/api\//, /^\/cart/, /^\/shop\/checkout/, /^\/preview\//, /^\/lovable\//, /^\/hubs/, /^\/email\//];
+const INDEXABLE_PRIORITY_PATHS = [
+  "/contact-legislators",
+  "/find-representative",
+  "/laws",
+  "/bills",
+  "/texas-legislature",
+];
+const REDIRECT_ALIASES = [
+  "/candidate-guides",
+  "/laws-to-know",
+  "/legislative-updates",
+  "/texas-laws",
+  "/voting-locations",
+  "/living-in-texas",
+  "/moving-to-texas",
+  "/texas-living",
+  "/explore",
+  "/tax-calculator",
+];
 const errors = [];
 const warnings = [];
 
 async function text(path) {
   const response = await fetch(`${BASE}${path}`, { redirect: "manual" });
-  return { status: response.status, body: await response.text() };
+  return { status: response.status, body: await response.text(), location: response.headers.get("location") };
 }
 
 function locs(xml) {
@@ -148,12 +167,22 @@ if (/^\s*Disallow:\s*\/\s*$/m.test(robots.body)) errors.push("robots.txt blocks 
 if (!robots.body.includes(`Sitemap: ${CANONICAL_HOST}/sitemap.xml`)) {
   errors.push("robots.txt does not advertise the sitemap index.");
 }
-for (const priority of ["/candidate-guides", "/contact-legislators", "/find-representative", "/laws-to-know", "/legislative-updates"]) {
+
+// 7. Core canonical pages must be crawlable and present in a primary sitemap.
+for (const priority of INDEXABLE_PRIORITY_PATHS) {
   if (new RegExp(`^\\s*Disallow:\\s*${priority}`, "m").test(robots.body)) {
     errors.push(`robots.txt blocks priority page ${priority}`);
   }
   if (!primary.some((entry) => entry.loc === `${CANONICAL_HOST}${priority}`)) {
     errors.push(`Priority page ${priority} is missing from the primary sitemaps.`);
+  }
+}
+
+// 8. Legacy, noindex, or migrated aliases must never be advertised as canonical
+// sitemap URLs. Redirects remain crawlable so search engines can transfer equity.
+for (const alias of REDIRECT_ALIASES) {
+  if (primary.some((entry) => entry.loc === `${CANONICAL_HOST}${alias}`)) {
+    errors.push(`Redirect/noindex alias is incorrectly listed in a primary sitemap: ${alias}`);
   }
 }
 
