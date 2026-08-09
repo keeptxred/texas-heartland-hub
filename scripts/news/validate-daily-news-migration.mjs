@@ -16,7 +16,9 @@ for (const file of files) {
   if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
     errors.push("internal_url must be generated as '/news/' || slug");
   }
-  if (!/jsonb_build_object\s*\([\s\S]*?'(?:intro|sections)'\s*,/i.test(sql)) {
+  const hasBuiltBodyShape = /jsonb_build_object\s*\([\s\S]*?'(?:intro|sections)'\s*,/i.test(sql);
+  const hasLiteralBodyShape = /\{[\s\S]*?"(?:intro|sections)"\s*:/i.test(sql) && /::\s*jsonb/i.test(sql);
+  if (!hasBuiltBodyShape && !hasLiteralBodyShape) {
     errors.push("body_json must include an 'intro' or 'sections' field accepted by daily_articles_require_body");
   }
   if (!/ON\s+CONFLICT\s*\(\s*slug\s*\)\s+DO\s+UPDATE/i.test(sql)) {
