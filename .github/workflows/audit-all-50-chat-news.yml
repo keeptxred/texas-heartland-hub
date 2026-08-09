@@ -62,12 +62,27 @@ jobs:
               failed=$((failed+1))
               continue
             fi
-            image=$(grep -Eo '<meta[^>]+property=["'"']og:image["'"'][^>]+content=["'"'][^"'"']+' /tmp/article.html | head -1 | sed -E 's/.*content=["'"']([^"'"']+).*/\1/' || true)
+            image=$(python3 - <<'PY'
+          import re
+          from pathlib import Path
+          html = Path('/tmp/article.html').read_text(errors='ignore')
+          patterns = [
+              r'<meta[^>]+property=["\x27]og:image["\x27][^>]+content=["\x27]([^"\x27]+)',
+              r'<meta[^>]+content=["\x27]([^"\x27]+)["\x27][^>]+property=["\x27]og:image["\x27]',
+          ]
+          for pattern in patterns:
+              match = re.search(pattern, html, re.I)
+              if match:
+                  print(match.group(1))
+                  break
+          PY
+          )
             if [[ -z "$image" ]]; then
               echo "FAIL image-metadata $url" | tee -a /tmp/results.txt
               failed=$((failed+1))
               continue
             fi
+            if [[ "$image" == /* ]]; then image="https://keeptxred.com$image"; fi
             image_code=$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 25 "$image" || echo 000)
             if [[ "$image_code" != "200" ]]; then
               echo "FAIL image $image_code $image ($url)" | tee -a /tmp/results.txt
