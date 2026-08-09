@@ -29,7 +29,7 @@ export function AgedFeedSection({ section, title = "From the Live Feed", blurb, 
       const cutoffIso = new Date(Date.now() - ONE_DAY_MS).toISOString();
       const { data } = await supabase
         .from("texas_news_feed")
-        .select("id,title,source,link,description,pub_date,pillar_slug")
+        .select("id,title,source,link,description,pub_date,pillar_slug,pillar_classified_at")
         .lt("pub_date", cutoffIso)
         .order("pub_date", { ascending: false })
         .limit(200);
