@@ -104,33 +104,54 @@ export function getContentPillar(slug: ContentPillarSlug): ContentPillar {
   return PILLAR_BY_SLUG.get(slug)!;
 }
 
+const PRIORITY: ContentPillarSlug[] = [
+  "texas-elections",
+  "texas-border-immigration",
+  "texas-veterans-military",
+  "texas-agriculture-rural",
+  "texas-law-enforcement-public-safety",
+  "texas-energy-oil",
+  "texas-laws-legislature",
+  "texas-economy-small-business",
+  "texas-politics-government",
+];
+
+const CATEGORY_SIGNALS: Partial<Record<string, ContentPillarSlug>> = {
+  elections: "texas-elections",
+  border: "texas-border-immigration",
+  energy: "texas-energy-oil",
+  "tax & spending": "texas-economy-small-business",
+};
+
 export function classifyContentPillar(input: {
   title?: string | null;
   description?: string | null;
   body?: string | null;
   category?: string | null;
 }): ContentPillarSlug | null {
-  const haystack = `${input.category ?? ""} ${input.title ?? ""} ${input.description ?? ""} ${input.body ?? ""}`;
+  const category = (input.category ?? "").trim().toLowerCase();
+  const categorySignal = CATEGORY_SIGNALS[category];
+  if (categorySignal) return categorySignal;
 
-  // Specific beats broad: an election story about the governor belongs in Elections;
-  // a border bill belongs in Border unless the legislative process itself is the news.
-  const priority: ContentPillarSlug[] = [
-    "texas-elections",
-    "texas-border-immigration",
-    "texas-veterans-military",
-    "texas-agriculture-rural",
-    "texas-law-enforcement-public-safety",
-    "texas-energy-oil",
-    "texas-laws-legislature",
-    "texas-economy-small-business",
-    "texas-politics-government",
-  ];
+  // Classify from editorially prominent text first. Historical article bodies often
+  // contain boilerplate, related-links, or general election/government language that
+  // can swamp the actual story topic if the entire body is treated equally.
+  const prominent = `${input.title ?? ""} ${input.description ?? ""}`;
+  const prominentMatch = firstPillarMatch(prominent);
+  if (prominentMatch) return prominentMatch;
 
-  for (const slug of priority) {
+  // Only fall back to the article lead when the headline/dek are genuinely ambiguous.
+  // Limit the body to the lead so footer boilerplate and unrelated internal links do
+  // not pull stories into Elections or another high-priority pillar.
+  const lead = (input.body ?? "").slice(0, 1200);
+  return firstPillarMatch(lead);
+}
+
+function firstPillarMatch(text: string): ContentPillarSlug | null {
+  for (const slug of PRIORITY) {
     const pillar = getContentPillar(slug);
-    if (pillar.keywords.test(haystack)) return slug;
+    if (pillar.keywords.test(text)) return slug;
   }
-
   return null;
 }
 
