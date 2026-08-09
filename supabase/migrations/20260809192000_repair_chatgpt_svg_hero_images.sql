@@ -1,3 +1,4 @@
+-- BULK_IMAGE_REMEDIATION
 -- Repair legacy ChatGPT-created news hero images that were stored as SVG.
 -- Matching PNG files are committed from the same repository repair branch.
 -- This intentionally leaves rows already remediated to verified raster/photo URLs unchanged.
@@ -9,6 +10,7 @@ SET
     WHEN image_url IS NOT NULL THEN regexp_replace(image_url, '\.svg', '.png', 'i')
     ELSE image_url
   END,
+  image_alt_text = image_alt_text,
   image_generation_status = 'ready'
 WHERE author = 'Keep TX Red Newsroom'
   AND published_at >= '2026-08-07T00:00:00Z'::timestamptz
