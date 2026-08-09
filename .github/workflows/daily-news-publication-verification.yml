@@ -1,0 +1,135 @@
+name: Verify Daily News Publication
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+      - 'scripts/news/validate-daily-news-migration.mjs'
+      - '.github/workflows/daily-news-publication-verification.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/migrations/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-news-publication-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  migration-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Find changed daily news migrations
+        id: changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            git fetch origin "${{ github.base_ref }}" --depth=1
+            RANGE="origin/${{ github.base_ref }}...HEAD"
+          elif [[ "${{ github.event_name }}" == "push" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+            RANGE="${{ github.event.before }}..${{ github.sha }}"
+          else
+            RANGE="HEAD^..HEAD"
+          fi
+
+          mapfile -t candidates < <(git diff --name-only --diff-filter=AM "$RANGE" -- 'supabase/migrations/*.sql' || true)
+          : > /tmp/daily-news-migrations.txt
+          for file in "${candidates[@]}"; do
+            [[ -f "$file" ]] || continue
+            if grep -Eqi 'INSERT[[:space:]]+INTO[[:space:]]+public\.daily_articles' "$file"; then
+              echo "$file" >> /tmp/daily-news-migrations.txt
+            fi
+          done
+
+          if [[ -s /tmp/daily-news-migrations.txt ]]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            echo 'Daily news publication migrations:'
+            cat /tmp/daily-news-migrations.txt
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo 'No changed daily_articles publication migrations.'
+          fi
+
+      - name: Validate publication contract
+        if: steps.changed.outputs.found == 'true'
+        shell: bash
+        run: |
+          mapfile -t files < /tmp/daily-news-migrations.txt
+          node scripts/news/validate-daily-news-migration.mjs "${files[@]}"
+
+  live-publication:
+    if: github.event_name == 'push'
+    needs: migration-contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Extract article slugs from changed migrations
+        id: slugs
+        shell: bash
+        run: |
+          set -euo pipefail
+          RANGE="${{ github.event.before }}..${{ github.sha }}"
+          mapfile -t files < <(git diff --name-only --diff-filter=AM "$RANGE" -- 'supabase/migrations/*.sql' || true)
+          : > /tmp/article-slugs.txt
+          for file in "${files[@]}"; do
+            [[ -f "$file" ]] || continue
+            grep -Eo "\('20[0-9]{2}-[0-9]{2}-[0-9]{2}-[a-z0-9-]+'[[:space:]]*," "$file" \
+              | sed -E "s/^\('//; s/'[[:space:]]*,$//" >> /tmp/article-slugs.txt || true
+          done
+          sort -u -o /tmp/article-slugs.txt /tmp/article-slugs.txt
+          if [[ -s /tmp/article-slugs.txt ]]; then
+            echo "found=true" >> "$GITHUB_OUTPUT"
+            cat /tmp/article-slugs.txt
+          else
+            echo "found=false" >> "$GITHUB_OUTPUT"
+            echo 'No daily news slugs found in this push.'
+          fi
+
+      - name: Verify every published article resolves on Keep TX Red
+        if: steps.slugs.outputs.found == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          failed=0
+          while IFS= read -r slug; do
+            url="https://keeptxred.com/news/$slug"
+            ok=0
+            for attempt in {1..10}; do
+              code=$(curl -L -sS -o /tmp/article.html -w '%{http_code}' --max-time 20 "$url" || echo 000)
+              if [[ "$code" == "200" ]] && ! grep -Eqi '(^|>)404([^0-9]|<)|page not found|article not found' /tmp/article.html; then
+                echo "LIVE: $url"
+                ok=1
+                break
+              fi
+              echo "Waiting for live article ($attempt/10): $url returned $code"
+              sleep 30
+            done
+            if [[ "$ok" != "1" ]]; then
+              echo "ERROR: article did not become live: $url" >&2
+              failed=1
+            fi
+          done < /tmp/article-slugs.txt
+
+          if [[ "$failed" != "0" ]]; then
+            echo 'One or more database-backed news articles are missing from production. Do not report this publication batch as successful.' >&2
+            exit 1
+          fi
+
+      - name: Publication verified
+        if: steps.slugs.outputs.found == 'true'
+        run: echo 'All article rows are reachable on the production site. This batch may be reported as successfully published.'
