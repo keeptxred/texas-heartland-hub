@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
+import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 
 const SECTIONS = [
   { title: "Operation Lone Star", description: "Texas-led border enforcement, deployments, costs, and legal challenges.", href: "/news/operation-lone-star" },
@@ -25,20 +26,23 @@ export const Route = createFileRoute("/texas-border-security")({
 
 function TexasBorderSecurityPage() {
   return (
-    <ContentPillarView
-      hubSlug="texas-border-security"
-      sections={SECTIONS}
-      feedSection="border"
-      heading="Texas at the Border"
-      paragraphs={[
-        "Keep TX Red follows the Texas-specific decisions behind border security and immigration enforcement: state deployments, state legislation, federal litigation, ports of entry, local impacts, and the agencies responsible for carrying policy out.",
-        "This pillar separates breaking developments from evergreen context so readers can move from a headline to the underlying law, geography, authority, and policy history without leaving the topic.",
-      ]}
-      related={[
-        { label: "Texas Laws & Legislature", href: "/laws" },
-        { label: "Texas Politics & Government", href: "/texas-politics" },
-        { label: "Law Enforcement & Public Safety", href: "/texas-law-enforcement" },
-      ]}
-    />
+    <>
+      <ContentPillarView
+        hubSlug="texas-border-security"
+        sections={SECTIONS}
+        feedSection="border"
+        heading="Texas at the Border"
+        paragraphs={[
+          "Keep TX Red follows the Texas-specific decisions behind border security and immigration enforcement: state deployments, state legislation, federal litigation, ports of entry, local impacts, and the agencies responsible for carrying policy out.",
+          "This pillar separates breaking developments from evergreen context so readers can move from a headline to the underlying law, geography, authority, and policy history without leaving the topic.",
+        ]}
+        related={[
+          { label: "Texas Laws & Legislature", href: "/laws" },
+          { label: "Texas Politics & Government", href: "/texas-politics" },
+          { label: "Law Enforcement & Public Safety", href: "/texas-law-enforcement" },
+        ]}
+      />
+      <SupportingGuideGrid pillarHref="/texas-border-security" />
+    </>
   );
 }
