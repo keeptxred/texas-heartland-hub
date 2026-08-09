@@ -17,7 +17,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: daily-news-publication-${{ github.event.pull_request.number || github.ref }}
+  group: daily-news-publication-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('push-{0}', github.sha) }}
   cancel-in-progress: true
 
 jobs:
