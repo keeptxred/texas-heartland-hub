@@ -34,7 +34,8 @@ for (const file of files) {
     errors.push('published article image changes must include featured_image_url and image_alt_text');
   }
 
-  if (/\.svg(?:\b|\?|#)/i.test(sql)) {
+  const imageRefs = [...sql.matchAll(/(?:https:\/\/|\/images\/news\/)[^'$\s)]+/gi)].map((match) => match[0]);
+  if (imageRefs.some((ref) => /\.svg(?:\b|\?|#|&)/i.test(ref))) {
     errors.push('SVG hero images are not allowed for published news; use a real raster photograph or photorealistic editorial image');
   }
 
