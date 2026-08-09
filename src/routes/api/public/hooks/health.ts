@@ -1,15 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 
-function rewriteProviderState() {
+function aiProviderState() {
   const ready = Boolean(
     process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY,
   );
   return {
+    ai_provider: ready ? "google-gemini-direct" : "unconfigured",
+    ai_provider_ready: ready,
     rewrite_provider: ready ? "google-gemini-direct" : "unconfigured",
     rewrite_provider_ready: ready,
     rewrite_model: ready ? (process.env.AI_REWRITE_MODEL || "gemini-3.5-flash") : null,
+    image_provider: ready ? "google-gemini-direct" : "unconfigured",
+    image_provider_ready: ready,
+    image_model: ready ? (process.env.AI_IMAGE_MODEL || "gemini-3.1-flash-image") : null,
+    image_validation_model: ready ? (process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash") : null,
     lovable_rewrite_bypassed: ready,
+    lovable_image_bypassed: ready,
+    lovable_ai_network_disabled: true,
+    lovable_ai_fallback_allowed: false,
   };
 }
 
@@ -20,7 +29,7 @@ export const Route = createFileRoute("/api/public/hooks/health")({
         const timestamp = new Date().toISOString();
         const supabaseUrl = process.env.SUPABASE_URL;
         const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-        const rewrite = rewriteProviderState();
+        const ai = aiProviderState();
 
         if (!supabaseUrl || !publishableKey) {
           return Response.json({
@@ -29,7 +38,7 @@ export const Route = createFileRoute("/api/public/hooks/health")({
             database: "error",
             articles_last_24h: null,
             latest_published_at: null,
-            ...rewrite,
+            ...ai,
           });
         }
 
@@ -68,7 +77,7 @@ export const Route = createFileRoute("/api/public/hooks/health")({
           latest_published_at: dbOk ? latestPublishedAt : null,
           publishing_stalled: dbOk ? publishingStalled : null,
           publishing_stall_threshold_hours: 24,
-          ...rewrite,
+          ...ai,
         });
       },
     },

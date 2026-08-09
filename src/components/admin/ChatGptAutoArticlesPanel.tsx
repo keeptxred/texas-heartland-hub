@@ -21,6 +21,25 @@ type PostState =
   | { status: "posted"; postUrl: string | null }
   | { status: "error"; message: string };
 
+function normalizeGeneratedHeroUrl(raw: string | null): string | null {
+  if (!raw) return raw;
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+
+  // Legacy ChatGPT newsroom batches committed generated SVG heroes. The matching
+  // 1600x900 PNGs now exist at the same path, so normalize stale DB references
+  // at the admin boundary instead of allowing Facebook to probe the old SVG.
+  const isGeneratedNewsAsset =
+    trimmed.includes("/images/news/generated/") ||
+    trimmed.includes("/public/images/news/generated/");
+
+  if (isGeneratedNewsAsset && /\.svg([?#].*)?$/i.test(trimmed)) {
+    return trimmed.replace(/\.svg(?=([?#].*)?$)/i, ".png");
+  }
+
+  return trimmed;
+}
+
 export function ChatGptAutoArticlesPanel() {
   const [articles, setArticles] = useState<ChatGptArticle[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +69,12 @@ export function ChatGptAutoArticlesPanel() {
         setError(queryError.message);
         setArticles([]);
       } else {
-        setArticles((data ?? []) as ChatGptArticle[]);
+        setArticles(
+          ((data ?? []) as ChatGptArticle[]).map((article) => ({
+            ...article,
+            featured_image_url: normalizeGeneratedHeroUrl(article.featured_image_url),
+          })),
+        );
       }
       setLoading(false);
     }
@@ -70,7 +94,7 @@ export function ChatGptAutoArticlesPanel() {
         source: article.source_name ?? "Keep TX Red",
         source_url: article.source_url,
         caption: article.title,
-        asset_url: article.featured_image_url,
+        asset_url: normalizeGeneratedHeroUrl(article.featured_image_url),
         slug: article.slug,
       });
 

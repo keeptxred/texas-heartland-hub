@@ -15,6 +15,7 @@ for (const file of files) {
   if (!isInsert && !isUpdate) continue;
 
   const errors = [];
+  const isBulkImageRemediation = /^\s*--\s*BULK_IMAGE_REMEDIATION\s*$/im.test(sql);
 
   if (isInsert) {
     if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
@@ -27,6 +28,17 @@ for (const file of files) {
     }
     if (!/ON\s+CONFLICT\s*\(\s*slug\s*\)\s+DO\s+UPDATE/i.test(sql)) {
       errors.push('daily news publication migrations must be idempotent with ON CONFLICT (slug) DO UPDATE');
+    }
+  }
+
+  if (isBulkImageRemediation) {
+    const safelyScoped =
+      isUpdate &&
+      /WHERE[\s\S]*?author\s*=\s*'Keep TX Red Newsroom'/i.test(sql) &&
+      /published_at\s*>=/i.test(sql) &&
+      /featured_image_url[\s\S]*?images\/news\/generated/i.test(sql);
+    if (!safelyScoped) {
+      errors.push('BULK_IMAGE_REMEDIATION updates must be narrowly scoped to Keep TX Red Newsroom rows, a publication date floor, and generated news-image paths');
     }
   }
 
@@ -51,7 +63,7 @@ for (const file of files) {
   const selectSlugs = [...sql.matchAll(/SELECT\s+'((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const dollarSlugs = [...sql.matchAll(/SELECT\s+\$slug\$((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)\$slug\$\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const slugs = [...valuesSlugs, ...selectSlugs, ...dollarSlugs];
-  if (!slugs.length) errors.push('could not find any dated article slugs in the publication input');
+  if (!slugs.length && !isBulkImageRemediation) errors.push('could not find any dated article slugs in the publication input');
   if (new Set(slugs).size !== slugs.length) errors.push('duplicate article slug found in migration');
 
   if (errors.length) {
@@ -59,7 +71,8 @@ for (const file of files) {
     console.error(`\n${file}: INVALID`);
     for (const error of errors) console.error(`  - ${error}`);
   } else {
-    console.log(`${file}: valid (${slugs.length} article slug${slugs.length === 1 ? '' : 's'})`);
+    const detail = isBulkImageRemediation ? 'bulk image remediation' : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
+    console.log(`${file}: valid (${detail})`);
   }
 }
 
