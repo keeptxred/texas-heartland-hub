@@ -11,6 +11,16 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/senate": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/current-session": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/sessions": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/topics": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/texas-politics": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/texas-economy": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/texas-border-security": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/texas-energy": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/texas-agriculture": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/texas-veterans": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/texas-law-enforcement": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/texas-law-policy": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/laws": toIsoDate("2026-08-09T00:00:00-05:00"),
 };
 
 const STATIC_PATHS:string[]=[
@@ -29,8 +39,10 @@ const STATIC_PATHS:string[]=[
   // /legislative-updates redirects to /bills, /laws-to-know redirects to /laws,
   // and /voting-locations redirects to the verified Election Central voting page.
   "/contact","/privacy","/terms-of-service",
-  "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/texas-politics",
-  "/authors","/texas-economy","/texas-law-policy","/shop",
+  "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards",
+  "/topics","/texas-politics","/texas-economy","/texas-border-security","/texas-energy",
+  "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-law-policy",
+  "/authors","/shop",
   // Representative detail pages live only in sitemap-representatives.xml —
   // listing them here duplicated 250+ URLs across two sitemaps.
 ];
