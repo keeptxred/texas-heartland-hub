@@ -24,8 +24,11 @@ jobs:
         with:
           bun-version: 1.3.14
 
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
       - name: Run pillar classifier tests
-        run: bunx vitest run src/lib/content-pillars.test.ts
+        run: bun run test -- src/lib/content-pillars.test.ts
 
       - name: Generate live article-library pillar report
         run: bun scripts/news/report-live-pillar-library.ts
