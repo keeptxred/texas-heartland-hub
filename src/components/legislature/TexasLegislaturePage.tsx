@@ -67,7 +67,7 @@ const pages = {
     sections: [
       ["Search Texas bills", "Browse legislation across available Texas legislative sessions and open the complete history for individual bills.", "/bills"],
       ["Current session", "Return to the active Texas legislative session hub.", "/texas-legislature/current-session"],
-      ["Texas laws", "Connect legislation from prior sessions with current Texas law explainers.", "/texas-laws"],
+      ["Texas laws", "Connect legislation from prior sessions with current Texas law explainers.", "/laws"],
       ["Browse Texas legislation", "Review Texas bills and legislative history across available sessions.", "/bills"],
       ["Election Central", "See the elections that determine the membership of the Texas House and Senate.", "/elections/legislative"],
     ],
@@ -152,7 +152,7 @@ export default function TexasLegislaturePage({ page }: { page: LegislaturePageKe
           <h2 className="text-xl font-bold">Texas Legislature resources</h2>
           <p className="mt-2 leading-7 text-muted-foreground">KeepTXRed connects legislative information with Texas lawmakers, elections, laws, policy coverage, and practical voter resources.</p>
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 font-semibold text-primary">
-            <Link to="/bills" search={EMPTY_BILLS_SEARCH}>Bills</Link><Link to="/representatives">Representatives</Link><Link to="/elections/legislative">Legislative elections</Link><Link to="/texas-law-policy">Texas law and policy</Link><Link to="/get-involved">Get involved</Link>
+            <Link to="/bills" search={EMPTY_BILLS_SEARCH}>Bills</Link><Link to="/representatives">Representatives</Link><Link to="/elections/legislative">Legislative elections</Link><Link to="/laws">Texas laws</Link><Link to="/get-involved">Get involved</Link>
           </div>
         </aside>
       </section>
