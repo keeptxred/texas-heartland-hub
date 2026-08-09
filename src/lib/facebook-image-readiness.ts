@@ -6,6 +6,11 @@
 
 const SITE_URL = "https://keeptxred.com";
 
+export const FACEBOOK_IMAGE_FETCH_HEADERS = {
+  Accept: "image/avif,image/webp,image/apng,image/png,image/jpeg,image/*,*/*;q=0.8",
+  "User-Agent": "KeepTXRed/1.0 (+https://keeptxred.com)",
+} as const;
+
 export type FacebookImageReadinessSource =
   | "generated_featured_image"
   | "stored_featured_image"
@@ -111,7 +116,11 @@ export async function verifyImageIsReachable(url: string): Promise<FacebookImage
   let contentType: string | null = null;
   let status = 0;
   try {
-    let probe = await fetch(url, { method: "HEAD", redirect: "follow" });
+    let probe = await fetch(url, {
+      method: "HEAD",
+      headers: FACEBOOK_IMAGE_FETCH_HEADERS,
+      redirect: "follow",
+    });
 
     // Some CDNs/static hosts reject HEAD and byte-range probes even though a
     // normal public GET succeeds. Facebook ultimately performs a regular GET,
@@ -120,9 +129,7 @@ export async function verifyImageIsReachable(url: string): Promise<FacebookImage
       probe = await fetch(url, {
         method: "GET",
         redirect: "follow",
-        headers: {
-          Accept: "image/avif,image/webp,image/apng,image/png,image/jpeg,image/*,*/*;q=0.8",
-        },
+        headers: FACEBOOK_IMAGE_FETCH_HEADERS,
       });
     }
     status = probe.status;
