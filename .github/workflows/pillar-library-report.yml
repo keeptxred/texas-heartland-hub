@@ -1,0 +1,35 @@
+name: Live Pillar Library Report
+
+on:
+  push:
+    branches: [feature/ktr-content-pillars]
+    paths:
+      - 'scripts/news/report-live-pillar-library.ts'
+      - '.github/workflows/pillar-library-report.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Generate live article-library pillar report
+        run: bun scripts/news/report-live-pillar-library.ts
+
+      - name: Upload report
+        uses: actions/upload-artifact@v4
+        with:
+          name: pillar-library-report
+          path: |
+            pillar-library-report.json
+            pillar-library-report.md
+          retention-days: 7
