@@ -39,12 +39,13 @@ const STATIC_PATHS:string[]=[
   // promoted as a first-class sitemap target because its culture/lifestyle
   // framing belongs on TexasDefined after the site split.
   "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
-  // NOTE: /elections is a 307 to /elections/2026 and is intentionally absent —
+  // NOTE: /elections is a redirect to /elections/2026 and is intentionally absent —
   // the canonical election hub ships in sitemap-elections.xml.
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
-  "/get-involved","/county-elections","/laws","/texas-laws",
+  "/get-involved","/county-elections","/laws",
+  // /texas-laws is now a permanent alias for /laws and must not be advertised.
   // Legacy candidate guides are noindex until rebuilt on verified Election Central data.
   // /legislative-updates redirects to /bills, /laws-to-know redirects to /laws,
   // and /voting-locations redirects to the verified Election Central voting page.
