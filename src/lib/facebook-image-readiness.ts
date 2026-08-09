@@ -2,7 +2,7 @@
 // are exposed via `assessImageUrl` so both the client dashboard and server
 // publish path agree on what "an image URL is even usable" means. The server
 // additionally calls `verifyImageIsReachable` at posting time to confirm the
-// URL returns real image bytes.
+// URL returns real raster image bytes.
 
 const SITE_URL = "https://keeptxred.com";
 
@@ -51,6 +51,14 @@ export function normalizeImageUrl(raw: unknown): string | null {
   }
 }
 
+function isSvgUrl(url: string): boolean {
+  try {
+    return /\.svg$/i.test(new URL(url).pathname);
+  } catch {
+    return false;
+  }
+}
+
 export function assessImageUrl(
   raw: unknown,
   source: FacebookImageReadinessSource = "stored_featured_image",
@@ -74,6 +82,15 @@ export function assessImageUrl(
       message: "Facebook post blocked: the featured image URL is not a valid public https URL.",
     };
   }
+  if (isSvgUrl(url)) {
+    return {
+      ready: false,
+      imageUrl: url,
+      source,
+      reason: "NOT_IMAGE",
+      message: "Facebook post blocked: SVG hero images are not supported. Use a PNG, JPG, or WebP image.",
+    };
+  }
   return {
     ready: true,
     imageUrl: url,
@@ -83,7 +100,7 @@ export function assessImageUrl(
   };
 }
 
-// Server-only. Verifies the URL resolves to real image bytes at posting time.
+// Server-only. Verifies the URL resolves to real raster image bytes at posting time.
 // Caller should have already run `assessImageUrl` and only invoke this once
 // per publish request.
 export async function verifyImageIsReachable(url: string): Promise<FacebookImageReadiness> {
@@ -95,11 +112,29 @@ export async function verifyImageIsReachable(url: string): Promise<FacebookImage
   let status = 0;
   try {
     let probe = await fetch(url, { method: "HEAD", redirect: "follow" });
+
+    // Some CDNs/static hosts reject HEAD and byte-range probes even though a
+    // normal public GET succeeds. Facebook ultimately performs a regular GET,
+    // so use that as the authoritative fallback instead of a Range request.
     if (!probe.ok || !probe.headers.get("content-type")) {
-      probe = await fetch(url, { method: "GET", headers: { Range: "bytes=0-0" }, redirect: "follow" });
+      probe = await fetch(url, {
+        method: "GET",
+        redirect: "follow",
+        headers: {
+          Accept: "image/avif,image/webp,image/apng,image/png,image/jpeg,image/*,*/*;q=0.8",
+        },
+      });
     }
     status = probe.status;
     contentType = probe.headers.get("content-type");
+
+    // We only need headers/type for validation. Cancel an unread response body
+    // where the runtime supports it instead of buffering the full image.
+    try {
+      await probe.body?.cancel();
+    } catch {
+      // Ignore cancellation failures; reachability has already been determined.
+    }
   } catch {
     return {
       ...base,
@@ -116,12 +151,15 @@ export async function verifyImageIsReachable(url: string): Promise<FacebookImage
       message: `Facebook post blocked: featured image returned HTTP ${status}.`,
     };
   }
-  if (!contentType || !contentType.toLowerCase().startsWith("image/")) {
+  const normalizedType = contentType?.toLowerCase() ?? "";
+  if (!normalizedType.startsWith("image/") || normalizedType.startsWith("image/svg+xml")) {
     return {
       ...base,
       ready: false,
       reason: "NOT_IMAGE",
-      message: "Facebook post blocked: the image URL returned non-image content (likely an HTML page).",
+      message: normalizedType.startsWith("image/svg+xml")
+        ? "Facebook post blocked: the featured image resolved to SVG. Use a PNG, JPG, or WebP image."
+        : "Facebook post blocked: the image URL returned non-image content (likely an HTML page).",
     };
   }
   return {
