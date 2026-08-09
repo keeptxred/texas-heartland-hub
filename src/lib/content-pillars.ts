@@ -141,10 +141,10 @@ export function classifyContentPillar(input: {
   if (prominentMatch) return prominentMatch;
 
   // Only fall back to the article lead when the headline/dek are genuinely ambiguous.
-  // Limit the body to the lead so footer boilerplate and unrelated internal links do
-  // not pull stories into Elections or another high-priority pillar.
+  // In the lead, the earliest topical signal wins instead of global pillar priority,
+  // preventing a later boilerplate mention of elections from overriding the actual lead.
   const lead = (input.body ?? "").slice(0, 1200);
-  return firstPillarMatch(lead);
+  return earliestPillarMatch(lead);
 }
 
 function firstPillarMatch(text: string): ContentPillarSlug | null {
@@ -153,6 +153,19 @@ function firstPillarMatch(text: string): ContentPillarSlug | null {
     if (pillar.keywords.test(text)) return slug;
   }
   return null;
+}
+
+function earliestPillarMatch(text: string): ContentPillarSlug | null {
+  let winner: { slug: ContentPillarSlug; index: number; priority: number } | null = null;
+  for (const [priority, slug] of PRIORITY.entries()) {
+    const pillar = getContentPillar(slug);
+    const match = text.match(pillar.keywords);
+    if (!match || match.index == null) continue;
+    if (!winner || match.index < winner.index || (match.index === winner.index && priority < winner.priority)) {
+      winner = { slug, index: match.index, priority };
+    }
+  }
+  return winner?.slug ?? null;
 }
 
 export function resolveContentPillarSlug(
