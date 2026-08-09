@@ -6,6 +6,9 @@ import { TEAMS } from "@/lib/texas-teams";
 import { SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
+const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(
+  SUPPORTING_GUIDE_SLUGS.map((slug) => [`/guides/${slug}`, GUIDE_LASTMOD]),
+);
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/news": toIsoDate("2026-08-07T00:00:00-05:00"),
@@ -27,6 +30,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
   "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
   "/guides/texas-law-enforcement-public-safety-guide": GUIDE_LASTMOD,
+  ...SUPPORTING_GUIDE_LASTMOD,
 };
 
 const STATIC_PATHS:string[]=[
@@ -55,4 +59,4 @@ const STATIC_PATHS:string[]=[
   // listing them here duplicated 250+ URLs across two sitemaps.
 ];
 
-export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`)];for(const league of ["nfl","mlb","nba"] as const){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || (path.startsWith("/guides/") ? GUIDE_LASTMOD : undefined)}));return xmlResponse(renderUrlset(entries))}}}});
+export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`)];for(const league of ["nfl","mlb","nba"] as const){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});
