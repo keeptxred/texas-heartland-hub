@@ -160,6 +160,7 @@ COMMENT ON VIEW public.pillar_authority_trends IS
 
 GRANT SELECT ON public.pillar_authority_snapshots TO authenticated;
 GRANT SELECT ON public.pillar_authority_snapshots TO service_role;
+GRANT SELECT ON public.pillar_authority_trends TO anon;
 GRANT SELECT ON public.pillar_authority_trends TO authenticated;
 GRANT SELECT ON public.pillar_authority_trends TO service_role;
 
