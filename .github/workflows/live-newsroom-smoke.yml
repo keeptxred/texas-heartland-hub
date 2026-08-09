@@ -4,6 +4,17 @@ on:
   schedule:
     - cron: '17 13 * * *'
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'src/routes/api/public/hooks/health.ts'
+      - 'src/routes/api/public/newsroom-health.ts'
+      - 'src/lib/multi-source-publish.ts'
+      - 'src/lib/ingest-feeds-legacy.ts'
+      - 'scripts/news/smoke-live-newsroom.mjs'
+      - '.github/workflows/live-newsroom-smoke.yml'
 
 permissions:
   contents: read
