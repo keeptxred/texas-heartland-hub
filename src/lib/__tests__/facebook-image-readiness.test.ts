@@ -29,15 +29,25 @@ describe("assessImageUrl — deterministic image gate", () => {
     expect(url).toMatch(/^https:\/\/keeptxred\.com\/api\/public\/article-image\/foo\.png$/);
     expect(assessImageUrl("/api/public/article-image/foo.png").ready).toBe(true);
   });
+
+  it("blocks legacy generated newsroom placeholders even when rasterized as PNG", () => {
+    const result = assessImageUrl(
+      "/images/news/generated/2026-08-09/texas-childrens-expansion.png",
+    );
+    expect(result.ready).toBe(false);
+    expect(result.reason).toBe("NOT_IMAGE");
+    expect(result.message).toContain("legacy generated placeholder");
+  });
 });
 
 describe("verifyImageIsReachable — server-side content-type gate", () => {
   it("blocks when the URL returns non-image content", async () => {
-    globalThis.fetch = vi.fn(async () =>
-      new Response("<html></html>", {
-        status: 200,
-        headers: { "content-type": "text/html" },
-      }),
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response("<html></html>", {
+          status: 200,
+          headers: { "content-type": "text/html" },
+        }),
     ) as unknown as typeof fetch;
     const r = await verifyImageIsReachable("https://example.com/image.png");
     expect(r.ready).toBe(false);
@@ -45,11 +55,12 @@ describe("verifyImageIsReachable — server-side content-type gate", () => {
   });
 
   it("passes when the URL returns real image bytes", async () => {
-    globalThis.fetch = vi.fn(async () =>
-      new Response("", {
-        status: 200,
-        headers: { "content-type": "image/png" },
-      }),
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response("", {
+          status: 200,
+          headers: { "content-type": "image/png" },
+        }),
     ) as unknown as typeof fetch;
     const r = await verifyImageIsReachable("https://example.com/image.png");
     expect(r.ready).toBe(true);
@@ -57,8 +68,8 @@ describe("verifyImageIsReachable — server-side content-type gate", () => {
   });
 
   it("blocks when the URL returns an HTTP error", async () => {
-    globalThis.fetch = vi.fn(async () =>
-      new Response("nope", { status: 404, headers: { "content-type": "text/plain" } }),
+    globalThis.fetch = vi.fn(
+      async () => new Response("nope", { status: 404, headers: { "content-type": "text/plain" } }),
     ) as unknown as typeof fetch;
     const r = await verifyImageIsReachable("https://example.com/missing.png");
     expect(r.ready).toBe(false);
