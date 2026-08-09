@@ -104,7 +104,7 @@ export function classifyContentPillar(input: {
   description?: string | null;
   body?: string | null;
   category?: string | null;
-}): ContentPillarSlug {
+}): ContentPillarSlug | null {
   const haystack = `${input.category ?? ""} ${input.title ?? ""} ${input.description ?? ""} ${input.body ?? ""}`;
 
   // Specific beats broad: an election story about the governor belongs in Elections;
@@ -126,5 +126,5 @@ export function classifyContentPillar(input: {
     if (pillar.keywords.test(haystack)) return slug;
   }
 
-  return "texas-politics-government";
+  return null;
 }
