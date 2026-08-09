@@ -39,6 +39,7 @@ const LOVABLE_AI_GATEWAY_PREFIX = "https://ai.gateway.lovable.dev/";
 const LOVABLE_CHAT_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const LOVABLE_IMAGE_GATEWAY = "https://ai.gateway.lovable.dev/v1/images/generations";
 const GEMINI_INTERACTIONS = "https://generativelanguage.googleapis.com/v1beta/interactions";
+const GEMINI_IMAGE_MIME_TYPE = "image/jpeg";
 const nativeFetch = globalThis.fetch.bind(globalThis);
 let directAiFetchInstalled = false;
 
@@ -113,7 +114,7 @@ async function directGeminiImageResponse(
       input: prompt,
       response_format: {
         type: "image",
-        mime_type: "image/jpeg",
+        mime_type: GEMINI_IMAGE_MIME_TYPE,
         aspect_ratio: "16:9",
         image_size: process.env.AI_IMAGE_SIZE || "1K",
       },
