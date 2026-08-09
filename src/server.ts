@@ -35,6 +35,7 @@ type GeminiInteraction = {
   }>;
 };
 
+const LOVABLE_AI_GATEWAY_PREFIX = "https://ai.gateway.lovable.dev/";
 const LOVABLE_CHAT_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const LOVABLE_IMAGE_GATEWAY = "https://ai.gateway.lovable.dev/v1/images/generations";
 const GEMINI_INTERACTIONS = "https://generativelanguage.googleapis.com/v1beta/interactions";
@@ -238,12 +239,11 @@ async function directGeminiChatResponse(
 function installDirectAiFetch(): void {
   if (directAiFetchInstalled) return;
   const apiKey = directGeminiApiKey();
-  if (!apiKey) return;
 
   // Compatibility only: legacy callers check this variable before entering their
-  // AI paths. Requests to the Lovable AI endpoints are intercepted below and
-  // sent directly to Google's Gemini API, so no Lovable AI credit is consumed.
-  if (!process.env.LOVABLE_API_KEY) process.env.LOVABLE_API_KEY = "direct-gemini";
+  // AI paths. When Gemini is configured, the matching Lovable-compatible calls
+  // below are intercepted and sent directly to Google. Lovable AI is never used.
+  if (apiKey && !process.env.LOVABLE_API_KEY) process.env.LOVABLE_API_KEY = "direct-gemini";
 
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = typeof input === "string"
@@ -252,8 +252,34 @@ function installDirectAiFetch(): void {
         ? input.toString()
         : input.url;
 
-    if (url !== LOVABLE_CHAT_GATEWAY && url !== LOVABLE_IMAGE_GATEWAY) {
+    if (!url.startsWith(LOVABLE_AI_GATEWAY_PREFIX)) {
       return nativeFetch(input, init);
+    }
+
+    // Hard stop: KeepTXRed must never fall back to Lovable AI credits. If the
+    // direct Gemini credential disappears, AI fails closed instead of charging
+    // the Lovable workspace.
+    if (!apiKey) {
+      return Response.json(
+        {
+          error: {
+            message:
+              "Direct Gemini AI is not configured. Lovable AI fallback is disabled by policy.",
+          },
+        },
+        { status: 503 },
+      );
+    }
+
+    if (url !== LOVABLE_CHAT_GATEWAY && url !== LOVABLE_IMAGE_GATEWAY) {
+      return Response.json(
+        {
+          error: {
+            message: `Unsupported legacy AI endpoint blocked from Lovable: ${url}`,
+          },
+        },
+        { status: 501 },
+      );
     }
 
     let body: OpenAiCompatBody | OpenAiImageBody;
@@ -270,7 +296,15 @@ function installDirectAiFetch(): void {
   }) as typeof globalThis.fetch;
 
   directAiFetchInstalled = true;
-  console.info("[AI] direct Gemini provider enabled for text, validation, and featured images; Lovable AI gateway bypassed");
+  if (apiKey) {
+    console.info(
+      "[AI] direct Gemini provider enabled for all legacy text, validation, and image calls; Lovable AI network access hard-disabled",
+    );
+  } else {
+    console.warn(
+      "[AI] no direct Gemini key configured; Lovable AI network access remains hard-disabled and AI calls will fail closed",
+    );
+  }
 }
 
 let serverEntryPromise: Promise<ServerEntry> | undefined;
