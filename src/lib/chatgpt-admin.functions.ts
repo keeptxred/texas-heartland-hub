@@ -1,10 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import type { Database } from "@/integrations/supabase/types";
 
-type DailyArticleUpdate = Database["public"]["Tables"]["daily_articles"]["Update"] & {
-  chatgpt_admin_ignored?: boolean;
-};
+const IGNORE_FLAG = "chatgpt-admin-ignored";
 
 export const ignoreChatGptArticle = createServerFn({ method: "POST" })
   .validator((d) =>
@@ -22,15 +19,33 @@ export const ignoreChatGptArticle = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const update: DailyArticleUpdate = { chatgpt_admin_ignored: true };
-    const { error } = await supabaseAdmin
+    const { data: article, error: readError } = await supabaseAdmin
       .from("daily_articles")
-      .update(update)
+      .select("quality_flags")
+      .eq("id", data.id)
+      .eq("author", "Keep TX Red Newsroom")
+      .maybeSingle();
+
+    if (readError) {
+      return { ok: false as const, error: readError.message };
+    }
+    if (!article) {
+      return { ok: false as const, error: "Article not found" };
+    }
+
+    const qualityFlags = article.quality_flags ?? [];
+    if (qualityFlags.includes(IGNORE_FLAG)) {
+      return { ok: true as const };
+    }
+
+    const { error: updateError } = await supabaseAdmin
+      .from("daily_articles")
+      .update({ quality_flags: [...qualityFlags, IGNORE_FLAG] })
       .eq("id", data.id)
       .eq("author", "Keep TX Red Newsroom");
 
-    if (error) {
-      return { ok: false as const, error: error.message };
+    if (updateError) {
+      return { ok: false as const, error: updateError.message };
     }
 
     return { ok: true as const };
