@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
+import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 
 const SECTIONS = [
   { title: "Essential Agriculture Guide", description: "Start here: agencies, financing, water, land, rural infrastructure, and the policy system affecting Texas producers.", href: "/guides/texas-agriculture-rural-guide" },
@@ -25,21 +26,24 @@ export const Route = createFileRoute("/texas-agriculture")({
 
 function TexasAgriculturePage() {
   return (
-    <ContentPillarView
-      hubSlug="texas-agriculture"
-      sections={SECTIONS}
-      feedSection="agriculture"
-      heading="Texas Beyond the Metros"
-      paragraphs={[
-        "Agriculture remains inseparable from Texas water, land, transportation, trade, taxes, and rural economic policy. This pillar follows the decisions that affect farmers, ranchers, producers, agricultural businesses, and the communities built around them.",
-        "Coverage is routed here when agriculture or rural Texas is the primary subject, keeping those stories from disappearing inside generic business or statewide-news categories.",
-      ]}
-      related={[
-        { label: "Read the essential agriculture guide", href: "/guides/texas-agriculture-rural-guide" },
-        { label: "Texas Economy & Small Business", href: "/texas-economy" },
-        { label: "Texas Laws & Legislature", href: "/laws" },
-        { label: "Texas Politics & Government", href: "/texas-politics" },
-      ]}
-    />
+    <>
+      <ContentPillarView
+        hubSlug="texas-agriculture"
+        sections={SECTIONS}
+        feedSection="agriculture"
+        heading="Texas Beyond the Metros"
+        paragraphs={[
+          "Agriculture remains inseparable from Texas water, land, transportation, trade, taxes, and rural economic policy. This pillar follows the decisions that affect farmers, ranchers, producers, agricultural businesses, and the communities built around them.",
+          "Coverage is routed here when agriculture or rural Texas is the primary subject, keeping those stories from disappearing inside generic business or statewide-news categories.",
+        ]}
+        related={[
+          { label: "Read the essential agriculture guide", href: "/guides/texas-agriculture-rural-guide" },
+          { label: "Texas Economy & Small Business", href: "/texas-economy" },
+          { label: "Texas Laws & Legislature", href: "/laws" },
+          { label: "Texas Politics & Government", href: "/texas-politics" },
+        ]}
+      />
+      <SupportingGuideGrid pillarHref="/texas-agriculture" />
+    </>
   );
 }

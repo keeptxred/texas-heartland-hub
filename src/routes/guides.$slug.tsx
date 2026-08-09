@@ -1,10 +1,11 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CornerstoneGuidePage, cornerstoneGuideHead } from "@/components/cornerstone-guide-page";
-import { CORNERSTONE_GUIDES, type CornerstoneGuide } from "@/data/cornerstone-guides";
+import { ALL_GUIDES } from "@/data/all-guides";
+import type { CornerstoneGuide } from "@/data/cornerstone-guides";
 
 export const Route = createFileRoute("/guides/$slug")({
   loader: ({ params }): CornerstoneGuide => {
-    const guide = CORNERSTONE_GUIDES[params.slug];
+    const guide = ALL_GUIDES[params.slug];
     if (!guide) throw notFound();
     return guide;
   },

@@ -3,6 +3,9 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
+import { SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
+
+const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/news": toIsoDate("2026-08-07T00:00:00-05:00"),
@@ -11,19 +14,19 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/senate": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/current-session": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/sessions": toIsoDate("2026-08-07T00:00:00-05:00"),
-  "/topics": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/texas-politics": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/texas-economy": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/texas-border-security": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/texas-energy": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/texas-agriculture": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/texas-veterans": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/texas-law-enforcement": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/texas-law-policy": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/laws": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/guides/texas-agriculture-rural-guide": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/guides/texas-veterans-military-guide": toIsoDate("2026-08-09T00:00:00-05:00"),
-  "/guides/texas-law-enforcement-public-safety-guide": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/topics": GUIDE_LASTMOD,
+  "/texas-politics": GUIDE_LASTMOD,
+  "/texas-economy": GUIDE_LASTMOD,
+  "/texas-border-security": GUIDE_LASTMOD,
+  "/texas-energy": GUIDE_LASTMOD,
+  "/texas-agriculture": GUIDE_LASTMOD,
+  "/texas-veterans": GUIDE_LASTMOD,
+  "/texas-law-enforcement": GUIDE_LASTMOD,
+  "/texas-law-policy": GUIDE_LASTMOD,
+  "/laws": GUIDE_LASTMOD,
+  "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
+  "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
+  "/guides/texas-law-enforcement-public-safety-guide": GUIDE_LASTMOD,
 };
 
 const STATIC_PATHS:string[]=[
@@ -52,4 +55,4 @@ const STATIC_PATHS:string[]=[
   // listing them here duplicated 250+ URLs across two sitemaps.
 ];
 
-export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS];for(const league of ["nfl","mlb","nba"] as const){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});
+export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`)];for(const league of ["nfl","mlb","nba"] as const){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || (path.startsWith("/guides/") ? GUIDE_LASTMOD : undefined)}));return xmlResponse(renderUrlset(entries))}}}});
