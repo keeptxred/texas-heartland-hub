@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
+import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 
 const SECTIONS = [
   { title: "Veterans & Military Guide", description: "Start here: benefits navigation, state services, employment, education, military families, and installations.", href: "/guides/texas-veterans-military-guide" },
@@ -25,21 +26,24 @@ export const Route = createFileRoute("/texas-veterans")({
 
 function TexasVeteransPage() {
   return (
-    <ContentPillarView
-      hubSlug="texas-veterans"
-      sections={SECTIONS}
-      feedSection="veterans"
-      heading="Service and Policy in Texas"
-      paragraphs={[
-        "Texas has a large military and veteran community, and decisions made by state and federal officials can affect benefits, installations, military families, honors, deployments, and local economies. This pillar keeps those developments together instead of scattering them across general government coverage.",
-        "Military honors and commemorations belong here when the Texas veteran, service-member, installation, or public-policy connection is central to the story.",
-      ]}
-      related={[
-        { label: "Read the veterans and military guide", href: "/guides/texas-veterans-military-guide" },
-        { label: "Texas Laws & Legislature", href: "/laws" },
-        { label: "Texas Politics & Government", href: "/texas-politics" },
-        { label: "Latest Texas News", href: "/news" },
-      ]}
-    />
+    <>
+      <ContentPillarView
+        hubSlug="texas-veterans"
+        sections={SECTIONS}
+        feedSection="veterans"
+        heading="Service and Policy in Texas"
+        paragraphs={[
+          "Texas has a large military and veteran community, and decisions made by state and federal officials can affect benefits, installations, military families, honors, deployments, and local economies. This pillar keeps those developments together instead of scattering them across general government coverage.",
+          "Military honors and commemorations belong here when the Texas veteran, service-member, installation, or public-policy connection is central to the story.",
+        ]}
+        related={[
+          { label: "Read the veterans and military guide", href: "/guides/texas-veterans-military-guide" },
+          { label: "Texas Laws & Legislature", href: "/laws" },
+          { label: "Texas Politics & Government", href: "/texas-politics" },
+          { label: "Latest Texas News", href: "/news" },
+        ]}
+      />
+      <SupportingGuideGrid pillarHref="/texas-veterans" />
+    </>
   );
 }
