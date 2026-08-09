@@ -64,6 +64,16 @@ function isSvgUrl(url: string): boolean {
   }
 }
 
+export function isLegacyGeneratedNewsAsset(raw: unknown): boolean {
+  const url = normalizeImageUrl(raw);
+  if (!url) return false;
+  try {
+    return new URL(url).pathname.includes("/images/news/generated/");
+  } catch {
+    return false;
+  }
+}
+
 export function assessImageUrl(
   raw: unknown,
   source: FacebookImageReadinessSource = "stored_featured_image",
@@ -93,7 +103,18 @@ export function assessImageUrl(
       imageUrl: url,
       source,
       reason: "NOT_IMAGE",
-      message: "Facebook post blocked: SVG hero images are not supported. Use a PNG, JPG, or WebP image.",
+      message:
+        "Facebook post blocked: SVG hero images are not supported. Use a PNG, JPG, or WebP image.",
+    };
+  }
+  if (isLegacyGeneratedNewsAsset(url)) {
+    return {
+      ready: false,
+      imageUrl: url,
+      source,
+      reason: "NOT_IMAGE",
+      message:
+        "Facebook post blocked: this article still uses a legacy generated placeholder. Regenerate a real editorial image first.",
     };
   }
   return {
