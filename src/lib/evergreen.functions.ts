@@ -4,6 +4,7 @@ import { z } from "zod";
 import { articleMainWordCount, meetsArticleMainWordCount, sanitizeArticleFaqs } from "@/lib/article-length";
 import { isSitemapEligibleSlug } from "@/lib/article-slug-integrity";
 import { hasSeoDuplicateFlag, selectCanonicalArticles } from "@/lib/article-canonical";
+import { getChatNewsFallbackBySlug } from "@/lib/chat-news-fallback";
 
 export type EvergreenSection = {
   heading: string;
@@ -126,19 +127,20 @@ function sanitizeEvergreenBody(body: EvergreenBody, publishedAt: string): Evergr
 export const getEvergreenBySlug = createServerFn({ method: "GET" })
   .validator((d) => z.object({ slug: z.string().min(1).max(120) }).parse(d))
   .handler(async ({ data }): Promise<EvergreenArticle | null> => {
+    const fallback = getChatNewsFallbackBySlug(data.slug) as EvergreenArticle | null;
     const supabase = client();
-    if (!supabase) return null;
+    if (!supabase) return fallback;
     const { data: row, error } = await supabase
       .from("daily_articles")
       .select("slug,category,title,dek,author,source_name,source_url,image_url,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,keywords,body_json,kind")
       .eq("slug", data.slug)
       .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
       .maybeSingle();
-    if (error || !row) return null;
+    if (error || !row) return fallback;
     const rawBody = (row as { body_json?: EvergreenBody | null }).body_json ?? null;
-    if (!rawBody) return null;
+    if (!rawBody) return fallback;
     const body = sanitizeEvergreenBody(rawBody, row.published_at);
-    if (!meetsArticleMainWordCount(row.kind, body)) return null;
+    if (!meetsArticleMainWordCount(row.kind, body)) return fallback;
     return {
       slug: row.slug,
       category: row.category,
