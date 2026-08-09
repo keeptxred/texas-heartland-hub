@@ -6,6 +6,8 @@ function aiProviderState() {
     process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY,
   );
   return {
+    ai_provider: ready ? "google-gemini-direct" : "unconfigured",
+    ai_provider_ready: ready,
     rewrite_provider: ready ? "google-gemini-direct" : "unconfigured",
     rewrite_provider_ready: ready,
     rewrite_model: ready ? (process.env.AI_REWRITE_MODEL || "gemini-3.5-flash") : null,
@@ -15,6 +17,8 @@ function aiProviderState() {
     image_validation_model: ready ? (process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash") : null,
     lovable_rewrite_bypassed: ready,
     lovable_image_bypassed: ready,
+    lovable_ai_network_disabled: true,
+    lovable_ai_fallback_allowed: false,
   };
 }
 
