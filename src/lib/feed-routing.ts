@@ -20,6 +20,7 @@ export type FeedRow = {
   description: string | null;
   pub_date: string;
   pillar_slug?: ContentPillarSlug | null;
+  pillar_classified_at?: string | null;
 };
 
 const PILLAR_TO_FEED_SECTION: Record<ContentPillarSlug, Exclude<FeedSection, "news">> = {
@@ -43,7 +44,12 @@ export function classifyFeedItem(item: {
   description: string | null;
   source: string;
   pillar_slug?: unknown;
+  pillar_classified_at?: string | null;
 }): FeedSection {
+  // A classified row with a null pillar was intentionally assigned to General
+  // Texas News. Preserve that decision instead of reclassifying on every render.
+  if (item.pillar_classified_at && item.pillar_slug == null) return "news";
+
   const pillar = resolveContentPillarSlug(item.pillar_slug, {
     title: item.title,
     description: item.description,
