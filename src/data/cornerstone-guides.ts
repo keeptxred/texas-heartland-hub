@@ -11,6 +11,7 @@ export type CornerstoneGuide = {
   updated: string;
   pillarLabel: string;
   pillarHref: string;
+  guideLabel?: string;
   keyTakeaways: string[];
   intro: string[];
   sections: CornerstoneGuideSection[];
