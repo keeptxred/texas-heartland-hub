@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
 import { ContentOpportunityPanel } from "@/components/admin/ContentOpportunityPanel";
+import { ChatGptAutoArticlesPanel } from "@/components/admin/ChatGptAutoArticlesPanel";
 import { SavedPackagesPanel } from "@/components/admin/SavedPackagesPanel";
 import { BrandSettings } from "@/components/admin/BrandSettings";
 import { ReelRadarPanel } from "@/components/admin/ReelRadarPanel";
@@ -212,6 +213,10 @@ function AdminDashboardPage() {
             </ul>
           )}
         </Panel>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <ChatGptAutoArticlesPanel />
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
