@@ -14,6 +14,7 @@ const MODEL = "google/gemini-3.1-flash-image";
 const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/images/generations";
 const CHAT_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const BUCKET = "article-images";
+const PURPLE_HEART_IMAGE_URL = "/images/military-honors/purple-heart.svg";
 
 type ArticleRow = {
   slug: string;
@@ -122,7 +123,7 @@ const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["weather", /\b(hurricane|tornado|flood|drought|storm|heat wave|freeze|blizzard|wildfire|rainfall|weather)\b/i],
   ["energy", /\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig)\b/i],
   ["sports", /\b(cowboys|texans|rangers|astros|mavericks|spurs|rockets|stars|nfl|nba|mlb|football|basketball|baseball|playoff)\b/i],
-  ["military", /\b(military|army|navy|air force|marines|fort hood|fort cavazos|base|installation|soldier|veteran)\b/i],
+  ["military", /\b(purple heart|medal of honor|military|army|navy|air force|marines|fort hood|fort cavazos|base|installation|soldier|veteran)\b/i],
   ["education", /\b(school|isd|university|college|teacher|classroom|student|curriculum)\b/i],
   ["health", /\b(hospital|clinic|doctor|nurse|patient|disease|virus|outbreak|medicaid|healthcare)\b/i],
   ["transportation", /\b(highway|interstate|traffic|txdot|airport|rail|transit|bridge|road construction)\b/i],
@@ -144,7 +145,7 @@ type SubjectExtract = {
   entities: string[];
   locations: string[];
   domain: Domain;
-  concreteSubject: string; // one-line description of the actual thing to depict
+  concreteSubject: string;
 };
 
 function extractImageSubject(row: ArticleRow): SubjectExtract {
@@ -160,16 +161,10 @@ function extractImageSubject(row: ArticleRow): SubjectExtract {
     ),
   ].filter((v, i, a) => a.indexOf(v) === i);
   const domain = inferDomain(haystack);
-
   const terms = topArticleTerms(haystack);
-
-  // First-pass concrete subject = the title itself, refined by the first
-  // paragraph and concrete article terms. The category is never used as the
-  // visual subject because it causes generic "news" imagery.
   const concreteSubject = intro
     ? `${title}. Context: ${intro}. Concrete subjects to show if present: ${terms.join(", ") || "the specific event, place, animal, object, or people described"}.`
     : title;
-
   return { title, firstParagraph: intro, entities, locations, domain, concreteSubject };
 }
 
@@ -183,7 +178,7 @@ const DOMAIN_STEER: Record<Domain, string> = {
   sports:
     "Depict a game-day sports scene — stadium, playing field, generic athletic action — with no identifiable player faces, jerseys with names, or team logos.",
   military:
-    "Depict a military installation scene: hangars, training grounds, aircraft, or personnel in silhouette. No identifiable faces, no unit insignia.",
+    "Depict the specific military honor, medal, installation, aircraft, personnel, or commemoration named by the story. When a medal or decoration is named, the medal itself must dominate the image. No identifiable faces, no unit insignia.",
   education:
     "Depict a school setting: classroom, hallway, playground, or campus exterior. No identifiable children's faces.",
   health: "Depict a hospital or clinical setting relevant to the story. No identifiable patients or staff.",
@@ -199,10 +194,6 @@ const DOMAIN_STEER: Record<Domain, string> = {
     "Depict a specific, believable real-world Texas scene tied directly to the article's subject.",
 };
 
-/** Build a detailed editorial image prompt from article context.
- *  Leads with the concrete subject (title + first paragraph), applies
- *  domain-specific steering, and hard-blocks generic newsroom imagery
- *  unless the article is literally about it. */
 export function buildImagePrompt(
   subject: SubjectExtract,
   extraGuidance = "",
@@ -234,7 +225,6 @@ export function buildImagePrompt(
 
   const style =
     "Professional editorial photography, natural lighting, realistic composition, cinematic depth of field, 16:9 landscape, muted editorial color palette with warm Texas tones.";
-
   const loc = subject.locations.slice(0, 2).join(", ");
 
   return [
@@ -256,6 +246,17 @@ export function buildImagePrompt(
 export function buildAltText(a: { title: string; category?: string | null }): string {
   const cat = a.category ? ` — ${a.category}` : "";
   return `Editorial illustration for Keep TX Red news article: ${a.title}${cat}`;
+}
+
+function staticFeaturedImage(row: ArticleRow): { url: string; alt: string } | null {
+  const subject = `${row.title} ${row.seo_headline ?? ""} ${row.dek ?? ""}`;
+  if (/\bpurple heart\b/i.test(subject)) {
+    return {
+      url: PURPLE_HEART_IMAGE_URL,
+      alt: `Purple Heart medal — ${row.title}`,
+    };
+  }
+  return null;
 }
 
 async function generateImageBytes(prompt: string): Promise<Uint8Array> {
@@ -287,8 +288,6 @@ async function generateImageBytes(prompt: string): Promise<Uint8Array> {
   return bytes;
 }
 
-/** Ask a vision model: does this image actually match the article subject?
- *  Fails open (returns matches=true) if the validator call itself errors. */
 async function validateImageMatchesArticle(
   bytes: Uint8Array,
   subject: SubjectExtract,
@@ -357,6 +356,21 @@ async function generateAndStore(
 ): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
   const supabase = await serviceClient();
 
+  const staticImage = staticFeaturedImage(row);
+  if (staticImage) {
+    await supabase
+      .from("daily_articles")
+      .update({
+        featured_image_url: staticImage.url,
+        image_alt_text: staticImage.alt,
+        image_generation_status: "ready",
+        image_prompt: null,
+        image_validation_note: "static military-honor asset",
+      })
+      .eq("slug", row.slug);
+    return { ok: true, url: staticImage.url, alt: staticImage.alt };
+  }
+
   if (!opts.overwrite && row.featured_image_url) {
     return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
   }
@@ -399,7 +413,6 @@ async function generateAndStore(
       });
     if (upErr) throw upErr;
 
-    // Public passthrough URL — private bucket served via our own route.
     const url = `/api/public/article-image/${filename}`;
 
     await supabase
@@ -427,7 +440,6 @@ async function generateAndStore(
 const SELECT_COLS =
   "slug,title,dek,category,keywords,seo_keywords,affected_regions,seo_headline,discover_category,texas_impact_summary,featured_image_url,image_generation_status,body_json";
 
-/** Generate featured image for one slug (idempotent unless overwrite=true). */
 export const generateFeaturedImageForSlug = createServerFn({ method: "POST" })
   .validator((d) =>
     z
@@ -459,7 +471,6 @@ export async function generateFeaturedImageForSlugDirect(
   return generateAndStore(row as ArticleRow, { overwrite });
 }
 
-/** Admin-gated regenerate (checks shared passcode header). */
 export const regenerateFeaturedImage = createServerFn({ method: "POST" })
   .validator((d) =>
     z.object({ slug: z.string().min(1).max(200), token: z.string().min(1) }).parse(d),
@@ -477,8 +488,6 @@ export const regenerateFeaturedImage = createServerFn({ method: "POST" })
     return generateAndStore(row as ArticleRow, { overwrite: true });
   });
 
-/** Backfill helper: pull N articles missing a featured image and generate them.
- *  Pass overwrite=true to also regenerate articles that already have one. */
 export async function backfillBatch(
   limit = 5,
   overwrite = false,
