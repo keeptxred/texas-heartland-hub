@@ -32,8 +32,9 @@ COMMENT ON COLUMN public.texas_news_feed.pillar_slug IS
 COMMENT ON COLUMN public.texas_news_feed.pillar_classified_at IS
   'Timestamp when pillar classification was evaluated, including rows intentionally left in general Texas News.';
 
--- Recreate the admin coverage-gap view with pillar visibility so editorial QA
--- can see which authority cluster an uncovered story should strengthen.
+-- Recreate the admin coverage-gap view with pillar visibility. Existing view
+-- columns keep their original order so CREATE OR REPLACE VIEW remains safe;
+-- new pillar fields are appended at the end.
 CREATE OR REPLACE VIEW public.news_coverage_gaps AS
 SELECT
   id,
@@ -43,8 +44,6 @@ SELECT
   pub_date,
   category,
   internal_slug,
-  pillar_slug,
-  pillar_classified_at,
   viral_score,
   classification_confidence,
   texas_relevance_score,
@@ -59,7 +58,9 @@ SELECT
     WHEN routing_type IN ('FACEBOOK_ONLY', 'REEL_CANDIDATE') THEN 'routing_gate'
     ELSE 'article_generation_or_publish_gap'
   END AS gap_reason,
-  GREATEST(coalesce(texas_relevance_score, 0), coalesce(viral_score, 0)) AS coverage_priority
+  GREATEST(coalesce(texas_relevance_score, 0), coalesce(viral_score, 0)) AS coverage_priority,
+  pillar_slug,
+  pillar_classified_at
 FROM public.texas_news_feed
 WHERE (internal_slug IS NULL OR btrim(internal_slug) = '')
   AND pub_date >= now() - interval '7 days'
@@ -74,8 +75,8 @@ GRANT SELECT ON public.news_coverage_gaps TO authenticated;
 GRANT SELECT ON public.news_coverage_gaps TO service_role;
 
 -- Classify two minutes after each :07/:37 ingest and before the :12/:42 viral
--- scoring run. The hook also backfills older unclassified rows and syncs the
--- persisted pillar into published article body_json metadata.
+-- scoring run. The hook also backfills older unclassified rows. Published
+-- consumers resolve the persisted decision through the existing feed-to-slug link.
 DO $$
 DECLARE
   existing_job_id bigint;
