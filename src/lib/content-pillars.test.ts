@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { classifyContentPillar, resolveContentPillarSlug } from "@/lib/content-pillars";
+import {
+  CONTENT_PILLARS,
+  classifyContentPillar,
+  classifyContentPillars,
+  getContentPillarByHref,
+  getRelatedContentPillars,
+  resolveContentPillarSlug,
+} from "@/lib/content-pillars";
 import { classifyFeedItem } from "@/lib/feed-routing";
 
 describe("content pillar classification", () => {
@@ -69,5 +76,32 @@ describe("content pillar classification", () => {
         pillar_slug: "texas-agriculture-rural",
       }),
     ).toBe("agriculture");
+  });
+
+  it("keeps a primary pillar first while exposing secondary topic relationships", () => {
+    expect(
+      classifyContentPillars({
+        title: "ERCOT grid bill advances in Texas Senate",
+        description: "Lawmakers are considering new energy regulation for the electric grid.",
+      }),
+    ).toEqual([
+      "texas-energy-oil",
+      "texas-laws-legislature",
+      "texas-economy-small-business",
+    ]);
+  });
+
+  it("resolves canonical hub ownership by href", () => {
+    expect(getContentPillarByHref("/texas-border-security")?.slug).toBe("texas-border-immigration");
+    expect(getContentPillarByHref("/not-a-pillar")).toBeNull();
+  });
+
+  it("defines intentional internal-link neighbors for every pillar", () => {
+    for (const pillar of CONTENT_PILLARS) {
+      expect(pillar.subtopics.length).toBeGreaterThanOrEqual(5);
+      const related = getRelatedContentPillars(pillar.slug);
+      expect(related.length).toBeGreaterThanOrEqual(2);
+      expect(related.every((item) => item.slug !== pillar.slug)).toBe(true);
+    }
   });
 });

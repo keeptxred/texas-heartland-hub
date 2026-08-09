@@ -25,7 +25,6 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-agriculture": GUIDE_LASTMOD,
   "/texas-veterans": GUIDE_LASTMOD,
   "/texas-law-enforcement": GUIDE_LASTMOD,
-  "/texas-law-policy": GUIDE_LASTMOD,
   "/laws": GUIDE_LASTMOD,
   "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
   "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
@@ -35,9 +34,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
 
 const STATIC_PATHS:string[]=[
   "/","/news","/happening-now","/keep-texas-red",
-  // /texas-news remains reachable for compatibility, but it is no longer
-  // promoted as a first-class sitemap target because its culture/lifestyle
-  // framing belongs on TexasDefined after the site split.
+  // /texas-news is a permanent alias for /news and is intentionally absent.
   "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
   // NOTE: /elections is a redirect to /elections/2026 and is intentionally absent —
   // the canonical election hub ships in sitemap-elections.xml.
@@ -45,14 +42,14 @@ const STATIC_PATHS:string[]=[
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws",
-  // /texas-laws is now a permanent alias for /laws and must not be advertised.
+  // /texas-laws and /texas-law-policy are permanent aliases for /laws.
   // Legacy candidate guides are noindex until rebuilt on verified Election Central data.
   // /legislative-updates redirects to /bills, /laws-to-know redirects to /laws,
   // and /voting-locations redirects to the verified Election Central voting page.
   "/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards",
   "/topics","/texas-politics","/texas-economy","/texas-border-security","/texas-energy",
-  "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-law-policy",
+  "/texas-agriculture","/texas-veterans","/texas-law-enforcement",
   "/guides/texas-agriculture-rural-guide","/guides/texas-veterans-military-guide",
   "/guides/texas-law-enforcement-public-safety-guide",
   "/authors","/shop",

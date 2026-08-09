@@ -33,6 +33,8 @@ const REDIRECT_ALIASES = [
   "/laws-to-know",
   "/legislative-updates",
   "/texas-laws",
+  "/texas-law-policy",
+  "/texas-news",
   "/voting-locations",
   "/living-in-texas",
   "/moving-to-texas",
@@ -178,8 +180,9 @@ for (const priority of INDEXABLE_PRIORITY_PATHS) {
   }
 }
 
-// 8. Legacy, noindex, or migrated aliases must never be advertised as canonical
-// sitemap URLs. Redirects remain crawlable so search engines can transfer equity.
+// 8. Legacy, duplicate, noindex, or migrated aliases must never be advertised
+// as canonical sitemap URLs. Redirects remain crawlable so search engines can
+// discover the 301 and transfer accumulated equity to the canonical destination.
 for (const alias of REDIRECT_ALIASES) {
   if (primary.some((entry) => entry.loc === `${CANONICAL_HOST}${alias}`)) {
     errors.push(`Redirect/noindex alias is incorrectly listed in a primary sitemap: ${alias}`);

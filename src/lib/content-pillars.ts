@@ -16,6 +16,8 @@ export type ContentPillar = {
   href: string;
   description: string;
   keywords: RegExp;
+  subtopics: readonly string[];
+  related: readonly ContentPillarSlug[];
 };
 
 export const CONTENT_PILLARS: readonly ContentPillar[] = [
@@ -26,6 +28,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/texas-politics",
     description: "Texas statewide government, officeholders, agencies, political leadership, and the decisions shaping public policy.",
     keywords: /\b(governor|lieutenant governor|lt\.? governor|attorney general|secretary of state|comptroller|land commissioner|railroad commission|state board|state agency|politic|officeholder|appointment|executive order|proclamation|capitol)\b/i,
+    subtopics: ["Statewide officials", "State agencies", "Government accountability", "Executive actions", "Public policy"],
+    related: ["texas-elections", "texas-laws-legislature", "texas-economy-small-business"],
   },
   {
     slug: "texas-elections",
@@ -34,6 +38,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/elections/2026",
     description: "Texas elections, candidates, races, polling, voting rules, results, and election administration.",
     keywords: /\b(election|primary|runoff|candidate|campaign|ballot|voter|voting|polling place|polls?|precinct|election day|early voting|absentee|mail ballot)\b/i,
+    subtopics: ["Candidates", "Races", "Voting rules", "Polling", "Election results", "Election administration"],
+    related: ["texas-politics-government", "texas-laws-legislature"],
   },
   {
     slug: "texas-border-immigration",
@@ -42,6 +48,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/texas-border-security",
     description: "Border security, immigration enforcement, Operation Lone Star, ports of entry, and state-federal border policy.",
     keywords: /\b(border|immigration|immigrant|migrant|operation lone star|rio grande|customs and border protection|\bcbp\b|ice agents?|border patrol|asylum|deport|port of entry|cartel|smuggl)\b/i,
+    subtopics: ["Operation Lone Star", "Immigration enforcement", "Ports of entry", "State-federal authority", "Border counties"],
+    related: ["texas-law-enforcement-public-safety", "texas-laws-legislature", "texas-politics-government"],
   },
   {
     slug: "texas-energy-oil",
@@ -50,6 +58,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/texas-energy",
     description: "Oil and gas, the Permian Basin, ERCOT, the electric grid, pipelines, refineries, LNG, and Texas energy policy.",
     keywords: /\b(energy|oil|gas|natural gas|permian|ercot|electric grid|power grid|electricity|pipeline|refiner|refinery|lng|railroad commission|public utility commission|\bpuc\b|drilling|petroleum|crude|wind power|solar power)\b/i,
+    subtopics: ["ERCOT", "Electric grid", "Oil and gas", "Permian Basin", "Pipelines and refineries", "Energy regulation"],
+    related: ["texas-economy-small-business", "texas-laws-legislature", "texas-politics-government"],
   },
   {
     slug: "texas-economy-small-business",
@@ -58,6 +68,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/texas-economy",
     description: "Jobs, taxes, state spending, regulation, entrepreneurship, employers, and conditions affecting Texas small businesses.",
     keywords: /\b(economy|economic|small business|business owner|entrepreneur|startup|employer|jobs?|workforce|unemployment|tax|spending|budget|commerce|regulation|regulatory|manufacturing|investment|inflation)\b/i,
+    subtopics: ["Jobs and workforce", "Small business", "Taxes and spending", "Regulation", "Manufacturing", "Investment"],
+    related: ["texas-energy-oil", "texas-laws-legislature", "texas-politics-government", "texas-agriculture-rural"],
   },
   {
     slug: "texas-agriculture-rural",
@@ -66,6 +78,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/texas-agriculture",
     description: "Texas farmers, ranchers, rural communities, water, livestock, crops, agricultural policy, and the rural economy.",
     keywords: /\b(agriculture|agricultural|farmer|farming|farm bill|ranch|rancher|cattle|livestock|crop|cotton|grain|wheat|corn|drought|rural|texas department of agriculture|commissioner of agriculture|farm bureau)\b/i,
+    subtopics: ["Farmers and ranchers", "Livestock", "Crops", "Water and drought", "Rural economy", "Agricultural policy"],
+    related: ["texas-economy-small-business", "texas-laws-legislature", "texas-politics-government"],
   },
   {
     slug: "texas-veterans-military",
@@ -74,6 +88,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/texas-veterans",
     description: "Texas veterans, military installations, service members, benefits, honors, deployments, and military policy affecting the state.",
     keywords: /\b(veteran|veterans|military|service member|servicemember|armed forces|army|air force|navy|marines?|coast guard|national guard|fort cavazos|fort bliss|lackland|randolph|dyess|sheppard|purple heart|medal of honor|va benefits?|department of veterans affairs)\b/i,
+    subtopics: ["Veterans benefits", "Military installations", "Texas National Guard", "Military honors", "Service members", "Defense policy"],
+    related: ["texas-politics-government", "texas-laws-legislature", "texas-law-enforcement-public-safety"],
   },
   {
     slug: "texas-law-enforcement-public-safety",
@@ -82,6 +98,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/texas-law-enforcement",
     description: "Texas police, sheriffs, DPS, criminal justice, emergency response, public safety policy, and major statewide enforcement developments.",
     keywords: /\b(law enforcement|police|sheriff|deputy|trooper|texas dps|department of public safety|public safety|criminal justice|crime|arrest|charged|indicted|prosecutor|district attorney|jail|prison|manhunt|amber alert|first responder)\b/i,
+    subtopics: ["Texas DPS", "Police and sheriffs", "Criminal justice", "Emergency response", "Public safety policy", "Courts and prosecution"],
+    related: ["texas-border-immigration", "texas-laws-legislature", "texas-politics-government"],
   },
   {
     slug: "texas-laws-legislature",
@@ -90,10 +108,13 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     href: "/laws",
     description: "Texas laws, bills, legislative sessions, committees, constitutional amendments, rulemaking, and how state law changes.",
     keywords: /\b(legislature|legislative|house bill|senate bill|\bhb\s*\d|\bsb\s*\d|bill passed|bill filed|signed into law|new law|statute|rulemaking|regulation|committee hearing|special session|constitutional amendment|texas house|texas senate)\b/i,
+    subtopics: ["Bills", "Legislative sessions", "Committees", "Texas House", "Texas Senate", "State laws", "Constitutional amendments"],
+    related: ["texas-politics-government", "texas-elections", "texas-economy-small-business"],
   },
 ] as const;
 
 const PILLAR_BY_SLUG = new Map(CONTENT_PILLARS.map((pillar) => [pillar.slug, pillar]));
+const PILLAR_BY_HREF = new Map(CONTENT_PILLARS.map((pillar) => [pillar.href, pillar]));
 const CONTENT_PILLAR_SLUGS = new Set<string>(CONTENT_PILLARS.map((pillar) => pillar.slug));
 
 export function isContentPillarSlug(value: unknown): value is ContentPillarSlug {
@@ -102,6 +123,14 @@ export function isContentPillarSlug(value: unknown): value is ContentPillarSlug 
 
 export function getContentPillar(slug: ContentPillarSlug): ContentPillar {
   return PILLAR_BY_SLUG.get(slug)!;
+}
+
+export function getContentPillarByHref(href: string): ContentPillar | null {
+  return PILLAR_BY_HREF.get(href) ?? null;
+}
+
+export function getRelatedContentPillars(slug: ContentPillarSlug): ContentPillar[] {
+  return getContentPillar(slug).related.map((relatedSlug) => getContentPillar(relatedSlug));
 }
 
 const PRIORITY: ContentPillarSlug[] = [
@@ -145,6 +174,19 @@ export function classifyContentPillar(input: {
   // preventing a later boilerplate mention of elections from overriding the actual lead.
   const lead = (input.body ?? "").slice(0, 1200);
   return earliestPillarMatch(lead);
+}
+
+export function classifyContentPillars(input: {
+  title?: string | null;
+  description?: string | null;
+  body?: string | null;
+  category?: string | null;
+}, limit = 3): ContentPillarSlug[] {
+  const primary = classifyContentPillar(input);
+  const haystack = `${input.title ?? ""} ${input.description ?? ""} ${(input.body ?? "").slice(0, 1600)}`;
+  const matches = PRIORITY.filter((slug) => getContentPillar(slug).keywords.test(haystack));
+  const ordered = primary ? [primary, ...matches.filter((slug) => slug !== primary)] : matches;
+  return [...new Set(ordered)].slice(0, Math.max(1, limit));
 }
 
 function firstPillarMatch(text: string): ContentPillarSlug | null {
