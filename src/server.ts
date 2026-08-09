@@ -18,7 +18,7 @@ const nativeFetch = globalThis.fetch.bind(globalThis);
 let directAiFetchInstalled = false;
 
 function directGeminiApiKey(): string | undefined {
-  return process.env.GEMINI_API_KEY || process.env.GOOGLE_AI_API_KEY;
+  return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY;
 }
 
 function installDirectAiFetch(): void {
@@ -60,11 +60,14 @@ function installDirectAiFetch(): void {
         parts: [{ text: message.content! }],
       }));
 
-    const model = process.env.AI_REWRITE_MODEL || "gemini-2.5-flash-lite";
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+    const model = process.env.AI_REWRITE_MODEL || "gemini-3.5-flash";
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
     const response = await nativeFetch(endpoint, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: {
+        "content-type": "application/json",
+        "x-goog-api-key": apiKey,
+      },
       body: JSON.stringify({
         ...(system ? { systemInstruction: { parts: [{ text: system }] } } : {}),
         contents: conversational,
