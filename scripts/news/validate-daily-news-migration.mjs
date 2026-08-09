@@ -30,7 +30,8 @@ for (const file of files) {
 
   const valuesSlugs = [...sql.matchAll(/\('((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*,/g)].map((match) => match[1]);
   const selectSlugs = [...sql.matchAll(/SELECT\s+'((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
-  const slugs = [...valuesSlugs, ...selectSlugs];
+  const dollarSlugs = [...sql.matchAll(/SELECT\s+\$slug\$((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)\$slug\$\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
+  const slugs = [...valuesSlugs, ...selectSlugs, ...dollarSlugs];
   if (!slugs.length) errors.push('could not find any dated article slugs in the publication input');
   if (new Set(slugs).size !== slugs.length) errors.push('duplicate article slug found in migration');
 
