@@ -4,17 +4,41 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "35 11 * * *"
+  pull_request:
+    branches:
+      - feature/ktr-content-pillars
+    paths:
+      - ".github/workflows/sync-gsc-metrics.yml"
+      - "scripts/seo/sync-gsc-metrics.mjs"
+      - "src/lib/gsc.ts"
+      - "src/routes/api/admin/gsc-sync.ts"
 
 permissions:
   contents: read
   actions: read
 
 concurrency:
-  group: gsc-metric-sync
+  group: gsc-metric-sync-${{ github.event_name }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  verify-google-access:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON }}
+      GSC_SITE_URL: sc-domain:keeptxred.com
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Verify Search Console access without database writes
+        run: node scripts/seo/sync-gsc-metrics.mjs --dry-run
+
   sync:
+    if: ${{ github.event_name != 'pull_request' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
