@@ -1,0 +1,83 @@
+name: Audit all 50 chat-created KTR articles
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/audit-all-50-chat-news.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-live-articles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Extract all 50 chat-created article slugs
+        shell: bash
+        run: |
+          set -euo pipefail
+          : > /tmp/slugs.txt
+          files=(
+            supabase/migrations/20260808093000_musk-terafab-grimes-county-texas.sql
+            supabase/migrations/20260808093100_kerr-county-federal-disaster-aid-delay.sql
+            supabase/migrations/20260808093200_texas-childrens-pavilion-women-expansion.sql
+            supabase/migrations/20260808093300_texas-measles-alert-montgomery-county.sql
+            supabase/migrations/20260808093400_texas-thc-ban-enforcement.sql
+            supabase/migrations/20260808093500_daniella-guzman-kprc-return-ticket-review.sql
+            supabase/migrations/20260808093600_victor-wembanyama-soccer-katy.sql
+            supabase/migrations/20260808093700_houston-anime-threat-governor-office.sql
+            supabase/migrations/20260808093800_fdr-grandson-rolling-r-ranch-sale.sql
+            supabase/migrations/20260808093900_the-hop-webster-closes-preslees.sql
+            supabase/migrations/20260808133000_publish_daily_texas_news_batch.sql
+            supabase/migrations/20260808174500_publish_daily_texas_news_afternoon_batch.sql
+            supabase/migrations/20260808215000_publish_daily_texas_news_evening_batch.sql
+            supabase/migrations/20260809012500_publish_daily_texas_news_night_batch.sql
+          )
+          for file in "${files[@]}"; do
+            test -f "$file"
+            grep -Eo "'2026-08-08-[a-z0-9-]+'" "$file" | tr -d "'" >> /tmp/slugs.txt || true
+          done
+          sort -u -o /tmp/slugs.txt /tmp/slugs.txt
+          count=$(wc -l < /tmp/slugs.txt | tr -d ' ')
+          echo "Expected article count: $count"
+          cat /tmp/slugs.txt
+          if [[ "$count" != "50" ]]; then
+            echo "ERROR: expected exactly 50 unique chat-created KTR article slugs; found $count" >&2
+            exit 1
+          fi
+      - name: Verify all 50 production article pages and hero images
+        shell: bash
+        run: |
+          set -euo pipefail
+          passed=0
+          failed=0
+          : > /tmp/results.txt
+          while IFS= read -r slug; do
+            url="https://keeptxred.com/news/$slug"
+            code=$(curl -L -sS -o /tmp/article.html -w '%{http_code}' --max-time 25 "$url" || echo 000)
+            if [[ "$code" != "200" ]] || grep -Eqi 'ARTICLE NOT FOUND|page not found|article not found|That article may have moved or never existed' /tmp/article.html; then
+              echo "FAIL page $code $url" | tee -a /tmp/results.txt
+              failed=$((failed+1))
+              continue
+            fi
+            image=$(grep -Eo '<meta[^>]+property=["'"']og:image["'"'][^>]+content=["'"'][^"'"']+' /tmp/article.html | head -1 | sed -E 's/.*content=["'"']([^"'"']+).*/\1/' || true)
+            if [[ -z "$image" ]]; then
+              echo "FAIL image-metadata $url" | tee -a /tmp/results.txt
+              failed=$((failed+1))
+              continue
+            fi
+            image_code=$(curl -L -sS -o /dev/null -w '%{http_code}' --max-time 25 "$image" || echo 000)
+            if [[ "$image_code" != "200" ]]; then
+              echo "FAIL image $image_code $image ($url)" | tee -a /tmp/results.txt
+              failed=$((failed+1))
+              continue
+            fi
+            echo "PASS page=200 image=200 $url" | tee -a /tmp/results.txt
+            passed=$((passed+1))
+          done < /tmp/slugs.txt
+          echo "Passed: $passed"
+          echo "Failed: $failed"
+          cat /tmp/results.txt
+          [[ "$failed" -eq 0 ]]
