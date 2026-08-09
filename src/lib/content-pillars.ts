@@ -94,6 +94,11 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
 ] as const;
 
 const PILLAR_BY_SLUG = new Map(CONTENT_PILLARS.map((pillar) => [pillar.slug, pillar]));
+const CONTENT_PILLAR_SLUGS = new Set<string>(CONTENT_PILLARS.map((pillar) => pillar.slug));
+
+export function isContentPillarSlug(value: unknown): value is ContentPillarSlug {
+  return typeof value === "string" && CONTENT_PILLAR_SLUGS.has(value);
+}
 
 export function getContentPillar(slug: ContentPillarSlug): ContentPillar {
   return PILLAR_BY_SLUG.get(slug)!;
@@ -127,4 +132,11 @@ export function classifyContentPillar(input: {
   }
 
   return null;
+}
+
+export function resolveContentPillarSlug(
+  persisted: unknown,
+  input: Parameters<typeof classifyContentPillar>[0],
+): ContentPillarSlug | null {
+  return isContentPillarSlug(persisted) ? persisted : classifyContentPillar(input);
 }

@@ -1,4 +1,4 @@
-import { classifyContentPillar, type ContentPillarSlug } from "@/lib/content-pillars";
+import { resolveContentPillarSlug, type ContentPillarSlug } from "@/lib/content-pillars";
 
 export type FeedSection =
   | "elections"
@@ -19,6 +19,7 @@ export type FeedRow = {
   link: string;
   description: string | null;
   pub_date: string;
+  pillar_slug?: ContentPillarSlug | null;
 };
 
 const PILLAR_TO_FEED_SECTION: Record<ContentPillarSlug, Exclude<FeedSection, "news">> = {
@@ -33,14 +34,23 @@ const PILLAR_TO_FEED_SECTION: Record<ContentPillarSlug, Exclude<FeedSection, "ne
   "texas-laws-legislature": "laws",
 };
 
-export function classifyFeedItem(item: { title: string; description: string | null; source: string }): FeedSection {
-  const pillar = classifyContentPillar({
+export function feedSectionForPillar(pillar: ContentPillarSlug): Exclude<FeedSection, "news"> {
+  return PILLAR_TO_FEED_SECTION[pillar];
+}
+
+export function classifyFeedItem(item: {
+  title: string;
+  description: string | null;
+  source: string;
+  pillar_slug?: unknown;
+}): FeedSection {
+  const pillar = resolveContentPillarSlug(item.pillar_slug, {
     title: item.title,
     description: item.description,
     category: item.source,
   });
   if (!pillar) return "news";
-  return PILLAR_TO_FEED_SECTION[pillar];
+  return feedSectionForPillar(pillar);
 }
 
 export const SECTION_LABELS: Record<FeedSection, string> = {
