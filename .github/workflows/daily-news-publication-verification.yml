@@ -111,10 +111,6 @@ jobs:
               | grep -Ei '\.(png|jpg|jpeg|webp)([?#&].*)?$' >> /tmp/article-images.txt || true
           done
 
-          # A bulk image repair updates existing rows rather than spelling out every
-          # slug. Audit the complete current Aug. 8-9 publication window so the push
-          # is not considered successful until the live site emits raster heroes for
-          # the existing ChatGPT-era news set as well.
           if [[ "$bulk" == "1" ]]; then
             echo 'Bulk image remediation detected; expanding live audit to Aug. 8-9 daily news migrations.'
             for file in supabase/migrations/20260808*.sql supabase/migrations/20260809*.sql; do
@@ -153,27 +149,9 @@ jobs:
               code=$(curl -L -sS -o /tmp/article.html -w '%{http_code}' --max-time 20 "$url" || echo 000)
               social_image=""
               if [[ "$code" == "200" ]] && ! grep -Eqi '(^|>)404([^0-9]|<)|page not found|article not found' /tmp/article.html; then
-                social_image=$(python3 - <<'PY'
-from html.parser import HTMLParser
-
-class MetaParser(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.image = ''
-    def handle_starttag(self, tag, attrs):
-        if tag.lower() != 'meta' or self.image:
-            return
-        values = {str(k).lower(): str(v or '') for k, v in attrs}
-        key = (values.get('property') or values.get('name') or '').lower()
-        if key in {'og:image', 'twitter:image'}:
-            self.image = values.get('content', '').strip()
-
-p = MetaParser()
-with open('/tmp/article.html', 'r', encoding='utf-8', errors='ignore') as f:
-    p.feed(f.read())
-print(p.image)
-PY
-                )
+                social_image=$(grep -Eio '<meta[^>]+(property|name)="(og:image|twitter:image)"[^>]*>' /tmp/article.html \
+                  | head -n 1 \
+                  | sed -E 's/.*content="([^"]+)".*/\1/I' || true)
                 if [[ -n "$social_image" && ! "$social_image" =~ \.svg([?#].*)?$ ]]; then
                   echo "LIVE WITH RASTER SOCIAL IMAGE: $url -> $social_image"
                   printf '%s\n' "$social_image" >> /tmp/live-article-images.txt
