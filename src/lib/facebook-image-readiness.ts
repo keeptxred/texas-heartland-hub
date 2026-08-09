@@ -95,11 +95,29 @@ export async function verifyImageIsReachable(url: string): Promise<FacebookImage
   let status = 0;
   try {
     let probe = await fetch(url, { method: "HEAD", redirect: "follow" });
+
+    // Some CDNs/static hosts reject HEAD and byte-range probes even though a
+    // normal public GET succeeds. Facebook ultimately performs a regular GET,
+    // so use that as the authoritative fallback instead of a Range request.
     if (!probe.ok || !probe.headers.get("content-type")) {
-      probe = await fetch(url, { method: "GET", headers: { Range: "bytes=0-0" }, redirect: "follow" });
+      probe = await fetch(url, {
+        method: "GET",
+        redirect: "follow",
+        headers: {
+          Accept: "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+        },
+      });
     }
     status = probe.status;
     contentType = probe.headers.get("content-type");
+
+    // We only need headers/type for validation. Cancel an unread response body
+    // where the runtime supports it instead of buffering the full image.
+    try {
+      await probe.body?.cancel();
+    } catch {
+      // Ignore cancellation failures; reachability has already been determined.
+    }
   } catch {
     return {
       ...base,
