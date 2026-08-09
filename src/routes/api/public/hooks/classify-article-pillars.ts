@@ -7,9 +7,16 @@ type ArticleCandidate = {
   slug: string;
   title: string;
   dek: string | null;
-  body: string | null;
   category: string | null;
+  source_url: string | null;
 };
+
+function belongsToTexasDefined(article: ArticleCandidate): boolean {
+  return /(^|\.)texasdefined\.com$/i.test((() => {
+    try { return article.source_url ? new URL(article.source_url).hostname : ""; }
+    catch { return ""; }
+  })());
+}
 
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -27,7 +34,7 @@ async function handler() {
   const assignedSlugs = new Set((assigned ?? []).map((row: { article_slug: string }) => row.article_slug));
   const { data: articles, error: articleError } = await db
     .from("daily_articles")
-    .select("slug,title,dek,body,category")
+    .select("slug,title,dek,category,source_url")
     .order("published_at", { ascending: false })
     .limit(10000);
   if (articleError) {
@@ -39,20 +46,24 @@ async function handler() {
     .slice(0, BATCH_SIZE);
 
   if (!candidates.length) {
-    return Response.json({ ok: true, examined: 0, assigned: 0, unmatched: 0, complete: true });
+    return Response.json({ ok: true, examined: 0, assigned: 0, unmatched: 0, texasDefinedExcluded: 0, complete: true });
   }
 
-  const rows = candidates.map((article) => ({
-    article_slug: article.slug,
-    pillar_slug: classifyContentPillar({
-      title: article.title,
-      description: article.dek,
-      body: article.body,
-      category: article.category,
-    }),
-    classified_at: new Date().toISOString(),
-    classifier_version: "content-pillars-v1",
-  }));
+  let texasDefinedExcluded = 0;
+  const rows = candidates.map((article) => {
+    const excluded = belongsToTexasDefined(article);
+    if (excluded) texasDefinedExcluded++;
+    return {
+      article_slug: article.slug,
+      pillar_slug: excluded ? null : classifyContentPillar({
+        title: article.title,
+        description: article.dek,
+        category: article.category,
+      }),
+      classified_at: new Date().toISOString(),
+      classifier_version: excluded ? "content-pillars-v1:texasdefined-excluded" : "content-pillars-v1",
+    };
+  });
 
   const { error: upsertError } = await db
     .from("article_pillar_assignments")
@@ -72,6 +83,7 @@ async function handler() {
     examined: candidates.length,
     assigned: matched.length,
     unmatched: rows.length - matched.length,
+    texasDefinedExcluded,
     complete: candidates.length < BATCH_SIZE,
     byPillar,
   });
