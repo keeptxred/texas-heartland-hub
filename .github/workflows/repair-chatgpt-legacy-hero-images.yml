@@ -1,0 +1,62 @@
+name: Repair ChatGPT Legacy Hero Images
+
+on:
+  push:
+    branches:
+      - fix/chatgpt-image-pipeline-e2e
+    paths:
+      - '.github/workflows/repair-chatgpt-legacy-hero-images.yml'
+      - 'public/images/news/generated/**/*.svg'
+      - 'public/images/news/generated/*.svg'
+
+permissions:
+  contents: write
+
+jobs:
+  rasterize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Install SVG rasterizer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin file
+
+      - name: Convert generated SVG heroes to 1600x900 PNG
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=0
+          while IFS= read -r -d '' svg; do
+            png="${svg%.svg}.png"
+            rsvg-convert --width 1600 --height 900 --keep-aspect-ratio "$svg" > "$png"
+            mime=$(file --brief --mime-type "$png")
+            bytes=$(wc -c < "$png")
+            if [[ "$mime" != "image/png" || "$bytes" -le 10000 ]]; then
+              echo "ERROR: rasterized hero failed validation: $png mime=$mime bytes=$bytes" >&2
+              exit 1
+            fi
+            echo "RASTERIZED: $svg -> $png ($bytes bytes)"
+            count=$((count + 1))
+          done < <(find public/images/news/generated -type f -name '*.svg' -print0)
+          echo "Rasterized $count generated SVG hero images."
+
+      - name: Commit rasterized hero assets to repair branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- '*.png' && [[ -z "$(git ls-files --others --exclude-standard -- 'public/images/news/generated/**/*.png' 'public/images/news/generated/*.png')" ]]; then
+            echo 'No raster assets changed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add public/images/news/generated
+          git commit -m 'Rasterize legacy ChatGPT news hero images'
+          git push origin HEAD:${{ github.ref_name }}
