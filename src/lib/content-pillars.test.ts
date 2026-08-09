@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { classifyContentPillar, resolveContentPillarSlug } from "@/lib/content-pillars";
+import {
+  classifyContentPillar,
+  classifyContentPillars,
+  getContentPillar,
+  getContentPillarByHref,
+  getRelatedContentPillars,
+  resolveContentPillarSlug,
+} from "@/lib/content-pillars";
 import { classifyFeedItem } from "@/lib/feed-routing";
 
 describe("content pillar classification", () => {
@@ -69,5 +76,38 @@ describe("content pillar classification", () => {
         pillar_slug: "texas-agriculture-rural",
       }),
     ).toBe("agriculture");
+  });
+
+  it("keeps a primary pillar first while exposing secondary topic relationships", () => {
+    expect(
+      classifyContentPillars({
+        title: "ERCOT grid bill advances in Texas Senate",
+        description: "Lawmakers are considering new energy regulation for the electric grid.",
+      }),
+    ).toEqual(["texas-energy-oil", "texas-laws-legislature"]);
+  });
+
+  it("resolves canonical hub ownership by href", () => {
+    expect(getContentPillarByHref("/texas-border-security")?.slug).toBe("texas-border-immigration");
+    expect(getContentPillarByHref("/not-a-pillar")).toBeNull();
+  });
+
+  it("defines intentional internal-link neighbors for every pillar", () => {
+    for (const slug of [
+      "texas-politics-government",
+      "texas-elections",
+      "texas-border-immigration",
+      "texas-energy-oil",
+      "texas-economy-small-business",
+      "texas-agriculture-rural",
+      "texas-veterans-military",
+      "texas-law-enforcement-public-safety",
+      "texas-laws-legislature",
+    ] as const) {
+      const pillar = getContentPillar(slug);
+      expect(pillar.subtopics.length).toBeGreaterThanOrEqual(5);
+      expect(getRelatedContentPillars(slug).length).toBeGreaterThanOrEqual(2);
+      expect(getRelatedContentPillars(slug).some((related) => related.slug === slug)).toBe(false);
+    }
   });
 });
