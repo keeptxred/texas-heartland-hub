@@ -34,10 +34,10 @@ const statusLabel: Record<PillarMetric["authority_status"], string> = {
   established: "Established",
 };
 
-function signed(value: number, suffix = "") {
+function signed(value: number | string, suffix = "") {
   const numeric = Number(value ?? 0);
   if (numeric === 0) return `0${suffix}`;
-  return `${numeric > 0 ? "+" : ""}${numeric}${suffix}`;
+  return `${numeric > 0 ? "+" : ""}${value}${suffix}`;
 }
 
 export function PillarAuthorityPanel() {
@@ -125,7 +125,7 @@ export function PillarAuthorityPanel() {
                 <td className="px-3 py-3"><div>{Number(row.gsc_impressions).toLocaleString()}</div><div className="text-[10px] text-muted-foreground">{row.comparison_7d_date ? `${signed(row.impressions_delta_7d)} vs 7d` : "baseline"}</div></td>
                 <td className="px-3 py-3">{row.gsc_ctr == null ? "—" : `${(Number(row.gsc_ctr) * 100).toFixed(1)}%`}</td>
                 <td className="px-3 py-3">{row.avg_search_position == null ? "—" : Number(row.avg_search_position).toFixed(1)}</td>
-                <td className="px-3 py-3">{row.comparison_7d_date && row.search_position_improvement_7d != null ? signed(Number(row.search_position_improvement_7d).toFixed(1) as unknown as number) : "Baseline"}</td>
+                <td className="px-3 py-3">{row.comparison_7d_date && row.search_position_improvement_7d != null ? signed(Number(row.search_position_improvement_7d).toFixed(1)) : "Baseline"}</td>
                 <td className="px-3 py-3 text-xs text-muted-foreground">{row.latest_published_at ? new Date(row.latest_published_at).toLocaleDateString("en-US", { timeZone: "America/Chicago" }) : "—"}</td>
                 <td className="px-4 py-3"><div className="max-w-[260px] text-xs font-medium leading-relaxed">{row.recommended_action}</div></td>
               </tr>
