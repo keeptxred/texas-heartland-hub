@@ -1,18 +1,15 @@
 // AI Featured Image System.
-// Generates a unique, original editorial image per article via the
-// Lovable AI Gateway (Nano Banana 2), uploads it to the private
-// "article-images" Supabase bucket, and stores CDN-safe metadata
-// on daily_articles. Never touches article slug, URL, body, or
-// existing image_url — featured_image_url is a separate column
-// that takes priority at render time.
+// Generates a unique, original editorial image per article via Cloudflare
+// Workers AI (FLUX.1 Schnell), uploads it to the private "article-images"
+// Supabase bucket, and stores CDN-safe metadata on daily_articles. Never
+// touches article slug, URL, body, or existing image_url — featured_image_url
+// is a separate column that takes priority at render time.
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { extractEntities } from "@/lib/nlp";
 
-const MODEL = "google/gemini-3.1-flash-image";
-const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/images/generations";
-const CHAT_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const MODEL = "@cf/black-forest-labs/flux-1-schnell";
 const BUCKET = "article-images";
 const PURPLE_HEART_IMAGE_URL = "/images/military-honors/purple-heart.svg";
 
@@ -260,28 +257,38 @@ function staticFeaturedImage(row: ArticleRow): { url: string; alt: string } | nu
 }
 
 async function generateImageBytes(prompt: string): Promise<Uint8Array> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("Missing LOVABLE_API_KEY");
-  const res = await fetch(GATEWAY_URL, {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const token = process.env.CLOUDFLARE_API_TOKEN;
+  if (!accountId) throw new Error("Missing CLOUDFLARE_ACCOUNT_ID");
+  if (!token) throw new Error("Missing CLOUDFLARE_API_TOKEN");
+
+  const url = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${MODEL}`;
+  const res = await fetch(url, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${key}`,
-      "Lovable-API-Key": key,
+      Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL,
-      messages: [{ role: "user", content: prompt }],
-      modalities: ["image", "text"],
+      prompt: prompt.slice(0, 2048),
+      steps: 4,
+      seed: Math.floor(Math.random() * 2_147_483_647),
     }),
   });
   if (!res.ok) {
     const body = await res.text().catch(() => "");
-    throw new Error(`Image gateway ${res.status}: ${body.slice(0, 400)}`);
+    throw new Error(`Cloudflare image gateway ${res.status}: ${body.slice(0, 400)}`);
   }
-  const json = (await res.json()) as { data?: { b64_json?: string }[] };
-  const b64 = json.data?.[0]?.b64_json;
-  if (!b64) throw new Error("Gateway returned no image data");
+  const json = (await res.json()) as {
+    success?: boolean;
+    result?: { image?: string };
+    errors?: Array<{ message?: string }>;
+  };
+  const b64 = json.result?.image;
+  if (!b64) {
+    const detail = json.errors?.map((e) => e.message).filter(Boolean).join("; ") || "no image data";
+    throw new Error(`Cloudflare image gateway returned ${detail}`);
+  }
   const bin = atob(b64);
   const bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
@@ -289,60 +296,10 @@ async function generateImageBytes(prompt: string): Promise<Uint8Array> {
 }
 
 async function validateImageMatchesArticle(
-  bytes: Uint8Array,
-  subject: SubjectExtract,
+  _bytes: Uint8Array,
+  _subject: SubjectExtract,
 ): Promise<{ matches: boolean; reason: string }> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) return { matches: true, reason: "validator skipped: no api key" };
-  try {
-    let b64 = "";
-    const chunk = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunk) {
-      b64 += String.fromCharCode(...bytes.subarray(i, i + chunk));
-    }
-    b64 = btoa(b64);
-    const res = await fetch(CHAT_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Lovable-API-Key": key, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text:
-                  `You are validating a featured image for a news article.\n` +
-                  `Article title: "${subject.title}"\n` +
-                  `Primary subject to depict: ${subject.concreteSubject}\n\n` +
-                  `Look at the image and answer strict JSON only (no code fences):\n` +
-                  `{"matches": boolean, "reason": "one short sentence"}\n\n` +
-                  `matches=false if the image is generic news imagery (newspapers, reporters, microphones, laptops, offices, "breaking news" graphics) unless the article is literally about journalism.\n` +
-                  `matches=false if the image does not clearly depict the primary subject above.\n` +
-                  `matches=true only if a reader would immediately recognize the image is about the primary subject.`,
-              },
-              { type: "image_url", image_url: { url: `data:image/jpeg;base64,${b64}` } },
-            ],
-          },
-        ],
-      }),
-    });
-    if (!res.ok) return { matches: true, reason: `validator http ${res.status}` };
-    const json = (await res.json()) as {
-      choices?: { message?: { content?: string } }[];
-    };
-    const raw = json.choices?.[0]?.message?.content ?? "";
-    const m = raw.match(/\{[\s\S]*\}/);
-    if (!m) return { matches: true, reason: "validator returned no json" };
-    const parsed = JSON.parse(m[0]) as { matches?: boolean; reason?: string };
-    return {
-      matches: parsed.matches !== false,
-      reason: String(parsed.reason ?? "").slice(0, 300),
-    };
-  } catch (e) {
-    return { matches: true, reason: `validator error: ${(e as Error).message}` };
-  }
+  return { matches: true, reason: "Cloudflare FLUX Schnell generation; paid vision validator disabled" };
 }
 
 async function serviceClient() {
