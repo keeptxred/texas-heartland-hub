@@ -21,6 +21,9 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-law-enforcement": toIsoDate("2026-08-09T00:00:00-05:00"),
   "/texas-law-policy": toIsoDate("2026-08-09T00:00:00-05:00"),
   "/laws": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/guides/texas-agriculture-rural-guide": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/guides/texas-veterans-military-guide": toIsoDate("2026-08-09T00:00:00-05:00"),
+  "/guides/texas-law-enforcement-public-safety-guide": toIsoDate("2026-08-09T00:00:00-05:00"),
 };
 
 const STATIC_PATHS:string[]=[
@@ -42,6 +45,8 @@ const STATIC_PATHS:string[]=[
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards",
   "/topics","/texas-politics","/texas-economy","/texas-border-security","/texas-energy",
   "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-law-policy",
+  "/guides/texas-agriculture-rural-guide","/guides/texas-veterans-military-guide",
+  "/guides/texas-law-enforcement-public-safety-guide",
   "/authors","/shop",
   // Representative detail pages live only in sitemap-representatives.xml —
   // listing them here duplicated 250+ URLs across two sitemaps.
