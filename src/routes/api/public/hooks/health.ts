@@ -1,6 +1,18 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 
+function rewriteProviderState() {
+  const ready = Boolean(
+    process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY,
+  );
+  return {
+    rewrite_provider: ready ? "google-gemini-direct" : "unconfigured",
+    rewrite_provider_ready: ready,
+    rewrite_model: ready ? (process.env.AI_REWRITE_MODEL || "gemini-3.5-flash") : null,
+    lovable_rewrite_bypassed: ready,
+  };
+}
+
 export const Route = createFileRoute("/api/public/hooks/health")({
   server: {
     handlers: {
@@ -8,6 +20,7 @@ export const Route = createFileRoute("/api/public/hooks/health")({
         const timestamp = new Date().toISOString();
         const supabaseUrl = process.env.SUPABASE_URL;
         const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+        const rewrite = rewriteProviderState();
 
         if (!supabaseUrl || !publishableKey) {
           return Response.json({
@@ -16,6 +29,7 @@ export const Route = createFileRoute("/api/public/hooks/health")({
             database: "error",
             articles_last_24h: null,
             latest_published_at: null,
+            ...rewrite,
           });
         }
 
@@ -54,6 +68,7 @@ export const Route = createFileRoute("/api/public/hooks/health")({
           latest_published_at: dbOk ? latestPublishedAt : null,
           publishing_stalled: dbOk ? publishingStalled : null,
           publishing_stall_threshold_hours: 24,
+          ...rewrite,
         });
       },
     },
