@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 
 const SECTIONS = [
-  { title: "Texas Government", description: "State agencies and officials responsible for veterans policy and services.", href: "/texas-government" },
+  { title: "Veterans & Military Guide", description: "Start here: benefits navigation, state services, employment, education, military families, and installations.", href: "/guides/texas-veterans-military-guide" },
   { title: "Laws & Benefits Policy", description: "Legislation and policy affecting veterans, benefits, and military families.", href: "/laws" },
+  { title: "Texas Government", description: "State agencies and officials responsible for veterans policy and services.", href: "/texas-government" },
   { title: "Representatives", description: "Find Texas elected officials and follow the offices shaping veterans policy.", href: "/representatives" },
-  { title: "Latest Texas News", description: "Current military, veterans, honors, and public-policy coverage from across Texas.", href: "/news" },
 ];
 
 export const Route = createFileRoute("/texas-veterans")({
@@ -35,6 +35,7 @@ function TexasVeteransPage() {
         "Military honors and commemorations belong here when the Texas veteran, service-member, installation, or public-policy connection is central to the story.",
       ]}
       related={[
+        { label: "Read the veterans and military guide", href: "/guides/texas-veterans-military-guide" },
         { label: "Texas Laws & Legislature", href: "/laws" },
         { label: "Texas Politics & Government", href: "/texas-politics" },
         { label: "Latest Texas News", href: "/news" },
