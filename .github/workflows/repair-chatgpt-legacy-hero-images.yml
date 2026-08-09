@@ -6,6 +6,7 @@ on:
       - fix/chatgpt-image-pipeline-e2e
     paths:
       - '.github/workflows/repair-chatgpt-legacy-hero-images.yml'
+      - 'supabase/migrations/20260809192000_repair_chatgpt_svg_hero_images.sql'
       - 'public/images/news/generated/**/*.svg'
       - 'public/images/news/generated/*.svg'
 
