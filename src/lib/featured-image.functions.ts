@@ -322,7 +322,7 @@ async function validateImageMatchesArticle(
                   `matches=false if the image does not clearly depict the primary subject above.\n` +
                   `matches=true only if a reader would immediately recognize the image is about the primary subject.`,
               },
-              { type: "image_url", image_url: { url: `data:image/png;base64,${b64}` } },
+              { type: "image_url", image_url: { url: `data:image/jpeg;base64,${b64}` } },
             ],
           },
         ],
@@ -378,7 +378,7 @@ async function generateAndStore(
   const subject = extractImageSubject(row);
   const prompt = buildImagePrompt(subject);
   const alt = buildAltText(row);
-  const filename = `${sanitizeFilename(row.slug)}.png`;
+  const filename = `${sanitizeFilename(row.slug)}.jpg`;
 
   await supabase
     .from("daily_articles")
@@ -407,7 +407,7 @@ async function generateAndStore(
     const { error: upErr } = await supabase.storage
       .from(BUCKET)
       .upload(path, bytes, {
-        contentType: "image/png",
+        contentType: "image/jpeg",
         cacheControl: "public, max-age=31536000, immutable",
         upsert: true,
       });
