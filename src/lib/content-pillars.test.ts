@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
+  CONTENT_PILLARS,
   classifyContentPillar,
   classifyContentPillars,
-  getContentPillar,
   getContentPillarByHref,
   getRelatedContentPillars,
   resolveContentPillarSlug,
@@ -84,7 +84,11 @@ describe("content pillar classification", () => {
         title: "ERCOT grid bill advances in Texas Senate",
         description: "Lawmakers are considering new energy regulation for the electric grid.",
       }),
-    ).toEqual(["texas-energy-oil", "texas-laws-legislature"]);
+    ).toEqual([
+      "texas-energy-oil",
+      "texas-laws-legislature",
+      "texas-economy-small-business",
+    ]);
   });
 
   it("resolves canonical hub ownership by href", () => {
@@ -93,21 +97,11 @@ describe("content pillar classification", () => {
   });
 
   it("defines intentional internal-link neighbors for every pillar", () => {
-    for (const slug of [
-      "texas-politics-government",
-      "texas-elections",
-      "texas-border-immigration",
-      "texas-energy-oil",
-      "texas-economy-small-business",
-      "texas-agriculture-rural",
-      "texas-veterans-military",
-      "texas-law-enforcement-public-safety",
-      "texas-laws-legislature",
-    ] as const) {
-      const pillar = getContentPillar(slug);
+    for (const pillar of CONTENT_PILLARS) {
       expect(pillar.subtopics.length).toBeGreaterThanOrEqual(5);
-      expect(getRelatedContentPillars(slug).length).toBeGreaterThanOrEqual(2);
-      expect(getRelatedContentPillars(slug).some((related) => related.slug === slug)).toBe(false);
+      const related = getRelatedContentPillars(pillar.slug);
+      expect(related.length).toBeGreaterThanOrEqual(2);
+      expect(related.every((item) => item.slug !== pillar.slug)).toBe(true);
     }
   });
 });
