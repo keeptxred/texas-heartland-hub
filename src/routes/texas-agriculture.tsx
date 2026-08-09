@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 
 const SECTIONS = [
+  { title: "Essential Agriculture Guide", description: "Start here: agencies, financing, water, land, rural infrastructure, and the policy system affecting Texas producers.", href: "/guides/texas-agriculture-rural-guide" },
   { title: "Rural Economy", description: "Jobs, taxes, infrastructure, and business conditions beyond the major metros.", href: "/texas-economy" },
   { title: "Water & Land", description: "Water rights, drought, land use, and resources that shape farms and ranches.", href: "/news/texas-water-rights-explained" },
   { title: "Laws & Legislature", description: "Bills, regulation, and state policy affecting agriculture and rural Texas.", href: "/laws" },
-  { title: "Texas Government", description: "State agencies, elected officials, and public institutions affecting rural communities.", href: "/texas-government" },
 ];
 
 export const Route = createFileRoute("/texas-agriculture")({
@@ -35,6 +35,7 @@ function TexasAgriculturePage() {
         "Coverage is routed here when agriculture or rural Texas is the primary subject, keeping those stories from disappearing inside generic business or statewide-news categories.",
       ]}
       related={[
+        { label: "Read the essential agriculture guide", href: "/guides/texas-agriculture-rural-guide" },
         { label: "Texas Economy & Small Business", href: "/texas-economy" },
         { label: "Texas Laws & Legislature", href: "/laws" },
         { label: "Texas Politics & Government", href: "/texas-politics" },
