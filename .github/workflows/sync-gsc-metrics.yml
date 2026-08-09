@@ -1,0 +1,31 @@
+name: Sync Google Search Console metrics
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "35 11 * * *"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: gsc-metric-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON }}
+      GSC_SITE_URL: sc-domain:keeptxred.com
+      GSC_SYNC_ENDPOINT: https://keeptxred.com/api/admin/gsc-sync
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Sync final 28-day Search Console page metrics
+        run: node scripts/seo/sync-gsc-metrics.mjs
