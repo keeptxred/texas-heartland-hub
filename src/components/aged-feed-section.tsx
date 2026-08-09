@@ -29,12 +29,12 @@ export function AgedFeedSection({ section, title = "From the Live Feed", blurb, 
       const cutoffIso = new Date(Date.now() - ONE_DAY_MS).toISOString();
       const { data } = await supabase
         .from("texas_news_feed")
-        .select("id,title,source,link,description,pub_date")
+        .select("id,title,source,link,description,pub_date,pillar_slug")
         .lt("pub_date", cutoffIso)
         .order("pub_date", { ascending: false })
         .limit(200);
       if (!active) return;
-      const rows = ((data as FeedRow[]) ?? []).filter((r) => classifyFeedItem(r) === section).slice(0, limit);
+      const rows = ((data as unknown as FeedRow[]) ?? []).filter((r) => classifyFeedItem(r) === section).slice(0, limit);
       setItems(rows);
       setLoaded(true);
     })();
