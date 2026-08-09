@@ -53,6 +53,21 @@
     "https://keeptxred.com/elections/methodology",
     "https://keeptxred.com/elections/corrections",
     "https://keeptxred.com/bills",
-    "https://keeptxred.com/committees"
+    "https://keeptxred.com/committees",
+    "https://keeptxred.com/sitemap.xml",
+    "https://keeptxred.com/sitemap-pages.xml",
+    "https://keeptxred.com/sitemap-elections.xml",
+    "https://keeptxred.com/sitemap-government.xml",
+    "https://keeptxred.com/sitemap-bills.xml",
+    "https://keeptxred.com/sitemap-representatives.xml",
+    "https://keeptxred.com/sitemap-committees.xml",
+    "https://keeptxred.com/sitemap-districts.xml",
+    "https://keeptxred.com/sitemap-legislature.xml",
+    "https://keeptxred.com/sitemap-news.xml",
+    "https://keeptxred.com/sitemap-evergreen.xml",
+    "https://keeptxred.com/sitemap-products.xml",
+    "https://keeptxred.com/sitemap-authors.xml",
+    "https://keeptxred.com/sitemap-images.xml"
   ]
+
 }
