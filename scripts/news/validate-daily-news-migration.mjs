@@ -10,22 +10,40 @@ let failed = false;
 
 for (const file of files) {
   const sql = fs.readFileSync(file, 'utf8');
-  if (!/INSERT\s+INTO\s+public\.daily_articles/i.test(sql)) continue;
+  const isInsert = /INSERT\s+INTO\s+public\.daily_articles/i.test(sql);
+  const isUpdate = /UPDATE\s+public\.daily_articles/i.test(sql);
+  if (!isInsert && !isUpdate) continue;
 
   const errors = [];
-  if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
-    errors.push("internal_url must be generated as '/news/' || slug");
+
+  if (isInsert) {
+    if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
+      errors.push("internal_url must be generated as '/news/' || slug");
+    }
+    const hasBuiltBodyShape = /jsonb_build_object\s*\([\s\S]*?'(?:intro|sections)'\s*,/i.test(sql);
+    const hasLiteralBodyShape = /\{[\s\S]*?"(?:intro|sections)"\s*:/i.test(sql) && /::\s*jsonb/i.test(sql);
+    if (!hasBuiltBodyShape && !hasLiteralBodyShape) {
+      errors.push("body_json must include an 'intro' or 'sections' field accepted by daily_articles_require_body");
+    }
+    if (!/ON\s+CONFLICT\s*\(\s*slug\s*\)\s+DO\s+UPDATE/i.test(sql)) {
+      errors.push('daily news publication migrations must be idempotent with ON CONFLICT (slug) DO UPDATE');
+    }
   }
-  const hasBuiltBodyShape = /jsonb_build_object\s*\([\s\S]*?'(?:intro|sections)'\s*,/i.test(sql);
-  const hasLiteralBodyShape = /\{[\s\S]*?"(?:intro|sections)"\s*:/i.test(sql) && /::\s*jsonb/i.test(sql);
-  if (!hasBuiltBodyShape && !hasLiteralBodyShape) {
-    errors.push("body_json must include an 'intro' or 'sections' field accepted by daily_articles_require_body");
-  }
-  if (!/ON\s+CONFLICT\s*\(\s*slug\s*\)\s+DO\s+UPDATE/i.test(sql)) {
-    errors.push('daily news publication migrations must be idempotent with ON CONFLICT (slug) DO UPDATE');
-  }
+
   if (!/featured_image_url/i.test(sql) || !/image_alt_text/i.test(sql)) {
-    errors.push('published articles must include featured_image_url and image_alt_text');
+    errors.push('published article image changes must include featured_image_url and image_alt_text');
+  }
+
+  if (/\.svg(?:\b|\?|#)/i.test(sql)) {
+    errors.push('SVG hero images are not allowed for published news; use a real raster photograph or photorealistic editorial image');
+  }
+
+  if (/image\/svg\+xml/i.test(sql)) {
+    errors.push('SVG image content types are not allowed for published news');
+  }
+
+  if (/(?:editorial\s+illustration|vector\s+illustration|generic\s+illustration|placeholder\s+image)/i.test(sql)) {
+    errors.push('placeholder/vector/illustration hero imagery is not allowed for published news');
   }
 
   const valuesSlugs = [...sql.matchAll(/\('((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*,/g)].map((match) => match[1]);
