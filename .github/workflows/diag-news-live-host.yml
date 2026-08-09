@@ -16,9 +16,9 @@ jobs:
         run: |
           set -euo pipefail
           slug='2026-08-08-amazon-pecos-ai-data-center-emissions'
-          for base in 'https://keeptxred.com' 'https://keeptxred.lovable.app'; do
+          for base in 'https://keeptxred.com' 'https://keeptxred.lovable.app' 'https://id-preview--eabc624d-53f7-4564-8bf9-613c4b63a016.lovable.app'; do
             url="$base/news/$slug"
             code=$(curl -L -sS -o /tmp/page.html -w '%{http_code}' --max-time 30 "$url" || echo 000)
             echo "HOST $base CODE $code"
-            grep -Eio '<title>[^<]+|ARTICLE NOT FOUND|That article may have moved or never existed' /tmp/page.html | head -10 || true
+            grep -aEio '<title>[^<]+|ARTICLE NOT FOUND|That article may have moved or never existed' /tmp/page.html | head -10 || true
           done
