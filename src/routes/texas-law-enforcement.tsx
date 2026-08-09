@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 
 const SECTIONS = [
-  { title: "Texas DPS & State Government", description: "State public-safety agencies, leadership, authority, and accountability.", href: "/texas-government" },
+  { title: "Who Does What Guide", description: "Start here: DPS, Highway Patrol, Texas Rangers, criminal investigations, local agencies, and public-safety authority.", href: "/guides/texas-law-enforcement-public-safety-guide" },
   { title: "Texas Laws", description: "Criminal law, public-safety statutes, enforcement authority, and legal changes.", href: "/laws" },
   { title: "Texas Legislature", description: "Bills, committees, hearings, and votes affecting law enforcement and public safety.", href: "/texas-legislature" },
   { title: "Border Security", description: "DPS, Operation Lone Star, border enforcement, and public-safety operations.", href: "/texas-border-security" },
@@ -35,6 +35,7 @@ function TexasLawEnforcementPage() {
         "The pillar connects breaking enforcement news to the laws, agencies, legislative decisions, and government authority that explain how Texas public safety actually works.",
       ]}
       related={[
+        { label: "Read the law enforcement guide", href: "/guides/texas-law-enforcement-public-safety-guide" },
         { label: "Texas Border & Immigration", href: "/texas-border-security" },
         { label: "Texas Laws & Legislature", href: "/laws" },
         { label: "Texas Politics & Government", href: "/texas-politics" },
