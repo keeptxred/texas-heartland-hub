@@ -1,0 +1,1 @@
+One-time audit scope: all 30 Keep TX Red articles created in this ChatGPT conversation across PRs #179, #189, and #203.
