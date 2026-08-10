@@ -54,18 +54,45 @@ jobs:
         if: ${{ github.event_name != 'workflow_dispatch' || inputs.pr_number == '' }}
         uses: actions/checkout@v5
 
+      - name: Resolve required status target
+        id: status-target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          EVENT_PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          DISPATCH_PR: ${{ inputs.pr_number }}
+        run: |
+          set -euo pipefail
+          MERGE_SHA="$(git rev-parse HEAD)"
+          if [[ "$EVENT_NAME" == "pull_request" && -n "${EVENT_PR_HEAD_SHA:-}" ]]; then
+            STATUS_SHA="$EVENT_PR_HEAD_SHA"
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" && -n "${DISPATCH_PR:-}" ]]; then
+            STATUS_SHA="$(curl --fail-with-body --silent --show-error \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/pulls/${DISPATCH_PR}" \
+              | python -c 'import json,sys; print(json.load(sys.stdin)["head"]["sha"])')"
+          else
+            STATUS_SHA="$MERGE_SHA"
+          fi
+          echo "status_sha=$STATUS_SHA" >> "$GITHUB_OUTPUT"
+          echo "merge_sha=$MERGE_SHA" >> "$GITHUB_OUTPUT"
+          echo "Validating merge state $MERGE_SHA; required verify status will be published to $STATUS_SHA"
+
       - name: Publish required verify status as pending
         env:
           GH_TOKEN: ${{ github.token }}
+          STATUS_SHA: ${{ steps.status-target.outputs.status_sha }}
+          MERGE_SHA: ${{ steps.status-target.outputs.merge_sha }}
         run: |
-          STATUS_SHA="$(git rev-parse HEAD)"
           curl --fail-with-body --silent --show-error \
             -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "https://api.github.com/repos/${GITHUB_REPOSITORY}/statuses/${STATUS_SHA}" \
-            -d '{"state":"pending","context":"verify","description":"Repository health validation is running"}'
+            -d "{\"state\":\"pending\",\"context\":\"verify\",\"description\":\"Validating PR merge state ${MERGE_SHA:0:7}\"}"
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -94,16 +121,17 @@ jobs:
         run: bun run legislature:validate
 
       - name: Publish required verify status
-        if: ${{ always() }}
+        if: ${{ always() && steps.status-target.outputs.status_sha != '' }}
         env:
           GH_TOKEN: ${{ github.token }}
           JOB_STATUS: ${{ job.status }}
+          STATUS_SHA: ${{ steps.status-target.outputs.status_sha }}
+          MERGE_SHA: ${{ steps.status-target.outputs.merge_sha }}
         run: |
-          STATUS_SHA="$(git rev-parse HEAD 2>/dev/null || echo "$GITHUB_SHA")"
           case "$JOB_STATUS" in
-            success) STATE=success; DESCRIPTION="Repository health validation passed" ;;
-            failure) STATE=failure; DESCRIPTION="Repository health validation failed" ;;
-            *) STATE=error; DESCRIPTION="Repository health validation did not complete" ;;
+            success) STATE=success; DESCRIPTION="Merge state ${MERGE_SHA:0:7} passed repository health" ;;
+            failure) STATE=failure; DESCRIPTION="Merge state ${MERGE_SHA:0:7} failed repository health" ;;
+            *) STATE=error; DESCRIPTION="Merge-state repository health did not complete" ;;
           esac
           curl --fail-with-body --silent --show-error \
             -X POST \
