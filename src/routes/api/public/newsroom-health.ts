@@ -12,8 +12,19 @@ type FeedRow = {
   internal_slug: string | null;
 };
 
+type TexasDefinedReadyRow = {
+  id: number;
+  title: string;
+  description: string | null;
+  source: string;
+  link: string;
+  target_section: string | null;
+  pub_date: string | null;
+};
+
 type TexasDefinedArticleRow = {
   slug: string;
+  title: string;
   published_at: string | null;
 };
 
@@ -62,13 +73,15 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
             .select("id", { count: "exact", head: true }),
           supabaseAdmin
             .from("texasdefined_ready_queue" as never)
-            .select("id", { count: "exact", head: true }),
+            .select("id,title,description,source,link,target_section,pub_date", { count: "exact" })
+            .order("pub_date", { ascending: false })
+            .limit(10),
           supabaseAdmin
             .from("texasdefined_articles" as never)
-            .select("slug,published_at")
+            .select("slug,title,published_at", { count: "exact" })
             .eq("status", "published")
             .order("published_at", { ascending: false })
-            .limit(1),
+            .limit(10),
         ]);
 
         const errors = [
@@ -88,7 +101,9 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
 
         const sourceRows = (sourcesResult.data ?? []) as unknown as SourceRow[];
         const feedRows = (feedResult.data ?? []) as unknown as FeedRow[];
-        const latestTexasDefined = ((texasDefinedArticlesResult.data ?? []) as unknown as TexasDefinedArticleRow[])[0] ?? null;
+        const texasDefinedReadySample = (texasDefinedReadyResult.data ?? []) as unknown as TexasDefinedReadyRow[];
+        const texasDefinedPublishedSample = (texasDefinedArticlesResult.data ?? []) as unknown as TexasDefinedArticleRow[];
+        const latestTexasDefined = texasDefinedPublishedSample[0] ?? null;
         const feedBySource = new Map<string, FeedRow[]>();
         for (const row of feedRows) {
           const key = String(row.source || "").trim().toLowerCase();
@@ -140,9 +155,12 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
             texasDefinedChannelReady: true,
             texasDefinedQueueCount: texasDefinedQueueResult.count ?? 0,
             texasDefinedReadyCount: texasDefinedReadyResult.count ?? 0,
-            texasDefinedPublishedCount: latestTexasDefined ? 1 : 0,
+            texasDefinedPublishedCount: texasDefinedArticlesResult.count ?? 0,
             latestTexasDefinedSlug: latestTexasDefined?.slug ?? null,
+            latestTexasDefinedTitle: latestTexasDefined?.title ?? null,
             latestTexasDefinedPublishedAt: latestTexasDefined?.published_at ?? null,
+            texasDefinedReadySample,
+            texasDefinedPublishedSample,
             coverageGapCount: gapResult.count ?? 0,
             sourceCount: sources.length,
             sourceStatusCounts: statusCounts,
