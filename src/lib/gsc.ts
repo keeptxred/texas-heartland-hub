@@ -1,8 +1,6 @@
-// Google Search Console feedback storage — data layer only.
-// No OAuth, no fetch. Ready for future integration.
-//
-// Usage from a trusted server context (server fn / route handler):
-//   await applyGscMetrics([{ slug, impressions, clicks, ctr, position }])
+// Google Search Console feedback storage — metadata-only article maintenance.
+// OAuth/fetch lives in the scheduled GSC sync workflow; this module only applies
+// normalized metrics from a trusted server route.
 
 export type GscRow = {
   slug: string;
@@ -12,13 +10,15 @@ export type GscRow = {
   position?: number | null;
 };
 
-export async function applyGscMetrics(rows: GscRow[]): Promise<{ updated: number }> {
-  if (!rows || rows.length === 0) return { updated: 0 };
+export async function applyGscMetrics(rows: GscRow[]): Promise<{ updated: number; unmatched: string[] }> {
+  if (!rows || rows.length === 0) return { updated: 0, unmatched: [] };
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const now = new Date().toISOString();
   let updated = 0;
+  const unmatched: string[] = [];
+
   for (const r of rows) {
-    const { error } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from("daily_articles")
       .update({
         gsc_impressions: Math.max(0, Math.round(r.impressions)),
@@ -27,10 +27,15 @@ export async function applyGscMetrics(rows: GscRow[]): Promise<{ updated: number
         gsc_avg_position: r.position ?? null,
         gsc_last_update: now,
       })
-      .eq("slug", r.slug);
-    if (!error) updated++;
+      .eq("slug", r.slug)
+      .select("slug");
+
+    if (error) throw new Error(`Failed to apply GSC metrics for ${r.slug}: ${error.message}`);
+    if (data && data.length > 0) updated += data.length;
+    else unmatched.push(r.slug);
   }
-  return { updated };
+
+  return { updated, unmatched };
 }
 
 /** Convenience: compute the site-wide average CTR from stored GSC data. */

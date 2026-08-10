@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildStoryCluster, combinationScore } from "./story-clustering";
+import { buildStoryCluster, combinationScore, likelySameLineage } from "./story-clustering";
 
 const now = "2026-08-08T14:00:00Z";
 
@@ -68,5 +68,30 @@ describe("story clustering", () => {
     expect(cluster.strongMerge).toBe(true);
     expect(cluster.members.filter((row) => row.link.includes("b.com")).length).toBe(1);
     expect(cluster.sourceCount).toBe(3);
+  });
+
+  it("recognizes near-identical syndication copy across different domains", () => {
+    const copy = "Texas officials approved the project after a public meeting in Austin. The plan calls for 2,400 megawatts of new capacity over several years and includes new transmission work, environmental review, local permitting, and phased construction beginning next spring.";
+    const a = item("Outlet A", "Texas approves major grid project", copy, "https://a.com/grid-project");
+    const b = item("Outlet B", "Major Texas grid project approved", copy, "https://b.com/grid-project");
+    expect(likelySameLineage(a, b)).toBe(true);
+  });
+
+  it("does not count syndicated copies as separate independent cluster sources", () => {
+    const primary = item(
+      "Official source",
+      "Texas approves major grid project",
+      "State officials approved a large power-grid project in Austin with new transmission capacity.",
+      "https://official.texas.gov/grid-project",
+    );
+    const wireCopy = "Texas officials approved the project after a public meeting in Austin. The plan calls for 2,400 megawatts of new capacity over several years and includes new transmission work, environmental review, local permitting, and phased construction beginning next spring.";
+    const rows = [
+      item("Outlet A", "Texas grid project adds 2,400 megawatts", wireCopy, "https://a.com/grid-project"),
+      item("Outlet B", "Texas grid project adds 2,400 megawatts", wireCopy, "https://b.com/grid-project"),
+      item("Local Reporter", "Austin officials outline local permitting for Texas grid project", "Austin officials described the local permitting timeline and neighborhood construction impacts tied to the same Texas grid project.", "https://local.com/grid-project"),
+    ];
+    const cluster = buildStoryCluster(primary, rows, 5);
+    const syndicated = cluster.members.filter((row) => row.link.includes("a.com") || row.link.includes("b.com"));
+    expect(syndicated.length).toBeLessThanOrEqual(1);
   });
 });

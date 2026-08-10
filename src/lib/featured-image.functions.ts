@@ -1,19 +1,18 @@
 // AI Featured Image System.
-// Generates a unique, original editorial image per article via the
-// Lovable AI Gateway (Nano Banana 2), uploads it to the private
-// "article-images" Supabase bucket, and stores CDN-safe metadata
-// on daily_articles. Never touches article slug, URL, body, or
-// existing image_url — featured_image_url is a separate column
-// that takes priority at render time.
+// Generates a unique, original editorial image per article via Cloudflare
+// Workers AI, uploads it to the private "article-images" Supabase bucket,
+// and stores CDN-safe metadata on daily_articles. Never touches article
+// slug, URL, body, or existing image_url — featured_image_url is a separate
+// column that takes priority at render time.
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { extractEntities } from "@/lib/nlp";
 
-const MODEL = "google/gemini-3.1-flash-image";
-const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/images/generations";
+const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 const CHAT_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const BUCKET = "article-images";
+const PURPLE_HEART_IMAGE_URL = "/images/military-honors/purple-heart.svg";
 
 type ArticleRow = {
   slug: string;
@@ -122,7 +121,7 @@ const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["weather", /\b(hurricane|tornado|flood|drought|storm|heat wave|freeze|blizzard|wildfire|rainfall|weather)\b/i],
   ["energy", /\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig)\b/i],
   ["sports", /\b(cowboys|texans|rangers|astros|mavericks|spurs|rockets|stars|nfl|nba|mlb|football|basketball|baseball|playoff)\b/i],
-  ["military", /\b(military|army|navy|air force|marines|fort hood|fort cavazos|base|installation|soldier|veteran)\b/i],
+  ["military", /\b(purple heart|medal of honor|military|army|navy|air force|marines|fort hood|fort cavazos|base|installation|soldier|veteran)\b/i],
   ["education", /\b(school|isd|university|college|teacher|classroom|student|curriculum)\b/i],
   ["health", /\b(hospital|clinic|doctor|nurse|patient|disease|virus|outbreak|medicaid|healthcare)\b/i],
   ["transportation", /\b(highway|interstate|traffic|txdot|airport|rail|transit|bridge|road construction)\b/i],
@@ -144,7 +143,7 @@ type SubjectExtract = {
   entities: string[];
   locations: string[];
   domain: Domain;
-  concreteSubject: string; // one-line description of the actual thing to depict
+  concreteSubject: string;
 };
 
 function extractImageSubject(row: ArticleRow): SubjectExtract {
@@ -160,16 +159,10 @@ function extractImageSubject(row: ArticleRow): SubjectExtract {
     ),
   ].filter((v, i, a) => a.indexOf(v) === i);
   const domain = inferDomain(haystack);
-
   const terms = topArticleTerms(haystack);
-
-  // First-pass concrete subject = the title itself, refined by the first
-  // paragraph and concrete article terms. The category is never used as the
-  // visual subject because it causes generic "news" imagery.
   const concreteSubject = intro
     ? `${title}. Context: ${intro}. Concrete subjects to show if present: ${terms.join(", ") || "the specific event, place, animal, object, or people described"}.`
     : title;
-
   return { title, firstParagraph: intro, entities, locations, domain, concreteSubject };
 }
 
@@ -183,7 +176,7 @@ const DOMAIN_STEER: Record<Domain, string> = {
   sports:
     "Depict a game-day sports scene — stadium, playing field, generic athletic action — with no identifiable player faces, jerseys with names, or team logos.",
   military:
-    "Depict a military installation scene: hangars, training grounds, aircraft, or personnel in silhouette. No identifiable faces, no unit insignia.",
+    "Depict the specific military honor, medal, installation, aircraft, personnel, or commemoration named by the story. When a medal or decoration is named, the medal itself must dominate the image. No identifiable faces, no unit insignia.",
   education:
     "Depict a school setting: classroom, hallway, playground, or campus exterior. No identifiable children's faces.",
   health: "Depict a hospital or clinical setting relevant to the story. No identifiable patients or staff.",
@@ -199,10 +192,6 @@ const DOMAIN_STEER: Record<Domain, string> = {
     "Depict a specific, believable real-world Texas scene tied directly to the article's subject.",
 };
 
-/** Build a detailed editorial image prompt from article context.
- *  Leads with the concrete subject (title + first paragraph), applies
- *  domain-specific steering, and hard-blocks generic newsroom imagery
- *  unless the article is literally about it. */
 export function buildImagePrompt(
   subject: SubjectExtract,
   extraGuidance = "",
@@ -233,8 +222,7 @@ export function buildImagePrompt(
     .join("; ");
 
   const style =
-    "Professional editorial photography, natural lighting, realistic composition, cinematic depth of field, 16:9 landscape, muted editorial color palette with warm Texas tones.";
-
+    "Professional editorial photography, natural lighting, realistic composition, cinematic depth of field, muted editorial color palette with warm Texas tones. OUTPUT REQUIREMENTS: landscape JPEG, exactly 16:9, provider 1K size (approximately 1024 by 576 pixels), sRGB color, no transparency, target file size under 2 MB and never over 4 MB. Do not generate a square, portrait, 2K, or 4K image.";
   const loc = subject.locations.slice(0, 2).join(", ");
 
   return [
@@ -258,37 +246,79 @@ export function buildAltText(a: { title: string; category?: string | null }): st
   return `Editorial illustration for Keep TX Red news article: ${a.title}${cat}`;
 }
 
-async function generateImageBytes(prompt: string): Promise<Uint8Array> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("Missing LOVABLE_API_KEY");
-  const res = await fetch(GATEWAY_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${key}`,
-      "Lovable-API-Key": key,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [{ role: "user", content: prompt }],
-      modalities: ["image", "text"],
-    }),
-  });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`Image gateway ${res.status}: ${body.slice(0, 400)}`);
+function staticFeaturedImage(row: ArticleRow): { url: string; alt: string } | null {
+  const subject = `${row.title} ${row.seo_headline ?? ""} ${row.dek ?? ""}`;
+  if (/\bpurple heart\b/i.test(subject)) {
+    return {
+      url: PURPLE_HEART_IMAGE_URL,
+      alt: `Purple Heart medal — ${row.title}`,
+    };
   }
-  const json = (await res.json()) as { data?: { b64_json?: string }[] };
-  const b64 = json.data?.[0]?.b64_json;
-  if (!b64) throw new Error("Gateway returned no image data");
+  return null;
+}
+
+function base64ToBytes(b64: string): Uint8Array {
   const bin = atob(b64);
   const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
   return bytes;
 }
 
-/** Ask a vision model: does this image actually match the article subject?
- *  Fails open (returns matches=true) if the validator call itself errors. */
+async function generateImageBytes(prompt: string): Promise<Uint8Array> {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (!accountId || !apiToken) {
+    throw new Error(
+      "Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required",
+    );
+  }
+
+  const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${CLOUDFLARE_IMAGE_MODEL}`;
+  const res = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt: prompt.slice(0, 2048),
+      steps: 4,
+      seed: Math.floor(Math.random() * 2_147_483_647),
+    }),
+  });
+
+  const raw = await res.text().catch(() => "");
+  let json: {
+    success?: boolean;
+    result?: { image?: string };
+    image?: string;
+    errors?: { message?: string }[];
+    error?: { message?: string };
+  } = {};
+  try {
+    json = raw ? JSON.parse(raw) : {};
+  } catch {
+    throw new Error(
+      `Cloudflare Workers AI returned a non-JSON response: ${raw.slice(0, 400)}`,
+    );
+  }
+
+  if (!res.ok || json.success === false) {
+    const detail =
+      json.errors?.[0]?.message ||
+      json.error?.message ||
+      raw ||
+      `HTTP ${res.status}`;
+    throw new Error(
+      `Cloudflare Workers AI ${res.status}: ${String(detail).slice(0, 400)}`,
+    );
+  }
+
+  const b64 = json.result?.image || json.image;
+  if (!b64) throw new Error("Cloudflare Workers AI returned no image data");
+  return base64ToBytes(b64);
+}
+
 async function validateImageMatchesArticle(
   bytes: Uint8Array,
   subject: SubjectExtract,
@@ -323,7 +353,7 @@ async function validateImageMatchesArticle(
                   `matches=false if the image does not clearly depict the primary subject above.\n` +
                   `matches=true only if a reader would immediately recognize the image is about the primary subject.`,
               },
-              { type: "image_url", image_url: { url: `data:image/png;base64,${b64}` } },
+              { type: "image_url", image_url: { url: `data:image/jpeg;base64,${b64}` } },
             ],
           },
         ],
@@ -357,6 +387,21 @@ async function generateAndStore(
 ): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
   const supabase = await serviceClient();
 
+  const staticImage = staticFeaturedImage(row);
+  if (staticImage) {
+    await supabase
+      .from("daily_articles")
+      .update({
+        featured_image_url: staticImage.url,
+        image_alt_text: staticImage.alt,
+        image_generation_status: "ready",
+        image_prompt: null,
+        image_validation_note: "static military-honor asset",
+      })
+      .eq("slug", row.slug);
+    return { ok: true, url: staticImage.url, alt: staticImage.alt };
+  }
+
   if (!opts.overwrite && row.featured_image_url) {
     return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
   }
@@ -364,7 +409,7 @@ async function generateAndStore(
   const subject = extractImageSubject(row);
   const prompt = buildImagePrompt(subject);
   const alt = buildAltText(row);
-  const filename = `${sanitizeFilename(row.slug)}.png`;
+  const filename = `${sanitizeFilename(row.slug)}.jpg`;
 
   await supabase
     .from("daily_articles")
@@ -393,13 +438,12 @@ async function generateAndStore(
     const { error: upErr } = await supabase.storage
       .from(BUCKET)
       .upload(path, bytes, {
-        contentType: "image/png",
+        contentType: "image/jpeg",
         cacheControl: "public, max-age=31536000, immutable",
         upsert: true,
       });
     if (upErr) throw upErr;
 
-    // Public passthrough URL — private bucket served via our own route.
     const url = `/api/public/article-image/${filename}`;
 
     await supabase
@@ -427,7 +471,6 @@ async function generateAndStore(
 const SELECT_COLS =
   "slug,title,dek,category,keywords,seo_keywords,affected_regions,seo_headline,discover_category,texas_impact_summary,featured_image_url,image_generation_status,body_json";
 
-/** Generate featured image for one slug (idempotent unless overwrite=true). */
 export const generateFeaturedImageForSlug = createServerFn({ method: "POST" })
   .validator((d) =>
     z
@@ -459,7 +502,6 @@ export async function generateFeaturedImageForSlugDirect(
   return generateAndStore(row as ArticleRow, { overwrite });
 }
 
-/** Admin-gated regenerate (checks shared passcode header). */
 export const regenerateFeaturedImage = createServerFn({ method: "POST" })
   .validator((d) =>
     z.object({ slug: z.string().min(1).max(200), token: z.string().min(1) }).parse(d),
@@ -477,8 +519,6 @@ export const regenerateFeaturedImage = createServerFn({ method: "POST" })
     return generateAndStore(row as ArticleRow, { overwrite: true });
   });
 
-/** Backfill helper: pull N articles missing a featured image and generate them.
- *  Pass overwrite=true to also regenerate articles that already have one. */
 export async function backfillBatch(
   limit = 5,
   overwrite = false,

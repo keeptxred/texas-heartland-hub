@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
+import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
 
 const HUB = HUBS.find((h) => h.slug === "texas-economy")!;
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
@@ -65,6 +66,8 @@ function TexasEconomyPage() {
           <Link to="/texas-business" className="font-semibold text-primary hover:underline">Read Texas business coverage</Link>
         </div>
       </section>
+
+      <PillarRelationshipNav pillarSlug="texas-economy-small-business" />
     </HubView>
   );
 }

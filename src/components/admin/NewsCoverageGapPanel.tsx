@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { getContentPillar, isContentPillarSlug } from "@/lib/content-pillars";
 
 type CoverageGap = {
   id: number;
@@ -12,6 +13,7 @@ type CoverageGap = {
   source_reputation_score: number | null;
   classification_confidence: number | null;
   routing_type: string | null;
+  pillar_slug: string | null;
   gap_reason: string;
   coverage_priority: number;
 };
@@ -25,6 +27,10 @@ const reasonLabels: Record<string, string> = {
   article_generation_or_publish_gap: "Generation or publishing failed",
 };
 
+function pillarLabel(slug: string | null) {
+  return isContentPillarSlug(slug) ? getContentPillar(slug).shortTitle : "General Texas News";
+}
+
 export function NewsCoverageGapPanel() {
   const [rows, setRows] = useState<CoverageGap[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,7 +41,7 @@ export function NewsCoverageGapPanel() {
     async function load() {
       const { data, error: queryError } = await supabase
         .from("news_coverage_gaps" as never)
-        .select("id,title,source,pub_date,link,viral_score,texas_relevance_score,source_reputation_score,classification_confidence,routing_type,gap_reason,coverage_priority")
+        .select("id,title,source,pub_date,link,viral_score,texas_relevance_score,source_reputation_score,classification_confidence,routing_type,pillar_slug,gap_reason,coverage_priority")
         .order("coverage_priority", { ascending: false })
         .order("pub_date", { ascending: false })
         .limit(30);
@@ -90,6 +96,9 @@ export function NewsCoverageGapPanel() {
               <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-wider">
                 <span className="text-primary">Priority {row.coverage_priority}</span>
                 <span className="text-muted-foreground">{row.source}</span>
+                <span className="border border-primary/30 bg-primary/5 px-2 py-0.5 text-primary">
+                  {pillarLabel(row.pillar_slug)}
+                </span>
                 <span className="border border-amber-300 bg-amber-50 px-2 py-0.5 text-amber-900">
                   {reasonLabels[row.gap_reason] ?? row.gap_reason}
                 </span>

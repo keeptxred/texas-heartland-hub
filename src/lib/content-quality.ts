@@ -63,6 +63,8 @@ export type InternalLink = {
   kind: "hub" | "resource" | "evergreen" | "glossary";
 };
 
+// Only canonical, indexable destinations belong here. Generated content should
+// never spend internal-link equity on routes that immediately redirect.
 const CATEGORY_HUB: Record<string, InternalLink[]> = {
   "Tax & Spending": [
     { label: "Texas Legislature", href: "/texas-legislature", kind: "hub" },
@@ -70,15 +72,19 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
   ],
   Elections: [
     { label: "Register to Vote in Texas", href: "/register-to-vote", kind: "resource" },
-    { label: "Texas Candidate Guides", href: "/candidate-guides", kind: "resource" },
-    { label: "Elections Hub", href: "/elections", kind: "hub" },
+    { label: "Election Central", href: "/elections/2026", kind: "hub" },
   ],
   Legislature: [
     { label: "Texas Politics", href: "/texas-politics", kind: "hub" },
-    { label: "Legislative Updates", href: "/legislative-updates", kind: "resource" },
+    { label: "Texas Bills", href: "/bills", kind: "resource" },
+    { label: "Texas Laws", href: "/laws", kind: "hub" },
   ],
-  Border: [{ label: "Texas Politics", href: "/texas-politics", kind: "hub" }],
+  Border: [
+    { label: "Texas Border & Immigration", href: "/texas-border-security", kind: "hub" },
+    { label: "Texas Politics", href: "/texas-politics", kind: "hub" },
+  ],
   Energy: [
+    { label: "Texas Energy & Oil", href: "/texas-energy", kind: "hub" },
     { label: "Texas Business", href: "/texas-business", kind: "hub" },
     { label: "Texas Economy", href: "/texas-economy", kind: "hub" },
   ],
@@ -89,11 +95,11 @@ const CATEGORY_HUB: Record<string, InternalLink[]> = {
   Economy: [{ label: "Texas Economy", href: "/texas-economy", kind: "hub" }],
   Housing: [{ label: "Texas Economy", href: "/texas-economy", kind: "hub" }],
   "Growth & Migration": [{ label: "Texas Economy", href: "/texas-economy", kind: "hub" }],
-  Education: [{ label: "Laws to Know", href: "/laws-to-know", kind: "resource" }],
+  Education: [{ label: "Texas Laws", href: "/laws", kind: "resource" }],
   Politics: [{ label: "Texas Politics", href: "/texas-politics", kind: "hub" }],
   Laws: [
-    { label: "Texas Laws", href: "/texas-laws", kind: "hub" },
-    { label: "Laws to Know", href: "/laws-to-know", kind: "resource" },
+    { label: "Texas Laws", href: "/laws", kind: "hub" },
+    { label: "Texas Bills", href: "/bills", kind: "resource" },
   ],
   Sports: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
   NFL: [{ label: "Texas Sports", href: "/texas-sports", kind: "hub" }],
@@ -126,7 +132,7 @@ export function pickInternalLinks(input: {
     push({ label: "Texas Legislature", href: "/texas-legislature", kind: "hub" });
     push({ label: "Texas Bills", href: "/bills", kind: "resource" });
   }
-  if (/vote|ballot|election|primary/.test(hay)) push({ label: "Register to Vote in Texas", href: "/register-to-vote", kind: "resource" });
+  if (/vote|ballot|election|primary/.test(hay)) push({ label: "Election Central", href: "/elections/2026", kind: "hub" });
   if (/moving|relocat|newcomer|housing market/.test(hay)) push({ label: "Texas Economy", href: "/texas-economy", kind: "hub" });
   ALWAYS_AVAILABLE.forEach(push);
   return out.slice(0, 5);

@@ -31,8 +31,7 @@ Keep TX Red covers Texas politics, elections, public officials, the Legislature,
 
 ## Reference
 
-- [Texas Laws](/texas-laws): Major Texas statutes and legal topics.
-- [Laws Explained](/laws): Detailed Texas law explainers and practical guidance.
+- [Texas Laws](/laws): Detailed Texas law explainers, statutes, and practical guidance.
 - [Glossary](/glossary): Texas political and government terminology.
 
 ## About

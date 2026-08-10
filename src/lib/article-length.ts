@@ -5,14 +5,12 @@ export const EVERGREEN_MIN_MAIN_WORDS = 5000;
 export const SPORTS_BREAKING_MIN_MAIN_WORDS = 800;
 export const SPORTS_ANALYSIS_MIN_MAIN_WORDS = 1200;
 export const SPORTS_MIN_MAIN_WORDS = SPORTS_ANALYSIS_MIN_MAIN_WORDS;
-// Ingested RSS rewrites (kind = "ingested" or "news") are gated at the
-// breaking-news floor used by the ingestion pipeline. The publish path in
-// src/routes/api/public/hooks/ingest-feeds.ts commits rows above this
-// threshold, so the read/visibility gate MUST match — otherwise articles
-// that publish successfully (and get posted to Facebook) would 404 on
-// /news/{slug}. Evergreen and generic long-form (tools/guides) still use
-// the higher NON_EVERGREEN_MIN_MAIN_WORDS / EVERGREEN_MIN_MAIN_WORDS.
+// Automated ingested RSS rewrites keep the stricter breaking-news floor.
 export const INGESTED_MIN_MAIN_WORDS = 800;
+// Curated newsroom briefs are source-backed editorial items and may be much
+// shorter than automated ingested rewrites. Keep a substantive floor while
+// allowing both narrative-section and intro-only brief formats.
+export const CURATED_NEWS_MIN_MAIN_WORDS = 150;
 
 const EXCLUDED_SECTION_RE =
   /\b(texas\s+relevance|source\s+attribution|sources?|faq|frequently\s+asked\s+questions|key\s+takeaways?|reader\s+questions?)\b/i;
@@ -106,7 +104,8 @@ export function requiredMainWordCountForKind(kind?: string | null): number {
   if (kind === "evergreen") return EVERGREEN_MIN_MAIN_WORDS;
   if (kind?.startsWith("sports-breaking")) return SPORTS_BREAKING_MIN_MAIN_WORDS;
   if (kind?.startsWith("sports-")) return SPORTS_ANALYSIS_MIN_MAIN_WORDS;
-  if (kind === "ingested" || kind === "news") return INGESTED_MIN_MAIN_WORDS;
+  if (kind === "news") return CURATED_NEWS_MIN_MAIN_WORDS;
+  if (kind === "ingested") return INGESTED_MIN_MAIN_WORDS;
   return NON_EVERGREEN_MIN_MAIN_WORDS;
 }
 
@@ -129,6 +128,25 @@ export function hasMeaningfulArticleStructure(body: ArticleBodyShape | null | un
   return introWords >= 35 && meaningfulSections.length >= 2;
 }
 
+function hasMeaningfulCuratedNewsStructure(body: ArticleBodyShape | null | undefined): boolean {
+  if (!body || typeof body !== "object") return false;
+  const intro = (Array.isArray(body.intro) ? body.intro : [])
+    .map(normalizedText)
+    .filter((p) => p && !isGenericText(p));
+  const meaningfulSections = (Array.isArray(body.sections) ? body.sections : []).filter((section) => {
+    if (!section || isExcludedSectionHeading(section.heading)) return false;
+    const paragraphs = (Array.isArray(section.paragraphs) ? section.paragraphs : [])
+      .map(normalizedText)
+      .filter((p) => p && !isGenericText(p));
+    const bullets = (Array.isArray(section.bullets) ? section.bullets : [])
+      .map(normalizedText)
+      .filter((p) => p && !isGenericText(p));
+    return paragraphs.join(" ").length >= 180 || bullets.join(" ").length >= 120;
+  });
+  const introWords = wordCount(intro.join(" "));
+  return meaningfulSections.length >= 1 || introWords >= 120;
+}
+
 export function hasValidArticleSources(body: ArticleBodyShape | null | undefined): boolean {
   if (!body || typeof body !== "object") return false;
   const sources = "sources" in body && Array.isArray(body.sources) ? body.sources : [];
@@ -148,8 +166,11 @@ export function hasValidArticleSources(body: ArticleBodyShape | null | undefined
 }
 
 export function meetsArticleMainWordCount(kind: string | null | undefined, body: ArticleBodyShape | null | undefined): boolean {
+  const hasRequiredStructure = kind === "news"
+    ? hasMeaningfulCuratedNewsStructure(body)
+    : hasMeaningfulArticleStructure(body);
   return articleMainWordCount(body) >= requiredMainWordCountForKind(kind)
-    && hasMeaningfulArticleStructure(body)
+    && hasRequiredStructure
     && hasValidArticleSources(body);
 }
 
@@ -159,8 +180,13 @@ export function assertArticleMainWordCount(kind: string | null | undefined, body
   if (count < required) {
     throw new Error(`Article main body is too short: ${count}/${required} words`);
   }
-  if (!hasMeaningfulArticleStructure(body)) {
-    throw new Error("Article body lacks a substantive introduction and at least two meaningful sections");
+  const hasRequiredStructure = kind === "news"
+    ? hasMeaningfulCuratedNewsStructure(body)
+    : hasMeaningfulArticleStructure(body);
+  if (!hasRequiredStructure) {
+    throw new Error(kind === "news"
+      ? "Curated news body lacks a substantive section or intro"
+      : "Article body lacks a substantive introduction and at least two meaningful sections");
   }
   if (!hasValidArticleSources(body)) {
     throw new Error("Article body must include at least one valid source URL");
