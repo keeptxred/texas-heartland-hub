@@ -1,6 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
-import FindMySchoolDistrict from "@/components/FindMySchoolDistrict";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/find-my-school-district")({
-  component: FindMySchoolDistrict,
+  beforeLoad: ({ location }) => {
+    throw redirect({
+      href: `https://texasdefined.com/find-my-school-district${location.searchStr || ""}`,
+      statusCode: 301,
+    });
+  },
 });

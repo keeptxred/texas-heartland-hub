@@ -5,11 +5,14 @@ export type FeaturedCandidateProfile = {
   imageLicense: string;
   imageSourceUrl: string;
   biography: string;
+  occupation: string;
+  currentRole: string;
   education: readonly string[];
   career: readonly string[];
   committees?: readonly string[];
   keyRecord: readonly string[];
   sources: readonly { label: string; url: string }[];
+  sameAs: readonly string[];
 };
 
 const PROFILES: Record<string, FeaturedCandidateProfile> = {
@@ -20,6 +23,8 @@ const PROFILES: Record<string, FeaturedCandidateProfile> = {
     imageLicense: "CC BY-SA 4.0",
     imageSourceUrl: "https://commons.wikimedia.org/wiki/File:Ken_Paxton_-_55022286853.jpg",
     biography: "Ken Paxton is the 51st Attorney General of Texas and the Republican nominee for the 2026 United States Senate election in Texas. He was first elected attorney general in 2014 and reelected in 2018 and 2022. Before becoming attorney general, he served in the Texas House of Representatives and the Texas Senate and worked in private legal practice.",
+    occupation: "Attorney and elected official",
+    currentRole: "Attorney General of Texas",
     education: [
       "B.A. in psychology, Baylor University",
       "M.B.A., Baylor University",
@@ -41,6 +46,10 @@ const PROFILES: Record<string, FeaturedCandidateProfile> = {
       { label: "Official campaign biography", url: "https://www.kenpaxton.com/about" },
       { label: "Photo and license", url: "https://commons.wikimedia.org/wiki/File:Ken_Paxton_-_55022286853.jpg" },
     ],
+    sameAs: [
+      "https://www.texasattorneygeneral.gov/about-office",
+      "https://www.kenpaxton.com/about",
+    ],
   },
   "james talarico": {
     imageUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/James%20Talarico%20Press%20Conference%20%28centered%29.jpg?width=900",
@@ -49,6 +58,8 @@ const PROFILES: Record<string, FeaturedCandidateProfile> = {
     imageLicense: "See Wikimedia Commons file page",
     imageSourceUrl: "https://commons.wikimedia.org/wiki/File:James_Talarico_Press_Conference_(centered).jpg",
     biography: "James Talarico is a Democratic Texas state representative, former public-school teacher, and the Democratic nominee for the 2026 United States Senate election in Texas. First elected to the Texas House in 2018, he has represented House Districts 52 and 50. His legislative work has focused heavily on public education, health-care costs, youth services, and prescription-drug affordability.",
+    occupation: "Teacher and elected official",
+    currentRole: "Texas State Representative, District 50",
     education: [
       "The University of Texas at Austin",
       "Harvard University",
@@ -73,6 +84,10 @@ const PROFILES: Record<string, FeaturedCandidateProfile> = {
       { label: "Texas Legislative Reference Library service record", url: "https://lrl.texas.gov/legeleaders/members/memberdisplay.cfm?memberID=5831" },
       { label: "Texas House member page", url: "https://house.texas.gov/members/50" },
       { label: "Photo source", url: "https://commons.wikimedia.org/wiki/File:James_Talarico_Press_Conference_(centered).jpg" },
+    ],
+    sameAs: [
+      "https://house.texas.gov/members/3685/biography",
+      "https://lrl.texas.gov/legeleaders/members/memberdisplay.cfm?memberID=5831",
     ],
   },
 };

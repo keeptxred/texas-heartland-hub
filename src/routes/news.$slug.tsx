@@ -1,21 +1,64 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
 import { ARTICLE_BODIES, type ArticleBody } from "@/data/article-bodies";
 import { authorSlug, getAuthor } from "@/data/authors";
-import { getEvergreenBySlug } from "@/lib/evergreen.functions";
+import {
+  getEvergreenBySlug,
+  resolveArticleSlugByTail,
+  resolveArticleSlugRedirect,
+  type EvergreenBody,
+} from "@/lib/evergreen.functions";
+import { isBadYearSlug, parseArticleSlug } from "@/lib/article-slug-integrity";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
-import { buildSeo, SITE_URL } from "@/lib/seo";
+import {
+  buildSeo,
+  imageObjectJsonLd,
+  ORGANIZATION_ID,
+  personJsonLd,
+  SITE_URL,
+  WEBSITE_ID,
+} from "@/lib/seo";
 import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { resolveArticleImage } from "@/lib/seo-headline";
-import { resolveDisplayHeadline, type HeadlineVariants } from "@/lib/ctr-score";
+import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
-import { useEffect } from "react";
+
+type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
+
+const GENERIC_FAQ_PATTERNS = [
+  /where can i read more/i,
+  /where can i learn more/i,
+  /how can i stay updated/i,
+  /check back for updates/i,
+];
+
+function validIsoDate(value: string | null | undefined): string | undefined {
+  if (!value) return undefined;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+}
+
+function articleDates(article: Article, body: ArticleBody) {
+  const published = validIsoDate(article.publishedAt) ?? validIsoDate(body.updated) ?? new Date().toISOString();
+  const candidateModified = validIsoDate(body.updated) ?? published;
+  const modified = new Date(candidateModified).getTime() < new Date(published).getTime()
+    ? published
+    : candidateModified;
+  return { published, modified };
+}
+
+function isSpecificFaq(faq: { q: string; a: string }) {
+  const question = faq.q.trim();
+  const answer = faq.a.trim();
+  if (question.length < 12 || answer.length < 30) return false;
+  return !GENERIC_FAQ_PATTERNS.some((pattern) => pattern.test(`${question} ${answer}`));
+}
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{
     article: Article;
-    body: ArticleBody;
+    body: StructuredArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
@@ -25,9 +68,26 @@ export const Route = createFileRoute("/news/$slug")({
       const body = dedupeArticleBody(rawBody) as ArticleBody;
       return { article, body, ctr: null };
     }
+    // Canonical slug mapping (article_slug_redirects): single 301, never to
+    // ourselves and never into a loop (guarded in resolveRedirectChain).
+    const mapped = await resolveArticleSlugRedirect({ data: { slug: params.slug } });
+    if (mapped.slug && mapped.slug !== params.slug) {
+      throw redirect({ href: `/news/${encodeURIComponent(mapped.slug)}`, statusCode: 301 });
+    }
     // Fallback: AI-generated evergreen article stored in daily_articles.
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
-    if (!ever || !ever.body) throw notFound();
+    if (!ever || !ever.body) {
+      // Legacy bad-year URL (e.g. /news/live-2001-… minted from a broken feed
+      // date). The corrected slug keeps the same tail, so resolve it and 301.
+      const parsed = parseArticleSlug(params.slug);
+      if (parsed && isBadYearSlug(params.slug)) {
+        const { slug } = await resolveArticleSlugByTail({ data: { tail: parsed.tail } });
+        if (slug && slug !== params.slug) {
+          throw redirect({ href: `/news/${slug}`, statusCode: 301 });
+        }
+      }
+      throw notFound();
+    }
     // Safety net: never render a stub article. If the body is only the
     // "affects Texans and is being tracked" boilerplate with a one-line
     // intro, treat it as missing rather than serve an empty page.
@@ -43,7 +103,7 @@ export const Route = createFileRoute("/news/$slug")({
     const synth: Article = {
       slug: ever.slug,
       category: cat,
-      // Prefer AI-rewritten SEO/Discover headline; original stays in DB.
+      // Prefer the editorially selected SEO headline as the single canonical headline.
       title: (ever.seo_headline ?? "").trim() || ever.title,
       dek: ever.dek,
       author: ever.author,
@@ -64,7 +124,7 @@ export const Route = createFileRoute("/news/$slug")({
         image_alt_text: ever.image_alt_text,
       }),
     };
-    const rawBody: ArticleBody = {
+    const rawBody: StructuredArticleBody = {
       updated: ever.body.updated,
       intro: ever.body.intro,
       sections: ever.body.sections,
@@ -73,10 +133,11 @@ export const Route = createFileRoute("/news/$slug")({
       related: ARTICLES.filter((x) => x.category === ever.category && isPublished(x)).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
       cta: { label: "Browse the Newsroom", href: "/news" },
       keyTakeaways: ever.body.keyTakeaways,
+      entities: ever.body.entities,
     };
     return {
       article: synth,
-      body: dedupeArticleBody(rawBody) as ArticleBody,
+      body: dedupeArticleBody(rawBody) as StructuredArticleBody,
       ctr: { variants: ever.headline_variants, score: ever.ctr_score },
     };
   },
@@ -91,19 +152,31 @@ export const Route = createFileRoute("/news/$slug")({
     }
     const { article, body } = loaderData;
     const path = `/news/${article.slug}`;
-    const keywords = buildKeywords(article.title, article.dek, article.category);
+    const { published, modified } = articleDates(article, body);
+    const authorPath = `/authors/${authorSlug(article.author)}`;
+    const authorUrl = `${SITE_URL}${authorPath}`;
+    const articleFaq = body.faq.filter(isSpecificFaq);
     const seo = buildSeo({
       title: article.title,
       description: article.dek,
       path,
       image: article.image,
       imageAlt: article.title,
+      imageWidth: 1280,
+      imageHeight: 720,
       type: "article",
-      publishedTime: body.updated,
-      modifiedTime: body.updated,
+      publishedTime: published,
+      modifiedTime: modified,
       section: article.category,
       author: article.author,
-      keywords,
+    });
+    const articleImage = imageObjectJsonLd({
+      url: seo.image,
+      width: 1280,
+      height: 720,
+      caption: article.title,
+      alt: article.title,
+      representativeOfPage: true,
     });
     return {
       meta: seo.meta,
@@ -114,20 +187,31 @@ export const Route = createFileRoute("/news/$slug")({
           children: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "NewsArticle",
+            "@id": `${seo.url}#article`,
+            url: seo.url,
             headline: article.title,
             description: seo.description,
-            image: [seo.image],
-            datePublished: body.updated,
-            dateModified: body.updated,
-            author: { "@type": "Person", name: article.author },
-            publisher: {
-              "@type": "NewsMediaOrganization",
-              name: "Keep TX Red",
-              url: `${SITE_URL}/`,
-              logo: { "@type": "ImageObject", url: `${SITE_URL}/favicon.ico` },
-            },
-            mainEntityOfPage: { "@type": "WebPage", "@id": seo.url },
+            image: { ...articleImage, "@type": "ImageObject" },
+            thumbnailUrl: seo.image,
+            datePublished: published,
+            dateModified: modified,
+            author: personJsonLd({
+              name: article.author,
+              url: authorUrl,
+              id: `${authorUrl}#person`,
+            }),
+            publisher: { "@id": ORGANIZATION_ID },
+            isPartOf: { "@id": WEBSITE_ID },
+            mainEntityOfPage: { "@type": "WebPage", "@id": `${seo.url}#webpage` },
             articleSection: article.category,
+            inLanguage: "en-US",
+            about: body.entities?.map((entity) => ({
+              "@type": entity.type,
+              name: entity.name,
+              ...(entity.identifier ? { identifier: entity.identifier } : {}),
+              ...(entity.url ? { url: entity.url } : {}),
+              ...(entity.sameAs ? { sameAs: entity.sameAs } : {}),
+            })),
           }),
         },
         {
@@ -138,17 +222,18 @@ export const Route = createFileRoute("/news/$slug")({
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Home", item: `${SITE_URL}/` },
               { "@type": "ListItem", position: 2, name: "Newsroom", item: `${SITE_URL}/news` },
-              { "@type": "ListItem", position: 3, name: article.category, item: seo.url },
+              { "@type": "ListItem", position: 3, name: article.title, item: seo.url },
             ],
           }),
         },
-        body.faq.length > 0
+        articleFaq.length > 0
           ? {
               type: "application/ld+json",
               children: JSON.stringify({
                 "@context": "https://schema.org",
                 "@type": "FAQPage",
-                mainEntity: body.faq.map((f) => ({
+                "@id": `${seo.url}#faq`,
+                mainEntity: articleFaq.map((f) => ({
                   "@type": "Question",
                   name: f.q,
                   acceptedAnswer: { "@type": "Answer", text: f.a },
@@ -179,31 +264,6 @@ function buildDefaultBody(a: Article): ArticleBody {
   return _buildDefaultBody(a);
 }
 
-const TEXAS_KEYWORDS = [
-  "Texas",
-  "Texas politics",
-  "Texas news",
-  "Lone Star State",
-  "Houston",
-  "Dallas",
-  "Austin",
-  "San Antonio",
-  "Fort Worth",
-];
-
-function buildKeywords(title: string, dek: string, category: string): string {
-  const base = new Set<string>([
-    ...TEXAS_KEYWORDS,
-    `Texas ${category}`,
-    `${category} in Texas`,
-  ]);
-  // Pull capitalized phrases from title/dek as additional keyword hints.
-  const text = `${title} ${dek}`;
-  const matches = text.match(/\b[A-Z][a-zA-Z]+(?:\s+[A-Z][a-zA-Z]+){0,2}\b/g) ?? [];
-  for (const m of matches.slice(0, 8)) base.add(m);
-  return Array.from(base).slice(0, 18).join(", ");
-}
-
 function _buildDefaultBody(a: Article): ArticleBody {
   return {
     updated: (a.publishedAt ?? new Date().toISOString()).slice(0, 10),
@@ -216,12 +276,7 @@ function _buildDefaultBody(a: Article): ArticleBody {
         ],
       },
     ],
-    faq: [
-      {
-        q: "Where can I read more on this topic?",
-        a: "See our category page for related Texas political news, or explore our evergreen guides linked below.",
-      },
-    ],
+    faq: [],
     sources: [
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/" },
@@ -235,36 +290,11 @@ function _buildDefaultBody(a: Article): ArticleBody {
 }
 
 function ArticlePage() {
-  const { article, body, ctr } = Route.useLoaderData() as {
+  const { article, body } = Route.useLoaderData() as {
     article: Article;
     body: ArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   };
-
-  // A/B variant selection is deterministic per slug + ctr_score.
-  const { headline: displayTitle, variant } = resolveDisplayHeadline({
-    slug: article.slug,
-    title: article.title,
-    dek: article.dek,
-    seo_headline: article.title, // synth title already prefers seo_headline
-    ctr_score: ctr?.score ?? null,
-    headline_variants: ctr?.variants ?? null,
-  });
-
-  // Fire-and-forget impression track. No PII, no cookies, no blocking.
-  useEffect(() => {
-    if (!ctr?.variants) return;
-    try {
-      fetch("/api/public/hooks/track-variant", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: article.slug, variant, kind: "impression" }),
-        keepalive: true,
-      }).catch(() => {});
-    } catch {
-      /* noop */
-    }
-  }, [article.slug, variant, ctr?.variants]);
 
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
@@ -281,7 +311,6 @@ function ArticlePage() {
       0,
     );
   const readingMinutes = Math.max(2, Math.round(wordCount / 230));
-
 
   const formattedDate = new Date(body.updated).toLocaleDateString("en-US", {
     year: "numeric",
@@ -301,7 +330,7 @@ function ArticlePage() {
       </nav>
 
       <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ {article.category}</span>
-      <h1 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] mt-2">{displayTitle}</h1>
+      <h1 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] mt-2">{article.title}</h1>
       <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-snug font-serif italic">{article.dek}</p>
 
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground border-y border-border py-3">

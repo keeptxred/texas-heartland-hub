@@ -57,7 +57,7 @@ async function getAdmin(): Promise<Admin> {
 }
 
 export const addContentSourceFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => AddInput.parse(d))
+  .validator((d: unknown) => AddInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; row: ContentSource } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const client = await getAdmin();
@@ -79,7 +79,7 @@ export const addContentSourceFn = createServerFn({ method: "POST" })
   });
 
 export const listContentSourcesFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => TokenInput.parse(d))
+  .validator((d: unknown) => TokenInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; rows: ContentSource[] } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const client = await getAdmin();
@@ -92,7 +92,7 @@ export const listContentSourcesFn = createServerFn({ method: "POST" })
   });
 
 export const updateContentSourceFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => UpdateInput.parse(d))
+  .validator((d: unknown) => UpdateInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true; row: ContentSource } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const client = await getAdmin();
@@ -115,7 +115,7 @@ export const updateContentSourceFn = createServerFn({ method: "POST" })
   });
 
 export const deleteContentSourceFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => DeleteInput.parse(d))
+  .validator((d: unknown) => DeleteInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: true } | { ok: false; error: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const client = await getAdmin();

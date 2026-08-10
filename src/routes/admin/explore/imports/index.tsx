@@ -5,7 +5,7 @@ export const Route = createFileRoute("/admin/explore/imports/")({
   head: () => ({
     meta: [
       { title: "Explore Texas Imports — Keep TX Red Admin" },
-      { name: "robots", content: "noindex, nofollow" },
+      { name: "robots", content: "noindex, follow" },
     ],
   }),
   component: ExploreImportAdminPage,

@@ -33,14 +33,10 @@ export const Route = createFileRoute("/shop/$productId")({
     const title = `${displayTitle} | Keep Texas Red Shop`;
     const description = seoDescription(p);
     const url = `${SITE_URL}/shop/${p.id}`;
-    // Products lacking a real description are Printify placeholders — keep the page
-    // reachable but noindex to prevent thin/duplicate URLs from being crawled.
-    const isThin = !p.description || p.description.trim().length < 40;
     return {
       meta: [
         { title },
         { name: "description", content: description },
-        ...(isThin ? [{ name: "robots", content: "noindex,follow" }] : []),
         { property: "og:title", content: displayTitle },
         { property: "og:description", content: description },
         { property: "og:type", content: "product" },
@@ -58,7 +54,7 @@ export const Route = createFileRoute("/shop/$productId")({
     <div className="mx-auto max-w-2xl px-6 py-24 text-center">
       <h1 className="font-display text-3xl mb-3">Product not found</h1>
       <p className="text-muted-foreground mb-6">This item may be sold out or no longer available.</p>
-      <Link to="/shop" className="text-primary font-semibold hover:underline">← Back to shop</Link>
+      <Link to="/shop" search={{ category: undefined, collection: undefined, q: undefined, sort: undefined }} className="text-primary font-semibold hover:underline">← Back to shop</Link>
     </div>
   ),
   errorComponent: ({ error, reset }) => (
@@ -202,7 +198,7 @@ function ProductPage() {
           <ol className="flex items-center gap-1 flex-wrap">
             <li><Link to="/" className="hover:text-primary">Home</Link></li>
             <li aria-hidden>/</li>
-            <li><Link to="/shop" className="hover:text-primary">Shop</Link></li>
+            <li><Link to="/shop" search={{ category: undefined, collection: undefined, q: undefined, sort: undefined }} className="hover:text-primary">Shop</Link></li>
             <li aria-hidden>/</li>
             <li className="text-foreground font-medium line-clamp-1">{displayTitle}</li>
           </ol>
@@ -306,11 +302,9 @@ function ProductPage() {
             </div>
           </div>
 
-          {product.description && (
-            <p className="mt-6 text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-              {product.description}
-            </p>
-          )}
+          <p className="mt-6 text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+            {seoDescription(product)}
+          </p>
 
           <button
             type="button"
@@ -321,7 +315,7 @@ function ProductPage() {
             <span aria-hidden>→</span>
           </button>
           <p className="mt-3 text-[11px] text-muted-foreground text-center">
-            🔒 Secure checkout · Ships in 3–7 business days
+            🔒 Secure checkout · Free U.S. shipping · Production in 3–7 business days
           </p>
         </div>
       </section>
@@ -343,7 +337,35 @@ function ProductPage() {
               price: unitPrice.toFixed(2),
               priceCurrency: product.currency || "USD",
               availability: "https://schema.org/InStock",
+              itemCondition: "https://schema.org/NewCondition",
               url: `${SITE_URL}/shop/${product.id}`,
+              shippingDetails: {
+                "@type": "OfferShippingDetails",
+                shippingRate: {
+                  "@type": "MonetaryAmount",
+                  value: 0,
+                  currency: product.currency || "USD",
+                },
+                shippingDestination: {
+                  "@type": "DefinedRegion",
+                  addressCountry: "US",
+                },
+                deliveryTime: {
+                  "@type": "ShippingDeliveryTime",
+                  handlingTime: {
+                    "@type": "QuantitativeValue",
+                    minValue: 3,
+                    maxValue: 7,
+                    unitCode: "DAY",
+                  },
+                  transitTime: {
+                    "@type": "QuantitativeValue",
+                    minValue: 2,
+                    maxValue: 5,
+                    unitCode: "DAY",
+                  },
+                },
+              },
             },
           }),
         }}

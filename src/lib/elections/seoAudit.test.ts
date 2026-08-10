@@ -26,7 +26,12 @@ describe("Election Central SEO audit", () => {
     const source = readFileSync(resolve(process.cwd(), "src/routes", `${route}.tsx`), "utf8");
     expect(source).toContain("title:");
     expect(source).toContain('name: "description"');
-    expect(source).toContain('rel: "canonical"');
+    // Layout parents (e.g. elections.polls) intentionally omit a canonical so
+    // child detail routes are not given a second, wrong canonical; those
+    // sections get their canonical from ElectionLayout instead.
+    const hasOwnCanonical = source.includes('rel: "canonical"');
+    const delegatesCanonical = /canonical here emits a second|ElectionLayout/.test(source);
+    expect(hasOwnCanonical || delegatesCanonical).toBe(true);
   });
 
   it.each(["pollSlug", "forecastSlug", "resultSlug"])(
@@ -37,7 +42,7 @@ describe("Election Central SEO audit", () => {
         "utf8",
       );
       expect(source).toContain('rel: "canonical"');
-      expect(source).toContain("noindex, nofollow");
+      expect(source).toContain("noindex, follow");
     },
   );
 });

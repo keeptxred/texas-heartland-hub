@@ -1,0 +1,139 @@
+{
+  "auditedAt": "2026-08-08T13:12:14.784Z",
+  "officialFile": "scripts/elections/import/official-candidates.json",
+  "statewideRaceCount": 14,
+  "officialStatewideCandidateCount": 44,
+  "generatedStatewideCandidateCount": 44,
+  "races": [
+    {
+      "id": "race-2026-governor",
+      "officeName": "Governor",
+      "candidateIds": [
+        "candidate-demetra-jefferson-wysinger-independent-race-2026-governor",
+        "candidate-gina-hinojosa-democratic-race-2026-governor",
+        "candidate-greg-abbott-republican-race-2026-governor",
+        "candidate-jenn-mack-other-race-2026-governor",
+        "candidate-pat-dixon-libertarian-race-2026-governor",
+        "candidate-sarah-bowman-cunningham-independent-race-2026-governor"
+      ]
+    },
+    {
+      "id": "race-2026-lieutenant-governor",
+      "officeName": "Lieutenant Governor",
+      "candidateIds": [
+        "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
+        "candidate-arturo-espinosa-other-race-2026-lieutenant-governor",
+        "candidate-dan-patrick-republican-race-2026-lieutenant-governor",
+        "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
+        "candidate-mike-collier-independent-race-2026-lieutenant-governor",
+        "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor"
+      ]
+    },
+    {
+      "id": "race-2026-attorney-general",
+      "officeName": "Attorney General",
+      "candidateIds": [
+        "candidate-mayes-middleton-republican-race-2026-attorney-general",
+        "candidate-nathan-johnson-democratic-race-2026-attorney-general",
+        "candidate-tom-oxford-libertarian-race-2026-attorney-general"
+      ]
+    },
+    {
+      "id": "race-2026-comptroller",
+      "officeName": "Comptroller of Public Accounts",
+      "candidateIds": [
+        "candidate-don-huffines-republican-race-2026-comptroller",
+        "candidate-sarah-eckhardt-democratic-race-2026-comptroller",
+        "candidate-shehla-faizi-green-race-2026-comptroller",
+        "candidate-v-alonzo-echavarria-garza-libertarian-race-2026-comptroller"
+      ]
+    },
+    {
+      "id": "race-2026-land-commissioner",
+      "officeName": "Commissioner of the General Land Office",
+      "candidateIds": [
+        "candidate-benjamin-flores-democratic-race-2026-land-commissioner",
+        "candidate-dawn-buckingham-republican-race-2026-land-commissioner",
+        "candidate-neill-snider-libertarian-race-2026-land-commissioner"
+      ]
+    },
+    {
+      "id": "race-2026-agriculture-commissioner",
+      "officeName": "Commissioner of Agriculture",
+      "candidateIds": [
+        "candidate-alfred-molison-jr-green-race-2026-agriculture-commissioner",
+        "candidate-austin-r-kelly-libertarian-race-2026-agriculture-commissioner",
+        "candidate-clayton-tucker-democratic-race-2026-agriculture-commissioner",
+        "candidate-nate-sheets-republican-race-2026-agriculture-commissioner"
+      ]
+    },
+    {
+      "id": "race-2026-railroad-commissioner",
+      "officeName": "Railroad Commissioner",
+      "candidateIds": [
+        "candidate-arthur-dibianca-libertarian-race-2026-railroad-commissioner",
+        "candidate-bo-french-republican-race-2026-railroad-commissioner",
+        "candidate-jon-rosenthal-democratic-race-2026-railroad-commissioner"
+      ]
+    },
+    {
+      "id": "race-2026-texas-supreme-court-place-1",
+      "officeName": "Texas Supreme Court Chief Justice, Place 1",
+      "candidateIds": [
+        "candidate-jimmy-blacklock-republican-race-2026-texas-supreme-court-place-1",
+        "candidate-maggie-ellis-democratic-race-2026-texas-supreme-court-place-1"
+      ]
+    },
+    {
+      "id": "race-2026-texas-supreme-court-place-2",
+      "officeName": "Texas Supreme Court, Place 2",
+      "candidateIds": [
+        "candidate-chari-kelly-democratic-race-2026-texas-supreme-court-place-2",
+        "candidate-james-p-sullivan-republican-race-2026-texas-supreme-court-place-2"
+      ]
+    },
+    {
+      "id": "race-2026-texas-supreme-court-place-7",
+      "officeName": "Texas Supreme Court, Place 7",
+      "candidateIds": [
+        "candidate-kristen-hawkins-democratic-race-2026-texas-supreme-court-place-7",
+        "candidate-kyle-hawkins-republican-race-2026-texas-supreme-court-place-7"
+      ]
+    },
+    {
+      "id": "race-2026-texas-supreme-court-place-8",
+      "officeName": "Texas Supreme Court, Place 8",
+      "candidateIds": [
+        "candidate-brett-busby-republican-race-2026-texas-supreme-court-place-8",
+        "candidate-gisela-d-triana-democratic-race-2026-texas-supreme-court-place-8"
+      ]
+    },
+    {
+      "id": "race-2026-court-of-criminal-appeals-place-3",
+      "officeName": "Texas Court of Criminal Appeals, Place 3",
+      "candidateIds": [
+        "candidate-mark-ash-libertarian-race-2026-court-of-criminal-appeals-place-3",
+        "candidate-okey-anyiam-democratic-race-2026-court-of-criminal-appeals-place-3",
+        "candidate-thomas-smith-republican-race-2026-court-of-criminal-appeals-place-3"
+      ]
+    },
+    {
+      "id": "race-2026-court-of-criminal-appeals-place-4",
+      "officeName": "Texas Court of Criminal Appeals, Place 4",
+      "candidateIds": [
+        "candidate-audra-riley-democratic-race-2026-court-of-criminal-appeals-place-4",
+        "candidate-kevin-patrick-yeary-republican-race-2026-court-of-criminal-appeals-place-4"
+      ]
+    },
+    {
+      "id": "race-2026-court-of-criminal-appeals-place-9",
+      "officeName": "Texas Court of Criminal Appeals, Place 9",
+      "candidateIds": [
+        "candidate-holly-taylor-democratic-race-2026-court-of-criminal-appeals-place-9",
+        "candidate-john-messinger-republican-race-2026-court-of-criminal-appeals-place-9"
+      ]
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

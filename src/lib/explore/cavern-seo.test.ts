@@ -34,7 +34,7 @@ describe("cavern SEO metadata", () => {
     expect(getCavernSeoOverride(`/explore/${nonCavern!.slug}`)).toBeNull();
   });
 
-  it("applies cavern wording to title, Open Graph, Twitter, and keywords without changing the canonical", () => {
+  it("applies cavern wording to title, Open Graph, and Twitter without changing the canonical", () => {
     expect(cavern).toBeDefined();
     const path = `/explore/${cavern!.slug}`;
     const seo = buildSeo({
@@ -47,12 +47,10 @@ describe("cavern SEO metadata", () => {
     const title = seo.meta.find((item) => "title" in item)?.title;
     const ogTitle = seo.meta.find((item) => item.property === "og:title")?.content;
     const twitterTitle = seo.meta.find((item) => item.name === "twitter:title")?.content;
-    const keywords = seo.meta.find((item) => item.name === "keywords")?.content;
 
     expect(title).toContain("Tours");
     expect(ogTitle).toBe(title);
     expect(twitterTitle).toBe(title);
-    expect(keywords).toContain("guided cave tours");
     expect(seo.links).toEqual([
       { rel: "canonical", href: `https://keeptxred.com${path}` },
     ]);

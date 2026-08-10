@@ -1,3 +1,5 @@
+import electionReadiness from "@/data/elections/2026/readiness.json";
+
 function readBooleanFlag(value: string | boolean | undefined, fallback: boolean): boolean {
   if (typeof value === "boolean") return value;
   if (typeof value !== "string") return fallback;
@@ -10,8 +12,10 @@ function readBooleanFlag(value: string | boolean | undefined, fallback: boolean)
   return fallback;
 }
 
+const electionCentralReady = Boolean(electionReadiness.ready);
+
 export const ELECTION_FEATURE_FLAGS = {
-  homepagePromotion: readBooleanFlag(
+  homepagePromotion: electionCentralReady && readBooleanFlag(
     import.meta.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE,
     true,
   ),

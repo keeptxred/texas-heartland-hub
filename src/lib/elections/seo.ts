@@ -30,7 +30,7 @@ export interface ElectionSeoMetadata {
   title: string;
   description: string;
   canonicalUrl: string;
-  robots: "index,follow" | "noindex,nofollow";
+  robots: "index,follow" | "noindex,follow";
   openGraph: {
     type: "website" | "article";
     title: string;
@@ -88,7 +88,7 @@ export function buildElectionSeo(input: ElectionSeoInput): ElectionSeoMetadata {
     title,
     description,
     canonicalUrl,
-    robots: input.noIndex ? "noindex,nofollow" : "index,follow",
+    robots: input.noIndex ? "noindex,follow" : "index,follow",
     openGraph: {
       type: openGraphType,
       title,

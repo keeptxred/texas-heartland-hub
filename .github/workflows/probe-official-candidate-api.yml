@@ -2,12 +2,6 @@ name: Probe official candidate API
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "scripts/elections/probe-official-candidate-api.mjs"
-      - ".github/workflows/probe-official-candidate-api.yml"
 
 permissions:
   contents: write
@@ -22,29 +16,22 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+          fetch-depth: 0
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
-
+          bun-version: 1.3.14
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --reporter=silent
-
+        run: bun install --frozen-lockfile
       - name: Install Chromium
-        run: pnpm exec playwright install --with-deps chromium
-
+        run: bun x playwright install --with-deps chromium
       - name: Capture official API payload
         id: capture
         continue-on-error: true
-        run: node scripts/elections/probe-official-candidate-api.mjs
-
+        run: bun run scripts/elections/probe-official-candidate-api.mjs
       - name: Upload official API payload
         if: always()
         uses: actions/upload-artifact@v4
@@ -53,21 +40,37 @@ jobs:
           path: /tmp/official-candidate-api-payload.json
           if-no-files-found: warn
           retention-days: 7
-
-      - name: Publish safe schema summary
+      - name: Publish verified schema summary
         if: always()
         shell: bash
         env:
           CAPTURE_OUTCOME: ${{ steps.capture.outcome }}
         run: |
+          if [[ "$CAPTURE_OUTCOME" != "success" ]]; then
+            echo "Candidate API capture failed; refusing to publish a partial or stale schema."
+            exit 1
+          fi
+          if [[ ! -s src/data/elections/2026/candidate-api-schema.json ]]; then
+            echo "Capture succeeded but produced no schema summary."
+            exit 1
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add src/data/elections/2026/candidate-api-schema.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Record official candidate API schema"
-            git pull --rebase origin main
-            git push origin HEAD:main
+          if git diff --cached --quiet; then
+            echo "Candidate API schema is already current."
+            exit 0
           fi
-          if [[ "$CAPTURE_OUTCOME" != "success" ]]; then
+          unexpected=$(git diff --cached --name-only | grep -v '^src/data/elections/2026/candidate-api-schema.json$' || true)
+          if [[ -n "$unexpected" ]]; then
+            echo "Refusing to publish unexpected files:"
+            echo "$unexpected"
             exit 1
           fi
+          git commit -m "Record official candidate API schema"
+          git fetch origin main
+          if [[ "$(git rev-parse HEAD^)" != "$(git rev-parse origin/main)" ]]; then
+            echo "Main advanced during candidate API probing; refusing stale schema publication."
+            exit 1
+          fi
+          git push origin HEAD:main

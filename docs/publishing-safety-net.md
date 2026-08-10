@@ -23,6 +23,18 @@ Use the override only when an article must legally or operationally be removed.
 If a URL changes for editorial reasons, preserve the original URL or create an
 explicit permanent redirect.
 
+## Publication boundary validation
+
+`bun run publication:validate` is a required repository check. It discovers all
+code paths that insert, upsert, or update `daily_articles`, rejects unregistered
+writers, verifies that normal writers pass through the Keep TX Red ownership
+gate, and limits maintenance writers to their approved metadata fields.
+
+The check runs in both the focused **Validate Publication Writers** workflow and
+the repository’s full validation workflow. Any new publication or maintenance
+writer must be registered in `scripts/shared/validate-publication-writers.mjs`
+and added to the focused workflow path filters in the same change.
+
 ## Stall detection
 
 `/api/public/hooks/publishing-safety-net` runs hourly at minute 17. It treats the

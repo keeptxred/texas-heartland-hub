@@ -1,0 +1,59 @@
+name: Legislative platform validation
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'src/start.ts'
+      - 'src/routes/bills/**'
+      - 'src/routes/admin/bills/**'
+      - 'src/routes/news.$slug.tsx'
+      - 'src/components/bills/**'
+      - 'src/components/newsletter-signup.tsx'
+      - 'src/lib/bills.ts'
+      - 'src/lib/bill-hierarchy.ts'
+      - 'src/lib/bill-subjects.ts'
+      - 'src/lib/article-bills.ts'
+      - 'src/lib/bill-analysis-summary.ts'
+      - 'src/lib/bill-fiscal-impact.ts'
+      - 'src/lib/bill-source-agencies.ts'
+      - 'src/lib/bill-witness-summary.ts'
+      - 'src/lib/legislative-sitemaps.ts'
+      - 'scripts/legislature/**'
+      - 'supabase/migrations/**bill**'
+      - 'supabase/migrations/**legislative**'
+      - '.github/workflows/legislative-platform-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: legislative-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - run: bun install --frozen-lockfile
+      - name: Validate legislative architecture
+        run: bun run legislature:validate
+      - name: Validate bill crawl URLs
+        run: node scripts/legislature/validate-bill-crawl-urls.mjs
+      - name: Validate article-to-bill display
+        run: node scripts/legislature/validate-article-bill-display.mjs
+      - name: Validate bill analysis summaries
+        run: node scripts/legislature/validate-bill-analysis-summary.mjs
+      - name: Validate bill fiscal impact display
+        run: node scripts/legislature/validate-bill-fiscal-impact.mjs
+      - name: Validate verified bill source agencies
+        run: node scripts/legislature/validate-bill-source-agencies.mjs
+      - name: Validate bill witness summaries
+        run: node scripts/legislature/validate-bill-witness-summary.mjs

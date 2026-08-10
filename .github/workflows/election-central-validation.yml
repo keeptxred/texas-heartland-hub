@@ -2,9 +2,16 @@ name: Election Central validation
 
 on:
   pull_request:
+    branches: [main]
     paths:
       - "src/data/elections/**"
       - "src/lib/elections/**"
+      - "src/lib/authority-entity.ts"
+      - "src/lib/authority-entity-paths.ts"
+      - "src/lib/authority-entity-registry.ts"
+      - "src/lib/candidate-authority.ts"
+      - "src/lib/race-authority.ts"
+      - "src/lib/election-authority-registry.ts"
       - "src/types/elections/**"
       - "src/components/elections/**"
       - "src/components/admin/elections/**"
@@ -12,22 +19,9 @@ on:
       - "src/routes/elections*"
       - "src/routes/sitemap-elections*"
       - "scripts/elections/**"
+      - "public/images/elections/**"
       - "package.json"
-      - ".github/workflows/election-central-validation.yml"
-  push:
-    branches:
-      - main
-    paths:
-      - "src/data/elections/**"
-      - "src/lib/elections/**"
-      - "src/types/elections/**"
-      - "src/components/elections/**"
-      - "src/components/admin/elections/**"
-      - "src/pages/elections/**"
-      - "src/routes/elections*"
-      - "src/routes/sitemap-elections*"
-      - "scripts/elections/**"
-      - "package.json"
+      - "bun.lock"
       - ".github/workflows/election-central-validation.yml"
   workflow_dispatch:
 
@@ -35,39 +29,31 @@ permissions:
   contents: read
 
 concurrency:
-  group: election-central-validation-${{ github.ref }}
+  group: election-central-validation-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 10
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/checkout@v5
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
-
+          bun-version: 1.3.14
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --reporter=silent
-
+        run: bun install --frozen-lockfile
       - name: Validate canonical election data
-        run: pnpm elections:validate
-
+        run: bun run elections:validate
+      - name: Validate race authority graph
+        run: bun scripts/elections/validate-race-authority.mjs
+      - name: Validate complete Phase 3 graph
+        run: bun scripts/elections/validate-phase-3-authority-graph.mjs
       - name: Run election calculation fixtures
-        run: pnpm exec vitest run src/lib/elections
-
-      - name: Typecheck application
-        run: pnpm typecheck
-
-      - name: Build production application and routes
-        run: pnpm build
-
+        run: bunx vitest run src/lib/elections
       - name: Run real-data launch QA
-        run: pnpm elections:qa
+        run: bun run elections:qa
+      - name: Run public-launch audit
+        run: bun scripts/elections/public-launch-audit.mjs

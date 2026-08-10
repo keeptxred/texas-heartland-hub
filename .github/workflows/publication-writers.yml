@@ -1,0 +1,38 @@
+name: Validate Publication Writers
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'src/lib/content-publication-guard.ts'
+      - 'src/lib/content-quality.ts'
+      - 'src/lib/ctr-loop.functions.ts'
+      - 'src/lib/featured-image.functions.ts'
+      - 'src/lib/gsc.ts'
+      - 'src/routes/api/public/hooks/**'
+      - 'src/lib/ingest-and-normalize.functions.ts'
+      - 'scripts/shared/validate-publication-writers.mjs'
+      - '.github/workflows/publication-writers.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publication-writers-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-publication-writers:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Audit article publication writers
+        run: bun run publication:validate

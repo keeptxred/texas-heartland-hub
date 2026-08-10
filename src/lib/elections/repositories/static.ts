@@ -50,6 +50,9 @@ type Query = {
 type ExtendedRace = ElectionRace & {
   counties?: readonly { id: ElectionEntityId; name: string; slug: string }[];
   zipCodes?: readonly string[];
+  officialCountyElectionLinks?: RaceDetail["officialCountyElectionLinks"];
+  geographySource?: RaceDetail["geographySource"];
+  countyElectionLinkSource?: RaceDetail["countyElectionLinkSource"];
 };
 type ExtendedCandidate = ElectionCandidate & {
   fundraising?: CandidateDetail["fundraising"];
@@ -350,6 +353,8 @@ function raceDetail(record: ExtendedRace): RaceDetail {
   const result = latest(results.filter((item) => item.raceId === record.id));
   return {
     ...record,
+    counties: record.counties ?? [],
+    zipCodes: record.zipCodes ?? [],
     candidates: candidates.filter((candidate) => candidate.raceIds.includes(record.id)).map(raceCandidate),
     latestPoll: poll
       ? {

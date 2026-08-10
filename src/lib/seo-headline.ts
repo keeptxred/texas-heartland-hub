@@ -88,10 +88,28 @@ export function toImageInput(article: ArticleLike): ArticleImageInput {
 }
 
 /**
+ * Published military-honor stories may still carry an older generic image in
+ * daily_articles. Subject-specific honor art must override that stale cached
+ * URL at render time so existing stories are corrected without republishing.
+ */
+function resolveSubjectImage(article: ArticleLike): string | null {
+  const subject = `${article.slug} ${article.title} ${article.seo_headline ?? ""}`.toLowerCase();
+  if (subject.includes("purple heart") || subject.includes("purple-heart")) {
+    return "/images/military-honors/purple-heart.svg";
+  }
+  return null;
+}
+
+/**
  * Convenience: same output as getArticleImage(toImageInput(article)).
  */
 export function resolveArticleImage(article: ArticleLike): string {
-  // AI-generated featured image always wins.
+  // Explicit subject art wins even when a published DB row still points at an
+  // older generic featured image.
+  const subjectImage = resolveSubjectImage(article);
+  if (subjectImage) return subjectImage;
+
+  // AI-generated featured image wins for all other stories.
   const featured = (article.featured_image_url ?? "").trim();
   if (featured) return featured;
   return getArticleImage(toImageInput(article));

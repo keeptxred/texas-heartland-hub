@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.explore-review]
 verify_jwt = false
+
+[functions.legislative-document-import]
+verify_jwt = false

@@ -57,6 +57,13 @@ function Page() {
         <section>
           <h2 className="text-2xl font-bold text-slate-950">Polling averages</h2>
           <p className="mt-2">
+            Poll discovery includes original pollster releases, university polling archives, and
+            major public aggregators such as RealClearPolling. Aggregators are treated as discovery
+            and coverage-audit sources—not as substitutes for an original topline, questionnaire,
+            or methodology statement. A poll enters the KeepTXRed dataset only after its reported
+            figures and field information can be traced to a source record.
+          </p>
+          <p className="mt-2">
             A qualifying poll receives a multiplicative weight. The implemented formula is:
           </p>
           <p className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-4 font-mono text-sm text-slate-900">

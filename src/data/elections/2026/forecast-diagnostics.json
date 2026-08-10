@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-07-30T22:26:20.120Z",
+  "generatedAt": "2026-08-08T11:44:47.750Z",
   "totals": {
     "races": 227,
-    "candidates": 464,
+    "candidates": 478,
     "polls": 8,
     "publishedVerifiedRaces": 227,
     "racesWithCandidateMatches": 208,
@@ -32,9 +32,10 @@
         "candidate-ken-paxton-republican-race-2026-us-senate",
         "candidate-ted-brown-libertarian-race-2026-us-senate"
       ],
-      "matchedCandidateCount": 3,
+      "matchedCandidateCount": 4,
       "matchedCandidateIds": [
         "candidate-james-talarico-democratic-race-2026-us-senate",
+        "candidate-jade-simmons-independent-race-2026-us-senate",
         "candidate-ted-brown-libertarian-race-2026-us-senate",
         "candidate-ken-paxton-republican-race-2026-us-senate"
       ],
@@ -65,9 +66,11 @@
         "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidate-pat-dixon-libertarian-race-2026-governor"
       ],
-      "matchedCandidateCount": 4,
+      "matchedCandidateCount": 6,
       "matchedCandidateIds": [
         "candidate-gina-hinojosa-democratic-race-2026-governor",
+        "candidate-demetra-jefferson-wysinger-independent-race-2026-governor",
+        "candidate-sarah-bowman-cunningham-independent-race-2026-governor",
         "candidate-pat-dixon-libertarian-race-2026-governor",
         "candidate-jenn-mack-other-race-2026-governor",
         "candidate-greg-abbott-republican-race-2026-governor"
@@ -99,10 +102,11 @@
         "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
         "candidate-kevin-mccormick-green-race-2026-lieutenant-governor"
       ],
-      "matchedCandidateCount": 5,
+      "matchedCandidateCount": 6,
       "matchedCandidateIds": [
         "candidate-vikki-goodwin-democratic-race-2026-lieutenant-governor",
         "candidate-kevin-mccormick-green-race-2026-lieutenant-governor",
+        "candidate-mike-collier-independent-race-2026-lieutenant-governor",
         "candidate-anthony-cristo-libertarian-race-2026-lieutenant-governor",
         "candidate-arturo-espinosa-other-race-2026-lieutenant-governor",
         "candidate-dan-patrick-republican-race-2026-lieutenant-governor"

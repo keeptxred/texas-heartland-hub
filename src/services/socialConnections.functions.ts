@@ -40,7 +40,7 @@ async function getAdmin(): Promise<Admin> {
 }
 
 export const listSocialConnectionsFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => TokenInput.parse(d))
+  .validator((d: unknown) => TokenInput.parse(d))
   .handler(
     async ({
       data,
@@ -57,7 +57,7 @@ export const listSocialConnectionsFn = createServerFn({ method: "POST" })
   );
 
 export const disconnectSocialFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => PlatformInput.parse(d))
+  .validator((d: unknown) => PlatformInput.parse(d))
   .handler(async ({ data }): Promise<{ ok: boolean; error?: string }> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -70,7 +70,7 @@ export const disconnectSocialFn = createServerFn({ method: "POST" })
   });
 
 export const testSocialConnectionFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => PlatformInput.parse(d))
+  .validator((d: unknown) => PlatformInput.parse(d))
   .handler(
     async ({ data }): Promise<{ ok: boolean; account?: string; error?: string }> => {
       if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };

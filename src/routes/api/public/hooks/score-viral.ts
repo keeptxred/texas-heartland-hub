@@ -4,9 +4,11 @@ import {
   scoreFeedItem,
   classifySourceReputation,
   qualifiesReadyForRewrite,
+  qualifiesForAutoRewrite,
   VIRAL_READY_MIN_SCORE,
 } from "@/lib/viral-score";
 import { isLowValueTitle } from "@/lib/low-value-titles";
+import { publishSingleFeedItem } from "./ingest-feeds";
 
 const DISCOVERY_FEEDS = [
   {
@@ -26,6 +28,22 @@ const DISCOVERY_FEEDS = [
     url: "https://www.texastribune.org/topics/energy/feed",
   },
 ] as const;
+
+const AUTO_PUBLISH_PER_RUN = 6;
+const MAX_AUTO_PUBLISH_ATTEMPTS_PER_RUN = 18;
+
+const POST_REWRITE_REVIEW_RE =
+  /\b(election|elections|candidate|candidates|campaign|campaigns|ballot|ballots|voter|voters|voting|primary|runoff|poll|polls|polling|redistrict(?:ing)?|lawsuit|sues?|sued|court|judge|ruling|injunction|indicted|indictment|arrested|charged|charges|suspect|murder|homicide|shooting|killed|dead|death|dies|sexual assault|rape|abuse|fraud claim|unverified|threat(?:en|ened|ening)?|swatting)\b/i;
+
+function requiresPostRewriteReview(article: {
+  title?: string | null;
+  dek?: string | null;
+  body?: string | null;
+  category?: string | null;
+}): boolean {
+  const text = `${article.title ?? ""} ${article.dek ?? ""} ${article.body ?? ""} ${article.category ?? ""}`;
+  return POST_REWRITE_REVIEW_RE.test(text);
+}
 
 function decodeXml(value: string): string {
   return value
@@ -59,15 +77,13 @@ function parseGoogleNewsFeed(xml: string, fallbackSource: string) {
     const title = titleParts.join(" - ").trim() || rawTitle;
     const parsedDate = Date.parse(rawDate);
 
-    return [
-      {
-        title: title.slice(0, 500),
-        link,
-        pub_date: new Date(Number.isNaN(parsedDate) ? Date.now() : parsedDate).toISOString(),
-        source,
-        description: description.slice(0, 1000),
-      },
-    ];
+    return [{
+      title: title.slice(0, 500),
+      link,
+      pub_date: new Date(Number.isNaN(parsedDate) ? Date.now() : parsedDate).toISOString(),
+      source,
+      description: description.slice(0, 1000),
+    }];
   });
 }
 
@@ -113,9 +129,6 @@ async function ingestDiscoveryFeeds(
   return { fetched, inserted, feedsOk, errors };
 }
 
-// Refreshes ingestion first, then recomputes viral scoring for recent feed rows.
-// This makes the admin "Rescore Now" action a true newsroom refresh instead of
-// merely recalculating stale rows that were already in texas_news_feed.
 export const Route = createFileRoute("/api/public/hooks/score-viral")({
   server: {
     handlers: {
@@ -143,14 +156,12 @@ async function scoreRecent(request: Request) {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  // Import verified direct publisher RSS feeds during every manual newsroom refresh.
-  // This does not depend on Supabase migrations or content_sources being populated.
   const discovery = await ingestDiscoveryFeeds(supabase);
 
   const sinceIso = new Date(Date.now() - 72 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from("texas_news_feed")
-    .select("id,title,source,link,pub_date,description,viral_score,internal_slug")
+    .select("id,title,source,link,pub_date,description,viral_score,viral_signals,internal_slug")
     .gte("pub_date", sinceIso)
     .order("pub_date", { ascending: false })
     .limit(300);
@@ -164,6 +175,7 @@ async function scoreRecent(request: Request) {
     pub_date: string;
     description: string | null;
     viral_score: number | null;
+    viral_signals: Record<string, unknown> | null;
     internal_slug: string | null;
   }>;
 
@@ -199,8 +211,12 @@ async function scoreRecent(request: Request) {
   const now = new Date().toISOString();
   let updated = 0;
   let readyFlagged = 0;
+  let autoPublishFlagged = 0;
+  let reviewFlagged = 0;
   let reelsQueued = 0;
   let removedMediaStubs = 0;
+  let postRewriteReviewBlocked = 0;
+  const autoPublishCandidates: Array<{ id: number; score: number; pubDate: string }> = [];
 
   const VIDEO_RE = /(youtube\.com|youtu\.be|tiktok\.com|instagram\.com\/reel|twitter\.com\/.+\/status|x\.com\/.+\/status|\.mp4|video)/i;
 
@@ -238,8 +254,19 @@ async function scoreRecent(request: Request) {
     const prior = row.viral_score ?? 0;
     const trendVelocity = Number(((result.viralScore - prior) + (sourceCount - 1) * 5).toFixed(2));
 
+    const postRewriteReviewRequired = row.viral_signals?.post_rewrite_review_required === true;
     const readyForRewrite = qualifiesReadyForRewrite(result);
+    const autoPublish =
+      qualifiesForAutoRewrite(result) &&
+      result.editorialLane === "AUTO_PUBLISH" &&
+      !postRewriteReviewRequired;
+    const persistedEditorialLane = postRewriteReviewRequired ? "REVIEW" : result.editorialLane;
     if (readyForRewrite) readyFlagged += 1;
+    if (autoPublish) autoPublishFlagged += 1;
+    if (persistedEditorialLane === "REVIEW") reviewFlagged += 1;
+    if (autoPublish && !row.internal_slug) {
+      autoPublishCandidates.push({ id: row.id, score: result.editorialValueScore, pubDate: row.pub_date });
+    }
 
     const { error: updateError } = await supabase
       .from("texas_news_feed")
@@ -250,6 +277,11 @@ async function scoreRecent(request: Request) {
           ...result.signals,
           source_reputation_reason: result.sourceReputationReason,
           has_video: hasVideo,
+          editorial_value_score: result.editorialValueScore,
+          editorial_lane: persistedEditorialLane,
+          editorial_signals: result.editorialSignals,
+          auto_publish_eligible: autoPublish,
+          post_rewrite_review_required: postRewriteReviewRequired,
         },
         texas_relevance_score: result.texasRelevanceScore,
         source_reputation_score: result.sourceReputationScore,
@@ -275,11 +307,93 @@ async function scoreRecent(request: Request) {
           source_url: row.link || "",
           title: row.title,
           topic: result.signals.category,
-          notes: `Auto-added from Viral Radar (score ${result.viralScore})`,
+          notes: `Auto-added from Viral Radar (viral ${result.viralScore}, editorial ${result.editorialValueScore}, lane ${persistedEditorialLane})`,
           status: "queued",
         });
         reelsQueued += 1;
       }
+    }
+  }
+
+  autoPublishCandidates.sort((a, b) =>
+    b.score - a.score || Date.parse(b.pubDate) - Date.parse(a.pubDate),
+  );
+  const autoPublishResults: Array<{
+    id: number;
+    ok: boolean;
+    slug?: string;
+    error?: string;
+    alreadyPublished?: boolean;
+    reviewRequired?: boolean;
+  }> = [];
+  let autoPublishSucceeded = 0;
+  let autoPublishAttempted = 0;
+
+  for (const candidate of autoPublishCandidates) {
+    if (autoPublishSucceeded >= AUTO_PUBLISH_PER_RUN) break;
+    if (autoPublishAttempted >= MAX_AUTO_PUBLISH_ATTEMPTS_PER_RUN) break;
+    autoPublishAttempted += 1;
+    try {
+      const result = await publishSingleFeedItem(candidate.id);
+
+      if (result.ok && result.slug && !result.alreadyPublished) {
+        const { data: publishedArticle, error: articleReadError } = await supabase
+          .from("daily_articles")
+          .select("title,dek,body,category")
+          .eq("slug", result.slug)
+          .maybeSingle();
+
+        if (!articleReadError && publishedArticle && requiresPostRewriteReview(publishedArticle)) {
+          const { error: deleteError } = await supabase
+            .from("daily_articles")
+            .delete()
+            .eq("slug", result.slug);
+
+          if (!deleteError) {
+            const { data: feedState } = await supabase
+              .from("texas_news_feed")
+              .select("viral_signals")
+              .eq("id", candidate.id)
+              .maybeSingle();
+            const priorSignals =
+              feedState?.viral_signals && typeof feedState.viral_signals === "object"
+                ? (feedState.viral_signals as Record<string, unknown>)
+                : {};
+            await supabase
+              .from("texas_news_feed")
+              .update({
+                internal_slug: null,
+                ready_for_rewrite: true,
+                viral_signals: {
+                  ...priorSignals,
+                  editorial_lane: "REVIEW",
+                  auto_publish_eligible: false,
+                  post_rewrite_review_required: true,
+                  post_rewrite_review_reason: "Sensitive topic detected in completed draft",
+                },
+              })
+              .eq("id", candidate.id);
+            postRewriteReviewBlocked += 1;
+            autoPublishResults.push({
+              id: candidate.id,
+              ok: false,
+              slug: result.slug,
+              reviewRequired: true,
+              error: "Post-rewrite safety gate moved the completed draft to REVIEW.",
+            });
+            continue;
+          }
+        }
+      }
+
+      autoPublishResults.push({ id: candidate.id, ...result });
+      if (result.ok && result.slug && !result.alreadyPublished) autoPublishSucceeded += 1;
+    } catch (error) {
+      autoPublishResults.push({
+        id: candidate.id,
+        ok: false,
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   }
 
@@ -290,6 +404,12 @@ async function scoreRecent(request: Request) {
     scanned: rows.length,
     updated,
     readyFlagged,
+    autoPublishFlagged,
+    reviewFlagged,
+    autoPublishAttempted,
+    autoPublished: autoPublishSucceeded,
+    postRewriteReviewBlocked,
+    autoPublishResults,
     reelsQueued,
     removedMediaStubs,
   });

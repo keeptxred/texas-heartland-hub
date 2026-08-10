@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { buildElectionSeo, buildElectionWebPageSchema, ELECTION_ROUTES } from "@/lib/elections";
+import { getFeaturedCandidateProfile } from "@/lib/elections/featuredCandidateProfiles";
 import type { CandidateDetail, RaceDetail } from "@/types/elections";
 
 export interface CandidateDetailSeoProps {
@@ -18,11 +19,16 @@ function safePublicUrl(value: string | null | undefined) {
 }
 
 export function CandidateDetailSeo({ candidate, race }: CandidateDetailSeoProps) {
+  const featuredProfile = getFeaturedCandidateProfile(candidate.fullName);
   const pathname = ELECTION_ROUTES.candidate(candidate.slug);
   const description =
     candidate.biography ??
+    featuredProfile?.biography ??
     `Review verified election information for ${candidate.fullName}${race ? ` in the ${race.name}` : ""}.`;
-  const usableImage = candidate.imageRights?.usageStatus === "approved" ? candidate.imageUrl : null;
+  const usableImage =
+    candidate.imageRights?.usageStatus === "approved"
+      ? candidate.imageUrl
+      : featuredProfile?.imageUrl ?? null;
   const metadata = buildElectionSeo({
     title: candidate.fullName,
     description,
@@ -54,6 +60,7 @@ export function CandidateDetailSeo({ candidate, race }: CandidateDetailSeoProps)
     candidate.socialLinks.instagramUrl,
     candidate.socialLinks.youtubeUrl,
     candidate.socialLinks.linkedinUrl,
+    ...(featuredProfile?.sameAs ?? []),
   ].flatMap((value) => {
     const url = safePublicUrl(value);
     return url ? [url] : [];
@@ -65,6 +72,22 @@ export function CandidateDetailSeo({ candidate, race }: CandidateDetailSeoProps)
     url: metadata.canonicalUrl,
     ...(usableImage ? { image: usableImage } : {}),
     ...(race?.officeName ? { jobTitle: `Candidate for ${race.officeName}` } : {}),
+    ...(featuredProfile?.occupation
+      ? {
+          hasOccupation: {
+            "@type": "Occupation",
+            name: featuredProfile.occupation,
+          },
+        }
+      : {}),
+    ...(featuredProfile?.education.length
+      ? {
+          alumniOf: featuredProfile.education.map((education) => ({
+            "@type": "EducationalOrganization",
+            name: education,
+          })),
+        }
+      : {}),
     affiliation: {
       "@type": "Organization",
       name: candidate.partyLabel ?? candidate.party,

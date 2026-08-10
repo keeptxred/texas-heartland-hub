@@ -24,7 +24,7 @@ Produce concise, factual, high-engagement copy. Do NOT invent facts. Keep tone c
 Return ONLY valid JSON matching the requested schema. No prose outside JSON.`;
 
 export const generateContentPackageFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => InputSchema.parse(d))
+  .validator((d: unknown) => InputSchema.parse(d))
   .handler(async ({ data }): Promise<OkResp | ErrResp> => {
     const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
     if (data.token !== expected) return { ok: false, error: "Unauthorized" };

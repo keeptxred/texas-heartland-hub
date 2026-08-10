@@ -1,7 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
-import { assessImageUrl, verifyImageIsReachable } from "@/lib/facebook-image-readiness";
+import {
+  assessImageUrl,
+  FACEBOOK_IMAGE_FETCH_HEADERS,
+  normalizeFacebookUploadImageUrl,
+  verifyImageIsReachable,
+} from "@/lib/facebook-image-readiness";
 
 function authOk(token: string): boolean {
   const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
@@ -22,6 +27,7 @@ const Input = z.object({
 const GRAPH_VERSION = "v21.0";
 const KEEP_TX_RED_PAGE_ID = "1211420085383129";
 const SITE_URL = "https://keeptxred.com";
+const MAX_FACEBOOK_IMAGE_BYTES = 12 * 1024 * 1024;
 
 function normalizeAssetUrl(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
@@ -84,7 +90,7 @@ function validateArticleUrl(raw: unknown): string | null {
 }
 
 export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => Input.parse(d))
+  .validator((d: unknown) => Input.parse(d))
   .handler(async ({ data }): Promise<QuickPublishResult> => {
     if (!authOk(data.token)) return { ok: false, error: "Unauthorized" };
     console.log("[quickPublish] incoming", {
@@ -347,11 +353,36 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
 
     try {
       let endpoint: string;
-      const body = new URLSearchParams();
+      // Upload image bytes so Meta never has to fetch a third-party host that
+      // may serve a public browser request but return 403 to Facebook.
+      const uploadImageUrl = normalizeFacebookUploadImageUrl(resolvedAssetUrl!);
+      if (!uploadImageUrl) {
+        return { ok: false, error: "Facebook post blocked: the featured image URL is invalid." };
+      }
+      const imageResponse = await fetch(uploadImageUrl, {
+        headers: FACEBOOK_IMAGE_FETCH_HEADERS,
+        redirect: "follow",
+      });
+      const imageContentType = imageResponse.headers.get("content-type")?.split(";", 1)[0]?.trim() ?? "";
+      if (!imageResponse.ok || !imageContentType.startsWith("image/")) {
+        return {
+          ok: false,
+          error: `Facebook post blocked: the featured image could not be downloaded for upload (HTTP ${imageResponse.status}).`,
+        };
+      }
+      const contentLength = Number(imageResponse.headers.get("content-length") ?? "0");
+      if (Number.isFinite(contentLength) && contentLength > MAX_FACEBOOK_IMAGE_BYTES) {
+        return { ok: false, error: "Facebook post blocked: the featured image is too large to upload." };
+      }
+      const imageBytes = await imageResponse.arrayBuffer();
+      if (imageBytes.byteLength === 0 || imageBytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES) {
+        return { ok: false, error: "Facebook post blocked: the downloaded featured image is empty or too large." };
+      }
+
+      const body = new FormData();
       body.set("access_token", pageToken);
-      // Hard-gated above: resolvedAssetUrl is guaranteed present and image-verified.
+      body.set("source", new Blob([imageBytes], { type: imageContentType }), "featured-image");
       endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/photos`;
-      body.set("url", resolvedAssetUrl!);
       // Graph /photos ignores `link`; append the article URL to the caption.
       body.set("caption", `${caption}\n\n${link}`);
       console.log("[quickPublish:server] publish mode", {

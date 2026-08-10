@@ -4,60 +4,46 @@ on:
   schedule:
     - cron: "17 11 * * *"
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "scripts/elections/forecast.ts"
-      - "scripts/elections/validate-forecast-pipeline.mjs"
-      - "scripts/elections/polling-averages.ts"
-      - "src/data/elections/2026/polls.json"
-      - "src/data/elections/2026/candidates.json"
-      - "src/data/elections/2026/races.json"
-      - "package.json"
-      - ".github/workflows/update-election-forecasts.yml"
 
 permissions:
   contents: write
 
 concurrency:
-  group: election-data-refresh
-  cancel-in-progress: false
+  group: election-forecast-refresh
+  cancel-in-progress: true
 
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 15
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          node-version: 22
-
-      - name: Install pnpm
-        run: corepack enable && corepack prepare pnpm@10.12.1 --activate
+          bun-version: 1.3.14
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile --reporter=silent
+        run: bun install --frozen-lockfile
 
       - name: Recalculate forecasts from latest main
         shell: bash
         run: |
           git fetch origin main
           git reset --hard origin/main
-          pnpm elections:polling-averages
-          pnpm elections:forecast
+          bun run elections:polling-averages
+          bun run elections:forecast
 
       - name: Validate election data and forecast invariants
         run: |
-          pnpm elections:validate
-          pnpm elections:qa
+          bun run elections:validate
+          bun run elections:validate:forecast
+          bun run elections:qa
 
       - name: Commit changed forecast snapshots
         shell: bash
@@ -71,6 +57,12 @@ jobs:
           if git diff --cached --quiet; then
             echo "No forecast changes to commit."
             exit 0
+          fi
+          unexpected_files="$(git diff --cached --name-only | grep -vE '^src/data/elections/2026/(forecasts|forecast-diagnostics|polling-averages|sources|readiness)\.json$' || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Refusing to publish files outside the forecast allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

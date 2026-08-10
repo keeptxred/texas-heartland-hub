@@ -29,7 +29,7 @@ type CheckoutInput = {
 type CheckoutResult = { clientSecret: string } | { error: string };
 
 export const createCartCheckoutSession = createServerFn({ method: "POST" })
-  .inputValidator((data: CheckoutInput) => {
+  .validator((data: CheckoutInput) => {
     if (!Array.isArray(data.items) || data.items.length === 0) {
       throw new Error("Cart is empty");
     }

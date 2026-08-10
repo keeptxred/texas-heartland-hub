@@ -18,7 +18,7 @@ export function LegalPage({
         <ol className="flex flex-wrap items-center gap-2">
           <li><Link to="/" className="hover:text-primary">Home</Link></li>
           <li aria-hidden>/</li>
-          <li><Link to="/shop" className="hover:text-primary">Shop</Link></li>
+          <li><Link to="/shop" search={{ category: undefined, collection: undefined, q: undefined, sort: undefined }} className="hover:text-primary">Shop</Link></li>
           <li aria-hidden>/</li>
           <li className="font-medium text-foreground">{title}</li>
         </ol>
