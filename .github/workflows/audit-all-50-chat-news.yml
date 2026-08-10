@@ -1,4 +1,5 @@
 name: Audit all 50 chat-created KTR articles
+# Re-run after the all-50 fallback and current production deployment fixes.
 
 on:
   pull_request:
