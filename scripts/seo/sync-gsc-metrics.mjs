@@ -37,7 +37,7 @@ const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
   method: 'POST',
   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   body: new URLSearchParams({
-    grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+    grant_type: 'urn:ietf:params:oauth-grant-type:jwt-bearer',
     assertion,
   }),
 });
@@ -114,6 +114,7 @@ for (let i = 0; i < metrics.length; i += 500) {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${githubToken}`,
+      'X-GitHub-Token': githubToken,
       'Content-Type': 'application/json',
       'X-GitHub-Run-Id': githubRunId,
       'X-GitHub-Repository': githubRepository,
