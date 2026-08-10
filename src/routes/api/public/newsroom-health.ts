@@ -71,29 +71,69 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
         const twoDaysAgoMs = now - 48 * 60 * 60 * 1000;
         const sevenDaysAgoMs = now - 7 * 24 * 60 * 60 * 1000;
 
-        const [gapResult, sourcesResult, feedResult, ktrPublishedResult, texasDefinedQueueResult, texasDefinedReadyResult, texasDefinedArticlesResult] = await Promise.all([
+        const [gapResult, sourcesResult, ktrPublishedResult] = await Promise.all([
           supabaseAdmin.from("news_coverage_gaps" as never).select("id", { count: "exact", head: true }),
           supabaseAdmin.from("content_sources" as never).select("source_name,rss_url,category").eq("enabled", true).not("rss_url", "is", null),
-          supabaseAdmin.from("texas_news_feed" as never).select("title,description,source,pub_date,internal_slug,target_site,target_section").gte("pub_date", sevenDaysAgo).limit(1000),
           supabaseAdmin.from("daily_articles" as never).select("slug,title,published_at").gte("published_at", sevenDaysAgo).order("published_at", { ascending: false }).limit(500),
-          supabaseAdmin.from("texasdefined_story_queue" as never).select("id", { count: "exact", head: true }),
-          supabaseAdmin.from("texasdefined_ready_queue" as never).select("id,title,description,source,link,target_section,pub_date", { count: "exact" }).order("pub_date", { ascending: false }).limit(10),
-          supabaseAdmin.from("texasdefined_articles" as never).select("slug,title,published_at", { count: "exact" }).eq("status", "published").order("published_at", { ascending: false }).limit(100),
         ]);
 
-        const errors = [gapResult.error?.message, sourcesResult.error?.message, feedResult.error?.message, ktrPublishedResult.error?.message, texasDefinedQueueResult.error?.message, texasDefinedReadyResult.error?.message, texasDefinedArticlesResult.error?.message].filter(Boolean);
-        if (errors.length > 0) {
-          return new Response(JSON.stringify({ ok: false, databaseViewsReady: false, texasDefinedChannelReady: false, errors }), {
+        let feedResult = await supabaseAdmin.from("texas_news_feed" as never)
+          .select("title,description,source,pub_date,internal_slug,target_site,target_section")
+          .gte("pub_date", sevenDaysAgo).limit(1000);
+        let routingSchemaReady = true;
+        if (feedResult.error) {
+          routingSchemaReady = false;
+          feedResult = await supabaseAdmin.from("texas_news_feed" as never)
+            .select("title,description,source,pub_date,internal_slug")
+            .gte("pub_date", sevenDaysAgo).limit(1000) as typeof feedResult;
+        }
+
+        const coreErrors = [gapResult.error?.message, sourcesResult.error?.message, feedResult.error?.message, ktrPublishedResult.error?.message].filter(Boolean);
+        if (coreErrors.length > 0) {
+          return new Response(JSON.stringify({ ok: false, databaseViewsReady: false, texasDefinedChannelReady: false, errors: coreErrors }), {
             status: 503,
             headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
           });
         }
 
+        let texasDefinedQueueCount = 0;
+        let texasDefinedReadyCount = 0;
+        let texasDefinedPublishedCount = 0;
+        let texasDefinedReadySample: TexasDefinedReadyRow[] = [];
+        let texasDefinedPublishedSample: PublishedRow[] = [];
+        const optionalErrors: string[] = [];
+
+        const tdQueueResult = await supabaseAdmin.from("texasdefined_story_queue" as never).select("id", { count: "exact", head: true });
+        if (tdQueueResult.error) optionalErrors.push(tdQueueResult.error.message); else texasDefinedQueueCount = tdQueueResult.count ?? 0;
+
+        const tdReadyResult = await supabaseAdmin.from("texasdefined_ready_queue" as never)
+          .select("id,title,description,source,link,target_section,pub_date", { count: "exact" }).order("pub_date", { ascending: false }).limit(10);
+        if (tdReadyResult.error) optionalErrors.push(tdReadyResult.error.message);
+        else {
+          texasDefinedReadyCount = tdReadyResult.count ?? 0;
+          texasDefinedReadySample = (tdReadyResult.data ?? []) as unknown as TexasDefinedReadyRow[];
+        }
+
+        const tdArticlesResult = await supabaseAdmin.from("texasdefined_articles" as never)
+          .select("slug,title,published_at", { count: "exact" }).eq("status", "published").order("published_at", { ascending: false }).limit(100);
+        if (tdArticlesResult.error) optionalErrors.push(tdArticlesResult.error.message);
+        else {
+          texasDefinedPublishedCount = tdArticlesResult.count ?? 0;
+          texasDefinedPublishedSample = (tdArticlesResult.data ?? []) as unknown as PublishedRow[];
+        }
+
+        const texasDefinedChannelReady = routingSchemaReady && optionalErrors.length === 0;
         const sourceRows = (sourcesResult.data ?? []) as unknown as SourceRow[];
-        const feedRows = (feedResult.data ?? []) as unknown as FeedRow[];
+        const feedRows = ((feedResult.data ?? []) as unknown as Array<Partial<FeedRow>>).map((row) => ({
+          title: String(row.title ?? ""),
+          description: row.description ?? null,
+          source: String(row.source ?? ""),
+          pub_date: row.pub_date ?? null,
+          internal_slug: row.internal_slug ?? null,
+          target_site: row.target_site ?? null,
+          target_section: row.target_section ?? null,
+        }));
         const ktrPublishedRows = (ktrPublishedResult.data ?? []) as unknown as PublishedRow[];
-        const texasDefinedReadySample = (texasDefinedReadyResult.data ?? []) as unknown as TexasDefinedReadyRow[];
-        const texasDefinedPublishedSample = (texasDefinedArticlesResult.data ?? []) as unknown as PublishedRow[];
         const latestTexasDefined = texasDefinedPublishedSample[0] ?? null;
         const feedBySource = new Map<string, FeedRow[]>();
         for (const row of feedRows) {
@@ -124,7 +164,7 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
             expectedSite: spec.expectedSite,
             ingested: Boolean(feedMatch),
             routedSite: feedMatch?.target_site ?? null,
-            routedCorrectly: Boolean(feedMatch && feedMatch.target_site === spec.expectedSite),
+            routedCorrectly: routingSchemaReady ? Boolean(feedMatch && feedMatch.target_site === spec.expectedSite) : null,
             feedTitle: feedMatch?.title ?? null,
             published: Boolean(publishedMatch),
             publishedSlug: publishedMatch?.slug ?? null,
@@ -135,10 +175,13 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
         return new Response(JSON.stringify({
           ok: true,
           databaseViewsReady: true,
-          texasDefinedChannelReady: true,
-          texasDefinedQueueCount: texasDefinedQueueResult.count ?? 0,
-          texasDefinedReadyCount: texasDefinedReadyResult.count ?? 0,
-          texasDefinedPublishedCount: texasDefinedArticlesResult.count ?? 0,
+          degraded: !texasDefinedChannelReady,
+          routingSchemaReady,
+          texasDefinedChannelReady,
+          schemaErrors: optionalErrors,
+          texasDefinedQueueCount,
+          texasDefinedReadyCount,
+          texasDefinedPublishedCount,
           latestTexasDefinedSlug: latestTexasDefined?.slug ?? null,
           latestTexasDefinedTitle: latestTexasDefined?.title ?? null,
           latestTexasDefinedPublishedAt: latestTexasDefined?.published_at ?? null,
@@ -146,7 +189,7 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
           texasDefinedPublishedSample,
           flyoverCoverage,
           flyoverIngestedCount: flyoverCoverage.filter((item) => item.ingested).length,
-          flyoverRoutedCorrectlyCount: flyoverCoverage.filter((item) => item.routedCorrectly).length,
+          flyoverRoutedCorrectlyCount: flyoverCoverage.filter((item) => item.routedCorrectly === true).length,
           flyoverPublishedCount: flyoverCoverage.filter((item) => item.published).length,
           coverageGapCount: gapResult.count ?? 0,
           sourceCount: sources.length,
