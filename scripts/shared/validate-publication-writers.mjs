@@ -26,6 +26,10 @@ const maintenanceWriters = new Map([
     'src/lib/gsc.ts',
     ['gsc_impressions', 'gsc_clicks', 'gsc_last_update'],
   ],
+  [
+    'src/lib/chatgpt-admin.functions.ts',
+    ['quality_flags', 'chatgpt_admin_ignored'],
+  ],
 ]);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set([
