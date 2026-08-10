@@ -39,12 +39,10 @@ export const Route = createFileRoute("/elections/polls")({
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://keeptxred.com/images/elections/election-central-social.jpg" },
     ],
-    links: [
-      {
-        rel: "canonical",
-        href: "https://keeptxred.com/elections/polls",
-      },
-    ],
+    // Canonical intentionally omitted: this route is a layout for
+    // /elections/polls/$pollSlug, and TanStack concatenates parent links —
+    // a canonical here emits a second, wrong canonical on every poll detail
+    // page. The index and detail leaves each set their own.
   }),
   component: ElectionPollsRoute,
 });

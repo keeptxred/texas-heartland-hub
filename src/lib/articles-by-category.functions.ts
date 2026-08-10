@@ -32,7 +32,7 @@ export type LiveArticleRow = {
 };
 
 export const getLiveArticlesByCategory = createServerFn({ method: "GET" })
-  .inputValidator((input: unknown) =>
+  .validator((input: unknown) =>
     z.object({ activeFilter: z.string().max(40) }).parse(input),
   )
   .handler(async ({ data }): Promise<LiveArticleRow[]> => {

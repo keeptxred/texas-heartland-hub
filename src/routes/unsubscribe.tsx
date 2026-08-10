@@ -5,7 +5,7 @@ export const Route = createFileRoute('/unsubscribe')({
   head: () => ({
     meta: [
       { title: 'Unsubscribe · Keep Texas Red' },
-      { name: 'robots', content: 'noindex,nofollow' },
+      { name: 'robots', content: 'noindex,follow' },
     ],
   }),
   component: UnsubscribePage,

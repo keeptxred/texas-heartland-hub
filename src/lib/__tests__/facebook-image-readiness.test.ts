@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   assessImageUrl,
+  normalizeFacebookUploadImageUrl,
   normalizeImageUrl,
   verifyImageIsReachable,
 } from "@/lib/facebook-image-readiness";
@@ -29,15 +30,40 @@ describe("assessImageUrl — deterministic image gate", () => {
     expect(url).toMatch(/^https:\/\/keeptxred\.com\/api\/public\/article-image\/foo\.png$/);
     expect(assessImageUrl("/api/public/article-image/foo.png").ready).toBe(true);
   });
+
+  it("blocks legacy generated newsroom placeholders even when rasterized as PNG", () => {
+    const result = assessImageUrl(
+      "/images/news/generated/2026-08-09/texas-childrens-expansion.png",
+    );
+    expect(result.ready).toBe(false);
+    expect(result.reason).toBe("NOT_IMAGE");
+    expect(result.message).toContain("legacy generated placeholder");
+  });
+
+  it("requests a bounded 1200px thumbnail for Wikimedia uploads", () => {
+    const url = normalizeFacebookUploadImageUrl(
+      "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bexar%20County%20Courthouse%20%282023%29.jpg",
+    );
+    expect(url).toBe(
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bexar%20County%20Courthouse%20%282023%29.jpg?width=1200",
+    );
+  });
+
+  it("leaves non-Wikimedia image URLs unchanged", () => {
+    expect(normalizeFacebookUploadImageUrl("https://example.com/photo.jpg?x=1")).toBe(
+      "https://example.com/photo.jpg?x=1",
+    );
+  });
 });
 
 describe("verifyImageIsReachable — server-side content-type gate", () => {
   it("blocks when the URL returns non-image content", async () => {
-    globalThis.fetch = vi.fn(async () =>
-      new Response("<html></html>", {
-        status: 200,
-        headers: { "content-type": "text/html" },
-      }),
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response("<html></html>", {
+          status: 200,
+          headers: { "content-type": "text/html" },
+        }),
     ) as unknown as typeof fetch;
     const r = await verifyImageIsReachable("https://example.com/image.png");
     expect(r.ready).toBe(false);
@@ -45,11 +71,12 @@ describe("verifyImageIsReachable — server-side content-type gate", () => {
   });
 
   it("passes when the URL returns real image bytes", async () => {
-    globalThis.fetch = vi.fn(async () =>
-      new Response("", {
-        status: 200,
-        headers: { "content-type": "image/png" },
-      }),
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response("", {
+          status: 200,
+          headers: { "content-type": "image/png" },
+        }),
     ) as unknown as typeof fetch;
     const r = await verifyImageIsReachable("https://example.com/image.png");
     expect(r.ready).toBe(true);
@@ -57,8 +84,8 @@ describe("verifyImageIsReachable — server-side content-type gate", () => {
   });
 
   it("blocks when the URL returns an HTTP error", async () => {
-    globalThis.fetch = vi.fn(async () =>
-      new Response("nope", { status: 404, headers: { "content-type": "text/plain" } }),
+    globalThis.fetch = vi.fn(
+      async () => new Response("nope", { status: 404, headers: { "content-type": "text/plain" } }),
     ) as unknown as typeof fetch;
     const r = await verifyImageIsReachable("https://example.com/missing.png");
     expect(r.ready).toBe(false);

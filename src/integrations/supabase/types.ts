@@ -84,6 +84,643 @@ export type Database = {
           },
         ]
       }
+      article_slug_redirects: {
+        Row: {
+          created_at: string
+          new_slug: string
+          old_slug: string
+        }
+        Insert: {
+          created_at?: string
+          new_slug: string
+          old_slug: string
+        }
+        Update: {
+          created_at?: string
+          new_slug?: string
+          old_slug?: string
+        }
+        Relationships: []
+      }
+      authority_relationships: {
+        Row: {
+          created_at: string
+          evidence: Json
+          id: string
+          is_manual: boolean
+          relationship_type: string
+          score: number
+          source_key: string
+          source_type: string
+          target_key: string
+          target_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          evidence?: Json
+          id?: string
+          is_manual?: boolean
+          relationship_type: string
+          score?: number
+          source_key: string
+          source_type: string
+          target_key: string
+          target_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          evidence?: Json
+          id?: string
+          is_manual?: boolean
+          relationship_type?: string
+          score?: number
+          source_key?: string
+          source_type?: string
+          target_key?: string
+          target_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bill_actions: {
+        Row: {
+          action_code: string | null
+          action_date: string
+          action_sequence: number
+          action_text: string
+          action_time: string | null
+          bill_id: string
+          chamber: string | null
+          committee_id: string | null
+          created_at: string
+          id: string
+          normalized_status: string | null
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          action_code?: string | null
+          action_date: string
+          action_sequence?: number
+          action_text: string
+          action_time?: string | null
+          bill_id: string
+          chamber?: string | null
+          committee_id?: string | null
+          created_at?: string
+          id?: string
+          normalized_status?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          action_code?: string | null
+          action_date?: string
+          action_sequence?: number
+          action_text?: string
+          action_time?: string | null
+          bill_id?: string
+          chamber?: string | null
+          committee_id?: string | null
+          created_at?: string
+          id?: string
+          normalized_status?: string | null
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_actions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_actions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bill_actions_committee_id_fkey"
+            columns: ["committee_id"]
+            isOneToOne: false
+            referencedRelation: "legislative_committees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_article_relationships: {
+        Row: {
+          article_id: string
+          bill_id: string
+          confidence: number | null
+          created_at: string
+          id: string
+          is_manual: boolean
+          relationship_type: string
+          updated_at: string
+        }
+        Insert: {
+          article_id: string
+          bill_id: string
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          is_manual?: boolean
+          relationship_type?: string
+          updated_at?: string
+        }
+        Update: {
+          article_id?: string
+          bill_id?: string
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          is_manual?: boolean
+          relationship_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_article_relationships_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "daily_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bill_article_relationships_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_article_relationships_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_committee_history: {
+        Row: {
+          action_description: string | null
+          action_type: string | null
+          bill_id: string
+          chamber: string | null
+          committee_id: string | null
+          committee_name: string
+          created_at: string
+          hearing_date: string | null
+          id: string
+          referred_date: string | null
+          reported_date: string | null
+          sequence: number
+          source_url: string | null
+          updated_at: string
+          vote_date: string | null
+        }
+        Insert: {
+          action_description?: string | null
+          action_type?: string | null
+          bill_id: string
+          chamber?: string | null
+          committee_id?: string | null
+          committee_name: string
+          created_at?: string
+          hearing_date?: string | null
+          id?: string
+          referred_date?: string | null
+          reported_date?: string | null
+          sequence?: number
+          source_url?: string | null
+          updated_at?: string
+          vote_date?: string | null
+        }
+        Update: {
+          action_description?: string | null
+          action_type?: string | null
+          bill_id?: string
+          chamber?: string | null
+          committee_id?: string | null
+          committee_name?: string
+          created_at?: string
+          hearing_date?: string | null
+          id?: string
+          referred_date?: string | null
+          reported_date?: string | null
+          sequence?: number
+          source_url?: string | null
+          updated_at?: string
+          vote_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_committee_history_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_committee_history_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bill_committee_history_committee_id_fkey"
+            columns: ["committee_id"]
+            isOneToOne: false
+            referencedRelation: "legislative_committees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_documents: {
+        Row: {
+          bill_id: string
+          bill_number: number | null
+          bill_type: string | null
+          content_hash: string | null
+          created_at: string
+          document_date: string | null
+          document_title: string
+          document_type: string
+          document_url: string
+          extracted_text: string | null
+          extracted_text_hash: string | null
+          file_format: string | null
+          id: string
+          is_latest: boolean
+          last_imported_at: string | null
+          last_seen_at: string
+          legislature_number: number | null
+          metadata: Json
+          session_code: string | null
+          source_html_url: string | null
+          source_key: string
+          source_pdf_url: string | null
+          source_record_key: string
+          storage_path: string | null
+          updated_at: string
+          version_code: string | null
+          version_label: string | null
+          version_sequence: number | null
+        }
+        Insert: {
+          bill_id: string
+          bill_number?: number | null
+          bill_type?: string | null
+          content_hash?: string | null
+          created_at?: string
+          document_date?: string | null
+          document_title: string
+          document_type: string
+          document_url: string
+          extracted_text?: string | null
+          extracted_text_hash?: string | null
+          file_format?: string | null
+          id?: string
+          is_latest?: boolean
+          last_imported_at?: string | null
+          last_seen_at?: string
+          legislature_number?: number | null
+          metadata?: Json
+          session_code?: string | null
+          source_html_url?: string | null
+          source_key?: string
+          source_pdf_url?: string | null
+          source_record_key: string
+          storage_path?: string | null
+          updated_at?: string
+          version_code?: string | null
+          version_label?: string | null
+          version_sequence?: number | null
+        }
+        Update: {
+          bill_id?: string
+          bill_number?: number | null
+          bill_type?: string | null
+          content_hash?: string | null
+          created_at?: string
+          document_date?: string | null
+          document_title?: string
+          document_type?: string
+          document_url?: string
+          extracted_text?: string | null
+          extracted_text_hash?: string | null
+          file_format?: string | null
+          id?: string
+          is_latest?: boolean
+          last_imported_at?: string | null
+          last_seen_at?: string
+          legislature_number?: number | null
+          metadata?: Json
+          session_code?: string | null
+          source_html_url?: string | null
+          source_key?: string
+          source_pdf_url?: string | null
+          source_record_key?: string
+          storage_path?: string | null
+          updated_at?: string
+          version_code?: string | null
+          version_label?: string | null
+          version_sequence?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_documents_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_documents_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_sponsors: {
+        Row: {
+          bill_id: string
+          chamber: string | null
+          created_at: string
+          date_added: string | null
+          district: string | null
+          external_legislator_id: string | null
+          id: string
+          party: string | null
+          representative_id: string | null
+          sequence: number
+          sponsor_name: string
+          sponsor_role: string
+          sponsor_slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          bill_id: string
+          chamber?: string | null
+          created_at?: string
+          date_added?: string | null
+          district?: string | null
+          external_legislator_id?: string | null
+          id?: string
+          party?: string | null
+          representative_id?: string | null
+          sequence?: number
+          sponsor_name: string
+          sponsor_role: string
+          sponsor_slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bill_id?: string
+          chamber?: string | null
+          created_at?: string
+          date_added?: string | null
+          district?: string | null
+          external_legislator_id?: string | null
+          id?: string
+          party?: string | null
+          representative_id?: string | null
+          sequence?: number
+          sponsor_name?: string
+          sponsor_role?: string
+          sponsor_slug?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_sponsors_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_sponsors_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_subject_relationships: {
+        Row: {
+          bill_id: string
+          subject_id: string
+        }
+        Insert: {
+          bill_id: string
+          subject_id: string
+        }
+        Update: {
+          bill_id?: string
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bill_subject_relationships_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bill_document_completeness"
+            referencedColumns: ["bill_id"]
+          },
+          {
+            foreignKeyName: "bill_subject_relationships_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bill_subject_relationships_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "bill_subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bill_subjects: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      bills: {
+        Row: {
+          analysis_url: string | null
+          became_law: boolean
+          bill_identifier: string | null
+          bill_number: number
+          bill_text_url: string | null
+          bill_type: string
+          caption: string
+          chamber: string
+          created_at: string
+          current_chamber: string | null
+          current_committee_id: string | null
+          current_status_code: string
+          current_status_description: string | null
+          current_status_label: string
+          description: string | null
+          effective_date: string | null
+          fiscal_note_url: string | null
+          id: string
+          introduced_date: string | null
+          is_active: boolean
+          is_featured: boolean
+          last_action_date: string | null
+          last_synced_at: string | null
+          legislative_session_id: string | null
+          legislature_number: number
+          passed_house_date: string | null
+          passed_senate_date: string | null
+          plain_language_summary: string | null
+          sent_to_governor_date: string | null
+          seo_description: string | null
+          seo_title: string | null
+          session_code: string
+          short_title: string | null
+          signed_date: string | null
+          source_url: string | null
+          summary: string | null
+          updated_at: string
+          vetoed_date: string | null
+        }
+        Insert: {
+          analysis_url?: string | null
+          became_law?: boolean
+          bill_identifier?: string | null
+          bill_number: number
+          bill_text_url?: string | null
+          bill_type: string
+          caption: string
+          chamber: string
+          created_at?: string
+          current_chamber?: string | null
+          current_committee_id?: string | null
+          current_status_code?: string
+          current_status_description?: string | null
+          current_status_label?: string
+          description?: string | null
+          effective_date?: string | null
+          fiscal_note_url?: string | null
+          id?: string
+          introduced_date?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          last_action_date?: string | null
+          last_synced_at?: string | null
+          legislative_session_id?: string | null
+          legislature_number: number
+          passed_house_date?: string | null
+          passed_senate_date?: string | null
+          plain_language_summary?: string | null
+          sent_to_governor_date?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          session_code?: string
+          short_title?: string | null
+          signed_date?: string | null
+          source_url?: string | null
+          summary?: string | null
+          updated_at?: string
+          vetoed_date?: string | null
+        }
+        Update: {
+          analysis_url?: string | null
+          became_law?: boolean
+          bill_identifier?: string | null
+          bill_number?: number
+          bill_text_url?: string | null
+          bill_type?: string
+          caption?: string
+          chamber?: string
+          created_at?: string
+          current_chamber?: string | null
+          current_committee_id?: string | null
+          current_status_code?: string
+          current_status_description?: string | null
+          current_status_label?: string
+          description?: string | null
+          effective_date?: string | null
+          fiscal_note_url?: string | null
+          id?: string
+          introduced_date?: string | null
+          is_active?: boolean
+          is_featured?: boolean
+          last_action_date?: string | null
+          last_synced_at?: string | null
+          legislative_session_id?: string | null
+          legislature_number?: number
+          passed_house_date?: string | null
+          passed_senate_date?: string | null
+          plain_language_summary?: string | null
+          sent_to_governor_date?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          session_code?: string
+          short_title?: string | null
+          signed_date?: string | null
+          source_url?: string | null
+          summary?: string | null
+          updated_at?: string
+          vetoed_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bills_current_committee_id_fkey"
+            columns: ["current_committee_id"]
+            isOneToOne: false
+            referencedRelation: "legislative_committees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bills_legislative_session_id_fkey"
+            columns: ["legislative_session_id"]
+            isOneToOne: false
+            referencedRelation: "legislative_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_packages: {
         Row: {
           asset_notes: string | null
@@ -1527,70 +2164,322 @@ export type Database = {
       explore_import_jobs: {
         Row: {
           completed_at: string | null
-          connector_key: string
+          connector_key: string | null
           created_at: string
+          cursor_after: Json | null
+          cursor_before: Json | null
           cursor_state: Json
           entities_created: number
           entities_unchanged: number
           entities_updated: number
+          entity_source_id: string | null
+          error: Json | null
           error_details: Json
           errors_count: number
+          execution_mode: Database["public"]["Enums"]["explore_import_execution_mode"]
+          heartbeat_at: string | null
           id: string
+          mode: string
+          parent_job_id: string | null
           records_received: number
+          requested_by: string | null
           source_id: string | null
           started_at: string | null
+          statistics: Json
           status: string
           summary: Json
           updated_at: string
+          warnings: Json
           warnings_count: number
         }
         Insert: {
           completed_at?: string | null
-          connector_key: string
+          connector_key?: string | null
           created_at?: string
+          cursor_after?: Json | null
+          cursor_before?: Json | null
           cursor_state?: Json
           entities_created?: number
           entities_unchanged?: number
           entities_updated?: number
+          entity_source_id?: string | null
+          error?: Json | null
           error_details?: Json
           errors_count?: number
+          execution_mode?: Database["public"]["Enums"]["explore_import_execution_mode"]
+          heartbeat_at?: string | null
           id?: string
+          mode?: string
+          parent_job_id?: string | null
           records_received?: number
+          requested_by?: string | null
           source_id?: string | null
           started_at?: string | null
+          statistics?: Json
           status?: string
           summary?: Json
           updated_at?: string
+          warnings?: Json
           warnings_count?: number
         }
         Update: {
           completed_at?: string | null
-          connector_key?: string
+          connector_key?: string | null
           created_at?: string
+          cursor_after?: Json | null
+          cursor_before?: Json | null
           cursor_state?: Json
           entities_created?: number
           entities_unchanged?: number
           entities_updated?: number
+          entity_source_id?: string | null
+          error?: Json | null
           error_details?: Json
           errors_count?: number
+          execution_mode?: Database["public"]["Enums"]["explore_import_execution_mode"]
+          heartbeat_at?: string | null
           id?: string
+          mode?: string
+          parent_job_id?: string | null
           records_received?: number
+          requested_by?: string | null
           source_id?: string | null
           started_at?: string | null
+          statistics?: Json
           status?: string
           summary?: Json
           updated_at?: string
+          warnings?: Json
           warnings_count?: number
         }
         Relationships: [
           {
+            foreignKeyName: "explore_import_jobs_parent_job_id_fkey"
+            columns: ["parent_job_id"]
+            isOneToOne: false
+            referencedRelation: "explore_import_jobs"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "explore_import_jobs_source_id_fkey"
-            columns: ["source_id"]
+            columns: ["entity_source_id"]
             isOneToOne: false
             referencedRelation: "explore_sources"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "explore_import_jobs_source_id_fkey1"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "explore_import_sources"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      explore_import_records: {
+        Row: {
+          action: Database["public"]["Enums"]["explore_import_record_action"]
+          checksum: string
+          created_at: string
+          duplicate_candidates: Json
+          entity_id: string | null
+          external_id: string
+          id: string
+          job_id: string
+          normalized_payload: Json
+          previous_checksum: string | null
+          raw_payload: Json | null
+          review_notes: string | null
+          review_status: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          source_id: string
+          validation_issues: Json
+        }
+        Insert: {
+          action: Database["public"]["Enums"]["explore_import_record_action"]
+          checksum: string
+          created_at?: string
+          duplicate_candidates?: Json
+          entity_id?: string | null
+          external_id: string
+          id?: string
+          job_id: string
+          normalized_payload: Json
+          previous_checksum?: string | null
+          raw_payload?: Json | null
+          review_notes?: string | null
+          review_status?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_id: string
+          validation_issues?: Json
+        }
+        Update: {
+          action?: Database["public"]["Enums"]["explore_import_record_action"]
+          checksum?: string
+          created_at?: string
+          duplicate_candidates?: Json
+          entity_id?: string | null
+          external_id?: string
+          id?: string
+          job_id?: string
+          normalized_payload?: Json
+          previous_checksum?: string | null
+          raw_payload?: Json | null
+          review_notes?: string | null
+          review_status?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          source_id?: string
+          validation_issues?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_import_records_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "explore_import_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "explore_import_records_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "explore_import_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_import_revisions: {
+        Row: {
+          after_payload: Json | null
+          before_payload: Json | null
+          created_at: string
+          entity_id: string | null
+          id: string
+          import_record_id: string
+          operation: string
+        }
+        Insert: {
+          after_payload?: Json | null
+          before_payload?: Json | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          import_record_id: string
+          operation: string
+        }
+        Update: {
+          after_payload?: Json | null
+          before_payload?: Json | null
+          created_at?: string
+          entity_id?: string | null
+          id?: string
+          import_record_id?: string
+          operation?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_import_revisions_import_record_id_fkey"
+            columns: ["import_record_id"]
+            isOneToOne: false
+            referencedRelation: "explore_import_records"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_import_rollbacks: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          error: Json | null
+          id: string
+          job_id: string
+          requested_by: string | null
+          started_at: string | null
+          statistics: Json
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          error?: Json | null
+          id?: string
+          job_id: string
+          requested_by?: string | null
+          started_at?: string | null
+          statistics?: Json
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          error?: Json | null
+          id?: string
+          job_id?: string
+          requested_by?: string | null
+          started_at?: string | null
+          statistics?: Json
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "explore_import_rollbacks_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "explore_import_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      explore_import_sources: {
+        Row: {
+          configuration: Json
+          consecutive_failures: number
+          created_at: string
+          cursor: Json
+          enabled: boolean
+          endpoint: string
+          id: string
+          last_failure_at: string | null
+          last_success_at: string | null
+          name: string
+          schedule: string | null
+          source_type: string
+          updated_at: string
+        }
+        Insert: {
+          configuration?: Json
+          consecutive_failures?: number
+          created_at?: string
+          cursor?: Json
+          enabled?: boolean
+          endpoint: string
+          id?: string
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          name: string
+          schedule?: string | null
+          source_type: string
+          updated_at?: string
+        }
+        Update: {
+          configuration?: Json
+          consecutive_failures?: number
+          created_at?: string
+          cursor?: Json
+          enabled?: boolean
+          endpoint?: string
+          id?: string
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          name?: string
+          schedule?: string | null
+          source_type?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       explore_lake_profiles: {
         Row: {
@@ -2387,6 +3276,219 @@ export type Database = {
         }
         Relationships: []
       }
+      legislative_committees: {
+        Row: {
+          chamber: string
+          committee_code: string | null
+          committee_name: string
+          committee_slug: string
+          created_at: string
+          description: string | null
+          id: string
+          legislature_number: number
+          session_code: string
+          source_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          chamber: string
+          committee_code?: string | null
+          committee_name: string
+          committee_slug: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          legislature_number: number
+          session_code?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          chamber?: string
+          committee_code?: string | null
+          committee_name?: string
+          committee_slug?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          legislature_number?: number
+          session_code?: string
+          source_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      legislative_report_indexes: {
+        Row: {
+          content_hash: string
+          extracted_text: string | null
+          id: string
+          last_imported_at: string
+          last_seen_at: string
+          legislature_number: number
+          metadata: Json
+          report_key: string | null
+          report_title: string
+          report_type: string
+          session_code: string
+          source_key: string
+          source_record_key: string
+          source_url: string
+        }
+        Insert: {
+          content_hash: string
+          extracted_text?: string | null
+          id?: string
+          last_imported_at?: string
+          last_seen_at?: string
+          legislature_number: number
+          metadata?: Json
+          report_key?: string | null
+          report_title: string
+          report_type: string
+          session_code: string
+          source_key?: string
+          source_record_key: string
+          source_url: string
+        }
+        Update: {
+          content_hash?: string
+          extracted_text?: string | null
+          id?: string
+          last_imported_at?: string
+          last_seen_at?: string
+          legislature_number?: number
+          metadata?: Json
+          report_key?: string | null
+          report_title?: string
+          report_type?: string
+          session_code?: string
+          source_key?: string
+          source_record_key?: string
+          source_url?: string
+        }
+        Relationships: []
+      }
+      legislative_sessions: {
+        Row: {
+          created_at: string
+          end_date: string | null
+          id: string
+          is_current: boolean
+          legislature_number: number
+          session_code: string
+          session_name: string
+          session_type: string
+          source_url: string | null
+          start_date: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          is_current?: boolean
+          legislature_number: number
+          session_code?: string
+          session_name: string
+          session_type?: string
+          source_url?: string | null
+          start_date?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          is_current?: boolean
+          legislature_number?: number
+          session_code?: string
+          session_name?: string
+          session_type?: string
+          source_url?: string | null
+          start_date?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      legislative_source_records: {
+        Row: {
+          content_hash: string
+          last_imported_at: string
+          last_seen_at: string
+          metadata: Json
+          source_key: string
+          source_record_key: string
+          source_updated_at: string | null
+          source_url: string
+        }
+        Insert: {
+          content_hash: string
+          last_imported_at?: string
+          last_seen_at?: string
+          metadata?: Json
+          source_key: string
+          source_record_key: string
+          source_updated_at?: string | null
+          source_url: string
+        }
+        Update: {
+          content_hash?: string
+          last_imported_at?: string
+          last_seen_at?: string
+          metadata?: Json
+          source_key?: string
+          source_record_key?: string
+          source_updated_at?: string | null
+          source_url?: string
+        }
+        Relationships: []
+      }
+      legislative_sync_runs: {
+        Row: {
+          completed_at: string | null
+          cursor_after: Json
+          cursor_before: Json
+          errors: Json
+          id: string
+          legislature_number: number
+          records_changed: number
+          records_seen: number
+          session_code: string
+          source_key: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          cursor_after?: Json
+          cursor_before?: Json
+          errors?: Json
+          id?: string
+          legislature_number: number
+          records_changed?: number
+          records_seen?: number
+          session_code: string
+          source_key?: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          cursor_after?: Json
+          cursor_before?: Json
+          errors?: Json
+          id?: string
+          legislature_number?: number
+          records_changed?: number
+          records_seen?: number
+          session_code?: string
+          source_key?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: []
+      }
       newsletter_signups: {
         Row: {
           created_at: string
@@ -2471,8 +3573,64 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_governance_events: {
+        Row: {
+          candidate_fingerprint: string
+          canonical_owner: string
+          created_at: string
+          decision_fingerprint: string
+          disposition: string
+          domain: string
+          gate_status: string
+          id: string
+          kind: string
+          occurred_at: string
+          override_used: boolean
+          reason_codes: string[]
+          site: string
+          source_site: string
+          writer: string | null
+        }
+        Insert: {
+          candidate_fingerprint: string
+          canonical_owner: string
+          created_at?: string
+          decision_fingerprint: string
+          disposition: string
+          domain: string
+          gate_status: string
+          id: string
+          kind: string
+          occurred_at?: string
+          override_used?: boolean
+          reason_codes?: string[]
+          site: string
+          source_site: string
+          writer?: string | null
+        }
+        Update: {
+          candidate_fingerprint?: string
+          canonical_owner?: string
+          created_at?: string
+          decision_fingerprint?: string
+          disposition?: string
+          domain?: string
+          gate_status?: string
+          id?: string
+          kind?: string
+          occurred_at?: string
+          override_used?: boolean
+          reason_codes?: string[]
+          site?: string
+          source_site?: string
+          writer?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
+          category: string | null
+          collections: string[]
           colors: string[]
           created_at: string
           currency: string
@@ -2480,16 +3638,38 @@ export type Database = {
           id: string
           image_url: string
           is_active: boolean
+          is_featured: boolean
+          is_new: boolean
+          is_on_sale: boolean
+          keeptxred_category: string | null
+          keeptxred_collections: string[]
+          keeptxred_description: string | null
+          keeptxred_display_order: number
+          keeptxred_featured: boolean
+          keeptxred_image_url: string | null
+          keeptxred_title: string | null
           price: number
+          printify_product_id: string | null
           product_url: string
+          publish_keeptxred: boolean
+          publish_texasdefined: boolean
           source: string
           synced_at: string
           tags: string[]
+          texasdefined_category: string | null
+          texasdefined_collections: string[]
+          texasdefined_description: string | null
+          texasdefined_display_order: number
+          texasdefined_featured: boolean
+          texasdefined_image_url: string | null
+          texasdefined_title: string | null
           title: string
           updated_at: string
           variants: Json
         }
         Insert: {
+          category?: string | null
+          collections?: string[]
           colors?: string[]
           created_at?: string
           currency?: string
@@ -2497,16 +3677,38 @@ export type Database = {
           id: string
           image_url?: string
           is_active?: boolean
+          is_featured?: boolean
+          is_new?: boolean
+          is_on_sale?: boolean
+          keeptxred_category?: string | null
+          keeptxred_collections?: string[]
+          keeptxred_description?: string | null
+          keeptxred_display_order?: number
+          keeptxred_featured?: boolean
+          keeptxred_image_url?: string | null
+          keeptxred_title?: string | null
           price?: number
+          printify_product_id?: string | null
           product_url?: string
+          publish_keeptxred?: boolean
+          publish_texasdefined?: boolean
           source?: string
           synced_at?: string
           tags?: string[]
+          texasdefined_category?: string | null
+          texasdefined_collections?: string[]
+          texasdefined_description?: string | null
+          texasdefined_display_order?: number
+          texasdefined_featured?: boolean
+          texasdefined_image_url?: string | null
+          texasdefined_title?: string | null
           title: string
           updated_at?: string
           variants?: Json
         }
         Update: {
+          category?: string | null
+          collections?: string[]
           colors?: string[]
           created_at?: string
           currency?: string
@@ -2514,14 +3716,76 @@ export type Database = {
           id?: string
           image_url?: string
           is_active?: boolean
+          is_featured?: boolean
+          is_new?: boolean
+          is_on_sale?: boolean
+          keeptxred_category?: string | null
+          keeptxred_collections?: string[]
+          keeptxred_description?: string | null
+          keeptxred_display_order?: number
+          keeptxred_featured?: boolean
+          keeptxred_image_url?: string | null
+          keeptxred_title?: string | null
           price?: number
+          printify_product_id?: string | null
           product_url?: string
+          publish_keeptxred?: boolean
+          publish_texasdefined?: boolean
           source?: string
           synced_at?: string
           tags?: string[]
+          texasdefined_category?: string | null
+          texasdefined_collections?: string[]
+          texasdefined_description?: string | null
+          texasdefined_display_order?: number
+          texasdefined_featured?: boolean
+          texasdefined_image_url?: string | null
+          texasdefined_title?: string | null
           title?: string
           updated_at?: string
           variants?: Json
+        }
+        Relationships: []
+      }
+      publishing_alerts: {
+        Row: {
+          created_at: string
+          id: string
+          incident_key: string
+          latest_published_at: string | null
+          message: string
+          notification_sent_at: string | null
+          opened_at: string
+          reserve_slug: string | null
+          resolved_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          incident_key: string
+          latest_published_at?: string | null
+          message: string
+          notification_sent_at?: string | null
+          opened_at?: string
+          reserve_slug?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          incident_key?: string
+          latest_published_at?: string | null
+          message?: string
+          notification_sent_at?: string | null
+          opened_at?: string
+          reserve_slug?: string | null
+          resolved_at?: string | null
+          status?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -2602,6 +3866,27 @@ export type Database = {
           status?: string
           title?: string | null
           topic?: string | null
+        }
+        Relationships: []
+      }
+      reserve_article_publications: {
+        Row: {
+          created_at: string
+          published_at: string
+          reserve_key: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          published_at?: string
+          reserve_key: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          published_at?: string
+          reserve_key?: string
+          slug?: string
         }
         Relationships: []
       }
@@ -2737,8 +4022,52 @@ export type Database = {
         }
         Relationships: []
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
+      bill_document_completeness: {
+        Row: {
+          analysis_count: number | null
+          bill_id: string | null
+          bill_number: number | null
+          bill_text_count: number | null
+          bill_type: string | null
+          completeness_score: number | null
+          document_count: number | null
+          fiscal_note_count: number | null
+          has_analysis: boolean | null
+          has_bill_text: boolean | null
+          has_fiscal_note: boolean | null
+          has_history: boolean | null
+          has_witness_list: boolean | null
+          history_count: number | null
+          latest_document_imported_at: string | null
+          legislature_number: number | null
+          session_code: string | null
+          witness_list_count: number | null
+        }
+        Relationships: []
+      }
       explore_public_entities: {
         Row: {
           activities: string[] | null
@@ -2853,6 +4182,45 @@ export type Database = {
         }
         Returns: string
       }
+      claim_explore_import_job: {
+        Args: never
+        Returns: {
+          completed_at: string | null
+          connector_key: string | null
+          created_at: string
+          cursor_after: Json | null
+          cursor_before: Json | null
+          cursor_state: Json
+          entities_created: number
+          entities_unchanged: number
+          entities_updated: number
+          entity_source_id: string | null
+          error: Json | null
+          error_details: Json
+          errors_count: number
+          execution_mode: Database["public"]["Enums"]["explore_import_execution_mode"]
+          heartbeat_at: string | null
+          id: string
+          mode: string
+          parent_job_id: string | null
+          records_received: number
+          requested_by: string | null
+          source_id: string | null
+          started_at: string | null
+          statistics: Json
+          status: string
+          summary: Json
+          updated_at: string
+          warnings: Json
+          warnings_count: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "explore_import_jobs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -2880,6 +4248,13 @@ export type Database = {
         }
         Returns: Json
       }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       increment_variant_metric: {
         Args: { _kind: string; _slug: string; _variant: string }
         Returns: undefined
@@ -2893,12 +4268,31 @@ export type Database = {
         }
         Returns: number
       }
+      prune_platform_governance_events: {
+        Args: { retain_days?: number }
+        Returns: number
+      }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
           message: Json
           msg_id: number
           read_ct: number
+        }[]
+      }
+      refresh_bill_document_latest_flags: {
+        Args: { p_bill_id?: string }
+        Returns: undefined
+      }
+      refresh_legislative_authority_graph: { Args: never; Returns: undefined }
+      related_authority_content: {
+        Args: { p_limit?: number; p_source_key: string; p_source_type: string }
+        Returns: {
+          evidence: Json
+          relationship_type: string
+          score: number
+          target_key: string
+          target_type: string
         }[]
       }
       search_explore_entities: {
@@ -2941,9 +4335,37 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      upsert_bidirectional_authority_relationship: {
+        Args: {
+          p_evidence?: Json
+          p_is_manual?: boolean
+          p_relationship_type: string
+          p_score: number
+          p_source_key: string
+          p_source_type: string
+          p_target_key: string
+          p_target_type: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
+      explore_import_execution_mode: "live" | "dry-run" | "preview"
+      explore_import_job_status:
+        | "queued"
+        | "running"
+        | "completed"
+        | "completed_with_warnings"
+        | "failed"
+        | "cancelled"
+        | "rolled_back"
+      explore_import_record_action:
+        | "insert"
+        | "update"
+        | "unchanged"
+        | "duplicate"
+        | "reject"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3070,6 +4492,25 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+      explore_import_execution_mode: ["live", "dry-run", "preview"],
+      explore_import_job_status: [
+        "queued",
+        "running",
+        "completed",
+        "completed_with_warnings",
+        "failed",
+        "cancelled",
+        "rolled_back",
+      ],
+      explore_import_record_action: [
+        "insert",
+        "update",
+        "unchanged",
+        "duplicate",
+        "reject",
+      ],
+    },
   },
 } as const

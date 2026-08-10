@@ -9,6 +9,7 @@
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { assertKeepTxRedPublication, inferKeepTxRedDomain } from "./content-publication-guard";
 import { classifyStory, extractEntities } from "./nlp";
 
 const RawStorySchema = z.object({
@@ -30,7 +31,7 @@ function slugify(title: string): string {
 }
 
 export const ingestStory = createServerFn({ method: "POST" })
-  .inputValidator((input: unknown) => RawStorySchema.parse(input))
+  .validator((input: unknown) => RawStorySchema.parse(input))
   .handler(async ({ data: story }) => {
     const { createClient } = await import("@supabase/supabase-js");
     const supabaseUrl = process.env.SUPABASE_URL;
@@ -48,6 +49,18 @@ export const ingestStory = createServerFn({ method: "POST" })
     const publishedAt = story.publishedAt ?? new Date().toISOString();
     const datePrefix = publishedAt.slice(0, 10);
     const slug = `${datePrefix}-${slugify(story.title)}`;
+
+    assertKeepTxRedPublication({
+      id: `normalized-ingest:${slug}`,
+      title: story.title,
+      description: story.content,
+      category,
+      source: story.source,
+      domain: inferKeepTxRedDomain(category, haystack),
+      sourceSite: story.url.includes("texasdefined.com") ? "TexasDefined" : "KeepTXRed",
+      sourceCanonicalUrl: story.url,
+      proposedUrl: `https://keeptxred.com/news/${slug}`,
+    });
 
     // "queue.send" equivalent: insert as pending-ingestion. The existing
     // ingest-feeds worker picks up rows where is_ingested=false and rewrites

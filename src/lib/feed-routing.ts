@@ -1,4 +1,16 @@
-export type FeedSection = "elections" | "laws" | "politics" | "news";
+import { resolveContentPillarSlug, type ContentPillarSlug } from "@/lib/content-pillars";
+
+export type FeedSection =
+  | "elections"
+  | "laws"
+  | "politics"
+  | "border"
+  | "energy"
+  | "economy"
+  | "agriculture"
+  | "veterans"
+  | "law-enforcement"
+  | "news";
 
 export type FeedRow = {
   id: number;
@@ -7,24 +19,56 @@ export type FeedRow = {
   link: string;
   description: string | null;
   pub_date: string;
+  pillar_slug?: ContentPillarSlug | null;
+  pillar_classified_at?: string | null;
 };
 
-const ELECTION_RE = /(election|ballot|\bvote\b|voter|primary|candidate|polling|precinct|runoff|early voting)/i;
-const LAW_RE = /(register|rule|regulation|rulemaking|statute|\blaw\b|legal|attorney general|\bbill\b|legislat|senate bill|house bill|\bsb \d|\bhb \d|amendment)/i;
-const POLITICS_RE = /(governor|abbott|lt\.? governor|patrick|paxton|agency|commission|appoint|proclamation|disaster declaration|press release|secretary of state)/i;
+const PILLAR_TO_FEED_SECTION: Record<ContentPillarSlug, Exclude<FeedSection, "news">> = {
+  "texas-politics-government": "politics",
+  "texas-elections": "elections",
+  "texas-border-immigration": "border",
+  "texas-energy-oil": "energy",
+  "texas-economy-small-business": "economy",
+  "texas-agriculture-rural": "agriculture",
+  "texas-veterans-military": "veterans",
+  "texas-law-enforcement-public-safety": "law-enforcement",
+  "texas-laws-legislature": "laws",
+};
 
-export function classifyFeedItem(item: { title: string; description: string | null; source: string }): FeedSection {
-  const hay = `${item.source} ${item.title} ${item.description ?? ""}`;
-  if (ELECTION_RE.test(hay)) return "elections";
-  if (LAW_RE.test(hay)) return "laws";
-  if (POLITICS_RE.test(hay)) return "politics";
-  return "news";
+export function feedSectionForPillar(pillar: ContentPillarSlug): Exclude<FeedSection, "news"> {
+  return PILLAR_TO_FEED_SECTION[pillar];
+}
+
+export function classifyFeedItem(item: {
+  title: string;
+  description: string | null;
+  source: string;
+  pillar_slug?: unknown;
+  pillar_classified_at?: string | null;
+}): FeedSection {
+  // A classified row with a null pillar was intentionally assigned to General
+  // Texas News. Preserve that decision instead of reclassifying on every render.
+  if (item.pillar_classified_at && item.pillar_slug == null) return "news";
+
+  const pillar = resolveContentPillarSlug(item.pillar_slug, {
+    title: item.title,
+    description: item.description,
+    category: item.source,
+  });
+  if (!pillar) return "news";
+  return feedSectionForPillar(pillar);
 }
 
 export const SECTION_LABELS: Record<FeedSection, string> = {
   elections: "Elections & Voting",
-  laws: "Laws & Legislation",
-  politics: "Government & Politics",
+  laws: "Laws & Legislature",
+  politics: "Politics & Government",
+  border: "Border & Immigration",
+  energy: "Energy & Oil",
+  economy: "Economy & Small Business",
+  agriculture: "Agriculture & Rural Texas",
+  veterans: "Veterans & Military",
+  "law-enforcement": "Law Enforcement & Public Safety",
   news: "Texas News",
 };
 

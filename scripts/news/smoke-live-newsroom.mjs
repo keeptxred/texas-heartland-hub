@@ -1,0 +1,164 @@
+const baseUrl = (process.env.KTR_BASE_URL || "https://keeptxred.com").replace(/\/$/, "");
+const expectedFingerprint = (process.env.KTR_EXPECTED_FINGERPRINT || "").trim();
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchWithTimeout(url, options = {}, timeoutMs = 30000) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function retry(label, fn, attempts = 6, delayMs = 15000) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await fn();
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) break;
+      console.warn(`WAIT ${label} attempt ${attempt}/${attempts}: ${error instanceof Error ? error.message : String(error)}`);
+      await sleep(delayMs);
+    }
+  }
+  throw lastError;
+}
+
+async function checkProtectedAdminRoute(path) {
+  const response = await fetchWithTimeout(`${baseUrl}${path}`, {
+    redirect: "manual",
+    headers: { "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
+  });
+
+  if (response.status === 404) throw new Error(`${path} returned HTTP 404`);
+  if (response.status >= 500) throw new Error(`${path} returned HTTP ${response.status}`);
+
+  const location = response.headers.get("location");
+  if (response.status >= 300 && response.status < 400) {
+    if (!location || !location.includes("/admin")) {
+      throw new Error(`${path} redirected unexpectedly to ${location ?? "unknown"}`);
+    }
+    console.log(`OK ${path} protected redirect (${response.status} -> ${location})`);
+    return;
+  }
+
+  if (!response.ok) throw new Error(`${path} returned HTTP ${response.status}`);
+  console.log(`OK ${path} reachable (${response.status})`);
+}
+
+async function checkDeploymentFingerprint() {
+  const response = await fetchWithTimeout(`${baseUrl}/api/public/deployment-fingerprint`, {
+    redirect: "follow",
+    headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
+  });
+  if (response.status === 404) {
+    throw new Error("production is stale: deployment fingerprint route is missing");
+  }
+  const text = await response.text();
+  let payload;
+  try {
+    payload = JSON.parse(text);
+  } catch {
+    throw new Error(`deployment fingerprint did not return JSON: ${text.slice(0, 300)}`);
+  }
+  if (!response.ok) {
+    throw new Error(`deployment fingerprint returned HTTP ${response.status}: ${text.slice(0, 300)}`);
+  }
+  const actual = typeof payload?.fingerprint === "string" ? payload.fingerprint.trim() : "";
+  if (!actual) {
+    throw new Error("deployment fingerprint response is missing a non-empty fingerprint");
+  }
+  if (expectedFingerprint && actual !== expectedFingerprint) {
+    throw new Error(`production fingerprint mismatch: expected ${expectedFingerprint}, received ${actual}`);
+  }
+  console.log(`OK deployment fingerprint=${actual} mode=${payload.newsroomHealthMode ?? "unknown"}`);
+}
+
+async function checkNewsroomHealth() {
+  const response = await fetchWithTimeout(`${baseUrl}/api/public/newsroom-health`, {
+    redirect: "follow",
+    headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
+  });
+  const text = await response.text();
+  let payload;
+  try {
+    payload = JSON.parse(text);
+  } catch {
+    throw new Error(`newsroom-health did not return JSON: ${text.slice(0, 300)}`);
+  }
+  if (!response.ok || payload?.ok !== true || payload?.databaseViewsReady !== true) {
+    throw new Error(`newsroom-health is not ready (${response.status}): ${text.slice(0, 500)}`);
+  }
+  if (!Number.isFinite(payload?.sourceCount) || payload.sourceCount < 1) {
+    throw new Error(`newsroom-health reports no configured sources: ${text.slice(0, 500)}`);
+  }
+  console.log(`OK newsroom-health sources=${payload.sourceCount} gaps=${payload.coverageGapCount} items24h=${payload.items24h}`);
+}
+
+async function checkIngestion() {
+  const startedAt = Date.now();
+  let response;
+  try {
+    response = await fetchWithTimeout(`${baseUrl}/api/public/hooks/ingest-feeds`, {
+      method: "POST",
+      redirect: "follow",
+      headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
+    }, 180000);
+  } catch (error) {
+    const elapsed = Math.round((Date.now() - startedAt) / 1000);
+    if (error?.name === "AbortError") {
+      throw new Error(`ingest-feeds did not finish within ${elapsed}s; endpoint is reachable but ingestion is too slow`);
+    }
+    throw error;
+  }
+  if (!response.ok) throw new Error(`ingest-feeds returned HTTP ${response.status}`);
+  const text = await response.text();
+  let payload;
+  try {
+    payload = JSON.parse(text);
+  } catch {
+    throw new Error("ingest-feeds did not return JSON");
+  }
+  if (payload?.ok !== true) throw new Error(`ingest-feeds returned ok=${String(payload?.ok)}: ${text.slice(0, 500)}`);
+  if (typeof payload.fetched !== "number" || typeof payload.inserted !== "number") {
+    throw new Error(`ingest-feeds response lacks numeric ingestion counts: ${text.slice(0, 500)}`);
+  }
+  if (typeof payload.sourceCount === "number" && payload.sourceCount < 1) {
+    throw new Error(`ingest-feeds reports zero configured sources: ${text.slice(0, 500)}`);
+  }
+  if (typeof payload.healthySources === "number" && payload.healthySources < 1) {
+    throw new Error(`ingest-feeds reports zero healthy sources: ${text.slice(0, 500)}`);
+  }
+  if (payload.fetched < 1) {
+    throw new Error(`ingest-feeds completed but fetched zero Texas-relevant candidates: ${text.slice(0, 500)}`);
+  }
+  const elapsed = Math.round((Date.now() - startedAt) / 1000);
+  console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched} inserted=${payload.inserted} healthySources=${payload.healthySources ?? "n/a"}`);
+}
+
+const failures = [];
+
+for (const [label, check] of [
+  ["coverage gaps admin route", () => retry("coverage gaps admin route", () => checkProtectedAdminRoute("/admin/coverage-gaps"))],
+  ["deployment fingerprint", () => retry("deployment fingerprint", checkDeploymentFingerprint)],
+  ["newsroom-health endpoint", () => retry("newsroom-health endpoint", checkNewsroomHealth)],
+  ["feed ingestion", checkIngestion],
+]) {
+  try {
+    await check();
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    failures.push(`${label}: ${message}`);
+    console.error(`FAIL ${label}: ${message}`);
+  }
+}
+
+if (failures.length > 0) {
+  throw new Error(`Live newsroom smoke check found ${failures.length} failure(s):\n- ${failures.join("\n- ")}`);
+}
+
+console.log(`Live newsroom smoke check passed for ${baseUrl}`);

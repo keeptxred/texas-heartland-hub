@@ -122,6 +122,44 @@ function effectivePreflight(item: FeedItem): RewritePreflightResult {
   });
 }
 
+function normalizeOpportunityTitle(value: string | null | undefined): string {
+  return String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function normalizeOpportunityUrl(value: string | null | undefined): string {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  try {
+    const url = new URL(raw);
+    url.hash = "";
+    url.search = "";
+    return `${url.origin}${url.pathname.replace(/\/+$/, "")}`.toLowerCase();
+  } catch {
+    return raw.replace(/[?#].*$/, "").replace(/\/+$/, "").toLowerCase();
+  }
+}
+
+function dedupeFeedOpportunities(feed: FeedItem[]): FeedItem[] {
+  const seenLinks = new Set<string>();
+  const seenSlugs = new Set<string>();
+  const seenTitles = new Set<string>();
+  const result: FeedItem[] = [];
+
+  for (const item of feed) {
+    const link = normalizeOpportunityUrl(item.link);
+    const slug = String(item.internal_slug ?? item.article_slug ?? "").toLowerCase().trim();
+    const title = normalizeOpportunityTitle(item.title);
+    if ((link && seenLinks.has(link)) || (slug && seenSlugs.has(slug)) || (title && seenTitles.has(title))) {
+      continue;
+    }
+    if (link) seenLinks.add(link);
+    if (slug) seenSlugs.add(slug);
+    if (title) seenTitles.add(title);
+    result.push(item);
+  }
+  return result;
+}
+
 function shouldShowOpportunity(item: FeedItem): boolean {
   if (item.id < 0 || item.internal_slug) return true;
   if (!item.preflight_json) return true;
@@ -369,7 +407,7 @@ export function ContentOpportunityPanel() {
           .limit(500),
         supabase
           .from("daily_articles")
-          .select("slug,title,category,source_name,published_at,featured_image_url")
+          .select("slug,title,category,source_name,published_at,featured_image_url,source_url")
           .in("kind", ["sports-nfl", "sports-mlb", "sports-nba", "evergreen"])
           .order("published_at", { ascending: false })
           .limit(50),
@@ -387,6 +425,7 @@ export function ContentOpportunityPanel() {
         source_name: string | null;
         published_at: string;
         featured_image_url: string | null;
+        source_url: string | null;
       }>;
 
       const publishedSlugs = new Set<string>();
@@ -401,11 +440,26 @@ export function ContentOpportunityPanel() {
         },
       );
 
+      // Canonicalize the real feed first. If ingestion inserted the same source
+      // more than once, keep the newest real feed row so actions/status attach
+      // to a single record.
+      const canonicalFeed = dedupeFeedOpportunities(rawFeed);
+      const feedLinks = new Set(canonicalFeed.map((f) => normalizeOpportunityUrl(f.link)).filter(Boolean));
+      const feedSlugs = new Set(
+        canonicalFeed
+          .map((f) => String(f.internal_slug ?? f.article_slug ?? "").toLowerCase().trim())
+          .filter(Boolean),
+      );
+      const feedTitles = new Set(canonicalFeed.map((f) => normalizeOpportunityTitle(f.title)).filter(Boolean));
+
       const articleFeed: FeedItem[] = rawArticles
         .filter(
           (a) =>
             !publishedSlugs.has(a.slug.toLowerCase()) &&
-            !publishedTitles.has(a.title.toLowerCase().trim()),
+            !publishedTitles.has(a.title.toLowerCase().trim()) &&
+            !feedSlugs.has(a.slug.toLowerCase()) &&
+            !feedTitles.has(normalizeOpportunityTitle(a.title)) &&
+            !(a.source_url && feedLinks.has(normalizeOpportunityUrl(a.source_url))),
         )
         .map((a, i) => ({
           id: -(i + 1),
@@ -421,27 +475,46 @@ export function ContentOpportunityPanel() {
           article_title: a.title,
         }));
 
-      const feed = [...rawFeed, ...articleFeed].filter((f) => !isLowValueTitle(f.title));
+      // Real texas_news_feed rows win over synthetic daily_articles rows. A final
+      // dedupe protects against title/slug/link overlap across both sources.
+      const feed = dedupeFeedOpportunities([...canonicalFeed, ...articleFeed]).filter(
+        (f) => !isLowValueTitle(f.title),
+      );
       setItems(feed);
 
-      const slugs = feed.map((f) => f.internal_slug).filter(Boolean) as string[];
       const links = feed.map((f) => f.link).filter(Boolean) as string[];
       const titles = feed.map((f) => f.title).filter(Boolean) as string[];
 
       const [articlesRes, reelsRes] = await Promise.all([
-        slugs.length > 0
-          ? supabase
-              .from("daily_articles")
-              .select("slug,title,featured_image_url")
-              .in("slug", slugs)
-          : Promise.resolve({ data: [] as { slug: string; title: string; featured_image_url: string | null }[] }),
+        // Load a recent published-article window instead of only rows whose feed
+        // item already has internal_slug populated. Older/manual publication paths
+        // can leave texas_news_feed.internal_slug null even though daily_articles
+        // contains the finished story. Title matching below repairs that linkage in
+        // the admin UI so Facebook can use the real KeepTXRed slug/URL/image.
+        supabase
+          .from("daily_articles")
+          .select("slug,title,source_url,featured_image_url,published_at")
+          .order("published_at", { ascending: false })
+          .limit(750),
         links.length > 0 || titles.length > 0
           ? supabase.from("reel_candidates").select("source_url,title")
           : Promise.resolve({ data: [] as { source_url: string | null; title: string | null }[] }),
       ]);
 
-      const articleMap = new Map<string, { title: string; featured_image_url: string | null }>();
-      (articlesRes.data ?? []).forEach((a) => articleMap.set(a.slug, a));
+      type PublishedArticleRef = {
+        slug: string;
+        title: string;
+        source_url: string | null;
+        featured_image_url: string | null;
+      };
+      const articleMap = new Map<string, PublishedArticleRef>();
+      const articleSourceMap = new Map<string, PublishedArticleRef>();
+      const articleTitleMap = new Map<string, PublishedArticleRef>();
+      (articlesRes.data ?? []).forEach((a) => {
+        articleMap.set(a.slug, a);
+        if (a.source_url) articleSourceMap.set(a.source_url.toLowerCase().trim(), a);
+        articleTitleMap.set(a.title.toLowerCase().trim(), a);
+      });
 
       const normalizedTitles = new Set(titles.map((t) => t.toLowerCase().trim()));
       const normalizedLinks = new Set(links.map((l) => l.toLowerCase().trim()));
@@ -465,7 +538,23 @@ export function ContentOpportunityPanel() {
 
       const statusMap: Record<number, OpportunityStatus> = {};
       feed.forEach((f) => {
-        const article = f.internal_slug ? articleMap.get(f.internal_slug) : null;
+        const article =
+          (f.internal_slug ? articleMap.get(f.internal_slug) : null) ??
+          (f.link ? articleSourceMap.get(f.link.toLowerCase().trim()) : null) ??
+          articleTitleMap.get(f.title.toLowerCase().trim()) ??
+          null;
+
+        // Repair the client-side publication linkage when the article exists but
+        // the feed row's internal_slug was never backfilled. quickPost and image
+        // generation can then use the canonical KeepTXRed article instead of
+        // incorrectly disabling Facebook.
+        if (f.id > 0 && article && !f.internal_slug) {
+          f.internal_slug = article.slug;
+          f.article_slug = article.slug;
+          f.article_url = `https://keeptxred.com/news/${article.slug}`;
+          f.article_asset_url = article.featured_image_url;
+        }
+
         if (f.id < 0) {
           statusMap[f.id] = {
             rewritten: true,
@@ -585,8 +674,11 @@ export function ContentOpportunityPanel() {
                 const alreadyPublished = !!status?.rewritten;
                 const isDailyArticle = r.id < 0;
                 const preflight = preflightById[r.id];
+                const resolvedArticleSlug = r.article_slug ?? r.internal_slug ?? null;
+                const resolvedArticleUrl =
+                  r.article_url ?? (resolvedArticleSlug ? `https://keeptxred.com/news/${resolvedArticleSlug}` : null);
                 const canPostToFacebook =
-                  isDailyArticle || (!!r.internal_slug && !!status?.rewritten);
+                  isDailyArticle || (!!status?.rewritten && !!(resolvedArticleSlug || resolvedArticleUrl));
                 const hasImage = !!status?.imageReady;
                 const readiness = readinessLabel(r, status, preflight ?? {
                   rewriteable: false,
@@ -814,7 +906,9 @@ export function ContentOpportunityPanel() {
                       {statuses[previewRow.id]?.rewritten ? "Republish" : "Publish to Keep Texas Red"}
                     </button>
                   ) : null}
-                  {(previewRow.id < 0 || (!!previewRow.internal_slug && !!statuses[previewRow.id]?.rewritten)) ? (
+                  {(previewRow.id < 0 ||
+                    (!!statuses[previewRow.id]?.rewritten &&
+                      !!(previewRow.article_slug ?? previewRow.internal_slug ?? previewRow.article_url))) ? (
                     statuses[previewRow.id]?.imageReady ? (
                       <button
                         type="button"

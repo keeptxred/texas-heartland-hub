@@ -3,54 +3,58 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
-import { TEXAS_DATASETS } from "@/data/texas-data-center";
+import { SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
 
-/** Static, public, indexable app routes. */
-const STATIC_PATHS: string[] = [
-  "/", "/news", "/news/non-political", "/happening-now", "/keep-texas-red", "/texas-news",
-  "/texas-news/economy", "/texas-news/housing", "/texas-news/migration", "/texas-news/culture",
-  "/texas-news/education", "/texas-news/sports-culture", "/houston", "/dallas-fort-worth",
-  "/san-antonio", "/austin", "/el-paso", "/texas-sports", "/texas-business",
-  "/texas-business/energy", "/texas-business/jobs", "/texas-business/relocations",
-  "/texas-business/real-estate", "/texas-business/policy", "/elections", "/texas-legislature",
-  "/texas-legislature/house", "/texas-legislature/senate", "/texas-legislature/current-session",
-  "/texas-legislature/sessions", "/tax-calculator", "/texas-property-tax-protest-guide",
-  "/texas-sales-tax-explained", "/texas-first-time-homebuyer-programs", "/moving-to-texas",
-  "/moving-to-texas-checklist", "/find-my-dmv", "/living-in-texas", "/explore",
-  "/explore/trip-planner", "/texas-financial-tools", "/texas-mortgage-calculator",
-  "/texas-home-affordability-calculator", "/texas-down-payment-calculator",
-  "/texas-closing-cost-calculator", "/texas-home-equity-growth-calculator",
-  "/texas-mortgage-payoff-calculator", "/texas-homeownership-cost-calculator",
-  "/texas-refinance-savings-calculator", "/texas-home-equity-calculator",
-  "/texas-rent-vs-buy-calculator", "/texas-cost-of-living-calculator", "/texas-salary-calculator",
-  "/texas-budget-planner", "/texas-home-insurance-calculator", "/texas-utility-cost-calculator",
-  "/texas-moving-cost-calculator", "/texas-property-tax-increase-calculator",
-  "/texas-down-payment-assistance-calculator", "/texas-salary-comparison-by-city", "/about",
-  "/representatives", "/find-representative", "/register-to-vote", "/contact-legislators",
-  "/get-involved", "/county-elections", "/candidate-guides", "/voting-locations", "/laws",
-  "/texas-laws", "/laws-to-know", "/legislative-updates", "/contact", "/privacy", "/terms",
-  "/terms-of-service", "/shipping-policy", "/return-refund-policy", "/glossary",
-  "/editorial-standards", "/texas-politics", "/authors", "/texas-economy", "/texas-law-policy",
-  "/shop", "/texas", "/texas/no-state-income-tax-2026", "/texas/property-taxes-2026",
-  "/texas/moving-to-texas-2026", "/texas-data",
-  ...TEXAS_DATASETS.map((dataset) => `/texas-data/${dataset.slug}`),
+const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
+const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(
+  SUPPORTING_GUIDE_SLUGS.map((slug) => [`/guides/${slug}`, GUIDE_LASTMOD]),
+);
+
+const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
+  "/news": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/texas-legislature": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/texas-legislature/house": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/texas-legislature/senate": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/texas-legislature/current-session": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/texas-legislature/sessions": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/topics": GUIDE_LASTMOD,
+  "/texas-politics": GUIDE_LASTMOD,
+  "/texas-economy": GUIDE_LASTMOD,
+  "/texas-border-security": GUIDE_LASTMOD,
+  "/texas-energy": GUIDE_LASTMOD,
+  "/texas-agriculture": GUIDE_LASTMOD,
+  "/texas-veterans": GUIDE_LASTMOD,
+  "/texas-law-enforcement": GUIDE_LASTMOD,
+  "/laws": GUIDE_LASTMOD,
+  "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
+  "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
+  "/guides/texas-law-enforcement-public-safety-guide": GUIDE_LASTMOD,
+  ...SUPPORTING_GUIDE_LASTMOD,
+};
+
+const STATIC_PATHS:string[]=[
+  "/","/news","/happening-now","/keep-texas-red",
+  // /texas-news is a permanent alias for /news and is intentionally absent.
+  "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
+  // NOTE: /elections is a redirect to /elections/2026 and is intentionally absent —
+  // the canonical election hub ships in sitemap-elections.xml.
+  "/texas-business","/texas-legislature","/texas-legislature/house",
+  "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
+  "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
+  "/get-involved","/county-elections","/laws",
+  // /texas-laws and /texas-law-policy are permanent aliases for /laws.
+  // Legacy candidate guides are noindex until rebuilt on verified Election Central data.
+  // /legislative-updates redirects to /bills, /laws-to-know redirects to /laws,
+  // and /voting-locations redirects to the verified Election Central voting page.
+  "/contact","/privacy","/terms-of-service",
+  "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards",
+  "/topics","/texas-politics","/texas-economy","/texas-border-security","/texas-energy",
+  "/texas-agriculture","/texas-veterans","/texas-law-enforcement",
+  "/guides/texas-agriculture-rural-guide","/guides/texas-veterans-military-guide",
+  "/guides/texas-law-enforcement-public-safety-guide",
+  "/authors","/shop",
+  // Representative detail pages live only in sitemap-representatives.xml —
+  // listing them here duplicated 250+ URLs across two sitemaps.
 ];
 
-export const Route = createFileRoute("/sitemap-pages.xml")({
-  server: {
-    handlers: {
-      GET: async () => {
-        const lastmod = toIsoDate(new Date());
-        const paths = [...STATIC_PATHS];
-        for (const league of ["nfl", "mlb", "nba"] as const) {
-          if (await hasEnoughContent({ kind: `sports-${league}` }, MIN_ARTICLES_DEFAULT)) paths.push(`/texas-sports/${league}`);
-        }
-        for (const t of TEAMS) {
-          if (await hasEnoughContent({ teamSlug: t.slug, league: t.league }, MIN_ARTICLES_DEFAULT)) paths.push(`/texas-sports/team/${t.slug}`);
-        }
-        const entries: UrlEntry[] = paths.map((p) => ({ loc: `${BASE_URL}${p}`, lastmod }));
-        return xmlResponse(renderUrlset(entries));
-      },
-    },
-  },
-});
+export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`)];for(const league of ["nfl","mlb","nba"] as const){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});

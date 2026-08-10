@@ -1,4 +1,5 @@
 export * from "./RaceCandidateSection";
+export * from "./RaceAuthoritySection";
 export * from "./RaceDetailHeader";
 export * from "./RaceDetailSeo";
 export * from "./RaceForecastSection";

@@ -2,11 +2,12 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
 import { AgedFeedSection } from "@/components/aged-feed-section";
+import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
   { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections" },
-  { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/legislative-updates" },
+  { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/texas-legislature" },
   { title: "Governor & Leadership", description: "The Governor, Lt. Governor, AG, and statewide officeholders.", href: "/representatives" },
   { title: "Voting & Policy", description: "Voter ID, registration, election integrity, and ballot access.", href: "/register-to-vote" },
 ];
@@ -96,6 +97,7 @@ function TexasPoliticsPage() {
             </p>
           </div>
         </section>
+        <PillarRelationshipNav pillarSlug="texas-politics-government" />
       </HubView>
       <AgedFeedSection
         section="politics"

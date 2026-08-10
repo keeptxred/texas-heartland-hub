@@ -228,7 +228,7 @@ export type ListDuplicatesResult =
     };
 
 export const listExploreDuplicateCandidatesFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => ListInput.parse(d))
+  .validator((d: unknown) => ListInput.parse(d))
   .handler(async ({ data }): Promise<ListDuplicatesResult> => {
     if (!authOk(data.token)) return fail("unauthorized", "Admin access required");
     const admin = await getAdmin();
@@ -270,7 +270,7 @@ export type GetDuplicateResult =
   ErrorPayload | { ok: true; data: ExploreDuplicateCandidateWithEntities };
 
 export const getExploreDuplicateCandidateFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => DetailInput.parse(d))
+  .validator((d: unknown) => DetailInput.parse(d))
   .handler(async ({ data }): Promise<GetDuplicateResult> => {
     if (!authOk(data.token)) return fail("unauthorized", "Admin access required");
     const admin = await getAdmin();
@@ -305,7 +305,7 @@ const MergeInput = z.object({
 export type MergeCandidateResult = ErrorPayload | { ok: true; data: ExploreMergeResult };
 
 export const mergeExploreDuplicateCandidateFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => MergeInput.parse(d))
+  .validator((d: unknown) => MergeInput.parse(d))
   .handler(async ({ data }): Promise<MergeCandidateResult> => {
     if (!authOk(data.token)) return fail("unauthorized", "Admin access required");
     if (data.candidateId === data.survivorId) {
@@ -391,7 +391,7 @@ const ResolveInput = z.object({
 export type ResolveCandidateResult = ErrorPayload | { ok: true; data: ExploreDuplicateCandidate };
 
 export const resolveExploreDuplicateCandidateFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => ResolveInput.parse(d))
+  .validator((d: unknown) => ResolveInput.parse(d))
   .handler(async ({ data }): Promise<ResolveCandidateResult> => {
     if (!authOk(data.token)) return fail("unauthorized", "Admin access required");
     const admin = await getAdmin();

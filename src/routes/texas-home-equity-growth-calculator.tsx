@@ -1,12 +1,2 @@
-import { createFileRoute } from "@tanstack/react-router";
-import TexasEquityGrowthPage from "@/pages/equity/TexasEquityGrowthPage";
-import { calculatorRouteSeo } from "@/lib/calculator-route-seo";
-import { withFinancialTrust } from "@/components/calculators/FinancialTrustPanel";
-
-const title = "Texas Home Equity Growth Calculator";
-const description = "Project Texas home equity growth from appreciation, mortgage principal reduction, extra payments, and future property value over time.";
-
-export const Route = createFileRoute("/texas-home-equity-growth-calculator")({
-  head: () => calculatorRouteSeo({ title, description, path: "/texas-home-equity-growth-calculator" }),
-  component: withFinancialTrust(TexasEquityGrowthPage, title, true),
-});
+import { createFileRoute, redirect } from "@tanstack/react-router";
+export const Route = createFileRoute("/texas-home-equity-growth-calculator")({ beforeLoad: ({ location }) => { throw redirect({ href: `https://texasdefined.com${location.pathname}${location.searchStr || ""}`, statusCode: 301 }); } });

@@ -107,6 +107,31 @@ export interface RaceResultSummary {
 }
 
 export interface RaceDetail extends ElectionRace {
+  counties: readonly {
+    id: string;
+    name: string;
+    slug: string;
+  }[];
+  zipCodes: readonly string[];
+  officialCountyElectionLinks?: readonly {
+    label: string;
+    url: string;
+    countyId: string;
+  }[];
+  geographySource?: {
+    sourceName: string;
+    sourceUrl: string;
+    retrievedAt: string;
+    boundaryVintage?: string | null;
+    congressionalSession?: string | null;
+    stateLegislativeVintage?: string | null;
+    zipCodesAuthoritative?: boolean;
+  } | null;
+  countyElectionLinkSource?: {
+    sourceName: string;
+    sourceUrl: string;
+    retrievedAt: string;
+  } | null;
   candidates: readonly RaceCandidateSummary[];
   latestPoll: RacePollSummary | null;
   latestForecast: RaceForecastSummary | null;

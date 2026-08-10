@@ -6,7 +6,7 @@ export const Route = createFileRoute("/admin/elections/races")({
   head: () => ({
     meta: [
       { title: "Election Races — Keep TX Red Admin" },
-      { name: "robots", content: "noindex, nofollow" },
+      { name: "robots", content: "noindex, follow" },
     ],
   }),
   component: AdminElectionRacesPage,

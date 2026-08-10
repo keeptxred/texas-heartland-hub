@@ -9,19 +9,10 @@ export const Route = createFileRoute("/robots.txt")({
     handlers: {
       GET: async () => {
         const body = [
-          "# Keep TX Red — allow all public content, block internal system paths.",
-          "User-agent: OAI-SearchBot",
-          "Allow: /",
-          "",
-          "User-agent: GPTBot",
-          "Allow: /",
-          "",
-          "User-agent: PerplexityBot",
-          "Allow: /",
-          "",
-          "User-agent: ClaudeBot",
-          "Allow: /",
-          "",
+          "# Keep TX Red — public pages are crawlable; private, operational, checkout, and low-value query states are excluded for every crawler.",
+          // Keep one shared group so Googlebot, Googlebot-Image, search crawlers,
+          // and AI crawlers inherit the same crawl boundaries. A bot-specific
+          // Allow group can otherwise bypass wildcard-group restrictions.
           "User-agent: *",
           "Allow: /",
           "Disallow: /api/",
@@ -34,6 +25,18 @@ export const Route = createFileRoute("/robots.txt")({
           "Disallow: /email/",
           "Disallow: /hubs",
           "Disallow: /hubs/",
+          // Cart / checkout and low-value search/filter/sort URLs should not
+          // enter the crawl queue. Pagination is intentionally crawlable so
+          // Googlebot can follow bill-directory links beyond the first page.
+          "Disallow: /cart",
+          "Disallow: /shop/checkout",
+          "Disallow: /shop/checkout-return",
+          "Disallow: /*?topic=",
+          "Disallow: /*?q=",
+          "Disallow: /*?query=",
+          "Disallow: /*?search=",
+          "Disallow: /*?sort=",
+          "Disallow: /*?filter=",
           "",
           `Sitemap: ${BASE_URL}/sitemap.xml`,
           "",

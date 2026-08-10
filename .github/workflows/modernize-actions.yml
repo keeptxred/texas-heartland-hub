@@ -1,0 +1,42 @@
+name: Validate GitHub Workflows
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: workflow-validation-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate workflow YAML
+        shell: bash
+        run: |
+          set -euo pipefail
+          ruby -e "require 'yaml'; Dir['.github/workflows/*.{yml,yaml}'].sort.each { |file| YAML.parse_file(file); puts \"validated #{file}\" }"
+      - name: Reject deprecated action runtimes
+        shell: bash
+        run: |
+          set -euo pipefail
+          deprecated='actions/checkout@v4|actions/setup-node@v4|actions/setup-python@v5|actions/github-script@v7'
+          matches=$(grep -RInE "^[[:space:]]*-[[:space:]]*uses:[[:space:]]*(${deprecated})[[:space:]]*$|^[[:space:]]*uses:[[:space:]]*(${deprecated})[[:space:]]*$" .github/workflows || true)
+          if [[ -n "$matches" ]]; then
+            echo 'Deprecated GitHub Action runtimes remain:' >&2
+            echo "$matches" >&2
+            exit 1
+          fi

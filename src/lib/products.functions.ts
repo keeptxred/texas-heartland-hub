@@ -21,6 +21,12 @@ export type Product = {
   tags?: string[];
   colors?: string[];
   variants?: ProductVariant[];
+  category?: string | null;
+  collections?: string[];
+  isFeatured?: boolean;
+  isNew?: boolean;
+  isOnSale?: boolean;
+  syncedAt?: string | null;
 };
 
 const MOCK_PRODUCTS: Product[] = [
@@ -32,6 +38,11 @@ const MOCK_PRODUCTS: Product[] = [
     image: "https://images.pexels.com/photos/1656684/pexels-photo-1656684.jpeg?auto=compress&cs=tinysrgb&w=800",
     url: "/shop",
     description: "Soft cotton tee with the Keep Texas Red mark. Printed in Texas.",
+    category: "shirts",
+    collections: ["texas", "patriotic", "conservative"],
+    isFeatured: true,
+    isNew: false,
+    isOnSale: false,
   },
   {
     id: "ktr-cap",
@@ -41,6 +52,11 @@ const MOCK_PRODUCTS: Product[] = [
     image: "https://images.pexels.com/photos/1124465/pexels-photo-1124465.jpeg?auto=compress&cs=tinysrgb&w=800",
     url: "/shop",
     description: "Six-panel cap with embroidered Texas star. Adjustable strap.",
+    category: "hats",
+    collections: ["texas"],
+    isFeatured: false,
+    isNew: false,
+    isOnSale: false,
   },
   {
     id: "ktr-flag-print",
@@ -50,6 +66,11 @@ const MOCK_PRODUCTS: Product[] = [
     image: "https://images.pexels.com/photos/1550337/pexels-photo-1550337.jpeg?auto=compress&cs=tinysrgb&w=800",
     url: "/shop",
     description: "18x24 archival poster print of the Texas state flag.",
+    category: "accessories",
+    collections: ["texas", "patriotic"],
+    isFeatured: false,
+    isNew: false,
+    isOnSale: false,
   },
   {
     id: "ktr-mug",
@@ -59,6 +80,11 @@ const MOCK_PRODUCTS: Product[] = [
     image: "https://images.pexels.com/photos/1793035/pexels-photo-1793035.jpeg?auto=compress&cs=tinysrgb&w=800",
     url: "/shop",
     description: "12oz ceramic mug. Dishwasher and microwave safe.",
+    category: "drinkware",
+    collections: ["texas"],
+    isFeatured: false,
+    isNew: false,
+    isOnSale: false,
   },
 ];
 
@@ -81,8 +107,12 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
     });
     const { data, error } = await supabase
       .from("products")
-      .select("id,title,price,currency,image_url,product_url,description,tags,colors,variants")
-      .eq("is_active", true)
+      // KeepTXRed shows only products assigned to KeepTXRed or Both, using its own
+      // category/collections/featured/display-order columns.
+      .select("id,title,price,currency,image_url,product_url,description,tags,colors,variants,keeptxred_category,keeptxred_collections,keeptxred_featured,keeptxred_display_order,is_new,is_on_sale,synced_at")
+      .eq("publish_keeptxred", true)
+      .order("keeptxred_featured", { ascending: false })
+      .order("keeptxred_display_order", { ascending: true })
       .order("synced_at", { ascending: false })
       .limit(120);
     if (error || !data || (Array.isArray(data) && data.length === 0)) {
@@ -103,6 +133,12 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       tags: string[] | null;
       colors: string[] | null;
       variants: ProductVariant[] | null;
+      keeptxred_category: string | null;
+      keeptxred_collections: string[] | null;
+      keeptxred_featured: boolean | null;
+      is_new: boolean | null;
+      is_on_sale: boolean | null;
+      synced_at: string | null;
     }>).map((r) => ({
       id: r.id,
       title: r.title,
@@ -114,6 +150,12 @@ export const getProducts = createServerFn({ method: "GET" }).handler(async (): P
       tags: r.tags ?? [],
       colors: r.colors ?? [],
       variants: Array.isArray(r.variants) ? r.variants : [],
+      category: r.keeptxred_category,
+      collections: r.keeptxred_collections ?? [],
+      isFeatured: Boolean(r.keeptxred_featured),
+      isNew: Boolean(r.is_new),
+      isOnSale: Boolean(r.is_on_sale),
+      syncedAt: r.synced_at,
     }));
     return { products, isFallback: false };
   } catch (error) {

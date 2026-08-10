@@ -17,7 +17,7 @@ const ACTIONS = [
   { to: "/register-to-vote", title: "Register to Vote", desc: "Eligibility, deadlines, and how to file your application." },
   { to: "/find-representative", title: "Find Your Representative", desc: "Look up federal and state districts by address or ZIP." },
   { to: "/contact-legislators", title: "Contact Your Legislators", desc: "Phone scripts, email templates, and direct lines." },
-  { to: "/voting-locations", title: "Voting Locations", desc: "Find your polling place and early voting sites." },
+  { to: "/elections/voting", title: "Voting Information", desc: "Find polling-place guidance, early voting information, and election resources." },
   { to: "/county-elections", title: "County Election Pages", desc: "Local election info for every major Texas county." },
 ] as const;
 

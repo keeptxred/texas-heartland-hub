@@ -72,6 +72,7 @@ function CheckoutPage() {
             <p className="text-muted-foreground mb-6">Add products to your bag first.</p>
             <Link
               to="/shop"
+              search={{ category: undefined, collection: undefined, q: undefined, sort: undefined }}
               className="inline-flex rounded-lg bg-primary text-primary-foreground px-5 py-3 font-semibold hover:bg-primary/90"
             >
               Back to shop

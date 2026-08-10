@@ -110,11 +110,6 @@ export const Route = createFileRoute("/elections/2026")({
     meta: [
       { title: ELECTION_CENTRAL_TITLE },
       { name: "description", content: ELECTION_CENTRAL_DESCRIPTION },
-      {
-        name: "keywords",
-        content:
-          "2026 Texas elections, Texas election candidates, Texas election polls, Texas election results, Texas races, Texas voting",
-      },
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { property: "og:title", content: ELECTION_CENTRAL_TITLE },
       { property: "og:description", content: ELECTION_CENTRAL_DESCRIPTION },

@@ -1,22 +1,39 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { BASE_URL, xmlEscape, xmlResponse } from "@/lib/sitemap-shared";
+import {
+  BASE_URL,
+  isRealImage,
+  isArticleSlugDateConsistent,
+  xmlEscape,
+  xmlResponse,
+} from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
-import { AUTHORS } from "@/data/authors";
-import { ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
+import { AUTHORS, authorSlug } from "@/data/authors";
+import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
+import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 
-/** Sitemap INDEX. Includes only sub-sitemaps that would contain >0 URLs. */
+function isCompleteAuthor(author: (typeof AUTHORS)[number]): boolean {
+  return Boolean(
+    author.slug.trim()
+      && author.name.trim().length >= 3
+      && author.role.trim().length >= 3
+      && author.bio.some((paragraph) => paragraph.trim().length >= 80)
+      && author.beats.some((beat) => beat.trim().length >= 3),
+  );
+}
+
+/** Sitemap index. Includes every dedicated sitemap at most once and omits empty dynamic sitemaps. */
 export const Route = createFileRoute("/sitemap.xml")({
   server: {
     handlers: {
       GET: async () => {
-        const now = Date.now();
-        const cutoff = now - 48 * 60 * 60 * 1000;
-
-        const localArticles = ARTICLES.filter((a) => isPublished(a));
+        const cutoff = Date.now() - 48 * 60 * 60 * 1000;
+        const localArticles = ARTICLES.filter((article) =>
+          isPublished(article) && isArticleSlugDateConsistent(article.slug, article.publishedAt),
+        );
         let cloudArticles: Array<{
           published_at: string;
           image_url: string | null;
@@ -26,54 +43,89 @@ export const Route = createFileRoute("/sitemap.xml")({
           updated_at: string | null;
         }> = [];
         try {
-          const res = await listSitemapArticles();
-          cloudArticles = res.articles;
-        } catch (e) {
-          console.error("sitemap index: cloud articles fetch failed", e);
+          cloudArticles = (await listSitemapArticles()).articles.filter((article) =>
+            isArticleSlugDateConsistent(article.slug, article.published_at),
+          );
+        } catch (error) {
+          console.error("sitemap index: cloud articles fetch failed", error);
         }
 
         const newsCount =
-          localArticles.filter((a) => new Date(a.publishedAt).getTime() >= cutoff).length +
-          cloudArticles.filter(
-            (a) =>
-              new Date(a.published_at).getTime() >= cutoff &&
-              (a.kind === "ingested" || a.kind === "news"),
+          localArticles.filter((article) => new Date(article.publishedAt).getTime() >= cutoff).length
+          + cloudArticles.filter((article) =>
+            new Date(article.published_at).getTime() >= cutoff
+            && (article.kind === "ingested" || article.kind === "news"),
           ).length;
-
         const evergreenCount = localArticles.length + cloudArticles.length;
 
         let productCount = 0;
+        let productImageCount = 0;
         try {
-          const { products } = await getProducts();
-          productCount = products.length;
-        } catch (e) {
-          console.error("sitemap index: products fetch failed", e);
+          const { products, isFallback } = await getProducts();
+          if (!isFallback) {
+            const completeProducts = products.filter((product) =>
+              String(product.id ?? "").trim()
+              && String(product.title ?? "").trim()
+              && isRealImage(product.image),
+            );
+            productCount = completeProducts.length;
+            productImageCount = completeProducts.length;
+          }
+        } catch (error) {
+          console.error("sitemap index: products fetch failed", error);
         }
 
-        const authorCount = AUTHORS.length;
-        const imageCount =
-          localArticles.length + cloudArticles.filter((a) => !!a.image_url).length + productCount;
+        const activeAuthorSlugs = new Set(
+          localArticles.map((article) => authorSlug(article.author)).filter(Boolean),
+        );
+        try {
+          const { articles: liveArticles } = await getPublishedAuthorArticles();
+          for (const article of liveArticles) {
+            if (article.slug && article.author) activeAuthorSlugs.add(authorSlug(article.author));
+          }
+        } catch (error) {
+          console.error("sitemap index: live author bylines fetch failed", error);
+        }
+        const authorCount = AUTHORS.filter(
+          (author) => isCompleteAuthor(author) && activeAuthorSlugs.has(author.slug),
+        ).length;
 
-        const included = [
+        const imageCount =
+          localArticles.filter((article) => isRealImage(article.image)).length
+          + cloudArticles.filter((article) => isRealImage(article.image_url)).length
+          + productImageCount;
+
+        const candidates = [
           { file: "sitemap-pages.xml", count: 1 },
-          { file: "sitemap-explore.xml", count: 1 },
           { file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT },
           { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
+          { file: "sitemap-bills.xml", count: 1 },
+          { file: "sitemap-representatives.xml", count: 1 },
+          { file: "sitemap-committees.xml", count: 1 },
+          { file: "sitemap-districts.xml", count: ELECTION_DISTRICT_PATHS.length },
+          // One or more session-detail pages are emitted dynamically from the
+          // legislative_sessions table; the three shared Legislature hubs live
+          // in sitemap-pages.xml and are intentionally not duplicated here.
+          { file: "sitemap-legislature.xml", count: 1 },
           { file: "sitemap-news.xml", count: newsCount },
           { file: "sitemap-evergreen.xml", count: evergreenCount },
           { file: "sitemap-products.xml", count: productCount },
           { file: "sitemap-authors.xml", count: authorCount },
           { file: "sitemap-images.xml", count: imageCount },
-        ].filter((s) => s.count > 0);
+        ];
 
-        const lastmod = new Date().toISOString();
-        const entries = included
-          .map(
-            (s) =>
-              `  <sitemap>\n    <loc>${xmlEscape(`${BASE_URL}/${s.file}`)}</loc>\n    <lastmod>${lastmod}</lastmod>\n  </sitemap>`,
-          )
-          .join("\n");
-
+        const seen = new Set<string>();
+        const included = candidates.filter(({ file, count }) => {
+          if (count <= 0 || seen.has(file)) return false;
+          seen.add(file);
+          return true;
+        });
+        // A sitemap index lastmod is optional. Omitting it is more truthful than
+        // hard-coding a sitewide date that quickly becomes stale and cannot
+        // represent each child sitemap's independent update cadence.
+        const entries = included.map(({ file }) =>
+          `  <sitemap>\n    <loc>${xmlEscape(`${BASE_URL}/${file}`)}</loc>\n  </sitemap>`,
+        ).join("\n");
         const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</sitemapindex>`;
         return xmlResponse(xml);
       },

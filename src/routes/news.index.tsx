@@ -100,6 +100,10 @@ function NewsPage() {
         <p className="mt-3 text-muted-foreground max-w-2xl">
           Independent conservative reporting on the legislature, border security, energy, education, and the tax fights that matter to Texas families. Updated every morning at 2:00 AM Central.
         </p>
+        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
+          <Link to="/authors" className="text-primary hover:underline">Meet our authors &amp; desks →</Link>
+          <Link to="/editorial-standards" className="text-primary hover:underline">Editorial standards →</Link>
+        </div>
       </div>
 
       <div className="flex flex-wrap gap-2 mb-10">

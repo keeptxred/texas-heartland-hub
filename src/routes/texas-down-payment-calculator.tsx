@@ -1,12 +1,2 @@
-import { createFileRoute } from "@tanstack/react-router";
-import TexasDownPaymentPage from "@/pages/downPayment/TexasDownPaymentPage";
-import { calculatorRouteSeo } from "@/lib/calculator-route-seo";
-import { withFinancialTrust } from "@/components/calculators/FinancialTrustPanel";
-
-const title = "Texas Down Payment Calculator";
-const description = "Compare Texas home down-payment percentages, loan amounts, estimated cash needs, and monthly payment effects before choosing a purchase target.";
-
-export const Route = createFileRoute("/texas-down-payment-calculator")({
-  head: () => calculatorRouteSeo({ title, description, path: "/texas-down-payment-calculator" }),
-  component: withFinancialTrust(TexasDownPaymentPage, title, true),
-});
+import { createFileRoute, redirect } from "@tanstack/react-router";
+export const Route = createFileRoute("/texas-down-payment-calculator")({ beforeLoad: ({ location }) => { throw redirect({ href: `https://texasdefined.com${location.pathname}${location.searchStr || ""}`, statusCode: 301 }); } });

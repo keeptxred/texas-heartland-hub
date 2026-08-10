@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Helmet } from "react-helmet-async";
+import { useRouterState } from "@tanstack/react-router";
 
 export interface ElectionLayoutProps {
   title: string;
@@ -30,6 +31,14 @@ export function ElectionLayout({
   fullWidth = false,
   indexable = true,
 }: ElectionLayoutProps) {
+  // This layout is also embedded on non-election pages (e.g. the homepage
+  // election takeover). Only emit canonical/og:url when the visitor is
+  // actually on the canonical URL, otherwise the host page gets a second,
+  // conflicting canonical.
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const canonicalPath = canonicalUrl ? canonicalUrl.replace(/^https?:\/\/[^/]+/, "") || "/" : "";
+  const normalized = pathname.length > 1 && pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  const isCanonicalPage = Boolean(canonicalPath) && canonicalPath === normalized;
   const defaultSchema = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -62,7 +71,7 @@ export function ElectionLayout({
         <meta name="description" content={description} />
         <meta
           name="robots"
-          content={indexable ? "index, follow, max-image-preview:large" : "noindex, nofollow"}
+          content={indexable ? "index, follow, max-image-preview:large" : "noindex, follow"}
         />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
@@ -72,8 +81,8 @@ export function ElectionLayout({
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        {indexable && canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-        {indexable && canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+        {indexable && isCanonicalPage && <link rel="canonical" href={canonicalUrl} />}
+        {indexable && isCanonicalPage && <meta property="og:url" content={canonicalUrl} />}
         <script type="application/ld+json">{JSON.stringify(schema ?? defaultSchema)}</script>
       </Helmet>
 

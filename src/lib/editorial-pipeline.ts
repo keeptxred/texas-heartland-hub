@@ -78,6 +78,13 @@ RULES DERIVED FROM THE BRIEF:
 - A relationship entry is required only when two subjects are asserted to be connected in the same sentence. A factual attendee list or separate mentions do not require pairwise relationship entries.
 - Never confuse a current office with an office being sought.
 - Do not invent polling, unnamed analysts, observers, consultants, experts, statistics, quotes, or public-opinion claims.
+
+AEO / ANSWER-FIRST SUMMARY REQUIREMENTS:
+- The "summary" field is the article's direct-answer block. Write it as a self-contained 45–90 word answer to the headline/topic.
+- Put the answer in the first sentence. Do not begin with throat-clearing such as "In a development," "This story is about," or "Keep TX Red is tracking."
+- Name the primary subject and concrete action/event immediately. Include the relevant Texas location, agency, office, date, or consequence when the source supports it.
+- A reader or AI system should be able to quote the summary alone and understand what happened and why it matters.
+- Do not repeat the headline verbatim and do not add unsupported interpretation merely to make the summary sound definitive.
 `;
 
 export const EDITORIAL_STRICT_RETRY_ADDENDUM = `
@@ -85,9 +92,10 @@ export const EDITORIAL_STRICT_RETRY_ADDENDUM = `
 RETRY — STRICT MODE:
 The previous draft failed editorial validation. Regenerate using only verified
 source facts. Remove unsupported people, organizations, statistics, quotes,
-relationships, and filler. The first paragraph must state what happened, who
-was involved, when it occurred, and why it is news. If a factual article cannot
-be produced, set brief.hasClearNewsEvent to false and leave article fields empty.
+relationships, and filler. The summary must be a self-contained, answer-first
+45–90 word explanation whose first sentence states what happened. If a factual
+article cannot be produced, set brief.hasClearNewsEvent to false and leave
+article fields empty.
 `;
 
 const BANNED_UNSUPPORTED_PATTERNS: RegExp[] = [
@@ -105,6 +113,14 @@ const BANNED_UNSUPPORTED_PATTERNS: RegExp[] = [
   /\bpolls (?:show|indicate|suggest)\b/i,
 ];
 
+const GENERIC_SUMMARY_OPENERS: RegExp[] = [
+  /^in a (?:new|major|recent|significant) development\b/i,
+  /^this (?:story|article|report)\b/i,
+  /^keep tx red (?:is|will be) tracking\b/i,
+  /^keep texas red (?:is|will be) tracking\b/i,
+  /^there (?:has been|is|are)\b/i,
+];
+
 function articleProse(article: ArticleShape): string {
   const parts: string[] = [];
   if (article.summary) parts.push(article.summary);
@@ -118,6 +134,10 @@ function articleProse(article: ArticleShape): string {
 
 function firstParagraph(article: ArticleShape): string {
   return (article.summary ?? article.sections?.[0]?.paragraphs?.[0] ?? "").trim();
+}
+
+function countWords(value: string): number {
+  return value.trim().split(/\s+/).filter(Boolean).length;
 }
 
 function escapeRegExp(value: string): string {
@@ -170,13 +190,23 @@ function headlineMatchesBody(article: ArticleShape, brief?: StoryBrief): boolean
 
 export type ValidationResult = { ok: boolean; reasons: string[] };
 
-export function validateArticle(article: ArticleShape, brief?: StoryBrief): ValidationResult {
+export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourceText?: string): ValidationResult {
   const reasons: string[] = [];
   const prose = articleProse(article);
   const proseAndTitle = `${article.title ?? ""} \n ${prose}`;
+  const summary = (article.summary ?? "").trim();
 
   if (!article.title || article.title.trim().length < 10) reasons.push("missing_or_short_title");
   if (!prose || prose.trim().length < 200) reasons.push("body_too_short_or_missing");
+  if (!summary) {
+    reasons.push("missing_direct_answer_summary");
+  } else {
+    const summaryWords = countWords(summary);
+    if (summaryWords < 35 || summaryWords > 110) reasons.push("direct_answer_summary_length");
+    if (GENERIC_SUMMARY_OPENERS.some((pattern) => pattern.test(summary))) {
+      reasons.push("generic_summary_opener");
+    }
+  }
   if (article.title && prose && !headlineMatchesBody(article, brief)) {
     reasons.push("headline_does_not_match_body");
   }
@@ -202,6 +232,14 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief): Vali
       for (const secondaryRaw of brief.secondarySubjects ?? []) {
         const secondary = secondaryRaw?.trim();
         if (!secondary || secondary.toLowerCase() === primary.toLowerCase()) continue;
+
+        // A subject named explicitly in the source headline/body is source-supported.
+        // Do not demand a separate AI-generated relationship record for it; that
+        // would turn omissions in the brief.relationships array into false
+        // `unrelated_subject` rejections (for example, QTS Data Centers in an
+        // Office of the Governor release whose headline names QTS directly).
+        if (sourceText && containsName(sourceText, secondary)) continue;
+
         const assertedTogether = sentences.some((sentence) =>
           sentenceHasBoth(sentence, primary, secondary),
         );
@@ -270,6 +308,7 @@ export type EditorialResult<T extends ArticleShape> = {
 
 export async function runEditorialRewrite<T extends ArticleShape>(
   generate: GeneratorFn<T>,
+  sourceText?: string,
 ): Promise<EditorialResult<T>> {
   const first = await generate(EDITORIAL_SYSTEM_ADDENDUM, "initial");
   if (!first?.raw) {
@@ -296,6 +335,7 @@ export async function runEditorialRewrite<T extends ArticleShape>(
   const firstValidation = validateArticle(
     parsedFirst.article ?? {},
     parsedFirst.brief ?? undefined,
+    sourceText,
   );
   if (firstValidation.ok && parsedFirst.article) {
     return {
@@ -334,6 +374,7 @@ export async function runEditorialRewrite<T extends ArticleShape>(
   const secondValidation = validateArticle(
     parsedSecond.article ?? {},
     parsedSecond.brief ?? undefined,
+    sourceText,
   );
   if (secondValidation.ok && parsedSecond.article) {
     return {

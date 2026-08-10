@@ -1,12 +1,13 @@
-// Backfill scorer: runs the existing viral scorer against feed rows that
-// have never been scored (viral_scored_at IS NULL). Reuses the same logic
-// as score-viral.ts — no scoring changes, no publishing, no generation.
+// Backfill scorer: runs the current viral + editorial scorer against feed rows
+// that have never been scored (viral_scored_at IS NULL). No generation or
+// publishing happens here; it only classifies newsroom value and routing.
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import {
   scoreFeedItem,
   classifySourceReputation,
   qualifiesReadyForRewrite,
+  qualifiesForAutoRewrite,
 } from "@/lib/viral-score";
 
 export const Route = createFileRoute("/api/public/hooks/score-viral-backfill")({
@@ -80,6 +81,8 @@ async function scoreUnscored(request: Request) {
   const now = new Date().toISOString();
   let updated = 0;
   let readyFlagged = 0;
+  let autoPublishFlagged = 0;
+  let reviewFlagged = 0;
 
   for (const row of rows) {
     const rep =
@@ -98,7 +101,10 @@ async function scoreUnscored(request: Request) {
     const prior = row.viral_score ?? 0;
     const trendVelocity = Number(((r.viralScore - prior) + (sourceCount - 1) * 5).toFixed(2));
     const readyForRewrite = qualifiesReadyForRewrite(r);
+    const autoPublish = qualifiesForAutoRewrite(r) && r.editorialLane === "AUTO_PUBLISH";
     if (readyForRewrite) readyFlagged += 1;
+    if (autoPublish) autoPublishFlagged += 1;
+    if (r.editorialLane === "REVIEW") reviewFlagged += 1;
 
     const { error: upErr } = await supabase
       .from("texas_news_feed")
@@ -109,6 +115,10 @@ async function scoreUnscored(request: Request) {
           ...r.signals,
           source_reputation_reason: r.sourceReputationReason,
           has_video: hasVideo,
+          editorial_value_score: r.editorialValueScore,
+          editorial_lane: r.editorialLane,
+          editorial_signals: r.editorialSignals,
+          auto_publish_eligible: autoPublish,
         },
         texas_relevance_score: r.texasRelevanceScore,
         source_reputation_score: r.sourceReputationScore,
@@ -127,7 +137,15 @@ async function scoreUnscored(request: Request) {
     .select("id", { count: "exact", head: true })
     .is("viral_scored_at", null);
 
-  return json({ ok: true, scanned: rows.length, updated, readyFlagged, remaining: remaining ?? 0 });
+  return json({
+    ok: true,
+    scanned: rows.length,
+    updated,
+    readyFlagged,
+    autoPublishFlagged,
+    reviewFlagged,
+    remaining: remaining ?? 0,
+  });
 }
 
 function json(body: unknown, status = 200) {
