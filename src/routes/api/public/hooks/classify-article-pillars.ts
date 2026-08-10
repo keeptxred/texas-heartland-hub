@@ -24,6 +24,12 @@ function belongsToTexasDefined(article: ArticleCandidate): boolean {
   })());
 }
 
+async function syncVisibleCategories(db: any): Promise<number> {
+  const { data, error } = await db.rpc("sync_historical_article_categories_from_pillars");
+  if (error) throw new Error(error.message);
+  return typeof data === "number" ? data : Number(data ?? 0);
+}
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
@@ -57,15 +63,21 @@ async function handler() {
     .slice(0, BATCH_SIZE);
 
   if (!candidates.length) {
-    return Response.json({
-      ok: true,
-      classifierVersion: CLASSIFIER_VERSION,
-      examined: 0,
-      assigned: 0,
-      unmatched: 0,
-      texasDefinedExcluded: 0,
-      complete: true,
-    });
+    try {
+      const categoriesReclassified = await syncVisibleCategories(db);
+      return Response.json({
+        ok: true,
+        classifierVersion: CLASSIFIER_VERSION,
+        examined: 0,
+        assigned: 0,
+        unmatched: 0,
+        texasDefinedExcluded: 0,
+        categoriesReclassified,
+        complete: true,
+      });
+    } catch (error) {
+      return Response.json({ ok: false, error: error instanceof Error ? error.message : String(error) }, { status: 500 });
+    }
   }
 
   let texasDefinedExcluded = 0;
@@ -91,6 +103,13 @@ async function handler() {
     return Response.json({ ok: false, error: upsertError.message }, { status: 500 });
   }
 
+  let categoriesReclassified = 0;
+  try {
+    categoriesReclassified = await syncVisibleCategories(db);
+  } catch (error) {
+    return Response.json({ ok: false, error: error instanceof Error ? error.message : String(error) }, { status: 500 });
+  }
+
   const matched = rows.filter((row) => row.pillar_slug !== null);
   const byPillar = matched.reduce<Record<string, number>>((acc, row) => {
     acc[row.pillar_slug!] = (acc[row.pillar_slug!] ?? 0) + 1;
@@ -104,6 +123,7 @@ async function handler() {
     assigned: matched.length,
     unmatched: rows.length - matched.length,
     texasDefinedExcluded,
+    categoriesReclassified,
     complete: candidates.length < BATCH_SIZE,
     byPillar,
   });
