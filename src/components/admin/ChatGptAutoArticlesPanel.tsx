@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { quickPublishToFacebook } from "@/services/quickPublish";
 import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
+import { ignoreChatGptArticle } from "@/lib/chatgpt-admin.functions";
 import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
-import { Facebook, Image as ImageIcon } from "lucide-react";
+import { EyeOff, Facebook, Image as ImageIcon } from "lucide-react";
+
+const IGNORE_FLAG = "chatgpt-admin-ignored";
 
 type ChatGptArticle = {
   id: string;
@@ -15,6 +18,7 @@ type ChatGptArticle = {
   published_at: string;
   featured_image_url: string | null;
   image_generation_status: string | null;
+  quality_flags: string[] | null;
 };
 
 type PostState =
@@ -29,6 +33,7 @@ export function ChatGptAutoArticlesPanel() {
   const [error, setError] = useState<string | null>(null);
   const [postState, setPostState] = useState<Record<string, PostState>>({});
   const [regenerating, setRegenerating] = useState<Record<string, boolean>>({});
+  const [ignoring, setIgnoring] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     let active = true;
@@ -40,7 +45,7 @@ export function ChatGptAutoArticlesPanel() {
       const { data, error: queryError } = await supabase
         .from("daily_articles")
         .select(
-          "id,slug,title,category,source_name,source_url,published_at,featured_image_url,image_generation_status",
+          "id,slug,title,category,source_name,source_url,published_at,featured_image_url,image_generation_status,quality_flags",
         )
         .eq("author", "Keep TX Red Newsroom")
         .eq("is_ingested", false)
@@ -53,7 +58,10 @@ export function ChatGptAutoArticlesPanel() {
         setError(queryError.message);
         setArticles([]);
       } else {
-        setArticles((data ?? []) as ChatGptArticle[]);
+        const visibleArticles = ((data ?? []) as ChatGptArticle[]).filter(
+          (article) => !(article.quality_flags ?? []).includes(IGNORE_FLAG),
+        );
+        setArticles(visibleArticles);
       }
       setLoading(false);
     }
@@ -63,6 +71,38 @@ export function ChatGptAutoArticlesPanel() {
       active = false;
     };
   }, []);
+
+  function adminToken(): string {
+    return (
+      sessionStorage.getItem("ktr-admin-passcode") ||
+      (import.meta.env.VITE_ADMIN_PASSCODE as string) ||
+      "keeptxred"
+    );
+  }
+
+  async function ignoreArticle(article: ChatGptArticle) {
+    setIgnoring((current) => ({ ...current, [article.id]: true }));
+    setPostState((current) => ({ ...current, [article.id]: { status: "idle" } }));
+
+    try {
+      const result = await ignoreChatGptArticle({
+        data: { id: article.id, token: adminToken() },
+      });
+      if (!result.ok) throw new Error(result.error);
+
+      setArticles((current) => current.filter((item) => item.id !== article.id));
+    } catch (err) {
+      setPostState((current) => ({
+        ...current,
+        [article.id]: {
+          status: "error",
+          message: err instanceof Error ? err.message : "Could not ignore article",
+        },
+      }));
+    } finally {
+      setIgnoring((current) => ({ ...current, [article.id]: false }));
+    }
+  }
 
   async function postToFacebook(article: ChatGptArticle) {
     if (isLegacyGeneratedNewsAsset(article.featured_image_url)) {
@@ -82,7 +122,7 @@ export function ChatGptAutoArticlesPanel() {
       const result = await quickPublishToFacebook({
         headline: article.title,
         source: article.source_name ?? "Keep TX Red",
-        source_url: `https://keeptxred.com/news/${article.slug}`,
+        source_url: article.source_url,
         caption: article.title,
         asset_url: article.featured_image_url,
         slug: article.slug,
@@ -115,11 +155,9 @@ export function ChatGptAutoArticlesPanel() {
     setRegenerating((current) => ({ ...current, [article.id]: true }));
     setPostState((current) => ({ ...current, [article.id]: { status: "idle" } }));
     try {
-      const token =
-        sessionStorage.getItem("ktr-admin-passcode") ||
-        (import.meta.env.VITE_ADMIN_PASSCODE as string) ||
-        "keeptxred";
-      const result = await regenerateFeaturedImage({ data: { slug: article.slug, token } });
+      const result = await regenerateFeaturedImage({
+        data: { slug: article.slug, token: adminToken() },
+      });
       if (!result.ok) throw new Error(result.error);
       setArticles((current) =>
         current.map((item) =>
@@ -151,7 +189,7 @@ export function ChatGptAutoArticlesPanel() {
           <h2 className="font-display text-2xl">ChatGPT Auto Articles</h2>
           <p className="mt-1 text-sm text-muted-foreground">
             Articles created by the ChatGPT automated newsroom, ready to review and share to
-            Facebook.
+            Facebook. Ignored articles stay hidden permanently.
           </p>
         </div>
         <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -179,6 +217,7 @@ export function ChatGptAutoArticlesPanel() {
             const isPosting = state.status === "posting";
             const isLegacyPlaceholder = isLegacyGeneratedNewsAsset(article.featured_image_url);
             const isRegenerating = regenerating[article.id] ?? false;
+            const isIgnoring = ignoring[article.id] ?? false;
 
             return (
               <li key={article.id} className="py-4">
@@ -250,7 +289,7 @@ export function ChatGptAutoArticlesPanel() {
                       <button
                         type="button"
                         onClick={() => void regenerateImage(article)}
-                        disabled={isRegenerating}
+                        disabled={isRegenerating || isIgnoring}
                         className="border-2 border-primary px-3 py-2 text-xs font-bold text-primary disabled:opacity-50"
                       >
                         {isRegenerating ? "Regenerating…" : "Regenerate Real Image"}
@@ -262,6 +301,7 @@ export function ChatGptAutoArticlesPanel() {
                       disabled={
                         isPosting ||
                         isRegenerating ||
+                        isIgnoring ||
                         isLegacyPlaceholder ||
                         state.status === "posted"
                       }
@@ -273,6 +313,15 @@ export function ChatGptAutoArticlesPanel() {
                         : state.status === "posted"
                           ? "Posted"
                           : "Post to Facebook"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void ignoreArticle(article)}
+                      disabled={isIgnoring || isPosting || isRegenerating}
+                      className="inline-flex items-center justify-center gap-2 border-2 border-foreground/20 px-3 py-2 text-xs font-bold text-muted-foreground transition-colors hover:border-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <EyeOff size={15} />
+                      {isIgnoring ? "Ignoring…" : "Ignore"}
                     </button>
                   </div>
                 </div>
