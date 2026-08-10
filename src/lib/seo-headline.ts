@@ -55,6 +55,24 @@ export type ArticleLike = {
 };
 
 /**
+ * Legacy ChatGPT publication migrations briefly wrote generated-news hero
+ * references as SVG even when the matching raster PNG was committed beside
+ * them. Upgrade only that generated-news path at render time so stale database
+ * rows cannot keep serving the placeholder SVG while production migrations are
+ * catching up. Subject-specific SVG assets elsewhere (for example military
+ * honors) are intentionally left untouched.
+ */
+export function upgradeGeneratedNewsSvgUrl(value: string | null | undefined): string | null {
+  const url = (value ?? "").trim();
+  if (!url) return null;
+  const isGeneratedNews =
+    url.includes("/images/news/generated/") ||
+    url.includes("/public/images/news/generated/");
+  if (!isGeneratedNews || !/\.svg([?#].*)?$/i.test(url)) return url;
+  return url.replace(/\.svg(?=([?#].*)?$)/i, ".png");
+}
+
+/**
  * Google Discover-facing headline. Prefers the AI-rewritten seo_headline
  * (cached in the DB) and falls back to the original title.
  */
@@ -77,7 +95,7 @@ export function toImageInput(article: ArticleLike): ArticleImageInput {
   const bucket = discover === "other" ? null : discover;
   return {
     slug: article.slug,
-    image_url: article.image_url,
+    image_url: upgradeGeneratedNewsSvgUrl(article.image_url),
     // AI-cached bucket wins; discover_category is used as a secondary hint.
     image_category: article.image_category ?? bucket,
     category: article.category,
@@ -109,8 +127,10 @@ export function resolveArticleImage(article: ArticleLike): string {
   const subjectImage = resolveSubjectImage(article);
   if (subjectImage) return subjectImage;
 
-  // AI-generated featured image wins for all other stories.
-  const featured = (article.featured_image_url ?? "").trim();
+  // AI-generated featured image wins for all other stories. Legacy generated
+  // SVG hero references are upgraded to their matching raster asset here so a
+  // stale production row cannot force the placeholder SVG back onto the page.
+  const featured = upgradeGeneratedNewsSvgUrl(article.featured_image_url);
   if (featured) return featured;
   return getArticleImage(toImageInput(article));
 }
