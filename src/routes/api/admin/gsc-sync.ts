@@ -24,7 +24,7 @@ async function verifyGithubRun(request: Request) {
   return run?.repository?.full_name === EXPECTED_REPOSITORY
     && run?.path === EXPECTED_WORKFLOW
     && run?.head_branch === "main"
-    && ["schedule", "workflow_dispatch"].includes(String(run?.event || ""))
+    && ["schedule", "workflow_dispatch", "push"].includes(String(run?.event || ""))
     && ["queued", "in_progress"].includes(String(run?.status || ""));
 }
 
