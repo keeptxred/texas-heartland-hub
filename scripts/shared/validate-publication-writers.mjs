@@ -28,7 +28,7 @@ const maintenanceWriters = new Map([
   ],
   [
     'src/lib/chatgpt-admin.functions.ts',
-    ['quality_flags', 'chatgpt_admin_ignored'],
+    ['quality_flags', 'chatgpt-admin-ignored'],
   ],
 ]);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
