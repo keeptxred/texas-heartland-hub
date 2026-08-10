@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS public.article_category_reclassification_log (
   article_slug text PRIMARY KEY,
   old_category text,
   new_category text NOT NULL,
-  pillar_slug text NOT NULL,
+  pillar_slug text,
   reclassified_at timestamptz NOT NULL DEFAULT now()
 );
 
@@ -29,7 +29,7 @@ AS $$
     WHEN 'texas-veterans-military' THEN 'Non-Political'
     WHEN 'texas-law-enforcement-public-safety' THEN 'Non-Political'
     WHEN 'texas-laws-legislature' THEN 'Legislature'
-    ELSE NULL
+    ELSE 'Non-Political'
   END;
 $$;
 
@@ -57,8 +57,7 @@ BEGIN
     now()
   FROM public.daily_articles d
   JOIN public.article_pillar_assignments a ON a.article_slug = d.slug
-  WHERE a.pillar_slug IS NOT NULL
-    AND public.legacy_article_category_for_pillar(a.pillar_slug) IS NOT NULL
+  WHERE a.classifier_version NOT LIKE '%texasdefined-excluded'
     AND d.category IS DISTINCT FROM public.legacy_article_category_for_pillar(a.pillar_slug)
   ON CONFLICT (article_slug) DO UPDATE SET
     old_category = EXCLUDED.old_category,
@@ -70,8 +69,7 @@ BEGIN
   SET category = public.legacy_article_category_for_pillar(a.pillar_slug)
   FROM public.article_pillar_assignments a
   WHERE a.article_slug = d.slug
-    AND a.pillar_slug IS NOT NULL
-    AND public.legacy_article_category_for_pillar(a.pillar_slug) IS NOT NULL
+    AND a.classifier_version NOT LIKE '%texasdefined-excluded'
     AND d.category IS DISTINCT FROM public.legacy_article_category_for_pillar(a.pillar_slug);
 
   GET DIAGNOSTICS changed_count = ROW_COUNT;
@@ -80,7 +78,7 @@ END;
 $$;
 
 COMMENT ON FUNCTION public.sync_historical_article_categories_from_pillars() IS
-  'Idempotently corrects historical visible categories from the canonical article pillar assignment and records each changed row.';
+  'Idempotently corrects historical visible categories from canonical article pillar assignments; General Texas News becomes the neutral Non-Political legacy display category.';
 
 -- Correct all already-classified historical rows immediately when this
 -- migration is applied.
