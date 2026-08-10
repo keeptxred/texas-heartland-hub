@@ -222,7 +222,7 @@ export function buildImagePrompt(
     .join("; ");
 
   const style =
-    "Professional editorial photography, natural lighting, realistic composition, cinematic depth of field, 16:9 landscape, muted editorial color palette with warm Texas tones.";
+    "Professional editorial photography, natural lighting, realistic composition, cinematic depth of field, muted editorial color palette with warm Texas tones. OUTPUT REQUIREMENTS: landscape JPEG, exactly 16:9, provider 1K size (approximately 1024 by 576 pixels), sRGB color, no transparency, target file size under 2 MB and never over 4 MB. Do not generate a square, portrait, 2K, or 4K image.";
   const loc = subject.locations.slice(0, 2).join(", ");
 
   return [

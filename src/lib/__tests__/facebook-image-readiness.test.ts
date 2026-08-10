@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   assessImageUrl,
+  normalizeFacebookUploadImageUrl,
   normalizeImageUrl,
   verifyImageIsReachable,
 } from "@/lib/facebook-image-readiness";
@@ -37,6 +38,21 @@ describe("assessImageUrl — deterministic image gate", () => {
     expect(result.ready).toBe(false);
     expect(result.reason).toBe("NOT_IMAGE");
     expect(result.message).toContain("legacy generated placeholder");
+  });
+
+  it("requests a bounded 1200px thumbnail for Wikimedia uploads", () => {
+    const url = normalizeFacebookUploadImageUrl(
+      "https://commons.wikimedia.org/wiki/Special:Redirect/file/Bexar%20County%20Courthouse%20%282023%29.jpg",
+    );
+    expect(url).toBe(
+      "https://commons.wikimedia.org/wiki/Special:FilePath/Bexar%20County%20Courthouse%20%282023%29.jpg?width=1200",
+    );
+  });
+
+  it("leaves non-Wikimedia image URLs unchanged", () => {
+    expect(normalizeFacebookUploadImageUrl("https://example.com/photo.jpg?x=1")).toBe(
+      "https://example.com/photo.jpg?x=1",
+    );
   });
 });
 
