@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { classifyContentPillar } from "@/lib/content-pillars";
 
-const BATCH_SIZE = 500;
+const BATCH_SIZE = 10000;
+const CLASSIFIER_VERSION = "content-pillars-v2";
 
 type ArticleCandidate = {
   slug: string;
@@ -9,6 +10,11 @@ type ArticleCandidate = {
   dek: string | null;
   category: string | null;
   source_url: string | null;
+};
+
+type ExistingAssignment = {
+  article_slug: string;
+  classifier_version: string | null;
 };
 
 function belongsToTexasDefined(article: ArticleCandidate): boolean {
@@ -24,14 +30,19 @@ async function handler() {
 
   const { data: assigned, error: assignedError } = await db
     .from("article_pillar_assignments")
-    .select("article_slug")
+    .select("article_slug,classifier_version")
     .order("classified_at", { ascending: false })
     .limit(10000);
   if (assignedError) {
     return Response.json({ ok: false, error: assignedError.message }, { status: 500 });
   }
 
-  const assignedSlugs = new Set((assigned ?? []).map((row: { article_slug: string }) => row.article_slug));
+  const currentAssignments = new Set(
+    ((assigned ?? []) as ExistingAssignment[])
+      .filter((row) => row.classifier_version === CLASSIFIER_VERSION)
+      .map((row) => row.article_slug),
+  );
+
   const { data: articles, error: articleError } = await db
     .from("daily_articles")
     .select("slug,title,dek,category,source_url")
@@ -42,11 +53,19 @@ async function handler() {
   }
 
   const candidates = ((articles ?? []) as ArticleCandidate[])
-    .filter((article) => !assignedSlugs.has(article.slug))
+    .filter((article) => !currentAssignments.has(article.slug))
     .slice(0, BATCH_SIZE);
 
   if (!candidates.length) {
-    return Response.json({ ok: true, examined: 0, assigned: 0, unmatched: 0, texasDefinedExcluded: 0, complete: true });
+    return Response.json({
+      ok: true,
+      classifierVersion: CLASSIFIER_VERSION,
+      examined: 0,
+      assigned: 0,
+      unmatched: 0,
+      texasDefinedExcluded: 0,
+      complete: true,
+    });
   }
 
   let texasDefinedExcluded = 0;
@@ -61,7 +80,7 @@ async function handler() {
         category: article.category,
       }),
       classified_at: new Date().toISOString(),
-      classifier_version: excluded ? "content-pillars-v1:texasdefined-excluded" : "content-pillars-v1",
+      classifier_version: excluded ? `${CLASSIFIER_VERSION}:texasdefined-excluded` : CLASSIFIER_VERSION,
     };
   });
 
@@ -80,6 +99,7 @@ async function handler() {
 
   return Response.json({
     ok: true,
+    classifierVersion: CLASSIFIER_VERSION,
     examined: candidates.length,
     assigned: matched.length,
     unmatched: rows.length - matched.length,
