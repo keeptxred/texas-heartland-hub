@@ -90,7 +90,16 @@ export function isOfficialArticleSource(source: ArticleSource): boolean {
 
   try {
     const hostname = new URL(rawUrl).hostname.toLowerCase().replace(/^www\./, "");
-    return hostname.endsWith(".gov") || hostname === "gov" || hostname.endsWith(".mil") || hostname === "mil";
+    return (
+      hostname.endsWith(".gov") ||
+      hostname === "gov" ||
+      hostname.endsWith(".mil") ||
+      hostname === "mil" ||
+      hostname.endsWith(".state.tx.us") ||
+      hostname === "state.tx.us" ||
+      hostname.endsWith(".tx.us") ||
+      hostname === "tx.us"
+    );
   } catch {
     return false;
   }
