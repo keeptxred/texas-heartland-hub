@@ -5,8 +5,10 @@ const EXPECTED_REPOSITORY = "keeptxred/texas-heartland-hub";
 const EXPECTED_WORKFLOW = ".github/workflows/sync-gsc-metrics.yml";
 
 async function verifyGithubRun(request: Request) {
+  const directToken = request.headers.get("x-github-token")?.trim() ?? "";
   const authorization = request.headers.get("authorization") ?? "";
-  const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+  const bearerToken = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+  const token = directToken || bearerToken;
   const runId = request.headers.get("x-github-run-id") ?? "";
   const repository = request.headers.get("x-github-repository") ?? "";
   if (!token || !/^\d+$/.test(runId) || repository !== EXPECTED_REPOSITORY) return false;
