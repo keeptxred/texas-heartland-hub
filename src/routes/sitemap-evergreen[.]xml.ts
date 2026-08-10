@@ -12,6 +12,18 @@ import {
 import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 
+/**
+ * Tombstoned article slugs that are known to return 404 and must never be
+ * advertised in a sitemap even if a stale database row remains behind.
+ */
+const TOMBSTONED_ARTICLE_SLUGS = new Set([
+  "2026-07-10-texas-wrestling-coach-from-amarillo-sentenced-to-18-years-for-abuse",
+]);
+
+function isSitemapArticleAllowed(slug: string): boolean {
+  return !TOMBSTONED_ARTICLE_SLUGS.has(slug);
+}
+
 /** Evergreen + all article URLs (news items also live here for long-term
  *  indexing; the 48-hour News sitemap is separate). */
 export const Route = createFileRoute("/sitemap-evergreen.xml")({
@@ -22,6 +34,7 @@ export const Route = createFileRoute("/sitemap-evergreen.xml")({
 
         for (const a of ARTICLES.filter((a) => isPublished(a))) {
           if (!isArticleSlugDateConsistent(a.slug, a.publishedAt)) continue;
+          if (!isSitemapArticleAllowed(a.slug)) continue;
           entries.push({
             loc: `${BASE_URL}/news/${a.slug}`,
             lastmod: toIsoDate(a.publishedAt),
@@ -32,6 +45,7 @@ export const Route = createFileRoute("/sitemap-evergreen.xml")({
           const { articles } = await listSitemapArticles();
           for (const a of articles) {
             if (!isArticleSlugDateConsistent(a.slug, a.published_at)) continue;
+            if (!isSitemapArticleAllowed(a.slug)) continue;
             entries.push({
               loc: `${BASE_URL}/news/${a.slug}`,
               lastmod: latestIsoDate(a.published_at, a.updated_at),
