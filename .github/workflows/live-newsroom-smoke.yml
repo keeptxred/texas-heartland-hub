@@ -20,6 +20,7 @@ on:
 permissions:
   contents: read
 
+# Keep coverage reporting independent so schema failures cannot hide the story matrix.
 concurrency:
   group: live-newsroom-smoke-${{ github.run_id }}
   cancel-in-progress: false
