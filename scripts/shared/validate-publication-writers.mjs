@@ -10,22 +10,11 @@ const writers = [
   'src/lib/ingest-and-normalize.functions.ts',
 ];
 const maintenanceWriters = new Map([
-  [
-    'src/lib/multi-source-publish.ts',
-    ['body_json', 'source_name'],
-  ],
-  [
-    'src/lib/ctr-loop.functions.ts',
-    ['headline_variants', 'variant_b_impressions', 'variant_b_clicks'],
-  ],
-  [
-    'src/lib/featured-image.functions.ts',
-    ['featured_image_url', 'image_generation_status'],
-  ],
-  [
-    'src/lib/gsc.ts',
-    ['gsc_impressions', 'gsc_clicks', 'gsc_last_update'],
-  ],
+  ['src/lib/multi-source-publish.ts', ['body_json', 'source_name']],
+  ['src/lib/ctr-loop.functions.ts', ['headline_variants', 'variant_b_impressions', 'variant_b_clicks']],
+  ['src/lib/featured-image.functions.ts', ['featured_image_url', 'image_generation_status']],
+  ['src/lib/gsc.ts', ['gsc_impressions', 'gsc_clicks', 'gsc_last_update']],
+  ['src/lib/chatgpt-admin.functions.ts', ['quality_flags', 'chatgpt-admin-ignored']],
 ]);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set([
