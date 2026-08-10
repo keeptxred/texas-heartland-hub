@@ -15,6 +15,9 @@ import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 
 const PRODUCT_CATALOG_LASTMOD = toIsoDate("2026-07-01T00:00:00-05:00");
+const TOMBSTONED_ARTICLE_SLUGS = new Set([
+  "2026-07-10-texas-wrestling-coach-from-amarillo-sentenced-to-18-years-for-abuse",
+]);
 
 /** Image sitemap: one <image:image> per indexable page with a primary image.
  * Dedupes by image URL so the same asset never appears twice. */
@@ -48,6 +51,7 @@ export const Route = createFileRoute("/sitemap-images.xml")({
         };
 
         for (const a of ARTICLES.filter((a) => isPublished(a))) {
+          if (TOMBSTONED_ARTICLE_SLUGS.has(a.slug)) continue;
           push(
             `${BASE_URL}/news/${a.slug}`,
             a.image,
@@ -60,6 +64,7 @@ export const Route = createFileRoute("/sitemap-images.xml")({
         try {
           const { articles } = await listSitemapArticles();
           for (const a of articles) {
+            if (TOMBSTONED_ARTICLE_SLUGS.has(a.slug)) continue;
             push(
               `${BASE_URL}/news/${a.slug}`,
               a.image_url,
