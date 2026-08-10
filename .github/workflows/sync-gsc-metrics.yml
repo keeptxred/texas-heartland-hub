@@ -4,9 +4,17 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "35 11 * * *"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/sync-gsc-metrics.yml"
+      - "scripts/seo/sync-gsc-metrics.mjs"
+      - "src/lib/gsc.ts"
+      - "src/routes/api/admin/gsc-sync.ts"
   pull_request:
     branches:
-      - feature/ktr-content-pillars
+      - main
     paths:
       - ".github/workflows/sync-gsc-metrics.yml"
       - "scripts/seo/sync-gsc-metrics.mjs"
