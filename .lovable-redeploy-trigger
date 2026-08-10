@@ -1,3 +1,3 @@
 KeepTXRed production redeploy trigger
-2026-08-09T15:09:00-05:00
-Reason: force production pickup of ChatGPT admin image self-heal merged in 125e15ceaee592921059ba71032eaa270a57695a after live admin remained on stale HTTP 403 path.
+2026-08-09T21:57:00-05:00
+Reason: force production pickup of merged KTR Cloudflare Workers AI featured-image path from PR #264 / merge commit 3926ed3e2cd34cc7bdbb24e5b34a8f03798ee40e after live admin Regenerate Real Image continued returning the prior Lovable image-gateway 429 error.

@@ -116,7 +116,9 @@ async function directGeminiImageResponse(
         type: "image",
         mime_type: GEMINI_IMAGE_MIME_TYPE,
         aspect_ratio: "16:9",
-        image_size: process.env.AI_IMAGE_SIZE || "1K",
+        // Keep generated assets bounded for reliable Facebook photo uploads.
+        // Do not permit an environment override to silently raise this to 2K/4K.
+        image_size: "1K",
       },
     }),
     signal: signal ?? undefined,

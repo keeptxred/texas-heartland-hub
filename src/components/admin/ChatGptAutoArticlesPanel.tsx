@@ -82,7 +82,7 @@ export function ChatGptAutoArticlesPanel() {
       const result = await quickPublishToFacebook({
         headline: article.title,
         source: article.source_name ?? "Keep TX Red",
-        source_url: article.source_url,
+        source_url: `https://keeptxred.com/news/${article.slug}`,
         caption: article.title,
         asset_url: article.featured_image_url,
         slug: article.slug,

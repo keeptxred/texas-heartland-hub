@@ -1,6 +1,7 @@
 // Article-wide duplicate-content scrubber. Removes duplicate paragraphs,
 // repeated sentences within paragraphs, repeated headings, repeated bullets,
-// and repeated FAQ questions. Pure function — no side effects.
+// repeated FAQ questions, and keeps the article's "Official Sources" list
+// limited to genuinely authoritative government / military sources.
 
 export type Section = {
   heading?: string;
@@ -11,12 +12,13 @@ export type Section = {
   [k: string]: unknown;
 };
 export type FaqItem = { q?: string; a?: string };
+export type ArticleSource = { label?: string; url?: string };
 export type ArticleBodyShape = {
   updated?: string;
   intro?: string[];
   sections?: Section[];
   faq?: FaqItem[];
-  sources?: { label?: string; url?: string }[];
+  sources?: ArticleSource[];
   keyTakeaways?: string[];
   [k: string]: unknown;
 };
@@ -76,6 +78,51 @@ function dedupeList(items: string[], seen: Set<string>): string[] {
   return out;
 }
 
+/**
+ * The article template labels body.sources as "Official Sources", so this gate
+ * must be conservative. Community/social platforms, news outlets, blogs, and
+ * aggregators are intentionally excluded from that list even when they were
+ * useful during reporting. They may still be cited in article prose.
+ */
+export function isOfficialArticleSource(source: ArticleSource): boolean {
+  const rawUrl = (source.url ?? "").trim();
+  if (!rawUrl) return false;
+
+  try {
+    const hostname = new URL(rawUrl).hostname.toLowerCase().replace(/^www\./, "");
+    return (
+      hostname.endsWith(".gov") ||
+      hostname === "gov" ||
+      hostname.endsWith(".mil") ||
+      hostname === "mil" ||
+      hostname.endsWith(".state.tx.us") ||
+      hostname === "state.tx.us" ||
+      hostname.endsWith(".tx.us") ||
+      hostname === "tx.us"
+    );
+  } catch {
+    return false;
+  }
+}
+
+function officialSourcesOnly(sources: ArticleSource[] | undefined): ArticleSource[] | undefined {
+  if (!Array.isArray(sources)) return sources;
+  const seen = new Set<string>();
+  const out: ArticleSource[] = [];
+
+  for (const source of sources) {
+    if (!source || !isOfficialArticleSource(source)) continue;
+    const url = (source.url ?? "").trim();
+    const label = (source.label ?? "").trim();
+    const key = url.toLowerCase();
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({ label, url });
+  }
+
+  return out;
+}
+
 export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
   if (!body || typeof body !== "object") return body;
   const seenPara = new Set<string>();
@@ -123,7 +170,9 @@ export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
     }
   }
 
-  return { ...body, intro, sections, keyTakeaways, faq } as T;
+  const sources = officialSourcesOnly(body.sources);
+
+  return { ...body, intro, sections, keyTakeaways, faq, sources } as T;
 }
 
 // True when the body still contains duplicate paragraphs/sentences after dedupe.
