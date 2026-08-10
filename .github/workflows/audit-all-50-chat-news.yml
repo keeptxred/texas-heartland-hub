@@ -1,5 +1,6 @@
 name: Audit all 50 chat-created KTR articles
 # Re-run after the all-50 fallback and current production deployment fixes.
+# Production re-audit triggered after seed-style fallback remediation.
 
 on:
   pull_request:
