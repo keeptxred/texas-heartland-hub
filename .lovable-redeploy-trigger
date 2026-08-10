@@ -1,3 +1,3 @@
 KeepTXRed production redeploy trigger
-2026-08-09T21:57:00-05:00
-Reason: force production pickup of merged KTR Cloudflare Workers AI featured-image path from PR #264 / merge commit 3926ed3e2cd34cc7bdbb24e5b34a8f03798ee40e after live admin Regenerate Real Image continued returning the prior Lovable image-gateway 429 error.
+2026-08-10T17:37:00-05:00
+Reason: force production pickup of the current protected main build after live verification continued showing pre-remediation behavior. Current main contains the seed-style chat-news fallback remediation from PR #283, the Election Central breaking strip from PR #284, the Search Console cleanup from PR #273, and all subsequent merged main changes through 9ee635cfecc954bba071a2c01dff7ce72c7e6521. Immediate verification target: the eight August 8 article URLs that still returned 404 after #283 merged.
