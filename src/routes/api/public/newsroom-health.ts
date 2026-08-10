@@ -12,6 +12,11 @@ type FeedRow = {
   internal_slug: string | null;
 };
 
+type TexasDefinedArticleRow = {
+  slug: string;
+  published_at: string | null;
+};
+
 type SourceHealthRow = SourceRow & {
   latest_item_at: string | null;
   items_24h: number;
@@ -32,7 +37,14 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
         const twoDaysAgoMs = now - 48 * 60 * 60 * 1000;
         const sevenDaysAgoMs = now - 7 * 24 * 60 * 60 * 1000;
 
-        const [gapResult, sourcesResult, feedResult] = await Promise.all([
+        const [
+          gapResult,
+          sourcesResult,
+          feedResult,
+          texasDefinedQueueResult,
+          texasDefinedReadyResult,
+          texasDefinedArticlesResult,
+        ] = await Promise.all([
           supabaseAdmin
             .from("news_coverage_gaps" as never)
             .select("id", { count: "exact", head: true }),
@@ -45,11 +57,30 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
             .from("texas_news_feed" as never)
             .select("source,pub_date,internal_slug")
             .gte("pub_date", sevenDaysAgo),
+          supabaseAdmin
+            .from("texasdefined_story_queue" as never)
+            .select("id", { count: "exact", head: true }),
+          supabaseAdmin
+            .from("texasdefined_ready_queue" as never)
+            .select("id", { count: "exact", head: true }),
+          supabaseAdmin
+            .from("texasdefined_articles" as never)
+            .select("slug,published_at")
+            .eq("status", "published")
+            .order("published_at", { ascending: false })
+            .limit(1),
         ]);
 
-        const errors = [gapResult.error?.message, sourcesResult.error?.message, feedResult.error?.message].filter(Boolean);
+        const errors = [
+          gapResult.error?.message,
+          sourcesResult.error?.message,
+          feedResult.error?.message,
+          texasDefinedQueueResult.error?.message,
+          texasDefinedReadyResult.error?.message,
+          texasDefinedArticlesResult.error?.message,
+        ].filter(Boolean);
         if (errors.length > 0) {
-          return new Response(JSON.stringify({ ok: false, databaseViewsReady: false, errors }), {
+          return new Response(JSON.stringify({ ok: false, databaseViewsReady: false, texasDefinedChannelReady: false, errors }), {
             status: 503,
             headers: { "Content-Type": "application/json", "Cache-Control": "no-store" },
           });
@@ -57,6 +88,7 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
 
         const sourceRows = (sourcesResult.data ?? []) as unknown as SourceRow[];
         const feedRows = (feedResult.data ?? []) as unknown as FeedRow[];
+        const latestTexasDefined = ((texasDefinedArticlesResult.data ?? []) as unknown as TexasDefinedArticleRow[])[0] ?? null;
         const feedBySource = new Map<string, FeedRow[]>();
         for (const row of feedRows) {
           const key = String(row.source || "").trim().toLowerCase();
@@ -105,6 +137,12 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
           JSON.stringify({
             ok: true,
             databaseViewsReady: true,
+            texasDefinedChannelReady: true,
+            texasDefinedQueueCount: texasDefinedQueueResult.count ?? 0,
+            texasDefinedReadyCount: texasDefinedReadyResult.count ?? 0,
+            texasDefinedPublishedCount: latestTexasDefined ? 1 : 0,
+            latestTexasDefinedSlug: latestTexasDefined?.slug ?? null,
+            latestTexasDefinedPublishedAt: latestTexasDefined?.published_at ?? null,
             coverageGapCount: gapResult.count ?? 0,
             sourceCount: sources.length,
             sourceStatusCounts: statusCounts,
