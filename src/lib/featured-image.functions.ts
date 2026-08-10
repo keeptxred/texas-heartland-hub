@@ -1,17 +1,15 @@
 // AI Featured Image System.
-// Generates a unique, original editorial image per article via the
-// Lovable AI Gateway (Nano Banana 2), uploads it to the private
-// "article-images" Supabase bucket, and stores CDN-safe metadata
-// on daily_articles. Never touches article slug, URL, body, or
-// existing image_url — featured_image_url is a separate column
-// that takes priority at render time.
+// Generates a unique, original editorial image per article via Cloudflare
+// Workers AI, uploads it to the private "article-images" Supabase bucket,
+// and stores CDN-safe metadata on daily_articles. Never touches article
+// slug, URL, body, or existing image_url — featured_image_url is a separate
+// column that takes priority at render time.
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { extractEntities } from "@/lib/nlp";
 
-const MODEL = "google/gemini-3.1-flash-image";
-const GATEWAY_URL = "https://ai.gateway.lovable.dev/v1/images/generations";
+const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 const CHAT_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 const BUCKET = "article-images";
 const PURPLE_HEART_IMAGE_URL = "/images/military-honors/purple-heart.svg";
@@ -259,33 +257,66 @@ function staticFeaturedImage(row: ArticleRow): { url: string; alt: string } | nu
   return null;
 }
 
+function base64ToBytes(b64: string): Uint8Array {
+  const bin = atob(b64);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i += 1) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
 async function generateImageBytes(prompt: string): Promise<Uint8Array> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) throw new Error("Missing LOVABLE_API_KEY");
-  const res = await fetch(GATEWAY_URL, {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (!accountId || !apiToken) {
+    throw new Error(
+      "Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required",
+    );
+  }
+
+  const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${CLOUDFLARE_IMAGE_MODEL}`;
+  const res = await fetch(endpoint, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${key}`,
-      "Lovable-API-Key": key,
+      Authorization: `Bearer ${apiToken}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: MODEL,
-      messages: [{ role: "user", content: prompt }],
-      modalities: ["image", "text"],
+      prompt: prompt.slice(0, 2048),
+      steps: 4,
+      seed: Math.floor(Math.random() * 2_147_483_647),
     }),
   });
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new Error(`Image gateway ${res.status}: ${body.slice(0, 400)}`);
+
+  const raw = await res.text().catch(() => "");
+  let json: {
+    success?: boolean;
+    result?: { image?: string };
+    image?: string;
+    errors?: { message?: string }[];
+    error?: { message?: string };
+  } = {};
+  try {
+    json = raw ? JSON.parse(raw) : {};
+  } catch {
+    throw new Error(
+      `Cloudflare Workers AI returned a non-JSON response: ${raw.slice(0, 400)}`,
+    );
   }
-  const json = (await res.json()) as { data?: { b64_json?: string }[] };
-  const b64 = json.data?.[0]?.b64_json;
-  if (!b64) throw new Error("Gateway returned no image data");
-  const bin = atob(b64);
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return bytes;
+
+  if (!res.ok || json.success === false) {
+    const detail =
+      json.errors?.[0]?.message ||
+      json.error?.message ||
+      raw ||
+      `HTTP ${res.status}`;
+    throw new Error(
+      `Cloudflare Workers AI ${res.status}: ${String(detail).slice(0, 400)}`,
+    );
+  }
+
+  const b64 = json.result?.image || json.image;
+  if (!b64) throw new Error("Cloudflare Workers AI returned no image data");
+  return base64ToBytes(b64);
 }
 
 async function validateImageMatchesArticle(
