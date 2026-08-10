@@ -114,6 +114,7 @@ for (let i = 0; i < metrics.length; i += 500) {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${githubToken}`,
+      'X-GitHub-Token': githubToken,
       'Content-Type': 'application/json',
       'X-GitHub-Run-Id': githubRunId,
       'X-GitHub-Repository': githubRepository,
