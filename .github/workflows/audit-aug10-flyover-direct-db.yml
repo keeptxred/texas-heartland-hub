@@ -44,9 +44,19 @@ jobs:
             return JSON.parse(text);
           }
 
+          async function getAll(table, baseQuery) {
+            const rows = [];
+            for (let offset = 0; offset < 10000; offset += 1000) {
+              const page = await get(table, `${baseQuery}&limit=1000&offset=${offset}`);
+              rows.push(...page);
+              if (page.length < 1000) break;
+            }
+            return rows;
+          }
+
           const since = encodeURIComponent('2026-08-03T00:00:00Z');
-          const feed = await get('texas_news_feed', `select=title,description,source,pub_date,internal_slug&pub_date=gte.${since}&order=pub_date.desc&limit=2000`);
-          const articles = await get('daily_articles', `select=slug,title,published_at,source_url&published_at=gte.${since}&order=published_at.desc&limit=2000`);
+          const feed = await getAll('texas_news_feed', `select=id,title,description,source,link,pub_date,internal_slug&pub_date=gte.${since}&order=pub_date.desc`);
+          const articles = await getAll('daily_articles', `select=slug,title,published_at,source_url&published_at=gte.${since}&order=published_at.desc`);
 
           const specs = [
             ['state-fair-gun-ban','keeptxred',[/state fair/i,/(gun|handgun|firearm)/i]],
@@ -83,7 +93,7 @@ jobs:
             const article = articles.find((row) => matches(row.title ?? '', terms));
             if (feedRow) ingestedCount += 1;
             if (expected === 'keeptxred' && article) ktrPublishedCount += 1;
-            console.log(`${id} | expected=${expected} | ingested=${Boolean(feedRow)} | feed=${feedRow?.title ?? '-'} | internalSlug=${feedRow?.internal_slug ?? '-'} | ktrPublished=${Boolean(article)} | ktrSlug=${article?.slug ?? '-'} | ktrTitle=${article?.title ?? '-'}`);
+            console.log(`${id} | expected=${expected} | ingested=${Boolean(feedRow)} | feedId=${feedRow?.id ?? '-'} | source=${feedRow?.source ?? '-'} | url=${feedRow?.link ?? '-'} | feed=${feedRow?.title ?? '-'} | internalSlug=${feedRow?.internal_slug ?? '-'} | ktrPublished=${Boolean(article)} | ktrSlug=${article?.slug ?? '-'} | ktrTitle=${article?.title ?? '-'}`);
           }
           console.log(`SUMMARY ingested=${ingestedCount}/23 ktrPublished=${ktrPublishedCount}/${specs.filter((s) => s[1] === 'keeptxred').length}`);
           NODE
