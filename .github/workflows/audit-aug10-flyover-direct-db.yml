@@ -1,0 +1,89 @@
+name: Audit Aug 10 Flyover Direct DB
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-aug10-flyover-direct-db.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Query production Supabase and print 23-story matrix
+        run: |
+          node <<'NODE'
+          import fs from 'node:fs';
+
+          const envText = fs.readFileSync('.env.production', 'utf8');
+          const env = Object.fromEntries(envText.split(/\r?\n/).filter(Boolean).map((line) => {
+            const i = line.indexOf('=');
+            const key = line.slice(0, i);
+            const value = line.slice(i + 1).replace(/^"|"$/g, '');
+            return [key, value];
+          }));
+          const base = env.SUPABASE_URL;
+          const key = env.SUPABASE_PUBLISHABLE_KEY;
+          if (!base || !key) throw new Error('Production Supabase public configuration is missing');
+
+          async function get(table, query) {
+            const response = await fetch(`${base}/rest/v1/${table}?${query}`, {
+              headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: 'application/json' },
+            });
+            const text = await response.text();
+            if (!response.ok) throw new Error(`${table} HTTP ${response.status}: ${text.slice(0, 500)}`);
+            return JSON.parse(text);
+          }
+
+          const since = encodeURIComponent('2026-08-03T00:00:00Z');
+          const feed = await get('texas_news_feed', `select=title,description,source,pub_date,internal_slug&pub_date=gte.${since}&order=pub_date.desc&limit=2000`);
+          const articles = await get('daily_articles', `select=slug,title,published_at,source_url&published_at=gte.${since}&order=published_at.desc&limit=2000`);
+
+          const specs = [
+            ['state-fair-gun-ban','keeptxred',[/state fair/i,/(gun|handgun|firearm)/i]],
+            ['fort-worth-alligators-shot','keeptxred', [/(fort worth|nature center)/i,/alligator/i,/(shot|crossbow|killed)/i]],
+            ['don-nelson','keeptxred', [/don nelson/i,/(mavericks|dallas)/i]],
+            ['ingram-school-flood-repairs','keeptxred', [/ingram/i,/(school|campus)/i,/(flood|storm|repair)/i]],
+            ['st-louis-encephalitis','keeptxred', [/(st\. louis encephalitis|encephalitis)/i,/(corpus christi|kingsville|mosquito)/i]],
+            ['lakeside-fentanyl-children','keeptxred', [/fentanyl/i,/(lakeside|children|child endangerment)/i]],
+            ['dallas-pedestrian-waymo','keeptxred', [/dallas/i,/(waymo|pedestrian|maple avenue)/i]],
+            ['canyon-lake-full','texasdefined', [/canyon lake/i,/(full|capacity|reservoir)/i]],
+            ['bastrop-council-retreat','keeptxred', [/bastrop/i,/(council|fredericksburg|gerdes)/i]],
+            ['kaylee-hottle-scholarship','texasdefined', [/(kaylee hottle|school for the deaf)/i,/scholarship/i]],
+            ['tate-taylor-sprint-double','keeptxred', [/tate taylor/i,/(200 meters|sprint|under-20|texas tech)/i]],
+            ['texas-stadium-mavericks-redevelopment','keeptxred', [/(texas stadium|irving)/i,/(mavericks|redevelop)/i]],
+            ['cowboys-quinnen-williams','keeptxred', [/quinnen williams/i,/cowboys/i]],
+            ['rangers-jonah-bride','keeptxred', [/jonah bride/i,/(rangers|round rock|osuna|leiter)/i]],
+            ['heb-store-upgrades','keeptxred', [/(h-e-b|heb)/i,/(upgrade|remodel|5\.2 million)/i]],
+            ['caseys-pak-a-sak','keeptxred', [/(casey|casey's)/i,/pak-a-sak/i]],
+            ['sushi-door-dash-dispute','keeptxred', [/(sushi by the heights|sushi)/i,/(doordash|door dash)/i]],
+            ['texas-born-county-ranking','texasdefined', [/(born in texas|texas-born)/i,/(jim hogg|county|counties)/i]],
+            ['eds-plano-implosion','texasdefined', [/(eds|electronic data systems)/i,/(plano|implosion|at&t)/i]],
+            ['richardson-lego-public-safety','texasdefined', [/richardson/i,/lego/i,/(public safety|police)/i]],
+            ['kris6-anchor-layoffs','keeptxred', [/(kris 6|hofmann)/i,/(layoff|sign off|scripps)/i]],
+            ['3d-printed-wheelchair','texasdefined', [/(3d-printed|3d printed)/i,/wheelchair/i]],
+            ['nueces-1862-history','texasdefined', [/(nueces|kinney county)/i,/(1862|unionist|german)/i]],
+          ];
+
+          const matches = (text, terms) => terms.every((re) => re.test(text));
+          let ingestedCount = 0;
+          let ktrPublishedCount = 0;
+          console.log(`rows feed=${feed.length} daily_articles=${articles.length}`);
+          for (const [id, expected, terms] of specs) {
+            const feedRow = feed.find((row) => matches(`${row.title ?? ''} ${row.description ?? ''}`, terms));
+            const article = articles.find((row) => matches(row.title ?? '', terms));
+            if (feedRow) ingestedCount += 1;
+            if (expected === 'keeptxred' && article) ktrPublishedCount += 1;
+            console.log(`${id} | expected=${expected} | ingested=${Boolean(feedRow)} | feed=${feedRow?.title ?? '-'} | internalSlug=${feedRow?.internal_slug ?? '-'} | ktrPublished=${Boolean(article)} | ktrSlug=${article?.slug ?? '-'} | ktrTitle=${article?.title ?? '-'}`);
+          }
+          console.log(`SUMMARY ingested=${ingestedCount}/23 ktrPublished=${ktrPublishedCount}/${specs.filter((s) => s[1] === 'keeptxred').length}`);
+          NODE
