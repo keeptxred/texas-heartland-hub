@@ -1,3 +1,3 @@
 KeepTXRed production redeploy trigger
-2026-08-09T15:09:00-05:00
-Reason: force production pickup of ChatGPT admin image self-heal merged in 125e15ceaee592921059ba71032eaa270a57695a after live admin remained on stale HTTP 403 path.
+2026-08-09T21:50:00-05:00
+Reason: force production pickup of merged SEO/AEO release through commit 530ed1121b8a42494a87b3cf8733ef04e6e0c0d1 after live /texas-news remained on the pre-release route instead of redirecting to /news.
