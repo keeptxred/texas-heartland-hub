@@ -56,6 +56,26 @@ export function normalizeImageUrl(raw: unknown): string | null {
   }
 }
 
+// Wikimedia Special:Redirect URLs serve the original upload, which can be
+// tens of megabytes. Request a bounded Commons thumbnail for Facebook while
+// preserving the full-resolution URL used by the article itself.
+export function normalizeFacebookUploadImageUrl(raw: unknown): string | null {
+  const normalized = normalizeImageUrl(raw);
+  if (!normalized) return null;
+  const url = new URL(normalized);
+  if (
+    url.hostname.toLowerCase() === "commons.wikimedia.org" &&
+    /^\/wiki\/Special:(?:Redirect\/file|FilePath)\//i.test(url.pathname)
+  ) {
+    url.pathname = url.pathname.replace(
+      /^\/wiki\/Special:(?:Redirect\/file|FilePath)\//i,
+      "/wiki/Special:FilePath/",
+    );
+    url.searchParams.set("width", "1200");
+  }
+  return url.toString();
+}
+
 function isSvgUrl(url: string): boolean {
   try {
     return /\.svg$/i.test(new URL(url).pathname);

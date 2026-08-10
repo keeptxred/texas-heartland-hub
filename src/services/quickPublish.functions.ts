@@ -4,6 +4,7 @@ import { meetsArticleMainWordCount } from "@/lib/article-length";
 import {
   assessImageUrl,
   FACEBOOK_IMAGE_FETCH_HEADERS,
+  normalizeFacebookUploadImageUrl,
   verifyImageIsReachable,
 } from "@/lib/facebook-image-readiness";
 
@@ -354,7 +355,11 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       let endpoint: string;
       // Upload image bytes so Meta never has to fetch a third-party host that
       // may serve a public browser request but return 403 to Facebook.
-      const imageResponse = await fetch(resolvedAssetUrl!, {
+      const uploadImageUrl = normalizeFacebookUploadImageUrl(resolvedAssetUrl!);
+      if (!uploadImageUrl) {
+        return { ok: false, error: "Facebook post blocked: the featured image URL is invalid." };
+      }
+      const imageResponse = await fetch(uploadImageUrl, {
         headers: FACEBOOK_IMAGE_FETCH_HEADERS,
         redirect: "follow",
       });
