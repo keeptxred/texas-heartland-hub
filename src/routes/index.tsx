@@ -40,16 +40,46 @@ function homepageHead() {
 
 export const Route = createFileRoute("/")({ head: homepageHead, loader: () => getDailyArticles(), component: Index });
 
+function BreakingStrip({ articles }: { articles: DailyArticle[] }) {
+  const breaking = articles.filter((article) => article.slug && article.title && article.is_breaking).slice(0, 3);
+  if (breaking.length === 0) return null;
+
+  return (
+    <section className="border-b bg-primary text-primary-foreground" aria-label="Breaking news">
+      <div className="mx-auto max-w-[1200px] px-6 py-4 sm:py-5">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start md:gap-6">
+          <p className="shrink-0 text-xs font-extrabold uppercase tracking-[0.22em]">Breaking</p>
+          <div className="grid flex-1 gap-3 md:grid-cols-3 md:gap-5">
+            {breaking.map((article) => (
+              <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="font-semibold leading-snug hover:underline">
+                {article.title}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Index() {
-  return ELECTION_FEATURE_FLAGS.homepagePromotion ? (
-    <ElectionRepositoryProvider><ElectionHomePage /></ElectionRepositoryProvider>
-  ) : <PoliticalHomepage />;
+  const { articles } = Route.useLoaderData() as { articles: DailyArticle[] };
+
+  if (ELECTION_FEATURE_FLAGS.homepagePromotion) {
+    return (
+      <>
+        <BreakingStrip articles={articles} />
+        <ElectionRepositoryProvider><ElectionHomePage /></ElectionRepositoryProvider>
+      </>
+    );
+  }
+
+  return <PoliticalHomepage />;
 }
 
 function PoliticalHomepage() {
   const { articles } = Route.useLoaderData() as { articles: DailyArticle[] };
   const valid = articles.filter((article) => article.slug && article.title);
-  const breaking = valid.filter((article) => article.is_breaking).slice(0, 3);
   const latest = valid.slice(0, 9);
   const images = assignUniqueImages(latest, (article) => article.slug, (article) => article.featured_image_url ?? article.image_url ?? heroFlag, (article) => article.category);
 
@@ -76,7 +106,7 @@ function PoliticalHomepage() {
         </div>
       </section>
 
-      {breaking.length > 0 && <section className="border-b bg-primary text-primary-foreground"><div className="mx-auto max-w-[1200px] px-6 py-6"><p className="text-xs font-bold uppercase tracking-[0.2em]">Breaking</p><div className="mt-3 grid gap-4 md:grid-cols-3">{breaking.map((article) => <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="font-semibold hover:underline">{article.title}</Link>)}</div></div></section>}
+      <BreakingStrip articles={valid} />
 
       <section className="mx-auto max-w-[1200px] px-6 py-16">
         <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Latest coverage</p><h2 className="mt-2 font-display text-4xl">Texas News</h2></div><Link to="/news" className="text-sm font-semibold text-primary hover:underline">View all news →</Link></div>
