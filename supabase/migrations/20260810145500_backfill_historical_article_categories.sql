@@ -1,3 +1,4 @@
+-- BULK_CATEGORY_RECLASSIFICATION
 -- Align the historical visible article category with the authoritative pillar
 -- assignment. The public article route still supports the original broad
 -- category vocabulary, so use the closest non-misleading legacy label while
