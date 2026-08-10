@@ -298,20 +298,14 @@ export function ChatGptAutoArticlesPanel() {
                     <button
                       type="button"
                       onClick={() => void postToFacebook(article)}
-                      disabled={
-                        isPosting ||
-                        isRegenerating ||
-                        isIgnoring ||
-                        isLegacyPlaceholder ||
-                        state.status === "posted"
-                      }
+                      disabled={isPosting || isRegenerating || isIgnoring || isLegacyPlaceholder}
                       className="inline-flex items-center justify-center gap-2 border-2 border-[#1877F2] px-3 py-2 text-xs font-bold text-[#1877F2] transition-colors hover:bg-[#1877F2] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <Facebook size={15} />
                       {isPosting
                         ? "Posting…"
                         : state.status === "posted"
-                          ? "Posted"
+                          ? "Republish to Facebook"
                           : "Post to Facebook"}
                     </button>
                     <button
