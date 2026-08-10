@@ -150,6 +150,31 @@ function rowFromInsert(sql: string): Record<string, string> | null {
   return Object.fromEntries(columns.map((column, index) => [column, fields[index]]));
 }
 
+// The first ten Aug. 8 newsroom migrations use a third SQL shape:
+// WITH seed AS (SELECT <value> alias, ...) ... INSERT ... SELECT FROM prepared.
+// Parse the seed SELECT directly so those articles still render when the remote
+// database has not applied the migration yet.
+function rowFromSeedSelect(sql: string): Record<string, string> | null {
+  const header = /WITH\s+seed\s+AS\s*\(\s*SELECT\s+/i.exec(sql);
+  if (!header || header.index == null) return null;
+  const open = sql.indexOf("(", header.index);
+  if (open < 0) return null;
+  const seed = balancedTuple(sql, open);
+  if (!seed) return null;
+  const selectBody = seed.replace(/^\s*SELECT\s+/i, "").trim();
+  const fields = splitFields(selectBody);
+  const row: Record<string, string> = {};
+
+  for (const field of fields) {
+    const aliasMatch = /\s+([a-z_][a-z0-9_]*)\s*$/i.exec(field);
+    if (!aliasMatch) continue;
+    const alias = aliasMatch[1];
+    row[alias] = field.slice(0, aliasMatch.index).trim();
+  }
+
+  return row.slug && row.published_at ? row : null;
+}
+
 function articleFromRow(row: Record<string, string>): ChatNewsFallback | null {
   const slug = decode(row.slug);
   const publishedAt = decode(row.published_at);
@@ -204,6 +229,8 @@ const articles = migrationSql.flatMap((sql) => {
   const rows = rowsFromBatch(sql);
   const single = rowFromInsert(sql);
   if (single) rows.push(single);
+  const seed = rowFromSeedSelect(sql);
+  if (seed) rows.push(seed);
   return rows.map(articleFromRow).filter((article): article is ChatNewsFallback => Boolean(article));
 });
 
