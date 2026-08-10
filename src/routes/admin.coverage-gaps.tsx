@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { NewsCoverageGapPanel } from "@/components/admin/NewsCoverageGapPanel";
 import { NewsSourceHealthPanel } from "@/components/admin/NewsSourceHealthPanel";
+import { PillarAuthorityPanel } from "@/components/admin/PillarAuthorityPanel";
 
 const STORAGE_KEY = "ktr-admin-ok";
 
@@ -38,9 +39,9 @@ function CoverageGapsPage() {
           <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-accent">★ Newsroom QA</div>
           <div className="mt-2 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h1 className="font-display text-3xl md:text-5xl">Coverage &amp; Source Health</h1>
+              <h1 className="font-display text-3xl md:text-5xl">Coverage &amp; Authority</h1>
               <p className="mt-2 text-sm text-white/80">
-                See important Texas stories that did not become articles and identify feeds that are quiet, stale, or failing.
+                Find missed stories, unhealthy sources, and the content pillars that most need additional depth.
               </p>
             </div>
             <Link to="/admin" className="border border-white/40 px-3 py-2 text-sm font-semibold hover:bg-white/10">
@@ -50,7 +51,11 @@ function CoverageGapsPage() {
         </div>
       </header>
       <div className="mx-auto max-w-6xl space-y-12 px-4 py-8">
-        <section aria-labelledby="coverage-gaps-heading">
+        <section aria-labelledby="pillar-authority-heading">
+          <h2 id="pillar-authority-heading" className="mb-4 font-display text-2xl">Pillar Authority</h2>
+          <PillarAuthorityPanel />
+        </section>
+        <section aria-labelledby="coverage-gaps-heading" className="border-t pt-10">
           <h2 id="coverage-gaps-heading" className="mb-4 font-display text-2xl">Coverage Gaps</h2>
           <NewsCoverageGapPanel />
         </section>

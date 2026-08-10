@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HUBS } from "@/data/hubs";
 import { HubView } from "@/components/hub-view";
 import { AgedFeedSection } from "@/components/aged-feed-section";
+import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
 
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
@@ -96,6 +97,7 @@ function TexasPoliticsPage() {
             </p>
           </div>
         </section>
+        <PillarRelationshipNav pillarSlug="texas-politics-government" />
       </HubView>
       <AgedFeedSection
         section="politics"

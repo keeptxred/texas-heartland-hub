@@ -10,28 +10,77 @@ let failed = false;
 
 for (const file of files) {
   const sql = fs.readFileSync(file, 'utf8');
-  if (!/INSERT\s+INTO\s+public\.daily_articles/i.test(sql)) continue;
+  const isInsert = /INSERT\s+INTO\s+public\.daily_articles/i.test(sql);
+  const isUpdate = /UPDATE\s+public\.daily_articles/i.test(sql);
+  if (!isInsert && !isUpdate) continue;
 
   const errors = [];
-  if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
-    errors.push("internal_url must be generated as '/news/' || slug");
+  const isBulkImageRemediation = /^\s*--\s*BULK_IMAGE_REMEDIATION\s*$/im.test(sql);
+  const isBulkCategoryReclassification = /^\s*--\s*BULK_CATEGORY_RECLASSIFICATION\s*$/im.test(sql);
+
+  if (isInsert) {
+    if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
+      errors.push("internal_url must be generated as '/news/' || slug");
+    }
+    const hasBuiltBodyShape = /jsonb_build_object\s*\([\s\S]*?'(?:intro|sections)'\s*,/i.test(sql);
+    const hasLiteralBodyShape = /\{[\s\S]*?"(?:intro|sections)"\s*:/i.test(sql) && /::\s*jsonb/i.test(sql);
+    if (!hasBuiltBodyShape && !hasLiteralBodyShape) {
+      errors.push("body_json must include an 'intro' or 'sections' field accepted by daily_articles_require_body");
+    }
+    if (!/ON\s+CONFLICT\s*\(\s*slug\s*\)\s+DO\s+UPDATE/i.test(sql)) {
+      errors.push('daily news publication migrations must be idempotent with ON CONFLICT (slug) DO UPDATE');
+    }
   }
-  const hasBuiltBodyShape = /jsonb_build_object\s*\([\s\S]*?'(?:intro|sections)'\s*,/i.test(sql);
-  const hasLiteralBodyShape = /\{[\s\S]*?"(?:intro|sections)"\s*:/i.test(sql) && /::\s*jsonb/i.test(sql);
-  if (!hasBuiltBodyShape && !hasLiteralBodyShape) {
-    errors.push("body_json must include an 'intro' or 'sections' field accepted by daily_articles_require_body");
+
+  if (isBulkImageRemediation) {
+    const safelyScoped =
+      isUpdate &&
+      /WHERE[\s\S]*?author\s*=\s*'Keep TX Red Newsroom'/i.test(sql) &&
+      /published_at\s*>=/i.test(sql) &&
+      /featured_image_url[\s\S]*?images\/news\/generated/i.test(sql);
+    if (!safelyScoped) {
+      errors.push('BULK_IMAGE_REMEDIATION updates must be narrowly scoped to Keep TX Red Newsroom rows, a publication date floor, and generated news-image paths');
+    }
   }
-  if (!/ON\s+CONFLICT\s*\(\s*slug\s*\)\s+DO\s+UPDATE/i.test(sql)) {
-    errors.push('daily news publication migrations must be idempotent with ON CONFLICT (slug) DO UPDATE');
+
+  if (isBulkCategoryReclassification) {
+    const safelyScoped =
+      isUpdate &&
+      !isInsert &&
+      /SET\s+category\s*=/i.test(sql) &&
+      /FROM\s+public\.article_pillar_assignments/i.test(sql) &&
+      /a\.article_slug\s*=\s*d\.slug/i.test(sql) &&
+      /legacy_article_category_for_pillar/i.test(sql) &&
+      /category\s+IS\s+DISTINCT\s+FROM/i.test(sql);
+    if (!safelyScoped) {
+      errors.push('BULK_CATEGORY_RECLASSIFICATION updates must only sync daily_articles.category from article_pillar_assignments with an idempotent distinct-value guard');
+    }
   }
-  if (!/featured_image_url/i.test(sql) || !/image_alt_text/i.test(sql)) {
-    errors.push('published articles must include featured_image_url and image_alt_text');
+
+  if (!isBulkCategoryReclassification && (!/featured_image_url/i.test(sql) || !/image_alt_text/i.test(sql))) {
+    errors.push('published article image changes must include featured_image_url and image_alt_text');
+  }
+
+  const imageRefs = [...sql.matchAll(/(?:https:\/\/|\/images\/news\/)[^'$\s)]+/gi)].map((match) => match[0]);
+  if (imageRefs.some((ref) => /\.svg(?:\b|\?|#|&)/i.test(ref))) {
+    errors.push('SVG hero images are not allowed for published news; use a real raster photograph or photorealistic editorial image');
+  }
+
+  if (/image\/svg\+xml/i.test(sql)) {
+    errors.push('SVG image content types are not allowed for published news');
+  }
+
+  if (/(?:editorial\s+illustration|vector\s+illustration|generic\s+illustration|placeholder\s+image)/i.test(sql)) {
+    errors.push('placeholder/vector/illustration hero imagery is not allowed for published news');
   }
 
   const valuesSlugs = [...sql.matchAll(/\('((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*,/g)].map((match) => match[1]);
   const selectSlugs = [...sql.matchAll(/SELECT\s+'((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
-  const slugs = [...valuesSlugs, ...selectSlugs];
-  if (!slugs.length) errors.push('could not find any dated article slugs in the publication input');
+  const dollarSlugs = [...sql.matchAll(/SELECT\s+\$slug\$((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)\$slug\$\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
+  const slugs = [...valuesSlugs, ...selectSlugs, ...dollarSlugs];
+  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification) {
+    errors.push('could not find any dated article slugs in the publication input');
+  }
   if (new Set(slugs).size !== slugs.length) errors.push('duplicate article slug found in migration');
 
   if (errors.length) {
@@ -39,7 +88,12 @@ for (const file of files) {
     console.error(`\n${file}: INVALID`);
     for (const error of errors) console.error(`  - ${error}`);
   } else {
-    console.log(`${file}: valid (${slugs.length} article slug${slugs.length === 1 ? '' : 's'})`);
+    const detail = isBulkImageRemediation
+      ? 'bulk image remediation'
+      : isBulkCategoryReclassification
+        ? 'bulk category reclassification'
+        : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
+    console.log(`${file}: valid (${detail})`);
   }
 }
 

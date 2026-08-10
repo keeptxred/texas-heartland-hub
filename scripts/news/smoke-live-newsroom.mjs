@@ -1,5 +1,5 @@
 const baseUrl = (process.env.KTR_BASE_URL || "https://keeptxred.com").replace(/\/$/, "");
-const expectedFingerprint = "newsroom-coverage-2026-08-05-v1";
+const expectedFingerprint = (process.env.KTR_EXPECTED_FINGERPRINT || "").trim();
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -56,7 +56,7 @@ async function checkDeploymentFingerprint() {
     headers: { Accept: "application/json", "User-Agent": "KeepTXRed-Newsroom-Smoke/1.0" },
   });
   if (response.status === 404) {
-    throw new Error(`production is stale: deployment fingerprint route is missing; expected ${expectedFingerprint}`);
+    throw new Error("production is stale: deployment fingerprint route is missing");
   }
   const text = await response.text();
   let payload;
@@ -65,10 +65,17 @@ async function checkDeploymentFingerprint() {
   } catch {
     throw new Error(`deployment fingerprint did not return JSON: ${text.slice(0, 300)}`);
   }
-  if (!response.ok || payload?.fingerprint !== expectedFingerprint) {
-    throw new Error(`production fingerprint mismatch: expected ${expectedFingerprint}, received ${String(payload?.fingerprint ?? "missing")}`);
+  if (!response.ok) {
+    throw new Error(`deployment fingerprint returned HTTP ${response.status}: ${text.slice(0, 300)}`);
   }
-  console.log(`OK deployment fingerprint=${payload.fingerprint} mode=${payload.newsroomHealthMode}`);
+  const actual = typeof payload?.fingerprint === "string" ? payload.fingerprint.trim() : "";
+  if (!actual) {
+    throw new Error("deployment fingerprint response is missing a non-empty fingerprint");
+  }
+  if (expectedFingerprint && actual !== expectedFingerprint) {
+    throw new Error(`production fingerprint mismatch: expected ${expectedFingerprint}, received ${actual}`);
+  }
+  console.log(`OK deployment fingerprint=${actual} mode=${payload.newsroomHealthMode ?? "unknown"}`);
 }
 
 async function checkNewsroomHealth() {
@@ -85,6 +92,9 @@ async function checkNewsroomHealth() {
   }
   if (!response.ok || payload?.ok !== true || payload?.databaseViewsReady !== true) {
     throw new Error(`newsroom-health is not ready (${response.status}): ${text.slice(0, 500)}`);
+  }
+  if (!Number.isFinite(payload?.sourceCount) || payload.sourceCount < 1) {
+    throw new Error(`newsroom-health reports no configured sources: ${text.slice(0, 500)}`);
   }
   console.log(`OK newsroom-health sources=${payload.sourceCount} gaps=${payload.coverageGapCount} items24h=${payload.items24h}`);
 }
@@ -114,11 +124,20 @@ async function checkIngestion() {
     throw new Error("ingest-feeds did not return JSON");
   }
   if (payload?.ok !== true) throw new Error(`ingest-feeds returned ok=${String(payload?.ok)}: ${text.slice(0, 500)}`);
-  if (typeof payload.fetched !== "number" && typeof payload.inserted !== "number") {
-    throw new Error(`ingest-feeds response lacks ingestion counts: ${text.slice(0, 500)}`);
+  if (typeof payload.fetched !== "number" || typeof payload.inserted !== "number") {
+    throw new Error(`ingest-feeds response lacks numeric ingestion counts: ${text.slice(0, 500)}`);
+  }
+  if (typeof payload.sourceCount === "number" && payload.sourceCount < 1) {
+    throw new Error(`ingest-feeds reports zero configured sources: ${text.slice(0, 500)}`);
+  }
+  if (typeof payload.healthySources === "number" && payload.healthySources < 1) {
+    throw new Error(`ingest-feeds reports zero healthy sources: ${text.slice(0, 500)}`);
+  }
+  if (payload.fetched < 1) {
+    throw new Error(`ingest-feeds completed but fetched zero Texas-relevant candidates: ${text.slice(0, 500)}`);
   }
   const elapsed = Math.round((Date.now() - startedAt) / 1000);
-  console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched ?? "n/a"} inserted=${payload.inserted ?? "n/a"}`);
+  console.log(`OK ingest-feeds elapsed=${elapsed}s fetched=${payload.fetched} inserted=${payload.inserted} healthySources=${payload.healthySources ?? "n/a"}`);
 }
 
 const failures = [];
