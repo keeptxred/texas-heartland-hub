@@ -3,10 +3,11 @@ name: Sync Texas legislation
 on:
   workflow_dispatch:
   schedule:
-    - cron: "40 8 * * *"
+    - cron: "20 14 * * *"
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: texas-legislation-sync
@@ -16,6 +17,13 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    env:
+      # GitHub performs the FTP ingestion work, while database writes are proxied
+      # through the deployed Lovable server route. The short-lived GITHUB_TOKEN
+      # plus run id authenticate the exact workflow run, so no Supabase service
+      # role key is stored in GitHub Actions.
+      SUPABASE_URL: https://keeptxred.com/api/admin/legislation-sync-proxy
+      SUPABASE_SERVICE_ROLE_KEY: ${{ github.token }}::${{ github.run_id }}
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
@@ -24,7 +32,4 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
       - name: Incremental legislative sync
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: bun run legislature:sync -- --sessions=89R

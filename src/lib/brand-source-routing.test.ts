@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  isKeepTxRedOwnedSource,
   isTexasDefinedOwnedSource,
   isTexasDefinedOwnedSourceRecord,
   TEXAS_DEFINED_OWNED_SOURCE_NAMES,
@@ -26,6 +27,27 @@ describe("TexasDefined source ownership", () => {
         "KeepTXRed statewide source",
       ),
     ).toBe(false);
+  });
+
+  it("keeps government and election authorities owned by KeepTXRed even with stale notes", () => {
+    const keepTxRedSources = [
+      "Office of the Governor",
+      "Texas Secretary of State",
+      "Texas Legislature",
+      "Harris County Elections",
+      "Texas Elections Division",
+    ];
+
+    for (const source of keepTxRedSources) {
+      expect(isKeepTxRedOwnedSource(source)).toBe(true);
+      expect(isTexasDefinedOwnedSource(source)).toBe(false);
+      expect(
+        isTexasDefinedOwnedSourceRecord(
+          source,
+          "TexasDefined-owned stale legacy note",
+        ),
+      ).toBe(false);
+    }
   });
 
   it("blocks TexasDefined sources before KeepTXRed storage, article, and rewrite routing", () => {

@@ -10,11 +10,16 @@ function corsHeaders(request: Request) {
   const origin = request.headers.get("origin") ?? "";
   return {
     "access-control-allow-origin": ALLOWED_ORIGINS.has(origin) ? origin : "https://texasdefined.com",
-    "access-control-allow-methods": "POST, OPTIONS",
+    "access-control-allow-methods": "GET, POST, OPTIONS",
     "access-control-allow-headers": "content-type",
     "cache-control": "no-store",
     vary: "Origin",
   };
+}
+
+function originAllowed(request: Request) {
+  const origin = request.headers.get("origin") ?? "";
+  return ALLOWED_ORIGINS.has(origin);
 }
 
 type CartInput = {
@@ -28,16 +33,40 @@ type StoredVariant = {
   title?: string;
   price?: number;
   image?: string | null;
+  is_enabled?: boolean;
 };
 
 export const Route = createFileRoute("/api/public/texasdefined-checkout")({
   server: {
     handlers: {
       OPTIONS: async ({ request }) => new Response(null, { status: 204, headers: corsHeaders(request) }),
+      GET: async ({ request }) => {
+        const headers = corsHeaders(request);
+        if (!originAllowed(request)) {
+          return Response.json({ ok: false, error: "Origin not allowed" }, { status: 403, headers });
+        }
+
+        const sessionId = new URL(request.url).searchParams.get("session_id")?.trim() ?? "";
+        if (!sessionId.startsWith("cs_") || sessionId.length > 255) {
+          return Response.json({ ok: false, error: "Invalid checkout session" }, { status: 400, headers });
+        }
+
+        try {
+          const stripe = createStripeClient("live");
+          const session = await stripe.checkout.sessions.retrieve(sessionId);
+          if (session.metadata?.source !== "texasdefined_shop") {
+            return Response.json({ ok: false, error: "Checkout session not found" }, { status: 404, headers });
+          }
+
+          const paid = session.status === "complete" && session.payment_status === "paid";
+          return Response.json({ ok: true, paid, status: session.status, paymentStatus: session.payment_status }, { headers });
+        } catch (error) {
+          return Response.json({ ok: false, error: getStripeErrorMessage(error) }, { status: 404, headers });
+        }
+      },
       POST: async ({ request }) => {
         const headers = corsHeaders(request);
-        const origin = request.headers.get("origin") ?? "";
-        if (!ALLOWED_ORIGINS.has(origin)) {
+        if (!originAllowed(request)) {
           return Response.json({ ok: false, error: "Origin not allowed" }, { status: 403, headers });
         }
 
@@ -69,19 +98,20 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
           const resolved = items.map((item) => {
             const row = rows.get(item.productId)!;
             const variants = Array.isArray(row.variants) ? row.variants as StoredVariant[] : [];
-            const variant = item.variantId == null ? null : variants.find((entry) => Number(entry.id) === Number(item.variantId));
-            if (item.variantId != null && !variant) throw new Error(`Selected option is unavailable for ${row.title}`);
-            const price = Number(variant?.price ?? row.price);
+            if (!Number.isInteger(item.variantId)) throw new Error(`Choose an available option for ${row.title}`);
+            const variant = variants.find((entry) => Number(entry.id) === Number(item.variantId) && entry.is_enabled !== false);
+            if (!variant) throw new Error(`Selected option is unavailable for ${row.title}`);
+            const price = Number(variant.price ?? row.price);
             if (!Number.isFinite(price) || price <= 0) throw new Error(`Invalid price for ${row.title}`);
             return {
               productId: row.id as string,
-              variantId: variant?.id ?? null,
+              variantId: variant.id,
               quantity: item.quantity,
               title: row.title as string,
-              variantTitle: variant?.title ?? null,
+              variantTitle: variant.title ?? null,
               price,
               currency: String(row.currency || "USD").toLowerCase(),
-              image: variant?.image || row.image_url || undefined,
+              image: variant.image || row.image_url || undefined,
             };
           });
 
@@ -114,7 +144,7 @@ export const Route = createFileRoute("/api/public/texasdefined-checkout")({
             shipping_address_collection: { allowed_countries: ["US"] },
             phone_number_collection: { enabled: true },
             success_url: "https://texasdefined.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url: "https://texasdefined.com/cart",
+            cancel_url: "https://texasdefined.com/shop/cart",
             payment_intent_data: {
               description: "Texas Defined — Shop Order",
               metadata: { cart: cartJson, source: "texasdefined_shop" },

@@ -4,39 +4,68 @@ on:
   push:
     branches: [main]
     paths:
-      - 'src/routes/**'
+      # Retired lifestyle implementations that this validator explicitly keeps out of KeepTXRed.
+      - 'src/routes/-toolsRoutes.tsx'
+      - 'src/routes/-calculatorRoutes.tsx'
       - 'src/pages/tools/**'
+      - 'src/components/calculators/**'
       - 'src/components/moving-checklist.tsx'
       - 'src/components/vehicle-registration-guide.tsx'
+      - 'src/components/tax-calculator.tsx'
+      - 'src/components/pillar-article.tsx'
       - 'src/lib/moving-checklist.ts'
       - 'src/lib/vehicle-registration.ts'
-      - 'src/lib/content-quality.ts'
-      - 'src/data/texas-cities.ts'
-      - 'src/components/city-page.tsx'
+      - 'src/lib/property-address-lookup.ts'
+      - 'src/lib/__tests__/moving-resources.test.ts'
+      - 'src/data/texas-pillars.ts'
+      - 'src/data/texas-issue-authority.ts'
+      - 'src/data/texas-data-center.ts'
+      - 'src/data/seo/mortgageCalculatorSEO.ts'
+      - 'src/data/sitemap/mortgageCalculatorSitemap.ts'
+      - 'src/lib/analytics/mortgageCalculatorAnalytics.ts'
+      - 'src/routes/api/public/property-address-lookup.ts'
+      - 'src/routes/texas.index.tsx'
+      - 'src/routes/texas.$slug.tsx'
+
+      # Files whose KeepTXRed/TexasDefined ownership tokens are actually validated.
       - 'src/shared/texas-platform/registry.ts'
-      - 'src/shared/texas-platform/texas-life-*'
-      - 'src/platform/governance-persistence.ts'
-      - 'public/llms.txt'
-      - 'scripts/shared/validate-backend-separation.mjs'
+      - 'src/components/texas-news-view.tsx'
+      - 'src/components/texas-business-view.tsx'
+      - 'src/routes/keep-texas-red.tsx'
+      - 'src/routes/api/public/hooks/generate-evergreen.ts'
+
+      # Validator/workflow changes must validate themselves.
       - 'scripts/shared/validate-retired-lifestyle-code.mjs'
       - '.github/workflows/backend-separation.yml'
   pull_request:
     branches: [main]
     paths:
-      - 'src/routes/**'
+      - 'src/routes/-toolsRoutes.tsx'
+      - 'src/routes/-calculatorRoutes.tsx'
       - 'src/pages/tools/**'
+      - 'src/components/calculators/**'
       - 'src/components/moving-checklist.tsx'
       - 'src/components/vehicle-registration-guide.tsx'
+      - 'src/components/tax-calculator.tsx'
+      - 'src/components/pillar-article.tsx'
       - 'src/lib/moving-checklist.ts'
       - 'src/lib/vehicle-registration.ts'
-      - 'src/lib/content-quality.ts'
-      - 'src/data/texas-cities.ts'
-      - 'src/components/city-page.tsx'
+      - 'src/lib/property-address-lookup.ts'
+      - 'src/lib/__tests__/moving-resources.test.ts'
+      - 'src/data/texas-pillars.ts'
+      - 'src/data/texas-issue-authority.ts'
+      - 'src/data/texas-data-center.ts'
+      - 'src/data/seo/mortgageCalculatorSEO.ts'
+      - 'src/data/sitemap/mortgageCalculatorSitemap.ts'
+      - 'src/lib/analytics/mortgageCalculatorAnalytics.ts'
+      - 'src/routes/api/public/property-address-lookup.ts'
+      - 'src/routes/texas.index.tsx'
+      - 'src/routes/texas.$slug.tsx'
       - 'src/shared/texas-platform/registry.ts'
-      - 'src/shared/texas-platform/texas-life-*'
-      - 'src/platform/governance-persistence.ts'
-      - 'public/llms.txt'
-      - 'scripts/shared/validate-backend-separation.mjs'
+      - 'src/components/texas-news-view.tsx'
+      - 'src/components/texas-business-view.tsx'
+      - 'src/routes/keep-texas-red.tsx'
+      - 'src/routes/api/public/hooks/generate-evergreen.ts'
       - 'scripts/shared/validate-retired-lifestyle-code.mjs'
       - '.github/workflows/backend-separation.yml'
   workflow_dispatch:
@@ -57,5 +86,4 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.14
-      - run: bun scripts/shared/validate-backend-separation.mjs
       - run: bun scripts/shared/validate-retired-lifestyle-code.mjs

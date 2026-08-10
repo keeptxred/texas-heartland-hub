@@ -1,0 +1,55 @@
+name: Editorial Auto-Publish Acceptance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/editorial-acceptance.yml'
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'src/lib/ingest-feeds-legacy.ts'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: editorial-auto-publish-acceptance
+  cancel-in-progress: true
+
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Wait for production deployment
+        run: sleep 90
+
+      - name: Trigger editorial scoring and auto-publish
+        shell: bash
+        run: |
+          set -euo pipefail
+          response_file="$(mktemp)"
+          http_code=$(curl -sS --retry 3 --retry-delay 15 --max-time 900 \
+            -o "$response_file" -w '%{http_code}' \
+            -X POST 'https://keeptxred.com/api/public/hooks/score-viral')
+          echo "HTTP $http_code"
+          cat "$response_file"
+          echo
+          if [[ "$http_code" -lt 200 || "$http_code" -ge 300 ]]; then
+            exit 1
+          fi
+          jq -e '.ok == true' "$response_file" >/dev/null
+          jq -e '.ingest.ok == true' "$response_file" >/dev/null
+          jq -e '.ingest.sourceCount >= 10' "$response_file" >/dev/null
+          jq -e '.ingest.directSources >= 8' "$response_file" >/dev/null
+          jq -e '.ingest.healthySources >= 5' "$response_file" >/dev/null
+          jq -e '.ingest.skippedLegacyYoutube >= 0' "$response_file" >/dev/null
+          jq -e '.scanned >= 0 and .updated >= 0' "$response_file" >/dev/null
+          jq -e '.autoPublishAttempted >= 0 and .autoPublishAttempted <= 6' "$response_file" >/dev/null
+          jq -e '.autoPublished >= 0 and .autoPublished <= .autoPublishAttempted' "$response_file" >/dev/null
+          jq -e '.reviewFlagged >= 0' "$response_file" >/dev/null
+          jq -e '(.autoPublishResults | type) == "array"' "$response_file" >/dev/null
+
+      - name: Verify production site still responds
+        run: |
+          set -euo pipefail
+          curl -fsS --retry 3 --max-time 60 'https://keeptxred.com/' >/dev/null

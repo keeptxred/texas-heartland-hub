@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const DEPLOYMENT_FINGERPRINT = "newsroom-coverage-2026-08-05-v1";
+const DEPLOYMENT_FINGERPRINT = "purple-heart-live-render-2026-08-08-v1";
 
 export const Route = createFileRoute("/api/public/deployment-fingerprint")({
   server: {

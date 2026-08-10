@@ -53,6 +53,9 @@ export const ingestStory = createServerFn({ method: "POST" })
     assertKeepTxRedPublication({
       id: `normalized-ingest:${slug}`,
       title: story.title,
+      description: story.content,
+      category,
+      source: story.source,
       domain: inferKeepTxRedDomain(category, haystack),
       sourceSite: story.url.includes("texasdefined.com") ? "TexasDefined" : "KeepTXRed",
       sourceCanonicalUrl: story.url,

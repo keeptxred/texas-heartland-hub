@@ -1,7 +1,10 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/texas-news")({
-  validateSearch: (search: Record<string, unknown>): { topic?: string } =>
-    typeof search.topic === "string" && search.topic ? { topic: search.topic } : {},
-  component: () => <Outlet />,
+  beforeLoad: ({ location }) => {
+    throw redirect({
+      href: `/news${location.searchStr || ""}`,
+      statusCode: 301,
+    });
+  },
 });

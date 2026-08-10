@@ -70,7 +70,7 @@ function PoliticalHomepage() {
           <aside className="rounded-xl border border-white/15 bg-white/5 p-6">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Start here</p>
             <nav className="mt-4 grid gap-3">
-              {[["Find your representatives", "/find-representative"], ["Explore the Texas Legislature", "/texas-legislature"], ["Register to vote", "/register-to-vote"], ["Contact Texas legislators", "/contact-legislators"], ["Browse Texas laws", "/texas-laws"]].map(([label, to]) => <Link key={to} to={to} className="flex justify-between border-b border-white/10 py-2 text-sm font-semibold hover:text-primary"><span>{label}</span><span aria-hidden>→</span></Link>)}
+              {[["Find your representatives", "/find-representative"], ["Explore the Texas Legislature", "/texas-legislature"], ["Register to vote", "/register-to-vote"], ["Contact Texas legislators", "/contact-legislators"], ["Browse Texas laws", "/laws"]].map(([label, to]) => <Link key={to} to={to} className="flex justify-between border-b border-white/10 py-2 text-sm font-semibold hover:text-primary"><span>{label}</span><span aria-hidden>→</span></Link>)}
             </nav>
           </aside>
         </div>

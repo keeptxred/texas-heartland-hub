@@ -1,4 +1,5 @@
 import {
+  classifyStoryOwnership,
   decideCrossSiteContent,
   enforcePublicationDecision,
   type ContentCandidate,
@@ -11,6 +12,9 @@ export type KeepTxRedPublicationInput = {
   id: string;
   title: string;
   domain: ContentDomain;
+  description?: string | null;
+  category?: string | null;
+  source?: string | null;
   sourceSite?: 'TexasDefined' | 'KeepTXRed';
   sourceCanonicalUrl: string;
   proposedUrl?: string;
@@ -24,20 +28,27 @@ export type KeepTxRedPublicationInput = {
 export type KeepTxRedPublicationGuard = ReturnType<typeof guardKeepTxRedPublication>;
 
 export function guardKeepTxRedPublication(input: KeepTxRedPublicationInput) {
-  const resolvedDomain = resolveKeepTxRedPublicationDomain(input.domain, input.title);
+  const storyRoute = classifyStoryOwnership({
+    title: input.title,
+    description: input.description,
+    category: input.category,
+    source: input.source,
+    fallbackDomain: resolveKeepTxRedPublicationDomain(input.domain, `${input.title} ${input.description ?? ''} ${input.category ?? ''} ${input.source ?? ''}`),
+  });
   const candidate: ContentCandidate = {
     id: input.id,
     title: input.title,
-    domain: resolvedDomain,
+    domain: storyRoute.domain,
     sourceSite: input.sourceSite ?? 'KeepTXRed',
     targetSite: 'KeepTXRed',
     sourceCanonicalUrl: input.sourceCanonicalUrl,
     ...(input.proposedUrl ? { proposedUrl: input.proposedUrl } : {}),
     ...(input.contentFingerprint ? { contentFingerprint: input.contentFingerprint } : {}),
     ...(input.sourceFingerprint ? { sourceFingerprint: input.sourceFingerprint } : {}),
-    ...(input.derivativePurpose ? { derivativePurpose: input.derivativePurpose } : {}),
+    ...(input.derivativePurpose ?? storyRoute.derivativePurpose ? { derivativePurpose: input.derivativePurpose ?? storyRoute.derivativePurpose } : {}),
   };
   const decision = decideCrossSiteContent(candidate);
+  decision.reasons.unshift(...storyRoute.reasons.map((reason) => `Story routing: ${reason}`));
   const gate = enforcePublicationDecision(candidate, decision, input.override);
   const governanceEventIds = recordGovernanceDecision({
     candidate,
@@ -46,7 +57,7 @@ export function guardKeepTxRedPublication(input: KeepTxRedPublicationInput) {
     override: input.override,
     writer: input.writer ?? 'internal-publication-guard',
   });
-  return { candidate, decision, gate, governanceEventIds };
+  return { candidate, storyRoute, decision, gate, governanceEventIds };
 }
 
 export function assertKeepTxRedPublication(input: KeepTxRedPublicationInput) {
@@ -59,6 +70,7 @@ export function assertKeepTxRedPublication(input: KeepTxRedPublicationInput) {
       disposition: result.decision.disposition,
       canonicalOwner: result.decision.canonicalOwner,
       canonicalUrl: result.decision.canonicalUrl,
+      storyRoute: result.storyRoute,
       governanceEventIds: result.governanceEventIds,
     });
     throw error;
@@ -72,9 +84,6 @@ export function resolveKeepTxRedPublicationDomain(
 ): ContentDomain {
   const value = context?.toLowerCase() ?? '';
 
-  // Sports belongs on both sites according to article intent, not source domain.
-  // Current team/player/game/news coverage belongs to KeepTXRed. Evergreen sports
-  // culture, venue, history, travel and guide content remains TexasDefined-owned.
   if (isCurrentSportsNews(value)) return 'breaking-news';
   if (isEvergreenSportsFeature(value)) return 'texas-culture';
 
@@ -87,9 +96,6 @@ export function inferKeepTxRedDomain(
 ): ContentDomain {
   const value = `${category ?? ''} ${context ?? ''}`.toLowerCase();
 
-  // Official government authority coverage is newsroom content even when the
-  // article also contains lifestyle words such as fair, event, housing, travel,
-  // food, or property tax. Those subject words do not transfer ownership.
   if (isGovernmentAuthorityNews(value)) return 'breaking-news';
 
   if (isCurrentSportsNews(value)) return 'breaking-news';

@@ -1,19 +1,6 @@
 name: Validate Publication Writers
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'package.json'
-      - 'src/lib/content-publication-guard.ts'
-      - 'src/lib/content-quality.ts'
-      - 'src/lib/ctr-loop.functions.ts'
-      - 'src/lib/featured-image.functions.ts'
-      - 'src/lib/gsc.ts'
-      - 'src/routes/api/public/hooks/**'
-      - 'src/lib/ingest-and-normalize.functions.ts'
-      - 'scripts/shared/validate-publication-writers.mjs'
-      - '.github/workflows/publication-writers.yml'
   pull_request:
     branches: [main]
     paths:

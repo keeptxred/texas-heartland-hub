@@ -1,15 +1,6 @@
 name: Validate Cross-Site Content Ownership
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'src/shared/platform-core/**'
-      - 'src/routes/api.content-disposition.ts'
-      - 'scripts/shared/validate-content-ownership.ts'
-      - 'package.json'
-      - 'bun.lock*'
-      - '.github/workflows/content-ownership.yml'
   pull_request:
     branches: [main]
     paths:
