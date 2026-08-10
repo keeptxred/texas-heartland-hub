@@ -1,5 +1,7 @@
 {
+  "siteUrl": "https://keeptxred.com",
   "type": "JobPosting",
+  "maxUrls": 200,
   "urls": [
     "https://keeptxred.com/",
     "https://keeptxred.com/news",
@@ -14,7 +16,12 @@
     "https://keeptxred.com/texas-business",
     "https://keeptxred.com/texas-politics",
     "https://keeptxred.com/texas-economy",
-    "https://keeptxred.com/texas-law-policy",
+    "https://keeptxred.com/texas-border-security",
+    "https://keeptxred.com/texas-energy",
+    "https://keeptxred.com/texas-agriculture",
+    "https://keeptxred.com/texas-veterans",
+    "https://keeptxred.com/texas-law-enforcement",
+    "https://keeptxred.com/topics",
     "https://keeptxred.com/texas-legislature",
     "https://keeptxred.com/texas-legislature/house",
     "https://keeptxred.com/texas-legislature/senate",
@@ -27,7 +34,6 @@
     "https://keeptxred.com/get-involved",
     "https://keeptxred.com/county-elections",
     "https://keeptxred.com/laws",
-    "https://keeptxred.com/texas-laws",
     "https://keeptxred.com/glossary",
     "https://keeptxred.com/editorial-standards",
     "https://keeptxred.com/authors",
@@ -51,9 +57,7 @@
     "https://keeptxred.com/elections/methodology",
     "https://keeptxred.com/elections/corrections",
     "https://keeptxred.com/bills",
-    "https://keeptxred.com/committees"
-  ],
-  "sitemaps": [
+    "https://keeptxred.com/committees",
     "https://keeptxred.com/sitemap.xml",
     "https://keeptxred.com/sitemap-pages.xml",
     "https://keeptxred.com/sitemap-elections.xml",
@@ -69,6 +73,4 @@
     "https://keeptxred.com/sitemap-authors.xml",
     "https://keeptxred.com/sitemap-images.xml"
   ]
-
 }
-

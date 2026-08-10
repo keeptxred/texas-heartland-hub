@@ -4,6 +4,17 @@ on:
   schedule:
     - cron: '17 13 * * *'
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/routes/api/public/hooks/ingest-feeds.ts'
+      - 'src/routes/api/public/hooks/health.ts'
+      - 'src/routes/api/public/newsroom-health.ts'
+      - 'src/lib/multi-source-publish.ts'
+      - 'src/lib/ingest-feeds-legacy.ts'
+      - 'scripts/news/smoke-live-newsroom.mjs'
+      - '.github/workflows/live-newsroom-smoke.yml'
 
 permissions:
   contents: read
@@ -21,6 +32,20 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+      - name: Verify direct Gemini rewrite provider
+        run: |
+          node <<'NODE'
+          const url = 'https://keeptxred.com/api/public/hooks/health';
+          const response = await fetch(url, { headers: { Accept: 'application/json', 'User-Agent': 'KeepTXRed-Newsroom-Smoke/1.0' } });
+          const text = await response.text();
+          if (!response.ok) throw new Error(`health returned HTTP ${response.status}: ${text.slice(0, 500)}`);
+          const payload = JSON.parse(text);
+          if (payload.rewrite_provider !== 'google-gemini-direct') throw new Error(`unexpected rewrite_provider=${payload.rewrite_provider}`);
+          if (payload.rewrite_provider_ready !== true) throw new Error('rewrite_provider_ready is not true');
+          if (payload.lovable_rewrite_bypassed !== true) throw new Error('lovable_rewrite_bypassed is not true');
+          if (typeof payload.rewrite_model !== 'string' || !payload.rewrite_model) throw new Error('rewrite_model is missing');
+          console.log(`OK rewrite provider=${payload.rewrite_provider} model=${payload.rewrite_model} lovableBypassed=${payload.lovable_rewrite_bypassed}`);
+          NODE
       - name: Check live ingestion and newsroom QA routes
         env:
           KTR_BASE_URL: https://keeptxred.com

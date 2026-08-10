@@ -1,7 +1,3 @@
-import afternoonSql from "../../supabase/migrations/20260808174500_publish_daily_texas_news_afternoon_batch.sql?raw";
-import eveningSql from "../../supabase/migrations/20260808215000_publish_daily_texas_news_evening_batch.sql?raw";
-import nightSql from "../../supabase/migrations/20260809012500_publish_daily_texas_news_night_batch.sql?raw";
-
 export type ChatNewsFallback = {
   slug: string;
   category: string;
@@ -30,16 +26,23 @@ export type ChatNewsFallback = {
   };
 };
 
-const SQL_BATCHES = [afternoonSql, eveningSql, nightSql];
+const migrationSql = Object.values(
+  import.meta.glob("../../supabase/migrations/*.sql", {
+    query: "?raw",
+    import: "default",
+    eager: true,
+  }),
+) as string[];
 
-function decodeSqlString(value: string): string {
+function decode(value: string | undefined): string {
+  if (!value) return "";
   const trimmed = value.trim().replace(/::[a-z_]+$/i, "");
   if (!trimmed.startsWith("'")) return trimmed;
   const end = trimmed.lastIndexOf("'");
   return trimmed.slice(1, end).replace(/''/g, "'");
 }
 
-function splitSqlFields(tuple: string): string[] {
+function splitFields(tuple: string): string[] {
   const fields: string[] = [];
   let current = "";
   let quoted = false;
@@ -58,8 +61,8 @@ function splitSqlFields(tuple: string): string[] {
     }
     if (!quoted) {
       if (ch === "(") depth += 1;
-      if (ch === ")") depth -= 1;
-      if (ch === "," && depth === 0) {
+      else if (ch === ")") depth -= 1;
+      else if (ch === "," && depth === 0) {
         fields.push(current.trim());
         current = "";
         continue;
@@ -71,15 +74,38 @@ function splitSqlFields(tuple: string): string[] {
   return fields;
 }
 
-function extractTuples(sql: string): { columns: string[]; rows: string[][] } {
+function balancedTuple(text: string, open: number): string | null {
+  let quoted = false;
+  let depth = 0;
+  for (let i = open; i < text.length; i += 1) {
+    const ch = text[i];
+    if (ch === "'") {
+      if (quoted && text[i + 1] === "'") {
+        i += 1;
+        continue;
+      }
+      quoted = !quoted;
+      continue;
+    }
+    if (quoted) continue;
+    if (ch === "(") depth += 1;
+    else if (ch === ")") {
+      depth -= 1;
+      if (depth === 0) return text.slice(open + 1, i);
+    }
+  }
+  return null;
+}
+
+function rowsFromBatch(sql: string): Record<string, string>[] {
   const header = /WITH\s+items\(([^)]+)\)\s+AS\s*\(VALUES\s*/i.exec(sql);
-  if (!header || header.index == null) return { columns: [], rows: [] };
-  const columns = header[1].split(",").map((column) => column.trim());
+  if (!header || header.index == null) return [];
+  const columns = header[1].split(",").map((v) => v.trim());
   const start = header.index + header[0].length;
   const marker = /\n\),\s*prepared\s+AS\s*\(/i.exec(sql.slice(start));
-  if (!marker || marker.index == null) return { columns: [], rows: [] };
+  if (!marker || marker.index == null) return [];
   const block = sql.slice(start, start + marker.index);
-  const rows: string[][] = [];
+  const rows: Record<string, string>[] = [];
   let quoted = false;
   let depth = 0;
   let tupleStart = -1;
@@ -100,56 +126,88 @@ function extractTuples(sql: string): { columns: string[]; rows: string[][] } {
     } else if (ch === ")") {
       depth -= 1;
       if (depth === 0 && tupleStart >= 0) {
-        const fields = splitSqlFields(block.slice(tupleStart, i));
-        if (fields.length === columns.length) rows.push(fields);
+        const fields = splitFields(block.slice(tupleStart, i));
+        if (fields.length === columns.length) {
+          rows.push(Object.fromEntries(columns.map((column, index) => [column, fields[index]])));
+        }
         tupleStart = -1;
       }
     }
   }
-  return { columns, rows };
+  return rows;
 }
 
-function parseBatch(sql: string): ChatNewsFallback[] {
-  const { columns, rows } = extractTuples(sql);
-  return rows.map((fields) => {
-    const row = Object.fromEntries(columns.map((column, index) => [column, fields[index]]));
-    const publishedAt = decodeSqlString(row.published_at);
-    const bodyText = decodeSqlString(row.body).replace(/\\n/g, "\n").trim();
-    const paragraphs = bodyText.split(/\n\s*\n/).map((text) => text.trim()).filter(Boolean);
-    const sourceName = decodeSqlString(row.source_name);
-    const sourceUrl = decodeSqlString(row.source_url);
-    const imageUrl = decodeSqlString(row.image_url);
-    return {
-      slug: decodeSqlString(row.slug),
-      category: decodeSqlString(row.category),
-      title: decodeSqlString(row.title),
-      dek: decodeSqlString(row.dek),
-      author: "Keep TX Red Editorial Team",
-      image_url: imageUrl || null,
-      image_category: null,
-      featured_image_url: imageUrl || null,
-      image_alt_text: decodeSqlString(row.image_alt_text) || null,
-      seo_headline: null,
-      discover_category: null,
-      seo_keywords: null,
-      ctr_score: null,
-      headline_variants: null,
-      published_at: publishedAt,
-      kind: "news",
-      keywords: null,
-      body: {
-        updated: publishedAt,
-        intro: paragraphs.slice(0, 1),
-        sections: [{ heading: "The story", paragraphs }],
-        faq: [],
-        sources: sourceName && sourceUrl ? [{ label: `${sourceName} — original report`, url: sourceUrl }] : [],
-        keyTakeaways: [decodeSqlString(row.dek)],
-      },
+function rowFromInsert(sql: string): Record<string, string> | null {
+  const header = /INSERT\s+INTO\s+public\.daily_articles\s*\(([^)]+)\)\s*VALUES\s*/i.exec(sql);
+  if (!header || header.index == null) return null;
+  const columns = header[1].split(",").map((v) => v.trim());
+  const open = sql.indexOf("(", header.index + header[0].length);
+  if (open < 0) return null;
+  const tuple = balancedTuple(sql, open);
+  if (!tuple) return null;
+  const fields = splitFields(tuple);
+  if (fields.length !== columns.length) return null;
+  return Object.fromEntries(columns.map((column, index) => [column, fields[index]]));
+}
+
+function articleFromRow(row: Record<string, string>): ChatNewsFallback | null {
+  const slug = decode(row.slug);
+  const publishedAt = decode(row.published_at);
+  if (!slug || !publishedAt) return null;
+  const sourceName = decode(row.source_name);
+  const sourceUrl = decode(row.source_url);
+  const imageUrl = decode(row.image_url);
+  let body: ChatNewsFallback["body"] | null = null;
+
+  if (row.body_json) {
+    try {
+      body = JSON.parse(decode(row.body_json)) as ChatNewsFallback["body"];
+    } catch {
+      body = null;
+    }
+  } else if (row.body) {
+    const paragraphs = decode(row.body).replace(/\\n/g, "\n").trim().split(/\n\s*\n/).map((v) => v.trim()).filter(Boolean);
+    body = {
+      updated: publishedAt,
+      intro: paragraphs.slice(0, 1),
+      sections: [{ heading: "The story", paragraphs }],
+      faq: [],
+      sources: sourceName && sourceUrl ? [{ label: `${sourceName} — original report`, url: sourceUrl }] : [],
+      keyTakeaways: [decode(row.dek)].filter(Boolean),
     };
-  });
+  }
+
+  if (!body) return null;
+  return {
+    slug,
+    category: decode(row.category),
+    title: decode(row.title),
+    dek: decode(row.dek),
+    author: decode(row.author) || "Keep TX Red Editorial Team",
+    image_url: imageUrl || null,
+    image_category: null,
+    featured_image_url: decode(row.featured_image_url) || imageUrl || null,
+    image_alt_text: decode(row.image_alt_text) || null,
+    seo_headline: null,
+    discover_category: null,
+    seo_keywords: null,
+    ctr_score: null,
+    headline_variants: null,
+    published_at: publishedAt,
+    kind: decode(row.kind) || "news",
+    keywords: null,
+    body,
+  };
 }
 
-const CHAT_NEWS = new Map(SQL_BATCHES.flatMap(parseBatch).map((article) => [article.slug, article]));
+const articles = migrationSql.flatMap((sql) => {
+  const rows = rowsFromBatch(sql);
+  const single = rowFromInsert(sql);
+  if (single) rows.push(single);
+  return rows.map(articleFromRow).filter((article): article is ChatNewsFallback => Boolean(article));
+});
+
+const CHAT_NEWS = new Map(articles.map((article) => [article.slug, article]));
 
 export function getChatNewsFallbackBySlug(slug: string): ChatNewsFallback | null {
   return CHAT_NEWS.get(slug) ?? null;
