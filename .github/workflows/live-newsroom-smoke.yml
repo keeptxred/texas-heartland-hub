@@ -14,6 +14,7 @@ on:
       - 'src/lib/multi-source-publish.ts'
       - 'src/lib/ingest-feeds-legacy.ts'
       - 'scripts/news/smoke-live-newsroom.mjs'
+      - 'supabase/migrations/**'
       - '.github/workflows/live-newsroom-smoke.yml'
 
 permissions:
@@ -26,7 +27,7 @@ concurrency:
 jobs:
   smoke-live-newsroom:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -46,7 +47,21 @@ jobs:
           if (typeof payload.rewrite_model !== 'string' || !payload.rewrite_model) throw new Error('rewrite_model is missing');
           console.log(`OK rewrite provider=${payload.rewrite_provider} model=${payload.rewrite_model} lovableBypassed=${payload.lovable_rewrite_bypassed}`);
           NODE
-      - name: Check live ingestion and newsroom QA routes
+      - name: Check live ingestion and both publication sites
         env:
           KTR_BASE_URL: https://keeptxred.com
+          TEXASDEFINED_BASE_URL: https://texasdefined.com
         run: node scripts/news/smoke-live-newsroom.mjs
+      - name: Report Flyover-style story coverage
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --max-time 30 https://keeptxred.com/api/public/newsroom-health -o /tmp/newsroom-health.json || {
+            echo 'Live newsroom-health unavailable for coverage report.'
+            exit 0
+          }
+          jq -r '
+            "Flyover audit: ingested=\(.flyoverIngestedCount // 0) routed-correctly=\(.flyoverRoutedCorrectlyCount // 0) published=\(.flyoverPublishedCount // 0)",
+            (.flyoverCoverage[]? | "\(.key) | expected=\(.expectedSite) | ingested=\(.ingested) | routed=\(.routedSite // "-") | correct=\(.routedCorrectly) | published=\(.published) | slug=\(.publishedSlug // "-")")
+          ' /tmp/newsroom-health.json
