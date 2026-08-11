@@ -17,6 +17,7 @@ for (const file of files) {
   const errors = [];
   const isBulkImageRemediation = /^\s*--\s*BULK_IMAGE_REMEDIATION\s*$/im.test(sql);
   const isBulkCategoryReclassification = /^\s*--\s*BULK_CATEGORY_RECLASSIFICATION\s*$/im.test(sql);
+  const isBulkContentStructureRemediation = /^\s*--\s*BULK_CONTENT_STRUCTURE_REMEDIATION\s*$/im.test(sql);
 
   if (isInsert) {
     if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
@@ -57,7 +58,22 @@ for (const file of files) {
     }
   }
 
-  if (!isBulkCategoryReclassification && (!/featured_image_url/i.test(sql) || !/image_alt_text/i.test(sql))) {
+  if (isBulkContentStructureRemediation) {
+    const safelyScoped =
+      isUpdate &&
+      !isInsert &&
+      /SET\s+body_json\s*=/i.test(sql) &&
+      /jsonb_array_length\s*\(\s*body_json->'sections'\s*\)\s*=\s*1/i.test(sql) &&
+      /body_json->'sections'->0->>'heading'/i.test(sql) &&
+      /jsonb_array_length\s*\(\s*body_json->'sections'->0->'paragraphs'\s*\)\s*=\s*1/i.test(sql) &&
+      /WHERE\s+slug\s*=\s*'20\d{2}-\d{2}-\d{2}-[a-z0-9-]+'/i.test(sql);
+    if (!safelyScoped) {
+      errors.push('BULK_CONTENT_STRUCTURE_REMEDIATION must only update body_json, target the legacy single-section/single-paragraph shape, and include an explicitly scoped dated article repair');
+    }
+  }
+
+  const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation;
+  if (!contentOnlyRemediation && (!/featured_image_url/i.test(sql) || !/image_alt_text/i.test(sql))) {
     errors.push('published article image changes must include featured_image_url and image_alt_text');
   }
 
@@ -77,8 +93,9 @@ for (const file of files) {
   const valuesSlugs = [...sql.matchAll(/\('((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*,/g)].map((match) => match[1]);
   const selectSlugs = [...sql.matchAll(/SELECT\s+'((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const dollarSlugs = [...sql.matchAll(/SELECT\s+\$slug\$((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)\$slug\$\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
-  const slugs = [...valuesSlugs, ...selectSlugs, ...dollarSlugs];
-  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification) {
+  const whereSlugs = [...sql.matchAll(/WHERE\s+slug\s*=\s*'((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'/gi)].map((match) => match[1]);
+  const slugs = [...valuesSlugs, ...selectSlugs, ...dollarSlugs, ...whereSlugs];
+  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification && !isBulkContentStructureRemediation) {
     errors.push('could not find any dated article slugs in the publication input');
   }
   if (new Set(slugs).size !== slugs.length) errors.push('duplicate article slug found in migration');
@@ -92,7 +109,9 @@ for (const file of files) {
       ? 'bulk image remediation'
       : isBulkCategoryReclassification
         ? 'bulk category reclassification'
-        : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
+        : isBulkContentStructureRemediation
+          ? 'bulk content structure remediation'
+          : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
     console.log(`${file}: valid (${detail})`);
   }
 }
