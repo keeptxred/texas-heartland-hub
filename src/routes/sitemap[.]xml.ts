@@ -98,7 +98,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         // Keep the index organized around the URLs we most want humans and crawlers
         // to discover first: core pages, current news, evergreen explainers, and
         // Election Central. Sitemap order is not a ranking signal; the practical
-        // crawl-priority work happens through selective inclusion and internal links.
+        // crawl-priority work happens through selective inclusion and strong internal links.
         const candidates = [
           { file: "sitemap-pages.xml", count: 1 },
           { file: "sitemap-news.xml", count: newsCount },
