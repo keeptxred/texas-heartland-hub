@@ -46,7 +46,7 @@ const LOVABLE_CHAT_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions
 const LOVABLE_IMAGE_GATEWAY = "https://ai.gateway.lovable.dev/v1/images/generations";
 const GEMINI_INTERACTIONS = "https://generativelanguage.googleapis.com/v1beta/interactions";
 const GEMINI_IMAGE_MIME_TYPE = "image/jpeg";
-const CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
+const CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
 const nativeFetch = globalThis.fetch.bind(globalThis);
 let directAiFetchInstalled = false;
 
@@ -248,6 +248,18 @@ async function directGeminiVisionResponse(
   });
 }
 
+function normalizeCloudflareJsonContent(rawContent: unknown): string | null {
+  if (rawContent && typeof rawContent === "object") return JSON.stringify(rawContent);
+  if (typeof rawContent !== "string") return null;
+  const content = rawContent.trim();
+  if (!content) return null;
+  try {
+    return JSON.stringify(JSON.parse(content));
+  } catch {
+    return null;
+  }
+}
+
 async function directCloudflareTextResponse(
   body: OpenAiCompatBody,
   credentials: { accountId: string; apiToken: string },
@@ -266,53 +278,60 @@ async function directCloudflareTextResponse(
 
   const model = process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL;
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(credentials.accountId)}/ai/run/${model}`;
-  const response = await nativeFetch(endpoint, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${credentials.apiToken}`,
-      "content-type": "application/json",
-    },
-    body: JSON.stringify({
-      messages,
-      response_format: { type: "json_object" },
-      max_tokens: Math.min(Math.max(Number(body.max_tokens) || 9000, 256), 12000),
-      temperature: 0.25,
-    }),
-    signal: signal ?? undefined,
-  });
+  const maxTokens = Math.min(Math.max(Number(body.max_tokens) || 9000, 256), 12000);
+  let lastFailure = "Cloudflare Workers AI returned invalid JSON";
 
-  const text = await response.text();
-  let payload: CloudflareAiResponse | null = null;
-  try {
-    payload = JSON.parse(text) as CloudflareAiResponse;
-  } catch {
-    // Preserve the provider response below for diagnosis.
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    const retryInstruction = attempt === 1 ? null : {
+      role: "system" as const,
+      content: "CRITICAL: Your previous attempt was malformed or truncated. Return one COMPLETE valid JSON object only. Close every string, array, and object. Do not include markdown fences or prose outside the JSON object.",
+    };
+    const response = await nativeFetch(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${credentials.apiToken}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        messages: retryInstruction ? [...messages, retryInstruction] : messages,
+        response_format: { type: "json_object" },
+        max_tokens: maxTokens,
+        temperature: attempt === 1 ? 0.25 : 0.1,
+      }),
+      signal: signal ?? undefined,
+    });
+
+    const text = await response.text();
+    let payload: CloudflareAiResponse | null = null;
+    try {
+      payload = JSON.parse(text) as CloudflareAiResponse;
+    } catch {
+      lastFailure = `Cloudflare Workers AI ${response.status}: provider envelope was invalid JSON`;
+      continue;
+    }
+
+    if (!response.ok || payload?.success === false) {
+      const detail = payload?.errors?.map((error) => error.message).filter(Boolean).join("; ") || text.slice(0, 400);
+      lastFailure = `Cloudflare Workers AI ${response.status}: ${detail}`;
+      if (response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 429) {
+        return Response.json({ error: { message: lastFailure } }, { status: response.status || 502 });
+      }
+      continue;
+    }
+
+    const content = normalizeCloudflareJsonContent(payload?.result?.response);
+    if (content) {
+      return Response.json({
+        choices: [{ message: { role: "assistant", content } }],
+        provider: "cloudflare-workers-ai",
+        model,
+        attempts: attempt,
+      });
+    }
+    lastFailure = `Cloudflare Workers AI returned malformed or truncated JSON on attempt ${attempt}`;
   }
 
-  if (!response.ok || payload?.success === false) {
-    const detail = payload?.errors?.map((error) => error.message).filter(Boolean).join("; ") || text.slice(0, 400);
-    return Response.json(
-      { error: { message: `Cloudflare Workers AI ${response.status}: ${detail}` } },
-      { status: response.status || 502 },
-    );
-  }
-
-  const rawContent = payload?.result?.response;
-  const content =
-    typeof rawContent === "string"
-      ? rawContent.trim()
-      : rawContent && typeof rawContent === "object"
-        ? JSON.stringify(rawContent)
-        : "";
-  if (!content) {
-    return Response.json({ error: { message: "Cloudflare Workers AI returned an empty response" } }, { status: 502 });
-  }
-
-  return Response.json({
-    choices: [{ message: { role: "assistant", content } }],
-    provider: "cloudflare-workers-ai",
-    model,
-  });
+  return Response.json({ error: { message: lastFailure } }, { status: 502 });
 }
 
 function installDirectAiFetch(): void {
@@ -327,21 +346,11 @@ function installDirectAiFetch(): void {
   }
 
   globalThis.fetch = (async (input: RequestInfo | URL, init?: RequestInit) => {
-    const url = typeof input === "string"
-      ? input
-      : input instanceof URL
-        ? input.toString()
-        : input.url;
+    const url = typeof input === "string" ? input : input instanceof URL ? input.toString() : input.url;
 
-    if (!url.startsWith(LOVABLE_AI_GATEWAY_PREFIX)) {
-      return nativeFetch(input, init);
-    }
-
+    if (!url.startsWith(LOVABLE_AI_GATEWAY_PREFIX)) return nativeFetch(input, init);
     if (url !== LOVABLE_CHAT_GATEWAY && url !== LOVABLE_IMAGE_GATEWAY) {
-      return Response.json(
-        { error: { message: `Unsupported legacy AI endpoint blocked from Lovable: ${url}` } },
-        { status: 501 },
-      );
+      return Response.json({ error: { message: `Unsupported legacy AI endpoint blocked from Lovable: ${url}` } }, { status: 501 });
     }
 
     let body: OpenAiCompatBody | OpenAiImageBody;
@@ -352,36 +361,18 @@ function installDirectAiFetch(): void {
     }
 
     if (url === LOVABLE_IMAGE_GATEWAY) {
-      if (!geminiApiKey) {
-        return Response.json(
-          { error: { message: "Direct Gemini image AI is not configured. Lovable fallback is disabled." } },
-          { status: 503 },
-        );
-      }
+      if (!geminiApiKey) return Response.json({ error: { message: "Direct Gemini image AI is not configured. Lovable fallback is disabled." } }, { status: 503 });
       return directGeminiImageResponse(body as OpenAiImageBody, geminiApiKey, init?.signal);
     }
 
     const chatBody = body as OpenAiCompatBody;
     if (hasImageInput(chatBody)) {
-      if (!geminiApiKey) {
-        return Response.json(
-          { error: { message: "Direct Gemini image validation is not configured. Lovable fallback is disabled." } },
-          { status: 503 },
-        );
-      }
+      if (!geminiApiKey) return Response.json({ error: { message: "Direct Gemini image validation is not configured. Lovable fallback is disabled." } }, { status: 503 });
       return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
     }
 
     if (!cf) {
-      return Response.json(
-        {
-          error: {
-            message:
-              "Cloudflare Workers AI text rewriting is not configured. CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required; Lovable and Gemini text fallbacks are disabled.",
-          },
-        },
-        { status: 503 },
-      );
+      return Response.json({ error: { message: "Cloudflare Workers AI text rewriting is not configured. CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required; Lovable and Gemini text fallbacks are disabled." } }, { status: 503 });
     }
 
     return directCloudflareTextResponse(chatBody, cf, init?.signal);
@@ -389,13 +380,9 @@ function installDirectAiFetch(): void {
 
   directAiFetchInstalled = true;
   if (cf) {
-    console.info(
-      `[AI] text rewrite provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Lovable and Gemini text routing disabled`,
-    );
+    console.info(`[AI] text rewrite provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Lovable and Gemini text routing disabled`);
   } else {
-    console.warn(
-      "[AI] Cloudflare Workers AI text credentials missing; text rewrite calls will fail closed",
-    );
+    console.warn("[AI] Cloudflare Workers AI text credentials missing; text rewrite calls will fail closed");
   }
 }
 
@@ -403,9 +390,7 @@ let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 async function getServerEntry(): Promise<ServerEntry> {
   if (!serverEntryPromise) {
-    serverEntryPromise = import("@tanstack/react-start/server-entry").then(
-      (m) => (m.default ?? m) as ServerEntry,
-    );
+    serverEntryPromise = import("@tanstack/react-start/server-entry").then((m) => (m.default ?? m) as ServerEntry);
   }
   return serverEntryPromise;
 }
@@ -416,9 +401,7 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   if (!contentType.includes("application/json")) return response;
 
   const body = await response.clone().text();
-  if (!body.includes('"unhandled":true') || !body.includes('"message":"HTTPError"')) {
-    return response;
-  }
+  if (!body.includes('"unhandled":true') || !body.includes('"message":"HTTPError"')) return response;
 
   console.error(consumeLastCapturedError() ?? new Error(`h3 swallowed SSR error: ${body}`));
   return new Response(renderErrorPage(), {
