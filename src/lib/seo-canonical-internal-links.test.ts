@@ -49,9 +49,13 @@ describe("canonical internal links", () => {
   it("keeps key Search Console pages self-canonical", () => {
     for (const [file, canonical] of canonicalRouteChecks) {
       const source = readFileSync(file, "utf8");
-      expect(source, `${file} must declare ${canonical} as canonical`).toContain(
-        `rel: "canonical", href: "${canonical}"`,
-      );
+      const canonicalPath = new URL(canonical).pathname;
+      const literalCanonical = `rel: "canonical", href: "${canonical}"`;
+      const siteUrlCanonical = `rel: "canonical", href: \`\${SITE_URL}${canonicalPath}\``;
+      expect(
+        source.includes(literalCanonical) || source.includes(siteUrlCanonical),
+        `${file} must declare ${canonical} as canonical`,
+      ).toBe(true);
     }
   });
 });
