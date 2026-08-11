@@ -18,13 +18,68 @@ type UsageRow = {
 
 function explainPublishFailure(error: string, feedItemId: number): string {
   const message = error.trim() || "Publish failed without an error message";
+  const lower = message.toLowerCase();
 
-  if (message === "AI rewrite failed") {
+  // The rewrite pipeline has two independent quota layers. Keep these messages
+  // explicit so the admin never mistakes KTR's own daily automation cap for a
+  // Lovable credit problem, or a Google Gemini free-tier limit for the KTR cap.
+  if (/daily ai rewrite budget reached|budget_exhausted/.test(lower)) {
+    const limit = message.match(/\((\d+)\)/)?.[1];
+    return (
+      `KTR automated rewrite limit reached${limit ? ` (${limit} successful rewrites today)` : ""}. ` +
+      "This is Keep TX Red's internal daily automation cap, not a Lovable credit limit and not a Google Gemini quota. " +
+      "Manual admin publishing is intended to bypass this automation cap. The automated counter resets at midnight UTC."
+    );
+  }
+
+  if (
+    /ai gateway http 429|resource_exhausted|rate limit|rate_limit|quota exceeded|quota_exceeded|too many requests/.test(lower)
+  ) {
+    return (
+      `Google Gemini quota/rate limit reached while rewriting feed item ${feedItemId}. ` +
+      "Keep TX Red is calling Gemini directly; Lovable AI credits are not being used. " +
+      "This is a Google Gemini API project/model limit (requests, tokens, or daily quota). Retry after Google's quota window resets or use a configured fallback model/provider."
+    );
+  }
+
+  if (
+    /ai gateway http 503|direct gemini ai is not configured|no direct gemini key|gemini.*not configured/.test(lower)
+  ) {
+    return (
+      `Direct Google Gemini is not configured for feed item ${feedItemId}. ` +
+      "KTR is deliberately blocked from falling back to Lovable AI. Configure GEMINI_API_KEY (or GOOGLE_API_KEY / GOOGLE_AI_API_KEY) in the production environment."
+    );
+  }
+
+  if (/ai gateway http 401|ai gateway http 403|api key not valid|permission_denied|unauthenticated/.test(lower)) {
+    return (
+      `Google Gemini rejected KTR's API credentials while rewriting feed item ${feedItemId}. ` +
+      "This is a direct Gemini authentication/permission error, not a Lovable credit problem. Verify the production Gemini API key and its Google AI project permissions."
+    );
+  }
+
+  if (/ai gateway http 5\d\d/.test(lower)) {
+    return (
+      `Google Gemini returned a temporary server error while rewriting feed item ${feedItemId}. ` +
+      "KTR is using Gemini directly and is not consuming Lovable AI credits. Retry the item; if it continues, inspect the provider response and model availability. " +
+      `Technical detail: ${message}`
+    );
+  }
+
+  if (/ai gateway timed out|ai gateway request failed|timeout|timed out/.test(lower)) {
+    return (
+      `Direct Google Gemini timed out while rewriting feed item ${feedItemId}. ` +
+      "This is a provider/network timeout, not an AI-credit exhaustion message. The failed attempt was not published and does not consume the successful automated rewrite allowance."
+    );
+  }
+
+  if (message === "AI rewrite failed" || lower.startsWith("ai rewrite failed")) {
     return (
       `AI rewrite produced no usable article for feed item ${feedItemId}. ` +
-      "The source passed extraction and preflight, but the AI gateway returned no valid draft after the editorial retry. " +
-      "Possible stages are gateway HTTP failure, timeout, empty response, invalid JSON, or editorial validation rejection. " +
-      "The failed attempt was not published and does not consume the automated daily rewrite allowance."
+      "The source passed extraction and preflight, but direct Google Gemini returned no valid draft after the editorial retry. " +
+      "Possible stages are provider HTTP failure, timeout, empty response, invalid JSON, or editorial validation rejection. " +
+      "The failed attempt was not published and does not consume the successful automated daily rewrite allowance. " +
+      `Technical detail: ${message}`
     );
   }
 
