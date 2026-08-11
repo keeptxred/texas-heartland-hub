@@ -23,7 +23,7 @@ jobs:
         continue-on-error: true
         run: |
           set -u
-          status=$(curl -sS --max-time 360 -X POST \
+          status=$(curl -L -sS --max-time 360 -X POST \
             -H 'Accept: application/json' \
             -H 'User-Agent: KeepTXRed-Aug10-Remediation/1.0' \
             -o /tmp/remediate.json \
