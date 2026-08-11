@@ -86,13 +86,12 @@ async function repair() {
   const { data, error } = await supabaseAdmin
     .from("daily_articles")
     .update({
-      body_json: sanitizedBody,
+      body_json: sanitizedBody as never,
       featured_image_url: FEATURED_IMAGE,
       image_alt_text: "Texas public university campus and governing-board review scene for the SB 37 core curriculum changes.",
-      updated_at: new Date().toISOString(),
     })
     .eq("slug", SLUG)
-    .select("slug,body_json,featured_image_url,image_alt_text,updated_at")
+    .select("slug,body_json,featured_image_url,image_alt_text")
     .maybeSingle();
 
   if (error) throw error;
@@ -104,7 +103,6 @@ async function repair() {
     slug: data.slug,
     featured_image_url: data.featured_image_url,
     image_alt_text: data.image_alt_text,
-    updated_at: data.updated_at,
     generic_texas_news_link_present: /\[Texas\]\((?:https?:\/\/(?:www\.)?keeptxred\.com)?\/texas-news\/?\)/i.test(serialized),
     section_count: Array.isArray((data.body_json as { sections?: unknown[] } | null)?.sections)
       ? (data.body_json as { sections: unknown[] }).sections.length
