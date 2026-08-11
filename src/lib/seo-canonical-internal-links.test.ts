@@ -12,6 +12,7 @@ const sourceFiles = [
   "public/llms.txt",
 ];
 
+const legacyWwwHost = "www." + "keeptxred.com/";
 const redirectAliases = [
   'to="/texas-news"',
   'href="/texas-news"',
@@ -20,8 +21,8 @@ const redirectAliases = [
   'href="/elections"',
   'livingInTexas: "/living-in-texas"',
   "http://keeptxred.com/",
-  "http://www.keeptxred.com/",
-  "https://www.keeptxred.com/",
+  `http://${legacyWwwHost}`,
+  `https://${legacyWwwHost}`,
   "https://keeptxred.com/texas-news/",
   "/texas-business?topic=relocations",
   "/texas-business?topic=energy",
@@ -49,9 +50,13 @@ describe("canonical internal links", () => {
   it("keeps key Search Console pages self-canonical", () => {
     for (const [file, canonical] of canonicalRouteChecks) {
       const source = readFileSync(file, "utf8");
-      expect(source, `${file} must declare ${canonical} as canonical`).toContain(
-        `rel: "canonical", href: "${canonical}"`,
-      );
+      const canonicalPath = new URL(canonical).pathname;
+      const literalCanonical = `rel: "canonical", href: "${canonical}"`;
+      const siteUrlCanonical = `rel: "canonical", href: \`\${SITE_URL}${canonicalPath}\``;
+      expect(
+        source.includes(literalCanonical) || source.includes(siteUrlCanonical),
+        `${file} must declare ${canonical} as canonical`,
+      ).toBe(true);
     }
   });
 });
