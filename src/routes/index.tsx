@@ -12,6 +12,17 @@ import { buildSeo, organizationJsonLd, SITE_URL, webPageJsonLd, websiteJsonLd } 
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 const EMPTY_SHOP_SEARCH = { category: undefined, collection: undefined, q: undefined, sort: undefined } as const;
 
+const DISCOVERY_PRIORITY_LINKS = [
+  { title: "Latest Texas news", href: "/news", description: "Breaking news, statewide reporting, politics, business, and public affairs." },
+  { title: "Texas politics", href: "/texas-politics", description: "Reporting and explainers on state government, campaigns, officials, and policy." },
+  { title: "Texas Legislature", href: "/texas-legislature", description: "Sessions, lawmakers, committees, chambers, and legislative resources." },
+  { title: "Border security", href: "/texas-border-security", description: "Texas border policy, enforcement, federal-state disputes, and related reporting." },
+  { title: "Energy", href: "/texas-energy", description: "ERCOT, oil and gas, electricity, grid policy, and the Texas energy economy." },
+  { title: "Texas economy", href: "/texas-economy", description: "Jobs, taxes, business, growth, regulation, and major economic developments." },
+  { title: "Texas laws", href: "/laws", description: "Plain-language guides to Texas laws, legal changes, and civic rules." },
+  { title: "Representatives", href: "/representatives", description: "Find Texas lawmakers and connect legislative coverage to public officials." },
+] as const;
+
 function homepageHead() {
   const electionTakeover = ELECTION_FEATURE_FLAGS.homepagePromotion;
   const title = electionTakeover
@@ -62,6 +73,29 @@ function BreakingStrip({ articles }: { articles: DailyArticle[] }) {
   );
 }
 
+function DiscoveryPriorityLinks() {
+  return (
+    <section className="border-t bg-background" aria-labelledby="keep-tx-red-discovery-priority">
+      <div className="mx-auto max-w-[1200px] px-6 py-12">
+        <div className="max-w-3xl">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">More from Keep TX Red</p>
+          <h2 id="keep-tx-red-discovery-priority" className="mt-2 font-display text-3xl">Texas news, government and policy</h2>
+          <p className="mt-3 leading-7 text-muted-foreground">Election Central is the homepage focus during election season, but Keep TX Red continues publishing statewide news and maintaining core civic reference coverage.</p>
+        </div>
+        <nav className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Core Keep TX Red coverage">
+          {DISCOVERY_PRIORITY_LINKS.map((item) => (
+            <a key={item.href} href={item.href} className="rounded-xl border bg-card p-5 transition hover:border-primary hover:shadow-sm">
+              <h3 className="font-semibold">{item.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
+              <span className="mt-4 block text-sm font-semibold text-primary">Explore →</span>
+            </a>
+          ))}
+        </nav>
+      </div>
+    </section>
+  );
+}
+
 function Index() {
   const { articles } = Route.useLoaderData() as { articles: DailyArticle[] };
 
@@ -70,6 +104,7 @@ function Index() {
       <>
         <BreakingStrip articles={articles} />
         <ElectionRepositoryProvider><ElectionHomePage /></ElectionRepositoryProvider>
+        <DiscoveryPriorityLinks />
       </>
     );
   }
