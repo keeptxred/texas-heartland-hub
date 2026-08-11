@@ -10,7 +10,7 @@ on:
 permissions:
   contents: read
 
-# Revision 2: rerun after semantic BBQ section repair landed.
+# Revision 3: only pass after the deployed endpoint confirms the BBQ row is structured.
 jobs:
   repair:
     runs-on: ubuntu-latest
@@ -26,13 +26,12 @@ jobs:
             status=$(curl -sS -o /tmp/repair.json -w '%{http_code}' --max-time 30 "$endpoint" || true)
             cat /tmp/repair.json 2>/dev/null || true
             echo
-            if [[ "$status" == "200" ]]; then
-              jq -e '.ok == true' /tmp/repair.json >/dev/null
-              echo 'Legacy article repair completed successfully.'
+            if [[ "$status" == "200" ]] && jq -e '.ok == true and .bbqFound == true and .bbqStructured == true and (.bbqHeadings | length) == 5' /tmp/repair.json >/dev/null 2>&1; then
+              echo 'Legacy article repair completed and BBQ semantic structure verified.'
               exit 0
             fi
-            echo "Endpoint not ready or repair incomplete (HTTP $status)."
+            echo "Endpoint not ready or BBQ repair not yet verified (HTTP $status)."
             sleep 15
           done
-          echo 'Repair endpoint did not complete successfully within retry window.'
+          echo 'Repair endpoint did not verify the BBQ article within retry window.'
           exit 1
