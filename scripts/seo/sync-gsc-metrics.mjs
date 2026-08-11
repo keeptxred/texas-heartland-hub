@@ -12,6 +12,8 @@ if (!credentialsJson) throw new Error('GOOGLE_SEARCH_CONSOLE_CREDENTIALS_JSON is
 const credentials = JSON.parse(credentialsJson);
 if (!credentials.client_email || !credentials.private_key) throw new Error('Search Console service-account credentials are incomplete');
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const end = new Date();
 end.setUTCDate(end.getUTCDate() - 3);
 const start = new Date(end);
@@ -107,24 +109,47 @@ console.log(JSON.stringify({ siteUrl, startDate, endDate, searchConsoleRows: row
 if (dryRun) process.exit(0);
 if (!githubToken || !githubRunId || !githubRepository) throw new Error('GitHub Actions identity is required for write mode');
 
+async function writeBatch(batch) {
+  const retryDelaysMs = [0, 10000, 20000, 30000, 45000, 60000];
+  let lastFailure = '';
+
+  for (let attempt = 0; attempt < retryDelaysMs.length; attempt += 1) {
+    const delay = retryDelaysMs[attempt];
+    if (delay > 0) {
+      console.log(`GSC write retry ${attempt + 1}/${retryDelaysMs.length} after ${delay / 1000}s deployment grace period.`);
+      await sleep(delay);
+    }
+
+    const response = await fetch(syncEndpoint, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${githubToken}`,
+        'X-GitHub-Token': githubToken,
+        'Content-Type': 'application/json',
+        'X-GitHub-Run-Id': githubRunId,
+        'X-GitHub-Repository': githubRepository,
+      },
+      body: JSON.stringify({ rows: batch, startDate, endDate }),
+    });
+
+    if (response.ok) return response.json();
+
+    const body = await response.text();
+    lastFailure = `${response.status} ${body}`;
+    const retryable = [401, 502, 503, 504].includes(response.status);
+    if (!retryable || attempt === retryDelaysMs.length - 1) break;
+    console.log(`GSC write attempt ${attempt + 1} hit transient ${response.status}; production may still be serving the prior revision.`);
+  }
+
+  throw new Error(`GSC metric write failed after deployment retries: ${lastFailure}`);
+}
+
 let updated = 0;
 let aliasesResolved = 0;
 const unmatched = [];
 for (let i = 0; i < metrics.length; i += 500) {
   const batch = metrics.slice(i, i + 500);
-  const response = await fetch(syncEndpoint, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${githubToken}`,
-      'X-GitHub-Token': githubToken,
-      'Content-Type': 'application/json',
-      'X-GitHub-Run-Id': githubRunId,
-      'X-GitHub-Repository': githubRepository,
-    },
-    body: JSON.stringify({ rows: batch, startDate, endDate }),
-  });
-  if (!response.ok) throw new Error(`GSC metric write failed: ${response.status} ${await response.text()}`);
-  const result = await response.json();
+  const result = await writeBatch(batch);
   updated += Number(result.updated || 0);
   aliasesResolved += Number(result.aliasesResolved || 0);
   if (Array.isArray(result.unmatched)) unmatched.push(...result.unmatched);
