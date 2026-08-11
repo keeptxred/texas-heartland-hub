@@ -32,12 +32,8 @@ async function verifyGithubRun(request: Request): Promise<GithubRunVerification>
   if (run?.repository?.full_name !== EXPECTED_REPOSITORY) return { ok: false, reason: "run-repository-mismatch" };
   if (run?.path !== EXPECTED_WORKFLOW) return { ok: false, reason: "workflow-path-mismatch" };
   if (run?.head_branch !== "main") return { ok: false, reason: "branch-mismatch" };
-  if (!["schedule", "workflow_dispatch", "push"].includes(String(run?.event || ""))) {
-    return { ok: false, reason: "event-not-allowed" };
-  }
-  if (!["queued", "in_progress"].includes(String(run?.status || ""))) {
-    return { ok: false, reason: `run-not-active-${String(run?.status || "unknown")}` };
-  }
+  if (!["schedule", "workflow_dispatch", "push"].includes(String(run?.event || ""))) return { ok: false, reason: "event-not-allowed" };
+  if (!["queued", "in_progress"].includes(String(run?.status || ""))) return { ok: false, reason: `run-not-active-${String(run?.status || "unknown")}` };
   return { ok: true };
 }
 
@@ -54,24 +50,35 @@ function validRow(value: unknown): value is GscRow {
     && (row.position == null || Number.isFinite(Number(row.position)));
 }
 
+function validDate(value: unknown): value is string {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
 export const Route = createFileRoute("/api/admin/gsc-sync")({
   server: {
     handlers: {
       POST: async ({ request }) => {
         const verification = await verifyGithubRun(request);
         if (!verification.ok) {
-          return Response.json(
-            { ok: false, error: "Unauthorized GitHub Actions run", reason: verification.reason },
-            { status: 401 },
-          );
+          return Response.json({ ok: false, error: "Unauthorized GitHub Actions run", reason: verification.reason }, { status: 401 });
         }
 
-        const payload = await request.json().catch(() => null) as { rows?: unknown } | null;
+        const payload = await request.json().catch(() => null) as {
+          rows?: unknown;
+          startDate?: unknown;
+          endDate?: unknown;
+        } | null;
         if (!Array.isArray(payload?.rows) || payload.rows.length > 500 || !payload.rows.every(validRow)) {
           return Response.json({ ok: false, error: "Invalid GSC metrics payload" }, { status: 400 });
         }
+        if ((payload?.startDate != null && !validDate(payload.startDate)) || (payload?.endDate != null && !validDate(payload.endDate))) {
+          return Response.json({ ok: false, error: "Invalid GSC metrics window" }, { status: 400 });
+        }
 
-        const result = await applyGscMetrics(payload.rows as GscRow[]);
+        const result = await applyGscMetrics(payload.rows as GscRow[], {
+          startDate: validDate(payload?.startDate) ? payload.startDate : null,
+          endDate: validDate(payload?.endDate) ? payload.endDate : null,
+        });
         return Response.json({ ok: true, ...result });
       },
     },
