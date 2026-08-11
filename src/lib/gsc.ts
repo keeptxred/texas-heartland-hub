@@ -18,6 +18,11 @@ type AggregatedGscRow = {
   positionWeight: number;
 };
 
+export type GscWindow = {
+  startDate?: string | null;
+  endDate?: string | null;
+};
+
 const MAX_REDIRECT_HOPS = 8;
 
 function resolveCanonicalSlug(slug: string, redirects: Map<string, string>): string {
@@ -33,19 +38,22 @@ function resolveCanonicalSlug(slug: string, redirects: Map<string, string>): str
   return current;
 }
 
-export async function applyGscMetrics(rows: GscRow[]): Promise<{
+export async function applyGscMetrics(rows: GscRow[], window: GscWindow = {}): Promise<{
   updated: number;
+  dailyArticlesUpdated: number;
   unmatched: string[];
   aliasesResolved: number;
 }> {
-  if (!rows || rows.length === 0) return { updated: 0, unmatched: [], aliasesResolved: 0 };
+  if (!rows || rows.length === 0) {
+    return { updated: 0, dailyArticlesUpdated: 0, unmatched: [], aliasesResolved: 0 };
+  }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const now = new Date().toISOString();
 
   // Public /news/:slug resolution checks article_slug_redirects before
   // daily_articles. GSC can therefore continue reporting impressions against a
   // legacy URL after the article has moved. Mirror that public resolution here
-  // so historical aliases roll up into the canonical article record.
+  // so historical aliases roll up into the canonical public article identity.
   const { data: redirectRows, error: redirectError } = await supabaseAdmin
     .from("article_slug_redirects")
     .select("old_slug,new_slug")
@@ -84,37 +92,65 @@ export async function applyGscMetrics(rows: GscRow[]): Promise<{
     aggregated.set(canonicalSlug, current);
   }
 
-  let updated = 0;
-  const unmatched: string[] = [];
-  for (const row of aggregated.values()) {
+  const metricRows = [...aggregated.values()].map((row) => {
     const impressions = Math.max(0, Math.round(row.impressions));
     const clicks = Math.max(0, Math.round(row.clicks));
     const position = row.positionWeight > 0 ? row.positionWeighted / row.positionWeight : null;
+    return {
+      slug: row.slug,
+      gsc_impressions: impressions,
+      gsc_clicks: clicks,
+      gsc_ctr: impressions > 0 ? clicks / impressions : null,
+      gsc_avg_position: position,
+      window_start: window.startDate || null,
+      window_end: window.endDate || null,
+      gsc_last_update: now,
+    };
+  });
+
+  // Canonical source of truth: every public /news/:slug URL gets a metric row,
+  // regardless of whether the page is backed by static ARTICLES or daily_articles.
+  const { error: metricError } = await supabaseAdmin
+    .from("article_search_metrics")
+    .upsert(metricRows, { onConflict: "slug" });
+  if (metricError) throw new Error(`Failed to persist canonical GSC metrics: ${metricError.message}`);
+
+  // Compatibility bridge: keep the legacy daily_articles metric columns fresh
+  // for existing consumers, but do not treat a missing daily_articles row as a
+  // failed GSC ingestion. Static ARTICLES are valid public pages too.
+  let dailyArticlesUpdated = 0;
+  const unmatched: string[] = [];
+  for (const row of metricRows) {
     const { data, error } = await supabaseAdmin
       .from("daily_articles")
       .update({
-        gsc_impressions: impressions,
-        gsc_clicks: clicks,
-        gsc_ctr: impressions > 0 ? clicks / impressions : null,
-        gsc_avg_position: position,
-        gsc_last_update: now,
+        gsc_impressions: row.gsc_impressions,
+        gsc_clicks: row.gsc_clicks,
+        gsc_ctr: row.gsc_ctr,
+        gsc_avg_position: row.gsc_avg_position,
+        gsc_last_update: row.gsc_last_update,
       })
       .eq("slug", row.slug)
       .select("slug");
 
-    if (error) throw new Error(`Failed to apply GSC metrics for ${row.slug}: ${error.message}`);
-    if (data && data.length > 0) updated += data.length;
+    if (error) throw new Error(`Failed to apply compatibility GSC metrics for ${row.slug}: ${error.message}`);
+    if (data && data.length > 0) dailyArticlesUpdated += data.length;
     else unmatched.push(row.slug);
   }
 
-  return { updated, unmatched, aliasesResolved };
+  return {
+    updated: metricRows.length,
+    dailyArticlesUpdated,
+    unmatched,
+    aliasesResolved,
+  };
 }
 
-/** Convenience: compute the site-wide average CTR from stored GSC data. */
+/** Convenience: compute the site-wide average CTR from canonical public URLs. */
 export async function fetchSiteAverageCtr(): Promise<number | null> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data, error } = await supabaseAdmin
-    .from("daily_articles")
+    .from("article_search_metrics")
     .select("gsc_impressions,gsc_clicks")
     .gt("gsc_impressions", 0);
   if (error || !data || data.length === 0) return null;
