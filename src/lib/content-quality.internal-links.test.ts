@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { pickInternalLinks } from "@/lib/content-quality";
+import { pickInternalLinks, stripLowValueInternalLinks } from "@/lib/content-quality";
 
 const REDIRECT_ALIASES = new Set([
   "/candidate-guides",
@@ -42,5 +42,32 @@ describe("generated internal links", () => {
     const links = pickInternalLinks({ category: "Laws", title: "Texas law update" });
     expect(links.some((link) => link.href === "/laws")).toBe(true);
     expect(links.some((link) => link.href === "/texas-laws")).toBe(false);
+  });
+
+  it("removes generic broad-section anchors but preserves useful contextual links recursively", () => {
+    const body = {
+      intro: [
+        "[Texas](/texas-news) public universities are reviewing [Senate Bill 37](/bills/texas/89/sb/37).",
+      ],
+      sections: [
+        {
+          heading: "What changes",
+          paragraphs: ["Read the [news](/news) while keeping [Texas Politics](/texas-politics/sb37) intact."],
+        },
+      ],
+    };
+
+    const cleaned = stripLowValueInternalLinks(body);
+    expect(cleaned).toEqual({
+      intro: [
+        "Texas public universities are reviewing [Senate Bill 37](/bills/texas/89/sb/37).",
+      ],
+      sections: [
+        {
+          heading: "What changes",
+          paragraphs: ["Read the news while keeping [Texas Politics](/texas-politics/sb37) intact."],
+        },
+      ],
+    });
   });
 });
