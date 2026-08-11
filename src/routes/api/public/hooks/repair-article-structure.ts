@@ -33,6 +33,14 @@ type ArticleBody = {
   [key: string]: unknown;
 };
 
+const BBQ_SLUG = "2026-08-09-austin-lockhart-bbq-ranking";
+const BBQ_HEADINGS = [
+  "Why Austin ranked first and Lockhart second",
+  "What the ranking actually measures",
+  "Why the Austin-Lockhart rivalry helps Central Texas",
+  "Competition keeps Texas barbecue evolving",
+  "Why there is still no objective barbecue champion",
+] as const;
 const MAX_PARAGRAPH_WORDS = 110;
 const TARGET_PARAGRAPH_WORDS = 75;
 
@@ -101,40 +109,68 @@ function normalizeBody(body: ArticleBody): ArticleBody {
   return { ...body, intro, sections };
 }
 
-function buildBbqBody(existing: ArticleBody, rawBody: string | null): ArticleBody {
-  if (!rawBody) return normalizeBody(existing);
-  const paragraphs = rawBody
-    .split(/\r?\n\s*\r?\n+/)
-    .map((part) => part.trim())
-    .filter(Boolean);
+function flattenBodyParagraphs(body: ArticleBody): string[] {
+  const values: string[] = [];
+  if (Array.isArray(body.intro)) values.push(...body.intro);
+  if (Array.isArray(body.sections)) {
+    for (const section of body.sections) {
+      if (Array.isArray(section.paragraphs)) values.push(...section.paragraphs);
+    }
+  }
 
-  if (paragraphs.length < 10) return normalizeBody(existing);
+  const seen = new Set<string>();
+  return values
+    .map((value) => String(value ?? "").trim())
+    .filter((value) => value.length > 0)
+    .filter((value) => {
+      if (seen.has(value)) return false;
+      seen.add(value);
+      return true;
+    });
+}
+
+function buildBbqBody(existing: ArticleBody, rawBody: string | null): ArticleBody {
+  const fromRaw = rawBody
+    ? rawBody
+        .split(/\r?\n\s*\r?\n+/)
+        .map((part) => part.trim())
+        .filter(Boolean)
+    : [];
+
+  const normalizedExisting = normalizeBody(existing);
+  const source = fromRaw.length >= 10 ? fromRaw : flattenBodyParagraphs(normalizedExisting);
+  if (source.length < 8) return normalizedExisting;
+
+  const intro = source[0];
+  const remaining = source.slice(1);
+  const first = remaining.slice(0, 2);
+  const second = remaining.slice(2, 3);
+  const third = remaining.slice(3, 5);
+  const fourth = remaining.slice(5, 7);
+  const fifth = remaining.slice(7);
 
   return {
-    ...existing,
-    intro: [paragraphs[0]],
+    ...normalizedExisting,
+    intro: [intro],
     sections: [
-      {
-        heading: "Why Austin ranked first and Lockhart second",
-        paragraphs: [paragraphs[1], paragraphs[2]],
-      },
-      {
-        heading: "What the ranking actually measures",
-        paragraphs: [paragraphs[3]],
-      },
-      {
-        heading: "Why the Austin-Lockhart rivalry helps Central Texas",
-        paragraphs: [paragraphs[4], paragraphs[5]],
-      },
-      {
-        heading: "Competition keeps Texas barbecue evolving",
-        paragraphs: [paragraphs[6], paragraphs[7]],
-      },
-      {
-        heading: "Why there is still no objective barbecue champion",
-        paragraphs: [paragraphs[8], paragraphs[9]],
-      },
-    ],
+      { heading: BBQ_HEADINGS[0], paragraphs: first },
+      { heading: BBQ_HEADINGS[1], paragraphs: second },
+      { heading: BBQ_HEADINGS[2], paragraphs: third },
+      { heading: BBQ_HEADINGS[3], paragraphs: fourth },
+      { heading: BBQ_HEADINGS[4], paragraphs: fifth },
+    ].filter((section) => section.paragraphs.length > 0),
+  };
+}
+
+function bbqStatus(body: ArticleBody | null | undefined) {
+  const headings = Array.isArray(body?.sections)
+    ? body.sections.map((section) => String(section.heading ?? "")).filter(Boolean)
+    : [];
+  const paragraphCount = flattenBodyParagraphs(body ?? {}).length;
+  return {
+    structured: BBQ_HEADINGS.every((heading) => headings.includes(heading)),
+    headings,
+    paragraphCount,
   };
 }
 
@@ -157,7 +193,10 @@ async function repairLegacyArticleStructure() {
 
   let scanned = 0;
   let repaired = 0;
+  let bbqFound = false;
   let bbqStructured = false;
+  let bbqHeadings: string[] = [];
+  let bbqParagraphCount = 0;
   const failures: Array<{ slug: string; error: string }> = [];
 
   for (const row of data ?? []) {
@@ -166,33 +205,44 @@ async function repairLegacyArticleStructure() {
     if (!raw || typeof raw !== "object") continue;
 
     const slug = String((row as { slug: string }).slug);
-    const next = slug === "2026-08-09-austin-lockhart-bbq-ranking"
+    const isBbq = slug === BBQ_SLUG;
+    if (isBbq) bbqFound = true;
+
+    const next = isBbq
       ? buildBbqBody(raw, (row as { body?: string | null }).body ?? null)
       : normalizeBody(raw);
 
-    if (JSON.stringify(next) === JSON.stringify(raw)) continue;
+    if (JSON.stringify(next) !== JSON.stringify(raw)) {
+      const { error: updateError } = await supabase
+        .from("daily_articles")
+        .update({ body_json: next })
+        .eq("slug", slug);
 
-    const { error: updateError } = await supabase
-      .from("daily_articles")
-      .update({ body_json: next })
-      .eq("slug", slug);
-
-    if (updateError) {
-      failures.push({ slug, error: updateError.message });
-      continue;
+      if (updateError) {
+        failures.push({ slug, error: updateError.message });
+        continue;
+      }
+      repaired += 1;
     }
 
-    repaired += 1;
-    if (slug === "2026-08-09-austin-lockhart-bbq-ranking") bbqStructured = true;
+    if (isBbq) {
+      const state = bbqStatus(next);
+      bbqStructured = state.structured;
+      bbqHeadings = state.headings;
+      bbqParagraphCount = state.paragraphCount;
+    }
   }
 
   return json({
-    ok: failures.length === 0,
+    ok: failures.length === 0 && (!bbqFound || bbqStructured),
     scanned,
     repaired,
+    bbqFound,
     bbqStructured,
+    bbqHeadings,
+    bbqParagraphCount,
     failures: failures.slice(0, 20),
-  }, failures.length === 0 ? 200 : 207);
+  }, failures.length === 0 && (!bbqFound || bbqStructured) ? 200 : 207);
 }
 
 function json(body: unknown, status = 200) {
