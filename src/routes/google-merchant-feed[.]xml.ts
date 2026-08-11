@@ -53,6 +53,23 @@ function absoluteImageUrl(value: string | null | undefined): string {
   }
 }
 
+function merchantImageUrl(value: string | null | undefined): string {
+  const absolute = absoluteImageUrl(value);
+  if (!absolute) return "";
+
+  try {
+    const image = new URL(absolute);
+    const isPrintify = image.protocol === "https:" &&
+      (image.hostname === "printify.com" || image.hostname.endsWith(".printify.com"));
+
+    return isPrintify
+      ? `${BASE_URL}/merchant-image?src=${encodeURIComponent(absolute)}`
+      : absolute;
+  } catch {
+    return "";
+  }
+}
+
 function productCategory(product: Product): { category: string; apparel: boolean } {
   const haystack = [product.title, ...(product.tags ?? [])].join(" ").toLowerCase();
 
@@ -103,7 +120,7 @@ function merchantItems(product: Product): MerchantItem[] {
   const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled !== false);
 
   if (enabledVariants.length === 0) {
-    const imageLink = absoluteImageUrl(product.image);
+    const imageLink = merchantImageUrl(product.image);
     if (!imageLink || !Number.isFinite(product.price) || product.price <= 0) return [];
     return [{
       id: product.id,
@@ -120,7 +137,7 @@ function merchantItems(product: Product): MerchantItem[] {
   }
 
   return enabledVariants.flatMap((variant) => {
-    const imageLink = absoluteImageUrl(variant.image || variant.images?.[0] || product.image);
+    const imageLink = merchantImageUrl(variant.image || variant.images?.[0] || product.image);
     const price = Number(variant.price || product.price);
     if (!imageLink || !Number.isFinite(price) || price <= 0) return [];
 
