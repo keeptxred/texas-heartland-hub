@@ -67,8 +67,8 @@ export const CONTENT_PILLARS: readonly ContentPillar[] = [
     shortTitle: "Economy & Small Business",
     href: "/texas-economy",
     description: "Jobs, taxes, state spending, regulation, entrepreneurship, employers, and conditions affecting Texas small businesses.",
-    keywords: /\b(economy|economic|small business|business owner|entrepreneur|startup|employer|jobs?|workforce|unemployment|tax|spending|budget|commerce|regulation|regulatory|manufacturing|investment|inflation)\b/i,
-    subtopics: ["Jobs and workforce", "Small business", "Taxes and spending", "Regulation", "Manufacturing", "Investment"],
+    keywords: /\b(economy|economic|small business|business owner|entrepreneur|startup|employer|jobs?|workforce|unemployment|tax|taxes|property tax(?:es)?|homestead exemption|appraisal protest|appraisal district|county appraisal district|\bcad\b|taxable value|assessed value|spending|budget|commerce|regulation|regulatory|manufacturing|investment|inflation)\b/i,
+    subtopics: ["Jobs and workforce", "Small business", "Taxes and spending", "Property taxes and appraisals", "Regulation", "Manufacturing", "Investment"],
     related: ["texas-energy-oil", "texas-laws-legislature", "texas-politics-government", "texas-agriculture-rural"],
   },
   {
@@ -162,16 +162,10 @@ export function classifyContentPillar(input: {
   const categorySignal = CATEGORY_SIGNALS[category];
   if (categorySignal) return categorySignal;
 
-  // Classify from editorially prominent text first. Historical article bodies often
-  // contain boilerplate, related-links, or general election/government language that
-  // can swamp the actual story topic if the entire body is treated equally.
   const prominent = `${input.title ?? ""} ${input.description ?? ""}`;
   const prominentMatch = firstPillarMatch(prominent);
   if (prominentMatch) return prominentMatch;
 
-  // Only fall back to the article lead when the headline/dek are genuinely ambiguous.
-  // In the lead, the earliest topical signal wins instead of global pillar priority,
-  // preventing a later boilerplate mention of elections from overriding the actual lead.
   const lead = (input.body ?? "").slice(0, 1200);
   return earliestPillarMatch(lead);
 }
