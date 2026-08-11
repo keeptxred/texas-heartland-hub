@@ -231,7 +231,7 @@ async function fetchWithTimeout(url: string, ms = 10000): Promise<string | null>
   }
 }
 
-async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
+async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {
   const list = items
     .map((it, i) => `${i + 1}. [score=${it.score}${it.isBreaking ? " BREAKING" : ""}] [${it.source} — ${it.sourceCategory}] ${it.title}\n   ${it.description.slice(0, 400)}\n   URL: ${it.link}`)
     .join("\n\n");
@@ -262,7 +262,7 @@ BODY RULES (required for every picked story):
 - "keyTakeaways": 3–5 short bullet strings.
 - "faq": 4–6 Q&A entries answering likely reader questions with substantive answers.
 
-Pick the best ${Math.min(10, items.length)} stories. Return ONLY valid JSON:
+Pick every story in this batch (up to ${Math.min(3, items.length)} stories). Return ONLY valid JSON:
 {"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"...","summary":"...","relevance":"...","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["..."],"faq":[{"q":"...","a":"..."}]}]}
 
 Valid categories: ${CATEGORIES.join(", ")}.
@@ -338,6 +338,25 @@ CATEGORY CLASSIFICATION RULES (strict):
     kept.push(a);
   }
   return kept;
+}
+
+async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
+  const selected = items.slice(0, 10);
+  const combined: Awaited<ReturnType<typeof rewriteBatchWithAi>> = [];
+
+  // Keep each model response small enough to satisfy the 800-word article
+  // floor without exhausting the output-token budget. Run sequentially to
+  // avoid provider burst/rate-limit failures and preserve source ordering.
+  for (let offset = 0; offset < selected.length; offset += 3) {
+    const batch = selected.slice(offset, offset + 3);
+    const rewritten = await rewriteBatchWithAi(batch, lovableApiKey);
+    for (const article of rewritten) {
+      if (article.source_index < 1 || article.source_index > batch.length) continue;
+      combined.push({ ...article, source_index: article.source_index + offset });
+    }
+  }
+
+  return combined.slice(0, 10);
 }
 
 export const Route = createFileRoute("/api/public/hooks/generate-news")({
