@@ -1,3 +1,5 @@
+import { validateArticleReadability } from "./editorial-readability";
+
 // Shared analyze-first editorial validation for AI-generated articles.
 
 export type StoryBrief = {
@@ -85,6 +87,18 @@ AEO / ANSWER-FIRST SUMMARY REQUIREMENTS:
 - Name the primary subject and concrete action/event immediately. Include the relevant Texas location, agency, office, date, or consequence when the source supports it.
 - A reader or AI system should be able to quote the summary alone and understand what happened and why it matters.
 - Do not repeat the headline verbatim and do not add unsupported interpretation merely to make the summary sound definitive.
+
+READABILITY / WEB STRUCTURE REQUIREMENTS:
+- Write for a news website, not a print essay. Paragraphs must be visually short and easy to scan.
+- Target roughly 40–100 words per normal paragraph. Avoid paragraphs over 130 words; never exceed 150 words unless the paragraph is a direct quotation that cannot be split safely.
+- Most paragraphs should contain 1–4 sentences. Do not put more than 5 prose sentences into one paragraph.
+- One distinct idea belongs in one paragraph. Start a new paragraph when the subject, time frame, stakeholder, consequence, example, or argument changes.
+- In JSON output, EACH visible paragraph must be its own string inside the relevant paragraphs[] array. Never place multiple paragraphs separated by blank lines or newline characters inside one paragraphs[] string.
+- Do not compress several paragraphs into a single string merely to satisfy a word-count requirement. Add factual depth through additional paragraphs instead.
+- When sections are requested, use specific, descriptive H2-style headings that tell the reader what the section is about. Avoid generic headings such as "Conclusion", "Overview", "Background", or "The story" when a more specific heading is possible.
+- Do not manufacture filler sections or repetitive headings. Section breaks should reflect genuine changes in topic or reader intent.
+- Keep lists as lists when the source material is naturally enumerated; do not turn a list of separate points into one dense prose paragraph.
+- Preserve quotations as quotations and do not bury a long quotation inside an unrelated prose paragraph.
 `;
 
 export const EDITORIAL_STRICT_RETRY_ADDENDUM = `
@@ -93,9 +107,13 @@ RETRY — STRICT MODE:
 The previous draft failed editorial validation. Regenerate using only verified
 source facts. Remove unsupported people, organizations, statistics, quotes,
 relationships, and filler. The summary must be a self-contained, answer-first
-45–90 word explanation whose first sentence states what happened. If a factual
-article cannot be produced, set brief.hasClearNewsEvent to false and leave
-article fields empty.
+45–90 word explanation whose first sentence states what happened. Correct any
+readability failure as well: split oversized paragraphs into separate paragraph
+array items at natural idea boundaries, keep normal paragraphs below 130 words,
+never place multiple blank-line-separated paragraphs inside one paragraphs[]
+string, and use descriptive section headings instead of generic filler. If a
+factual article cannot be produced, set brief.hasClearNewsEvent to false and
+leave article fields empty.
 `;
 
 const BANNED_UNSUPPORTED_PATTERNS: RegExp[] = [
@@ -207,6 +225,9 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourc
       reasons.push("generic_summary_opener");
     }
   }
+
+  reasons.push(...validateArticleReadability(article));
+
   if (article.title && prose && !headlineMatchesBody(article, brief)) {
     reasons.push("headline_does_not_match_body");
   }
@@ -223,21 +244,10 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourc
     const relationships = brief.relationships ?? [];
     const sentences = prose.split(/(?<=[.!?])\s+/).filter(Boolean);
 
-    // The previous validator rejected any secondary subject mentioned anywhere
-    // unless it appeared in relationships. That incorrectly rejected official
-    // releases containing attendee lists. Enforce relationships only when the
-    // prose actually places the primary and secondary subject in the same
-    // sentence and therefore asserts a connection between them.
     if (primary) {
       for (const secondaryRaw of brief.secondarySubjects ?? []) {
         const secondary = secondaryRaw?.trim();
         if (!secondary || secondary.toLowerCase() === primary.toLowerCase()) continue;
-
-        // A subject named explicitly in the source headline/body is source-supported.
-        // Do not demand a separate AI-generated relationship record for it; that
-        // would turn omissions in the brief.relationships array into false
-        // `unrelated_subject` rejections (for example, QTS Data Centers in an
-        // Office of the Governor release whose headline names QTS directly).
         if (sourceText && containsName(sourceText, secondary)) continue;
 
         const assertedTogether = sentences.some((sentence) =>
