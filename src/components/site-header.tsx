@@ -7,7 +7,7 @@ import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions"
 
 const NAV = [
   { to: "/", label: "Home" },
-  { to: "/texas-news", label: "Texas News" },
+  { to: "/news", label: "Texas News" },
   { to: "/happening-now", label: "Happening Now" },
   { to: "/elections/2026", label: "Elections" },
   { to: "/bills", label: "Bills" },
