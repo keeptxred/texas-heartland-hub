@@ -126,7 +126,7 @@ export function CityPage({
               until newer local coverage replaces them.
             </p>
           </div>
-          <Link to="/texas-news" className="text-sm font-semibold text-primary hover:underline">
+          <Link to="/news" className="text-sm font-semibold text-primary hover:underline">
             Browse statewide news →
           </Link>
         </div>
@@ -176,7 +176,7 @@ export function CityPage({
               </a>
             ))}
             <a
-              href="/texas-news"
+              href="/news"
               className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
             >
               Statewide Texas news

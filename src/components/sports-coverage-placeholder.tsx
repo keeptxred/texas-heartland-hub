@@ -11,10 +11,10 @@ export function SportsCoveragePlaceholder({ label }: { label?: string }) {
         Explore current Texas news below.
       </p>
       <ul className="mt-5 grid sm:grid-cols-2 gap-3 text-sm">
-        <li><Link to="/texas-news" className="text-primary hover:underline">Texas News →</Link></li>
+        <li><Link to="/news" className="text-primary hover:underline">Texas News →</Link></li>
         <li><Link to="/texas-business" className="text-primary hover:underline">Texas Business →</Link></li>
         <li><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link></li>
-        <li><Link to="/elections" className="text-primary hover:underline">Texas Elections →</Link></li>
+        <li><Link to="/elections/2026" className="text-primary hover:underline">Texas Elections →</Link></li>
       </ul>
     </div>
   );
