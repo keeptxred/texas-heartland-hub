@@ -44,6 +44,7 @@ const LEGACY_CONTENT_PATHS = new Map([
   ["/texas-news/tax-spending", "/texas-economy"],
   ["/texas-news/legislature", "/texas-legislature"],
   ["/texas-news/border", "/texas-border-security"],
+  ["/texas-sports/team/aggies", "/texas-sports/team/texas-am"],
   ["/hubs", "/topics"],
   ["/hubs/texas-policy-law", "/laws"],
   ["/hubs/texas-politics", "/texas-politics"],
