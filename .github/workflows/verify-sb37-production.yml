@@ -1,12 +1,6 @@
 name: Verify SB 37 Production Repair
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/verify-sb37-production.yml'
-      - 'src/routes/api/public/hooks/repair-sb37-production.ts'
-      - '.lovable-redeploy-trigger'
   workflow_dispatch:
 
 permissions:
@@ -17,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 12
     steps:
-      - name: Wait for production deployment and apply repair
+      - name: Verify published production and apply repair
         shell: bash
         run: |
           set -euo pipefail
@@ -35,7 +29,7 @@ jobs:
             fi
             sleep 15
           done
-          test "$ok" = 'yes' || { echo 'Production repair hook never became healthy with the visible hero'; exit 1; }
+          test "$ok" = 'yes' || { echo 'Published production never became healthy with the visible hero'; exit 1; }
 
       - name: Verify live article structure and hero metadata
         shell: bash

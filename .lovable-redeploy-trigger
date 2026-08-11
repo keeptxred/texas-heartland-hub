@@ -1,3 +1,0 @@
-KeepTXRed production redeploy trigger
-2026-08-11T15:12:00-05:00
-Reason: force production pickup of the merged SB 37 visible-hero remediation. The live article must switch away from the technically valid but visually blank generated WebP and use the verified public-domain UT Austin campus photograph at https://upload.wikimedia.org/wikipedia/commons/a/a3/UT-Austin-Tower.jpg. The SB 37 production verification workflow is expected to pass only after the live repair endpoint reports that exact image and the live article renders it.
