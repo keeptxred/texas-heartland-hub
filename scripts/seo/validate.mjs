@@ -103,6 +103,7 @@ if (!/lastmod:STATIC_PAGE_LASTMOD_OVERRIDES\[path\]\s*\|\|\s*undefined/.test(sta
   fail("src/routes/sitemap-pages[.]xml.ts", "static sitemap must omit lastmod when no trustworthy page revision date is known");
 }
 
+const retiredRoutes = new Map();
 for (const [file, source] of contents) {
   if (!file.startsWith("src/routes/") || !file.endsWith(".tsx")) continue;
   const routeMatch = source.match(/createFileRoute\(["']([^"']+)["']\)/);
@@ -118,11 +119,32 @@ for (const [file, source] of contents) {
   const alwaysNoindex = staticHeadMatch
     ? /name:\s*["']robots["'][\s\S]{0,160}content:\s*["'][^"']*noindex/i.test(staticHeadMatch[1])
     : false;
+  if (redirects || alwaysNoindex) retiredRoutes.set(routePath, file);
   if ((redirects || alwaysNoindex) && staticSitemap.includes(`"${routePath}"`)) {
     fail(
       "src/routes/sitemap-pages[.]xml.ts",
       `static sitemap must not promote a route that redirects or is always noindex: ${routePath} (${file})`,
     );
+  }
+}
+
+const llms = await read("public/llms.txt");
+for (const [routePath, definitionFile] of retiredRoutes) {
+  if (llms.includes(`](${routePath})`)) {
+    fail("public/llms.txt", `AI-facing link index must not advertise retired/noindex route: ${routePath}`);
+  }
+
+  // Literal route strings are not proof of a crawlable link: route metadata,
+  // admin tooling, tests, redirect definitions, and migrated route trees all
+  // legitimately mention retired paths. Keep this heuristic visible without
+  // blocking CI. The sitemap and llms.txt checks above remain hard failures.
+  for (const [file, source] of contents) {
+    const publicFacing = (file.startsWith("src/routes/") || file.startsWith("src/components/")) && file.endsWith(".tsx");
+    if (!publicFacing || file === definitionFile) continue;
+    const hasLiteralRoute = source.includes(`"${routePath}"`) || source.includes(`'${routePath}'`) || source.includes(`\`${routePath}\``);
+    if (hasLiteralRoute) {
+      warn(file, `public-facing source may link to a retired/noindex route; verify canonical destination: ${routePath}`);
+    }
   }
 }
 
