@@ -34,6 +34,40 @@ const norm = (s: string) =>
 const splitSentences = (p: string) =>
   p.split(/(?<=[.!?])\s+(?=[A-Z0-9"'\u201c])/).map((s) => s.trim()).filter(Boolean);
 
+function paragraphBlocks(raw: string): string[] {
+  const clean = (raw ?? "").trim();
+  if (!clean) return [];
+
+  const explicit = clean
+    .split(/\n\s*\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (explicit.length > 1) return explicit;
+
+  // Defensive repair for legacy/generated rows that stored an entire article as
+  // one paragraph with no blank lines. Keep normal editorial paragraphs intact,
+  // but break obviously malformed walls of text into readable chunks.
+  if (clean.length < 1200) return [clean];
+
+  const sentences = splitSentences(clean);
+  if (sentences.length < 6) return [clean];
+
+  const out: string[] = [];
+  let chunk: string[] = [];
+  let chars = 0;
+  for (const sentence of sentences) {
+    chunk.push(sentence);
+    chars += sentence.length + 1;
+    if (chunk.length >= 4 || chars >= 700) {
+      out.push(chunk.join(" "));
+      chunk = [];
+      chars = 0;
+    }
+  }
+  if (chunk.length) out.push(chunk.join(" "));
+  return out;
+}
+
 function dedupeSentences(paragraph: string, seen: Set<string>): string {
   const out: string[] = [];
   for (const s of splitSentences(paragraph)) {
@@ -52,14 +86,14 @@ function dedupeSentences(paragraph: string, seen: Set<string>): string {
 function dedupeParagraphs(paragraphs: string[], seenPara: Set<string>, seenSent: Set<string>): string[] {
   const out: string[] = [];
   for (const raw of paragraphs) {
-    const p = (raw ?? "").trim();
-    if (!p) continue;
-    const key = norm(p);
-    if (key.length >= 30 && seenPara.has(key)) continue;
-    if (key.length >= 30) seenPara.add(key);
-    const cleaned = dedupeSentences(p, seenSent);
-    if (cleaned.trim().length === 0) continue;
-    out.push(cleaned);
+    for (const p of paragraphBlocks(raw)) {
+      const key = norm(p);
+      if (key.length >= 30 && seenPara.has(key)) continue;
+      if (key.length >= 30) seenPara.add(key);
+      const cleaned = dedupeSentences(p, seenSent);
+      if (cleaned.trim().length === 0) continue;
+      out.push(cleaned);
+    }
   }
   return out;
 }
