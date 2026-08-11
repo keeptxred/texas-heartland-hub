@@ -23,15 +23,14 @@ jobs:
         continue-on-error: true
         run: |
           set -u
-          if curl -fsS --max-time 180 -X POST \
+          status=$(curl -sS --max-time 360 -X POST \
             -H 'Accept: application/json' \
             -H 'User-Agent: KeepTXRed-Aug10-Remediation/1.0' \
-            https://keeptxred.com/api/public/hooks/remediate-aug10-flyover \
-            -o /tmp/remediate.json; then
-            cat /tmp/remediate.json | jq '{ok, discoveryFetched, feedErrors, results}'
-          else
-            echo 'Bounded remediation endpoint was not available or timed out; direct DB audit will still run.'
-          fi
+            -o /tmp/remediate.json \
+            -w '%{http_code}' \
+            https://keeptxred.lovable.app/api/public/hooks/remediate-aug10-flyover || true)
+          echo "REMEDIATION_HTTP=$status"
+          cat /tmp/remediate.json || true
           sleep 5
       - name: Query production Supabase and print 23-story matrix
         run: |
@@ -69,8 +68,9 @@ jobs:
           }
 
           const since = encodeURIComponent('2026-08-03T00:00:00Z');
-          const feed = await getAll('texas_news_feed', `select=id,title,description,source,link,pub_date,internal_slug&pub_date=gte.${since}&order=pub_date.desc`);
+          const feed = await getAll('texas_news_feed', `select=id,title,description,source,link,pub_date,internal_slug,texasdefined_slug,target_site,target_section&pub_date=gte.${since}&order=pub_date.desc`);
           const articles = await getAll('daily_articles', `select=slug,title,published_at,source_url&published_at=gte.${since}&order=published_at.desc`);
+          const td = await getAll('texasdefined_articles', `select=slug,title,published_at,source_url,status&published_at=gte.${since}&order=published_at.desc`);
 
           const specs = [
             ['state-fair-gun-ban','keeptxred',[/state fair/i,/(gun|handgun|firearm)/i]],
@@ -101,13 +101,16 @@ jobs:
           const matches = (text, terms) => terms.every((re) => re.test(text));
           let ingestedCount = 0;
           let ktrPublishedCount = 0;
-          console.log(`rows feed=${feed.length} daily_articles=${articles.length}`);
+          let tdPublishedCount = 0;
+          console.log(`rows feed=${feed.length} daily_articles=${articles.length} texasdefined_articles=${td.length}`);
           for (const [id, expected, terms] of specs) {
             const feedRow = feed.find((row) => matches(`${row.title ?? ''} ${row.description ?? ''}`, terms));
             const article = articles.find((row) => matches(row.title ?? '', terms));
+            const tdArticle = td.find((row) => matches(row.title ?? '', terms));
             if (feedRow) ingestedCount += 1;
             if (expected === 'keeptxred' && article) ktrPublishedCount += 1;
-            console.log(`${id} | expected=${expected} | ingested=${Boolean(feedRow)} | feedId=${feedRow?.id ?? '-'} | source=${feedRow?.source ?? '-'} | url=${feedRow?.link ?? '-'} | feed=${feedRow?.title ?? '-'} | internalSlug=${feedRow?.internal_slug ?? '-'} | ktrPublished=${Boolean(article)} | ktrSlug=${article?.slug ?? '-'} | ktrTitle=${article?.title ?? '-'}`);
+            if (expected === 'texasdefined' && tdArticle?.status === 'published') tdPublishedCount += 1;
+            console.log(`${id} | expected=${expected} | ingested=${Boolean(feedRow)} | feedId=${feedRow?.id ?? '-'} | target=${feedRow?.target_site ?? '-'}:${feedRow?.target_section ?? '-'} | feed=${feedRow?.title ?? '-'} | internalSlug=${feedRow?.internal_slug ?? '-'} | tdSlug=${feedRow?.texasdefined_slug ?? '-'} | ktrPublished=${Boolean(article)} | ktrSlug=${article?.slug ?? '-'} | tdPublished=${Boolean(tdArticle)} | tdArticleSlug=${tdArticle?.slug ?? '-'}`);
           }
-          console.log(`SUMMARY ingested=${ingestedCount}/23 ktrPublished=${ktrPublishedCount}/${specs.filter((s) => s[1] === 'keeptxred').length}`);
+          console.log(`SUMMARY ingested=${ingestedCount}/23 ktrPublished=${ktrPublishedCount}/${specs.filter((s) => s[1] === 'keeptxred').length} tdPublished=${tdPublishedCount}/${specs.filter((s) => s[1] === 'texasdefined').length}`);
           NODE
