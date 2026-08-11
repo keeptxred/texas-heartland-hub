@@ -52,8 +52,20 @@ export const TEAM_BY_SLUG: Record<string, TeamMeta> = Object.fromEntries(
   TEAMS.map((t) => [t.slug, t]),
 );
 
+// Preserve historical URLs that Google may still crawl while consolidating
+// authority onto the current canonical team slug.
+export const TEAM_SLUG_ALIASES: Readonly<Record<string, string>> = {
+  aggies: "texas-am",
+};
+
 export function isTeamSlug(v: string): boolean {
   return Object.prototype.hasOwnProperty.call(TEAM_BY_SLUG, v);
+}
+
+export function canonicalTeamSlug(v: string): string | null {
+  const normalized = v.toLowerCase();
+  if (isTeamSlug(normalized)) return normalized;
+  return TEAM_SLUG_ALIASES[normalized] ?? null;
 }
 
 export function teamsForLeague(league: LeagueSlug): TeamMeta[] {
