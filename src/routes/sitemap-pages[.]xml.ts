@@ -6,12 +6,17 @@ import { TEAMS } from "@/lib/texas-teams";
 import { SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
+const GSC_CANONICAL_REFRESH = toIsoDate("2026-08-11T12:30:00-05:00");
 const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(
   SUPPORTING_GUIDE_SLUGS.map((slug) => [`/guides/${slug}`, GUIDE_LASTMOD]),
 );
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/news": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/houston": GSC_CANONICAL_REFRESH,
+  "/keep-texas-red": GSC_CANONICAL_REFRESH,
+  "/register-to-vote": GSC_CANONICAL_REFRESH,
+  "/authors": GSC_CANONICAL_REFRESH,
   "/texas-legislature": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/house": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/senate": toIsoDate("2026-08-07T00:00:00-05:00"),
