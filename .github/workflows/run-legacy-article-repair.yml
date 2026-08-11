@@ -10,6 +10,7 @@ on:
 permissions:
   contents: read
 
+# Revision 2: rerun after semantic BBQ section repair landed.
 jobs:
   repair:
     runs-on: ubuntu-latest
