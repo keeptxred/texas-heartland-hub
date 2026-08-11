@@ -3,11 +3,16 @@ import { describe, expect, it } from "vitest";
 
 const sourceFiles = [
   "src/components/site-header.tsx",
+  "src/components/site-footer.tsx",
   "src/components/sports-coverage-placeholder.tsx",
   "src/components/city-page.tsx",
+  "src/routes/texas-sports.index.tsx",
   "src/lib/elections/internalLinks.ts",
+  "src/data/search-console-priority-urls.json",
+  "public/llms.txt",
 ];
 
+const legacyWwwHost = "www." + "keeptxred.com/";
 const redirectAliases = [
   'to="/texas-news"',
   'href="/texas-news"',
@@ -15,7 +20,22 @@ const redirectAliases = [
   'to="/elections"',
   'href="/elections"',
   'livingInTexas: "/living-in-texas"',
+  "http://keeptxred.com/",
+  `http://${legacyWwwHost}`,
+  `https://${legacyWwwHost}`,
+  "https://keeptxred.com/texas-news/",
+  "/texas-business?topic=relocations",
+  "/texas-business?topic=energy",
+  "/texas-news?topic=education",
+  "/news/homestead-exemption-explained",
+  "/news/texas-property-tax-guide",
 ];
+
+const canonicalRouteChecks = [
+  ["src/routes/shop.index.tsx", "https://keeptxred.com/shop"],
+  ["src/routes/texas-sports.index.tsx", "https://keeptxred.com/texas-sports"],
+  ["src/routes/texas-economy.tsx", "https://keeptxred.com/texas-economy"],
+] as const;
 
 describe("canonical internal links", () => {
   it("does not route high-traffic internal links through known redirect aliases", () => {
@@ -24,6 +44,19 @@ describe("canonical internal links", () => {
       for (const alias of redirectAliases) {
         expect(source, `${file} must not contain redirecting internal link ${alias}`).not.toContain(alias);
       }
+    }
+  });
+
+  it("keeps key Search Console pages self-canonical", () => {
+    for (const [file, canonical] of canonicalRouteChecks) {
+      const source = readFileSync(file, "utf8");
+      const canonicalPath = new URL(canonical).pathname;
+      const literalCanonical = `rel: "canonical", href: "${canonical}"`;
+      const siteUrlCanonical = `rel: "canonical", href: \`\${SITE_URL}${canonicalPath}\``;
+      expect(
+        source.includes(literalCanonical) || source.includes(siteUrlCanonical),
+        `${file} must declare ${canonical} as canonical`,
+      ).toBe(true);
     }
   });
 });
