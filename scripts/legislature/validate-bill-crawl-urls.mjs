@@ -70,6 +70,8 @@ const checks = [
   {
     file: 'src/lib/legislative-sitemaps.ts',
     required: [
+      "const SIMPLE_RESOLUTION_TYPES = new Set(['hr', 'sr']);",
+      'const minimumScore = SIMPLE_RESOLUTION_TYPES.has(billType) ? 4 : 2;',
       'const sitemapBills = billRows.filter((bill) => isSitemapWorthyBill(bill, evidence));',
       '...hierarchyEntries(sitemapBills)',
       'newestDate([bill.last_action_date, bill.updated_at])',
