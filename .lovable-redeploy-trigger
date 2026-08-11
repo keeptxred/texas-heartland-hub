@@ -1,3 +1,3 @@
 KeepTXRed production redeploy trigger
-2026-08-10T20:35:00-05:00
-Reason: force production pickup of current protected main including PR #305 (bounded Aug. 10 Flyover remediation endpoint) and the earlier newsroom-health/routing fixes. Live /api/public/hooks/remediate-aug10-flyover still falls through to the old HTML-only handler with HTTP 500, proving production is serving a stale backend bundle. Immediate verification target: the bounded remediation endpoint must return JSON and then the direct 23-story production matrix must be rerun.
+2026-08-11T00:10:00-05:00
+Reason: force production pickup of the current protected main plus the live pickle-festival remediation. The target revision restructures the malformed 2026-08-09-pickle-festival-helotes body into real editorial sections and regenerates its legacy generated-news hero through the current AI featured-image pipeline. The post-merge repair workflow must not pass until the live repair endpoint reports revision >= 3, pickleStructured=true, and pickleImageReady=true.
