@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
+import { AUTHORS, authorSlug } from "@/data/authors";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { filterByCategorySlug, CATEGORY_NAME_TO_SLUG, type CategoryName } from "@/lib/articles-by-category";
 import border from "@/assets/border.jpg";
@@ -59,6 +60,17 @@ function NewsPage() {
   const { articles } = Route.useLoaderData();
   const [activeCat, setActiveCat] = useState<(typeof CATS)[number]>("All");
 
+  const activeAuthors = useMemo(() => {
+    const slugs = new Set<string>();
+    for (const article of articles as DailyArticle[]) {
+      if (article.slug && article.author) slugs.add(authorSlug(article.author));
+    }
+    for (const article of ARTICLES) {
+      if (isPublished(article)) slugs.add(authorSlug(article.author));
+    }
+    return AUTHORS.filter((author) => slugs.has(author.slug));
+  }, [articles]);
+
   const filteredLive = useMemo(
     () =>
       activeCat === "All"
@@ -94,7 +106,7 @@ function NewsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-14">
-      <div className="border-b-2 border-foreground pb-4 mb-10">
+      <div className="border-b-2 border-foreground pb-4 mb-8">
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">★ Newsroom</span>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Texas Political News</h1>
         <p className="mt-3 text-muted-foreground max-w-2xl">
@@ -105,6 +117,30 @@ function NewsPage() {
           <Link to="/editorial-standards" className="text-primary hover:underline">Editorial standards →</Link>
         </div>
       </div>
+
+      {activeAuthors.length > 0 ? (
+        <nav className="mb-10 rounded-lg border bg-muted/30 p-5" aria-label="Active Keep TX Red newsroom desks">
+          <div className="flex flex-wrap items-baseline justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary">Active newsroom desks</p>
+              <p className="mt-1 text-sm text-muted-foreground">Browse reporting by the desks publishing current Keep TX Red coverage.</p>
+            </div>
+            <Link to="/authors" className="text-sm font-semibold text-primary hover:underline">All authors &amp; desks →</Link>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {activeAuthors.map((author) => (
+              <Link
+                key={author.slug}
+                to="/authors/$slug"
+                params={{ slug: author.slug }}
+                className="rounded-full border bg-background px-3 py-1.5 text-sm font-semibold hover:border-primary hover:text-primary"
+              >
+                {author.name}
+              </Link>
+            ))}
+          </div>
+        </nav>
+      ) : null}
 
       <div className="flex flex-wrap gap-2 mb-10">
         {CATS.map((c) => (
