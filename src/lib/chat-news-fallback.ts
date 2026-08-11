@@ -1,3 +1,5 @@
+import { repairArticleReadability } from "./editorial-readability";
+
 export type ChatNewsFallback = {
   slug: string;
   category: string;
@@ -150,10 +152,6 @@ function rowFromInsert(sql: string): Record<string, string> | null {
   return Object.fromEntries(columns.map((column, index) => [column, fields[index]]));
 }
 
-// The first ten Aug. 8 newsroom migrations use a third SQL shape:
-// WITH seed AS (SELECT <value> alias, ...) ... INSERT ... SELECT FROM prepared.
-// Parse the seed SELECT directly so those articles still render when the remote
-// database has not applied the migration yet.
 function rowFromSeedSelect(sql: string): Record<string, string> | null {
   const header = /WITH\s+seed\s+AS\s*\(\s*SELECT\s+/i.exec(sql);
   if (!header || header.index == null) return null;
@@ -203,6 +201,11 @@ function articleFromRow(row: Record<string, string>): ChatNewsFallback | null {
   }
 
   if (!body) return null;
+  // Checked-in migration fallbacks can contain the same historical malformed
+  // body_json shape as production. Repair only paragraph-array boundaries;
+  // article wording and all other fields remain unchanged.
+  body = repairArticleReadability(body);
+
   return {
     slug,
     category: decode(row.category),
