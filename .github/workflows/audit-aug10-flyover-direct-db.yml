@@ -13,12 +13,22 @@ permissions:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
         with:
           node-version: 22
+      - name: Run normal production ingestion and auto-publish remediation
+        run: |
+          set -euo pipefail
+          curl -fsS --max-time 240 -X POST \
+            -H 'Accept: application/json' \
+            -H 'User-Agent: KeepTXRed-Aug10-Remediation/1.0' \
+            https://keeptxred.com/api/public/hooks/score-viral \
+            -o /tmp/score-viral.json
+          cat /tmp/score-viral.json | jq '{ok, updated, readyFlagged, autoPublishFlagged, autoPublishAttempted, autoPublishSucceeded, autoPublishResults, ingest, discovery}'
+          sleep 10
       - name: Query production Supabase and print 23-story matrix
         run: |
           node <<'NODE'
