@@ -26,6 +26,7 @@ const LEGACY_ELECTION_PATHS = new Map([
   ["/election-central", "/elections/2026"],
   ["/texas-elections", "/elections/2026"],
   ["/elections-2026", "/elections/2026"],
+  ["/texas-news/elections", "/elections/2026"],
   ["/elections/forecasts", "/elections/forecast"],
   ["/elections/statewide-races", "/elections/statewide"],
   ["/elections/legislative-races", "/elections/legislative"],
@@ -40,6 +41,14 @@ const LEGACY_ELECTION_PATHS = new Map([
 const LEGACY_CONTENT_PATHS = new Map([
   ["/houston-news", "/houston"],
   ["/property-taxes", "/texas/property-taxes-2026"],
+  ["/texas-news/tax-spending", "/texas-economy"],
+  ["/texas-news/legislature", "/texas-legislature"],
+  ["/texas-news/border", "/texas-border-security"],
+  ["/texas-sports/team/aggies", "/texas-sports/team/texas-am"],
+  ["/hubs", "/topics"],
+  ["/hubs/texas-policy-law", "/laws"],
+  ["/hubs/texas-politics", "/texas-politics"],
+  ["/hubs/texas-economy", "/texas-economy"],
 ]);
 const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8", "live-2026-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8"],
