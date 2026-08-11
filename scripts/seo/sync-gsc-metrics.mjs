@@ -145,21 +145,24 @@ async function writeBatch(batch) {
 }
 
 let updated = 0;
+let dailyArticlesUpdated = 0;
 let aliasesResolved = 0;
 const unmatched = [];
 for (let i = 0; i < metrics.length; i += 500) {
   const batch = metrics.slice(i, i + 500);
   const result = await writeBatch(batch);
   updated += Number(result.updated || 0);
+  dailyArticlesUpdated += Number(result.dailyArticlesUpdated || 0);
   aliasesResolved += Number(result.aliasesResolved || 0);
   if (Array.isArray(result.unmatched)) unmatched.push(...result.unmatched);
 }
 
 console.log(JSON.stringify({
   submitted: metrics.length,
-  updated,
+  canonicalMetricsStored: updated,
+  dailyArticlesCompatibilityUpdated: dailyArticlesUpdated,
   aliasesResolved,
-  unmatchedCount: unmatched.length,
-  unmatchedSample: unmatched.slice(0, 25),
+  staticOrLegacyUrls: unmatched.length,
+  staticOrLegacySample: unmatched.slice(0, 25),
 }, null, 2));
-console.log(`GSC sync complete: ${metrics.length} article metrics submitted, ${updated} article rows updated, ${aliasesResolved} aliases resolved.`);
+console.log(`GSC sync complete: ${metrics.length} article metrics submitted, ${updated} canonical URL metrics stored, ${dailyArticlesUpdated} daily_articles compatibility rows updated.`);
