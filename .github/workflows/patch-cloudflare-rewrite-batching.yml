@@ -1,0 +1,49 @@
+name: Patch Cloudflare rewrite batching
+
+on:
+  push:
+    branches: [fix/cloudflare-rewrite-batching]
+    paths:
+      - '.github/workflows/patch-cloudflare-rewrite-batching.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/cloudflare-rewrite-batching
+      - name: Patch generate-news batching
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('src/routes/api/public/hooks/generate-news.ts')
+          s = p.read_text()
+          old = 'async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {'
+          if old not in s:
+              raise SystemExit('rewriteWithAi signature not found')
+          s = s.replace(old, 'async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {', 1)
+          old_prompt = 'Pick the best ${Math.min(10, items.length)} stories. Return ONLY valid JSON:'
+          if old_prompt not in s:
+              raise SystemExit('batch prompt marker not found')
+          s = s.replace(old_prompt, 'Pick every story in this batch (up to ${Math.min(3, items.length)} stories). Return ONLY valid JSON:', 1)
+          marker = '\nexport const Route = createFileRoute("/api/public/hooks/generate-news")({'
+          if marker not in s:
+              raise SystemExit('route marker not found')
+          wrapper = '''\nasync function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {\n  const selected = items.slice(0, 10);\n  const combined: Awaited<ReturnType<typeof rewriteBatchWithAi>> = [];\n\n  // Keep each model response small enough to satisfy the 800-word article\n  // floor without exhausting the output-token budget. Run sequentially to\n  // avoid provider burst/rate-limit failures and preserve source ordering.\n  for (let offset = 0; offset < selected.length; offset += 3) {\n    const batch = selected.slice(offset, offset + 3);\n    const rewritten = await rewriteBatchWithAi(batch, lovableApiKey);\n    for (const article of rewritten) {\n      if (article.source_index < 1 || article.source_index > batch.length) continue;\n      combined.push({ ...article, source_index: article.source_index + offset });\n    }\n  }\n\n  return combined.slice(0, 10);\n}\n'''
+          s = s.replace(marker, wrapper + marker, 1)
+          p.write_text(s)
+      - name: Remove one-time patch workflow
+        run: rm .github/workflows/patch-cloudflare-rewrite-batching.yml
+      - name: Commit patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'keeptxred'
+          git config user.email 'freddy.coppola@gmail.com'
+          git add src/routes/api/public/hooks/generate-news.ts .github/workflows/patch-cloudflare-rewrite-batching.yml
+          git commit -m 'Fix Cloudflare rewrite batching for article length gate'
+          git push origin HEAD:fix/cloudflare-rewrite-batching
