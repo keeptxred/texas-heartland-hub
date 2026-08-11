@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/verify-sb37-production.yml'
       - 'src/routes/api/public/hooks/repair-sb37-production.ts'
+      - '.lovable-redeploy-trigger'
   workflow_dispatch:
 
 permissions:
