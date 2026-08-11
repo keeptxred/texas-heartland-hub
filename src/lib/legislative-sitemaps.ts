@@ -4,6 +4,7 @@ import { absUrl, toIsoDate, type UrlEntry } from '@/lib/sitemap-shared';
 
 const db = supabase as any;
 const SITEMAP_PAGE_SIZE = 1000;
+const SIMPLE_RESOLUTION_TYPES = new Set(['hr', 'sr']);
 
 type SitemapBill = Bill & {
   updated_at?: string | null;
@@ -49,10 +50,11 @@ function hasMeaningfulText(value: string | null | undefined, minimum = 80): bool
 /**
  * Sitemaps are crawl invitations, not a complete database export. Keep every valid
  * bill route available, but explicitly advertise bills that have at least two
- * independent substance signals. This reduces crawl pressure from very thin
- * records while allowing them to become sitemap-eligible automatically as the
- * legislative enrichment pipeline fills in actions, sponsors, documents, subjects,
- * related reporting, or editorial explanations.
+ * independent substance signals. Simple House/Senate resolutions are especially
+ * numerous and commonly ceremonial, so they need stronger evidence before they
+ * consume crawl attention. They remain accessible and can become sitemap-eligible
+ * automatically when reporting, editorial enrichment, documents, subjects, or
+ * other substantive evidence makes the page useful as a search landing page.
  */
 function isSitemapWorthyBill(
   bill: SitemapBill,
@@ -79,7 +81,10 @@ function isSitemapWorthyBill(
     || hasMeaningfulText(bill.description)
   ) score += 1;
   if (bill.bill_text_url || bill.analysis_url || bill.fiscal_note_url) score += 1;
-  return score >= 2;
+
+  const billType = String(bill.bill_type ?? '').trim().toLowerCase();
+  const minimumScore = SIMPLE_RESOLUTION_TYPES.has(billType) ? 4 : 2;
+  return score >= minimumScore;
 }
 
 function hierarchyEntries(bills: SitemapBill[]): UrlEntry[] {
