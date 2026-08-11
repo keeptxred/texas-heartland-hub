@@ -37,7 +37,7 @@ type GeminiInteraction = {
 
 type CloudflareAiResponse = {
   success?: boolean;
-  result?: { response?: string };
+  result?: { response?: unknown };
   errors?: Array<{ code?: number; message?: string }>;
 };
 
@@ -297,7 +297,13 @@ async function directCloudflareTextResponse(
     );
   }
 
-  const content = payload?.result?.response?.trim();
+  const rawContent = payload?.result?.response;
+  const content =
+    typeof rawContent === "string"
+      ? rawContent.trim()
+      : rawContent && typeof rawContent === "object"
+        ? JSON.stringify(rawContent)
+        : "";
   if (!content) {
     return Response.json({ error: { message: "Cloudflare Workers AI returned an empty response" } }, { status: 502 });
   }
