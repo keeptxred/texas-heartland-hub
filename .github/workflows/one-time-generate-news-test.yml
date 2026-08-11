@@ -1,0 +1,36 @@
+name: One-time generate-news production test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-time-generate-news-test.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  run-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Trigger production generate-news hook
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Calling production generate-news hook..."
+          response_file="$(mktemp)"
+          http_code=$(curl --fail-with-body --silent --show-error \
+            --connect-timeout 20 --max-time 900 \
+            -H 'accept: application/json' \
+            -o "$response_file" -w '%{http_code}' \
+            'https://keeptxred.com/api/public/hooks/run-generate-news') || {
+              status=$?
+              echo "curl failed with status $status"
+              cat "$response_file" || true
+              exit "$status"
+            }
+          echo "HTTP $http_code"
+          cat "$response_file"
+          echo
+          test "$http_code" -ge 200 -a "$http_code" -lt 300
