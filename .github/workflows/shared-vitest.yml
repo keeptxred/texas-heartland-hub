@@ -151,15 +151,15 @@ jobs:
           done
 
   # Every merge to main can invalidate the synthetic merge commit for other open
-  # PRs. Bring same-repository PR branches up to date, then explicitly dispatch
-  # verification for each PR because GITHUB_TOKEN branch updates do not emit a
-  # normal pull_request synchronize workflow event.
+  # PRs. Re-run verification against each current refs/pull/<n>/merge without
+  # mutating PR branches; branch mutation by GITHUB_TOKEN can create
+  # action_required pull_request runs with no jobs.
   refresh-open-prs:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Update open PR branches from main and dispatch verification
+      - name: Dispatch verification for open PR merge states
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -193,20 +193,6 @@ jobs:
                   continue
               number = pr["number"]
               head_ref = pr["head"]["ref"]
-              try:
-                  request(
-                      f"{api}/repos/{repo}/pulls/{number}/update-branch",
-                      method="PUT",
-                      body={"expected_head_sha": pr["head"]["sha"]},
-                  )
-                  print(f"Updated PR #{number} with latest main")
-              except urllib.error.HTTPError as exc:
-                  detail = exc.read().decode(errors="replace")
-                  if exc.code != 422:
-                      print(f"PR #{number} update failed: HTTP {exc.code} {detail}")
-                      continue
-                  print(f"PR #{number} update skipped: HTTP 422 {detail}")
-
               try:
                   request(
                       f"{api}/repos/{repo}/actions/workflows/shared-vitest.yml/dispatches",
