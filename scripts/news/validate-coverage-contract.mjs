@@ -2,6 +2,7 @@ import fs from "node:fs";
 
 const scorerPath = "src/lib/viral-score.ts";
 const sourceMigrationPath = "supabase/migrations/20260805142000_expand_texas_news_coverage.sql";
+const hyperlocalMigrationPath = "supabase/migrations/20260811043000_hyperlocal_primary_source_discovery.sql";
 const gapMigrationPath = "supabase/migrations/20260805145500_add_news_coverage_gap_view.sql";
 const healthMigrationPath = "supabase/migrations/20260805153500_add_news_source_health_view.sql";
 const healthEndpointPath = "src/routes/api/public/newsroom-health.ts";
@@ -10,6 +11,7 @@ const smokePath = "scripts/news/smoke-live-newsroom.mjs";
 const requiredFiles = [
   scorerPath,
   sourceMigrationPath,
+  hyperlocalMigrationPath,
   gapMigrationPath,
   healthMigrationPath,
   healthEndpointPath,
@@ -21,6 +23,7 @@ for (const file of requiredFiles) {
 
 const scorer = fs.readFileSync(scorerPath, "utf8");
 const sources = fs.readFileSync(sourceMigrationPath, "utf8");
+const hyperlocalSources = fs.readFileSync(hyperlocalMigrationPath, "utf8");
 const gaps = fs.readFileSync(gapMigrationPath, "utf8");
 const health = fs.readFileSync(healthMigrationPath, "utf8");
 const healthEndpoint = fs.readFileSync(healthEndpointPath, "utf8");
@@ -40,6 +43,25 @@ const configuredSources = [
 ];
 for (const source of configuredSources) {
   if (!sources.includes(source)) throw new Error(`Discovery source missing from migration: ${source}`);
+}
+
+const hyperlocalRequiredSources = [
+  "Texas City Municipal Agendas — CivicEngage",
+  "Sinton City Council Agendas — CivicEngage",
+  "Orange City Council Agendas — CivicEngage",
+  "Webster City Council Agendas — CivicEngage",
+  "Aubrey City Council Agendas — CivicEngage",
+  "Paris Texas City Notices — CivicEngage",
+  "Galveston City Council Agendas — CivicEngage",
+  "Texas Hyperlocal Government — Daily Discovery",
+  "Texas Hyperlocal Human Interest — Daily Discovery",
+  "Texas Mosquito and Local Health — Daily Discovery",
+];
+for (const source of hyperlocalRequiredSources) {
+  if (!hyperlocalSources.includes(source)) throw new Error(`Hyperlocal source missing from migration: ${source}`);
+}
+for (const token of ["Primary-source", "Hyperlocal", "public-health", "human-interest"]) {
+  if (!hyperlocalSources.includes(token)) throw new Error(`Hyperlocal discovery contract missing: ${token}`);
 }
 
 // Verify stable scoring primitives here. Behavioral routing rules belong in
@@ -92,4 +114,4 @@ for (const token of ["/admin/coverage-gaps", "/api/public/newsroom-health", "/ap
   if (!smoke.includes(token)) throw new Error(`Live newsroom smoke contract missing: ${token}`);
 }
 
-console.log(`Newsroom coverage contract valid: ${configuredSources.length} discovery sources, scoring, gap reporting, source health, server aggregation, and live smoke monitoring.`);
+console.log(`Newsroom coverage contract valid: ${configuredSources.length} statewide discovery sources + ${hyperlocalRequiredSources.length} hyperlocal sources, scoring, gap reporting, source health, server aggregation, and live smoke monitoring.`);
