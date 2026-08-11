@@ -28,6 +28,20 @@ for (const file of files) {
     if (!hasBuiltBodyShape && !hasLiteralBodyShape) {
       errors.push("body_json must include an 'intro' or 'sections' field accepted by daily_articles_require_body");
     }
+
+    // Legacy ChatGPT publication migrations packed the complete article body
+    // into one `paragraphs` array item (`jsonb_build_array(body)`). The renderer
+    // correctly treats each array item as one paragraph, so that shape creates a
+    // giant wall of text even when the raw body string contains blank lines.
+    // Block that publication shape at validation time instead of repairing it
+    // after the article reaches production.
+    const packsWholeBodyIntoOneParagraph =
+      /['"]paragraphs['"]\s*,\s*jsonb_build_array\s*\(\s*body\s*\)/i.test(sql) ||
+      /jsonb_build_array\s*\(\s*body\s*\)[\s\S]{0,300}?body_json/i.test(sql);
+    if (packsWholeBodyIntoOneParagraph) {
+      errors.push('body_json may not pack the complete article body into one paragraph; store separate intro/section paragraph array items with editorial headings');
+    }
+
     if (!/ON\s+CONFLICT\s*\(\s*slug\s*\)\s+DO\s+UPDATE/i.test(sql)) {
       errors.push('daily news publication migrations must be idempotent with ON CONFLICT (slug) DO UPDATE');
     }
