@@ -1,13 +1,6 @@
 name: Run Legacy Article Repair
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/run-legacy-article-repair.yml'
-      - 'src/routes/api/public/hooks/repair-article-structure.ts'
-      - 'src/lib/featured-image.functions.ts'
-      - '.lovable-redeploy-trigger'
   workflow_dispatch:
 
 permissions:
@@ -19,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Invoke production article structure repair
+      - name: Invoke published production article structure repair
         shell: bash
         run: |
           set -euo pipefail
@@ -39,7 +32,7 @@ jobs:
               echo 'Legacy article repair completed successfully, including pickle structure and hero.'
               exit 0
             fi
-            echo "Production is not yet on repair revision 3 or remediation is incomplete (HTTP $status)."
+            echo "Published production is not yet on repair revision 3 or remediation is incomplete (HTTP $status)."
             sleep 15
           done
           echo 'Repair endpoint did not complete revision 3 successfully within retry window.'
