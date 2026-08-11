@@ -1,7 +1,8 @@
 // Article-wide duplicate-content scrubber. Removes duplicate paragraphs,
 // repeated sentences within paragraphs, repeated headings, repeated bullets,
-// repeated FAQ questions, and keeps the article's "Official Sources" list
-// limited to genuinely authoritative government / military sources.
+// repeated FAQ questions, repairs malformed paragraph structure, and keeps the
+// article's "Official Sources" list limited to genuinely authoritative
+// government / military sources.
 
 export type Section = {
   heading?: string;
@@ -23,6 +24,9 @@ export type ArticleBodyShape = {
   [k: string]: unknown;
 };
 
+const MAX_RENDER_PARAGRAPH_WORDS = 110;
+const TARGET_RENDER_PARAGRAPH_WORDS = 75;
+
 const norm = (s: string) =>
   s
     .toLowerCase()
@@ -33,6 +37,55 @@ const norm = (s: string) =>
 
 const splitSentences = (p: string) =>
   p.split(/(?<=[.!?])\s+(?=[A-Z0-9"'\u201c])/).map((s) => s.trim()).filter(Boolean);
+
+const wordCount = (value: string) => value.trim().split(/\s+/).filter(Boolean).length;
+
+/**
+ * Published database rows can predate the editorial readability gate or arrive
+ * through a legacy/import path that packed several visible paragraphs into one
+ * string. Repair that shape before rendering so a malformed row can never turn
+ * the article page into a wall of text.
+ *
+ * We first honor explicit line breaks, then split only oversized prose at
+ * sentence boundaries. We never split a sentence in the middle, preserving
+ * links, quotations, names, and meaning.
+ */
+export function repairParagraphStructure(value: string): string[] {
+  const explicitParagraphs = (value ?? "")
+    .split(/\r?\n+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  const repaired: string[] = [];
+  for (const paragraph of explicitParagraphs) {
+    if (wordCount(paragraph) <= MAX_RENDER_PARAGRAPH_WORDS) {
+      repaired.push(paragraph);
+      continue;
+    }
+
+    const sentences = splitSentences(paragraph);
+    if (sentences.length < 2) {
+      repaired.push(paragraph);
+      continue;
+    }
+
+    let current: string[] = [];
+    let currentWords = 0;
+    for (const sentence of sentences) {
+      const sentenceWords = wordCount(sentence);
+      if (current.length > 0 && currentWords + sentenceWords > TARGET_RENDER_PARAGRAPH_WORDS) {
+        repaired.push(current.join(" "));
+        current = [];
+        currentWords = 0;
+      }
+      current.push(sentence);
+      currentWords += sentenceWords;
+    }
+    if (current.length > 0) repaired.push(current.join(" "));
+  }
+
+  return repaired;
+}
 
 function dedupeSentences(paragraph: string, seen: Set<string>): string {
   const out: string[] = [];
@@ -52,14 +105,16 @@ function dedupeSentences(paragraph: string, seen: Set<string>): string {
 function dedupeParagraphs(paragraphs: string[], seenPara: Set<string>, seenSent: Set<string>): string[] {
   const out: string[] = [];
   for (const raw of paragraphs) {
-    const p = (raw ?? "").trim();
-    if (!p) continue;
-    const key = norm(p);
-    if (key.length >= 30 && seenPara.has(key)) continue;
-    if (key.length >= 30) seenPara.add(key);
-    const cleaned = dedupeSentences(p, seenSent);
-    if (cleaned.trim().length === 0) continue;
-    out.push(cleaned);
+    for (const repaired of repairParagraphStructure(raw ?? "")) {
+      const p = repaired.trim();
+      if (!p) continue;
+      const key = norm(p);
+      if (key.length >= 30 && seenPara.has(key)) continue;
+      if (key.length >= 30) seenPara.add(key);
+      const cleaned = dedupeSentences(p, seenSent);
+      if (cleaned.trim().length === 0) continue;
+      out.push(cleaned);
+    }
   }
   return out;
 }
