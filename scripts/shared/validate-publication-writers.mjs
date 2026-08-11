@@ -34,6 +34,10 @@ const maintenanceWriters = new Map([
     'src/routes/api/public/hooks/repair-article-structure.ts',
     ['body_json', 'repairLegacyArticleStructure'],
   ],
+  [
+    'src/routes/api/public/hooks/repair-sb37-production.ts',
+    ['body_json', 'featured_image_url', 'stripLowValueInternalLinks'],
+  ],
 ]);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set([
