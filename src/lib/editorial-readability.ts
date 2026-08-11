@@ -6,8 +6,8 @@ export type ReadabilityArticleShape = {
 
 export const READABILITY_LIMITS = {
   warningParagraphWords: 130,
-  hardParagraphWords: 180,
-  hardParagraphSentences: 6,
+  hardParagraphWords: 150,
+  hardParagraphSentences: 5,
   longArticleWords: 700,
   longArticleMinSections: 2,
   veryLongArticleWords: 1200,
