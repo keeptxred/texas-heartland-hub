@@ -1,10 +1,15 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
 import { TexasBusinessView, BUSINESS_SECTIONS, BUSINESS_TOPIC_SLUGS } from "@/components/texas-business-view";
 
 const VALID = new Set(BUSINESS_TOPIC_SLUGS);
 
 export const Route = createFileRoute("/texas-business/$topic")({
   beforeLoad: ({ params }) => {
+    // Energy has a dedicated, stronger topical authority page. Keep one indexable
+    // destination instead of a duplicate filtered business page.
+    if (params.topic === "energy") {
+      throw redirect({ href: "/texas-energy", statusCode: 301 });
+    }
     if (!VALID.has(params.topic)) throw notFound();
   },
   head: ({ params }) => {
