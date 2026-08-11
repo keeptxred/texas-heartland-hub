@@ -18,6 +18,7 @@ jobs:
       - name: Call bounded remediation and print response
         run: |
           set -u
+          echo 'post-redeploy check'
           status=$(curl -sS --max-time 180 -X POST \
             -H 'Accept: application/json' \
             -H 'User-Agent: KeepTXRed-Aug10-Diagnostic/1.0' \
