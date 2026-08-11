@@ -2,10 +2,11 @@
 // that stored multiple visible paragraphs inside a single paragraph string.
 //
 // This endpoint intentionally accepts no arbitrary article content or SQL. It can
-// only normalize existing stored article bodies and apply the fixed editorial
-// structure for the known Austin/Lockhart BBQ article. Repeated calls are safe.
+// only normalize existing stored article bodies and apply fixed editorial
+// structure to known legacy articles. Repeated calls are safe.
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
+import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 
 export const Route = createFileRoute("/api/public/hooks/repair-article-structure")({
   server: {
@@ -33,6 +34,7 @@ type ArticleBody = {
   [key: string]: unknown;
 };
 
+const REPAIR_REVISION = 3;
 const BBQ_SLUG = "2026-08-09-austin-lockhart-bbq-ranking";
 const BBQ_HEADINGS = [
   "Why Austin ranked first and Lockhart second",
@@ -41,6 +43,15 @@ const BBQ_HEADINGS = [
   "Competition keeps Texas barbecue evolving",
   "Why there is still no objective barbecue champion",
 ] as const;
+
+const PICKLE_SLUG = "2026-08-09-pickle-festival-helotes";
+const PICKLE_HEADINGS = [
+  "Why the festival is moving",
+  "Why Helotes is the new venue",
+  "What organizers need to fix",
+  "What the move means for visitors and vendors",
+] as const;
+
 const MAX_PARAGRAPH_WORDS = 110;
 const TARGET_PARAGRAPH_WORDS = 75;
 
@@ -109,6 +120,15 @@ function normalizeBody(body: ArticleBody): ArticleBody {
   return { ...body, intro, sections };
 }
 
+function rawParagraphs(rawBody: string | null): string[] {
+  return rawBody
+    ? rawBody
+        .split(/\r?\n\s*\r?\n+/)
+        .map((part) => part.trim())
+        .filter(Boolean)
+    : [];
+}
+
 function flattenBodyParagraphs(body: ArticleBody): string[] {
   const values: string[] = [];
   if (Array.isArray(body.intro)) values.push(...body.intro);
@@ -130,13 +150,7 @@ function flattenBodyParagraphs(body: ArticleBody): string[] {
 }
 
 function buildBbqBody(existing: ArticleBody, rawBody: string | null): ArticleBody {
-  const fromRaw = rawBody
-    ? rawBody
-        .split(/\r?\n\s*\r?\n+/)
-        .map((part) => part.trim())
-        .filter(Boolean)
-    : [];
-
+  const fromRaw = rawParagraphs(rawBody);
   const normalizedExisting = normalizeBody(existing);
   const source = fromRaw.length >= 10 ? fromRaw : flattenBodyParagraphs(normalizedExisting);
   if (source.length < 8) return normalizedExisting;
@@ -162,22 +176,52 @@ function buildBbqBody(existing: ArticleBody, rawBody: string | null): ArticleBod
   };
 }
 
-function bbqStatus(body: ArticleBody | null | undefined) {
+function buildPickleBody(existing: ArticleBody, rawBody: string | null): ArticleBody {
+  const fromRaw = rawParagraphs(rawBody);
+  const normalizedExisting = normalizeBody(existing);
+  const source = fromRaw.length >= 9 ? fromRaw : flattenBodyParagraphs(normalizedExisting);
+  if (source.length < 7) return normalizedExisting;
+
+  const intro = source[0];
+  const remaining = source.slice(1);
+  const first = remaining.slice(0, 3);
+  const second = remaining.slice(3, 5);
+  const third = remaining.slice(5, 7);
+  const fourth = remaining.slice(7);
+
+  return {
+    ...normalizedExisting,
+    intro: [intro],
+    sections: [
+      { heading: PICKLE_HEADINGS[0], paragraphs: first },
+      { heading: PICKLE_HEADINGS[1], paragraphs: second },
+      { heading: PICKLE_HEADINGS[2], paragraphs: third },
+      { heading: PICKLE_HEADINGS[3], paragraphs: fourth },
+    ].filter((section) => section.paragraphs.length > 0),
+  };
+}
+
+function structureStatus(body: ArticleBody | null | undefined, requiredHeadings: readonly string[]) {
   const headings = Array.isArray(body?.sections)
     ? body.sections.map((section) => String(section.heading ?? "")).filter(Boolean)
     : [];
   const paragraphCount = flattenBodyParagraphs(body ?? {}).length;
   return {
-    structured: BBQ_HEADINGS.every((heading) => headings.includes(heading)),
+    structured: requiredHeadings.every((heading) => headings.includes(heading)) && paragraphCount >= 7,
     headings,
     paragraphCount,
   };
 }
 
+function isLegacyGeneratedNewsImage(value: string | null | undefined) {
+  const url = String(value ?? "").trim();
+  return !url || url.includes("/images/news/generated/") || url.includes("/public/images/news/generated/");
+}
+
 async function repairLegacyArticleStructure() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) return json({ ok: false, error: "server not configured" }, 500);
+  if (!url || !key) return json({ revision: REPAIR_REVISION, ok: false, error: "server not configured" }, 500);
 
   const supabase = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -185,11 +229,11 @@ async function repairLegacyArticleStructure() {
 
   const { data, error } = await supabase
     .from("daily_articles")
-    .select("slug,body,body_json")
+    .select("slug,body,body_json,featured_image_url")
     .not("body_json", "is", null)
     .limit(5000);
 
-  if (error) return json({ ok: false, error: error.message }, 500);
+  if (error) return json({ revision: REPAIR_REVISION, ok: false, error: error.message }, 500);
 
   let scanned = 0;
   let repaired = 0;
@@ -197,6 +241,11 @@ async function repairLegacyArticleStructure() {
   let bbqStructured = false;
   let bbqHeadings: string[] = [];
   let bbqParagraphCount = 0;
+  let pickleFound = false;
+  let pickleStructured = false;
+  let pickleHeadings: string[] = [];
+  let pickleParagraphCount = 0;
+  let pickleFeaturedImageUrl: string | null = null;
   const failures: Array<{ slug: string; error: string }> = [];
 
   for (const row of data ?? []) {
@@ -206,11 +255,18 @@ async function repairLegacyArticleStructure() {
 
     const slug = String((row as { slug: string }).slug);
     const isBbq = slug === BBQ_SLUG;
+    const isPickle = slug === PICKLE_SLUG;
     if (isBbq) bbqFound = true;
+    if (isPickle) {
+      pickleFound = true;
+      pickleFeaturedImageUrl = (row as { featured_image_url?: string | null }).featured_image_url ?? null;
+    }
 
     const next = isBbq
       ? buildBbqBody(raw, (row as { body?: string | null }).body ?? null)
-      : normalizeBody(raw);
+      : isPickle
+        ? buildPickleBody(raw, (row as { body?: string | null }).body ?? null)
+        : normalizeBody(raw);
 
     if (JSON.stringify(next) !== JSON.stringify(raw)) {
       const { error: updateError } = await supabase
@@ -226,23 +282,58 @@ async function repairLegacyArticleStructure() {
     }
 
     if (isBbq) {
-      const state = bbqStatus(next);
+      const state = structureStatus(next, BBQ_HEADINGS);
       bbqStructured = state.structured;
       bbqHeadings = state.headings;
       bbqParagraphCount = state.paragraphCount;
     }
+
+    if (isPickle) {
+      const state = structureStatus(next, PICKLE_HEADINGS);
+      pickleStructured = state.structured;
+      pickleHeadings = state.headings;
+      pickleParagraphCount = state.paragraphCount;
+    }
   }
 
+  let pickleImageReady = pickleFound && !isLegacyGeneratedNewsImage(pickleFeaturedImageUrl);
+  let pickleImageError: string | null = null;
+  if (pickleFound && isLegacyGeneratedNewsImage(pickleFeaturedImageUrl)) {
+    const imageResult = await generateFeaturedImageForSlugDirect(PICKLE_SLUG, true);
+    if (imageResult.ok) {
+      pickleImageReady = true;
+      pickleFeaturedImageUrl = imageResult.url;
+    } else {
+      pickleImageError = imageResult.error;
+      failures.push({ slug: PICKLE_SLUG, error: `image regeneration failed: ${imageResult.error}` });
+    }
+  }
+
+  const ok =
+    failures.length === 0
+    && (!bbqFound || bbqStructured)
+    && pickleFound
+    && pickleStructured
+    && pickleImageReady;
+
   return json({
-    ok: failures.length === 0 && (!bbqFound || bbqStructured),
+    revision: REPAIR_REVISION,
+    ok,
     scanned,
     repaired,
     bbqFound,
     bbqStructured,
     bbqHeadings,
     bbqParagraphCount,
+    pickleFound,
+    pickleStructured,
+    pickleHeadings,
+    pickleParagraphCount,
+    pickleImageReady,
+    pickleFeaturedImageUrl,
+    pickleImageError,
     failures: failures.slice(0, 20),
-  }, failures.length === 0 && (!bbqFound || bbqStructured) ? 200 : 207);
+  }, ok ? 200 : 207);
 }
 
 function json(body: unknown, status = 200) {
