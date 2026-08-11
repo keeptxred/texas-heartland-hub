@@ -1,3 +1,5 @@
+import { validateArticleReadability } from "./editorial-readability";
+
 // Shared analyze-first editorial validation for AI-generated articles.
 
 export type StoryBrief = {
@@ -223,6 +225,9 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourc
       reasons.push("generic_summary_opener");
     }
   }
+
+  reasons.push(...validateArticleReadability(article));
+
   if (article.title && prose && !headlineMatchesBody(article, brief)) {
     reasons.push("headline_does_not_match_body");
   }
@@ -239,21 +244,10 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourc
     const relationships = brief.relationships ?? [];
     const sentences = prose.split(/(?<=[.!?])\s+/).filter(Boolean);
 
-    // The previous validator rejected any secondary subject mentioned anywhere
-    // unless it appeared in relationships. That incorrectly rejected official
-    // releases containing attendee lists. Enforce relationships only when the
-    // prose actually places the primary and secondary subject in the same
-    // sentence and therefore asserts a connection between them.
     if (primary) {
       for (const secondaryRaw of brief.secondarySubjects ?? []) {
         const secondary = secondaryRaw?.trim();
         if (!secondary || secondary.toLowerCase() === primary.toLowerCase()) continue;
-
-        // A subject named explicitly in the source headline/body is source-supported.
-        // Do not demand a separate AI-generated relationship record for it; that
-        // would turn omissions in the brief.relationships array into false
-        // `unrelated_subject` rejections (for example, QTS Data Centers in an
-        // Office of the Governor release whose headline names QTS directly).
         if (sourceText && containsName(sourceText, secondary)) continue;
 
         const assertedTogether = sentences.some((sentence) =>
