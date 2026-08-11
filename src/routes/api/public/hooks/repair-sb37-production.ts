@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { stripLowValueInternalLinks } from "@/lib/content-quality";
 
 const SLUG = "2026-08-09-sb37-texas-university-oversight";
-const FEATURED_IMAGE = "/images/news/generated/2026-08-09/sb37-texas-university-oversight.webp";
+const FEATURED_IMAGE = "https://upload.wikimedia.org/wikipedia/commons/a/a3/UT-Austin-Tower.jpg";
 
 const BODY = {
   updated: "2026-08-11",
@@ -88,7 +88,7 @@ async function repair() {
     .update({
       body_json: sanitizedBody as never,
       featured_image_url: FEATURED_IMAGE,
-      image_alt_text: "Texas public university campus and governing-board review scene for the SB 37 core curriculum changes.",
+      image_alt_text: "University of Texas at Austin tower and Littlefield Fountain, representing Texas public university governance under SB 37.",
     })
     .eq("slug", SLUG)
     .select("slug,body_json,featured_image_url,image_alt_text")
