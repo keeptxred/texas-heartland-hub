@@ -182,15 +182,25 @@ export async function getBillFilterOptions() {
 }
 
 export async function getBill(legislature: number, billType: string, billNumber: number) {
+  // Public bill URLs intentionally omit session_code. The same bill identifier can
+  // exist in regular and special sessions, so maybeSingle() can throw when both are
+  // present. Prefer the regular-session record when it exists; otherwise use the
+  // most recently active matching record.
   const { data, error } = await db
     .from('bills')
     .select('*')
     .eq('legislature_number', legislature)
     .eq('bill_type', normalizeBillType(billType))
     .eq('bill_number', billNumber)
-    .maybeSingle();
+    .eq('is_active', true)
+    .order('last_action_date', { ascending: false, nullsFirst: false })
+    .order('session_code', { ascending: true })
+    .limit(25);
   if (error) throw error;
-  return data as Bill | null;
+
+  const rows = (data ?? []) as Bill[];
+  if (rows.length === 0) return null;
+  return rows.find((bill) => String(bill.session_code).toUpperCase() === 'R') ?? rows[0] ?? null;
 }
 
 export type BillEditorialEnrichment = {
