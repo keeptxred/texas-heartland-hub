@@ -95,22 +95,26 @@ export const Route = createFileRoute("/sitemap.xml")({
           + cloudArticles.filter((article) => isRealImage(article.image_url)).length
           + productImageCount;
 
+        // Keep the index organized around the URLs we most want humans and crawlers
+        // to discover first: core pages, current news, evergreen explainers, and
+        // Election Central. Sitemap order is not a ranking signal; the practical
+        // crawl-priority work happens through selective inclusion and internal links.
         const candidates = [
           { file: "sitemap-pages.xml", count: 1 },
+          { file: "sitemap-news.xml", count: newsCount },
+          { file: "sitemap-evergreen.xml", count: evergreenCount },
           { file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT },
-          { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
-          { file: "sitemap-bills.xml", count: 1 },
-          { file: "sitemap-representatives.xml", count: 1 },
-          { file: "sitemap-committees.xml", count: 1 },
           { file: "sitemap-districts.xml", count: ELECTION_DISTRICT_PATHS.length },
+          { file: "sitemap-representatives.xml", count: 1 },
+          { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
           // One or more session-detail pages are emitted dynamically from the
           // legislative_sessions table; the three shared Legislature hubs live
           // in sitemap-pages.xml and are intentionally not duplicated here.
           { file: "sitemap-legislature.xml", count: 1 },
-          { file: "sitemap-news.xml", count: newsCount },
-          { file: "sitemap-evergreen.xml", count: evergreenCount },
-          { file: "sitemap-products.xml", count: productCount },
+          { file: "sitemap-committees.xml", count: 1 },
+          { file: "sitemap-bills.xml", count: 1 },
           { file: "sitemap-authors.xml", count: authorCount },
+          { file: "sitemap-products.xml", count: productCount },
           { file: "sitemap-images.xml", count: imageCount },
         ];
 
