@@ -1,0 +1,85 @@
+name: Audit Current Breaking Direct DB
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/audit-breaking-direct-db.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit-breaking:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Query production breaking rows and apply public gate
+        run: |
+          node <<'NODE'
+          import fs from 'node:fs';
+
+          const envText = fs.readFileSync('.env.production', 'utf8');
+          const env = Object.fromEntries(envText.split(/\r?\n/).filter(Boolean).map((line) => {
+            const i = line.indexOf('=');
+            return [line.slice(0, i), line.slice(i + 1).replace(/^"|"$/g, '')];
+          }));
+          const base = env.SUPABASE_URL;
+          const key = env.SUPABASE_PUBLISHABLE_KEY;
+          if (!base || !key) throw new Error('Production Supabase public configuration is missing');
+
+          async function get(query) {
+            const response = await fetch(`${base}/rest/v1/daily_articles?${query}`, {
+              headers: { apikey: key, Authorization: `Bearer ${key}`, Accept: 'application/json' },
+            });
+            const text = await response.text();
+            if (!response.ok) throw new Error(`daily_articles HTTP ${response.status}: ${text.slice(0, 1000)}`);
+            return JSON.parse(text);
+          }
+
+          const safety = /\b(active shooter|mass shooting|shooting|killed|fatal|dead|death toll|explosion|tornado warning|tornado emergency|hurricane warning|flash flood emergency|evacuation|evacuations|amber alert|manhunt|wildfire evacuation|shelter in place)\b/i;
+          const infrastructure = /\b(ercot|power grid|electric grid|rolling blackout|blackout|grid emergency|major outage|boil water notice)\b/i;
+          const infrastructureUrgency = /\b(emergency|warning|outage|blackout|failure|conservation|shed load|rolling)\b/i;
+          const government = /\b(indicted|indictment|resigns|resigned|resignation|removed from office|impeached|impeachment|state of emergency|emergency declaration|court blocks|court halts|strikes down|supreme court rules|injunction)\b/i;
+          const election = /\b(election|primary|runoff|ballot|race)\b/i;
+          const electionEvent = /\b(wins|winner|called|projected|concedes|conceded|withdraws|withdrew|drops out|results|recount|disqualified)\b/i;
+          const windowMs = 12 * 60 * 60 * 1000;
+          const now = Date.now();
+
+          function classify(row) {
+            const ageMs = now - Date.parse(row.published_at);
+            if (!Number.isFinite(ageMs) || ageMs > windowMs) return { publicBreaking: false, reason: 'older-than-12h' };
+            const text = `${row.title ?? ''} ${row.dek ?? ''} ${row.category ?? ''} ${row.source_name ?? ''}`;
+            if (safety.test(text)) return { publicBreaking: true, reason: 'urgent-public-safety-or-disaster' };
+            if (infrastructure.test(text) && infrastructureUrgency.test(text)) return { publicBreaking: true, reason: 'critical-infrastructure-emergency' };
+            if (government.test(text)) return { publicBreaking: true, reason: 'major-government-or-court-disruption' };
+            if (election.test(text) && electionEvent.test(text)) return { publicBreaking: true, reason: 'decisive-election-event' };
+            return { publicBreaking: false, reason: 'important-but-not-urgent-breaking-event' };
+          }
+
+          const since24h = encodeURIComponent(new Date(now - 24 * 60 * 60 * 1000).toISOString());
+          const select = encodeURIComponent('slug,title,dek,category,source_name,source_url,published_at,score,is_breaking');
+          const rows = await get(`select=${select}&is_breaking=eq.true&published_at=gte.${since24h}&order=published_at.desc`);
+          console.log(`BROAD_BREAKING_COUNT_24H=${rows.length}`);
+          let publicCount = 0;
+          for (const row of rows) {
+            const result = classify(row);
+            if (result.publicBreaking) publicCount += 1;
+            console.log(JSON.stringify({
+              title: row.title,
+              slug: row.slug,
+              published_at: row.published_at,
+              category: row.category,
+              source_name: row.source_name,
+              score: row.score,
+              publicBreaking: result.publicBreaking,
+              reason: result.reason,
+            }));
+          }
+          console.log(`STRICT_PUBLIC_BREAKING_COUNT=${publicCount}`);
+          NODE
