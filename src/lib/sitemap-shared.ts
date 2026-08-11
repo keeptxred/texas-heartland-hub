@@ -12,6 +12,7 @@ const SITE_HOSTS = new Set([CANONICAL_HOST, `www.${CANONICAL_HOST}`]);
 const INVALID_IMAGE_PATTERN =
   /(?:placeholder|spacer|blank(?:[-_.]?image)?|transparent(?:[-_.]?pixel)?|pixel\.gif|1x1)/i;
 const LIVE_SLUG_DATE = /^live-(\d{4})-(\d{2})-(\d{2})-/i;
+const UNRESOLVED_ROUTE_TOKEN = /(?:^|\/)(?:\$[a-z][a-z0-9_-]*|%24[a-z][a-z0-9_-]*)(?:\/|$)/i;
 
 export function xmlEscape(s: string): string {
   return s
@@ -51,6 +52,7 @@ export function canonicalize(url: string): string {
     u.search = "";
     let pathname = u.pathname.replace(/\/{2,}/g, "/");
     if (pathname.length > 1 && pathname.endsWith("/")) pathname = pathname.slice(0, -1);
+    if (UNRESOLVED_ROUTE_TOKEN.test(pathname)) return "";
     u.pathname = pathname || "/";
     return u.toString();
   } catch {
