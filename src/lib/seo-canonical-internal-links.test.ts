@@ -3,9 +3,12 @@ import { describe, expect, it } from "vitest";
 
 const sourceFiles = [
   "src/components/site-header.tsx",
+  "src/components/site-footer.tsx",
   "src/components/sports-coverage-placeholder.tsx",
   "src/components/city-page.tsx",
   "src/lib/elections/internalLinks.ts",
+  "src/data/search-console-priority-urls.json",
+  "public/llms.txt",
 ];
 
 const redirectAliases = [
@@ -15,6 +18,15 @@ const redirectAliases = [
   'to="/elections"',
   'href="/elections"',
   'livingInTexas: "/living-in-texas"',
+  "http://keeptxred.com/",
+  "http://www.keeptxred.com/",
+  "https://www.keeptxred.com/",
+  "https://keeptxred.com/texas-news/",
+  "/texas-business?topic=relocations",
+  "/texas-business?topic=energy",
+  "/texas-news?topic=education",
+  "/news/homestead-exemption-explained",
+  "/news/texas-property-tax-guide",
 ];
 
 describe("canonical internal links", () => {
