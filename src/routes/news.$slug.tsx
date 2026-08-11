@@ -68,17 +68,12 @@ export const Route = createFileRoute("/news/$slug")({
       const body = dedupeArticleBody(rawBody) as ArticleBody;
       return { article, body, ctr: null };
     }
-    // Canonical slug mapping (article_slug_redirects): single 301, never to
-    // ourselves and never into a loop (guarded in resolveRedirectChain).
     const mapped = await resolveArticleSlugRedirect({ data: { slug: params.slug } });
     if (mapped.slug && mapped.slug !== params.slug) {
       throw redirect({ href: `/news/${encodeURIComponent(mapped.slug)}`, statusCode: 301 });
     }
-    // Fallback: AI-generated evergreen article stored in daily_articles.
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
     if (!ever || !ever.body) {
-      // Legacy bad-year URL (e.g. /news/live-2001-… minted from a broken feed
-      // date). The corrected slug keeps the same tail, so resolve it and 301.
       const parsed = parseArticleSlug(params.slug);
       if (parsed && isBadYearSlug(params.slug)) {
         const { slug } = await resolveArticleSlugByTail({ data: { tail: parsed.tail } });
@@ -88,9 +83,6 @@ export const Route = createFileRoute("/news/$slug")({
       }
       throw notFound();
     }
-    // Safety net: never render a stub article. If the body is only the
-    // "affects Texans and is being tracked" boilerplate with a one-line
-    // intro, treat it as missing rather than serve an empty page.
     const stubPattern = /affects Texans and is being tracked by the Keep TX Red newsroom/i;
     const introText = (ever.body.intro ?? []).join(" ").trim();
     const nonStubSections = (ever.body.sections ?? []).filter(
@@ -103,7 +95,6 @@ export const Route = createFileRoute("/news/$slug")({
     const synth: Article = {
       slug: ever.slug,
       category: cat,
-      // Prefer the editorially selected SEO headline as the single canonical headline.
       title: (ever.seo_headline ?? "").trim() || ever.title,
       dek: ever.dek,
       author: ever.author,
@@ -300,7 +291,6 @@ function ArticlePage() {
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
 
-  // Reading time from full body word count (avg 230 wpm).
   const wordCount =
     body.intro.join(" ").split(/\s+/).length +
     body.sections.reduce(
@@ -322,7 +312,7 @@ function ArticlePage() {
   const authorHref = author ? `/authors/${author.slug}` : `/authors/${authorSlug(article.author)}`;
 
   return (
-    <article className="mx-auto max-w-3xl px-4 py-14">
+    <article className="mx-auto max-w-4xl px-4 sm:px-6 py-10 sm:py-14">
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
         <Link to="/news" className="hover:text-primary">Newsroom</Link>
         <span className="mx-2">/</span>
@@ -331,7 +321,7 @@ function ArticlePage() {
 
       <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ {article.category}</span>
       <h1 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] mt-2">{article.title}</h1>
-      <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-snug font-serif italic">{article.dek}</p>
+      <p className="mt-4 max-w-3xl text-lg md:text-xl text-muted-foreground leading-7 md:leading-8 font-serif italic">{article.dek}</p>
 
       <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground border-y border-border py-3">
         <Link to={authorHref} className="font-semibold text-foreground hover:text-primary underline-offset-2 hover:underline">
@@ -354,57 +344,56 @@ function ArticlePage() {
       </div>
 
       {body.editorNote ? (
-        <p className="mt-5 text-sm bg-accent/10 border-l-4 border-accent px-4 py-3 italic text-foreground/80">
+        <p className="mt-5 text-sm bg-accent/10 border-l-4 border-accent px-4 py-3 italic text-foreground/80 leading-6">
           <strong className="not-italic font-semibold text-accent uppercase tracking-wider text-[10px] block mb-1">Editor's Note</strong>
           {body.editorNote}
         </p>
       ) : null}
 
-      <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground border-l-2 border-primary/40 pl-3">
+      <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-muted-foreground border-l-2 border-primary/40 pl-3 leading-5">
         Editorial disclaimer: Opinions and analysis on Keep TX Red are editorial content — not statements of fact. See our <Link to="/editorial-standards" className="text-primary hover:underline">editorial standards</Link>.
       </p>
 
-      <div className="aspect-[16/9] overflow-hidden bg-muted my-8 border-2 border-foreground/10">
+      <div className="aspect-[16/9] overflow-hidden bg-muted my-8 md:my-10 border-2 border-foreground/10">
         <img src={article.image} alt={article.title} className="size-full object-cover" width={1280} height={720} />
       </div>
 
-      <div className="prose prose-neutral max-w-none">
+      <div className="prose prose-neutral mx-auto max-w-2xl prose-a:font-medium prose-a:text-primary prose-a:underline prose-a:underline-offset-2 prose-blockquote:my-8 prose-blockquote:border-l-4 prose-blockquote:pl-5 prose-blockquote:font-serif prose-blockquote:text-lg prose-blockquote:leading-8 prose-li:my-1.5">
         {body.intro.map((p, i) => (
-          <p key={i} className="font-serif text-lg leading-relaxed text-foreground first:first-letter:text-5xl first:first-letter:font-bold first:first-letter:float-left first:first-letter:mr-2 first:first-letter:leading-none first:first-letter:text-primary mb-5">
+          <p key={i} className="font-serif text-[17px] md:text-lg leading-8 text-foreground first:first-letter:text-5xl first:first-letter:font-bold first:first-letter:float-left first:first-letter:mr-2 first:first-letter:leading-none first:first-letter:text-primary mb-7">
             {renderInline(p)}
           </p>
         ))}
 
-        {/* SLOT 1 — after first paragraph */}
         <AdSlot placement="top" />
 
         {body.sections.map((sec, i) => (
-          <section key={i} className="mt-10">
-            <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">{sec.heading}</h2>
+          <section key={i} className="mt-12 md:mt-14 first:mt-10">
+            <h2 className="font-display text-2xl md:text-3xl tracking-tight leading-tight mb-6 border-b border-border pb-3 text-balance">{sec.heading}</h2>
             {sec.image ? (
-              <figure className="my-5">
+              <figure className="my-7 md:my-8">
                 <div className="aspect-[16/9] overflow-hidden bg-muted border border-foreground/10">
                   <img src={sec.image.src} alt={sec.image.alt} loading="lazy" className="size-full object-cover" />
                 </div>
                 {sec.image.caption ? (
-                  <figcaption className="mt-2 text-xs text-muted-foreground italic text-center">{sec.image.caption}</figcaption>
+                  <figcaption className="mt-3 text-xs leading-5 text-muted-foreground italic text-center">{sec.image.caption}</figcaption>
                 ) : null}
               </figure>
             ) : null}
             {sec.paragraphs?.map((p, j) => (
-              <p key={j} className="font-serif text-base leading-relaxed text-foreground mb-4">
+              <p key={j} className="font-serif text-[17px] md:text-lg leading-8 text-foreground mb-6 last:mb-0">
                 {renderInline(p)}
               </p>
             ))}
             {sec.bullets ? (
-              <ul className="list-disc pl-6 space-y-2 my-4">
+              <ul className="list-disc pl-6 space-y-3 my-6">
                 {sec.bullets.map((b, j) => (
-                  <li key={j} className="font-serif text-base leading-relaxed">{b}</li>
+                  <li key={j} className="font-serif text-[17px] md:text-lg leading-8 pl-1">{b}</li>
                 ))}
               </ul>
             ) : null}
             {sec.table ? (
-              <div className="overflow-x-auto my-5">
+              <div className="overflow-x-auto my-7">
                 <table className="w-full text-sm border-collapse border border-border">
                   <thead className="bg-secondary text-secondary-foreground">
                     <tr>
@@ -428,17 +417,16 @@ function ArticlePage() {
           </section>
         ))}
 
-        {/* SLOT 2 — between body sections and FAQ */}
         <AdSlot placement="in-content" />
 
         {body.faq.length > 0 ? (
-          <section className="mt-12">
-            <h2 className="font-display text-2xl md:text-3xl tracking-tight mb-4 border-b border-border pb-2">Frequently Asked Questions</h2>
-            <dl className="space-y-5">
+          <section className="mt-14 md:mt-16">
+            <h2 className="font-display text-2xl md:text-3xl tracking-tight leading-tight mb-6 border-b border-border pb-3">Frequently Asked Questions</h2>
+            <dl className="space-y-7">
               {body.faq.map((f, i) => (
                 <div key={i}>
-                  <dt className="font-semibold text-foreground mb-1">{f.q}</dt>
-                  <dd className="text-muted-foreground leading-relaxed">{f.a}</dd>
+                  <dt className="font-semibold text-foreground mb-2 text-base md:text-lg leading-7">{f.q}</dt>
+                  <dd className="font-serif text-[17px] md:text-lg text-muted-foreground leading-8">{f.a}</dd>
                 </div>
               ))}
             </dl>
@@ -446,12 +434,12 @@ function ArticlePage() {
         ) : null}
 
         {body.sources.length > 0 ? (
-          <section className="mt-12">
-            <h2 className="font-display text-xl tracking-tight mb-3">Official Sources</h2>
-            <ul className="space-y-1 text-sm">
+          <section className="mt-14 md:mt-16">
+            <h2 className="font-display text-xl md:text-2xl tracking-tight mb-4">Official Sources</h2>
+            <ul className="space-y-2 text-sm leading-6">
               {body.sources.map((s, i) => (
                 <li key={i}>
-                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                  <a href={s.url} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2 hover:no-underline">
                     {s.label} ↗
                   </a>
                 </li>
@@ -461,11 +449,11 @@ function ArticlePage() {
         ) : null}
 
         {body.keyTakeaways && body.keyTakeaways.length > 0 ? (
-          <aside className="mt-12 border-2 border-primary/60 bg-primary/5 p-5 md:p-6">
-            <h2 className="font-display text-xl md:text-2xl tracking-tight mb-3 text-primary">Key Takeaways</h2>
-            <ul className="list-disc pl-6 space-y-2">
+          <aside className="mt-14 md:mt-16 border-2 border-primary/60 bg-primary/5 p-5 md:p-6">
+            <h2 className="font-display text-xl md:text-2xl tracking-tight mb-4 text-primary">Key Takeaways</h2>
+            <ul className="list-disc pl-6 space-y-3">
               {body.keyTakeaways.map((t, i) => (
-                <li key={i} className="font-serif text-base leading-relaxed">{t}</li>
+                <li key={i} className="font-serif text-[17px] md:text-lg leading-8">{t}</li>
               ))}
             </ul>
           </aside>
@@ -473,7 +461,7 @@ function ArticlePage() {
       </div>
 
       {body.cta ? (
-        <div className="mt-12 border-2 border-primary bg-primary/5 p-6 md:p-8 text-center">
+        <div className="mx-auto max-w-2xl mt-14 border-2 border-primary bg-primary/5 p-6 md:p-8 text-center">
           <p className="font-display text-xl md:text-2xl tracking-tight mb-3">Take the next step</p>
           <Link
             to={body.cta.href}
@@ -484,10 +472,9 @@ function ArticlePage() {
         </div>
       ) : null}
 
-      {/* Sitewide pillar CTA — every article links to Keep Texas Red */}
-      <div className="mt-8 border-l-4 border-primary bg-muted/40 p-5">
-        <p className="font-serif text-base">
-          <Link to="/keep-texas-red" className="text-primary font-semibold hover:underline">
+      <div className="mx-auto max-w-2xl mt-8 border-l-4 border-primary bg-muted/40 p-5">
+        <p className="font-serif text-[17px] leading-8">
+          <Link to="/keep-texas-red" className="text-primary font-semibold underline underline-offset-2 hover:no-underline">
             Read more about Keep Texas Red →
           </Link>
           <span className="text-muted-foreground"> Our full guide to what Keep Texas Red means and why Texans support it.</span>
@@ -511,58 +498,24 @@ function ArticlePage() {
         </section>
       ) : null}
 
-      {/* SLOT 3 — footer, before author bio */}
       <AdSlot placement="footer" />
 
       <div className="mt-10">
         <NewsletterSignup sourcePage={`/news/${article.slug}`} compact />
       </div>
-
-      {author ? (
-        <section className="mt-12 border-t border-border pt-6">
-          <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">About the author</span>
-          <h3 className="font-display text-2xl tracking-tight mt-1">{author.name}</h3>
-          <p className="text-sm italic text-muted-foreground">{author.role}</p>
-          <p className="mt-2 font-serif text-sm leading-relaxed text-foreground/90">{author.bio[0]}</p>
-          <Link to={authorHref} className="mt-2 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline">
-            More from {author.name} →
-          </Link>
-        </section>
-      ) : (
-        <section className="mt-12 border-t border-border pt-6">
-          <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">About the author</span>
-          <h3 className="font-display text-2xl tracking-tight mt-1">{article.author}</h3>
-          <p className="mt-2 font-serif text-sm leading-relaxed text-foreground/90">
-            The Keep Texas Red Editorial Staff produces nonpartisan explainers, policy breakdowns, and educational resources to help Texans understand how their government works. All content is reviewed for accuracy and updated regularly.
-          </p>
-          <Link to="/about" className="mt-2 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline">
-            About Keep TX Red →
-          </Link>
-        </section>
-      )}
     </article>
   );
 }
 
-// Renders [text](/path) as an internal Link and leaves the rest as text.
 function renderInline(text: string) {
-  const parts: (string | { label: string; href: string })[] = [];
-  const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  let lastIndex = 0;
-  let m: RegExpExecArray | null;
-  while ((m = regex.exec(text))) {
-    if (m.index > lastIndex) parts.push(text.slice(lastIndex, m.index));
-    parts.push({ label: m[1], href: m[2] });
-    lastIndex = regex.lastIndex;
-  }
-  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
-  return parts.map((p, i) =>
-    typeof p === "string" ? (
-      <span key={i}>{p}</span>
-    ) : (
-      <Link key={i} to={p.href} className="text-primary underline underline-offset-2 hover:no-underline">
-        {p.label}
-      </Link>
-    )
-  );
+  const parts = text.split(/(\[[^\]]+\]\([^)]+\))/g);
+  return parts.map((part, i) => {
+    const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (!match) return part;
+    const [, label, href] = match;
+    if (href.startsWith("/")) {
+      return <Link key={i} to={href} className="text-primary font-medium underline underline-offset-2 hover:no-underline">{label}</Link>;
+    }
+    return <a key={i} href={href} target="_blank" rel="noopener noreferrer" className="text-primary font-medium underline underline-offset-2 hover:no-underline">{label}</a>;
+  });
 }
