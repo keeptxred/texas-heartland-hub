@@ -13,17 +13,20 @@ permissions:
 jobs:
   capture:
     runs-on: ubuntu-latest
-    timeout-minutes: 4
+    timeout-minutes: 7
     steps:
-      - name: Call bounded remediation and print response
+      - name: Compare published origin and custom domain
         run: |
           set -u
-          echo 'post-redeploy check'
-          status=$(curl -sS --max-time 180 -X POST \
-            -H 'Accept: application/json' \
-            -H 'User-Agent: KeepTXRed-Aug10-Diagnostic/1.0' \
-            -o /tmp/body.json \
-            -w '%{http_code}' \
-            https://keeptxred.com/api/public/hooks/remediate-aug10-flyover || true)
-          echo "HTTP $status"
-          cat /tmp/body.json || true
+          for base in https://keeptxred.lovable.app https://keeptxred.com; do
+            echo "=== $base ==="
+            status=$(curl -sS --max-time 180 -X POST \
+              -H 'Accept: application/json' \
+              -H 'User-Agent: KeepTXRed-Aug10-Diagnostic/1.0' \
+              -o /tmp/body.json \
+              -w '%{http_code}' \
+              "$base/api/public/hooks/remediate-aug10-flyover" || true)
+            echo "HTTP $status"
+            cat /tmp/body.json || true
+            echo
+          done
