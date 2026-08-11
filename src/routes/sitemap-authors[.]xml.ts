@@ -5,6 +5,8 @@ import { AUTHORS, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
 
+const MIN_AUTHOR_ARTICLES_FOR_SITEMAP = 3;
+
 function isCompleteAuthor(author: Author): boolean {
   const biography = author.bio.join(" ").trim();
   return Boolean(
@@ -34,7 +36,7 @@ function authorArticleDates(author: Author, liveArticles: DailyArticle[]): strin
 function activeAuthorEntry(author: Author, liveArticles: DailyArticle[]): UrlEntry | null {
   if (!isCompleteAuthor(author)) return null;
   const dates = authorArticleDates(author, liveArticles);
-  if (dates.length === 0) return null;
+  if (dates.length < MIN_AUTHOR_ARTICLES_FOR_SITEMAP) return null;
 
   const latestArticleDate = dates
     .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
