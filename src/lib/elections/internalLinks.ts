@@ -4,8 +4,8 @@ export const ELECTION_INTERNAL_LINKS = {
   texasLaws: "/laws",
   contactLegislators: "/contact-legislators",
   getInvolved: "/get-involved",
-  livingInTexas: "/living-in-texas",
-  texasNews: "/texas-news",
+  livingInTexas: "https://texasdefined.com/texas-living",
+  texasNews: "/news",
 } as const;
 
 export const ELECTION_CORE_RESOURCES = [
