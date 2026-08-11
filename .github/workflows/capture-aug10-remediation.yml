@@ -1,0 +1,28 @@
+name: Capture Aug 10 Remediation Response
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/capture-aug10-remediation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - name: Call bounded remediation and print response
+        run: |
+          set -u
+          status=$(curl -sS --max-time 180 -X POST \
+            -H 'Accept: application/json' \
+            -H 'User-Agent: KeepTXRed-Aug10-Diagnostic/1.0' \
+            -o /tmp/body.json \
+            -w '%{http_code}' \
+            https://keeptxred.com/api/public/hooks/remediate-aug10-flyover || true)
+          echo "HTTP $status"
+          cat /tmp/body.json || true
