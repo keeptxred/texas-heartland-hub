@@ -30,6 +30,10 @@ const maintenanceWriters = new Map([
     'src/lib/chatgpt-admin.functions.ts',
     ['quality_flags', 'chatgpt-admin-ignored'],
   ],
+  [
+    'src/routes/api/public/hooks/repair-article-structure.ts',
+    ['body_json', 'repairLegacyArticleStructure'],
+  ],
 ]);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set([
