@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { regenerateFeaturedImage } from "@/lib/featured-image.functions";
+import { isPublicBreaking } from "@/lib/public-breaking";
 import { ContentOpportunityPanel } from "@/components/admin/ContentOpportunityPanel";
 import { ChatGptAutoArticlesPanel } from "@/components/admin/ChatGptAutoArticlesPanel";
 import { SavedPackagesPanel } from "@/components/admin/SavedPackagesPanel";
@@ -38,6 +39,7 @@ type ArticleRow = {
   id: string;
   slug: string;
   title: string;
+  dek: string | null;
   category: string;
   is_breaking: boolean | null;
   published_at: string;
@@ -72,7 +74,7 @@ function AdminDashboardPage() {
           .limit(50),
         supabase
           .from("daily_articles")
-          .select("id,slug,title,category,is_breaking,published_at,created_at,source_name,featured_image_url,image_generation_status")
+          .select("id,slug,title,dek,category,is_breaking,published_at,created_at,source_name,featured_image_url,image_generation_status")
           .order("created_at", { ascending: false })
           .limit(50),
       ]);
@@ -88,7 +90,8 @@ function AdminDashboardPage() {
   }, []);
 
   const missingSlug = feed.filter((r) => !r.internal_slug).length;
-  const breaking = articles.filter((a) => a.is_breaking).length;
+  const priorityFlags = articles.filter((article) => article.is_breaking).length;
+  const publicBreaking = articles.filter((article) => isPublicBreaking(article)).length;
   const latestNormalArticle = articles.find(
     (article) => article.source_name !== "Keep TX Red Reserve Desk",
   );
@@ -138,11 +141,12 @@ function AdminDashboardPage() {
         </Link>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 py-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <section className="mx-auto max-w-6xl px-4 py-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <Stat label="Feed items (last 50)" value={feed.length} />
         <Stat label="Missing internal slug" value={missingSlug} tone={missingSlug > 0 ? "warn" : "ok"} />
         <Stat label="Articles (last 50)" value={articles.length} />
-        <Stat label="Currently breaking" value={breaking} />
+        <Stat label="Priority flags (last 50)" value={priorityFlags} />
+        <Stat label="Public breaking now" value={publicBreaking} tone={publicBreaking > 0 ? "warn" : "ok"} />
       </section>
 
       {publishingStalled ? (
@@ -196,20 +200,27 @@ function AdminDashboardPage() {
         <Panel title="Latest Published Articles">
           {loading ? <Skel /> : (
             <ul className="divide-y divide-border">
-              {articles.slice(0, 20).map((a) => (
-                <li key={a.id} className="py-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-primary">{a.category}</span>
-                    {a.is_breaking ? <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Breaking</span> : null}
-                    <ImageStatusBadge status={a.image_generation_status} hasImage={!!a.featured_image_url} />
-                  </div>
-                  <a href={`/news/${a.slug}`} className="text-sm font-medium leading-snug hover:underline">{a.title}</a>
-                  <div className="text-[11px] text-muted-foreground">
-                    {new Date(a.published_at).toLocaleString("en-US", { timeZone: "America/Chicago" })}
-                  </div>
-                  <RegenerateImageButton slug={a.slug} />
-                </li>
-              ))}
+              {articles.slice(0, 20).map((a) => {
+                const publicBreakingNow = isPublicBreaking(a);
+                return (
+                  <li key={a.id} className="py-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-primary">{a.category}</span>
+                      {publicBreakingNow ? (
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">Breaking</span>
+                      ) : a.is_breaking ? (
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-accent">Priority</span>
+                      ) : null}
+                      <ImageStatusBadge status={a.image_generation_status} hasImage={!!a.featured_image_url} />
+                    </div>
+                    <a href={`/news/${a.slug}`} className="text-sm font-medium leading-snug hover:underline">{a.title}</a>
+                    <div className="text-[11px] text-muted-foreground">
+                      {new Date(a.published_at).toLocaleString("en-US", { timeZone: "America/Chicago" })}
+                    </div>
+                    <RegenerateImageButton slug={a.slug} />
+                  </li>
+                );
+              })}
             </ul>
           )}
         </Panel>
