@@ -122,6 +122,10 @@ function effectivePreflight(item: FeedItem): RewritePreflightResult {
   });
 }
 
+function canAttemptArticlePublish(preflight: RewritePreflightResult | undefined): boolean {
+  return !!preflight && (preflight.rewriteable || preflight.reason === "PENDING_EXTRACTION");
+}
+
 function normalizeOpportunityTitle(value: string | null | undefined): string {
   return String(value ?? "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
@@ -163,7 +167,7 @@ function dedupeFeedOpportunities(feed: FeedItem[]): FeedItem[] {
 function shouldShowOpportunity(item: FeedItem): boolean {
   if (item.id < 0 || item.internal_slug) return true;
   if (!item.preflight_json) return true;
-  return effectivePreflight(item).rewriteable;
+  return canAttemptArticlePublish(effectivePreflight(item));
 }
 
 function OpportunityStatusBadges({ status }: { status?: OpportunityStatus }) {
@@ -211,7 +215,9 @@ function readinessLabel(
   if (preflight.rewriteable) {
     return { text: `Rewrite ready · ${preflight.sourceWordCount} source words`, tone: "ok" };
   }
-  if (preflight.reason === "PENDING_EXTRACTION") return { text: "Checking source", tone: "muted" };
+  if (preflight.reason === "PENDING_EXTRACTION") {
+    return { text: "Source check required · publishing will extract the source", tone: "muted" };
+  }
   return { text: preflightStatusLabel(preflight), tone: "bad" };
 }
 
@@ -380,6 +386,16 @@ export function ContentOpportunityPanel() {
         }));
       } else {
         setArticleMsg((s) => ({ ...s, [r.id]: { ok: false, text: res.error } }));
+        const { data: refreshed } = await supabase
+          .from("texas_news_feed")
+          .select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")
+          .eq("id", r.id)
+          .maybeSingle();
+        if (refreshed) {
+          setItems((current) =>
+            current.map((item) => (item.id === r.id ? ({ ...item, ...refreshed } as FeedItem) : item)),
+          );
+        }
         if (/does not contain enough text|not enough factual/i.test(res.error)) {
           setItems((current) => current.filter((item) => item.id !== r.id));
         }
@@ -674,6 +690,7 @@ export function ContentOpportunityPanel() {
                 const alreadyPublished = !!status?.rewritten;
                 const isDailyArticle = r.id < 0;
                 const preflight = preflightById[r.id];
+                const canAttemptPublish = alreadyPublished || canAttemptArticlePublish(preflight);
                 const resolvedArticleSlug = r.article_slug ?? r.internal_slug ?? null;
                 const resolvedArticleUrl =
                   r.article_url ?? (resolvedArticleSlug ? `https://keeptxred.com/news/${resolvedArticleSlug}` : null);
@@ -718,19 +735,17 @@ export function ContentOpportunityPanel() {
                           {isDailyArticle ? null : (
                             <button
                               type="button"
-                              disabled={!!articleWorking[r.id] || (!alreadyPublished && !preflight?.rewriteable)}
+                              disabled={!!articleWorking[r.id] || !canAttemptPublish}
                               onClick={() => void publishArticle(r)}
-                              title={
-                                !alreadyPublished && !preflight?.rewriteable
-                                  ? preflight?.message
-                                  : undefined
-                              }
+                              title={!canAttemptPublish ? preflight?.message : undefined}
                               className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60 disabled:cursor-not-allowed"
                             >
                               {articleWorking[r.id]
                                 ? "Publishing…"
                                 : alreadyPublished
                                 ? "Republish"
+                                : preflight?.reason === "PENDING_EXTRACTION"
+                                ? "Check Source & Publish"
                                 : "Publish to Keep Texas Red"}
                             </button>
                           )}
@@ -898,12 +913,16 @@ export function ContentOpportunityPanel() {
                       type="button"
                       disabled={
                         !!articleWorking[previewRow.id] ||
-                        (!statuses[previewRow.id]?.rewritten && !preflightById[previewRow.id]?.rewriteable)
+                        (!statuses[previewRow.id]?.rewritten && !canAttemptArticlePublish(preflightById[previewRow.id]))
                       }
                       onClick={() => void publishArticle(previewRow)}
                       className="px-3 py-1 bg-secondary text-secondary-foreground text-[11px] font-bold uppercase tracking-widest disabled:opacity-60"
                     >
-                      {statuses[previewRow.id]?.rewritten ? "Republish" : "Publish to Keep Texas Red"}
+                      {statuses[previewRow.id]?.rewritten
+                        ? "Republish"
+                        : preflightById[previewRow.id]?.reason === "PENDING_EXTRACTION"
+                        ? "Check Source & Publish"
+                        : "Publish to Keep Texas Red"}
                     </button>
                   ) : null}
                   {(previewRow.id < 0 ||
