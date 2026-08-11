@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { dedupeByTitle } from "@/lib/title-similarity";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isPublicBreaking, PUBLIC_BREAKING_WINDOW_MS } from "@/lib/public-breaking";
 
 export type DailyArticle = {
   slug: string;
@@ -31,14 +32,6 @@ type DailyArticleRow = DailyArticle & { body_json?: unknown };
 
 const ARTICLE_PAGE_SIZE = 1000;
 const DAILY_ARTICLE_SELECT = "slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json";
-const PUBLIC_BREAKING_WINDOW_MS = 12 * 60 * 60 * 1000;
-
-const PUBLIC_BREAKING_SAFETY = /\b(active shooter|mass shooting|shooting|killed|fatal|dead|death toll|explosion|tornado warning|tornado emergency|hurricane warning|flash flood emergency|evacuation|evacuations|amber alert|manhunt|wildfire evacuation|shelter in place)\b/i;
-const PUBLIC_BREAKING_INFRASTRUCTURE = /\b(ercot|power grid|electric grid|rolling blackout|blackout|grid emergency|major outage|boil water notice)\b/i;
-const PUBLIC_BREAKING_GOVERNMENT = /\b(indicted|indictment|resigns|resigned|resignation|removed from office|impeached|impeachment|state of emergency|emergency declaration|court blocks|court halts|strikes down|supreme court rules|injunction)\b/i;
-const PUBLIC_BREAKING_ELECTION = /\b(election|primary|runoff|ballot|race)\b/i;
-const PUBLIC_BREAKING_ELECTION_EVENT = /\b(wins|winner|called|projected|concedes|conceded|withdraws|withdrew|drops out|results|recount|disqualified)\b/i;
-const PUBLIC_BREAKING_ROUTINE = /\b(announces|announcement|appoints|appointment|approves|passes|signs bill|files bill|launches|opens|awards|visits|speaks|statement|press release)\b/i;
 
 function getSupabaseClient() {
   const url = process.env.SUPABASE_URL;
@@ -54,27 +47,6 @@ function stripBodyJson(rows: DailyArticleRow[]): DailyArticle[] {
   return rows
     .filter((article) => meetsArticleMainWordCount(article.kind, article.body_json as never))
     .map(({ body_json: _bodyJson, ...article }) => article);
-}
-
-function isPublicBreaking(article: DailyArticle): boolean {
-  if (!article.is_breaking) return false;
-
-  const publishedAt = Date.parse(article.published_at);
-  if (!Number.isFinite(publishedAt) || Date.now() - publishedAt > PUBLIC_BREAKING_WINDOW_MS) return false;
-
-  const text = `${article.title ?? ""} ${article.dek ?? ""} ${article.category ?? ""} ${article.source_name ?? ""}`;
-  const safety = PUBLIC_BREAKING_SAFETY.test(text);
-  const infrastructure = PUBLIC_BREAKING_INFRASTRUCTURE.test(text) && /\b(emergency|warning|outage|blackout|failure|conservation|shed load|rolling)\b/i.test(text);
-  const government = PUBLIC_BREAKING_GOVERNMENT.test(text);
-  const election = PUBLIC_BREAKING_ELECTION.test(text) && PUBLIC_BREAKING_ELECTION_EVENT.test(text);
-
-  if (!(safety || infrastructure || government || election)) return false;
-
-  // Routine government/business activity should not become a public red-banner
-  // item unless the same story also contains a genuine urgent-event signal.
-  if (PUBLIC_BREAKING_ROUTINE.test(text) && !(safety || infrastructure || government || election)) return false;
-
-  return true;
 }
 
 async function loadPublishedDailyArticles(limit: number): Promise<DailyArticle[]> {
@@ -123,7 +95,7 @@ async function loadFreshBreakingArticles(limit = 12): Promise<DailyArticle[]> {
     return [];
   }
 
-  return stripBodyJson((data ?? []) as DailyArticleRow[]).filter(isPublicBreaking);
+  return stripBodyJson((data ?? []) as DailyArticleRow[]).filter((article) => isPublicBreaking(article));
 }
 
 export const getDailyArticles = createServerFn({ method: "GET" }).handler(async () => {
