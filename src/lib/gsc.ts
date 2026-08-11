@@ -48,13 +48,14 @@ export async function applyGscMetrics(rows: GscRow[], window: GscWindow = {}): P
     return { updated: 0, dailyArticlesUpdated: 0, unmatched: [], aliasesResolved: 0 };
   }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const db = supabaseAdmin as any;
   const now = new Date().toISOString();
 
   // Public /news/:slug resolution checks article_slug_redirects before
   // daily_articles. GSC can therefore continue reporting impressions against a
   // legacy URL after the article has moved. Mirror that public resolution here
   // so historical aliases roll up into the canonical public article identity.
-  const { data: redirectRows, error: redirectError } = await supabaseAdmin
+  const { data: redirectRows, error: redirectError } = await db
     .from("article_slug_redirects")
     .select("old_slug,new_slug")
     .limit(5000);
@@ -110,7 +111,7 @@ export async function applyGscMetrics(rows: GscRow[], window: GscWindow = {}): P
 
   // Canonical source of truth: every public /news/:slug URL gets a metric row,
   // regardless of whether the page is backed by static ARTICLES or daily_articles.
-  const { error: metricError } = await supabaseAdmin
+  const { error: metricError } = await db
     .from("article_search_metrics")
     .upsert(metricRows, { onConflict: "slug" });
   if (metricError) throw new Error(`Failed to persist canonical GSC metrics: ${metricError.message}`);
@@ -121,7 +122,7 @@ export async function applyGscMetrics(rows: GscRow[], window: GscWindow = {}): P
   let dailyArticlesUpdated = 0;
   const unmatched: string[] = [];
   for (const row of metricRows) {
-    const { data, error } = await supabaseAdmin
+    const { data, error } = await db
       .from("daily_articles")
       .update({
         gsc_impressions: row.gsc_impressions,
@@ -149,12 +150,13 @@ export async function applyGscMetrics(rows: GscRow[], window: GscWindow = {}): P
 /** Convenience: compute the site-wide average CTR from canonical public URLs. */
 export async function fetchSiteAverageCtr(): Promise<number | null> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const { data, error } = await supabaseAdmin
+  const db = supabaseAdmin as any;
+  const { data, error } = await db
     .from("article_search_metrics")
     .select("gsc_impressions,gsc_clicks")
     .gt("gsc_impressions", 0);
   if (error || !data || data.length === 0) return null;
-  const imp = data.reduce((s, r: { gsc_impressions: number }) => s + (r.gsc_impressions ?? 0), 0);
-  const clk = data.reduce((s, r: { gsc_clicks: number }) => s + (r.gsc_clicks ?? 0), 0);
+  const imp = data.reduce((s: number, r: { gsc_impressions: number }) => s + (r.gsc_impressions ?? 0), 0);
+  const clk = data.reduce((s: number, r: { gsc_clicks: number }) => s + (r.gsc_clicks ?? 0), 0);
   return imp > 0 ? clk / imp : null;
 }
