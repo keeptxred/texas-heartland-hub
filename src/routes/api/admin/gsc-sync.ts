@@ -54,6 +54,10 @@ function validRow(value: unknown): value is GscRow {
     && (row.position == null || Number.isFinite(Number(row.position)));
 }
 
+function validDate(value: unknown): value is string {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
 export const Route = createFileRoute("/api/admin/gsc-sync")({
   server: {
     handlers: {
@@ -66,12 +70,22 @@ export const Route = createFileRoute("/api/admin/gsc-sync")({
           );
         }
 
-        const payload = await request.json().catch(() => null) as { rows?: unknown } | null;
+        const payload = await request.json().catch(() => null) as {
+          rows?: unknown;
+          startDate?: unknown;
+          endDate?: unknown;
+        } | null;
         if (!Array.isArray(payload?.rows) || payload.rows.length > 500 || !payload.rows.every(validRow)) {
           return Response.json({ ok: false, error: "Invalid GSC metrics payload" }, { status: 400 });
         }
+        if ((payload?.startDate != null && !validDate(payload.startDate)) || (payload?.endDate != null && !validDate(payload.endDate))) {
+          return Response.json({ ok: false, error: "Invalid GSC metrics window" }, { status: 400 });
+        }
 
-        const result = await applyGscMetrics(payload.rows as GscRow[]);
+        const result = await applyGscMetrics(payload.rows as GscRow[], {
+          startDate: validDate(payload?.startDate) ? payload.startDate : null,
+          endDate: validDate(payload?.endDate) ? payload.endDate : null,
+        });
         return Response.json({ ok: true, ...result });
       },
     },
