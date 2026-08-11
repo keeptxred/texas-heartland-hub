@@ -15,7 +15,7 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
         const entries = buildElectionSitemapEntries({
           lastmod: newestElectionUpdate(),
           races: publicRecords(races, "/elections/races/"),
-          candidates: publicRecords(candidates, "/elections/candidates/"),
+          candidates: publicCandidateRecords(candidates),
           additionalPages: [
             ...publicRecords(polls, "/elections/polls/"),
             ...publicRecords(forecasts, "/elections/forecast/"),
@@ -58,6 +58,58 @@ function publicDistrictRecords(records: readonly Record<string, unknown>[]) {
         }]
       : [];
   });
+}
+
+function meaningfulString(value: unknown, minimum: number): boolean {
+  return typeof value === "string" && value.trim().length >= minimum;
+}
+
+function nonEmptyArray(value: unknown, minimum = 1): boolean {
+  return Array.isArray(value) && value.filter(Boolean).length >= minimum;
+}
+
+/**
+ * Candidate routes remain reachable whenever they are published + verified, but
+ * the sitemap is a crawl-priority queue rather than a complete roster export.
+ * Require multiple independent profile signals so Google spends crawl budget on
+ * candidates with enough unique substance to be useful search landing pages.
+ */
+function isSitemapWorthyCandidate(record: Record<string, unknown>): boolean {
+  let score = 0;
+
+  if (meaningfulString(record.biography, 140) || meaningfulString(record.description, 140)) score += 2;
+  if (meaningfulString(record.campaignWebsite, 8) || meaningfulString(record.website, 8) || meaningfulString(record.officialWebsite, 8)) score += 1;
+  if (meaningfulString(record.primaryRaceId, 3) || meaningfulString(record.office, 3) || meaningfulString(record.officeLabel, 3)) score += 1;
+  if (nonEmptyArray(record.sources, 2) || nonEmptyArray(record.sourceUrls, 2)) score += 1;
+  if (nonEmptyArray(record.officeHistory) || nonEmptyArray(record.endorsements) || nonEmptyArray(record.issues)) score += 1;
+
+  const imageRights = record.imageRights;
+  if (
+    meaningfulString(record.imageUrl, 8) &&
+    imageRights &&
+    typeof imageRights === "object" &&
+    "usageStatus" in imageRights &&
+    (imageRights as { usageStatus?: unknown }).usageStatus === "approved"
+  ) score += 1;
+
+  return score >= 3;
+}
+
+function publicCandidateRecords(records: readonly Record<string, unknown>[]) {
+  return records
+    .filter(
+      (record) =>
+        record.publicationStatus === "published" &&
+        record.verificationStatus === "verified" &&
+        typeof record.slug === "string" &&
+        isSitemapWorthyCandidate(record),
+    )
+    .map((record) => ({
+      path: `/elections/candidates/${record.slug}`,
+      canonicalPath: `/elections/candidates/${record.slug}`,
+      updatedAt: String(record.updatedAt ?? record.dataAsOf ?? newestElectionUpdate()),
+      indexable: true,
+    }));
 }
 
 function publicRecords(records: readonly Record<string, unknown>[], prefix: string) {
