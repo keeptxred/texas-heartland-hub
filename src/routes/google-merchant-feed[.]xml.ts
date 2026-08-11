@@ -188,6 +188,11 @@ function response(body: string, status = 200): Response {
         ? "public, max-age=900, s-maxage=3600, stale-while-revalidate=86400"
         : "no-store",
       "X-Content-Type-Options": "nosniff",
+      // This endpoint is a machine-readable Merchant Center data feed, not a
+      // search result landing page. Explicit noindex keeps a successful crawl
+      // from lingering as "Crawled - currently not indexed" in Search Console
+      // while leaving the feed fully fetchable by Google Merchant Center.
+      "X-Robots-Tag": "noindex, follow",
     },
   });
 }
