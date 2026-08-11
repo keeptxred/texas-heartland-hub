@@ -1,3 +1,4 @@
+-- BULK_CONTENT_STRUCTURE_REMEDIATION
 -- Normalize legacy daily_articles rows that stored an entire multi-paragraph
 -- article as a single paragraphs[] item under one generic section.
 --
