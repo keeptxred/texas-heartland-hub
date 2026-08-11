@@ -1,3 +1,3 @@
 KeepTXRed production redeploy trigger
-2026-08-10T19:44:00-05:00
-Reason: force production pickup of current protected main through dc129d76c711b12fd99e9b3488cbe08e2499d9da. Live /api/admin/gsc-sync continued serving pre-remediation code after PRs #298-#300 merged, blocking canonical Search Console metric ingestion and returning the old generic 401 response. Immediate verification target: production endpoint must expose the new authenticated-run diagnostics and canonical GSC writer before rerunning the live sync.
+2026-08-10T20:35:00-05:00
+Reason: force production pickup of current protected main including PR #305 (bounded Aug. 10 Flyover remediation endpoint) and the earlier newsroom-health/routing fixes. Live /api/public/hooks/remediate-aug10-flyover still falls through to the old HTML-only handler with HTTP 500, proving production is serving a stale backend bundle. Immediate verification target: the bounded remediation endpoint must return JSON and then the direct 23-story production matrix must be rerun.
