@@ -13,7 +13,7 @@ on:
 permissions:
   contents: read
 
-# Revision 3: require the live pickle article structure and hero remediation.
+# Revision 4: require live BBQ and pickle article remediation before passing.
 jobs:
   repair:
     runs-on: ubuntu-latest
@@ -32,15 +32,18 @@ jobs:
             if [[ "$status" == "200" ]] && jq -e '
               .ok == true and
               .revision >= 3 and
+              .bbqFound == true and
+              .bbqStructured == true and
+              (.bbqHeadings | length) == 5 and
               .pickleFound == true and
               .pickleStructured == true and
               .pickleImageReady == true
             ' /tmp/repair.json >/dev/null 2>&1; then
-              echo 'Legacy article repair completed successfully, including pickle structure and hero.'
+              echo 'Legacy article repair completed successfully, including BBQ and pickle remediation.'
               exit 0
             fi
-            echo "Production is not yet on repair revision 3 or remediation is incomplete (HTTP $status)."
+            echo "Production repair is incomplete or not yet deployed (HTTP $status)."
             sleep 15
           done
-          echo 'Repair endpoint did not complete revision 3 successfully within retry window.'
+          echo 'Repair endpoint did not verify BBQ and pickle remediation within retry window.'
           exit 1
