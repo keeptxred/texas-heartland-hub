@@ -1,0 +1,71 @@
+name: Verify SB 37 Production Repair
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-sb37-production.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Wait for production deployment and apply repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint='https://keeptxred.com/api/public/hooks/repair-sb37-production'
+          ok=''
+          for attempt in $(seq 1 24); do
+            echo "Repair attempt $attempt"
+            code=$(curl -L -sS --max-time 30 -o /tmp/repair.json -w '%{http_code}' "$endpoint" || true)
+            cat /tmp/repair.json 2>/dev/null || true
+            echo
+            if [ "$code" = '200' ] && grep -q '"ok":true' /tmp/repair.json && grep -q '"generic_texas_news_link_present":false' /tmp/repair.json && grep -q '"section_count":6' /tmp/repair.json; then
+              ok='yes'
+              break
+            fi
+            sleep 15
+          done
+          test "$ok" = 'yes' || { echo 'Production repair hook never became healthy'; exit 1; }
+
+      - name: Verify live article structure and hero metadata
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://keeptxred.com/news/2026-08-09-sb37-texas-university-oversight'
+          code=$(curl -L -sS --max-time 30 -o /tmp/article.html -w '%{http_code}' "$url")
+          test "$code" = '200'
+          grep -q 'What SB 37 changes' /tmp/article.html
+          grep -q 'The January 2027 curriculum review' /tmp/article.html
+          grep -q '/bills/texas/89/sb/37' /tmp/article.html
+          ! grep -q 'href="/texas-news"[^>]*>Texas<' /tmp/article.html
+          grep -q '/images/news/generated/2026-08-09/sb37-texas-university-oversight.webp' /tmp/article.html
+
+      - name: Verify live bill page
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://keeptxred.com/bills/texas/89/sb/37'
+          code=$(curl -L -sS --max-time 30 -o /tmp/bill.html -w '%{http_code}' "$url")
+          test "$code" = '200'
+          ! grep -q "This page didn't load" /tmp/bill.html
+          grep -Eqi 'SB[[:space:]]*37|Senate Bill 37' /tmp/bill.html
+
+      - name: Verify live hero is a real WebP
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://keeptxred.com/images/news/generated/2026-08-09/sb37-texas-university-oversight.webp'
+          curl -L -sS --max-time 30 -D /tmp/image.headers -o /tmp/hero.webp "$url"
+          grep -Eqi '^content-type:[[:space:]]*image/webp' /tmp/image.headers
+          bytes=$(wc -c < /tmp/hero.webp)
+          test "$bytes" -gt 10000
+          prefix=$(od -An -tx1 -N4 /tmp/hero.webp | tr -d ' \n')
+          test "$prefix" = '52494646'
+          echo "Verified WebP bytes=$bytes"
