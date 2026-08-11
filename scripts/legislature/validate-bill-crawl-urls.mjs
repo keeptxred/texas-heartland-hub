@@ -96,7 +96,7 @@ const checks = [
   {
     file: 'src/routes/texas-government.$entitySlug.tsx',
     required: [
-      'href={`/news/${article.slug}`',
+      'href={`/news/${article.slug}`}',
     ],
   },
 ];
