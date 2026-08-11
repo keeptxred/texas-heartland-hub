@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
+import fs from "node:fs";
+import path from "node:path";
 
-// These tests intentionally exercise the public admin-facing behavior through
-// stable message patterns. The implementation lives in publishArticle.functions.ts.
 describe("AI rewrite error message taxonomy", () => {
-  it("keeps the three quota/configuration classes distinct", () => {
-    const source = [
-      "KTR automated rewrite limit reached",
-      "Google Gemini quota/rate limit reached",
-      "Direct Google Gemini is not configured",
-    ];
+  it("keeps KTR, Gemini quota, and Gemini configuration failures distinct", () => {
+    const file = fs.readFileSync(
+      path.resolve(process.cwd(), "src/services/publishArticle.functions.ts"),
+      "utf8",
+    );
 
-    expect(new Set(source).size).toBe(3);
-    expect(source[0]).toContain("KTR");
-    expect(source[1]).toContain("Gemini");
-    expect(source[2]).toContain("not configured");
+    expect(file).toContain("KTR automated rewrite limit reached");
+    expect(file).toContain("Google Gemini quota/rate limit reached");
+    expect(file).toContain("Direct Google Gemini is not configured");
+    expect(file).toContain("Lovable AI credits are not being used");
+    expect(file).toContain("not a Lovable credit limit");
   });
 });
