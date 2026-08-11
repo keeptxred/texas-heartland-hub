@@ -1,7 +1,9 @@
-# Verify dispatch contract
+# Verify check contract
 
-The repository health workflow must validate the exact synthetic PR merge commit that GitHub evaluates at the branch-protection gate.
+The repository has one required CI check named `verify`, produced only by the native GitHub Actions job in `.github/workflows/shared-vitest.yml`.
 
-When `main` changes, the workflow's `refresh-open-prs` job updates same-repository PR branches and explicitly dispatches `shared-vitest.yml` with the PR number. The dispatched run checks out `refs/pull/<pr_number>/merge` and publishes the required `verify` status against that checked-out merge SHA.
+Do not create additional check runs or legacy commit statuses named `verify`. Multiple publishers using the same required-check name can leave branch protection waiting for a different check identity even when another `verify` reports success.
 
-This explicit dispatch is required because branch updates performed with the repository `GITHUB_TOKEN` do not emit a normal `pull_request` `synchronize` workflow event.
+The workflow runs for pull requests targeting `main`, direct pushes to `main`, manual dispatches, and GitHub merge-queue `merge_group` events. GitHub Actions owns the required check end to end.
+
+If branch protection or a ruleset requires `verify`, configure that requirement to use the native GitHub Actions `verify` check from the `Repository test and build health` workflow. Do not bind the requirement to a legacy status publisher.

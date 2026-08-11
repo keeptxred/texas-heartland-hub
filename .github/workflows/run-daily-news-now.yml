@@ -1,5 +1,6 @@
 name: Run Daily News Now
 
+# Production publisher smoke trigger: 2026-08-11 Cloudflare rewrite rollout
 on:
   push:
     branches: [main]

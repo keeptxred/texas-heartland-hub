@@ -10,7 +10,7 @@ export const Route = createFileRoute("/elections/")({
           "Follow verified 2026 Texas races, candidates, polls, forecasts, results, and voting information in KeepTXRed Election Central.",
       },
     ],
-    links: [{ rel: "canonical", href: "https://keeptxred.com/elections/2026" }],
+    links: [{ rel: "canonical", href: "https://keeptxred.com/elections" }],
   }),
   beforeLoad: () => {
     throw redirect({ to: "/elections/2026" });
