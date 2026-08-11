@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
+// This contract keeps the direct Election Central discovery paths crawlable as the UI evolves.
 const electionHub = readFileSync(new URL("../../routes/elections.2026.tsx", import.meta.url), "utf8");
 const candidateLinks = readFileSync(
   new URL("../../components/elections/candidates/CandidateInternalLinks.tsx", import.meta.url),
