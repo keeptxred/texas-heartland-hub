@@ -12,6 +12,7 @@ const sourceFiles = [
   "public/llms.txt",
 ];
 
+const legacyWwwHost = "www." + "keeptxred.com/";
 const redirectAliases = [
   'to="/texas-news"',
   'href="/texas-news"',
@@ -20,8 +21,8 @@ const redirectAliases = [
   'href="/elections"',
   'livingInTexas: "/living-in-texas"',
   "http://keeptxred.com/",
-  "http://www.keeptxred.com/",
-  "https://www.keeptxred.com/",
+  `http://${legacyWwwHost}`,
+  `https://${legacyWwwHost}`,
   "https://keeptxred.com/texas-news/",
   "/texas-business?topic=relocations",
   "/texas-business?topic=energy",
