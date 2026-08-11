@@ -7,7 +7,26 @@ export interface CandidateInternalLinksProps {
   race: RaceDetail | null;
 }
 
+function districtPathForRaceSlug(slug: string): { href: string; title: string } | null {
+  const patterns: Array<[RegExp, string, string]> = [
+    [/^2026-us-house-district-(\d{1,2})$/, "congressional-district", "Texas Congressional District"],
+    [/^2026-texas-house-district-(\d{1,3})$/, "texas-house-district", "Texas House District"],
+    [/^2026-texas-senate-district-(\d{1,2})$/, "texas-senate-district", "Texas Senate District"],
+  ];
+  for (const [pattern, prefix, label] of patterns) {
+    const match = pattern.exec(slug);
+    if (match) {
+      return {
+        href: `/elections/districts/${prefix}-${match[1]}`,
+        title: `${label} ${match[1]} election page`,
+      };
+    }
+  }
+  return null;
+}
+
 export function CandidateInternalLinks({ candidate, race }: CandidateInternalLinksProps) {
+  const district = race ? districtPathForRaceSlug(race.slug) : null;
   const resources = [
     ...(race
       ? [
@@ -17,6 +36,16 @@ export function CandidateInternalLinks({ candidate, race }: CandidateInternalLin
             description: `Review the full ${race.officeName} race.`,
             eyebrow: "Related race",
           },
+          ...(district
+            ? [
+                {
+                  title: district.title,
+                  href: district.href,
+                  description: "Open the district hub for its race, verified candidates, geography, and election resources.",
+                  eyebrow: "Election district",
+                },
+              ]
+            : []),
           ...race.candidates
             .filter((otherCandidate) => otherCandidate.id !== candidate.id)
             .map((otherCandidate) => ({
@@ -51,7 +80,7 @@ export function CandidateInternalLinks({ candidate, race }: CandidateInternalLin
     <RelatedResources
       resources={resources}
       title="Related candidate resources"
-      description="Continue to the related race, other candidates, and trusted Texas election guidance."
+      description="Continue to the related race, district, other candidates, and trusted Texas election guidance."
     />
   );
 }
