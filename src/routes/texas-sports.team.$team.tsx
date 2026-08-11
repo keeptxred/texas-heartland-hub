@@ -1,15 +1,23 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, redirect } from "@tanstack/react-router";
 import { listSportsByTeam, type SportsListItem } from "@/lib/sports.functions";
 import { assignUniqueImages } from "@/lib/dedupe-images";
-import { TEAM_BY_SLUG, isTeamSlug, LEAGUE_META, teamsForLeague, type TeamMeta } from "@/lib/texas-teams";
+import { TEAM_BY_SLUG, canonicalTeamSlug, LEAGUE_META, teamsForLeague, type TeamMeta } from "@/lib/texas-teams";
 import { resolveArticleImage } from "@/lib/seo-headline";
 import { MIN_ARTICLES_DEFAULT, isReadyFromItems } from "@/lib/content-readiness";
 import { SportsCoveragePlaceholder } from "@/components/sports-coverage-placeholder";
 
 export const Route = createFileRoute("/texas-sports/team/$team")({
   loader: async ({ params }) => {
-    const slug = params.team.toLowerCase();
-    if (!isTeamSlug(slug)) throw notFound();
+    const requestedSlug = params.team.toLowerCase();
+    const slug = canonicalTeamSlug(requestedSlug);
+    if (!slug) throw notFound();
+    if (slug !== requestedSlug) {
+      throw redirect({
+        to: "/texas-sports/team/$team",
+        params: { team: slug },
+        statusCode: 301,
+      });
+    }
     const { items } = await listSportsByTeam({ data: { team: slug } });
     return { team: TEAM_BY_SLUG[slug], items };
   },
