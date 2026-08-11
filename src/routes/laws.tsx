@@ -3,6 +3,8 @@ import { PageHero } from "@/components/page-hero";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { SITE_URL } from "@/lib/seo";
 
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
+
 export const Route = createFileRoute("/laws")({
   head: () => ({
     meta: [
@@ -92,7 +94,6 @@ const SECTIONS: {
     intent: "For anyone who lives in Texas and just wants to stay out of trouble.",
     description:
       "Traffic stops, castle doctrine, homestead exemption, open-records rights — the everyday rules Texans actually encounter and the practical guides that explain them.",
-    hubHref: "/laws-to-know",
     articleSlugs: [
       "homestead-exemption-explained",
       "texas-open-meetings-public-info",
@@ -107,7 +108,7 @@ const SECTIONS: {
     intent: "For readers tracking what's changing in Austin right now.",
     description:
       "The 2026 statutes taking effect this cycle, the bills moving through committee, and the constitutional amendments Texans will vote on in November.",
-    hubHref: "/legislative-updates",
+    hubHref: "/bills",
     articleSlugs: [
       "texas-new-laws-2026",
       "property-tax-relief-package",
@@ -248,11 +249,11 @@ function LawsHubPage() {
         <p>
           For a working reader, three habits cover most of it: watch the November constitutional-amendment
           ballot, review the appraisal notice that arrives in April, and follow ongoing coverage from a
-          state-focused newsroom during session. Keep TX Red publishes the{" "}
-          <Link to="/legislative-updates" className="text-primary underline underline-offset-4">
-            Legislative Updates
+          state-focused newsroom during session. Keep TX Red maintains the{" "}
+          <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="text-primary underline underline-offset-4">
+            Texas bill tracker
           </Link>{" "}
-          hub during and after each session and maintains the evergreen guides below.
+          during and after each session and maintains the evergreen guides below.
         </p>
       </article>
 
@@ -279,7 +280,15 @@ function LawsHubPage() {
               ))}
             </div>
 
-            {section.hubHref ? (
+            {section.hubHref === "/bills" ? (
+              <Link
+                to="/bills"
+                search={EMPTY_BILLS_SEARCH}
+                className="mt-6 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline"
+              >
+                Full {section.heading} hub →
+              </Link>
+            ) : section.hubHref ? (
               <Link
                 to={section.hubHref}
                 className="mt-6 inline-block text-xs font-bold uppercase tracking-widest text-primary hover:underline"
