@@ -113,6 +113,19 @@ const ALWAYS_AVAILABLE: InternalLink[] = [
   { label: "Latest Texas News", href: "/news", kind: "hub" },
 ];
 
+const LOW_VALUE_LINK_RE = /\[(Texas|Texans|Texas news|news|here|this story|the state|Lone Star State)\]\((?:https?:\/\/(?:www\.)?keeptxred\.com)?\/(?:texas-news|texas-politics|texas-economy|texas-business|news)\/?\)/gi;
+
+export function stripLowValueInternalLinks(value: unknown): unknown {
+  if (typeof value === "string") return value.replace(LOW_VALUE_LINK_RE, "$1");
+  if (Array.isArray(value)) return value.map(stripLowValueInternalLinks);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, item]) => [key, stripLowValueInternalLinks(item)]),
+    );
+  }
+  return value;
+}
+
 export function pickInternalLinks(input: {
   category?: string | null;
   title?: string | null;
@@ -226,6 +239,7 @@ export function detectAffiliateCategory(text: string): AffiliateCategory | null 
 }
 
 export function enrichArticleRow<T extends QualityRow>(row: T): T {
+  if (row.body_json) row.body_json = stripLowValueInternalLinks(row.body_json);
   const proposedUrl = row.internal_url?.startsWith("http")
     ? row.internal_url
     : `https://keeptxred.com${row.internal_url ?? `/news/${row.slug}`}`;
