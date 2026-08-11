@@ -18,6 +18,10 @@ describe("content pillar classification", () => {
     ["Fort Cavazos veterans benefits event opens", "texas-veterans-military"],
     ["Texas DPS trooper public safety operation announced", "texas-law-enforcement-public-safety"],
     ["Texas small business jobs report shows growth", "texas-economy-small-business"],
+    ["Texas Homestead Exemption Explained for Homeowners", "texas-economy-small-business"],
+    ["How to File a Property Tax Appraisal Protest in Texas", "texas-economy-small-business"],
+    ["What Your County Appraisal District Does", "texas-economy-small-business"],
+    ["Texas Property Taxes and Taxable Value Explained", "texas-economy-small-business"],
     ["Texas Senate committee hearing on new law", "texas-laws-legislature"],
     ["Governor announces state agency appointment", "texas-politics-government"],
   ])("classifies %s", (title, expected) => {
@@ -37,6 +41,16 @@ describe("content pillar classification", () => {
         category: "Legislature",
       }),
     ).toBe("texas-politics-government");
+  });
+
+  it("does not let generic government language override a prominent property-tax topic", () => {
+    expect(
+      classifyContentPillar({
+        title: "Texas Homestead Exemption Explained",
+        description: "A homeowner guide to exemptions, taxable value, and appraisal districts.",
+        body: "The governor and Legislature have debated tax policy for years.",
+      }),
+    ).toBe("texas-economy-small-business");
   });
 
   it("uses only the article lead when headline and dek are ambiguous", () => {
