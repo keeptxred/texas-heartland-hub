@@ -1,0 +1,37 @@
+name: Run Legacy Article Repair
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/run-legacy-article-repair.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Invoke production article structure repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          endpoint='https://keeptxred.com/api/public/hooks/repair-article-structure'
+          for attempt in $(seq 1 24); do
+            echo "Repair attempt ${attempt}/24"
+            status=$(curl -sS -o /tmp/repair.json -w '%{http_code}' --max-time 30 "$endpoint" || true)
+            cat /tmp/repair.json 2>/dev/null || true
+            echo
+            if [[ "$status" == "200" ]]; then
+              jq -e '.ok == true' /tmp/repair.json >/dev/null
+              echo 'Legacy article repair completed successfully.'
+              exit 0
+            fi
+            echo "Endpoint not ready or repair incomplete (HTTP $status)."
+            sleep 15
+          done
+          echo 'Repair endpoint did not complete successfully within retry window.'
+          exit 1
