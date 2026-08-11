@@ -41,6 +41,7 @@ const LEGACY_ELECTION_PATHS = new Map([
 const LEGACY_CONTENT_PATHS = new Map([
   ["/houston-news", "/houston"],
   ["/property-taxes", "/texas/property-taxes-2026"],
+  ["/favicon.ico", "/__l5e/assets-v1/44ccd7e8-589f-48c9-b255-0b52bb83c041/red-texas-icon.png"],
   ["/texas-news/tax-spending", "/texas-economy"],
   ["/texas-news/legislature", "/texas-legislature"],
   ["/texas-news/border", "/texas-border-security"],
