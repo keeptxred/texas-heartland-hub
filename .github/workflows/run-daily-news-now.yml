@@ -1,6 +1,6 @@
 name: Run Daily News Now
 
-# Production publisher smoke trigger: 2026-08-11 AI rewrite provider failover
+# Production publisher smoke trigger: 2026-08-12 Cloudflare-only retry
 on:
   push:
     branches: [main]
