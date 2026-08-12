@@ -10,8 +10,11 @@ const REDISTRICTING = "https://redistricting.capitol.texas.gov/";
 const TEXAS_SENATE_DISTRICTS = [1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31] as const;
 const VERIFIED_RACES = racesSnapshot.filter((race) => race.publicationStatus === "published" && race.verificationStatus === "verified");
 
-function raceForDistrict(jurisdictionType: string, districtNumber: number) {
-  return VERIFIED_RACES.find((race) => race.jurisdictionType === jurisdictionType && race.districtNumber === districtNumber) ?? null;
+type VerifiedRace = (typeof VERIFIED_RACES)[number];
+
+function raceForDistrict(jurisdictionType: string, districtNumber: number): VerifiedRace | null {
+  const normalizedDistrictNumber = String(districtNumber);
+  return VERIFIED_RACES.find((race) => race.jurisdictionType === jurisdictionType && race.districtNumber === normalizedDistrictNumber) ?? null;
 }
 
 export const Route = createFileRoute("/elections/districts/")({
