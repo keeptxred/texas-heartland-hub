@@ -47,7 +47,7 @@ const LOVABLE_CHAT_GATEWAY = "https://ai.gateway.lovable.dev/v1/chat/completions
 const LOVABLE_IMAGE_GATEWAY = "https://ai.gateway.lovable.dev/v1/images/generations";
 const GEMINI_INTERACTIONS = "https://generativelanguage.googleapis.com/v1beta/interactions";
 const GEMINI_IMAGE_MIME_TYPE = "image/jpeg";
-const CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.3-70b-instruct-fp8-fast";
+const CLOUDFLARE_TEXT_MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
 const nativeFetch = globalThis.fetch.bind(globalThis);
 let directAiFetchInstalled = false;
 
@@ -314,6 +314,11 @@ async function directCloudflareTextResponse(
     if (!response.ok || payload?.success === false) {
       const detail = payload?.errors?.map((error) => error.message).filter(Boolean).join("; ") || text.slice(0, 400);
       lastFailure = `Cloudflare Workers AI ${response.status}: ${detail}`;
+      const dailyQuotaExhausted =
+        response.status === 429 && /daily free allocation|used up.*neurons/i.test(detail);
+      if (dailyQuotaExhausted) {
+        return Response.json({ error: { message: lastFailure } }, { status: 429 });
+      }
       if (response.status >= 400 && response.status < 500 && response.status !== 408 && response.status !== 429) {
         return Response.json({ error: { message: lastFailure } }, { status: response.status || 502 });
       }
