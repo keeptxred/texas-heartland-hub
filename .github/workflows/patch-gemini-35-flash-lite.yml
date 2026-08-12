@@ -1,0 +1,31 @@
+name: Patch Gemini 3.5 Flash-Lite
+
+on:
+  push:
+    branches:
+      - agent/gemini-35-flash-lite
+    paths:
+      - scripts/patch-gemini-35-flash-lite.mjs
+      - .github/workflows/patch-gemini-35-flash-lite.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/gemini-35-flash-lite
+      - name: Apply model migration
+        run: node scripts/patch-gemini-35-flash-lite.mjs
+      - name: Commit model migration
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/server.ts src/routes/api/public/hooks/health.ts
+          git commit -m 'Move rewrites to Gemini 3.5 Flash-Lite'
+          git rm scripts/patch-gemini-35-flash-lite.mjs .github/workflows/patch-gemini-35-flash-lite.yml
+          git commit -m 'Remove one-time Gemini migration workflow'
+          git push origin HEAD:agent/gemini-35-flash-lite
