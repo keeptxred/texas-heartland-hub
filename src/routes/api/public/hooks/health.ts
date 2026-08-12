@@ -3,20 +3,20 @@ import { createClient } from "@supabase/supabase-js";
 
 function aiProviderState() {
   const ready = Boolean(
-    process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY || process.env.GOOGLE_AI_API_KEY,
+    process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CLOUDFLARE_API_TOKEN,
   );
   return {
-    ai_provider: ready ? "google-gemini-direct" : "unconfigured",
+    ai_provider: ready ? "cloudflare-workers-ai" : "unconfigured",
     ai_provider_ready: ready,
-    rewrite_provider: ready ? "google-gemini-direct" : "unconfigured",
+    rewrite_provider: ready ? "cloudflare-workers-ai" : "unconfigured",
     rewrite_provider_ready: ready,
-    rewrite_model: ready ? "gemini-3.1-flash-lite" : null,
-    image_provider: ready ? "google-gemini-direct" : "unconfigured",
+    rewrite_model: ready ? "@cf/meta/llama-3.3-70b-instruct-fp8-fast" : null,
+    image_provider: ready ? "cloudflare-workers-ai" : "unconfigured",
     image_provider_ready: ready,
-    image_model: ready ? (process.env.AI_IMAGE_MODEL || "gemini-3.1-flash-image") : null,
-    image_validation_model: ready ? (process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash") : null,
-    lovable_rewrite_bypassed: ready,
-    lovable_image_bypassed: ready,
+    image_model: ready ? "@cf/black-forest-labs/flux-1-schnell" : null,
+    image_validation_model: ready ? "@cf/meta/llama-3.2-11b-vision-instruct" : null,
+    lovable_rewrite_bypassed: true,
+    lovable_image_bypassed: true,
     lovable_ai_network_disabled: true,
     lovable_ai_fallback_allowed: false,
   };
@@ -70,7 +70,7 @@ export const Route = createFileRoute("/api/public/hooks/health")({
             Date.now() - Date.parse(latestPublishedAt) >= 24 * 60 * 60 * 1000);
 
         return Response.json({
-          status: dbOk && !publishingStalled ? "ok" : "degraded",
+          status: dbOk && !publishingStalled && ai.ai_provider_ready ? "ok" : "degraded",
           timestamp,
           database: dbOk ? "ok" : "error",
           articles_last_24h: dbOk ? (countRes.count ?? 0) : null,

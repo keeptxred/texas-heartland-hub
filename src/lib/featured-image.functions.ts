@@ -10,7 +10,7 @@ import { z } from "zod";
 import { extractEntities } from "@/lib/nlp";
 
 const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
-const CHAT_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const CLOUDFLARE_VISION_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
 const BUCKET = "article-images";
 const PURPLE_HEART_IMAGE_URL = "/images/military-honors/purple-heart.svg";
 
@@ -83,7 +83,6 @@ function sanitizeFilename(slug: string): string {
   );
 }
 
-/** Pull the first paragraph out of the article's body_json.intro (array of strings). */
 function firstParagraph(bodyJson: unknown): string {
   if (!bodyJson || typeof bodyJson !== "object") return "";
   const bj = bodyJson as { intro?: unknown; sections?: unknown };
@@ -154,9 +153,7 @@ function extractImageSubject(row: ArticleRow): SubjectExtract {
   const entities = extractEntities(haystack);
   const locations = [
     ...(row.affected_regions ?? []),
-    ...entities.filter((e) =>
-      /houston|dallas|austin|san antonio|fort worth|el paso|rio grande|texas/i.test(e),
-    ),
+    ...entities.filter((e) => /houston|dallas|austin|san antonio|fort worth|el paso|rio grande|texas/i.test(e)),
   ].filter((v, i, a) => a.indexOf(v) === i);
   const domain = inferDomain(haystack);
   const terms = topArticleTerms(haystack);
@@ -167,92 +164,78 @@ function extractImageSubject(row: ArticleRow): SubjectExtract {
 }
 
 const DOMAIN_STEER: Record<Domain, string> = {
-  wildlife:
-    "Depict the actual species named in the article in its natural habitat. Correct anatomy, natural lighting, water/land environment appropriate to the animal. No zoos, no cartoons.",
-  weather:
-    "Depict the actual weather phenomenon and its effect on the Texas landscape (flooded street, cracked drought soil, storm-damaged neighborhood, etc.).",
-  energy:
-    "Depict the actual energy infrastructure (oil pump jack, refinery, wind turbines, transmission lines, drilling rig) in a Texas setting.",
-  sports:
-    "Depict a game-day sports scene — stadium, playing field, generic athletic action — with no identifiable player faces, jerseys with names, or team logos.",
-  military:
-    "Depict the specific military honor, medal, installation, aircraft, personnel, or commemoration named by the story. When a medal or decoration is named, the medal itself must dominate the image. No identifiable faces, no unit insignia.",
-  education:
-    "Depict a school setting: classroom, hallway, playground, or campus exterior. No identifiable children's faces.",
-  health: "Depict a hospital or clinical setting relevant to the story. No identifiable patients or staff.",
+  wildlife: "Depict the actual species named in the article in its natural habitat. Correct anatomy, natural lighting, water/land environment appropriate to the animal. No zoos, no cartoons.",
+  weather: "Depict the actual weather phenomenon and its effect on the Texas landscape (flooded street, cracked drought soil, storm-damaged neighborhood, etc.).",
+  energy: "Depict the actual energy infrastructure (oil pump jack, refinery, wind turbines, transmission lines, drilling rig) in a Texas setting.",
+  sports: "Depict a game-day sports scene — stadium, playing field, generic athletic action — with no identifiable player faces, jerseys with names, or team logos.",
+  military: "Depict the specific military honor, medal, installation, aircraft, personnel, or commemoration named by the story. When a medal or decoration is named, the medal itself must dominate the image. No identifiable faces, no unit insignia.",
+  education: "Depict a school setting: classroom, hallway, playground, or campus exterior. No identifiable children's faces.",
+  health: "Depict a believable hospital, campus, construction, or clinical-facility setting relevant to the story. No identifiable patients or staff and no generic medical-symbol placeholder.",
   transportation: "Depict the actual road, highway, airport, or transit infrastructure described.",
   housing: "Depict Texas neighborhoods, homes, or construction — the real subject, not stock finance imagery.",
   border: "Depict the border landscape, river, or fence line. No identifiable faces.",
-  business:
-    "Depict the actual industry or facility described (factory floor, film set, storefront). No branded signage.",
-  politics:
-    "Depict the government setting the story is about only when the article is explicitly about the legislature, capitol, or a named official. Otherwise depict the policy's real-world effect.",
+  business: "Depict the actual industry or facility described (factory floor, film set, storefront). No branded signage.",
+  politics: "Depict a realistic government setting only when the article is explicitly about that setting; otherwise depict the policy's real-world effect rather than abstract symbols.",
   culture: "Depict the cultural scene or event described.",
-  general:
-    "Depict a specific, believable real-world Texas scene tied directly to the article's subject.",
+  general: "Depict a specific, believable real-world Texas scene tied directly to the article's subject.",
 };
 
-export function buildImagePrompt(
-  subject: SubjectExtract,
-  extraGuidance = "",
-): string {
+export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): string {
   const t = `${subject.title} ${subject.firstParagraph}`;
-  const capitolAllowed =
-    /capitol|legislature|governor|abbott|patrick|session|state house|state senate/i.test(t);
+  const capitolAllowed = /capitol|legislature|governor|abbott|patrick|session|state house|state senate/i.test(t);
   const flagAllowed = /flag|patriot|independence|texas day/i.test(t);
-  const newsroomAllowed =
-    /newspaper|journalism|reporter|press freedom|media industry|newsroom/i.test(t);
+  const newsroomAllowed = /newspaper|journalism|reporter|press freedom|media industry|newsroom/i.test(t);
 
   const avoid = [
+    "no illustration",
+    "no vector art",
+    "no infographic",
+    "no collage",
+    "no split screen",
+    "no poster",
+    "no headline text",
+    "no captions",
+    "no watermarks",
+    "no decorative typography",
+    "no fake UI",
+    "no icons",
+    "no clip art",
+    "no simplified geometric shapes",
+    "no generic symbolic placeholder image",
     "no logos of any kind",
     "no brand names or trademarks",
-    "no political party symbols (elephants, donkeys, MAGA, campaign signs)",
+    "no political party symbols",
     "no copyrighted characters or celebrities",
-    "no text, letters, watermarks, or captions anywhere in the image",
-    "no AI hands with extra fingers, no distorted anatomy",
-    !newsroomAllowed
-      ? "absolutely no newspapers, no stacks of paper, no printing presses, no reporters, no microphones, no press conferences, no news anchor desks, no TV studios, no laptops or computers, no generic office or desk scenes, no 'breaking news' graphics"
-      : "",
-    !capitolAllowed
-      ? "avoid the Texas State Capitol dome and generic government-building shots"
-      : "",
+    "no AI hands with extra fingers and no distorted anatomy",
+    !newsroomAllowed ? "no generic newsroom, newspaper, microphone, TV studio, laptop, office, or breaking-news graphic" : "",
+    !capitolAllowed ? "avoid the Texas State Capitol dome and generic government-building shots" : "",
     !flagAllowed ? "avoid generic Texas or American flag imagery" : "",
-  ]
-    .filter(Boolean)
-    .join("; ");
+  ].filter(Boolean).join("; ");
 
-  const style =
-    "Professional editorial photography, natural lighting, realistic composition, cinematic depth of field, muted editorial color palette with warm Texas tones. OUTPUT REQUIREMENTS: landscape JPEG, exactly 16:9, provider 1K size (approximately 1024 by 576 pixels), sRGB color, no transparency, target file size under 2 MB and never over 4 MB. Do not generate a square, portrait, 2K, or 4K image.";
   const loc = subject.locations.slice(0, 2).join(", ");
-
   return [
-    `Create a specific featured image for this exact article, not a generic news illustration. Ignore broad categories such as news, politics, non-political, or business unless they are the literal topic.`,
+    "Create a single photorealistic 16:9 editorial news photograph for this exact article.",
     `PRIMARY SUBJECT (must be clearly the main focus of the image): ${subject.concreteSubject}`,
-    loc ? `Location context: ${loc}, Texas.` : "",
+    loc ? `Location context: ${loc}, Texas.` : "Use believable Texas surroundings where relevant.",
     DOMAIN_STEER[subject.domain],
-    `The image must visually depict the primary subject above — a viewer glancing at the image should immediately understand it is about this specific story, not a generic news topic.`,
-    `Do not use symbolic substitutes when the story names a concrete thing. If the article names an animal, species, location, facility, road, storm, event, or object, that concrete thing must dominate the image.`,
-    `If people appear, show anonymous everyday Texans from behind or in silhouette, faces obscured or out of frame. Do not depict identifiable real politicians or celebrities.`,
-    style,
+    "Require realistic professional news/editorial photography, natural lighting, realistic materials and textures, believable scale and perspective, and one coherent scene.",
+    "The viewer should immediately understand the concrete subject of this specific story. Do not substitute abstract symbolism for a named place, object, event, facility, industry, weather condition, business, or issue.",
+    "If people appear, use anonymous everyday Texans from behind, in silhouette, or with faces out of frame unless a properly licensed official photograph is deliberately being used. Do not fabricate a recognizable real person's face.",
+    "Output a landscape JPEG in 16:9, sRGB, no transparency, approximately 1024 by 576 pixels, under 4 MB.",
     `Strict rules: ${avoid}.`,
     extraGuidance,
-  ]
-    .filter(Boolean)
-    .join(" ");
+  ].filter(Boolean).join(" ");
 }
 
 export function buildAltText(a: { title: string; category?: string | null }): string {
   const cat = a.category ? ` — ${a.category}` : "";
-  return `Editorial illustration for Keep TX Red news article: ${a.title}${cat}`;
+  return `Editorial news photograph for Keep TX Red article: ${a.title}${cat}`;
 }
 
 function staticFeaturedImage(row: ArticleRow): { url: string; alt: string } | null {
   const subject = `${row.title} ${row.seo_headline ?? ""} ${row.dek ?? ""}`;
   if (/\bpurple heart\b/i.test(subject)) {
-    return {
-      url: PURPLE_HEART_IMAGE_URL,
-      alt: `Purple Heart medal — ${row.title}`,
-    };
+    return { url: PURPLE_HEART_IMAGE_URL, alt: `Purple Heart medal — ${row.title}` };
   }
   return null;
 }
@@ -264,115 +247,83 @@ function base64ToBytes(b64: string): Uint8Array {
   return bytes;
 }
 
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+function cloudflareEndpoint(accountId: string, model: string): string {
+  return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
+}
+
 async function generateImageBytes(prompt: string): Promise<Uint8Array> {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
-  if (!accountId || !apiToken) {
-    throw new Error(
-      "Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required",
-    );
-  }
+  if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${CLOUDFLARE_IMAGE_MODEL}`;
-  const res = await fetch(endpoint, {
+  const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_IMAGE_MODEL), {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiToken}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      prompt: prompt.slice(0, 2048),
-      steps: 4,
-      seed: Math.floor(Math.random() * 2_147_483_647),
-    }),
+    headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: prompt.slice(0, 2048), steps: 4, seed: Math.floor(Math.random() * 2_147_483_647) }),
   });
 
   const raw = await res.text().catch(() => "");
-  let json: {
-    success?: boolean;
-    result?: { image?: string };
-    image?: string;
-    errors?: { message?: string }[];
-    error?: { message?: string };
-  } = {};
-  try {
-    json = raw ? JSON.parse(raw) : {};
-  } catch {
-    throw new Error(
-      `Cloudflare Workers AI returned a non-JSON response: ${raw.slice(0, 400)}`,
-    );
-  }
-
+  let json: { success?: boolean; result?: { image?: string }; image?: string; errors?: { message?: string }[]; error?: { message?: string } } = {};
+  try { json = raw ? JSON.parse(raw) : {}; } catch { throw new Error(`Cloudflare Workers AI returned a non-JSON response: ${raw.slice(0, 400)}`); }
   if (!res.ok || json.success === false) {
-    const detail =
-      json.errors?.[0]?.message ||
-      json.error?.message ||
-      raw ||
-      `HTTP ${res.status}`;
-    throw new Error(
-      `Cloudflare Workers AI ${res.status}: ${String(detail).slice(0, 400)}`,
-    );
+    const detail = json.errors?.[0]?.message || json.error?.message || raw || `HTTP ${res.status}`;
+    throw new Error(`Cloudflare Workers AI ${res.status}: ${String(detail).slice(0, 400)}`);
   }
-
   const b64 = json.result?.image || json.image;
   if (!b64) throw new Error("Cloudflare Workers AI returned no image data");
   return base64ToBytes(b64);
 }
 
-async function validateImageMatchesArticle(
-  bytes: Uint8Array,
-  subject: SubjectExtract,
-): Promise<{ matches: boolean; reason: string }> {
-  const key = process.env.LOVABLE_API_KEY;
-  if (!key) return { matches: true, reason: "validator skipped: no api key" };
+async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectExtract): Promise<{ matches: boolean; reason: string }> {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  if (!accountId || !apiToken) return { matches: false, reason: "Cloudflare vision validator unavailable: missing credentials" };
   try {
-    let b64 = "";
-    const chunk = 0x8000;
-    for (let i = 0; i < bytes.length; i += chunk) {
-      b64 += String.fromCharCode(...bytes.subarray(i, i + chunk));
-    }
-    b64 = btoa(b64);
-    const res = await fetch(CHAT_URL, {
+    const image = `data:image/jpeg;base64,${bytesToBase64(bytes)}`;
+    const validationPrompt = [
+      `Article title: "${subject.title}"`,
+      `Primary subject: ${subject.concreteSubject}`,
+      "Return strict JSON only: {\"matches\":boolean,\"photorealistic\":boolean,\"reason\":\"short sentence\"}.",
+      "matches=false if the scene does not clearly depict the primary subject or is generic news symbolism.",
+      "photorealistic=false if it looks illustrated, vector-like, cartoon-like, poster-like, icon-based, diagrammatic, collage-like, flat, synthetic-placeholder-like, or contains prominent generated text/signage.",
+      "Both values should be true only for a believable professional editorial news photograph tied directly to this story.",
+    ].join("\n");
+    const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_VISION_MODEL), {
       method: "POST",
-      headers: { Authorization: `Bearer ${key}`, "Lovable-API-Key": key, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
         messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text:
-                  `You are validating a featured image for a news article.\n` +
-                  `Article title: "${subject.title}"\n` +
-                  `Primary subject to depict: ${subject.concreteSubject}\n\n` +
-                  `Look at the image and answer strict JSON only (no code fences):\n` +
-                  `{"matches": boolean, "reason": "one short sentence"}\n\n` +
-                  `matches=false if the image is generic news imagery (newspapers, reporters, microphones, laptops, offices, "breaking news" graphics) unless the article is literally about journalism.\n` +
-                  `matches=false if the image does not clearly depict the primary subject above.\n` +
-                  `matches=true only if a reader would immediately recognize the image is about the primary subject.`,
-              },
-              { type: "image_url", image_url: { url: `data:image/jpeg;base64,${b64}` } },
-            ],
-          },
+          { role: "system", content: "You are a strict editorial photo quality-control reviewer." },
+          { role: "user", content: validationPrompt },
         ],
+        image,
+        max_tokens: 160,
+        temperature: 0,
       }),
     });
-    if (!res.ok) return { matches: true, reason: `validator http ${res.status}` };
-    const json = (await res.json()) as {
-      choices?: { message?: { content?: string } }[];
-    };
-    const raw = json.choices?.[0]?.message?.content ?? "";
-    const m = raw.match(/\{[\s\S]*\}/);
-    if (!m) return { matches: true, reason: "validator returned no json" };
-    const parsed = JSON.parse(m[0]) as { matches?: boolean; reason?: string };
-    return {
-      matches: parsed.matches !== false,
-      reason: String(parsed.reason ?? "").slice(0, 300),
-    };
+    const raw = await res.text().catch(() => "");
+    let json: { success?: boolean; result?: { response?: string } | string; errors?: { message?: string }[] } = {};
+    try { json = raw ? JSON.parse(raw) : {}; } catch { return { matches: false, reason: `Cloudflare vision returned non-JSON HTTP payload ${res.status}` }; }
+    if (!res.ok || json.success === false) {
+      return { matches: false, reason: `Cloudflare vision HTTP ${res.status}: ${json.errors?.[0]?.message || raw.slice(0, 180)}` };
+    }
+    const output = typeof json.result === "string" ? json.result : json.result?.response ?? "";
+    const m = output.match(/\{[\s\S]*\}/);
+    if (!m) return { matches: false, reason: "Cloudflare vision validator returned no JSON verdict" };
+    const parsed = JSON.parse(m[0]) as { matches?: boolean; photorealistic?: boolean; reason?: string };
+    const ok = parsed.matches === true && parsed.photorealistic === true;
+    return { matches: ok, reason: String(parsed.reason ?? (ok ? "story match and photorealism passed" : "quality gate failed")).slice(0, 300) };
   } catch (e) {
-    return { matches: true, reason: `validator error: ${(e as Error).message}` };
+    return { matches: false, reason: `Cloudflare vision validator error: ${(e as Error).message}` };
   }
 }
 
@@ -381,175 +332,99 @@ async function serviceClient() {
   return supabaseAdmin;
 }
 
-async function generateAndStore(
-  row: ArticleRow,
-  opts: { overwrite?: boolean } = {},
-): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
+async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } = {}): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
   const supabase = await serviceClient();
-
   const staticImage = staticFeaturedImage(row);
   if (staticImage) {
-    await supabase
-      .from("daily_articles")
-      .update({
-        featured_image_url: staticImage.url,
-        image_alt_text: staticImage.alt,
-        image_generation_status: "ready",
-        image_prompt: null,
-        image_validation_note: "static military-honor asset",
-      })
-      .eq("slug", row.slug);
+    await supabase.from("daily_articles").update({
+      featured_image_url: staticImage.url,
+      image_alt_text: staticImage.alt,
+      image_generation_status: "ready",
+      image_prompt: null,
+      image_validation_note: "static military-honor asset",
+    }).eq("slug", row.slug);
     return { ok: true, url: staticImage.url, alt: staticImage.alt };
   }
-
-  if (!opts.overwrite && row.featured_image_url) {
-    return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
-  }
+  if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
 
   const subject = extractImageSubject(row);
   const prompt = buildImagePrompt(subject);
   const alt = buildAltText(row);
   const filename = `${sanitizeFilename(row.slug)}.jpg`;
-
-  await supabase
-    .from("daily_articles")
-    .update({ image_generation_status: "generating", image_prompt: prompt })
-    .eq("slug", row.slug);
+  await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
 
   try {
     let bytes = await generateImageBytes(prompt);
     let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
     for (let attempt = 1; !verdict.matches && attempt <= 2; attempt += 1) {
-      const stronger = buildImagePrompt(
-        subject,
-        `PREVIOUS ATTEMPT FAILED VALIDATION because: "${verdict.reason}". You MUST fix this. Depict the primary subject literally and specifically. Do not include anything the validator flagged. Reject generic news symbolism completely.`,
-      );
+      const stronger = buildImagePrompt(subject, `PREVIOUS ATTEMPT FAILED CLOUDFLARE VISION VALIDATION because: "${verdict.reason}". Fix the failure. Depict the primary subject literally and specifically as a photorealistic editorial photograph.`);
       usedPrompt = stronger;
-      const retryBytes = await generateImageBytes(stronger);
-      const retryVerdict = await validateImageMatchesArticle(retryBytes, subject);
-      bytes = retryBytes;
-      verdict = retryVerdict;
+      bytes = await generateImageBytes(stronger);
+      verdict = await validateImageMatchesArticle(bytes, subject);
     }
-    if (!verdict.matches) {
-      throw new Error(`Generated image failed story-match validation: ${verdict.reason}`);
-    }
-    const path = filename;
-    const { error: upErr } = await supabase.storage
-      .from(BUCKET)
-      .upload(path, bytes, {
-        contentType: "image/jpeg",
-        cacheControl: "public, max-age=31536000, immutable",
-        upsert: true,
-      });
+    if (!verdict.matches) throw new Error(`Generated image failed Cloudflare story-match/photorealism validation: ${verdict.reason}`);
+
+    const { error: upErr } = await supabase.storage.from(BUCKET).upload(filename, bytes, {
+      contentType: "image/jpeg",
+      cacheControl: "public, max-age=31536000, immutable",
+      upsert: true,
+    });
     if (upErr) throw upErr;
-
     const url = `/api/public/article-image/${filename}`;
-
-    await supabase
-      .from("daily_articles")
-      .update({
-        featured_image_url: url,
-        image_alt_text: alt,
-        image_generation_status: "ready",
-        image_prompt: usedPrompt,
-        image_validation_note: `${verdict.matches ? "ok" : "weak"}: ${verdict.reason}`,
-      })
-      .eq("slug", row.slug);
-
+    await supabase.from("daily_articles").update({
+      featured_image_url: url,
+      image_alt_text: alt,
+      image_generation_status: "ready",
+      image_prompt: usedPrompt,
+      image_validation_note: `cloudflare-vision ok: ${verdict.reason}`,
+    }).eq("slug", row.slug);
     return { ok: true, url, alt };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await supabase
-      .from("daily_articles")
-      .update({ image_generation_status: "failed" })
-      .eq("slug", row.slug);
+    await supabase.from("daily_articles").update({ image_generation_status: "failed" }).eq("slug", row.slug);
     return { ok: false, error: msg };
   }
 }
 
-const SELECT_COLS =
-  "slug,title,dek,category,keywords,seo_keywords,affected_regions,seo_headline,discover_category,texas_impact_summary,featured_image_url,image_generation_status,body_json";
+const SELECT_COLS = "slug,title,dek,category,keywords,seo_keywords,affected_regions,seo_headline,discover_category,texas_impact_summary,featured_image_url,image_generation_status,body_json";
 
 export const generateFeaturedImageForSlug = createServerFn({ method: "POST" })
-  .validator((d) =>
-    z
-      .object({ slug: z.string().min(1).max(200), overwrite: z.boolean().optional() })
-      .parse(d),
-  )
+  .validator((d) => z.object({ slug: z.string().min(1).max(200), overwrite: z.boolean().optional() }).parse(d))
   .handler(async ({ data }) => {
     const supabase = await serviceClient();
-    const { data: row, error } = await supabase
-      .from("daily_articles")
-      .select(SELECT_COLS)
-      .eq("slug", data.slug)
-      .maybeSingle();
+    const { data: row, error } = await supabase.from("daily_articles").select(SELECT_COLS).eq("slug", data.slug).maybeSingle();
     if (error || !row) return { ok: false as const, error: "Article not found" };
     return generateAndStore(row as ArticleRow, { overwrite: !!data.overwrite });
   });
 
-export async function generateFeaturedImageForSlugDirect(
-  slug: string,
-  overwrite = false,
-): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
+export async function generateFeaturedImageForSlugDirect(slug: string, overwrite = false): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
   const supabase = await serviceClient();
-  const { data: row, error } = await supabase
-    .from("daily_articles")
-    .select(SELECT_COLS)
-    .eq("slug", slug)
-    .maybeSingle();
+  const { data: row, error } = await supabase.from("daily_articles").select(SELECT_COLS).eq("slug", slug).maybeSingle();
   if (error || !row) return { ok: false, error: "Article not found" };
   return generateAndStore(row as ArticleRow, { overwrite });
 }
 
 export const regenerateFeaturedImage = createServerFn({ method: "POST" })
-  .validator((d) =>
-    z.object({ slug: z.string().min(1).max(200), token: z.string().min(1) }).parse(d),
-  )
+  .validator((d) => z.object({ slug: z.string().min(1).max(200), token: z.string().min(1) }).parse(d))
   .handler(async ({ data }) => {
     const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
     if (data.token !== expected) return { ok: false as const, error: "Unauthorized" };
     const supabase = await serviceClient();
-    const { data: row, error } = await supabase
-      .from("daily_articles")
-      .select(SELECT_COLS)
-      .eq("slug", data.slug)
-      .maybeSingle();
+    const { data: row, error } = await supabase.from("daily_articles").select(SELECT_COLS).eq("slug", data.slug).maybeSingle();
     if (error || !row) return { ok: false as const, error: "Article not found" };
     return generateAndStore(row as ArticleRow, { overwrite: true });
   });
 
-export async function backfillBatch(
-  limit = 5,
-  overwrite = false,
-): Promise<{
-  processed: number;
-  ok: number;
-  failed: number;
-  results: { slug: string; ok: boolean; error?: string }[];
-}> {
+export async function backfillBatch(limit = 5, overwrite = false): Promise<{ processed: number; ok: number; failed: number; results: { slug: string; ok: boolean; error?: string }[] }> {
   const supabase = await serviceClient();
-  let q = supabase
-    .from("daily_articles")
-    .select(SELECT_COLS)
-    .neq("image_generation_status", "generating")
-    .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"])
-    .order("published_at", { ascending: false })
-    .limit(limit);
-  if (!overwrite) {
-    q = q.is("featured_image_url", null).in("image_generation_status", ["pending", "failed"]);
-  }
+  let q = supabase.from("daily_articles").select(SELECT_COLS).neq("image_generation_status", "generating").in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba"]).order("published_at", { ascending: false }).limit(limit);
+  if (!overwrite) q = q.is("featured_image_url", null).in("image_generation_status", ["pending", "failed"]);
   const { data: rows } = await q;
-
   const results: { slug: string; ok: boolean; error?: string }[] = [];
   for (const row of (rows ?? []) as ArticleRow[]) {
     const r = await generateAndStore(row, { overwrite });
     results.push({ slug: row.slug, ok: r.ok, error: r.ok ? undefined : r.error });
   }
-  return {
-    processed: results.length,
-    ok: results.filter((r) => r.ok).length,
-    failed: results.filter((r) => !r.ok).length,
-    results,
-  };
+  return { processed: results.length, ok: results.filter((r) => r.ok).length, failed: results.filter((r) => !r.ok).length, results };
 }
