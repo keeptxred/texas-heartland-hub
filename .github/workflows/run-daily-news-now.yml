@@ -1,6 +1,6 @@
 name: Run Daily News Now
 
-# Production publisher smoke trigger: stable project preview origin bypasses primary-domain redirects.
+# Production publisher: per-offset generate-news calls on the custom domain.
 on:
   push:
     branches: [main]
@@ -14,28 +14,60 @@ permissions:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 45
     steps:
-      - name: Invoke production daily news publisher
+      - name: Invoke production daily news publisher (one ranked story per request)
         shell: bash
         run: |
           set -euo pipefail
-          endpoint='https://id-preview--eabc624d-53f7-4564-8bf9-613c4b63a016.lovable.app/api/public/hooks/run-generate-news'
-          for attempt in $(seq 1 4); do
-            echo "Publish attempt ${attempt}/4"
-            status=$(curl -sS -o /tmp/publish.json -w '%{http_code}' --max-time 180 "$endpoint" || true)
-            cat /tmp/publish.json 2>/dev/null || true
-            echo
-            if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
-              echo 'DAILY_NEWS_PUBLISH_SUCCESS'
-              exit 0
-            fi
-            if grep -Eqi 'daily free allocation|used up.*neurons|prepayment credits are depleted|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
-              echo 'AI provider quota or credit allocation is exhausted; stop retrying to avoid waste.'
-              exit 1
-            fi
-            echo "Publisher not ready or failed (HTTP $status)."
-            sleep 15
+          base='https://keeptxred.com/api/public/hooks/generate-news'
+          failed=()
+          for offset in $(seq 0 9); do
+            result='unknown'
+            for attempt in 1 2; do
+              status=$(curl -sS -X POST -o /tmp/publish.json -w '%{http_code}' \
+                --max-time 95 -H 'accept: application/json' \
+                "${base}?offset=${offset}&limit=1" || echo 000)
+
+              if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
+                echo "offset=${offset} QUOTA_EXHAUSTED"
+                cat /tmp/publish.json || true
+                echo
+                echo 'Cloudflare Workers AI daily allocation exhausted; stopping to avoid waste.'
+                exit 1
+              fi
+
+              if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
+                if jq -e '.no_items == true' /tmp/publish.json >/dev/null 2>&1; then
+                  result="ok(no-items)"
+                else
+                  result="ok(inserted=$(jq -r '.inserted // 0' /tmp/publish.json))"
+                fi
+                break
+              fi
+
+              # Benign no-item / duplicate-only outcomes are nonfatal.
+              if [[ "$status" == "200" ]] && grep -Eqi 'No items met the publish threshold|duplicate' /tmp/publish.json 2>/dev/null; then
+                result='ok(benign-skip)'
+                break
+              fi
+
+              if [[ "$status" == "000" || "$status" =~ ^5 ]]; then
+                result="retryable(HTTP ${status})"
+                [[ "$attempt" -lt 2 ]] && sleep 10 && continue
+                break
+              fi
+
+              result="failed(HTTP ${status}: $(head -c 200 /tmp/publish.json | tr -d '\n'))"
+              break
+            done
+
+            echo "offset=${offset} -> ${result}"
+            [[ "$result" == ok* ]] || failed+=("${offset}:${result}")
           done
-          echo 'DAILY_NEWS_PUBLISH_FAILED'
-          exit 1
+
+          if [[ ${#failed[@]} -gt 0 ]]; then
+            echo "DAILY_NEWS_PUBLISH_FAILED offsets: ${failed[*]}"
+            exit 1
+          fi
+          echo 'DAILY_NEWS_PUBLISH_SUCCESS'
