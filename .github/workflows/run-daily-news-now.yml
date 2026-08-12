@@ -1,6 +1,6 @@
 name: Run Daily News Now
 
-# Production publisher: per-offset generate-news calls on the custom domain.
+# Production publisher: per-offset generate-news calls on the custom domain. Trigger 2026-08-12 18:18 CT.
 on:
   push:
     branches: [main]
