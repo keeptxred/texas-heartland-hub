@@ -12,10 +12,6 @@ import {
 
 type NewsSection = { heading: string; paragraphs: string[] };
 
-function wordCount(text: string): number {
-  return text.trim().split(/\s+/).filter(Boolean).length;
-}
-
 function articleBodyText(body: {
   intro: string[];
   sections: { heading?: string; paragraphs?: string[]; bullets?: string[] }[];
@@ -101,21 +97,12 @@ function parseRss(xml: string, source: string, sourceCategory: string): RssItem[
   return items;
 }
 
-// ── Breaking News Priority Engine ─────────────────────────────────────────
-// Scores a raw RSS item before it's ever sent to the rewriter. Items below
-// the publish threshold are discarded; items above the breaking threshold
-// get the BREAKING badge on the homepage.
 const TEXAS_KEYWORDS = ["texas", "lone star", "ercot", "txdot", "rgv", "permian"];
 const METRO_KEYWORDS = ["houston", "harris county", "katy", "sugar land", "cypress", "the woodlands"];
 const POLITICS_KEYWORDS = ["legislature", "governor", "abbott", "paxton", "patrick", "senate", "house bill", "sb ", "hb ", "capitol", "election", "vote", "ballot", "campaign"];
 const BREAKING_KEYWORDS = ["breaking", "shooting", "killed", "arrested", "explosion", "tornado", "hurricane", "flood", "emergency", "evacuation", "manhunt", "amber alert", "indicted", "resign"];
 const ENGAGEMENT_KEYWORDS = ["exclusive", "revealed", "what we know", "first on", "investigation", "leaked", "exposes", "warns"];
 
-// Hard disqualifiers — content shapes that must NEVER be tagged breaking,
-// regardless of raw keyword score. Covers Reddit-style help posts, personal
-// experiences, listicles, travel/restaurant guides, opinion threads, and
-// evergreen explainers. Genuine news (politics, public safety, weather
-// emergencies, court rulings, elections, major business/sports) is unaffected.
 const NON_BREAKING_TITLE_PATTERNS: RegExp[] = [
   /^\s*(looking for|anyone (?:know|have|tried)|recommend|recommendations?|suggestions?|advice|help|where (?:can|do|to)|how (?:do|to|can)|what(?:'s| is) the best|best way to|has anyone|is there|question:|discussion:|thoughts on)\b/i,
   /\b(my|our) (?:experience|story|take|journey|trip)\b/i,
@@ -128,9 +115,6 @@ const NON_BREAKING_TITLE_PATTERNS: RegExp[] = [
   /\b(house call|mobile (?:vet|veterinar)|pet sitter|babysitter|handyman|plumber|electrician|contractor|realtor)\b/i,
 ];
 
-// Sources that are structurally discussion/personal-experience venues.
-// Anything from these is disqualified from breaking even if the neutralized
-// headline picks up an incidental keyword.
 const NON_BREAKING_SOURCE_PATTERNS: RegExp[] = [
   /^r\//i,
   /reddit/i,
@@ -145,10 +129,6 @@ const NON_BREAKING_SOURCE_PATTERNS: RegExp[] = [
   /culture/i,
 ];
 
-// Positive signal required for a breaking classification: a real news verb
-// or a hard-news noun tied to Texas government / public safety / markets.
-// Without at least one of these, we don't upgrade to breaking even if the
-// score crosses the threshold via generic Texas/metro weight alone.
 const HARD_NEWS_SIGNAL =
   /\b(breaking|shooting|killed|arrested|explosion|tornado|hurricane|flood|emergency|evacuation|manhunt|amber alert|indicted|resign|signs|declares|announces|ruling|verdict|convicted|charged|sues|lawsuit|veto|vetoes|appoints|passes|approves|filed|election|ballot|primary|runoff|governor|legislature|senate bill|house bill|\bsb\s?\d|\bhb\s?\d|paxton|abbott|patrick|cornyn|cruz|border|ercot|grid|recall|impeach|storm|wildfire|evacuat|acquires|merger|ipo|championship|traded|signs deal|hired|fired)\b/i;
 
@@ -228,6 +208,66 @@ async function fetchWithTimeout(url: string, ms = 10000): Promise<string | null>
   } catch {
     return null;
   }
+}
+
+type RewrittenArticle = {
+  brief?: StoryBrief;
+  source_index: number;
+  category: string;
+  title: string;
+  dek: string;
+  summary?: string;
+  relevance?: string;
+  sections?: NewsSection[];
+  keyTakeaways?: string[];
+  faq?: { q: string; a: string }[];
+};
+
+function isQuotaOrRateLimitError(error: unknown): boolean {
+  const message = String(error).toLowerCase();
+  return (
+    message.includes("429") ||
+    message.includes("quota") ||
+    message.includes("rate limit") ||
+    message.includes("rate_limit") ||
+    message.includes("daily limit") ||
+    message.includes("allocation") ||
+    message.includes("neurons")
+  );
+}
+
+function jsonCandidates(content: string): string[] {
+  const trimmed = content.trim();
+  const candidates = new Set<string>();
+  if (trimmed) candidates.add(trimmed);
+
+  const unfenced = trimmed
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim();
+  if (unfenced) candidates.add(unfenced);
+
+  const firstBrace = unfenced.indexOf("{");
+  const lastBrace = unfenced.lastIndexOf("}");
+  if (firstBrace >= 0 && lastBrace > firstBrace) {
+    candidates.add(unfenced.slice(firstBrace, lastBrace + 1));
+  }
+
+  return [...candidates];
+}
+
+function parseAiArticles(content: string): RewrittenArticle[] {
+  let lastError: unknown;
+  for (const candidate of jsonCandidates(content)) {
+    try {
+      const parsed = JSON.parse(candidate) as { articles?: unknown };
+      if (!Array.isArray(parsed?.articles)) continue;
+      return parsed.articles.filter((article): article is RewrittenArticle => Boolean(article && typeof article === "object"));
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw new Error(`AI returned malformed JSON: ${String(lastError ?? "no articles array")}`);
 }
 
 async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {
@@ -337,12 +377,7 @@ CATEGORY CLASSIFICATION RULES (strict):
                     type: "array",
                     minItems: 4,
                     maxItems: 6,
-                    items: {
-                      type: "object",
-                      additionalProperties: false,
-                      properties: { q: { type: "string" }, a: { type: "string" } },
-                      required: ["q", "a"],
-                    },
+                    items: { type: "object", additionalProperties: false, properties: { q: { type: "string" }, a: { type: "string" } }, required: ["q", "a"] },
                   },
                 },
                 required: ["brief", "source_index", "category", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
@@ -362,24 +397,12 @@ CATEGORY CLASSIFICATION RULES (strict):
   }
 
   const data = (await r.json()) as { choices?: { message?: { content?: string } }[] };
-  const content = data.choices?.[0]?.message?.content ?? "{}";
-  const parsed = JSON.parse(content) as {
-    articles?: {
-      brief?: StoryBrief;
-      source_index: number;
-      category: string;
-      title: string;
-      dek: string;
-      summary?: string;
-      relevance?: string;
-      keyTakeaways?: string[];
-      faq?: { q: string; a: string }[];
-    }[];
-  };
-  const raw = parsed.articles ?? [];
-  const kept: typeof raw = [];
+  const content = data.choices?.[0]?.message?.content ?? "";
+  const raw = parseAiArticles(content);
+  const kept: RewrittenArticle[] = [];
   for (const a of raw) {
     if (a?.brief?.hasClearNewsEvent === false) continue;
+    if (!Number.isInteger(a.source_index) || a.source_index < 1 || a.source_index > items.length) continue;
     const source = items[a.source_index - 1];
     const sourceText = source ? `${source.title} ${source.description}` : undefined;
     const v = validateArticle(
@@ -388,7 +411,7 @@ CATEGORY CLASSIFICATION RULES (strict):
         dek: a.dek,
         summary: a.summary,
         relevance: a.relevance,
-        sections: (a as { sections?: NewsSection[] }).sections,
+        sections: a.sections,
         faq: a.faq,
         keyTakeaways: a.keyTakeaways,
       },
@@ -396,10 +419,7 @@ CATEGORY CLASSIFICATION RULES (strict):
       sourceText,
     );
     if (!v.ok) {
-      console.warn("[generate-news] editorial validation dropped article", {
-        title: a.title,
-        reasons: v.reasons,
-      });
+      console.warn("[generate-news] editorial validation dropped article", { title: a.title, reasons: v.reasons });
       continue;
     }
     kept.push(a);
@@ -409,14 +429,29 @@ CATEGORY CLASSIFICATION RULES (strict):
 
 async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
   const selected = items.slice(0, 10);
-  const combined: Awaited<ReturnType<typeof rewriteBatchWithAi>> = [];
+  const combined: RewrittenArticle[] = [];
 
   for (let offset = 0; offset < selected.length; offset += 3) {
     const batch = selected.slice(offset, offset + 3);
-    const rewritten = await rewriteBatchWithAi(batch, lovableApiKey);
-    for (const article of rewritten) {
-      if (article.source_index < 1 || article.source_index > batch.length) continue;
-      combined.push({ ...article, source_index: article.source_index + offset });
+    try {
+      const rewritten = await rewriteBatchWithAi(batch, lovableApiKey);
+      for (const article of rewritten) {
+        if (article.source_index < 1 || article.source_index > batch.length) continue;
+        combined.push({ ...article, source_index: article.source_index + offset });
+      }
+    } catch (batchError) {
+      if (isQuotaOrRateLimitError(batchError)) throw batchError;
+      console.warn("[generate-news] batch rewrite failed; retrying stories individually", { offset, size: batch.length, error: String(batchError) });
+      for (let index = 0; index < batch.length; index += 1) {
+        try {
+          const recovered = await rewriteBatchWithAi([batch[index]], lovableApiKey);
+          const article = recovered.find((candidate) => candidate.source_index === 1);
+          if (article) combined.push({ ...article, source_index: offset + index + 1 });
+        } catch (storyError) {
+          if (isQuotaOrRateLimitError(storyError)) throw storyError;
+          console.warn("[generate-news] individual story rewrite skipped after one recovery attempt", { sourceIndex: offset + index + 1, title: batch[index].title, error: String(storyError) });
+        }
+      }
     }
   }
 
@@ -451,17 +486,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           return Response.json({ error: "No items met the publish threshold" }, { status: 200 });
         }
 
-        let rewritten: {
-          source_index: number;
-          category: string;
-          title: string;
-          dek: string;
-          summary?: string;
-          relevance?: string;
-          sections?: NewsSection[];
-          keyTakeaways?: string[];
-          faq?: { q: string; a: string }[];
-        }[];
+        let rewritten: RewrittenArticle[];
         try {
           rewritten = await rewriteWithAi(items, lovableApiKey);
         } catch (err) {
@@ -500,9 +525,7 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               sections: [
                 { heading: "Texas relevance", paragraphs: [a.relevance!.trim()] },
                 ...(Array.isArray(a.sections)
-                  ? a.sections
-                      .filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0)
-                      .slice(0, 10)
+                  ? a.sections.filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0).slice(0, 10)
                   : []),
                 {
                   heading: "Source attribution",
