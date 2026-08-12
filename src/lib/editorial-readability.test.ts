@@ -50,12 +50,15 @@ describe("article readability validation", () => {
     expect(reasons.some((reason) => reason.startsWith("readability_too_few_sections:"))).toBe(true);
   });
 
-  it("rejects generic section headings", () => {
-    const reasons = validateArticleReadability({
+  it("normalizes generic section headings without discarding valid prose", () => {
+    const article = {
       summary: `${words(55)}.`,
       sections: [{ heading: "The story", paragraphs: [`${words(70)}.`] }],
-    });
+    };
 
-    expect(reasons).toContain("readability_generic_section_heading:1");
+    const reasons = validateArticleReadability(article);
+
+    expect(reasons).not.toContain("readability_generic_section_heading:1");
+    expect(article.sections[0].heading).toBe("What happened");
   });
 });
