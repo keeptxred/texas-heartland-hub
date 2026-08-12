@@ -21,6 +21,19 @@ describe("robots policy", () => {
     expect(source).toContain('"Allow: /"');
   });
 
+  it("explicitly names AI discovery and user-fetch crawlers in the shared group", () => {
+    const source = readFileSync(dynamicRobotsPath, "utf8");
+    for (const agent of [
+      "OAI-SearchBot",
+      "ChatGPT-User",
+      "PerplexityBot",
+      "Perplexity-User",
+      "Google-Extended",
+    ]) {
+      expect(source).toContain(`"${agent}"`);
+    }
+  });
+
   it("keeps the first-party Merchant image endpoint crawlable", () => {
     const source = readFileSync(dynamicRobotsPath, "utf8");
     expect(source).not.toContain("Disallow: /merchant-image");

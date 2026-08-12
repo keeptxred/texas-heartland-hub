@@ -3,10 +3,18 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL } from "@/lib/sitemap-shared";
 
 const GOOGLE_MERCHANT_AGENTS = ["Googlebot", "Googlebot-Image", "Storebot-Google"] as const;
+const AI_DISCOVERY_AGENTS = [
+  "OAI-SearchBot",
+  "ChatGPT-User",
+  "PerplexityBot",
+  "Perplexity-User",
+  "Google-Extended",
+] as const;
 
 /** Dynamic robots.txt. This is the single robots policy for Keep TX Red.
- *  Merchant-specific crawlers share the same rule group as the wildcard so
- *  naming them explicitly never bypasses the common crawl boundaries. */
+ *  Public search, merchant, and AI-discovery crawlers share the same rule
+ *  group as the wildcard so explicit allowlisting never bypasses the common
+ *  private/operational crawl boundaries. */
 export const Route = createFileRoute("/robots.txt")({
   server: {
     handlers: {
@@ -15,10 +23,13 @@ export const Route = createFileRoute("/robots.txt")({
           "# Keep TX Red — public pages are crawlable; private, operational, checkout, and low-value query states are excluded for every crawler.",
           // Merchant Center explicitly requires Googlebot and Googlebot-Image.
           // Storebot-Google is included for Google Shopping product analysis.
+          // AI/search discovery agents are explicitly named so OpenAI,
+          // Perplexity, and Gemini/Google controls are unambiguous.
           // Keep all named agents consecutive with `*` so this remains ONE
           // shared rules group instead of allowing a specific bot to bypass
           // the common Disallow rules below.
           ...GOOGLE_MERCHANT_AGENTS.map((agent) => `User-agent: ${agent}`),
+          ...AI_DISCOVERY_AGENTS.map((agent) => `User-agent: ${agent}`),
           "User-agent: *",
           "Allow: /",
           "Disallow: /api/",
