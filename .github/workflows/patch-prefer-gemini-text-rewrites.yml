@@ -19,30 +19,31 @@ jobs:
         run: |
           python3 <<'PY'
           from pathlib import Path
+          import re
+
           p = Path('src/server.ts')
           s = p.read_text()
-          a = '  const model = process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash";'
-          b = '  const model = hasImageInput(body)\n    ? process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash"\n    : process.env.AI_REWRITE_MODEL || "gemini-3.5-flash";'
-          assert a in s
-          s = s.replace(a, b, 1)
-          a = '''    if (!cf) {
-              return Response.json({ error: { message: "Cloudflare Workers AI text rewriting is not configured. CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required; Lovable and Gemini text fallbacks are disabled." } }, { status: 503 });
-            }
 
-            return directCloudflareTextResponse(chatBody, cf, init?.signal);'''
-          a = a.replace('            ', '')
-          b = '''    if (geminiApiKey) {
-              return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
-            }
+          old_model = '  const model = process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash";'
+          new_model = '  const model = hasImageInput(body)\n    ? process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash"\n    : process.env.AI_REWRITE_MODEL || "gemini-3.5-flash";'
+          if old_model not in s:
+              raise SystemExit('Gemini model selection block not found')
+          s = s.replace(old_model, new_model, 1)
 
-            if (!cf) {
-              return Response.json({ error: { message: "No direct text rewrite provider is configured. Set GEMINI_API_KEY (preferred) or Cloudflare credentials; Lovable fallback is disabled." } }, { status: 503 });
-            }
+          pattern = re.compile(r'''    if \(!cf\) \{\n      return Response\.json\(\{ error: \{ message: "Cloudflare Workers AI text rewriting is not configured\.[^\n]+\n    \}\n\n    return directCloudflareTextResponse\(chatBody, cf, init\?\.signal\);''')
+          replacement = '''    if (geminiApiKey) {
+      return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
+    }
 
-            return directCloudflareTextResponse(chatBody, cf, init?.signal);'''
-          b = b.replace('            ', '')
-          assert a in s
-          s = s.replace(a, b, 1)
+    if (!cf) {
+      return Response.json({ error: { message: "No direct text rewrite provider is configured. Set GEMINI_API_KEY (preferred) or Cloudflare credentials; Lovable fallback is disabled." } }, { status: 503 });
+    }
+
+    return directCloudflareTextResponse(chatBody, cf, init?.signal);'''
+          s, count = pattern.subn(replacement, s, count=1)
+          if count != 1:
+              raise SystemExit(f'Text routing block replacement count={count}')
+
           p.write_text(s)
           PY
           git config user.name "github-actions[bot]"
