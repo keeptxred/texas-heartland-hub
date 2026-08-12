@@ -1,0 +1,188 @@
+name: Patch Cloudflare Rewrite Root Cause
+
+on:
+  push:
+    branches:
+      - agent/fix-cloudflare-json-schema-root-cause
+    paths:
+      - '.github/workflows/patch-cloudflare-root-cause.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/fix-cloudflare-json-schema-root-cause
+          fetch-depth: 0
+
+      - name: Patch oversized batching and forward structured output schema
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          server = Path('src/server.ts')
+          s = server.read_text()
+          old = '''type OpenAiCompatBody = {
+            model?: string;
+            messages?: OpenAiMessage[];
+            max_tokens?: number;
+          };'''
+          new = '''type OpenAiCompatBody = {
+            model?: string;
+            messages?: OpenAiMessage[];
+            max_tokens?: number;
+            response_format?: { type?: string; json_schema?: unknown };
+          };'''
+          if old not in s:
+              raise SystemExit('OpenAiCompatBody anchor not found')
+          s = s.replace(old, new, 1)
+
+          old = '''        response_format: { type: "json_object" },
+                max_tokens: maxTokens,'''
+          new = '''        response_format: body.response_format ?? { type: "json_object" },
+                max_tokens: maxTokens,'''
+          if old not in s:
+              raise SystemExit('Cloudflare response_format anchor not found')
+          s = s.replace(old, new, 1)
+          server.write_text(s)
+
+          news = Path('src/routes/api/public/hooks/generate-news.ts')
+          n = news.read_text()
+          old = 'async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {'
+          new = 'async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {'
+          if old not in n:
+              raise SystemExit('rewriteWithAi anchor not found')
+          n = n.replace(old, new, 1)
+
+          old = '''      response_format: { type: "json_object" },
+                max_tokens: 9000,'''
+          new = '''      response_format: {
+                type: "json_schema",
+                json_schema: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    articles: {
+                      type: "array",
+                      maxItems: 2,
+                      items: {
+                        type: "object",
+                        additionalProperties: false,
+                        properties: {
+                          brief: { type: "object", additionalProperties: true },
+                          source_index: { type: "integer", minimum: 1, maximum: 2 },
+                          category: { type: "string", enum: CATEGORIES },
+                          title: { type: "string" },
+                          dek: { type: "string" },
+                          summary: { type: "string" },
+                          relevance: { type: "string" },
+                          sections: {
+                            type: "array",
+                            minItems: 5,
+                            maxItems: 8,
+                            items: {
+                              type: "object",
+                              additionalProperties: false,
+                              properties: {
+                                heading: { type: "string" },
+                                paragraphs: {
+                                  type: "array",
+                                  minItems: 2,
+                                  maxItems: 4,
+                                  items: { type: "string" },
+                                },
+                              },
+                              required: ["heading", "paragraphs"],
+                            },
+                          },
+                          keyTakeaways: {
+                            type: "array",
+                            minItems: 3,
+                            maxItems: 5,
+                            items: { type: "string" },
+                          },
+                          faq: {
+                            type: "array",
+                            minItems: 4,
+                            maxItems: 6,
+                            items: {
+                              type: "object",
+                              additionalProperties: false,
+                              properties: {
+                                q: { type: "string" },
+                                a: { type: "string" },
+                              },
+                              required: ["q", "a"],
+                            },
+                          },
+                        },
+                        required: ["brief", "source_index", "category", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
+                      },
+                    },
+                  },
+                  required: ["articles"],
+                },
+              },
+                max_tokens: 9000,'''
+          if old not in n:
+              raise SystemExit('news response_format anchor not found')
+          n = n.replace(old, new, 1)
+
+          anchor = '''  return kept;
+          }
+
+          export const Route = createFileRoute("/api/public/hooks/generate-news")({'''
+          replacement = '''  return kept;
+          }
+
+          async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
+            // Two 800+ word articles fit comfortably inside a single 9k-token response.
+            // The former 10-article request could require well over the model output budget,
+            // causing deterministic truncation before the JSON object could close.
+            const batchSize = 2;
+            const all: Awaited<ReturnType<typeof rewriteBatchWithAi>> = [];
+            for (let offset = 0; offset < items.length; offset += batchSize) {
+              const batch = items.slice(offset, offset + batchSize);
+              const rewritten = await rewriteBatchWithAi(batch, lovableApiKey);
+              all.push(
+                ...rewritten.map((article) => ({
+                  ...article,
+                  source_index: article.source_index + offset,
+                })),
+              );
+            }
+            return all;
+          }
+
+          export const Route = createFileRoute("/api/public/hooks/generate-news")({'''
+          if anchor not in n:
+              raise SystemExit('wrapper insertion anchor not found')
+          n = n.replace(anchor, replacement, 1)
+          news.write_text(n)
+          PY
+
+      - name: Validate focused diff
+        run: |
+          git diff --check
+          grep -q 'async function rewriteBatchWithAi' src/routes/api/public/hooks/generate-news.ts
+          grep -q 'const batchSize = 2' src/routes/api/public/hooks/generate-news.ts
+          grep -q 'type: "json_schema"' src/routes/api/public/hooks/generate-news.ts
+          grep -q 'body.response_format ??' src/server.ts
+
+      - name: Commit root-cause fix
+        run: |
+          git config user.name 'keeptxred-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add src/server.ts src/routes/api/public/hooks/generate-news.ts
+          if git diff --cached --quiet; then
+            echo 'No patch changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Fix Cloudflare rewrite output budgeting'
+          git push origin HEAD:agent/fix-cloudflare-json-schema-root-cause
