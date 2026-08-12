@@ -1,0 +1,49 @@
+name: Production News Gemini Smoke
+
+on:
+  push:
+    branches: [agent/prod-news-gemini-smoke]
+    paths: ['.github/workflows/prod-news-gemini-smoke.yml']
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Check live provider and publisher
+        shell: bash
+        run: |
+          set -euo pipefail
+          health='https://keeptxred.com/api/public/hooks/health'
+          endpoint='https://keeptxred.com/api/public/hooks/run-generate-news'
+
+          echo 'LIVE_HEALTH_BEGIN'
+          curl -fsS --max-time 30 "$health" | tee /tmp/health.json
+          echo
+          echo 'LIVE_HEALTH_END'
+
+          for attempt in $(seq 1 4); do
+            echo "Publish attempt ${attempt}/4"
+            status=$(curl -sS -o /tmp/publish.json -w '%{http_code}' --max-time 240 "$endpoint" || true)
+            cat /tmp/publish.json 2>/dev/null || true
+            echo
+
+            if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
+              echo 'DAILY_NEWS_PUBLISH_SUCCESS'
+              exit 0
+            fi
+
+            if grep -Eqi 'daily free allocation|used up.*neurons' /tmp/publish.json 2>/dev/null; then
+              echo 'DAILY_NEWS_PUBLISH_QUOTA_EXHAUSTED'
+              exit 2
+            fi
+
+            echo "Publisher failed (HTTP $status)."
+            sleep 20
+          done
+
+          echo 'DAILY_NEWS_PUBLISH_FAILED'
+          exit 1
