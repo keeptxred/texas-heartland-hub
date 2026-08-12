@@ -387,7 +387,7 @@ CATEGORY CLASSIFICATION RULES (strict):
           required: ["articles"],
         },
       },
-      max_tokens: 9000,
+      max_tokens: 12000,
     }),
   });
 
@@ -431,27 +431,32 @@ async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
   const selected = items.slice(0, 10);
   const combined: RewrittenArticle[] = [];
 
-  for (let offset = 0; offset < selected.length; offset += 3) {
-    const batch = selected.slice(offset, offset + 3);
+  // Free-tier Gemini is more reliable when each long-form story gets its own
+  // structured-output request and full output-token budget.
+  for (let index = 0; index < selected.length; index += 1) {
+    const story = selected[index];
     try {
-      const rewritten = await rewriteBatchWithAi(batch, lovableApiKey);
-      for (const article of rewritten) {
-        if (article.source_index < 1 || article.source_index > batch.length) continue;
-        combined.push({ ...article, source_index: article.source_index + offset });
+      const rewritten = await rewriteBatchWithAi([story], lovableApiKey);
+      const article = rewritten.find((candidate) => candidate.source_index === 1);
+      if (article) {
+        combined.push({ ...article, source_index: index + 1 });
+      } else {
+        console.warn("[generate-news] individual story produced no editorially valid article", {
+          sourceIndex: index + 1,
+          title: story.title,
+        });
       }
-    } catch (batchError) {
-      if (isQuotaOrRateLimitError(batchError)) throw batchError;
-      console.warn("[generate-news] batch rewrite failed; retrying stories individually", { offset, size: batch.length, error: String(batchError) });
-      for (let index = 0; index < batch.length; index += 1) {
-        try {
-          const recovered = await rewriteBatchWithAi([batch[index]], lovableApiKey);
-          const article = recovered.find((candidate) => candidate.source_index === 1);
-          if (article) combined.push({ ...article, source_index: offset + index + 1 });
-        } catch (storyError) {
-          if (isQuotaOrRateLimitError(storyError)) throw storyError;
-          console.warn("[generate-news] individual story rewrite skipped after one recovery attempt", { sourceIndex: offset + index + 1, title: batch[index].title, error: String(storyError) });
-        }
-      }
+    } catch (storyError) {
+      if (isQuotaOrRateLimitError(storyError)) throw storyError;
+      console.warn("[generate-news] individual story rewrite skipped after one attempt", {
+        sourceIndex: index + 1,
+        title: story.title,
+        error: String(storyError),
+      });
+    }
+
+    if (index < selected.length - 1) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
 

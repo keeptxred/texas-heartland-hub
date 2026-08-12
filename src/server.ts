@@ -214,6 +214,9 @@ async function directGeminiVisionResponse(
       contents: conversational,
       generationConfig: {
         responseMimeType: "application/json",
+        ...(body.response_format?.type === "json_schema" && body.response_format.json_schema
+          ? { responseJsonSchema: body.response_format.json_schema }
+          : {}),
         maxOutputTokens: Math.min(Math.max(Number(body.max_tokens) || 1024, 256), 12000),
         temperature: 0.1,
       },
