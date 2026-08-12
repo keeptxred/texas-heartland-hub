@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { AIReferralTracker } from "@/components/analytics/AIReferralTracker";
+import { CitationCollectionTrustRouter } from "@/components/authority/CitationCollectionTrustRouter";
 import { SocialLinks } from "@/components/social-links";
 
 const PRIMARY_LINKS = [
@@ -54,6 +55,7 @@ export function SiteFooter() {
   return (
     <>
       <AIReferralTracker />
+      <CitationCollectionTrustRouter />
       <footer className="mt-16 bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-7xl px-4 py-14">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr]">
