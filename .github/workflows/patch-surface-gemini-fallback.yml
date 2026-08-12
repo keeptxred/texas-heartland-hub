@@ -1,0 +1,31 @@
+name: Surface Gemini Fallback Error
+
+on:
+  push:
+    branches:
+      - agent/surface-gemini-fallback-error
+    paths:
+      - scripts/patch-surface-gemini-fallback.mjs
+      - .github/workflows/patch-surface-gemini-fallback.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/surface-gemini-fallback-error
+      - name: Apply diagnostics patch
+        run: node scripts/patch-surface-gemini-fallback.mjs
+      - name: Commit diagnostics
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/server.ts
+          git commit -m 'Surface Gemini and Cloudflare fallback failures'
+          git rm scripts/patch-surface-gemini-fallback.mjs .github/workflows/patch-surface-gemini-fallback.yml
+          git commit -m 'Remove one-time fallback diagnostics workflow'
+          git push origin HEAD:agent/surface-gemini-fallback-error
