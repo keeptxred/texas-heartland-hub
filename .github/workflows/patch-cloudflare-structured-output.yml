@@ -1,0 +1,147 @@
+name: Patch Cloudflare Structured Output
+
+on:
+  push:
+    branches:
+      - agent/cloudflare-structured-output
+    paths:
+      - '.github/workflows/patch-cloudflare-structured-output.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/cloudflare-structured-output
+          fetch-depth: 0
+
+      - name: Patch structured output passthrough and schema
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          server = Path('src/server.ts')
+          s = server.read_text()
+          old = '''type OpenAiCompatBody = {
+            model?: string;
+            messages?: OpenAiMessage[];
+            max_tokens?: number;
+          };'''
+          new = '''type OpenAiCompatBody = {
+            model?: string;
+            messages?: OpenAiMessage[];
+            max_tokens?: number;
+            response_format?: { type?: string; json_schema?: unknown };
+          };'''
+          if old not in s:
+              raise SystemExit('OpenAiCompatBody anchor not found')
+          s = s.replace(old, new, 1)
+
+          old = '''        response_format: { type: "json_object" },
+                max_tokens: maxTokens,'''
+          new = '''        response_format: body.response_format ?? { type: "json_object" },
+                max_tokens: maxTokens,'''
+          if old not in s:
+              raise SystemExit('Cloudflare response_format anchor not found')
+          s = s.replace(old, new, 1)
+          server.write_text(s)
+
+          news = Path('src/routes/api/public/hooks/generate-news.ts')
+          n = news.read_text()
+          old = '''      response_format: { type: "json_object" },
+                max_tokens: 9000,'''
+          new = '''      response_format: {
+                type: "json_schema",
+                json_schema: {
+                  type: "object",
+                  additionalProperties: false,
+                  properties: {
+                    articles: {
+                      type: "array",
+                      maxItems: 3,
+                      items: {
+                        type: "object",
+                        additionalProperties: false,
+                        properties: {
+                          brief: { type: "object", additionalProperties: true },
+                          source_index: { type: "integer", minimum: 1, maximum: 3 },
+                          category: { type: "string", enum: CATEGORIES },
+                          title: { type: "string" },
+                          dek: { type: "string" },
+                          summary: { type: "string" },
+                          relevance: { type: "string" },
+                          sections: {
+                            type: "array",
+                            minItems: 5,
+                            maxItems: 8,
+                            items: {
+                              type: "object",
+                              additionalProperties: false,
+                              properties: {
+                                heading: { type: "string" },
+                                paragraphs: {
+                                  type: "array",
+                                  minItems: 2,
+                                  maxItems: 4,
+                                  items: { type: "string" },
+                                },
+                              },
+                              required: ["heading", "paragraphs"],
+                            },
+                          },
+                          keyTakeaways: {
+                            type: "array",
+                            minItems: 3,
+                            maxItems: 5,
+                            items: { type: "string" },
+                          },
+                          faq: {
+                            type: "array",
+                            minItems: 4,
+                            maxItems: 6,
+                            items: {
+                              type: "object",
+                              additionalProperties: false,
+                              properties: {
+                                q: { type: "string" },
+                                a: { type: "string" },
+                              },
+                              required: ["q", "a"],
+                            },
+                          },
+                        },
+                        required: ["brief", "source_index", "category", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
+                      },
+                    },
+                  },
+                  required: ["articles"],
+                },
+              },
+                max_tokens: 9000,'''
+          if old not in n:
+              raise SystemExit('generate-news response_format anchor not found')
+          n = n.replace(old, new, 1)
+          news.write_text(n)
+          PY
+
+      - name: Validate focused diff
+        run: |
+          git diff --check
+          grep -q 'response_format?: { type?: string; json_schema?: unknown }' src/server.ts
+          grep -q 'body.response_format ??' src/server.ts
+          grep -q 'type: "json_schema"' src/routes/api/public/hooks/generate-news.ts
+          grep -q 'maxItems: 3' src/routes/api/public/hooks/generate-news.ts
+
+      - name: Commit structured output fix
+        run: |
+          git config user.name 'keeptxred-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add src/server.ts src/routes/api/public/hooks/generate-news.ts
+          git commit -m 'Use Cloudflare structured output schema'
+          git push origin HEAD:agent/cloudflare-structured-output
