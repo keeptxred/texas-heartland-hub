@@ -380,7 +380,17 @@ function installDirectAiFetch(): void {
     }
 
     if (geminiApiKey) {
-      return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
+      const geminiResponse = await directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
+      if (geminiResponse.ok || !cf) return geminiResponse;
+
+      const retryableGeminiFailure = geminiResponse.status === 429 || geminiResponse.status >= 500;
+      if (!retryableGeminiFailure) return geminiResponse;
+
+      const geminiFailureBody = await geminiResponse.clone().text();
+      console.warn("[AI] direct Gemini text rewrite failed; falling back to Cloudflare Workers AI", {
+        status: geminiResponse.status,
+        detail: geminiFailureBody.slice(0, 300),
+      });
     }
 
     if (!cf) {

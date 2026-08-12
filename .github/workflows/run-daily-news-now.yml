@@ -1,6 +1,6 @@
 name: Run Daily News Now
 
-# Production publisher smoke trigger: 2026-08-11 Cloudflare rewrite rollout
+# Production publisher smoke trigger: 2026-08-11 AI rewrite provider failover
 on:
   push:
     branches: [main]
@@ -30,8 +30,8 @@ jobs:
               echo 'DAILY_NEWS_PUBLISH_SUCCESS'
               exit 0
             fi
-            if grep -Eqi 'daily free allocation|used up.*neurons' /tmp/publish.json 2>/dev/null; then
-              echo 'Cloudflare daily allocation is exhausted; stop retrying to avoid waste.'
+            if grep -Eqi 'daily free allocation|used up.*neurons|prepayment credits are depleted|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
+              echo 'AI provider quota or credit allocation is exhausted; stop retrying to avoid waste.'
               exit 1
             fi
             echo "Publisher not ready or failed (HTTP $status)."
