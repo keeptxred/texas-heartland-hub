@@ -14,11 +14,13 @@ export function CurrentSessionAuthorityReference() {
           <Fact label="Texas Senate" value="31 members" />
           <Fact label="Regular session" value="Up to 140 days" />
         </dl>
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <ReferenceLink href="/bills" label="Search Texas bills" />
           <ReferenceLink href="/texas-legislature/committees" label="Browse committees" />
+          <ReferenceLink href="/texas-legislature/votes" label="Committee vote records" />
           <ReferenceLink href="/representatives" label="Texas lawmakers" />
-          <ReferenceLink href="/laws" label="Texas laws" />
+          <ReferenceLink href="/laws/effective-dates" label="2026 effective dates" />
+          <ReferenceLink href="/laws/constitutional-amendments" label="Amendment tracker" />
         </div>
       </div>
       <CitationTrustPanel
