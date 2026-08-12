@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import candidatesSnapshot from "@/data/elections/2026/candidates.json";
 import racesSnapshot from "@/data/elections/2026/races.json";
-import { CitationTrustPanel, ElectionLayout, ElectionNavigation } from "@/components/elections";
+import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
+import { ElectionLayout, ElectionNavigation } from "@/components/elections";
 import { TEXAS_ELECTIONS } from "@/lib/election-calendar";
 import { ELECTION_ROUTES } from "@/lib/elections";
 
