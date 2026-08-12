@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ContentPillarView } from "@/components/content-pillar-view";
 import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
+import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
 
 const SECTIONS = [
   { title: "Who Does What Guide", description: "Start here: DPS, Highway Patrol, Texas Rangers, criminal investigations, local agencies, and public-safety authority.", href: "/guides/texas-law-enforcement-public-safety-guide" },
@@ -8,6 +9,8 @@ const SECTIONS = [
   { title: "Texas Legislature", description: "Bills, committees, hearings, and votes affecting law enforcement and public safety.", href: "/texas-legislature" },
   { title: "Border Security", description: "DPS, Operation Lone Star, border enforcement, and public-safety operations.", href: "/texas-border-security" },
 ];
+
+const VERIFIED = "Reviewed against the cited official institutional sources on August 11, 2026.";
 
 export const Route = createFileRoute("/texas-law-enforcement")({
   head: () => ({
@@ -42,6 +45,31 @@ function TexasLawEnforcementPage() {
           { label: "Texas Laws & Legislature", href: "/laws" },
           { label: "Texas Politics & Government", href: "/texas-politics" },
         ]}
+      />
+      <EvergreenAuthorityReference
+        eyebrow="Public-safety authority map"
+        title="DPS, Rangers, TCOLE and local law enforcement"
+        summary="Texas public safety is decentralized. DPS operates statewide divisions, the Texas Rangers handle major and specialized investigations, TCOLE sets licensing and training standards, and sheriffs and police departments answer to their own local structures. This reference prevents those roles from being collapsed into a single 'Texas police' authority."
+        institutions={[
+          { name: "Texas Department of Public Safety", href: "https://www.dps.texas.gov/", role: "State public-safety department that includes Highway Patrol, Texas Rangers and other statewide divisions and programs.", scopeNote: "DPS is not the command authority for every county sheriff or municipal police department in Texas." },
+          { name: "Texas Highway Patrol", href: "https://www.dps.texas.gov/section/highway-patrol", role: "DPS division responsible for roadway public-safety functions, patrol, enforcement and statewide response capabilities.", scopeNote: "Highway Patrol responsibilities are different from Texas Ranger major-investigation responsibilities." },
+          { name: "Texas Rangers", href: "https://www.dps.texas.gov/section/texas-rangers/texas-rangers", role: "DPS investigative division handling major violent crime, public corruption, complex investigations and specialized public-safety operations.", scopeNote: "The Rangers do not function as the routine complaint office for every local law-enforcement dispute." },
+          { name: "Texas Commission on Law Enforcement", href: "https://tcole.texas.gov/content/background", role: "State regulatory agency that establishes and monitors standards for peace officers, county corrections officers and emergency communications personnel.", scopeNote: "TCOLE licensing jurisdiction is not the same as direct command over local departments or general investigation of every misconduct complaint." },
+        ]}
+        questions={[
+          { question: "Does DPS run every police department and sheriff's office in Texas?", answer: "No. DPS is a statewide agency, while sheriffs and municipal police departments operate under separate local authority. Statewide and local agencies can cooperate, but cooperation does not make them one chain of command.", href: "/guides/texas-law-enforcement-public-safety-guide", linkLabel: "Read the who-does-what guide" },
+          { question: "What is the difference between Highway Patrol and the Texas Rangers?", answer: "Both are within DPS, but their core roles differ. Highway Patrol focuses heavily on roadway public safety and statewide patrol functions; the Texas Rangers are the department's major criminal investigative branch and handle specialized investigations and operations." },
+          { question: "Does TCOLE investigate every complaint against a police officer?", answer: "No. TCOLE regulates licensing, training, appointment and related standards. Its own complaint guidance says many complaints about conduct or investigations belong first with the employing agency or other responsible authority unless they fall within TCOLE's statutory and rule jurisdiction.", href: "https://tcole.texas.gov/content/complaint-procedures", linkLabel: "Read TCOLE complaint jurisdiction" },
+        ]}
+        sources={[
+          { name: "Texas Department of Public Safety", url: "https://www.dps.texas.gov/", note: "Official statewide public-safety source." },
+          { name: "Texas Highway Patrol", url: "https://www.dps.texas.gov/section/highway-patrol", note: "Official Highway Patrol responsibility reference." },
+          { name: "Texas Rangers", url: "https://www.dps.texas.gov/section/texas-rangers/texas-rangers", note: "Official Ranger role and investigation reference." },
+          { name: "Texas Commission on Law Enforcement", url: "https://tcole.texas.gov/content/background", note: "Official licensing and standards authority reference." },
+          { name: "Texas Legislature Online", url: "https://capitol.texas.gov/", note: "Official statutes, bills and legislative actions." },
+        ]}
+        methodology="Keep TX Red distinguishes state operations, specialized investigations, professional licensing and local agency authority. The map describes institutional jurisdiction, not the merits of a particular enforcement action, investigation or complaint."
+        lastVerified={VERIFIED}
       />
       <SupportingGuideGrid pillarHref="/texas-law-enforcement" />
     </>
