@@ -61,6 +61,7 @@ type RssItem = {
   pubDate?: string;
   source: string;
   sourceCategory: string;
+  sourceText?: string;
 };
 
 function stripHtml(s: string): string {
@@ -210,6 +211,23 @@ async function fetchWithTimeout(url: string, ms = 10000): Promise<string | null>
   }
 }
 
+function extractPageText(html: string): string {
+  return stripHtml(
+    html
+      .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, " ")
+      .replace(/<noscript\b[^>]*>[\s\S]*?<\/noscript>/gi, " "),
+  ).slice(0, 14000);
+}
+
+async function hydrateSourceContext(item: ScoredItem): Promise<ScoredItem> {
+  const html = await fetchWithTimeout(item.link, 15000);
+  if (!html) return item;
+  const sourceText = extractPageText(html);
+  if (sourceText.length < 500) return item;
+  return { ...item, sourceText };
+}
+
 type RewrittenArticle = {
   brief?: StoryBrief;
   source_index: number;
@@ -272,7 +290,10 @@ function parseAiArticles(content: string): RewrittenArticle[] {
 
 async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {
   const list = items
-    .map((it, i) => `${i + 1}. [score=${it.score}${it.isBreaking ? " BREAKING" : ""}] [${it.source} — ${it.sourceCategory}] ${it.title}\n   ${it.description.slice(0, 400)}\n   URL: ${it.link}`)
+    .map((it, i) => {
+      const sourceMaterial = (it.sourceText || it.description).slice(0, 14000);
+      return `${i + 1}. [score=${it.score}${it.isBreaking ? " BREAKING" : ""}] [${it.source} — ${it.sourceCategory}] ${it.title}\n   VERIFIED SOURCE MATERIAL: ${sourceMaterial}\n   URL: ${it.link}`;
+    })
     .join("\n\n");
 
   const system = `You are the senior editor of Keep TX Red, a Texas news site optimized for Google Discover and high click-through rates. Stay factually neutral in headlines; reserve principled conservative framing for analysis. Never invent quotes or statistics.
@@ -294,10 +315,11 @@ DEK (first paragraph + meta description) RULES:
 - Sentence 2 gives the most newsworthy fact.
 
 BODY RULES (required for every picked story):
-- Every automated RSS rewrite MUST be at least ${INGESTED_MIN_MAIN_WORDS} words of MAIN STORY PROSE across summary + sections only. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward the minimum. Expand until the main story prose meets the minimum.
-- "summary": a substantial neutral opening section, grounded in concrete facts drawn from the source blurb. No invented quotes or stats.
+- TARGET 1,050–1,250 words of MAIN STORY PROSE across summary + sections only. The hard publication floor is ${INGESTED_MIN_MAIN_WORDS} qualifying words, so never return fewer than 900 words of main prose. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward the minimum.
+- Use ONLY facts supported by the supplied verified source material. If a detail is not supported, omit it instead of inventing filler.
+- "summary": a substantial neutral opening section grounded in concrete facts from the verified source material. No invented quotes or stats.
 - "relevance": a substantial Texas relevance section explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
-- "sections": 5–8 additional H2-style sections, each with 2–4 substantial paragraphs covering background, timeline, stakeholders, local implications, what changes next, and practical reader context.
+- "sections": 6–8 additional H2-style sections, each with 3–4 substantial paragraphs covering background, timeline, stakeholders, local implications, what changes next, and practical reader context supported by the source.
 - "keyTakeaways": 3–5 short bullet strings.
 - "faq": 4–6 Q&A entries answering likely reader questions with substantive answers.
 
@@ -350,7 +372,7 @@ CATEGORY CLASSIFICATION RULES (strict):
                   relevance: { type: "string" },
                   sections: {
                     type: "array",
-                    minItems: 5,
+                    minItems: 6,
                     maxItems: 8,
                     items: {
                       type: "object",
@@ -359,7 +381,7 @@ CATEGORY CLASSIFICATION RULES (strict):
                         heading: { type: "string" },
                         paragraphs: {
                           type: "array",
-                          minItems: 2,
+                          minItems: 3,
                           maxItems: 4,
                           items: { type: "string" },
                         },
@@ -387,7 +409,7 @@ CATEGORY CLASSIFICATION RULES (strict):
           required: ["articles"],
         },
       },
-      max_tokens: 12000,
+      max_tokens: 16000,
     }),
   });
 
@@ -411,7 +433,7 @@ CATEGORY CLASSIFICATION RULES (strict):
       continue;
     }
     const source = items[a.source_index - 1];
-    const sourceText = source ? `${source.title} ${source.description}` : undefined;
+    const sourceText = source ? `${source.title} ${source.sourceText || source.description}` : undefined;
     const v = validateArticle(
       {
         title: a.title,
@@ -442,12 +464,11 @@ CATEGORY CLASSIFICATION RULES (strict):
 }
 
 async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
-  const selected = items.slice(0, 10);
+  const selected = await Promise.all(items.slice(0, 10).map(hydrateSourceContext));
   const combined: RewrittenArticle[] = [];
   const failures: string[] = [];
 
-  // Free-tier Gemini is more reliable when each long-form story gets its own
-  // structured-output request and full output-token budget.
+  // Long-form stories get their own structured-output request and full output-token budget.
   for (let index = 0; index < selected.length; index += 1) {
     const story = selected[index];
     try {
