@@ -1,6 +1,6 @@
 name: Run Daily News Now
 
-# Production publisher smoke trigger: 2026-08-12 Cloudflare-only retry
+# Production publisher smoke trigger: 2026-08-12 20:37 UTC hydrated-source retry
 on:
   push:
     branches: [main]
