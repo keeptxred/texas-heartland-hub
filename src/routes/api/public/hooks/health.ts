@@ -5,12 +5,13 @@ function aiProviderState() {
   const ready = Boolean(
     process.env.CLOUDFLARE_ACCOUNT_ID && process.env.CLOUDFLARE_API_TOKEN,
   );
+  const rewriteModel = process.env.AI_REWRITE_MODEL_CF || "@cf/meta/llama-3.1-8b-instruct-fast";
   return {
     ai_provider: ready ? "cloudflare-workers-ai" : "unconfigured",
     ai_provider_ready: ready,
     rewrite_provider: ready ? "cloudflare-workers-ai" : "unconfigured",
     rewrite_provider_ready: ready,
-    rewrite_model: ready ? "@cf/meta/llama-3.3-70b-instruct-fp8-fast" : null,
+    rewrite_model: ready ? rewriteModel : null,
     image_provider: ready ? "cloudflare-workers-ai" : "unconfigured",
     image_provider_ready: ready,
     image_model: ready ? "@cf/black-forest-labs/flux-1-schnell" : null,
