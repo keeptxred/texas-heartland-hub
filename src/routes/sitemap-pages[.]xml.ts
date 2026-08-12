@@ -18,6 +18,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/keep-texas-red": GSC_CANONICAL_REFRESH,
   "/register-to-vote": GSC_CANONICAL_REFRESH,
   "/authors": GSC_CANONICAL_REFRESH,
+  "/citation-guide": CITATION_MAGNET_REFRESH,
   "/texas-legislature": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/house": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/senate": toIsoDate("2026-08-07T00:00:00-05:00"),
@@ -59,7 +60,7 @@ const STATIC_PATHS:string[]=[
   // /legislative-updates redirects to /bills, /laws-to-know redirects to /laws,
   // and /voting-locations redirects to the verified Election Central voting page.
   "/contact","/privacy","/terms-of-service",
-  "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards",
+  "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/citation-guide",
   "/topics","/texas-politics","/texas-economy","/texas-border-security","/texas-energy",
   "/texas-agriculture","/texas-veterans","/texas-law-enforcement",
   "/guides/texas-agriculture-rural-guide","/guides/texas-veterans-military-guide",
