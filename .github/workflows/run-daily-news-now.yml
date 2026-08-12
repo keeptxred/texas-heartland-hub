@@ -1,6 +1,6 @@
 name: Run Daily News Now
 
-# Production publisher: per-offset generate-news calls on the custom domain. Trigger 2026-08-12 18:18 CT.
+# Production publisher: per-offset generate-news calls on the custom domain.
 on:
   push:
     branches: [main]
@@ -21,7 +21,6 @@ jobs:
         run: |
           set -euo pipefail
           base='https://keeptxred.com/api/public/hooks/generate-news'
-          failed=()
           for offset in $(seq 0 9); do
             result='unknown'
             for attempt in 1 2; do
@@ -46,7 +45,6 @@ jobs:
                 break
               fi
 
-              # Benign no-item / duplicate-only outcomes are nonfatal.
               if [[ "$status" == "200" ]] && grep -Eqi 'No items met the publish threshold|duplicate' /tmp/publish.json 2>/dev/null; then
                 result='ok(benign-skip)'
                 break
@@ -54,20 +52,29 @@ jobs:
 
               if [[ "$status" == "000" || "$status" =~ ^5 ]]; then
                 result="retryable(HTTP ${status})"
-                [[ "$attempt" -lt 2 ]] && sleep 10 && continue
-                break
+                if [[ "$attempt" -lt 2 ]]; then
+                  echo "offset=${offset} attempt=${attempt} -> ${result}; response=$(head -c 1200 /tmp/publish.json 2>/dev/null | tr -d '\n')"
+                  sleep 10
+                  continue
+                fi
+                echo "offset=${offset} final -> ${result}"
+                echo '--- production response body ---'
+                cat /tmp/publish.json 2>/dev/null || true
+                echo
+                echo 'DAILY_NEWS_PUBLISH_FAILED'
+                exit 1
               fi
 
-              result="failed(HTTP ${status}: $(head -c 200 /tmp/publish.json | tr -d '\n'))"
-              break
+              echo "offset=${offset} -> failed(HTTP ${status})"
+              echo '--- production response body ---'
+              cat /tmp/publish.json 2>/dev/null || true
+              echo
+              echo 'DAILY_NEWS_PUBLISH_FAILED'
+              exit 1
             done
 
             echo "offset=${offset} -> ${result}"
-            [[ "$result" == ok* ]] || failed+=("${offset}:${result}")
+            [[ "$result" == ok* ]] || { echo 'DAILY_NEWS_PUBLISH_FAILED'; exit 1; }
           done
 
-          if [[ ${#failed[@]} -gt 0 ]]; then
-            echo "DAILY_NEWS_PUBLISH_FAILED offsets: ${failed[*]}"
-            exit 1
-          fi
           echo 'DAILY_NEWS_PUBLISH_SUCCESS'
