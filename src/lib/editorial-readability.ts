@@ -33,6 +33,22 @@ function isGenericHeading(value: string): boolean {
   return /^(the story|overview|background|details|more information|conclusion|summary)$/i.test(value.trim());
 }
 
+const NORMALIZED_SECTION_HEADINGS = [
+  "What happened",
+  "Why it matters",
+  "How the story developed",
+  "Who is affected",
+  "What officials are watching",
+  "What comes next",
+  "What readers should know",
+  "Key context",
+] as const;
+
+function normalizeGenericHeading(value: string, sectionIndex: number): string {
+  if (!isGenericHeading(value)) return value.trim();
+  return NORMALIZED_SECTION_HEADINGS[sectionIndex % NORMALIZED_SECTION_HEADINGS.length];
+}
+
 export function validateArticleReadability(article: ReadabilityArticleShape): string[] {
   const reasons: string[] = [];
   const paragraphs: { label: string; text: string }[] = [];
@@ -42,9 +58,14 @@ export function validateArticleReadability(article: ReadabilityArticleShape): st
 
   const sections = Array.isArray(article.sections) ? article.sections : [];
   sections.forEach((section, sectionIndex) => {
-    const heading = (section?.heading ?? "").trim();
-    if (!heading) reasons.push(`readability_missing_section_heading:${sectionIndex + 1}`);
-    else if (isGenericHeading(heading)) reasons.push(`readability_generic_section_heading:${sectionIndex + 1}`);
+    const originalHeading = (section?.heading ?? "").trim();
+    if (!originalHeading) {
+      reasons.push(`readability_missing_section_heading:${sectionIndex + 1}`);
+    } else {
+      const heading = normalizeGenericHeading(originalHeading, sectionIndex);
+      if (heading !== originalHeading && section) section.heading = heading;
+      if (isGenericHeading(heading)) reasons.push(`readability_generic_section_heading:${sectionIndex + 1}`);
+    }
 
     (section?.paragraphs ?? []).forEach((paragraph, paragraphIndex) => {
       const text = (paragraph ?? "").trim();
