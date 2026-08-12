@@ -1,0 +1,81 @@
+name: Patch Gemini Rewrite Routing
+
+on:
+  push:
+    branches:
+      - agent/prefer-gemini-text-rewrites
+    paths:
+      - '.github/workflows/patch-prefer-gemini-text-rewrites.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/prefer-gemini-text-rewrites
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Prefer direct Gemini for text rewrites
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('src/server.ts')
+          text = path.read_text()
+
+          old_model = '  const model = process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash";'
+          new_model = '''  const model = hasImageInput(body)
+            ? process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash"
+            : process.env.AI_REWRITE_MODEL || "gemini-3.5-flash";'''
+          if old_model not in text:
+              raise SystemExit('Gemini model selection block not found')
+          text = text.replace(old_model, new_model, 1)
+
+          old_route = '''    if (!cf) {
+      return Response.json({ error: { message: "Cloudflare Workers AI text rewriting is not configured. CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required; Lovable and Gemini text fallbacks are disabled." } }, { status: 503 });
+    }
+
+    return directCloudflareTextResponse(chatBody, cf, init?.signal);'''
+          new_route = '''    if (geminiApiKey) {
+      return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
+    }
+
+    if (!cf) {
+      return Response.json({ error: { message: "No direct text rewrite provider is configured. Set GEMINI_API_KEY (preferred) or Cloudflare credentials; Lovable fallback is disabled." } }, { status: 503 });
+    }
+
+    return directCloudflareTextResponse(chatBody, cf, init?.signal);'''
+          if old_route not in text:
+              raise SystemExit('Text rewrite routing block not found')
+          text = text.replace(old_route, new_route, 1)
+
+          old_log = '''  if (cf) {
+    console.info(`[AI] text rewrite provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Lovable and Gemini text routing disabled`);
+  } else {
+    console.warn("[AI] Cloudflare Workers AI text credentials missing; text rewrite calls will fail closed");
+  }'''
+          new_log = '''  if (geminiApiKey) {
+    console.info(`[AI] text rewrite provider = Google Gemini direct (${process.env.AI_REWRITE_MODEL || "gemini-3.5-flash"}); Cloudflare is fallback only`);
+  } else if (cf) {
+    console.info(`[AI] text rewrite provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Gemini direct is not configured`);
+  } else {
+    console.warn("[AI] no direct text rewrite provider configured; rewrite calls will fail closed");
+  }'''
+          if old_log not in text:
+              raise SystemExit('Provider logging block not found')
+          text = text.replace(old_log, new_log, 1)
+
+          path.write_text(text)
+      - name: Commit patch and remove one-time workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/patch-prefer-gemini-text-rewrites.yml
+          git add src/server.ts
+          git commit -m "Prefer direct Gemini for text rewrites"
+          git push origin HEAD:agent/prefer-gemini-text-rewrites
