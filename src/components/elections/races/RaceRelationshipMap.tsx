@@ -16,7 +16,7 @@ export function RaceRelationshipMap({ race, candidates }: { race: RaceDetail; ca
       <h2 id="race-relationship-heading" className="mt-2 text-2xl font-bold text-slate-950">Election → candidate → district</h2>
       <p className="mt-2 max-w-3xl leading-7 text-slate-600">This map shows only relationships attached to the verified race record. Candidate profiles and district pages stay separate canonical entities so the same candidate or district can connect to other election records without duplicating content.</p>
       <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_auto_1fr_auto_1fr] lg:items-center">
-        <RelationshipNode eyebrow="Election race" title={race.name} detail={race.officeName} href={`/elections/races/${race.slug}`} />
+        <RelationshipNode eyebrow="Election race" title={race.name} detail={race.districtName ?? 'Verified Texas election race'} href={`/elections/races/${race.slug}`} />
         <Arrow />
         <div className="space-y-3">
           {candidates.length ? candidates.map((candidate) => <RelationshipNode key={candidate.id} eyebrow="Candidate" title={candidate.ballotName} detail="Verified candidate profile" href={`/elections/candidates/${candidate.slug}`} />) : <RelationshipNode eyebrow="Candidate" title="No published verified candidate attached" detail="Relationship remains pending" />}
