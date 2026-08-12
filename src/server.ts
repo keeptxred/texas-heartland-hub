@@ -15,6 +15,7 @@ type OpenAiCompatBody = {
   model?: string;
   messages?: OpenAiMessage[];
   max_tokens?: number;
+  response_format?: { type?: string; json_schema?: unknown };
 };
 type OpenAiImageBody = {
   model?: string;
@@ -294,7 +295,7 @@ async function directCloudflareTextResponse(
       },
       body: JSON.stringify({
         messages: retryInstruction ? [...messages, retryInstruction] : messages,
-        response_format: { type: "json_object" },
+        response_format: body.response_format ?? { type: "json_object" },
         max_tokens: maxTokens,
         temperature: attempt === 1 ? 0.25 : 0.1,
       }),
