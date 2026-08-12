@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import type { RaceDetail } from "@/types/elections";
 
 export interface RaceAuthoritySectionProps {
@@ -31,6 +32,27 @@ function districtSlug(race: RaceDetail) {
 
 export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
   const slug = districtSlug(race);
+  const sources = [
+    {
+      name: race.source.sourceName,
+      url: race.source.sourceUrl,
+      note: "Primary race record.",
+    },
+    race.geographySource
+      ? {
+          name: race.geographySource.sourceName,
+          url: race.geographySource.sourceUrl,
+          note: "District geography and boundary reference.",
+        }
+      : null,
+    race.countyElectionLinkSource
+      ? {
+          name: "Official county election directory",
+          url: race.countyElectionLinkSource.sourceUrl,
+          note: "Address-specific ballot and local election verification.",
+        }
+      : null,
+  ].filter((source): source is { name: string; url: string; note: string } => Boolean(source));
 
   return (
     <section aria-labelledby="race-authority-heading" className="space-y-6">
@@ -80,33 +102,11 @@ export function RaceAuthoritySection({ race }: RaceAuthoritySectionProps) {
         </div>
       ) : null}
 
-      <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
-        <h3 className="text-xl font-bold text-slate-950">Verification and primary sources</h3>
-        <p className="mt-2 leading-7 text-slate-600">
-          Race scope and election status are published only from verified records. Geography and
-          county links are shown separately so district boundaries are not confused with an
-          address-specific official ballot.
-        </p>
-        <div className="mt-4 flex flex-wrap gap-4 text-sm font-semibold">
-          <a href={race.source.sourceUrl} target="_blank" rel="noreferrer" className="text-red-700 hover:underline">
-            {race.source.sourceName}
-          </a>
-          {race.geographySource ? (
-            <a href={race.geographySource.sourceUrl} target="_blank" rel="noreferrer" className="text-red-700 hover:underline">
-              {race.geographySource.sourceName}
-            </a>
-          ) : null}
-          {race.countyElectionLinkSource ? (
-            <a href={race.countyElectionLinkSource.sourceUrl} target="_blank" rel="noreferrer" className="text-red-700 hover:underline">
-              Official county election directory
-            </a>
-          ) : null}
-        </div>
-        <p className="mt-4 text-xs leading-5 text-slate-500">
-          Data verified {formatDate((race.lastCheckedAt ?? "").slice(0, 10))}. Current freshness status:{" "}
-          {race.freshnessStatus}.
-        </p>
-      </div>
+      <CitationTrustPanel
+        sources={sources}
+        methodology="KeepTXRed publishes this race from verified election records, keeps district geography separate from address-specific ballot assignment, and normalizes recurring election dates and status fields across race pages. Polling, forecasts, and editorial analysis are displayed in separate sections and are not treated as primary-source race facts."
+        lastVerified={`${formatDate((race.lastCheckedAt ?? "").slice(0, 10))}. Freshness status: ${race.freshnessStatus}.`}
+      />
     </section>
   );
 }
