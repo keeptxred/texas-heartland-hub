@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { CitationTrustPanel } from "@/components/authority/CitationTrustPanel";
 import { ElectionLayout, ElectionNavigation, VotingDates, type VotingDateItem } from "@/components/elections";
+import { TexasVoterIdReference } from "@/components/elections/voting/TexasVoterIdReference";
 import { useElectionRaces } from "@/hooks/elections";
 import { TEXAS_ELECTIONS, formatElectionDate } from "@/lib/election-calendar";
 import { ELECTION_ROUTES } from "@/lib/elections";
@@ -17,10 +18,10 @@ const calendarVerified = calendar2026.map((election) => election.lastUpdated).so
 export const Route = createFileRoute("/elections/voting")({
   head: () => ({
     meta: [
-      { title: "Texas Voting Dates, Ballot Research & Official Resources | KeepTXRed" },
-      { name: "description", content: "Review the 2026 Texas election calendar, browse published races by ZIP, county or district, and continue to official Texas voter and county election resources." },
+      { title: "Texas Voting Dates, Voter ID, Ballot Research & Official Resources | KeepTXRed" },
+      { name: "description", content: "Review the 2026 Texas election calendar, current voter-ID categories, browse published races by ZIP, county or district, and continue to official Texas voter resources." },
       { name: "robots", content: "index, follow, max-image-preview:large" },
-      { property: "og:title", content: "Texas Voting Dates & Ballot Research | KeepTXRed Election Central" },
+      { property: "og:title", content: "Texas Voting Dates, Voter ID & Ballot Research | KeepTXRed Election Central" },
       { property: "og:url", content: "https://keeptxred.com/elections/voting" },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "Keep TX Red" },
@@ -93,13 +94,15 @@ function VotingResearch() {
 
   return (
     <ElectionLayout
-      title="Texas Voting Dates & Ballot Research"
-      description="Use the 2026 election calendar for statewide orientation, browse public race records by ZIP, county or district, then confirm registration, ballot assignment, voting requirements and local details with an official election authority."
+      title="Texas Voting Dates, Voter ID & Ballot Research"
+      description="Use the 2026 election calendar and voter-ID reference for statewide orientation, browse public race records by ZIP, county or district, then confirm registration, ballot assignment and local details with an official election authority."
       canonicalUrl="https://keeptxred.com/elections/voting"
       navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.voting} />}
     >
       <div className="space-y-8">
         <VotingDates dates={votingDates} title="2026 Texas election dates" description="Statewide primary, runoff and general-election dates from the centralized Texas election calendar. Local and special elections may use additional dates." />
+
+        <TexasVoterIdReference />
 
         <section className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm" aria-labelledby="voter-requirements-reference">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-red-700">What to verify before voting</p>
