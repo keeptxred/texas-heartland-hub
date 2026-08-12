@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2, Gavel, Landmark, Scale } from "lucide-react";
+import { StatewideOfficePowersComparison } from "@/components/government/StatewideOfficePowersComparison";
 import { GOVERNMENT_ENTITIES, governmentHubJsonLd, governmentPath, SITE_URL } from "@/lib/texas-government";
 
 const TITLE = "Texas Government: Offices, Leaders, Powers and Elections | KeepTXRed";
-const DESCRIPTION = "Explore Texas government offices, legislative institutions, statewide boards and highest courts, including current leaders, constitutional powers, laws, elections and history.";
+const DESCRIPTION = "Explore Texas government offices, legislative institutions, statewide boards and highest courts, including current leaders, constitutional powers, limits, laws, elections and history.";
 
 export const Route = createFileRoute("/texas-government")({
   head: () => ({
@@ -35,7 +36,7 @@ function TexasGovernmentHub() {
       <header className="rounded-2xl border bg-card p-6 md:p-10">
         <div className="flex items-center gap-3 text-primary"><Landmark className="h-7 w-7"/><span className="text-sm font-bold uppercase tracking-[0.18em]">Texas government authority guides</span></div>
         <h1 className="mt-4 max-w-4xl text-4xl font-bold leading-tight md:text-6xl">Texas Government: Offices, Leaders, Powers and Elections</h1>
-        <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">Understand who runs Texas government, what the constitution allows each institution to do, how leaders are selected, and how offices connect to laws, bills, elections and representatives.</p>
+        <p className="mt-5 max-w-3xl text-lg leading-8 text-muted-foreground">Understand who runs Texas government, what the constitution allows each institution to do, what limits apply, how leaders are selected, and how offices connect to laws, bills, elections and representatives.</p>
         <div className="mt-6 flex flex-wrap gap-3"><a href="/laws/texas-constitution" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Read the Texas Constitution</a><a href="/elections" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Election Central</a><a href="/bills" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Track Texas bills</a></div>
       </header>
 
@@ -47,6 +48,8 @@ function TexasGovernmentHub() {
         const entities = GOVERNMENT_ENTITIES.filter((entity) => entity.branch === branch);
         return <section key={branch} className="mt-12" aria-labelledby={`${branch.toLowerCase()}-heading`}><div className="flex items-center gap-3"><Gavel className="h-6 w-6 text-primary"/><h2 id={`${branch.toLowerCase()}-heading`} className="text-3xl font-bold">{title}</h2></div><div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{entities.map((entity) => <a key={entity.slug} href={governmentPath(entity.slug)} className="group rounded-xl border bg-card p-5 transition hover:-translate-y-0.5 hover:border-primary hover:shadow-sm"><div className="flex items-center justify-between gap-3"><span className="rounded-full bg-muted px-2.5 py-1 text-xs font-bold uppercase tracking-wide">{entity.entityType}</span><span className="text-xs text-muted-foreground">{entity.currentOfficeholder}</span></div><h3 className="mt-4 text-xl font-bold group-hover:text-primary">{entity.name}</h3><p className="mt-2 line-clamp-3 text-sm leading-6 text-muted-foreground">{entity.overview}</p><span className="mt-4 inline-flex text-sm font-bold text-primary">View authority page →</span></a>)}</div></section>;
       })}
+
+      <StatewideOfficePowersComparison />
 
       <section className="mt-12 rounded-2xl border bg-muted/30 p-6 md:p-8"><h2 className="text-2xl font-bold">How Texas government power is divided</h2><div className="mt-5 grid gap-6 md:grid-cols-3"><div><h3 className="font-bold">Executive</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Texas divides executive authority among independently elected constitutional officers, appointed officials, boards and commissions rather than concentrating all power in the governor.</p></div><div><h3 className="font-bold">Legislative</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">The House and Senate must agree on legislation. The governor may sign or veto bills, while courts may review enacted laws.</p></div><div><h3 className="font-bold">Judicial</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Texas has separate highest courts for civil and criminal cases, each with statewide elected judges.</p></div></div></section>
     </div>
