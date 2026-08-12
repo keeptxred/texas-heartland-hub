@@ -8,6 +8,7 @@ const publishedCandidates = candidatesSnapshot.filter((candidate) => candidate.p
 const calendar2026 = TEXAS_ELECTIONS.filter((election) => election.date.startsWith('2026-'));
 const latestCalendarVerification = calendar2026.map((election) => election.lastUpdated).sort().at(-1) ?? 'Verification pending';
 const calendarSource = calendar2026.find((election) => election.source)?.source;
+const generalElection = calendar2026.find((item) => item.type === 'general');
 
 export function ElectionMasterReference() {
   return (
@@ -21,7 +22,7 @@ export function ElectionMasterReference() {
           <MasterFact label="Verified races" value={publishedRaces.length.toLocaleString('en-US')} />
           <MasterFact label="Verified candidates" value={publishedCandidates.length.toLocaleString('en-US')} />
           <MasterFact label="2026 statewide election dates" value={calendar2026.length.toLocaleString('en-US')} />
-          <MasterFact label="General Election" value={formatElectionDate(calendar2026.find((item) => item.type === 'general') ?? calendar2026[calendar2026.length - 1])} />
+          <MasterFact label="General Election" value={generalElection ? formatElectionDate(generalElection) : 'Date pending verification'} />
         </dl>
 
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
