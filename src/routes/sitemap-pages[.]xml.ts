@@ -7,6 +7,7 @@ import { SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
 const GSC_CANONICAL_REFRESH = toIsoDate("2026-08-11T12:30:00-05:00");
+const CITATION_MAGNET_REFRESH = toIsoDate("2026-08-11T22:00:00-05:00");
 const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(
   SUPPORTING_GUIDE_SLUGS.map((slug) => [`/guides/${slug}`, GUIDE_LASTMOD]),
 );
@@ -20,8 +21,14 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/house": toIsoDate("2026-08-07T00:00:00-05:00"),
   "/texas-legislature/senate": toIsoDate("2026-08-07T00:00:00-05:00"),
-  "/texas-legislature/current-session": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/texas-legislature/current-session": CITATION_MAGNET_REFRESH,
   "/texas-legislature/sessions": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/texas-legislature/votes": CITATION_MAGNET_REFRESH,
+  "/texas-government": CITATION_MAGNET_REFRESH,
+  "/texas-government/agencies": CITATION_MAGNET_REFRESH,
+  "/laws": GUIDE_LASTMOD,
+  "/laws/constitutional-amendments": CITATION_MAGNET_REFRESH,
+  "/laws/effective-dates": CITATION_MAGNET_REFRESH,
   "/topics": GUIDE_LASTMOD,
   "/texas-politics": GUIDE_LASTMOD,
   "/texas-economy": GUIDE_LASTMOD,
@@ -30,7 +37,6 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-agriculture": GUIDE_LASTMOD,
   "/texas-veterans": GUIDE_LASTMOD,
   "/texas-law-enforcement": GUIDE_LASTMOD,
-  "/laws": GUIDE_LASTMOD,
   "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
   "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
   "/guides/texas-law-enforcement-public-safety-guide": GUIDE_LASTMOD,
@@ -45,8 +51,9 @@ const STATIC_PATHS:string[]=[
   // the canonical election hub ships in sitemap-elections.xml.
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
+  "/texas-legislature/votes","/texas-government","/texas-government/agencies",
   "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
-  "/get-involved","/county-elections","/laws",
+  "/get-involved","/county-elections","/laws","/laws/constitutional-amendments","/laws/effective-dates",
   // /texas-laws and /texas-law-policy are permanent aliases for /laws.
   // Legacy candidate guides are noindex until rebuilt on verified Election Central data.
   // /legislative-updates redirects to /bills, /laws-to-know redirects to /laws,

@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "site": "Keep TX Red",
+  "canonicalDomain": "https://keeptxred.com",
+  "asOf": "2026-08-11",
+  "purpose": "Machine-readable index of maintained Keep TX Red election, legislative, law and government reference resources intended for factual retrieval and citation.",
+  "resources": [
+    { "url": "https://keeptxred.com/elections/2026", "type": "election-cycle-reference", "topic": "2026 Texas elections", "title": "2026 Texas Election Central", "trust": ["verified-records", "official-calendar", "freshness"] },
+    { "url": "https://keeptxred.com/elections/statewide", "type": "race-comparison", "topic": "Texas statewide elections", "title": "2026 Texas Statewide Elections", "trust": ["verified-races", "verified-candidates", "scope-status"] },
+    { "url": "https://keeptxred.com/elections/races", "type": "race-directory", "topic": "Texas election races", "title": "Texas Election Races", "trust": ["verified-records", "entity-relationships"] },
+    { "url": "https://keeptxred.com/elections/candidates", "type": "candidate-directory", "topic": "Texas candidates", "title": "Texas Election Candidates", "trust": ["verified-records", "neutral-factual-core"] },
+    { "url": "https://keeptxred.com/elections/districts", "type": "district-directory", "topic": "Texas election districts", "title": "Texas Election Districts", "trust": ["official-lookup", "verified-race-links", "address-caveat"] },
+    { "url": "https://keeptxred.com/elections/voting", "type": "voting-reference", "topic": "Texas voting", "title": "Texas Voting Dates, Voter ID & Ballot Research", "trust": ["official-calendar", "official-voter-id", "voter-specific-caveat"] },
+    { "url": "https://keeptxred.com/elections/polls", "type": "poll-directory", "topic": "Texas election polling", "title": "Texas Election Polls", "trust": ["methodology", "freshness"] },
+    { "url": "https://keeptxred.com/elections/results", "type": "results-reference", "topic": "Texas election results", "title": "Texas Election Results", "trust": ["status", "freshness"] },
+    { "url": "https://keeptxred.com/texas-legislature", "type": "legislature-hub", "topic": "Texas Legislature", "title": "Texas Legislature", "trust": ["official-sources", "entity-relationships"] },
+    { "url": "https://keeptxred.com/texas-legislature/current-session", "type": "session-reference", "topic": "Texas legislative session", "title": "Current Texas Legislative Session", "trust": ["official-source", "current-session"] },
+    { "url": "https://keeptxred.com/texas-legislature/committees", "type": "committee-directory", "topic": "Texas legislative committees", "title": "Texas Legislative Committees", "trust": ["official-records", "entity-relationships"] },
+    { "url": "https://keeptxred.com/texas-legislature/votes", "type": "vote-activity-reference", "topic": "Texas legislative committee votes", "title": "Texas Legislative Committee Vote Records", "trust": ["official-source-links", "no-tally-inference"] },
+    { "url": "https://keeptxred.com/bills", "type": "bill-directory", "topic": "Texas legislation", "title": "Texas Bill Tracker", "trust": ["official-records", "freshness"] },
+    { "url": "https://keeptxred.com/laws", "type": "law-reference-hub", "topic": "Texas laws", "title": "Texas Laws Explained", "trust": ["official-sources", "editorial-separation"] },
+    { "url": "https://keeptxred.com/laws/constitutional-amendments", "type": "ballot-tracker", "topic": "Texas constitutional amendments", "title": "Texas Constitutional Amendments Tracker", "trust": ["secretary-of-state", "date-stamped-status", "local-proposition-caveat"] },
+    { "url": "https://keeptxred.com/laws/effective-dates", "type": "effective-date-tracker", "topic": "Texas laws taking effect", "title": "Texas Laws Taking Effect in 2026", "trust": ["legislative-reference-library", "mixed-date-caveat"] },
+    { "url": "https://keeptxred.com/texas-government", "type": "government-authority-hub", "topic": "Texas government powers", "title": "Texas Government: Offices, Leaders, Powers and Elections", "trust": ["constitutional-basis", "powers-and-limits", "review-date"] },
+    { "url": "https://keeptxred.com/texas-government/agencies", "type": "agency-directory-reference", "topic": "Texas state agencies", "title": "Texas State Agency Directory", "trust": ["texas-gov-directory", "state-library-directory", "scope-caveat"] },
+    { "url": "https://keeptxred.com/representatives", "type": "elected-official-directory", "topic": "Texas elected officials", "title": "Texas Representatives and Elected Officials", "trust": ["official-office-links", "district-coverage", "vacancy-handling"] }
+  ]
+}
