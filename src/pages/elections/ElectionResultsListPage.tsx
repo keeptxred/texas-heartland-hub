@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ElectionDirectoryTrustPanel } from "@/components/elections/ElectionDirectoryTrustPanel";
 import {
   ElectionEmptyState,
   ElectionErrorState,
@@ -62,6 +63,7 @@ export function ElectionResultsListPage({
             (children ?? <ElectionEmptyState kind="results" />)
           )}
         </section>
+        <ElectionDirectoryTrustPanel kind="results" />
       </div>
     </ElectionLayout>
   );
