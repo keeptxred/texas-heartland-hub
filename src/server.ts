@@ -381,48 +381,21 @@ function installDirectAiFetch(): void {
       return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
     }
 
-    let geminiFailure: { status: number; body: string } | null = null;
-    if (geminiApiKey) {
-      const geminiResponse = await directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
-      if (geminiResponse.ok || !cf) return geminiResponse;
-
-      const retryableGeminiFailure = geminiResponse.status === 429 || geminiResponse.status >= 500;
-      if (!retryableGeminiFailure) return geminiResponse;
-
-      const geminiFailureBody = await geminiResponse.clone().text();
-      geminiFailure = { status: geminiResponse.status, body: geminiFailureBody };
-      console.warn("[AI] direct Gemini text rewrite failed; falling back to Cloudflare Workers AI", {
-        status: geminiResponse.status,
-        detail: geminiFailureBody.slice(0, 300),
-      });
-    }
-
+    // Text rewriting is Cloudflare Workers AI ONLY. Gemini is never used for
+    // text-only rewrites (even when GEMINI_API_KEY exists), and the Lovable
+    // gateway fallback stays disabled.
     if (!cf) {
-      return Response.json({ error: { message: "No direct text rewrite provider is configured. Set GEMINI_API_KEY (preferred) or Cloudflare credentials; Lovable fallback is disabled." } }, { status: 503 });
+      return Response.json({ error: { message: "Cloudflare Workers AI text rewrite is not configured. Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN; Gemini text rewrite and Lovable fallback are disabled." } }, { status: 503 });
     }
 
-    const cloudflareResponse = await directCloudflareTextResponse(chatBody, cf, init?.signal);
-    if (!cloudflareResponse.ok && geminiFailure) {
-      const cloudflareFailureBody = await cloudflareResponse.clone().text();
-      return Response.json(
-        {
-          error: {
-            message: `Gemini ${geminiFailure.status}: ${geminiFailure.body.slice(0, 900)} | Cloudflare ${cloudflareResponse.status}: ${cloudflareFailureBody.slice(0, 500)}`,
-          },
-        },
-        { status: geminiFailure.status || cloudflareResponse.status || 502 },
-      );
-    }
-    return cloudflareResponse;
+    return directCloudflareTextResponse(chatBody, cf, init?.signal);
   }) as typeof globalThis.fetch;
 
   directAiFetchInstalled = true;
-  if (geminiApiKey) {
-    console.info(`[AI] text rewrite provider = Google Gemini direct (gemini-3.1-flash-lite); Cloudflare is fallback only`);
-  } else if (cf) {
-    console.info(`[AI] text rewrite provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Gemini direct is not configured`);
+  if (cf) {
+    console.info(`[AI] text rewrite provider = Cloudflare Workers AI ONLY (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Gemini text rewrite and Lovable fallback are disabled`);
   } else {
-    console.warn("[AI] no direct text rewrite provider configured; rewrite calls will fail closed");
+    console.warn("[AI] Cloudflare Workers AI credentials missing; text rewrite calls will fail closed");
   }
 }
 

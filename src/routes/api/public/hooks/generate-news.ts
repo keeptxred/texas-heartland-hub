@@ -509,7 +509,7 @@ async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
 export const Route = createFileRoute("/api/public/hooks/generate-news")({
   server: {
     handlers: {
-      POST: async () => {
+      POST: async ({ request }) => {
         const supabaseUrl = process.env.SUPABASE_URL;
         const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         const lovableApiKey = process.env.LOVABLE_API_KEY;
@@ -517,6 +517,19 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
         if (!supabaseUrl || !serviceKey || !lovableApiKey) {
           return Response.json({ error: "Missing required environment variables" }, { status: 500 });
         }
+
+        // Optional windowing so a caller can process one ranked story per
+        // request instead of one long batch run.
+        const query = new URL(request.url).searchParams;
+        const clamp = (raw: string | null, min: number, max: number, fallback: number) => {
+          if (raw === null || raw.trim() === "") return fallback;
+          const parsed = Number(raw);
+          if (!Number.isFinite(parsed)) return fallback;
+          return Math.min(Math.max(Math.trunc(parsed), min), max);
+        };
+        const offset = clamp(query.get("offset"), 0, 19, 0);
+        const limit = clamp(query.get("limit"), 1, 3, 3);
+        const windowed = query.has("offset") || query.has("limit");
 
         const feeds = await Promise.all(
           RSS_SOURCES.map(async (s) => {
@@ -529,9 +542,27 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           return Response.json({ error: "No RSS items fetched" }, { status: 502 });
         }
 
-        const items = scoreAndFilter(rawItems);
-        if (items.length === 0) {
+        const scored = scoreAndFilter(rawItems);
+        if (scored.length === 0) {
           return Response.json({ error: "No items met the publish threshold" }, { status: 200 });
+        }
+
+        // Slice BEFORE the rewrite. `items` is the local array every downstream
+        // source_index lookup resolves against, so mapping stays correct.
+        const items = windowed ? scored.slice(offset, offset + limit) : scored;
+        if (items.length === 0) {
+          return Response.json(
+            {
+              ok: true,
+              no_items: true,
+              reason: "offset_beyond_scored_items",
+              offset,
+              limit,
+              scored_count: scored.length,
+              inserted: 0,
+            },
+            { status: 200 },
+          );
         }
 
         let rewritten: RewrittenArticle[];
