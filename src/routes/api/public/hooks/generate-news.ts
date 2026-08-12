@@ -284,7 +284,75 @@ CATEGORY CLASSIFICATION RULES (strict):
         { role: "system", content: system + EDITORIAL_SYSTEM_ADDENDUM + `\n\nBATCH NOTE: for a batch call, include the "brief" object INSIDE each articles[] entry, e.g. {"articles":[{"brief":{...}, "source_index":..., "title":..., ...}]}. Any article whose brief.hasClearNewsEvent is false will be discarded — leave that entry's body fields empty rather than fabricating.` },
         { role: "user", content: `Source stories:\n\n${list}` },
       ],
-      response_format: { type: "json_object" },
+      response_format: {
+        type: "json_schema",
+        json_schema: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            articles: {
+              type: "array",
+              maxItems: 3,
+              items: {
+                type: "object",
+                additionalProperties: false,
+                properties: {
+                  brief: {
+                    type: "object",
+                    additionalProperties: true,
+                    properties: { hasClearNewsEvent: { type: "boolean" } },
+                    required: ["hasClearNewsEvent"],
+                  },
+                  source_index: { type: "integer", minimum: 1, maximum: 3 },
+                  category: { type: "string", enum: CATEGORIES },
+                  title: { type: "string" },
+                  dek: { type: "string" },
+                  summary: { type: "string" },
+                  relevance: { type: "string" },
+                  sections: {
+                    type: "array",
+                    minItems: 5,
+                    maxItems: 8,
+                    items: {
+                      type: "object",
+                      additionalProperties: false,
+                      properties: {
+                        heading: { type: "string" },
+                        paragraphs: {
+                          type: "array",
+                          minItems: 2,
+                          maxItems: 4,
+                          items: { type: "string" },
+                        },
+                      },
+                      required: ["heading", "paragraphs"],
+                    },
+                  },
+                  keyTakeaways: {
+                    type: "array",
+                    minItems: 3,
+                    maxItems: 5,
+                    items: { type: "string" },
+                  },
+                  faq: {
+                    type: "array",
+                    minItems: 4,
+                    maxItems: 6,
+                    items: {
+                      type: "object",
+                      additionalProperties: false,
+                      properties: { q: { type: "string" }, a: { type: "string" } },
+                      required: ["q", "a"],
+                    },
+                  },
+                },
+                required: ["brief", "source_index", "category", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
+              },
+            },
+          },
+          required: ["articles"],
+        },
+      },
       max_tokens: 9000,
     }),
   });
@@ -316,6 +384,8 @@ CATEGORY CLASSIFICATION RULES (strict):
   const kept: typeof raw = [];
   for (const a of raw) {
     if (a?.brief?.hasClearNewsEvent === false) continue;
+    const source = items[a.source_index - 1];
+    const sourceText = source ? `${source.title} ${source.description}` : undefined;
     const v = validateArticle(
       {
         title: a.title,
@@ -327,6 +397,7 @@ CATEGORY CLASSIFICATION RULES (strict):
         keyTakeaways: a.keyTakeaways,
       },
       a.brief,
+      sourceText,
     );
     if (!v.ok) {
       console.warn("[generate-news] editorial validation dropped article", {
