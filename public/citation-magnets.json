@@ -5,6 +5,7 @@
   "asOf": "2026-08-11",
   "purpose": "Machine-readable index of maintained Keep TX Red election, legislative, law and government reference resources intended for factual retrieval and citation.",
   "resources": [
+    { "url": "https://keeptxred.com/citation-guide", "type": "citation-policy", "topic": "Keep TX Red citation guidance", "title": "How to Cite Keep TX Red References & Data", "trust": ["canonical-url-guidance", "official-source-precedence", "provenance"] },
     { "url": "https://keeptxred.com/elections/2026", "type": "election-cycle-reference", "topic": "2026 Texas elections", "title": "2026 Texas Election Central", "trust": ["verified-records", "official-calendar", "freshness"] },
     { "url": "https://keeptxred.com/elections/statewide", "type": "race-comparison", "topic": "Texas statewide elections", "title": "2026 Texas Statewide Elections", "trust": ["verified-races", "verified-candidates", "scope-status"] },
     { "url": "https://keeptxred.com/elections/races", "type": "race-directory", "topic": "Texas election races", "title": "Texas Election Races", "trust": ["verified-records", "entity-relationships"] },
