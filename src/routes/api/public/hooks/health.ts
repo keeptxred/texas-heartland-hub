@@ -10,7 +10,7 @@ function aiProviderState() {
     ai_provider_ready: ready,
     rewrite_provider: ready ? "google-gemini-direct" : "unconfigured",
     rewrite_provider_ready: ready,
-    rewrite_model: ready ? "gemini-3.5-flash-lite" : null,
+    rewrite_model: ready ? "gemini-3.1-flash-lite" : null,
     image_provider: ready ? "google-gemini-direct" : "unconfigured",
     image_provider_ready: ready,
     image_model: ready ? (process.env.AI_IMAGE_MODEL || "gemini-3.1-flash-image") : null,
