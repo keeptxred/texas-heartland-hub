@@ -1,6 +1,6 @@
 name: Run Daily News Now
 
-# Production publisher smoke trigger: direct Lovable origin retry 2026-08-12 20:59 UTC.
+# Production publisher smoke trigger: stable project preview origin bypasses primary-domain redirects.
 on:
   push:
     branches: [main]
@@ -20,7 +20,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          endpoint='https://keeptxred.lovable.app/api/public/hooks/run-generate-news'
+          endpoint='https://id-preview--eabc624d-53f7-4564-8bf9-613c4b63a016.lovable.app/api/public/hooks/run-generate-news'
           for attempt in $(seq 1 4); do
             echo "Publish attempt ${attempt}/4"
             status=$(curl -sS -o /tmp/publish.json -w '%{http_code}' --max-time 180 "$endpoint" || true)
