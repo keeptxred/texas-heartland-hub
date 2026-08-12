@@ -199,7 +199,9 @@ async function directGeminiVisionResponse(
     }))
     .filter((message) => message.parts.length > 0);
 
-  const model = process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash";
+  const model = hasImageInput(body)
+    ? process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash"
+    : process.env.AI_REWRITE_MODEL || "gemini-3.5-flash";
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   const response = await nativeFetch(endpoint, {
     method: "POST",
@@ -377,18 +379,24 @@ function installDirectAiFetch(): void {
       return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
     }
 
+    if (geminiApiKey) {
+      return directGeminiVisionResponse(chatBody, geminiApiKey, init?.signal);
+    }
+
     if (!cf) {
-      return Response.json({ error: { message: "Cloudflare Workers AI text rewriting is not configured. CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required; Lovable and Gemini text fallbacks are disabled." } }, { status: 503 });
+      return Response.json({ error: { message: "No direct text rewrite provider is configured. Set GEMINI_API_KEY (preferred) or Cloudflare credentials; Lovable fallback is disabled." } }, { status: 503 });
     }
 
     return directCloudflareTextResponse(chatBody, cf, init?.signal);
   }) as typeof globalThis.fetch;
 
   directAiFetchInstalled = true;
-  if (cf) {
-    console.info(`[AI] text rewrite provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Lovable and Gemini text routing disabled`);
+  if (geminiApiKey) {
+    console.info(`[AI] text rewrite provider = Google Gemini direct (${process.env.AI_REWRITE_MODEL || "gemini-3.5-flash"}); Cloudflare is fallback only`);
+  } else if (cf) {
+    console.info(`[AI] text rewrite provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Gemini direct is not configured`);
   } else {
-    console.warn("[AI] Cloudflare Workers AI text credentials missing; text rewrite calls will fail closed");
+    console.warn("[AI] no direct text rewrite provider configured; rewrite calls will fail closed");
   }
 }
 
