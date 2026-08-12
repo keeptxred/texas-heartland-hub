@@ -201,7 +201,7 @@ async function directGeminiVisionResponse(
 
   const model = hasImageInput(body)
     ? process.env.AI_VALIDATION_MODEL || "gemini-3.5-flash"
-    : "gemini-2.5-flash-lite";
+    : "gemini-3.5-flash-lite";
   const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   const response = await nativeFetch(endpoint, {
     method: "POST",
@@ -218,7 +218,6 @@ async function directGeminiVisionResponse(
           ? { responseJsonSchema: body.response_format.json_schema }
           : {}),
         maxOutputTokens: Math.min(Math.max(Number(body.max_tokens) || 1024, 256), 12000),
-        temperature: 0.1,
       },
     }),
     signal: signal ?? undefined,
@@ -405,7 +404,7 @@ function installDirectAiFetch(): void {
 
   directAiFetchInstalled = true;
   if (geminiApiKey) {
-    console.info(`[AI] text rewrite provider = Google Gemini direct (gemini-2.5-flash-lite); Cloudflare is fallback only`);
+    console.info(`[AI] text rewrite provider = Google Gemini direct (gemini-3.5-flash-lite); Cloudflare is fallback only`);
   } else if (cf) {
     console.info(`[AI] text rewrite provider = Cloudflare Workers AI (${process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL}); Gemini direct is not configured`);
   } else {
