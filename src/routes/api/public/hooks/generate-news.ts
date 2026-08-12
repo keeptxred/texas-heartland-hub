@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { isPuzzleTitle } from "./ingest-feeds";
-import { meetsArticleMainWordCount, NON_EVERGREEN_MIN_MAIN_WORDS } from "@/lib/article-length";
+import { articleMainWordCount, INGESTED_MIN_MAIN_WORDS, meetsArticleMainWordCount } from "@/lib/article-length";
 import {
   EDITORIAL_SYSTEM_ADDENDUM,
   validateArticle,
@@ -132,7 +132,7 @@ const NON_BREAKING_TITLE_PATTERNS: RegExp[] = [
 // Anything from these is disqualified from breaking even if the neutralized
 // headline picks up an incidental keyword.
 const NON_BREAKING_SOURCE_PATTERNS: RegExp[] = [
-  /^r\//i,           // any subreddit
+  /^r\//i,
   /reddit/i,
   /medium/i,
   /substack/i,
@@ -168,7 +168,7 @@ function scoreItem(item: RssItem, titleRepetition: number): number {
   if (POLITICS_KEYWORDS.some((k) => haystack.includes(k))) score += 8;
   if (BREAKING_KEYWORDS.some((k) => haystack.includes(k))) score += 8;
   if (ENGAGEMENT_KEYWORDS.some((k) => haystack.includes(k))) score += 6;
-  if (titleRepetition >= 2) score += 5; // trending across multiple sources
+  if (titleRepetition >= 2) score += 5;
   return score;
 }
 
@@ -186,7 +186,6 @@ function titleFingerprint(title: string): string {
 type ScoredItem = RssItem & { score: number; isBreaking: boolean };
 
 function scoreAndFilter(items: RssItem[]): ScoredItem[] {
-  // Count rough title overlap across sources for trending boost.
   const fingerprints = new Map<string, number>();
   for (const it of items) {
     const fp = titleFingerprint(it.title);
@@ -255,7 +254,7 @@ DEK (first paragraph + meta description) RULES:
 - Sentence 2 gives the most newsworthy fact.
 
 BODY RULES (required for every picked story):
-- Every non-evergreen article MUST be at least ${NON_EVERGREEN_MIN_MAIN_WORDS} words of MAIN STORY PROSE across summary + sections only. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward the minimum. There is no upper word limit. Expand until the main story prose meets the minimum.
+- Every automated RSS rewrite MUST be at least ${INGESTED_MIN_MAIN_WORDS} words of MAIN STORY PROSE across summary + sections only. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward the minimum. Expand until the main story prose meets the minimum.
 - "summary": a substantial neutral opening section, grounded in concrete facts drawn from the source blurb. No invented quotes or stats.
 - "relevance": a substantial Texas relevance section explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
 - "sections": 5–8 additional H2-style sections, each with 2–4 substantial paragraphs covering background, timeline, stakeholders, local implications, what changes next, and practical reader context.
@@ -377,9 +376,6 @@ CATEGORY CLASSIFICATION RULES (strict):
       faq?: { q: string; a: string }[];
     }[];
   };
-  // Editorial validation: drop fabricated / off-topic / filler drafts before
-  // they reach the insert path. Batch mode does not retry per-item — a
-  // failing article is simply omitted from this run.
   const raw = parsed.articles ?? [];
   const kept: typeof raw = [];
   for (const a of raw) {
@@ -415,9 +411,6 @@ async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
   const selected = items.slice(0, 10);
   const combined: Awaited<ReturnType<typeof rewriteBatchWithAi>> = [];
 
-  // Keep each model response small enough to satisfy the 800-word article
-  // floor without exhausting the output-token budget. Run sequentially to
-  // avoid provider burst/rate-limit failures and preserve source ordering.
   for (let offset = 0; offset < selected.length; offset += 3) {
     const batch = selected.slice(offset, offset + 3);
     const rewritten = await rewriteBatchWithAi(batch, lovableApiKey);
@@ -442,7 +435,6 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           return Response.json({ error: "Missing required environment variables" }, { status: 500 });
         }
 
-        // 1. Pull every RSS feed in parallel.
         const feeds = await Promise.all(
           RSS_SOURCES.map(async (s) => {
             const xml = await fetchWithTimeout(s.url);
@@ -454,13 +446,11 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           return Response.json({ error: "No RSS items fetched" }, { status: 502 });
         }
 
-        // 2. Breaking News Priority Engine — score, drop low-value items.
         const items = scoreAndFilter(rawItems);
         if (items.length === 0) {
           return Response.json({ error: "No items met the publish threshold" }, { status: 200 });
         }
 
-        // 3. Discover-optimized rewrite.
         let rewritten: {
           source_index: number;
           category: string;
@@ -479,7 +469,6 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           return Response.json({ error: "AI rewrite failed", details: String(err) }, { status: 500 });
         }
 
-        // 4. Insert rewritten articles into the database.
         const supabase = createClient(supabaseUrl, serviceKey, {
           auth: { persistSession: false, autoRefreshToken: false },
         });
@@ -543,7 +532,11 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               body_json: bodyJson,
             };
           })
-          .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json));
+          .filter(
+            (row) =>
+              articleMainWordCount(row.body_json) >= INGESTED_MIN_MAIN_WORDS &&
+              meetsArticleMainWordCount(row.kind, row.body_json),
+          );
 
         if (rows.length === 0) {
           return Response.json({ error: "No valid rewritten articles" }, { status: 500 });
@@ -561,11 +554,6 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
         }
 
         await Promise.allSettled(rows.map((row) => generateFeaturedImageForSlugDirect(row.slug, true)));
-
-        // Published URLs are permanent. Removing old rows turns indexed article
-        // URLs into 404s and discards the search equity those pages earned.
-        // Archive presentation should be handled by feed queries, never by
-        // deleting the underlying published article.
 
         return Response.json({
           ok: true,
