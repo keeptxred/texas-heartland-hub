@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { AIReferralTracker } from "@/components/analytics/AIReferralTracker";
 import { SocialLinks } from "@/components/social-links";
 
 const PRIMARY_LINKS = [
@@ -51,32 +52,35 @@ const SHOP_POLICY_LINKS = [
 
 export function SiteFooter() {
   return (
-    <footer className="mt-16 bg-secondary text-secondary-foreground">
-      <div className="mx-auto max-w-7xl px-4 py-14">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr]">
-          <div>
-            <div className="mb-5 grid size-12 place-items-center rounded-full border border-white/20" aria-hidden>
-              <span className="font-display text-2xl leading-none text-accent">★</span>
+    <>
+      <AIReferralTracker />
+      <footer className="mt-16 bg-secondary text-secondary-foreground">
+        <div className="mx-auto max-w-7xl px-4 py-14">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr]">
+            <div>
+              <div className="mb-5 grid size-12 place-items-center rounded-full border border-white/20" aria-hidden>
+                <span className="font-display text-2xl leading-none text-accent">★</span>
+              </div>
+              <h2 className="font-display text-3xl tracking-tight">KEEP TEXAS RED</h2>
+              <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/80">
+                Texas news, politics, elections, legislation, public officials, business coverage and Texas-made designs.
+              </p>
             </div>
-            <h2 className="font-display text-3xl tracking-tight">KEEP TEXAS RED</h2>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/80">
-              Texas news, politics, elections, legislation, public officials, business coverage and Texas-made designs.
-            </p>
+            <FooterColumn heading="Explore" links={PRIMARY_LINKS} />
+            <FooterColumn heading="Texas News" links={NEWS_LINKS} />
+            <FooterColumn heading="Civic Tools" links={CIVIC_LINKS} />
+            <FooterColumn heading="About" links={TRUST_LINKS} />
+            <FooterColumn heading="Shop Policies" links={SHOP_POLICY_LINKS} />
           </div>
-          <FooterColumn heading="Explore" links={PRIMARY_LINKS} />
-          <FooterColumn heading="Texas News" links={NEWS_LINKS} />
-          <FooterColumn heading="Civic Tools" links={CIVIC_LINKS} />
-          <FooterColumn heading="About" links={TRUST_LINKS} />
-          <FooterColumn heading="Shop Policies" links={SHOP_POLICY_LINKS} />
+          <SocialLinks variant="footer" />
+          <div className="mt-10 border-t border-white/10 pt-6 text-center text-[10px] uppercase leading-relaxed tracking-[0.25em] text-white/75">
+            &copy; {new Date().getFullYear()} keeptxred.com — All rights reserved
+            <br />
+            <span className="normal-case tracking-normal">Independent commentary. Not authorized by any candidate or candidate&apos;s committee.</span>
+          </div>
         </div>
-        <SocialLinks variant="footer" />
-        <div className="mt-10 border-t border-white/10 pt-6 text-center text-[10px] uppercase leading-relaxed tracking-[0.25em] text-white/75">
-          &copy; {new Date().getFullYear()} keeptxred.com — All rights reserved
-          <br />
-          <span className="normal-case tracking-normal">Independent commentary. Not authorized by any candidate or candidate&apos;s committee.</span>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 }
 
