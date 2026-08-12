@@ -1,6 +1,6 @@
 name: Run Daily News Now
 
-# Production publisher smoke trigger: direct Lovable origin avoids custom-domain loopback failures.
+# Production publisher smoke trigger: direct Lovable origin retry 2026-08-12 20:59 UTC.
 on:
   push:
     branches: [main]
