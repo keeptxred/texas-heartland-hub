@@ -1,11 +1,9 @@
 name: Run Daily News Now
 
-# Production publisher: per-offset generate-news calls on the custom domain. Post-reset trigger 2026-08-12 19:06 CT.
+# Production publisher: try ranked stories until one publishes, then use the reserve safety net if needed.
 on:
-  push:
-    branches: [main]
-    paths:
-      - '.github/workflows/run-daily-news-now.yml'
+  schedule:
+    - cron: "15 12 * * *"
   workflow_dispatch:
 
 permissions:
@@ -21,6 +19,8 @@ jobs:
         run: |
           set -euo pipefail
           base='https://keeptxred.com/api/public/hooks/generate-news'
+          inserted=0
+          failed=0
           for offset in $(seq 0 9); do
             result='unknown'
             for attempt in 1 2; do
@@ -40,7 +40,9 @@ jobs:
                 if jq -e '.no_items == true' /tmp/publish.json >/dev/null 2>&1; then
                   result="ok(no-items)"
                 else
-                  result="ok(inserted=$(jq -r '.inserted // 0' /tmp/publish.json))"
+                  current_inserted=$(jq -r '.inserted // 0' /tmp/publish.json)
+                  result="ok(inserted=${current_inserted})"
+                  inserted=$((inserted + current_inserted))
                 fi
                 break
               fi
@@ -61,20 +63,38 @@ jobs:
                 echo '--- production response body ---'
                 cat /tmp/publish.json 2>/dev/null || true
                 echo
-                echo 'DAILY_NEWS_PUBLISH_FAILED'
-                exit 1
+                result="rejected(HTTP ${status})"
+                failed=$((failed + 1))
+                break
               fi
 
               echo "offset=${offset} -> failed(HTTP ${status})"
               echo '--- production response body ---'
               cat /tmp/publish.json 2>/dev/null || true
               echo
-              echo 'DAILY_NEWS_PUBLISH_FAILED'
-              exit 1
+              result="rejected(HTTP ${status})"
+              failed=$((failed + 1))
+              break
             done
 
             echo "offset=${offset} -> ${result}"
-            [[ "$result" == ok* ]] || { echo 'DAILY_NEWS_PUBLISH_FAILED'; exit 1; }
+            if [[ "$inserted" -gt 0 ]]; then
+              echo "A normal article published at offset=${offset}; stopping further AI calls."
+              break
+            fi
           done
 
-          echo 'DAILY_NEWS_PUBLISH_SUCCESS'
+          if [[ "$inserted" -eq 0 ]]; then
+            echo "No normal article published (${failed} rejected candidate(s)); invoking reserve safety net."
+            safety_status=$(curl -sS -X POST -o /tmp/safety-net.json -w '%{http_code}' \
+              --max-time 95 -H 'accept: application/json' \
+              'https://keeptxred.com/api/public/hooks/publishing-safety-net' || echo 000)
+            cat /tmp/safety-net.json 2>/dev/null || true
+            echo
+            if [[ "$safety_status" != "200" ]] || ! jq -e '.ok == true' /tmp/safety-net.json >/dev/null 2>&1; then
+              echo "PUBLISHING_SAFETY_NET_FAILED (HTTP ${safety_status})"
+              exit 1
+            fi
+          fi
+
+          echo "DAILY_NEWS_PUBLISH_SUCCESS inserted=${inserted} rejected=${failed}"
