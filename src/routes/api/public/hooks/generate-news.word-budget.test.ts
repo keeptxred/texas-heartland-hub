@@ -29,4 +29,13 @@ describe("Daily Texas News qualifying prose contract", () => {
     expect(source).toContain("combinedWords >= 45");
     expect(source).toContain("a.summary = normalizeSummaryLength(a.summary, a.sections)");
   });
+
+  it("requires enough verified source material before spending AI quota", () => {
+    expect(source).toContain("const MIN_VERIFIED_SOURCE_WORDS = 900");
+    expect(source).toContain("sourceWords >= MIN_VERIFIED_SOURCE_WORDS");
+    expect(source).toContain("skipped thin verified source before AI rewrite");
+    expect(source).toContain('reason: "insufficient_verified_source"');
+    expect(source).toContain("min_verified_source_words: MIN_VERIFIED_SOURCE_WORDS");
+    expect(source).toContain("source_word_counts: sourceWordCounts.slice(0, 10)");
+  });
 });
