@@ -7,12 +7,14 @@ import { isLegacyGeneratedNewsAsset } from "@/lib/facebook-image-readiness";
 import { EyeOff, Facebook, Image as ImageIcon } from "lucide-react";
 
 const IGNORE_FLAG = "chatgpt-admin-ignored";
+const NEWSROOM_AUTHOR = "Keep TX Red Newsroom";
 
 type ChatGptArticle = {
   id: string;
   slug: string;
   title: string;
   category: string;
+  author: string | null;
   source_name: string | null;
   source_url: string | null;
   published_at: string;
@@ -45,13 +47,14 @@ export function ChatGptAutoArticlesPanel() {
       const { data, error: queryError } = await supabase
         .from("daily_articles")
         .select(
-          "id,slug,title,category,source_name,source_url,published_at,featured_image_url,image_generation_status,quality_flags",
+          "id,slug,title,category,author,source_name,source_url,published_at,featured_image_url,image_generation_status,quality_flags",
         )
-        // The current Daily Texas News publisher writes is_ingested=false but
-        // does not populate author. Include those rows so a missing provenance
-        // label cannot make successfully published automated articles disappear.
+        // New generated newsroom rows are stamped with NEWSROOM_AUTHOR. Keep
+        // the NULL-author path only for legacy generated-news rows created
+        // before that metadata contract was added.
         .or("author.eq.Keep TX Red Newsroom,author.is.null")
         .eq("is_ingested", false)
+        .eq("kind", "news")
         .order("published_at", { ascending: false })
         .limit(100);
 
@@ -74,6 +77,9 @@ export function ChatGptAutoArticlesPanel() {
       active = false;
     };
   }, []);
+
+  const legacyMetadataCount = articles.filter((article) => !article.author).length;
+  const stampedMetadataCount = articles.filter((article) => article.author === NEWSROOM_AUTHOR).length;
 
   function adminToken(): string {
     return (
@@ -195,9 +201,17 @@ export function ChatGptAutoArticlesPanel() {
             Facebook. Ignored articles stay hidden permanently.
           </p>
         </div>
-        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          {articles.length} loaded
-        </span>
+        <div className="text-right text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          <div>{articles.length} loaded</div>
+          {!loading && !error ? (
+            <div className="mt-1 normal-case tracking-normal">
+              <span className="text-emerald-700">{stampedMetadataCount} stamped</span>
+              {legacyMetadataCount > 0 ? (
+                <span className="ml-2 text-amber-700">{legacyMetadataCount} legacy metadata</span>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
       </div>
 
       {loading ? <div className="text-sm text-muted-foreground">Loading…</div> : null}
@@ -219,6 +233,7 @@ export function ChatGptAutoArticlesPanel() {
             const state = postState[article.id] ?? { status: "idle" as const };
             const isPosting = state.status === "posting";
             const isLegacyPlaceholder = isLegacyGeneratedNewsAsset(article.featured_image_url);
+            const isLegacyMetadata = !article.author;
             const isRegenerating = regenerating[article.id] ?? false;
             const isIgnoring = ignoring[article.id] ?? false;
 
@@ -230,6 +245,11 @@ export function ChatGptAutoArticlesPanel() {
                       <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
                         {article.category}
                       </span>
+                      {isLegacyMetadata ? (
+                        <span className="text-[10px] font-bold uppercase tracking-widest text-amber-700">
+                          Legacy Metadata
+                        </span>
+                      ) : null}
                       {isLegacyPlaceholder ? (
                         <span className="text-[10px] font-bold uppercase tracking-widest text-destructive">
                           Legacy Placeholder
