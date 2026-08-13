@@ -50,6 +50,9 @@ function readSecretKeyCollection(value: string | undefined): string | undefined 
 }
 
 function resolveSupabaseAdminKey(): string | undefined {
+  const keepTxRedSecret = process.env.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (keepTxRedSecret) return keepTxRedSecret;
+
   const modernSecret = process.env.SUPABASE_SECRET_KEY?.trim();
   if (modernSecret) return modernSecret;
 
