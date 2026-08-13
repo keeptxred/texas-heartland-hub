@@ -288,6 +288,28 @@ function parseAiArticles(content: string): RewrittenArticle[] {
   throw new Error(`AI returned malformed JSON: ${String(lastError ?? "no articles array")}`);
 }
 
+function normalizeOverlongSummary(summary?: string): string | undefined {
+  if (typeof summary !== "string") return summary;
+  const trimmed = summary.trim();
+  const words = trimmed.split(/\s+/).filter(Boolean);
+  if (words.length <= 90) return trimmed;
+
+  const sentences = trimmed.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [];
+  const kept: string[] = [];
+  let keptWords = 0;
+  for (const sentence of sentences) {
+    const sentenceText = sentence.trim();
+    if (!sentenceText) continue;
+    const sentenceWords = sentenceText.split(/\s+/).filter(Boolean).length;
+    if (keptWords + sentenceWords > 90) break;
+    kept.push(sentenceText);
+    keptWords += sentenceWords;
+  }
+
+  if (keptWords >= 45) return kept.join(" ");
+  return words.slice(0, 90).join(" ");
+}
+
 async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {
   const list = items
     .map((it, i) => {
@@ -315,13 +337,14 @@ DEK (first paragraph + meta description) RULES:
 - Sentence 2 gives the most newsworthy fact.
 
 BODY RULES (required for every picked story):
-- TARGET 1,050–1,250 words of MAIN STORY PROSE across summary + sections only. The hard publication floor is ${INGESTED_MIN_MAIN_WORDS} qualifying words, so never return fewer than 900 words of main prose. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward the minimum.
-- Use ONLY facts supported by the supplied verified source material. If a detail is not supported, omit it instead of inventing filler.
-- "summary": a substantial neutral opening section grounded in concrete facts from the verified source material. No invented quotes or stats.
-- "relevance": a substantial Texas relevance section explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
-- "sections": 6–8 additional H2-style sections, each with 3–4 substantial paragraphs covering background, timeline, stakeholders, local implications, what changes next, and practical reader context supported by the source.
-- "keyTakeaways": 3–5 short bullet strings.
-- "faq": 4–6 Q&A entries answering likely reader questions with substantive answers.
+- The hard publication floor is ${INGESTED_MIN_MAIN_WORDS} qualifying words. Allocate the output budget to COUNTED MAIN STORY PROSE, not auxiliary fields.
+- "summary": exactly 55–75 words, neutral and answer-first, grounded in concrete facts from the verified source material.
+- "sections": exactly 6 substantive H2-style sections. EACH section must contain exactly 3 separate paragraphs. Target 50–70 words per paragraph. These 18 section paragraphs are the primary qualifying article body and should total roughly 900–1,200 factual words by themselves.
+- Texas relevance, source attribution, FAQ, key takeaways, title, dek, and source lists DO NOT count toward the ${INGESTED_MIN_MAIN_WORDS}-word publication floor. Do not spend the main word budget on those fields.
+- Use ONLY facts supported by the supplied verified source material. Avoid repetition and filler. If the verified source material genuinely cannot support an original factual article of at least ${INGESTED_MIN_MAIN_WORDS} qualifying words without inventing or repeating material, set brief.hasClearNewsEvent=false and leave the article body empty instead of fabricating content.
+- "relevance": a concise Texas relevance section explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
+- "keyTakeaways": exactly 3 short bullet strings.
+- "faq": exactly 3 Q&A entries answering likely reader questions concisely from the verified source.
 
 Pick every story in this batch (up to ${Math.min(3, items.length)} stories). Return ONLY valid JSON:
 {"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"...","summary":"...","relevance":"...","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["..."],"faq":[{"q":"...","a":"..."}]}]}
@@ -373,7 +396,7 @@ CATEGORY CLASSIFICATION RULES (strict):
                   sections: {
                     type: "array",
                     minItems: 6,
-                    maxItems: 8,
+                    maxItems: 6,
                     items: {
                       type: "object",
                       additionalProperties: false,
@@ -382,7 +405,7 @@ CATEGORY CLASSIFICATION RULES (strict):
                         paragraphs: {
                           type: "array",
                           minItems: 3,
-                          maxItems: 4,
+                          maxItems: 3,
                           items: { type: "string" },
                         },
                       },
@@ -392,13 +415,13 @@ CATEGORY CLASSIFICATION RULES (strict):
                   keyTakeaways: {
                     type: "array",
                     minItems: 3,
-                    maxItems: 5,
+                    maxItems: 3,
                     items: { type: "string" },
                   },
                   faq: {
                     type: "array",
-                    minItems: 4,
-                    maxItems: 6,
+                    minItems: 3,
+                    maxItems: 3,
                     items: { type: "object", additionalProperties: false, properties: { q: { type: "string" }, a: { type: "string" } }, required: ["q", "a"] },
                   },
                 },
@@ -432,6 +455,7 @@ CATEGORY CLASSIFICATION RULES (strict):
       rejectionReasons.push("invalid_source_index");
       continue;
     }
+    a.summary = normalizeOverlongSummary(a.summary);
     const source = items[a.source_index - 1];
     const sourceText = source ? `${source.title} ${source.sourceText || source.description}` : undefined;
     const v = validateArticle(
