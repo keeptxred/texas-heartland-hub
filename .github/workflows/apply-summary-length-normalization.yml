@@ -1,0 +1,34 @@
+name: Apply summary length normalization patch
+
+on:
+  push:
+    branches:
+      - fix/summary-length-normalization
+    paths:
+      - 'scripts/apply-summary-length-normalization.py'
+      - '.github/workflows/apply-summary-length-normalization.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/summary-length-normalization
+          fetch-depth: 0
+      - name: Apply patch
+        run: python3 scripts/apply-summary-length-normalization.py
+      - name: Commit patched generator
+        run: |
+          if git diff --quiet -- src/routes/api/public/hooks/generate-news.ts; then
+            echo 'No patch changes needed.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/routes/api/public/hooks/generate-news.ts
+          git commit -m 'Normalize short and long article summaries before validation'
+          git push origin HEAD:fix/summary-length-normalization
