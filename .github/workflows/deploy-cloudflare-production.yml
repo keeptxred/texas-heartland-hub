@@ -112,7 +112,40 @@ jobs:
               json.dump(payload, fh)
           PY
 
+          set +e
           bunx wrangler deploy --secrets-file "$secrets_file" 2>&1 | tee "$deploy_log"
+          deploy_status=${PIPESTATUS[0]}
+          set -e
+
+          if [[ "$deploy_status" -ne 0 ]]; then
+            diagnostic="$(python3 - "$deploy_log" <<'PY'
+          import os
+          import re
+          import sys
+
+          with open(sys.argv[1], "r", encoding="utf-8", errors="replace") as fh:
+              text = fh.read()
+
+          for name in ("CLOUDFLARE_API_TOKEN", "CLOUDFLARE_RUNTIME_AI_TOKEN"):
+              secret = os.environ.get(name, "")
+              if secret:
+                  text = text.replace(secret, "***")
+
+          ansi = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+          lines = [ansi.sub("", line).strip() for line in text.splitlines() if line.strip()]
+          interesting = [
+              line for line in lines
+              if re.search(r"error|permission|auth|forbidden|unauthorized|code|worker", line, re.I)
+          ]
+          selected = (interesting or lines)[-12:]
+          message = " | ".join(selected)[:3500]
+          message = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(message or "Wrangler exited without a diagnostic message")
+          PY
+            )"
+            echo "::error title=Cloudflare Worker upload failed::$diagnostic"
+            exit "$deploy_status"
+          fi
 
           preview_url="$(grep -Eo 'https://[^[:space:]]+\.workers\.dev' "$deploy_log" | tail -1 || true)"
           if [[ -z "$preview_url" ]]; then
