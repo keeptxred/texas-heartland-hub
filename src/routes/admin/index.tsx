@@ -53,10 +53,16 @@ function AdminDashboardPage() {
   const [feed, setFeed] = useState<FeedRow[]>([]);
   const [articles, setArticles] = useState<ArticleRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [feedError, setFeedError] = useState<string | null>(null);
+  const [articleError, setArticleError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
     async function load() {
+      setLoading(true);
+      setFeedError(null);
+      setArticleError(null);
+
       try {
         await fetch("/api/public/hooks/ingest-feeds", {
           method: "POST",
@@ -66,24 +72,47 @@ function AdminDashboardPage() {
         // Dashboard data still loads even when the on-open feed refresh fails.
       }
 
-      const [{ data: f }, { data: a }] = await Promise.all([
-        supabase
-          .from("texas_news_feed")
-          .select("id,title,source,internal_slug,pub_date")
-          .order("pub_date", { ascending: false })
-          .limit(50),
-        supabase
-          .from("daily_articles")
-          .select("id,slug,title,dek,category,is_breaking,published_at,created_at,source_name,featured_image_url,image_generation_status")
-          .order("created_at", { ascending: false })
-          .limit(50),
-      ]);
-      if (!active) return;
-      setFeed((f ?? []) as FeedRow[]);
-      setArticles((a ?? []) as ArticleRow[]);
-      setLoading(false);
+      try {
+        const [feedResult, articleResult] = await Promise.all([
+          supabase
+            .from("texas_news_feed")
+            .select("id,title,source,internal_slug,pub_date")
+            .order("pub_date", { ascending: false })
+            .limit(50),
+          supabase
+            .from("daily_articles")
+            .select("id,slug,title,dek,category,is_breaking,published_at,created_at,source_name,featured_image_url,image_generation_status")
+            .order("created_at", { ascending: false })
+            .limit(50),
+        ]);
+
+        if (!active) return;
+
+        if (feedResult.error) {
+          setFeedError(feedResult.error.message);
+          setFeed([]);
+        } else {
+          setFeed((feedResult.data ?? []) as FeedRow[]);
+        }
+
+        if (articleResult.error) {
+          setArticleError(articleResult.error.message);
+          setArticles([]);
+        } else {
+          setArticles((articleResult.data ?? []) as ArticleRow[]);
+        }
+      } catch (error) {
+        if (!active) return;
+        const message = error instanceof Error ? error.message : "Unexpected dashboard data query failure";
+        setFeedError(message);
+        setArticleError(message);
+        setFeed([]);
+        setArticles([]);
+      } finally {
+        if (active) setLoading(false);
+      }
     }
-    load();
+    void load();
     return () => {
       active = false;
     };
@@ -99,8 +128,9 @@ function AdminDashboardPage() {
     ? latestNormalArticle.created_at ?? latestNormalArticle.published_at
     : null;
   const publishingStalled =
-    !latestNormalActivity ||
-    Date.now() - Date.parse(latestNormalActivity) >= 24 * 60 * 60 * 1000;
+    !articleError &&
+    (!latestNormalActivity ||
+      Date.now() - Date.parse(latestNormalActivity) >= 24 * 60 * 60 * 1000);
 
   function signOut() {
     sessionStorage.removeItem(STORAGE_KEY);
@@ -142,14 +172,24 @@ function AdminDashboardPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 py-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Stat label="Feed items (last 50)" value={feed.length} />
-        <Stat label="Missing internal slug" value={missingSlug} tone={missingSlug > 0 ? "warn" : "ok"} />
-        <Stat label="Articles (last 50)" value={articles.length} />
-        <Stat label="Priority flags (last 50)" value={priorityFlags} />
-        <Stat label="Public breaking now" value={publicBreaking} tone={publicBreaking > 0 ? "warn" : "ok"} />
+        <Stat label="Feed items (last 50)" value={feedError ? "ERR" : feed.length} tone={feedError ? "warn" : "default"} />
+        <Stat label="Missing internal slug" value={feedError ? "ERR" : missingSlug} tone={feedError || missingSlug > 0 ? "warn" : "ok"} />
+        <Stat label="Articles (last 50)" value={articleError ? "ERR" : articles.length} tone={articleError ? "warn" : "default"} />
+        <Stat label="Priority flags (last 50)" value={articleError ? "ERR" : priorityFlags} tone={articleError ? "warn" : "default"} />
+        <Stat label="Public breaking now" value={articleError ? "ERR" : publicBreaking} tone={articleError || publicBreaking > 0 ? "warn" : "ok"} />
       </section>
 
-      {publishingStalled ? (
+      {articleError ? (
+        <section className="mx-auto max-w-6xl px-4 pb-8">
+          <div role="alert" className="border-2 border-destructive bg-destructive/5 p-4 text-destructive">
+            <div className="text-xs font-bold uppercase tracking-widest">Publishing monitor unavailable</div>
+            <p className="mt-1 text-sm">
+              The dashboard could not read <code>daily_articles</code>. This is a data-access/query failure, not evidence that publishing has stopped.
+            </p>
+            <p className="mt-1 break-words text-xs">{articleError}</p>
+          </div>
+        </section>
+      ) : publishingStalled ? (
         <section className="mx-auto max-w-6xl px-4 pb-8">
           <div role="alert" className="border-2 border-amber-500 bg-amber-50 p-4 text-amber-950">
             <div className="text-xs font-bold uppercase tracking-widest">Publishing safety net active</div>
@@ -180,7 +220,11 @@ function AdminDashboardPage() {
 
       <section className="mx-auto max-w-6xl px-4 pb-16 grid gap-8 lg:grid-cols-2">
         <Panel title="Latest RSS Ingest">
-          {loading ? <Skel /> : (
+          {loading ? <Skel /> : feedError ? (
+            <QueryError label="RSS feed query" message={feedError} />
+          ) : feed.length === 0 ? (
+            <div className="text-sm text-muted-foreground">No RSS feed items returned.</div>
+          ) : (
             <ul className="divide-y divide-border">
               {feed.slice(0, 20).map((r) => (
                 <li key={r.id} className="py-2 flex items-start gap-3">
@@ -198,7 +242,11 @@ function AdminDashboardPage() {
           )}
         </Panel>
         <Panel title="Latest Published Articles">
-          {loading ? <Skel /> : (
+          {loading ? <Skel /> : articleError ? (
+            <QueryError label="Published article query" message={articleError} />
+          ) : articles.length === 0 ? (
+            <div className="text-sm text-muted-foreground">No published articles returned.</div>
+          ) : (
             <ul className="divide-y divide-border">
               {articles.slice(0, 20).map((a) => {
                 const publicBreakingNow = isPublicBreaking(a);
@@ -329,7 +377,7 @@ function RegenerateImageButton({ slug }: { slug: string }) {
   );
 }
 
-function Stat({ label, value, tone = "default" }: { label: string; value: number; tone?: "default" | "ok" | "warn" }) {
+function Stat({ label, value, tone = "default" }: { label: string; value: number | string; tone?: "default" | "ok" | "warn" }) {
   const color = tone === "warn" ? "text-destructive" : tone === "ok" ? "text-emerald-600" : "text-foreground";
   return (
     <div className="border-2 border-foreground/10 p-4 bg-card">
@@ -344,6 +392,15 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
     <div className="border-2 border-foreground/10 bg-card p-5">
       <h2 className="font-display text-xl mb-3">{title}</h2>
       {children}
+    </div>
+  );
+}
+
+function QueryError({ label, message }: { label: string; message: string }) {
+  return (
+    <div role="alert" className="border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+      <div className="font-semibold">{label} failed.</div>
+      <div className="mt-1 break-words text-xs">{message}</div>
     </div>
   );
 }
