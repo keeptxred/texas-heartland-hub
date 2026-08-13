@@ -47,4 +47,12 @@ describe("Daily Texas News qualifying prose contract", () => {
     expect(source).toContain("verified_source_words: sourceWordCount(story.sourceText || story.description)");
     expect(source).toContain('typeof article.verified_source_words === "number"');
   });
+
+  it("removes vague unsupported attribution before editorial validation without another AI call", () => {
+    expect(source).toContain("VAGUE_ATTRIBUTION_PATTERNS");
+    expect(source).toContain("stripVagueAttributionSentences");
+    expect(source).toContain("sanitizeVagueAttribution(a)");
+    expect(source).toContain("experts (?:say|suggest|believe)");
+    expect(source).toContain("Never use vague unsupported attribution");
+  });
 });
