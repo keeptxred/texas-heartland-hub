@@ -315,13 +315,17 @@ DEK (first paragraph + meta description) RULES:
 - Sentence 2 gives the most newsworthy fact.
 
 BODY RULES (required for every picked story):
-- TARGET 1,050–1,250 words of MAIN STORY PROSE across summary + sections only. The hard publication floor is ${INGESTED_MIN_MAIN_WORDS} qualifying words, so never return fewer than 900 words of main prose. Do NOT count Texas relevance, source attribution, FAQ, key takeaways, title, dek, or source lists toward the minimum.
+- QUALIFYING PROSE BUDGET (strict): only "summary" + the "sections" paragraphs count toward the length minimum. Texas relevance, FAQ, key takeaways, title, dek, and source attribution DO NOT COUNT toward the minimum.
+- "summary" must be 55–75 words. Never longer than 90 words.
+- "sections" must contain EXACTLY 6 substantive H2 sections, each with EXACTLY 3 separate paragraphs, and each paragraph should target 50–70 words. Those 18 section paragraphs are the primary qualifying body and must together provide at least ~900 words.
+- The hard publication floor is ${INGESTED_MIN_MAIN_WORDS} qualifying words. Do not pad with repetition, filler, restatement, or boilerplate — every paragraph must add new factual substance from the verified source material.
+- If the verified source genuinely cannot support a factual 800+ word article, set brief.hasClearNewsEvent = false instead of inventing material.
 - Use ONLY facts supported by the supplied verified source material. If a detail is not supported, omit it instead of inventing filler.
-- "summary": a substantial neutral opening section grounded in concrete facts from the verified source material. No invented quotes or stats.
+- "summary": a self-contained neutral answer-first opening grounded in concrete facts from the verified source material. No invented quotes or stats.
 - "relevance": a substantial Texas relevance section explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
-- "sections": 6–8 additional H2-style sections, each with 3–4 substantial paragraphs covering background, timeline, stakeholders, local implications, what changes next, and practical reader context supported by the source.
-- "keyTakeaways": 3–5 short bullet strings.
-- "faq": 4–6 Q&A entries answering likely reader questions with substantive answers.
+- Section coverage: background, timeline, stakeholders, local implications, what changes next, and practical reader context supported by the source.
+- "keyTakeaways": EXACTLY 3 short bullet strings — keep them brief so output tokens go to the counted section prose.
+- "faq": EXACTLY 3 Q&A entries with concise answers — keep them brief so output tokens go to the counted section prose.
 
 Pick every story in this batch (up to ${Math.min(3, items.length)} stories). Return ONLY valid JSON:
 {"articles":[{"source_index":1,"category":"Legislature","title":"...","dek":"...","summary":"...","relevance":"...","sections":[{"heading":"...","paragraphs":["..."]}],"keyTakeaways":["..."],"faq":[{"q":"...","a":"..."}]}]}
@@ -373,7 +377,7 @@ CATEGORY CLASSIFICATION RULES (strict):
                   sections: {
                     type: "array",
                     minItems: 6,
-                    maxItems: 8,
+                    maxItems: 6,
                     items: {
                       type: "object",
                       additionalProperties: false,
@@ -382,7 +386,7 @@ CATEGORY CLASSIFICATION RULES (strict):
                         paragraphs: {
                           type: "array",
                           minItems: 3,
-                          maxItems: 4,
+                          maxItems: 3,
                           items: { type: "string" },
                         },
                       },
@@ -392,13 +396,13 @@ CATEGORY CLASSIFICATION RULES (strict):
                   keyTakeaways: {
                     type: "array",
                     minItems: 3,
-                    maxItems: 5,
+                    maxItems: 3,
                     items: { type: "string" },
                   },
                   faq: {
                     type: "array",
-                    minItems: 4,
-                    maxItems: 6,
+                    minItems: 3,
+                    maxItems: 3,
                     items: { type: "object", additionalProperties: false, properties: { q: { type: "string" }, a: { type: "string" } }, required: ["q", "a"] },
                   },
                 },
@@ -434,6 +438,9 @@ CATEGORY CLASSIFICATION RULES (strict):
     }
     const source = items[a.source_index - 1];
     const sourceText = source ? `${source.title} ${source.sourceText || source.description}` : undefined;
+    if (typeof a.summary === "string") {
+      a.summary = normalizeOverlongSummary(a.summary);
+    }
     const v = validateArticle(
       {
         title: a.title,
