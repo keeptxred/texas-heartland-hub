@@ -54,6 +54,35 @@ for (const symbol of ['assertKeepTxRedPublication', 'inferKeepTxRedDomain', 'sou
   if (!enrichment.includes(symbol)) errors.push(`Shared enrichment gate missing: ${symbol}`);
 }
 
+const generatedNewsSignature = 'Keep TX Red rewrote the coverage independently and links to the original for verification.';
+const generatedNewsWriter = read('src/routes/api/public/hooks/generate-news.ts');
+const generatedNewsTrigger = read('supabase/migrations/20260813014000_stamp_generated_newsroom_author.sql');
+const generatedNewsAdmin = read('src/components/admin/ChatGptAutoArticlesPanel.tsx');
+
+if (!generatedNewsWriter.includes(generatedNewsSignature)) {
+  errors.push('Daily Texas News writer provenance signature changed without updating the newsroom author contract.');
+}
+for (const marker of [
+  'stamp_generated_newsroom_author',
+  "NEW.author := 'Keep TX Red Newsroom'",
+  generatedNewsSignature,
+  "NEW.kind = 'news'",
+  'NEW.is_ingested IS FALSE',
+  "= 'Source attribution'",
+]) {
+  if (!generatedNewsTrigger.includes(marker)) {
+    errors.push(`Daily Texas News newsroom-author trigger missing contract marker: ${marker}`);
+  }
+}
+for (const marker of [
+  '.or("author.eq.Keep TX Red Newsroom,author.is.null")',
+  '.eq("is_ingested", false)',
+]) {
+  if (!generatedNewsAdmin.includes(marker)) {
+    errors.push(`ChatGPT Auto Articles admin feed missing provenance compatibility marker: ${marker}`);
+  }
+}
+
 for (const file of discoverArticleWriters('src')) {
   if (!allowedWriterSet.has(file)) errors.push(`Unregistered daily_articles writer: ${file}`);
 }
@@ -99,7 +128,7 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, no temporary exceptions or unregistered paths).`);
+console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, newsroom provenance contract locked, no temporary exceptions or unregistered paths).`);
 
 function read(file) {
   if (!fs.existsSync(file)) {
