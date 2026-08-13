@@ -318,6 +318,40 @@ function parseAiArticles(content: string): RewrittenArticle[] {
   throw new Error(`AI returned malformed JSON: ${String(lastError ?? "no articles array")}`);
 }
 
+const VAGUE_ATTRIBUTION_PATTERNS: RegExp[] = [
+  /\banalysts (?:say|believe)\b/i,
+  /\bobservers (?:say|believe|note)\b/i,
+  /\bexperts (?:say|suggest|believe)\b/i,
+  /\bconsultants (?:say|note|believe)\b/i,
+  /\bsources close to\b/i,
+];
+
+function stripVagueAttributionSentences(value?: string): string | undefined {
+  if (typeof value !== "string") return value;
+  const sentences = value.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [value];
+  const kept = sentences
+    .map((sentence) => sentence.trim())
+    .filter(Boolean)
+    .filter((sentence) => !VAGUE_ATTRIBUTION_PATTERNS.some((pattern) => pattern.test(sentence)));
+  return kept.join(" ").trim();
+}
+
+function sanitizeVagueAttribution(article: RewrittenArticle): void {
+  article.title = stripVagueAttributionSentences(article.title) || article.title;
+  article.dek = stripVagueAttributionSentences(article.dek) || article.dek;
+  article.summary = stripVagueAttributionSentences(article.summary);
+  article.relevance = stripVagueAttributionSentences(article.relevance);
+  if (Array.isArray(article.sections)) {
+    article.sections = article.sections.map((section) => ({
+      ...section,
+      heading: stripVagueAttributionSentences(section.heading) || section.heading,
+      paragraphs: (section.paragraphs ?? [])
+        .map((paragraph) => stripVagueAttributionSentences(paragraph) || "")
+        .filter(Boolean),
+    }));
+  }
+}
+
 function rewrittenMainWordCount(article: Pick<RewrittenArticle, "summary" | "sections">): number {
   const mainText = [
     article.summary ?? "",
@@ -410,7 +444,7 @@ BODY RULES (required for every picked story):
 - "summary": exactly 55–75 words, neutral and answer-first, grounded in concrete facts from the verified source material.
 - "sections": exactly 6 substantive H2-style sections. EACH section must contain exactly 3 separate paragraphs. Target 50–70 words per paragraph. These 18 section paragraphs are the primary qualifying article body and should total roughly 900–1,200 factual words by themselves.
 - Texas relevance, source attribution, FAQ, key takeaways, title, dek, and source lists DO NOT count toward the ${INGESTED_MIN_MAIN_WORDS}-word publication floor. Do not spend the main word budget on those fields.
-- Use ONLY facts supported by the supplied verified source material. Avoid repetition and filler. If the verified source material genuinely cannot support an original factual article of at least ${INGESTED_MIN_MAIN_WORDS} qualifying words without inventing or repeating material, set brief.hasClearNewsEvent=false and leave the article body empty instead of fabricating content.
+- Use ONLY facts supported by the supplied verified source material. Avoid repetition and filler. Never use vague unsupported attribution such as “analysts say,” “observers believe,” “experts say/suggest/believe,” “consultants say,” or “sources close to.” Attribute claims to a named person or organization only when the verified source supports that attribution. If the verified source material genuinely cannot support an original factual article of at least ${INGESTED_MIN_MAIN_WORDS} qualifying words without inventing or repeating material, set brief.hasClearNewsEvent=false and leave the article body empty instead of fabricating content.
 - "relevance": a concise Texas relevance section explaining the specific Texas stake (which city/region/agency/law is affected and why it matters to Texans).
 - "keyTakeaways": exactly 3 short bullet strings.
 - "faq": exactly 3 Q&A entries answering likely reader questions concisely from the verified source.
@@ -524,6 +558,7 @@ CATEGORY CLASSIFICATION RULES (strict):
       rejectionReasons.push("invalid_source_index");
       continue;
     }
+    sanitizeVagueAttribution(a);
     a.summary = normalizeSummaryLength(a.summary, a.sections);
     const source = items[a.source_index - 1];
     const sourceText = source ? `${source.title} ${source.sourceText || source.description}` : undefined;
