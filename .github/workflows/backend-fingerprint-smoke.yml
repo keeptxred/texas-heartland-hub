@@ -1,0 +1,21 @@
+name: Backend Fingerprint Smoke
+on:
+  push:
+    branches: [test/backend-fingerprint-smoke]
+    paths: ['.github/workflows/backend-fingerprint-smoke.yml']
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check deployed backend routes
+        shell: bash
+        run: |
+          set +e
+          for path in deployment-fingerprint newsroom-health; do
+            echo "=== $path ==="
+            curl -sS -i --max-time 30 "https://keeptxred.com/api/public/$path"
+            echo
+          done
