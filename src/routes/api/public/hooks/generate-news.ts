@@ -317,26 +317,54 @@ function parseAiArticles(content: string): RewrittenArticle[] {
   throw new Error(`AI returned malformed JSON: ${String(lastError ?? "no articles array")}`);
 }
 
-function normalizeOverlongSummary(summary?: string): string | undefined {
+function normalizeSummaryLength(summary?: string, sections?: NewsSection[]): string | undefined {
   if (typeof summary !== "string") return summary;
   const trimmed = summary.trim();
   const words = trimmed.split(/\s+/).filter(Boolean);
-  if (words.length <= 90) return trimmed;
 
-  const sentences = trimmed.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [];
-  const kept: string[] = [];
-  let keptWords = 0;
-  for (const sentence of sentences) {
-    const sentenceText = sentence.trim();
-    if (!sentenceText) continue;
-    const sentenceWords = sentenceText.split(/\s+/).filter(Boolean).length;
-    if (keptWords + sentenceWords > 90) break;
-    kept.push(sentenceText);
-    keptWords += sentenceWords;
+  if (words.length > 90) {
+    const sentences = trimmed.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [];
+    const kept: string[] = [];
+    let keptWords = 0;
+    for (const sentence of sentences) {
+      const sentenceText = sentence.trim();
+      if (!sentenceText) continue;
+      const sentenceWords = sentenceText.split(/\s+/).filter(Boolean).length;
+      if (keptWords + sentenceWords > 90) break;
+      kept.push(sentenceText);
+      keptWords += sentenceWords;
+    }
+    if (keptWords >= 45) return kept.join(" ");
+    return words.slice(0, 90).join(" ");
   }
 
-  if (keptWords >= 45) return kept.join(" ");
-  return words.slice(0, 90).join(" ");
+  if (words.length >= 45) return trimmed;
+
+  const firstBodyParagraph = (sections ?? [])
+    .flatMap((section) => section?.paragraphs ?? [])
+    .map((paragraph) => paragraph?.trim() ?? "")
+    .find(Boolean);
+
+  if (!firstBodyParagraph) return trimmed;
+
+  const supplementSentences = firstBodyParagraph.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [firstBodyParagraph];
+  const combined: string[] = [trimmed];
+  let combinedWords = words.length;
+  for (const sentence of supplementSentences) {
+    const sentenceText = sentence.trim();
+    if (!sentenceText || trimmed.includes(sentenceText)) continue;
+    const sentenceWords = sentenceText.split(/\s+/).filter(Boolean).length;
+    if (combinedWords + sentenceWords > 90) {
+      const remaining = Math.max(0, 90 - combinedWords);
+      if (remaining > 0) combined.push(sentenceText.split(/\s+/).slice(0, remaining).join(" "));
+      break;
+    }
+    combined.push(sentenceText);
+    combinedWords += sentenceWords;
+    if (combinedWords >= 45) break;
+  }
+
+  return combined.join(" ").trim();
 }
 
 async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {
@@ -484,7 +512,7 @@ CATEGORY CLASSIFICATION RULES (strict):
       rejectionReasons.push("invalid_source_index");
       continue;
     }
-    a.summary = normalizeOverlongSummary(a.summary);
+    a.summary = normalizeSummaryLength(a.summary, a.sections);
     const source = items[a.source_index - 1];
     const sourceText = source ? `${source.title} ${source.sourceText || source.description}` : undefined;
     const v = validateArticle(
