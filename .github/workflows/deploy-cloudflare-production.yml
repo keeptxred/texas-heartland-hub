@@ -1,11 +1,6 @@
 name: Deploy KeepTXRed to Cloudflare Workers
 
 on:
-  push:
-    branches:
-      - agent/fix-cloudflare-preview-upload
-    paths:
-      - '.github/workflows/deploy-cloudflare-production.yml'
   workflow_dispatch:
     inputs:
       activate_custom_domain:
@@ -83,26 +78,6 @@ jobs:
               raise SystemExit(f"Cloudflare Workers account access failed: errors={workers.get('errors')!r}")
           result = workers.get("result") or []
           print(f"Cloudflare deploy token active; Workers account access confirmed ({len(result)} script(s) visible).")
-          PY
-
-      - name: Confirm workers.dev preview namespace
-        shell: bash
-        run: |
-          set -euo pipefail
-          response="$(curl --fail-with-body --silent --show-error \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain")"
-          python3 - "$response" <<'PY'
-          import json
-          import sys
-
-          data = json.loads(sys.argv[1])
-          if data.get("success") is not True:
-              raise SystemExit(f"workers.dev namespace lookup failed: errors={data.get('errors')!r}")
-          subdomain = (data.get("result") or {}).get("subdomain")
-          if not subdomain:
-              raise SystemExit("Cloudflare account does not have a workers.dev namespace")
-          print(f"Workers preview namespace confirmed: {subdomain}.workers.dev")
           PY
 
       - name: Install dependencies
