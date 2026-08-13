@@ -47,7 +47,10 @@ export function ChatGptAutoArticlesPanel() {
         .select(
           "id,slug,title,category,source_name,source_url,published_at,featured_image_url,image_generation_status,quality_flags",
         )
-        .eq("author", "Keep TX Red Newsroom")
+        // The current Daily Texas News publisher writes is_ingested=false but
+        // does not populate author. Include those rows so a missing provenance
+        // label cannot make successfully published automated articles disappear.
+        .or("author.eq.Keep TX Red Newsroom,author.is.null")
         .eq("is_ingested", false)
         .order("published_at", { ascending: false })
         .limit(100);
