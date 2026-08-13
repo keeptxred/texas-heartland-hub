@@ -140,6 +140,10 @@ export function lawGuidesForTopic(topic: LawTopic): LawGuideMeta[] {
   return LAW_GUIDES.filter((guide) => guide.topic === topic);
 }
 
+export function isLawGuideMetaIndexable(guide: LawGuideMeta): boolean {
+  return guide.status === "legacy" || guide.status === "verified";
+}
+
 /**
  * Safe sitemap/publication guard for guides that have entered the new registry.
  * Unknown slugs preserve existing behavior so this migration cannot silently
@@ -149,7 +153,7 @@ export function lawGuidesForTopic(topic: LawTopic): LawGuideMeta[] {
 export function isLawGuideIndexable(slug: string): boolean {
   const guide = getLawGuideMeta(slug);
   if (!guide) return true;
-  return guide.status === "legacy" || guide.status === "verified";
+  return isLawGuideMetaIndexable(guide);
 }
 
 export function validateLawGuideMeta(guide: LawGuideMeta): string[] {
