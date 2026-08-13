@@ -1,5 +1,6 @@
 name: Source Preflight Live Smoke
 
+# Rerun after summary normalization merge dc6cab1f2e100fc57b222d20dfe3895662ff3014.
 on:
   push:
     branches:
