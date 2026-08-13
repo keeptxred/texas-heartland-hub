@@ -1,6 +1,9 @@
 name: Deploy KeepTXRed to Cloudflare Workers
 
 on:
+  pull_request:
+    paths:
+      - '.github/workflows/deploy-cloudflare-production.yml'
   push:
     branches: [main]
     paths:
