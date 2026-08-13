@@ -268,6 +268,7 @@ type RewrittenArticle = {
   sections?: NewsSection[];
   keyTakeaways?: string[];
   faq?: { q: string; a: string }[];
+  verified_source_words?: number;
 };
 
 function isQuotaOrRateLimitError(error: unknown): boolean {
@@ -315,6 +316,17 @@ function parseAiArticles(content: string): RewrittenArticle[] {
     }
   }
   throw new Error(`AI returned malformed JSON: ${String(lastError ?? "no articles array")}`);
+}
+
+function rewrittenMainWordCount(article: Pick<RewrittenArticle, "summary" | "sections">): number {
+  const mainText = [
+    article.summary ?? "",
+    ...(article.sections ?? []).flatMap((section) => [
+      section.heading ?? "",
+      ...(section.paragraphs ?? []),
+    ]),
+  ].join(" ");
+  return mainText.trim().split(/\s+/).filter(Boolean).length;
 }
 
 function normalizeSummaryLength(summary?: string, sections?: NewsSection[]): string | undefined {
@@ -367,7 +379,7 @@ function normalizeSummaryLength(summary?: string, sections?: NewsSection[]): str
   return combined.join(" ").trim();
 }
 
-async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {
+async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string, correctiveInstruction = "") {
   const list = items
     .map((it, i) => {
       const sourceMaterial = (it.sourceText || it.description).slice(0, 14000);
@@ -420,9 +432,9 @@ CATEGORY CLASSIFICATION RULES (strict):
       "Lovable-API-Key": lovableApiKey,
     },
     body: JSON.stringify({
-      model: "google/gemini-3-flash-preview",
+      model: "@cf/qwen/qwen3-30b-a3b-fp8",
       messages: [
-        { role: "system", content: system + EDITORIAL_SYSTEM_ADDENDUM + `\n\nBATCH NOTE: for a batch call, include the "brief" object INSIDE each articles[] entry, e.g. {"articles":[{"brief":{...}, "source_index":..., "title":..., ...}]}. Any article whose brief.hasClearNewsEvent is false will be discarded — leave that entry's body fields empty rather than fabricating.` },
+        { role: "system", content: system + EDITORIAL_SYSTEM_ADDENDUM + (correctiveInstruction ? `\n\n${correctiveInstruction}` : "") + `\n\nBATCH NOTE: for a batch call, include the "brief" object INSIDE each articles[] entry, e.g. {"articles":[{"brief":{...}, "source_index":..., "title":..., ...}]}. Any article whose brief.hasClearNewsEvent is false will be discarded — leave that entry's body fields empty rather than fabricating.` },
         { role: "user", content: `Source stories:\n\n${list}` },
       ],
       response_format: {
@@ -591,9 +603,37 @@ async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
     const { story, originalIndex } = eligible[index];
     try {
       const rewritten = await rewriteBatchWithAi([story], lovableApiKey);
-      const article = rewritten.find((candidate) => candidate.source_index === 1);
-      if (article) {
-        combined.push({ ...article, source_index: originalIndex + 1 });
+      const firstArticle = rewritten.find((candidate) => candidate.source_index === 1);
+      if (firstArticle) {
+        let article = firstArticle;
+        let mainWords = rewrittenMainWordCount(article);
+
+        if (mainWords < INGESTED_MIN_MAIN_WORDS) {
+          const correctiveInstruction = `CORRECTIVE LONG-FORM PASS: The previous valid draft produced only ${mainWords} qualifying main-story words, below the ${INGESTED_MIN_MAIN_WORDS}-word publication floor. Regenerate the COMPLETE article from the same verified source. Keep exactly 6 sections with exactly 3 separate paragraphs each. EACH of the 18 section paragraphs must be 65–80 words, so section prose alone totals at least 1,170 words before the summary. Use all concrete chronology, named entities, figures, decisions, causes, effects, and context explicitly supported by the verified source. Do not repeat yourself and do not invent facts. If the verified source cannot support that length without invention or repetition, set brief.hasClearNewsEvent=false instead.`;
+          try {
+            const corrected = await rewriteBatchWithAi([story], lovableApiKey, correctiveInstruction);
+            const correctedArticle = corrected.find((candidate) => candidate.source_index === 1);
+            const correctedWords = correctedArticle ? rewrittenMainWordCount(correctedArticle) : 0;
+            if (correctedArticle && correctedWords > mainWords) {
+              article = correctedArticle;
+              mainWords = correctedWords;
+            }
+          } catch (correctiveError) {
+            if (isQuotaOrRateLimitError(correctiveError)) throw correctiveError;
+            console.warn("[generate-news] corrective long-form pass failed; retaining first valid draft for final hard gate", {
+              sourceIndex: originalIndex + 1,
+              title: story.title,
+              firstDraftWords: mainWords,
+              error: String(correctiveError),
+            });
+          }
+        }
+
+        combined.push({
+          ...article,
+          source_index: originalIndex + 1,
+          verified_source_words: sourceWordCount(story.sourceText || story.description),
+        });
       } else {
         const message = `story ${originalIndex + 1} produced no editorially valid article`;
         failures.push(message);
@@ -771,17 +811,9 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           );
 
         if (rows.length === 0) {
-          const mainWordCounts = rewritten.map((article) => {
-            const mainText = [
-              article.summary ?? "",
-              ...(article.sections ?? []).flatMap((section) => [
-                section.heading ?? "",
-                ...(section.paragraphs ?? []),
-              ]),
-            ].join(" ");
-            return mainText.trim().split(/\s+/).filter(Boolean).length;
-          });
+          const mainWordCounts = rewritten.map(rewrittenMainWordCount);
           const sourceWordCounts = rewritten.map((article) => {
+            if (typeof article.verified_source_words === "number") return article.verified_source_words;
             const source = items[article.source_index - 1];
             return sourceWordCount(source?.sourceText || source?.description);
           });
