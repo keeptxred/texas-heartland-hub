@@ -90,106 +90,18 @@ jobs:
           }
           EOF
 
-          node <<'NODE'
-          const fs = require('fs')
-          const secret = (name) => '$' + '{{ secrets.' + name + ' }}'
-          const workflow = `name: Deploy KeepTXRed to Cloudflare Workers
-
-          on:
-            workflow_dispatch:
-
-          permissions:
-            contents: read
-
-          concurrency:
-            group: keeptxred-cloudflare-production
-            cancel-in-progress: false
-
-          jobs:
-            deploy:
-              runs-on: ubuntu-latest
-              timeout-minutes: 20
-              env:
-                CLOUDFLARE_ACCOUNT_ID: ${secret('CLOUDFLARE_ACCOUNT_ID')}
-                CLOUDFLARE_API_TOKEN: ${secret('CLOUDFLARE_DEPLOY_API_TOKEN')}
-                CLOUDFLARE_RUNTIME_AI_TOKEN: ${secret('CLOUDFLARE_API_TOKEN')}
-                SUPABASE_SERVICE_ROLE_KEY: ${secret('SUPABASE_SERVICE_ROLE_KEY')}
-              steps:
-                - uses: actions/checkout@v5
-
-                - uses: oven-sh/setup-bun@v2
-                  with:
-                    bun-version: latest
-
-                - name: Verify required production credentials
-                  shell: bash
-                  run: |
-                    set -euo pipefail
-                    missing=0
-                    for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN CLOUDFLARE_RUNTIME_AI_TOKEN SUPABASE_SERVICE_ROLE_KEY; do
-                      if [[ -z "\${!name:-}" ]]; then
-                        echo "Missing required GitHub secret for $name" >&2
-                        missing=1
-                      fi
-                    done
-                    exit "$missing"
-
-                - name: Install dependencies
-                  run: bun install --frozen-lockfile
-
-                - name: Validate and build
-                  run: |
-                    bun run lint
-                    bun run test
-                    bun run build
-                    bunx wrangler deploy --dry-run
-
-                - name: Deploy Worker with runtime secrets
-                  shell: bash
-                  run: |
-                    set -euo pipefail
-                    secrets_file="$(mktemp)"
-                    trap 'rm -f "$secrets_file"' EXIT
-                    python3 - "$secrets_file" <<'PY'
-                    import json, os, sys
-                    payload = {
-                        "CLOUDFLARE_ACCOUNT_ID": os.environ["CLOUDFLARE_ACCOUNT_ID"],
-                        "CLOUDFLARE_API_TOKEN": os.environ["CLOUDFLARE_RUNTIME_AI_TOKEN"],
-                        "SUPABASE_SERVICE_ROLE_KEY": os.environ["SUPABASE_SERVICE_ROLE_KEY"],
-                    }
-                    with open(sys.argv[1], "w", encoding="utf-8") as fh:
-                        json.dump(payload, fh)
-                    PY
-                    bunx wrangler deploy --secrets-file "$secrets_file"
-
-                - name: Verify production health
-                  shell: bash
-                  run: |
-                    set -euo pipefail
-                    response="$(curl --retry 5 --retry-delay 3 --fail-with-body --silent --show-error https://keeptxred.com/api/public/hooks/health)"
-                    echo "$response"
-                    python3 - "$response" <<'PY'
-                    import json, sys
-                    data = json.loads(sys.argv[1])
-                    if data.get("database") != "ok":
-                        raise SystemExit("Production database health is not ok after deploy")
-                    PY
-          `
-          fs.writeFileSync('.github/workflows/deploy-cloudflare-production.yml', workflow.replace(/^          /gm, ''))
-          NODE
-
       - name: Validate official Cloudflare build
         run: |
           bun run lint
           bun run build
           bunx wrangler deploy --dry-run
 
-      - name: Commit to isolated output branch
+      - name: Commit code-only output branch
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'keeptxred'
           git config user.email 'freddy.coppola@gmail.com'
-          git add package.json bun.lock vite.config.ts wrangler.jsonc .github/workflows/deploy-cloudflare-production.yml
+          git add package.json bun.lock vite.config.ts wrangler.jsonc
           git commit -m 'Replace Lovable build adapter with Cloudflare Workers'
           git push --force origin HEAD:agent/direct-cloudflare-ready
