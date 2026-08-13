@@ -166,7 +166,7 @@ function titleFingerprint(title: string): string {
 
 type ScoredItem = RssItem & { score: number; isBreaking: boolean };
 
-const MIN_VERIFIED_SOURCE_WORDS = 600;
+const MIN_VERIFIED_SOURCE_WORDS = 900;
 
 type SourcePreflightDiagnostic = {
   title: string;
@@ -781,13 +781,19 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
             ].join(" ");
             return mainText.trim().split(/\s+/).filter(Boolean).length;
           });
+          const sourceWordCounts = rewritten.map((article) => {
+            const source = items[article.source_index - 1];
+            return sourceWordCount(source?.sourceText || source?.description);
+          });
           return Response.json(
             {
               error: "No valid rewritten articles",
               diagnostics: {
                 rewritten: rewritten.length,
                 min_main_words: INGESTED_MIN_MAIN_WORDS,
+                min_verified_source_words: MIN_VERIFIED_SOURCE_WORDS,
                 main_word_counts: mainWordCounts.slice(0, 10),
+                source_word_counts: sourceWordCounts.slice(0, 10),
               },
             },
             { status: 500 },
