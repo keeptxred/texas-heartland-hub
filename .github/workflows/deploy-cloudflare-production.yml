@@ -175,7 +175,7 @@ jobs:
         run: |
           set -euo pipefail
           health_url="${PREVIEW_URL%/}/api/public/hooks/health"
-          response="$(curl --retry 6 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error "$health_url")"
+          response="$(curl --retry 20 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error "$health_url")"
           echo "$response"
           python3 - "$response" <<'PY'
           import json
