@@ -53,6 +53,17 @@ const enrichment = read('src/lib/content-quality.ts');
 for (const symbol of ['assertKeepTxRedPublication', 'inferKeepTxRedDomain', 'source_url?.includes("texasdefined.com")']) {
   if (!enrichment.includes(symbol)) errors.push(`Shared enrichment gate missing: ${symbol}`);
 }
+for (const marker of [
+  'GENERATED_NEWS_PROVENANCE_SIGNATURE',
+  'GENERATED_NEWSROOM_AUTHOR',
+  'row.kind === "news"',
+  'bodyText.includes(GENERATED_NEWS_PROVENANCE_SIGNATURE)',
+  'row.author = GENERATED_NEWSROOM_AUTHOR',
+]) {
+  if (!enrichment.includes(marker)) {
+    errors.push(`Shared enrichment missing automated newsroom author marker: ${marker}`);
+  }
+}
 
 const generatedNewsSignature = 'Keep TX Red rewrote the coverage independently and links to the original for verification.';
 const generatedNewsWriter = read('src/routes/api/public/hooks/generate-news.ts');
@@ -61,6 +72,9 @@ const generatedNewsAdmin = read('src/components/admin/ChatGptAutoArticlesPanel.t
 
 if (!generatedNewsWriter.includes(generatedNewsSignature)) {
   errors.push('Daily Texas News writer provenance signature changed without updating the newsroom author contract.');
+}
+if (!enrichment.includes(generatedNewsSignature)) {
+  errors.push('Shared enrichment newsroom provenance signature no longer matches the Daily Texas News writer.');
 }
 for (const marker of [
   'stamp_generated_newsroom_author',
@@ -128,7 +142,7 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, newsroom provenance contract locked, no temporary exceptions or unregistered paths).`);
+console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, app-side newsroom author stamping locked, database fallback contract locked, no temporary exceptions or unregistered paths).`);
 
 function read(file) {
   if (!fs.existsSync(file)) {
