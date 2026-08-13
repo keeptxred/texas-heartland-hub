@@ -1,6 +1,6 @@
 name: Source Preflight Live Smoke
 
-# Rerun after 900-word verified-source preflight merge d7d89ad99c21291768defd401190d1247c875e3e.
+# Rerun after deployment propagation for merge d7d89ad99c21291768defd401190d1247c875e3e.
 on:
   push:
     branches:
