@@ -6,6 +6,7 @@ on:
       - agent/direct-cloudflare-deploy
     paths:
       - '.github/workflows/prepare-direct-cloudflare.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -17,7 +18,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: agent/direct-cloudflare-deploy
+          ref: main
           fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
@@ -177,26 +178,18 @@ jobs:
           fs.writeFileSync('.github/workflows/deploy-cloudflare-production.yml', workflow.replace(/^          /gm, ''))
           NODE
 
-          echo 'Runtime process.env names referenced in tracked source:'
-          git grep -hoE 'process\.env\.[A-Z0-9_]+' -- '*.ts' '*.tsx' '*.js' '*.mjs' | sed 's/process\.env\.//' | sort -u || true
-
       - name: Validate official Cloudflare build
         run: |
           bun run lint
           bun run build
           bunx wrangler deploy --dry-run
 
-      - name: Commit prepared deployment configuration
+      - name: Commit to isolated output branch
         shell: bash
         run: |
           set -euo pipefail
-          rm -f .github/workflows/prepare-direct-cloudflare.yml
           git config user.name 'keeptxred'
           git config user.email 'freddy.coppola@gmail.com'
-          git add package.json bun.lock vite.config.ts wrangler.jsonc .github/workflows/deploy-cloudflare-production.yml .github/workflows/prepare-direct-cloudflare.yml
-          if git diff --cached --quiet; then
-            echo 'No deployment changes to commit.'
-            exit 0
-          fi
+          git add package.json bun.lock vite.config.ts wrangler.jsonc .github/workflows/deploy-cloudflare-production.yml
           git commit -m 'Replace Lovable build adapter with Cloudflare Workers'
-          git push origin HEAD:agent/direct-cloudflare-deploy
+          git push --force origin HEAD:agent/direct-cloudflare-ready
