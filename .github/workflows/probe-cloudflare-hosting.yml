@@ -1,0 +1,86 @@
+name: Probe Cloudflare hosting
+
+on:
+  push:
+    branches:
+      - agent/probe-cloudflare-hosting
+    paths:
+      - '.github/workflows/probe-cloudflare-hosting.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Inspect Cloudflare hosting targets read-only
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]]; then
+            echo 'CLOUDFLARE_ACCOUNT_ID is not configured.'
+            exit 2
+          fi
+          if [[ -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+            echo 'CLOUDFLARE_API_TOKEN is not configured.'
+            exit 2
+          fi
+
+          api='https://api.cloudflare.com/client/v4'
+          auth=( -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" -H 'Content-Type: application/json' )
+
+          verify="$(curl -fsS "${auth[@]}" "$api/user/tokens/verify" || true)"
+          workers="$(curl -fsS "${auth[@]}" "$api/accounts/${CLOUDFLARE_ACCOUNT_ID}/workers/scripts" || true)"
+          pages="$(curl -fsS "${auth[@]}" "$api/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects?per_page=100" || true)"
+          zones="$(curl -fsS "${auth[@]}" "$api/zones?name=keeptxred.com" || true)"
+
+          python3 - "$verify" "$workers" "$pages" "$zones" <<'PY'
+          import json, sys
+
+          def load(raw):
+              try:
+                  return json.loads(raw)
+              except Exception:
+                  return {"success": False, "errors": [{"message": "non-json response"}]}
+
+          verify, workers, pages, zones = map(load, sys.argv[1:5])
+
+          print('token_verify_success=', verify.get('success'))
+          if not verify.get('success'):
+              print('token_errors=', [(e.get('code'), e.get('message')) for e in verify.get('errors', [])])
+
+          print('workers_success=', workers.get('success'))
+          if workers.get('success'):
+              for row in workers.get('result') or []:
+                  print('worker=', row.get('id') or row.get('name'))
+          else:
+              print('workers_errors=', [(e.get('code'), e.get('message')) for e in workers.get('errors', [])])
+
+          print('pages_success=', pages.get('success'))
+          if pages.get('success'):
+              for row in pages.get('result') or []:
+                  print('pages_project=', {
+                      'name': row.get('name'),
+                      'subdomain': row.get('subdomain'),
+                      'domains': row.get('domains'),
+                      'production_branch': row.get('production_branch'),
+                  })
+          else:
+              print('pages_errors=', [(e.get('code'), e.get('message')) for e in pages.get('errors', [])])
+
+          print('zones_success=', zones.get('success'))
+          if zones.get('success'):
+              for row in zones.get('result') or []:
+                  print('zone=', {'id': row.get('id'), 'name': row.get('name'), 'status': row.get('status')})
+          else:
+              print('zones_errors=', [(e.get('code'), e.get('message')) for e in zones.get('errors', [])])
+          PY
