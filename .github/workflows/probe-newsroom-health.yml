@@ -1,0 +1,28 @@
+name: Probe Newsroom Health After Supabase Cutover
+
+on:
+  push:
+    branches:
+      - probe/newsroom-health-after-supabase-cutover
+    paths:
+      - '.github/workflows/probe-newsroom-health.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Probe production newsroom health
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=$(curl -sS --max-time 45 -o /tmp/body.json -w '%{http_code}' https://keeptxred.com/api/public/newsroom-health)
+          echo "HTTP $status"
+          cat /tmp/body.json
+          echo
+          if [ "$status" -lt 200 ] || [ "$status" -ge 300 ]; then
+            exit 1
+          fi
