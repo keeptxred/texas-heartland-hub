@@ -292,6 +292,35 @@ async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {
   return rewriteBatchWithAiImpl(items, lovableApiKey);
 }
 
+const SUMMARY_MAX_WORDS = 90;
+const SUMMARY_MIN_KEPT_WORDS = 45;
+
+/**
+ * Deterministically shortens an OVERLONG summary (>90 words) without another AI
+ * request and without inventing facts. Summaries of 90 words or fewer are
+ * returned unchanged so existing validation still handles too-short summaries.
+ */
+export function normalizeOverlongSummary(summary: string): string {
+  const text = summary.trim();
+  if (!text) return summary;
+  const words = text.split(/\s+/).filter(Boolean);
+  if (words.length <= SUMMARY_MAX_WORDS) return summary;
+
+  const sentences = text.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [];
+  const kept: string[] = [];
+  let keptWords = 0;
+  for (const sentence of sentences) {
+    const sentenceWords = sentence.trim().split(/\s+/).filter(Boolean).length;
+    if (keptWords + sentenceWords > SUMMARY_MAX_WORDS) break;
+    kept.push(sentence.trim());
+    keptWords += sentenceWords;
+  }
+  if (keptWords >= SUMMARY_MIN_KEPT_WORDS) return kept.join(" ");
+
+  const truncated = words.slice(0, SUMMARY_MAX_WORDS).join(" ").replace(/[,;:\s]+$/, "");
+  return /[.!?]$/.test(truncated) ? truncated : `${truncated}.`;
+}
+
 async function rewriteBatchWithAiImpl(items: ScoredItem[], lovableApiKey: string) {
   const list = items
     .map((it, i) => {
