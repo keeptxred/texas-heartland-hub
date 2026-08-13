@@ -93,7 +93,7 @@ jobs:
             -X PUT \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             -H "Content-Type: application/json" \
-            --data '{"subdomain":"keeptxred"}' \
+            --data '{"subdomain":"keeptxred-preview-693afebd"}' \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain")"
           python3 - "$response" <<'PY'
           import json
@@ -103,7 +103,7 @@ jobs:
           if data.get("success") is not True:
               raise SystemExit(f"workers.dev namespace registration failed: errors={data.get('errors')!r}")
           subdomain = (data.get("result") or {}).get("subdomain")
-          if subdomain != "keeptxred":
+          if subdomain != "keeptxred-preview-693afebd":
               raise SystemExit(f"Unexpected workers.dev namespace: {subdomain!r}")
           print(f"Workers preview namespace registered: {subdomain}.workers.dev")
           PY
