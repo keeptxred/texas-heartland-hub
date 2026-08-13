@@ -36,7 +36,8 @@ async function sendOptionalWebhook(payload: Record<string, unknown>): Promise<bo
 
 export async function runPublishingSafetyNet() {
   const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY;
   if (!supabaseUrl || !serviceKey) {
     return { ok: false as const, status: 500, error: "Missing required environment variables" };
   }

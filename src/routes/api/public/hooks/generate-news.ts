@@ -704,7 +704,9 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
     handlers: {
       POST: async ({ request }) => {
         const supabaseUrl = process.env.SUPABASE_URL;
-        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        const serviceKey =
+          process.env.SUPABASE_SERVICE_ROLE_KEY ||
+          process.env.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY;
         const lovableApiKey = process.env.LOVABLE_API_KEY;
 
         if (!supabaseUrl || !serviceKey || !lovableApiKey) {
