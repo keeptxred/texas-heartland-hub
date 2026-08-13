@@ -30,13 +30,17 @@ jobs:
           printf '### Live KeepTXRed backend trace\n\n' >> "$GITHUB_STEP_SUMMARY"
           printf 'Live HTML: `%s bytes`\n\n' "$(wc -c < "$work/index.html")" >> "$GITHUB_STEP_SUMMARY"
 
-          mapfile -t scripts < <(
-            grep -oE '<script[^>]+src=["'"'][^"'"']+["'"']' "$work/index.html" \
-              | sed -E 's/.*src=["'"']([^"'"']+)["'"'].*/\1/' \
-              | sort -u
-          )
+          python3 - "$work/index.html" "$work/scripts.txt" <<'PY'
+          import re, sys
+          html = open(sys.argv[1], encoding='utf-8', errors='ignore').read()
+          scripts = sorted(set(re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', html, re.I)))
+          with open(sys.argv[2], 'w', encoding='utf-8') as f:
+              for src in scripts:
+                  f.write(src + '\n')
+          print(f'Found {len(scripts)} script assets')
+          PY
 
-          echo "Found ${#scripts[@]} script assets"
+          mapfile -t scripts < "$work/scripts.txt"
           printf 'Script assets inspected: `%s`\n\n' "${#scripts[@]}" >> "$GITHUB_STEP_SUMMARY"
 
           : > "$work/all.txt"
@@ -53,26 +57,21 @@ jobs:
             printf '\n' >> "$work/all.txt"
           done
 
-          mapfile -t hosts < <(grep -oE 'https://[a-z0-9-]+\.supabase\.co' "$work/all.txt" | sort -u || true)
-          mapfile -t refs < <(grep -oE '[a-z0-9]{20}\.supabase\.co' "$work/all.txt" | sed 's/\.supabase\.co//' | sort -u || true)
+          python3 - "$work/all.txt" <<'PY' | tee "$work/result.txt"
+          import re, sys
+          text = open(sys.argv[1], encoding='utf-8', errors='ignore').read()
+          hosts = sorted(set(re.findall(r'https://[a-z0-9-]+\.supabase\.co', text, re.I)))
+          refs = sorted(set(re.findall(r'https://([a-z0-9-]+)\.supabase\.co', text, re.I)))
+          print('Supabase hosts found:')
+          for host in hosts:
+              print(host)
+          print('Project refs found:')
+          for ref in refs:
+              print(ref)
+          if not hosts:
+              print('none')
+          PY
 
-          echo 'Supabase hosts found:'
-          printf '%s\n' "${hosts[@]:-none}"
-
-          printf 'Supabase hosts found:\n' >> "$GITHUB_STEP_SUMMARY"
-          if [[ ${#hosts[@]} -eq 0 ]]; then
-            printf -- '- none\n' >> "$GITHUB_STEP_SUMMARY"
-          else
-            for host in "${hosts[@]}"; do
-              printf -- '- `%s`\n' "$host" >> "$GITHUB_STEP_SUMMARY"
-            done
-          fi
-
-          printf '\nProject refs found:\n' >> "$GITHUB_STEP_SUMMARY"
-          if [[ ${#refs[@]} -eq 0 ]]; then
-            printf -- '- none\n' >> "$GITHUB_STEP_SUMMARY"
-          else
-            for ref in "${refs[@]}"; do
-              printf -- '- `%s`\n' "$ref" >> "$GITHUB_STEP_SUMMARY"
-            done
-          fi
+          printf '```text\n' >> "$GITHUB_STEP_SUMMARY"
+          cat "$work/result.txt" >> "$GITHUB_STEP_SUMMARY"
+          printf '```\n' >> "$GITHUB_STEP_SUMMARY"
