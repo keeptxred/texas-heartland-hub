@@ -281,10 +281,10 @@ async function directCloudflareTextResponse(
     return Response.json({ error: { message: "Cloudflare text request contained no prompt" } }, { status: 400 });
   }
 
-  const requestedModel = body.model?.trim();
-  const model = requestedModel?.startsWith("@cf/")
-    ? requestedModel
-    : process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL;
+  // Legacy callers may still send a stale @cf model. The production rewrite
+  // path is intentionally centralized here so every text rewrite uses the
+  // configured efficient model and cannot silently bypass it.
+  const model = process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL;
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(credentials.accountId)}/ai/run/${model}`;
   const maxTokens = Math.min(Math.max(Number(body.max_tokens) || 9000, 256), 12000);
   let lastFailure = "Cloudflare Workers AI returned invalid JSON";
