@@ -1,20 +1,34 @@
 import { Link } from "@tanstack/react-router";
+import { LawDisclaimer, LawQuickAnswer, LawStatuteCard } from "@/components/laws/law-guide-ui";
 import type { CornerstoneGuide } from "@/data/cornerstone-guides";
+import { LAW_TOPICS, getLawGuideMeta, isLawGuideIndexable } from "@/lib/law-guides";
+import {
+  lawGuideBreadcrumbJsonLd,
+  lawGuideCanonicalUrl,
+  lawGuideMetaDescription,
+  lawGuideSeoTitle,
+} from "@/lib/law-guide-seo";
 import { SITE_URL } from "@/lib/seo";
 
 export function cornerstoneGuideHead(guide: CornerstoneGuide) {
-  const url = `${SITE_URL}/guides/${guide.slug}`;
+  const lawMeta = getLawGuideMeta(guide.slug);
+  const url = lawMeta ? lawGuideCanonicalUrl(guide.slug) : `${SITE_URL}/guides/${guide.slug}`;
+  const title = lawMeta ? lawGuideSeoTitle(guide.title) : guide.title;
+  const description = lawMeta ? lawGuideMetaDescription(guide.dek) : guide.dek;
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     "@id": `${url}#article`,
     headline: guide.title,
-    description: guide.dek,
+    description,
     datePublished: guide.updated,
-    dateModified: guide.updated,
+    dateModified: lawMeta?.lastVerified ?? guide.updated,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     publisher: { "@type": "Organization", name: "Keep TX Red", url: SITE_URL },
-    about: { "@type": "Thing", name: guide.pillarLabel },
+    about: {
+      "@type": "Thing",
+      name: lawMeta ? LAW_TOPICS[lawMeta.topic].label : guide.pillarLabel,
+    },
     inLanguage: "en-US",
   };
   const faqJsonLd = {
@@ -26,26 +40,33 @@ export function cornerstoneGuideHead(guide: CornerstoneGuide) {
       acceptedAnswer: { "@type": "Answer", text: item.a },
     })),
   };
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
-      { "@type": "ListItem", position: 2, name: "Topics", item: `${SITE_URL}/topics` },
-      { "@type": "ListItem", position: 3, name: guide.pillarLabel, item: `${SITE_URL}${guide.pillarHref}` },
-      { "@type": "ListItem", position: 4, name: guide.title, item: url },
-    ],
-  };
+  const breadcrumbJsonLd = lawMeta
+    ? lawGuideBreadcrumbJsonLd(guide.title, guide.slug)
+    : {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "Topics", item: `${SITE_URL}/topics` },
+          { "@type": "ListItem", position: 3, name: guide.pillarLabel, item: `${SITE_URL}${guide.pillarHref}` },
+          { "@type": "ListItem", position: 4, name: guide.title, item: url },
+        ],
+      };
 
   return {
     meta: [
-      { title: guide.title },
-      { name: "description", content: guide.dek },
+      { title },
+      { name: "description", content: description },
       { property: "og:title", content: guide.title },
-      { property: "og:description", content: guide.dek },
+      { property: "og:description", content: description },
       { property: "og:url", content: url },
       { property: "og:type", content: "article" },
-      { name: "robots", content: "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" },
+      {
+        name: "robots",
+        content: lawMeta && !isLawGuideIndexable(guide.slug)
+          ? "noindex,follow"
+          : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
+      },
     ],
     links: [{ rel: "canonical", href: url }],
     scripts: [articleJsonLd, faqJsonLd, breadcrumbJsonLd].map((value) => ({
@@ -56,6 +77,7 @@ export function cornerstoneGuideHead(guide: CornerstoneGuide) {
 }
 
 export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
+  const lawMeta = getLawGuideMeta(guide.slug);
   const wordCount = [
     ...guide.intro,
     ...guide.sections.flatMap((section) => [...(section.paragraphs ?? []), ...(section.bullets ?? [])]),
@@ -66,14 +88,26 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
   return (
     <article className="mx-auto max-w-4xl px-4 py-14">
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground mb-6">
-        <Link to="/topics" className="hover:text-primary">Topics</Link>
-        <span className="mx-2">/</span>
-        <a href={guide.pillarHref} className="hover:text-primary">{guide.pillarLabel}</a>
+        {lawMeta ? (
+          <>
+            <Link to="/laws" className="hover:text-primary">Texas Laws</Link>
+            <span className="mx-2">/</span>
+            <span>{LAW_TOPICS[lawMeta.topic].label}</span>
+          </>
+        ) : (
+          <>
+            <Link to="/topics" className="hover:text-primary">Topics</Link>
+            <span className="mx-2">/</span>
+            <a href={guide.pillarHref} className="hover:text-primary">{guide.pillarLabel}</a>
+          </>
+        )}
         <span className="mx-2">/</span>
         <span className="text-primary">Guide</span>
       </nav>
 
-      <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Cornerstone Guide</span>
+      <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">
+        ★ {guide.guideLabel ?? (lawMeta ? "Texas Law Guide" : "Cornerstone Guide")}
+      </span>
       <h1 className="font-display text-4xl md:text-6xl tracking-tight leading-[1.05] mt-2">{guide.title}</h1>
       <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-snug font-serif italic">{guide.dek}</p>
 
@@ -81,9 +115,27 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
         <span className="font-semibold text-foreground">Keep TX Red Editorial Desk</span>
         <span>•</span>
         <span>Updated <time dateTime={guide.updated}>{new Date(`${guide.updated}T12:00:00-05:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></span>
+        {lawMeta?.lastVerified ? (
+          <>
+            <span>•</span>
+            <span>Law verified <time dateTime={lawMeta.lastVerified}>{lawMeta.lastVerified}</time></span>
+          </>
+        ) : null}
         <span>•</span>
         <span>About {readingMinutes} min read</span>
       </div>
+
+      {lawMeta ? (
+        <div className="mt-8 space-y-5">
+          <LawQuickAnswer
+            answer={guide.keyTakeaways[0]}
+            lastVerified={lawMeta.lastVerified}
+            sources={lawMeta.sources ?? []}
+          />
+          <LawStatuteCard meta={lawMeta} />
+          <LawDisclaimer />
+        </div>
+      ) : null}
 
       <section className="mt-8 border-l-4 border-primary bg-primary/5 p-5 md:p-6">
         <h2 className="font-display text-2xl tracking-tight">Key Takeaways</h2>
@@ -124,16 +176,18 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
         </div>
       </section>
 
-      <section className="mt-12 border-t border-border pt-8">
-        <h2 className="font-display text-2xl tracking-tight">Primary Sources</h2>
-        <ul className="mt-4 space-y-2 text-sm">
-          {guide.sources.map((source) => (
-            <li key={source.url}>
-              <a href={source.url} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">{source.label}</a>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {!lawMeta ? (
+        <section className="mt-12 border-t border-border pt-8">
+          <h2 className="font-display text-2xl tracking-tight">Primary Sources</h2>
+          <ul className="mt-4 space-y-2 text-sm">
+            {guide.sources.map((source) => (
+              <li key={source.url}>
+                <a href={source.url} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">{source.label}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="mt-10 rounded-xl border bg-muted/20 p-6">
         <h2 className="font-display text-2xl tracking-tight">Continue this topic</h2>
