@@ -1,7 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 import { RESERVE_ARTICLES } from "@/data/reserve-articles";
-import { articleMainText, articleMainWordCount, INGESTED_MIN_MAIN_WORDS } from "@/lib/article-length";
+import {
+  articleMainText,
+  articleMainWordCount,
+  INGESTED_MIN_MAIN_WORDS,
+} from "@/lib/article-length";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { assertKeepTxRedPublication, inferKeepTxRedDomain } from "@/lib/content-publication-guard";
 
@@ -36,7 +40,8 @@ async function sendOptionalWebhook(payload: Record<string, unknown>): Promise<bo
 
 export async function runPublishingSafetyNet() {
   const supabaseUrl = process.env.SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY;
   if (!supabaseUrl || !serviceKey) {
     return { ok: false as const, status: 500, error: "Missing required environment variables" };
   }
@@ -122,7 +127,10 @@ export async function runPublishingSafetyNet() {
       if (webhookSent) {
         await supabase
           .from("publishing_alerts")
-          .update({ notification_sent_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          .update({
+            notification_sent_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
           .eq("id", inserted.id);
       }
     }
@@ -195,9 +203,7 @@ export async function runPublishingSafetyNet() {
       };
       enrichArticleRow(row);
 
-      const { error: articleError } = await supabase
-        .from("daily_articles")
-        .insert(row);
+      const { error: articleError } = await supabase.from("daily_articles").insert(row);
       if (articleError) {
         console.error("[publishing-safety-net] reserve publish failed", articleError);
         return { ok: false as const, status: 500, error: articleError.message };
@@ -231,7 +237,9 @@ export async function runPublishingSafetyNet() {
     webhook_sent: webhookSent,
     reserve_published: reservePublished,
     reserve_remaining:
-      RESERVE_ARTICLES.length - (publishedReserveResult.data?.length ?? 0) - (reservePublished ? 1 : 0),
+      RESERVE_ARTICLES.length -
+      (publishedReserveResult.data?.length ?? 0) -
+      (reservePublished ? 1 : 0),
   };
 }
 

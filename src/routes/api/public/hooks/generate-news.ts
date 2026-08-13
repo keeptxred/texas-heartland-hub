@@ -3,7 +3,11 @@ import { createClient } from "@supabase/supabase-js";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { isPuzzleTitle } from "./ingest-feeds";
-import { articleMainWordCount, INGESTED_MIN_MAIN_WORDS, meetsArticleMainWordCount } from "@/lib/article-length";
+import {
+  articleMainWordCount,
+  INGESTED_MIN_MAIN_WORDS,
+  meetsArticleMainWordCount,
+} from "@/lib/article-length";
 import {
   EDITORIAL_SYSTEM_ADDENDUM,
   validateArticle,
@@ -37,11 +41,31 @@ const RSS_SOURCES: { name: string; url: string; category: string }[] = [
   { name: "Texas Scorecard", url: "https://texasscorecard.com/feed/", category: "Legislature" },
   { name: "The Texan", url: "https://thetexan.news/feed/", category: "Legislature" },
   { name: "Dallas Express", url: "https://dallasexpress.com/feed/", category: "Elections" },
-  { name: "The Center Square — Texas", url: "https://www.thecentersquare.com/texas/?f=rss", category: "Tax & Spending" },
-  { name: "Texas Public Policy Foundation", url: "https://www.texaspolicy.com/feed/", category: "Tax & Spending" },
-  { name: "Houston Chronicle — Politics", url: "https://www.houstonchronicle.com/rss/feed/politics-9764.php", category: "Legislature" },
-  { name: "Houston Public Media — News", url: "https://www.houstonpublicmedia.org/feed/?post_type=articles", category: "Legislature" },
-  { name: "KHOU 11 — Local", url: "https://www.khou.com/feeds/syndication/rss/news/local", category: "Legislature" },
+  {
+    name: "The Center Square — Texas",
+    url: "https://www.thecentersquare.com/texas/?f=rss",
+    category: "Tax & Spending",
+  },
+  {
+    name: "Texas Public Policy Foundation",
+    url: "https://www.texaspolicy.com/feed/",
+    category: "Tax & Spending",
+  },
+  {
+    name: "Houston Chronicle — Politics",
+    url: "https://www.houstonchronicle.com/rss/feed/politics-9764.php",
+    category: "Legislature",
+  },
+  {
+    name: "Houston Public Media — News",
+    url: "https://www.houstonpublicmedia.org/feed/?post_type=articles",
+    category: "Legislature",
+  },
+  {
+    name: "KHOU 11 — Local",
+    url: "https://www.khou.com/feeds/syndication/rss/news/local",
+    category: "Legislature",
+  },
 ];
 
 const CATEGORIES = [
@@ -99,10 +123,56 @@ function parseRss(xml: string, source: string, sourceCategory: string): RssItem[
 }
 
 const TEXAS_KEYWORDS = ["texas", "lone star", "ercot", "txdot", "rgv", "permian"];
-const METRO_KEYWORDS = ["houston", "harris county", "katy", "sugar land", "cypress", "the woodlands"];
-const POLITICS_KEYWORDS = ["legislature", "governor", "abbott", "paxton", "patrick", "senate", "house bill", "sb ", "hb ", "capitol", "election", "vote", "ballot", "campaign"];
-const BREAKING_KEYWORDS = ["breaking", "shooting", "killed", "arrested", "explosion", "tornado", "hurricane", "flood", "emergency", "evacuation", "manhunt", "amber alert", "indicted", "resign"];
-const ENGAGEMENT_KEYWORDS = ["exclusive", "revealed", "what we know", "first on", "investigation", "leaked", "exposes", "warns"];
+const METRO_KEYWORDS = [
+  "houston",
+  "harris county",
+  "katy",
+  "sugar land",
+  "cypress",
+  "the woodlands",
+];
+const POLITICS_KEYWORDS = [
+  "legislature",
+  "governor",
+  "abbott",
+  "paxton",
+  "patrick",
+  "senate",
+  "house bill",
+  "sb ",
+  "hb ",
+  "capitol",
+  "election",
+  "vote",
+  "ballot",
+  "campaign",
+];
+const BREAKING_KEYWORDS = [
+  "breaking",
+  "shooting",
+  "killed",
+  "arrested",
+  "explosion",
+  "tornado",
+  "hurricane",
+  "flood",
+  "emergency",
+  "evacuation",
+  "manhunt",
+  "amber alert",
+  "indicted",
+  "resign",
+];
+const ENGAGEMENT_KEYWORDS = [
+  "exclusive",
+  "revealed",
+  "what we know",
+  "first on",
+  "investigation",
+  "leaked",
+  "exposes",
+  "warns",
+];
 
 const NON_BREAKING_TITLE_PATTERNS: RegExp[] = [
   /^\s*(looking for|anyone (?:know|have|tried)|recommend|recommendations?|suggestions?|advice|help|where (?:can|do|to)|how (?:do|to|can)|what(?:'s| is) the best|best way to|has anyone|is there|question:|discussion:|thoughts on)\b/i,
@@ -185,14 +255,14 @@ class InsufficientVerifiedSourceError extends Error {
   diagnostics: SourcePreflightSummary;
 
   constructor(diagnostics: SourcePreflightSummary) {
-    super('All selected stories failed verified-source sufficiency preflight');
-    this.name = 'InsufficientVerifiedSourceError';
+    super("All selected stories failed verified-source sufficiency preflight");
+    this.name = "InsufficientVerifiedSourceError";
     this.diagnostics = diagnostics;
   }
 }
 
 function sourceWordCount(value: string | undefined): number {
-  return (value ?? '').trim().split(/\s+/).filter(Boolean).length;
+  return (value ?? "").trim().split(/\s+/).filter(Boolean).length;
 }
 
 function scoreAndFilter(items: RssItem[]): ScoredItem[] {
@@ -310,7 +380,9 @@ function parseAiArticles(content: string): RewrittenArticle[] {
     try {
       const parsed = JSON.parse(candidate) as { articles?: unknown };
       if (!Array.isArray(parsed?.articles)) continue;
-      return parsed.articles.filter((article): article is RewrittenArticle => Boolean(article && typeof article === "object"));
+      return parsed.articles.filter((article): article is RewrittenArticle =>
+        Boolean(article && typeof article === "object"),
+      );
     } catch (error) {
       lastError = error;
     }
@@ -393,7 +465,9 @@ function normalizeSummaryLength(summary?: string, sections?: NewsSection[]): str
 
   if (!firstBodyParagraph) return trimmed;
 
-  const supplementSentences = firstBodyParagraph.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [firstBodyParagraph];
+  const supplementSentences = firstBodyParagraph.match(/[^.!?]+(?:[.!?]+|$)/g) ?? [
+    firstBodyParagraph,
+  ];
   const combined: string[] = [trimmed];
   let combinedWords = words.length;
   for (const sentence of supplementSentences) {
@@ -413,7 +487,11 @@ function normalizeSummaryLength(summary?: string, sections?: NewsSection[]): str
   return combined.join(" ").trim();
 }
 
-async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string, correctiveInstruction = "") {
+async function rewriteBatchWithAi(
+  items: ScoredItem[],
+  lovableApiKey: string,
+  correctiveInstruction = "",
+) {
   const list = items
     .map((it, i) => {
       const sourceMaterial = (it.sourceText || it.description).slice(0, 14000);
@@ -468,7 +546,14 @@ CATEGORY CLASSIFICATION RULES (strict):
     body: JSON.stringify({
       model: "@cf/qwen/qwen3-30b-a3b-fp8",
       messages: [
-        { role: "system", content: system + EDITORIAL_SYSTEM_ADDENDUM + (correctiveInstruction ? `\n\n${correctiveInstruction}` : "") + `\n\nBATCH NOTE: for a batch call, include the "brief" object INSIDE each articles[] entry, e.g. {"articles":[{"brief":{...}, "source_index":..., "title":..., ...}]}. Any article whose brief.hasClearNewsEvent is false will be discarded — leave that entry's body fields empty rather than fabricating.` },
+        {
+          role: "system",
+          content:
+            system +
+            EDITORIAL_SYSTEM_ADDENDUM +
+            (correctiveInstruction ? `\n\n${correctiveInstruction}` : "") +
+            `\n\nBATCH NOTE: for a batch call, include the "brief" object INSIDE each articles[] entry, e.g. {"articles":[{"brief":{...}, "source_index":..., "title":..., ...}]}. Any article whose brief.hasClearNewsEvent is false will be discarded — leave that entry's body fields empty rather than fabricating.`,
+        },
         { role: "user", content: `Source stories:\n\n${list}` },
       ],
       response_format: {
@@ -525,10 +610,26 @@ CATEGORY CLASSIFICATION RULES (strict):
                     type: "array",
                     minItems: 3,
                     maxItems: 3,
-                    items: { type: "object", additionalProperties: false, properties: { q: { type: "string" }, a: { type: "string" } }, required: ["q", "a"] },
+                    items: {
+                      type: "object",
+                      additionalProperties: false,
+                      properties: { q: { type: "string" }, a: { type: "string" } },
+                      required: ["q", "a"],
+                    },
                   },
                 },
-                required: ["brief", "source_index", "category", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
+                required: [
+                  "brief",
+                  "source_index",
+                  "category",
+                  "title",
+                  "dek",
+                  "summary",
+                  "relevance",
+                  "sections",
+                  "keyTakeaways",
+                  "faq",
+                ],
               },
             },
           },
@@ -561,7 +662,9 @@ CATEGORY CLASSIFICATION RULES (strict):
     sanitizeVagueAttribution(a);
     a.summary = normalizeSummaryLength(a.summary, a.sections);
     const source = items[a.source_index - 1];
-    const sourceText = source ? `${source.title} ${source.sourceText || source.description}` : undefined;
+    const sourceText = source
+      ? `${source.title} ${source.sourceText || source.description}`
+      : undefined;
     const v = validateArticle(
       {
         title: a.title,
@@ -577,7 +680,10 @@ CATEGORY CLASSIFICATION RULES (strict):
     );
     if (!v.ok) {
       rejectionReasons.push(...v.reasons);
-      console.warn("[generate-news] editorial validation dropped article", { title: a.title, reasons: v.reasons });
+      console.warn("[generate-news] editorial validation dropped article", {
+        title: a.title,
+        reasons: v.reasons,
+      });
       continue;
     }
     kept.push(a);
@@ -646,7 +752,11 @@ async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
         if (mainWords < INGESTED_MIN_MAIN_WORDS) {
           const correctiveInstruction = `CORRECTIVE LONG-FORM PASS: The previous valid draft produced only ${mainWords} qualifying main-story words, below the ${INGESTED_MIN_MAIN_WORDS}-word publication floor. Regenerate the COMPLETE article from the same verified source. Keep exactly 6 sections with exactly 3 separate paragraphs each. EACH of the 18 section paragraphs must be 65–80 words, so section prose alone totals at least 1,170 words before the summary. Use all concrete chronology, named entities, figures, decisions, causes, effects, and context explicitly supported by the verified source. Do not repeat yourself and do not invent facts. If the verified source cannot support that length without invention or repetition, set brief.hasClearNewsEvent=false instead.`;
           try {
-            const corrected = await rewriteBatchWithAi([story], lovableApiKey, correctiveInstruction);
+            const corrected = await rewriteBatchWithAi(
+              [story],
+              lovableApiKey,
+              correctiveInstruction,
+            );
             const correctedArticle = corrected.find((candidate) => candidate.source_index === 1);
             const correctedWords = correctedArticle ? rewrittenMainWordCount(correctedArticle) : 0;
             if (correctedArticle && correctedWords > mainWords) {
@@ -655,12 +765,15 @@ async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
             }
           } catch (correctiveError) {
             if (isQuotaOrRateLimitError(correctiveError)) throw correctiveError;
-            console.warn("[generate-news] corrective long-form pass failed; retaining first valid draft for final hard gate", {
-              sourceIndex: originalIndex + 1,
-              title: story.title,
-              firstDraftWords: mainWords,
-              error: String(correctiveError),
-            });
+            console.warn(
+              "[generate-news] corrective long-form pass failed; retaining first valid draft for final hard gate",
+              {
+                sourceIndex: originalIndex + 1,
+                title: story.title,
+                firstDraftWords: mainWords,
+                error: String(correctiveError),
+              },
+            );
           }
         }
 
@@ -704,11 +817,16 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
     handlers: {
       POST: async ({ request }) => {
         const supabaseUrl = process.env.SUPABASE_URL;
-        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+        const serviceKey =
+          process.env.SUPABASE_SERVICE_ROLE_KEY ||
+          process.env.KEEP_TX_RED_SUPABASE_SERVICE_ROLE_KEY;
         const lovableApiKey = process.env.LOVABLE_API_KEY;
 
         if (!supabaseUrl || !serviceKey || !lovableApiKey) {
-          return Response.json({ error: "Missing required environment variables" }, { status: 500 });
+          return Response.json(
+            { error: "Missing required environment variables" },
+            { status: 500 },
+          );
         }
 
         // Optional windowing so a caller can process one ranked story per
@@ -775,7 +893,10 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
             );
           }
           console.error("AI rewrite failed", err);
-          return Response.json({ error: "AI rewrite failed", details: String(err) }, { status: 500 });
+          return Response.json(
+            { error: "AI rewrite failed", details: String(err) },
+            { status: 500 },
+          );
         }
 
         const supabase = createClient(supabaseUrl, serviceKey, {
@@ -797,7 +918,9 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           )
           .map((a) => {
             const src = items[a.source_index - 1];
-            const category = (CATEGORIES as readonly string[]).includes(a.category) ? a.category : src.sourceCategory;
+            const category = (CATEGORIES as readonly string[]).includes(a.category)
+              ? a.category
+              : src.sourceCategory;
             const slug = `${datePrefix}-${slugify(a.title)}`;
             const takeaways =
               Array.isArray(a.keyTakeaways) && a.keyTakeaways.length > 0
@@ -809,7 +932,11 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
               sections: [
                 { heading: "Texas relevance", paragraphs: [a.relevance!.trim()] },
                 ...(Array.isArray(a.sections)
-                  ? a.sections.filter((s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0).slice(0, 10)
+                  ? a.sections
+                      .filter(
+                        (s) => s?.heading && Array.isArray(s.paragraphs) && s.paragraphs.length > 0,
+                      )
+                      .slice(0, 10)
                   : []),
                 {
                   heading: "Source attribution",
@@ -848,7 +975,8 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
         if (rows.length === 0) {
           const mainWordCounts = rewritten.map(rewrittenMainWordCount);
           const sourceWordCounts = rewritten.map((article) => {
-            if (typeof article.verified_source_words === "number") return article.verified_source_words;
+            if (typeof article.verified_source_words === "number")
+              return article.verified_source_words;
             const source = items[article.source_index - 1];
             return sourceWordCount(source?.sourceText || source?.description);
           });
@@ -878,7 +1006,9 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
           return Response.json({ error: insertError.message }, { status: 500 });
         }
 
-        await Promise.allSettled(rows.map((row) => generateFeaturedImageForSlugDirect(row.slug, true)));
+        await Promise.allSettled(
+          rows.map((row) => generateFeaturedImageForSlugDirect(row.slug, true)),
+        );
 
         return Response.json({
           ok: true,
