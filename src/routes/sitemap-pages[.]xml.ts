@@ -3,13 +3,16 @@ import type {} from "@tanstack/react-start";
 import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@/lib/sitemap-shared";
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
-import { SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
+import { SUPPORTING_GUIDES, SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
 const GSC_CANONICAL_REFRESH = toIsoDate("2026-08-11T12:30:00-05:00");
 const CITATION_MAGNET_REFRESH = toIsoDate("2026-08-11T22:00:00-05:00");
 const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(
-  SUPPORTING_GUIDE_SLUGS.map((slug) => [`/guides/${slug}`, GUIDE_LASTMOD]),
+  Object.values(SUPPORTING_GUIDES).map((guide) => [
+    `/guides/${guide.slug}`,
+    toIsoDate(`${guide.updated}T00:00:00-05:00`),
+  ]),
 );
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
@@ -27,7 +30,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/votes": CITATION_MAGNET_REFRESH,
   "/texas-government": CITATION_MAGNET_REFRESH,
   "/texas-government/agencies": CITATION_MAGNET_REFRESH,
-  "/laws": GUIDE_LASTMOD,
+  "/laws": toIsoDate("2026-08-13T00:00:00-05:00"),
   "/laws/constitutional-amendments": CITATION_MAGNET_REFRESH,
   "/laws/effective-dates": CITATION_MAGNET_REFRESH,
   "/topics": GUIDE_LASTMOD,
