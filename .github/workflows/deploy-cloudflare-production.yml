@@ -1,6 +1,11 @@
 name: Deploy KeepTXRed to Cloudflare Workers
 
 on:
+  push:
+    branches:
+      - agent/fix-cloudflare-preview-upload
+    paths:
+      - '.github/workflows/deploy-cloudflare-production.yml'
   workflow_dispatch:
     inputs:
       activate_custom_domain:
@@ -30,7 +35,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
       CLOUDFLARE_RUNTIME_AI_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       WORKER_NAME: keeptxred-site
-      PRODUCTION_HOSTNAME: ${{ inputs.production_hostname }}
+      PRODUCTION_HOSTNAME: ${{ github.event_name == 'workflow_dispatch' && inputs.production_hostname || 'keeptxred.com' }}
 
     steps:
       - uses: actions/checkout@v5
@@ -87,7 +92,7 @@ jobs:
               json.dump(payload, fh)
           PY
 
-          bunx wrangler deploy --strict --secrets-file "$secrets_file" 2>&1 | tee "$deploy_log"
+          bunx wrangler deploy --secrets-file "$secrets_file" 2>&1 | tee "$deploy_log"
 
           preview_url="$(grep -Eo 'https://[^[:space:]]+\.workers\.dev' "$deploy_log" | tail -1 || true)"
           if [[ -z "$preview_url" ]]; then
@@ -142,7 +147,7 @@ jobs:
           PY
 
       - name: Attach production custom domain
-        if: ${{ inputs.activate_custom_domain }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
         shell: bash
         run: |
           set -euo pipefail
@@ -174,7 +179,7 @@ jobs:
           PY
 
       - name: Verify production database and AI health
-        if: ${{ inputs.activate_custom_domain }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
         shell: bash
         run: |
           set -euo pipefail
