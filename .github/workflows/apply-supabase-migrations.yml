@@ -31,10 +31,10 @@ jobs:
       # Supabase Personal Access Token.
       SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
 
-      # Backward-compatible fallback for the old linked-project workflow.
+      # Backward-compatible fallback for a linked-project workflow.
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-      SUPABASE_PROJECT_REF: qhwwmdszjgkscqxgmenf
+      SUPABASE_PROJECT_REF: ftkznprjljkhymknvhye
     steps:
       - uses: actions/checkout@v5
         with:
@@ -58,7 +58,7 @@ jobs:
 
           if [[ -n "${SUPABASE_ACCESS_TOKEN:-}" && -n "${SUPABASE_DB_PASSWORD:-}" ]]; then
             echo 'mode=linked' >> "$GITHUB_OUTPUT"
-            echo 'Using legacy linked-project migration transport.'
+            echo 'Using linked-project migration transport.'
             exit 0
           fi
 
