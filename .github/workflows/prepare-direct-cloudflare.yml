@@ -1,0 +1,199 @@
+name: Prepare direct Cloudflare deployment
+
+on:
+  push:
+    branches:
+      - agent/direct-cloudflare-deploy
+    paths:
+      - '.github/workflows/prepare-direct-cloudflare.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: agent/direct-cloudflare-deploy
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Replace Lovable build adapter with official Cloudflare adapter
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          bun remove @lovable.dev/vite-tanstack-config nitro
+          bun add --dev @cloudflare/vite-plugin wrangler
+
+          node <<'NODE'
+          const fs = require('fs')
+          const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+          pkg.scripts.deploy = 'bun run build && wrangler deploy'
+          pkg.scripts['deploy:dry-run'] = 'bun run build && wrangler deploy --dry-run'
+          pkg.scripts['cf-typegen'] = 'wrangler types'
+          fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n')
+          NODE
+
+          cat > vite.config.ts <<'EOF'
+          import { cloudflare } from "@cloudflare/vite-plugin";
+          import tailwindcss from "@tailwindcss/vite";
+          import viteReact from "@vitejs/plugin-react";
+          import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+          import { defineConfig, loadEnv } from "vite";
+          import tsConfigPaths from "vite-tsconfig-paths";
+
+          export default defineConfig(({ mode }) => {
+            const env = loadEnv(mode, process.cwd(), "");
+            const supabaseUrl = env.SUPABASE_URL || env.VITE_SUPABASE_URL;
+            const supabasePublishableKey =
+              env.SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+            return {
+              plugins: [
+                cloudflare({ viteEnvironment: { name: "ssr" } }),
+                tanstackStart(),
+                tsConfigPaths(),
+                tailwindcss(),
+                viteReact(),
+              ],
+              optimizeDeps: {
+                force: true,
+              },
+              // These two values are public Supabase connection metadata. Keep
+              // server-side service-role credentials out of the bundle and in
+              // Cloudflare Worker secrets.
+              define: {
+                "process.env.SUPABASE_URL": JSON.stringify(supabaseUrl),
+                "process.env.SUPABASE_PUBLISHABLE_KEY": JSON.stringify(supabasePublishableKey),
+              },
+            };
+          });
+          EOF
+
+          cat > wrangler.jsonc <<'EOF'
+          {
+            "$schema": "./node_modules/wrangler/config-schema.json",
+            "name": "keeptxred",
+            "main": "@tanstack/react-start/server-entry",
+            "compatibility_date": "2026-08-12",
+            "compatibility_flags": ["nodejs_compat"],
+            "observability": {
+              "enabled": true
+            }
+          }
+          EOF
+
+          cat > .github/workflows/deploy-cloudflare-production.yml <<'EOF'
+          name: Deploy KeepTXRed to Cloudflare Workers
+
+          on:
+            workflow_dispatch:
+
+          permissions:
+            contents: read
+
+          concurrency:
+            group: keeptxred-cloudflare-production
+            cancel-in-progress: false
+
+          jobs:
+            deploy:
+              runs-on: ubuntu-latest
+              timeout-minutes: 20
+              env:
+                CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+                CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
+                CLOUDFLARE_RUNTIME_AI_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+                SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+              steps:
+                - uses: actions/checkout@v5
+
+                - uses: oven-sh/setup-bun@v2
+                  with:
+                    bun-version: latest
+
+                - name: Verify required production credentials
+                  shell: bash
+                  run: |
+                    set -euo pipefail
+                    missing=0
+                    for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN CLOUDFLARE_RUNTIME_AI_TOKEN SUPABASE_SERVICE_ROLE_KEY; do
+                      if [[ -z "${!name:-}" ]]; then
+                        echo "Missing required GitHub secret for $name" >&2
+                        missing=1
+                      fi
+                    done
+                    exit "$missing"
+
+                - name: Install dependencies
+                  run: bun install --frozen-lockfile
+
+                - name: Validate and build
+                  run: |
+                    bun run lint
+                    bun run test
+                    bun run build
+                    bunx wrangler deploy --dry-run
+
+                - name: Deploy Worker with runtime secrets
+                  shell: bash
+                  run: |
+                    set -euo pipefail
+                    secrets_file="$(mktemp)"
+                    trap 'rm -f "$secrets_file"' EXIT
+                    python3 - "$secrets_file" <<'PY'
+                    import json, os, sys
+                    payload = {
+                        "CLOUDFLARE_ACCOUNT_ID": os.environ["CLOUDFLARE_ACCOUNT_ID"],
+                        "CLOUDFLARE_API_TOKEN": os.environ["CLOUDFLARE_RUNTIME_AI_TOKEN"],
+                        "SUPABASE_SERVICE_ROLE_KEY": os.environ["SUPABASE_SERVICE_ROLE_KEY"],
+                    }
+                    with open(sys.argv[1], "w", encoding="utf-8") as fh:
+                        json.dump(payload, fh)
+                    PY
+                    bunx wrangler deploy --secrets-file "$secrets_file"
+
+                - name: Verify production health
+                  shell: bash
+                  run: |
+                    set -euo pipefail
+                    response="$(curl --retry 5 --retry-delay 3 --fail-with-body --silent --show-error https://keeptxred.com/api/public/hooks/health)"
+                    echo "$response"
+                    python3 - "$response" <<'PY'
+                    import json, sys
+                    data = json.loads(sys.argv[1])
+                    if data.get("database") != "ok":
+                        raise SystemExit("Production database health is not ok after deploy")
+                    PY
+          EOF
+
+          echo 'Runtime process.env names referenced in tracked source:'
+          git grep -hoE 'process\.env\.[A-Z0-9_]+' -- '*.ts' '*.tsx' '*.js' '*.mjs' | sed 's/process\.env\.//' | sort -u || true
+
+      - name: Validate official Cloudflare build
+        run: |
+          bun run lint
+          bun run build
+          bunx wrangler deploy --dry-run
+
+      - name: Commit prepared deployment configuration
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -f .github/workflows/prepare-direct-cloudflare.yml
+          git config user.name 'keeptxred'
+          git config user.email 'freddy.coppola@gmail.com'
+          git add package.json bun.lock vite.config.ts wrangler.jsonc .github/workflows/deploy-cloudflare-production.yml .github/workflows/prepare-direct-cloudflare.yml
+          if git diff --cached --quiet; then
+            echo 'No deployment changes to commit.'
+            exit 0
+          fi
+          git commit -m 'Replace Lovable build adapter with Cloudflare Workers'
+          git push origin HEAD:agent/direct-cloudflare-deploy
