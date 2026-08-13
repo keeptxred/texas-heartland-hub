@@ -4,6 +4,7 @@ import {
   LAW_TOPICS,
   createDraftLawGuideMeta,
   isLawGuideIndexable,
+  isLawGuideMetaIndexable,
   validateLawGuideMeta,
   type LawGuideMeta,
 } from "@/lib/law-guides";
@@ -19,11 +20,10 @@ describe("law guide registry", () => {
   it("creates new entries as drafts", () => {
     const draft = createDraftLawGuideMeta("sample-guide", "driving");
     expect(draft.status).toBe("draft");
-    expect(draft.sources).toEqual([]);
-    expect(draft.statutes).toEqual([]);
+    expect(isLawGuideMetaIndexable(draft)).toBe(false);
   });
 
-  it("requires verification metadata before verified status", () => {
+  it("requires metadata for verified status", () => {
     const incomplete: LawGuideMeta = {
       slug: "sample-guide",
       topic: "consumer",
@@ -47,9 +47,10 @@ describe("law guide registry", () => {
       ],
     };
     expect(validateLawGuideMeta(complete)).toEqual([]);
+    expect(isLawGuideMetaIndexable(complete)).toBe(true);
   });
 
-  it("keeps legacy and unknown existing content indexable", () => {
+  it("preserves existing content behavior", () => {
     expect(isLawGuideIndexable(LAW_GUIDES[0].slug)).toBe(true);
     expect(isLawGuideIndexable("unregistered-existing-article")).toBe(true);
   });
