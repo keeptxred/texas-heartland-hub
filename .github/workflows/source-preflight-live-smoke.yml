@@ -1,0 +1,43 @@
+name: Source Preflight Live Smoke
+
+on:
+  push:
+    branches:
+      - test/source-preflight-live-smoke
+    paths:
+      - '.github/workflows/source-preflight-live-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call production generator once
+        shell: bash
+        run: |
+          set -euo pipefail
+          body=/tmp/response.json
+          status=$(curl -sS -X POST -o "$body" -w '%{http_code}' \
+            --max-time 95 -H 'accept: application/json' \
+            'https://keeptxred.com/api/public/hooks/generate-news?offset=0&limit=1' || echo 000)
+          echo "HTTP_STATUS=$status"
+          echo '--- response body ---'
+          cat "$body" || true
+          echo
+          if [[ "$status" != "200" ]]; then
+            exit 1
+          fi
+          jq . "$body" >/dev/null
+          if jq -e '.ok == true' "$body" >/dev/null 2>&1; then
+            echo 'SMOKE_OK'
+            exit 0
+          fi
+          if grep -Eqi 'No items met the publish threshold|duplicate' "$body"; then
+            echo 'SMOKE_BENIGN_SKIP'
+            exit 0
+          fi
+          echo 'SMOKE_UNEXPECTED_RESPONSE'
+          exit 1
