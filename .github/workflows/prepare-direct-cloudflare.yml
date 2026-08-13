@@ -66,9 +66,8 @@ jobs:
               optimizeDeps: {
                 force: true,
               },
-              // These two values are public Supabase connection metadata. Keep
-              // server-side service-role credentials out of the bundle and in
-              // Cloudflare Worker secrets.
+              // These values are public Supabase connection metadata. Privileged
+              // credentials stay exclusively in Cloudflare Worker secrets.
               define: {
                 "process.env.SUPABASE_URL": JSON.stringify(supabaseUrl),
                 "process.env.SUPABASE_PUBLISHABLE_KEY": JSON.stringify(supabasePublishableKey),
@@ -90,8 +89,10 @@ jobs:
           }
           EOF
 
-          cat > .github/workflows/deploy-cloudflare-production.yml <<'EOF'
-          name: Deploy KeepTXRed to Cloudflare Workers
+          node <<'NODE'
+          const fs = require('fs')
+          const secret = (name) => '$' + '{{ secrets.' + name + ' }}'
+          const workflow = `name: Deploy KeepTXRed to Cloudflare Workers
 
           on:
             workflow_dispatch:
@@ -108,10 +109,10 @@ jobs:
               runs-on: ubuntu-latest
               timeout-minutes: 20
               env:
-                CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-                CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
-                CLOUDFLARE_RUNTIME_AI_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-                SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+                CLOUDFLARE_ACCOUNT_ID: ${secret('CLOUDFLARE_ACCOUNT_ID')}
+                CLOUDFLARE_API_TOKEN: ${secret('CLOUDFLARE_DEPLOY_API_TOKEN')}
+                CLOUDFLARE_RUNTIME_AI_TOKEN: ${secret('CLOUDFLARE_API_TOKEN')}
+                SUPABASE_SERVICE_ROLE_KEY: ${secret('SUPABASE_SERVICE_ROLE_KEY')}
               steps:
                 - uses: actions/checkout@v5
 
@@ -125,7 +126,7 @@ jobs:
                     set -euo pipefail
                     missing=0
                     for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN CLOUDFLARE_RUNTIME_AI_TOKEN SUPABASE_SERVICE_ROLE_KEY; do
-                      if [[ -z "${!name:-}" ]]; then
+                      if [[ -z "\${!name:-}" ]]; then
                         echo "Missing required GitHub secret for $name" >&2
                         missing=1
                       fi
@@ -172,7 +173,9 @@ jobs:
                     if data.get("database") != "ok":
                         raise SystemExit("Production database health is not ok after deploy")
                     PY
-          EOF
+          `
+          fs.writeFileSync('.github/workflows/deploy-cloudflare-production.yml', workflow.replace(/^          /gm, ''))
+          NODE
 
           echo 'Runtime process.env names referenced in tracked source:'
           git grep -hoE 'process\.env\.[A-Z0-9_]+' -- '*.ts' '*.tsx' '*.js' '*.mjs' | sed 's/process\.env\.//' | sort -u || true
