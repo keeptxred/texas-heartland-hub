@@ -1,74 +1,13 @@
-name: Daily News Production Test
+name: Daily News Production Test (inactive)
 
 on:
-  push:
-    paths:
-      - '.github/workflows/daily-news-production-test.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  publish-ten:
+  inactive:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
     steps:
-      - name: Publish exactly ten current ranked Texas stories through production hook
-        shell: bash
-        run: |
-          set -euo pipefail
-          base='https://keeptxred.com/api/public/hooks/generate-news'
-          inserted=0
-          failed=0
-          : > /tmp/results.tsv
-
-          for offset in $(seq 0 19); do
-            if [[ "$inserted" -ge 10 ]]; then break; fi
-            result='unknown'
-            for attempt in 1 2; do
-              status=$(curl -sS -X POST -o /tmp/publish.json -w '%{http_code}' \
-                --max-time 120 -H 'accept: application/json' \
-                "${base}?offset=${offset}&limit=1" || echo 000)
-
-              body=$(cat /tmp/publish.json 2>/dev/null || true)
-              echo "offset=${offset} attempt=${attempt} status=${status} body=${body}"
-
-              if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
-                echo "QUOTA_EXHAUSTED at offset=${offset}"
-                exit 1
-              fi
-
-              if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
-                if jq -e '.no_items == true' /tmp/publish.json >/dev/null 2>&1; then
-                  result='no-items'
-                else
-                  current_inserted=$(jq -r '.inserted // 0' /tmp/publish.json)
-                  if [[ "$current_inserted" =~ ^[0-9]+$ ]] && [[ "$current_inserted" -gt 0 ]]; then
-                    inserted=$((inserted + current_inserted))
-                    result="inserted:${current_inserted}"
-                  else
-                    result='ok-zero'
-                  fi
-                fi
-                break
-              fi
-
-              if [[ "$status" == "000" || "$status" =~ ^5 ]]; then
-                result="retryable:${status}"
-                if [[ "$attempt" -lt 2 ]]; then sleep 8; continue; fi
-              fi
-
-              failed=$((failed + 1))
-              result="failed:${status}"
-              break
-            done
-            printf '%s\t%s\n' "$offset" "$result" >> /tmp/results.tsv
-          done
-
-          echo '--- test results ---'
-          cat /tmp/results.tsv
-          echo "TOTAL_INSERTED=${inserted} FAILED_OFFSETS=${failed}"
-          if [[ "$inserted" -ne 10 ]]; then
-            echo "Expected exactly 10 successful production inserts; got ${inserted}."
-            exit 1
-          fi
+      - run: echo 'One-time production test is inactive.'
