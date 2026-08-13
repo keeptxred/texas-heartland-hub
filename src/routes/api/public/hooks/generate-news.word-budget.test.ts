@@ -16,13 +16,17 @@ describe("Daily Texas News qualifying prose contract", () => {
     expect(source).toContain("DO NOT count toward the ${INGESTED_MIN_MAIN_WORDS}-word publication floor");
   });
 
-  it("keeps auxiliary output bounded and summary overshoot deterministic", () => {
+  it("keeps auxiliary output bounded and normalizes summary length without another AI call", () => {
     expect(source).toContain('minItems: 6');
     expect(source).toContain('maxItems: 6');
     expect(source).toContain('minItems: 3');
     expect(source).toContain('maxItems: 3');
-    expect(source).toContain("normalizeOverlongSummary");
-    expect(source).toContain("words.length <= 90");
+    expect(source).toContain("normalizeSummaryLength");
+    expect(source).toContain("words.length > 90");
     expect(source).toContain("words.slice(0, 90)");
+    expect(source).toContain("words.length >= 45");
+    expect(source).toContain("firstBodyParagraph");
+    expect(source).toContain("combinedWords >= 45");
+    expect(source).toContain("a.summary = normalizeSummaryLength(a.summary, a.sections)");
   });
 });
