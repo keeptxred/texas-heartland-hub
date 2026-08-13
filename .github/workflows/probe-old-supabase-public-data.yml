@@ -1,0 +1,80 @@
+name: Probe old Supabase public data
+
+on:
+  push:
+    branches:
+      - agent/probe-old-supabase-public-data
+    paths:
+      - '.github/workflows/probe-old-supabase-public-data.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Probe old Supabase public tables
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          OLD_URL="$(sed -n 's/^SUPABASE_URL="\(.*\)"$/\1/p' .env.production)"
+          OLD_KEY="$(sed -n 's/^SUPABASE_PUBLISHABLE_KEY="\(.*\)"$/\1/p' .env.production)"
+
+          test -n "$OLD_URL" || { echo 'Missing SUPABASE_URL in .env.production'; exit 1; }
+          test -n "$OLD_KEY" || { echo 'Missing SUPABASE_PUBLISHABLE_KEY in .env.production'; exit 1; }
+
+          tables=(
+            daily_articles
+            texas_news_feed
+            content_sources
+            products
+            bills
+            bill_actions
+            bill_subjects
+            bill_subject_relationships
+            bill_article_relationships
+            article_slug_redirects
+            texasdefined_articles
+          )
+
+          printf '### Old Supabase public-read probe\n\n' >> "$GITHUB_STEP_SUMMARY"
+          printf '| Table | HTTP | Content-Range |\n|---|---:|---|\n' >> "$GITHUB_STEP_SUMMARY"
+
+          dns_failed=0
+          for table in "${tables[@]}"; do
+            headers="$(mktemp)"
+            body="$(mktemp)"
+            status="$(curl --connect-timeout 15 --max-time 45 -sS \
+              -D "$headers" \
+              -o "$body" \
+              -w '%{http_code}' \
+              -X HEAD \
+              -H "apikey: $OLD_KEY" \
+              -H "Authorization: Bearer $OLD_KEY" \
+              -H 'Prefer: count=exact' \
+              -H 'Range: 0-0' \
+              "$OLD_URL/rest/v1/$table?select=id" || true)"
+
+            range="$(awk 'BEGIN{IGNORECASE=1} /^content-range:/ {gsub("\r", ""); sub(/^[^:]+:[[:space:]]*/, ""); print; exit}' "$headers")"
+            [[ -n "$status" ]] || status='curl-error'
+            [[ -n "$range" ]] || range='—'
+
+            printf '%s | HTTP %s | %s\n' "$table" "$status" "$range"
+            printf '| `%s` | `%s` | `%s` |\n' "$table" "$status" "$range" >> "$GITHUB_STEP_SUMMARY"
+
+            if [[ "$status" == '000' || "$status" == 'curl-error' ]]; then
+              dns_failed=1
+            fi
+            rm -f "$headers" "$body"
+          done
+
+          if [[ "$dns_failed" -eq 1 ]]; then
+            echo 'One or more requests could not connect from the GitHub runner.'
+            exit 2
+          fi
