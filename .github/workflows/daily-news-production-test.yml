@@ -1,13 +1,166 @@
-name: Daily News Production Test (inactive)
+name: Daily News Production Test Retry
 
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '5 0 14 8 *'
 
 permissions:
   contents: read
 
 jobs:
-  inactive:
+  publish-ten:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
     steps:
-      - run: echo 'One-time production test is inactive.'
+      - name: One-time retry guard
+        id: guard
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "${{ github.event_name }}" == "schedule" && "$(date -u +%F)" != "2026-08-14" ]]; then
+            echo 'run_test=false' >> "$GITHUB_OUTPUT"
+            echo 'Scheduled retry is only active for 2026-08-14 UTC.'
+          else
+            echo 'run_test=true' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Repair newest failed featured images after quota reset
+        if: steps.guard.outputs.run_test == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS -X POST --max-time 300 \
+            'https://keeptxred.com/api/public/hooks/backfill-featured-images?limit=9' \
+            -o /tmp/backfill.json
+          cat /tmp/backfill.json
+          failed=$(jq -r '.failed // 0' /tmp/backfill.json)
+          if [[ "$failed" != "0" ]]; then
+            echo "Featured-image repair still has ${failed} failure(s)."
+            exit 1
+          fi
+
+      - name: Record production test start
+        if: steps.guard.outputs.run_test == 'true'
+        shell: bash
+        run: echo "TEST_START=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Publish exactly ten distinct current ranked Texas stories
+        if: steps.guard.outputs.run_test == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          base='https://keeptxred.com/api/public/hooks/generate-news'
+          inserted=0
+          failed=0
+          : > /tmp/results.tsv
+
+          for offset in $(seq 0 19); do
+            if [[ "$inserted" -ge 10 ]]; then break; fi
+            result='unknown'
+            for attempt in 1 2; do
+              status=$(curl -sS -X POST -o /tmp/publish.json -w '%{http_code}' \
+                --max-time 150 -H 'accept: application/json' \
+                "${base}?offset=${offset}&limit=1" || echo 000)
+              body=$(cat /tmp/publish.json 2>/dev/null || true)
+              echo "offset=${offset} attempt=${attempt} status=${status} body=${body}"
+
+              if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
+                echo "QUOTA_EXHAUSTED at offset=${offset}"
+                exit 1
+              fi
+
+              if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
+                if jq -e '.no_items == true' /tmp/publish.json >/dev/null 2>&1; then
+                  result='no-items'
+                else
+                  current_inserted=$(jq -r '.inserted // 0' /tmp/publish.json)
+                  if [[ "$current_inserted" =~ ^[0-9]+$ ]] && [[ "$current_inserted" -gt 0 ]]; then
+                    inserted=$((inserted + current_inserted))
+                    result="inserted:${current_inserted}"
+                  else
+                    result='ok-zero'
+                  fi
+                fi
+                break
+              fi
+
+              if [[ "$status" == "000" || "$status" =~ ^5 ]]; then
+                result="retryable:${status}"
+                if [[ "$attempt" -lt 2 ]]; then sleep 8; continue; fi
+              fi
+
+              failed=$((failed + 1))
+              result="failed:${status}"
+              break
+            done
+            printf '%s\t%s\n' "$offset" "$result" >> /tmp/results.tsv
+          done
+
+          echo '--- test results ---'
+          cat /tmp/results.tsv
+          echo "TOTAL_INSERTED=${inserted} FAILED_OFFSETS=${failed}"
+          if [[ "$inserted" -ne 10 ]]; then
+            echo "Expected exactly 10 successful production inserts; got ${inserted}."
+            exit 1
+          fi
+
+      - name: Verify ten new production rows and hero readiness
+        if: steps.guard.outputs.run_test == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${SUPABASE_DB_URL:-}" ]]; then
+            echo 'SUPABASE_DB_URL is required for authoritative production verification.' >&2
+            exit 1
+          fi
+          command -v psql >/dev/null || { sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client; }
+
+          psql "$SUPABASE_DB_URL" -At -F $'\t' -c "
+            select slug,
+                   coalesce(featured_image_url,''),
+                   coalesce(image_generation_status,''),
+                   coalesce(title,'')
+            from public.daily_articles
+            where created_at >= '${TEST_START}'::timestamptz
+            order by created_at;
+          " > /tmp/new-rows.tsv
+
+          cat /tmp/new-rows.tsv
+          row_count=$(wc -l < /tmp/new-rows.tsv | tr -d ' ')
+          if [[ "$row_count" != "10" ]]; then
+            echo "Expected exactly 10 authoritative production rows created by this test; got ${row_count}."
+            exit 1
+          fi
+
+          while IFS=$'\t' read -r slug image status title; do
+            [[ -n "$slug" ]] || continue
+            if [[ "$status" != "ready" || -z "$image" ]]; then
+              echo "Hero not ready: slug=${slug} status=${status} image=${image}"
+              exit 1
+            fi
+
+            article_url="https://keeptxred.com/news/${slug}"
+            article_code=$(curl -L -sS -o /tmp/article.html -w '%{http_code}' --max-time 30 "$article_url" || echo 000)
+            if [[ "$article_code" != "200" ]]; then
+              echo "Live article failed: ${article_code} ${article_url}"
+              exit 1
+            fi
+            if grep -Eqi 'article not found|page not found|story unavailable' /tmp/article.html; then
+              echo "Live article rendered a not-found state: ${article_url}"
+              exit 1
+            fi
+
+            if [[ "$image" == /* ]]; then image_url="https://keeptxred.com${image}"; else image_url="$image"; fi
+            image_meta=$(curl -L -sS -o /tmp/hero.bin -w '%{http_code}\t%{content_type}\t%{size_download}' --max-time 30 "$image_url" || printf '000\t\t0')
+            IFS=$'\t' read -r image_code image_type image_size <<< "$image_meta"
+            if [[ "$image_code" != "200" || ! "$image_type" =~ ^image/(jpeg|png|webp) || "$image_size" -lt 10000 ]]; then
+              echo "Hero readiness failed: slug=${slug} code=${image_code} type=${image_type} bytes=${image_size} url=${image_url}"
+              exit 1
+            fi
+            echo "PASS slug=${slug} article=200 image=200 mime=${image_type} bytes=${image_size}"
+          done < /tmp/new-rows.tsv
+
+          echo 'PASS: 10/10 new production rows, live pages, and raster hero images verified.'
