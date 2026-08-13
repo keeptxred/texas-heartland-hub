@@ -38,6 +38,9 @@ const RELEVANT_HINTS = [
   "government", "capitol", "senate", "house", "election", "vote", "oil", "energy",
   "grid", "school", "map", "chart", "stadium",
 ];
+const GENERATED_NEWS_PROVENANCE_SIGNATURE =
+  "Keep TX Red rewrote the coverage independently and links to the original for verification.";
+const GENERATED_NEWSROOM_AUTHOR = "Keep TX Red Newsroom";
 
 export function scoreImage(input: {
   url?: string | null;
@@ -243,7 +246,12 @@ export function enrichArticleRow<T extends QualityRow>(row: T): T {
   const proposedUrl = row.internal_url?.startsWith("http")
     ? row.internal_url
     : `https://keeptxred.com${row.internal_url ?? `/news/${row.slug}`}`;
-  const text = `${row.title ?? ""} ${row.dek ?? ""} ${bodyToText(row)}`;
+  const bodyText = bodyToText(row);
+  const text = `${row.title ?? ""} ${row.dek ?? ""} ${bodyText}`;
+
+  if (!row.author && row.kind === "news" && bodyText.includes(GENERATED_NEWS_PROVENANCE_SIGNATURE)) {
+    row.author = GENERATED_NEWSROOM_AUTHOR;
+  }
 
   assertKeepTxRedPublication({
     id: row.slug,
