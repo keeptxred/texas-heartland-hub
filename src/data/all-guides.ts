@@ -6,6 +6,7 @@ import { BORDER_SUPPORTING_GUIDES } from "@/data/supporting-guides-border";
 import { DRIVING_SUPPORTING_GUIDES } from "@/data/supporting-guides-driving";
 import { RENTER_GUIDES } from "@/data/supporting-guides-renters";
 import { RENTER_GUIDES_B } from "@/data/supporting-guides-renters-b";
+import { LANDLORD_SMOKE_ALARM_GUIDES } from "@/data/laws-landlord-smoke-alarm";
 
 export const SUPPORTING_GUIDES = {
   ...AGRICULTURE_SUPPORTING_GUIDES,
@@ -15,6 +16,7 @@ export const SUPPORTING_GUIDES = {
   ...DRIVING_SUPPORTING_GUIDES,
   ...RENTER_GUIDES,
   ...RENTER_GUIDES_B,
+  ...LANDLORD_SMOKE_ALARM_GUIDES,
 };
 
 export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
