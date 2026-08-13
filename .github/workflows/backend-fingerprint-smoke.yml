@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 3
     steps:
-      - name: Check deployed backend routes
+      - name: Check deployed backend routes and canonical Supabase host
         shell: bash
         run: |
           set +e
@@ -19,3 +19,8 @@ jobs:
             curl -sS -i --max-time 30 "https://keeptxred.com/api/public/$path"
             echo
           done
+          echo '=== canonical Supabase DNS ==='
+          getent ahosts qhwwmdszjgkscqxgmenf.supabase.co || true
+          echo '=== canonical Supabase HTTP ==='
+          curl -sS -i --max-time 30 'https://qhwwmdszjgkscqxgmenf.supabase.co/rest/v1/' || true
+          echo
