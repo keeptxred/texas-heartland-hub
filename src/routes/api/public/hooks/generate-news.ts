@@ -289,6 +289,10 @@ function parseAiArticles(content: string): RewrittenArticle[] {
 }
 
 async function rewriteBatchWithAi(items: ScoredItem[], lovableApiKey: string) {
+  return rewriteBatchWithAiImpl(items, lovableApiKey);
+}
+
+async function rewriteBatchWithAiImpl(items: ScoredItem[], lovableApiKey: string) {
   const list = items
     .map((it, i) => {
       const sourceMaterial = (it.sourceText || it.description).slice(0, 14000);
