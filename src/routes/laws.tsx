@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
+import { LawGuideTopicGrid } from "@/components/laws/law-guide-topic-grid";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { SITE_URL } from "@/lib/seo";
 
@@ -256,6 +257,8 @@ function LawsHubPage() {
           during and after each session and maintains the evergreen guides below.
         </p>
       </article>
+
+      <LawGuideTopicGrid topic="driving" />
 
       {sections.map((section) => (
         <section key={section.key} className="border-t-4 border-foreground/10 bg-secondary/5">
