@@ -281,7 +281,10 @@ async function directCloudflareTextResponse(
     return Response.json({ error: { message: "Cloudflare text request contained no prompt" } }, { status: 400 });
   }
 
-  const model = process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL;
+  const requestedModel = body.model?.trim();
+  const model = requestedModel?.startsWith("@cf/")
+    ? requestedModel
+    : process.env.AI_REWRITE_MODEL_CF || CLOUDFLARE_TEXT_MODEL;
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(credentials.accountId)}/ai/run/${model}`;
   const maxTokens = Math.min(Math.max(Number(body.max_tokens) || 9000, 256), 12000);
   let lastFailure = "Cloudflare Workers AI returned invalid JSON";

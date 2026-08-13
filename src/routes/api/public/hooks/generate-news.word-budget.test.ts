@@ -38,4 +38,13 @@ describe("Daily Texas News qualifying prose contract", () => {
     expect(source).toContain("min_verified_source_words: MIN_VERIFIED_SOURCE_WORDS");
     expect(source).toContain("source_word_counts: sourceWordCounts.slice(0, 10)");
   });
+
+  it("uses the stronger Cloudflare rewrite model and one bounded underlength correction", () => {
+    expect(source).toContain('model: "@cf/qwen/qwen3-30b-a3b-fp8"');
+    expect(source).toContain("CORRECTIVE LONG-FORM PASS");
+    expect(source).toContain("mainWords < INGESTED_MIN_MAIN_WORDS");
+    expect(source).toContain("EACH of the 18 section paragraphs must be 65–80 words");
+    expect(source).toContain("verified_source_words: sourceWordCount(story.sourceText || story.description)");
+    expect(source).toContain('typeof article.verified_source_words === "number"');
+  });
 });
