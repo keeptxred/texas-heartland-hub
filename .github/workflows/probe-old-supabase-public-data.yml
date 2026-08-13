@@ -1,4 +1,4 @@
-name: Probe old Supabase public data
+name: Trace live KeepTXRed backend
 
 on:
   push:
@@ -12,69 +12,67 @@ permissions:
   contents: read
 
 jobs:
-  probe:
+  trace:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v5
 
-      - name: Probe old Supabase public tables
+      - name: Inspect live HTML and JavaScript bundles
         shell: bash
         run: |
           set -euo pipefail
+          work="$(mktemp -d)"
+          trap 'rm -rf "$work"' EXIT
 
-          OLD_URL="$(sed -n 's/^SUPABASE_URL="\(.*\)"$/\1/p' .env.production)"
-          OLD_KEY="$(sed -n 's/^SUPABASE_PUBLISHABLE_KEY="\(.*\)"$/\1/p' .env.production)"
+          curl --connect-timeout 15 --max-time 60 -fsSL https://keeptxred.com/ -o "$work/index.html"
 
-          test -n "$OLD_URL" || { echo 'Missing SUPABASE_URL in .env.production'; exit 1; }
-          test -n "$OLD_KEY" || { echo 'Missing SUPABASE_PUBLISHABLE_KEY in .env.production'; exit 1; }
+          printf '### Live KeepTXRed backend trace\n\n' >> "$GITHUB_STEP_SUMMARY"
+          printf 'Live HTML: `%s bytes`\n\n' "$(wc -c < "$work/index.html")" >> "$GITHUB_STEP_SUMMARY"
 
-          tables=(
-            daily_articles
-            texas_news_feed
-            content_sources
-            products
-            bills
-            bill_actions
-            bill_subjects
-            bill_subject_relationships
-            bill_article_relationships
-            article_slug_redirects
-            texasdefined_articles
+          mapfile -t scripts < <(
+            grep -oE '<script[^>]+src=["'"'][^"'"']+["'"']' "$work/index.html" \
+              | sed -E 's/.*src=["'"']([^"'"']+)["'"'].*/\1/' \
+              | sort -u
           )
 
-          printf '### Old Supabase public-read probe\n\n' >> "$GITHUB_STEP_SUMMARY"
-          printf '| Table | HTTP | Content-Range |\n|---|---:|---|\n' >> "$GITHUB_STEP_SUMMARY"
+          echo "Found ${#scripts[@]} script assets"
+          printf 'Script assets inspected: `%s`\n\n' "${#scripts[@]}" >> "$GITHUB_STEP_SUMMARY"
 
-          dns_failed=0
-          for table in "${tables[@]}"; do
-            headers="$(mktemp)"
-            body="$(mktemp)"
-            status="$(curl --connect-timeout 15 --max-time 45 -sS \
-              -D "$headers" \
-              -o "$body" \
-              -w '%{http_code}' \
-              -X HEAD \
-              -H "apikey: $OLD_KEY" \
-              -H "Authorization: Bearer $OLD_KEY" \
-              -H 'Prefer: count=exact' \
-              -H 'Range: 0-0' \
-              "$OLD_URL/rest/v1/$table?select=id" || true)"
+          : > "$work/all.txt"
+          cat "$work/index.html" >> "$work/all.txt"
 
-            range="$(awk 'BEGIN{IGNORECASE=1} /^content-range:/ {gsub("\r", ""); sub(/^[^:]+:[[:space:]]*/, ""); print; exit}' "$headers")"
-            [[ -n "$status" ]] || status='curl-error'
-            [[ -n "$range" ]] || range='—'
-
-            printf '%s | HTTP %s | %s\n' "$table" "$status" "$range"
-            printf '| `%s` | `%s` | `%s` |\n' "$table" "$status" "$range" >> "$GITHUB_STEP_SUMMARY"
-
-            if [[ "$status" == '000' || "$status" == 'curl-error' ]]; then
-              dns_failed=1
-            fi
-            rm -f "$headers" "$body"
+          for src in "${scripts[@]}"; do
+            case "$src" in
+              http://*|https://*) url="$src" ;;
+              /*) url="https://keeptxred.com$src" ;;
+              *) url="https://keeptxred.com/$src" ;;
+            esac
+            echo "Fetching $url"
+            curl --connect-timeout 15 --max-time 60 -fsSL "$url" >> "$work/all.txt" || true
+            printf '\n' >> "$work/all.txt"
           done
 
-          if [[ "$dns_failed" -eq 1 ]]; then
-            echo 'One or more requests could not connect from the GitHub runner.'
-            exit 2
+          mapfile -t hosts < <(grep -oE 'https://[a-z0-9-]+\.supabase\.co' "$work/all.txt" | sort -u || true)
+          mapfile -t refs < <(grep -oE '[a-z0-9]{20}\.supabase\.co' "$work/all.txt" | sed 's/\.supabase\.co//' | sort -u || true)
+
+          echo 'Supabase hosts found:'
+          printf '%s\n' "${hosts[@]:-none}"
+
+          printf 'Supabase hosts found:\n' >> "$GITHUB_STEP_SUMMARY"
+          if [[ ${#hosts[@]} -eq 0 ]]; then
+            printf -- '- none\n' >> "$GITHUB_STEP_SUMMARY"
+          else
+            for host in "${hosts[@]}"; do
+              printf -- '- `%s`\n' "$host" >> "$GITHUB_STEP_SUMMARY"
+            done
+          fi
+
+          printf '\nProject refs found:\n' >> "$GITHUB_STEP_SUMMARY"
+          if [[ ${#refs[@]} -eq 0 ]]; then
+            printf -- '- none\n' >> "$GITHUB_STEP_SUMMARY"
+          else
+            for ref in "${refs[@]}"; do
+              printf -- '- `%s`\n' "$ref" >> "$GITHUB_STEP_SUMMARY"
+            done
           fi
