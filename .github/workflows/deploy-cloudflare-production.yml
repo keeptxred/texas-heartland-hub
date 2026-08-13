@@ -1,0 +1,99 @@
+name: Deploy KeepTXRed to Cloudflare Workers
+
+on:
+  workflow_dispatch:
+    inputs:
+      health_url:
+        description: Production health endpoint to verify after deployment
+        required: false
+        default: https://keeptxred.com/api/public/hooks/health
+
+permissions:
+  contents: read
+
+concurrency:
+  group: keeptxred-cloudflare-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
+      CLOUDFLARE_RUNTIME_AI_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      HEALTH_URL: ${{ inputs.health_url }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Verify required production credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          missing=0
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN CLOUDFLARE_RUNTIME_AI_TOKEN; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "Missing required GitHub secret for $name" >&2
+              missing=1
+            fi
+          done
+          if [[ "$missing" -ne 0 ]]; then
+            echo "Deployment is blocked before any Cloudflare change is attempted." >&2
+          fi
+          exit "$missing"
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Validate production Worker
+        run: |
+          set -euo pipefail
+          bun run lint
+          bun run build
+          bunx wrangler deploy --dry-run
+
+      - name: Deploy Worker with runtime AI credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          secrets_file="$(mktemp)"
+          trap 'rm -f "$secrets_file"' EXIT
+          python3 - "$secrets_file" <<'PY'
+          import json
+          import os
+          import sys
+
+          payload = {
+              "CLOUDFLARE_ACCOUNT_ID": os.environ["CLOUDFLARE_ACCOUNT_ID"],
+              "CLOUDFLARE_API_TOKEN": os.environ["CLOUDFLARE_RUNTIME_AI_TOKEN"],
+          }
+          with open(sys.argv[1], "w", encoding="utf-8") as fh:
+              json.dump(payload, fh)
+          PY
+          bunx wrangler deploy --secrets-file "$secrets_file"
+
+      - name: Verify production database and AI health
+        shell: bash
+        run: |
+          set -euo pipefail
+          response="$(curl --retry 5 --retry-delay 3 --fail-with-body --silent --show-error "$HEALTH_URL")"
+          echo "$response"
+          python3 - "$response" <<'PY'
+          import json
+          import sys
+
+          data = json.loads(sys.argv[1])
+          failures = []
+          if data.get("database") != "ok":
+              failures.append("database is not ok")
+          if data.get("ai_provider_ready") is not True:
+              failures.append("AI provider is not ready")
+          if failures:
+              raise SystemExit("Post-deploy health verification failed: " + "; ".join(failures))
+          PY
