@@ -11,6 +11,7 @@ import {
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
+import { isLawGuideIndexable } from "@/lib/law-guides";
 
 /**
  * Tombstoned article slugs that are known to return 404 and must never be
@@ -21,7 +22,7 @@ const TOMBSTONED_ARTICLE_SLUGS = new Set([
 ]);
 
 function isSitemapArticleAllowed(slug: string): boolean {
-  return !TOMBSTONED_ARTICLE_SLUGS.has(slug);
+  return !TOMBSTONED_ARTICLE_SLUGS.has(slug) && isLawGuideIndexable(slug);
 }
 
 /** Evergreen + all article URLs (news items also live here for long-term
