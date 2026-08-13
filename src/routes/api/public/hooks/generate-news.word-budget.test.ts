@@ -52,7 +52,7 @@ describe("Daily Texas News qualifying prose contract", () => {
     expect(source).toContain("VAGUE_ATTRIBUTION_PATTERNS");
     expect(source).toContain("stripVagueAttributionSentences");
     expect(source).toContain("sanitizeVagueAttribution(a)");
-    expect(source).toContain('/\bexperts (?:say|suggest|believe)\b/i');
+    expect(source).toContain("experts (?:say|suggest|believe)");
     expect(source).toContain("Never use vague unsupported attribution");
   });
 });
