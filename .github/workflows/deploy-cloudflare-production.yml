@@ -29,6 +29,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
       CLOUDFLARE_RUNTIME_AI_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       WORKER_NAME: keeptxred-site
       PRODUCTION_HOSTNAME: ${{ github.event_name == 'workflow_dispatch' && inputs.production_hostname || 'keeptxred.com' }}
 
@@ -44,7 +45,7 @@ jobs:
         run: |
           set -euo pipefail
           missing=0
-          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN CLOUDFLARE_RUNTIME_AI_TOKEN; do
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN CLOUDFLARE_RUNTIME_AI_TOKEN SUPABASE_SERVICE_ROLE_KEY; do
             if [[ -z "${!name:-}" ]]; then
               echo "Missing required GitHub secret for $name" >&2
               missing=1
@@ -107,6 +108,7 @@ jobs:
           payload = {
               "CLOUDFLARE_ACCOUNT_ID": os.environ["CLOUDFLARE_ACCOUNT_ID"],
               "CLOUDFLARE_API_TOKEN": os.environ["CLOUDFLARE_RUNTIME_AI_TOKEN"],
+              "SUPABASE_SERVICE_ROLE_KEY": os.environ["SUPABASE_SERVICE_ROLE_KEY"],
           }
           with open(sys.argv[1], "w", encoding="utf-8") as fh:
               json.dump(payload, fh)
