@@ -18,60 +18,29 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Inspect live HTML and JavaScript bundles
+      - name: Probe live server health and hosting headers
         shell: bash
         run: |
           set -euo pipefail
           work="$(mktemp -d)"
           trap 'rm -rf "$work"' EXIT
 
-          curl --connect-timeout 15 --max-time 60 -fsSL https://keeptxred.com/ -o "$work/index.html"
+          curl --connect-timeout 15 --max-time 60 -fsSL -D "$work/root.headers" https://keeptxred.com/ -o /dev/null
+          status="$(curl --connect-timeout 15 --max-time 60 -sS -D "$work/health.headers" -o "$work/health.json" -w '%{http_code}' https://keeptxred.com/api/public/hooks/health || true)"
 
-          printf '### Live KeepTXRed backend trace\n\n' >> "$GITHUB_STEP_SUMMARY"
-          printf 'Live HTML: `%s bytes`\n\n' "$(wc -c < "$work/index.html")" >> "$GITHUB_STEP_SUMMARY"
+          echo "health HTTP $status"
+          cat "$work/health.json"
+          echo
+          echo 'selected response headers:'
+          grep -Ei '^(server|via|x-|cf-|fly-|render-|vercel-|location):' "$work/root.headers" || true
+          grep -Ei '^(server|via|x-|cf-|fly-|render-|vercel-|location):' "$work/health.headers" || true
 
-          python3 - "$work/index.html" "$work/scripts.txt" <<'PY'
-          import re, sys
-          html = open(sys.argv[1], encoding='utf-8', errors='ignore').read()
-          scripts = sorted(set(re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', html, re.I)))
-          with open(sys.argv[2], 'w', encoding='utf-8') as f:
-              for src in scripts:
-                  f.write(src + '\n')
-          print(f'Found {len(scripts)} script assets')
-          PY
+          printf '### Live KeepTXRed server health\n\n' >> "$GITHUB_STEP_SUMMARY"
+          printf 'Health HTTP: `%s`\n\n' "$status" >> "$GITHUB_STEP_SUMMARY"
+          printf '```json\n' >> "$GITHUB_STEP_SUMMARY"
+          cat "$work/health.json" >> "$GITHUB_STEP_SUMMARY"
+          printf '\n```\n' >> "$GITHUB_STEP_SUMMARY"
 
-          mapfile -t scripts < "$work/scripts.txt"
-          printf 'Script assets inspected: `%s`\n\n' "${#scripts[@]}" >> "$GITHUB_STEP_SUMMARY"
-
-          : > "$work/all.txt"
-          cat "$work/index.html" >> "$work/all.txt"
-
-          for src in "${scripts[@]}"; do
-            case "$src" in
-              http://*|https://*) url="$src" ;;
-              /*) url="https://keeptxred.com$src" ;;
-              *) url="https://keeptxred.com/$src" ;;
-            esac
-            echo "Fetching $url"
-            curl --connect-timeout 15 --max-time 60 -fsSL "$url" >> "$work/all.txt" || true
-            printf '\n' >> "$work/all.txt"
-          done
-
-          python3 - "$work/all.txt" <<'PY' | tee "$work/result.txt"
-          import re, sys
-          text = open(sys.argv[1], encoding='utf-8', errors='ignore').read()
-          hosts = sorted(set(re.findall(r'https://[a-z0-9-]+\.supabase\.co', text, re.I)))
-          refs = sorted(set(re.findall(r'https://([a-z0-9-]+)\.supabase\.co', text, re.I)))
-          print('Supabase hosts found:')
-          for host in hosts:
-              print(host)
-          print('Project refs found:')
-          for ref in refs:
-              print(ref)
-          if not hosts:
-              print('none')
-          PY
-
-          printf '```text\n' >> "$GITHUB_STEP_SUMMARY"
-          cat "$work/result.txt" >> "$GITHUB_STEP_SUMMARY"
-          printf '```\n' >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$status" == '000' || "$status" == 'curl-error' ]]; then
+            exit 2
+          fi
