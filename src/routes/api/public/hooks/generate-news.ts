@@ -166,6 +166,35 @@ function titleFingerprint(title: string): string {
 
 type ScoredItem = RssItem & { score: number; isBreaking: boolean };
 
+const MIN_VERIFIED_SOURCE_WORDS = 600;
+
+type SourcePreflightDiagnostic = {
+  title: string;
+  source: string;
+  sourceWords: number;
+};
+
+type SourcePreflightSummary = {
+  threshold: number;
+  selected_count: number;
+  skipped_count: number;
+  stories: SourcePreflightDiagnostic[];
+};
+
+class InsufficientVerifiedSourceError extends Error {
+  diagnostics: SourcePreflightSummary;
+
+  constructor(diagnostics: SourcePreflightSummary) {
+    super('All selected stories failed verified-source sufficiency preflight');
+    this.name = 'InsufficientVerifiedSourceError';
+    this.diagnostics = diagnostics;
+  }
+}
+
+function sourceWordCount(value: string | undefined): number {
+  return (value ?? '').trim().split(/\s+/).filter(Boolean).length;
+}
+
 function scoreAndFilter(items: RssItem[]): ScoredItem[] {
   const fingerprints = new Map<string, number>();
   for (const it of items) {
@@ -488,23 +517,60 @@ CATEGORY CLASSIFICATION RULES (strict):
 }
 
 async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
-  const selected = await Promise.all(items.slice(0, 10).map(hydrateSourceContext));
+  const selected = await Promise.all(
+    items.slice(0, 10).map(async (item, originalIndex) => ({
+      story: await hydrateSourceContext(item),
+      originalIndex,
+    })),
+  );
+
+  const diagnostics: SourcePreflightSummary = {
+    threshold: MIN_VERIFIED_SOURCE_WORDS,
+    selected_count: selected.length,
+    skipped_count: 0,
+    stories: selected.map(({ story }) => ({
+      title: story.title,
+      source: story.source,
+      sourceWords: sourceWordCount(story.sourceText || story.description),
+    })),
+  };
+
+  const eligible = selected.filter(({ story }, index) => {
+    const sourceWords = diagnostics.stories[index].sourceWords;
+    const passes = sourceWords >= MIN_VERIFIED_SOURCE_WORDS;
+    if (!passes) {
+      diagnostics.skipped_count += 1;
+      console.warn("[generate-news] skipped thin verified source before AI rewrite", {
+        title: story.title,
+        source: story.source,
+        sourceWords,
+        threshold: MIN_VERIFIED_SOURCE_WORDS,
+      });
+    }
+    return passes;
+  });
+
+  if (eligible.length === 0) {
+    throw new InsufficientVerifiedSourceError(diagnostics);
+  }
+
   const combined: RewrittenArticle[] = [];
   const failures: string[] = [];
 
   // Long-form stories get their own structured-output request and full output-token budget.
-  for (let index = 0; index < selected.length; index += 1) {
-    const story = selected[index];
+  // Thin verified sources have already been removed, so no AI quota is spent on them.
+  for (let index = 0; index < eligible.length; index += 1) {
+    const { story, originalIndex } = eligible[index];
     try {
       const rewritten = await rewriteBatchWithAi([story], lovableApiKey);
       const article = rewritten.find((candidate) => candidate.source_index === 1);
       if (article) {
-        combined.push({ ...article, source_index: index + 1 });
+        combined.push({ ...article, source_index: originalIndex + 1 });
       } else {
-        const message = `story ${index + 1} produced no editorially valid article`;
+        const message = `story ${originalIndex + 1} produced no editorially valid article`;
         failures.push(message);
         console.warn("[generate-news] individual story produced no editorially valid article", {
-          sourceIndex: index + 1,
+          sourceIndex: originalIndex + 1,
           title: story.title,
         });
       }
@@ -512,13 +578,13 @@ async function rewriteWithAi(items: ScoredItem[], lovableApiKey: string) {
       if (isQuotaOrRateLimitError(storyError)) throw storyError;
       failures.push(String(storyError));
       console.warn("[generate-news] individual story rewrite skipped after one attempt", {
-        sourceIndex: index + 1,
+        sourceIndex: originalIndex + 1,
         title: story.title,
         error: String(storyError),
       });
     }
 
-    if (index < selected.length - 1) {
+    if (index < eligible.length - 1) {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
@@ -593,6 +659,18 @@ export const Route = createFileRoute("/api/public/hooks/generate-news")({
         try {
           rewritten = await rewriteWithAi(items, lovableApiKey);
         } catch (err) {
+          if (err instanceof InsufficientVerifiedSourceError) {
+            return Response.json(
+              {
+                ok: true,
+                no_items: true,
+                reason: "insufficient_verified_source",
+                inserted: 0,
+                diagnostics: err.diagnostics,
+              },
+              { status: 200 },
+            );
+          }
           console.error("AI rewrite failed", err);
           return Response.json({ error: "AI rewrite failed", details: String(err) }, { status: 500 });
         }
