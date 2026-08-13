@@ -1,7 +1,7 @@
 import { RENTER_GUIDES } from "@/data/supporting-guides-renters";
 import { RENTER_GUIDES_B } from "@/data/supporting-guides-renters-b";
 import { LANDLORD_SMOKE_ALARM_GUIDES } from "@/data/laws-landlord-smoke-alarm";
-import type { LawGuideMeta } from "@/lib/law-guides";
+import type { LawGuideMeta } from "@/lib/law-guides-core";
 
 const guides = {
   ...RENTER_GUIDES,
