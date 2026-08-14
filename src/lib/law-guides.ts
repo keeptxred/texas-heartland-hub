@@ -2,11 +2,18 @@ import * as core from "@/lib/law-guides-core";
 import { RENTER_LAW_GUIDES } from "@/lib/law-guides-renters";
 import { RENTER_BATCH4_LAW_GUIDES } from "@/lib/law-guides-renters-batch4";
 import { HOA_BATCH6_LAW_GUIDES } from "@/lib/law-guides-hoa-batch6";
+import { HOA_BATCH7_LAW_GUIDES } from "@/lib/law-guides-hoa-batch7";
 
 export { LAW_TOPICS, createDraftLawGuideMeta, isLawGuideMetaIndexable, validateLawGuideMeta } from "@/lib/law-guides-core";
 export type { LawGuideMeta, LawGuideStatus, LawSource, LawTopic } from "@/lib/law-guides-core";
 
-export const LAW_GUIDES = [...core.LAW_GUIDES, ...RENTER_LAW_GUIDES, ...RENTER_BATCH4_LAW_GUIDES, ...HOA_BATCH6_LAW_GUIDES] as const;
+export const LAW_GUIDES = [
+  ...core.LAW_GUIDES,
+  ...RENTER_LAW_GUIDES,
+  ...RENTER_BATCH4_LAW_GUIDES,
+  ...HOA_BATCH6_LAW_GUIDES,
+  ...HOA_BATCH7_LAW_GUIDES,
+] as const;
 
 const GUIDE_BY_SLUG = new Map(LAW_GUIDES.map((guide) => [guide.slug, guide] as const));
 
