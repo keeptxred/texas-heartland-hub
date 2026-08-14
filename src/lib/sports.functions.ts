@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { TEAM_BY_SLUG, isTeamSlug, type LeagueSlug } from "./texas-teams";
-import { SPORTS_TOPIC_SLUGS, classifySportsText, type SportsTopicSlug } from "./sports-taxonomy";
+import { classifySportsText, type SportsTopicSlug } from "./sports-taxonomy";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
 import { getArticlesByCategory, type CategoryFeedItem } from "./category-feed.functions";
@@ -27,6 +27,26 @@ export type SportsListItem = {
 };
 
 export const SPORTS_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const satisfies readonly LeagueSlug[];
+const SportsLeagueSchema = z.enum(["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"]);
+const SportsTopicSchema = z.enum([
+  "latest",
+  "trending",
+  "football",
+  "baseball",
+  "basketball",
+  "hockey",
+  "soccer",
+  "college",
+  "recruiting",
+  "nil",
+  "business-policy",
+  "stadiums",
+  "motorsports",
+  "postseason",
+  "transactions",
+  "injuries",
+  "rivalries",
+]);
 const SPORT_KINDS = [...SPORTS_LEAGUES.map((league) => `sports-${league}`), "sports-general", "sports-policy", "sports-motorsports"];
 
 function client() {
@@ -65,6 +85,34 @@ async function sportsRows(limit = 160): Promise<CategoryFeedItem[]> {
   return getArticlesByCategory({ data: { kind: SPORT_KINDS, limit, order: "newest" } });
 }
 
+async function getSportsTrending(limit: number): Promise<SportsListItem[]> {
+  const rows = await sportsRows(160);
+  const supabase = client();
+  if (!supabase || rows.length === 0) return rows.slice(0, limit).map(toSportsListItem);
+
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: signals } = await supabase
+    .from("texas_news_feed")
+    .select("internal_slug,viral_score,trend_velocity,pub_date")
+    .not("internal_slug", "is", null)
+    .gte("pub_date", since)
+    .order("viral_score", { ascending: false, nullsFirst: false })
+    .order("trend_velocity", { ascending: false, nullsFirst: false })
+    .limit(120);
+
+  const rank = new Map<string, number>();
+  for (const signal of signals ?? []) {
+    if (!signal.internal_slug || rank.has(signal.internal_slug)) continue;
+    const score = Number(signal.viral_score ?? 0) * 1000 + Number(signal.trend_velocity ?? 0) * 100;
+    rank.set(signal.internal_slug, score);
+  }
+  const ranked = rows
+    .filter((row) => rank.has(row.slug))
+    .sort((a, b) => (rank.get(b.slug) ?? 0) - (rank.get(a.slug) ?? 0));
+  const result = ranked.length > 0 ? ranked : rows;
+  return result.slice(0, limit).map(toSportsListItem);
+}
+
 export const listSportsLatest = createServerFn({ method: "GET" })
   .validator((input) => z.object({ limit: z.number().int().min(1).max(60).default(24) }).parse(input ?? {}))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
@@ -74,36 +122,10 @@ export const listSportsLatest = createServerFn({ method: "GET" })
 
 export const listSportsTrending = createServerFn({ method: "GET" })
   .validator((input) => z.object({ limit: z.number().int().min(1).max(30).default(12) }).parse(input ?? {}))
-  .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
-    const rows = await sportsRows(160);
-    const supabase = client();
-    if (!supabase || rows.length === 0) return { items: rows.slice(0, data.limit).map(toSportsListItem) };
-
-    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: signals } = await supabase
-      .from("texas_news_feed")
-      .select("internal_slug,viral_score,trend_velocity,pub_date")
-      .not("internal_slug", "is", null)
-      .gte("pub_date", since)
-      .order("viral_score", { ascending: false, nullsFirst: false })
-      .order("trend_velocity", { ascending: false, nullsFirst: false })
-      .limit(120);
-
-    const rank = new Map<string, number>();
-    for (const signal of signals ?? []) {
-      if (!signal.internal_slug || rank.has(signal.internal_slug)) continue;
-      const score = Number(signal.viral_score ?? 0) * 1000 + Number(signal.trend_velocity ?? 0) * 100;
-      rank.set(signal.internal_slug, score);
-    }
-    const ranked = rows
-      .filter((row) => rank.has(row.slug))
-      .sort((a, b) => (rank.get(b.slug) ?? 0) - (rank.get(a.slug) ?? 0));
-    const result = ranked.length > 0 ? ranked : rows;
-    return { items: result.slice(0, data.limit).map(toSportsListItem) };
-  });
+  .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => ({ items: await getSportsTrending(data.limit) }));
 
 export const listSportsByLeague = createServerFn({ method: "GET" })
-  .validator((input) => z.object({ league: z.enum(SPORTS_LEAGUES) }).parse(input))
+  .validator((input) => z.object({ league: SportsLeagueSchema }).parse(input))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
     const rows = await getArticlesByCategory({ data: { kind: `sports-${data.league}`, limit: 100, order: "newest" } });
     const items = rows
@@ -114,11 +136,11 @@ export const listSportsByLeague = createServerFn({ method: "GET" })
   });
 
 export const listSportsByTopic = createServerFn({ method: "GET" })
-  .validator((input) => z.object({ topic: z.enum(SPORTS_TOPIC_SLUGS), limit: z.number().int().min(1).max(60).default(30) }).parse(input))
+  .validator((input) => z.object({ topic: SportsTopicSchema, limit: z.number().int().min(1).max(60).default(30) }).parse(input))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
-    if (data.topic === "trending") return listSportsTrending({ data: { limit: data.limit } });
+    if (data.topic === "trending") return { items: await getSportsTrending(data.limit) };
     const rows = await sportsRows(160);
-    const topic = data.topic as SportsTopicSlug;
+    const topic: SportsTopicSlug = data.topic;
     const filtered = topic === "latest"
       ? rows
       : rows.filter((row) => classifySportsText(searchableText(row)).topics.includes(topic));
