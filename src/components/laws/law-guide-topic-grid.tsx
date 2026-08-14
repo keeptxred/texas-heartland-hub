@@ -11,6 +11,7 @@ const FEATURED_LAW_TOPICS: LawTopic[] = [
   "self-defense-firearms",
   "criminal",
   "family",
+  "employment",
 ];
 
 function TopicSection({ topic }: { topic: LawTopic }) {
