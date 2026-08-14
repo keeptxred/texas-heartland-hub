@@ -29,8 +29,8 @@ SELECT
 FROM (VALUES
   ('rss','Dallas Cowboys','https://www.dallascowboys.com','https://www.dallascowboys.com/rss/news',95),
   ('rss','Houston Texans','https://www.houstontexans.com','https://www.houstontexans.com/rss/news',95),
-  ('website','Houston Astros','https://www.mlb.com/astros/news',NULL,95),
-  ('website','Texas Rangers','https://www.mlb.com/rangers/news',NULL,95),
+  ('rss','Houston Astros','https://www.mlb.com/astros/news','https://www.mlb.com/astros/feeds/news/rss.xml',95),
+  ('rss','Texas Rangers','https://www.mlb.com/rangers/news','https://www.mlb.com/rangers/feeds/news/rss.xml',95),
   ('website','Dallas Mavericks','https://www.mavs.com/news/',NULL,94),
   ('website','Houston Rockets','https://www.nba.com/rockets/news',NULL,94),
   ('website','San Antonio Spurs','https://www.nba.com/spurs/news',NULL,94),
