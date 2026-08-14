@@ -3,6 +3,7 @@ export const ELECTION_ROUTES = {
   legacyRoot: "/elections",
   root: "/elections/2026",
   cycle: (year: number | string) => `/elections/${year}` as const,
+  findMyRaces: "/find-representative",
   races: "/elections/races",
   race: (slug: string) => `/elections/races/${slug}` as const,
   statewide: "/elections/statewide",
@@ -38,6 +39,7 @@ export const ELECTION_PRIMARY_NAV_ROUTES = [
 
 export const ELECTION_PRIMARY_NAVIGATION = [
   { label: "Overview", href: ELECTION_ROUTES.root },
+  { label: "Find My Races", href: ELECTION_ROUTES.findMyRaces },
   { label: "All Races", href: ELECTION_ROUTES.races },
   { label: "Statewide", href: ELECTION_ROUTES.statewide },
   { label: "Legislature", href: ELECTION_ROUTES.legislative },
