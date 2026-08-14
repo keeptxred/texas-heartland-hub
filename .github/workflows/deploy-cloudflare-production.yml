@@ -36,6 +36,7 @@ jobs:
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       WORKER_NAME: keeptxred-site
       PRODUCTION_HOSTNAME: ${{ github.event_name == 'workflow_dispatch' && inputs.production_hostname || 'keeptxred.com' }}
+      PRODUCTION_ZONE_NAME: keeptxred.com
 
     steps:
       - uses: actions/checkout@v5
@@ -200,62 +201,46 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          secrets_file="$(mktemp)"
-          deploy_log="$(mktemp)"
-          trap 'rm -f "$secrets_file" "$deploy_log"' EXIT
+          domain_payload="$(python3 - <<'PY'
+          import json
+          import os
 
-          python3 - "$secrets_file" <<'PY'
+          print(json.dumps({
+              "hostname": os.environ["PRODUCTION_HOSTNAME"],
+              "service": os.environ["WORKER_NAME"],
+              "zone_name": os.environ["PRODUCTION_ZONE_NAME"],
+          }))
+          PY
+          )"
+
+          domain_json="$(curl --fail-with-body --silent --show-error \
+            -X PUT \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            --data "$domain_payload" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains")"
+          echo "$domain_json"
+
+          python3 - "$domain_json" <<'PY'
           import json
           import os
           import sys
 
-          payload = {
-              "CLOUDFLARE_ACCOUNT_ID": os.environ["CLOUDFLARE_ACCOUNT_ID"],
-              "CLOUDFLARE_API_TOKEN": os.environ["CLOUDFLARE_RUNTIME_AI_TOKEN"],
-              "SUPABASE_SERVICE_ROLE_KEY": os.environ["SUPABASE_SERVICE_ROLE_KEY"],
-          }
-          with open(sys.argv[1], "w", encoding="utf-8") as fh:
-              json.dump(payload, fh)
+          data = json.loads(sys.argv[1])
+          result = data.get("result") or {}
+          failures = []
+          if data.get("success") is not True:
+              failures.append(f"Cloudflare API returned errors={data.get('errors')!r}")
+          if result.get("hostname") != os.environ["PRODUCTION_HOSTNAME"]:
+              failures.append(f"hostname mismatch: {result.get('hostname')!r}")
+          if result.get("service") != os.environ["WORKER_NAME"]:
+              failures.append(f"service mismatch: {result.get('service')!r}")
+          if result.get("zone_name") != os.environ["PRODUCTION_ZONE_NAME"]:
+              failures.append(f"zone mismatch: {result.get('zone_name')!r}")
+          if failures:
+              raise SystemExit("Cloudflare production domain attachment failed: " + "; ".join(failures))
+          print(f"Attached {result['hostname']} to {result['service']} in zone {result['zone_name']} after preview health passed.")
           PY
-
-          set +e
-          bunx wrangler deploy --domain "$PRODUCTION_HOSTNAME" --secrets-file "$secrets_file" 2>&1 | tee "$deploy_log"
-          deploy_status=${PIPESTATUS[0]}
-          set -e
-
-          if [[ "$deploy_status" -ne 0 ]]; then
-            diagnostic="$(python3 - "$deploy_log" <<'PY'
-          import os
-          import re
-          import sys
-
-          with open(sys.argv[1], "r", encoding="utf-8", errors="replace") as fh:
-              text = fh.read()
-
-          for name in ("CLOUDFLARE_API_TOKEN", "CLOUDFLARE_RUNTIME_AI_TOKEN"):
-              secret = os.environ.get(name, "")
-              if secret:
-                  text = text.replace(secret, "***")
-
-          ansi = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
-          lines = [ansi.sub("", line).strip() for line in text.splitlines() if line.strip()]
-          interesting = [line for line in lines if re.search(r"error|permission|auth|forbidden|unauthorized|domain|route|worker", line, re.I)]
-          selected = (interesting or lines)[-12:]
-          message = " | ".join(selected)[:3500]
-          message = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
-          print(message or "Wrangler exited without a diagnostic message")
-          PY
-            )"
-            echo "::error title=Cloudflare production promotion failed::$diagnostic"
-            exit "$deploy_status"
-          fi
-
-          if ! grep -Fq "$PRODUCTION_HOSTNAME" "$deploy_log"; then
-            echo "Wrangler completed, but the production hostname was not present in its deployment output." >&2
-            exit 1
-          fi
-
-          echo "Wrangler attached $PRODUCTION_HOSTNAME to $WORKER_NAME after preview health passed."
 
       - name: Verify production database and AI health
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.activate_custom_domain == true }}
