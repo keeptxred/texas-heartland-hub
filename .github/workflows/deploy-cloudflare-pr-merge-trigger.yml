@@ -1,7 +1,8 @@
-name: Trigger Cloudflare Production Deploy
+name: Trigger Cloudflare Production Deploy After Merge
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches: [main]
     paths:
       - 'src/**'
@@ -11,7 +12,8 @@ on:
       - 'wrangler.jsonc'
       - 'vite.config.*'
       - 'tsconfig*.json'
-      - '.github/workflows/deploy-cloudflare-main-trigger.yml'
+      - '.github/workflows/deploy-cloudflare-production.yml'
+      - '.github/workflows/deploy-cloudflare-pr-merge-trigger.yml'
   workflow_dispatch:
 
 permissions:
@@ -24,9 +26,10 @@ concurrency:
 
 jobs:
   dispatch:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
     steps:
-      - name: Dispatch production Cloudflare workflow
+      - name: Dispatch production Cloudflare workflow from main
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
