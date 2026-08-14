@@ -13,6 +13,7 @@ import { CONSUMER_BATCH14_LAW_GUIDES } from "@/lib/law-guides-consumer-batch14";
 import { CONSUMER_BATCH15_LAW_GUIDES } from "@/lib/law-guides-consumer-batch15";
 import { BUSINESS_BATCH16_LAW_GUIDES } from "@/lib/law-guides-business-batch16";
 import { EDUCATION_BATCH17_LAW_GUIDES } from "@/lib/law-guides-education-batch17";
+import { EDUCATION_BATCH18_LAW_GUIDES } from "@/lib/law-guides-education-batch18";
 
 export { LAW_TOPICS, createDraftLawGuideMeta, isLawGuideMetaIndexable, validateLawGuideMeta } from "@/lib/law-guides-core";
 export type { LawGuideMeta, LawGuideStatus, LawSource, LawTopic } from "@/lib/law-guides-core";
@@ -33,6 +34,7 @@ export const LAW_GUIDES = [
   ...CONSUMER_BATCH15_LAW_GUIDES,
   ...BUSINESS_BATCH16_LAW_GUIDES,
   ...EDUCATION_BATCH17_LAW_GUIDES,
+  ...EDUCATION_BATCH18_LAW_GUIDES,
 ] as const;
 
 const GUIDE_BY_SLUG = new Map(LAW_GUIDES.map((guide) => [guide.slug, guide] as const));
