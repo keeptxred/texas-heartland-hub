@@ -13,13 +13,23 @@ const EXPECTED = [
   "texas-hoa-election-law",
   "texas-hoa-political-signs-law",
   "texas-hoa-flag-display-law",
+  "texas-hoa-rainwater-harvesting-law",
+  "texas-hoa-drought-resistant-landscaping-law",
+  "texas-hoa-composting-law",
+  "texas-hoa-efficient-irrigation-law",
+  "texas-hoa-solar-panel-law",
+  "texas-hoa-standby-generator-law",
+  "texas-hoa-religious-display-law",
+  "texas-hoa-pool-enclosure-law",
+  "texas-hoa-security-measures-law",
+  "texas-hoa-renter-payment-method-law",
 ];
 
 describe("HOA and property evergreen guide registry", () => {
-  it("registers exactly ten verified HOA guides", () => {
+  it("registers exactly twenty verified HOA guides", () => {
     const guides = lawGuidesForTopic("hoa-property");
     expect(guides.map((guide) => guide.slug).sort()).toEqual([...EXPECTED].sort());
-    expect(guides).toHaveLength(10);
+    expect(guides).toHaveLength(20);
 
     for (const meta of guides) {
       expect(meta.status).toBe("verified");
@@ -47,8 +57,10 @@ describe("HOA and property evergreen guide registry", () => {
     }
   });
 
-  it("records the 2025 HOA voting-procedure update", () => {
-    const guide = lawGuidesForTopic("hoa-property").find((item) => item.slug === "texas-hoa-election-law");
-    expect(guide?.effectiveDate).toContain("September 1, 2025");
+  it("records current HOA effective-date updates", () => {
+    const guides = lawGuidesForTopic("hoa-property");
+    expect(guides.find((item) => item.slug === "texas-hoa-election-law")?.effectiveDate).toContain("September 1, 2025");
+    expect(guides.find((item) => item.slug === "texas-hoa-security-measures-law")?.effectiveDate).toContain("September 1, 2025");
+    expect(guides.find((item) => item.slug === "texas-hoa-renter-payment-method-law")?.effectiveDate).toContain("September 1, 2023");
   });
 });
