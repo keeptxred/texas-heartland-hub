@@ -57,7 +57,7 @@ describe("self-defense and firearms evergreen guide registry", () => {
 
     const permitless = ALL_GUIDES["texas-permitless-carry-law"];
     const ltc = ALL_GUIDES["texas-license-to-carry-guide"];
-    expect(permitless.sections.some((section) => section.paragraphs.some((text) => text.includes("21-and-older")))).toBe(true);
-    expect(ltc.sections.some((section) => section.paragraphs.some((text) => text.includes("18-to-20-year-olds")))).toBe(true);
+    expect(permitless.sections.some((section) => section.paragraphs?.some((text) => text.includes("21-and-older")) ?? false)).toBe(true);
+    expect(ltc.sections.some((section) => section.paragraphs?.some((text) => text.includes("18-to-20-year-olds")) ?? false)).toBe(true);
   });
 });
