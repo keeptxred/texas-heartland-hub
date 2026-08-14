@@ -9,7 +9,7 @@ const FEATURED_LAW_TOPICS: LawTopic[] = [
   "landlord-tenant",
   "hoa-property",
   "self-defense-firearms",
-  "everyday-criminal",
+  "criminal",
 ];
 
 function TopicSection({ topic }: { topic: LawTopic }) {
