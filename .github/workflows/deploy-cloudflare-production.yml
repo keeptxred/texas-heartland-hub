@@ -231,6 +231,25 @@ jobs:
           echo "Cloudflare domain API HTTP status: $domain_http_status"
           echo "Cloudflare domain API response: $domain_json"
           if [[ "$domain_curl_status" -ne 0 ]]; then
+            diagnostic="$(python3 - "$domain_http_status" "$domain_json" <<'PY'
+          import sys
+
+          status, body = sys.argv[1], sys.argv[2]
+          message = f"HTTP {status}: {body}"[:3500]
+          message = message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+          print(message)
+          PY
+            )"
+            echo "::error title=Cloudflare Workers Domains API failed::$diagnostic"
+            {
+              echo "### Cloudflare Workers Domains API diagnostic"
+              echo
+              echo "- HTTP status: \`$domain_http_status\`"
+              echo
+              echo '```json'
+              echo "$domain_json"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
             echo "Cloudflare domain API request failed with curl status $domain_curl_status and HTTP status $domain_http_status." >&2
             exit "$domain_curl_status"
           fi
