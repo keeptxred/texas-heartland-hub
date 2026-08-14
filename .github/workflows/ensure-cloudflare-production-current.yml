@@ -1,0 +1,50 @@
+name: Ensure Cloudflare Production Matches Main
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: keeptxred-cloudflare-production-ensure
+  cancel-in-progress: true
+
+jobs:
+  ensure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Compare production deploy SHA with main
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          main_sha="$(gh api "repos/${{ github.repository }}/commits/main" --jq '.sha')"
+          last_deployed_sha="$(gh api "repos/${{ github.repository }}/actions/workflows/deploy-cloudflare-production.yml/runs?status=success&per_page=20" --jq '.workflow_runs[0].head_sha // ""')"
+
+          echo "main_sha=$main_sha"
+          echo "last_deployed_sha=${last_deployed_sha:-none}"
+
+          if [[ "$main_sha" == "$last_deployed_sha" ]]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Production already matches main; no deployment needed."
+          else
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            echo "Production is behind main; dispatching deployment."
+          fi
+
+      - name: Dispatch production Cloudflare workflow
+        if: steps.gate.outputs.deploy == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh workflow run deploy-cloudflare-production.yml \
+            --repo "${{ github.repository }}" \
+            --ref main \
+            -f activate_custom_domain=false \
+            -f production_hostname=keeptxred.com
