@@ -19,7 +19,7 @@ export type TeamMeta = {
 
 export const TEAMS: readonly TeamMeta[] = [
   // NFL
-  { slug: "texans", name: "Houston Texans", short: "Texans", league: "nfl", kind: "pro", city: "Houston", keywords: ["houston texans", "texans", "nrg stadium"] },
+  { slug: "texans", name: "Houston Texans", short: "Texans", league: "nfl", kind: "pro", city: "Houston", keywords: ["houston texans", "texans football", "texans nfl", "nrg stadium"] },
   { slug: "cowboys", name: "Dallas Cowboys", short: "Cowboys", league: "nfl", kind: "pro", city: "Arlington", keywords: ["dallas cowboys", "cowboys", "at&t stadium", "america's team"] },
 
   // MLB
