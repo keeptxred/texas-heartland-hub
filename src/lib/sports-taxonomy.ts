@@ -60,6 +60,17 @@ const LEAGUE_KEYWORDS: Record<LeagueSlug, string[]> = {
   cfb: ["college football", "ncaa football", "big 12", "sec football", "acc football", "aac football", "sun belt football"],
 };
 
+const LEAGUE_TOPIC: Record<LeagueSlug, SportsTopicSlug> = {
+  nfl: "football",
+  mlb: "baseball",
+  nba: "basketball",
+  nhl: "hockey",
+  mls: "soccer",
+  nwsl: "soccer",
+  wnba: "basketball",
+  cfb: "football",
+};
+
 const TEXAS_CITIES = ["houston", "dallas", "arlington", "austin", "san antonio", "fort worth", "frisco", "college station", "waco", "lubbock", "denton", "san marcos"];
 
 function includesPhrase(text: string, phrase: string): boolean {
@@ -79,6 +90,9 @@ export function classifySportsText(text: string): SportsClassification {
   const topics = (Object.entries(TOPIC_KEYWORDS) as [Exclude<SportsTopicSlug, "latest" | "trending">, string[]][])
     .filter(([, keywords]) => keywords.some((keyword) => includesPhrase(haystack, keyword)))
     .map(([topic]) => topic);
+
+  for (const league of leagueSet) topics.push(LEAGUE_TOPIC[league]);
+  if (teams.some((slug) => TEAM_BY_SLUG[slug].kind === "college")) topics.push("college");
 
   const cities = TEXAS_CITIES.filter((city) => includesPhrase(haystack, city));
   let score = 0;
@@ -105,9 +119,9 @@ export function sportsKindForLeague(league: LeagueSlug): string {
 export function sportsKindForText(text: string): string | null {
   const classification = classifySportsText(text);
   if (!classification.isSports) return null;
-  if (classification.leagues.length === 1) return sportsKindForLeague(classification.leagues[0]);
   if (classification.topics.includes("motorsports")) return "sports-motorsports";
   if (classification.topics.includes("business-policy") || classification.topics.includes("nil")) return "sports-policy";
+  if (classification.leagues.length === 1) return sportsKindForLeague(classification.leagues[0]);
   return "sports-general";
 }
 
