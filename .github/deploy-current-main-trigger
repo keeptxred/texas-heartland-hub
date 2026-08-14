@@ -1,2 +1,2 @@
 Deploy current main to Cloudflare production.
-Promotion trigger after enabling custom-domain activation.
+Trigger Wrangler-managed custom-domain promotion for keeptxred.com.
