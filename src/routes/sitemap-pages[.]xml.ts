@@ -32,7 +32,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/votes": CITATION_MAGNET_REFRESH,
   "/texas-government": CITATION_MAGNET_REFRESH,
   "/texas-government/agencies": CITATION_MAGNET_REFRESH,
-  "/laws": toIsoDate("2026-08-13T00:00:00-05:00"),
+  "/laws": toIsoDate("2026-08-14T00:00:00-05:00"),
   "/laws/constitutional-amendments": CITATION_MAGNET_REFRESH,
   "/laws/effective-dates": CITATION_MAGNET_REFRESH,
   "/topics": GUIDE_LASTMOD,
@@ -58,7 +58,7 @@ const STATIC_PATHS:string[]=[
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/texas-legislature/votes","/texas-government","/texas-government/agencies",
-  "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
+  "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/constitutional-amendments","/laws/effective-dates",
   // /texas-laws and /texas-law-policy are permanent aliases for /laws.
   // Legacy candidate guides are noindex until rebuilt on verified Election Central data.

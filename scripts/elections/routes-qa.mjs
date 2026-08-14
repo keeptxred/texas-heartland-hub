@@ -9,6 +9,8 @@ const errors = [];
 const requiredFiles = [
   "index.tsx",
   "news.index.tsx",
+  "find-representative.tsx",
+  "api.elections.district-lookup.ts",
   "elections.tsx",
   "elections.index.tsx",
   "elections.2026.tsx",
@@ -41,7 +43,21 @@ for (const file of requiredFiles) {
   }
 }
 
-const [home, layout, legacyIndex, cycle, flags, electionRoutes, electionSitemap, siteHeader, siteFooter, start, sitemapIndex] = await Promise.all([
+const [
+  home,
+  layout,
+  legacyIndex,
+  cycle,
+  flags,
+  electionRoutes,
+  electionSitemap,
+  siteHeader,
+  siteFooter,
+  start,
+  sitemapIndex,
+  findMyRaces,
+  districtLookup,
+] = await Promise.all([
   read("src/routes/index.tsx"),
   read("src/routes/elections.tsx"),
   read("src/routes/elections.index.tsx"),
@@ -53,6 +69,8 @@ const [home, layout, legacyIndex, cycle, flags, electionRoutes, electionSitemap,
   read("src/components/site-footer.tsx"),
   read("src/start.ts"),
   read("src/routes/sitemap[.]xml.ts"),
+  read("src/routes/find-representative.tsx"),
+  read("src/routes/api.elections.district-lookup.ts"),
 ]);
 
 requireText(home, "ELECTION_FEATURE_FLAGS.homepagePromotion", "Homepage is not wired to the election feature flag.");
@@ -72,11 +90,45 @@ requireText(
 requireText(cycle, 'createFileRoute("/elections/2026")', "Canonical 2026 cycle route is not registered.");
 requireText(flags, "false", "Election homepage feature flag must default to disabled.");
 for (const route of [
+  'findMyRaces: "/find-representative"',
   'statewide: "/elections/statewide"',
   'legislative: "/elections/legislative"',
   'districts: "/elections/districts"',
 ]) {
   requireText(electionRoutes, route, `Missing SEO election route constant: ${route}.`);
+}
+requireText(
+  electionRoutes,
+  '{ label: "Find My Races", href: ELECTION_ROUTES.findMyRaces }',
+  "Election Central navigation is missing Find My Races.",
+);
+for (const requiredText of [
+  'createFileRoute("/api/elections/district-lookup")',
+  "geocoding.geo.census.gov/geocoder/locations/onelineaddress",
+  "tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Legislative/MapServer",
+  'lookupDistrict(0, "CD119"',
+  'lookupDistrict(1, "SLDU"',
+  'lookupDistrict(2, "SLDL"',
+  '"cache-control": "no-store"',
+  '"x-robots-tag": "noindex, nofollow"',
+]) {
+  requireText(
+    districtLookup,
+    requiredText,
+    `Find My Races district lookup is missing required contract: ${requiredText}`,
+  );
+}
+for (const requiredText of [
+  'fetch("/api/elections/district-lookup"',
+  "ELECTION_ROUTES.statewide",
+  "This is not your complete ballot",
+  "Texas Senate seats are staggered",
+]) {
+  requireText(
+    findMyRaces,
+    requiredText,
+    `Find My Races public page is missing required behavior: ${requiredText}`,
+  );
 }
 requireText(
   electionSitemap,

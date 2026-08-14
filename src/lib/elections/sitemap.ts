@@ -16,7 +16,6 @@ export interface ElectionSitemapInput {
   lastmod?: string | Date;
 }
 
-
 export const ELECTION_DISTRICT_PATHS = [
   ...Array.from({ length: 38 }, (_, index) => `/elections/districts/congressional-district-${index + 1}`),
   ...[1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31].map((district) => `/elections/districts/texas-senate-district-${district}`),
@@ -25,6 +24,7 @@ export const ELECTION_DISTRICT_PATHS = [
 
 const STATIC_ELECTION_PATHS = [
   ELECTION_ROUTES.root,
+  ELECTION_ROUTES.findMyRaces,
   ELECTION_ROUTES.races,
   ELECTION_ROUTES.statewide,
   ELECTION_ROUTES.legislative,
