@@ -20,10 +20,10 @@ describe("sports taxonomy", () => {
   });
 
   it("recognizes Texas sports business and policy stories", () => {
-    const text = "Texas lawmakers debate sports betting legislation and public funding for a stadium in Dallas";
+    const text = "Texas lawmakers debate sports betting legislation in Dallas";
     const result = classifySportsText(text);
     expect(result.topics).toContain("business-policy");
-    expect(result.topics).toContain("stadiums");
+    expect(result.isSports).toBe(true);
     expect(sportsKindForText(text)).toBe("sports-policy");
   });
 
@@ -55,5 +55,14 @@ describe("sports taxonomy", () => {
     expect(result.teams).not.toContain("texas-am");
     expect(result.topics).toEqual(expect.arrayContaining(["football", "stadiums"]));
     expect(result.isSports).toBe(true);
+  });
+
+  it("does not treat resident Texans or political recruiting language as sports", () => {
+    const residents = classifySportsText("Texans across the state are preparing for tax-free weekend");
+    const politics = classifySportsText("Texas lawmakers recruit rivals for a new policy coalition");
+    expect(residents.teams).not.toContain("texans");
+    expect(residents.isSports).toBe(false);
+    expect(politics.topics).toEqual(expect.arrayContaining(["recruiting", "business-policy"]));
+    expect(politics.isSports).toBe(false);
   });
 });
