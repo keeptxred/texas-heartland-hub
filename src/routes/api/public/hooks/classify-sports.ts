@@ -2,11 +2,33 @@ import { createFileRoute } from "@tanstack/react-router";
 import { classifySportsText, sportsKindForText } from "@/lib/sports-taxonomy";
 import { LEAGUE_META } from "@/lib/texas-teams";
 
+const GENERIC_OR_SPORTS_CATEGORIES = new Set([
+  "",
+  "non-political",
+  "sports",
+  "nfl",
+  "mlb",
+  "nba",
+  "nhl",
+  "mls",
+  "nwsl",
+  "wnba",
+  "college sports",
+  "motorsports",
+  "sports business & policy",
+]);
+
 function categoryFor(kind: string | null, leagues: string[]): string {
   if (kind === "sports-policy") return "Sports Business & Policy";
   if (kind === "sports-motorsports") return "Motorsports";
   if (leagues.length === 1 && leagues[0] in LEAGUE_META) return leagues[0] === "cfb" ? "College Sports" : LEAGUE_META[leagues[0] as keyof typeof LEAGUE_META].name;
   return "Sports";
+}
+
+function resolvedCategory(existing: string | null | undefined, kind: string, leagues: string[]): string {
+  const normalized = (existing ?? "").trim().toLowerCase();
+  if (normalized && !GENERIC_OR_SPORTS_CATEGORIES.has(normalized)) return existing!.trim();
+  return categoryFor(kind, leagues);
 }
 
 async function handler() {
@@ -27,7 +49,11 @@ async function handler() {
     const text = [row.title, row.dek, row.body, row.category, row.kind, ...(row.keywords ?? []), ...(row.seo_keywords ?? [])].filter(Boolean).join(" ");
     const classification = classifySportsText(text);
     const alreadySports = /^sports-/i.test(row.kind ?? "") || /sports|nfl|mlb|nba|nhl|mls|wnba|college football|motorsport/i.test(row.category ?? "");
-    const strongTexasSports = classification.teams.length > 0 || classification.texasRelevanceScore >= 45 || (classification.topics.includes("motorsports") && /\btexas\b|cota|circuit of the americas|texas motor speedway/i.test(text));
+    const texasNamed = /\btexas\b/i.test(text);
+    const strongTexasSports = classification.teams.length > 0
+      || (classification.isSports && texasNamed)
+      || classification.texasRelevanceScore >= 45
+      || (classification.topics.includes("motorsports") && /\bcota\b|circuit of the americas|texas motor speedway/i.test(text));
     if (!alreadySports && !strongTexasSports) continue;
 
     const kind = sportsKindForText(text) ?? (row.kind?.startsWith("sports-") ? row.kind : "sports-general");
@@ -36,7 +62,7 @@ async function handler() {
     const keywords = Array.from(new Set([...(row.keywords ?? []), ...topics])).slice(0, 24);
     const update = {
       kind,
-      category: categoryFor(kind, classification.leagues),
+      category: resolvedCategory(row.category, kind, classification.leagues),
       discover_category: "Sports",
       teams,
       keywords,
