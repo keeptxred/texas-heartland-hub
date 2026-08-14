@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { listSportsLatest, listSportsTrending, type SportsListItem } from "@/lib/sports.functions";
 import { TEAMS, LEAGUE_META, type LeagueSlug } from "@/lib/texas-teams";
@@ -58,7 +59,7 @@ function StoryCard({ article }: { article: SportsListItem }) {
   );
 }
 
-function DeskCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+function DeskCard({ title, description, children }: { title: string; description: string; children: ReactNode }) {
   return <div className="rounded-lg border border-border bg-card p-5 hover:shadow-md transition-shadow"><h3 className="font-semibold">{title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p><div className="mt-3 text-sm font-medium text-primary">{children}</div></div>;
 }
 
