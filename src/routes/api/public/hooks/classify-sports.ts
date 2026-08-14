@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { classifySportsText, sportsKindForText } from "@/lib/sports-taxonomy";
+import { classifySportsText, sportsKindForText, SPORTS_TOPIC_SLUGS } from "@/lib/sports-taxonomy";
 import { LEAGUE_META } from "@/lib/texas-teams";
 
 const GENERIC_OR_SPORTS_CATEGORIES = new Set([
@@ -17,6 +17,7 @@ const GENERIC_OR_SPORTS_CATEGORIES = new Set([
   "motorsports",
   "sports business & policy",
 ]);
+const SPORTS_TOPIC_KEYWORDS = new Set<string>(SPORTS_TOPIC_SLUGS);
 
 function categoryFor(kind: string | null, leagues: string[]): string {
   if (kind === "sports-policy") return "Sports Business & Policy";
@@ -31,35 +32,64 @@ function resolvedCategory(existing: string | null | undefined, kind: string, lea
   return categoryFor(kind, leagues);
 }
 
+function cleanedKeywords(keywords: string[] | null | undefined): string[] {
+  return (keywords ?? []).filter((keyword) => !SPORTS_TOPIC_KEYWORDS.has(keyword.toLowerCase()));
+}
+
+function hasSportsMetadata(row: { kind?: string | null; category?: string | null; discover_category?: string | null }): boolean {
+  return /^sports-/i.test(row.kind ?? "")
+    || /^sports$/i.test(row.discover_category ?? "")
+    || /^(sports|nfl|mlb|nba|nhl|mls|nwsl|wnba|college sports|motorsports|sports business & policy)$/i.test((row.category ?? "").trim());
+}
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabaseAdmin
     .from("daily_articles")
-    .select("slug,title,dek,body,category,kind,teams,keywords,seo_keywords,published_at")
+    .select("slug,title,dek,body,category,kind,discover_category,teams,keywords,seo_keywords,published_at")
     .gte("published_at", since)
     .order("published_at", { ascending: false })
     .limit(500);
   if (error) return Response.json({ ok: false, error: error.message }, { status: 500 });
 
   let classified = 0;
+  let cleaned = 0;
   let teamTagged = 0;
-  const changes: Array<{ slug: string; kind: string; teams: string[] }> = [];
+  const changes: Array<{ slug: string; action: "classified" | "cleaned"; kind: string; teams: string[] }> = [];
   for (const row of data ?? []) {
-    const text = [row.title, row.dek, row.body, row.category, row.kind, ...(row.keywords ?? []), ...(row.seo_keywords ?? [])].filter(Boolean).join(" ");
+    // Classify from editorial content, not mutable Sports metadata. Including
+    // kind/category/keywords here makes an old false positive self-reinforcing.
+    const text = [row.title, row.dek, row.body, ...(row.seo_keywords ?? [])].filter(Boolean).join(" ");
     const classification = classifySportsText(text);
-    const alreadySports = /^sports-/i.test(row.kind ?? "") || /sports|nfl|mlb|nba|nhl|mls|wnba|college football|motorsport/i.test(row.category ?? "");
     const texasNamed = /\btexas\b/i.test(text);
     const strongTexasSports = classification.teams.length > 0
       || (classification.isSports && texasNamed)
       || classification.texasRelevanceScore >= 45
       || (classification.topics.includes("motorsports") && /\bcota\b|circuit of the americas|texas motor speedway/i.test(text));
-    if (!alreadySports && !strongTexasSports) continue;
 
-    const kind = sportsKindForText(text) ?? (row.kind?.startsWith("sports-") ? row.kind : "sports-general");
-    const teams = Array.from(new Set([...(row.teams ?? []), ...classification.teams]));
+    if (!strongTexasSports) {
+      if (!hasSportsMetadata(row)) continue;
+      const currentCategory = (row.category ?? "").trim();
+      const categoryWasSportsOnly = /^(sports|nfl|mlb|nba|nhl|mls|nwsl|wnba|college sports|motorsports|sports business & policy)$/i.test(currentCategory);
+      const update = {
+        kind: /^sports-/i.test(row.kind ?? "") ? "news" : (row.kind ?? "news"),
+        category: categoryWasSportsOnly ? "Non-Political" : (row.category ?? "Non-Political"),
+        discover_category: null,
+        teams: [] as string[],
+        keywords: cleanedKeywords(row.keywords),
+      };
+      const { error: updateError } = await supabaseAdmin.from("daily_articles").update(update).eq("slug", row.slug);
+      if (updateError) continue;
+      cleaned++;
+      changes.push({ slug: row.slug, action: "cleaned", kind: update.kind, teams: [] });
+      continue;
+    }
+
+    const kind = sportsKindForText(text) ?? "sports-general";
+    const teams = classification.teams;
     const topics = classification.topics.filter((topic) => topic !== "latest" && topic !== "trending");
-    const keywords = Array.from(new Set([...(row.keywords ?? []), ...topics])).slice(0, 24);
+    const keywords = Array.from(new Set([...cleanedKeywords(row.keywords), ...topics])).slice(0, 24);
     const update = {
       kind,
       category: resolvedCategory(row.category, kind, classification.leagues),
@@ -70,11 +100,11 @@ async function handler() {
     const { error: updateError } = await supabaseAdmin.from("daily_articles").update(update).eq("slug", row.slug);
     if (updateError) continue;
     classified++;
-    if (teams.length > (row.teams ?? []).length) teamTagged++;
-    changes.push({ slug: row.slug, kind, teams });
+    if (teams.some((team) => !(row.teams ?? []).includes(team))) teamTagged++;
+    changes.push({ slug: row.slug, action: "classified", kind, teams });
   }
 
-  return Response.json({ ok: true, scanned: data?.length ?? 0, classified, teamTagged, changes: changes.slice(0, 50) });
+  return Response.json({ ok: true, scanned: data?.length ?? 0, classified, cleaned, teamTagged, changes: changes.slice(0, 75) });
 }
 
 export const Route = createFileRoute("/api/public/hooks/classify-sports")({ server: { handlers: { GET: handler, POST: handler } } });

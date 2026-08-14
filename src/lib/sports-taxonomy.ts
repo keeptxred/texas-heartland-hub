@@ -74,7 +74,11 @@ const LEAGUE_TOPIC: Record<LeagueSlug, SportsTopicSlug> = {
 const TEXAS_CITIES = ["houston", "dallas", "arlington", "austin", "san antonio", "fort worth", "frisco", "college station", "waco", "lubbock", "denton", "san marcos"];
 const COLLEGE_SPORTS_CONTEXT = /\b(football|basketball|baseball|softball|volleyball|soccer|athletics?|athletic|sports?|game|matchup|season|coach|player|recruit(?:ing)?|commit(?:ment)?|nil|name image likeness|revenue sharing|stadium|arena|conference|ncaa|bowl|playoff|championship|roster|score|touchdown|quarterback|transfer portal|ranked|ranking|kickoff|tipoff|tournament|practice|schedule)\b/i;
 const TEXAS_AM_BRANCH_CAMPUS = /\b(?:texas a&m[-–— ](?:texarkana|corpus christi|san antonio|commerce|kingsville|international)|west texas a&m)\b/i;
-const SAFE_STANDALONE_TOPICS = new Set<SportsTopicSlug>(["football", "baseball", "basketball", "hockey", "soccer", "college", "recruiting", "nil", "stadiums", "motorsports", "postseason", "rivalries"]);
+const STRONG_SPORTS_POLICY_CONTEXT = /\b(sports betting|sportsbook|stadium financing|athletic spending|college athlete compensation)\b/i;
+// Recruiting and rivalry language is common in politics, business, hiring, and
+// education. Those topics are useful labels once a story is known to be sports,
+// but they are not strong enough to make a story Sports on their own.
+const SAFE_STANDALONE_TOPICS = new Set<SportsTopicSlug>(["football", "baseball", "basketball", "hockey", "soccer", "college", "nil", "stadiums", "motorsports", "postseason"]);
 
 function includesPhrase(text: string, phrase: string): boolean {
   const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -121,7 +125,10 @@ export function classifySportsText(text: string): SportsClassification {
     topics: uniqueTopics,
     cities,
     texasRelevanceScore: Math.min(score, 100),
-    isSports: teams.length > 0 || leagueSet.size > 0 || uniqueTopics.some((topic) => SAFE_STANDALONE_TOPICS.has(topic)),
+    isSports: teams.length > 0
+      || leagueSet.size > 0
+      || uniqueTopics.some((topic) => SAFE_STANDALONE_TOPICS.has(topic))
+      || STRONG_SPORTS_POLICY_CONTEXT.test(text),
   };
 }
 

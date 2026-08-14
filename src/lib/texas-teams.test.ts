@@ -21,12 +21,13 @@ describe("Texas sports team registry", () => {
   });
 
   it("cross-posts a genuine multi-team Texas story", () => {
-    expect(detectTeams("Cowboys and Texans prepare for a Texas NFL matchup").sort()).toEqual(["cowboys", "texans"]);
+    expect(detectTeams("Dallas Cowboys and Houston Texans prepare for a Texas NFL matchup").sort()).toEqual(["cowboys", "texans"]);
   });
 
   it("does not tag generic uses of ambiguous words", () => {
     expect(detectTeams("Local stars gathered for a community event")).not.toContain("stars");
     expect(detectTeams("Park rangers opened a new trail")).not.toContain("rangers");
+    expect(detectTeams("Texans across the state are preparing for tax-free weekend")).not.toContain("texans");
   });
 });
 
