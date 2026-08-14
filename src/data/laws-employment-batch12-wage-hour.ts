@@ -33,6 +33,7 @@ export const EMPLOYMENT_BATCH12_WAGE_HOUR_GUIDES: Record<string, CornerstoneGuid
     sources: [
       { label: "Texas Labor Code Chapter 62", url: "https://statutes.capitol.texas.gov/Docs/LA/htm/LA.62.htm" },
       { label: "Texas Labor Code § 62.051", url: "https://statutes.capitol.texas.gov/?artSec=62.051&chapter=LA.62&code=LA&tab=1" },
+      { label: "Fair Labor Standards Act § 6, 29 U.S.C. § 206", url: "https://www.govinfo.gov/link/uscode/29/206" },
       { label: "U.S. Department of Labor — Minimum Wage", url: "https://www.dol.gov/agencies/whd/minimum-wage" },
     ],
     related: [
@@ -72,6 +73,7 @@ export const EMPLOYMENT_BATCH12_WAGE_HOUR_GUIDES: Record<string, CornerstoneGuid
       { q: "Can an employer refuse to pay overtime because it was not preapproved?", a: "An employer may prohibit unauthorized overtime, but if it knew or should have known compensable overtime was worked, federal law generally requires payment. The employer can separately enforce its scheduling rule." },
     ],
     sources: [
+      { label: "Fair Labor Standards Act § 7, 29 U.S.C. § 207", url: "https://www.govinfo.gov/link/uscode/29/207" },
       { label: "U.S. Department of Labor — Overtime", url: "https://www.dol.gov/general/topic/workhours/overtime" },
       { label: "U.S. Department of Labor — FLSA Fact Sheet #23", url: "https://www.dol.gov/agencies/whd/fact-sheets/23-flsa-overtime-pay" },
       { label: "Texas Workforce Commission — Texas Payday Law", url: "https://www.twc.texas.gov/programs/wage-and-hour/texas-payday-law" },
