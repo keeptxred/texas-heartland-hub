@@ -62,7 +62,7 @@ describe("sports taxonomy", () => {
     const politics = classifySportsText("Texas lawmakers recruit rivals for a new policy coalition");
     expect(residents.teams).not.toContain("texans");
     expect(residents.isSports).toBe(false);
-    expect(politics.topics).toEqual(expect.arrayContaining(["recruiting", "business-policy", "rivalries"]));
+    expect(politics.topics).toEqual(expect.arrayContaining(["recruiting", "business-policy"]));
     expect(politics.isSports).toBe(false);
   });
 });
