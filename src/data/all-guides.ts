@@ -13,6 +13,7 @@ import { HOA_BATCH7_GUIDES } from "@/data/laws-hoa-batch7-index";
 import { FIREARMS_BATCH8_GUIDES } from "@/data/laws-firearms-batch8-index";
 import { CRIMINAL_BATCH9_GUIDES } from "@/data/laws-criminal-batch9-index";
 import { FAMILY_BATCH10_GUIDES } from "@/data/laws-family-batch10-index";
+import { FAMILY_BATCH11_GUIDES } from "@/data/laws-family-batch11-index";
 
 export const SUPPORTING_GUIDES = {
   ...AGRICULTURE_SUPPORTING_GUIDES,
@@ -29,6 +30,7 @@ export const SUPPORTING_GUIDES = {
   ...FIREARMS_BATCH8_GUIDES,
   ...CRIMINAL_BATCH9_GUIDES,
   ...FAMILY_BATCH10_GUIDES,
+  ...FAMILY_BATCH11_GUIDES,
 };
 
 export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
