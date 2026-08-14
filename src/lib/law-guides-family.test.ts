@@ -62,7 +62,8 @@ describe("Marriage & Family evergreen guide registry", () => {
     const informalText = informalGuide.sections.flatMap((section) => section.paragraphs ?? []).join(" ");
     const protectiveText = protectiveGuide.sections.flatMap((section) => section.paragraphs ?? []).join(" ");
 
-    expect(informalText).toContain("rebuttable presumption");
+    expect(informalText).toContain("Section 2.401(b)");
+    expect(informalText).toContain("rebuttably presumed");
     expect(informalText).toContain("HB 1193");
     expect(protectiveText).toContain("Section 81.012");
     expect(protectiveText).toContain("SB 1559");
