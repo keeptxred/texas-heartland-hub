@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
-import { TEAMS, TEAM_BY_SLUG, teamsForLeague, detectTeams, type TeamMeta } from "@/lib/texas-teams";
+import { TEAMS, TEAM_BY_SLUG, teamsForLeague, detectTeams, type LeagueSlug, type TeamMeta } from "@/lib/texas-teams";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { articleMainWordCount, requiredMainWordCountForKind } from "@/lib/article-length";
@@ -36,7 +36,7 @@ const LEAGUE_PROMPT: Record<League, { category: string; teams: string; topics: s
       "What the latest Texans-Cowboys storyline means for Texas football fans",
       "Texas high school to NFL pipeline: players to watch",
       "Houston Texans offense: identity, scheme, and players to watch",
-      "Dallas Cowboys defense: identity, scheme, and players to watch",
+      "Dallas Cowboys defense: identity, scheme, and coaching",
       "AT&T Stadium and NRG Stadium: how home-field shapes Texas NFL games",
       "Texans vs Cowboys: the in-state rivalry that defines Texas pro football",
       "Texas NFL draft tradition: how the Cowboys and Texans build through the draft",
@@ -316,6 +316,10 @@ async function generateForTeam(
   return { slug };
 }
 
+function isLeagueSlug(value: string): value is LeagueSlug {
+  return TEAMS.some((team) => team.league === value);
+}
+
 export const Route = createFileRoute("/api/public/hooks/generate-sports")({
   server: {
     handlers: {
@@ -346,17 +350,18 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
         // Resolve the set of teams to generate for.
         // - `team: "cowboys"` → single team
         // - `league: "nfl"` → every Texas team in that league
-        // - no body → in-season teams (currently NFL, per weekly cadence)
+        // - no body → every Texas team whose league is currently in season
+        const normalizedLeague = leagueParam?.toLowerCase();
         let teamTargets: TeamMeta[];
         if (teamParam && TEAM_BY_SLUG[teamParam]) {
           teamTargets = [TEAM_BY_SLUG[teamParam]];
+        } else if (normalizedLeague && isLeagueSlug(normalizedLeague)) {
+          teamTargets = teamsForLeague(normalizedLeague);
         } else if (leagueParam) {
-          const lg = leagueParam as "nfl" | "mlb" | "nba" | "cfb";
-          teamTargets = teamsForLeague(lg);
+          return Response.json({ error: `Unknown sports league: ${leagueParam}` }, { status: 400 });
         } else {
-          // Default cron behavior: cover the currently in-season pro leagues.
           const inSeason = currentInSeasonLeagues();
-          teamTargets = TEAMS.filter((t) => inSeason.includes(t.league));
+          teamTargets = TEAMS.filter((team) => inSeason.includes(team.league));
         }
 
         const perTeam = countParam ?? 1;
@@ -380,12 +385,16 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
 
 // Approximate US sports seasons. Used by the default (no-body) cron path so
 // we only generate for leagues that are actually playing.
-function currentInSeasonLeagues(): ("nfl" | "mlb" | "nba" | "cfb")[] {
+function currentInSeasonLeagues(): LeagueSlug[] {
   const month = new Date().getUTCMonth() + 1; // 1-12
-  const out: ("nfl" | "mlb" | "nba" | "cfb")[] = [];
-  if (month >= 9 || month <= 2) out.push("nfl");
+  const out: LeagueSlug[] = [];
+  if (month >= 8 || month <= 2) out.push("nfl");
   if (month >= 8 || month <= 1) out.push("cfb");
   if (month >= 4 && month <= 10) out.push("mlb");
   if (month >= 10 || month <= 6) out.push("nba");
+  if (month >= 10 || month <= 6) out.push("nhl");
+  if (month >= 2 && month <= 12) out.push("mls");
+  if (month >= 3 && month <= 11) out.push("nwsl");
+  if (month >= 5 && month <= 10) out.push("wnba");
   return out;
 }

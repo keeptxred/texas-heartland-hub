@@ -38,6 +38,10 @@ const maintenanceWriters = new Map([
     'src/routes/api/public/hooks/repair-sb37-production.ts',
     ['body_json', 'featured_image_url', 'stripLowValueInternalLinks'],
   ],
+  [
+    'src/routes/api/public/hooks/classify-sports.ts',
+    ['kind', 'category', 'discover_category', 'teams', 'keywords'],
+  ],
 ]);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set([

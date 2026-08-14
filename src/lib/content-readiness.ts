@@ -18,9 +18,10 @@ function client() {
 }
 
 export type ReadinessFilter =
-  | { kind: string }                       // daily_articles.kind = X
-  | { kindIn: string[] }                   // kind IN (...)
-  | { teamSlug: string; league?: string }; // teams[] contains slug
+  | { kind: string }
+  | { kindIn: string[] }
+  | { teamSlug: string; league?: string }
+  | { keyword: string };
 
 /** Count published articles matching a filter (best-effort; failures → 0). */
 export async function countArticles(filter: ReadinessFilter): Promise<number> {
@@ -31,6 +32,7 @@ export async function countArticles(filter: ReadinessFilter): Promise<number> {
     .select("slug", { count: "exact", head: true });
   if ("kind" in filter) q = q.eq("kind", filter.kind);
   else if ("kindIn" in filter) q = q.in("kind", filter.kindIn);
+  else if ("keyword" in filter) q = q.contains("keywords", [filter.keyword]);
   else {
     q = q.contains("teams", [filter.teamSlug]);
     if (filter.league) q = q.eq("kind", `sports-${filter.league}`);
