@@ -8,6 +8,7 @@ import { LANDLORD_FLOOD_DISCLOSURE_GUIDES } from "@/data/laws-landlord-flood-dis
 import { LANDLORD_OCCUPANCY_GUIDES } from "@/data/laws-landlord-occupancy";
 import { LANDLORD_CASUALTY_LOSS_GUIDES } from "@/data/laws-landlord-casualty-loss";
 import { LANDLORD_PRIMARY_RESIDENCE_NOTICE_GUIDES } from "@/data/laws-landlord-primary-residence-notice";
+import { LANDLORD_BATCH5_GUIDES } from "@/data/laws-landlord-batch5-index";
 
 export const LANDLORD_BATCH4_GUIDES = {
   ...LANDLORD_EVICTION_NOTICE_GUIDES,
@@ -20,4 +21,5 @@ export const LANDLORD_BATCH4_GUIDES = {
   ...LANDLORD_OCCUPANCY_GUIDES,
   ...LANDLORD_CASUALTY_LOSS_GUIDES,
   ...LANDLORD_PRIMARY_RESIDENCE_NOTICE_GUIDES,
+  ...LANDLORD_BATCH5_GUIDES,
 };
