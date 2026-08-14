@@ -7,7 +7,7 @@ const isPrimaryAuthority = (url: string) =>
 
 export const CRIMINAL_BATCH9_LAW_GUIDES: readonly LawGuideMeta[] = Object.values(CRIMINAL_BATCH9_GUIDES).map((guide) => ({
   slug: guide.slug,
-  topic: "everyday-criminal",
+  topic: "criminal",
   status: "verified",
   canonicalPath: `/guides/${guide.slug}`,
   statutes: guide.sources
