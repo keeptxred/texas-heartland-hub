@@ -31,6 +31,7 @@ export const EMPLOYMENT_BATCH12_BREAKS_ATWILL_GUIDES: Record<string, Cornerstone
       { q: "Can a lunch break be unpaid?", a: "Yes, a bona fide meal period can generally be unpaid when the employee is completely relieved from duty. If work continues, the time may be compensable." },
     ],
     sources: [
+      { label: "29 C.F.R. §§ 785.18–785.19", url: "https://www.ecfr.gov/current/title-29/subtitle-B/chapter-V/subchapter-B/part-785" },
       { label: "U.S. Department of Labor — Breaks and Meal Periods", url: "https://www.dol.gov/general/topic/workhours/breaks" },
       { label: "U.S. Department of Labor — FLSA Fact Sheet #22", url: "https://www.dol.gov/agencies/whd/fact-sheets/22-flsa-hours-worked" },
       { label: "Texas Workforce Commission — Texas Guidebook for Employers", url: "https://efte.twc.texas.gov/efte.html" },
