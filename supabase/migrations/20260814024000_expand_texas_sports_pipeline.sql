@@ -5,36 +5,55 @@
 CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA extensions;
 CREATE EXTENSION IF NOT EXISTS pg_net WITH SCHEMA extensions;
 
-INSERT INTO public.content_sources (platform, source_name, source_url, rss_url, category, notes, enabled)
-SELECT v.platform, v.source_name, v.source_url, v.rss_url, 'Sports', 'Official Texas sports primary source used by KTR Sports discovery.', true
+INSERT INTO public.content_sources (
+  platform,
+  source_name,
+  source_url,
+  rss_url,
+  category,
+  notes,
+  source_reputation_score,
+  source_quality_reason,
+  enabled
+)
+SELECT
+  v.platform,
+  v.source_name,
+  v.source_url,
+  v.rss_url,
+  'Sports',
+  'Official Texas sports primary source used by KTR Sports discovery.',
+  v.reputation,
+  'Official first-party team, league, university athletics, governing body, or venue source.',
+  true
 FROM (VALUES
-  ('rss','Dallas Cowboys','https://www.dallascowboys.com','https://www.dallascowboys.com/rss/news'),
-  ('rss','Houston Texans','https://www.houstontexans.com','https://www.houstontexans.com/rss/news'),
-  ('website','Houston Astros','https://www.mlb.com/astros/news',NULL),
-  ('website','Texas Rangers','https://www.mlb.com/rangers/news',NULL),
-  ('website','Dallas Mavericks','https://www.mavs.com/news/',NULL),
-  ('website','Houston Rockets','https://www.nba.com/rockets/news',NULL),
-  ('website','San Antonio Spurs','https://www.nba.com/spurs/news',NULL),
-  ('website','Dallas Stars','https://www.nhl.com/stars/news/',NULL),
-  ('website','Austin FC','https://www.austinfc.com/news/',NULL),
-  ('website','FC Dallas','https://www.fcdallas.com/news/',NULL),
-  ('website','Houston Dynamo FC','https://www.houstondynamofc.com/news/',NULL),
-  ('website','Houston Dash','https://www.houstondynamofc.com/houstondash/news/',NULL),
-  ('website','Dallas Wings','https://wings.wnba.com/news/',NULL),
-  ('website','Texas Longhorns Athletics','https://texaslonghorns.com/news/',NULL),
-  ('website','Texas A&M Athletics','https://12thman.com/news/',NULL),
-  ('website','TCU Athletics','https://gofrogs.com/news/',NULL),
-  ('website','Baylor Athletics','https://baylorbears.com/news/',NULL),
-  ('website','Texas Tech Athletics','https://texastech.com/news/',NULL),
-  ('website','Houston Cougars Athletics','https://uhcougars.com/news/',NULL),
-  ('website','SMU Athletics','https://smumustangs.com/news/',NULL),
-  ('website','UTSA Athletics','https://goutsa.com/news/',NULL),
-  ('website','North Texas Athletics','https://meangreensports.com/news/',NULL),
-  ('website','Texas State Athletics','https://txst.com/news/',NULL),
-  ('rss','University Interscholastic League','https://www.uiltexas.org/','https://feeds.feedburner.com/uil-press-releases'),
-  ('website','Circuit of the Americas','https://circuitoftheamericas.com/blog/',NULL),
-  ('website','Texas Motor Speedway','https://www.texasmotorspeedway.com/media/news/',NULL)
-) AS v(platform, source_name, source_url, rss_url)
+  ('rss','Dallas Cowboys','https://www.dallascowboys.com','https://www.dallascowboys.com/rss/news',95),
+  ('rss','Houston Texans','https://www.houstontexans.com','https://www.houstontexans.com/rss/news',95),
+  ('website','Houston Astros','https://www.mlb.com/astros/news',NULL,95),
+  ('website','Texas Rangers','https://www.mlb.com/rangers/news',NULL,95),
+  ('website','Dallas Mavericks','https://www.mavs.com/news/',NULL,94),
+  ('website','Houston Rockets','https://www.nba.com/rockets/news',NULL,94),
+  ('website','San Antonio Spurs','https://www.nba.com/spurs/news',NULL,94),
+  ('website','Dallas Stars','https://www.nhl.com/stars/news/',NULL,94),
+  ('website','Austin FC','https://www.austinfc.com/news/',NULL,94),
+  ('website','FC Dallas','https://www.fcdallas.com/news/',NULL,94),
+  ('website','Houston Dynamo FC','https://www.houstondynamofc.com/news/',NULL,94),
+  ('website','Houston Dash','https://www.houstondynamofc.com/houstondash/news/',NULL,94),
+  ('website','Dallas Wings','https://wings.wnba.com/news/',NULL,94),
+  ('website','Texas Longhorns Athletics','https://texaslonghorns.com/news/',NULL,94),
+  ('website','Texas A&M Athletics','https://12thman.com/news/',NULL,94),
+  ('website','TCU Athletics','https://gofrogs.com/news/',NULL,92),
+  ('website','Baylor Athletics','https://baylorbears.com/news/',NULL,92),
+  ('website','Texas Tech Athletics','https://texastech.com/news/',NULL,92),
+  ('website','Houston Cougars Athletics','https://uhcougars.com/news/',NULL,92),
+  ('website','SMU Athletics','https://smumustangs.com/news/',NULL,92),
+  ('website','UTSA Athletics','https://goutsa.com/news/',NULL,92),
+  ('website','North Texas Athletics','https://meangreensports.com/news/',NULL,90),
+  ('website','Texas State Athletics','https://txst.com/news/',NULL,90),
+  ('rss','University Interscholastic League','https://www.uiltexas.org/','https://feeds.feedburner.com/uil-press-releases',96),
+  ('website','Circuit of the Americas','https://circuitoftheamericas.com/blog/',NULL,92),
+  ('website','Texas Motor Speedway','https://www.texasmotorspeedway.com/media/news/',NULL,92)
+) AS v(platform, source_name, source_url, rss_url, reputation)
 WHERE NOT EXISTS (
   SELECT 1 FROM public.content_sources cs WHERE lower(cs.source_name) = lower(v.source_name)
 );
