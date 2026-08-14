@@ -24,4 +24,13 @@ describe("sports source registry", () => {
     expect(SPORTS_SOURCES.filter((source) => source.priority === 1).length).toBeGreaterThan(15);
     expect(Math.min(...SPORTS_SOURCES.map((source) => source.reputation))).toBeGreaterThanOrEqual(90);
   });
+
+  it("uses stable first-party feeds or archives for Sidearm college programs", () => {
+    const byName = Object.fromEntries(SPORTS_SOURCES.map((source) => [source.name, source]));
+    expect(byName["Texas Longhorns Athletics"]).toMatchObject({ mode: "rss", url: "https://texaslonghorns.com/rss?path=general" });
+    expect(byName["Texas Tech Athletics"]).toMatchObject({ mode: "rss", url: "https://texastech.com/rss?path=general" });
+    for (const name of ["TCU Athletics", "Baylor Athletics", "Houston Cougars Athletics", "North Texas Athletics"]) {
+      expect(byName[name].url).toContain("/archives");
+    }
+  });
 });
