@@ -60,7 +60,7 @@ function TopicSection({ topic }: { topic: LawTopic }) {
 }
 
 export function LawGuideTopicGrid({ topic }: { topic: LawTopic }) {
-  const topics: LawTopic[] = topic === "driving" ? ["driving", "landlord-tenant"] : [topic];
+  const topics: LawTopic[] = topic === "driving" ? ["driving", "landlord-tenant", "hoa-property"] : [topic];
   return (
     <>
       {topics.map((item) => (
