@@ -55,7 +55,7 @@ const STATIC_PATHS:string[]=[
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/texas-legislature/votes","/texas-government","/texas-government/agencies",
-  "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
+  "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/constitutional-amendments","/laws/effective-dates",
   // /texas-laws and /texas-law-policy are permanent aliases for /laws.
   // Legacy candidate guides are noindex until rebuilt on verified Election Central data.
