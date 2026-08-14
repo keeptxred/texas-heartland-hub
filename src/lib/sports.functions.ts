@@ -61,11 +61,45 @@ function searchableText(row: CategoryFeedItem): string {
   return [row.title, row.dek, row.category, row.kind, ...(row.keywords ?? []), ...(row.seo_keywords ?? [])].filter(Boolean).join(" ");
 }
 
+async function sportsRows(limit = 160): Promise<CategoryFeedItem[]> {
+  return getArticlesByCategory({ data: { kind: SPORT_KINDS, limit, order: "newest" } });
+}
+
 export const listSportsLatest = createServerFn({ method: "GET" })
   .validator((input) => z.object({ limit: z.number().int().min(1).max(60).default(24) }).parse(input ?? {}))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
-    const rows = await getArticlesByCategory({ data: { kind: SPORT_KINDS, limit: Math.min(data.limit * 2, 120), order: "newest" } });
+    const rows = await sportsRows(Math.min(data.limit * 2, 120));
     return { items: rows.slice(0, data.limit).map(toSportsListItem) };
+  });
+
+export const listSportsTrending = createServerFn({ method: "GET" })
+  .validator((input) => z.object({ limit: z.number().int().min(1).max(30).default(12) }).parse(input ?? {}))
+  .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
+    const rows = await sportsRows(160);
+    const supabase = client();
+    if (!supabase || rows.length === 0) return { items: rows.slice(0, data.limit).map(toSportsListItem) };
+
+    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: signals } = await supabase
+      .from("texas_news_feed")
+      .select("internal_slug,viral_score,trend_velocity,pub_date")
+      .not("internal_slug", "is", null)
+      .gte("pub_date", since)
+      .order("viral_score", { ascending: false, nullsFirst: false })
+      .order("trend_velocity", { ascending: false, nullsFirst: false })
+      .limit(120);
+
+    const rank = new Map<string, number>();
+    for (const signal of signals ?? []) {
+      if (!signal.internal_slug || rank.has(signal.internal_slug)) continue;
+      const score = Number(signal.viral_score ?? 0) * 1000 + Number(signal.trend_velocity ?? 0) * 100;
+      rank.set(signal.internal_slug, score);
+    }
+    const ranked = rows
+      .filter((row) => rank.has(row.slug))
+      .sort((a, b) => (rank.get(b.slug) ?? 0) - (rank.get(a.slug) ?? 0));
+    const result = ranked.length > 0 ? ranked : rows;
+    return { items: result.slice(0, data.limit).map(toSportsListItem) };
   });
 
 export const listSportsByLeague = createServerFn({ method: "GET" })
@@ -82,7 +116,8 @@ export const listSportsByLeague = createServerFn({ method: "GET" })
 export const listSportsByTopic = createServerFn({ method: "GET" })
   .validator((input) => z.object({ topic: z.enum(SPORTS_TOPIC_SLUGS), limit: z.number().int().min(1).max(60).default(30) }).parse(input))
   .handler(async ({ data }): Promise<{ items: SportsListItem[] }> => {
-    const rows = await getArticlesByCategory({ data: { kind: SPORT_KINDS, limit: 160, order: "newest" } });
+    if (data.topic === "trending") return listSportsTrending({ data: { limit: data.limit } });
+    const rows = await sportsRows(160);
     const topic = data.topic as SportsTopicSlug;
     const filtered = topic === "latest"
       ? rows
