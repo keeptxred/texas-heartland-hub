@@ -62,7 +62,7 @@ describe("Employment evergreen guide registry", () => {
     expect(finalPayText).toContain("next regularly scheduled payday");
     expect(wageClaimText).toContain("180 days");
     expect(discriminationText).toContain("15-employee");
-    expect(discriminationText).toContain("one-employee");
+    expect(discriminationText).toContain("one or more employees");
     expect(workersCompText).toContain("non-subscriber");
   });
 });
