@@ -3,6 +3,11 @@ name: Ensure Cloudflare Production Matches Main
 on:
   schedule:
     - cron: '*/5 * * * *'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+    paths:
+      - '.github/deploy-current-main-trigger'
   workflow_dispatch:
 
 permissions:
