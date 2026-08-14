@@ -13,13 +13,23 @@ const EXPECTED = [
   "texas-right-to-copy-of-lease",
   "texas-rental-smoke-alarm-law",
   "texas-landlord-owner-management-disclosure-law",
+  "texas-eviction-notice-law",
+  "texas-eviction-process-timeline",
+  "texas-landlord-lockout-law",
+  "texas-month-to-month-lease-termination",
+  "texas-military-lease-termination",
+  "texas-rental-security-device-law",
+  "texas-rental-flood-disclosure-law",
+  "texas-rental-occupancy-limits",
+  "texas-rental-casualty-loss-law",
+  "texas-rental-notice-address-law",
 ];
 
 describe("renter evergreen guide registry", () => {
-  it("registers exactly ten verified guides", () => {
+  it("registers twenty verified guides", () => {
     const guides = lawGuidesForTopic("landlord-tenant");
     expect(guides.map((guide) => guide.slug).sort()).toEqual([...EXPECTED].sort());
-    expect(guides).toHaveLength(10);
+    expect(guides).toHaveLength(20);
     for (const meta of guides) {
       expect(meta.status).toBe("verified");
       expect(meta.canonicalPath).toBe(`/guides/${meta.slug}`);
@@ -46,8 +56,9 @@ describe("renter evergreen guide registry", () => {
     }
   });
 
-  it("records the 2025 repair workflow update", () => {
-    const guide = lawGuidesForTopic("landlord-tenant").find((item) => item.slug === "texas-repair-and-deduct-law");
-    expect(guide?.effectiveDate).toContain("September 1, 2025");
+  it("records current effective-date metadata", () => {
+    const guides = lawGuidesForTopic("landlord-tenant");
+    expect(guides.find((item) => item.slug === "texas-repair-and-deduct-law")?.effectiveDate).toContain("September 1, 2025");
+    expect(guides.find((item) => item.slug === "texas-rental-flood-disclosure-law")?.effectiveDate).toContain("September 1, 2025");
   });
 });
