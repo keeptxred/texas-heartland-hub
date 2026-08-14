@@ -25,6 +25,7 @@ export const ELECTION_ROUTES = {
 
 export const ELECTION_PRIMARY_NAV_ROUTES = [
   ELECTION_ROUTES.root,
+  ELECTION_ROUTES.findMyRaces,
   ELECTION_ROUTES.races,
   ELECTION_ROUTES.statewide,
   ELECTION_ROUTES.legislative,
