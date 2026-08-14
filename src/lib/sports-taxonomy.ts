@@ -99,14 +99,14 @@ export function classifySportsText(text: string): SportsClassification {
     if (keywords.some((keyword) => includesPhrase(haystack, keyword))) leagueSet.add(league);
   }
 
-  const topics = (Object.entries(TOPIC_KEYWORDS) as [Exclude<SportsTopicSlug, "latest" | "trending">, string[]][])
+  const topics: SportsTopicSlug[] = (Object.entries(TOPIC_KEYWORDS) as [Exclude<SportsTopicSlug, "latest" | "trending">, string[]][])
     .filter(([, keywords]) => keywords.some((keyword) => includesPhrase(haystack, keyword)))
     .map(([topic]) => topic);
 
   for (const league of leagueSet) topics.push(LEAGUE_TOPIC[league]);
   if (teams.some((slug) => TEAM_BY_SLUG[slug].kind === "college")) topics.push("college");
 
-  const uniqueTopics = [...new Set(topics)];
+  const uniqueTopics: SportsTopicSlug[] = [...new Set(topics)];
   const cities = TEXAS_CITIES.filter((city) => includesPhrase(haystack, city));
   let score = 0;
   if (teams.length) score += 65;
