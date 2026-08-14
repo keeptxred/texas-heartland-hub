@@ -16,7 +16,12 @@ function TopicSection({ topic }: { topic: LawTopic }) {
   return (
     <section className="border-t-4 border-foreground/10 bg-primary/[0.03]" aria-labelledby={`laws-${topic}-heading`}>
       <div className="mx-auto max-w-6xl px-4 py-14">
-        <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Laws You Should Know</span>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Laws You Should Know</span>
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
+            {guides.length} verified {guides.length === 1 ? "guide" : "guides"}
+          </span>
+        </div>
         <h2 id={`laws-${topic}-heading`} className="font-display text-4xl md:text-5xl tracking-tight mt-2">
           {topicInfo.label}
         </h2>
