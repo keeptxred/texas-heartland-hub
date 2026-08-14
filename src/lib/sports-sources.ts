@@ -23,8 +23,8 @@ export type SportsSource = {
 export const SPORTS_SOURCES: readonly SportsSource[] = [
   { name: "Dallas Cowboys", url: "https://www.dallascowboys.com/rss/news", mode: "rss", team: "cowboys", league: "nfl", priority: 1, reputation: 95 },
   { name: "Houston Texans", url: "https://www.houstontexans.com/rss/news", mode: "rss", team: "texans", league: "nfl", priority: 1, reputation: 95 },
-  { name: "Houston Astros", url: "https://www.mlb.com/astros/news", mode: "html-links", include: "^/astros/news/", team: "astros", league: "mlb", priority: 1, reputation: 95 },
-  { name: "Texas Rangers", url: "https://www.mlb.com/rangers/news", mode: "html-links", include: "^/rangers/news/", team: "rangers", league: "mlb", priority: 1, reputation: 95 },
+  { name: "Houston Astros", url: "https://www.mlb.com/astros/feeds/news/rss.xml", mode: "rss", team: "astros", league: "mlb", priority: 1, reputation: 95 },
+  { name: "Texas Rangers", url: "https://www.mlb.com/rangers/feeds/news/rss.xml", mode: "rss", team: "rangers", league: "mlb", priority: 1, reputation: 95 },
   { name: "Dallas Mavericks", url: "https://www.mavs.com/news/", mode: "html-links", include: "^/news/", team: "mavericks", league: "nba", priority: 1, reputation: 94 },
   { name: "Houston Rockets", url: "https://www.nba.com/rockets/news", mode: "html-links", include: "^/rockets/news/", team: "rockets", league: "nba", priority: 1, reputation: 94 },
   { name: "San Antonio Spurs", url: "https://www.nba.com/spurs/news", mode: "html-links", include: "^/spurs/news/", team: "spurs", league: "nba", priority: 1, reputation: 94 },
