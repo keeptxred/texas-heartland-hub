@@ -16,7 +16,6 @@ const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/news": toIsoDate("2026-08-07T00:00:00-05:00"),
-  "/find-representative": toIsoDate("2026-08-14T13:00:00-05:00"),
   "/houston": GSC_CANONICAL_REFRESH,
   "/keep-texas-red": GSC_CANONICAL_REFRESH,
   "/register-to-vote": GSC_CANONICAL_REFRESH,
@@ -56,7 +55,7 @@ const STATIC_PATHS:string[]=[
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
   "/texas-legislature/votes","/texas-government","/texas-government/agencies",
-  "/about","/representatives","/find-representative","/register-to-vote","/contact-legislators",
+  "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/constitutional-amendments","/laws/effective-dates",
   // /texas-laws and /texas-law-policy are permanent aliases for /laws.
   // Legacy candidate guides are noindex until rebuilt on verified Election Central data.
