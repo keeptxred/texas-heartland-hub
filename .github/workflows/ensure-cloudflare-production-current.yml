@@ -51,5 +51,5 @@ jobs:
           gh workflow run deploy-cloudflare-production.yml \
             --repo "${{ github.repository }}" \
             --ref main \
-            -f activate_custom_domain=false \
+            -f activate_custom_domain=true \
             -f production_hostname=keeptxred.com
