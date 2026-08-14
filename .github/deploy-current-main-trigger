@@ -1,2 +1,3 @@
 Deploy current main to Cloudflare production.
-Trigger Wrangler-managed custom-domain promotion for keeptxred.com.
+Trigger explicit-zone custom-domain promotion for keeptxred.com.
+Target main: d9fd88772fabfa6e290507d751ee49a175256306
