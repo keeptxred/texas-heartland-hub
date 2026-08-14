@@ -13,14 +13,24 @@ const EXPECTED = [
   "texas-gift-card-law",
   "texas-lemon-law-guide",
   "texas-towing-consumer-rights-law",
+  "texas-time-barred-debt-law",
+  "texas-wage-garnishment-law",
+  "texas-judgment-exempt-property-law",
+  "texas-judgment-lien-homestead-law",
+  "texas-vehicle-repossession-law",
+  "texas-repossession-sale-deficiency-law",
+  "texas-mortgage-foreclosure-notice-law",
+  "texas-foreclosure-deficiency-law",
+  "texas-credit-repair-organization-law",
+  "texas-payday-title-loan-law",
 ];
 
 describe("Consumer & Everyday Money evergreen guide registry", () => {
-  it("registers exactly ten verified consumer-law guides", () => {
+  it("registers exactly twenty verified consumer-law guides", () => {
     const verified = lawGuidesForTopic("consumer").filter((guide) => guide.status === "verified");
 
     expect(verified.map((guide) => guide.slug).sort()).toEqual([...EXPECTED].sort());
-    expect(verified).toHaveLength(10);
+    expect(verified).toHaveLength(20);
 
     for (const meta of verified) {
       expect(meta.canonicalPath).toBe(`/guides/${meta.slug}`);
@@ -71,6 +81,42 @@ describe("Consumer & Everyday Money evergreen guide registry", () => {
     expect(text(towing)).toContain("14th day");
     expect(text(priceGouging)).toContain("President");
     expect(text(doorToDoor)).toContain("three business days");
+  });
+
+  it("locks Batch 15 debt, judgment, repossession, foreclosure, and credit-service protections", () => {
+    const timeBarred = ALL_GUIDES["texas-time-barred-debt-law"];
+    const wages = ALL_GUIDES["texas-wage-garnishment-law"];
+    const exemptions = ALL_GUIDES["texas-judgment-exempt-property-law"];
+    const lien = ALL_GUIDES["texas-judgment-lien-homestead-law"];
+    const repossession = ALL_GUIDES["texas-vehicle-repossession-law"];
+    const repoSale = ALL_GUIDES["texas-repossession-sale-deficiency-law"];
+    const foreclosure = ALL_GUIDES["texas-mortgage-foreclosure-notice-law"];
+    const foreclosureDeficiency = ALL_GUIDES["texas-foreclosure-deficiency-law"];
+    const creditRepair = ALL_GUIDES["texas-credit-repair-organization-law"];
+    const paydayTitle = ALL_GUIDES["texas-payday-title-loan-law"];
+
+    const text = (guide: typeof timeBarred) => [
+      ...guide.keyTakeaways,
+      ...guide.sections.flatMap((section) => section.paragraphs ?? []),
+    ].join(" ");
+
+    expect(text(timeBarred)).toContain("does not revive");
+    expect(text(timeBarred)).toContain("392.307");
+    expect(text(wages)).toContain("current wages");
+    expect(text(exemptions)).toContain("$100,000");
+    expect(text(exemptions)).toContain("$50,000");
+    expect(text(lien)).toContain("10 years");
+    expect(text(lien)).toContain("52.0012");
+    expect(text(repossession)).toContain("breach of the peace");
+    expect(text(repoSale)).toContain("commercially reasonable");
+    expect(text(foreclosure)).toContain("20 days");
+    expect(text(foreclosure)).toContain("21 days");
+    expect(text(foreclosureDeficiency)).toContain("two years");
+    expect(text(foreclosureDeficiency)).toContain("fair market value");
+    expect(text(creditRepair)).toContain("180 days");
+    expect(text(creditRepair)).toContain("third day");
+    expect(text(paydayTitle)).toContain("no prepayment penalty");
+    expect(text(paydayTitle)).toContain("fee may not be charged unless it is disclosed");
   });
 
   it("records the Texas Data Privacy and Security Act effective date", () => {
