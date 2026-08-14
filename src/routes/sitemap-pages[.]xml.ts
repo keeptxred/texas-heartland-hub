@@ -16,6 +16,7 @@ const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/news": toIsoDate("2026-08-07T00:00:00-05:00"),
+  "/find-representative": toIsoDate("2026-08-14T13:00:00-05:00"),
   "/houston": GSC_CANONICAL_REFRESH,
   "/keep-texas-red": GSC_CANONICAL_REFRESH,
   "/register-to-vote": GSC_CANONICAL_REFRESH,
