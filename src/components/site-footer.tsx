@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { AIReferralTracker } from "@/components/analytics/AIReferralTracker";
 import { CitationCollectionTrustRouter } from "@/components/authority/CitationCollectionTrustRouter";
 import { SocialLinks } from "@/components/social-links";
+import { TexasDefinedCrosslinks } from "@/components/texas-defined-crosslinks";
 
 const PRIMARY_LINKS = [
   { to: "/", label: "Home" },
@@ -56,6 +57,7 @@ export function SiteFooter() {
     <>
       <AIReferralTracker />
       <CitationCollectionTrustRouter />
+      <TexasDefinedCrosslinks />
       <footer className="mt-16 bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-7xl px-4 py-14">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr_1fr]">
@@ -79,6 +81,13 @@ export function SiteFooter() {
             &copy; {new Date().getFullYear()} keeptxred.com — All rights reserved
             <br />
             <span className="normal-case tracking-normal">Independent commentary. Not authorized by any candidate or candidate&apos;s committee.</span>
+            <br />
+            <span className="normal-case tracking-normal">
+              Looking for the nonpolitical side of Texas?{" "}
+              <a href="https://texasdefined.com" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-white">
+                Visit TexasDefined ↗
+              </a>
+            </span>
           </div>
         </div>
       </footer>
