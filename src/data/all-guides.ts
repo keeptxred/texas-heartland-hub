@@ -17,6 +17,7 @@ import { FAMILY_BATCH11_GUIDES } from "@/data/laws-family-batch11-index";
 import { EMPLOYMENT_BATCH12_GUIDES } from "@/data/laws-employment-batch12-index";
 import { EMPLOYMENT_BATCH13_GUIDES } from "@/data/laws-employment-batch13-index";
 import { CONSUMER_BATCH14_GUIDES } from "@/data/laws-consumer-batch14-index";
+import { CONSUMER_BATCH15_GUIDES } from "@/data/laws-consumer-batch15-index";
 
 export const SUPPORTING_GUIDES = {
   ...AGRICULTURE_SUPPORTING_GUIDES,
@@ -37,6 +38,7 @@ export const SUPPORTING_GUIDES = {
   ...EMPLOYMENT_BATCH12_GUIDES,
   ...EMPLOYMENT_BATCH13_GUIDES,
   ...CONSUMER_BATCH14_GUIDES,
+  ...CONSUMER_BATCH15_GUIDES,
 };
 
 export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
