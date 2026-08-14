@@ -19,6 +19,12 @@ function pick(block: string, tag: string): string {
   return decode(block.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, "i"))?.[1] ?? "");
 }
 
+function safeIso(value?: string): string {
+  if (!value) return new Date().toISOString();
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : parsed.toISOString();
+}
+
 function parseRss(xml: string, source: SportsSource): FeedRow[] {
   const blocks = xml.match(/<(item|entry)[\s\S]*?<\/(item|entry)>/gi) ?? [];
   const out: FeedRow[] = [];
@@ -31,7 +37,7 @@ function parseRss(xml: string, source: SportsSource): FeedRow[] {
     if (!title || !/^https?:\/\//i.test(link)) continue;
     const classification = classifySportsText(`${title} ${description} ${source.name}`);
     if (!source.team && !source.topic && !classification.isSports) continue;
-    out.push({ title: title.slice(0, 500), link, pub_date: date ? new Date(date).toISOString() : new Date().toISOString(), source: source.name, description: description.slice(0, 1200) });
+    out.push({ title: title.slice(0, 500), link, pub_date: safeIso(date), source: source.name, description: description.slice(0, 1200) });
   }
   return out;
 }
@@ -59,7 +65,7 @@ function parseHtml(html: string, source: SportsSource): FeedRow[] {
     seen.add(canonical);
     const description = `${source.name}: ${title}`;
     out.push({ title: title.slice(0, 500), link: canonical, pub_date: new Date().toISOString(), source: source.name, description: description.slice(0, 1200) });
-    if (out.length >= 30) break;
+    if (out.length >= 20) break;
   }
   return out;
 }
