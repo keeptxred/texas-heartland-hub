@@ -1,19 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { listSportsLatest, type SportsListItem } from "@/lib/sports.functions";
+import { listSportsLatest, listSportsTrending, type SportsListItem } from "@/lib/sports.functions";
 import { TEAMS, LEAGUE_META, type LeagueSlug } from "@/lib/texas-teams";
 import { resolveArticleImage } from "@/lib/seo-headline";
 
 const LEAGUES: LeagueSlug[] = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"];
 
-const DESKS = [
-  { title: "Latest Texas Sports", description: "The newest reporting from teams and sports across the state.", league: "nfl" as LeagueSlug },
-  { title: "Texas College Sports", description: "Longhorns, Aggies, Big 12 programs, recruiting, NIL and conference business.", league: "cfb" as LeagueSlug },
-  { title: "Sports Business & Policy", description: "Stadium financing, NIL, sports betting, public money and Texas sports policy.", league: null },
-  { title: "Texas Motorsports", description: "COTA, Texas Motor Speedway, NASCAR, Formula 1 and major racing news.", league: null },
-] as const;
-
 export const Route = createFileRoute("/texas-sports/")({
-  loader: async () => listSportsLatest({ data: { limit: 12 } }),
+  loader: async () => {
+    const [latest, trending] = await Promise.all([
+      listSportsLatest({ data: { limit: 12 } }),
+      listSportsTrending({ data: { limit: 6 } }),
+    ]);
+    return { items: latest.items, trending: trending.items };
+  },
   head: () => ({
     meta: [
       { title: "Texas Sports News, Teams, College Sports & Policy | Keep TX Red" },
@@ -59,8 +58,12 @@ function StoryCard({ article }: { article: SportsListItem }) {
   );
 }
 
+function DeskCard({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
+  return <div className="rounded-lg border border-border bg-card p-5 hover:shadow-md transition-shadow"><h3 className="font-semibold">{title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{description}</p><div className="mt-3 text-sm font-medium text-primary">{children}</div></div>;
+}
+
 function SportsPage() {
-  const { items } = Route.useLoaderData();
+  const { items, trending } = Route.useLoaderData();
   const pro = TEAMS.filter((team) => team.kind === "pro");
   const college = TEAMS.filter((team) => team.kind === "college");
 
@@ -77,22 +80,22 @@ function SportsPage() {
       <section className="py-10" aria-labelledby="sports-desks-heading">
         <h2 id="sports-desks-heading" className="text-2xl font-semibold tracking-tight">Texas sports desks</h2>
         <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {DESKS.map((desk) => desk.league ? (
-            <Link key={desk.title} to="/texas-sports/$league" params={{ league: desk.league }} className="rounded-lg border border-border bg-card p-5 hover:shadow-md transition-shadow">
-              <h3 className="font-semibold">{desk.title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desk.description}</p>
-            </Link>
-          ) : (
-            <div key={desk.title} className="rounded-lg border border-border bg-card p-5">
-              <h3 className="font-semibold">{desk.title}</h3><p className="mt-2 text-sm leading-relaxed text-muted-foreground">{desk.description}</p>
-            </div>
-          ))}
+          <DeskCard title="Latest Texas Sports" description="The newest reporting from teams and sports across the state."><Link to="/texas-sports/topic/$topic" params={{ topic: "latest" }} className="hover:underline">Open latest →</Link></DeskCard>
+          <DeskCard title="Texas College Sports" description="Longhorns, Aggies, Big 12 programs, recruiting, NIL and conference business."><Link to="/texas-sports/$league" params={{ league: "cfb" }} className="hover:underline">Open college sports →</Link></DeskCard>
+          <DeskCard title="Sports Business & Policy" description="Stadium financing, NIL, sports betting, public money and Texas sports policy."><Link to="/texas-sports/topic/$topic" params={{ topic: "business-policy" }} className="hover:underline">Open business & policy →</Link></DeskCard>
+          <DeskCard title="Texas Motorsports" description="COTA, Texas Motor Speedway, NASCAR, Formula 1 and major racing news."><Link to="/texas-sports/topic/$topic" params={{ topic: "motorsports" }} className="hover:underline">Open motorsports →</Link></DeskCard>
         </div>
       </section>
+
+      {trending.length > 0 && <section className="border-t border-border py-10" aria-labelledby="trending-sports-heading">
+        <div className="flex items-end justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Viral Radar</p><h2 id="trending-sports-heading" className="mt-1 text-2xl font-semibold tracking-tight">Trending Texas Sports</h2></div><Link to="/texas-sports/topic/$topic" params={{ topic: "trending" }} className="text-sm font-medium text-primary hover:underline">View trending →</Link></div>
+        <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-3">{trending.slice(0, 6).map((article, index) => <Link key={article.slug} to="/news/$slug" params={{ slug: article.slug }} className="rounded-lg border border-border bg-card p-5 hover:shadow-md transition-shadow"><p className="text-xs font-semibold uppercase tracking-wider text-primary">#{index + 1} trending</p><h3 className="mt-2 font-semibold leading-snug">{article.title}</h3><p className="mt-2 text-xs text-muted-foreground">{article.category}</p></Link>)}</div>
+      </section>}
 
       <section className="border-t border-border py-10" aria-labelledby="latest-sports-heading">
         <div className="flex items-end justify-between gap-4">
           <div><p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Newsroom</p><h2 id="latest-sports-heading" className="mt-1 text-2xl font-semibold tracking-tight">Latest Texas Sports</h2></div>
-          <Link to="/news" className="text-sm font-medium text-primary hover:underline">All Texas news →</Link>
+          <Link to="/texas-sports/topic/$topic" params={{ topic: "latest" }} className="text-sm font-medium text-primary hover:underline">All sports news →</Link>
         </div>
         {items.length ? <div className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">{items.slice(0, 6).map((article) => <StoryCard key={article.slug} article={article} />)}</div> : <p className="mt-5 rounded-lg border border-dashed p-6 text-sm text-muted-foreground">Fresh Texas sports coverage will appear here as it publishes.</p>}
       </section>
@@ -115,10 +118,17 @@ function SportsPage() {
         <div className="mt-5 flex flex-wrap gap-3">{LEAGUES.map((league) => <Link key={league} to="/texas-sports/$league" params={{ league }} className="rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-muted">{LEAGUE_META[league].name}</Link>)}</div>
       </section>
 
+      <section className="border-t border-border py-10" aria-labelledby="topics-heading">
+        <h2 id="topics-heading" className="text-2xl font-semibold tracking-tight">Browse sports topics</h2>
+        <div className="mt-5 flex flex-wrap gap-3">
+          {(["football","baseball","basketball","soccer","college","recruiting","nil","business-policy","stadiums","motorsports","postseason","transactions","injuries","rivalries"] as const).map((topic) => <Link key={topic} to="/texas-sports/topic/$topic" params={{ topic }} className="rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-muted">{topic.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase())}</Link>)}
+        </div>
+      </section>
+
       <section className="border-t border-border py-10">
         <h2 className="text-2xl font-semibold tracking-tight">Where sports meets Texas policy</h2>
         <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">KTR Sports goes beyond scores: NIL and athlete compensation, sports betting law, taxpayer-backed stadium deals, major-event economics, university athletic spending and state or local government decisions that affect Texas teams and fans.</p>
-        <div className="mt-5 flex flex-wrap gap-4 text-sm"><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link><Link to="/texas-business" className="text-primary hover:underline">Texas Business →</Link><Link to="/news" className="text-primary hover:underline">Latest News →</Link></div>
+        <div className="mt-5 flex flex-wrap gap-4 text-sm"><Link to="/texas-sports/topic/$topic" params={{ topic: "business-policy" }} className="text-primary hover:underline">Sports Business & Policy →</Link><Link to="/texas-politics" className="text-primary hover:underline">Texas Politics →</Link><Link to="/texas-business" className="text-primary hover:underline">Texas Business →</Link></div>
       </section>
     </main>
   );
