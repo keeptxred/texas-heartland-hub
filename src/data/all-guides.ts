@@ -52,7 +52,7 @@ export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
   ...SUPPORTING_GUIDES,
 };
 
-export const SUPPORTING_GUIDE_SLUGS = Object.keys(SUPPORTING_GUIDIDES);
+export const SUPPORTING_GUIDE_SLUGS = Object.keys(SUPPORTING_GUIDES);
 
 export function supportingGuidesForPillar(pillarHref: string): CornerstoneGuide[] {
   return Object.values(SUPPORTING_GUIDES).filter((guide) => guide.pillarHref === pillarHref);
