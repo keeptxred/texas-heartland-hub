@@ -17,7 +17,7 @@ const EXPECTED = [
 
 describe("Everyday Criminal Law evergreen guide registry", () => {
   it("registers exactly ten newly verified criminal-law guides", () => {
-    const verified = lawGuidesForTopic("everyday-criminal").filter((guide) => guide.status === "verified");
+    const verified = lawGuidesForTopic("criminal").filter((guide) => guide.status === "verified");
 
     expect(verified.map((guide) => guide.slug).sort()).toEqual([...EXPECTED].sort());
     expect(verified).toHaveLength(10);
@@ -48,7 +48,7 @@ describe("Everyday Criminal Law evergreen guide registry", () => {
   });
 
   it("records current statutory-change dates and identification distinctions", () => {
-    const verified = lawGuidesForTopic("everyday-criminal").filter((guide) => guide.status === "verified");
+    const verified = lawGuidesForTopic("criminal").filter((guide) => guide.status === "verified");
 
     expect(verified.find((item) => item.slug === "texas-theft-shoplifting-law")?.effectiveDate).toContain("September 1, 2025");
     expect(verified.find((item) => item.slug === "texas-assault-law")?.effectiveDate).toContain("September 1, 2025");
@@ -60,7 +60,8 @@ describe("Everyday Criminal Law evergreen guide registry", () => {
     const theftText = theft.sections.flatMap((section) => section.paragraphs ?? []).join(" ");
     const identificationText = failureToIdentify.sections.flatMap((section) => section.paragraphs ?? []).join(" ");
 
-    expect(theftText).toContain("organized retail theft");
+    expect(theftText).toContain("Penal Code Section 31.16");
+    expect(theftText).toContain("SB 1300");
     expect(identificationText).toContain("lawfully arrested");
     expect(identificationText).toContain("motor-vehicle");
   });
