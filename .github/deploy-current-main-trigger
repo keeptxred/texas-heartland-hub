@@ -1,3 +1,3 @@
 Deploy current main to Cloudflare production.
-Trigger custom-domain promotion with safe API diagnostics for keeptxred.com.
-Target main: f08d6e69e92a08ea23515a89b494680b975ff666
+Trigger custom-domain promotion with Actions annotation diagnostics for keeptxred.com.
+Target main: eac57dddb8f5027783c725781cbb516277d2e687
