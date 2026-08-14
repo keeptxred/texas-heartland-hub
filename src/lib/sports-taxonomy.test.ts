@@ -40,4 +40,20 @@ describe("sports taxonomy", () => {
     expect(result.teams.sort()).toEqual(["astros", "rangers"]);
     expect(result.topics).toEqual(expect.arrayContaining(["baseball", "rivalries"]));
   });
+
+  it("does not turn generic university coverage into college sports", () => {
+    const tamu = classifySportsText("Texas A&M professors challenge classroom restrictions in federal court");
+    const tech = classifySportsText("Texas Tech researchers publish a new water study for West Texas communities");
+    expect(tamu.teams).not.toContain("texas-am");
+    expect(tamu.isSports).toBe(false);
+    expect(tech.teams).not.toContain("texas-tech");
+    expect(tech.isSports).toBe(false);
+  });
+
+  it("does not confuse Texas A&M system campuses with the Aggies", () => {
+    const result = classifySportsText("Texas A&M-Texarkana opens a sports complex with a 6,000-seat football stadium");
+    expect(result.teams).not.toContain("texas-am");
+    expect(result.topics).toEqual(expect.arrayContaining(["football", "stadiums"]));
+    expect(result.isSports).toBe(true);
+  });
 });
