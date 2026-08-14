@@ -213,13 +213,27 @@ jobs:
           PY
           )"
 
-          domain_json="$(curl --fail-with-body --silent --show-error \
+          domain_response_file="$(mktemp)"
+          trap 'rm -f "$domain_response_file"' EXIT
+          set +e
+          domain_http_status="$(curl --fail-with-body --silent --show-error \
+            -o "$domain_response_file" \
+            -w '%{http_code}' \
             -X PUT \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             -H "Content-Type: application/json" \
             --data "$domain_payload" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains")"
-          echo "$domain_json"
+          domain_curl_status=$?
+          set -e
+          domain_json="$(cat "$domain_response_file")"
+
+          echo "Cloudflare domain API HTTP status: $domain_http_status"
+          echo "Cloudflare domain API response: $domain_json"
+          if [[ "$domain_curl_status" -ne 0 ]]; then
+            echo "Cloudflare domain API request failed with curl status $domain_curl_status and HTTP status $domain_http_status." >&2
+            exit "$domain_curl_status"
+          fi
 
           python3 - "$domain_json" <<'PY'
           import json
