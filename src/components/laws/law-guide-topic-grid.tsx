@@ -4,6 +4,13 @@ import { ALL_GUIDES } from "@/data/all-guides";
 import { LAW_TOPICS, type LawTopic } from "@/lib/law-guides";
 import { guidesForTopic } from "@/lib/guide-registry";
 
+const FEATURED_LAW_TOPICS: LawTopic[] = [
+  "driving",
+  "landlord-tenant",
+  "hoa-property",
+  "self-defense-firearms",
+];
+
 function TopicSection({ topic }: { topic: LawTopic }) {
   const topicInfo = LAW_TOPICS[topic];
   const guides = guidesForTopic(topic)
@@ -60,7 +67,7 @@ function TopicSection({ topic }: { topic: LawTopic }) {
 }
 
 export function LawGuideTopicGrid({ topic }: { topic: LawTopic }) {
-  const topics: LawTopic[] = topic === "driving" ? ["driving", "landlord-tenant", "hoa-property"] : [topic];
+  const topics = topic === "driving" ? FEATURED_LAW_TOPICS : [topic];
   return (
     <>
       {topics.map((item) => (
