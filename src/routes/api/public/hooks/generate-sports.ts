@@ -36,7 +36,7 @@ const LEAGUE_PROMPT: Record<League, { category: string; teams: string; topics: s
       "What the latest Texans-Cowboys storyline means for Texas football fans",
       "Texas high school to NFL pipeline: players to watch",
       "Houston Texans offense: identity, scheme, and players to watch",
-      "Dallas Cowboys defense: identity, scheme, and players to watch",
+      "Dallas Cowboys defense: identity, scheme, and coaching",
       "AT&T Stadium and NRG Stadium: how home-field shapes Texas NFL games",
       "Texans vs Cowboys: the in-state rivalry that defines Texas pro football",
       "Texas NFL draft tradition: how the Cowboys and Texans build through the draft",
@@ -351,11 +351,12 @@ export const Route = createFileRoute("/api/public/hooks/generate-sports")({
         // - `team: "cowboys"` → single team
         // - `league: "nfl"` → every Texas team in that league
         // - no body → every Texas team whose league is currently in season
+        const normalizedLeague = leagueParam?.toLowerCase();
         let teamTargets: TeamMeta[];
         if (teamParam && TEAM_BY_SLUG[teamParam]) {
           teamTargets = [TEAM_BY_SLUG[teamParam]];
-        } else if (leagueParam && isLeagueSlug(leagueParam.toLowerCase())) {
-          teamTargets = teamsForLeague(leagueParam.toLowerCase());
+        } else if (normalizedLeague && isLeagueSlug(normalizedLeague)) {
+          teamTargets = teamsForLeague(normalizedLeague);
         } else if (leagueParam) {
           return Response.json({ error: `Unknown sports league: ${leagueParam}` }, { status: 400 });
         } else {
