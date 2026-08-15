@@ -25,9 +25,11 @@ export const SPORTS_SOURCES: readonly SportsSource[] = [
   { name: "Houston Texans", url: "https://www.houstontexans.com/rss/news", mode: "rss", team: "texans", league: "nfl", priority: 1, reputation: 95 },
   { name: "Houston Astros", url: "https://www.mlb.com/astros/feeds/news/rss.xml", mode: "rss", team: "astros", league: "mlb", priority: 1, reputation: 95 },
   { name: "Texas Rangers", url: "https://www.mlb.com/rangers/feeds/news/rss.xml", mode: "rss", team: "rangers", league: "mlb", priority: 1, reputation: 95 },
-  { name: "Dallas Mavericks", url: "https://www.mavs.com/news/", mode: "html-links", include: "^/news/", team: "mavericks", league: "nba", priority: 1, reputation: 94 },
-  { name: "Houston Rockets", url: "https://www.nba.com/rockets/category/news", mode: "html-links", include: "^/rockets/news/", team: "rockets", league: "nba", priority: 1, reputation: 94 },
-  { name: "San Antonio Spurs", url: "https://www.nba.com/spurs/news", mode: "html-links", include: "^/spurs/news/", team: "spurs", league: "nba", priority: 1, reputation: 94 },
+
+  // NBA team news pages are JS-rendered and consistently return zero usable
+  // anchors to the server-side HTML fetcher. Keep them out of the standalone
+  // source loop until a stable first-party machine-readable endpoint exists;
+  // the general statewide discovery pipeline still captures NBA coverage.
   { name: "Dallas Stars", url: "https://www.nhl.com/stars/news/", mode: "html-links", include: "^/stars/news/", team: "stars", league: "nhl", priority: 1, reputation: 94 },
   { name: "Austin FC", url: "https://www.austinfc.com/news/", mode: "html-links", include: "^/news/", team: "austin-fc", league: "mls", priority: 1, reputation: 94 },
   { name: "FC Dallas", url: "https://www.fcdallas.com/news/", mode: "html-links", include: "^/news/", team: "fc-dallas", league: "mls", priority: 1, reputation: 94 },
@@ -44,10 +46,10 @@ export const SPORTS_SOURCES: readonly SportsSource[] = [
   { name: "Baylor Athletics", url: "https://baylorbears.com/archives", mode: "html-links", include: "^/news/20\\d{2}/", team: "baylor", league: "cfb", topic: "college", priority: 1, reputation: 92 },
   { name: "Texas Tech Athletics", url: "https://texastech.com/rss?path=general", mode: "rss", team: "texas-tech", league: "cfb", topic: "college", priority: 1, reputation: 92 },
   { name: "Houston Cougars Athletics", url: "https://uhcougars.com/archives", mode: "html-links", include: "^/news/20\\d{2}/", team: "houston-cougars", league: "cfb", topic: "college", priority: 1, reputation: 92 },
-  { name: "SMU Athletics", url: "https://smumustangs.com/archives", mode: "html-links", include: "^/news/20\\d{2}/", team: "smu", league: "cfb", topic: "college", priority: 1, reputation: 92 },
+  { name: "SMU Athletics", url: "https://smumustangs.com/sports/general", mode: "html-links", include: "^/news/20\\d{2}/", team: "smu", league: "cfb", topic: "college", priority: 1, reputation: 92 },
   { name: "UTSA Athletics", url: "https://goutsa.com/news/", mode: "html-links", include: "^/news/20\\d{2}/", team: "utsa", league: "cfb", topic: "college", priority: 1, reputation: 92 },
   { name: "North Texas Athletics", url: "https://meangreensports.com/archives", mode: "html-links", include: "^/news/20\\d{2}/", team: "north-texas", league: "cfb", topic: "college", priority: 2, reputation: 90 },
-  { name: "Texas State Athletics", url: "https://txst.com/archives.aspx?tab=generalreleases", mode: "html-links", include: "^/news/20\\d{2}/", team: "texas-state", league: "cfb", topic: "college", priority: 2, reputation: 90 },
+  { name: "Texas State Athletics", url: "https://txst.com/rss.aspx?path=general", mode: "rss", team: "texas-state", league: "cfb", topic: "college", priority: 2, reputation: 90 },
 
   { name: "University Interscholastic League", url: "https://feeds.feedburner.com/uil-press-releases", mode: "rss", topic: "statewide", priority: 1, reputation: 96 },
   { name: "Circuit of the Americas", url: "https://circuitoftheamericas.com/blog/", mode: "html-links", include: "^/blog/", topic: "motorsports", priority: 1, reputation: 92 },
