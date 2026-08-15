@@ -21,6 +21,7 @@ import { CONSUMER_BATCH15_GUIDES } from "@/data/laws-consumer-batch15-index";
 import { BUSINESS_BATCH16_GUIDES } from "@/data/laws-business-batch16";
 import { EDUCATION_BATCH17_GUIDES } from "@/data/laws-education-batch17";
 import { EDUCATION_BATCH18_GUIDES } from "@/data/laws-education-batch18";
+import { OPEN_GOVERNMENT_BATCH19_GUIDES } from "@/data/laws-open-government-batch19";
 
 export const SUPPORTING_GUIDES = {
   ...AGRICULTURE_SUPPORTING_GUIDES,
@@ -45,6 +46,7 @@ export const SUPPORTING_GUIDES = {
   ...BUSINESS_BATCH16_GUIDES,
   ...EDUCATION_BATCH17_GUIDES,
   ...EDUCATION_BATCH18_GUIDES,
+  ...OPEN_GOVERNMENT_BATCH19_GUIDES,
 };
 
 export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
