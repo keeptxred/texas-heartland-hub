@@ -1,3 +1,3 @@
 Deploy current main to Cloudflare production.
-Trigger Sports Phase 1 edge-case classifier deployment for keeptxred.com.
-Target main: 62af126879bf91d345e552c15303c5570c5c22dc
+Trigger final Sports Phase 1 context-guardrail deployment for keeptxred.com.
+Target main: 598b80c17f93bb62624b53d6c9054d43de898f0a
