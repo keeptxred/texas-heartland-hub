@@ -5,6 +5,9 @@
   "compatibility_date": "2026-08-12",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
+  "vars": {
+    "PRINTIFY_SHOP_ID": "28098650"
+  },
   "send_email": [
     {
       "name": "EMAIL",
