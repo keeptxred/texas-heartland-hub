@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: keeptxred-cloudflare-production
@@ -18,10 +19,9 @@ jobs:
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' &&
-       github.event.workflow_run.head_branch == 'main' &&
-       github.event.workflow_run.event == 'push')
+       (github.event.workflow_run.event == 'push' || github.event.workflow_run.event == 'pull_request'))
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
@@ -32,16 +32,106 @@ jobs:
       PRODUCTION_URL: https://keeptxred.com
 
     steps:
+      - name: Resolve verified production revision
+        id: revision
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          RUN_EVENT: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event || 'workflow_dispatch' }}
+          VERIFIED_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          VERIFIED_BRANCH: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || 'main' }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$RUN_EVENT" == "workflow_dispatch" ]]; then
+            main_sha="$(curl --fail-with-body --silent --show-error \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPOSITORY/git/ref/heads/main" \
+              | python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])')"
+            echo "sha=$main_sha" >> "$GITHUB_OUTPUT"
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            echo "Manual deployment resolved to current main: $main_sha"
+            exit 0
+          fi
+
+          if [[ "$RUN_EVENT" == "push" ]]; then
+            if [[ "$VERIFIED_BRANCH" != "main" ]]; then
+              echo "deploy=false" >> "$GITHUB_OUTPUT"
+              echo "Verified push was not main; skipping production deployment."
+              exit 0
+            fi
+            echo "sha=$VERIFIED_SHA" >> "$GITHUB_OUTPUT"
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            echo "Verified main push resolved directly: $VERIFIED_SHA"
+            exit 0
+          fi
+
+          if [[ "$RUN_EVENT" != "pull_request" ]]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Unsupported verification event '$RUN_EVENT'; skipping."
+            exit 0
+          fi
+
+          merged_sha=""
+          for attempt in $(seq 1 90); do
+            pulls_json="$(curl --fail-with-body --silent --show-error \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/$REPOSITORY/commits/$VERIFIED_SHA/pulls")"
+            merged_sha="$(python3 - "$pulls_json" "$VERIFIED_SHA" <<'PY'
+          import json, sys
+          pulls = json.loads(sys.argv[1])
+          verified = sys.argv[2]
+          matches = [
+              pr for pr in pulls
+              if pr.get("merged_at")
+              and (pr.get("base") or {}).get("ref") == "main"
+              and (pr.get("head") or {}).get("sha") == verified
+          ]
+          print((matches[0].get("merge_commit_sha") or "") if len(matches) == 1 else "")
+          PY
+            )"
+            [[ -n "$merged_sha" ]] && break
+            sleep 4
+          done
+
+          if [[ -z "$merged_sha" ]]; then
+            echo "::error title=Verified PR was not merged::The verification passed, but its same-repository PR did not become merged to main within the wait window. Production was not changed."
+            exit 1
+          fi
+
+          main_sha="$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPOSITORY/git/ref/heads/main" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])')"
+
+          if [[ "$main_sha" != "$merged_sha" ]]; then
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "A newer main revision already exists ($main_sha); refusing to deploy stale merge $merged_sha. The newer verified merge will own production deployment."
+            exit 0
+          fi
+
+          echo "sha=$merged_sha" >> "$GITHUB_OUTPUT"
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+          echo "Verified PR merged and is current main: $merged_sha"
+
       - name: Checkout verified revision
+        if: steps.revision.outputs.deploy == 'true'
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          ref: ${{ steps.revision.outputs.sha }}
 
       - uses: oven-sh/setup-bun@v2
+        if: steps.revision.outputs.deploy == 'true'
         with:
           bun-version: 1.3.14
 
       - name: Verify required production credentials
+        if: steps.revision.outputs.deploy == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -55,6 +145,7 @@ jobs:
           exit "$missing"
 
       - name: Verify Cloudflare deploy token
+        if: steps.revision.outputs.deploy == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -76,15 +167,18 @@ jobs:
           PY
 
       - name: Install dependencies
+        if: steps.revision.outputs.deploy == 'true'
         run: bun install --frozen-lockfile
 
       - name: Build and validate Worker package
+        if: steps.revision.outputs.deploy == 'true'
         run: |
           set -euo pipefail
           bun run build
           bunx wrangler deploy --dry-run
 
       - name: Deploy verified revision
+        if: steps.revision.outputs.deploy == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -102,6 +196,7 @@ jobs:
           bunx wrangler deploy --secrets-file "$secrets_file"
 
       - name: Verify workers.dev health
+        if: steps.revision.outputs.deploy == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -116,6 +211,7 @@ jobs:
           PY
 
       - name: Verify production health and homepage
+        if: steps.revision.outputs.deploy == 'true'
         shell: bash
         run: |
           set -euo pipefail
