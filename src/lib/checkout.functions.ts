@@ -56,6 +56,37 @@ type PrintifyShippingQuote = {
   standard?: number;
 };
 
+type ProductVariantRow = {
+  id: number;
+  title?: string | null;
+  price?: number | string | null;
+  image?: string | null;
+  color?: string | null;
+  is_enabled?: boolean | null;
+};
+
+type ProductRow = {
+  id: string;
+  title: string;
+  price: number | string;
+  currency: string | null;
+  image_url: string | null;
+  variants: ProductVariantRow[] | null;
+};
+
+type ValidatedCheckoutItem = {
+  productId: string;
+  variantId: number;
+  quantity: number;
+  title: string;
+  variantTitle: string | null;
+  unitAmount: number;
+  currency: string;
+  image: string | null;
+  color: string | null;
+  size: string | null;
+};
+
 export function qualifiesForFreeShipping(subtotalCents: number): boolean {
   return subtotalCents > FREE_SHIPPING_THRESHOLD_CENTS;
 }
@@ -66,6 +97,18 @@ export function getStandardShippingCents(quote: PrintifyShippingQuote): number {
     throw new Error("Printify did not return a valid standard shipping rate.");
   }
   return amount;
+}
+
+export function priceToCents(value: unknown): number {
+  const amount = Number(value);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("A product has an invalid server-side price.");
+  }
+  const cents = Math.round(amount * 100);
+  if (!Number.isInteger(cents) || cents <= 0) {
+    throw new Error("A product has an invalid server-side price.");
+  }
+  return cents;
 }
 
 function parseCompactCart(value: string | null | undefined): CompactCartItem[] {
@@ -136,6 +179,68 @@ function splitName(name: string): { first: string; last: string } {
   };
 }
 
+async function loadAuthoritativeCheckoutItems(
+  requestedItems: CheckoutCartItem[],
+): Promise<ValidatedCheckoutItem[]> {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error("Product pricing is temporarily unavailable.");
+  }
+
+  const { createClient } = await import("@supabase/supabase-js");
+  const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: { storage: undefined, persistSession: false, autoRefreshToken: false },
+  });
+
+  const productIds = Array.from(new Set(requestedItems.map((item) => item.productId)));
+  const { data, error } = await supabase
+    .from("products")
+    .select("id,title,price,currency,image_url,variants")
+    .eq("publish_keeptxred", true)
+    .in("id", productIds);
+
+  if (error) {
+    console.error("Checkout product lookup failed", error);
+    throw new Error("Unable to verify current product prices.");
+  }
+
+  const products = (data ?? []) as ProductRow[];
+  const byId = new Map(products.map((product) => [String(product.id), product]));
+
+  return requestedItems.map((item) => {
+    const product = byId.get(String(item.productId));
+    if (!product) {
+      throw new Error("One or more products are no longer available.");
+    }
+    if (!Number.isInteger(item.variantId)) {
+      throw new Error(`${product.title} requires a valid product option.`);
+    }
+
+    const variants = Array.isArray(product.variants) ? product.variants : [];
+    const variant = variants.find((candidate) => Number(candidate?.id) === item.variantId);
+    if (!variant || variant.is_enabled === false) {
+      throw new Error(`The selected option for ${product.title} is no longer available.`);
+    }
+
+    const unitAmount = priceToCents(variant.price ?? product.price);
+    const currency = String(product.currency || "USD").toLowerCase();
+
+    return {
+      productId: String(product.id),
+      variantId: item.variantId as number,
+      quantity: item.quantity,
+      title: String(product.title),
+      variantTitle: variant.title ? String(variant.title) : null,
+      unitAmount,
+      currency,
+      image: variant.image || product.image_url || null,
+      color: variant.color ? String(variant.color) : item.color ?? null,
+      size: item.size ?? null,
+    };
+  });
+}
+
 async function quotePrintifyStandardShipping(
   cart: CompactCartItem[],
   shippingDetails: ShippingDetails,
@@ -195,15 +300,18 @@ async function quotePrintifyStandardShipping(
 
 export const createCartCheckoutSession = createServerFn({ method: "POST" })
   .validator((data: CheckoutInput) => {
-    if (!Array.isArray(data.items) || data.items.length === 0) {
-      throw new Error("Cart is empty");
+    if (!Array.isArray(data.items) || data.items.length === 0 || data.items.length > 10) {
+      throw new Error("Cart must contain between 1 and 10 items.");
     }
     for (const item of data.items) {
-      if (!item.productId || !item.quantity || item.quantity < 1) {
+      if (
+        !item.productId ||
+        !Number.isInteger(item.variantId) ||
+        !Number.isInteger(item.quantity) ||
+        item.quantity < 1 ||
+        item.quantity > 10
+      ) {
         throw new Error("Invalid cart item");
-      }
-      if (typeof item.price !== "number" || item.price <= 0) {
-        throw new Error("Invalid cart item price");
       }
     }
     return data;
@@ -211,13 +319,17 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<CheckoutResult> => {
     try {
       const stripe = createStripeClient(data.environment);
-      const currency = (data.currency || "usd").toLowerCase();
+      const validatedItems = await loadAuthoritativeCheckoutItems(data.items);
+      const currency = validatedItems[0]?.currency || "usd";
+      if (validatedItems.some((item) => item.currency !== currency)) {
+        return { error: "Cart items must use the same currency." };
+      }
 
       // Compact cart for Printify fulfillment (500-char metadata limit).
-      const compactCart = data.items.map((i) => ({
-        p: i.productId,
-        v: i.variantId,
-        q: i.quantity,
+      const compactCart = validatedItems.map((item) => ({
+        p: item.productId,
+        v: item.variantId,
+        q: item.quantity,
       }));
       const cartJson = JSON.stringify(compactCart);
       if (cartJson.length > 480) {
@@ -231,20 +343,22 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
         mode: "payment",
         ui_mode: "embedded_page",
         return_url: data.returnUrl,
-        line_items: data.items.map((i) => ({
-          quantity: i.quantity,
+        line_items: validatedItems.map((item) => ({
+          quantity: item.quantity,
           price_data: {
             currency,
             product_data: {
-              name: i.title,
-              ...(i.image ? { images: [i.image] } : {}),
-              ...(i.color || i.size
+              name: item.variantTitle
+                ? `${item.title} — ${item.variantTitle}`
+                : item.title,
+              ...(item.image ? { images: [item.image] } : {}),
+              ...(item.color || item.size
                 ? {
-                    description: [i.color, i.size].filter(Boolean).join(" / "),
+                    description: [item.color, item.size].filter(Boolean).join(" / "),
                   }
                 : {}),
             },
-            unit_amount: Math.round(i.price * 100),
+            unit_amount: item.unitAmount,
           },
         })),
         shipping_address_collection: { allowed_countries: ["US"] },
