@@ -1,0 +1,149 @@
+name: One-shot production checkout shipping smoke
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/checkout-shipping-smoke-execute
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: >-
+      github.head_ref == 'run-checkout-shipping-smoke' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
+      WORKER_NAME: keeptxred-site
+      SMOKE_PRODUCTS_JSON: /tmp/smoke-products.json
+      SMOKE_SCREENSHOT_DIR: /tmp/checkout-smoke
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Validate live Merchant feed and choose smoke products
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --retry 10 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+            https://keeptxred.com/google-merchant-feed.xml -o /tmp/merchant-feed.xml
+
+          python3 - <<'PY'
+          import json
+          import re
+          import xml.etree.ElementTree as ET
+
+          path = "/tmp/merchant-feed.xml"
+          root = ET.parse(path).getroot()
+          ns = {"g": "http://base.google.com/ns/1.0"}
+          items = root.findall("./channel/item")
+          if not items:
+              raise SystemExit("Merchant feed contains no offers")
+
+          eligible = []
+          zero_shipping_overrides = []
+          threshold_errors = []
+          for item in items:
+              title = (item.findtext("title") or "").strip()
+              link = (item.findtext("link") or "").strip()
+              price_text = (item.findtext("g:price", namespaces=ns) or "").strip()
+              match = re.match(r"^([0-9]+(?:\.[0-9]+)?)\s+([A-Z]{3})$", price_text)
+              if not match:
+                  continue
+              price = float(match.group(1))
+              currency = match.group(2)
+
+              if currency == "USD":
+                  threshold = item.find("g:free_shipping_threshold", ns)
+                  country = threshold.findtext("g:country", namespaces=ns) if threshold is not None else None
+                  amount = threshold.findtext("g:price_threshold", namespaces=ns) if threshold is not None else None
+                  if country != "US" or amount != "35.00 USD":
+                      threshold_errors.append({"title": title, "country": country, "threshold": amount})
+
+              for shipping in item.findall("g:shipping", ns):
+                  shipping_price = (shipping.findtext("g:price", namespaces=ns) or "").strip()
+                  if shipping_price == "0.00 USD":
+                      zero_shipping_overrides.append(title)
+
+              route = re.search(r"/product-offer/([^/]+)/([0-9]+)(?:$|[?#])", link)
+              if route and currency == "USD":
+                  eligible.append({
+                      "title": title,
+                      "link": link,
+                      "image": (item.findtext("g:image_link", namespaces=ns) or "").strip(),
+                      "price": price,
+                      "currency": currency,
+                      "productId": route.group(1),
+                      "variantId": int(route.group(2)),
+                  })
+
+          if threshold_errors:
+              raise SystemExit(f"Merchant free-shipping threshold errors: {threshold_errors[:5]!r}")
+          if zero_shipping_overrides:
+              raise SystemExit(f"Merchant feed still contains universal $0 shipping overrides: {zero_shipping_overrides[:5]!r}")
+
+          under = next((item for item in sorted(eligible, key=lambda x: x["price"]) if item["price"] <= 35.0), None)
+          over = next((item for item in sorted(eligible, key=lambda x: x["price"]) if item["price"] > 35.0), None)
+          if not under or not over:
+              raise SystemExit(f"Need one <=$35 and one >$35 variant offer for smoke test; found {len(eligible)} eligible offers")
+
+          result = {"under": under, "over": over, "offer_count": len(items)}
+          with open("/tmp/smoke-products.json", "w", encoding="utf-8") as fh:
+              json.dump(result, fh)
+          print(f"Merchant feed PASS: {len(items)} offers; threshold is 35.00 USD; no universal $0 shipping overrides")
+          print(f"Under-$35 smoke product: {under['title']} @ ${under['price']:.2f}")
+          print(f"Over-$35 smoke product: {over['title']} @ ${over['price']:.2f}")
+          PY
+
+      - name: Audit Cloudflare Worker payment secret names
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" || -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
+            echo "Cloudflare audit skipped: deploy credentials unavailable"
+            exit 0
+          fi
+
+          response="$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME/secrets")"
+          python3 - "$response" <<'PY'
+          import json, sys
+          payload = json.loads(sys.argv[1])
+          if payload.get("success") is not True:
+              raise SystemExit(f"Cloudflare secret-name audit failed: {payload.get('errors')!r}")
+          names = sorted({entry.get("name") for entry in payload.get("result", []) if entry.get("name")})
+          payment_names = [name for name in names if any(word in name for word in ("STRIPE", "PRINTIFY", "LOVABLE"))]
+          print("Payment-related Worker secret names: " + (", ".join(payment_names) if payment_names else "none"))
+          print("Direct Stripe secret-key binding present: " + str(any(name in names for name in ("STRIPE_LIVE_SECRET_KEY", "STRIPE_SECRET_KEY", "STRIPE_SANDBOX_SECRET_KEY"))))
+          print("Lovable gateway binding present: " + str("LOVABLE_API_KEY" in names))
+          print("Printify quote bindings present: " + str("PRINTIFY_API_TOKEN" in names and "PRINTIFY_SHOP_ID" in names))
+          PY
+
+      - name: Install Chromium
+        run: bunx playwright install --with-deps chromium
+
+      - name: Run live checkout shipping smoke
+        run: node .github/scripts/checkout-shipping-smoke.mjs
+
+      - name: Upload smoke screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkout-shipping-smoke-screenshots
+          path: /tmp/checkout-smoke
+          if-no-files-found: ignore
+          retention-days: 1
