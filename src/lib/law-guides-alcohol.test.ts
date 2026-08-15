@@ -90,6 +90,7 @@ describe("Alcohol and everyday regulations evergreen guide registry", () => {
     expect(text("texas-byob-law")).toContain("corkage");
     expect(text("texas-wet-dry-local-option-law")).toContain("Section 251.71");
     expect(text("texas-wet-dry-local-option-law")).toContain("Chapter 501");
-    expect(text("texas-wet-dry-local-option-law")).toContain("beverage specific");
+    expect(text("texas-wet-dry-local-option-law")).toContain("particular alcoholic beverages");
+    expect(text("texas-wet-dry-local-option-law")).toContain("allow some alcohol sales while prohibiting others");
   });
 });
