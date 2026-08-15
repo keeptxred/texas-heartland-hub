@@ -20,6 +20,7 @@ const FEATURED_LAW_TOPICS: LawTopic[] = [
   "elections",
   "outdoors",
   "alcohol",
+  "animals",
 ];
 
 function TopicSection({ topic }: { topic: LawTopic }) {
