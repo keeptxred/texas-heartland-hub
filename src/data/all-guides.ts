@@ -23,6 +23,7 @@ import { EDUCATION_BATCH17_GUIDES } from "@/data/laws-education-batch17";
 import { EDUCATION_BATCH18_GUIDES } from "@/data/laws-education-batch18";
 import { OPEN_GOVERNMENT_BATCH19_GUIDES } from "@/data/laws-open-government-batch19";
 import { ELECTIONS_BATCH20_GUIDES } from "@/data/laws-elections-batch20";
+import { PROBATE_BATCH21_GUIDES } from "@/data/laws-probate-batch21";
 
 export const SUPPORTING_GUIDES = {
   ...AGRICULTURE_SUPPORTING_GUIDES,
@@ -49,6 +50,7 @@ export const SUPPORTING_GUIDES = {
   ...EDUCATION_BATCH18_GUIDES,
   ...OPEN_GOVERNMENT_BATCH19_GUIDES,
   ...ELECTIONS_BATCH20_GUIDES,
+  ...PROBATE_BATCH21_GUIDES,
 };
 
 export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
