@@ -1,0 +1,99 @@
+name: TexasDefined Cloudflare migration executor
+
+on:
+  workflow_dispatch:
+    inputs:
+      td_ref:
+        description: TexasDefined branch or commit to deploy to isolated preview
+        required: true
+        type: string
+        default: migrate-texasdefined-cloudflare
+
+permissions:
+  contents: read
+
+concurrency:
+  group: texasdefined-cloudflare-migration-executor
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
+      TD_REF: ${{ inputs.td_ref }}
+      PREVIEW_WORKER_NAME: texasdefined-site-migration-preview
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Verify deploy-capable Cloudflare token
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo 'Missing CLOUDFLARE_ACCOUNT_ID'; exit 1; }
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo 'Missing CLOUDFLARE_DEPLOY_API_TOKEN'; exit 1; }
+          workers_json="$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts")"
+          python3 - "$workers_json" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          if data.get('success') is not True:
+              raise SystemExit(f"Workers Scripts access failed: {data.get('errors')!r}")
+          print(f"Deploy token can access {len(data.get('result') or [])} Worker script(s).")
+          PY
+      - name: Fetch TexasDefined migration revision
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --depth 1 --branch "$TD_REF" https://github.com/keeptxred/TexasDefined.git td
+          git -C td rev-parse HEAD
+      - name: Install and build TexasDefined
+        working-directory: td
+        run: |
+          npm ci
+          npm run build
+          npm run performance:validate
+      - name: Deploy isolated TexasDefined Worker preview
+        id: deploy
+        working-directory: td
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx wrangler deploy --name "$PREVIEW_WORKER_NAME" 2>&1 | tee /tmp/td-wrangler-deploy.log
+          PREVIEW_URL="$(grep -Eo 'https://[^[:space:]]+\.workers\.dev' /tmp/td-wrangler-deploy.log | tail -1 | sed 's/[[:punct:]]$//' || true)"
+          if [ -z "$PREVIEW_URL" ]; then
+            subdomain_json="$(curl --fail-with-body --silent --show-error \
+              -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+              "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" || true)"
+            subdomain="$(python3 - "$subdomain_json" <<'PY'
+          import json, sys
+          try:
+              print((json.loads(sys.argv[1]).get('result') or {}).get('subdomain') or '')
+          except Exception:
+              print('')
+          PY
+            )"
+            if [ -n "$subdomain" ]; then
+              PREVIEW_URL="https://${PREVIEW_WORKER_NAME}.${subdomain}.workers.dev"
+            fi
+          fi
+          test -n "$PREVIEW_URL" || { echo 'Unable to resolve TexasDefined workers.dev preview URL.' >&2; exit 1; }
+          echo "url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
+          echo "TexasDefined preview: $PREVIEW_URL"
+      - name: Smoke-test TexasDefined Cloudflare preview
+        shell: bash
+        env:
+          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+        run: |
+          set -euo pipefail
+          for path in / /robots.txt /sitemap.xml /fishing /guides /county/travis; do
+            echo "Checking ${PREVIEW_URL}${path}"
+            curl --retry 10 --retry-all-errors --retry-delay 3 --max-time 45 -fsSL "${PREVIEW_URL}${path}" -o /tmp/td-response
+            test -s /tmp/td-response || { echo "Empty response for $path" >&2; exit 1; }
+          done
+          echo 'TexasDefined isolated Cloudflare preview passed all smoke tests.'
