@@ -8,6 +8,9 @@ on:
         required: true
         type: string
         default: migrate-texasdefined-cloudflare
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
 
 permissions:
   contents: read
@@ -18,12 +21,13 @@ concurrency:
 
 jobs:
   preview:
+    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'run-td-cloudflare-migration'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
-      TD_REF: ${{ inputs.td_ref }}
+      TD_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.td_ref || 'migrate-texasdefined-cloudflare' }}
       PREVIEW_WORKER_NAME: texasdefined-site-migration-preview
     steps:
       - uses: actions/checkout@v5
