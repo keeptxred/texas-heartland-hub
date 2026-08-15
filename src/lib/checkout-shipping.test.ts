@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   FREE_SHIPPING_THRESHOLD_CENTS,
   getStandardShippingCents,
+  priceToCents,
   qualifiesForFreeShipping,
 } from "@/lib/checkout.functions";
 
@@ -27,5 +28,16 @@ describe("checkout shipping policy", () => {
     );
     expect(() => getStandardShippingCents({ standard: -1 })).toThrow();
     expect(() => getStandardShippingCents({ standard: 4.5 })).toThrow();
+  });
+
+  it("converts authoritative product prices to Stripe cents", () => {
+    expect(priceToCents(24.99)).toBe(2499);
+    expect(priceToCents("43.89")).toBe(4389);
+  });
+
+  it("rejects invalid authoritative prices", () => {
+    expect(() => priceToCents(0)).toThrow();
+    expect(() => priceToCents(-1)).toThrow();
+    expect(() => priceToCents("not-a-price")).toThrow();
   });
 });
