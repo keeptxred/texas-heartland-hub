@@ -6,19 +6,30 @@ import { seoDescription, seoTitle } from "@/lib/shop-seo";
 
 const XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
 const BRAND = "Keep TX Red";
+const TITLE_LIMIT = 150;
+const DESCRIPTION_LIMIT = 5000;
+
+type VariantOption = {
+  name: "Color" | "Size";
+  value: string;
+};
 
 type MerchantItem = {
   id: string;
+  mpn: string;
   itemGroupId?: string;
+  itemGroupTitle?: string;
+  variantOptions?: VariantOption[];
   title: string;
   description: string;
   link: string;
+  canonicalLink: string;
   imageLink: string;
   price: number;
   currency: string;
   color?: string;
   size?: string;
-  category: string;
+  category?: string;
   apparel: boolean;
 };
 
@@ -42,6 +53,11 @@ function plainText(value: string): string {
     .replace(/&#39;|&apos;/gi, "'")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function limitText(value: string, maxLength: number): string {
+  if (value.length <= maxLength) return value;
+  return value.slice(0, maxLength).replace(/\s+\S*$/, "").trim();
 }
 
 function absoluteImageUrl(value: string | null | undefined): string {
@@ -70,101 +86,196 @@ function merchantImageUrl(value: string | null | undefined): string {
   }
 }
 
-function productCategory(product: Product): { category: string; apparel: boolean } {
+function productCategory(product: Product): { category?: string; apparel: boolean } {
   const haystack = [product.title, ...(product.tags ?? [])].join(" ").toLowerCase();
 
   if (/\b(t-?shirt|tee|shirt|sweatshirt|hoodie|tank top|long sleeve)\b/.test(haystack)) {
-    return { category: "Apparel & Accessories > Clothing", apparel: true };
+    return { category: "212", apparel: true };
   }
   if (/\b(hat|cap|beanie|headwear)\b/.test(haystack)) {
-    return { category: "Apparel & Accessories > Clothing Accessories > Hats", apparel: true };
+    return { category: "173", apparel: true };
   }
   if (/\b(sticker|decal)\b/.test(haystack)) {
-    return { category: "Arts & Entertainment > Hobbies & Creative Arts > Arts & Crafts > Stickers", apparel: false };
+    return { category: "4054", apparel: false };
   }
-  if (/\b(mug|tumbler|cup|drinkware)\b/.test(haystack)) {
-    return { category: "Home & Garden > Kitchen & Dining > Tableware > Drinkware", apparel: false };
+  if (/\btumbler\b/.test(haystack)) {
+    return { category: "2951", apparel: false };
+  }
+  if (/\bmug\b/.test(haystack)) {
+    return { category: "2169", apparel: false };
+  }
+  if (/\b(cup|drinkware)\b/.test(haystack)) {
+    return { category: "674", apparel: false };
   }
   if (/\b(poster|print|wall art|canvas)\b/.test(haystack)) {
-    return { category: "Home & Garden > Decor > Artwork", apparel: false };
+    return { category: "500044", apparel: false };
   }
-  if (/\b(tote|bag)\b/.test(haystack)) {
-    return { category: "Apparel & Accessories > Handbags, Wallets & Cases > Handbags", apparel: true };
+  if (/\btote\b/.test(haystack)) {
+    return { category: "5608", apparel: false };
+  }
+  if (/\bbag\b/.test(haystack)) {
+    return { category: "5181", apparel: false };
   }
 
-  return { category: "Apparel & Accessories", apparel: false };
+  return { apparel: false };
 }
 
-function variantSize(variant: ProductVariant): string | undefined {
+function variantSize(variant: ProductVariant, apparel: boolean): string | undefined {
   const title = variant.title.trim();
   if (!title) return undefined;
 
   const parts = title.split(/\s*\/\s*|\s*\|\s*|\s+-\s+/).map((part) => part.trim()).filter(Boolean);
   const knownSize = parts.find((part) =>
-    /^(?:XXS|XS|S|M|L|XL|2XL|XXL|3XL|XXXL|4XL|XXXXL|5XL|6XL|\d+(?:\.\d+)?\s*(?:in|inch|inches|cm)?|\d+\s*[x×]\s*\d+)$/i.test(part),
+    /^(?:XXS|XS|S|M|L|XL|2XL|XXL|3XL|XXXL|4XL|XXXXL|5XL|6XL|OS|OSFA|OSFM|ONE\s*SIZE|ONE\s*SIZE\s*FITS\s*(?:ALL|MOST)|\d+(?:\.\d+)?\s*(?:in|inch|inches|cm|oz)?|\d+(?:\.\d+)?\s*[x×]\s*\d+(?:\.\d+)?)$/i.test(part),
   );
-  return knownSize;
+  if (knownSize) return knownSize;
+
+  if (apparel && parts.length >= 2) return parts[parts.length - 1];
+  return undefined;
 }
 
 function itemTitle(product: Product, variant?: ProductVariant): string {
   const title = seoTitle(product);
-  if (!variant) return title;
-  const options = [variant.color, variantSize(variant)].filter(Boolean);
-  return options.length ? `${title} - ${options.join(" / ")}` : title;
+  if (!variant) return limitText(plainText(title), TITLE_LIMIT);
+  const { apparel } = productCategory(product);
+  const options = [variant.color, variantSize(variant, apparel)].filter(Boolean);
+  const withOptions = options.length ? `${title} - ${options.join(" / ")}` : title;
+  return limitText(plainText(withOptions), TITLE_LIMIT);
+}
+
+function variantAttributes(
+  product: Product,
+  variant: ProductVariant,
+  apparel: boolean,
+): { color?: string; size?: string } {
+  const rawColor = variant.color?.trim() || undefined;
+  const parsedSize = variantSize(variant, apparel);
+  const haystack = [product.title, ...(product.tags ?? [])].join(" ").toLowerCase();
+  const optionLooksLikeDimensions = rawColor != null &&
+    /\d+(?:\.\d+)?\s*(?:in|inch|inches|cm|["″])?\s*[x×]\s*\d+(?:\.\d+)?/i.test(rawColor);
+  const dimensionFirstProduct = /\b(sticker|decal|poster|print|canvas)\b/.test(haystack);
+
+  if (!apparel && dimensionFirstProduct && optionLooksLikeDimensions) {
+    return { size: rawColor };
+  }
+
+  return { color: rawColor, size: parsedSize };
+}
+
+function variantOptionNames(
+  product: Product,
+  variants: ProductVariant[],
+  apparel: boolean,
+): Array<VariantOption["name"]> {
+  if (variants.length <= 1) return [];
+
+  const rows = variants.map((variant) => {
+    const attrs = variantAttributes(product, variant, apparel);
+    return { Color: attrs.color, Size: attrs.size };
+  });
+  const candidates: Array<Array<VariantOption["name"]>> = [
+    ["Color"],
+    ["Size"],
+    ["Color", "Size"],
+  ];
+
+  for (const names of candidates) {
+    if (!rows.every((row) => names.every((name) => Boolean(row[name])))) continue;
+    const combinations = rows.map((row) => names.map((name) => row[name]).join("\u001f"));
+    if (new Set(combinations).size === combinations.length) return names;
+  }
+
+  return [];
 }
 
 function merchantItems(product: Product): MerchantItem[] {
-  const description = seoDescription(product);
-  const link = `${BASE_URL}/shop/${encodeURIComponent(product.id)}`;
+  const description = limitText(plainText(seoDescription(product)), DESCRIPTION_LIMIT);
+  const canonicalLink = `${BASE_URL}/shop/${encodeURIComponent(product.id)}`;
   const { category, apparel } = productCategory(product);
   const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled !== false);
 
   if (enabledVariants.length === 0) {
     const imageLink = merchantImageUrl(product.image);
-    if (!imageLink || !Number.isFinite(product.price) || product.price <= 0) return [];
+    if (!imageLink || !Number.isFinite(product.price) || product.price <= 0 || !description) return [];
+
+    const color = product.colors?.length === 1 ? product.colors[0]?.trim() || undefined : undefined;
+    if (apparel) return [];
+
     return [{
       id: product.id,
-      title: product.title,
+      mpn: product.id,
+      title: itemTitle(product),
       description,
-      link,
+      link: canonicalLink,
+      canonicalLink,
       imageLink,
       price: product.price,
       currency: product.currency || "USD",
       category,
       apparel,
-      color: product.colors?.length === 1 ? product.colors[0] : undefined,
+      color,
     }];
   }
+
+  const optionNames = variantOptionNames(product, enabledVariants, apparel);
 
   return enabledVariants.flatMap((variant) => {
     const imageLink = merchantImageUrl(variant.image || variant.images?.[0] || product.image);
     const price = Number(variant.price || product.price);
-    if (!imageLink || !Number.isFinite(price) || price <= 0) return [];
+    const attrs = variantAttributes(product, variant, apparel);
+    const color = attrs.color || (product.colors?.length === 1 ? product.colors[0]?.trim() : undefined);
+    const size = attrs.size;
+    if (!imageLink || !Number.isFinite(price) || price <= 0 || !description) return [];
+    if (apparel && (!color || !size)) return [];
+
+    const id = `${product.id}-${variant.id}`;
+    const link = `${BASE_URL}/product-offer/${encodeURIComponent(product.id)}/${encodeURIComponent(String(variant.id))}`;
+    const values = { Color: color, Size: size };
+    const variantOptions = optionNames.flatMap((name) => {
+      const value = values[name];
+      return value ? [{ name, value }] : [];
+    });
 
     return [{
-      id: `${product.id}-${variant.id}`,
+      id,
+      mpn: id,
       itemGroupId: product.id,
+      itemGroupTitle: limitText(plainText(seoTitle(product)), TITLE_LIMIT),
+      variantOptions,
       title: itemTitle(product, variant),
       description,
       link,
+      canonicalLink,
       imageLink,
       price,
       currency: product.currency || "USD",
-      color: variant.color || undefined,
-      size: variantSize(variant),
+      color,
+      size,
       category,
       apparel,
     }];
   });
 }
 
+function renderVariantOptions(options: VariantOption[] | undefined): string {
+  if (!options?.length) return "";
+  return options.map((option) => `      <g:variant_option>
+        <g:name>${escapeXml(option.name)}</g:name>
+        <g:value>${escapeXml(option.value)}</g:value>
+      </g:variant_option>`).join("\n");
+}
+
 function renderItem(item: MerchantItem): string {
   const optional = [
     item.itemGroupId ? `      <g:item_group_id>${escapeXml(item.itemGroupId)}</g:item_group_id>` : "",
+    item.itemGroupTitle ? `      <g:item_group_title>${escapeXml(item.itemGroupTitle)}</g:item_group_title>` : "",
+    renderVariantOptions(item.variantOptions),
     item.color ? `      <g:color>${escapeXml(item.color)}</g:color>` : "",
     item.size ? `      <g:size>${escapeXml(item.size)}</g:size>` : "",
     item.apparel ? "      <g:age_group>adult</g:age_group>" : "",
     item.apparel ? "      <g:gender>unisex</g:gender>" : "",
+    item.apparel && item.size ? "      <g:size_system>US</g:size_system>" : "",
+    item.category ? `      <g:google_product_category>${escapeXml(item.category)}</g:google_product_category>` : "",
   ].filter(Boolean).join("\n");
 
   return `    <item>
@@ -172,13 +283,22 @@ function renderItem(item: MerchantItem): string {
       <title>${escapeXml(item.title)}</title>
       <description>${escapeXml(item.description)}</description>
       <link>${escapeXml(item.link)}</link>
+      <g:canonical_link>${escapeXml(item.canonicalLink)}</g:canonical_link>
       <g:image_link>${escapeXml(item.imageLink)}</g:image_link>
       <g:availability>in_stock</g:availability>
       <g:condition>new</g:condition>
       <g:price>${escapeXml(item.price.toFixed(2))} ${escapeXml(item.currency)}</g:price>
       <g:brand>${escapeXml(BRAND)}</g:brand>
-      <g:identifier_exists>false</g:identifier_exists>
-      <g:google_product_category>${escapeXml(item.category)}</g:google_product_category>
+      <g:mpn>${escapeXml(item.mpn)}</g:mpn>
+      <g:shipping>
+        <g:country>US</g:country>
+        <g:service>Standard</g:service>
+        <g:price>0.00 USD</g:price>
+        <g:min_handling_time>3</g:min_handling_time>
+        <g:max_handling_time>7</g:max_handling_time>
+        <g:min_transit_time>2</g:min_transit_time>
+        <g:max_transit_time>5</g:max_transit_time>
+      </g:shipping>
 ${optional}
     </item>`;
 }
@@ -205,10 +325,6 @@ function response(body: string, status = 200): Response {
         ? "public, max-age=900, s-maxage=3600, stale-while-revalidate=86400"
         : "no-store",
       "X-Content-Type-Options": "nosniff",
-      // This endpoint is a machine-readable Merchant Center data feed, not a
-      // search result landing page. Explicit noindex keeps a successful crawl
-      // from lingering as "Crawled - currently not indexed" in Search Console
-      // while leaving the feed fully fetchable by Google Merchant Center.
       "X-Robots-Tag": "noindex, follow",
     },
   });
@@ -220,9 +336,6 @@ export const Route = createFileRoute("/google-merchant-feed.xml")({
       GET: async () => {
         const result = await getProducts();
 
-        // Never publish the local demo catalog to Merchant Center. Returning a
-        // temporary error preserves Google's last successful catalog instead of
-        // replacing it with placeholder products during an outage.
         if (result.isFallback) {
           console.error("google-merchant-feed: live catalog unavailable", result.error);
           return response("Merchant catalog temporarily unavailable.", 503);
