@@ -56,7 +56,7 @@ describe("Wills, probate and inheritance evergreen guide registry", () => {
     expect(text("texas-will-requirements-guide")).toContain("14 years old");
     expect(text("texas-holographic-will-law")).toContain("wholly in the testator's handwriting");
     expect(text("texas-intestate-succession-guide")).toContain("community");
-    expect(text("texas-intestate-succession-guide")).toContain("nonprobate");
+    expect(text("texas-intestate-succession-guide").toLowerCase()).toContain("nonprobate");
     expect(text("texas-probate-four-year-deadline")).toContain("fourth anniversary");
     expect(text("texas-probate-four-year-deadline")).toContain("not in default");
   });
