@@ -47,10 +47,6 @@ function editorialIdentityText(row: {
   dek?: string | null;
   seo_keywords?: string[] | null;
 }): string {
-  // Sports routing should be driven by the article's editorial identity, not
-  // every token in the stored body. Imported/rewritten bodies can contain
-  // related-link residue, navigation copy, venue references, or incidental
-  // team mentions that have nothing to do with the story itself.
   return [row.title, row.dek, ...(row.seo_keywords ?? [])].filter(Boolean).join(" ");
 }
 
@@ -70,15 +66,11 @@ async function handler() {
   let teamTagged = 0;
   const changes: Array<{ slug: string; action: "classified" | "cleaned"; kind: string; teams: string[] }> = [];
   for (const row of data ?? []) {
-    // Use title/dek/SEO keywords only. Including body or mutable Sports
-    // metadata here made old false positives self-reinforcing and allowed
-    // unrelated body residue to classify BBQ, entertainment and TV stories
-    // as football/college/NFL coverage.
     const text = editorialIdentityText(row);
     const classification = classifySportsText(text);
     const texasNamed = /\btexas\b/i.test(text);
     const strongTexasSports = classification.teams.length > 0
-      || (classification.isSports && texasNamed)
+      || (classification.isSports && (texasNamed || classification.cities.length > 0))
       || classification.texasRelevanceScore >= 45
       || (classification.topics.includes("motorsports") && /\bcota\b|circuit of the americas|texas motor speedway/i.test(text));
 
