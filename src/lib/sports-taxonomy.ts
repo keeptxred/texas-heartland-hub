@@ -33,7 +33,7 @@ export type SportsClassification = {
 
 const TOPIC_KEYWORDS: Record<Exclude<SportsTopicSlug, "latest" | "trending">, string[]> = {
   football: ["football", "touchdown", "quarterback", "nfl", "cfb", "bowl game", "kickoff", "playoff"],
-  baseball: ["baseball", "mlb", "pitcher", "home run", "bullpen", "world series"],
+  baseball: ["baseball", "mlb", "pitcher", "home run", "homer", "bullpen", "world series"],
   basketball: ["basketball", "nba", "wnba", "hoops", "three-pointer", "tipoff", "playoffs"],
   hockey: ["hockey", "nhl", "puck", "stanley cup"],
   soccer: ["soccer", "mls", "nwsl", "goalkeeper", "world cup"],
@@ -75,10 +75,12 @@ const TEXAS_CITIES = ["houston", "dallas", "arlington", "austin", "san antonio",
 const COLLEGE_SPORTS_CONTEXT = /\b(football|basketball|baseball|softball|volleyball|soccer|athletics?|athletic|sports?|game|matchup|season|coach|player|recruit(?:ing)?|commit(?:ment)?|nil|name image likeness|revenue sharing|stadium|arena|conference|ncaa|bowl|playoff|championship|roster|score|touchdown|quarterback|transfer portal|ranked|ranking|kickoff|tipoff|tournament|practice|schedule)\b/i;
 const TEXAS_AM_BRANCH_CAMPUS = /\b(?:texas a&m[-–— ](?:texarkana|corpus christi|san antonio|commerce|kingsville|international)|west texas a&m)\b/i;
 const STRONG_SPORTS_POLICY_CONTEXT = /\b(sports betting|sportsbook|stadium financing|athletic spending|college athlete compensation)\b/i;
+const GENERIC_SPORTS_CONTEXT = /\b(sports?|athletics?|athletic)\b/i;
 // Recruiting and rivalry language is common in politics, business, hiring, and
-// education. Those topics are useful labels once a story is known to be sports,
-// but they are not strong enough to make a story Sports on their own.
-const SAFE_STANDALONE_TOPICS = new Set<SportsTopicSlug>(["football", "baseball", "basketball", "hockey", "soccer", "college", "nil", "stadiums", "motorsports", "postseason"]);
+// education. Stadium/arena wording is also common in concerts and events.
+// Those labels are useful once a story is known to be sports, but are not
+// strong enough to make a story Sports on their own.
+const SAFE_STANDALONE_TOPICS = new Set<SportsTopicSlug>(["football", "baseball", "basketball", "hockey", "soccer", "college", "nil", "motorsports", "postseason"]);
 
 function includesPhrase(text: string, phrase: string): boolean {
   const escaped = phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -128,7 +130,8 @@ export function classifySportsText(text: string): SportsClassification {
     isSports: teams.length > 0
       || leagueSet.size > 0
       || uniqueTopics.some((topic) => SAFE_STANDALONE_TOPICS.has(topic))
-      || STRONG_SPORTS_POLICY_CONTEXT.test(text),
+      || STRONG_SPORTS_POLICY_CONTEXT.test(text)
+      || GENERIC_SPORTS_CONTEXT.test(text),
   };
 }
 
