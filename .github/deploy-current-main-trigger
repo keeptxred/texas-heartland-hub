@@ -1,3 +1,4 @@
 Deploy current main to Cloudflare production.
 Trigger custom-domain promotion with Actions annotation diagnostics for keeptxred.com.
-Target main: eac57dddb8f5027783c725781cbb516277d2e687
+Target main: 772961a2e1b9ca0713353400ab4d1ef2a066a9ef
+Reason: deploy Cloudflare Email Service migration for live smoke test.
