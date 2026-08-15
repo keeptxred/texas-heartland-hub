@@ -329,3 +329,5 @@ jobs:
           restore_dns
           echo "::error title=Cloudflare cutover rolled back::Production health failed, so the previous apex DNS was restored when applicable."
           exit 1
+
+# Explicit manual trigger after hardened permission preflight.
