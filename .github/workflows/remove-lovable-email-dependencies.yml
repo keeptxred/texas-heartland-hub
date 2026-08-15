@@ -1,0 +1,51 @@
+name: Remove Lovable email dependencies
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    if: github.head_ref == 'replace-lovable-email-cloudflare' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out migration branch
+        uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+
+      - name: Remove retired Lovable SDKs and regenerate lockfile
+        run: |
+          set -euo pipefail
+          bun remove @lovable.dev/email-js @lovable.dev/webhooks-js
+          if grep -q '"@lovable.dev/email-js"\|"@lovable.dev/webhooks-js"' package.json; then
+            echo 'Lovable email dependencies remain in package.json' >&2
+            exit 1
+          fi
+
+      - name: Regenerate route tree with Cloudflare email route
+        run: bun run build:dev
+
+      - name: Commit generated dependency and route artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add package.json bun.lock src/routeTree.gen.ts
+          if git diff --cached --quiet; then
+            echo 'Generated artifacts already current.'
+            exit 0
+          fi
+          git commit -m 'Regenerate dependencies after Lovable email removal'
+          git push origin "HEAD:${GITHUB_HEAD_REF}"
