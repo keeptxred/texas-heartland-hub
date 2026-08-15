@@ -1,7 +1,10 @@
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { useMemo } from "react";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
-import { createCartCheckoutSession } from "@/lib/checkout.functions";
+import {
+  createCartCheckoutSession,
+  updateCartCheckoutShipping,
+} from "@/lib/checkout.functions";
 import type { CartItem } from "@/lib/cart-context";
 
 export function StripeEmbeddedCartCheckout({
@@ -35,14 +38,42 @@ export function StripeEmbeddedCartCheckout({
         if (!result.clientSecret) throw new Error("Stripe did not return a client secret");
         return result.clientSecret;
       },
+      onShippingDetailsChange: async (event: {
+        checkoutSessionId: string;
+        shippingDetails: {
+          name: string;
+          address: {
+            line1: string;
+            line2?: string | null;
+            city: string;
+            state: string;
+            postal_code: string;
+            country: string;
+          };
+        };
+      }) => {
+        const result = await updateCartCheckoutShipping({
+          data: {
+            environment: getStripeEnvironment(),
+            checkoutSessionId: event.checkoutSessionId,
+            shippingDetails: event.shippingDetails,
+          },
+        });
+
+        if ("error" in result) {
+          return { type: "reject" as const, errorMessage: result.error };
+        }
+        return { type: "accept" as const };
+      },
     }),
+    // The embedded session should be created only once for the mounted cart.
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
   return (
     <div id="checkout">
-      <EmbeddedCheckoutProvider stripe={getStripe()} options={options}>
+      <EmbeddedCheckoutProvider stripe={getStripe()} options={options as any}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
     </div>
