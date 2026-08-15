@@ -19,6 +19,7 @@ import { ELECTIONS_BATCH20_LAW_GUIDES } from "@/lib/law-guides-elections-batch20
 import { PROBATE_BATCH21_LAW_GUIDES } from "@/lib/law-guides-probate-batch21";
 import { OUTDOORS_BATCH22_LAW_GUIDES } from "@/lib/law-guides-outdoors-batch22";
 import { ALCOHOL_BATCH23_LAW_GUIDES } from "@/lib/law-guides-alcohol-batch23";
+import { ANIMALS_BATCH24_LAW_GUIDES } from "@/lib/law-guides-animals-batch24";
 
 export { LAW_TOPICS, createDraftLawGuideMeta, isLawGuideMetaIndexable, validateLawGuideMeta } from "@/lib/law-guides-core";
 export type { LawGuideMeta, LawGuideStatus, LawSource, LawTopic } from "@/lib/law-guides-core";
@@ -45,6 +46,7 @@ export const LAW_GUIDES = [
   ...PROBATE_BATCH21_LAW_GUIDES,
   ...OUTDOORS_BATCH22_LAW_GUIDES,
   ...ALCOHOL_BATCH23_LAW_GUIDES,
+  ...ANIMALS_BATCH24_LAW_GUIDES,
 ] as const;
 
 const GUIDE_BY_SLUG = new Map(LAW_GUIDES.map((guide) => [guide.slug, guide] as const));
