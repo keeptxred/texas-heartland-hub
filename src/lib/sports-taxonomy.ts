@@ -64,7 +64,7 @@ export function classifySportsText(text: string): SportsClassification {
   if (cities.length) score += 10;
   if (/\btexas\b/i.test(text)) score += 10;
   if (uniqueTopics.includes("business-policy") || uniqueTopics.includes("nil")) score += 5;
-  const incidentalMediaTickets = INCIDENTIAL_MEDIA_TICKET_CONTEXT.test(text) && teams.length === 0 && leagueSet.size === 0;
+  const incidentalMediaTickets = INCIDENTAL_MEDIA_TICKET_CONTEXT.test(text) && teams.length === 0 && leagueSet.size === 0;
   const isSportsSignal = teams.length > 0 || leagueSet.size > 0 || uniqueTopics.some((topic) => SAFE_STANDALONE_TOPICS.has(topic)) || STRONG_SPORTS_POLICY_CONTEXT.test(text) || GENERIC_SPORTS_CONTEXT.test(text);
   return { teams, leagues: [...leagueSet], topics: uniqueTopics, cities, texasRelevanceScore: Math.min(score, 100), isSports: isSportsSignal && !incidentalMediaTickets };
 }
