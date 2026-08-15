@@ -1,18 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const DEFAULT_INTERNAL_ORIGIN = "https://keeptxred.lovable.app";
+const DEFAULT_INTERNAL_ORIGIN = "https://keeptxred-site.freddy-coppola.workers.dev";
+
+function safeConfiguredOrigin(value: string | undefined): string | null {
+  const configured = value?.trim();
+  if (!configured) return null;
+
+  try {
+    const url = new URL(configured);
+    if (url.protocol !== "https:") return null;
+    if (url.hostname === "lovable.app" || url.hostname.endsWith(".lovable.app")) {
+      console.warn("Ignoring retired Lovable INTERNAL_APP_ORIGIN", { hostname: url.hostname });
+      return null;
+    }
+    return url.origin;
+  } catch {
+    console.warn("Ignoring invalid INTERNAL_APP_ORIGIN");
+    return null;
+  }
+}
 
 function resolveInternalOrigin(requestUrl: string): string {
-  const incoming = new URL(requestUrl);
-  const configured = process.env.INTERNAL_APP_ORIGIN?.trim();
-  if (configured) return configured.replace(/\/$/, "");
+  const configured = safeConfiguredOrigin(process.env.INTERNAL_APP_ORIGIN);
+  if (configured) return configured;
 
-  // Server-to-server publication must not loop back through the public custom
-  // domain. That path can traverse an external CDN/proxy and has produced
-  // Cloudflare 1016/524 failures even while the Lovable production origin is
-  // healthy. Requests already arriving on lovable.app can safely reuse their
-  // own origin; branded/custom-domain requests use the stable Lovable origin.
-  if (incoming.hostname.endsWith("lovable.app")) return incoming.origin;
+  const incoming = new URL(requestUrl);
+  if (incoming.hostname.endsWith(".workers.dev")) return incoming.origin;
+
+  // Keep server-to-server publication on the Worker origin so it does not
+  // depend on a retired hosting provider or loop through the branded domain.
   return DEFAULT_INTERNAL_ORIGIN;
 }
 
