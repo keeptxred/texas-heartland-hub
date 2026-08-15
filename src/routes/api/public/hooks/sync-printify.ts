@@ -170,8 +170,6 @@ function mapProduct(product: PrintifyProduct, settings?: WebsiteSettings) {
     source: "printify",
     synced_at: new Date().toISOString(),
 
-    // Website merchandising is owned by Keep TX Red, not Printify.
-    // New products start hidden; existing choices survive every sync.
     is_active: settings?.is_active ?? false,
     category: settings?.category ?? null,
     collections: settings?.collections ?? [],
@@ -179,8 +177,6 @@ function mapProduct(product: PrintifyProduct, settings?: WebsiteSettings) {
     is_new: settings?.is_new ?? false,
     is_on_sale: settings?.is_on_sale ?? false,
 
-    // Storefront assignments are never overwritten by Printify.
-    // New products start hidden from both storefronts.
     publish_keeptxred: settings?.publish_keeptxred ?? false,
     publish_texasdefined: settings?.publish_texasdefined ?? false,
     keeptxred_category: settings?.keeptxred_category ?? null,
@@ -194,11 +190,27 @@ function mapProduct(product: PrintifyProduct, settings?: WebsiteSettings) {
   };
 }
 
+function isAuthorized(request: Request) {
+  const bearer = request.headers.get("authorization")?.match(/^Bearer\s+(.+)$/i)?.[1] ?? "";
+  const adminPasscode = request.headers.get("x-admin-passcode") ?? "";
+  const expected = process.env.PRINTIFY_SYNC_SECRET ?? process.env.ADMIN_PASSCODE ?? "";
+  return expected.length > 0 && (bearer === expected || adminPasscode === expected);
+}
+
 export const Route = createFileRoute("/api/public/hooks/sync-printify")({
   server: {
     handlers: {
-      GET: async () => runSync(),
-      POST: async () => runSync(),
+      GET: async () =>
+        Response.json(
+          { ok: false, error: "Method not allowed" },
+          { status: 405, headers: { Allow: "POST" } },
+        ),
+      POST: async ({ request }) => {
+        if (!isAuthorized(request)) {
+          return Response.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+        }
+        return runSync();
+      },
     },
   },
 });
