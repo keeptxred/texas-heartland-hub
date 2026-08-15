@@ -18,6 +18,7 @@ const FEATURED_LAW_TOPICS: LawTopic[] = [
   "education",
   "open-government",
   "elections",
+  "outdoors",
 ];
 
 function TopicSection({ topic }: { topic: LawTopic }) {
