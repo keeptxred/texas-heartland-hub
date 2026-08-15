@@ -65,7 +65,7 @@ function ShippingPolicyPage() {
       <section>
         <h2>Shipping Charges</h2>
         <p>
-          Standard shipping is free for orders delivered within the United States. The price shown for each product is the merchandise total before applicable sales tax; no separate standard-shipping charge is added at checkout.
+          Standard shipping is free for U.S. orders over $35. Shipping charges may apply to U.S. orders of $35 or less and are shown during checkout before payment is completed. Applicable sales tax is separate from shipping charges.
         </p>
       </section>
 
