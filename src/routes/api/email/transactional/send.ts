@@ -110,6 +110,37 @@ export const Route = createFileRoute('/api/email/transactional/send')({
           )
         }
 
+        // Stripe can retry webhook events. Reuse the caller-supplied
+        // idempotency key so a retry does not send a second receipt/alert.
+        const { data: existingLog, error: existingLogError } = await supabase
+          .from('email_send_log')
+          .select('id, status')
+          .eq('template_name', templateName)
+          .eq('recipient_email', effectiveRecipient)
+          .contains('metadata', { idempotency_key: idempotencyKey })
+          .in('status', ['pending', 'sent'])
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle()
+
+        if (existingLogError) {
+          console.error('Email idempotency lookup failed', {
+            error: existingLogError,
+            templateName,
+            recipient_redacted: redactEmail(effectiveRecipient),
+          })
+          return Response.json({ error: 'Failed to verify email idempotency' }, { status: 500 })
+        }
+
+        if (existingLog) {
+          return Response.json({
+            success: true,
+            provider: 'cloudflare-email-service',
+            deduplicated: true,
+            status: existingLog.status,
+          })
+        }
+
         const messageId = crypto.randomUUID()
         const element = React.createElement(template.component, templateData)
         const html = await render(element)
@@ -119,13 +150,26 @@ export const Route = createFileRoute('/api/email/transactional/send')({
             ? template.subject(templateData)
             : template.subject
 
-        await supabase.from('email_send_log').insert({
-          message_id: messageId,
-          template_name: templateName,
-          recipient_email: effectiveRecipient,
-          status: 'pending',
-          metadata: { provider: 'cloudflare-email-service', idempotency_key: idempotencyKey },
-        })
+        const { data: logEntry, error: logError } = await supabase
+          .from('email_send_log')
+          .insert({
+            message_id: messageId,
+            template_name: templateName,
+            recipient_email: effectiveRecipient,
+            status: 'pending',
+            metadata: { provider: 'cloudflare-email-service', idempotency_key: idempotencyKey },
+          })
+          .select('id')
+          .single()
+
+        if (logError || !logEntry) {
+          console.error('Failed to create transactional email log entry', {
+            error: logError,
+            templateName,
+            recipient_redacted: redactEmail(effectiveRecipient),
+          })
+          return Response.json({ error: 'Failed to prepare email delivery' }, { status: 500 })
+        }
 
         try {
           const result = await binding.send({
@@ -140,13 +184,16 @@ export const Route = createFileRoute('/api/email/transactional/send')({
             },
           })
 
-          await supabase.from('email_send_log').insert({
-            message_id: messageId,
-            template_name: templateName,
-            recipient_email: effectiveRecipient,
-            status: 'sent',
-            metadata: { provider: 'cloudflare-email-service' },
-          })
+          await supabase
+            .from('email_send_log')
+            .update({
+              status: 'sent',
+              metadata: {
+                provider: 'cloudflare-email-service',
+                idempotency_key: idempotencyKey,
+              },
+            })
+            .eq('id', logEntry.id)
 
           console.log('Transactional email sent through Cloudflare Email Service', {
             templateName,
@@ -162,14 +209,17 @@ export const Route = createFileRoute('/api/email/transactional/send')({
             error: message,
           })
 
-          await supabase.from('email_send_log').insert({
-            message_id: messageId,
-            template_name: templateName,
-            recipient_email: effectiveRecipient,
-            status: 'failed',
-            error_message: message.slice(0, 1000),
-            metadata: { provider: 'cloudflare-email-service' },
-          })
+          await supabase
+            .from('email_send_log')
+            .update({
+              status: 'failed',
+              error_message: message.slice(0, 1000),
+              metadata: {
+                provider: 'cloudflare-email-service',
+                idempotency_key: idempotencyKey,
+              },
+            })
+            .eq('id', logEntry.id)
 
           return Response.json({ error: 'Email delivery failed' }, { status: 502 })
         }
