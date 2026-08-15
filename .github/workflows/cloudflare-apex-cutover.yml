@@ -1,5 +1,4 @@
 name: One-time KeepTXRed Cloudflare apex cutover
-# This follow-up change intentionally triggers the already-registered one-time cutover workflow.
 
 on:
   push:
@@ -21,32 +20,27 @@ jobs:
     timeout-minutes: 12
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
+      CLOUDFLARE_DEPLOY_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
+      CLOUDFLARE_FALLBACK_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
       WORKER_NAME: keeptxred-site
       PRODUCTION_HOSTNAME: keeptxred.com
       PRODUCTION_ZONE_NAME: keeptxred.com
 
     steps:
-      - name: Verify cutover credentials
-        shell: bash
-        run: |
-          set -euo pipefail
-          missing=0
-          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_API_TOKEN; do
-            if [[ -z "${!name:-}" ]]; then
-              echo "::error title=Missing Cloudflare credential::$name is not configured in GitHub Actions secrets."
-              missing=1
-            fi
-          done
-          exit "$missing"
-
       - name: Verify Worker preview before touching DNS
         shell: bash
         run: |
           set -euo pipefail
+          for name in CLOUDFLARE_ACCOUNT_ID CLOUDFLARE_DEPLOY_TOKEN; do
+            if [[ -z "${!name:-}" ]]; then
+              echo "::error title=Missing Cloudflare credential::$name is not configured. DNS was not touched."
+              exit 1
+            fi
+          done
+
           subdomain_json="$(curl --fail-with-body --silent --show-error \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+            -H "Authorization: Bearer $CLOUDFLARE_DEPLOY_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain")"
           account_subdomain="$(python3 - "$subdomain_json" <<'PY'
           import json, sys
@@ -56,153 +50,149 @@ jobs:
           print((data.get("result") or {}).get("subdomain") or "")
           PY
           )"
-          if [[ -z "$account_subdomain" ]]; then
-            echo "::error title=Worker preview unavailable::Cloudflare did not return the account workers.dev subdomain. DNS was not touched."
-            exit 1
-          fi
-          health_url="https://$WORKER_NAME.$account_subdomain.workers.dev/api/public/hooks/health"
-          response="$(curl --retry 20 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error "$health_url")"
+          [[ -n "$account_subdomain" ]] || { echo "Worker preview unavailable. DNS was not touched." >&2; exit 1; }
+
+          response="$(curl --retry 20 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+            "https://$WORKER_NAME.$account_subdomain.workers.dev/api/public/hooks/health")"
           python3 - "$response" <<'PY'
           import json, sys
           data = json.loads(sys.argv[1])
-          failures = []
-          if data.get("database") != "ok": failures.append("database is not ok")
-          if data.get("ai_provider_ready") is not True: failures.append("AI provider is not ready")
-          if failures:
-              raise SystemExit("Worker preview health verification failed: " + "; ".join(failures))
-          print("Worker preview is healthy: database=ok, ai_provider_ready=true")
+          if data.get("database") != "ok" or data.get("ai_provider_ready") is not True:
+              raise SystemExit(f"Worker preview is not production-ready: {data!r}")
+          print("Worker preview healthy: database=ok, ai_provider_ready=true")
           PY
 
-      - name: Resolve Cloudflare zone and back up conflicting apex DNS
-        id: dns
+      - name: Safely replace apex web DNS with Worker Custom Domain
         shell: bash
-        run: |
-          set -euo pipefail
-          api="https://api.cloudflare.com/client/v4"
-          zone_id="${CLOUDFLARE_ZONE_ID:-}"
-
-          if [[ -z "$zone_id" ]]; then
-            zone_file="$(mktemp)"
-            trap 'rm -f "$zone_file"' EXIT
-            set +e
-            zone_http="$(curl --silent --show-error -o "$zone_file" -w '%{http_code}' \
-              -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-              --get --data-urlencode "name=$PRODUCTION_ZONE_NAME" \
-              --data-urlencode "account.id=$CLOUDFLARE_ACCOUNT_ID" \
-              "$api/zones")"
-            zone_curl=$?
-            set -e
-            if [[ "$zone_curl" -ne 0 || "$zone_http" -ge 400 ]]; then
-              echo "::error title=Cloudflare Zone Read permission required::Add Zone > Zone > Read and Zone > DNS > Edit for keeptxred.com to CLOUDFLARE_DEPLOY_API_TOKEN. No DNS records were changed."
-              cat "$zone_file" >&2 || true
-              exit 1
-            fi
-            zone_id="$(python3 - "$zone_file" <<'PY'
-          import json, os, sys
-          data = json.load(open(sys.argv[1], encoding="utf-8"))
-          matches = [z for z in (data.get("result") or []) if z.get("name") == os.environ["PRODUCTION_ZONE_NAME"] and (z.get("account") or {}).get("id") == os.environ["CLOUDFLARE_ACCOUNT_ID"]]
-          if len(matches) != 1:
-              raise SystemExit(f"Expected exactly one matching Cloudflare zone; found {len(matches)}")
-          if matches[0].get("status") != "active":
-              raise SystemExit(f"Cloudflare zone is not active: {matches[0].get('status')!r}")
-          print(matches[0]["id"])
-          PY
-            )"
-          fi
-
-          records_file="$(mktemp)"
-          set +e
-          records_http="$(curl --silent --show-error -o "$records_file" -w '%{http_code}' \
-            -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            --get --data-urlencode "name=$PRODUCTION_HOSTNAME" --data-urlencode "per_page=100" \
-            "$api/zones/$zone_id/dns_records")"
-          records_curl=$?
-          set -e
-          if [[ "$records_curl" -ne 0 || "$records_http" -ge 400 ]]; then
-            echo "::error title=Cloudflare DNS Edit permission required::Unable to read the existing apex DNS records. Add Zone > DNS > Edit for keeptxred.com to CLOUDFLARE_DEPLOY_API_TOKEN. No DNS records were changed."
-            cat "$records_file" >&2 || true
-            exit 1
-          fi
-
-          backup="$RUNNER_TEMP/keeptxred-apex-dns-backup.json"
-          python3 - "$records_file" "$backup" <<'PY'
-          import json, os, sys
-          data = json.load(open(sys.argv[1], encoding="utf-8"))
-          if data.get("success") is not True:
-              raise SystemExit(f"DNS record lookup failed: {data.get('errors')!r}")
-          hostname = os.environ["PRODUCTION_HOSTNAME"].rstrip(".").lower()
-          conflicts = []
-          for r in data.get("result") or []:
-              if str(r.get("name") or "").rstrip(".").lower() == hostname and r.get("type") in {"A", "AAAA", "CNAME"}:
-                  conflicts.append({
-                      "id": r.get("id"), "type": r.get("type"), "name": r.get("name"),
-                      "content": r.get("content"), "ttl": r.get("ttl", 1),
-                      "proxied": r.get("proxied"), "comment": r.get("comment"),
-                      "tags": r.get("tags") or [],
-                  })
-          if not conflicts:
-              raise SystemExit("No exact-host A/AAAA/CNAME record was found. Refusing to delete anything.")
-          json.dump(conflicts, open(sys.argv[2], "w", encoding="utf-8"))
-          print("Backed up conflicting apex web DNS records:")
-          for r in conflicts:
-              print(f"- {r['type']} {r['name']} -> {r['content']} (proxied={r['proxied']})")
-          PY
-          rm -f "$records_file"
-          echo "zone_id=$zone_id" >> "$GITHUB_OUTPUT"
-          echo "backup=$backup" >> "$GITHUB_OUTPUT"
-
-      - name: Replace apex web DNS with Worker Custom Domain
-        id: cutover
-        shell: bash
-        env:
-          ZONE_ID: ${{ steps.dns.outputs.zone_id }}
-          BACKUP: ${{ steps.dns.outputs.backup }}
         run: |
           set -euo pipefail
           api="https://api.cloudflare.com/client/v4"
           workdir="$(mktemp -d)"
           trap 'rm -rf "$workdir"' EXIT
 
-          restore_dns() {
-            python3 - "$BACKUP" <<'PY' | while IFS= read -r payload; do
-          import json, sys
-          for r in json.load(open(sys.argv[1], encoding="utf-8")):
-              payload = {k: r.get(k) for k in ("type", "name", "content", "ttl", "proxied", "comment", "tags") if r.get(k) is not None}
-              print(json.dumps(payload, separators=(",", ":")))
-          PY
-              restore_file="$workdir/restore.json"
-              restore_http="$(curl --silent --show-error -o "$restore_file" -w '%{http_code}' \
-                -X POST -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" \
-                --data "$payload" "$api/zones/$ZONE_ID/dns_records")"
-              if [[ "$restore_http" -ge 400 ]]; then
-                echo "::error title=DNS rollback failed::Cloudflare returned HTTP $restore_http while restoring an apex record."
-                cat "$restore_file" >&2
-                return 1
-              fi
-            done
-          }
-
-          while IFS= read -r record_id; do
-            delete_file="$workdir/delete-$record_id.json"
-            set +e
-            delete_http="$(curl --silent --show-error -o "$delete_file" -w '%{http_code}' \
-              -X DELETE -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-              "$api/zones/$ZONE_ID/dns_records/$record_id")"
-            delete_curl=$?
-            set -e
-            if [[ "$delete_curl" -ne 0 || "$delete_http" -ge 400 ]]; then
-              echo "::error title=Cloudflare DNS deletion failed::Failed to remove one conflicting apex web record (HTTP $delete_http). Rolling back."
-              restore_dns || true
+          zone_id="${CLOUDFLARE_ZONE_ID:-}"
+          if [[ -z "$zone_id" ]]; then
+            zone_file="$workdir/zone.json"
+            zone_http="$(curl --silent --show-error -o "$zone_file" -w '%{http_code}' \
+              -H "Authorization: Bearer $CLOUDFLARE_DEPLOY_TOKEN" \
+              --get --data-urlencode "name=$PRODUCTION_ZONE_NAME" \
+              --data-urlencode "account.id=$CLOUDFLARE_ACCOUNT_ID" \
+              "$api/zones")"
+            if [[ "$zone_http" -ge 400 ]]; then
+              echo "::error title=Cloudflare zone lookup failed::HTTP $zone_http. DNS was not touched."
+              cat "$zone_file" >&2 || true
               exit 1
             fi
-          done < <(python3 - "$BACKUP" <<'PY'
-          import json, sys
-          for r in json.load(open(sys.argv[1], encoding="utf-8")):
-              print(r["id"])
+            zone_id="$(python3 - "$zone_file" <<'PY'
+          import json, os, sys
+          data = json.load(open(sys.argv[1], encoding="utf-8"))
+          matches = [z for z in data.get("result", []) if z.get("name") == os.environ["PRODUCTION_ZONE_NAME"] and (z.get("account") or {}).get("id") == os.environ["CLOUDFLARE_ACCOUNT_ID"]]
+          if len(matches) != 1 or matches[0].get("status") != "active":
+              raise SystemExit(f"Expected one active matching zone; got {matches!r}")
+          print(matches[0]["id"])
           PY
-          )
+            )"
+          fi
 
-          payload="$(python3 - <<'PY'
+          read_records() {
+            local token="$1" out="$2"
+            curl --silent --show-error -o "$out" -w '%{http_code}' \
+              -H "Authorization: Bearer $token" \
+              --get --data-urlencode "name=$PRODUCTION_HOSTNAME" --data-urlencode "per_page=100" \
+              "$api/zones/$zone_id/dns_records"
+          }
+
+          records_file="$workdir/records.json"
+          set +e
+          records_http="$(read_records "$CLOUDFLARE_DEPLOY_TOKEN" "$records_file")"
+          records_curl=$?
+          set -e
+          DNS_TOKEN="$CLOUDFLARE_DEPLOY_TOKEN"
+          token_source="deploy token"
+
+          if [[ "$records_curl" -ne 0 || "$records_http" -ge 400 ]]; then
+            if [[ -z "${CLOUDFLARE_FALLBACK_TOKEN:-}" ]]; then
+              echo "::error title=Cloudflare DNS permission required::The deploy token cannot read DNS and no existing fallback token is configured. Add Zone > DNS > Edit for keeptxred.com to CLOUDFLARE_DEPLOY_API_TOKEN. DNS was not touched."
+              exit 1
+            fi
+            set +e
+            records_http="$(read_records "$CLOUDFLARE_FALLBACK_TOKEN" "$records_file")"
+            records_curl=$?
+            set -e
+            DNS_TOKEN="$CLOUDFLARE_FALLBACK_TOKEN"
+            token_source="existing fallback token"
+          fi
+
+          if [[ "$records_curl" -ne 0 || "$records_http" -ge 400 ]]; then
+            echo "::error title=Cloudflare DNS permission required::Neither existing Cloudflare token can read keeptxred.com DNS. Add Zone > DNS > Edit for keeptxred.com to CLOUDFLARE_DEPLOY_API_TOKEN. DNS was not touched."
+            cat "$records_file" >&2 || true
+            exit 1
+          fi
+          echo "DNS access confirmed with $token_source."
+
+          backup="$workdir/apex-backup.json"
+          python3 - "$records_file" "$backup" <<'PY'
+          import json, os, sys
+          data = json.load(open(sys.argv[1], encoding="utf-8"))
+          if data.get("success") is not True:
+              raise SystemExit(f"DNS lookup failed: {data.get('errors')!r}")
+          host = os.environ["PRODUCTION_HOSTNAME"].rstrip(".").lower()
+          records = []
+          for r in data.get("result") or []:
+              if str(r.get("name") or "").rstrip(".").lower() == host and r.get("type") in {"A", "AAAA", "CNAME"}:
+                  records.append({
+                      "id": r.get("id"), "type": r.get("type"), "name": r.get("name"),
+                      "content": r.get("content"), "ttl": r.get("ttl", 1),
+                      "proxied": r.get("proxied"), "comment": r.get("comment"),
+                      "tags": r.get("tags") or [],
+                  })
+          if len(records) != 1:
+              raise SystemExit(f"Expected exactly one conflicting apex A/AAAA/CNAME record; found {len(records)}. Refusing automated deletion.")
+          json.dump(records[0], open(sys.argv[2], "w", encoding="utf-8"))
+          r = records[0]
+          print(f"Backed up apex web record: {r['type']} {r['name']} -> {r['content']} (proxied={r['proxied']})")
+          PY
+
+          restore_dns() {
+            local payload restore_file restore_http
+            payload="$(python3 - "$backup" <<'PY'
+          import json, sys
+          r = json.load(open(sys.argv[1], encoding="utf-8"))
+          print(json.dumps({k: r.get(k) for k in ("type", "name", "content", "ttl", "proxied", "comment", "tags") if r.get(k) is not None}, separators=(",", ":")))
+          PY
+            )"
+            restore_file="$workdir/restore.json"
+            restore_http="$(curl --silent --show-error -o "$restore_file" -w '%{http_code}' \
+              -X POST -H "Authorization: Bearer $DNS_TOKEN" -H "Content-Type: application/json" \
+              --data "$payload" "$api/zones/$zone_id/dns_records")"
+            if [[ "$restore_http" -ge 400 ]]; then
+              echo "::error title=DNS rollback failed::HTTP $restore_http while restoring the saved apex record."
+              cat "$restore_file" >&2 || true
+              return 1
+            fi
+            echo "Previous apex web DNS record restored."
+          }
+
+          record_id="$(python3 - "$backup" <<'PY'
+          import json, sys
+          print(json.load(open(sys.argv[1], encoding="utf-8"))["id"])
+          PY
+          )"
+          delete_file="$workdir/delete.json"
+          set +e
+          delete_http="$(curl --silent --show-error -o "$delete_file" -w '%{http_code}' \
+            -X DELETE -H "Authorization: Bearer $DNS_TOKEN" \
+            "$api/zones/$zone_id/dns_records/$record_id")"
+          delete_curl=$?
+          set -e
+          if [[ "$delete_curl" -ne 0 || "$delete_http" -ge 400 ]]; then
+            echo "::error title=Cloudflare DNS Edit permission required::The selected token can read DNS but cannot delete the conflicting apex record (HTTP $delete_http). No DNS record was changed. Add Zone > DNS > Edit for keeptxred.com to CLOUDFLARE_DEPLOY_API_TOKEN."
+            cat "$delete_file" >&2 || true
+            exit 1
+          fi
+          echo "Old apex web record removed; attaching Worker Custom Domain immediately."
+
+          domain_payload="$(python3 - <<'PY'
           import json, os
           print(json.dumps({"hostname": os.environ["PRODUCTION_HOSTNAME"], "service": os.environ["WORKER_NAME"], "zone_name": os.environ["PRODUCTION_ZONE_NAME"]}))
           PY
@@ -210,12 +200,13 @@ jobs:
           attach_file="$workdir/attach.json"
           set +e
           attach_http="$(curl --silent --show-error -o "$attach_file" -w '%{http_code}' \
-            -X PUT -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" \
-            --data "$payload" "$api/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains")"
+            -X PUT -H "Authorization: Bearer $CLOUDFLARE_DEPLOY_TOKEN" -H "Content-Type: application/json" \
+            --data "$domain_payload" "$api/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains")"
           attach_curl=$?
           set -e
 
-          cutover_ok="$(python3 - "$attach_file" <<'PY'
+          domain_id=""
+          attach_ok="$(python3 - "$attach_file" <<'PY'
           import json, os, sys
           try:
               data = json.load(open(sys.argv[1], encoding="utf-8"))
@@ -226,93 +217,62 @@ jobs:
           print("true" if ok else "false")
           PY
           )"
-          if [[ "$attach_curl" -ne 0 || "$attach_http" -ge 400 || "$cutover_ok" != "true" ]]; then
-            echo "Worker Custom Domain attach failed after DNS removal; restoring previous web DNS immediately."
-            restore_dns
-            cat "$attach_file" >&2 || true
-            exit 1
-          fi
-
-          domain_id="$(python3 - "$attach_file" <<'PY'
+          if [[ "$attach_curl" -eq 0 && "$attach_http" -lt 400 && "$attach_ok" == "true" ]]; then
+            domain_id="$(python3 - "$attach_file" <<'PY'
           import json, sys
           print((json.load(open(sys.argv[1], encoding="utf-8")).get("result") or {}).get("id") or "")
-          PY
-          )"
-          if [[ -z "$domain_id" ]]; then
-            echo "Custom Domain response omitted its ID; restoring old DNS rather than leaving an unverified cutover."
-            restore_dns
-            exit 1
-          fi
-          echo "domain_id=$domain_id" >> "$GITHUB_OUTPUT"
-          echo "Worker Custom Domain attached successfully."
-
-      - name: Verify production and rollback if unhealthy
-        shell: bash
-        env:
-          ZONE_ID: ${{ steps.dns.outputs.zone_id }}
-          BACKUP: ${{ steps.dns.outputs.backup }}
-          DOMAIN_ID: ${{ steps.cutover.outputs.domain_id }}
-        run: |
-          set -euo pipefail
-          api="https://api.cloudflare.com/client/v4"
-          response_file="$(mktemp)"
-          trap 'rm -f "$response_file"' EXIT
-          set +e
-          curl --retry 60 --retry-delay 5 --retry-all-errors --fail-with-body --silent --show-error \
-            -o "$response_file" "https://$PRODUCTION_HOSTNAME/api/public/hooks/health"
-          curl_status=$?
-          set -e
-
-          health_ok=false
-          if [[ "$curl_status" -eq 0 ]]; then
-            health_ok="$(python3 - "$response_file" <<'PY'
-          import json, sys
-          try:
-              data = json.load(open(sys.argv[1], encoding="utf-8"))
-              ok = data.get("database") == "ok" and data.get("ai_provider_ready") is True
-          except Exception:
-              ok = False
-          print("true" if ok else "false")
           PY
             )"
           fi
 
+          if [[ -z "$domain_id" ]]; then
+            echo "Worker Custom Domain attach failed; restoring old apex DNS immediately."
+            cat "$attach_file" >&2 || true
+            restore_dns
+            exit 1
+          fi
+          echo "Worker Custom Domain attached. Waiting for production health."
+
+          health_ok=false
+          for attempt in $(seq 1 60); do
+            set +e
+            health="$(curl --connect-timeout 8 --max-time 15 --fail-with-body --silent --show-error \
+              "https://$PRODUCTION_HOSTNAME/api/public/hooks/health" 2>/dev/null)"
+            health_curl=$?
+            set -e
+            if [[ "$health_curl" -eq 0 ]]; then
+              health_ok="$(python3 - "$health" <<'PY'
+          import json, sys
+          try:
+              d = json.loads(sys.argv[1])
+              ok = d.get("database") == "ok" and d.get("ai_provider_ready") is True
+          except Exception:
+              ok = False
+          print("true" if ok else "false")
+          PY
+              )"
+              [[ "$health_ok" == "true" ]] && break
+            fi
+            sleep 5
+          done
+
           if [[ "$health_ok" == "true" ]]; then
-            curl --retry 10 --retry-delay 3 --retry-all-errors --fail --silent --show-error -o /dev/null "https://$PRODUCTION_HOSTNAME/"
+            curl --retry 10 --retry-delay 3 --retry-all-errors --fail --silent --show-error \
+              -o /dev/null "https://$PRODUCTION_HOSTNAME/"
             echo "Production health passed and homepage is reachable. KeepTXRed is now served by Cloudflare Workers."
             exit 0
           fi
 
-          echo "Production health failed after the provisioning window. Rolling back to the previous web DNS."
-          detach_file="$(mktemp)"
+          echo "Production did not become healthy in the provisioning window; rolling back."
+          detach_file="$workdir/detach.json"
           detach_http="$(curl --silent --show-error -o "$detach_file" -w '%{http_code}' \
-            -X DELETE -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-            "$api/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains/$DOMAIN_ID")"
+            -X DELETE -H "Authorization: Bearer $CLOUDFLARE_DEPLOY_TOKEN" \
+            "$api/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/domains/$domain_id")"
           if [[ "$detach_http" -ge 400 ]]; then
-            echo "::error title=Automatic rollback blocked::Could not detach the failed Worker Custom Domain (HTTP $detach_http)."
-            cat "$detach_file" >&2
+            echo "::error title=Automatic rollback blocked::Could not detach the unhealthy Worker Custom Domain (HTTP $detach_http)."
+            cat "$detach_file" >&2 || true
             exit 1
           fi
-
-          restore_failed=0
-          while IFS= read -r payload; do
-            restore_file="$(mktemp)"
-            restore_http="$(curl --silent --show-error -o "$restore_file" -w '%{http_code}' \
-              -X POST -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" -H "Content-Type: application/json" \
-              --data "$payload" "$api/zones/$ZONE_ID/dns_records")"
-            if [[ "$restore_http" -ge 400 ]]; then
-              echo "::error title=DNS rollback failed::Could not restore an apex record (HTTP $restore_http)."
-              cat "$restore_file" >&2
-              restore_failed=1
-            fi
-            rm -f "$restore_file"
-          done < <(python3 - "$BACKUP" <<'PY'
-          import json, sys
-          for r in json.load(open(sys.argv[1], encoding="utf-8")):
-              payload = {k: r.get(k) for k in ("type", "name", "content", "ttl", "proxied", "comment", "tags") if r.get(k) is not None}
-              print(json.dumps(payload, separators=(",", ":")))
-          PY
-          )
-          [[ "$restore_failed" -eq 0 ]] || exit 1
-          echo "::error title=Cloudflare cutover rolled back::Production health failed, so the previous apex DNS records were restored."
+          restore_dns
+          echo "::error title=Cloudflare cutover rolled back::Production health failed, so the previous apex web DNS record was restored."
           exit 1
