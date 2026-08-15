@@ -42,6 +42,18 @@ function hasSportsMetadata(row: { kind?: string | null; category?: string | null
     || /^(sports|nfl|mlb|nba|nhl|mls|nwsl|wnba|college sports|motorsports|sports business & policy)$/i.test((row.category ?? "").trim());
 }
 
+function editorialIdentityText(row: {
+  title?: string | null;
+  dek?: string | null;
+  seo_keywords?: string[] | null;
+}): string {
+  // Sports routing should be driven by the article's editorial identity, not
+  // every token in the stored body. Imported/rewritten bodies can contain
+  // related-link residue, navigation copy, venue references, or incidental
+  // team mentions that have nothing to do with the story itself.
+  return [row.title, row.dek, ...(row.seo_keywords ?? [])].filter(Boolean).join(" ");
+}
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
@@ -58,9 +70,11 @@ async function handler() {
   let teamTagged = 0;
   const changes: Array<{ slug: string; action: "classified" | "cleaned"; kind: string; teams: string[] }> = [];
   for (const row of data ?? []) {
-    // Classify from editorial content, not mutable Sports metadata. Including
-    // kind/category/keywords here makes an old false positive self-reinforcing.
-    const text = [row.title, row.dek, row.body, ...(row.seo_keywords ?? [])].filter(Boolean).join(" ");
+    // Use title/dek/SEO keywords only. Including body or mutable Sports
+    // metadata here made old false positives self-reinforcing and allowed
+    // unrelated body residue to classify BBQ, entertainment and TV stories
+    // as football/college/NFL coverage.
+    const text = editorialIdentityText(row);
     const classification = classifySportsText(text);
     const texasNamed = /\btexas\b/i.test(text);
     const strongTexasSports = classification.teams.length > 0
