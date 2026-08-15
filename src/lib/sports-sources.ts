@@ -46,7 +46,7 @@ export const SPORTS_SOURCES: readonly SportsSource[] = [
   { name: "Baylor Athletics", url: "https://baylorbears.com/archives", mode: "html-links", include: "^/news/20\\d{2}/", team: "baylor", league: "cfb", topic: "college", priority: 1, reputation: 92 },
   { name: "Texas Tech Athletics", url: "https://texastech.com/rss?path=general", mode: "rss", team: "texas-tech", league: "cfb", topic: "college", priority: 1, reputation: 92 },
   { name: "Houston Cougars Athletics", url: "https://uhcougars.com/archives", mode: "html-links", include: "^/news/20\\d{2}/", team: "houston-cougars", league: "cfb", topic: "college", priority: 1, reputation: 92 },
-  { name: "SMU Athletics", url: "https://smumustangs.com/sports/general", mode: "html-links", include: "^/news/20\\d{2}/", team: "smu", league: "cfb", topic: "college", priority: 1, reputation: 92 },
+  { name: "SMU Athletics", url: "https://smumustangs.com/archives", mode: "html-links", include: "^/news/20\\d{2}/", team: "smu", league: "cfb", topic: "college", priority: 1, reputation: 92 },
   { name: "UTSA Athletics", url: "https://goutsa.com/news/", mode: "html-links", include: "^/news/20\\d{2}/", team: "utsa", league: "cfb", topic: "college", priority: 1, reputation: 92 },
   { name: "North Texas Athletics", url: "https://meangreensports.com/archives", mode: "html-links", include: "^/news/20\\d{2}/", team: "north-texas", league: "cfb", topic: "college", priority: 2, reputation: 90 },
   { name: "Texas State Athletics", url: "https://txst.com/rss.aspx?path=general", mode: "rss", team: "texas-state", league: "cfb", topic: "college", priority: 2, reputation: 90 },
