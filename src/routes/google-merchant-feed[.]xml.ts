@@ -8,6 +8,7 @@ const XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
 const BRAND = "Keep TX Red";
 const TITLE_LIMIT = 150;
 const DESCRIPTION_LIMIT = 5000;
+const FREE_SHIPPING_THRESHOLD_USD = 35;
 
 type VariantOption = {
   name: "Color" | "Size";
@@ -276,6 +277,10 @@ function renderItem(item: MerchantItem): string {
     item.apparel ? "      <g:gender>unisex</g:gender>" : "",
     item.apparel && item.size ? "      <g:size_system>US</g:size_system>" : "",
     item.category ? `      <g:google_product_category>${escapeXml(item.category)}</g:google_product_category>` : "",
+    item.currency.toUpperCase() === "USD" ? `      <g:free_shipping_threshold>
+        <g:country>US</g:country>
+        <g:price_threshold>${FREE_SHIPPING_THRESHOLD_USD.toFixed(2)} USD</g:price_threshold>
+      </g:free_shipping_threshold>` : "",
   ].filter(Boolean).join("\n");
 
   return `    <item>
@@ -290,15 +295,6 @@ function renderItem(item: MerchantItem): string {
       <g:price>${escapeXml(item.price.toFixed(2))} ${escapeXml(item.currency)}</g:price>
       <g:brand>${escapeXml(BRAND)}</g:brand>
       <g:mpn>${escapeXml(item.mpn)}</g:mpn>
-      <g:shipping>
-        <g:country>US</g:country>
-        <g:service>Standard</g:service>
-        <g:price>0.00 USD</g:price>
-        <g:min_handling_time>3</g:min_handling_time>
-        <g:max_handling_time>7</g:max_handling_time>
-        <g:min_transit_time>2</g:min_transit_time>
-        <g:max_transit_time>5</g:max_transit_time>
-      </g:shipping>
 ${optional}
     </item>`;
 }

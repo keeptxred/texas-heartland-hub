@@ -177,7 +177,7 @@ function ProductOfferPage() {
             <span aria-hidden>→</span>
           </button>
           <p className="mt-3 text-center text-[11px] text-muted-foreground">
-            🔒 Secure checkout · Free U.S. shipping · Production in 3–7 business days
+            🔒 Secure checkout · Free U.S. shipping on orders over $35 · Production in 3–7 business days
           </p>
 
           <Link
@@ -212,33 +212,6 @@ function ProductOfferPage() {
               availability: "https://schema.org/InStock",
               itemCondition: "https://schema.org/NewCondition",
               url,
-              shippingDetails: {
-                "@type": "OfferShippingDetails",
-                shippingRate: {
-                  "@type": "MonetaryAmount",
-                  value: 0,
-                  currency,
-                },
-                shippingDestination: {
-                  "@type": "DefinedRegion",
-                  addressCountry: "US",
-                },
-                deliveryTime: {
-                  "@type": "ShippingDeliveryTime",
-                  handlingTime: {
-                    "@type": "QuantitativeValue",
-                    minValue: 3,
-                    maxValue: 7,
-                    unitCode: "DAY",
-                  },
-                  transitTime: {
-                    "@type": "QuantitativeValue",
-                    minValue: 2,
-                    maxValue: 5,
-                    unitCode: "DAY",
-                  },
-                },
-              },
             },
           }),
         }}
