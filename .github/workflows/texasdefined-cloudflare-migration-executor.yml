@@ -4,10 +4,18 @@ on:
   workflow_dispatch:
     inputs:
       td_ref:
-        description: TexasDefined branch or commit to deploy to isolated preview
+        description: TexasDefined branch or commit to deploy
         required: true
         type: string
         default: migrate-texasdefined-cloudflare
+      worker_name:
+        description: Cloudflare Worker name
+        required: true
+        type: choice
+        options:
+          - texasdefined-site-migration-preview
+          - texasdefined-site
+        default: texasdefined-site-migration-preview
   pull_request:
     types: [opened, synchronize, reopened]
     branches: [main]
@@ -16,19 +24,22 @@ permissions:
   contents: read
 
 concurrency:
-  group: texasdefined-cloudflare-migration-executor
+  group: texasdefined-cloudflare-migration-executor-${{ github.head_ref || inputs.worker_name || 'manual' }}
   cancel-in-progress: true
 
 jobs:
-  preview:
-    if: github.event_name == 'workflow_dispatch' || github.head_ref == 'run-td-cloudflare-migration'
+  deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.head_ref == 'run-td-cloudflare-migration' ||
+      github.head_ref == 'run-td-cloudflare-production-worker'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_DEPLOY_API_TOKEN }}
-      TD_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.td_ref || 'migrate-texasdefined-cloudflare' }}
-      PREVIEW_WORKER_NAME: texasdefined-site-migration-preview
+      TD_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.td_ref || (github.head_ref == 'run-td-cloudflare-production-worker' && 'main' || 'migrate-texasdefined-cloudflare') }}
+      WORKER_NAME: ${{ github.event_name == 'workflow_dispatch' && inputs.worker_name || (github.head_ref == 'run-td-cloudflare-production-worker' && 'texasdefined-site' || 'texasdefined-site-migration-preview') }}
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -50,27 +61,28 @@ jobs:
               raise SystemExit(f"Workers Scripts access failed: {data.get('errors')!r}")
           print(f"Deploy token can access {len(data.get('result') or [])} Worker script(s).")
           PY
-      - name: Fetch TexasDefined migration revision
+      - name: Fetch TexasDefined revision
         shell: bash
         run: |
           set -euo pipefail
           git clone --depth 1 --branch "$TD_REF" https://github.com/keeptxred/TexasDefined.git td
-          git -C td rev-parse HEAD
+          echo "TexasDefined revision: $(git -C td rev-parse HEAD)"
+          echo "Target Worker: $WORKER_NAME"
       - name: Install and build TexasDefined
         working-directory: td
         run: |
           npm ci
           npm run build
           npm run performance:validate
-      - name: Deploy isolated TexasDefined Worker preview
+      - name: Deploy TexasDefined Worker
         id: deploy
         working-directory: td
         shell: bash
         run: |
           set -euo pipefail
-          npx wrangler deploy --name "$PREVIEW_WORKER_NAME" 2>&1 | tee /tmp/td-wrangler-deploy.log
-          PREVIEW_URL="$(grep -Eo 'https://[^[:space:]]+\.workers\.dev' /tmp/td-wrangler-deploy.log | tail -1 | sed 's/[[:punct:]]$//' || true)"
-          if [ -z "$PREVIEW_URL" ]; then
+          npx wrangler deploy --name "$WORKER_NAME" 2>&1 | tee /tmp/td-wrangler-deploy.log
+          WORKER_URL="$(grep -Eo 'https://[^[:space:]]+\.workers\.dev' /tmp/td-wrangler-deploy.log | tail -1 | sed 's/[[:punct:]]$//' || true)"
+          if [ -z "$WORKER_URL" ]; then
             subdomain_json="$(curl --fail-with-body --silent --show-error \
               -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
               "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/subdomain" || true)"
@@ -83,21 +95,21 @@ jobs:
           PY
             )"
             if [ -n "$subdomain" ]; then
-              PREVIEW_URL="https://${PREVIEW_WORKER_NAME}.${subdomain}.workers.dev"
+              WORKER_URL="https://${WORKER_NAME}.${subdomain}.workers.dev"
             fi
           fi
-          test -n "$PREVIEW_URL" || { echo 'Unable to resolve TexasDefined workers.dev preview URL.' >&2; exit 1; }
-          echo "url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
-          echo "TexasDefined preview: $PREVIEW_URL"
-      - name: Smoke-test TexasDefined Cloudflare preview
+          test -n "$WORKER_URL" || { echo 'Unable to resolve TexasDefined workers.dev URL.' >&2; exit 1; }
+          echo "url=$WORKER_URL" >> "$GITHUB_OUTPUT"
+          echo "TexasDefined Worker: $WORKER_URL"
+      - name: Smoke-test TexasDefined Cloudflare Worker
         shell: bash
         env:
-          PREVIEW_URL: ${{ steps.deploy.outputs.url }}
+          WORKER_URL: ${{ steps.deploy.outputs.url }}
         run: |
           set -euo pipefail
           for path in / /robots.txt /sitemap.xml /fishing /guides /county/travis; do
-            echo "Checking ${PREVIEW_URL}${path}"
-            curl --retry 10 --retry-all-errors --retry-delay 3 --max-time 45 -fsSL "${PREVIEW_URL}${path}" -o /tmp/td-response
+            echo "Checking ${WORKER_URL}${path}"
+            curl --retry 10 --retry-all-errors --retry-delay 3 --max-time 45 -fsSL "${WORKER_URL}${path}" -o /tmp/td-response
             test -s /tmp/td-response || { echo "Empty response for $path" >&2; exit 1; }
           done
-          echo 'TexasDefined isolated Cloudflare preview passed all smoke tests.'
+          echo "TexasDefined $WORKER_NAME passed all workers.dev smoke tests."
