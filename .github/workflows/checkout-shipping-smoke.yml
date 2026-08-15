@@ -38,11 +38,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if [[ -z "${CLOUDFLARE_ACCOUNT_ID:-}" || -z "${CLOUDFLARE_API_TOKEN:-}" ]]; then
-            echo "Cloudflare audit skipped: deploy credentials unavailable"
-            exit 0
-          fi
-
           response="$(curl --fail-with-body --silent --show-error \
             -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
             "https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$WORKER_NAME/secrets")"
@@ -59,78 +54,66 @@ jobs:
           print("Printify quote bindings present: " + str("PRINTIFY_API_TOKEN" in names and "PRINTIFY_SHOP_ID" in names))
           PY
 
+      - name: Recover Printify catalog through legacy runtime
+        id: recovery
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          response="$(curl --retry 3 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error \
+            -X POST https://keeptxred.lovable.app/api/public/hooks/sync-printify)"
+          echo "Legacy Printify recovery response: $response"
+          python3 - "$response" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          if data.get("ok") is not True:
+              raise SystemExit(f"Legacy Printify recovery failed: {data!r}")
+          if int(data.get("upserted") or 0) < 1:
+              raise SystemExit(f"Legacy Printify recovery returned no products: {data!r}")
+          print(f"Legacy Printify recovery PASS: fetched={data.get('fetched')} upserted={data.get('upserted')} newlyImported={data.get('newlyImported')}")
+          PY
+
       - name: Validate live Merchant feed and choose smoke products
         id: merchant
         continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
-          curl --retry 10 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+          curl --retry 3 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error \
             https://keeptxred.com/google-merchant-feed.xml -o /tmp/merchant-feed.xml
 
           python3 - <<'PY'
           import json
           import re
           import xml.etree.ElementTree as ET
-
-          path = "/tmp/merchant-feed.xml"
-          root = ET.parse(path).getroot()
-          ns = {"g": "http://base.google.com/ns/1.0"}
-          items = root.findall("./channel/item")
-          if not items:
-              raise SystemExit("Merchant feed contains no offers")
-
-          eligible = []
-          zero_shipping_overrides = []
-          threshold_errors = []
+          root = ET.parse('/tmp/merchant-feed.xml').getroot()
+          ns = {'g': 'http://base.google.com/ns/1.0'}
+          items = root.findall('./channel/item')
+          if not items: raise SystemExit('Merchant feed contains no offers')
+          eligible=[]; zero_shipping_overrides=[]; threshold_errors=[]
           for item in items:
-              title = (item.findtext("title") or "").strip()
-              link = (item.findtext("link") or "").strip()
-              price_text = (item.findtext("g:price", namespaces=ns) or "").strip()
-              match = re.match(r"^([0-9]+(?:\.[0-9]+)?)\s+([A-Z]{3})$", price_text)
-              if not match:
-                  continue
-              price = float(match.group(1))
-              currency = match.group(2)
-
-              if currency == "USD":
-                  threshold = item.find("g:free_shipping_threshold", ns)
-                  country = threshold.findtext("g:country", namespaces=ns) if threshold is not None else None
-                  amount = threshold.findtext("g:price_threshold", namespaces=ns) if threshold is not None else None
-                  if country != "US" or amount != "35.00 USD":
-                      threshold_errors.append({"title": title, "country": country, "threshold": amount})
-
-              for shipping in item.findall("g:shipping", ns):
-                  shipping_price = (shipping.findtext("g:price", namespaces=ns) or "").strip()
-                  if shipping_price == "0.00 USD":
-                      zero_shipping_overrides.append(title)
-
-              route = re.search(r"/product-offer/([^/]+)/([0-9]+)(?:$|[?#])", link)
-              if route and currency == "USD":
-                  eligible.append({
-                      "title": title,
-                      "link": link,
-                      "image": (item.findtext("g:image_link", namespaces=ns) or "").strip(),
-                      "price": price,
-                      "currency": currency,
-                      "productId": route.group(1),
-                      "variantId": int(route.group(2)),
-                  })
-
-          if threshold_errors:
-              raise SystemExit(f"Merchant free-shipping threshold errors: {threshold_errors[:5]!r}")
-          if zero_shipping_overrides:
-              raise SystemExit(f"Merchant feed still contains universal $0 shipping overrides: {zero_shipping_overrides[:5]!r}")
-
-          under = next((item for item in sorted(eligible, key=lambda x: x["price"]) if item["price"] <= 35.0), None)
-          over = next((item for item in sorted(eligible, key=lambda x: x["price"]) if item["price"] > 35.0), None)
-          if not under or not over:
-              raise SystemExit(f"Need one <=$35 and one >$35 variant offer for smoke test; found {len(eligible)} eligible offers")
-
-          result = {"under": under, "over": over, "offer_count": len(items)}
-          with open("/tmp/smoke-products.json", "w", encoding="utf-8") as fh:
-              json.dump(result, fh)
-          print(f"Merchant feed PASS: {len(items)} offers; threshold is 35.00 USD; no universal $0 shipping overrides")
+              title=(item.findtext('title') or '').strip(); link=(item.findtext('link') or '').strip()
+              price_text=(item.findtext('g:price', namespaces=ns) or '').strip()
+              match=re.match(r'^([0-9]+(?:\.[0-9]+)?)\s+([A-Z]{3})$', price_text)
+              if not match: continue
+              price=float(match.group(1)); currency=match.group(2)
+              if currency == 'USD':
+                  threshold=item.find('g:free_shipping_threshold', ns)
+                  country=threshold.findtext('g:country', namespaces=ns) if threshold is not None else None
+                  amount=threshold.findtext('g:price_threshold', namespaces=ns) if threshold is not None else None
+                  if country != 'US' or amount != '35.00 USD': threshold_errors.append({'title':title,'country':country,'threshold':amount})
+              for shipping in item.findall('g:shipping', ns):
+                  if (shipping.findtext('g:price', namespaces=ns) or '').strip() == '0.00 USD': zero_shipping_overrides.append(title)
+              route=re.search(r'/product-offer/([^/]+)/([0-9]+)(?:$|[?#])', link)
+              if route and currency == 'USD':
+                  eligible.append({'title':title,'link':link,'image':(item.findtext('g:image_link',namespaces=ns) or '').strip(),'price':price,'currency':currency,'productId':route.group(1),'variantId':int(route.group(2))})
+          if threshold_errors: raise SystemExit(f'Merchant free-shipping threshold errors: {threshold_errors[:5]!r}')
+          if zero_shipping_overrides: raise SystemExit(f'Merchant feed still contains universal $0 shipping overrides: {zero_shipping_overrides[:5]!r}')
+          under=next((x for x in sorted(eligible,key=lambda x:x['price']) if x['price'] <= 35.0),None)
+          over=next((x for x in sorted(eligible,key=lambda x:x['price']) if x['price'] > 35.0),None)
+          if not under or not over: raise SystemExit(f'Need one <=$35 and one >$35 variant offer; found {len(eligible)} eligible offers')
+          with open('/tmp/smoke-products.json','w',encoding='utf-8') as fh: json.dump({'under':under,'over':over,'offer_count':len(items)},fh)
+          print(f"Merchant feed PASS: {len(items)} offers; threshold 35.00 USD; no universal $0 shipping overrides")
           print(f"Under-$35 smoke product: {under['title']} @ ${under['price']:.2f}")
           print(f"Over-$35 smoke product: {over['title']} @ ${over['price']:.2f}")
           PY
@@ -143,10 +126,11 @@ jobs:
         if: steps.merchant.outcome == 'success'
         run: node .github/scripts/checkout-shipping-smoke.mjs
 
-      - name: Fail if Merchant feed was unavailable
+      - name: Report recovery/feed state
         if: steps.merchant.outcome != 'success'
         run: |
-          echo "Merchant feed verification failed; checkout smoke was intentionally skipped."
+          echo "Catalog recovery outcome: ${{ steps.recovery.outcome }}"
+          echo "Merchant feed outcome: ${{ steps.merchant.outcome }}"
           exit 1
 
       - name: Upload smoke screenshots
