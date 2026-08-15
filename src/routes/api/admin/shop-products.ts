@@ -30,8 +30,8 @@ type ProductUpdate = {
 
 function isAuthorized(request: Request) {
   const supplied = request.headers.get("x-admin-passcode") ?? "";
-  const expected = process.env.ADMIN_PASSCODE ?? process.env.VITE_ADMIN_PASSCODE ?? "keeptxred";
-  return supplied.length > 0 && supplied === expected;
+  const expected = process.env.ADMIN_PASSCODE ?? process.env.VITE_ADMIN_PASSCODE ?? "";
+  return expected.length > 0 && supplied.length > 0 && supplied === expected;
 }
 
 function validCategory(value: unknown) {
