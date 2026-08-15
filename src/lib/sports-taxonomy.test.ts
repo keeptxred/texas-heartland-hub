@@ -65,4 +65,34 @@ describe("sports taxonomy", () => {
     expect(politics.topics).toEqual(expect.arrayContaining(["recruiting", "business-policy"]));
     expect(politics.isSports).toBe(false);
   });
+
+  it("does not infer a team from a venue-only entertainment story", () => {
+    const result = classifySportsText("Ringling returns to Houston with an animal-free circus at NRG Stadium");
+    expect(result.teams).not.toContain("texans");
+    expect(result.isSports).toBe(false);
+  });
+
+  it("recognizes an ambiguous Rangers headline when baseball context is present", () => {
+    const text = "Rangers Win Fourth Straight Behind deGrom as AL West Race Tightens";
+    const result = classifySportsText(text);
+    expect(result.teams).toContain("rangers");
+    expect(result.leagues).toContain("mlb");
+    expect(result.topics).toContain("baseball");
+    expect(result.isSports).toBe(true);
+  });
+
+  it("keeps city-specific NBA and athletics stories in Sports", () => {
+    const camp = classifySportsText("NBA Rookie Kingston Flemings Comes Home to San Antonio for a Basketball Camp");
+    const tomball = classifySportsText("Tomball ISD Plans Athletic Upgrades as Extreme Heat Reshapes Texas Sports");
+    expect(camp.leagues).toContain("nba");
+    expect(camp.cities).toContain("san antonio");
+    expect(camp.isSports).toBe(true);
+    expect(tomball.isSports).toBe(true);
+  });
+
+  it("does not turn co-branded university merchandise into college sports", () => {
+    const result = classifySportsText("Buc-ee's and Texas A&M Put Two Texas Icons on the Same Shirt");
+    expect(result.teams).not.toContain("texas-am");
+    expect(result.isSports).toBe(false);
+  });
 });
