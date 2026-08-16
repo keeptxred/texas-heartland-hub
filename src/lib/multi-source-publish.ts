@@ -21,6 +21,12 @@ import {
   selectStoryAngle,
   type StoryAnglePlan,
 } from "@/lib/story-angle-selector";
+import {
+  acquirePublicationClaim,
+  assessPublicationTiming,
+  persistTimingDecision,
+  releasePublicationClaim,
+} from "@/lib/publication-lifecycle";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
 import { assessPublicationReadiness } from "@/lib/publication-quality-gate";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
@@ -258,6 +264,53 @@ async function assessExistingStory(
   return assessStoryNovelty(incoming, existingText);
 }
 
+async function preparePublicationLifecycle(
+  db: any,
+  feedItemId: number,
+  clusterId: string | null,
+  cluster: StoryCluster,
+  factVerification: FactVerificationDecision,
+): Promise<{ proceed: boolean; claimToken?: string; result?: PublishResult }> {
+  const timing = assessPublicationTiming(cluster, factVerification);
+  await persistTimingDecision(db, feedItemId, clusterId, timing);
+
+  if (timing.mode === "collect_briefly") {
+    return {
+      proceed: false,
+      result: {
+        ok: false,
+        error: `Publication collecting briefly: ${timing.reason}. Recheck after ${timing.waitUntil}.`,
+        clusteredSources: cluster.sourceCount,
+      },
+    };
+  }
+
+  const claim = await acquirePublicationClaim(db, clusterId);
+  if (claim.alreadyPublished && claim.publishedSlug) {
+    await db.from("texas_news_feed").update({ internal_slug: claim.publishedSlug }).eq("id", feedItemId);
+    return {
+      proceed: false,
+      result: {
+        ok: true,
+        slug: claim.publishedSlug,
+        alreadyPublished: true,
+        clusteredSources: cluster.sourceCount,
+      },
+    };
+  }
+  if (!claim.acquired) {
+    return {
+      proceed: false,
+      result: {
+        ok: false,
+        error: `Publication deferred: ${claim.reason}.`,
+        clusteredSources: cluster.sourceCount,
+      },
+    };
+  }
+  return { proceed: true, claimToken: claim.claimToken };
+}
+
 export async function publishSingleFeedItem(feedItemId: number): Promise<PublishResult> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
@@ -317,9 +370,14 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       };
     }
 
+    const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
+    if (!lifecycle.proceed) return lifecycle.result!;
+
     const singleResult = await publishLegacySingleFeedItem(feedItemId);
     if (singleResult.ok && singleResult.slug) {
       await persistEventCluster(db, cluster, { status: "published", publishedSlug: singleResult.slug });
+    } else {
+      await releasePublicationClaim(db, eventClusterId, lifecycle.claimToken);
     }
     return { ...singleResult, clusteredSources: cluster.sourceCount };
   }
@@ -371,6 +429,9 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       };
     }
   }
+
+  const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
+  if (!lifecycle.proceed) return lifecycle.result!;
 
   const anglePlan = selectStoryAngle(cluster, ledger, {
     preferredActions: existingNovelty?.material ? existingNovelty.newActions : [],
@@ -430,6 +491,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       noveltyScore: existingNovelty?.score,
     };
   }
+  await releasePublicationClaim(db, eventClusterId, lifecycle.claimToken);
   return {
     ...result,
     clusteredSources: cluster.sourceCount,
