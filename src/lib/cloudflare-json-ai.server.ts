@@ -41,6 +41,7 @@ export async function runCloudflareJson<T>(input: {
   maxTokens?: number;
   maxAttempts?: number;
   requestTimeoutMs?: number;
+  jsonSchema?: Record<string, unknown>;
 }): Promise<CloudflareJsonResult<T>> {
   const cf = credentials();
   if (!cf) throw new Error("Cloudflare Workers AI credentials are not configured");
@@ -69,7 +70,9 @@ export async function runCloudflareJson<T>(input: {
             { role: "system", content: input.system + retry },
             { role: "user", content: input.user },
           ],
-          response_format: { type: "json_object" },
+          response_format: input.jsonSchema
+            ? { type: "json_schema", json_schema: input.jsonSchema }
+            : { type: "json_object" },
           max_tokens: Math.min(Math.max(input.maxTokens ?? 9000, 512), 12000),
           temperature: attempt === 1 ? 0.2 : 0.1,
         }),
