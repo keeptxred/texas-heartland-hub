@@ -1,3 +1,3 @@
 Deploy current main to Cloudflare production.
-Trigger low-credit newsroom Phases 3-8 deployment for keeptxred.com.
-Target main: fa6c70fc7584b3f3f1b29b345c188e3b5e51a062
+Trigger guarded newsroom Phase 10 deployment for keeptxred.com.
+Target main: 088bd3034bf7a6582c76093e407955077f85359a
