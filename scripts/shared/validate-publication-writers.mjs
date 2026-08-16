@@ -10,6 +10,7 @@ const writers = [
   'src/routes/api/public/hooks/publishing-safety-net.ts',
   'src/lib/ingest-feeds-legacy.ts',
   'src/lib/ingest-and-normalize.functions.ts',
+  'src/lib/living-story-update.ts',
 ];
 const maintenanceWriters = new Map([
   [
