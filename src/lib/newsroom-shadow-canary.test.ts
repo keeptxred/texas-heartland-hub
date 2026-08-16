@@ -41,7 +41,7 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(adapter).toContain("maxItems: 6");
     expect(adapter).toContain("minItems: 3");
     expect(adapter).toContain("maxItems: 3");
-    expect(adapter).toContain('minLength: 300');
+    expect(adapter).toContain('minLength: 380');
   });
 
   it("skips sparse deduplicated research packets before reserving an AI generation", () => {
