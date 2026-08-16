@@ -18,7 +18,7 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
     const db = supabaseAdmin as any;
     const today = new Date().toISOString().slice(0, 10);
 
-    const [budgetResult, candidatesResult, clustersResult, packetsResult, draftsResult, briefsResult, cronResult] = await Promise.all([
+    const [budgetResult, candidatesResult, clustersResult, packetsResult, draftsResult, briefsResult, actionsResult, cronResult] = await Promise.all([
       db.from("ai_generation_budget").select("*").eq("site", "keeptxred").eq("budget_date", today).maybeSingle(),
       db.from("news_publish_candidates")
         .select("id,cluster_id,editorial_score,score_breakdown,recommended_format,status,selection_reason,rejection_reason,selected_at,published_at,created_at,updated_at")
@@ -35,10 +35,13 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
       db.from("newsroom_daily_briefs")
         .select("id,brief_date,mode,status,candidate_ids,cluster_ids,validation_reasons,main_word_count,provider,model,provider_attempts,published_article_id,created_at")
         .order("created_at", { ascending: false }).limit(20),
+      db.from("newsroom_editorial_actions")
+        .select("id,candidate_id,cluster_id,action,previous_candidate_status,next_candidate_status,reason,actor,created_at")
+        .order("created_at", { ascending: false }).limit(30),
       db.rpc("newsroom_admin_cron_health"),
     ]);
 
-    for (const result of [budgetResult, candidatesResult, clustersResult, packetsResult, draftsResult, briefsResult]) {
+    for (const result of [budgetResult, candidatesResult, clustersResult, packetsResult, draftsResult, briefsResult, actionsResult]) {
       if (result.error) throw new Error(result.error.message);
     }
 
@@ -72,6 +75,7 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
       formatCounts,
       drafts: draftsResult.data ?? [],
       briefs: briefsResult.data ?? [],
+      actions: actionsResult.data ?? [],
       cronHealth: cronResult.error ? [] : (cronResult.data ?? []),
     };
   });
@@ -102,26 +106,30 @@ export const updateNewsroomEditorialState = createServerFn({ method: "POST" })
     const reason = data.reason.trim();
     const candidatePatch: Record<string, unknown> = {};
     const clusterPatch: Record<string, unknown> = {};
+    let nextStatus = "PENDING";
 
     if (data.action === "SELECT") {
-      candidatePatch.status = "SELECTED";
+      nextStatus = "SELECTED";
+      candidatePatch.status = nextStatus;
       candidatePatch.selected_at = now;
       candidatePatch.selection_reason = reason || "Selected in Admin Editorial Control Center";
       candidatePatch.rejection_reason = null;
       clusterPatch.status = "SELECTED";
       clusterPatch.selected_at = now;
     } else if (data.action === "HOLD") {
-      candidatePatch.status = "HELD";
+      nextStatus = "HELD";
+      candidatePatch.status = nextStatus;
       candidatePatch.selection_reason = reason || "Held in Admin Editorial Control Center";
       candidatePatch.rejection_reason = null;
       clusterPatch.status = "HELD";
     } else if (data.action === "REJECT") {
-      candidatePatch.status = "REJECTED";
+      nextStatus = "REJECTED";
+      candidatePatch.status = nextStatus;
       candidatePatch.rejection_reason = reason || "Rejected in Admin Editorial Control Center";
       candidatePatch.selection_reason = null;
       clusterPatch.status = "SKIPPED";
     } else {
-      candidatePatch.status = "PENDING";
+      candidatePatch.status = nextStatus;
       candidatePatch.selection_reason = null;
       candidatePatch.rejection_reason = null;
       candidatePatch.selected_at = null;
@@ -136,5 +144,16 @@ export const updateNewsroomEditorialState = createServerFn({ method: "POST" })
     if (candidateUpdate.error) throw new Error(candidateUpdate.error.message);
     if (clusterUpdate.error) throw new Error(clusterUpdate.error.message);
 
-    return { ok: true as const, candidateId: candidate.id, clusterId: candidate.cluster_id, action: data.action };
+    const audit = await db.from("newsroom_editorial_actions").insert({
+      candidate_id: candidate.id,
+      cluster_id: candidate.cluster_id,
+      action: data.action,
+      previous_candidate_status: candidate.status,
+      next_candidate_status: nextStatus,
+      reason: reason || null,
+      actor: "admin-control-center",
+    });
+    if (audit.error) throw new Error(audit.error.message);
+
+    return { ok: true as const, candidateId: candidate.id, clusterId: candidate.cluster_id, action: data.action, status: nextStatus };
   });
