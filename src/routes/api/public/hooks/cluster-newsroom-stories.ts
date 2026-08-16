@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { clusterNewsFeedItems } from "@/lib/newsroom-clustering";
+import { isPrimaryNewsSource } from "@/lib/newsroom-editorial-scoring";
 
 const LOOKBACK_HOURS = 48;
 const CLUSTER_LIMIT = 500;
@@ -72,11 +73,12 @@ async function handler() {
       .map((id) => feedById.get(id))
       .filter((row): row is FeedRouteRow => Boolean(row));
     const sourceCount = new Set(members.map((row) => row.source).filter(Boolean)).size;
+    const primarySourceCount = members.filter((row) => isPrimaryNewsSource(row.source, row.link)).length;
     return {
       cluster_key: `deterministic-v${CLUSTER_VERSION}:${cluster.anchorFeedItemId}`,
       canonical_subject: cluster.canonicalSubject,
       source_count: sourceCount,
-      primary_source_count: 0,
+      primary_source_count: primarySourceCount,
       confidence: cluster.confidence,
       last_seen_at: now,
     };
@@ -95,12 +97,13 @@ async function handler() {
     if (!clusterId) return [];
     return cluster.memberFeedItemIds.map((feedItemId) => {
       const feed = feedById.get(feedItemId);
+      const isPrimarySource = isPrimaryNewsSource(feed?.source, feed?.link);
       return {
         cluster_id: clusterId,
         feed_item_id: feedItemId,
-        relationship_type: "supporting",
-        weight: 1,
-        is_primary_source: false,
+        relationship_type: isPrimarySource ? "primary" : "supporting",
+        weight: isPrimarySource ? 1.2 : 1,
+        is_primary_source: isPrimarySource,
         source_name: feed?.source ?? null,
         source_url: feed?.link ?? null,
       };
@@ -115,12 +118,14 @@ async function handler() {
   }
 
   const multiSourceClusters = clusterRows.filter((row) => row.source_count > 1).length;
+  const primarySourceItems = memberships.filter((row) => row.is_primary_source).length;
   return Response.json({
     ok: true,
     scanned: clusterable.length,
     clusters: clusters.length,
     multiSourceClusters,
     memberships: memberships.length,
+    primarySourceItems,
     clusterVersion: CLUSTER_VERSION,
     aiCalls: 0,
   });
