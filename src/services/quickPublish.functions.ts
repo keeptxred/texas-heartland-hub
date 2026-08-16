@@ -28,6 +28,12 @@ const GRAPH_VERSION = "v21.0";
 const KEEP_TX_RED_PAGE_ID = "1211420085383129";
 const SITE_URL = "https://keeptxred.com";
 const MAX_FACEBOOK_IMAGE_BYTES = 12 * 1024 * 1024;
+const GENERATED_IMAGE_PATH_PREFIX = "/api/public/article-image/";
+const GENERATED_IMAGE_HOSTS = new Set([
+  "keeptxred.com",
+  "www.keeptxred.com",
+  "keeptxred-site.freddy-coppola.workers.dev",
+]);
 
 function normalizeAssetUrl(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
@@ -43,6 +49,27 @@ function normalizeAssetUrl(raw: unknown): string | null {
   } catch {
     return null;
   }
+}
+
+export function generatedArticleImageFilename(raw: unknown): string | null {
+  if (typeof raw !== "string" || !raw.trim()) return null;
+  try {
+    const url = new URL(raw);
+    if (!GENERATED_IMAGE_HOSTS.has(url.hostname.toLowerCase())) return null;
+    if (!url.pathname.startsWith(GENERATED_IMAGE_PATH_PREFIX)) return null;
+    const filename = url.pathname.slice(GENERATED_IMAGE_PATH_PREFIX.length);
+    if (!/^[a-z0-9-]+\.(png|jpg|jpeg|webp)$/i.test(filename)) return null;
+    return filename;
+  } catch {
+    return null;
+  }
+}
+
+function generatedImageContentType(filename: string): string {
+  const lower = filename.toLowerCase();
+  if (lower.endsWith(".png")) return "image/png";
+  if (lower.endsWith(".webp")) return "image/webp";
+  return "image/jpeg";
 }
 
 export type QuickPublishResult =
@@ -100,7 +127,6 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     });
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // 1. Connection check first — cheapest exit, no writes.
     const { data: conn } = await supabaseAdmin
       .from("social_connections")
       .select("platform, connection_status, account_id, account_name, access_token")
@@ -117,8 +143,7 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     if (!conn || conn.connection_status !== "CONNECTED" || !conn.access_token || !conn.account_id) {
       return {
         ok: false,
-        error:
-          "Facebook is not connected. Connect your Meta account to enable one-click publishing.",
+        error: "Facebook is not connected. Connect your Meta account to enable one-click publishing.",
         requires_connection: true,
       };
     }
@@ -139,13 +164,7 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         debugUrl.searchParams.set("access_token", `${appId}|${appSecret}`);
         const debugRes = await fetch(debugUrl.toString());
         const debugJson = (await debugRes.json()) as {
-          data?: {
-            app_id?: string;
-            type?: string;
-            profile_id?: string;
-            is_valid?: boolean;
-            expires_at?: number;
-          };
+          data?: { app_id?: string; type?: string; profile_id?: string; is_valid?: boolean; expires_at?: number };
           error?: { message?: string };
         };
         console.log("[quickPublish] Stored token debug", {
@@ -169,8 +188,6 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       }
     }
 
-    // 1b. Resolve media: if caller didn't pass asset_url, look up the article's featured image
-    // via feed_item_id -> texas_news_feed.internal_slug -> daily_articles.featured_image_url.
     let resolvedAssetUrl: string | null = data.asset_url ?? null;
     let assetSource: "caller" | "daily_articles" | "none" = resolvedAssetUrl ? "caller" : "none";
     if (!resolvedAssetUrl && data.feed_item_id) {
@@ -201,8 +218,6 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       }
     }
 
-    // Normalize to an absolute http(s) URL. Relative paths (e.g. "/api/public/...")
-    // are valid on the site but Facebook /photos requires a fully qualified URL.
     const normalizedAssetUrl = normalizeAssetUrl(resolvedAssetUrl);
     if (resolvedAssetUrl && !normalizedAssetUrl) {
       console.log("[quickPublish:server] asset_url rejected as invalid", {
@@ -212,14 +227,15 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     }
     resolvedAssetUrl = normalizedAssetUrl;
     if (!resolvedAssetUrl) assetSource = assetSource === "caller" ? "none" : assetSource;
+    const generatedFilename = generatedArticleImageFilename(resolvedAssetUrl);
     console.log("[quickPublish:server] asset resolution", {
       feed_item_id: data.feed_item_id ?? null,
       source: assetSource,
       has_asset_url: Boolean(resolvedAssetUrl),
+      generated_storage_asset: Boolean(generatedFilename),
     });
 
-    // Validate asset URL before handing it to Facebook. Never log the URL or tokens.
-    if (resolvedAssetUrl) {
+    if (resolvedAssetUrl && !generatedFilename) {
       const isHttps = resolvedAssetUrl.startsWith("https://");
       const isHttp = resolvedAssetUrl.startsWith("http://");
       let extension: string | null = null;
@@ -254,9 +270,6 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       });
     }
 
-    // 2. Validate article URL — Facebook article posts must always carry a link.
-    //    For original KeepTXRed articles (daily_articles), the caller may pass a slug
-    //    instead of an external source_url. Fall back to the canonical internal URL.
     let articleUrl = validateArticleUrl(data.source_url);
     if (!articleUrl && data.slug) {
       const safeSlug = String(data.slug).trim().replace(/^\/+|\/+$/g, "");
@@ -267,14 +280,10 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
     if (!articleUrl) {
       return {
         ok: false,
-        error:
-          "Cannot publish to Facebook: a valid http(s) article URL is required. This item has no article link attached.",
+        error: "Cannot publish to Facebook: a valid http(s) article URL is required. This item has no article link attached.",
       };
     }
 
-    // 2b. If we're linking to an internal KeepTXRed article, verify the row
-    //     exists AND passes the same visibility gate that /news/{slug} uses.
-    //     Otherwise Facebook would happily post a link that 404s on click.
     if (data.slug && articleUrl.startsWith(`${SITE_URL}/news/`)) {
       const safeSlug = String(data.slug).trim().replace(/^\/+|\/+$/g, "");
       const { data: articleRow } = await supabaseAdmin
@@ -283,27 +292,16 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
         .eq("slug", safeSlug)
         .maybeSingle();
       if (!articleRow) {
-        return {
-          ok: false,
-          error:
-            "Cannot publish: this item does not have a KeepTXRed article yet. Click 'Publish to Keep Texas Red' first.",
-        };
+        return { ok: false, error: "Cannot publish: this item does not have a KeepTXRed article yet. Click 'Publish to Keep Texas Red' first." };
       }
       if (!meetsArticleMainWordCount(articleRow.kind, articleRow.body_json as never)) {
-        return {
-          ok: false,
-          error:
-            "Cannot publish: the KeepTXRed article is below the minimum length and would 404. Regenerate the article before posting.",
-        };
+        return { ok: false, error: "Cannot publish: the KeepTXRed article is below the minimum length and would 404. Regenerate the article before posting." };
       }
     }
 
-    // 3. Persist a lightweight content package (no AI).
     const rawCaption = data.caption?.trim() || buildDefaultCaption(data.headline, data.source);
     const caption = sanitizeCaption(rawCaption);
 
-    // HARD GATE: dashboard-triggered Facebook posts REQUIRE a verified image.
-    // No text-only or link-only fallback is allowed.
     const staticCheck = assessImageUrl(resolvedAssetUrl, "stored_featured_image");
     console.log("[quickPublish:server] facebook_image_check_started", {
       static_reason: staticCheck.reason,
@@ -313,14 +311,46 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       console.log("[quickPublish:server] facebook_publish_blocked_no_image", { reason: staticCheck.reason });
       return { ok: false, error: staticCheck.message };
     }
-    const remoteCheck = await verifyImageIsReachable(staticCheck.imageUrl!);
-    console.log("[quickPublish:server] facebook_image_check_result", {
-      reason: remoteCheck.reason,
-      ready: remoteCheck.ready,
-    });
-    if (!remoteCheck.ready) {
-      console.log("[quickPublish:server] facebook_publish_blocked_no_image", { reason: remoteCheck.reason });
-      return { ok: false, error: remoteCheck.message };
+
+    let generatedImageBytes: ArrayBuffer | null = null;
+    let generatedImageContentTypeValue: string | null = null;
+    if (generatedFilename) {
+      const { data: imageBlob, error: imageError } = await supabaseAdmin.storage
+        .from("article-images")
+        .download(generatedFilename);
+      if (imageError || !imageBlob) {
+        console.error("[quickPublish:server] generated image storage download failed", {
+          filename: generatedFilename,
+          error: imageError?.message ?? null,
+        });
+        return { ok: false, error: "Facebook post blocked: the generated featured image is missing from storage." };
+      }
+      generatedImageBytes = await imageBlob.arrayBuffer();
+      generatedImageContentTypeValue = imageBlob.type?.startsWith("image/")
+        ? imageBlob.type.split(";", 1)[0]
+        : generatedImageContentType(generatedFilename);
+      if (
+        generatedImageBytes.byteLength === 0 ||
+        generatedImageBytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES ||
+        !generatedImageContentTypeValue.startsWith("image/")
+      ) {
+        return { ok: false, error: "Facebook post blocked: the generated featured image is empty, invalid, or too large." };
+      }
+      console.log("[quickPublish:server] facebook_image_check_result", {
+        reason: "READY",
+        ready: true,
+        source: "article-images-storage",
+      });
+    } else {
+      const remoteCheck = await verifyImageIsReachable(staticCheck.imageUrl!);
+      console.log("[quickPublish:server] facebook_image_check_result", {
+        reason: remoteCheck.reason,
+        ready: remoteCheck.ready,
+      });
+      if (!remoteCheck.ready) {
+        console.log("[quickPublish:server] facebook_publish_blocked_no_image", { reason: remoteCheck.reason });
+        return { ok: false, error: remoteCheck.message };
+      }
     }
     resolvedAssetUrl = staticCheck.imageUrl;
 
@@ -343,7 +373,6 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       .single();
     if (pkgErr || !pkg) return { ok: false, error: pkgErr?.message ?? "Failed to create package" };
 
-    // 4. Real Meta Graph API publish.
     const pageId = String(conn.account_id);
     const pageToken = String(conn.access_token);
     const link = articleUrl;
@@ -353,41 +382,47 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
 
     try {
       let endpoint: string;
-      // Upload image bytes so Meta never has to fetch a third-party host that
-      // may serve a public browser request but return 403 to Facebook.
-      const uploadImageUrl = normalizeFacebookUploadImageUrl(resolvedAssetUrl!);
-      if (!uploadImageUrl) {
-        return { ok: false, error: "Facebook post blocked: the featured image URL is invalid." };
-      }
-      const imageResponse = await fetch(uploadImageUrl, {
-        headers: FACEBOOK_IMAGE_FETCH_HEADERS,
-        redirect: "follow",
-      });
-      const imageContentType = imageResponse.headers.get("content-type")?.split(";", 1)[0]?.trim() ?? "";
-      if (!imageResponse.ok || !imageContentType.startsWith("image/")) {
-        return {
-          ok: false,
-          error: `Facebook post blocked: the featured image could not be downloaded for upload (HTTP ${imageResponse.status}).`,
-        };
-      }
-      const contentLength = Number(imageResponse.headers.get("content-length") ?? "0");
-      if (Number.isFinite(contentLength) && contentLength > MAX_FACEBOOK_IMAGE_BYTES) {
-        return { ok: false, error: "Facebook post blocked: the featured image is too large to upload." };
-      }
-      const imageBytes = await imageResponse.arrayBuffer();
-      if (imageBytes.byteLength === 0 || imageBytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES) {
-        return { ok: false, error: "Facebook post blocked: the downloaded featured image is empty or too large." };
+      let imageBytes: ArrayBuffer;
+      let imageContentType: string;
+
+      if (generatedImageBytes && generatedImageContentTypeValue) {
+        imageBytes = generatedImageBytes;
+        imageContentType = generatedImageContentTypeValue;
+      } else {
+        const uploadImageUrl = normalizeFacebookUploadImageUrl(resolvedAssetUrl!);
+        if (!uploadImageUrl) {
+          return { ok: false, error: "Facebook post blocked: the featured image URL is invalid." };
+        }
+        const imageResponse = await fetch(uploadImageUrl, {
+          headers: FACEBOOK_IMAGE_FETCH_HEADERS,
+          redirect: "follow",
+        });
+        imageContentType = imageResponse.headers.get("content-type")?.split(";", 1)[0]?.trim() ?? "";
+        if (!imageResponse.ok || !imageContentType.startsWith("image/")) {
+          return {
+            ok: false,
+            error: `Facebook post blocked: the featured image could not be downloaded for upload (HTTP ${imageResponse.status}).`,
+          };
+        }
+        const contentLength = Number(imageResponse.headers.get("content-length") ?? "0");
+        if (Number.isFinite(contentLength) && contentLength > MAX_FACEBOOK_IMAGE_BYTES) {
+          return { ok: false, error: "Facebook post blocked: the featured image is too large to upload." };
+        }
+        imageBytes = await imageResponse.arrayBuffer();
+        if (imageBytes.byteLength === 0 || imageBytes.byteLength > MAX_FACEBOOK_IMAGE_BYTES) {
+          return { ok: false, error: "Facebook post blocked: the downloaded featured image is empty or too large." };
+        }
       }
 
       const body = new FormData();
       body.set("access_token", pageToken);
       body.set("source", new Blob([imageBytes], { type: imageContentType }), "featured-image");
       endpoint = `https://graph.facebook.com/${GRAPH_VERSION}/${pageId}/photos`;
-      // Graph /photos ignores `link`; append the article URL to the caption.
       body.set("caption", `${caption}\n\n${link}`);
       console.log("[quickPublish:server] publish mode", {
         mode: "PHOTO",
         asset_source: assetSource,
+        generated_storage_asset: Boolean(generatedFilename),
       });
       console.log("[quickPublish] Graph API request", {
         provider: "facebook",
@@ -402,11 +437,7 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       });
       const res = await fetch(endpoint, { method: "POST", body });
       const rawText = await res.text();
-      let json: {
-        id?: string;
-        post_id?: string;
-        error?: { message?: string };
-      } = {};
+      let json: { id?: string; post_id?: string; error?: { message?: string } } = {};
       try {
         json = JSON.parse(rawText);
       } catch {
@@ -422,9 +453,7 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       } else {
         externalId = json.post_id ?? json.id ?? null;
         if (externalId) postUrl = `https://www.facebook.com/${externalId}`;
-        if (!externalId) {
-          console.error("[quickPublish] Graph API returned no post id", { json });
-        }
+        if (!externalId) console.error("[quickPublish] Graph API returned no post id", { json });
       }
     } catch (e) {
       graphError = e instanceof Error ? e.message : String(e);
@@ -444,15 +473,12 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       };
     }
 
-    // 4. Record publish + queue history.
     const postedAt = new Date().toISOString();
     const { error: updErr } = await supabaseAdmin
       .from("content_packages")
       .update({ workflow_status: "PUBLISHED", status: "PUBLISHED" })
       .eq("id", pkg.id);
-    if (updErr) {
-      console.error("[quickPublish] content_packages update failed", updErr);
-    }
+    if (updErr) console.error("[quickPublish] content_packages update failed", updErr);
     const { data: q, error: qErr } = await supabaseAdmin
       .from("publishing_queue")
       .insert({
