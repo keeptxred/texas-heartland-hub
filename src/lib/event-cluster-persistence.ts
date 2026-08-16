@@ -74,6 +74,29 @@ async function resolvePublishedArticleId(db: any, slug?: string): Promise<string
   return data?.id ?? null;
 }
 
+async function resolveExistingClusterId(
+  db: any,
+  rows: Array<ClusterableFeedItem | ClusterCandidate>,
+): Promise<string | null> {
+  const fromRows = rows
+    .map((row) => row.event_cluster_id)
+    .find((id): id is string => typeof id === "string" && id.length > 0);
+  if (fromRows) return fromRows;
+
+  const feedIds = rows
+    .map((row) => row.id)
+    .filter((id): id is number => typeof id === "number");
+  if (!feedIds.length) return null;
+
+  const { data, error } = await db
+    .from("news_event_cluster_sources")
+    .select("cluster_id,feed_item_id")
+    .in("feed_item_id", feedIds)
+    .limit(1);
+  if (error) throw error;
+  return data?.[0]?.cluster_id ?? null;
+}
+
 /**
  * Persists the in-memory clustering decision without making it a hard dependency
  * of publishing. A schema rollout or transient persistence failure must never
@@ -86,29 +109,28 @@ export async function persistEventCluster(
 ): Promise<string | null> {
   try {
     const rows = clusterRows(cluster);
-    const existingIds = rows
-      .map((row) => row.event_cluster_id)
-      .filter((id): id is string => typeof id === "string" && id.length > 0);
-    let id = existingIds[0] ?? null;
+    let id = await resolveExistingClusterId(db, rows);
     const now = new Date().toISOString();
     const publishedArticleId = await resolvePublishedArticleId(db, options.publishedSlug);
-    const payload = {
+    const payload: Record<string, unknown> = {
       canonical_headline: cluster.primary.title,
       status: options.status,
       match_score: cluster.score,
       source_count: rows.length,
       independent_source_count: independentSourceCount(cluster),
       last_seen_at: now,
-      synthesized_at: options.status === "synthesized" || options.status === "published" ? now : null,
-      published_at: options.status === "published" ? now : null,
-      published_article_id: publishedArticleId,
-      published_slug: options.publishedSlug ?? null,
       metadata: {
         strong_merge: cluster.strongMerge,
         source_families: [...new Set(rows.map(sourceFamily).filter(Boolean))],
         lookback_source_count: cluster.sourceCount,
       },
     };
+    if (options.status === "synthesized" || options.status === "published") payload.synthesized_at = now;
+    if (options.status === "published") {
+      payload.published_at = now;
+      payload.published_article_id = publishedArticleId;
+      payload.published_slug = options.publishedSlug ?? null;
+    }
 
     if (!id) {
       const firstSeen = rows
