@@ -24,7 +24,7 @@ async function handler() {
   const [{ data: clusters, error: clusterError }, { data: memberships, error: membershipError }] = await Promise.all([
     newsroomDb
       .from("news_story_clusters")
-      .select("id,source_count,primary_source_count,status")
+      .select("id,canonical_subject,source_count,primary_source_count,status")
       .in("id", clusterIds),
     newsroomDb
       .from("news_story_cluster_items")
@@ -49,7 +49,7 @@ async function handler() {
       primarySourceCount: Math.max(cluster?.primary_source_count ?? 0, members.filter((member) => member.is_primary_source).length),
       trendSignalCount: members.filter((member) => member.relationship_type === "trend-signal").length,
     });
-    return { candidate, result };
+    return { candidate, cluster, result };
   });
 
   const candidateUpdates = results.map(({ candidate, result }) => ({
@@ -65,14 +65,17 @@ async function handler() {
     .upsert(candidateUpdates, { onConflict: "id" });
   if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
 
-  const clusterUpdates = results.map(({ candidate, result }) => ({
+  const clusterUpdates = results.flatMap(({ candidate, cluster, result }) => cluster ? [{
     id: candidate.cluster_id,
+    canonical_subject: cluster.canonical_subject,
     cluster_type: result.decision,
-  }));
-  const { error: clusterUpdateError } = await newsroomDb
-    .from("news_story_clusters")
-    .upsert(clusterUpdates, { onConflict: "id" });
-  if (clusterUpdateError) return Response.json({ ok: false, error: clusterUpdateError.message }, { status: 500 });
+  }] : []);
+  if (clusterUpdates.length) {
+    const { error: clusterUpdateError } = await newsroomDb
+      .from("news_story_clusters")
+      .upsert(clusterUpdates, { onConflict: "id" });
+    if (clusterUpdateError) return Response.json({ ok: false, error: clusterUpdateError.message }, { status: 500 });
+  }
 
   const decisions = results.reduce<Record<string, number>>((counts, { result }) => {
     counts[result.decision] = (counts[result.decision] ?? 0) + 1;
