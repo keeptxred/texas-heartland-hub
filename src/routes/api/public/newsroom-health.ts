@@ -67,12 +67,17 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const now = Date.now();
         const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const publicationGapCutoff = new Date(now - 10 * 60 * 60 * 1000).toISOString();
         const oneDayAgoMs = now - 24 * 60 * 60 * 1000;
         const twoDaysAgoMs = now - 48 * 60 * 60 * 1000;
         const sevenDaysAgoMs = now - 7 * 24 * 60 * 60 * 1000;
 
         const [gapResult, sourcesResult, ktrPublishedResult] = await Promise.all([
-          supabaseAdmin.from("news_coverage_gaps" as never).select("id", { count: "exact", head: true }),
+          supabaseAdmin
+            .from("news_coverage_gaps" as never)
+            .select("id", { count: "exact", head: true })
+            .eq("gap_reason", "article_generation_or_publish_gap")
+            .lt("pub_date", publicationGapCutoff),
           supabaseAdmin.from("content_sources" as never).select("source_name,rss_url,category").eq("enabled", true).not("rss_url", "is", null),
           supabaseAdmin.from("daily_articles" as never).select("slug,title,published_at").gte("published_at", sevenDaysAgo).order("published_at", { ascending: false }).limit(500),
         ]);
@@ -192,6 +197,7 @@ export const Route = createFileRoute("/api/public/newsroom-health")({
           flyoverRoutedCorrectlyCount: flyoverCoverage.filter((item) => item.routedCorrectly === true).length,
           flyoverPublishedCount: flyoverCoverage.filter((item) => item.published).length,
           coverageGapCount: gapResult.count ?? 0,
+          coverageGapSlaHours: 10,
           sourceCount: sources.length,
           sourceStatusCounts: statusCounts,
           items24h: sources.reduce((sum, row) => sum + row.items_24h, 0),
