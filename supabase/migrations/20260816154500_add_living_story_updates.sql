@@ -27,6 +27,30 @@ CREATE INDEX IF NOT EXISTS idx_news_event_article_updates_cluster_created
 CREATE INDEX IF NOT EXISTS idx_news_event_article_updates_article_created
   ON public.news_event_article_updates(article_id, created_at DESC);
 
+-- A published event may be re-synthesized while an in-place update is prepared,
+-- but it must never lose its published lifecycle identity or canonical URL.
+CREATE OR REPLACE FUNCTION public.news_event_cluster_preserve_published_status()
+RETURNS trigger
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  IF OLD.status = 'published'
+     AND OLD.published_slug IS NOT NULL
+     AND NEW.status <> 'archived' THEN
+    NEW.status = 'published';
+    NEW.published_slug = COALESCE(NEW.published_slug, OLD.published_slug);
+    NEW.published_article_id = COALESCE(NEW.published_article_id, OLD.published_article_id);
+    NEW.published_at = COALESCE(NEW.published_at, OLD.published_at);
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_news_event_clusters_preserve_published_status ON public.news_event_clusters;
+CREATE TRIGGER trg_news_event_clusters_preserve_published_status
+BEFORE UPDATE ON public.news_event_clusters
+FOR EACH ROW EXECUTE FUNCTION public.news_event_cluster_preserve_published_status();
+
 CREATE OR REPLACE FUNCTION public.claim_news_event_cluster_update(
   p_cluster_id uuid,
   p_claim_token uuid,
