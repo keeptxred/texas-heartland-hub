@@ -13,6 +13,8 @@ import {
 import type { ResearchPacket } from "@/lib/newsroom-research-packet";
 
 const SITE = "keeptxred";
+const STANDARD_MIN_SOURCE_EVIDENCE_CHARS = 5_000;
+const LONG_FORM_MIN_SOURCE_EVIDENCE_CHARS = 9_000;
 
 type CandidateRow = {
   id: string;
@@ -36,6 +38,18 @@ function articleBodyText(body: {
     ...(body.faq ?? []).flatMap((item) => [item.q, item.a]),
     ...(body.keyTakeaways ?? []),
   ].filter(Boolean).join(" ");
+}
+
+function packetEvidenceChars(packet: ResearchPacket): number {
+  return (packet.sources ?? []).reduce((total, source) =>
+    total + (source.description?.length ?? 0) + (source.extractedBody?.length ?? 0), 0);
+}
+
+function evidenceFloorForPillar(pillar: string | null): number {
+  const category = categoryForPillar(pillar).toLowerCase();
+  return category === "sports" || category === "education" || category === "non-political"
+    ? LONG_FORM_MIN_SOURCE_EVIDENCE_CHARS
+    : STANDARD_MIN_SOURCE_EVIDENCE_CHARS;
 }
 
 function authorized(request: Request): boolean {
@@ -93,23 +107,26 @@ async function handler({ request }: { request: Request }) {
   const clusterById = new Map(clusters.map((row) => [row.id, row]));
   const packetByCluster = new Map(packets.map((row) => [row.cluster_id, row]));
   const shadowedCandidateIds = new Set<string>((shadowDraftData ?? []).map((row: { candidate_id: string }) => row.candidate_id));
-  const candidate = candidates.find((row) =>
-    !shadowedCandidateIds.has(row.id) &&
-    (packetByCluster.get(row.cluster_id)?.source_count ?? 0) > 0,
-  );
+  const unshadowedCandidates = candidates.filter((row) => !shadowedCandidateIds.has(row.id));
+  const candidate = unshadowedCandidates.find((row) => {
+    const packetRow = packetByCluster.get(row.cluster_id);
+    const cluster = clusterById.get(row.cluster_id);
+    if (!packetRow || !cluster || packetRow.source_count <= 0) return false;
+    return packetEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
+  });
   if (!candidate) {
-    return Response.json({
-      ok: true,
-      no_items: true,
-      reason: requestedMode === "shadow" ? "no_unshadowed_candidates" : "no_research_packets",
-      aiCalls: 0,
-    });
+    const reason = requestedMode === "shadow" && unshadowedCandidates.length === 0
+      ? "no_unshadowed_candidates"
+      : "insufficient_source_evidence";
+    return Response.json({ ok: true, no_items: true, reason, aiCalls: 0 });
   }
 
   const cluster = clusterById.get(candidate.cluster_id);
   const packetRow = packetByCluster.get(candidate.cluster_id);
   if (!cluster || !packetRow) return Response.json({ error: "Selected candidate is missing cluster or packet" }, { status: 500 });
   const packet = packetRow.packet_json;
+  const evidenceChars = packetEvidenceChars(packet);
+  const evidenceFloor = evidenceFloorForPillar(cluster.pillar_slug);
   const kind = "normal";
 
   const { data: reservation, error: reserveError } = await db.rpc("newsroom_reserve_ai_generation", {
@@ -170,6 +187,8 @@ async function handler({ request }: { request: Request }) {
         candidateId: candidate.id,
         clusterId: candidate.cluster_id,
         draftId,
+        evidenceChars,
+        evidenceFloor,
         validation,
         provider: ai.provider,
         model: ai.model,
@@ -193,6 +212,8 @@ async function handler({ request }: { request: Request }) {
         recommendedFormat: candidate.recommended_format,
         sourceCount: packetRow.source_count,
         primarySourceCount: packetRow.primary_source_count,
+        evidenceChars,
+        evidenceFloor,
         validation,
         provider: ai.provider,
         model: ai.model,
@@ -262,6 +283,8 @@ async function handler({ request }: { request: Request }) {
       draftId,
       articleId,
       slug,
+      evidenceChars,
+      evidenceFloor,
       validation,
       provider: ai.provider,
       model: ai.model,
