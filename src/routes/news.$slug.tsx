@@ -8,6 +8,7 @@ import {
   resolveArticleSlugRedirect,
   type EvergreenBody,
 } from "@/lib/evergreen.functions";
+import { getCloudArticleIndexability } from "@/lib/article-indexability.functions";
 import { isBadYearSlug, parseArticleSlug } from "@/lib/article-slug-integrity";
 import { normalizeCategoryName, type CategoryName } from "@/lib/articles-by-category";
 import { AdSlot } from "@/components/ad-slot";
@@ -26,7 +27,7 @@ import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
-type RenderedArticle = Omit<Article, "category"> & { category: CategoryName };
+type RenderedArticle = Omit<Article, "category"> & { category: CategoryName; noindex?: boolean };
 
 const GENERIC_FAQ_PATTERNS = [
   /where can i read more/i,
@@ -92,10 +93,12 @@ export const Route = createFileRoute("/news/$slug")({
     );
     if (nonStubSections.length === 0 && introText.length < 200) throw notFound();
     if (!meetsArticleMainWordCount(ever.kind, ever.body)) throw notFound();
+    const { noindex } = await getCloudArticleIndexability({ data: { slug: params.slug } });
     const cat = normalizeCategoryName(ever.category);
     const synth: RenderedArticle = {
       slug: ever.slug,
       category: cat,
+      noindex,
       title: (ever.seo_headline ?? "").trim() || ever.title,
       dek: ever.dek,
       author: ever.author,
@@ -161,6 +164,7 @@ export const Route = createFileRoute("/news/$slug")({
       modifiedTime: modified,
       section: article.category,
       author: article.author,
+      noindex: article.noindex === true,
     });
     const articleImage = imageObjectJsonLd({
       url: seo.image,
