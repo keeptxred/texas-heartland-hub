@@ -11,6 +11,7 @@ import {
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 /**
  * Tombstoned article slugs that are known to return 404 and must never be
@@ -32,7 +33,7 @@ export const Route = createFileRoute("/sitemap-evergreen.xml")({
       GET: async () => {
         const entries: UrlEntry[] = [];
 
-        for (const a of ARTICLES.filter((a) => isPublished(a))) {
+        for (const a of ARTICLES.filter((a) => isPublished(a) && isStaticArticleIndexable(a))) {
           if (!isArticleSlugDateConsistent(a.slug, a.publishedAt)) continue;
           if (!isSitemapArticleAllowed(a.slug)) continue;
           entries.push({
