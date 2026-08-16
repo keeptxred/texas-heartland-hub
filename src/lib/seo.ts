@@ -4,6 +4,7 @@
 
 import { getAuthor } from "@/data/authors";
 import { getCavernSeoOverride } from "@/lib/explore/cavern-seo";
+import { isRetiredStaticNewsPath } from "@/lib/static-article-indexability";
 
 export const SITE_URL = "https://keeptxred.com";
 export const SITE_NAME = "Keep TX Red";
@@ -145,13 +146,14 @@ export function buildSeo(input: SeoInput) {
   const image = absoluteSeoImage(effectiveInput.image);
   const isArticle = effectiveInput.type === "article";
   const imageAlt = effectiveInput.imageAlt?.trim() || effectiveInput.title;
+  const effectiveNoindex = effectiveInput.noindex === true || isRetiredStaticNewsPath(path);
 
   const meta: Array<Record<string, string>> = [
     { title },
     { name: "description", content: description },
     {
       name: "robots",
-      content: effectiveInput.noindex
+      content: effectiveNoindex
         ? "noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
         : "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1",
     },
