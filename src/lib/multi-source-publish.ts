@@ -190,7 +190,11 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   let cluster = buildStoryCluster(primary, (recent ?? []) as ClusterableFeedItem[], MAX_CLUSTER_SOURCES);
   if (!cluster.strongMerge) {
     await persistEventCluster(db, cluster, { status: "collecting" });
-    return publishLegacySingleFeedItem(feedItemId);
+    const singleResult = await publishLegacySingleFeedItem(feedItemId);
+    if (singleResult.ok && singleResult.slug) {
+      await persistEventCluster(db, cluster, { status: "published", publishedSlug: singleResult.slug });
+    }
+    return singleResult;
   }
 
   await persistEventCluster(db, cluster, { status: "ready" });
@@ -231,6 +235,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   const synthesisHeader = [
     "MULTI-SOURCE STORY PACKET.",
     "Use only facts supported by the sources below. Reconcile duplicate facts. Attribute claims when sources differ. Do not copy source wording.",
+    "For directly verifiable facts, prefer official government, agency, court, team, or other primary records over secondary summaries when they conflict; do not treat commentary as a primary record.",
     `Independent sources: ${sourceNames.join(" | ")}.`,
     "Treat this as one developing Texas story when the evidence supports it; do not invent a connection that is not supported.",
     existingNovelty?.material
