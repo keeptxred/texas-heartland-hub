@@ -4,13 +4,36 @@ import { decideNewsroomFormat } from "@/lib/newsroom-decision-engine";
 const LOOKBACK_HOURS = 48;
 const CANDIDATE_LIMIT = 500;
 
+type CandidateRow = {
+  id: string;
+  cluster_id: string;
+  editorial_score: number;
+  status: string;
+  created_at: string;
+};
+
+type ClusterRow = {
+  id: string;
+  canonical_subject: string;
+  source_count: number;
+  primary_source_count: number;
+  status: string;
+};
+
+type MembershipRow = {
+  cluster_id: string;
+  relationship_type: string;
+  is_primary_source: boolean;
+};
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  // New newsroom tables intentionally lead the committed generated Database type.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const newsroomDb = supabaseAdmin as any;
   const since = new Date(Date.now() - LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
 
-  const { data: candidates, error: candidateError } = await newsroomDb
+  const { data: candidateData, error: candidateError } = await newsroomDb
     .from("news_publish_candidates")
     .select("id,cluster_id,editorial_score,status,created_at")
     .in("status", ["PENDING", "HELD"])
@@ -18,10 +41,11 @@ async function handler() {
     .order("editorial_score", { ascending: false })
     .limit(CANDIDATE_LIMIT);
   if (candidateError) return Response.json({ ok: false, error: candidateError.message }, { status: 500 });
-  if (!(candidates ?? []).length) return Response.json({ ok: true, decided: 0, decisions: {}, aiCalls: 0 });
+  const candidates = (candidateData ?? []) as CandidateRow[];
+  if (!candidates.length) return Response.json({ ok: true, decided: 0, decisions: {}, aiCalls: 0 });
 
-  const clusterIds = candidates.map((candidate: { cluster_id: string }) => candidate.cluster_id);
-  const [{ data: clusters, error: clusterError }, { data: memberships, error: membershipError }] = await Promise.all([
+  const clusterIds = candidates.map((candidate) => candidate.cluster_id);
+  const [{ data: clusterData, error: clusterError }, { data: membershipData, error: membershipError }] = await Promise.all([
     newsroomDb
       .from("news_story_clusters")
       .select("id,canonical_subject,source_count,primary_source_count,status")
@@ -33,14 +57,16 @@ async function handler() {
   ]);
   if (clusterError) return Response.json({ ok: false, error: clusterError.message }, { status: 500 });
   if (membershipError) return Response.json({ ok: false, error: membershipError.message }, { status: 500 });
+  const clusters = (clusterData ?? []) as ClusterRow[];
+  const memberships = (membershipData ?? []) as MembershipRow[];
 
-  const clusterById = new Map((clusters ?? []).map((cluster: { id: string }) => [cluster.id, cluster]));
-  const membershipsByCluster = new Map<string, Array<{ relationship_type: string; is_primary_source: boolean }>>();
-  for (const membership of memberships ?? []) {
+  const clusterById = new Map<string, ClusterRow>(clusters.map((cluster) => [cluster.id, cluster]));
+  const membershipsByCluster = new Map<string, MembershipRow[]>();
+  for (const membership of memberships) {
     membershipsByCluster.set(membership.cluster_id, [...(membershipsByCluster.get(membership.cluster_id) ?? []), membership]);
   }
 
-  const results = (candidates ?? []).map((candidate: { id: string; cluster_id: string; editorial_score: number }) => {
+  const results = candidates.map((candidate) => {
     const cluster = clusterById.get(candidate.cluster_id);
     const members = membershipsByCluster.get(candidate.cluster_id) ?? [];
     const result = decideNewsroomFormat({
