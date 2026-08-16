@@ -10,7 +10,7 @@ import {
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
-import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { isStaticArticleSearchReady } from "@/lib/static-article-search-readiness";
 
 const WINDOW_MS = 48 * 60 * 60 * 1000;
 
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/sitemap-news.xml")({
         type NewsItem = { loc: string; title: string; pubDate: string };
         const items: NewsItem[] = [];
 
-        for (const a of ARTICLES.filter((a) => isPublished(a) && isStaticArticleIndexable(a))) {
+        for (const a of ARTICLES.filter((a) => isPublished(a) && isStaticArticleSearchReady(a))) {
           const t = new Date(a.publishedAt).getTime();
           if (isNaN(t) || t < cutoff || !isArticleSlugDateConsistent(a.slug, a.publishedAt)) continue;
           items.push({
