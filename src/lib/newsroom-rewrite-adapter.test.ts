@@ -3,6 +3,7 @@ import {
   categoryForPillar,
   newsroomRewriteSystemPrompt,
   newsroomRewriteUserPrompt,
+  normalizeNewsroomDraft,
   slugifyNewsroomTitle,
   validateNewsroomDraft,
   type NewsroomDraft,
@@ -61,6 +62,14 @@ describe("newsroom rewrite adapter", () => {
 
   it("builds stable dated news slugs", () => {
     expect(slugifyNewsroomTitle("Texas Board Approves New Rule", "2026-08-15")).toBe("2026-08-15-texas-board-approves-new-rule");
+  });
+
+  it("normalizes a reversed FAQ question and answer without another AI call", () => {
+    const normalized = normalizeNewsroomDraft({
+      brief: { hasClearNewsEvent: true },
+      faq: [{ q: "Appointments were announced Friday.", a: "What happened?" }],
+    }) as { faq: Array<{ q: string; a: string }> };
+    expect(normalized.faq).toEqual([{ q: "What happened?", a: "Appointments were announced Friday." }]);
   });
 
   it("rejects thin generated prose before publication", () => {

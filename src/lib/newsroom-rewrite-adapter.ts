@@ -41,7 +41,7 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
             type: "array",
             minItems: 3,
             maxItems: 3,
-            items: { type: "string" },
+            items: { type: "string", minLength: 300 },
           },
         },
         required: ["heading", "paragraphs"],
@@ -86,10 +86,11 @@ NON-NEGOTIABLE RULES:
 - Summary must be answer-first and 55–75 words.
 - The relevance field MUST be prose explaining why the story matters to Texas readers, never a numeric score.
 - Use heading (not title) for every section object.
-- Use q and a (not question and answer) for every FAQ object.
+- Use q for the QUESTION and a for the ANSWER in every FAQ object.
 - Write exactly 6 substantive sections with exactly 3 separate paragraphs per section.
 - Do not create standalone FAQ, FAQs, Sources, Source Attribution, Conclusion, or filler sections; FAQ and source attribution are handled separately by the application.
 - Target 65–80 words per section paragraph so qualifying main-story prose safely clears ${INGESTED_MIN_MAIN_WORDS} words.
+- Each section paragraph must contain source-supported detail rather than generic commentary, predictions, public reaction, or moral framing.
 - Keep paragraphs readable and fact-dense; do not repeat material to reach length.
 - If the packet cannot support a truthful article at the required length, set brief.hasClearNewsEvent=false and return empty strings/arrays for the article fields while still satisfying the required JSON keys.
 - Return exactly one JSON object matching the supplied JSON schema.
@@ -122,6 +123,18 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function hasNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
+}
+
+export function normalizeNewsroomDraft(value: unknown): unknown {
+  if (!isRecord(value) || !Array.isArray(value.faq)) return value;
+  const faq = value.faq.map((item) => {
+    if (!isRecord(item) || typeof item.q !== "string" || typeof item.a !== "string") return item;
+    const q = item.q.trim();
+    const a = item.a.trim();
+    if (!q.endsWith("?") && a.endsWith("?")) return { ...item, q: a, a: q };
+    return item;
+  });
+  return { ...value, faq };
 }
 
 function draftShapeReasons(value: unknown): string[] {

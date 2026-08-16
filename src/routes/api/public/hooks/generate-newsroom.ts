@@ -6,11 +6,16 @@ import {
   NEWSROOM_DRAFT_JSON_SCHEMA,
   newsroomRewriteSystemPrompt,
   newsroomRewriteUserPrompt,
+  normalizeNewsroomDraft,
   slugifyNewsroomTitle,
   validateNewsroomDraft,
   type NewsroomDraft,
 } from "@/lib/newsroom-rewrite-adapter";
-import type { ResearchPacket } from "@/lib/newsroom-research-packet";
+import {
+  compactResearchPacket,
+  researchPacketEvidenceChars,
+  type ResearchPacket,
+} from "@/lib/newsroom-research-packet";
 
 const SITE = "keeptxred";
 const STANDARD_MIN_SOURCE_EVIDENCE_CHARS = 5_000;
@@ -38,11 +43,6 @@ function articleBodyText(body: {
     ...(body.faq ?? []).flatMap((item) => [item.q, item.a]),
     ...(body.keyTakeaways ?? []),
   ].filter(Boolean).join(" ");
-}
-
-function packetEvidenceChars(packet: ResearchPacket): number {
-  return (packet.sources ?? []).reduce((total, source) =>
-    total + (source.description?.length ?? 0) + (source.extractedBody?.length ?? 0), 0);
 }
 
 function evidenceFloorForPillar(pillar: string | null): number {
@@ -80,7 +80,7 @@ async function handler({ request }: { request: Request }) {
     .in("status", ["PENDING", "HELD"])
     .in("recommended_format", ["SINGLE", "MERGE", "SYNTHESIS"])
     .order("editorial_score", { ascending: false })
-    .limit(20);
+    .limit(100);
   if (candidateError) return Response.json({ error: candidateError.message }, { status: 500 });
   const candidates = (candidateData ?? []) as CandidateRow[];
   if (!candidates.length) return Response.json({ ok: true, no_items: true, reason: "no_candidates", aiCalls: 0 });
@@ -112,7 +112,7 @@ async function handler({ request }: { request: Request }) {
     const packetRow = packetByCluster.get(row.cluster_id);
     const cluster = clusterById.get(row.cluster_id);
     if (!packetRow || !cluster || packetRow.source_count <= 0) return false;
-    return packetEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
+    return researchPacketEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
   });
   if (!candidate) {
     const reason = requestedMode === "shadow" && unshadowedCandidates.length === 0
@@ -124,9 +124,9 @@ async function handler({ request }: { request: Request }) {
   const cluster = clusterById.get(candidate.cluster_id);
   const packetRow = packetByCluster.get(candidate.cluster_id);
   if (!cluster || !packetRow) return Response.json({ error: "Selected candidate is missing cluster or packet" }, { status: 500 });
-  const packet = packetRow.packet_json;
-  const evidenceChars = packetEvidenceChars(packet);
+  const evidenceChars = researchPacketEvidenceChars(packetRow.packet_json);
   const evidenceFloor = evidenceFloorForPillar(cluster.pillar_slug);
+  const packet = compactResearchPacket(packetRow.packet_json);
   const kind = "normal";
 
   const { data: reservation, error: reserveError } = await db.rpc("newsroom_reserve_ai_generation", {
@@ -153,14 +153,15 @@ async function handler({ request }: { request: Request }) {
       jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
     });
     generated = true;
-    const validation = validateNewsroomDraft(ai.value, packet);
+    const draft = normalizeNewsroomDraft(ai.value) as NewsroomDraft;
+    const validation = validateNewsroomDraft(draft, packet);
 
     const { data: draftRows, error: draftError } = await db.from("newsroom_generation_drafts").insert({
       candidate_id: candidate.id,
       cluster_id: candidate.cluster_id,
       mode: requestedMode,
       status: validation.ok ? "GENERATED" : "REJECTED",
-      draft_json: ai.value,
+      draft_json: draft,
       validation_reasons: validation.reasons,
       main_word_count: validation.mainWordCount,
       provider: ai.provider,
@@ -223,31 +224,31 @@ async function handler({ request }: { request: Request }) {
     }
 
     const now = new Date();
-    const slug = slugifyNewsroomTitle(ai.value.title, now.toISOString().slice(0, 10));
+    const slug = slugifyNewsroomTitle(draft.title, now.toISOString().slice(0, 10));
     const sources = packet.sources.map((source) => ({ label: `${source.source} — source`, url: source.url }));
     const primary = packet.sources.find((source) => source.isPrimarySource) ?? packet.sources[0];
     const bodyJson = {
       updated: now.toISOString().slice(0, 10),
-      intro: [ai.value.summary.trim()],
+      intro: [draft.summary.trim()],
       sections: [
-        { heading: "Texas relevance", paragraphs: [ai.value.relevance.trim()] },
-        ...ai.value.sections,
+        { heading: "Texas relevance", paragraphs: [draft.relevance.trim()] },
+        ...draft.sections,
         {
           heading: "Source attribution",
           paragraphs: ["Keep TX Red rewrote the coverage independently and links to the original for verification."],
         },
       ],
-      faq: ai.value.faq,
+      faq: draft.faq,
       sources,
-      keyTakeaways: ai.value.keyTakeaways,
+      keyTakeaways: draft.keyTakeaways,
     };
     const row = {
       slug,
       internal_url: `/news/${slug}`,
       is_ingested: false,
       category: categoryForPillar(cluster.pillar_slug),
-      title: ai.value.title.slice(0, 200),
-      dek: ai.value.dek.slice(0, 400),
+      title: draft.title.slice(0, 200),
+      dek: draft.dek.slice(0, 400),
       source_name: primary?.source ?? "Keep TX Red newsroom packet",
       source_url: primary?.url ?? null,
       published_at: now.toISOString(),
