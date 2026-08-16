@@ -7,10 +7,21 @@ import {
   type FallbackSource,
 } from "@/lib/article-source-transparency";
 
-const slugSchema = z.object({
-  slug: z.string().min(1).max(240),
-  fallbackSources: z.array(z.object({ label: z.string().optional(), url: z.string().optional() })).max(30).optional().default([]),
-});
+const slugSchema = z.object({ slug: z.string().min(1).max(240) });
+
+async function fallbackSources(db: any, slug: string): Promise<FallbackSource[]> {
+  const { data, error } = await db
+    .from("daily_articles")
+    .select("body_json")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error || !data?.body_json || typeof data.body_json !== "object") return [];
+  const sources = (data.body_json as { sources?: unknown }).sources;
+  if (!Array.isArray(sources)) return [];
+  return sources
+    .filter((source): source is { label?: string; url?: string } => Boolean(source) && typeof source === "object")
+    .map((source) => ({ label: source.label, url: source.url }));
+}
 
 /**
  * Public article provenance is resolved server-side with the service client.
@@ -24,6 +35,7 @@ export const getArticleSourceTransparency = createServerFn({ method: "POST" })
     // Durable multi-source tables intentionally lead generated Supabase types.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabaseAdmin as any;
+    const fallback = await fallbackSources(db, data.slug);
 
     const clusterResult = await db
       .from("news_event_clusters")
@@ -36,7 +48,7 @@ export const getArticleSourceTransparency = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (clusterResult.error || !clusterResult.data) {
-      return buildArticleSourceTransparency({ fallbackSources: data.fallbackSources as FallbackSource[] });
+      return buildArticleSourceTransparency({ fallbackSources: fallback });
     }
 
     const sourceResult = await db
@@ -47,12 +59,12 @@ export const getArticleSourceTransparency = createServerFn({ method: "POST" })
       .order("published_at", { ascending: false });
 
     if (sourceResult.error) {
-      return buildArticleSourceTransparency({ fallbackSources: data.fallbackSources as FallbackSource[] });
+      return buildArticleSourceTransparency({ fallbackSources: fallback });
     }
 
     return buildArticleSourceTransparency({
       durableSources: (sourceResult.data ?? []) as DurableSourceRow[],
-      fallbackSources: data.fallbackSources as FallbackSource[],
+      fallbackSources: fallback,
       durableSourceCount: clusterResult.data.source_count,
       durableIndependentSourceCount: clusterResult.data.independent_source_count,
     });
