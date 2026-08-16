@@ -27,7 +27,7 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
     },
     title: { type: "string" },
     dek: { type: "string" },
-    summary: { type: "string" },
+    summary: { type: "string", minLength: 250, maxLength: 600 },
     relevance: { type: "string" },
     sections: {
       type: "array",
@@ -41,7 +41,7 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
             type: "array",
             minItems: 3,
             maxItems: 3,
-            items: { type: "string", minLength: 300 },
+            items: { type: "string", minLength: 380 },
           },
         },
         required: ["heading", "paragraphs"],
@@ -83,15 +83,17 @@ NON-NEGOTIABLE RULES:
 - Never invent quotes, polling, prices, availability, unnamed experts, analysts, observers, or source content.
 - Preserve attribution where a claim belongs to a particular source.
 - Headline must be factual, specific, under 110 characters, and not clickbait.
-- Summary must be answer-first and 55–75 words.
+- Summary must be answer-first and 55–75 words. Do not exceed 90 words under any circumstance.
 - The relevance field MUST be prose explaining why the story matters to Texas readers, never a numeric score.
 - Use heading (not title) for every section object.
 - Use q for the QUESTION and a for the ANSWER in every FAQ object.
 - Write exactly 6 substantive sections with exactly 3 separate paragraphs per section.
 - Do not create standalone FAQ, FAQs, Sources, Source Attribution, Conclusion, or filler sections; FAQ and source attribution are handled separately by the application.
-- Target 65–80 words per section paragraph so qualifying main-story prose safely clears ${INGESTED_MIN_MAIN_WORDS} words.
+- Target 75–90 words per section paragraph so qualifying main-story prose clears ${INGESTED_MIN_MAIN_WORDS} words with a meaningful safety margin.
+- Every section paragraph should be at least about 380 characters of source-supported prose unless the packet cannot factually support that depth.
 - Each section paragraph must contain source-supported detail rather than generic commentary, predictions, public reaction, or moral framing.
 - Keep paragraphs readable and fact-dense; do not repeat material to reach length.
+- Before returning JSON, verify that summary + relevance + all 18 section paragraphs total at least ${INGESTED_MIN_MAIN_WORDS + 100} words when the article is a qualifying long-form news category.
 - If the packet cannot support a truthful article at the required length, set brief.hasClearNewsEvent=false and return empty strings/arrays for the article fields while still satisfying the required JSON keys.
 - Return exactly one JSON object matching the supplied JSON schema.
 ${EDITORIAL_SYSTEM_ADDENDUM}`;
