@@ -9,7 +9,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { extractEntities } from "@/lib/nlp";
 
-const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
+const CLOUDFLARE_IMAGE_MODEL = "@cf/bytedance/stable-diffusion-xl-lightning";
 const CLOUDFLARE_VISION_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
 const BUCKET = "article-images";
 const PURPLE_HEART_IMAGE_URL = "/images/military-honors/purple-heart.svg";
@@ -159,9 +159,11 @@ function extractImageSubject(row: ArticleRow): SubjectExtract {
   ].filter((v, i, a) => a.indexOf(v) === i);
   const domain = inferDomain(haystack);
   const terms = topArticleTerms(haystack);
-  const concreteSubject = intro
-    ? `${title}. Context: ${intro}. Concrete subjects to show if present: ${terms.join(", ") || "the specific event, place, animal, object, or people described"}.`
-    : title;
+  const concreteSubject = domain === "legal"
+    ? `${title}. Show a real Texas courthouse or courtroom tied to this ruling. Context: ${intro || title}. Physical courthouse architecture, courtroom furniture, court files, or anonymous legal participants must dominate. Do not substitute a map, state outline, flag, politician, campaign scene, or election graphic.`
+    : intro
+      ? `${title}. Context: ${intro}. Concrete subjects to show if present: ${terms.join(", ") || "the specific event, place, animal, object, or people described"}.`
+      : title;
   return { title, firstParagraph: intro, entities, locations, domain, concreteSubject };
 }
 
@@ -175,7 +177,7 @@ const DOMAIN_STEER: Record<Domain, string> = {
   health: "Depict a believable hospital, campus, construction, or clinical-facility setting relevant to the story. No identifiable patients or staff and no generic medical-symbol placeholder.",
   transportation: "Depict the actual road, highway, airport, or transit infrastructure described.",
   housing: "Depict Texas neighborhoods, homes, or construction — the real subject, not stock finance imagery.",
-  legal: "Depict the legal proceeding itself: a believable Texas courthouse exterior or courtroom interior with judicial bench, counsel tables, court files, or anonymous legal participants seen from behind. For an election-law case, keep voting context subtle and secondary. Do not use a politician, candidate, suited spokesperson, flagpole, rally, podium, or capitol dome as the primary subject.",
+  legal: "Depict the legal proceeding itself: a believable Texas courthouse exterior or courtroom interior with judicial bench, counsel tables, court files, or anonymous legal participants seen from behind. For an election-law case, keep voting context subtle and secondary. Do not use a politician, candidate, suited spokesperson, flagpole, rally, podium, capitol dome, Texas map, Texas outline, or state-shaped graphic as the primary subject.",
   border: "Depict the border landscape, river, or fence line. No identifiable faces.",
   business: "Depict the actual industry or facility described (factory floor, film set, storefront). No branded signage.",
   politics: "Depict a realistic government setting only when the article is explicitly about that setting; otherwise depict the policy's real-world effect rather than abstract symbols.",
@@ -211,7 +213,7 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
     "no political party symbols",
     "no copyrighted characters or celebrities",
     "no AI hands with extra fingers and no distorted anatomy",
-    legalStory ? "no posed politician, candidate, campaign surrogate, suited spokesperson, flagpole, rally, podium, capitol-dome composition, or ceremonial government portrait" : "",
+    legalStory ? "no posed politician, candidate, campaign surrogate, suited spokesperson, flagpole, rally, podium, capitol-dome composition, Texas-shaped outline, map of Texas, election iconography, or ceremonial government portrait" : "",
     !newsroomAllowed ? "no generic newsroom, newspaper, microphone, TV studio, laptop, office, or breaking-news graphic" : "",
     !capitolAllowed ? "avoid the Texas State Capitol dome and generic government-building shots" : "",
     !flagAllowed ? "avoid generic Texas or American flag imagery" : "",
@@ -224,13 +226,43 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
     `PRIMARY SUBJECT (must be clearly the main focus of the image): ${subject.concreteSubject}`,
     loc ? `Location context: ${loc}, Texas.` : "Use believable Texas surroundings where relevant.",
     DOMAIN_STEER[subject.domain],
-    legalStory ? "LEGAL COMPOSITION PRIORITY: make the courthouse, courtroom, judicial bench, counsel area, or court-filing process visually dominant. A person in a suit must never be the hero subject of a court-ruling image." : "",
+    legalStory ? "LEGAL COMPOSITION PRIORITY: make a real courthouse, courtroom, judicial bench, counsel area, or court-filing process visually dominant. Show physical architecture and materials such as stone, wood, desks, paper files, and courtroom seating. Never use a Texas-shaped graphic, map, seal, flag, or person in a suit as the hero subject." : "",
     "Require realistic professional news/editorial photography, natural lighting, realistic materials and textures, believable scale and perspective, and one coherent scene.",
     "The viewer should immediately understand the concrete subject of this specific story. Do not substitute abstract symbolism for a named place, object, event, facility, industry, weather condition, business, or issue.",
     "If people appear, use anonymous everyday Texans from behind, in silhouette, or with faces out of frame unless a properly licensed official photograph is deliberately being used. Do not fabricate a recognizable real person's face.",
     `Strict rules: ${avoid}.`,
     "Output a landscape JPEG in 16:9, sRGB, no transparency, approximately 1024 by 576 pixels, under 4 MB.",
   ].filter(Boolean).join(" ");
+}
+
+export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason = ""): string {
+  const legalStory = subject.domain === "legal";
+  return [
+    "illustration",
+    "graphic design",
+    "vector art",
+    "infographic",
+    "poster",
+    "cartoon",
+    "drawing",
+    "painting",
+    "digital art",
+    "3D render",
+    "clip art",
+    "flat icon",
+    "symbolic placeholder",
+    "map graphic",
+    "state outline graphic",
+    "text",
+    "headline",
+    "caption",
+    "watermark",
+    "logo",
+    "split screen",
+    "collage",
+    legalStory ? "Texas state silhouette, Texas-shaped graphic, map of Texas, politician, candidate, campaign rally, podium, flagpole, capitol dome, election icon, ballot illustration" : "",
+    rejectedReason ? `rejected visual motif: ${rejectedReason.slice(0, 300)}` : "",
+  ].filter(Boolean).join(", ").slice(0, 1500);
 }
 
 export function buildAltText(a: { title: string; category?: string | null }): string {
@@ -348,7 +380,7 @@ function cloudflareEndpoint(accountId: string, model: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
 }
 
-async function generateImageBytes(prompt: string): Promise<Uint8Array> {
+async function generateImageBytes(prompt: string, negativePrompt: string): Promise<Uint8Array> {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
@@ -356,17 +388,48 @@ async function generateImageBytes(prompt: string): Promise<Uint8Array> {
   const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_IMAGE_MODEL), {
     method: "POST",
     headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt: prompt.slice(0, 2048), steps: 4 }),
+    body: JSON.stringify({
+      prompt: prompt.slice(0, 3500),
+      negative_prompt: negativePrompt.slice(0, 1500),
+      width: 1024,
+      height: 576,
+      num_steps: 8,
+      guidance: 9.5,
+      seed: Math.floor(Math.random() * 2_147_483_646) + 1,
+    }),
   });
 
+  if (!res.ok) {
+    const raw = await res.text().catch(() => "");
+    let detail = raw || `HTTP ${res.status}`;
+    try {
+      const json = raw ? JSON.parse(raw) as { errors?: { message?: string }[]; error?: { message?: string } } : {};
+      detail = json.errors?.[0]?.message || json.error?.message || detail;
+    } catch {
+      // Preserve the raw response when Cloudflare returns a non-JSON error body.
+    }
+    throw new Error(`Cloudflare Workers AI ${res.status}: ${String(detail).slice(0, 400)}`);
+  }
+
+  const contentType = (res.headers.get("content-type") || "").toLowerCase();
+  if (contentType.startsWith("image/") || contentType.includes("application/octet-stream")) {
+    const buffer = await res.arrayBuffer();
+    if (!buffer.byteLength) throw new Error("Cloudflare Workers AI returned an empty image body");
+    return new Uint8Array(buffer);
+  }
+
   const raw = await res.text().catch(() => "");
-  let json: { success?: boolean; result?: { image?: string }; image?: string; errors?: { message?: string }[]; error?: { message?: string } } = {};
-  try { json = raw ? JSON.parse(raw) : {}; } catch { throw new Error(`Cloudflare Workers AI returned a non-JSON response: ${raw.slice(0, 400)}`); }
-  if (!res.ok || json.success === false) {
+  let json: { success?: boolean; result?: { image?: string } | string; image?: string; errors?: { message?: string }[]; error?: { message?: string } } = {};
+  try {
+    json = raw ? JSON.parse(raw) : {};
+  } catch {
+    throw new Error(`Cloudflare Workers AI returned an unexpected non-image response: ${raw.slice(0, 400)}`);
+  }
+  if (json.success === false) {
     const detail = json.errors?.[0]?.message || json.error?.message || raw || `HTTP ${res.status}`;
     throw new Error(`Cloudflare Workers AI ${res.status}: ${String(detail).slice(0, 400)}`);
   }
-  const b64 = json.result?.image || json.image;
+  const b64 = (typeof json.result === "object" && json.result ? json.result.image : undefined) || json.image || (typeof json.result === "string" ? json.result : undefined);
   if (!b64) throw new Error("Cloudflare Workers AI returned no image data");
   return base64ToBytes(b64);
 }
@@ -463,13 +526,15 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   await supabase.from("daily_articles").update({ image_generation_status: "generating", image_prompt: prompt }).eq("slug", row.slug);
 
   try {
-    let bytes = await generateImageBytes(prompt);
+    let negativePrompt = buildNegativeImagePrompt(subject);
+    let bytes = await generateImageBytes(prompt, negativePrompt);
     let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
     for (let attempt = 1; !verdict.matches && attempt <= 2; attempt += 1) {
       const stronger = buildImagePrompt(subject, `PREVIOUS ATTEMPT FAILED CLOUDFLARE VISION VALIDATION because: "${verdict.reason}". Fix the failure. Do not reproduce any rejected motif named in that reason. Depict the primary subject literally and specifically as a photorealistic editorial photograph.`);
       usedPrompt = stronger;
-      bytes = await generateImageBytes(stronger);
+      negativePrompt = buildNegativeImagePrompt(subject, verdict.reason);
+      bytes = await generateImageBytes(stronger, negativePrompt);
       verdict = await validateImageMatchesArticle(bytes, subject);
     }
     if (!verdict.matches) throw new Error(`Generated image failed Cloudflare story-match/photorealism validation: ${verdict.reason}`);

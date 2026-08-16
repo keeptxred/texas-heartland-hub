@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildImagePrompt, inferDomain, parseVisionVerdict, type SubjectExtract } from "./featured-image.functions";
+import { buildImagePrompt, buildNegativeImagePrompt, inferDomain, parseVisionVerdict, type SubjectExtract } from "./featured-image.functions";
 
 const legalSubject: SubjectExtract = {
   title: "Texas Court Upholds Election Integrity Law Amid Democratic Challenges",
@@ -35,15 +35,27 @@ describe("Cloudflare featured-image vision resilience", () => {
     expect(inferDomain("Texas court upholds election law after an appellate ruling")).toBe("legal");
   });
 
-  it("steers legal stories away from politician, flagpole, and capitol imagery", () => {
+  it("steers legal stories away from politician, map, flagpole, and capitol imagery", () => {
     const prompt = buildImagePrompt(legalSubject);
     expect(prompt).toContain("believable Texas courthouse exterior or courtroom interior");
     expect(prompt).toContain("Do not use a politician");
     expect(prompt).toContain("flagpole");
     expect(prompt).toContain("capitol dome");
+    expect(prompt).toContain("Texas-shaped graphic");
   });
 
-  it("puts retry feedback ahead of the primary subject so the 2048-character model cap retains it", () => {
+  it("uses SDXL negative prompting to reject illustration and Texas-map motifs", () => {
+    const negative = buildNegativeImagePrompt(
+      legalSubject,
+      "The image appears to be an illustration or graphic representation of the state of Texas.",
+    );
+    expect(negative).toContain("illustration");
+    expect(negative).toContain("Texas state silhouette");
+    expect(negative).toContain("map of Texas");
+    expect(negative).toContain("rejected visual motif");
+  });
+
+  it("puts retry feedback ahead of the primary subject so correction survives prompt truncation", () => {
     const correction = "REJECTED MOTIF: politician with flagpole in front of a dome";
     const prompt = buildImagePrompt(legalSubject, correction);
     expect(prompt.indexOf(correction)).toBeGreaterThanOrEqual(0);
