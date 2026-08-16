@@ -18,7 +18,20 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
     const db = supabaseAdmin as any;
     const today = new Date().toISOString().slice(0, 10);
 
-    const [budgetResult, candidatesResult, clustersResult, packetsResult, draftsResult, briefsResult, actionsResult, cronResult] = await Promise.all([
+    const [
+      budgetResult,
+      candidatesResult,
+      clustersResult,
+      packetsResult,
+      draftsResult,
+      briefsResult,
+      actionsResult,
+      cronResult,
+      normalizationFreshness,
+      clusterFreshness,
+      scoringFreshness,
+      packetFreshness,
+    ] = await Promise.all([
       db.from("ai_generation_budget").select("*").eq("site", "keeptxred").eq("budget_date", today).maybeSingle(),
       db.from("news_publish_candidates")
         .select("id,cluster_id,editorial_score,score_breakdown,recommended_format,status,selection_reason,rejection_reason,selected_at,published_at,created_at,updated_at")
@@ -39,9 +52,13 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
         .select("id,candidate_id,cluster_id,action,previous_candidate_status,next_candidate_status,reason,actor,created_at")
         .order("created_at", { ascending: false }).limit(30),
       db.rpc("newsroom_admin_cron_health"),
+      db.from("news_feed_normalization").select("normalized_at").order("normalized_at", { ascending: false }).limit(1).maybeSingle(),
+      db.from("news_story_clusters").select("updated_at").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
+      db.from("news_publish_candidates").select("updated_at").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
+      db.from("news_research_packets").select("updated_at").order("updated_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
 
-    for (const result of [budgetResult, candidatesResult, clustersResult, packetsResult, draftsResult, briefsResult, actionsResult]) {
+    for (const result of [budgetResult, candidatesResult, clustersResult, packetsResult, draftsResult, briefsResult]) {
       if (result.error) throw new Error(result.error.message);
     }
 
@@ -66,6 +83,20 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
       return acc;
     }, {});
 
+    const pipelineHealth = [
+      { stage: "Normalization", lastActivity: normalizationFreshness.error ? null : normalizationFreshness.data?.normalized_at ?? null },
+      { stage: "Clustering", lastActivity: clusterFreshness.error ? null : clusterFreshness.data?.updated_at ?? null },
+      { stage: "Scoring / decisions", lastActivity: scoringFreshness.error ? null : scoringFreshness.data?.updated_at ?? null },
+      { stage: "Research packets", lastActivity: packetFreshness.error ? null : packetFreshness.data?.updated_at ?? null },
+    ];
+
+    const auditAvailable = !actionsResult.error;
+    const cronTelemetryAvailable = !cronResult.error;
+    const extensionWarnings = [
+      auditAvailable ? null : "Editorial action audit storage is unavailable; core editorial controls remain active.",
+      cronTelemetryAvailable ? null : "Direct pg_cron telemetry is unavailable; pipeline activity timestamps are shown instead.",
+    ].filter(Boolean) as string[];
+
     return {
       ok: true as const,
       generatedAt: new Date().toISOString(),
@@ -75,8 +106,12 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
       formatCounts,
       drafts: draftsResult.data ?? [],
       briefs: briefsResult.data ?? [],
-      actions: actionsResult.data ?? [],
-      cronHealth: cronResult.error ? [] : (cronResult.data ?? []),
+      actions: auditAvailable ? (actionsResult.data ?? []) : [],
+      cronHealth: cronTelemetryAvailable ? (cronResult.data ?? []) : [],
+      pipelineHealth,
+      auditAvailable,
+      cronTelemetryAvailable,
+      extensionWarnings,
     };
   });
 
@@ -153,7 +188,13 @@ export const updateNewsroomEditorialState = createServerFn({ method: "POST" })
       reason: reason || null,
       actor: "admin-control-center",
     });
-    if (audit.error) throw new Error(audit.error.message);
 
-    return { ok: true as const, candidateId: candidate.id, clusterId: candidate.cluster_id, action: data.action, status: nextStatus };
+    return {
+      ok: true as const,
+      candidateId: candidate.id,
+      clusterId: candidate.cluster_id,
+      action: data.action,
+      status: nextStatus,
+      auditRecorded: !audit.error,
+    };
   });
