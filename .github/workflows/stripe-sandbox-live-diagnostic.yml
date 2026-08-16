@@ -1,0 +1,22 @@
+name: Stripe sandbox live diagnostic
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/stripe-sandbox-live-diagnostic.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read live Stripe sandbox config
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --silent --show-error \
+            https://keeptxred.com/api/public/payments/sandbox-config | tee sandbox-config.json
+          echo
+          python3 -m json.tool sandbox-config.json
