@@ -3,6 +3,7 @@ import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import {
   categoryForPillar,
+  NEWSROOM_DRAFT_JSON_SCHEMA,
   newsroomRewriteSystemPrompt,
   newsroomRewriteUserPrompt,
   slugifyNewsroomTitle,
@@ -132,6 +133,7 @@ async function handler({ request }: { request: Request }) {
       user: newsroomRewriteUserPrompt(packet),
       maxTokens: 12000,
       maxAttempts: 1,
+      jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
     });
     generated = true;
     const validation = validateNewsroomDraft(ai.value, packet);
