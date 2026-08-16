@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { clusterNewsFeedItems } from "@/lib/newsroom-clustering";
 import { isPrimaryNewsSource } from "@/lib/newsroom-editorial-scoring";
+import { countDistinctNewsSources, countDistinctPrimaryNewsSources } from "@/lib/newsroom-source-quality";
 
 const LOOKBACK_HOURS = 48;
 const CLUSTER_LIMIT = 500;
@@ -72,8 +73,8 @@ async function handler() {
     const members = cluster.memberFeedItemIds
       .map((id) => feedById.get(id))
       .filter((row): row is FeedRouteRow => Boolean(row));
-    const sourceCount = new Set(members.map((row) => row.source).filter(Boolean)).size;
-    const primarySourceCount = members.filter((row) => isPrimaryNewsSource(row.source, row.link)).length;
+    const sourceCount = countDistinctNewsSources(members);
+    const primarySourceCount = countDistinctPrimaryNewsSources(members);
     return {
       cluster_key: `deterministic-v${CLUSTER_VERSION}:${cluster.anchorFeedItemId}`,
       canonical_subject: cluster.canonicalSubject,
@@ -119,6 +120,7 @@ async function handler() {
 
   const multiSourceClusters = clusterRows.filter((row) => row.source_count > 1).length;
   const primarySourceItems = memberships.filter((row) => row.is_primary_source).length;
+  const distinctPrimarySources = clusterRows.reduce((sum, row) => sum + row.primary_source_count, 0);
   return Response.json({
     ok: true,
     scanned: clusterable.length,
@@ -126,6 +128,7 @@ async function handler() {
     multiSourceClusters,
     memberships: memberships.length,
     primarySourceItems,
+    distinctPrimarySources,
     clusterVersion: CLUSTER_VERSION,
     aiCalls: 0,
   });
