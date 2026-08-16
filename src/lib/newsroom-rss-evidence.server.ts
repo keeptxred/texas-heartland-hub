@@ -1,3 +1,5 @@
+import { isSyntheticNewsroomEvidence } from "./newsroom-evidence-integrity";
+
 const RSS_EVIDENCE_FEEDS = [
   "https://gov.texas.gov/news/rss",
   "https://www.sos.state.tx.us/rss/press.xml",
@@ -26,6 +28,7 @@ type EvidenceRefreshResult = {
   evidenceItems: number;
   matchedRows: number;
   updatedRows: number;
+  repairedSyntheticRows: number;
   evidenceCharsWritten: number;
   failures: Array<{ url: string; error: string }>;
   aiCalls: 0;
@@ -74,11 +77,18 @@ export function extractRssEvidence(xml: string): Map<string, string> {
       pick(block, "description") ||
       pick(block, "summary")
     ).slice(0, MAX_BODY_CHARS);
-    if (body.length < MIN_USEFUL_BODY_CHARS) continue;
+    if (body.length < MIN_USEFUL_BODY_CHARS || isSyntheticNewsroomEvidence(body)) continue;
     const previous = evidence.get(link) ?? "";
     if (body.length > previous.length) evidence.set(link, body);
   }
   return evidence;
+}
+
+export function shouldReplaceExistingEvidence(existing: string | null | undefined, cleanBody: string): boolean {
+  if (cleanBody.length < MIN_USEFUL_BODY_CHARS || isSyntheticNewsroomEvidence(cleanBody)) return false;
+  const current = existing ?? "";
+  if (isSyntheticNewsroomEvidence(current)) return true;
+  return cleanBody.length > current.length + 100;
 }
 
 async function fetchFeed(url: string): Promise<{ url: string; evidence: Map<string, string>; error?: string }> {
@@ -131,6 +141,7 @@ export async function refreshNewsroomRssEvidence(): Promise<EvidenceRefreshResul
   const links = [...evidenceByLink.keys()];
   let matchedRows = 0;
   let updatedRows = 0;
+  let repairedSyntheticRows = 0;
   let evidenceCharsWritten = 0;
   for (let start = 0; start < links.length; start += 100) {
     const chunk = links.slice(start, start + 100);
@@ -142,10 +153,12 @@ export async function refreshNewsroomRssEvidence(): Promise<EvidenceRefreshResul
       if (!row.link) continue;
       const body = evidenceByLink.get(row.link) ?? "";
       const existing = row.extracted_body ?? "";
-      if (body.length <= existing.length + 100) continue;
+      if (!shouldReplaceExistingEvidence(existing, body)) continue;
+      const wasSynthetic = isSyntheticNewsroomEvidence(existing);
       const { error: updateError } = await db.from("texas_news_feed").update({ extracted_body: body }).eq("id", row.id);
       if (updateError) throw new Error(`rss evidence update failed for feed ${row.id}: ${updateError.message}`);
       updatedRows++;
+      if (wasSynthetic) repairedSyntheticRows++;
       evidenceCharsWritten += body.length;
     }
   }
@@ -156,6 +169,7 @@ export async function refreshNewsroomRssEvidence(): Promise<EvidenceRefreshResul
     evidenceItems: evidenceByLink.size,
     matchedRows,
     updatedRows,
+    repairedSyntheticRows,
     evidenceCharsWritten,
     failures,
     aiCalls: 0,

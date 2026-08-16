@@ -1,3 +1,5 @@
+import { isSyntheticNewsroomEvidence } from "./newsroom-evidence-integrity";
+
 export type ResearchPacketSource = {
   feedItemId: number;
   title: string;
@@ -40,7 +42,9 @@ function normalizeEvidenceSegment(value: string): string {
 }
 
 function sourceEvidenceSegments(source: ResearchPacketSource): string[] {
-  const combined = `${source.description ?? ""}\n${source.extractedBody ?? ""}`;
+  const safeExtractedBody = isSyntheticNewsroomEvidence(source.extractedBody) ? "" : source.extractedBody;
+  const safeDescription = isSyntheticNewsroomEvidence(source.description) ? "" : source.description;
+  const combined = `${safeDescription ?? ""}\n${safeExtractedBody ?? ""}`;
   return combined
     .split(/\n+|(?<=[.!?])\s+/)
     .map(normalizeEvidenceSegment)
@@ -86,8 +90,8 @@ export function buildResearchPacket(input: {
     .map((source) => ({
       ...source,
       title: source.title.slice(0, 500),
-      description: source.description.slice(0, 3000),
-      extractedBody: source.extractedBody.slice(0, 8000),
+      description: (isSyntheticNewsroomEvidence(source.description) ? "" : source.description).slice(0, 3000),
+      extractedBody: (isSyntheticNewsroomEvidence(source.extractedBody) ? "" : source.extractedBody).slice(0, 8000),
     }));
 
   return {

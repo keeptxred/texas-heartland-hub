@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildResearchPacket } from "./newsroom-research-packet";
+import { buildResearchPacket, researchPacketEvidenceChars } from "./newsroom-research-packet";
 
 describe("newsroom research packets", () => {
   it("places verified primary sources ahead of secondary coverage", () => {
@@ -39,5 +39,30 @@ describe("newsroom research packets", () => {
     });
     expect(packet.sources[0].description.length).toBe(3000);
     expect(packet.sources[0].extractedBody.length).toBe(8000);
+  });
+
+  it("never treats KTR synthetic multi-source packets as publisher evidence", () => {
+    const synthetic = `MULTI-SOURCE STORY PACKET.\nRAW SOURCE PACKET\n${"synthetic generated material. ".repeat(300)}`;
+    const packet = buildResearchPacket({
+      clusterId: "c-synthetic",
+      subject: "source integrity",
+      pillar: "texas-politics-government",
+      recommendedFormat: "MERGE",
+      editorialScore: 75,
+      sources: [{
+        feedItemId: 1,
+        title: "Source story",
+        source: "Publisher",
+        url: "https://publisher.example/story",
+        publishedAt: null,
+        description: "MULTI-SOURCE STORY PACKET. synthetic description",
+        extractedBody: synthetic,
+        isPrimarySource: false,
+        sourceReputationScore: 80,
+      }],
+    });
+    expect(packet.sources[0].description).toBe("");
+    expect(packet.sources[0].extractedBody).toBe("");
+    expect(researchPacketEvidenceChars(packet)).toBe(0);
   });
 });
