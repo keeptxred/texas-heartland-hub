@@ -1,5 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import {
+  failPendingRewriteClaimsForFeedItem,
+  type RewriteCacheFinalizationClient,
+} from "@/lib/rewrite-cache-finalization";
 
 const InputSchema = z.object({
   token: z.string().min(1),
@@ -169,6 +173,34 @@ export const publishFeedItemFn = createServerFn({ method: "POST" })
         feed_item_id: data.feed_item_id,
         detail,
       });
+
+      // publishSingleFeedItem claims the rewrite cache before calling the AI
+      // pipeline. A thrown provider/runtime exception can bypass its normal
+      // completed/failed write. Finalize only this feed item's still-pending
+      // claims so the UI never leaves an abandoned rewrite looking active.
+      try {
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const finalized = await failPendingRewriteClaimsForFeedItem(
+          supabaseAdmin as unknown as RewriteCacheFinalizationClient,
+          data.feed_item_id,
+          detail,
+        );
+        if (!finalized.ok) {
+          console.error("[publishFeedItemFn] failed to finalize crashed rewrite claim", {
+            feed_item_id: data.feed_item_id,
+            error: finalized.error,
+          });
+        }
+      } catch (finalizationError) {
+        console.error("[publishFeedItemFn] rewrite claim finalization crashed", {
+          feed_item_id: data.feed_item_id,
+          error:
+            finalizationError instanceof Error
+              ? finalizationError.message
+              : String(finalizationError),
+        });
+      }
+
       return {
         ok: false,
         error: `Publish request crashed for feed item ${data.feed_item_id}: ${detail}`,
