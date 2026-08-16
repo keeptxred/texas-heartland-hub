@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractRssEvidence } from "./newsroom-rss-evidence.server";
+import { extractRssEvidence, shouldReplaceExistingEvidence } from "./newsroom-rss-evidence.server";
 
 describe("newsroom RSS evidence enrichment", () => {
   it("prefers full content:encoded body over the short RSS description", () => {
@@ -27,5 +27,18 @@ describe("newsroom RSS evidence enrichment", () => {
     const xml = `<feed><entry><title>Texas entry</title><link href="https://example.com/atom"/><content type="html"><![CDATA[<p>${"Atom evidence sentence. ".repeat(30)}</p>]]></content></entry></feed>`;
     const body = extractRssEvidence(xml).get("https://example.com/atom") ?? "";
     expect(body.length).toBeGreaterThan(400);
+  });
+
+  it("repairs a longer synthetic KTR packet with shorter clean publisher evidence", () => {
+    const synthetic = `MULTI-SOURCE STORY PACKET. ${"generated packet text ".repeat(800)}`;
+    const clean = "Original publisher evidence sentence. ".repeat(30);
+    expect(clean.length).toBeLessThan(synthetic.length);
+    expect(shouldReplaceExistingEvidence(synthetic, clean)).toBe(true);
+  });
+
+  it("never accepts synthetic KTR packet text from an RSS body as evidence", () => {
+    const synthetic = `MULTI-SOURCE STORY PACKET. ${"generated packet text ".repeat(40)}`;
+    const xml = `<rss><channel><item><title>Bad evidence</title><link>https://example.com/synthetic</link><content:encoded><![CDATA[${synthetic}]]></content:encoded></item></channel></rss>`;
+    expect(extractRssEvidence(xml).has("https://example.com/synthetic")).toBe(false);
   });
 });
