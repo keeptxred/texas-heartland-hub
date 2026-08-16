@@ -13,15 +13,23 @@ function article(slug: string) {
 
 describe("static article indexability", () => {
   it.each([
+    "renting-vs-buying-in-texas",
+    "texas-house-down-payment-guide",
+    "true-cost-of-owning-a-home-in-texas",
+    "should-you-refinance-texas-mortgage",
+    "texas-home-equity-heloc-guide",
     "texas-mortgage-payment-guide",
     "texas-closing-costs-guide",
     "texas-utility-costs-guide",
     "texas-homeowners-insurance-guide",
+    "salary-needed-to-buy-a-house-in-texas",
+    "moving-to-houston-address-checklist",
+    "moving-to-dallas-fort-worth-guide",
+    "moving-to-san-antonio-guide",
+    "moving-to-austin-guide",
+    "moving-to-el-paso-guide",
     "moving-to-texas-guide",
-    "cost-of-living-in-texas",
-    "texas-stock-tank-plunge-pools-guide",
-    "texas-food-cities-dominating-food-network",
-    "texas-high-school-football-prospect-peyton-houser",
+    "2026-07-06-rangers-texas-rangers-prospect-guide-the-next-stars-of-arlington",
   ])("retires legacy off-topic static article %s", (slug) => {
     expect(isStaticArticleIndexable(article(slug))).toBe(false);
     expect(isRetiredStaticNewsPath(`/news/${slug}`)).toBe(true);
@@ -30,15 +38,32 @@ describe("static article indexability", () => {
   it.each([
     "texas-voting-guide-2026",
     "texas-property-tax-laws-explained",
-    "texas-gun-culture-explained",
-    "texas-water-future",
-  ])("preserves civic or pillar article %s", (slug) => {
+    "texas-gun-laws-explained",
+    "texas-water-rights-explained",
+    "how-a-bill-becomes-texas-law",
+  ])("preserves civic, legal, election or policy article %s", (slug) => {
     expect(isStaticArticleIndexable(article(slug))).toBe(true);
     expect(isRetiredStaticNewsPath(`/news/${slug}`)).toBe(false);
   });
 
-  it("retires legacy live-news paths even when the static fixture is gone", () => {
-    expect(isRetiredStaticNewsPath("/news/live-2026-07-20-example-legacy-story-abc123")).toBe(true);
+  it("does not let the legacy pillar flag override topical retirement", () => {
+    const mortgage = article("texas-mortgage-payment-guide");
+    expect(mortgage.pillar).toBe(true);
+    expect(isStaticArticleIndexable(mortgage)).toBe(false);
+  });
+
+  it("retires legacy live-news paths", () => {
+    const live = article("live-2026-07-02-secretary-of-state-releases-july-3-texas-register-detailing-new-state--m0th5w");
+    expect(isStaticArticleIndexable(live)).toBe(false);
+    expect(isRetiredStaticNewsPath(`/news/${live.slug}`)).toBe(true);
+  });
+
+  it("keeps sitemap and page-level robots decisions synchronized for the full static registry", () => {
+    for (const candidate of ARTICLES) {
+      const retiredByInventory = !isStaticArticleIndexable(candidate);
+      const retiredByPath = isRetiredStaticNewsPath(`/news/${candidate.slug}`);
+      expect(retiredByPath, `robots mismatch for ${candidate.slug}`).toBe(retiredByInventory);
+    }
   });
 
   it("does not affect non-news paths", () => {
