@@ -1,12 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
   FREE_SHIPPING_THRESHOLD_CENTS,
+  STRIPE_CHECKOUT_UI_MODE,
   getStandardShippingCents,
   priceToCents,
   qualifiesForFreeShipping,
 } from "@/lib/checkout.functions";
 
 describe("checkout shipping policy", () => {
+  it("uses Stripe's current embedded Checkout UI mode", () => {
+    expect(STRIPE_CHECKOUT_UI_MODE).toBe("embedded");
+  });
+
   it("charges shipping at exactly $35", () => {
     expect(FREE_SHIPPING_THRESHOLD_CENTS).toBe(3500);
     expect(qualifiesForFreeShipping(3500)).toBe(false);
