@@ -50,24 +50,30 @@ jobs:
         run: |
           set -euo pipefail
 
+          main_sha="$(curl --fail-with-body --silent --show-error \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/$REPOSITORY/git/ref/heads/main" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])')"
+
+          # A successful verification run can sometimes report the already-merged
+          # main SHA instead of the original PR head SHA. If that exact verified
+          # revision is current main, it is safe to deploy immediately and there
+          # is no reason to wait for GitHub's commit-to-PR association endpoint.
+          if [[ -n "$VERIFIED_SHA" && "$VERIFIED_SHA" == "$main_sha" ]]; then
+            echo "sha=$VERIFIED_SHA" >> "$GITHUB_OUTPUT"
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            echo "Verified revision is current main: $VERIFIED_SHA"
+            exit 0
+          fi
+
           if [[ "$RUN_EVENT" == "workflow_dispatch" ]]; then
             if [[ -z "$VERIFIED_SHA" ]]; then
               echo "::error title=Verified SHA required::Manual production deployment requires an exact verified_sha."
               exit 1
             fi
-            main_sha="$(curl --fail-with-body --silent --show-error \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$REPOSITORY/git/ref/heads/main" \
-              | python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])')"
-            if [[ "$main_sha" != "$VERIFIED_SHA" ]]; then
-              echo "::error title=Verified revision is stale::Current main is $main_sha, but deployment requested verified SHA $VERIFIED_SHA."
-              exit 1
-            fi
-            echo "sha=$VERIFIED_SHA" >> "$GITHUB_OUTPUT"
-            echo "deploy=true" >> "$GITHUB_OUTPUT"
-            echo "Explicit verified deployment resolved to current main: $VERIFIED_SHA"
-            exit 0
+            echo "::error title=Verified revision is stale::Current main is $main_sha, but deployment requested verified SHA $VERIFIED_SHA."
+            exit 1
           fi
 
           if [[ "$RUN_EVENT" == "push" ]]; then
@@ -76,9 +82,8 @@ jobs:
               echo "Verified push was not main; skipping production deployment."
               exit 0
             fi
-            echo "sha=$VERIFIED_SHA" >> "$GITHUB_OUTPUT"
-            echo "deploy=true" >> "$GITHUB_OUTPUT"
-            echo "Verified main push resolved directly: $VERIFIED_SHA"
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Verified main push $VERIFIED_SHA is no longer current main ($main_sha); refusing stale deployment."
             exit 0
           fi
 
@@ -119,12 +124,6 @@ jobs:
             echo "::error title=Verified PR merge could not be resolved::The verification passed, but GitHub did not expose one merged main PR matching either the verified head SHA or verified merge SHA within the wait window. Production was not changed."
             exit 1
           fi
-
-          main_sha="$(curl --fail-with-body --silent --show-error \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/$REPOSITORY/git/ref/heads/main" \
-            | python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])')"
 
           if [[ "$main_sha" != "$merged_sha" ]]; then
             echo "deploy=false" >> "$GITHUB_OUTPUT"
