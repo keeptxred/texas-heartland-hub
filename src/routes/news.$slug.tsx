@@ -9,6 +9,7 @@ import {
   type EvergreenBody,
 } from "@/lib/evergreen.functions";
 import { isBadYearSlug, parseArticleSlug } from "@/lib/article-slug-integrity";
+import { normalizeCategoryName, type CategoryName } from "@/lib/articles-by-category";
 import { AdSlot } from "@/components/ad-slot";
 import { NewsletterSignup } from "@/components/newsletter-signup";
 import {
@@ -25,6 +26,7 @@ import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
+type RenderedArticle = Omit<Article, "category"> & { category: CategoryName };
 
 const GENERIC_FAQ_PATTERNS = [
   /where can i read more/i,
@@ -39,7 +41,7 @@ function validIsoDate(value: string | null | undefined): string | undefined {
   return Number.isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
 }
 
-function articleDates(article: Article, body: ArticleBody) {
+function articleDates(article: Pick<RenderedArticle, "publishedAt">, body: ArticleBody) {
   const published = validIsoDate(article.publishedAt) ?? validIsoDate(body.updated) ?? new Date().toISOString();
   const candidateModified = validIsoDate(body.updated) ?? published;
   const modified = new Date(candidateModified).getTime() < new Date(published).getTime()
@@ -57,7 +59,7 @@ function isSpecificFaq(faq: { q: string; a: string }) {
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async ({ params }): Promise<{
-    article: Article;
+    article: RenderedArticle;
     body: StructuredArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   }> => {
@@ -90,9 +92,8 @@ export const Route = createFileRoute("/news/$slug")({
     );
     if (nonStubSections.length === 0 && introText.length < 200) throw notFound();
     if (!meetsArticleMainWordCount(ever.kind, ever.body)) throw notFound();
-    const allowed = ["Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
-    const cat = (allowed as readonly string[]).includes(ever.category) ? (ever.category as Article["category"]) : "Legislature";
-    const synth: Article = {
+    const cat = normalizeCategoryName(ever.category);
+    const synth: RenderedArticle = {
       slug: ever.slug,
       category: cat,
       title: (ever.seo_headline ?? "").trim() || ever.title,
@@ -282,7 +283,7 @@ function _buildDefaultBody(a: Article): ArticleBody {
 
 function ArticlePage() {
   const { article, body } = Route.useLoaderData() as {
-    article: Article;
+    article: RenderedArticle;
     body: ArticleBody;
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   };
