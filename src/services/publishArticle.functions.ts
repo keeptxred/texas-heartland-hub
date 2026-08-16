@@ -35,6 +35,14 @@ function isTieredWordCountFailure(error: string | undefined): boolean {
   return Boolean(error && /rewrite below tiered minimum/i.test(error));
 }
 
+function tieredMinimumFromError(error: string | undefined): number | undefined {
+  if (!error) return undefined;
+  const match = error.match(/rewrite below tiered minimum\s*\(\s*\d+\s*\/\s*(\d+)\s*words?\s*\)/i);
+  if (!match) return undefined;
+  const minimum = Number(match[1]);
+  return Number.isFinite(minimum) && minimum > 0 ? minimum : undefined;
+}
+
 function isMissingBypassRpc(error: { message?: string } | null): boolean {
   return Boolean(
     error?.message &&
@@ -114,12 +122,12 @@ export const publishFeedItemFn = createServerFn({ method: "POST" })
       let res = await publishSingleFeedItem(data.feed_item_id);
 
       // A source-ready item can still have a cached generated draft that lands
-      // just below its 800- or 1,200-word publishing tier. Expand that cached
-      // draft automatically and retry once instead of showing contradictory
-      // source/rewrite messaging or requiring another manual publish attempt.
+      // below its publishing tier. Expand the cached draft automatically using
+      // the exact minimum reported by the publishing gate, then retry once.
       if (!res.ok && isTieredWordCountFailure(res.error)) {
+        const requiredMinimum = tieredMinimumFromError(res.error);
         const { expandCachedRewriteForFeedItem } = await import("@/lib/expand-cached-rewrite");
-        const expanded = await expandCachedRewriteForFeedItem(data.feed_item_id);
+        const expanded = await expandCachedRewriteForFeedItem(data.feed_item_id, requiredMinimum);
         if (expanded) res = await publishSingleFeedItem(data.feed_item_id);
       }
 
