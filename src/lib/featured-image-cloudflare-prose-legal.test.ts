@@ -28,6 +28,17 @@ describe("Cloudflare featured-image vision resilience", () => {
     expect(verdict?.photorealistic).toBe(false);
   });
 
+  it("parses Mistral yes/no labels from production", () => {
+    const verdict = parseVisionVerdict(
+      "Matches: Yes Photorealistic: Yes Reason: The image depicts a realistic courthouse exterior, which directly represents the judicial ruling mentioned in the article.",
+    );
+    expect(verdict).toEqual({
+      matches: true,
+      photorealistic: true,
+      reason: "The image depicts a realistic courthouse exterior, which directly represents the judicial ruling mentioned in the article.",
+    });
+  });
+
   it("accepts an unambiguous plain-English approval when JSON mode is not followed", () => {
     const verdict = parseVisionVerdict(
       "The photograph clearly matches the story and is photorealistic, showing a believable courthouse scene tied directly to the ruling.",
