@@ -14,7 +14,7 @@ import { AUTHORS, authorSlug } from "@/data/authors";
 import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
 import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
-import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { isStaticArticleSearchReady } from "@/lib/static-article-search-readiness";
 
 function isCompleteAuthor(author: (typeof AUTHORS)[number]): boolean {
   return Boolean(
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/sitemap.xml")({
         const cutoff = Date.now() - 48 * 60 * 60 * 1000;
         const localArticles = ARTICLES.filter((article) =>
           isPublished(article)
-          && isStaticArticleIndexable(article)
+          && isStaticArticleSearchReady(article)
           && isArticleSlugDateConsistent(article.slug, article.publishedAt),
         );
         let cloudArticles: Array<{
