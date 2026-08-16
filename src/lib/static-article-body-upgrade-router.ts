@@ -1,4 +1,5 @@
 import { applyStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrades";
+import { applyNoIncomeTaxArticleUpgrade } from "@/lib/static-no-income-tax-upgrade";
 
 type UpgradeCandidate = {
   editorNote?: string;
@@ -24,13 +25,14 @@ function isCurrentLegacyHomesteadExplainer(body: UpgradeCandidate): boolean {
 }
 
 /**
- * The homestead fixture had one intermediate editorial revision before the
- * reviewed 2026 authority upgrade was introduced. Recognize that known shape
- * with three independent structural signals, then route it through the
- * canonical upgrade. This keeps the canonical body in one place and still
- * refuses to replace unrelated or future intentionally rewritten articles.
+ * Route narrowly fingerprinted legacy static explainers through reviewed
+ * authority upgrades. Each upgrade must refuse unrelated bodies so a future
+ * intentional rewrite is never silently replaced.
  */
 export function applyReviewedStaticArticleBodyUpgrade<T extends UpgradeCandidate>(body: T): T {
+  const noIncomeTaxUpgrade = applyNoIncomeTaxArticleUpgrade(body);
+  if (noIncomeTaxUpgrade !== body) return noIncomeTaxUpgrade;
+
   if (!isCurrentLegacyHomesteadExplainer(body)) return applyStaticArticleBodyUpgrade(body);
 
   const normalizedLegacyShape = {
