@@ -19,6 +19,8 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(workflow).not.toContain("generate-newsroom?mode=publish");
     expect(workflow).toContain('options:\n          - "1"\n          - "3"');
     expect(workflow).toContain('1|3)');
+    expect(workflow).toContain("/run-phase13-shadow-canary-1");
+    expect(workflow).toContain("github.event.comment.body == '/run-phase13-shadow-canary-1' && '1'");
     expect(generator).toContain("maxAttempts: 1");
   });
 
