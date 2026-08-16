@@ -42,6 +42,8 @@ const actionSchema = z.discriminatedUnion("action", [
   }),
 ]);
 
+export type SourceProvenanceAdminMutation = z.infer<typeof actionSchema>;
+
 function assertAdminToken(token: string) {
   const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
   if (token !== expected) throw new Error("Unauthorized");
