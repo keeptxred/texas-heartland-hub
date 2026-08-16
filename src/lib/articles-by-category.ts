@@ -6,12 +6,18 @@ import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/arti
  * never accidentally surface articles from another category.
  */
 export const CATEGORY_SLUG_TO_NAME = {
+  politics: "Politics",
   legislature: "Legislature",
+  government: "Government",
+  "local-government": "Local Government",
+  laws: "Laws",
   border: "Border",
   elections: "Elections",
   "tax-spending": "Tax & Spending",
   energy: "Energy",
   education: "Education",
+  business: "Business",
+  sports: "Sports",
   "non-political": "Non-Political",
   // Texas News (culture / economy / lifestyle) categories
   economy: "Economy",
@@ -28,8 +34,15 @@ export const CATEGORY_NAME_TO_SLUG: Record<CategoryName, CategorySlug> = Object.
   Object.entries(CATEGORY_SLUG_TO_NAME).map(([slug, name]) => [name, slug]),
 ) as Record<CategoryName, CategorySlug>;
 
+const CATEGORY_NAMES = new Set<string>(Object.values(CATEGORY_SLUG_TO_NAME));
+
 export function isCategorySlug(value: string): value is CategorySlug {
   return Object.prototype.hasOwnProperty.call(CATEGORY_SLUG_TO_NAME, value);
+}
+
+export function normalizeCategoryName(value: string | null | undefined): CategoryName {
+  const normalized = value?.trim() ?? "";
+  return CATEGORY_NAMES.has(normalized) ? (normalized as CategoryName) : "Non-Political";
 }
 
 /**

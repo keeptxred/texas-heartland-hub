@@ -19,9 +19,9 @@ export const Route = createFileRoute("/news/")({
   head: () => ({
     meta: [
       { title: "Texas Political News — Keep TX Red" },
-      { name: "description", content: "Conservative news from Austin to the border — legislature, border, energy, education, and tax policy from the Lone Star State." },
+      { name: "description", content: "Conservative news from Austin to the border — politics, elections, government, laws, legislature, energy, education, and tax policy from the Lone Star State." },
       { property: "og:title", content: "Texas Political News — Keep TX Red" },
-      { property: "og:description", content: "Conservative reporting on Texas politics, legislation, and policy." },
+      { property: "og:description", content: "Conservative reporting on Texas politics, elections, legislation, government, law, and policy." },
       { property: "og:url", content: "/news" },
     ],
     links: [{ rel: "canonical", href: "https://keeptxred.com/news" }],
@@ -30,7 +30,19 @@ export const Route = createFileRoute("/news/")({
   component: NewsPage,
 });
 
-const CATS = ["All", "Legislature", "Border", "Elections", "Tax & Spending", "Energy", "Education"] as const;
+const CATS = [
+  "All",
+  "Politics",
+  "Legislature",
+  "Government",
+  "Local Government",
+  "Laws",
+  "Border",
+  "Elections",
+  "Tax & Spending",
+  "Energy",
+  "Education",
+] as const;
 
 function catToSlug(cat: (typeof CATS)[number]): string {
   if (cat === "All") return "";
@@ -110,7 +122,7 @@ function NewsPage() {
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-primary">★ Newsroom</span>
         <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-1">Texas Political News</h1>
         <p className="mt-3 text-muted-foreground max-w-2xl">
-          Independent conservative reporting on the legislature, border security, energy, education, and the tax fights that matter to Texas families. Updated every morning at 2:00 AM Central.
+          Independent conservative reporting on Texas politics, elections, government, law, the legislature, border security, energy, education, and tax policy. Updated every morning at 2:00 AM Central.
         </p>
         <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold">
           <Link to="/authors" className="text-primary hover:underline">Meet our authors &amp; desks →</Link>
