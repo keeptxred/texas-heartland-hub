@@ -29,6 +29,8 @@ jobs:
     # Auto-merges performed with GITHUB_TOKEN do not emit a normal push workflow.
     # Explicitly dispatch the repository health workflow after a trusted merge so
     # current main is verified before the production deployment workflow runs.
+    # Keep this closed-event dispatch in place: it is the bootstrap/recovery path
+    # that guarantees an auto-merged main revision still reaches verification.
     if: >-
       github.event.action == 'closed' &&
       github.event.pull_request.merged == true &&
