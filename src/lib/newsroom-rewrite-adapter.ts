@@ -13,80 +13,17 @@ export type NewsroomDraft = {
   faq: Array<{ q: string; a: string }>;
 };
 
+// Keep provider-side structure guidance deliberately lean. Cloudflare documents that
+// complex JSON schemas can fail JSON Mode; semantic/detail validation remains local.
 export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
   type: "object",
-  additionalProperties: false,
   properties: {
     brief: {
       type: "object",
       properties: {
         hasClearNewsEvent: { type: "boolean" },
-        storyType: { type: "string" },
-        category: { type: "string" },
-        primaryEvent: { type: "string" },
-        whyNow: { type: "string" },
-        primarySubject: { type: "string" },
-        secondarySubjects: { type: "array", items: { type: "string" } },
-        organizations: { type: "array", items: { type: "string" } },
-        locations: { type: "array", items: { type: "string" } },
-        dates: { type: "array", items: { type: "string" } },
-        currentOffices: {
-          type: "array",
-          items: {
-            type: "object",
-            additionalProperties: false,
-            properties: { name: { type: "string" }, office: { type: "string" } },
-            required: ["name", "office"],
-          },
-        },
-        officesSought: {
-          type: "array",
-          items: {
-            type: "object",
-            additionalProperties: false,
-            properties: { name: { type: "string" }, office: { type: "string" } },
-            required: ["name", "office"],
-          },
-        },
-        relationships: {
-          type: "array",
-          items: {
-            type: "object",
-            additionalProperties: false,
-            properties: { a: { type: "string" }, b: { type: "string" }, relationship: { type: "string" } },
-            required: ["a", "b", "relationship"],
-          },
-        },
-        facts: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            names: { type: "array", items: { type: "string" } },
-            dates: { type: "array", items: { type: "string" } },
-            locations: { type: "array", items: { type: "string" } },
-            actions: { type: "array", items: { type: "string" } },
-            officialRoles: { type: "array", items: { type: "string" } },
-            numbers: { type: "array", items: { type: "string" } },
-            quotes: { type: "array", items: { type: "string" } },
-          },
-          required: ["names", "dates", "locations", "actions", "officialRoles", "numbers", "quotes"],
-        },
-        analysis: {
-          type: "object",
-          additionalProperties: false,
-          properties: {
-            opinions: { type: "array", items: { type: "string" } },
-            predictions: { type: "array", items: { type: "string" } },
-            implications: { type: "array", items: { type: "string" } },
-          },
-          required: ["opinions", "predictions", "implications"],
-        },
       },
-      required: [
-        "hasClearNewsEvent", "storyType", "category", "primaryEvent", "whyNow", "primarySubject",
-        "secondarySubjects", "organizations", "locations", "dates", "currentOffices", "officesSought",
-        "relationships", "facts", "analysis",
-      ],
+      required: ["hasClearNewsEvent"],
     },
     title: { type: "string" },
     dek: { type: "string" },
@@ -94,19 +31,11 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
     relevance: { type: "string" },
     sections: {
       type: "array",
-      minItems: 6,
-      maxItems: 6,
       items: {
         type: "object",
-        additionalProperties: false,
         properties: {
           heading: { type: "string" },
-          paragraphs: {
-            type: "array",
-            minItems: 3,
-            maxItems: 3,
-            items: { type: "string" },
-          },
+          paragraphs: { type: "array", items: { type: "string" } },
         },
         required: ["heading", "paragraphs"],
       },
@@ -116,7 +45,6 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
       type: "array",
       items: {
         type: "object",
-        additionalProperties: false,
         properties: { q: { type: "string" }, a: { type: "string" } },
         required: ["q", "a"],
       },
