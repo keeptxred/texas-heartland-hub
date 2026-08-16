@@ -4,6 +4,8 @@
 // article's "Official Sources" list limited to genuinely authoritative
 // government / military sources.
 
+import { applyStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrades";
+
 export type Section = {
   heading?: string;
   paragraphs?: string[];
@@ -180,16 +182,19 @@ function officialSourcesOnly(sources: ArticleSource[] | undefined): ArticleSourc
 
 export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
   if (!body || typeof body !== "object") return body;
+  const sourceBody = applyStaticArticleBodyUpgrade(body);
   const seenPara = new Set<string>();
   const seenSent = new Set<string>();
   const seenHeading = new Set<string>();
 
-  const intro = Array.isArray(body.intro) ? dedupeParagraphs(body.intro, seenPara, seenSent) : body.intro;
+  const intro = Array.isArray(sourceBody.intro)
+    ? dedupeParagraphs(sourceBody.intro, seenPara, seenSent)
+    : sourceBody.intro;
 
   let sections: Section[] | undefined;
-  if (Array.isArray(body.sections)) {
+  if (Array.isArray(sourceBody.sections)) {
     sections = [];
-    for (const sec of body.sections) {
+    for (const sec of sourceBody.sections) {
       if (!sec) continue;
       const h = (sec.heading ?? "").trim();
       const hKey = norm(h);
@@ -206,15 +211,15 @@ export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
     }
   }
 
-  const keyTakeaways = Array.isArray(body.keyTakeaways)
-    ? dedupeList(body.keyTakeaways, new Set<string>())
-    : body.keyTakeaways;
+  const keyTakeaways = Array.isArray(sourceBody.keyTakeaways)
+    ? dedupeList(sourceBody.keyTakeaways, new Set<string>())
+    : sourceBody.keyTakeaways;
 
   let faq: FaqItem[] | undefined;
-  if (Array.isArray(body.faq)) {
+  if (Array.isArray(sourceBody.faq)) {
     const seenQ = new Set<string>();
     faq = [];
-    for (const f of body.faq) {
+    for (const f of sourceBody.faq) {
       if (!f) continue;
       const q = (f.q ?? "").trim();
       const qKey = norm(q);
@@ -225,9 +230,9 @@ export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
     }
   }
 
-  const sources = officialSourcesOnly(body.sources);
+  const sources = officialSourcesOnly(sourceBody.sources);
 
-  return { ...body, intro, sections, keyTakeaways, faq, sources } as T;
+  return { ...sourceBody, intro, sections, keyTakeaways, faq, sources } as T;
 }
 
 // True when the body still contains duplicate paragraphs/sentences after dedupe.
