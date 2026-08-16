@@ -236,6 +236,7 @@ export function ChatGptAutoArticlesPanel() {
             const isLegacyMetadata = !article.author;
             const isRegenerating = regenerating[article.id] ?? false;
             const isIgnoring = ignoring[article.id] ?? false;
+            const needsImage = !article.featured_image_url || isLegacyPlaceholder;
 
             return (
               <li key={article.id} className="py-4">
@@ -308,20 +309,24 @@ export function ChatGptAutoArticlesPanel() {
                   </div>
 
                   <div className="flex shrink-0 flex-col gap-2">
-                    {isLegacyPlaceholder ? (
+                    {needsImage ? (
                       <button
                         type="button"
                         onClick={() => void regenerateImage(article)}
                         disabled={isRegenerating || isIgnoring}
                         className="border-2 border-primary px-3 py-2 text-xs font-bold text-primary disabled:opacity-50"
                       >
-                        {isRegenerating ? "Regenerating…" : "Regenerate Real Image"}
+                        {isRegenerating
+                          ? "Generating…"
+                          : isLegacyPlaceholder
+                            ? "Regenerate Real Image"
+                            : "Generate Image"}
                       </button>
                     ) : null}
                     <button
                       type="button"
                       onClick={() => void postToFacebook(article)}
-                      disabled={isPosting || isRegenerating || isIgnoring || isLegacyPlaceholder}
+                      disabled={isPosting || isRegenerating || isIgnoring || needsImage}
                       className="inline-flex items-center justify-center gap-2 border-2 border-[#1877F2] px-3 py-2 text-xs font-bold text-[#1877F2] transition-colors hover:bg-[#1877F2] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <Facebook size={15} />
@@ -329,7 +334,9 @@ export function ChatGptAutoArticlesPanel() {
                         ? "Posting…"
                         : state.status === "posted"
                           ? "Republish to Facebook"
-                          : "Post to Facebook"}
+                          : needsImage
+                            ? "Generate Image First"
+                            : "Post to Facebook"}
                     </button>
                     <button
                       type="button"
