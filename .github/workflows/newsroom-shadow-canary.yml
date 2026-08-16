@@ -13,6 +13,8 @@ on:
           - "3"
   push:
     branches: [main]
+  issue_comment:
+    types: [created]
 
 permissions:
   contents: read
@@ -26,7 +28,8 @@ jobs:
   shadow-canary:
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'push' && contains(github.event.head_commit.message, 'Run Phase 13 AI shadow canary'))
+      (github.event_name == 'push' && contains(github.event.head_commit.message, 'Run Phase 13 AI shadow canary')) ||
+      (github.event_name == 'issue_comment' && github.event.issue.number == 574 && github.event.comment.body == '/run-phase13-shadow-canary')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
