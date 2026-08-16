@@ -1,4 +1,4 @@
-import type { Article } from "@/data/articles";
+import { ARTICLES, type Article } from "@/data/articles";
 
 const RETIRED_CONTENT_CATEGORIES = new Set([
   "relocation",
@@ -32,7 +32,7 @@ export function isRetiredStaticNewsPath(path: string): boolean {
   const match = path.match(/^\/news\/([^/?#]+)$/);
   if (!match) return false;
   const slug = decodeURIComponent(match[1]);
-  // Path-only use is intentionally limited to explicit legacy slugs. Content-
-  // category retirement is evaluated where the Article record is available.
-  return slug.startsWith("live-") || RETIRED_STATIC_SLUGS.has(slug);
+  const article = ARTICLES.find((candidate) => candidate.slug === slug);
+  if (article) return !isStaticArticleIndexable(article);
+  return slug.startsWith("live-");
 }
