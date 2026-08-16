@@ -28,10 +28,14 @@ describe("Phase 9 source provenance controls", () => {
     expect(migration).toContain("Cannot split the only source out of a cluster");
   });
 
+  it("rejects null relationship overrides inside the database RPC", () => {
+    expect(migration).toContain("p_relationship_type IS NULL OR p_relationship_type NOT IN");
+  });
+
   it("recalculates source counts and resynchronizes the existing article instead of inserting a new one", () => {
     expect(migration).toContain("refresh_news_event_cluster_counts");
     expect(migration).toContain("sync_news_event_cluster_article_sources");
-    expect(migration).toMatch(/UPDATE public\.daily_articles[\s\S]*body_json = jsonb_set/);
+    expect(migration).toMatch(/UPDATE ONLY public\.daily_articles[\s\S]*body_json = jsonb_set/);
     expect(migration).not.toMatch(/INSERT INTO public\.daily_articles/);
   });
 
