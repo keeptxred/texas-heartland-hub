@@ -6,10 +6,8 @@ import {
 } from "@/lib/stripe.server";
 
 export const FREE_SHIPPING_THRESHOLD_CENTS = 3500;
+export const STRIPE_CHECKOUT_UI_MODE = "embedded" as const;
 
-// Compact cart shape we stamp onto Stripe session metadata. Kept small
-// because Stripe caps each metadata value at 500 chars. Printify only
-// needs product_id + variant_id + quantity to place an order.
 type CheckoutCartItem = {
   productId: string;
   variantId: number | null;
@@ -325,7 +323,6 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
         return { error: "Cart items must use the same currency." };
       }
 
-      // Compact cart for Printify fulfillment (500-char metadata limit).
       const compactCart = validatedItems.map((item) => ({
         p: item.productId,
         v: item.variantId,
@@ -341,7 +338,7 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
 
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        ui_mode: "embedded_page",
+        ui_mode: STRIPE_CHECKOUT_UI_MODE,
         return_url: data.returnUrl,
         line_items: validatedItems.map((item) => ({
           quantity: item.quantity,
