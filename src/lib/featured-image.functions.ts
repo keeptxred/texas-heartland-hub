@@ -99,7 +99,7 @@ function firstParagraph(bodyJson: unknown): string {
   return "";
 }
 
-type Domain =
+export type Domain =
   | "wildlife"
   | "weather"
   | "energy"
@@ -110,6 +110,7 @@ type Domain =
   | "health"
   | "transportation"
   | "housing"
+  | "legal"
   | "politics"
   | "border"
   | "culture"
@@ -127,16 +128,17 @@ const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["housing", /\b(housing|rent|home price|real estate|apartment|homebuyer|mortgage|property tax|appraisal)\b/i],
   ["border", /\b(border|migrant|immigration|cartel|rio grande|asylum)\b/i],
   ["business", /\b(company|corporation|factory|manufacturing|semiconductor|tech|film|festival|investment|economy|jobs|hiring)\b/i],
+  ["legal", /\b(court|courthouse|judge|justice|lawsuit|ruling|appeal|appellate|injunction|litigation|plaintiff|defendant|judicial|legal challenge|supreme court|court of appeals)\b/i],
   ["politics", /\b(governor|senator|representative|legislature|capitol|abbott|patrick|paxton|cruz|cornyn|bill|law|policy|election|ballot)\b/i],
   ["culture", /\b(rodeo|barbecue|music|festival|art|museum|heritage|cultural)\b/i],
 ];
 
-function inferDomain(text: string): Domain {
+export function inferDomain(text: string): Domain {
   for (const [d, re] of DOMAIN_KEYWORDS) if (re.test(text)) return d;
   return "general";
 }
 
-type SubjectExtract = {
+export type SubjectExtract = {
   title: string;
   firstParagraph: string;
   entities: string[];
@@ -173,6 +175,7 @@ const DOMAIN_STEER: Record<Domain, string> = {
   health: "Depict a believable hospital, campus, construction, or clinical-facility setting relevant to the story. No identifiable patients or staff and no generic medical-symbol placeholder.",
   transportation: "Depict the actual road, highway, airport, or transit infrastructure described.",
   housing: "Depict Texas neighborhoods, homes, or construction — the real subject, not stock finance imagery.",
+  legal: "Depict the legal proceeding itself: a believable Texas courthouse exterior or courtroom interior with judicial bench, counsel tables, court files, or anonymous legal participants seen from behind. For an election-law case, keep voting context subtle and secondary. Do not use a politician, candidate, suited spokesperson, flagpole, rally, podium, or capitol dome as the primary subject.",
   border: "Depict the border landscape, river, or fence line. No identifiable faces.",
   business: "Depict the actual industry or facility described (factory floor, film set, storefront). No branded signage.",
   politics: "Depict a realistic government setting only when the article is explicitly about that setting; otherwise depict the policy's real-world effect rather than abstract symbols.",
@@ -185,6 +188,7 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   const capitolAllowed = /capitol|legislature|governor|abbott|patrick|session|state house|state senate/i.test(t);
   const flagAllowed = /flag|patriot|independence|texas day/i.test(t);
   const newsroomAllowed = /newspaper|journalism|reporter|press freedom|media industry|newsroom/i.test(t);
+  const legalStory = subject.domain === "legal";
 
   const avoid = [
     "no illustration",
@@ -207,6 +211,7 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
     "no political party symbols",
     "no copyrighted characters or celebrities",
     "no AI hands with extra fingers and no distorted anatomy",
+    legalStory ? "no posed politician, candidate, campaign surrogate, suited spokesperson, flagpole, rally, podium, capitol-dome composition, or ceremonial government portrait" : "",
     !newsroomAllowed ? "no generic newsroom, newspaper, microphone, TV studio, laptop, office, or breaking-news graphic" : "",
     !capitolAllowed ? "avoid the Texas State Capitol dome and generic government-building shots" : "",
     !flagAllowed ? "avoid generic Texas or American flag imagery" : "",
@@ -215,15 +220,16 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   const loc = subject.locations.slice(0, 2).join(", ");
   return [
     "Create a single photorealistic 16:9 editorial news photograph for this exact article.",
+    extraGuidance ? `CORRECTION REQUIREMENT: ${extraGuidance}` : "",
     `PRIMARY SUBJECT (must be clearly the main focus of the image): ${subject.concreteSubject}`,
     loc ? `Location context: ${loc}, Texas.` : "Use believable Texas surroundings where relevant.",
     DOMAIN_STEER[subject.domain],
+    legalStory ? "LEGAL COMPOSITION PRIORITY: make the courthouse, courtroom, judicial bench, counsel area, or court-filing process visually dominant. A person in a suit must never be the hero subject of a court-ruling image." : "",
     "Require realistic professional news/editorial photography, natural lighting, realistic materials and textures, believable scale and perspective, and one coherent scene.",
     "The viewer should immediately understand the concrete subject of this specific story. Do not substitute abstract symbolism for a named place, object, event, facility, industry, weather condition, business, or issue.",
     "If people appear, use anonymous everyday Texans from behind, in silhouette, or with faces out of frame unless a properly licensed official photograph is deliberately being used. Do not fabricate a recognizable real person's face.",
-    "Output a landscape JPEG in 16:9, sRGB, no transparency, approximately 1024 by 576 pixels, under 4 MB.",
     `Strict rules: ${avoid}.`,
-    extraGuidance,
+    "Output a landscape JPEG in 16:9, sRGB, no transparency, approximately 1024 by 576 pixels, under 4 MB.",
   ].filter(Boolean).join(" ");
 }
 
@@ -256,13 +262,13 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-type VisionVerdict = {
+export type VisionVerdict = {
   matches: boolean;
   photorealistic: boolean;
   reason: string;
 };
 
-function parseVisionVerdict(value: unknown): VisionVerdict | null {
+export function parseVisionVerdict(value: unknown): VisionVerdict | null {
   const normalize = (candidate: unknown): VisionVerdict | null => {
     if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
     const v = candidate as { matches?: unknown; photorealistic?: unknown; reason?: unknown };
@@ -291,6 +297,49 @@ function parseVisionVerdict(value: unknown): VisionVerdict | null {
     } catch {
       // Try the next candidate; some model responses wrap JSON in prose/code fences.
     }
+  }
+
+  // Cloudflare documents JSON Mode as best-effort. The vision model can still
+  // occasionally return a plain-English verdict, so preserve clear QC signals
+  // instead of misclassifying a useful rejection as a parser failure.
+  const prose = cleaned.replace(/\s+/g, " ").trim();
+  const lower = prose.toLowerCase();
+  const rejectsMatch =
+    /\b(?:does not|doesn't|doesnt|fails? to|cannot|can't|cant)\s+(?:clearly\s+|directly\s+)?match\b/.test(lower) ||
+    /\bnot (?:a )?(?:direct )?(?:story )?match\b/.test(lower) ||
+    /\bunrelated to (?:the )?(?:article|story|subject)\b/.test(lower) ||
+    /\bdoes not (?:clearly |directly )?depict\b/.test(lower) ||
+    /\bgeneric (?:news )?(?:symbolism|imagery)\b/.test(lower);
+  const acceptsMatch = !rejectsMatch && (
+    /\b(?:image|scene|photograph|photo)\s+(?:clearly\s+|directly\s+|accurately\s+)?matches?\b/.test(lower) ||
+    /\bmatches? (?:the )?(?:article|story|primary subject)\b/.test(lower) ||
+    /\b(?:clearly|directly|accurately) depicts? (?:the )?(?:article|story|primary subject)\b/.test(lower) ||
+    /\bdirect story match\b/.test(lower) ||
+    /\brelevant to (?:the )?(?:article|story|primary subject)\b/.test(lower)
+  );
+  const rejectsPhoto =
+    /\bnot photorealistic\b/.test(lower) ||
+    /\bdoes not (?:look|appear|seem) photorealistic\b/.test(lower) ||
+    /\b(?:looks?|appears?|seems?) (?:illustrated|cartoon(?:ish)?|vector(?:-like)?|poster(?:-like)?|icon(?:-based)?|diagrammatic|collage(?:-like)?|synthetic(?:-placeholder-like)?)\b/.test(lower);
+  const acceptsPhoto = !rejectsPhoto && (
+    /\bphotorealistic\b/.test(lower) ||
+    /\brealistic (?:professional )?(?:editorial )?(?:photo|photograph)\b/.test(lower) ||
+    /\bbelievable (?:professional )?(?:editorial )?(?:photo|photograph)\b/.test(lower)
+  );
+
+  if (rejectsMatch || rejectsPhoto) {
+    return {
+      matches: !rejectsMatch,
+      photorealistic: !rejectsPhoto,
+      reason: prose.slice(0, 300),
+    };
+  }
+  if (acceptsMatch && acceptsPhoto) {
+    return {
+      matches: true,
+      photorealistic: true,
+      reason: prose.slice(0, 300) || "story match and photorealism passed",
+    };
   }
   return null;
 }
@@ -335,6 +384,7 @@ async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectEx
       "matches=false if the scene does not clearly depict the primary subject or is generic news symbolism.",
       "photorealistic=false if it looks illustrated, vector-like, cartoon-like, poster-like, icon-based, diagrammatic, collage-like, flat, synthetic-placeholder-like, or contains prominent generated text/signage.",
       "Both values should be true only for a believable professional editorial news photograph tied directly to this story.",
+      "Return only the requested schema fields. Do not add prose outside the schema.",
     ].join("\n");
     const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_VISION_MODEL), {
       method: "POST",
@@ -377,7 +427,7 @@ async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectEx
       const preview = typeof output === "string"
         ? output.replace(/\s+/g, " ").trim().slice(0, 180)
         : JSON.stringify(output ?? "").slice(0, 180);
-      return { matches: false, reason: `Cloudflare vision validator returned no parseable JSON verdict${preview ? `: ${preview}` : ""}` };
+      return { matches: false, reason: `Cloudflare vision validator returned no parseable verdict${preview ? `: ${preview}` : ""}` };
     }
     const ok = parsed.matches === true && parsed.photorealistic === true;
     return { matches: ok, reason: String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed")).slice(0, 300) };
@@ -417,7 +467,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
     for (let attempt = 1; !verdict.matches && attempt <= 2; attempt += 1) {
-      const stronger = buildImagePrompt(subject, `PREVIOUS ATTEMPT FAILED CLOUDFLARE VISION VALIDATION because: "${verdict.reason}". Fix the failure. Depict the primary subject literally and specifically as a photorealistic editorial photograph.`);
+      const stronger = buildImagePrompt(subject, `PREVIOUS ATTEMPT FAILED CLOUDFLARE VISION VALIDATION because: "${verdict.reason}". Fix the failure. Do not reproduce any rejected motif named in that reason. Depict the primary subject literally and specifically as a photorealistic editorial photograph.`);
       usedPrompt = stronger;
       bytes = await generateImageBytes(stronger);
       verdict = await validateImageMatchesArticle(bytes, subject);
