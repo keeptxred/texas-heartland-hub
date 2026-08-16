@@ -8,7 +8,7 @@ export const Route = createFileRoute("/shop/checkout-sandbox-return")({
     meta: [
       { title: "Sandbox Payment Complete — Keep Texas Red" },
       { name: "description", content: "Stripe sandbox checkout completed." },
-      { name: "robots", content: "noindex,nofollow" },
+      { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop/checkout-sandbox-return` }],
   }),
