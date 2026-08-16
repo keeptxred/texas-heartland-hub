@@ -1,7 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { assertSandboxCannotFulfill } from "@/lib/payment-safety";
 import { createStripeClient, verifyWebhook } from "@/lib/stripe.server";
 
 async function handleSandboxWebhook(request: Request) {
+  // Fail closed if this route is ever refactored in a way that could enable
+  // real fulfillment. Sandbox events must never create Printify orders.
+  assertSandboxCannotFulfill("sandbox");
+
   const event = await verifyWebhook(request, "sandbox");
 
   if (event.type !== "checkout.session.completed") {
