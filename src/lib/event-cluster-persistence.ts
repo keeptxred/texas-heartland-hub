@@ -97,6 +97,26 @@ async function resolveExistingClusterId(
   return data?.[0]?.cluster_id ?? null;
 }
 
+async function refreshLedgerCounts(db: any, clusterId: string): Promise<{ sourceCount: number; independentSourceCount: number }> {
+  const { data, error } = await db
+    .from("news_event_cluster_sources")
+    .select("source_family,is_independent_source")
+    .eq("cluster_id", clusterId);
+  if (error) throw error;
+
+  const rows = data ?? [];
+  const independentFamilies = new Set(
+    rows
+      .filter((row: any) => row.is_independent_source !== false)
+      .map((row: any) => row.source_family)
+      .filter((family: unknown): family is string => typeof family === "string" && family.length > 0),
+  );
+  return {
+    sourceCount: Math.max(1, rows.length),
+    independentSourceCount: Math.max(1, independentFamilies.size || rows.length),
+  };
+}
+
 /**
  * Persists the in-memory clustering decision without making it a hard dependency
  * of publishing. A schema rollout or transient persistence failure must never
@@ -190,12 +210,24 @@ export async function persistEventCluster(
       if (feedError) throw feedError;
     }
 
+    // Count the durable source ledger, not just the current lookback window, so
+    // later refreshes never make an established event appear to lose sources.
+    const ledgerCounts = await refreshLedgerCounts(db, id);
+    const { error: countError } = await db
+      .from("news_event_clusters")
+      .update({
+        source_count: ledgerCounts.sourceCount,
+        independent_source_count: ledgerCounts.independentSourceCount,
+      })
+      .eq("id", id);
+    if (countError) throw countError;
+
     console.info("[multi-source] event cluster persisted", {
       eventClusterId: id,
       status: options.status,
       score: cluster.score,
-      sources: rows.length,
-      independentSources: independentSourceCount(cluster),
+      sources: ledgerCounts.sourceCount,
+      independentSources: ledgerCounts.independentSourceCount,
     });
     return id;
   } catch (error) {
