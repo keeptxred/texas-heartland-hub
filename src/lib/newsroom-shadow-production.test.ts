@@ -38,7 +38,51 @@ describe("newsroom Phase 13 shadow production", () => {
     expect(result.dailyBriefSelection).toHaveLength(4);
     expect(result.packetCoverageRate).toBe(100);
     expect(result.draftStats.publishedFromShadow).toBe(0);
+    expect(result.readiness.find((check) => check.key === "shadow_sample")?.passed).toBe(false);
     expect(result.readyForControlledLaunch).toBe(false);
+  });
+
+  it("requires three valid isolated shadow drafts before controlled launch", () => {
+    const candidates = Array.from({ length: 20 }, (_, index) => ({
+      id: `c${index + 1}`,
+      clusterId: `k${index + 1}`,
+      editorialScore: 80 - index,
+      recommendedFormat: "SINGLE",
+      status: "PENDING",
+      createdAt: "2026-08-16T10:00:00Z",
+    }));
+    const clusters = candidates.map((candidate, index) => ({
+      id: candidate.clusterId,
+      canonicalSubject: `Texas primary story ${index + 1}`,
+      pillarSlug: "texas-news",
+      sourceCount: 1,
+      primarySourceCount: 1,
+      firstSeenAt: "2026-08-16T09:00:00Z",
+    }));
+    const drafts = [1, 2, 3].map((index) => ({
+      id: `d${index}`,
+      candidateId: `c${index}`,
+      clusterId: `k${index}`,
+      mode: "shadow",
+      status: "GENERATED",
+      mainWordCount: 1100,
+      validationReasons: [],
+      publishedArticleId: null,
+      createdAt: "2026-08-16T11:00:00Z",
+    }));
+    const result = evaluateNewsroomShadowProduction({
+      candidates,
+      clusters,
+      memberships: clusters.map((cluster) => ({ clusterId: cluster.id, relationshipType: "same-event", isPrimarySource: true })),
+      packets: clusters.map((cluster) => ({ clusterId: cluster.id })),
+      drafts,
+    });
+
+    expect(result.decisionAgreementRate).toBe(100);
+    expect(result.packetCoverageRate).toBe(100);
+    expect(result.readiness.find((check) => check.key === "shadow_sample")?.passed).toBe(true);
+    expect(result.readiness.find((check) => check.key === "draft_validation")?.passed).toBe(true);
+    expect(result.readyForControlledLaunch).toBe(true);
   });
 
   it("fails readiness if a shadow draft appears published", () => {
