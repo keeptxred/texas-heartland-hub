@@ -7,19 +7,20 @@ const publisher = readFileSync("src/lib/multi-source-publish.ts", "utf8");
 const migration = readFileSync("supabase/migrations/20260816154500_add_living_story_updates.sql", "utf8");
 
 describe("living story canonical updates", () => {
-  it("treats a genuinely new action as a material follow-up", () => {
+  it("treats a genuinely new decision and figure as a material follow-up", () => {
     const novelty = assessStoryNovelty(
       {
-        title: "Court orders Texas agency to release records",
-        description: "A judge ordered the agency to release the records by Friday.",
+        title: "Court issues ruling requiring Texas agency to release records",
+        description: "A judge ruled on the request and required the agency to release the records within 10 days.",
+        extracted_body: null,
         source: "Outlet B",
         link: "https://example.com/update",
-        pub_date: "2026-08-16T20:00:00Z",
       },
       "The lawsuit was filed last week and the agency said it would respond in court.",
     );
     expect(novelty.material).toBe(true);
-    expect(novelty.newActions.length).toBeGreaterThan(0);
+    expect(novelty.newActions).toContain("ruled");
+    expect(novelty.newNumbers.some((value) => value.includes("10 days"))).toBe(true);
   });
 
   it("updates daily_articles in place instead of upserting a replacement slug", () => {
@@ -52,6 +53,13 @@ describe("living story canonical updates", () => {
     expect(migration).toContain("new_title text");
     expect(migration).toContain("title_changed boolean");
     expect(updater).toContain('.from("news_event_article_updates").insert({');
+  });
+
+  it("keeps published event lifecycle identity monotonic during updates", () => {
+    expect(migration).toContain("news_event_cluster_preserve_published_status");
+    expect(migration).toContain("OLD.status = 'published'");
+    expect(migration).toContain("NEW.status = 'published'");
+    expect(migration).toContain("OLD.published_slug");
   });
 
   it("claims published clusters atomically before an in-place update", () => {
