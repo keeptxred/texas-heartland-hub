@@ -57,6 +57,6 @@ describe("failure-aware editorial retry", () => {
     expect(calls[1].addendum).toContain("missing_or_short_title");
     expect(calls[1].addendum).toMatch(/tiered_main_word_count:\d+\/1200/);
     expect(calls[1].addendum).toContain('"title":"A&M"');
-    expect(calls[1].addendum).toContain("Repair the supplied draft instead of restarting from scratch");
+    expect(calls[1].addendum).toMatch(/Repair the supplied draft instead\s+of restarting from scratch/);
   });
 });
