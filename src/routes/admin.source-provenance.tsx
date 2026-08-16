@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import {
   getSourceProvenanceAdminSnapshot,
   mutateSourceProvenanceAdmin,
+  type SourceProvenanceAdminMutation,
 } from "@/lib/article-source-transparency-admin.functions";
 
 export const Route = createFileRoute("/admin/source-provenance")({
@@ -71,7 +72,7 @@ function SourceProvenanceAdmin() {
     });
   }, [snapshot, query, status]);
 
-  async function mutate(key: string, input: Parameters<typeof mutateSourceProvenanceAdmin>[0]["data"], success: string) {
+  async function mutate(key: string, input: SourceProvenanceAdminMutation, success: string) {
     setWorking(key);
     setError(null);
     setMessage(null);
