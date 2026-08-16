@@ -8,6 +8,7 @@ const migration = readFileSync(
   "supabase/migrations/20260816152500_add_news_event_publication_claims.sql",
   "utf8",
 );
+const publisher = readFileSync("src/lib/multi-source-publish.ts", "utf8");
 
 function cluster(overrides: Partial<StoryCluster> = {}): StoryCluster {
   return {
@@ -97,5 +98,13 @@ describe("publication timing lifecycle", () => {
   it("only releases a claim held by the same worker token", () => {
     expect(migration).toContain("release_news_event_cluster_publication_claim");
     expect(migration).toContain("publish_claim_token = p_claim_token");
+  });
+
+  it("runs timing and the atomic claim before the legacy synthesis publisher", () => {
+    const lifecycleCall = publisher.indexOf("preparePublicationLifecycle(db, feedItemId");
+    const legacyCall = publisher.indexOf("publishLegacySingleFeedItem(feedItemId)", lifecycleCall);
+    expect(lifecycleCall).toBeGreaterThan(0);
+    expect(legacyCall).toBeGreaterThan(lifecycleCall);
+    expect(publisher).toContain("releasePublicationClaim(db, eventClusterId, lifecycle.claimToken)");
   });
 });
