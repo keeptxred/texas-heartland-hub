@@ -9,7 +9,7 @@ export const Route = createFileRoute("/shop/checkout-sandbox")({
     meta: [
       { title: "Sandbox Checkout — Keep Texas Red" },
       { name: "description", content: "Stripe sandbox checkout for Keep Texas Red payment testing." },
-      { name: "robots", content: "noindex,nofollow" },
+      { name: "robots", content: "noindex,follow" },
     ],
     links: [{ rel: "canonical", href: `${SITE_URL}/shop/checkout-sandbox` }],
   }),
