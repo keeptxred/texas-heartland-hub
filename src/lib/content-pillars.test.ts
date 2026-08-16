@@ -41,9 +41,16 @@ describe("content pillar classification", () => {
     expect(classifyContentPillar({ title: "Court ruling update", category: "Laws" })).toBe(
       "texas-laws-legislature",
     );
-    expect(classifyContentPillar({ title: "Session update", category: "Legislature" })).toBe(
-      "texas-laws-legislature",
-    );
+  });
+
+  it("does not trust the historically noisy Legislature label over article subject", () => {
+    expect(
+      classifyContentPillar({
+        title: "Retailer expansion adds jobs across North Texas",
+        description: "A new distribution investment is expected to add jobs and business activity.",
+        category: "Legislature",
+      }),
+    ).toBe("texas-economy-small-business");
   });
 
   it("leaves unrelated Texas lifestyle coverage in general news", () => {
