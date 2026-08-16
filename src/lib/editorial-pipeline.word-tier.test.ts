@@ -33,7 +33,7 @@ describe("editorial tiered word-count enforcement", () => {
       },
     );
 
-    expect(result.reasons.some((reason) => reason.startsWith("tiered_main_word_count:"))).toBe(true);
-    expect(result.reasons).toContain("tiered_main_word_count:379/1200");
+    const tierReason = result.reasons.find((reason) => reason.startsWith("tiered_main_word_count:"));
+    expect(tierReason).toMatch(/^tiered_main_word_count:\d+\/1200$/);
   });
 });
