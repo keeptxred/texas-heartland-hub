@@ -14,9 +14,9 @@ describe("newsroom hard AI budget guardrails", () => {
   });
 
   it("enforces normal, breaking and briefing capacities including reservations", () => {
-    expect(migration).toContain("normal_used + normal_reserved >= normal_limit");
-    expect(migration).toContain("breaking_used + breaking_reserved >= breaking_limit");
-    expect(migration).toContain("briefing_used + briefing_reserved >= briefing_limit");
+    expect(migration).toContain("budget.normal_used + budget.normal_reserved >= budget.normal_limit");
+    expect(migration).toContain("budget.breaking_used + budget.breaking_reserved >= budget.breaking_limit");
+    expect(migration).toContain("budget.briefing_used + budget.briefing_reserved >= budget.briefing_limit");
     expect(migration).toContain("briefing_used + briefing_reserved <= briefing_limit");
   });
 
