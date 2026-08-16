@@ -1,7 +1,7 @@
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useMemo, useState } from "react";
-import { getStripe, getStripeEnvironment } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import {
   createCartCheckoutSession,
   updateCartCheckoutShipping,
@@ -32,13 +32,25 @@ export function StripeEmbeddedCartCheckout({
 }: {
   items: CartItem[];
   returnUrl: string;
-  environment?: CheckoutEnvironment;
+  environment: CheckoutEnvironment;
 }) {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
-  const resolvedEnvironment = environment ?? getStripeEnvironment();
   const stripePromise = useMemo(
-    () => resolvedEnvironment === "sandbox" ? getSandboxStripe() : getStripe(),
-    [resolvedEnvironment],
+    () => environment === "sandbox" ? getSandboxStripe() : getStripe(),
+    [environment],
+  );
+  const checkoutInstanceKey = useMemo(
+    () =>
+      JSON.stringify({
+        environment,
+        returnUrl,
+        items: items.map((item) => ({
+          productId: item.productId,
+          variantId: item.variantId ?? null,
+          quantity: item.qty,
+        })),
+      }),
+    [environment, items, returnUrl],
   );
 
   const options = useMemo(
@@ -48,7 +60,7 @@ export function StripeEmbeddedCartCheckout({
         try {
           const result = await createCartCheckoutSession({
             data: {
-              environment: resolvedEnvironment,
+              environment,
               returnUrl,
               currency: items[0]?.currency ?? "USD",
               items: items.map((i) => ({
@@ -98,7 +110,7 @@ export function StripeEmbeddedCartCheckout({
       }) => {
         const result = await updateCartCheckoutShipping({
           data: {
-            environment: resolvedEnvironment,
+            environment,
             checkoutSessionId: event.checkoutSessionId,
             shippingDetails: event.shippingDetails,
           },
@@ -110,9 +122,7 @@ export function StripeEmbeddedCartCheckout({
         return { type: "accept" as const };
       },
     }),
-    // The embedded session should be created only once for the mounted cart.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [environment, items, returnUrl],
   );
 
   return (
@@ -126,7 +136,11 @@ export function StripeEmbeddedCartCheckout({
           <p className="mt-1">{checkoutError}</p>
         </div>
       ) : null}
-      <EmbeddedCheckoutProvider stripe={stripePromise} options={options as any}>
+      <EmbeddedCheckoutProvider
+        key={checkoutInstanceKey}
+        stripe={stripePromise}
+        options={options as any}
+      >
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
     </div>
