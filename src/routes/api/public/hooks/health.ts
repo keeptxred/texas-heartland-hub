@@ -14,7 +14,7 @@ function aiProviderState() {
     rewrite_model: ready ? rewriteModel : null,
     image_provider: ready ? "cloudflare-workers-ai" : "unconfigured",
     image_provider_ready: ready,
-    image_model: ready ? "@cf/bytedance/stable-diffusion-xl-lightning" : null,
+    image_model: ready ? "@cf/lykon/dreamshaper-8-lcm" : null,
     image_validation_model: ready ? "@cf/meta/llama-3.2-11b-vision-instruct" : null,
     lovable_rewrite_bypassed: true,
     lovable_image_bypassed: true,
