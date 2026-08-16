@@ -20,6 +20,14 @@ describe("Cloudflare featured-image vision resilience", () => {
     expect(verdict?.reason).toContain("does not match the story");
   });
 
+  it("parses the markdown-style verdict Cloudflare actually returns", () => {
+    const verdict = parseVisionVerdict(
+      "**Image Evaluation** * **Matches**: False, the image does not clearly depict a Texas courthouse. * **Photorealistic**: False, the image appears to be an illustration.",
+    );
+    expect(verdict?.matches).toBe(false);
+    expect(verdict?.photorealistic).toBe(false);
+  });
+
   it("accepts an unambiguous plain-English approval when JSON mode is not followed", () => {
     const verdict = parseVisionVerdict(
       "The photograph clearly matches the story and is photorealistic, showing a believable courthouse scene tied directly to the ruling.",
@@ -35,16 +43,17 @@ describe("Cloudflare featured-image vision resilience", () => {
     expect(inferDomain("Texas court upholds election law after an appellate ruling")).toBe("legal");
   });
 
-  it("steers legal stories away from politician, map, flagpole, and capitol imagery", () => {
+  it("steers legal stories toward real courthouse photography and away from symbolic graphics", () => {
     const prompt = buildImagePrompt(legalSubject);
-    expect(prompt).toContain("believable Texas courthouse exterior or courtroom interior");
+    expect(prompt).toContain("real courthouse exterior or courtroom interior");
     expect(prompt).toContain("Do not use a politician");
     expect(prompt).toContain("flagpole");
     expect(prompt).toContain("capitol dome");
     expect(prompt).toContain("Texas-shaped graphic");
+    expect(prompt).toContain("documentary photojournalism");
   });
 
-  it("uses SDXL negative prompting to reject illustration and Texas-map motifs", () => {
+  it("uses negative prompting to reject illustration and Texas-map motifs", () => {
     const negative = buildNegativeImagePrompt(
       legalSubject,
       "The image appears to be an illustration or graphic representation of the state of Texas.",
