@@ -48,8 +48,19 @@ jobs:
               "stripe_api": data.get("stripe_api"),
               "stripe_error": data.get("stripe_error"),
           }
-          print(json.dumps(safe, sort_keys=True))
+          rendered = json.dumps(safe, sort_keys=True)
+          print(rendered)
+          with open("payment-runtime-diagnostic.json", "w", encoding="utf-8") as fh:
+              fh.write(rendered + "\n")
           PY
+
+      - name: Upload sanitized payment diagnostic
+        uses: actions/upload-artifact@v4
+        with:
+          name: payment-runtime-diagnostic
+          path: payment-runtime-diagnostic.json
+          if-no-files-found: error
+          retention-days: 1
 
       - name: ESLint
         run: bun run lint
