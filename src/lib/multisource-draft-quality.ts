@@ -41,6 +41,14 @@ function draftProse(article: MultiSourceDraftShape): string {
   ].filter(Boolean).join(" ");
 }
 
+function proseSentences(prose: string): string[] {
+  return prose
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+}
+
 function extractLine(packet: string, prefix: string): string | null {
   const line = packet.split(/\r?\n/).find((row) => row.trim().startsWith(prefix));
   return line ? line.trim().slice(prefix.length).trim() : null;
@@ -69,20 +77,59 @@ function extractLedgerLines(packet: string): Array<{ text: string; conflict: boo
     .filter((row) => row.text.length >= 20);
 }
 
-function attributedClaims(packet: string): string[] {
+type AttributedClaim = { label: string | null; text: string };
+
+function attributedClaims(packet: string): AttributedClaim[] {
   const value = extractLine(packet, "ATTRIBUTED CLAIMS ONLY — do not state these as settled facts:");
   if (!value) return [];
   return value
     .split(" | ")
-    .map((claim) => claim.replace(/^\[[^\]]+\]\s*/, "").trim())
-    .filter((claim) => claim.length >= 20);
+    .map((raw) => {
+      const claim = raw.trim();
+      const match = claim.match(/^\[([^\]]+)\]\s*(.+)$/);
+      return {
+        label: match?.[1]?.trim() || null,
+        text: (match?.[2] ?? claim).trim(),
+      };
+    })
+    .filter((claim) => claim.text.length >= 20);
+}
+
+function numberTokens(text: string): string[] {
+  return normalize(text).match(/\$?\d[\d,.]*%?/g) ?? [];
+}
+
+function factRepresented(fact: string, prose: string): boolean {
+  const requiredNumbers = numberTokens(fact);
+  return proseSentences(prose).some((sentence) => {
+    const normalizedSentence = normalize(sentence);
+    if (requiredNumbers.length && !requiredNumbers.every((value) => normalizedSentence.includes(normalize(value)))) {
+      return false;
+    }
+    const normalizedFact = normalize(fact);
+    if (normalizedFact.length >= 28 && normalizedSentence.includes(normalizedFact)) return true;
+    return overlap(fact, sentence) >= 0.5;
+  });
 }
 
 function sentenceContaining(prose: string, claim: string): string | null {
-  return prose
-    .replace(/\s+/g, " ")
-    .split(/(?<=[.!?])\s+/)
-    .find((sentence) => overlap(claim, sentence) >= 0.4) ?? null;
+  const normalizedClaim = normalize(claim);
+  const candidates = proseSentences(prose);
+  const exact = candidates.find((sentence) => {
+    const normalizedSentence = normalize(sentence);
+    return normalizedClaim.length >= 20 && normalizedSentence.includes(normalizedClaim);
+  });
+  if (exact) return exact;
+  return candidates.find((sentence) => overlap(claim, sentence) >= 0.5) ?? null;
+}
+
+function claimHasAttribution(sentence: string, claim: AttributedClaim): boolean {
+  if (ATTRIBUTION_RE.test(sentence)) return true;
+  if (!claim.label) return false;
+  const labelTokens = [...tokens(claim.label)];
+  if (!labelTokens.length) return false;
+  const sentenceTokens = tokens(sentence);
+  return labelTokens.some((token) => sentenceTokens.has(token));
 }
 
 function nearVerbatimSourceCopy(article: MultiSourceDraftShape, packet: string): boolean {
@@ -133,7 +180,7 @@ export function validateMultiSourceDraftAgainstPacket(
 
   const ledger = extractLedgerLines(sourceText);
   const strongFacts = ledger.filter((fact) => fact.supported && !fact.conflict).slice(0, 6);
-  const represented = strongFacts.filter((fact) => overlap(fact.text, prose) >= 0.38);
+  const represented = strongFacts.filter((fact) => factRepresented(fact.text, prose));
   const required = strongFacts.length <= 2 ? strongFacts.length : Math.max(2, Math.ceil(strongFacts.length * 0.5));
   if (!strongFacts.length || represented.length < required) {
     reasons.push(`multisource_verified_fact_coverage:${represented.length}/${strongFacts.length}`);
@@ -144,8 +191,8 @@ export function validateMultiSourceDraftAgainstPacket(
   }
 
   const unattributed = attributedClaims(sourceText).filter((claim) => {
-    const sentence = sentenceContaining(prose, claim);
-    return sentence ? !ATTRIBUTION_RE.test(sentence) : false;
+    const sentence = sentenceContaining(prose, claim.text);
+    return sentence ? !claimHasAttribution(sentence, claim) : false;
   });
   if (unattributed.length) reasons.push(`multisource_unattributed_claim:${unattributed.length}`);
 
