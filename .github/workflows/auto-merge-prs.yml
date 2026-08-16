@@ -21,7 +21,7 @@ jobs:
       github.event.pull_request.draft == false &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     steps:
       - name: Enable auto-merge
         env:
@@ -29,7 +29,7 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr merge --auto --squash "$PR_URL"
 
-      - name: Wait for merge and verify current main
+      - name: Wait for merge, verify main, and dispatch exact verified deploy
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -38,36 +38,57 @@ jobs:
         run: |
           set -euo pipefail
 
-          # This poller remains in the originating workflow because GITHUB_TOKEN
-          # suppresses ordinary push/close workflow triggers from its own merge.
+          merged_sha=""
           for attempt in $(seq 1 300); do
             pr_json="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
-            merged_at="$(python3 - "$pr_json" <<'PY'
+            merged_sha="$(python3 - "$pr_json" <<'PY'
           import json, sys
           data = json.loads(sys.argv[1])
-          print(data.get("merged_at") or "")
+          print(data.get("merge_commit_sha") if data.get("merged_at") else "")
           PY
             )"
             state="$(python3 - "$pr_json" <<'PY'
           import json, sys
-          data = json.loads(sys.argv[1])
-          print(data.get("state") or "")
+          print(json.loads(sys.argv[1]).get("state") or "")
           PY
             )"
 
-            if [[ -n "$merged_at" ]]; then
-              gh workflow run shared-vitest.yml --ref main --repo "$REPOSITORY"
-              echo "Merged PR #$PR_NUMBER; dispatched repository health verification for current main."
-              exit 0
-            fi
-
+            [[ -n "$merged_sha" ]] && break
             if [[ "$state" == "closed" ]]; then
-              echo "PR #$PR_NUMBER closed without merging; no main verification dispatch needed."
+              echo "PR #$PR_NUMBER closed without merging; nothing to deploy."
               exit 0
             fi
-
             sleep 5
           done
 
-          echo "::error title=Auto-merge wait timed out::PR #$PR_NUMBER did not merge within 25 minutes."
-          exit 1
+          if [[ -z "$merged_sha" ]]; then
+            echo "::error title=Auto-merge wait timed out::PR #$PR_NUMBER did not merge within 25 minutes."
+            exit 1
+          fi
+
+          before_run_id="$(gh run list --repo "$REPOSITORY" --workflow shared-vitest.yml --branch main --event workflow_dispatch --limit 1 --json databaseId --jq '.[0].databaseId // 0')"
+          gh workflow run shared-vitest.yml --ref main --repo "$REPOSITORY"
+          echo "Merged PR #$PR_NUMBER as $merged_sha; dispatched repository health verification for main."
+
+          verify_run_id=""
+          for attempt in $(seq 1 60); do
+            verify_run_id="$(gh run list --repo "$REPOSITORY" --workflow shared-vitest.yml --branch main --event workflow_dispatch --limit 20 --json databaseId,headSha --jq ".[] | select(.headSha == \"$merged_sha\" and .databaseId > $before_run_id) | .databaseId" | head -n 1)"
+            [[ -n "$verify_run_id" ]] && break
+            sleep 2
+          done
+
+          if [[ -z "$verify_run_id" ]]; then
+            echo "::error title=Main verification run not found::Could not resolve the workflow_dispatch verification for $merged_sha."
+            exit 1
+          fi
+
+          gh run watch "$verify_run_id" --repo "$REPOSITORY" --exit-status
+
+          main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$main_sha" != "$merged_sha" ]]; then
+            echo "A newer main revision exists ($main_sha); skipping stale deployment of $merged_sha."
+            exit 0
+          fi
+
+          gh workflow run deploy-cloudflare-after-verify.yml --ref main --repo "$REPOSITORY" -f verified_sha="$merged_sha"
+          echo "Main verification passed; dispatched Cloudflare deployment for exact verified revision $merged_sha."
