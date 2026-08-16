@@ -24,6 +24,13 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(generator).toContain("maxAttempts: 1");
   });
 
+  it("refreshes research packets immediately before the canary without AI", () => {
+    expect(workflow).toContain("Refresh zero-AI research packets");
+    expect(workflow).toContain("/api/public/hooks/build-newsroom-research-packets");
+    expect(workflow).toContain('int(data.get("aiCalls") or 0) != 0');
+    expect(workflow.indexOf("Refresh zero-AI research packets")).toBeLessThan(workflow.indexOf("Generate isolated AI shadow drafts"));
+  });
+
   it("requires the exact newsroom shape through Cloudflare JSON schema mode", () => {
     expect(generator).toContain("jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA");
     expect(cloudflare).toContain('{ type: "json_schema", json_schema: input.jsonSchema }');
