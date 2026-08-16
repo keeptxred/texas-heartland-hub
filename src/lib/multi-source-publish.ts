@@ -6,6 +6,11 @@ import {
   type StoryCluster,
 } from "@/lib/story-clustering";
 import { persistEventCluster } from "@/lib/event-cluster-persistence";
+import {
+  buildStructuredFactLedger,
+  buildStructuredFactPacket,
+  persistStructuredFacts,
+} from "@/lib/structured-fact-provenance";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
 import { assessPublicationReadiness } from "@/lib/publication-quality-gate";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
@@ -23,6 +28,7 @@ type PublishResult = {
 const CLUSTER_LOOKBACK_HOURS = 72;
 const SAME_EVENT_SCORE = 80;
 const MAX_CLUSTER_SOURCES = 5;
+const MAX_FACT_PACKET_CHARS = 9000;
 
 function wordCount(text: string): number {
   return text.trim() ? text.trim().split(/\s+/).length : 0;
@@ -212,7 +218,9 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   if (!cluster.strongMerge) {
     cluster = await enrichClusterBodies(cluster, db);
     const readiness = assessPublicationReadiness(cluster);
-    await persistEventCluster(db, cluster, { status: "collecting" });
+    const eventClusterId = await persistEventCluster(db, cluster, { status: "collecting" });
+    const ledger = buildStructuredFactLedger(cluster);
+    await persistStructuredFacts(db, eventClusterId, ledger);
 
     if (!readiness.publish) {
       await writeQualityHoldMetadata(db, feedItemId, readiness, cluster);
@@ -236,7 +244,10 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     return { ...singleResult, clusteredSources: cluster.sourceCount };
   }
 
-  await persistEventCluster(db, cluster, { status: "ready" });
+  cluster = await enrichClusterBodies(cluster, db);
+  const eventClusterId = await persistEventCluster(db, cluster, { status: "ready" });
+  const ledger = buildStructuredFactLedger(cluster);
+  await persistStructuredFacts(db, eventClusterId, ledger);
 
   const existing = cluster.members
     .filter((row) => row.internal_slug && row.combinationScore >= SAME_EVENT_SCORE)
@@ -265,13 +276,15 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     }
   }
 
-  cluster = await enrichClusterBodies(cluster, db);
   const packet = buildSourcePacket(cluster);
+  const structuredFacts = buildStructuredFactPacket(ledger).slice(0, MAX_FACT_PACKET_CHARS);
   const sourceNames = [cluster.primary, ...cluster.members].map((row) => row.source);
   const synthesisHeader = [
     "MULTI-SOURCE STORY PACKET.",
-    "Use only facts supported by the sources below. Reconcile duplicate facts. Attribute claims when sources differ. Do not copy source wording.",
-    "For directly verifiable facts, prefer official government, agency, court, team, or other primary records over secondary summaries when they conflict; do not treat commentary as a primary record.",
+    "Use only facts supported by the material below. The structured fact ledger is an extraction aid, not a new source; verify every claim against the raw source packet.",
+    "Prefer facts corroborated by independent sources. For directly verifiable facts, prefer official government, agency, court, team, or other primary records over secondary summaries when they conflict.",
+    "When the fact ledger marks a conflict, do not average, choose silently, or invent a resolution. Attribute the competing figures or omit the disputed detail unless a primary record resolves it.",
+    "Quotes must remain attached to the source that actually contains the quotation. Never create composite or reconstructed quotes.",
     `Independent sources: ${sourceNames.join(" | ")}.`,
     "Treat this as one developing Texas story when the evidence supports it; do not invent a connection that is not supported.",
     existingNovelty?.material
@@ -279,9 +292,15 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       : "",
   ].filter(Boolean).join("\n");
 
+  const synthesisMaterial = [
+    synthesisHeader,
+    structuredFacts ? `STRUCTURED FACT LEDGER\n${structuredFacts}` : "",
+    `RAW SOURCE PACKET\n${packet}`,
+  ].filter(Boolean).join("\n\n");
+
   await db
     .from("texas_news_feed")
-    .update({ extracted_body: `${synthesisHeader}\n\n${packet}`.slice(0, 26000) })
+    .update({ extracted_body: synthesisMaterial.slice(0, 26000) })
     .eq("id", feedItemId);
 
   await writeClusterMetadata(db, cluster, undefined, existingNovelty?.material ? {
