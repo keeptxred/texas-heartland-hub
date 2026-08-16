@@ -220,11 +220,25 @@ async function handler({ request }: { request: Request }) {
       .limit(1);
     if (articleError) throw new Error(articleError.message);
     const articleId = articles?.[0]?.id as string | undefined;
+    const publishedAt = now.toISOString();
+    const selectedCandidateIds = selectedItems.map((item) => item.candidateId);
+    const selectedClusterIds = selectedItems.map((item) => item.clusterId);
 
-    await db.from("newsroom_daily_briefs").update({
-      status: "PUBLISHED",
-      published_article_id: articleId ?? null,
-    }).eq("id", briefId);
+    await Promise.all([
+      db.from("newsroom_daily_briefs").update({
+        status: "PUBLISHED",
+        published_article_id: articleId ?? null,
+      }).eq("id", briefId),
+      db.from("news_publish_candidates").update({
+        status: "PUBLISHED",
+        published_at: publishedAt,
+      }).in("id", selectedCandidateIds),
+      db.from("news_story_clusters").update({
+        status: "PUBLISHED",
+        published_at: publishedAt,
+        published_article_id: articleId ?? null,
+      }).in("id", selectedClusterIds),
+    ]);
     await db.rpc("newsroom_finalize_ai_generation", { p_site: SITE, p_kind: "briefing", p_success: true });
 
     return Response.json({
