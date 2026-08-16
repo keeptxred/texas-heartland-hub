@@ -3,6 +3,7 @@ import path from 'node:path';
 
 const writers = [
   'src/routes/api/public/hooks/generate-news.ts',
+  'src/routes/api/public/hooks/generate-newsroom.ts',
   'src/routes/api/public/hooks/generate-evergreen.ts',
   'src/routes/api/public/hooks/generate-sports.ts',
   'src/routes/api/public/hooks/publishing-safety-net.ts',
@@ -46,6 +47,7 @@ const maintenanceWriters = new Map([
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set([
   'src/routes/api/public/hooks/generate-news.ts',
+  'src/routes/api/public/hooks/generate-newsroom.ts',
   'src/routes/api/public/hooks/generate-evergreen.ts',
   'src/routes/api/public/hooks/generate-sports.ts',
   'src/routes/api/public/hooks/publishing-safety-net.ts',
@@ -71,11 +73,15 @@ for (const marker of [
 
 const generatedNewsSignature = 'Keep TX Red rewrote the coverage independently and links to the original for verification.';
 const generatedNewsWriter = read('src/routes/api/public/hooks/generate-news.ts');
+const generatedNewsroomWriter = read('src/routes/api/public/hooks/generate-newsroom.ts');
 const generatedNewsTrigger = read('supabase/migrations/20260813014000_stamp_generated_newsroom_author.sql');
 const generatedNewsAdmin = read('src/components/admin/ChatGptAutoArticlesPanel.tsx');
 
 if (!generatedNewsWriter.includes(generatedNewsSignature)) {
   errors.push('Daily Texas News writer provenance signature changed without updating the newsroom author contract.');
+}
+if (!generatedNewsroomWriter.includes(generatedNewsSignature)) {
+  errors.push('Cluster newsroom writer provenance signature does not match the newsroom author contract.');
 }
 if (!enrichment.includes(generatedNewsSignature)) {
   errors.push('Shared enrichment newsroom provenance signature no longer matches the Daily Texas News writer.');
