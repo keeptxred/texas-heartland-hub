@@ -11,6 +11,10 @@ const LOOKBACK_DAYS = 14;
 
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  // The committed generated Database type intentionally trails migrations until regeneration.
+  // Runtime PostgREST supports the new sidecar immediately after its migration is applied.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const newsroomDb = supabaseAdmin as any;
   const since = new Date(Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
   const [{ data: feedRows, error: feedError }, { data: priorRows, error: priorError }] = await Promise.all([
@@ -20,7 +24,7 @@ async function handler() {
       .gte("created_at", since)
       .order("created_at", { ascending: false })
       .limit(FEED_LIMIT),
-    supabaseAdmin
+    newsroomDb
       .from("news_feed_normalization")
       .select("feed_item_id,canonical_url,source_key,title_fingerprint,observed_at")
       .gte("observed_at", since)
@@ -66,7 +70,7 @@ async function handler() {
     });
 
   if (normalized.length) {
-    const { error: upsertError } = await supabaseAdmin
+    const { error: upsertError } = await newsroomDb
       .from("news_feed_normalization")
       .upsert(normalized, { onConflict: "feed_item_id" });
     if (upsertError) return Response.json({ ok: false, error: upsertError.message }, { status: 500 });
