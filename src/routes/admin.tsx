@@ -67,6 +67,7 @@ function AdminLayout() {
         <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-2 text-xs font-bold uppercase tracking-widest">
           <Link to="/admin" className="text-muted-foreground hover:text-primary">Dashboard</Link>
           <Link to="/admin/newsroom" className="text-primary hover:underline">Newsroom Control Center</Link>
+          <Link to="/admin/source-provenance" className="text-muted-foreground hover:text-primary">Source Provenance</Link>
         </div>
       </nav>
       <Outlet />

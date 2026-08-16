@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
+import { ArticleSourceTransparencyPanel } from "../components/article-source-transparency";
 import { organizationJsonLd } from "../lib/seo";
 import { exploreDestinations } from "../data/explore/all-destinations";
 import { isPublicCavernDestination, relatedCaverns } from "../lib/explore/cavern-discovery";
@@ -227,6 +228,7 @@ function RootComponent() {
         <SiteHeader />
         <main className="flex-1">
           <Outlet />
+          <ArticleSourceTransparencyPanel />
           <CavernGuideTrail />
         </main>
         <SiteFooter />
