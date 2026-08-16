@@ -4,7 +4,7 @@
 // article's "Official Sources" list limited to genuinely authoritative
 // government / military sources.
 
-import { applyStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrades";
+import { applyReviewedStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrade-router";
 
 export type Section = {
   heading?: string;
@@ -182,7 +182,7 @@ function officialSourcesOnly(sources: ArticleSource[] | undefined): ArticleSourc
 
 export function dedupeArticleBody<T extends ArticleBodyShape>(body: T): T {
   if (!body || typeof body !== "object") return body;
-  const sourceBody = applyStaticArticleBodyUpgrade(body);
+  const sourceBody = applyReviewedStaticArticleBodyUpgrade(body);
   const seenPara = new Set<string>();
   const seenSent = new Set<string>();
   const seenHeading = new Set<string>();
