@@ -103,11 +103,19 @@ export function parseVisionVerdict(value: unknown): VisionVerdict | null {
   }
   const prose = cleaned.replace(/\s+/g, " ").trim();
   const lower = prose.toLowerCase();
-  const labeledMatch = lower.match(/matches\*?\*?\s*[:\-]\s*(true|false)/i);
-  const labeledPhoto = lower.match(/photorealistic\*?\*?\s*[:\-]\s*(true|false)/i);
-  if (labeledMatch && labeledPhoto) return { matches: labeledMatch[1] === "true", photorealistic: labeledPhoto[1] === "true", reason: prose.slice(0, 300) };
-  const rejectsMatch = /does not (?:clearly |directly )?(?:match|depict)|doesn't match|unrelated to|generic news symbolism|matches?\s*[:\-]\s*false/i.test(lower);
-  const rejectsPhoto = /not photorealistic|photorealistic\s*[:\-]\s*false|appears? to be an? (?:illustration|cartoon|graphic)|looks? (?:illustrated|cartoon|vector|poster)|vector-like|cartoon-like|illustration/i.test(lower);
+  const labeledMatch = lower.match(/matches\*?\*?\s*[:\-]\s*(true|false|yes|no)/i);
+  const labeledPhoto = lower.match(/photorealistic\*?\*?\s*[:\-]\s*(true|false|yes|no)/i);
+  if (labeledMatch && labeledPhoto) {
+    const reasonMatch = prose.match(/reason\*?\*?\s*[:\-]\s*(.+)$/i);
+    const toBoolean = (token: string) => token === "true" || token === "yes";
+    return {
+      matches: toBoolean(labeledMatch[1]),
+      photorealistic: toBoolean(labeledPhoto[1]),
+      reason: (reasonMatch?.[1] || prose).trim().slice(0, 300),
+    };
+  }
+  const rejectsMatch = /does not (?:clearly |directly )?(?:match|depict)|doesn't match|unrelated to|generic news symbolism|matches?\s*[:\-]\s*(?:false|no)/i.test(lower);
+  const rejectsPhoto = /not photorealistic|photorealistic\s*[:\-]\s*(?:false|no)|appears? to be an? (?:illustration|cartoon|graphic)|looks? (?:illustrated|cartoon|vector|poster)|vector-like|cartoon-like|illustration/i.test(lower);
   const acceptsMatch = !rejectsMatch && /clearly matches|matches the story|direct story match|clearly depicts|relevant to the story/i.test(lower);
   const acceptsPhoto = !rejectsPhoto && /photorealistic|realistic editorial photograph|believable .*photograph/i.test(lower);
   if (rejectsMatch || rejectsPhoto) return { matches: !rejectsMatch, photorealistic: !rejectsPhoto, reason: prose.slice(0, 300) };
