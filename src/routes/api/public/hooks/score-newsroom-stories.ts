@@ -17,6 +17,8 @@ type ClusterRow = {
 type MembershipRow = { cluster_id: string; feed_item_id: number; is_primary_source: boolean };
 type FeedScoreRow = {
   id: number;
+  source: string | null;
+  link: string | null;
   pillar_slug: string | null;
   texas_relevance_score: number | null;
   source_reputation_score: number | null;
@@ -62,7 +64,7 @@ async function handler() {
   if (feedIds.length) {
     const { data: feedData, error: feedError } = await newsroomDb
       .from("texas_news_feed")
-      .select("id,pillar_slug,texas_relevance_score,source_reputation_score,viral_score,trend_velocity,pub_date,created_at")
+      .select("id,source,link,pillar_slug,texas_relevance_score,source_reputation_score,viral_score,trend_velocity,pub_date,created_at")
       .in("id", feedIds);
     if (feedError) return Response.json({ ok: false, error: feedError.message }, { status: 500 });
     feedRows = (feedData ?? []) as FeedScoreRow[];
@@ -93,6 +95,8 @@ async function handler() {
     const pillarSlug = routeEditorialPillar({
       canonicalSubject: cluster.canonical_subject,
       persistedPillars: feeds.map((feed) => feed.pillar_slug),
+      sourceNames: feeds.map((feed) => feed.source),
+      sourceUrls: feeds.map((feed) => feed.link),
     });
     return { cluster, score, pillarSlug };
   });
