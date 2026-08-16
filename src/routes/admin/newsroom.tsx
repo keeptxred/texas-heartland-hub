@@ -19,8 +19,16 @@ export const Route = createFileRoute("/admin/newsroom")({
 
 type EditorialAction = "SELECT" | "HOLD" | "REJECT" | "RELEASE";
 type Snapshot = Awaited<ReturnType<typeof getNewsroomAdminSnapshot>>;
-
 type QueueRow = Snapshot["queue"][number];
+type CronHealthRow = {
+  jobname: string;
+  schedule: string;
+  active: boolean;
+  status: string | null;
+  return_message: string | null;
+  start_time: string | null;
+  end_time: string | null;
+};
 
 function adminToken() {
   return (
@@ -64,7 +72,7 @@ function NewsroomControlCenter() {
 
   const rows = useMemo(() => {
     if (!snapshot) return [];
-    return snapshot.queue.filter((row) => {
+    return snapshot.queue.filter((row: QueueRow) => {
       if (filter !== "ALL" && row.status !== filter) return false;
       if (format !== "ALL" && row.recommended_format !== format) return false;
       return true;
@@ -93,7 +101,7 @@ function NewsroomControlCenter() {
   }
 
   const budget = snapshot?.budget;
-  const cronFailures = snapshot?.cronHealth.filter((job) => !job.active || job.status !== "succeeded") ?? [];
+  const cronFailures = snapshot?.cronHealth.filter((job: CronHealthRow) => !job.active || job.status !== "succeeded") ?? [];
 
   return (
     <div className="min-h-screen bg-muted/20">
@@ -155,7 +163,7 @@ function NewsroomControlCenter() {
           {!loading && rows.length === 0 ? <div className="py-8 text-sm text-muted-foreground">No candidates match these filters.</div> : null}
           {!loading ? (
             <div className="divide-y divide-border">
-              {rows.map((row) => {
+              {rows.map((row: QueueRow) => {
                 const cluster = row.cluster;
                 const packet = row.packet?.packet_json as any;
                 const sources = Array.isArray(packet?.sources) ? packet.sources : [];
