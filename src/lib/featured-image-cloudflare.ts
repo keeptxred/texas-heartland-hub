@@ -1,7 +1,7 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
 export const CLOUDFLARE_IMAGE_MODEL = "@cf/lykon/dreamshaper-8-lcm";
-export const CLOUDFLARE_VISION_MODEL = "@cf/google/gemma-4-26b-a4b-it";
+export const CLOUDFLARE_VISION_MODEL = "@cf/mistralai/mistral-small-3.1-24b-instruct";
 
 function cloudflareEndpoint(accountId: string, model: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
@@ -108,29 +108,27 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
       "Return only matches, photorealistic, and reason.",
     ].join("\n");
 
+    const verdictSchema = {
+      type: "object",
+      properties: {
+        matches: { type: "boolean" },
+        photorealistic: { type: "boolean" },
+        reason: { type: "string" },
+      },
+      required: ["matches", "photorealistic", "reason"],
+    };
+
     const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_VISION_MODEL), {
       method: "POST",
       headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         messages: [
-          { role: "system", content: "You are a strict editorial-photo quality reviewer. Follow the response schema and keep reasoning minimal." },
+          { role: "system", content: "You are a strict editorial-photo quality reviewer. Return only the requested verdict." },
           { role: "user", content: validationPrompt },
         ],
         image,
-        response_format: {
-          type: "json_schema",
-          json_schema: {
-            type: "object",
-            properties: {
-              matches: { type: "boolean" },
-              photorealistic: { type: "boolean" },
-              reason: { type: "string" },
-            },
-            required: ["matches", "photorealistic", "reason"],
-          },
-        },
-        max_completion_tokens: 768,
-        reasoning_effort: "low",
+        guided_json: verdictSchema,
+        max_tokens: 256,
         temperature: 0,
       }),
     });
