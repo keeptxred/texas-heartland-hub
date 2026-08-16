@@ -7,6 +7,7 @@ import {
 } from "@/lib/story-clustering";
 import { persistEventCluster } from "@/lib/event-cluster-persistence";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
+import { assessPublicationReadiness } from "@/lib/publication-quality-gate";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
 
 type PublishResult = {
@@ -109,9 +110,6 @@ async function writeClusterMetadata(
   const { error } = await supabaseAdmin.from("texas_news_feed").update({ cluster_json: metadata }).in("id", ids);
   if (error) console.warn("[multi-source] cluster metadata not persisted", error.message);
   if (slug) {
-    // Never repoint a feed item that already belongs to an earlier published
-    // article. On a material follow-up only the new/unpublished cluster rows
-    // should link to the follow-up slug; the original article keeps its sources.
     const linkableIds = rows
       .filter((row) => !row.internal_slug)
       .map((row) => row.id)
@@ -120,6 +118,29 @@ async function writeClusterMetadata(
       await supabaseAdmin.from("texas_news_feed").update({ internal_slug: slug }).in("id", linkableIds);
     }
   }
+}
+
+async function writeQualityHoldMetadata(
+  supabaseAdmin: any,
+  feedItemId: number,
+  readiness: ReturnType<typeof assessPublicationReadiness>,
+  cluster: StoryCluster,
+): Promise<void> {
+  const metadata = {
+    cluster_score: cluster.score,
+    source_count: cluster.sourceCount,
+    source_links: clusterSourceList(cluster),
+    clustered_at: new Date().toISOString(),
+    publication_readiness: readiness.mode,
+    publication_hold_reason: readiness.reason,
+    authority_topic: readiness.authorityTopic,
+    primary_record: readiness.primaryRecord,
+  };
+  const { error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .update({ cluster_json: metadata })
+    .eq("id", feedItemId);
+  if (error) console.warn("[multi-source] publication hold metadata not persisted", error.message);
 }
 
 async function updateArticleAttribution(supabaseAdmin: any, slug: string, cluster: StoryCluster): Promise<void> {
@@ -189,12 +210,30 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
 
   let cluster = buildStoryCluster(primary, (recent ?? []) as ClusterableFeedItem[], MAX_CLUSTER_SOURCES);
   if (!cluster.strongMerge) {
+    cluster = await enrichClusterBodies(cluster, db);
+    const readiness = assessPublicationReadiness(cluster);
     await persistEventCluster(db, cluster, { status: "collecting" });
+
+    if (!readiness.publish) {
+      await writeQualityHoldMetadata(db, feedItemId, readiness, cluster);
+      console.info("[multi-source] publication held for quality", {
+        feedItemId,
+        reason: readiness.reason,
+        authorityTopic: readiness.authorityTopic,
+        primaryRecord: readiness.primaryRecord,
+      });
+      return {
+        ok: false,
+        error: `Publication held: ${readiness.reason}. Waiting for an independent source or a substantive primary record.`,
+        clusteredSources: cluster.sourceCount,
+      };
+    }
+
     const singleResult = await publishLegacySingleFeedItem(feedItemId);
     if (singleResult.ok && singleResult.slug) {
       await persistEventCluster(db, cluster, { status: "published", publishedSlug: singleResult.slug });
     }
-    return singleResult;
+    return { ...singleResult, clusteredSources: cluster.sourceCount };
   }
 
   await persistEventCluster(db, cluster, { status: "ready" });
@@ -207,9 +246,6 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   if (existing?.internal_slug) {
     existingNovelty = await assessExistingStory(db, existing.internal_slug, primary);
 
-    // Confirmation coverage strengthens the existing article without spending
-    // another AI credit. Materially new actions, figures or facts instead
-    // proceed through synthesis so readers get a distinct follow-up article.
     if (!existingNovelty?.material) {
       await db.from("texas_news_feed").update({ internal_slug: existing.internal_slug }).eq("id", feedItemId);
       await writeClusterMetadata(db, cluster, existing.internal_slug, {
