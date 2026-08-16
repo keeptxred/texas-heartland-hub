@@ -6,7 +6,9 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "vars": {
-    "PRINTIFY_SHOP_ID": "28098650"
+    "PRINTIFY_SHOP_ID": "28098650",
+    "SUPABASE_URL": "https://ftkznprjljkhymknvhye.supabase.co",
+    "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_J6-Lke5yaaGA5N5agMsltQ_rCG2MVYo"
   },
   "send_email": [
     {
