@@ -28,6 +28,18 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(adapter).toContain('required: ["brief", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"]');
     expect(adapter).toContain('required: ["heading", "paragraphs"]');
     expect(adapter).toContain('required: ["q", "a"]');
+    expect(adapter).toContain("minItems: 6");
+    expect(adapter).toContain("maxItems: 6");
+    expect(adapter).toContain("minItems: 3");
+    expect(adapter).toContain("maxItems: 3");
+  });
+
+  it("skips sparse research packets before reserving an AI generation", () => {
+    expect(generator).toContain("STANDARD_MIN_SOURCE_EVIDENCE_CHARS = 5_000");
+    expect(generator).toContain("LONG_FORM_MIN_SOURCE_EVIDENCE_CHARS = 9_000");
+    expect(generator).toContain("packetEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug)");
+    expect(generator).toContain('"insufficient_source_evidence"');
+    expect(generator.indexOf("packetEvidenceChars(packetRow.packet_json)")).toBeLessThan(generator.indexOf('db.rpc("newsroom_reserve_ai_generation"'));
   });
 
   it("never retries a failed generation endpoint request as another paid call", () => {
@@ -49,6 +61,6 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(generator).toContain('const shadowFailure = requestedMode === "shadow"');
     expect(generator).toContain('status: "HELD"');
     expect(generator).toContain('status: "REJECTED"');
-    expect(generator).toContain('reason: requestedMode === "shadow" ? "no_unshadowed_candidates"');
+    expect(generator).toContain('"no_unshadowed_candidates"');
   });
 });
