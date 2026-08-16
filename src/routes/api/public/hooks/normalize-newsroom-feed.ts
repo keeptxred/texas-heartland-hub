@@ -9,16 +9,25 @@ const NORMALIZATION_VERSION = 1;
 const FEED_LIMIT = 1000;
 const LOOKBACK_DAYS = 14;
 
+type FeedNormalizationRow = {
+  id: number;
+  title: string | null;
+  source: string | null;
+  link: string | null;
+  description: string | null;
+  pub_date: string | null;
+  created_at: string;
+};
+
 async function handler() {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  // The committed generated Database type intentionally trails migrations until regeneration.
-  // Runtime PostgREST supports the new sidecar immediately after its migration is applied.
+  // The committed generated Database type intentionally trails recent feed columns and newsroom migrations.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const newsroomDb = supabaseAdmin as any;
   const since = new Date(Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
-  const [{ data: feedRows, error: feedError }, { data: priorRows, error: priorError }] = await Promise.all([
-    supabaseAdmin
+  const [{ data: feedData, error: feedError }, { data: priorData, error: priorError }] = await Promise.all([
+    newsroomDb
       .from("texas_news_feed")
       .select("id,title,source,link,description,pub_date,created_at")
       .gte("created_at", since)
@@ -35,9 +44,11 @@ async function handler() {
 
   if (feedError) return Response.json({ ok: false, error: feedError.message }, { status: 500 });
   if (priorError) return Response.json({ ok: false, error: priorError.message }, { status: 500 });
+  const feedRows = (feedData ?? []) as FeedNormalizationRow[];
+  const priorRows = (priorData ?? []) as ExistingNormalization[];
 
-  const canonicalRows: ExistingNormalization[] = [...(priorRows ?? [])];
-  const normalized = [...(feedRows ?? [])]
+  const canonicalRows: ExistingNormalization[] = [...priorRows];
+  const normalized = [...feedRows]
     .sort((a, b) => Date.parse(a.pub_date ?? a.created_at) - Date.parse(b.pub_date ?? b.created_at) || a.id - b.id)
     .map((row) => {
       const item = normalizeNewsFeedItem(row);
@@ -85,7 +96,7 @@ async function handler() {
 
   return Response.json({
     ok: true,
-    scanned: feedRows?.length ?? 0,
+    scanned: feedRows.length,
     normalized: normalized.length,
     unique: normalized.length - duplicates.length,
     duplicates: duplicates.length,
