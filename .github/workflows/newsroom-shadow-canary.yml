@@ -13,8 +13,6 @@ on:
           - "3"
   push:
     branches: [main]
-    paths:
-      - ".github/newsroom-shadow-canary-trigger"
 
 permissions:
   contents: read
@@ -26,6 +24,9 @@ concurrency:
 
 jobs:
   shadow-canary:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && contains(github.event.head_commit.message, 'Run Phase 13 AI shadow canary'))
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
