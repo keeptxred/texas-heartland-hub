@@ -6,6 +6,7 @@ import {
 } from "@/lib/stripe.server";
 
 export const FREE_SHIPPING_THRESHOLD_CENTS = 3500;
+export const STRIPE_CHECKOUT_UI_MODE = "embedded" as const;
 
 type CheckoutCartItem = {
   productId: string;
@@ -337,7 +338,7 @@ export const createCartCheckoutSession = createServerFn({ method: "POST" })
 
       const session = await stripe.checkout.sessions.create({
         mode: "payment",
-        ui_mode: "embedded",
+        ui_mode: STRIPE_CHECKOUT_UI_MODE,
         return_url: data.returnUrl,
         line_items: validatedItems.map((item) => ({
           quantity: item.quantity,
