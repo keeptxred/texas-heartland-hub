@@ -38,6 +38,8 @@ jobs:
         run: |
           set -euo pipefail
 
+          # This poller remains in the originating workflow because GITHUB_TOKEN
+          # suppresses ordinary push/close workflow triggers from its own merge.
           for attempt in $(seq 1 300); do
             pr_json="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
             merged_at="$(python3 - "$pr_json" <<'PY'
