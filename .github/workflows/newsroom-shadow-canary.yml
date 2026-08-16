@@ -68,21 +68,19 @@ jobs:
             runs="$(curl --fail-with-body --silent --show-error \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/$REPOSITORY/actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&per_page=30")"
+              "https://api.github.com/repos/$REPOSITORY/actions/workflows/deploy-cloudflare-after-verify.yml/runs?branch=main&head_sha=$main_sha&per_page=10")"
 
-            deployed="$(python3 - "$runs" "$main_sha" <<'PY'
+            deployed="$(printf '%s' "$runs" | python3 -c '
           import json, sys
-          data = json.loads(sys.argv[1])
-          target = sys.argv[2]
-          matches = [r for r in data.get("workflow_runs", []) if r.get("head_sha") == target]
+          data = json.load(sys.stdin)
+          matches = data.get("workflow_runs", [])
           if any(r.get("status") == "completed" and r.get("conclusion") == "success" for r in matches):
               print("yes")
           elif any(r.get("status") == "completed" and r.get("conclusion") in {"failure", "timed_out"} for r in matches):
               print("failed")
           else:
               print("no")
-          PY
-            )"
+          ')"
 
             if [[ "$deployed" == "yes" ]]; then
               echo "Current main $main_sha has a successful verified Cloudflare deployment."
