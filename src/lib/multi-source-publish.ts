@@ -27,6 +27,11 @@ import {
   persistTimingDecision,
   releasePublicationClaim,
 } from "@/lib/publication-lifecycle";
+import {
+  acquireLivingStoryUpdateClaim,
+  releaseLivingStoryUpdateClaim,
+  updateCanonicalLivingStory,
+} from "@/lib/living-story-update";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
 import { assessPublicationReadiness } from "@/lib/publication-quality-gate";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
@@ -430,8 +435,15 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     }
   }
 
-  const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
-  if (!lifecycle.proceed) return lifecycle.result!;
+  const materialExistingSlug = existing?.internal_slug && existingNovelty?.material
+    ? existing.internal_slug
+    : null;
+  let lifecycleClaimToken: string | undefined;
+  if (!materialExistingSlug) {
+    const lifecycle = await preparePublicationLifecycle(db, feedItemId, eventClusterId, cluster, factVerification);
+    if (!lifecycle.proceed) return lifecycle.result!;
+    lifecycleClaimToken = lifecycle.claimToken;
+  }
 
   const anglePlan = selectStoryAngle(cluster, ledger, {
     preferredActions: existingNovelty?.material ? existingNovelty.newActions : [],
@@ -475,27 +487,86 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   await writeStoryAngleMetadata(db, feedItemId, anglePlan);
   await persistEventCluster(db, cluster, { status: "synthesized" });
 
-  const result = await publishLegacySingleFeedItem(feedItemId);
-  if (result.ok && result.slug) {
-    await writeClusterMetadata(db, cluster, result.slug, existingNovelty?.material ? {
+  if (materialExistingSlug && existingNovelty && eventClusterId) {
+    const updateClaim = await acquireLivingStoryUpdateClaim(db, eventClusterId);
+    if (!updateClaim.acquired) {
+      return {
+        ok: false,
+        error: `Canonical update deferred: ${updateClaim.reason}.`,
+        slug: materialExistingSlug,
+        alreadyPublished: true,
+        clusteredSources: cluster.sourceCount,
+        developingStory: "follow_up",
+        noveltyScore: existingNovelty.score,
+      };
+    }
+
+    const updateResult = await updateCanonicalLivingStory({
+      db,
+      slug: materialExistingSlug,
+      clusterId: eventClusterId,
+      feedItemId,
+      cluster,
+      novelty: existingNovelty,
+      anglePlan,
+    });
+    await releaseLivingStoryUpdateClaim(db, eventClusterId, updateClaim.token);
+
+    if (!updateResult.ok) {
+      return {
+        ok: false,
+        error: `Canonical update failed: ${updateResult.error ?? "unknown error"}.`,
+        slug: materialExistingSlug,
+        alreadyPublished: true,
+        clusteredSources: cluster.sourceCount,
+        developingStory: "follow_up",
+        noveltyScore: existingNovelty.score,
+      };
+    }
+
+    await writeClusterMetadata(db, cluster, materialExistingSlug, {
       kind: "follow_up",
       novelty: existingNovelty,
-    } : undefined);
+    });
+    await writeStoryAngleMetadata(db, feedItemId, anglePlan);
+    await updateArticleAttribution(db, materialExistingSlug, cluster);
+    await persistEventCluster(db, cluster, { status: "published", publishedSlug: materialExistingSlug });
+    return {
+      ok: true,
+      slug: materialExistingSlug,
+      alreadyPublished: true,
+      clusteredSources: cluster.sourceCount,
+      developingStory: "follow_up",
+      noveltyScore: existingNovelty.score,
+    };
+  }
+
+  if (materialExistingSlug && (!existingNovelty || !eventClusterId)) {
+    return {
+      ok: false,
+      error: "Canonical update blocked because durable event identity is unavailable; refusing to mint a duplicate URL.",
+      slug: materialExistingSlug,
+      alreadyPublished: true,
+      clusteredSources: cluster.sourceCount,
+      developingStory: "follow_up",
+      noveltyScore: existingNovelty?.score,
+    };
+  }
+
+  const result = await publishLegacySingleFeedItem(feedItemId);
+  if (result.ok && result.slug) {
+    await writeClusterMetadata(db, cluster, result.slug);
     await writeStoryAngleMetadata(db, feedItemId, anglePlan);
     await updateArticleAttribution(db, result.slug, cluster);
     await persistEventCluster(db, cluster, { status: "published", publishedSlug: result.slug });
     return {
       ...result,
       clusteredSources: cluster.sourceCount,
-      developingStory: existingNovelty?.material ? "follow_up" : undefined,
-      noveltyScore: existingNovelty?.score,
     };
   }
-  await releasePublicationClaim(db, eventClusterId, lifecycle.claimToken);
+  await releasePublicationClaim(db, eventClusterId, lifecycleClaimToken);
   return {
     ...result,
     clusteredSources: cluster.sourceCount,
-    developingStory: existingNovelty?.material ? "follow_up" : undefined,
-    noveltyScore: existingNovelty?.score,
   };
 }
