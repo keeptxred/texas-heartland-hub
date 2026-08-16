@@ -6,15 +6,18 @@ import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/arti
  * never accidentally surface articles from another category.
  */
 export const CATEGORY_SLUG_TO_NAME = {
+  politics: "Politics",
   legislature: "Legislature",
+  government: "Government",
+  "local-government": "Local Government",
+  laws: "Laws",
   border: "Border",
   elections: "Elections",
   "tax-spending": "Tax & Spending",
   energy: "Energy",
   education: "Education",
-  laws: "Laws",
-  government: "Government",
-  "local-government": "Local Government",
+  business: "Business",
+  sports: "Sports",
   "non-political": "Non-Political",
   // Texas News (culture / economy / lifestyle) categories
   economy: "Economy",
