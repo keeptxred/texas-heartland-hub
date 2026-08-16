@@ -35,6 +35,22 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Temporary live payment runtime diagnostic
+        run: |
+          set -euo pipefail
+          response="$(curl --retry 5 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error https://keeptxred.com/api/public/payments/health)"
+          python3 - "$response" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          safe = {
+              "status": data.get("status"),
+              "bindings": data.get("bindings"),
+              "stripe_api": data.get("stripe_api"),
+              "stripe_error": data.get("stripe_error"),
+          }
+          print(json.dumps(safe, sort_keys=True))
+          PY
+
       - name: ESLint
         run: bun run lint
 
