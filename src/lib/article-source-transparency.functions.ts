@@ -18,9 +18,15 @@ async function fallbackSources(db: any, slug: string): Promise<FallbackSource[]>
   if (error || !data?.body_json || typeof data.body_json !== "object") return [];
   const sources = (data.body_json as { sources?: unknown }).sources;
   if (!Array.isArray(sources)) return [];
-  return sources
-    .filter((source): source is { label?: string; url?: string } => Boolean(source) && typeof source === "object")
-    .map((source) => ({ label: source.label, url: source.url }));
+  return sources.flatMap((source): FallbackSource[] => {
+    if (!source || typeof source !== "object") return [];
+    const row = source as { label?: unknown; url?: unknown };
+    if (typeof row.url !== "string") return [];
+    return [{
+      label: typeof row.label === "string" ? row.label : "Source",
+      url: row.url,
+    }];
+  });
 }
 
 /**
