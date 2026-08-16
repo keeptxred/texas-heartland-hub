@@ -153,7 +153,6 @@ const CATEGORY_SIGNALS: Partial<Record<string, ContentPillarSlug>> = {
   border: "texas-border-immigration",
   energy: "texas-energy-oil",
   laws: "texas-laws-legislature",
-  legislature: "texas-laws-legislature",
   "tax & spending": "texas-economy-small-business",
 };
 
