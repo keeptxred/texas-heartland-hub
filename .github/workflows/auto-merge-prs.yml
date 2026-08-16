@@ -2,22 +2,26 @@ name: Auto-merge eligible PRs
 
 on:
   pull_request_target:
-    types: [opened, reopened, synchronize, ready_for_review, closed]
+    types: [opened, reopened, synchronize, ready_for_review]
 
 permissions:
   actions: write
   contents: write
   pull-requests: write
 
+concurrency:
+  group: auto-merge-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   enable-auto-merge:
     # Only auto-merge trusted, same-repository, non-draft PRs. Branch protection
     # and every required status check still gate the actual merge.
     if: >-
-      github.event.action != 'closed' &&
       github.event.pull_request.draft == false &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Enable auto-merge
         env:
@@ -25,20 +29,43 @@ jobs:
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr merge --auto --squash "$PR_URL"
 
-  verify-merged-main:
-    # Auto-merges performed with GITHUB_TOKEN do not emit a normal push workflow.
-    # Explicitly dispatch the repository health workflow after a trusted merge so
-    # current main is verified before the production deployment workflow runs.
-    # Keep this closed-event dispatch in place: it is the bootstrap/recovery path
-    # that guarantees an auto-merged main revision still reaches verification.
-    if: >-
-      github.event.action == 'closed' &&
-      github.event.pull_request.merged == true &&
-      github.event.pull_request.base.ref == 'main' &&
-      github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-latest
-    steps:
-      - name: Verify current main after merge
+      - name: Wait for merge and verify current main
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run shared-vitest.yml --ref main --repo "$GITHUB_REPOSITORY"
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for attempt in $(seq 1 300); do
+            pr_json="$(gh api "repos/$REPOSITORY/pulls/$PR_NUMBER")"
+            merged_at="$(python3 - "$pr_json" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          print(data.get("merged_at") or "")
+          PY
+            )"
+            state="$(python3 - "$pr_json" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          print(data.get("state") or "")
+          PY
+            )"
+
+            if [[ -n "$merged_at" ]]; then
+              gh workflow run shared-vitest.yml --ref main --repo "$REPOSITORY"
+              echo "Merged PR #$PR_NUMBER; dispatched repository health verification for current main."
+              exit 0
+            fi
+
+            if [[ "$state" == "closed" ]]; then
+              echo "PR #$PR_NUMBER closed without merging; no main verification dispatch needed."
+              exit 0
+            fi
+
+            sleep 5
+          done
+
+          echo "::error title=Auto-merge wait timed out::PR #$PR_NUMBER did not merge within 25 minutes."
+          exit 1
