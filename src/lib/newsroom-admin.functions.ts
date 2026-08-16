@@ -92,6 +92,15 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
 
     const auditAvailable = !actionsResult.error;
     const cronTelemetryAvailable = !cronResult.error;
+    const inferredCronHealth = pipelineHealth.map((stage) => ({
+      jobname: `${stage.stage} activity`,
+      schedule: "direct cron telemetry unavailable",
+      active: true,
+      status: "unknown",
+      return_message: "Showing last persisted pipeline activity instead of pg_cron job state.",
+      start_time: stage.lastActivity,
+      end_time: stage.lastActivity,
+    }));
     const extensionWarnings = [
       auditAvailable ? null : "Editorial action audit storage is unavailable; core editorial controls remain active.",
       cronTelemetryAvailable ? null : "Direct pg_cron telemetry is unavailable; pipeline activity timestamps are shown instead.",
@@ -107,7 +116,7 @@ export const getNewsroomAdminSnapshot = createServerFn({ method: "POST" })
       drafts: draftsResult.data ?? [],
       briefs: briefsResult.data ?? [],
       actions: auditAvailable ? (actionsResult.data ?? []) : [],
-      cronHealth: cronTelemetryAvailable ? (cronResult.data ?? []) : [],
+      cronHealth: cronTelemetryAvailable ? (cronResult.data ?? []) : inferredCronHealth,
       pipelineHealth,
       auditAvailable,
       cronTelemetryAvailable,
