@@ -48,7 +48,7 @@ export type DeterministicStoryCluster = {
 };
 
 export function clusterNewsFeedItems(items: readonly ClusterableFeedItem[]): DeterministicStoryCluster[] {
-  const ordered = [...items].sort((a, b) => Date.parse(a.observedAt) - Date.parse(b.observedAt) || a.feedItemId - b.feedItemId);
+  const ordered = [...items].sort((a, b) => a.feedItemId - b.feedItemId);
   const parent = ordered.map((_, index) => index);
   const find = (index: number): number => {
     while (parent[index] !== index) {
@@ -94,9 +94,9 @@ export function clusterNewsFeedItems(items: readonly ClusterableFeedItem[]): Det
     const confidence = scores.length ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 1;
     return {
       anchorFeedItemId: anchor.feedItemId,
-      memberFeedItemIds: members.map((member) => member.feedItemId),
+      memberFeedItemIds: members.map((member) => member.feedItemId).sort((a, b) => a - b),
       canonicalSubject: canonical.normalizedTitle,
       confidence: Math.min(1, Math.max(0, confidence)),
     };
-  });
+  }).sort((a, b) => a.anchorFeedItemId - b.anchorFeedItemId);
 }
