@@ -19,6 +19,11 @@ describe("news article SEO/AEO contract", () => {
     expect(source).toContain("about: body.entities");
   });
 
+  it("propagates cloud noindex flags into page robots metadata", () => {
+    expect(source).toContain("getCloudArticleIndexability");
+    expect(source).toContain("noindex: article.noindex === true");
+  });
+
   it("keeps visible evidence and answer-oriented article fields", () => {
     expect(source).toContain(">Sources</h2>");
     expect(source).not.toContain("Official Sources");
