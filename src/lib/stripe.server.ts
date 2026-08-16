@@ -15,10 +15,26 @@ export function getStripeSecretKey(env: StripeEnv): string {
 }
 
 export function createStripeClient(env: StripeEnv): Stripe {
-  return new Stripe(getStripeSecretKey(env), {
+  const stripe = new Stripe(getStripeSecretKey(env), {
     apiVersion: "2026-03-25.dahlia",
     maxNetworkRetries: 2,
   });
+
+  // This Stripe account/API version uses the newer `embedded_page` value.
+  // Normalize the legacy app constant at the client boundary so every direct
+  // Checkout Session create call uses the mode Stripe currently accepts.
+  const createCheckoutSession = stripe.checkout.sessions.create.bind(
+    stripe.checkout.sessions,
+  );
+  (stripe.checkout.sessions as any).create = (params: any, options?: any) =>
+    createCheckoutSession(
+      params?.ui_mode === "embedded"
+        ? { ...params, ui_mode: "embedded_page" }
+        : params,
+      options,
+    );
+
+  return stripe;
 }
 
 export function getStripeErrorMessage(error: unknown): string {
