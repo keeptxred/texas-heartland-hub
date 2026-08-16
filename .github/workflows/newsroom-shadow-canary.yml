@@ -101,6 +101,27 @@ jobs:
           echo "Timed out waiting for a successful deployment of current main." >&2
           exit 1
 
+      - name: Refresh zero-AI research packets
+        shell: bash
+        run: |
+          set -euo pipefail
+          response="$(curl --max-time 60 --fail-with-body --silent --show-error -X POST \
+            "$PRODUCTION_URL/api/public/hooks/build-newsroom-research-packets")"
+          python3 - "$response" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          if data.get("ok") is not True:
+              raise SystemExit(f"Research packet refresh failed: {data.get('error')}")
+          if int(data.get("aiCalls") or 0) != 0:
+              raise SystemExit(f"Research packet refresh unexpectedly used AI: {data.get('aiCalls')}")
+          print(json.dumps({
+              "built": data.get("built"),
+              "sourceItems": data.get("sourceItems"),
+              "primarySourceItems": data.get("primarySourceItems"),
+              "aiCalls": data.get("aiCalls"),
+          }, sort_keys=True))
+          PY
+
       - name: Generate isolated AI shadow drafts
         shell: bash
         run: |
