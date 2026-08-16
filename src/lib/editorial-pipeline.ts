@@ -39,10 +39,18 @@ export type ArticleShape = {
   dek?: string;
   summary?: string;
   relevance?: string;
+  analysis?: string;
+  category?: string;
   sections?: { heading?: string; paragraphs?: string[] }[];
   faq?: { q?: string; a?: string }[];
   keyTakeaways?: string[];
 };
+
+const ANALYSIS_CATEGORIES = new Set(["non-political", "business", "education", "sports"]);
+
+export function editorialMinimumFor(category?: string | null): number {
+  return ANALYSIS_CATEGORIES.has((category ?? "").trim().toLowerCase()) ? 1200 : 800;
+}
 
 export const EDITORIAL_SYSTEM_ADDENDUM = `
 
@@ -81,6 +89,13 @@ RULES DERIVED FROM THE BRIEF:
 - Never confuse a current office with an office being sought.
 - Do not invent polling, unnamed analysts, observers, consultants, experts, statistics, quotes, or public-opinion claims.
 
+TIERED MAIN-STORY LENGTH REQUIREMENTS:
+- The word-count floor applies to main-story prose only: summary + analysis + section paragraph strings. Do not count the title, dek, headings, FAQ, keywords, key takeaways, or metadata.
+- If the selected category is non-political, business, education, or sports, write AT LEAST 1,200 main-story words.
+- For other non-evergreen news categories, write AT LEAST 800 main-story words.
+- These are minimums, not targets to pad toward. Reach the correct tier using only source-supported detail, chronology, stakeholders, consequences, and useful reader context.
+- Never invent or repeat facts merely to satisfy length. If the source cannot support the tier factually, set brief.hasClearNewsEvent to false rather than padding.
+
 AEO / ANSWER-FIRST SUMMARY REQUIREMENTS:
 - The "summary" field is the article's direct-answer block. Write it as a self-contained 45–90 word answer to the headline/topic.
 - Put the answer in the first sentence. Do not begin with throat-clearing such as "In a development," "This story is about," or "Keep TX Red is tracking."
@@ -107,13 +122,16 @@ RETRY — STRICT MODE:
 The previous draft failed editorial validation. Regenerate using only verified
 source facts. Remove unsupported people, organizations, statistics, quotes,
 relationships, and filler. The summary must be a self-contained, answer-first
-45–90 word explanation whose first sentence states what happened. Correct any
-readability failure as well: split oversized paragraphs into separate paragraph
-array items at natural idea boundaries, keep normal paragraphs below 130 words,
-never place multiple blank-line-separated paragraphs inside one paragraphs[]
-string, and use descriptive section headings instead of generic filler. If a
-factual article cannot be produced, set brief.hasClearNewsEvent to false and
-leave article fields empty.
+45–90 word explanation whose first sentence states what happened. Recalculate
+the main-story word count using summary + analysis + section paragraphs only.
+The corrected draft must reach at least 1,200 words for non-political, business,
+education, or sports, and at least 800 words for other non-evergreen news.
+Correct any readability failure as well: split oversized paragraphs into
+separate paragraph array items at natural idea boundaries, keep normal
+paragraphs below 130 words, never place multiple blank-line-separated
+paragraphs inside one paragraphs[] string, and use descriptive section headings
+instead of generic filler. If a factual article cannot be produced, set
+brief.hasClearNewsEvent to false and leave article fields empty.
 `;
 
 const BANNED_UNSUPPORTED_PATTERNS: RegExp[] = [
@@ -148,6 +166,14 @@ function articleProse(article: ArticleShape): string {
     for (const paragraph of section?.paragraphs ?? []) parts.push(paragraph);
   }
   return parts.join(" \n\n");
+}
+
+function mainStoryProse(article: ArticleShape): string {
+  return [
+    article.summary ?? "",
+    article.analysis ?? "",
+    ...(article.sections ?? []).flatMap((section) => section.paragraphs ?? []),
+  ].join(" ");
 }
 
 function firstParagraph(article: ArticleShape): string {
@@ -225,6 +251,11 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourc
       reasons.push("generic_summary_opener");
     }
   }
+
+  const tierCategory = article.category ?? brief?.category;
+  const tierMinimum = editorialMinimumFor(tierCategory);
+  const mainWords = countWords(mainStoryProse(article));
+  if (mainWords < tierMinimum) reasons.push(`tiered_main_word_count:${mainWords}/${tierMinimum}`);
 
   reasons.push(...validateArticleReadability(article));
 
