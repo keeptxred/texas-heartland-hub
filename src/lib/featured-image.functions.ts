@@ -268,7 +268,7 @@ async function generateImageBytes(prompt: string): Promise<Uint8Array> {
   const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_IMAGE_MODEL), {
     method: "POST",
     headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt: prompt.slice(0, 2048), steps: 4, seed: Math.floor(Math.random() * 2_147_483_647) }),
+    body: JSON.stringify({ prompt: prompt.slice(0, 2048), steps: 4 }),
   });
 
   const raw = await res.text().catch(() => "");
