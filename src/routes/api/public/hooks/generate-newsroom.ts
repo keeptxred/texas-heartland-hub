@@ -71,19 +71,39 @@ async function handler({ request }: { request: Request }) {
   if (!candidates.length) return Response.json({ ok: true, no_items: true, reason: "no_candidates", aiCalls: 0 });
 
   const clusterIds = candidates.map((candidate) => candidate.cluster_id);
-  const [{ data: clusterData, error: clusterError }, { data: packetData, error: packetError }] = await Promise.all([
+  const candidateIds = candidates.map((candidate) => candidate.id);
+  const baseQueries = [
     db.from("news_story_clusters").select("id,canonical_subject,pillar_slug").in("id", clusterIds),
     db.from("news_research_packets").select("cluster_id,packet_json,source_count,primary_source_count").in("cluster_id", clusterIds),
-  ]);
+  ];
+  const shadowDraftQuery = requestedMode === "shadow"
+    ? db.from("newsroom_generation_drafts").select("candidate_id").eq("mode", "shadow").in("candidate_id", candidateIds)
+    : Promise.resolve({ data: [], error: null });
+  const [clusterResult, packetResult, shadowDraftResult] = await Promise.all([...baseQueries, shadowDraftQuery]);
+  const { data: clusterData, error: clusterError } = clusterResult;
+  const { data: packetData, error: packetError } = packetResult;
+  const { data: shadowDraftData, error: shadowDraftError } = shadowDraftResult;
   if (clusterError) return Response.json({ error: clusterError.message }, { status: 500 });
   if (packetError) return Response.json({ error: packetError.message }, { status: 500 });
+  if (shadowDraftError) return Response.json({ error: shadowDraftError.message }, { status: 500 });
 
   const clusters = (clusterData ?? []) as ClusterRow[];
   const packets = (packetData ?? []) as PacketRow[];
   const clusterById = new Map(clusters.map((row) => [row.id, row]));
   const packetByCluster = new Map(packets.map((row) => [row.cluster_id, row]));
-  const candidate = candidates.find((row) => (packetByCluster.get(row.cluster_id)?.source_count ?? 0) > 0);
-  if (!candidate) return Response.json({ ok: true, no_items: true, reason: "no_research_packets", aiCalls: 0 });
+  const shadowedCandidateIds = new Set<string>((shadowDraftData ?? []).map((row: { candidate_id: string }) => row.candidate_id));
+  const candidate = candidates.find((row) =>
+    !shadowedCandidateIds.has(row.id) &&
+    (packetByCluster.get(row.cluster_id)?.source_count ?? 0) > 0,
+  );
+  if (!candidate) {
+    return Response.json({
+      ok: true,
+      no_items: true,
+      reason: requestedMode === "shadow" ? "no_unshadowed_candidates" : "no_research_packets",
+      aiCalls: 0,
+    });
+  }
 
   const cluster = clusterById.get(candidate.cluster_id);
   const packetRow = packetByCluster.get(candidate.cluster_id);
@@ -132,7 +152,10 @@ async function handler({ request }: { request: Request }) {
     const draftId = draftRows?.[0]?.id as string | undefined;
 
     if (!validation.ok) {
-      await db.from("news_publish_candidates").update({
+      const shadowFailure = requestedMode === "shadow";
+      await db.from("news_publish_candidates").update(shadowFailure ? {
+        status: "HELD",
+      } : {
         status: "REJECTED",
         rejection_reason: validation.reasons.join(",").slice(0, 1000),
       }).eq("id", candidate.id);
@@ -141,6 +164,7 @@ async function handler({ request }: { request: Request }) {
         ok: true,
         generated: true,
         published: false,
+        mode: requestedMode,
         candidateId: candidate.id,
         clusterId: candidate.cluster_id,
         draftId,
