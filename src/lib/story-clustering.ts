@@ -7,6 +7,8 @@ export type ClusterableFeedItem = {
   pub_date?: string | null;
   extracted_body?: string | null;
   internal_slug?: string | null;
+  event_cluster_id?: string | null;
+  event_cluster_score?: number | null;
 };
 
 export type ClusterCandidate = ClusterableFeedItem & {
@@ -79,6 +81,10 @@ function normalize(text: string): string {
     .replace(/[^a-z0-9' -]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+export function normalizeClusterText(text: string): string {
+  return normalize(text);
 }
 
 function textFor(item: ClusterableFeedItem): string {
@@ -159,6 +165,23 @@ function hoursApart(a?: string | null, b?: string | null): number {
   return Math.abs(ta - tb) / 3_600_000;
 }
 
+/**
+ * Event types with a high false-positive cost require stronger evidence before
+ * several reports are treated as one event. Sports and scheduled government
+ * actions are a little safer because team/agency + action + date are strong
+ * anchors. The broad candidate search remains permissive; this threshold is
+ * the publication-time merge gate.
+ */
+export function strongMergeThreshold(item: ClusterableFeedItem): number {
+  const text = textFor(item);
+  if (/\b(shooting|killed|dead|death|arrest|charged|indicted|crash|collision|missing)\b/i.test(text)) return 75;
+  if (/\b(lawsuit|court|judge|ruling|appeal|injunction|supreme court)\b/i.test(text)) return 72;
+  if (/\b(tornado|hurricane|wildfire|flood|warning|watch|storm)\b/i.test(text)) return 72;
+  if (/\b(cowboys|texans|rangers|astros|spurs|mavericks|stars|longhorns|aggies|game|season|score)\b/i.test(text)) return 62;
+  if (/\b(governor|senate|house|agency|commission|council|school district|tea)\b/i.test(text)) return 64;
+  return 65;
+}
+
 export function combinationScore(primary: ClusterableFeedItem, candidate: ClusterableFeedItem): { score: number; overlapTerms: string[] } {
   if (primary.link === candidate.link) return { score: 0, overlapTerms: [] };
   const a = tokens(primary);
@@ -225,12 +248,13 @@ export function buildStoryCluster(primary: ClusterableFeedItem, recent: Clustera
   }
 
   const score = members.length ? Math.max(...members.map((m) => m.combinationScore)) : 0;
+  const threshold = strongMergeThreshold(primary);
   return {
     primary,
     members,
     score,
     sourceCount: 1 + members.length,
-    strongMerge: members.some((m) => m.combinationScore >= 65),
+    strongMerge: members.some((m) => m.combinationScore >= threshold),
   };
 }
 
