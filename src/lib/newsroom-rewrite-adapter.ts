@@ -1,4 +1,4 @@
-import { articleMainWordCount, INGESTED_MIN_MAIN_WORDS, meetsArticleMainWordCount } from "./article-length";
+import { articleMainWordCount } from "./article-length";
 import { EDITORIAL_SYSTEM_ADDENDUM, editorialMinimumFor, validateArticle, type StoryBrief } from "./editorial-pipeline";
 import type { ResearchPacket } from "./newsroom-research-packet";
 
@@ -195,9 +195,14 @@ export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): D
   } catch {
     reasons.push("editorial_validation_exception");
   }
-  if (mainWordCount < INGESTED_MIN_MAIN_WORDS || !meetsArticleMainWordCount("news", bodyJson)) {
-    reasons.push("below_news_word_floor");
-  }
+  // Shadow validation occurs before publication assembly adds body_json.sources.
+  // Do not call the publication-level meetsArticleMainWordCount() helper here:
+  // it correctly requires source URLs and would reject an otherwise valid draft
+  // solely because the source list is attached later. Packet evidence has already
+  // passed the 5k/9k source gate before AI generation, so enforce the newsroom's
+  // category-specific prose floor directly at this stage instead.
+  const requiredMainWords = editorialMinimumFor(categoryForPillar(packet.pillar));
+  if (mainWordCount < requiredMainWords) reasons.push("below_news_word_floor");
   if (typedDraft.sections.length !== 6) reasons.push("section_count");
   if (typedDraft.sections.some((section) => section.paragraphs.length !== 3)) reasons.push("paragraph_count");
   return { ok: reasons.length === 0, reasons: [...new Set(reasons)], mainWordCount };

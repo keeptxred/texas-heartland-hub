@@ -53,6 +53,12 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(generator.indexOf("researchPacketEvidenceChars(packetRow.packet_json)")).toBeLessThan(generator.indexOf('db.rpc("newsroom_reserve_ai_generation"'));
   });
 
+  it("validates shadow prose before publication source URLs are assembled", () => {
+    expect(adapter).toContain("editorialMinimumFor(categoryForPillar(packet.pillar))");
+    expect(adapter).toContain('if (mainWordCount < requiredMainWords) reasons.push("below_news_word_floor")');
+    expect(adapter).not.toContain('meetsArticleMainWordCount("news", bodyJson)');
+  });
+
   it("retries only pre-AI 401 auth propagation and never retries a paid generation failure", () => {
     expect(workflow).toContain("for auth_attempt in $(seq 1 12)");
     expect(workflow).toContain("-w '%{http_code}'");
