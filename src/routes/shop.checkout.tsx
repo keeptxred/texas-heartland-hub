@@ -80,7 +80,11 @@ function CheckoutPage() {
           </div>
         ) : (
           <div className="rounded-2xl border border-border bg-card p-4 md:p-6">
-            <StripeEmbeddedCartCheckout items={items} returnUrl={returnUrl} />
+            <StripeEmbeddedCartCheckout
+              items={items}
+              returnUrl={returnUrl}
+              environment="live"
+            />
           </div>
         )}
       </section>
