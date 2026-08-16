@@ -191,11 +191,34 @@ jobs:
           print("Temporary shadow-only hook token installed.")
           PY
 
-          sleep 3
+          # Cloudflare secret writes create a new Worker version. The API may confirm
+          # the write before the custom domain serves that version. Retry only 401s:
+          # those are rejected at auth before any AI reservation or generation call.
           for i in $(seq 1 "$CANARY_COUNT"); do
-            response="$(curl --max-time 110 --fail-with-body --silent --show-error -X POST \
-              "$PRODUCTION_URL/api/public/hooks/generate-newsroom?mode=shadow" \
-              -H "x-newsroom-hook-token: $hook_token")"
+            response_file="$(mktemp)"
+            status=""
+            for auth_attempt in $(seq 1 12); do
+              status="$(curl --max-time 110 --silent --show-error -o "$response_file" -w '%{http_code}' -X POST \
+                "$PRODUCTION_URL/api/public/hooks/generate-newsroom?mode=shadow" \
+                -H "x-newsroom-hook-token: $hook_token")"
+              if [[ "$status" == "401" ]]; then
+                echo "Shadow hook token not live on custom domain yet (attempt $auth_attempt/12); retrying auth only."
+                sleep 5
+                continue
+              fi
+              break
+            done
+
+            response="$(cat "$response_file")"
+            rm -f "$response_file"
+            if [[ "$status" == "401" ]]; then
+              echo "Temporary shadow hook token never propagated to production." >&2
+              exit 1
+            fi
+            if [[ ! "$status" =~ ^2[0-9][0-9]$ ]]; then
+              echo "Shadow generation request $i failed with HTTP $status: $response" >&2
+              exit 1
+            fi
             if [[ -z "$response" ]]; then
               echo "Shadow generation request $i returned an empty response." >&2
               exit 1

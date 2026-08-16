@@ -53,9 +53,15 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(generator.indexOf("researchPacketEvidenceChars(packetRow.packet_json)")).toBeLessThan(generator.indexOf('db.rpc("newsroom_reserve_ai_generation"'));
   });
 
-  it("never retries a failed generation endpoint request as another paid call", () => {
-    expect(workflow).toContain("curl --max-time 110 --fail-with-body");
+  it("retries only pre-AI 401 auth propagation and never retries a paid generation failure", () => {
+    expect(workflow).toContain("for auth_attempt in $(seq 1 12)");
+    expect(workflow).toContain("-w '%{http_code}'");
+    expect(workflow).toContain('if [[ "$status" == "401" ]]');
+    expect(workflow).toContain("retrying auth only");
+    expect(workflow).toContain('if [[ ! "$status" =~ ^2[0-9][0-9]$ ]]');
+    expect(workflow).toContain("Shadow generation request $i failed with HTTP $status");
     expect(workflow).not.toContain("for attempt in $(seq 1 8)");
+    expect(generator).toContain("maxAttempts: 1");
     expect(cloudflare).toContain("requestTimeoutMs");
     expect(cloudflare).toContain("controller.abort()");
   });
