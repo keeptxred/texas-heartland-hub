@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { allowsRealFulfillment } from "@/lib/payment-safety";
 import { type StripeEnv, createStripeClient, verifyWebhook } from "@/lib/stripe.server";
 
 type CompactCartItem = { p: string; v: number | null; q: number };
@@ -294,6 +295,15 @@ async function handleWebhook(req: Request, env: StripeEnv) {
   // in-app email send endpoint without re-plumbing every argument.
   (globalThis as any).__ktrWebhookRequest = req;
   const event = await verifyWebhook(req, env);
+
+  // Defense in depth: the legacy shared endpoint still accepts an env query
+  // parameter, but only live events may reach persistence, email, or Printify
+  // fulfillment. Sandbox events are signature-verified and then stop here.
+  if (!allowsRealFulfillment(env)) {
+    console.log("Sandbox payment event verified; real fulfillment suppressed", event.type);
+    return;
+  }
+
   switch (event.type) {
     case "checkout.session.completed":
     case "checkout.session.async_payment_succeeded":
