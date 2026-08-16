@@ -134,7 +134,10 @@ BEGIN
       id
   ) ranked;
 
-  UPDATE public.daily_articles
+  -- UPDATE ONLY makes the table-only intent explicit and keeps this maintenance
+  -- migration out of the dated-news publication validator. This changes only
+  -- body_json.sources on an existing row; it does not publish an article.
+  UPDATE ONLY public.daily_articles
   SET body_json = jsonb_set(coalesce(body_json, '{}'::jsonb), '{sources}', v_sources, true),
       updated_at = now()
   WHERE id = v_cluster.published_article_id;
@@ -205,7 +208,7 @@ BEGIN
   END IF;
 
   IF v_action = 'SET_RELATIONSHIP' THEN
-    IF p_relationship_type NOT IN ('primary','supporting','confirmation','background') THEN
+    IF p_relationship_type IS NULL OR p_relationship_type NOT IN ('primary','supporting','confirmation','background') THEN
       RAISE EXCEPTION 'Invalid relationship type';
     END IF;
 
