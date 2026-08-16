@@ -1,4 +1,5 @@
 import { validateArticleReadability } from "./editorial-readability";
+import { validateMultiSourceDraftAgainstPacket } from "./multisource-draft-quality";
 
 // Shared analyze-first editorial validation for AI-generated articles.
 
@@ -312,6 +313,8 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourc
 
     if (brief.hasClearNewsEvent === false) reasons.push("brief_no_clear_news_event");
   }
+
+  reasons.push(...validateMultiSourceDraftAgainstPacket(article, sourceText));
 
   const hedgeHits = (
     prose.match(/\b(may|might|could|potentially|reportedly|allegedly|some (?:say|believe))\b/gi) ?? []
