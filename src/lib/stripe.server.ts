@@ -8,14 +8,45 @@ const getEnv = (key: string): string => {
 
 export type StripeEnv = "sandbox" | "live";
 
+export function normalizeStripeEnv(value: unknown): StripeEnv {
+  if (value === "sandbox" || value === "live") return value;
+  throw new Error("Invalid Stripe environment.");
+}
+
+export function validateStripeSecretKeyForEnvironment(
+  env: StripeEnv,
+  value: string,
+): string {
+  const key = value.trim();
+  const allowedPrefixes =
+    env === "sandbox" ? ["sk_test_", "rk_test_"] : ["sk_live_", "rk_live_"];
+
+  if (!allowedPrefixes.some((prefix) => key.startsWith(prefix))) {
+    const variable =
+      env === "sandbox" ? "STRIPE_SANDBOX_SECRET_KEY" : "STRIPE_LIVE_SECRET_KEY";
+    const mode = env === "sandbox" ? "test-mode" : "live-mode";
+    throw new Error(`${variable} must contain a ${mode} Stripe secret key.`);
+  }
+
+  return key;
+}
+
 export function getStripeSecretKey(env: StripeEnv): string {
-  return env === "sandbox"
-    ? getEnv("STRIPE_SANDBOX_SECRET_KEY")
-    : getEnv("STRIPE_LIVE_SECRET_KEY");
+  const resolvedEnvironment = normalizeStripeEnv(env);
+  const variable =
+    resolvedEnvironment === "sandbox"
+      ? "STRIPE_SANDBOX_SECRET_KEY"
+      : "STRIPE_LIVE_SECRET_KEY";
+
+  return validateStripeSecretKeyForEnvironment(
+    resolvedEnvironment,
+    getEnv(variable),
+  );
 }
 
 export function createStripeClient(env: StripeEnv): Stripe {
-  const stripe = new Stripe(getStripeSecretKey(env), {
+  const resolvedEnvironment = normalizeStripeEnv(env);
+  const stripe = new Stripe(getStripeSecretKey(resolvedEnvironment), {
     apiVersion: "2026-03-25.dahlia",
     maxNetworkRetries: 2,
   });

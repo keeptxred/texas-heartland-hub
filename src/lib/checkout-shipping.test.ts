@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   FREE_SHIPPING_THRESHOLD_CENTS,
   STRIPE_CHECKOUT_UI_MODE,
+  assertCheckoutEnvironmentMatchesReturnUrl,
   getStandardShippingCents,
   priceToCents,
   qualifiesForFreeShipping,
@@ -44,5 +45,35 @@ describe("checkout shipping policy", () => {
     expect(() => priceToCents(0)).toThrow();
     expect(() => priceToCents(-1)).toThrow();
     expect(() => priceToCents("not-a-price")).toThrow();
+  });
+
+  it("allows each Stripe environment only on its matching return route", () => {
+    expect(() =>
+      assertCheckoutEnvironmentMatchesReturnUrl(
+        "sandbox",
+        "https://keeptxred.com/shop/checkout-sandbox-return?session_id={CHECKOUT_SESSION_ID}",
+      ),
+    ).not.toThrow();
+    expect(() =>
+      assertCheckoutEnvironmentMatchesReturnUrl(
+        "live",
+        "https://keeptxred.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
+      ),
+    ).not.toThrow();
+  });
+
+  it("blocks live/sandbox return-route crossover before creating a Stripe session", () => {
+    expect(() =>
+      assertCheckoutEnvironmentMatchesReturnUrl(
+        "live",
+        "https://keeptxred.com/shop/checkout-sandbox-return?session_id={CHECKOUT_SESSION_ID}",
+      ),
+    ).toThrow("Stripe live checkout cannot use the /shop/checkout-sandbox-return return route.");
+    expect(() =>
+      assertCheckoutEnvironmentMatchesReturnUrl(
+        "sandbox",
+        "https://keeptxred.com/shop/checkout-return?session_id={CHECKOUT_SESSION_ID}",
+      ),
+    ).toThrow("Stripe sandbox checkout cannot use the /shop/checkout-return return route.");
   });
 });
