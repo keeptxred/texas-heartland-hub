@@ -146,17 +146,11 @@ jobs:
 
           sleep 3
           for i in $(seq 1 "$CANARY_COUNT"); do
-            response=""
-            for attempt in $(seq 1 8); do
-              if response="$(curl --fail-with-body --silent --show-error -X POST \
-                "$PRODUCTION_URL/api/public/hooks/generate-newsroom?mode=shadow" \
-                -H "x-newsroom-hook-token: $hook_token")"; then
-                break
-              fi
-              sleep 2
-            done
+            response="$(curl --max-time 110 --fail-with-body --silent --show-error -X POST \
+              "$PRODUCTION_URL/api/public/hooks/generate-newsroom?mode=shadow" \
+              -H "x-newsroom-hook-token: $hook_token")"
             if [[ -z "$response" ]]; then
-              echo "Shadow generation request $i did not return a response." >&2
+              echo "Shadow generation request $i returned an empty response." >&2
               exit 1
             fi
             python3 - "$response" "$i" <<'PY'
