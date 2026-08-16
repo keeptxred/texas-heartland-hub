@@ -65,30 +65,71 @@ function sourceText(packet: ResearchPacket): string {
     .slice(0, 50000);
 }
 
-export function validateNewsroomDraft(draft: NewsroomDraft, packet: ResearchPacket): DraftValidation {
-  if (!draft?.brief?.hasClearNewsEvent) {
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value && typeof value === "object" && !Array.isArray(value));
+}
+
+function hasNonEmptyString(value: unknown): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
+function draftShapeReasons(value: unknown): string[] {
+  if (!isRecord(value)) return ["invalid_draft_object"];
+  const reasons: string[] = [];
+  const brief = value.brief;
+  if (!isRecord(brief) || typeof brief.hasClearNewsEvent !== "boolean") reasons.push("invalid_brief");
+  for (const field of ["title", "dek", "summary", "relevance"] as const) {
+    if (!hasNonEmptyString(value[field])) reasons.push(`invalid_${field}`);
+  }
+  if (!Array.isArray(value.sections)) {
+    reasons.push("invalid_sections");
+  } else if (value.sections.some((section) =>
+    !isRecord(section) ||
+    !hasNonEmptyString(section.heading) ||
+    !Array.isArray(section.paragraphs) ||
+    section.paragraphs.some((paragraph) => !hasNonEmptyString(paragraph)))) {
+    reasons.push("invalid_section_shape");
+  }
+  if (!Array.isArray(value.keyTakeaways) || value.keyTakeaways.some((item) => !hasNonEmptyString(item))) {
+    reasons.push("invalid_key_takeaways");
+  }
+  if (!Array.isArray(value.faq) || value.faq.some((item) =>
+    !isRecord(item) || !hasNonEmptyString(item.q) || !hasNonEmptyString(item.a))) {
+    reasons.push("invalid_faq");
+  }
+  return reasons;
+}
+
+export function validateNewsroomDraft(draft: unknown, packet: ResearchPacket): DraftValidation {
+  const shapeReasons = draftShapeReasons(draft);
+  if (shapeReasons.length) return { ok: false, reasons: shapeReasons, mainWordCount: 0 };
+
+  const typedDraft = draft as NewsroomDraft;
+  if (!typedDraft.brief.hasClearNewsEvent) {
     return { ok: false, reasons: ["brief_no_clear_news_event"], mainWordCount: 0 };
   }
 
   const bodyJson = {
-    intro: [draft.summary],
+    intro: [typedDraft.summary],
     sections: [
-      { heading: "Texas relevance", paragraphs: [draft.relevance] },
-      ...(draft.sections ?? []),
+      { heading: "Texas relevance", paragraphs: [typedDraft.relevance] },
+      ...typedDraft.sections,
     ],
-    faq: draft.faq ?? [],
-    keyTakeaways: draft.keyTakeaways ?? [],
+    faq: typedDraft.faq,
+    keyTakeaways: typedDraft.keyTakeaways,
   };
-  const editorial = validateArticle(draft, draft.brief, sourceText(packet));
   const mainWordCount = articleMainWordCount(bodyJson);
-  const reasons = [...editorial.reasons];
+  const reasons: string[] = [];
+  try {
+    reasons.push(...validateArticle(typedDraft, typedDraft.brief, sourceText(packet)).reasons);
+  } catch {
+    reasons.push("editorial_validation_exception");
+  }
   if (mainWordCount < INGESTED_MIN_MAIN_WORDS || !meetsArticleMainWordCount("news", bodyJson)) {
     reasons.push("below_news_word_floor");
   }
-  if (!Array.isArray(draft.sections) || draft.sections.length !== 6) reasons.push("section_count");
-  if ((draft.sections ?? []).some((section) => !Array.isArray(section.paragraphs) || section.paragraphs.length !== 3)) {
-    reasons.push("paragraph_count");
-  }
+  if (typedDraft.sections.length !== 6) reasons.push("section_count");
+  if (typedDraft.sections.some((section) => section.paragraphs.length !== 3)) reasons.push("paragraph_count");
   return { ok: reasons.length === 0, reasons: [...new Set(reasons)], mainWordCount };
 }
 
