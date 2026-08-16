@@ -15,6 +15,7 @@ import type { ResearchPacket } from "@/lib/newsroom-research-packet";
 const SITE = "keeptxred";
 const MIN_BRIEF_ITEMS = 3;
 const QUERY_LIMIT = 50;
+const NEWSROOM_PROVENANCE_SIGNATURE = "Keep TX Red rewrote the coverage independently and links to the original for verification.";
 
 type CandidateRow = {
   id: string;
@@ -192,6 +193,10 @@ async function handler({ request }: { request: Request }) {
     }
 
     const bodyJson = dailyBriefBodyJson(ai.value, selectedItems, briefDate);
+    const renderedBody = bodyText(bodyJson);
+    if (!renderedBody.includes(NEWSROOM_PROVENANCE_SIGNATURE)) {
+      throw new Error("Texas Daily Brief provenance signature is missing");
+    }
     const sourceRows = selectedItems.flatMap((item) => item.packet.sources);
     const primary = sourceRows.find((source) => source.isPrimarySource) ?? sourceRows[0];
     const slug = `${briefDate}-texas-daily-brief`;
@@ -208,7 +213,7 @@ async function handler({ request }: { request: Request }) {
       score: Math.max(...selectedItems.map((item) => item.editorialScore)),
       is_breaking: false,
       kind: "news",
-      body: bodyText(bodyJson),
+      body: renderedBody,
       body_json: bodyJson,
     };
     enrichArticleRow(row);
