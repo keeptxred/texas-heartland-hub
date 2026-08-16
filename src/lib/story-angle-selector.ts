@@ -13,6 +13,11 @@ export type StoryAnglePlan = {
   dekInstruction: string;
 };
 
+export type StoryAngleContext = {
+  preferredActions?: string[];
+  preferredNumbers?: string[];
+};
+
 const SOFT_CLAIM_RE = /\b(alleg(?:e|ed|es|ation)|claim(?:s|ed)?|according to|argu(?:e|ed|es)|criticiz(?:e|ed|es)|accus(?:e|ed|es)|believ(?:e|ed|es)|expect(?:s|ed)?|estimat(?:e|ed|es)|project(?:s|ed)?|predict(?:s|ed)?|may|might|could|appears?|reportedly|likely|unlikely|suggest(?:s|ed)?|opinion|analysis)\b/i;
 const MATERIAL_ACTION_RE = /\b(approved|adopted|signed|filed|charged|arrested|ordered|ruled|voted|confirmed|issued|released|opened|closed|increased|decreased|won|lost|killed|injured|died|declared|launched|recalled|settled|passed|rejected|blocked|allowed|required|rescinded|appointed|resigned)\b/i;
 const TEXAS_CONTEXT_RE = /\b(texas|austin|houston|dallas|fort worth|san antonio|el paso|county|district|ercot|statewide|legislature|governor|attorney general|supreme court)\b/i;
@@ -25,7 +30,18 @@ function eligibleFact(fact: StructuredFact): boolean {
   return true;
 }
 
-function factScore(fact: StructuredFact, cluster: StoryCluster): number {
+function normalizedNeedles(context?: StoryAngleContext): string[] {
+  return [...(context?.preferredActions ?? []), ...(context?.preferredNumbers ?? [])]
+    .map((value) => value.toLowerCase().replace(/[^a-z0-9%$]+/g, " ").trim())
+    .filter((value) => value.length >= 2);
+}
+
+function matchesPreferredDevelopment(fact: StructuredFact, context?: StoryAngleContext): boolean {
+  const hay = fact.normalizedText.toLowerCase();
+  return normalizedNeedles(context).some((needle) => hay.includes(needle) || needle.includes(hay));
+}
+
+function factScore(fact: StructuredFact, cluster: StoryCluster, context?: StoryAngleContext): number {
   let score = 0;
   if (fact.type === "action") score += MATERIAL_ACTION_RE.test(fact.text) ? 42 : 30;
   if (fact.type === "number") score += 26;
@@ -36,6 +52,7 @@ function factScore(fact: StructuredFact, cluster: StoryCluster): number {
   if (fact.primaryRecordSupport) score += 18;
   score += Math.round(fact.confidence * 12);
   if (TEXAS_CONTEXT_RE.test(fact.text)) score += 6;
+  if (matchesPreferredDevelopment(fact, context)) score += 40;
 
   const primaryTitle = cluster.primary.title.toLowerCase();
   const factWords = fact.normalizedText.split(/\s+/).filter((word) => word.length >= 5);
@@ -55,10 +72,14 @@ function angleTypeFor(fact: StructuredFact): StoryAngleType {
   return "verified_development";
 }
 
-export function selectStoryAngle(cluster: StoryCluster, ledger: StructuredFactLedger): StoryAnglePlan | null {
+export function selectStoryAngle(
+  cluster: StoryCluster,
+  ledger: StructuredFactLedger,
+  context?: StoryAngleContext,
+): StoryAnglePlan | null {
   const ranked = ledger.facts
     .filter(eligibleFact)
-    .map((fact) => ({ fact, score: factScore(fact, cluster) }))
+    .map((fact) => ({ fact, score: factScore(fact, cluster, context) }))
     .sort((a, b) => b.score - a.score || b.fact.corroborationCount - a.fact.corroborationCount || a.fact.text.length - b.fact.text.length);
 
   const lead = ranked[0];
