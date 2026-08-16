@@ -5,6 +5,7 @@ import {
   type ClusterableFeedItem,
   type StoryCluster,
 } from "@/lib/story-clustering";
+import { persistEventCluster } from "@/lib/event-cluster-persistence";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
 
@@ -19,7 +20,6 @@ type PublishResult = {
 };
 
 const CLUSTER_LOOKBACK_HOURS = 72;
-const STRONG_MERGE_SCORE = 65;
 const SAME_EVENT_SCORE = 80;
 const MAX_CLUSTER_SOURCES = 5;
 
@@ -188,9 +188,12 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     .limit(140);
 
   let cluster = buildStoryCluster(primary, (recent ?? []) as ClusterableFeedItem[], MAX_CLUSTER_SOURCES);
-  if (!cluster.strongMerge || cluster.score < STRONG_MERGE_SCORE) {
+  if (!cluster.strongMerge) {
+    await persistEventCluster(db, cluster, { status: "collecting" });
     return publishLegacySingleFeedItem(feedItemId);
   }
+
+  await persistEventCluster(db, cluster, { status: "ready" });
 
   const existing = cluster.members
     .filter((row) => row.internal_slug && row.combinationScore >= SAME_EVENT_SCORE)
@@ -210,6 +213,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
         novelty: existingNovelty ?? undefined,
       });
       await updateArticleAttribution(db, existing.internal_slug, cluster);
+      await persistEventCluster(db, cluster, { status: "published", publishedSlug: existing.internal_slug });
       return {
         ok: true,
         slug: existing.internal_slug,
@@ -243,6 +247,8 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     kind: "follow_up",
     novelty: existingNovelty,
   } : undefined);
+  await persistEventCluster(db, cluster, { status: "synthesized" });
+
   const result = await publishLegacySingleFeedItem(feedItemId);
   if (result.ok && result.slug) {
     await writeClusterMetadata(db, cluster, result.slug, existingNovelty?.material ? {
@@ -250,6 +256,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       novelty: existingNovelty,
     } : undefined);
     await updateArticleAttribution(db, result.slug, cluster);
+    await persistEventCluster(db, cluster, { status: "published", publishedSlug: result.slug });
     return {
       ...result,
       clusteredSources: cluster.sourceCount,
