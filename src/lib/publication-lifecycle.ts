@@ -116,25 +116,34 @@ export async function releasePublicationClaim(db: any, clusterId: string | null,
 export async function persistTimingDecision(
   db: any,
   feedItemId: number,
+  clusterId: string | null,
   decision: PublicationTimingDecision,
 ): Promise<void> {
   try {
     const { data } = await db.from("texas_news_feed").select("cluster_json").eq("id", feedItemId).maybeSingle();
     const current = data?.cluster_json && typeof data.cluster_json === "object" ? data.cluster_json : {};
+    const timingMetadata = {
+      mode: decision.mode,
+      reason: decision.reason,
+      wait_until: decision.waitUntil ?? null,
+      breaking: decision.breaking,
+      age_minutes: Number(decision.ageMinutes.toFixed(1)),
+      decided_at: new Date().toISOString(),
+    };
     const { error } = await db.from("texas_news_feed").update({
-      cluster_json: {
-        ...current,
-        publication_timing: {
-          mode: decision.mode,
-          reason: decision.reason,
-          wait_until: decision.waitUntil ?? null,
-          breaking: decision.breaking,
-          age_minutes: Number(decision.ageMinutes.toFixed(1)),
-          decided_at: new Date().toISOString(),
-        },
-      },
+      cluster_json: { ...current, publication_timing: timingMetadata },
     }).eq("id", feedItemId);
     if (error) throw error;
+
+    if (clusterId) {
+      const { error: clusterError } = await db.from("news_event_clusters").update({
+        next_publish_eligible_at: decision.mode === "collect_briefly" ? decision.waitUntil ?? null : null,
+        metadata: {
+          publication_timing: timingMetadata,
+        },
+      }).eq("id", clusterId);
+      if (clusterError) throw clusterError;
+    }
   } catch (error) {
     console.warn("[multi-source] publication timing metadata not persisted", error instanceof Error ? error.message : String(error));
   }
