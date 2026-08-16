@@ -5,6 +5,7 @@ const workflow = fs.readFileSync(new URL("../../.github/workflows/newsroom-shado
 const wrangler = fs.readFileSync(new URL("../../wrangler.jsonc", import.meta.url), "utf8");
 const generator = fs.readFileSync(new URL("../routes/api/public/hooks/generate-newsroom.ts", import.meta.url), "utf8");
 const cloudflare = fs.readFileSync(new URL("./cloudflare-json-ai.server.ts", import.meta.url), "utf8");
+const adapter = fs.readFileSync(new URL("./newsroom-rewrite-adapter.ts", import.meta.url), "utf8");
 
 describe("newsroom Phase 13 AI shadow canary", () => {
   it("enables AI only with publication explicitly disabled", () => {
@@ -19,6 +20,14 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(workflow).toContain('options:\n          - "1"\n          - "3"');
     expect(workflow).toContain('1|3)');
     expect(generator).toContain("maxAttempts: 1");
+  });
+
+  it("requires the exact newsroom shape through Cloudflare JSON schema mode", () => {
+    expect(generator).toContain("jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA");
+    expect(cloudflare).toContain('{ type: "json_schema", json_schema: input.jsonSchema }');
+    expect(adapter).toContain('required: ["brief", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"]');
+    expect(adapter).toContain('required: ["heading", "paragraphs"]');
+    expect(adapter).toContain('required: ["q", "a"]');
   });
 
   it("never retries a failed generation endpoint request as another paid call", () => {

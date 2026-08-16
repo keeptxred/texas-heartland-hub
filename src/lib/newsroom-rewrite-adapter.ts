@@ -13,6 +13,118 @@ export type NewsroomDraft = {
   faq: Array<{ q: string; a: string }>;
 };
 
+export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
+  type: "object",
+  additionalProperties: false,
+  properties: {
+    brief: {
+      type: "object",
+      properties: {
+        hasClearNewsEvent: { type: "boolean" },
+        storyType: { type: "string" },
+        category: { type: "string" },
+        primaryEvent: { type: "string" },
+        whyNow: { type: "string" },
+        primarySubject: { type: "string" },
+        secondarySubjects: { type: "array", items: { type: "string" } },
+        organizations: { type: "array", items: { type: "string" } },
+        locations: { type: "array", items: { type: "string" } },
+        dates: { type: "array", items: { type: "string" } },
+        currentOffices: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: { name: { type: "string" }, office: { type: "string" } },
+            required: ["name", "office"],
+          },
+        },
+        officesSought: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: { name: { type: "string" }, office: { type: "string" } },
+            required: ["name", "office"],
+          },
+        },
+        relationships: {
+          type: "array",
+          items: {
+            type: "object",
+            additionalProperties: false,
+            properties: { a: { type: "string" }, b: { type: "string" }, relationship: { type: "string" } },
+            required: ["a", "b", "relationship"],
+          },
+        },
+        facts: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            names: { type: "array", items: { type: "string" } },
+            dates: { type: "array", items: { type: "string" } },
+            locations: { type: "array", items: { type: "string" } },
+            actions: { type: "array", items: { type: "string" } },
+            officialRoles: { type: "array", items: { type: "string" } },
+            numbers: { type: "array", items: { type: "string" } },
+            quotes: { type: "array", items: { type: "string" } },
+          },
+          required: ["names", "dates", "locations", "actions", "officialRoles", "numbers", "quotes"],
+        },
+        analysis: {
+          type: "object",
+          additionalProperties: false,
+          properties: {
+            opinions: { type: "array", items: { type: "string" } },
+            predictions: { type: "array", items: { type: "string" } },
+            implications: { type: "array", items: { type: "string" } },
+          },
+          required: ["opinions", "predictions", "implications"],
+        },
+      },
+      required: [
+        "hasClearNewsEvent", "storyType", "category", "primaryEvent", "whyNow", "primarySubject",
+        "secondarySubjects", "organizations", "locations", "dates", "currentOffices", "officesSought",
+        "relationships", "facts", "analysis",
+      ],
+    },
+    title: { type: "string" },
+    dek: { type: "string" },
+    summary: { type: "string" },
+    relevance: { type: "string" },
+    sections: {
+      type: "array",
+      minItems: 6,
+      maxItems: 6,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: {
+          heading: { type: "string" },
+          paragraphs: {
+            type: "array",
+            minItems: 3,
+            maxItems: 3,
+            items: { type: "string" },
+          },
+        },
+        required: ["heading", "paragraphs"],
+      },
+    },
+    keyTakeaways: { type: "array", items: { type: "string" } },
+    faq: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        properties: { q: { type: "string" }, a: { type: "string" } },
+        required: ["q", "a"],
+      },
+    },
+  },
+  required: ["brief", "title", "dek", "summary", "relevance", "sections", "keyTakeaways", "faq"],
+};
+
 export type DraftValidation = {
   ok: boolean;
   reasons: string[];
@@ -37,11 +149,14 @@ NON-NEGOTIABLE RULES:
 - Preserve attribution where a claim belongs to a particular source.
 - Headline must be factual, specific, under 110 characters, and not clickbait.
 - Summary must be answer-first and 55–75 words.
+- The relevance field MUST be prose explaining why the story matters to Texas readers, never a numeric score.
+- Use heading (not title) for every section object.
+- Use q and a (not question and answer) for every FAQ object.
 - Write exactly 6 substantive sections with exactly 3 separate paragraphs per section.
 - Target 65–80 words per section paragraph so qualifying main-story prose safely clears ${INGESTED_MIN_MAIN_WORDS} words.
 - Keep paragraphs readable and fact-dense; do not repeat material to reach length.
-- If the packet cannot support a truthful article at the required length, set brief.hasClearNewsEvent=false and leave prose fields empty.
-- Return exactly one JSON object with fields: brief, title, dek, summary, relevance, sections, keyTakeaways, faq.
+- If the packet cannot support a truthful article at the required length, set brief.hasClearNewsEvent=false and return empty strings/arrays for the article fields while still satisfying the required JSON keys.
+- Return exactly one JSON object matching the supplied JSON schema.
 ${EDITORIAL_SYSTEM_ADDENDUM}`;
 }
 
