@@ -256,6 +256,45 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
+type VisionVerdict = {
+  matches: boolean;
+  photorealistic: boolean;
+  reason: string;
+};
+
+function parseVisionVerdict(value: unknown): VisionVerdict | null {
+  const normalize = (candidate: unknown): VisionVerdict | null => {
+    if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) return null;
+    const v = candidate as { matches?: unknown; photorealistic?: unknown; reason?: unknown };
+    if (typeof v.matches !== "boolean" || typeof v.photorealistic !== "boolean") return null;
+    return {
+      matches: v.matches,
+      photorealistic: v.photorealistic,
+      reason: typeof v.reason === "string" ? v.reason : "",
+    };
+  };
+
+  const direct = normalize(value);
+  if (direct) return direct;
+  if (typeof value !== "string") return null;
+
+  const cleaned = value.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "");
+  const candidates = [cleaned];
+  const start = cleaned.indexOf("{");
+  const end = cleaned.lastIndexOf("}");
+  if (start >= 0 && end > start) candidates.push(cleaned.slice(start, end + 1));
+
+  for (const candidate of candidates) {
+    try {
+      const parsed = normalize(JSON.parse(candidate));
+      if (parsed) return parsed;
+    } catch {
+      // Try the next candidate; some model responses wrap JSON in prose/code fences.
+    }
+  }
+  return null;
+}
+
 function cloudflareEndpoint(accountId: string, model: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
 }
@@ -292,7 +331,7 @@ async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectEx
     const validationPrompt = [
       `Article title: "${subject.title}"`,
       `Primary subject: ${subject.concreteSubject}`,
-      "Return strict JSON only: {\"matches\":boolean,\"photorealistic\":boolean,\"reason\":\"short sentence\"}.",
+      "Judge whether the supplied image is both a direct story match and a believable photorealistic editorial photograph.",
       "matches=false if the scene does not clearly depict the primary subject or is generic news symbolism.",
       "photorealistic=false if it looks illustrated, vector-like, cartoon-like, poster-like, icon-based, diagrammatic, collage-like, flat, synthetic-placeholder-like, or contains prominent generated text/signage.",
       "Both values should be true only for a believable professional editorial news photograph tied directly to this story.",
@@ -302,26 +341,46 @@ async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectEx
       headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         messages: [
-          { role: "system", content: "You are a strict editorial photo quality-control reviewer." },
+          { role: "system", content: "You are a strict editorial photo quality-control reviewer. Follow the requested response schema exactly." },
           { role: "user", content: validationPrompt },
         ],
         image,
+        response_format: {
+          type: "json_schema",
+          json_schema: {
+            type: "object",
+            properties: {
+              matches: { type: "boolean" },
+              photorealistic: { type: "boolean" },
+              reason: { type: "string" },
+            },
+            required: ["matches", "photorealistic", "reason"],
+          },
+        },
         max_tokens: 160,
         temperature: 0,
       }),
     });
     const raw = await res.text().catch(() => "");
-    let json: { success?: boolean; result?: { response?: string } | string; errors?: { message?: string }[] } = {};
+    let json: { success?: boolean; result?: { response?: unknown } | unknown; errors?: { message?: string }[] } = {};
     try { json = raw ? JSON.parse(raw) : {}; } catch { return { matches: false, reason: `Cloudflare vision returned non-JSON HTTP payload ${res.status}` }; }
     if (!res.ok || json.success === false) {
       return { matches: false, reason: `Cloudflare vision HTTP ${res.status}: ${json.errors?.[0]?.message || raw.slice(0, 180)}` };
     }
-    const output = typeof json.result === "string" ? json.result : json.result?.response ?? "";
-    const m = output.match(/\{[\s\S]*\}/);
-    if (!m) return { matches: false, reason: "Cloudflare vision validator returned no JSON verdict" };
-    const parsed = JSON.parse(m[0]) as { matches?: boolean; photorealistic?: boolean; reason?: string };
+
+    const result = json.result;
+    const output = result && typeof result === "object" && !Array.isArray(result) && "response" in result
+      ? (result as { response?: unknown }).response
+      : result;
+    const parsed = parseVisionVerdict(output);
+    if (!parsed) {
+      const preview = typeof output === "string"
+        ? output.replace(/\s+/g, " ").trim().slice(0, 180)
+        : JSON.stringify(output ?? "").slice(0, 180);
+      return { matches: false, reason: `Cloudflare vision validator returned no parseable JSON verdict${preview ? `: ${preview}` : ""}` };
+    }
     const ok = parsed.matches === true && parsed.photorealistic === true;
-    return { matches: ok, reason: String(parsed.reason ?? (ok ? "story match and photorealism passed" : "quality gate failed")).slice(0, 300) };
+    return { matches: ok, reason: String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed")).slice(0, 300) };
   } catch (e) {
     return { matches: false, reason: `Cloudflare vision validator error: ${(e as Error).message}` };
   }
