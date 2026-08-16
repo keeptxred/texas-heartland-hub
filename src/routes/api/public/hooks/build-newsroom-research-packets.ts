@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { buildResearchPacket } from "@/lib/newsroom-research-packet";
 
 const LOOKBACK_HOURS = 48;
-const CANDIDATE_LIMIT = 250;
+// Match the 500-candidate scoring/decision pipeline so eligible lower-scored
+// developments are not starved of research packets during high-volume windows.
+const CANDIDATE_LIMIT = 500;
 
 type CandidateRow = {
   cluster_id: string;
