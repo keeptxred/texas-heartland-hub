@@ -1,4 +1,5 @@
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { useMemo, useState } from "react";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 import {
@@ -7,14 +8,38 @@ import {
 } from "@/lib/checkout.functions";
 import type { CartItem } from "@/lib/cart-context";
 
+type CheckoutEnvironment = "sandbox" | "live";
+
+async function getSandboxStripe() {
+  const response = await fetch("/api/public/payments/sandbox-config", {
+    cache: "no-store",
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => null) as { error?: string } | null;
+    throw new Error(body?.error || "Stripe sandbox is not configured.");
+  }
+  const body = await response.json() as { publishableKey?: string };
+  if (!body.publishableKey?.startsWith("pk_test_")) {
+    throw new Error("Stripe sandbox publishable key is invalid.");
+  }
+  return loadStripe(body.publishableKey);
+}
+
 export function StripeEmbeddedCartCheckout({
   items,
   returnUrl,
+  environment,
 }: {
   items: CartItem[];
   returnUrl: string;
+  environment?: CheckoutEnvironment;
 }) {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const resolvedEnvironment = environment ?? getStripeEnvironment();
+  const stripePromise = useMemo(
+    () => resolvedEnvironment === "sandbox" ? getSandboxStripe() : getStripe(),
+    [resolvedEnvironment],
+  );
 
   const options = useMemo(
     () => ({
@@ -23,7 +48,7 @@ export function StripeEmbeddedCartCheckout({
         try {
           const result = await createCartCheckoutSession({
             data: {
-              environment: getStripeEnvironment(),
+              environment: resolvedEnvironment,
               returnUrl,
               currency: items[0]?.currency ?? "USD",
               items: items.map((i) => ({
@@ -73,7 +98,7 @@ export function StripeEmbeddedCartCheckout({
       }) => {
         const result = await updateCartCheckoutShipping({
           data: {
-            environment: getStripeEnvironment(),
+            environment: resolvedEnvironment,
             checkoutSessionId: event.checkoutSessionId,
             shippingDetails: event.shippingDetails,
           },
@@ -101,7 +126,7 @@ export function StripeEmbeddedCartCheckout({
           <p className="mt-1">{checkoutError}</p>
         </div>
       ) : null}
-      <EmbeddedCheckoutProvider stripe={getStripe()} options={options as any}>
+      <EmbeddedCheckoutProvider stripe={stripePromise} options={options as any}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
     </div>
