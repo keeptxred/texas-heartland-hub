@@ -4,6 +4,13 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "17 12 * * *"
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/statewide-election-audit.yml'
+      - 'scripts/elections/audit-statewide.mjs'
+      - 'scripts/elections/scrape-official-candidates.mjs'
+      - 'scripts/elections/import-candidates.mjs'
 
 permissions:
   contents: write
