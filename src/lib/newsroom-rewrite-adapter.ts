@@ -31,11 +31,18 @@ export const NEWSROOM_DRAFT_JSON_SCHEMA: Record<string, unknown> = {
     relevance: { type: "string" },
     sections: {
       type: "array",
+      minItems: 6,
+      maxItems: 6,
       items: {
         type: "object",
         properties: {
           heading: { type: "string" },
-          paragraphs: { type: "array", items: { type: "string" } },
+          paragraphs: {
+            type: "array",
+            minItems: 3,
+            maxItems: 3,
+            items: { type: "string" },
+          },
         },
         required: ["heading", "paragraphs"],
       },
@@ -81,6 +88,7 @@ NON-NEGOTIABLE RULES:
 - Use heading (not title) for every section object.
 - Use q and a (not question and answer) for every FAQ object.
 - Write exactly 6 substantive sections with exactly 3 separate paragraphs per section.
+- Do not create standalone FAQ, FAQs, Sources, Source Attribution, Conclusion, or filler sections; FAQ and source attribution are handled separately by the application.
 - Target 65–80 words per section paragraph so qualifying main-story prose safely clears ${INGESTED_MIN_MAIN_WORDS} words.
 - Keep paragraphs readable and fact-dense; do not repeat material to reach length.
 - If the packet cannot support a truthful article at the required length, set brief.hasClearNewsEvent=false and return empty strings/arrays for the article fields while still satisfying the required JSON keys.
