@@ -1,5 +1,5 @@
 import { articleMainWordCount, INGESTED_MIN_MAIN_WORDS, meetsArticleMainWordCount } from "./article-length";
-import { EDITORIAL_SYSTEM_ADDENDUM, editorialMinimum, validateArticle, type StoryBrief } from "./editorial-pipeline";
+import { EDITORIAL_SYSTEM_ADDENDUM, editorialMinimumFor, validateArticle, type StoryBrief } from "./editorial-pipeline";
 import type { ResearchPacket } from "./newsroom-research-packet";
 
 export type NewsroomDraft = {
@@ -73,7 +73,7 @@ export function newsroomRewriteSystemPrompt(packet: ResearchPacket): string {
       ? "This is a SYNTHESIS package. Explain the broader pattern only when the provided evidence supports it; distinguish separate events and never infer a trend beyond the sources."
       : "This is a SINGLE package. Stay tightly focused on the concrete event supported by the source packet.";
   const category = categoryForPillar(packet.pillar);
-  const requiredMainWords = editorialMinimum(category);
+  const requiredMainWords = editorialMinimumFor(category);
   const targetMainWords = requiredMainWords + 100;
 
   return `You are the senior editor for Keep TX Red. Produce one source-grounded Texas news article from the supplied newsroom research packet.
