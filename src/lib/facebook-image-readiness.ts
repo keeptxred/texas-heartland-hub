@@ -5,6 +5,8 @@
 // URL returns real raster image bytes.
 
 const SITE_URL = "https://keeptxred.com";
+const WORKERS_DEV_URL = "https://keeptxred-site.freddy-coppola.workers.dev";
+const SITE_HOSTNAMES = new Set(["keeptxred.com", "www.keeptxred.com"]);
 
 export const FACEBOOK_IMAGE_FETCH_HEADERS = {
   Accept: "image/avif,image/webp,image/apng,image/png,image/jpeg,image/*,*/*;q=0.8",
@@ -53,6 +55,24 @@ export function normalizeImageUrl(raw: unknown): string | null {
     return u.toString();
   } catch {
     return null;
+  }
+}
+
+// A Worker attached as a Cloudflare Custom Domain cannot reliably fetch its own
+// public hostname; Cloudflare documents that self-fetch pattern as returning 522.
+// Probe the exact same deployed Worker through workers.dev instead, preserving the
+// path/query that Facebook itself will later request from the public custom domain.
+export function resolveFacebookImageProbeUrl(raw: string): string {
+  try {
+    const url = new URL(raw);
+    if (!SITE_HOSTNAMES.has(url.hostname.toLowerCase())) return raw;
+    const probeBase = new URL(WORKERS_DEV_URL);
+    probeBase.pathname = url.pathname;
+    probeBase.search = url.search;
+    probeBase.hash = "";
+    return probeBase.toString();
+  } catch {
+    return raw;
   }
 }
 
@@ -154,10 +174,11 @@ export async function verifyImageIsReachable(url: string): Promise<FacebookImage
     imageUrl: url,
     source: "stored_featured_image",
   };
+  const probeUrl = resolveFacebookImageProbeUrl(url);
   let contentType: string | null = null;
   let status = 0;
   try {
-    let probe = await fetch(url, {
+    let probe = await fetch(probeUrl, {
       method: "HEAD",
       headers: FACEBOOK_IMAGE_FETCH_HEADERS,
       redirect: "follow",
@@ -167,7 +188,7 @@ export async function verifyImageIsReachable(url: string): Promise<FacebookImage
     // normal public GET succeeds. Facebook ultimately performs a regular GET,
     // so use that as the authoritative fallback instead of a Range request.
     if (!probe.ok || !probe.headers.get("content-type")) {
-      probe = await fetch(url, {
+      probe = await fetch(probeUrl, {
         method: "GET",
         redirect: "follow",
         headers: FACEBOOK_IMAGE_FETCH_HEADERS,
