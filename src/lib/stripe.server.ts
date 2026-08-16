@@ -16,7 +16,7 @@ export function getStripeSecretKey(env: StripeEnv): string {
 
 export function createStripeClient(env: StripeEnv): Stripe {
   return new Stripe(getStripeSecretKey(env), {
-    apiVersion: "2026-06-24.dahlia",
+    apiVersion: "2026-03-25.dahlia",
     maxNetworkRetries: 2,
   });
 }
