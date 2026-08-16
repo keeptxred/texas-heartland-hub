@@ -1,6 +1,8 @@
 import { decideNewsroomFormat, type NewsroomDecision } from "./newsroom-decision-engine";
 import { selectDailyBriefItems } from "./newsroom-daily-brief";
 
+const MIN_SHADOW_DRAFTS = 3;
+
 export type ShadowCandidate = {
   id: string;
   clusterId: string;
@@ -208,6 +210,12 @@ export function evaluateNewsroomShadowProduction(input: {
       label: "Live sample volume",
       passed: rows.length >= 20,
       detail: `${rows.length} live candidates are present in the observation window.`,
+    },
+    {
+      key: "shadow_sample",
+      label: "AI shadow sample",
+      passed: shadowDrafts.length >= MIN_SHADOW_DRAFTS,
+      detail: `${shadowDrafts.length} shadow drafts observed; minimum ${MIN_SHADOW_DRAFTS} required before controlled launch.`,
     },
   ];
 
