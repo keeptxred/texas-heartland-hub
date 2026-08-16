@@ -14,6 +14,7 @@ import { AUTHORS, authorSlug } from "@/data/authors";
 import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
 import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 function isCompleteAuthor(author: (typeof AUTHORS)[number]): boolean {
   return Boolean(
@@ -32,7 +33,9 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async () => {
         const cutoff = Date.now() - 48 * 60 * 60 * 1000;
         const localArticles = ARTICLES.filter((article) =>
-          isPublished(article) && isArticleSlugDateConsistent(article.slug, article.publishedAt),
+          isPublished(article)
+          && isStaticArticleIndexable(article)
+          && isArticleSlugDateConsistent(article.slug, article.publishedAt),
         );
         let cloudArticles: Array<{
           published_at: string;
@@ -95,10 +98,6 @@ export const Route = createFileRoute("/sitemap.xml")({
           + cloudArticles.filter((article) => isRealImage(article.image_url)).length
           + productImageCount;
 
-        // Keep the index organized around the URLs we most want humans and crawlers
-        // to discover first: core pages, current news, evergreen explainers, and
-        // Election Central. Sitemap order is not a ranking signal; the practical
-        // crawl-priority work happens through selective inclusion and strong internal links.
         const candidates = [
           { file: "sitemap-pages.xml", count: 1 },
           { file: "sitemap-news.xml", count: newsCount },
@@ -107,9 +106,6 @@ export const Route = createFileRoute("/sitemap.xml")({
           { file: "sitemap-districts.xml", count: ELECTION_DISTRICT_PATHS.length },
           { file: "sitemap-representatives.xml", count: 1 },
           { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
-          // One or more session-detail pages are emitted dynamically from the
-          // legislative_sessions table; the three shared Legislature hubs live
-          // in sitemap-pages.xml and are intentionally not duplicated here.
           { file: "sitemap-legislature.xml", count: 1 },
           { file: "sitemap-committees.xml", count: 1 },
           { file: "sitemap-bills.xml", count: 1 },
@@ -124,9 +120,6 @@ export const Route = createFileRoute("/sitemap.xml")({
           seen.add(file);
           return true;
         });
-        // A sitemap index lastmod is optional. Omitting it is more truthful than
-        // hard-coding a sitewide date that quickly becomes stale and cannot
-        // represent each child sitemap's independent update cadence.
         const entries = included.map(({ file }) =>
           `  <sitemap>\n    <loc>${xmlEscape(`${BASE_URL}/${file}`)}</loc>\n  </sitemap>`,
         ).join("\n");
