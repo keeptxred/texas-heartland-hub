@@ -103,6 +103,20 @@ describe("story angle selection", () => {
     expect(selectStoryAngle(cluster(), ledger([allegation, safe]))?.leadFactKey).toBe("date:safe");
   });
 
+  it("prioritizes a verified material follow-up development", () => {
+    const oldLead = fact({ factKey: "action:old", text: "The agency approved the ratings plan in July.", normalizedText: "the agency approved the ratings plan in july" });
+    const update = fact({
+      factKey: "action:update",
+      text: "The agency reopened appeals for 12 school districts on Friday.",
+      normalizedText: "the agency reopened appeals for 12 school districts on friday",
+      primaryRecordSupport: false,
+      corroborationCount: 2,
+      confidence: 0.86,
+    });
+    const plan = selectStoryAngle(cluster(), ledger([oldLead, update]), { preferredActions: ["reopened appeals"] });
+    expect(plan?.leadFactKey).toBe("action:update");
+  });
+
   it("provides explicit headline and dek instructions without another AI stage", () => {
     const plan = selectStoryAngle(cluster(), ledger([fact()]));
     const instructions = buildStoryAngleInstructions(plan);
