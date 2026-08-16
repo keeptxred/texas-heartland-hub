@@ -1,5 +1,9 @@
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import {
+  assertKeepTxRedPublication,
+  inferKeepTxRedDomain,
+} from "@/lib/content-publication-guard";
+import {
   NEWSROOM_DRAFT_JSON_SCHEMA,
   newsroomRewriteSystemPrompt,
   newsroomRewriteUserPrompt,
@@ -227,6 +231,24 @@ export async function updateCanonicalLivingStory(input: {
       faq: Array<{ q: string; a: string }>;
       keyTakeaways: string[];
     });
+    const nextSourceName = packet.sources.length > 1
+      ? "Multiple independent sources"
+      : packet.sources[0]?.source ?? existing.source_name;
+    const nextSourceUrl = packet.sources[0]?.url ?? existing.source_url;
+    const proposedUrl = `https://keeptxred.com/news/${slug}`;
+
+    assertKeepTxRedPublication({
+      id: String(existing.id ?? slug),
+      title: nextTitle,
+      description: nextDek,
+      category: existing.category ?? null,
+      domain: inferKeepTxRedDomain(existing.category, `${nextTitle} ${nextDek} ${nextBody}`),
+      source: nextSourceName,
+      sourceSite: "KeepTXRed",
+      sourceCanonicalUrl: nextSourceUrl ?? proposedUrl,
+      proposedUrl,
+      writer: "living-story-update",
+    });
 
     const { error: updateError } = await db
       .from("daily_articles")
@@ -235,8 +257,8 @@ export async function updateCanonicalLivingStory(input: {
         dek: nextDek,
         body: nextBody,
         body_json: bodyJson,
-        source_name: packet.sources.length > 1 ? "Multiple independent sources" : packet.sources[0]?.source ?? existing.source_name,
-        source_url: packet.sources[0]?.url ?? existing.source_url,
+        source_name: nextSourceName,
+        source_url: nextSourceUrl,
       })
       .eq("id", existing.id)
       .eq("slug", slug);
