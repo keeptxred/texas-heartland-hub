@@ -436,7 +436,7 @@ function ArticlePage() {
 
         {body.sources.length > 0 ? (
           <section className="mt-14 md:mt-16">
-            <h2 className="font-display text-xl md:text-2xl tracking-tight mb-4">Official Sources</h2>
+            <h2 className="font-display text-xl md:text-2xl tracking-tight mb-4">Sources</h2>
             <ul className="space-y-2 text-sm leading-6">
               {body.sources.map((s, i) => (
                 <li key={i}>

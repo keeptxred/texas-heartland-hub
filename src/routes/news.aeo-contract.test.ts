@@ -20,7 +20,8 @@ describe("news article SEO/AEO contract", () => {
   });
 
   it("keeps visible evidence and answer-oriented article fields", () => {
-    expect(source).toContain("Official Sources");
+    expect(source).toContain(">Sources</h2>");
+    expect(source).not.toContain("Official Sources");
     expect(source).toContain("body.sources.map");
     expect(source).toContain("body.keyTakeaways");
     expect(source).toContain("body.intro.map");
