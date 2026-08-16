@@ -69,26 +69,75 @@ jobs:
         run: |
           set -euo pipefail
           allowed='^(src/data/elections/2026/|scripts/elections/import/official-candidates\.json$|artifacts/elections/statewide-race-audit\.json$)'
-          if git diff --quiet -- src/data/elections/2026 scripts/elections/import/official-candidates.json artifacts/elections/statewide-race-audit.json; then
+          tracked_paths=(
+            src/data/elections/2026
+            scripts/elections/import/official-candidates.json
+            artifacts/elections/statewide-race-audit.json
+          )
+
+          if git diff --quiet -- "${tracked_paths[@]}"; then
             echo "No election-data changes detected."
             exit 0
           fi
-          git add src/data/elections/2026 scripts/elections/import/official-candidates.json artifacts/elections/statewide-race-audit.json
+
+          git add "${tracked_paths[@]}"
           unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
           if [[ -n "$unexpected_files" ]]; then
             echo "Refusing to publish files outside the statewide-audit allowlist:" >&2
             echo "$unexpected_files" >&2
             exit 1
           fi
-          git fetch origin main
-          if [[ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]]; then
-            echo "main advanced during statewide audit; refusing to publish stale data." >&2
-            exit 1
+
+          # Preserve only the generated election-data delta. If main advances while
+          # this audit is running, reapply that delta to the newest main, validate it
+          # there, and retry the push instead of failing solely because another PR
+          # merged during the audit window.
+          git diff --cached --binary > /tmp/statewide-election-refresh.patch
+          if [[ ! -s /tmp/statewide-election-refresh.patch ]]; then
+            echo "No staged election-data patch to publish."
+            exit 0
           fi
+
           git config user.name "KeepTXRed Election Audit"
           git config user.email "actions@users.noreply.github.com"
-          git commit -m "Refresh and audit statewide election candidates"
-          git push origin HEAD:main
+
+          for attempt in 1 2 3; do
+            echo "Publishing refreshed election data (attempt $attempt/3)..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            if ! git apply --index --3way /tmp/statewide-election-refresh.patch; then
+              echo "Fresh election-data patch conflicts with current main; refusing to publish without a new audit." >&2
+              exit 1
+            fi
+
+            unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
+            if [[ -n "$unexpected_files" ]]; then
+              echo "Reapplied patch touched files outside the statewide-audit allowlist:" >&2
+              echo "$unexpected_files" >&2
+              exit 1
+            fi
+
+            # The patch was produced from a validated audit, but current main may
+            # contain newer election code. Re-run the full validation after rebase.
+            bun run elections:validate
+
+            if git diff --cached --quiet; then
+              echo "Election data already matches current main."
+              exit 0
+            fi
+
+            git commit -m "Refresh and audit statewide election candidates"
+            if git push origin HEAD:main; then
+              echo "Published refreshed election data on current main."
+              exit 0
+            fi
+
+            echo "main advanced again before push; retrying on the newest main."
+          done
+
+          echo "main continued advancing through all publish retries; leaving the audit failed rather than publishing stale data." >&2
+          exit 1
       - name: Upload audit report
         if: always()
         uses: actions/upload-artifact@v4
