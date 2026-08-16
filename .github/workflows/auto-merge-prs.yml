@@ -2,9 +2,10 @@ name: Auto-merge eligible PRs
 
 on:
   pull_request_target:
-    types: [opened, reopened, synchronize, ready_for_review]
+    types: [opened, reopened, synchronize, ready_for_review, closed]
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -13,6 +14,7 @@ jobs:
     # Only auto-merge trusted, same-repository, non-draft PRs. Branch protection
     # and every required status check still gate the actual merge.
     if: >-
+      github.event.action != 'closed' &&
       github.event.pull_request.draft == false &&
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
@@ -22,3 +24,19 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_URL: ${{ github.event.pull_request.html_url }}
         run: gh pr merge --auto --squash "$PR_URL"
+
+  verify-merged-main:
+    # Auto-merges performed with GITHUB_TOKEN do not emit a normal push workflow.
+    # Explicitly dispatch the repository health workflow after a trusted merge so
+    # current main is verified before the production deployment workflow runs.
+    if: >-
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify current main after merge
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run shared-vitest.yml --ref main --repo "$GITHUB_REPOSITORY"
