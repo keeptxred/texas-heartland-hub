@@ -11,6 +11,11 @@ import {
   buildStructuredFactPacket,
   persistStructuredFacts,
 } from "@/lib/structured-fact-provenance";
+import {
+  assessFactVerification,
+  buildVerificationInstructions,
+  type FactVerificationDecision,
+} from "@/lib/fact-verification-gate";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
 import { assessPublicationReadiness } from "@/lib/publication-quality-gate";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
@@ -149,6 +154,34 @@ async function writeQualityHoldMetadata(
   if (error) console.warn("[multi-source] publication hold metadata not persisted", error.message);
 }
 
+async function writeFactVerificationHoldMetadata(
+  supabaseAdmin: any,
+  feedItemId: number,
+  decision: FactVerificationDecision,
+  cluster: StoryCluster,
+): Promise<void> {
+  const metadata = {
+    cluster_score: cluster.score,
+    source_count: cluster.sourceCount,
+    source_links: clusterSourceList(cluster),
+    clustered_at: new Date().toISOString(),
+    publication_readiness: decision.mode,
+    publication_hold_reason: decision.reason,
+    fact_verification: {
+      traceable_major_facts: decision.traceableMajorFacts,
+      corroborated_major_facts: decision.corroboratedMajorFacts,
+      primary_record_major_facts: decision.primaryRecordMajorFacts,
+      material_conflict_keys: decision.materialConflictKeys,
+      attributed_claim_keys: decision.attributedClaimKeys,
+    },
+  };
+  const { error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .update({ cluster_json: metadata })
+    .eq("id", feedItemId);
+  if (error) console.warn("[multi-source] fact verification hold metadata not persisted", error.message);
+}
+
 async function updateArticleAttribution(supabaseAdmin: any, slug: string, cluster: StoryCluster): Promise<void> {
   const sources = clusterSourceList(cluster).map((source) => ({
     label: `${source.label} — source`,
@@ -237,6 +270,21 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       };
     }
 
+    const factVerification = assessFactVerification(cluster, ledger);
+    if (!factVerification.publish) {
+      await writeFactVerificationHoldMetadata(db, feedItemId, factVerification, cluster);
+      console.info("[multi-source] publication held for fact verification", {
+        feedItemId,
+        mode: factVerification.mode,
+        reason: factVerification.reason,
+      });
+      return {
+        ok: false,
+        error: `Publication held: ${factVerification.reason}.`,
+        clusteredSources: cluster.sourceCount,
+      };
+    }
+
     const singleResult = await publishLegacySingleFeedItem(feedItemId);
     if (singleResult.ok && singleResult.slug) {
       await persistEventCluster(db, cluster, { status: "published", publishedSlug: singleResult.slug });
@@ -248,6 +296,22 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
   const eventClusterId = await persistEventCluster(db, cluster, { status: "ready" });
   const ledger = buildStructuredFactLedger(cluster);
   await persistStructuredFacts(db, eventClusterId, ledger);
+  const factVerification = assessFactVerification(cluster, ledger);
+
+  if (!factVerification.publish) {
+    await writeFactVerificationHoldMetadata(db, feedItemId, factVerification, cluster);
+    console.info("[multi-source] multi-source publication held for fact verification", {
+      feedItemId,
+      mode: factVerification.mode,
+      reason: factVerification.reason,
+      materialConflictKeys: factVerification.materialConflictKeys,
+    });
+    return {
+      ok: false,
+      error: `Publication held: ${factVerification.reason}.`,
+      clusteredSources: cluster.sourceCount,
+    };
+  }
 
   const existing = cluster.members
     .filter((row) => row.internal_slug && row.combinationScore >= SAME_EVENT_SCORE)
@@ -278,6 +342,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
 
   const packet = buildSourcePacket(cluster);
   const structuredFacts = buildStructuredFactPacket(ledger).slice(0, MAX_FACT_PACKET_CHARS);
+  const verificationInstructions = buildVerificationInstructions(factVerification, ledger);
   const sourceNames = [cluster.primary, ...cluster.members].map((row) => row.source);
   const synthesisHeader = [
     "MULTI-SOURCE STORY PACKET.",
@@ -285,6 +350,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     "Prefer facts corroborated by independent sources. For directly verifiable facts, prefer official government, agency, court, team, or other primary records over secondary summaries when they conflict.",
     "When the fact ledger marks a conflict, do not average, choose silently, or invent a resolution. Attribute the competing figures or omit the disputed detail unless a primary record resolves it.",
     "Quotes must remain attached to the source that actually contains the quotation. Never create composite or reconstructed quotes.",
+    verificationInstructions,
     `Independent sources: ${sourceNames.join(" | ")}.`,
     "Treat this as one developing Texas story when the evidence supports it; do not invent a connection that is not supported.",
     existingNovelty?.material
