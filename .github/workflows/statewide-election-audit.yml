@@ -14,6 +14,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: statewide-election-audit
@@ -70,8 +71,10 @@ jobs:
         run: bun scripts/elections/audit-statewide.mjs
       - name: Run full election validation
         run: bun run elections:validate
-      - name: Commit refreshed election data
+      - name: Publish refreshed election data through PR
         if: steps.candidate_scrape.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -81,6 +84,7 @@ jobs:
             scripts/elections/import/official-candidates.json
             artifacts/elections/statewide-race-audit.json
           )
+          refresh_branch='automation/statewide-election-refresh'
 
           if git diff --quiet -- "${tracked_paths[@]}"; then
             echo "No election-data changes detected."
@@ -95,10 +99,6 @@ jobs:
             exit 1
           fi
 
-          # Preserve only the generated election-data delta. If main advances while
-          # this audit is running, reapply that delta to the newest main, validate it
-          # there, and retry the push instead of failing solely because another PR
-          # merged during the audit window.
           git diff --cached --binary > /tmp/statewide-election-refresh.patch
           if [[ ! -s /tmp/statewide-election-refresh.patch ]]; then
             echo "No staged election-data patch to publish."
@@ -108,43 +108,47 @@ jobs:
           git config user.name "KeepTXRed Election Audit"
           git config user.email "actions@users.noreply.github.com"
 
-          for attempt in 1 2 3; do
-            echo "Publishing refreshed election data (attempt $attempt/3)..."
-            git fetch origin main
-            git reset --hard origin/main
+          # Rebase the validated generated-data delta onto the newest protected main.
+          git fetch origin main
+          git reset --hard origin/main
+          if ! git apply --index --3way /tmp/statewide-election-refresh.patch; then
+            echo "Fresh election-data patch conflicts with current main; refusing to publish without a new audit." >&2
+            exit 1
+          fi
 
-            if ! git apply --index --3way /tmp/statewide-election-refresh.patch; then
-              echo "Fresh election-data patch conflicts with current main; refusing to publish without a new audit." >&2
-              exit 1
-            fi
+          unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Reapplied patch touched files outside the statewide-audit allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
 
-            unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
-            if [[ -n "$unexpected_files" ]]; then
-              echo "Reapplied patch touched files outside the statewide-audit allowlist:" >&2
-              echo "$unexpected_files" >&2
-              exit 1
-            fi
+          # Validate again because main may have advanced since the original scrape.
+          bun run elections:validate
+          if git diff --cached --quiet; then
+            echo "Election data already matches current main."
+            exit 0
+          fi
 
-            # The patch was produced from a validated audit, but current main may
-            # contain newer election code. Re-run the full validation after rebase.
-            bun run elections:validate
+          git checkout -B "$refresh_branch"
+          git commit -m "Refresh and audit statewide election candidates"
+          git push --force-with-lease origin "$refresh_branch"
 
-            if git diff --cached --quiet; then
-              echo "Election data already matches current main."
-              exit 0
-            fi
+          pr_number="$(gh pr list --head "$refresh_branch" --base main --state open --json number --jq '.[0].number // empty')"
+          if [[ -z "$pr_number" ]]; then
+            pr_url="$(gh pr create \
+              --base main \
+              --head "$refresh_branch" \
+              --title "Refresh and audit statewide election candidates" \
+              --body $'Automated refresh from the official Texas qualified-candidate source.\n\nThe workflow scraped the source, imported the generated records, passed the statewide race audit, passed the full election validation, rebased the generated-data delta onto current main, and reran validation before opening this PR. Branch protection and required checks remain authoritative.')"
+            pr_number="${pr_url##*/}"
+          else
+            echo "Updated existing election refresh PR #$pr_number."
+          fi
 
-            git commit -m "Refresh and audit statewide election candidates"
-            if git push origin HEAD:main; then
-              echo "Published refreshed election data on current main."
-              exit 0
-            fi
-
-            echo "main advanced again before push; retrying on the newest main."
-          done
-
-          echo "main continued advancing through all publish retries; leaving the audit failed rather than publishing stale data." >&2
-          exit 1
+          # Let normal branch protection and the required verify check govern the merge.
+          gh pr merge "$pr_number" --auto --squash
+          echo "Election refresh is queued through protected PR #$pr_number."
       - name: Upload audit report
         if: always()
         uses: actions/upload-artifact@v4
