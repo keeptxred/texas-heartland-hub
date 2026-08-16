@@ -83,13 +83,14 @@ function numericValues(text: string): string[] {
   return [...text.matchAll(NUMBER_RE)].map((match) => match[0].replace(/\s+/g, " ").trim().toLowerCase()).slice(0, 8);
 }
 
-function classify(sentence: string): StructuredFactType | null {
-  if (QUOTE_RE.test(sentence)) return "quote";
-  if (NEXT_RE.test(sentence)) return "next_step";
-  if (DATE_RE.test(sentence)) return "date";
-  if (numericValues(sentence).length) return "number";
-  if (ACTION_RE.test(sentence)) return "action";
-  return null;
+function classify(sentence: string): StructuredFactType[] {
+  const types: StructuredFactType[] = [];
+  if (ACTION_RE.test(sentence)) types.push("action");
+  if (numericValues(sentence).length) types.push("number");
+  if (DATE_RE.test(sentence)) types.push("date");
+  if (QUOTE_RE.test(sentence)) types.push("quote");
+  if (NEXT_RE.test(sentence)) types.push("next_step");
+  return types;
 }
 
 function candidateRows(cluster: StoryCluster): Candidate[] {
@@ -100,21 +101,26 @@ function candidateRows(cluster: StoryCluster): Candidate[] {
     const sentences = splitSentences(text).slice(0, 90);
     let contextualAdded = 0;
     for (const sentence of sentences) {
-      const type = classify(sentence);
-      if (!type) {
+      let types = classify(sentence);
+      if (!types.length) {
         if (contextualAdded >= 2 || words(sentence).size < 6) continue;
         contextualAdded += 1;
+        types = ["context"];
       }
       const normalizedText = normalizeClusterText(sentence);
-      out.push({
-        item,
-        type: type ?? "context",
-        text: sentence,
-        normalizedText,
-        tokens: words(sentence),
-        numericValues: numericValues(sentence),
-        primaryRecord,
-      });
+      const tokenSet = words(sentence);
+      const numbers = numericValues(sentence);
+      for (const type of types) {
+        out.push({
+          item,
+          type,
+          text: sentence,
+          normalizedText,
+          tokens: tokenSet,
+          numericValues: numbers,
+          primaryRecord,
+        });
+      }
     }
   }
   return out;
@@ -152,10 +158,22 @@ function buildGroups(candidates: Candidate[]): Candidate[][] {
   return groups;
 }
 
+function numericConflictKey(group: Candidate[]): string | undefined {
+  if (!group.some((row) => row.type === "number")) return undefined;
+  const bySource = group
+    .map((row) => row.numericValues.join("|"))
+    .filter(Boolean);
+  if (new Set(bySource).size < 2) return undefined;
+  const representative = preferredRepresentative(group);
+  return `numeric-conflict:${hash([...representative.tokens].sort().slice(0, 12).join(" "))}`;
+}
+
 function conflictingNumberGroups(groups: Candidate[][]): Map<number, string> {
   const conflicts = new Map<number, string>();
   for (let i = 0; i < groups.length; i += 1) {
     const a = groups[i];
+    const internalKey = numericConflictKey(a);
+    if (internalKey) conflicts.set(i, internalKey);
     if (!a.some((row) => row.type === "number")) continue;
     const aRep = preferredRepresentative(a);
     const aValues = new Set(a.flatMap((row) => row.numericValues));
