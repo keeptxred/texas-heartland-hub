@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -61,5 +61,15 @@ function AdminLayout() {
     );
   }
 
-  return <Outlet />;
+  return (
+    <>
+      <nav className="border-b bg-white">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-4 px-4 py-2 text-xs font-bold uppercase tracking-widest">
+          <Link to="/admin" className="text-muted-foreground hover:text-primary">Dashboard</Link>
+          <Link to="/admin/newsroom" className="text-primary hover:underline">Newsroom Control Center</Link>
+        </div>
+      </nav>
+      <Outlet />
+    </>
+  );
 }
