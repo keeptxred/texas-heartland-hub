@@ -1,21 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { getStripeSandboxBindings } from "@/lib/stripe-sandbox-health";
 
 export const Route = createFileRoute("/api/public/payments/sandbox-config")({
   server: {
     handlers: {
       GET: async () => {
         const publishableKey = process.env.STRIPE_SANDBOX_PUBLISHABLE_KEY?.trim();
-        const secretReady = Boolean(process.env.STRIPE_SANDBOX_SECRET_KEY?.trim().startsWith("sk_test_"));
-        const webhookReady = Boolean(process.env.PAYMENTS_SANDBOX_WEBHOOK_SECRET?.trim().startsWith("whsec_"));
-        const publishableReady = Boolean(publishableKey?.startsWith("pk_test_"));
+        const bindings = getStripeSandboxBindings();
 
-        const bindings = {
-          publishable_key: publishableReady,
-          secret_key: secretReady,
-          webhook_secret: webhookReady,
-        };
-
-        if (!publishableReady || !secretReady || !webhookReady) {
+        if (!Object.values(bindings).every(Boolean)) {
           return Response.json(
             {
               error: "Stripe sandbox is not fully configured.",
