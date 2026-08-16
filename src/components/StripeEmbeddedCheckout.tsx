@@ -1,5 +1,5 @@
 import { EmbeddedCheckoutProvider, EmbeddedCheckout } from "@stripe/react-stripe-js";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { getStripe, getStripeEnvironment } from "@/lib/stripe";
 import {
   createCartCheckoutSession,
@@ -14,29 +14,48 @@ export function StripeEmbeddedCartCheckout({
   items: CartItem[];
   returnUrl: string;
 }) {
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
   const options = useMemo(
     () => ({
       fetchClientSecret: async () => {
-        const result = await createCartCheckoutSession({
-          data: {
-            environment: getStripeEnvironment(),
-            returnUrl,
-            currency: items[0]?.currency ?? "USD",
-            items: items.map((i) => ({
-              productId: i.productId,
-              variantId: i.variantId ?? null,
-              quantity: i.qty,
-              title: i.title,
-              price: i.price,
-              image: i.image,
-              color: i.color,
-              size: i.size,
-            })),
-          },
-        });
-        if ("error" in result) throw new Error(result.error);
-        if (!result.clientSecret) throw new Error("Stripe did not return a client secret");
-        return result.clientSecret;
+        setCheckoutError(null);
+        try {
+          const result = await createCartCheckoutSession({
+            data: {
+              environment: getStripeEnvironment(),
+              returnUrl,
+              currency: items[0]?.currency ?? "USD",
+              items: items.map((i) => ({
+                productId: i.productId,
+                variantId: i.variantId ?? null,
+                quantity: i.qty,
+                title: i.title,
+                price: i.price,
+                image: i.image,
+                color: i.color,
+                size: i.size,
+              })),
+            },
+          });
+          if ("error" in result) {
+            setCheckoutError(result.error);
+            throw new Error(result.error);
+          }
+          if (!result.clientSecret) {
+            const message = "Stripe did not return a client secret";
+            setCheckoutError(message);
+            throw new Error(message);
+          }
+          return result.clientSecret;
+        } catch (error) {
+          const message =
+            error instanceof Error
+              ? error.message
+              : "Checkout could not be initialized. Please try again.";
+          setCheckoutError(message);
+          throw error;
+        }
       },
       onShippingDetailsChange: async (event: {
         checkoutSessionId: string;
@@ -73,6 +92,15 @@ export function StripeEmbeddedCartCheckout({
 
   return (
     <div id="checkout">
+      {checkoutError ? (
+        <div
+          role="alert"
+          className="mb-4 rounded-md border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        >
+          <p className="font-semibold">Checkout could not start</p>
+          <p className="mt-1">{checkoutError}</p>
+        </div>
+      ) : null}
       <EmbeddedCheckoutProvider stripe={getStripe()} options={options as any}>
         <EmbeddedCheckout />
       </EmbeddedCheckoutProvider>
