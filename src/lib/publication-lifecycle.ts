@@ -136,11 +136,18 @@ export async function persistTimingDecision(
     if (error) throw error;
 
     if (clusterId) {
+      const { data: clusterRow, error: readClusterError } = await db
+        .from("news_event_clusters")
+        .select("metadata")
+        .eq("id", clusterId)
+        .maybeSingle();
+      if (readClusterError) throw readClusterError;
+      const currentClusterMetadata = clusterRow?.metadata && typeof clusterRow.metadata === "object"
+        ? clusterRow.metadata
+        : {};
       const { error: clusterError } = await db.from("news_event_clusters").update({
         next_publish_eligible_at: decision.mode === "collect_briefly" ? decision.waitUntil ?? null : null,
-        metadata: {
-          publication_timing: timingMetadata,
-        },
+        metadata: { ...currentClusterMetadata, publication_timing: timingMetadata },
       }).eq("id", clusterId);
       if (clusterError) throw clusterError;
     }
