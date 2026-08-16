@@ -1,7 +1,7 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
 export const CLOUDFLARE_IMAGE_MODEL = "@cf/lykon/dreamshaper-8-lcm";
-export const CLOUDFLARE_VISION_MODEL = "@cf/meta/llama-3.2-11b-vision-instruct";
+export const CLOUDFLARE_VISION_MODEL = "@cf/google/gemma-4-26b-a4b-it";
 
 function cloudflareEndpoint(accountId: string, model: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
