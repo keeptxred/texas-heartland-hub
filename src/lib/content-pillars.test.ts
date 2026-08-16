@@ -28,17 +28,42 @@ describe("content pillar classification", () => {
     expect(classifyContentPillar({ title })).toBe(expected);
   });
 
+  it("routes reviewed government and law categories to their canonical authority pillars", () => {
+    expect(classifyContentPillar({ title: "County records update", category: "Government" })).toBe(
+      "texas-politics-government",
+    );
+    expect(classifyContentPillar({ title: "City procurement update", category: "Local Government" })).toBe(
+      "texas-politics-government",
+    );
+    expect(classifyContentPillar({ title: "State political update", category: "Politics" })).toBe(
+      "texas-politics-government",
+    );
+    expect(classifyContentPillar({ title: "Court ruling update", category: "Laws" })).toBe(
+      "texas-laws-legislature",
+    );
+  });
+
+  it("does not trust the historically noisy Legislature label over article subject", () => {
+    expect(
+      classifyContentPillar({
+        title: "Retailer expansion adds jobs across North Texas",
+        description: "A new distribution investment is expected to add jobs and business activity.",
+        category: "Legislature",
+      }),
+    ).toBe("texas-economy-small-business");
+  });
+
   it("leaves unrelated Texas lifestyle coverage in general news", () => {
     expect(classifyContentPillar({ title: "A weekend guide to swimming holes near Austin" })).toBeNull();
   });
 
-  it("does not let body boilerplate override a clear headline and dek", () => {
+  it("does not let body boilerplate override a clear government category and headline", () => {
     expect(
       classifyContentPillar({
         title: "Governor announces state agency appointment",
         description: "The governor named a new commissioner to lead a statewide agency.",
         body: "Related coverage: election results, candidates, voter registration, ballot rules, early voting and polling places.",
-        category: "Legislature",
+        category: "Government",
       }),
     ).toBe("texas-politics-government");
   });
