@@ -40,6 +40,7 @@ export async function runCloudflareJson<T>(input: {
   user: string;
   maxTokens?: number;
   maxAttempts?: number;
+  requestTimeoutMs?: number;
 }): Promise<CloudflareJsonResult<T>> {
   const cf = credentials();
   if (!cf) throw new Error("Cloudflare Workers AI credentials are not configured");
@@ -47,26 +48,42 @@ export async function runCloudflareJson<T>(input: {
   const model = process.env.AI_REWRITE_MODEL_CF || "@cf/meta/llama-3.1-8b-instruct-fast";
   const endpoint = `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(cf.accountId)}/ai/run/${model}`;
   const maxAttempts = Math.min(Math.max(input.maxAttempts ?? 1, 1), 3);
+  const requestTimeoutMs = Math.min(Math.max(input.requestTimeoutMs ?? 90_000, 10_000), 120_000);
   let lastFailure = "Cloudflare Workers AI returned malformed JSON";
 
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     const retry = attempt === 1 ? "" : "\n\nYour previous response was malformed or truncated. Return exactly one complete JSON object with no markdown fences or prose outside it.";
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${cf.token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        messages: [
-          { role: "system", content: input.system + retry },
-          { role: "user", content: input.user },
-        ],
-        response_format: { type: "json_object" },
-        max_tokens: Math.min(Math.max(input.maxTokens ?? 9000, 512), 12000),
-        temperature: attempt === 1 ? 0.2 : 0.1,
-      }),
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
+    let response: Response;
+    try {
+      response = await fetch(endpoint, {
+        method: "POST",
+        signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${cf.token}`,
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          messages: [
+            { role: "system", content: input.system + retry },
+            { role: "user", content: input.user },
+          ],
+          response_format: { type: "json_object" },
+          max_tokens: Math.min(Math.max(input.maxTokens ?? 9000, 512), 12000),
+          temperature: attempt === 1 ? 0.2 : 0.1,
+        }),
+      });
+    } catch (error) {
+      if (controller.signal.aborted) {
+        lastFailure = `Cloudflare Workers AI request timed out after ${requestTimeoutMs}ms`;
+      } else {
+        lastFailure = `Cloudflare Workers AI request failed: ${error instanceof Error ? error.message : String(error)}`;
+      }
+      continue;
+    } finally {
+      clearTimeout(timeout);
+    }
 
     const text = await response.text();
     let envelope: CloudflareEnvelope | null = null;

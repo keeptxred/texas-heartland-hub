@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 const workflow = fs.readFileSync(new URL("../../.github/workflows/newsroom-shadow-canary.yml", import.meta.url), "utf8");
 const wrangler = fs.readFileSync(new URL("../../wrangler.jsonc", import.meta.url), "utf8");
 const generator = fs.readFileSync(new URL("../routes/api/public/hooks/generate-newsroom.ts", import.meta.url), "utf8");
+const cloudflare = fs.readFileSync(new URL("./cloudflare-json-ai.server.ts", import.meta.url), "utf8");
 
 describe("newsroom Phase 13 AI shadow canary", () => {
   it("enables AI only with publication explicitly disabled", () => {
@@ -18,6 +19,13 @@ describe("newsroom Phase 13 AI shadow canary", () => {
     expect(workflow).toContain('options:\n          - "1"\n          - "3"');
     expect(workflow).toContain('1|3)');
     expect(generator).toContain("maxAttempts: 1");
+  });
+
+  it("never retries a failed generation endpoint request as another paid call", () => {
+    expect(workflow).toContain("curl --max-time 110 --fail-with-body");
+    expect(workflow).not.toContain("for attempt in $(seq 1 8)");
+    expect(cloudflare).toContain("requestTimeoutMs");
+    expect(cloudflare).toContain("controller.abort()");
   });
 
   it("installs a temporary random hook token and removes it after the canary", () => {
