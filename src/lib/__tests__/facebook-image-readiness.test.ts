@@ -3,6 +3,7 @@ import {
   assessImageUrl,
   normalizeFacebookUploadImageUrl,
   normalizeImageUrl,
+  resolveFacebookImageProbeUrl,
   verifyImageIsReachable,
 } from "@/lib/facebook-image-readiness";
 
@@ -29,6 +30,19 @@ describe("assessImageUrl — deterministic image gate", () => {
     const url = normalizeImageUrl("/api/public/article-image/foo.png");
     expect(url).toMatch(/^https:\/\/keeptxred\.com\/api\/public\/article-image\/foo\.png$/);
     expect(assessImageUrl("/api/public/article-image/foo.png").ready).toBe(true);
+  });
+
+  it("routes same-site readiness probes through workers.dev to avoid Custom Domain self-fetch 522", () => {
+    expect(
+      resolveFacebookImageProbeUrl(
+        "https://keeptxred.com/api/public/article-image/foo.png?version=2",
+      ),
+    ).toBe(
+      "https://keeptxred-site.freddy-coppola.workers.dev/api/public/article-image/foo.png?version=2",
+    );
+    expect(resolveFacebookImageProbeUrl("https://example.com/photo.jpg")).toBe(
+      "https://example.com/photo.jpg",
+    );
   });
 
   it("blocks legacy generated newsroom placeholders even when rasterized as PNG", () => {
@@ -81,6 +95,27 @@ describe("verifyImageIsReachable — server-side content-type gate", () => {
     const r = await verifyImageIsReachable("https://example.com/image.png");
     expect(r.ready).toBe(true);
     expect(r.reason).toBe("READY");
+  });
+
+  it("probes a keeptxred.com image through workers.dev while preserving the public Facebook URL", async () => {
+    const fetchMock = vi.fn(
+      async () =>
+        new Response("", {
+          status: 200,
+          headers: { "content-type": "image/png" },
+        }),
+    );
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+    const publicUrl = "https://keeptxred.com/api/public/article-image/court.png";
+    const r = await verifyImageIsReachable(publicUrl);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://keeptxred-site.freddy-coppola.workers.dev/api/public/article-image/court.png",
+      expect.objectContaining({ method: "HEAD" }),
+    );
+    expect(r.ready).toBe(true);
+    expect(r.imageUrl).toBe(publicUrl);
   });
 
   it("blocks when the URL returns an HTTP error", async () => {
