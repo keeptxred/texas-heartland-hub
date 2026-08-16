@@ -103,7 +103,7 @@ async function handler() {
         cluster_id: clusterId,
         feed_item_id: feedItemId,
         relationship_type: isPrimarySource ? "primary" : "supporting",
-        weight: isPrimarySource ? 1.2 : 1,
+        weight: 1,
         is_primary_source: isPrimarySource,
         source_name: feed?.source ?? null,
         source_url: feed?.link ?? null,
