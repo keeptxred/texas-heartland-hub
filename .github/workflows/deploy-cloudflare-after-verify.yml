@@ -89,7 +89,10 @@ jobs:
               pr for pr in pulls
               if pr.get("merged_at")
               and (pr.get("base") or {}).get("ref") == "main"
-              and (pr.get("head") or {}).get("sha") == verified
+              and (
+                  (pr.get("head") or {}).get("sha") == verified
+                  or pr.get("merge_commit_sha") == verified
+              )
           ]
           print((matches[0].get("merge_commit_sha") or "") if len(matches) == 1 else "")
           PY
@@ -99,7 +102,7 @@ jobs:
           done
 
           if [[ -z "$merged_sha" ]]; then
-            echo "::error title=Verified PR was not merged::The verification passed, but its same-repository PR did not become merged to main within the wait window. Production was not changed."
+            echo "::error title=Verified PR merge could not be resolved::The verification passed, but GitHub did not expose one merged main PR matching either the verified head SHA or verified merge SHA within the wait window. Production was not changed."
             exit 1
           fi
 
