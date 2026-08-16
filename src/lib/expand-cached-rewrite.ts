@@ -25,8 +25,8 @@ function mainProseWordCount(rewrite: Rewrite): number {
   );
 }
 
-function targetFor(rewrite: Rewrite, feedCategory?: string | null): number {
-  const category = (rewrite.category ?? feedCategory ?? "").toLowerCase();
+function targetFor(rewrite: Rewrite): number {
+  const category = (rewrite.category ?? "").toLowerCase();
   return ["non-political", "business", "education", "sports"].includes(category) ? 1200 : 800;
 }
 
@@ -43,7 +43,7 @@ export async function expandCachedRewriteForFeedItem(
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: row } = await supabaseAdmin
     .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date,extracted_body,category")
+    .select("id,title,link,source,description,pub_date,extracted_body")
     .eq("id", feedItemId)
     .maybeSingle();
 
@@ -69,7 +69,9 @@ export async function expandCachedRewriteForFeedItem(
   const prior = cacheRow?.status === "completed" ? (cacheRow.result_json as Rewrite | null) : null;
   if (!prior) return false;
 
-  const target = Math.max(targetFor(prior, row.category), requiredMinimum ?? 0);
+  // Manual publish passes the exact tier that rejected the draft. Fall back to
+  // the cached rewrite's own category only for older callers that do not pass it.
+  const target = Math.max(targetFor(prior), requiredMinimum ?? 0);
   let candidate = prior;
   let currentWords = mainProseWordCount(candidate);
   if (currentWords >= target) return true;
