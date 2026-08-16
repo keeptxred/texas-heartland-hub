@@ -68,6 +68,28 @@ export async function generateImageBytes(prompt: string, negativePrompt: string)
   return base64ToBytes(b64);
 }
 
+type VisionChatChoice = {
+  finish_reason?: string | null;
+  message?: {
+    content?: unknown;
+    reasoning_content?: unknown;
+  };
+};
+
+type VisionApiResult = {
+  response?: unknown;
+  choices?: VisionChatChoice[];
+};
+
+export function extractCloudflareVisionOutput(result: unknown): { output: unknown; finishReason?: string | null } {
+  if (!result || typeof result !== "object" || Array.isArray(result)) return { output: result };
+  const typed = result as VisionApiResult;
+  if ("response" in typed) return { output: typed.response };
+  const first = Array.isArray(typed.choices) ? typed.choices[0] : undefined;
+  if (first) return { output: first.message?.content, finishReason: first.finish_reason };
+  return { output: result };
+}
+
 export async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectExtract): Promise<{ matches: boolean; reason: string }> {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
@@ -91,7 +113,7 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
       headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         messages: [
-          { role: "system", content: "You are a strict editorial-photo quality reviewer. Follow the response schema." },
+          { role: "system", content: "You are a strict editorial-photo quality reviewer. Follow the response schema and keep reasoning minimal." },
           { role: "user", content: validationPrompt },
         ],
         image,
@@ -107,24 +129,23 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
             required: ["matches", "photorealistic", "reason"],
           },
         },
-        max_tokens: 180,
+        max_completion_tokens: 768,
+        reasoning_effort: "low",
         temperature: 0,
       }),
     });
 
     const raw = await res.text().catch(() => "");
-    let json: { success?: boolean; result?: { response?: unknown } | unknown; errors?: { message?: string }[] } = {};
+    let json: { success?: boolean; result?: unknown; errors?: { message?: string }[] } = {};
     try { json = raw ? JSON.parse(raw) : {}; } catch { return { matches: false, reason: `Cloudflare vision returned non-JSON HTTP payload ${res.status}` }; }
     if (!res.ok || json.success === false) return { matches: false, reason: `Cloudflare vision HTTP ${res.status}: ${json.errors?.[0]?.message || raw.slice(0, 180)}` };
 
-    const result = json.result;
-    const output = result && typeof result === "object" && !Array.isArray(result) && "response" in result
-      ? (result as { response?: unknown }).response
-      : result;
+    const { output, finishReason } = extractCloudflareVisionOutput(json.result);
     const parsed = parseVisionVerdict(output);
     if (!parsed) {
       const preview = typeof output === "string" ? output.replace(/\s+/g, " ").trim().slice(0, 220) : JSON.stringify(output ?? "").slice(0, 220);
-      return { matches: false, reason: `Cloudflare vision validator returned no parseable verdict${preview ? `: ${preview}` : ""}` };
+      const finish = finishReason ? ` (finish_reason=${finishReason})` : "";
+      return { matches: false, reason: `Cloudflare vision validator returned no parseable verdict${finish}${preview ? `: ${preview}` : ""}` };
     }
     const ok = parsed.matches && parsed.photorealistic;
     return { matches: ok, reason: String(parsed.reason || (ok ? "story match and photorealism passed" : "quality gate failed")).slice(0, 300) };
