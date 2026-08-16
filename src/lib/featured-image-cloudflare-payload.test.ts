@@ -25,11 +25,11 @@ describe("Cloudflare featured-image payload", () => {
     const validatorSource = runtime.slice(start);
 
     expect(core).toContain("export function parseVisionVerdict");
-    expect(validatorSource).toContain("response_format");
-    expect(validatorSource).toContain('type: "json_schema"');
+    expect(validatorSource).toContain("guided_json: verdictSchema");
     expect(validatorSource).toContain('matches: { type: "boolean" }');
     expect(validatorSource).toContain('photorealistic: { type: "boolean" }');
     expect(validatorSource).toContain('required: ["matches", "photorealistic", "reason"]');
+    expect(validatorSource).toContain("max_tokens: 256");
     expect(validatorSource).toContain("parseVisionVerdict(output)");
     expect(validatorSource).toContain("a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match");
   });
