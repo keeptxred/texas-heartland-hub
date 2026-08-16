@@ -16,6 +16,11 @@ import {
   buildVerificationInstructions,
   type FactVerificationDecision,
 } from "@/lib/fact-verification-gate";
+import {
+  buildStoryAngleInstructions,
+  selectStoryAngle,
+  type StoryAnglePlan,
+} from "@/lib/story-angle-selector";
 import { assessStoryNovelty, type StoryNovelty } from "@/lib/story-novelty";
 import { assessPublicationReadiness } from "@/lib/publication-quality-gate";
 import { publishSingleFeedItem as publishLegacySingleFeedItem } from "@/lib/ingest-feeds-legacy";
@@ -182,6 +187,33 @@ async function writeFactVerificationHoldMetadata(
   if (error) console.warn("[multi-source] fact verification hold metadata not persisted", error.message);
 }
 
+async function writeStoryAngleMetadata(
+  supabaseAdmin: any,
+  feedItemId: number,
+  anglePlan: StoryAnglePlan | null,
+): Promise<void> {
+  if (!anglePlan) return;
+  const { data } = await supabaseAdmin
+    .from("texas_news_feed")
+    .select("cluster_json")
+    .eq("id", feedItemId)
+    .maybeSingle();
+  const current = data?.cluster_json && typeof data.cluster_json === "object" ? data.cluster_json : {};
+  const storyAngle = {
+    angle_type: anglePlan.angleType,
+    lead_fact_key: anglePlan.leadFactKey,
+    lead_fact: anglePlan.leadFact,
+    evidence_score: anglePlan.leadScore,
+    alternate_facts: anglePlan.alternateFacts,
+    selected_at: new Date().toISOString(),
+  };
+  const { error } = await supabaseAdmin
+    .from("texas_news_feed")
+    .update({ cluster_json: { ...current, story_angle: storyAngle } })
+    .eq("id", feedItemId);
+  if (error) console.warn("[multi-source] story angle metadata not persisted", error.message);
+}
+
 async function updateArticleAttribution(supabaseAdmin: any, slug: string, cluster: StoryCluster): Promise<void> {
   const sources = clusterSourceList(cluster).map((source) => ({
     label: `${source.label} — source`,
@@ -340,6 +372,11 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     }
   }
 
+  const anglePlan = selectStoryAngle(cluster, ledger, {
+    preferredActions: existingNovelty?.material ? existingNovelty.newActions : [],
+    preferredNumbers: existingNovelty?.material ? existingNovelty.newNumbers : [],
+  });
+  const angleInstructions = buildStoryAngleInstructions(anglePlan);
   const packet = buildSourcePacket(cluster);
   const structuredFacts = buildStructuredFactPacket(ledger).slice(0, MAX_FACT_PACKET_CHARS);
   const verificationInstructions = buildVerificationInstructions(factVerification, ledger);
@@ -351,6 +388,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     "When the fact ledger marks a conflict, do not average, choose silently, or invent a resolution. Attribute the competing figures or omit the disputed detail unless a primary record resolves it.",
     "Quotes must remain attached to the source that actually contains the quotation. Never create composite or reconstructed quotes.",
     verificationInstructions,
+    angleInstructions,
     `Independent sources: ${sourceNames.join(" | ")}.`,
     "Treat this as one developing Texas story when the evidence supports it; do not invent a connection that is not supported.",
     existingNovelty?.material
@@ -373,6 +411,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
     kind: "follow_up",
     novelty: existingNovelty,
   } : undefined);
+  await writeStoryAngleMetadata(db, feedItemId, anglePlan);
   await persistEventCluster(db, cluster, { status: "synthesized" });
 
   const result = await publishLegacySingleFeedItem(feedItemId);
@@ -381,6 +420,7 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
       kind: "follow_up",
       novelty: existingNovelty,
     } : undefined);
+    await writeStoryAngleMetadata(db, feedItemId, anglePlan);
     await updateArticleAttribution(db, result.slug, cluster);
     await persistEventCluster(db, cluster, { status: "published", publishedSlug: result.slug });
     return {
