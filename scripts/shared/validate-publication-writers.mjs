@@ -45,6 +45,10 @@ const maintenanceWriters = new Map([
     'src/routes/api/public/hooks/classify-sports.ts',
     ['kind', 'category', 'discover_category', 'teams', 'keywords'],
   ],
+  [
+    'src/routes/api/public/hooks/finalize-newsroom-article.ts',
+    ['body_json', 'normalizeNewsroomWhyThisMatters', 'generateFeaturedImageForSlugDirect'],
+  ],
 ]);
 const allowedWriterSet = new Set([...writers, ...maintenanceWriters.keys()]);
 const sharedWriters = new Set([
