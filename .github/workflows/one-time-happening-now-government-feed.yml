@@ -1,0 +1,89 @@
+name: One-time Happening Now government feed fix
+
+on:
+  push:
+    branches:
+      - fix/happening-now-government-feed
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/happening-now-government-feed
+          fetch-depth: 0
+      - name: Patch Happening Now government feed
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("src/routes/happening-now.tsx")
+          source = path.read_text()
+
+          replacements = [
+              ('import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";\n', ''),
+              (
+                  'function isOfficialGovernmentSource(source: string) {\n  const normalized = source.trim().toLowerCase();\n  return OFFICIAL_SOURCE_PATTERNS.some((pattern) => normalized.includes(pattern));\n}',
+                  'function isOfficialGovernmentSource(source: string, sourceUrl?: string | null) {\n  const normalized = `${source} ${sourceUrl ?? ""}`.trim().toLowerCase();\n  return OFFICIAL_SOURCE_PATTERNS.some((pattern) => normalized.includes(pattern));\n}',
+              ),
+              (
+                  '  link: string | null;\n  pendingArticle: boolean;\n  description: string | null;',
+                  '  link: string | null;\n  sourceUrl: string | null;\n  officialSource: boolean;\n  pendingArticle: boolean;\n  description: string | null;',
+              ),
+              (
+                  '  source: string;\n  internal_slug: string | null;\n  description: string | null;',
+                  '  source: string;\n  link: string | null;\n  internal_slug: string | null;\n  description: string | null;',
+              ),
+              (
+                  '''      const [{ data: feedData, error: feedError }, { data: articleData, error: articleError }] =\n        await Promise.all([\n          supabase\n            .from("texas_news_feed")\n            .select("id,title,source,internal_slug,description,pub_date")\n            .gte("pub_date", sinceIso)\n            .order("pub_date", { ascending: false })\n            .limit(240),\n          supabase\n            .from("daily_articles")\n            .select("id,slug,title,category,dek,published_at,kind")\n            .gte("published_at", sinceIso)\n            .order("published_at", { ascending: false })\n            .limit(120),\n        ]);\n\n      if (!active) return;\n      if (feedError || articleError) {\n        console.error("[happening-now] load failed", {\n          feed: feedError?.message,\n          articles: articleError?.message,\n        });''',
+                  '''      const { data: feedData, error: feedError } = await supabase\n        .from("texas_news_feed")\n        .select("id,title,source,link,internal_slug,description,pub_date")\n        .gte("pub_date", sinceIso)\n        .order("pub_date", { ascending: false })\n        .limit(240);\n\n      if (!active) return;\n      if (feedError) {\n        console.error("[happening-now] load failed", {\n          feed: feedError.message,\n        });''',
+              ),
+              (
+                  '        const officialSource = isOfficialGovernmentSource(row.source);\n\n        if (!hasNativeArticle && !officialSource) return [];',
+                  '        const officialSource = isOfficialGovernmentSource(row.source, row.link);\n\n        if (!officialSource) return [];',
+              ),
+              (
+                  '            link: hasNativeArticle ? `/news/${row.internal_slug}` : null,\n            pendingArticle: !hasNativeArticle,',
+                  '            link: hasNativeArticle ? `/news/${row.internal_slug}` : row.link,\n            sourceUrl: row.link,\n            officialSource,\n            pendingArticle: !hasNativeArticle,',
+              ),
+              (
+                  '''      const nativeRows: Row[] = (\n        (articleData ?? []) as {\n          id: string;\n          slug: string;\n          title: string;\n          category: string;\n          dek: string | null;\n          published_at: string;\n          kind?: string | null;\n        }[]\n      )\n        .filter((article) =>\n          shouldDisplayBreakingSports(article.kind, article.published_at, "happening-now"),\n        )\n        .map((article, index) => ({\n          id: -1 - index,\n          title: article.title,\n          source: article.category || "Newsroom",\n          link: `/news/${article.slug}`,\n          pendingArticle: false,\n          description: article.dek,\n          pub_date: article.published_at,\n        }));\n\n      const deduplicated = new Map<string, Row>();\n      [...feedRows, ...nativeRows]''',
+                  '''      const deduplicated = new Map<string, Row>();\n      feedRows''',
+              ),
+              (
+                  '      return Number.isFinite(timestamp) && timestamp >= primaryCutoff && !isLowValueTitle(item.title);',
+                  '      return (\n        item.officialSource &&\n        Number.isFinite(timestamp) &&\n        timestamp >= primaryCutoff &&\n        !isLowValueTitle(item.title)\n      );',
+              ),
+              (
+                  '''                    <a href={item.link} className="hover:underline underline-offset-4">\n                      {item.title}\n                    </a>''',
+                  '''                    <a\n                      href={item.link}\n                      target={item.pendingArticle ? "_blank" : undefined}\n                      rel={item.pendingArticle ? "noopener noreferrer" : undefined}\n                      className="hover:underline underline-offset-4"\n                    >\n                      {item.title}\n                    </a>''',
+              ),
+              (
+                  '                  Source: {item.source}\n                </p>\n                {item.pendingArticle ? (\n                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">\n                    Full Keep TX Red article in progress\n                  </p>\n                ) : null}',
+                  '                  Official source: {item.source}\n                </p>\n                {item.pendingArticle ? (\n                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">\n                    Opens the official source · Keep TX Red article in progress\n                  </p>\n                ) : item.sourceUrl ? (\n                  <a\n                    href={item.sourceUrl}\n                    target="_blank"\n                    rel="noopener noreferrer"\n                    className="mt-1 inline-block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground hover:text-primary"\n                  >\n                    View official source ↗\n                  </a>\n                ) : null}',
+              ),
+          ]
+
+          for old, new in replacements:
+              count = source.count(old)
+              if count != 1:
+                  raise SystemExit(f"expected exactly one match, found {count}: {old[:100]!r}")
+              source = source.replace(old, new, 1)
+
+          path.write_text(source)
+
+          test = Path("src/lib/happening-now-government-feed.test.ts")
+          test.write_text('''import { readFileSync } from "node:fs";\nimport { describe, expect, it } from "vitest";\n\nconst source = readFileSync(new URL("../routes/happening-now.tsx", import.meta.url), "utf8");\n\ndescribe("Happening Now government feed contract", () => {\n  it("bases the dashboard on official feed rows rather than unrelated newsroom articles", () => {\n    expect(source).toContain('.select("id,title,source,link,internal_slug,description,pub_date")');\n    expect(source).toContain("if (!officialSource) return [];");\n    expect(source).not.toContain('shouldDisplayBreakingSports(article.kind, article.published_at, "happening-now")');\n    expect(source).not.toContain('.select("id,slug,title,category,dek,published_at,kind")');\n  });\n\n  it("preserves and exposes the official source URL", () => {\n    expect(source).toContain("isOfficialGovernmentSource(row.source, row.link)");\n    expect(source).toContain("sourceUrl: row.link");\n    expect(source).toContain('link: hasNativeArticle ? `/news/${row.internal_slug}` : row.link');\n    expect(source).toContain("Official source: {item.source}");\n    expect(source).toContain("View official source ↗");\n  });\n\n  it("uses official rows when selecting the 24-hour versus seven-day window", () => {\n    expect(source).toContain("item.officialSource &&");\n    expect(source).toContain("return hasPrimaryItems ? PRIMARY_WINDOW_MS : FALLBACK_WINDOW_MS;");\n  });\n});\n''')
+      - name: Commit fix and remove one-time workflow
+        shell: bash
+        run: |
+          rm .github/workflows/one-time-happening-now-government-feed.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/routes/happening-now.tsx src/lib/happening-now-government-feed.test.ts .github/workflows/one-time-happening-now-government-feed.yml
+          git commit -m 'Fix Happening Now official government feed fallback'
+          git push origin HEAD:fix/happening-now-government-feed
