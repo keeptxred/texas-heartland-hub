@@ -196,6 +196,93 @@ jobs:
             -o /dev/null "$PRODUCTION_URL/"
           echo "Production homepage reachable"
 
+      - name: Apply guarded one-time news history reconciliation
+        if: steps.revision.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          marker='.github/reconcile-news-history-once'
+          if [[ ! -f "$marker" ]]; then
+            echo 'No reconciliation marker present; skipping.'
+            exit 0
+          fi
+          if [[ "$(tr -d '\r\n' < "$marker")" != 'apply-2026-08-17' ]]; then
+            echo 'Unexpected reconciliation marker contents; refusing to run.' >&2
+            exit 1
+          fi
+
+          endpoint="$PRODUCTION_URL/api/public/hooks/reconcile-news-history?days=30&limit=5000"
+          dry_file="$(mktemp)"
+          apply_file="$(mktemp)"
+          trap 'rm -f "$dry_file" "$apply_file"' EXIT
+
+          curl --retry 4 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error \
+            --max-time 90 -o "$dry_file" "$endpoint"
+
+          python3 - "$dry_file" <<'PY'
+          import json, sys
+          with open(sys.argv[1], encoding='utf-8') as fh:
+              data = json.load(fh)
+          expected = {
+              '2026-08-14-austin-isd-s-future-hangs-in-the-balance-ebpaee',
+              '2026-08-17-texas-college-football-players-named-to-2026-ray-guy-award-watch-list',
+          }
+          safe = {
+              row.get('canonicalSlug')
+              for row in data.get('results', [])
+              if row.get('status') == 'would_backfill'
+          }
+          if data.get('ok') is not True or data.get('mode') != 'dry-run':
+              raise SystemExit(f'Unexpected dry-run response: {data!r}')
+          if safe != expected:
+              raise SystemExit(f'Reconciliation safe-set changed; refusing apply. expected={sorted(expected)!r} actual={sorted(x for x in safe if x)!r}')
+          for key in ('aiCalls', 'articleWrites', 'slugChanges'):
+              if data.get(key) != 0:
+                  raise SystemExit(f'Dry-run safety invariant failed: {key}={data.get(key)!r}')
+          print(f"Dry-run safe set verified: {sorted(expected)}")
+          PY
+
+          curl --retry 4 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error \
+            --max-time 90 -o "$apply_file" \
+            -X POST \
+            -H 'content-type: application/json' \
+            -H "x-reconcile-service-role-key: $SUPABASE_SERVICE_ROLE_KEY" \
+            --data '{}' \
+            "$endpoint"
+
+          python3 - "$apply_file" <<'PY'
+          import json, sys
+          with open(sys.argv[1], encoding='utf-8') as fh:
+              data = json.load(fh)
+          expected = {
+              '2026-08-14-austin-isd-s-future-hangs-in-the-balance-ebpaee',
+              '2026-08-17-texas-college-football-players-named-to-2026-ray-guy-award-watch-list',
+          }
+          backfilled = {
+              row.get('canonicalSlug')
+              for row in data.get('results', [])
+              if row.get('status') == 'backfilled'
+          }
+          if data.get('ok') is not True or data.get('mode') != 'apply':
+              raise SystemExit(f'Unexpected apply response: {data!r}')
+          if backfilled != expected:
+              raise SystemExit(f'Unexpected backfill set. expected={sorted(expected)!r} actual={sorted(x for x in backfilled if x)!r}')
+          for key in ('aiCalls', 'articleWrites', 'slugChanges'):
+              if data.get(key) != 0:
+                  raise SystemExit(f'Apply safety invariant failed: {key}={data.get(key)!r}')
+          print(json.dumps({
+              'scanned': data.get('scanned'),
+              'planned': data.get('planned'),
+              'safe': data.get('safe'),
+              'held': data.get('held'),
+              'holdsQueued': data.get('holdsQueued'),
+              'backfilled': sorted(expected),
+              'aiCalls': data.get('aiCalls'),
+              'articleWrites': data.get('articleWrites'),
+              'slugChanges': data.get('slugChanges'),
+          }, indent=2))
+          PY
+
       - name: Report payment runtime diagnostics
         if: steps.revision.outputs.deploy == 'true'
         continue-on-error: true
