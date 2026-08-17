@@ -11,7 +11,8 @@ import { buildStructuredFactLedger, persistStructuredFacts } from "@/lib/structu
 const DEFAULT_DAYS = 30;
 const MAX_DAYS = 90;
 const DEFAULT_LIMIT = 500;
-const MAX_LIMIT = 1500;
+const MAX_LIMIT = 5000;
+const PAGE_SIZE = 1000;
 
 type ExistingArticle = { slug: string; published_at: string | null };
 
@@ -68,6 +69,26 @@ async function existingArticles(db: any, slugs: string[]): Promise<Map<string, E
   return new Map((data ?? []).map((row: ExistingArticle) => [row.slug, row]));
 }
 
+async function fetchHistoricalFeedRows(db: any, since: string, limit: number): Promise<HistoricalFeedItem[]> {
+  const rows: HistoricalFeedItem[] = [];
+  for (let from = 0; from < limit; from += PAGE_SIZE) {
+    const to = Math.min(from + PAGE_SIZE - 1, limit - 1);
+    const expected = to - from + 1;
+    const { data, error } = await db
+      .from("texas_news_feed")
+      .select("id,title,link,source,description,pub_date,extracted_body,internal_slug,event_cluster_id,event_cluster_score,target_site,created_at")
+      .gte("created_at", since)
+      .order("created_at", { ascending: true })
+      .range(from, to);
+    if (error) throw error;
+
+    const batch = (data ?? []) as HistoricalFeedItem[];
+    rows.push(...batch);
+    if (batch.length < expected) break;
+  }
+  return rows;
+}
+
 async function recordHold(
   db: any,
   input: {
@@ -107,15 +128,16 @@ async function reconcile(request: Request, apply: boolean) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabaseAdmin as any;
 
-  const { data, error } = await db
-    .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date,extracted_body,internal_slug,event_cluster_id,event_cluster_score,target_site,created_at")
-    .gte("created_at", since)
-    .order("created_at", { ascending: true })
-    .limit(limit);
-  if (error) return Response.json({ ok: false, error: error.message }, { status: 500 });
+  let rows: HistoricalFeedItem[];
+  try {
+    rows = await fetchHistoricalFeedRows(db, since, limit);
+  } catch (error) {
+    return Response.json({
+      ok: false,
+      error: error instanceof Error ? error.message : String(error),
+    }, { status: 500 });
+  }
 
-  const rows = (data ?? []) as HistoricalFeedItem[];
   const plans = planHistoricalReconciliation(rows);
   const publishedSlugs = [...new Set(plans.flatMap((plan) => plan.publishedSlugs))];
   const articles = await existingArticles(db, publishedSlugs);
@@ -219,6 +241,7 @@ async function reconcile(request: Request, apply: boolean) {
     ok: true,
     mode: apply ? "apply" : "dry-run",
     days,
+    limit,
     scanned: rows.length,
     ...reconciliationSummary(plans),
     holdsQueued,
