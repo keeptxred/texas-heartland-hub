@@ -2,7 +2,8 @@ name: Authority JSON Production Smoke
 
 on:
   pull_request:
-    branches: [main]
+    branches:
+      - main
     paths:
       - '.github/workflows/authority-json-production-smoke.yml'
       - 'src/routes/elections.reference[.]json.ts'
@@ -11,9 +12,10 @@ on:
       - 'src/lib/bill-primary-source-reference.ts'
       - 'public/citation-magnets.json'
   workflow_run:
-    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
-    types: [completed]
-    branches: [main]
+    workflows:
+      - Deploy verified KeepTXRed to Cloudflare
+    types:
+      - completed
   workflow_dispatch:
   schedule:
     - cron: '17 13 * * *'
@@ -22,12 +24,12 @@ permissions:
   contents: read
 
 concurrency:
-  group: authority-json-production-smoke-${{ github.event.pull_request.number || github.ref }}
+  group: authority-json-production-smoke
   cancel-in-progress: true
 
 jobs:
   smoke:
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     env:
