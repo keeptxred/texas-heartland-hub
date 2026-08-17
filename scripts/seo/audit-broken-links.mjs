@@ -4,6 +4,7 @@ import path from 'node:path';
 import { isNavigationalPath, shouldScanRuntimeLinks } from './broken-link-scan-scope.mjs';
 
 const ROOT = process.cwd();
+const ROUTES_ROOT = path.join(ROOT, 'src', 'routes');
 const SITE = process.env.AUDIT_SITE_URL || 'https://keeptxred.com';
 const LIVE = process.argv.includes('--live');
 const SCAN_ROOTS = ['src', 'public', 'scripts', 'supabase'];
@@ -31,12 +32,22 @@ async function walk(dir) {
 }
 
 function routeRegexFromFile(file) {
-  let name = path.basename(file).replace(/\.(tsx?|jsx?)$/, '');
+  let name = path.relative(ROUTES_ROOT, file).replace(/\\/g, '/').replace(/\.(tsx?|jsx?)$/, '');
   if (name === '__root') return null;
-  name = name.replace(/\[\.\]/g, '.');
-  const parts = name.split('.');
+
+  // TanStack supports both flat route names (`news.$slug.tsx`) and nested route
+  // directories. `[.]` represents a literal dot in a public path segment, so
+  // protect it while splitting flat-route dots into URL segments.
+  const literalDot = '__KTR_LITERAL_DOT__';
+  const parts = name
+    .split('/')
+    .flatMap((segment) => segment.replace(/\[\.\]/g, literalDot).split('.'))
+    .map((part) => part.replaceAll(literalDot, '.'));
   if (parts.at(-1) === 'index') parts.pop();
-  const route = '/' + parts.map((part) => part.startsWith('$') ? '[^/]+' : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('/');
+
+  const route = '/' + parts
+    .map((part) => part.startsWith('$') ? '[^/]+' : part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('/');
   return new RegExp(`^${route === '/' ? '/' : route}/?$`);
 }
 
@@ -69,7 +80,7 @@ function extractLinks(text) {
 }
 
 async function staticAudit() {
-  const routeFiles = await walk(path.join(ROOT, 'src', 'routes'));
+  const routeFiles = await walk(ROUTES_ROOT);
   const routeRegexes = routeFiles.map(routeRegexFromFile).filter(Boolean);
   const findings = [];
   for (const root of SCAN_ROOTS) {
