@@ -173,6 +173,17 @@ async function liveAudit() {
   return { pagesChecked: pages.length, failures };
 }
 
+function printBlockingStaticFindings(findings) {
+  if (!findings.length) return;
+  const counts = new Map();
+  for (const item of findings) counts.set(item.pathname, (counts.get(item.pathname) ?? 0) + 1);
+  const grouped = [...counts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  console.log('\nBlocking static targets by frequency:');
+  for (const [pathname, count] of grouped) console.log(`- ${count} × ${pathname}`);
+  console.log('\nBlocking static findings:');
+  for (const item of findings) console.log(`- ${item.file}:${item.line} ${item.pathname} (${item.raw})`);
+}
+
 const staticFindings = await staticAudit();
 const live = LIVE ? await liveAudit() : { pagesChecked: 0, failures: [] };
 const blockingStatic = staticFindings.filter((item) => item.severity === 'blocking');
@@ -196,4 +207,5 @@ const report = {
 await fs.mkdir(path.join(ROOT, 'artifacts'), { recursive: true });
 await fs.writeFile(path.join(ROOT, 'artifacts', 'broken-link-audit.json'), JSON.stringify(report, null, 2) + '\n');
 console.log(JSON.stringify(report.summary, null, 2));
+printBlockingStaticFindings(blockingStatic);
 if (blockingStatic.length || blockingLive.length) process.exitCode = 1;
