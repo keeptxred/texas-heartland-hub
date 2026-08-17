@@ -12,6 +12,11 @@ on:
       - 'src/routes/bills/texas/**'
       - 'src/lib/bill-primary-source-reference.ts'
       - 'public/citation-magnets.json'
+  workflow_run:
+    workflows:
+      - Deploy verified KeepTXRed to Cloudflare
+    types:
+      - completed
   workflow_dispatch:
   schedule:
     - cron: '17 13 * * *'
@@ -19,16 +24,25 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: authority-json-production-smoke
-  cancel-in-progress: true
-
 jobs:
-  smoke:
+  validate-script:
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 4
     steps:
       - name: Check out repository
         uses: actions/checkout@v5
+      - name: Validate production smoke script
+        run: python3 -m py_compile scripts/authority/smoke-production.py
+
+  smoke:
+    if: ${{ github.event_name != 'pull_request' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out current main
+        uses: actions/checkout@v5
+        with:
+          ref: main
       - name: Verify live machine-readable authority resources
         run: python3 scripts/authority/smoke-production.py
