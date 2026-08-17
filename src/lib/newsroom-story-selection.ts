@@ -67,7 +67,7 @@ function preliminaryScore(input: StorySelectionInput, nowMs: number): {
   const emergency = EMERGENCY_RE.test(input.canonicalSubject);
   const breakingOverride = emergency && input.primarySourceCount > 0;
   if (breakingOverride) {
-    score = Math.max(score + 12, 96);
+    score = 100;
     reasons.push("official/public-safety emergency priority");
   } else if (emergency) {
     score = Math.max(score + 8, 88);
@@ -103,6 +103,7 @@ export function rankNewsroomStorySelection(
 
   prepared.sort((a, b) =>
     b.score - a.score ||
+    Number(b.breakingOverride) - Number(a.breakingOverride) ||
     b.input.primarySourceCount - a.input.primarySourceCount ||
     b.input.sourceCount - a.input.sourceCount ||
     Date.parse(b.input.lastSeenAt) - Date.parse(a.input.lastSeenAt) ||
