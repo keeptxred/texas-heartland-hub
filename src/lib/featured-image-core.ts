@@ -40,6 +40,11 @@ export function inferDomain(text: string): Domain {
   return "general";
 }
 
+export function inferArticleImageDomain(primaryText: string, fallbackText: string): Domain {
+  const primary = inferDomain(primaryText);
+  return primary !== "general" ? primary : inferDomain(fallbackText);
+}
+
 const DOMAIN_STEER: Record<Domain, string> = {
   wildlife: "the actual named animal or species in its natural habitat",
   weather: "the actual weather event affecting a recognizable Texas landscape",
