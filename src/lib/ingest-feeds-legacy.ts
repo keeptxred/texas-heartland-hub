@@ -671,7 +671,8 @@ async function expandRewrite(
   lovableApiKey: string,
 ): Promise<Rewrite | null> {
   const currentWords = rewriteMainProseWordCount(prior);
-  const need = NON_EVERGREEN_MIN_MAIN_WORDS - currentWords;
+  const target = minWordsForItem(it, prior);
+  const need = target - currentWords;
   if (need <= 0) return prior;
   try {
     const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
