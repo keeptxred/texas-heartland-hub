@@ -24,6 +24,7 @@ describe("historical event reconciliation", () => {
     expect(plans[0].kind).toBe("safe");
     expect(plans[0].canonicalSlug).toBe("ercot-data-center-grid-rule");
     expect(plans[0].publishedSlugs).toEqual(["ercot-data-center-grid-rule"]);
+    expect(plans[0].sourceFamilies).toHaveLength(2);
   });
 
   it("holds an event when matched reports already point to different published URLs", () => {
@@ -50,6 +51,14 @@ describe("historical event reconciliation", () => {
     const rows = [
       row({ id: 30, title: "Houston council approves park renovation", link: "https://city.gov/park", source: "City of Houston", internal_slug: "houston-park-renovation", description: "Houston City Council approved a neighborhood park renovation project." }),
       row({ id: 31, title: "Dallas school district announces calendar", link: "https://district.edu/calendar", source: "Dallas ISD", description: "Dallas ISD announced its school calendar for the coming year." }),
+    ];
+    expect(planHistoricalReconciliation(rows)).toEqual([]);
+  });
+
+  it("does not treat same-lineage copies as independent historical support", () => {
+    const rows = [
+      row({ id: 35, title: "ERCOT announces new rule for Texas data center grid connections", link: "https://example.com/original", source: "Texas Daily", internal_slug: "ercot-grid-rule" }),
+      row({ id: 36, title: "Texas data centers face new ERCOT grid connection rule", link: "https://example.com/copy", source: "Texas Daily" }),
     ];
     expect(planHistoricalReconciliation(rows)).toEqual([]);
   });
