@@ -31,10 +31,14 @@ describe("newsroom Phase 15 production observability", () => {
     expect(workflow).toContain("aiCalls");
     expect(workflow).toContain("repairAttempted");
     expect(workflow).toContain("legacyOffsetsAttempted");
+    expect(workflow).toContain("legacyExpensiveAttempts");
+    expect(workflow).toContain("legacyCapReached");
+    expect(workflow).toContain("LEGACY_FALLBACK_AI_CAP_REACHED");
     expect(workflow).toContain("quotaExhausted");
   });
 
   it("retains a machine-readable telemetry artifact for later optimization", () => {
+    expect(workflow).toContain("'schemaVersion': 2");
     expect(workflow).toContain("newsroom-production-telemetry.json");
     expect(workflow).toContain("actions/upload-artifact@v4");
     expect(workflow).toContain("retention-days: 30");
