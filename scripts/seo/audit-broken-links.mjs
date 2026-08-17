@@ -1,4 +1,5 @@
 // Repository and production-site broken-link audit for KeepTXRed.
+// Verification touch: exercise the post-merge current-main broken-link dispatcher.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 import { isNavigationalPath, shouldScanRuntimeLinks } from './broken-link-scan-scope.mjs';
