@@ -31,6 +31,8 @@ export type AuthorityEnrichmentResult = {
   flags: string[];
 };
 
+const EXPLICIT_PRIMARY_SOURCE_RE = /primary\s*\/\s*official source|primary government source|official system source/i;
+
 function normalizeSourceName(label: string): string {
   return label
     .replace(/\s+[—–-]\s+(?:primary\s*\/\s*official source|primary government source|official system source|reporting source|news and commentary source|policy and analysis source|published source|original report|source)$/i, "")
@@ -73,13 +75,15 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
   }
 
   const sources = existingSources.map((source) => {
-    const sourceName = normalizeSourceName(source.label || input.sourceName || "Published source");
+    const originalLabel = source.label || input.sourceName || "Published source";
+    const wasExplicitPrimary = EXPLICIT_PRIMARY_SOURCE_RE.test(originalLabel);
+    const sourceName = normalizeSourceName(originalLabel);
     const valueForClassification = `${sourceName} ${source.url || ""}`;
     return {
       label: sourceAuthorityLabel({
         source: sourceName,
         url: source.url,
-        isPrimarySource: isPrimaryOrOfficialSource(valueForClassification),
+        isPrimarySource: wasExplicitPrimary || isPrimaryOrOfficialSource(valueForClassification),
       }),
       url: source.url,
     };
@@ -87,7 +91,7 @@ export function applyGeneratedNewsAuthority(input: AuthorityInput): AuthorityEnr
 
   const primarySourceCount = sources.filter((source) =>
     isPrimaryOrOfficialSource(`${source.label || ""} ${source.url || ""}`)
-    || /primary\s*\/\s*official source/i.test(source.label || ""),
+    || EXPLICIT_PRIMARY_SOURCE_RE.test(source.label || ""),
   ).length;
   const sourceCount = sources.length;
   const flags: string[] = [];
