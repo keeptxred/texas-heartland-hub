@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { scoreQuality } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { normalizeNewsroomWhyThisMatters } from "@/lib/newsroom-postpublish";
@@ -6,6 +7,16 @@ import { normalizeNewsroomWhyThisMatters } from "@/lib/newsroom-postpublish";
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const PRODUCTION_WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
+const SCORE_QUALITY_FLAGS = new Set([
+  "weak_title",
+  "weak_dek",
+  "missing_author",
+  "missing_publish_date",
+  "missing_image",
+  "thin_body",
+  "missing_why_this_matters",
+  "missing_texas_context",
+]);
 
 function bearerToken(request: Request): string | null {
   const value = request.headers.get("authorization") ?? "";
@@ -29,6 +40,13 @@ async function authorized(request: Request): Promise<boolean> {
   }
 }
 
+function existingNonScoreFlags(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((flag): flag is string => typeof flag === "string")
+    .filter((flag) => !SCORE_QUALITY_FLAGS.has(flag));
+}
+
 async function post({ request }: { request: Request }) {
   if (!(await authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -47,7 +65,7 @@ async function post({ request }: { request: Request }) {
   const db = supabaseAdmin as any;
   const { data: article, error } = await db
     .from("daily_articles")
-    .select("slug,author,kind,body,body_json")
+    .select("slug,title,dek,author,kind,published_at,body,body_json,quality_flags")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -67,12 +85,37 @@ async function post({ request }: { request: Request }) {
   }
 
   const image = await generateFeaturedImageForSlugDirect(slug, false);
+  const quality = scoreQuality({
+    slug,
+    title: article.title,
+    dek: article.dek,
+    author: article.author,
+    published_at: article.published_at,
+    kind: article.kind,
+    body: normalized.body,
+    body_json: normalized.bodyJson,
+    image_url: image.ok ? image.url : null,
+  });
+  const qualityFlags = [...new Set([
+    ...existingNonScoreFlags(article.quality_flags),
+    ...quality.flags,
+  ])];
+  const { error: qualityUpdateError } = await db
+    .from("daily_articles")
+    .update({
+      content_quality_score: quality.score,
+      quality_flags: qualityFlags.length > 0 ? qualityFlags : null,
+    })
+    .eq("slug", slug);
+  if (qualityUpdateError) return Response.json({ error: qualityUpdateError.message }, { status: 500 });
 
   return Response.json({
     ok: true,
     slug,
     normalizedWhyThisMatters: normalized.changed,
     image,
+    contentQualityScore: quality.score,
+    qualityFlags: qualityFlags.length > 0 ? qualityFlags : null,
   });
 }
 
