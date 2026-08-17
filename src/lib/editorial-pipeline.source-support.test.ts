@@ -24,6 +24,44 @@ describe("editorial source-supported subjects", () => {
     expect(result.reasons).not.toContain("unrelated_subject:QTS Data Centers");
   });
 
+  it("accepts a full team name when the source contains its distinctive team alias", () => {
+    const sportsArticle = {
+      title: "Cowboys Prepare for Seahawks Matchup",
+      summary:
+        "The Dallas Cowboys are preparing to face the Seattle Seahawks in their upcoming matchup, with both teams entering the game focused on execution and preparation. The meeting gives Dallas another opportunity to evaluate its roster and approach against Seattle before the regular season schedule advances further.",
+      relevance:
+        "The Dallas Cowboys and Seattle Seahawks matchup matters to Texas football fans following both teams as they prepare for the next stage of the season.",
+    };
+    const sportsBrief: StoryBrief = {
+      hasClearNewsEvent: true,
+      primarySubject: "Dallas Cowboys",
+      secondarySubjects: ["Seattle Seahawks"],
+      relationships: [],
+    };
+    const source = "Cowboys vs Seahawks: what to know before the upcoming matchup.";
+    const result = validateArticle(sportsArticle, sportsBrief, source);
+    expect(result.reasons).not.toContain("unrelated_subject:Seattle Seahawks");
+  });
+
+  it("does not treat a shared city as support for a different organization", () => {
+    const sportsArticle = {
+      title: "Cowboys Prepare for Seattle Matchup",
+      summary:
+        "The Dallas Cowboys are preparing for their upcoming matchup while the Seattle Mariners were described as part of the same event. The Dallas organization is evaluating its approach and personnel before the schedule advances, giving Texas football fans a concrete update on the team's preparations.",
+      relevance:
+        "The Dallas Cowboys and Seattle Mariners were presented together in the draft even though the source does not support a connection between those organizations.",
+    };
+    const unsupportedBrief: StoryBrief = {
+      hasClearNewsEvent: true,
+      primarySubject: "Dallas Cowboys",
+      secondarySubjects: ["Seattle Mariners"],
+      relationships: [],
+    };
+    const source = "Cowboys vs Seahawks: what to know before the upcoming matchup in Seattle.";
+    const result = validateArticle(sportsArticle, unsupportedBrief, source);
+    expect(result.reasons).toContain("unrelated_subject:Seattle Mariners");
+  });
+
   it("still rejects a subject that is not in the source and lacks a relationship", () => {
     const unsupportedBrief: StoryBrief = {
       ...brief,

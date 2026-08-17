@@ -160,6 +160,13 @@ const GENERIC_SUMMARY_OPENERS: RegExp[] = [
   /^there (?:has been|is|are)\b/i,
 ];
 
+const SOURCE_ALIAS_STOP_TOKENS = new Set([
+  "texas", "texans", "houston", "dallas", "austin", "fort", "worth", "san", "antonio",
+  "city", "county", "state", "united", "states", "american", "national", "association",
+  "department", "office", "company", "group", "team", "news", "sports", "football",
+  "baseball", "basketball", "soccer", "hockey", "university", "college", "school",
+]);
+
 function articleProse(article: ArticleShape): string {
   const parts: string[] = [];
   if (article.summary) parts.push(article.summary);
@@ -208,6 +215,21 @@ function tokensFrom(text: string): Set<string> {
       .split(/\s+/)
       .filter((word) => word.length >= 4),
   );
+}
+
+function sourceSupportsSubject(sourceText: string, subject: string): boolean {
+  if (containsName(sourceText, subject)) return true;
+
+  const sourceTokens = tokensFrom(sourceText);
+  const subjectTokens = [...tokensFrom(subject)];
+  const aliasToken = [...subjectTokens]
+    .reverse()
+    .find((token) => !SOURCE_ALIAS_STOP_TOKENS.has(token));
+
+  // A normalized/full subject may be supported by its trailing distinctive token:
+  // "Seahawks" supports "Seattle Seahawks", while the shared city "Seattle" alone
+  // does not support a different organization such as "Seattle Mariners".
+  return Boolean(aliasToken && sourceTokens.has(aliasToken));
 }
 
 function headlineMatchesBody(article: ArticleShape, brief?: StoryBrief): boolean {
@@ -282,7 +304,7 @@ export function validateArticle(article: ArticleShape, brief?: StoryBrief, sourc
       for (const secondaryRaw of brief.secondarySubjects ?? []) {
         const secondary = secondaryRaw?.trim();
         if (!secondary || secondary.toLowerCase() === primary.toLowerCase()) continue;
-        if (sourceText && containsName(sourceText, secondary)) continue;
+        if (sourceText && sourceSupportsSubject(sourceText, secondary)) continue;
 
         const assertedTogether = sentences.some((sentence) =>
           sentenceHasBoth(sentence, primary, secondary),
