@@ -167,20 +167,28 @@ async function reconcile(request: Request, apply: boolean) {
   let ownershipHolds = 0;
   for (const plan of plans) {
     if (plan.kind === "hold") {
+      const contamination = plan.holdType === "source_material_contamination";
       if (apply) {
         await recordHold(db, {
-          groupKey: `multiple-slugs:${plan.feedItemIds[0]}`,
+          groupKey: contamination
+            ? `source-material-contamination:${plan.feedItemIds[0]}`
+            : `multiple-slugs:${plan.feedItemIds[0]}`,
           reason: plan.reason,
           feedItemIds: plan.feedItemIds,
           publishedSlugs: plan.publishedSlugs,
           sourceFamilies: plan.sourceFamilies,
-          details: { kind: "multiple_published_slugs" },
+          details: {
+            kind: contamination ? "source_material_contamination" : "multiple_published_slugs",
+            canonicalSlug: plan.canonicalSlug,
+          },
         });
         holdsQueued += 1;
       }
       results.push({
-        status: apply ? "held_for_admin_review" : "would_hold",
-        canonicalSlug: null,
+        status: contamination
+          ? (apply ? "held_source_material_contamination" : "hold_source_material_contamination")
+          : (apply ? "held_for_admin_review" : "would_hold"),
+        canonicalSlug: plan.canonicalSlug,
         feedItemIds: plan.feedItemIds,
         publishedSlugs: plan.publishedSlugs,
         sourceFamilies: plan.sourceFamilies,

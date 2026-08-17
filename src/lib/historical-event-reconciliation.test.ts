@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   historicalArticleOwnershipCompatible,
   historicalEventIdentityCompatible,
+  historicalSourceMaterialContaminated,
   planHistoricalReconciliation,
   type HistoricalFeedItem,
 } from "./historical-event-reconciliation";
@@ -40,8 +41,53 @@ describe("historical event reconciliation", () => {
     const plans = planHistoricalReconciliation(rows);
     expect(plans).toHaveLength(1);
     expect(plans[0].kind).toBe("hold");
+    expect(plans[0].holdType).toBe("multiple_published_slugs");
     expect(plans[0].canonicalSlug).toBeNull();
     expect(plans[0].publishedSlugs).toEqual(["ercot-grid-rule", "texas-data-center-rule"]);
+  });
+
+  it("holds recursively generated source packets instead of backfilling contaminated provenance", () => {
+    const statewide = row({
+      id: 61659,
+      title: "9 Texas school districts avoid state takeover in latest TEA A-F ratings",
+      link: "https://news.google.com/tea-ratings",
+      source: "Houston Chronicle",
+      internal_slug: "2026-08-14-texas-school-districts-show-improvement-in-tea-a-f-ratings-gbezru",
+      description: "Nine Texas school districts avoided state takeover in the latest TEA A-F ratings.",
+      extracted_body: `MULTI-SOURCE STORY PACKET.
+Use only facts supported by the sources below.
+
+SOURCE 1: Houston Chronicle
+HEADLINE: 9 Texas school districts avoid state takeover in latest TEA A-F ratings
+SOURCE MATERIAL: MULTI-SOURCE STORY PACKET.
+
+SOURCE 2: Houston Dynamo FC
+HEADLINE: Houston Dynamo FC transfer forward Ezequiel Ponce to Elche CF
+SOURCE MATERIAL: Houston Dynamo FC completed a player transfer.
+
+SOURCE 3: Houston Texans
+HEADLINE: Houston Texans Transactions
+SOURCE MATERIAL: The Houston Texans made roster moves.`,
+    });
+    const tribunal = row({
+      id: 34736,
+      title: "Texas schools receive A-F accountability grades as more districts hope to avoid takeovers",
+      link: "https://feeds.texastribune.org/texas-school-accountability-ratings-2026",
+      source: "Texas Tribune",
+      description: "Texas districts received A-F accountability grades as several hope to avoid state sanctions.",
+      extracted_body: null,
+    });
+
+    expect(historicalSourceMaterialContaminated(statewide)).toBe(true);
+    expect(historicalSourceMaterialContaminated(tribunal)).toBe(false);
+
+    const plans = planHistoricalReconciliation([tribunal, statewide]);
+    expect(plans).toHaveLength(1);
+    expect(plans[0].kind).toBe("hold");
+    expect(plans[0].holdType).toBe("source_material_contamination");
+    expect(plans[0].canonicalSlug).toBe("2026-08-14-texas-school-districts-show-improvement-in-tea-a-f-ratings-gbezru");
+    expect(plans[0].feedItemIds).toEqual([34736, 61659]);
+    expect(plans[0].reason).toContain("Contaminated feed item(s): 61659");
   });
 
   it("rejects the live Whitmire false positive where only person/city/office overlap", () => {

@@ -10,6 +10,7 @@ import {
 
 export type HistoricalFeedItem = ClusterableFeedItem & {
   id: number;
+  extracted_body?: string | null;
   internal_slug?: string | null;
   event_cluster_id?: string | null;
   target_site?: string | null;
@@ -21,8 +22,13 @@ export type HistoricalArticleEvidence = {
   bodyText?: string | null;
 };
 
+export type HistoricalReconciliationHoldType =
+  | "multiple_published_slugs"
+  | "source_material_contamination";
+
 export type HistoricalReconciliationPlan = {
   kind: "safe" | "hold";
+  holdType?: HistoricalReconciliationHoldType;
   cluster: StoryCluster;
   canonicalSlug: string | null;
   publishedSlugs: string[];
@@ -86,6 +92,26 @@ function namedAwardIdentity(title: string): string | null {
     identity.unshift(token);
   }
   return identity.length ? identity.join(" ") : null;
+}
+
+/**
+ * Old generated feed rows can contain the synthesis prompt/packet instead of
+ * the source article body. That material must never become durable provenance:
+ * it can recursively embed unrelated reports and poison the fact ledger.
+ */
+export function historicalSourceMaterialContaminated(row: HistoricalFeedItem): boolean {
+  const body = row.extracted_body?.trim();
+  if (!body) return false;
+
+  const packetMarkers = body.match(/MULTI-SOURCE STORY PACKET/gi)?.length ?? 0;
+  const sourceHeaders = body.match(/(?:^|\n)SOURCE\s+\d+\s*:/gim)?.length ?? 0;
+  const sourceMaterialHeaders = body.match(/(?:^|\n)SOURCE MATERIAL\s*:/gim)?.length ?? 0;
+
+  return (
+    (body.startsWith("MULTI-SOURCE STORY PACKET") && sourceHeaders >= 1)
+    || packetMarkers >= 2
+    || (sourceHeaders >= 2 && sourceMaterialHeaders >= 2)
+  );
 }
 
 /**
@@ -183,6 +209,22 @@ export function planHistoricalReconciliation(
     // apparent supporting reports collapse to one lineage/family.
     if (slugs.length === 1 && sourceFamilies.length < 2) continue;
 
+    const contaminatedRows = rows.filter(historicalSourceMaterialContaminated);
+    if (contaminatedRows.length) {
+      plans.push({
+        kind: "hold",
+        holdType: "source_material_contamination",
+        cluster,
+        canonicalSlug: slugs.length === 1 ? slugs[0] : null,
+        publishedSlugs: slugs,
+        feedItemIds,
+        sourceFamilies,
+        reason: `Historical feed source material contains synthesized or nested source-packet content and cannot be safely preserved as provenance. Contaminated feed item(s): ${contaminatedRows.map((row) => row.id).join(", ")}.`,
+      });
+      for (const id of feedItemIds) consumed.add(id);
+      continue;
+    }
+
     const kind: "safe" | "hold" = slugs.length === 1 ? "safe" : "hold";
     const reason = kind === "safe"
       ? `One existing published slug is supported by ${rows.length} matched reports from ${sourceFamilies.length} source families.`
@@ -190,6 +232,7 @@ export function planHistoricalReconciliation(
 
     plans.push({
       kind,
+      holdType: kind === "hold" ? "multiple_published_slugs" : undefined,
       cluster,
       canonicalSlug: kind === "safe" ? slugs[0] : null,
       publishedSlugs: slugs,
