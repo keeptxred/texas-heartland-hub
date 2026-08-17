@@ -140,65 +140,56 @@ jobs:
           base='https://keeptxred.com/api/public/hooks/generate-news'
           inserted=0
           failed=0
+          legacy_expensive_attempts=0
+          LEGACY_FALLBACK_MAX_EXPENSIVE_ATTEMPTS=2
+
+          # Free/no-item offsets may be scanned, but a response that could have
+          # consumed an AI rewrite counts against the fallback cap. Never retry a
+          # non-no-item response: a 5xx can occur after model generation, so an
+          # HTTP retry could silently spend a second AI call on the same candidate.
           for offset in $(seq 0 9); do
             result='unknown'
-            for attempt in 1 2; do
-              status=$(curl -sS -X POST -o /tmp/publish.json -w '%{http_code}' \
-                --max-time 95 -H 'accept: application/json' \
-                "${base}?offset=${offset}&limit=1" || echo 000)
+            status=$(curl -sS -X POST -o /tmp/publish.json -w '%{http_code}' \
+              --max-time 95 -H 'accept: application/json' \
+              "${base}?offset=${offset}&limit=1" || echo 000)
 
-              if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
-                echo "offset=${offset} QUOTA_EXHAUSTED"
-                cat /tmp/publish.json || true
-                echo
-                echo 'Cloudflare Workers AI daily allocation exhausted; stopping to avoid waste.'
-                exit 1
+            if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
+              echo "offset=${offset} QUOTA_EXHAUSTED"
+              cat /tmp/publish.json || true
+              echo
+              echo 'Cloudflare Workers AI daily allocation exhausted; stopping to avoid waste.'
+              exit 1
+            fi
+
+            if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
+              if jq -e '.no_items == true' /tmp/publish.json >/dev/null 2>&1; then
+                result="ok(no-items)"
+              else
+                current_inserted=$(jq -r '.inserted // 0' /tmp/publish.json)
+                result="ok(inserted=${current_inserted})"
+                inserted=$((inserted + current_inserted))
+                legacy_expensive_attempts=$((legacy_expensive_attempts + 1))
               fi
-
-              if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
-                if jq -e '.no_items == true' /tmp/publish.json >/dev/null 2>&1; then
-                  result="ok(no-items)"
-                else
-                  current_inserted=$(jq -r '.inserted // 0' /tmp/publish.json)
-                  result="ok(inserted=${current_inserted})"
-                  inserted=$((inserted + current_inserted))
-                fi
-                break
-              fi
-
-              if [[ "$status" == "200" ]] && grep -Eqi 'No items met the publish threshold|duplicate' /tmp/publish.json 2>/dev/null; then
-                result='ok(benign-skip)'
-                break
-              fi
-
-              if [[ "$status" == "000" || "$status" =~ ^5 ]]; then
-                result="retryable(HTTP ${status})"
-                if [[ "$attempt" -lt 2 ]]; then
-                  echo "offset=${offset} attempt=${attempt} -> ${result}; response=$(head -c 1200 /tmp/publish.json 2>/dev/null | tr -d '\n')"
-                  sleep 10
-                  continue
-                fi
-                echo "offset=${offset} final -> ${result}"
-                echo '--- production response body ---'
-                cat /tmp/publish.json 2>/dev/null || true
-                echo
-                result="rejected(HTTP ${status})"
-                failed=$((failed + 1))
-                break
-              fi
-
+            elif [[ "$status" == "200" ]] && grep -Eqi 'No items met the publish threshold|duplicate' /tmp/publish.json 2>/dev/null; then
+              result='ok(benign-skip)'
+              legacy_expensive_attempts=$((legacy_expensive_attempts + 1))
+            else
               echo "offset=${offset} -> failed(HTTP ${status})"
               echo '--- production response body ---'
               cat /tmp/publish.json 2>/dev/null || true
               echo
               result="rejected(HTTP ${status})"
               failed=$((failed + 1))
-              break
-            done
+              legacy_expensive_attempts=$((legacy_expensive_attempts + 1))
+            fi
 
-            echo "offset=${offset} -> ${result}"
+            echo "offset=${offset} -> ${result} legacy_expensive_attempts=${legacy_expensive_attempts}"
             if [[ "$inserted" -gt 0 ]]; then
               echo "A legacy fallback article published at offset=${offset}; stopping further AI calls."
+              break
+            fi
+            if [[ "$legacy_expensive_attempts" -ge "$LEGACY_FALLBACK_MAX_EXPENSIVE_ATTEMPTS" ]]; then
+              echo "LEGACY_FALLBACK_AI_CAP_REACHED attempts=${legacy_expensive_attempts}; stopping before additional AI candidates."
               break
             fi
           done
@@ -216,4 +207,4 @@ jobs:
             fi
           fi
 
-          echo "DAILY_NEWS_PUBLISH_SUCCESS inserted=${inserted} rejected=${failed}"
+          echo "DAILY_NEWS_PUBLISH_SUCCESS inserted=${inserted} rejected=${failed} legacy_expensive_attempts=${legacy_expensive_attempts}"
