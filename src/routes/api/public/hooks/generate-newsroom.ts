@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { sourceAuthorityLabel } from "@/data/source-authority";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import {
@@ -15,11 +16,14 @@ import {
   compactResearchPacket,
   researchPacketEvidenceChars,
   type ResearchPacket,
+  type ResearchPacketSource,
 } from "@/lib/newsroom-research-packet";
 
 const SITE = "keeptxred";
 const STANDARD_MIN_SOURCE_EVIDENCE_CHARS = 5_000;
 const LONG_FORM_MIN_SOURCE_EVIDENCE_CHARS = 9_000;
+const GENERATED_NEWS_PROVENANCE_SIGNATURE =
+  "Keep TX Red rewrote the coverage independently and links to the original for verification.";
 
 type CandidateRow = {
   id: string;
@@ -30,6 +34,17 @@ type CandidateRow = {
 };
 type ClusterRow = { id: string; canonical_subject: string; pillar_slug: string | null };
 type PacketRow = { cluster_id: string; packet_json: ResearchPacket; source_count: number; primary_source_count: number };
+
+type AuthorityMetadata = {
+  model: "aggregated";
+  storyClusterId: string;
+  recommendedFormat: string;
+  sourceCount: number;
+  primarySourceCount: number;
+  nonPrimarySourceCount: number;
+  generatedFromResearchPacket: true;
+  indexability: "indexable" | "noindex";
+};
 
 function articleBodyText(body: {
   intro: string[];
@@ -55,6 +70,58 @@ function evidenceFloorForPillar(pillar: string | null): number {
 function authorized(request: Request): boolean {
   const expected = process.env.NEWSROOM_HOOK_TOKEN;
   return Boolean(expected && request.headers.get("x-newsroom-hook-token") === expected);
+}
+
+function uniquePacketSources(sources: ResearchPacketSource[]): ResearchPacketSource[] {
+  const seen = new Set<string>();
+  return [...sources]
+    .filter((source) => Boolean(source.url))
+    .sort((a, b) => Number(b.isPrimarySource) - Number(a.isPrimarySource)
+      || (b.sourceReputationScore ?? 0) - (a.sourceReputationScore ?? 0)
+      || a.feedItemId - b.feedItemId)
+    .filter((source) => {
+      const key = source.url.trim().toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function coverageTimeline(sources: ResearchPacketSource[]): string[] {
+  const seen = new Set<string>();
+  return sources
+    .filter((source) => source.publishedAt && Number.isFinite(Date.parse(source.publishedAt)))
+    .sort((a, b) => Date.parse(a.publishedAt ?? "") - Date.parse(b.publishedAt ?? ""))
+    .filter((source) => {
+      const key = `${source.publishedAt?.slice(0, 10)}|${source.title.trim().toLowerCase()}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(-6)
+    .map((source) => {
+      const date = new Date(source.publishedAt as string).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: "America/Chicago",
+      });
+      return `${date} — ${source.source}: ${source.title}`;
+    });
+}
+
+function provenanceSummary(input: {
+  sourceCount: number;
+  primarySourceCount: number;
+  recommendedFormat: string;
+}): string {
+  const primary = input.primarySourceCount === 1
+    ? "1 primary or official record"
+    : `${input.primarySourceCount} primary or official records`;
+  const remaining = Math.max(0, input.sourceCount - input.primarySourceCount);
+  const other = remaining === 1 ? "1 other published source" : `${remaining} other published sources`;
+  const format = input.recommendedFormat.toLowerCase();
+  return `Keep TX Red built this ${format} story from ${input.sourceCount} linked source records in one story cluster, including ${primary} and ${other}. Source links are preserved below so readers can check the underlying material directly. Inclusion of a source does not imply endorsement.`;
 }
 
 async function handler({ request }: { request: Request }) {
@@ -225,22 +292,63 @@ async function handler({ request }: { request: Request }) {
 
     const now = new Date();
     const slug = slugifyNewsroomTitle(draft.title, now.toISOString().slice(0, 10));
-    const sources = packet.sources.map((source) => ({ label: `${source.source} — source`, url: source.url }));
-    const primary = packet.sources.find((source) => source.isPrimarySource) ?? packet.sources[0];
+    const packetSources = uniquePacketSources(packet.sources);
+    const sourceCount = packetSources.length;
+    const primarySourceCount = packetSources.filter((source) => source.isPrimarySource).length;
+    const nonPrimarySourceCount = Math.max(0, sourceCount - primarySourceCount);
+    const shouldNoindex = sourceCount < 2 && primarySourceCount === 0;
+    const timeline = coverageTimeline(packetSources);
+    const sources = packetSources.map((source) => ({
+      label: sourceAuthorityLabel(source),
+      url: source.url,
+    }));
+    const primary = packetSources.find((source) => source.isPrimarySource) ?? packetSources[0];
+    const authority: AuthorityMetadata = {
+      model: "aggregated",
+      storyClusterId: candidate.cluster_id,
+      recommendedFormat: candidate.recommended_format,
+      sourceCount,
+      primarySourceCount,
+      nonPrimarySourceCount,
+      generatedFromResearchPacket: true,
+      indexability: shouldNoindex ? "noindex" : "indexable",
+    };
+    const authoritySections = [
+      {
+        heading: "What We Know — Key Takeaways",
+        paragraphs: draft.keyTakeaways.map((takeaway) => takeaway.trim()).filter(Boolean),
+      },
+      {
+        heading: "How This Story Was Built",
+        paragraphs: [
+          provenanceSummary({ sourceCount, primarySourceCount, recommendedFormat: candidate.recommended_format }),
+          "[See Keep TX Red's source classifications and primary-source policy](/sources).",
+        ],
+      },
+      ...(timeline.length >= 2 ? [{
+        heading: "Coverage Timeline",
+        paragraphs: timeline,
+      }] : []),
+    ].filter((section) => section.paragraphs.length > 0);
     const bodyJson = {
       updated: now.toISOString().slice(0, 10),
       intro: [draft.summary.trim()],
       sections: [
+        ...authoritySections,
         { heading: "Texas relevance", paragraphs: [draft.relevance.trim()] },
         ...draft.sections,
         {
-          heading: "Source attribution",
-          paragraphs: ["Keep TX Red rewrote the coverage independently and links to the original for verification."],
+          heading: "Source Attribution",
+          paragraphs: [
+            GENERATED_NEWS_PROVENANCE_SIGNATURE,
+            "Keep TX Red is an aggregation and synthesis publication. This story was independently rewritten from the linked source material rather than copied from a single publisher. Where the research packet contains an exact primary or official record, that record is labeled separately in the source list below.",
+          ],
         },
       ],
       faq: draft.faq,
       sources,
-      keyTakeaways: draft.keyTakeaways,
+      keyTakeaways: [],
+      authority,
     };
     const row = {
       slug,
@@ -249,7 +357,8 @@ async function handler({ request }: { request: Request }) {
       category: categoryForPillar(cluster.pillar_slug),
       title: draft.title.slice(0, 200),
       dek: draft.dek.slice(0, 400),
-      source_name: primary?.source ?? "Keep TX Red newsroom packet",
+      author: "Keep TX Red Newsroom",
+      source_name: primary?.source ?? "Keep TX Red aggregation packet",
       source_url: primary?.url ?? null,
       published_at: now.toISOString(),
       score: candidate.editorial_score,
@@ -259,6 +368,11 @@ async function handler({ request }: { request: Request }) {
       body_json: bodyJson,
     };
     enrichArticleRow(row);
+
+    if (shouldNoindex) {
+      const enriched = row as typeof row & { quality_flags?: string[] | null };
+      enriched.quality_flags = [...new Set([...(enriched.quality_flags ?? []), "seo_noindex", "single_source_aggregation"] )];
+    }
 
     const { data: articles, error: articleError } = await db
       .from("daily_articles")
@@ -284,6 +398,9 @@ async function handler({ request }: { request: Request }) {
       draftId,
       articleId,
       slug,
+      sourceCount,
+      primarySourceCount,
+      indexability: shouldNoindex ? "noindex" : "indexable",
       evidenceChars,
       evidenceFloor,
       validation,
