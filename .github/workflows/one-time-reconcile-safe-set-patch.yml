@@ -1,0 +1,40 @@
+name: One-time reconciliation safe-set patch
+
+on:
+  push:
+    branches:
+      - fix/reconcile-current-safe-set
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/reconcile-current-safe-set
+      - name: Update exact reconciliation safe set
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('.github/workflows/deploy-cloudflare-after-verify.yml')
+          source = path.read_text()
+          old = '''          expected = {\n              '2026-08-14-austin-isd-s-future-hangs-in-the-balance-ebpaee',\n              '2026-08-17-texas-college-football-players-named-to-2026-ray-guy-award-watch-list',\n          }'''
+          new = '''          expected = {\n              '2026-08-14-texas-school-districts-show-improvement-in-tea-a-f-ratings-gbezru',\n          }'''
+          count = source.count(old)
+          if count != 2:
+              raise SystemExit(f'expected exactly two guarded safe-set blocks, found {count}')
+          path.write_text(source.replace(old, new))
+
+          test = Path('src/lib/reconcile-deploy-safe-set.test.ts')
+          test.write_text('''import { readFileSync } from "node:fs";\nimport { describe, expect, it } from "vitest";\n\nconst workflow = readFileSync(new URL("../../.github/workflows/deploy-cloudflare-after-verify.yml", import.meta.url), "utf8");\n\ndescribe("guarded historical reconciliation deploy contract", () => {\n  it("allows only the currently verified single backfill", () => {\n    const slug = "2026-08-14-texas-school-districts-show-improvement-in-tea-a-f-ratings-gbezru";\n    expect(workflow.match(new RegExp(slug, "g"))?.length).toBe(2);\n    expect(workflow).not.toContain("2026-08-14-austin-isd-s-future-hangs-in-the-balance-ebpaee");\n    expect(workflow).not.toContain("2026-08-17-texas-college-football-players-named-to-2026-ray-guy-award-watch-list");\n  });\n\n  it("retains zero-AI and zero-publication mutation invariants", () => {\n    for (const key of ["aiCalls", "articleWrites", "slugChanges"]) {\n      expect(workflow).toContain(`if data.get(key) != 0:`);\n    }\n  });\n});\n''')
+      - name: Commit patch and remove temporary workflow
+        run: |
+          rm .github/workflows/one-time-reconcile-safe-set-patch.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add .github/workflows/deploy-cloudflare-after-verify.yml src/lib/reconcile-deploy-safe-set.test.ts .github/workflows/one-time-reconcile-safe-set-patch.yml
+          git commit -m 'Refresh guarded news history safe set'
+          git push origin HEAD:fix/reconcile-current-safe-set
