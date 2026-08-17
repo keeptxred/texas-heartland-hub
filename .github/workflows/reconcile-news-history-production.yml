@@ -1,5 +1,6 @@
 name: Apply Verified News History Reconciliation
 
+# One-time verified production reconciliation runner.
 on:
   push:
     branches: [main]
