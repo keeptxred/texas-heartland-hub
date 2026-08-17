@@ -1,0 +1,43 @@
+name: One-time reconciliation dry-run probe
+
+on:
+  push:
+    branches:
+      - debug/reconcile-history-dry-run
+
+permissions:
+  contents: write
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch and summarize dry run
+        run: |
+          set -euo pipefail
+          response="$(curl --retry 3 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error --max-time 90 'https://keeptxred.com/api/public/hooks/reconcile-news-history?days=30&limit=5000')"
+          python3 - "$response" <<'PY'
+          import json,sys
+          data=json.loads(sys.argv[1])
+          print(json.dumps({
+            'ok': data.get('ok'),
+            'mode': data.get('mode'),
+            'scanned': data.get('scanned'),
+            'planned': data.get('planned'),
+            'safe': data.get('safe'),
+            'held': data.get('held'),
+            'holdsQueued': data.get('holdsQueued'),
+            'aiCalls': data.get('aiCalls'),
+            'articleWrites': data.get('articleWrites'),
+            'slugChanges': data.get('slugChanges'),
+            'results': [
+              {'canonicalSlug': r.get('canonicalSlug'), 'status': r.get('status'), 'reason': r.get('reason')}
+              for r in data.get('results', [])
+            ],
+          }, indent=2))
+          PY
+      - name: Remove temporary branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" --delete debug/reconcile-history-dry-run || true
