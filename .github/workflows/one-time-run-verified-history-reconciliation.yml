@@ -1,0 +1,65 @@
+name: One-time verified history reconciliation
+
+on:
+  push:
+    branches:
+      - ops/run-verified-history-reconciliation
+
+permissions:
+  contents: write
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      ENDPOINT: https://keeptxred.com/api/public/hooks/reconcile-news-history?days=30&limit=5000
+      EXPECTED_SLUG: 2026-08-14-texas-school-districts-show-improvement-in-tea-a-f-ratings-gbezru
+    steps:
+      - name: Verify exact dry-run safe set
+        run: |
+          set -euo pipefail
+          dry="$(curl --retry 4 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error --max-time 90 "$ENDPOINT")"
+          python3 - "$dry" "$EXPECTED_SLUG" <<'PY'
+          import json,sys
+          data=json.loads(sys.argv[1]); expected={sys.argv[2]}
+          safe={r.get('canonicalSlug') for r in data.get('results',[]) if r.get('status')=='would_backfill'}
+          if data.get('ok') is not True or data.get('mode')!='dry-run': raise SystemExit(f'unexpected dry run: {data!r}')
+          if safe != expected: raise SystemExit(f'safe set changed: expected={sorted(expected)} actual={sorted(x for x in safe if x)}')
+          for key in ('aiCalls','articleWrites','slugChanges'):
+              if data.get(key)!=0: raise SystemExit(f'dry-run invariant failed: {key}={data.get(key)!r}')
+          holds=[r for r in data.get('results',[]) if str(r.get('status','')).startswith('hold_')]
+          print(json.dumps({'safe':sorted(expected),'holds':holds,'aiCalls':0,'articleWrites':0,'slugChanges':0},indent=2))
+          PY
+      - name: Apply exact verified safe set
+        run: |
+          set -euo pipefail
+          apply="$(curl --retry 4 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error --max-time 90 -X POST -H 'content-type: application/json' -H "x-reconcile-service-role-key: $SUPABASE_SERVICE_ROLE_KEY" --data '{}' "$ENDPOINT")"
+          python3 - "$apply" "$EXPECTED_SLUG" <<'PY'
+          import json,sys
+          data=json.loads(sys.argv[1]); expected={sys.argv[2]}
+          backfilled={r.get('canonicalSlug') for r in data.get('results',[]) if r.get('status')=='backfilled'}
+          if data.get('ok') is not True or data.get('mode')!='apply': raise SystemExit(f'unexpected apply response: {data!r}')
+          if backfilled != expected: raise SystemExit(f'backfill set changed: expected={sorted(expected)} actual={sorted(x for x in backfilled if x)}')
+          for key in ('aiCalls','articleWrites','slugChanges'):
+              if data.get(key)!=0: raise SystemExit(f'apply invariant failed: {key}={data.get(key)!r}')
+          print(json.dumps({'backfilled':sorted(expected),'aiCalls':0,'articleWrites':0,'slugChanges':0},indent=2))
+          PY
+      - name: Verify target is no longer pending backfill
+        run: |
+          set -euo pipefail
+          dry="$(curl --retry 4 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error --max-time 90 "$ENDPOINT")"
+          python3 - "$dry" "$EXPECTED_SLUG" <<'PY'
+          import json,sys
+          data=json.loads(sys.argv[1]); target=sys.argv[2]
+          remaining={r.get('canonicalSlug') for r in data.get('results',[]) if r.get('status')=='would_backfill'}
+          if target in remaining: raise SystemExit(f'target still pending backfill: {target}')
+          for key in ('aiCalls','articleWrites','slugChanges'):
+              if data.get(key)!=0: raise SystemExit(f'post-check invariant failed: {key}={data.get(key)!r}')
+          print(json.dumps({'targetReconciled':target,'remainingWouldBackfill':sorted(x for x in remaining if x)},indent=2))
+          PY
+      - name: Remove temporary branch
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" --delete ops/run-verified-history-reconciliation || true
