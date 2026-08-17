@@ -247,7 +247,10 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     return { ok: true, url, alt };
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
-    await supabase.from("daily_articles").update({ image_generation_status: "failed" }).eq("slug", row.slug);
+    await supabase.from("daily_articles").update({
+      image_generation_status: "failed",
+      image_validation_note: msg.slice(0, 1000),
+    }).eq("slug", row.slug);
     return { ok: false, error: msg };
   }
 }
