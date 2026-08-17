@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: ["Repository test and build health"]
     types: [completed]
+    branches: [main]
   workflow_dispatch:
     inputs:
       verified_sha:
