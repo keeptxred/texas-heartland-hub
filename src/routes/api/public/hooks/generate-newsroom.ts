@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { sourceAuthorityLabel } from "@/data/source-authority";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
+import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import {
   categoryForPillar,
   NEWSROOM_DRAFT_JSON_SCHEMA,
@@ -22,6 +23,9 @@ import {
 const SITE = "keeptxred";
 const STANDARD_MIN_SOURCE_EVIDENCE_CHARS = 5_000;
 const LONG_FORM_MIN_SOURCE_EVIDENCE_CHARS = 9_000;
+const OIDC_AUDIENCE = "keeptxred-newsroom";
+const REPOSITORY = "keeptxred/texas-heartland-hub";
+const PRODUCTION_WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml";
 const GENERATED_NEWS_PROVENANCE_SIGNATURE =
   "Keep TX Red rewrote the coverage independently and links to the original for verification.";
 
@@ -67,9 +71,30 @@ function evidenceFloorForPillar(pillar: string | null): number {
     : STANDARD_MIN_SOURCE_EVIDENCE_CHARS;
 }
 
-function authorized(request: Request): boolean {
+function bearerToken(request: Request): string | null {
+  const value = request.headers.get("authorization") ?? "";
+  const match = value.match(/^Bearer\s+(.+)$/i);
+  return match?.[1]?.trim() || null;
+}
+
+async function authorized(request: Request, mode: "shadow" | "publish"): Promise<boolean> {
   const expected = process.env.NEWSROOM_HOOK_TOKEN;
-  return Boolean(expected && request.headers.get("x-newsroom-hook-token") === expected);
+  if (expected && request.headers.get("x-newsroom-hook-token") === expected) return true;
+  if (mode !== "publish") return false;
+
+  const token = bearerToken(request);
+  if (!token) return false;
+  try {
+    await verifyGitHubActionsOidc({
+      token,
+      audience: OIDC_AUDIENCE,
+      repository: REPOSITORY,
+      workflowPath: PRODUCTION_WORKFLOW_PATH,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function uniquePacketSources(sources: ResearchPacketSource[]): ResearchPacketSource[] {
@@ -124,14 +149,30 @@ function provenanceSummary(input: {
   return `Keep TX Red built this ${format} story from ${input.sourceCount} linked source records in one story cluster, including ${primary} and ${other}. Source links are preserved below so readers can check the underlying material directly. Inclusion of a source does not imply endorsement.`;
 }
 
+function newsroomRepairUserPrompt(
+  packet: ResearchPacket,
+  previousDraft: NewsroomDraft,
+  validationReasons: string[],
+): string {
+  return JSON.stringify({
+    instruction: "Repair the previous draft rather than restarting. Preserve every source-supported fact that already works. Fix every listed validation failure, remove unsupported/generic phrasing, keep the exact required JSON shape, and do not add facts that are absent from the packet. Return the complete corrected draft JSON.",
+    validationFailures: validationReasons,
+    previousDraft,
+    packet: JSON.parse(newsroomRewriteUserPrompt(packet)),
+  });
+}
+
+function productionAuthorityEligible(packetRow: PacketRow): boolean {
+  return packetRow.source_count >= 2 || packetRow.primary_source_count >= 1;
+}
+
 async function handler({ request }: { request: Request }) {
-  if (!authorized(request)) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  const url = new URL(request.url);
+  const requestedMode = url.searchParams.get("mode") === "publish" ? "publish" : "shadow";
+  if (!(await authorized(request, requestedMode))) return Response.json({ error: "Unauthorized" }, { status: 401 });
   if (process.env.NEWSROOM_AI_ENABLED !== "true") {
     return Response.json({ ok: false, disabled: true, reason: "newsroom_ai_disabled" }, { status: 503 });
   }
-
-  const url = new URL(request.url);
-  const requestedMode = url.searchParams.get("mode") === "publish" ? "publish" : "shadow";
   if (requestedMode === "publish" && process.env.NEWSROOM_PUBLISH_ENABLED !== "true") {
     return Response.json({ ok: false, disabled: true, reason: "newsroom_publish_disabled" }, { status: 503 });
   }
@@ -175,16 +216,21 @@ async function handler({ request }: { request: Request }) {
   const packetByCluster = new Map(packets.map((row) => [row.cluster_id, row]));
   const shadowedCandidateIds = new Set<string>((shadowDraftData ?? []).map((row: { candidate_id: string }) => row.candidate_id));
   const unshadowedCandidates = candidates.filter((row) => !shadowedCandidateIds.has(row.id));
-  const candidate = unshadowedCandidates.find((row) => {
+  const evidenceEligibleCandidates = unshadowedCandidates.filter((row) => {
     const packetRow = packetByCluster.get(row.cluster_id);
     const cluster = clusterById.get(row.cluster_id);
     if (!packetRow || !cluster || packetRow.source_count <= 0) return false;
     return researchPacketEvidenceChars(packetRow.packet_json) >= evidenceFloorForPillar(cluster.pillar_slug);
   });
+  const candidate = requestedMode === "publish"
+    ? evidenceEligibleCandidates.find((row) => productionAuthorityEligible(packetByCluster.get(row.cluster_id)!))
+    : evidenceEligibleCandidates[0];
   if (!candidate) {
     const reason = requestedMode === "shadow" && unshadowedCandidates.length === 0
       ? "no_unshadowed_candidates"
-      : "insufficient_source_evidence";
+      : requestedMode === "publish" && evidenceEligibleCandidates.length > 0
+        ? "insufficient_authority_evidence"
+        : "insufficient_source_evidence";
     return Response.json({ ok: true, no_items: true, reason, aiCalls: 0 });
   }
 
@@ -212,7 +258,7 @@ async function handler({ request }: { request: Request }) {
 
   let generated = false;
   try {
-    const ai = await runCloudflareJson<NewsroomDraft>({
+    let ai = await runCloudflareJson<NewsroomDraft>({
       system: newsroomRewriteSystemPrompt(packet),
       user: newsroomRewriteUserPrompt(packet),
       maxTokens: 12000,
@@ -220,8 +266,28 @@ async function handler({ request }: { request: Request }) {
       jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
     });
     generated = true;
-    const draft = normalizeNewsroomDraft(ai.value) as NewsroomDraft;
-    const validation = validateNewsroomDraft(draft, packet);
+    let draft = normalizeNewsroomDraft(ai.value) as NewsroomDraft;
+    let validation = validateNewsroomDraft(draft, packet);
+    const firstValidationReasons = [...validation.reasons];
+    let aiCalls = 1;
+    let providerAttempts = ai.attempts;
+    let repairAttempted = false;
+
+    if (!validation.ok && !validation.reasons.includes("brief_no_clear_news_event")) {
+      repairAttempted = true;
+      const repaired = await runCloudflareJson<NewsroomDraft>({
+        system: `${newsroomRewriteSystemPrompt(packet)}\n\nREPAIR MODE: The previous draft failed local validation. Correct only the listed failures while preserving supported facts and the required six-section structure. Do not invent detail or pad with generic commentary.`,
+        user: newsroomRepairUserPrompt(packet, draft, validation.reasons),
+        maxTokens: 12000,
+        maxAttempts: 1,
+        jsonSchema: NEWSROOM_DRAFT_JSON_SCHEMA,
+      });
+      aiCalls += 1;
+      providerAttempts += repaired.attempts;
+      ai = repaired;
+      draft = normalizeNewsroomDraft(repaired.value) as NewsroomDraft;
+      validation = validateNewsroomDraft(draft, packet);
+    }
 
     const { data: draftRows, error: draftError } = await db.from("newsroom_generation_drafts").insert({
       candidate_id: candidate.id,
@@ -233,7 +299,7 @@ async function handler({ request }: { request: Request }) {
       main_word_count: validation.mainWordCount,
       provider: ai.provider,
       model: ai.model,
-      provider_attempts: ai.attempts,
+      provider_attempts: providerAttempts,
     }).select("id").limit(1);
     if (draftError) throw new Error(draftError.message);
     const draftId = draftRows?.[0]?.id as string | undefined;
@@ -258,10 +324,12 @@ async function handler({ request }: { request: Request }) {
         evidenceChars,
         evidenceFloor,
         validation,
+        firstValidationReasons,
+        repairAttempted,
         provider: ai.provider,
         model: ai.model,
-        attempts: ai.attempts,
-        aiCalls: 1,
+        attempts: providerAttempts,
+        aiCalls,
       });
     }
 
@@ -283,10 +351,12 @@ async function handler({ request }: { request: Request }) {
         evidenceChars,
         evidenceFloor,
         validation,
+        firstValidationReasons,
+        repairAttempted,
         provider: ai.provider,
         model: ai.model,
-        attempts: ai.attempts,
-        aiCalls: 1,
+        attempts: providerAttempts,
+        aiCalls,
       });
     }
 
@@ -404,10 +474,12 @@ async function handler({ request }: { request: Request }) {
       evidenceChars,
       evidenceFloor,
       validation,
+      firstValidationReasons,
+      repairAttempted,
       provider: ai.provider,
       model: ai.model,
-      attempts: ai.attempts,
-      aiCalls: 1,
+      attempts: providerAttempts,
+      aiCalls,
     });
   } catch (error) {
     await db.from("news_publish_candidates").update({ status: "HELD" }).eq("id", candidate.id);
