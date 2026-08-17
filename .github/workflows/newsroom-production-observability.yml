@@ -94,9 +94,11 @@ jobs:
           finalize_http = match(r'clustered-newsroom-finalize HTTP (\d{3})')
           zero_ai_failures = sorted(set(re.findall(r'CLUSTERED_NEWSROOM_([A-Z]+)_FAILED', text)))
           legacy_offsets = sorted({int(x) for x in re.findall(r'offset=(\d+)', text)})
+          legacy_expensive_attempts = intval(match(r'legacy_expensive_attempts=(\d+)'))
+          legacy_cap_reached = 'LEGACY_FALLBACK_AI_CAP_REACHED' in text
 
           telemetry = {
-              'schemaVersion': 1,
+              'schemaVersion': 2,
               'sourceRunId': intval(os.environ.get('SOURCE_RUN_ID')),
               'sourceEvent': os.environ.get('SOURCE_RUN_EVENT'),
               'sourceConclusion': os.environ.get('SOURCE_RUN_CONCLUSION'),
@@ -120,6 +122,8 @@ jobs:
               'finalizeWarning': 'CLUSTERED_NEWSROOM_FINALIZE_WARNING' in text,
               'imageWarning': 'CLUSTERED_NEWSROOM_IMAGE_WARNING' in text,
               'legacyOffsetsAttempted': len(legacy_offsets),
+              'legacyExpensiveAttempts': legacy_expensive_attempts,
+              'legacyCapReached': legacy_cap_reached,
               'legacyInserted': legacy_inserted,
               'legacyRejected': legacy_rejected,
               'safetyNetInvoked': safety_net_invoked,
@@ -138,7 +142,8 @@ jobs:
               f"- Clustered no-item reason: `{no_item_reason or 'none'}`\n"
               f"- Clustered sources: **{source_count}** total / **{primary_source_count}** primary\n"
               f"- Clustered AI calls: **{ai_calls}**; repair: **{repair_attempted}**\n"
-              f"- Legacy offsets attempted: **{len(legacy_offsets)}**; inserted: **{legacy_inserted}**\n"
+              f"- Legacy offsets attempted: **{len(legacy_offsets)}**; expensive attempts: **{legacy_expensive_attempts}**; cap reached: **{legacy_cap_reached}**\n"
+              f"- Legacy inserted: **{legacy_inserted}**; rejected: **{legacy_rejected}**\n"
               f"- Safety net invoked: **{safety_net_invoked}**\n"
               f"- Finalize warning: **{telemetry['finalizeWarning']}**; image warning: **{telemetry['imageWarning']}**\n"
               f"- Quota exhausted: **{telemetry['quotaExhausted']}**\n"
