@@ -1,0 +1,72 @@
+name: One-time military honors image steering fix
+
+on:
+  push:
+    branches:
+      - fix/military-honors-image-steering-current
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/military-honors-image-steering-current
+          fetch-depth: 0
+      - name: Patch military honors image steering
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('src/lib/featured-image-core.ts')
+          source = path.read_text()
+
+          replacements = [
+            (
+              '''const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [''',
+              '''const MILITARY_HONORS_RE = /\\b(purple heart|medal of honor|military honor(?:s)?|military award(?:s)?|service member(?:s)?|servicemember(?:s)?|fallen (?:service member|servicemember|soldier|marine|airman|sailor|troop|hero)(?:s)?|memorial day|veterans day|veteran(?:s)?|remembrance|military remembrance|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia)\\b/i;\n\nconst DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [''',
+            ),
+            (
+              '''  ["military", /\\b(purple heart|medal of honor|military|army|navy|air force|marines|fort cavazos|soldier|veteran)\\b/i],''',
+              '''  ["military", /\\b(purple heart|medal of honor|military|army|navy|air force|airman|marines?|marine corps|coast guard|soldier|sailor|troop|veteran(?:s)?|service member(?:s)?|servicemember(?:s)?|armed forces|military honor(?:s)?|military award(?:s)?|remembrance|memorial|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia|fort cavazos)\\b/i],''',
+            ),
+            (
+              '''  military: "the specific medal, honor, installation, aircraft, or anonymous military scene named by the story",''',
+              '''  military: "the actual military subject named in the story; for honors or remembrance coverage, center the specific medal, decoration, folded flag, memorial, or remembrance setting rather than generic bases, aircraft, hangars, or troops",''',
+            ),
+            (
+              '''export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): string {\n  const loc = subject.locations.slice(0, 2).join(", ");\n  const correction = extraGuidance ? `Correction from rejected attempt: ${extraGuidance}. ` : "";\n  const evidenceLock = subject.evidenceGuidance ? `EVIDENCE CONSTRAINTS: ${subject.evidenceGuidance} ` : "";''',
+              '''export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): string {\n  const loc = subject.locations.slice(0, 2).join(", ");\n  const correction = extraGuidance ? `Correction from rejected attempt: ${extraGuidance}. ` : "";\n  const evidenceLock = subject.evidenceGuidance ? `EVIDENCE CONSTRAINTS: ${subject.evidenceGuidance} ` : "";\n  const isMilitaryHonors = subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`);\n  const militaryHonorsLock = isMilitaryHonors\n    ? "MILITARY HONORS OVERRIDE: This is an honors/remembrance story. Make the named medal, decoration, folded flag, memorial, or remembrance subject dominate the frame. Do not center a politician, government building, press event, generic military base, aircraft, hangar, unrelated combat scene, or generic troops. "\n    : "";''',
+            ),
+            (
+              '''  return `${correction}${evidenceLock}Professional photorealistic editorial news photograph, horizontal 16:9, documentary photojournalism, natural lighting, realistic textures, believable perspective and depth of field. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER[subject.domain]}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting where relevant."} One coherent real-world scene. No illustration, vector art, cartoon, infographic, collage, poster, text overlay, watermark, logo, generic symbolic placeholder, or fabricated recognizable face.`.slice(0, 1800);''',
+              '''  return `${correction}${evidenceLock}${militaryHonorsLock}Professional photorealistic editorial news photograph, horizontal 16:9, documentary photojournalism, natural lighting, realistic textures, believable perspective and depth of field. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER[subject.domain]}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting where relevant."} One coherent real-world scene. No illustration, vector art, cartoon, infographic, collage, poster, text overlay, watermark, logo, generic symbolic placeholder, or fabricated recognizable face.`.slice(0, 1800);''',
+            ),
+            (
+              '''  if (subject.domain === "legal") items.push(\n    "Texas state silhouette", "Texas-shaped graphic", "map of Texas", "politician", "candidate", "campaign rally",\n    "podium", "flagpole", "capitol dome", "election icon", "ballot illustration", "government seal",\n  );''',
+              '''  if (subject.domain === "legal") items.push(\n    "Texas state silhouette", "Texas-shaped graphic", "map of Texas", "politician", "candidate", "campaign rally",\n    "podium", "flagpole", "capitol dome", "election icon", "ballot illustration", "government seal",\n  );\n  if (subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.push(\n    "politician", "governor", "press conference", "capitol building", "government signing ceremony",\n    "generic military base", "generic aircraft", "hangar", "unrelated combat", "generic troops",\n  );''',
+            ),
+          ]
+
+          for old, new in replacements:
+            count = source.count(old)
+            if count != 1:
+              raise SystemExit(f'expected exactly one match, found {count}: {old[:140]!r}')
+            source = source.replace(old, new, 1)
+
+          path.write_text(source)
+
+          test = Path('src/lib/military-honors-image-steering.test.ts')
+          test.write_text('''import { describe, expect, it } from "vitest";\nimport { buildImagePrompt, buildNegativeImagePrompt, inferDomain } from "./featured-image-core";\n\ndescribe("military honors image steering", () => {\n  const subject = {\n    title: "Governor marks Purple Heart Day in Texas",\n    firstParagraph: "Texas recognizes wounded service members and Purple Heart recipients.",\n    entities: ["Purple Heart"],\n    locations: ["Texas"],\n    domain: "military" as const,\n    concreteSubject: "Purple Heart Day recognition honoring wounded service members",\n  };\n\n  it("classifies honors language as military before politics", () => {\n    expect(inferDomain("Governor marks Purple Heart Day for Texas veterans")).toBe("military");\n  });\n\n  it("centers the named honor rather than generic political or military imagery", () => {\n    const prompt = buildImagePrompt(subject);\n    expect(prompt).toContain("MILITARY HONORS OVERRIDE");\n    expect(prompt).toContain("Make the named medal, decoration, folded flag, memorial, or remembrance subject dominate the frame");\n    expect(prompt).toContain("Do not center a politician");\n  });\n\n  it("adds military-honors-specific negative motifs", () => {\n    const negative = buildNegativeImagePrompt(subject);\n    expect(negative).toContain("press conference");\n    expect(negative).toContain("generic military base");\n    expect(negative).toContain("unrelated combat");\n  });\n});\n''')
+      - name: Commit patch and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/one-time-military-honors-image-steering.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/lib/featured-image-core.ts src/lib/military-honors-image-steering.test.ts .github/workflows/one-time-military-honors-image-steering.yml
+          git commit -m 'Steer military honors images toward named subject'
+          git push origin HEAD:fix/military-honors-image-steering-current
