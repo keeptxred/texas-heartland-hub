@@ -50,6 +50,9 @@ async function handler({ request }: { request: Request }) {
     return Response.json({ ok: false, disabled: true, reason: "shadow_retest_requires_publish_disabled" }, { status: 503 });
   }
 
+  const requestUrl = new URL(request.url);
+  const excludedCandidateIds = new Set(requestUrl.searchParams.getAll("exclude").filter(Boolean));
+
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   // Newsroom tables intentionally lead generated Supabase types.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -86,7 +89,7 @@ async function handler({ request }: { request: Request }) {
 
   const alreadyValid = new Set<string>((generatedResult.data ?? []).map((row: { candidate_id: string }) => row.candidate_id));
   const candidates = ((candidateResult.data ?? []) as CandidateRow[])
-    .filter((row) => !alreadyValid.has(row.id))
+    .filter((row) => !alreadyValid.has(row.id) && !excludedCandidateIds.has(row.id))
     .sort((a, b) => b.editorial_score - a.editorial_score);
   if (!candidates.length) {
     return Response.json({ ok: true, no_items: true, reason: "no_retest_candidates", aiCalls: 0 });

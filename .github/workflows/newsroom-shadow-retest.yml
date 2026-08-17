@@ -87,6 +87,7 @@ jobs:
           set -euo pipefail
           hook_token="$(openssl rand -hex 32)"
           echo "::add-mask::$hook_token"
+          exclude_query=""
 
           cleanup() {
             set +e
@@ -114,7 +115,7 @@ jobs:
             status=""
             for auth_attempt in $(seq 1 12); do
               status="$(curl --max-time 110 --silent --show-error -o "$response_file" -w '%{http_code}' -X POST \
-                "$PRODUCTION_URL/api/public/hooks/retest-newsroom-shadow" \
+                "$PRODUCTION_URL/api/public/hooks/retest-newsroom-shadow$exclude_query" \
                 -H "x-newsroom-hook-token: $hook_token")"
               if [[ "$status" == "401" ]]; then
                 echo "Shadow retest token not live yet (attempt $auth_attempt/12); retrying auth only."
@@ -151,6 +152,20 @@ jobs:
               "published": data.get("published"),
           }, sort_keys=True))
           PY
+            candidate_id="$(python3 - "$response" <<'PY'
+          import json, sys
+          print(json.loads(sys.argv[1]).get("candidateId") or "")
+          PY
+          )"
+            if [[ -z "$candidate_id" ]]; then
+              echo "Shadow retest $i returned no candidate id" >&2
+              exit 1
+            fi
+            if [[ -z "$exclude_query" ]]; then
+              exclude_query="?exclude=$candidate_id"
+            else
+              exclude_query="$exclude_query&exclude=$candidate_id"
+            fi
           done
 
           cleanup
