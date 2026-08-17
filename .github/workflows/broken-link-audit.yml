@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '17 11 * * 1'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/broken-link-audit.yml'
+      - 'scripts/seo/audit-broken-links.mjs'
 
 permissions:
   contents: read
@@ -39,7 +44,13 @@ jobs:
           fs.appendFileSync(out, `- Blocking live failures: **${report.summary.blockingLiveFailures}**\n\n`);
           const actionable = [...report.staticFindings, ...report.liveFailures].filter((item) => item.severity === 'blocking');
           const migration = [...report.staticFindings, ...report.liveFailures].filter((item) => item.severity === 'migration-debt');
+          console.log(`Blocking static findings: ${report.summary.blockingStaticFindings}`);
+          console.log(`Blocking live failures: ${report.summary.blockingLiveFailures}`);
           if (actionable.length) {
+            console.log('Actionable findings:');
+            for (const item of actionable.slice(0, 200)) {
+              console.log(`- ${item.type}: ${item.file || item.source || item.url || ''}${item.line ? `:${item.line}` : ''} ${item.pathname || item.raw || item.status || item.error || ''}`);
+            }
             fs.appendFileSync(out, '## Actionable findings\n\n');
             for (const item of actionable.slice(0, 200)) {
               fs.appendFileSync(out, `- \`${item.type}\`: ${item.file || item.source || item.url || ''}${item.line ? `:${item.line}` : ''} ${item.pathname || item.raw || item.status || item.error || ''}\n`);
