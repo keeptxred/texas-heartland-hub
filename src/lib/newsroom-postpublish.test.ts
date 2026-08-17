@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { scoreQuality } from "./content-quality";
 import { normalizeNewsroomWhyThisMatters } from "./newsroom-postpublish";
 
 describe("normalizeNewsroomWhyThisMatters", () => {
@@ -23,6 +24,28 @@ describe("normalizeNewsroomWhyThisMatters", () => {
     });
     expect(result.body).toContain("Why This Matters");
     expect(result.body).not.toContain("Texas relevance");
+  });
+
+  it("satisfies the shared Why This Matters quality contract after normalization", () => {
+    const normalized = normalizeNewsroomWhyThisMatters({
+      intro: ["Texas regulators issued a statewide update affecting licensed providers."],
+      sections: [{
+        heading: "Texas relevance",
+        paragraphs: ["The change affects licensed providers across Texas and changes their compliance timeline."],
+      }],
+    }, null);
+
+    const quality = scoreQuality({
+      slug: "test-newsroom-story",
+      title: "Texas regulators issue statewide compliance update",
+      dek: "The revised rule changes compliance requirements and timing for licensed providers across Texas.",
+      author: "Keep TX Red Newsroom",
+      published_at: "2026-08-17T12:00:00Z",
+      kind: "news",
+      body_json: normalized.bodyJson,
+    });
+
+    expect(quality.flags).not.toContain("missing_why_this_matters");
   });
 
   it("leaves unrelated article bodies unchanged", () => {
