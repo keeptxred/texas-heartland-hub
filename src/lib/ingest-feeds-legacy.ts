@@ -1409,43 +1409,45 @@ export async function publishSingleFeedItem(
       : "";
   let extractedBody: string = cachedBody;
   let extractionFailureStage: "extraction" | "preflight" | "none" = "none";
+  let resolvedSourceWordCount: number | null = null;
 
-  if (isRedditLink(item.link) && !extractedBody) {
-    // Reddit RSS descriptions rarely contain the post body — pull selftext from
-    // the public JSON endpoint so the AI rewrite has real source material.
-    // Refuse to publish headline-only Reddit posts rather than fabricating facts.
-    const { selftext, externalUrl } = await fetchRedditPostData(item.link);
-    const selftextMeaningful = !!selftext && wordCount(selftext) >= 40;
+  if (isRedditLink(item.link)) {
+    // Resolve the exact Reddit source once so extraction, preflight and the AI
+    // rewrite all use and count the same text. Cached extraction remains authoritative.
+    let selftext: string | null = null;
+    let externalUrl: string | null = null;
     let linkedText: string | null = null;
-    let linkedFrom: string | null = null;
-    if (!selftextMeaningful && externalUrl) {
-      const fetched = await fetchLinkedArticleText(externalUrl);
-      if (fetched && wordCount(fetched) >= 80) {
-        linkedText = fetched;
-        linkedFrom = externalUrl;
-      }
+    if (!cachedBody) {
+      const redditData = await fetchRedditPostData(item.link);
+      selftext = redditData.selftext;
+      externalUrl = redditData.externalUrl;
+      if (externalUrl) linkedText = await fetchLinkedArticleText(externalUrl);
     }
-    if (!selftextMeaningful && !linkedText) {
+    const { resolveRewriteSource } = await import("@/lib/rewrite-source");
+    const resolvedSource = resolveRewriteSource({
+      cachedExtraction: cachedBody,
+      storedDescription: item.description,
+      redditSelftext: selftext,
+      linkedArticleText: linkedText,
+      linkedArticleUrl: externalUrl,
+    });
+    extractedBody = resolvedSource.text;
+    resolvedSourceWordCount = resolvedSource.wordCount;
+
+    if (!resolvedSource.meetsAbsoluteMinimum) {
       extractionFailureStage = "extraction";
       const { assessRewritePreflight: preflightAssess, toPersistedSnapshot } =
         await import("@/lib/rewrite-preflight");
-      const blocked = preflightAssess({ title: item.title, description: "", link: item.link });
+      const blocked = preflightAssess({ title: item.title, description: resolvedSource.text, link: item.link });
       await supabaseAdmin
         .from("texas_news_feed")
         .update({ preflight_json: toPersistedSnapshot(blocked, extractionFailureStage) } as never)
         .eq("id", feedItemId);
       return {
         ok: false,
-        error:
-          "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",
+        error: "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",
       };
     }
-    const parts: string[] = [];
-    const base = item.description?.trim() ?? "";
-    if (base) parts.push(base);
-    if (selftextMeaningful) parts.push(`REDDIT SELFTEXT:\n${selftext}`);
-    if (linkedText) parts.push(`LINKED SOURCE (${linkedFrom}):\n${linkedText}`);
-    extractedBody = parts.join("\n\n");
   } else if (!extractedBody) {
     // Non-Reddit path: if the stored RSS description is short, run the same
     // linked-article extraction we already use for Reddit link posts so a
@@ -1486,7 +1488,7 @@ export async function publishSingleFeedItem(
     reason: preflight.reason,
     source_word_count: preflight.sourceWordCount,
     used_cached_extraction: cachedBody.length > 0,
-    extracted_body_words: wordCount(extractedBody),
+    extracted_body_words: resolvedSourceWordCount ?? wordCount(extractedBody),
   });
 
   // Persist the extraction + preflight snapshot so page loads and admin
