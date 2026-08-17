@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - '.github/workflows/authority-json-production-smoke.yml'
+      - 'scripts/authority/**'
       - 'src/routes/elections*'
       - 'src/lib/elections/**'
       - 'src/routes/bills/texas/**'
@@ -18,10 +19,16 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: authority-json-production-smoke
+  cancel-in-progress: true
+
 jobs:
   smoke:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Sanity check workflow execution
-        run: echo 'Authority JSON production smoke workflow is runnable'
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Verify live machine-readable authority resources
+        run: python3 scripts/authority/smoke-production.py
