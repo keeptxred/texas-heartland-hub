@@ -11,7 +11,7 @@ import {
   type SubjectExtract,
   type VisionVerdict,
 } from "./featured-image-core";
-import { generateImageBytes, validateImageMatchesArticle } from "./featured-image-cloudflare";
+import { CLOUDFLARE_CULTURE_IMAGE_MODEL, generateImageBytes, validateImageMatchesArticle } from "./featured-image-cloudflare";
 import {
   buildMultiSourceImageGrounding,
   extractSelectedImageLead,
@@ -196,7 +196,8 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
 
   try {
     let negativePrompt = buildNegativeImagePrompt(subject);
-    let bytes = await generateImageBytes(prompt, negativePrompt);
+    const imageModel = subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined;
+    let bytes = await generateImageBytes(prompt, negativePrompt, imageModel);
     let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
 
@@ -205,7 +206,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
       const stronger = buildImagePrompt(subject, correction);
       usedPrompt = stronger;
       negativePrompt = buildNegativeImagePrompt(subject, verdict.reason);
-      bytes = await generateImageBytes(stronger, negativePrompt);
+      bytes = await generateImageBytes(stronger, negativePrompt, imageModel);
       verdict = await validateImageMatchesArticle(bytes, subject);
     }
 

@@ -1,7 +1,12 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
 export const CLOUDFLARE_IMAGE_MODEL = "@cf/lykon/dreamshaper-8-lcm";
+export const CLOUDFLARE_CULTURE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
 export const CLOUDFLARE_VISION_MODEL = "@cf/mistralai/mistral-small-3.1-24b-instruct";
+
+export type CloudflareImageModel =
+  | typeof CLOUDFLARE_IMAGE_MODEL
+  | typeof CLOUDFLARE_CULTURE_IMAGE_MODEL;
 
 function cloudflareEndpoint(accountId: string, model: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
@@ -21,23 +26,39 @@ function bytesToBase64(bytes: Uint8Array): string {
   return btoa(binary);
 }
 
-export async function generateImageBytes(prompt: string, negativePrompt: string): Promise<Uint8Array> {
+export async function generateImageBytes(
+  prompt: string,
+  negativePrompt: string,
+  model: CloudflareImageModel = CLOUDFLARE_IMAGE_MODEL,
+): Promise<Uint8Array> {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
-  const res = await fetch(cloudflareEndpoint(accountId, CLOUDFLARE_IMAGE_MODEL), {
+  const seed = Math.floor(Math.random() * 2_147_483_646) + 1;
+  const requestBody = model === CLOUDFLARE_CULTURE_IMAGE_MODEL
+    ? {
+        // FLUX.1 Schnell uses its own compact Workers AI schema. Put the most
+        // important negative constraints into the text prompt because the model
+        // does not accept DreamShaper's negative_prompt parameter.
+        prompt: `${prompt} Avoid all of the following: ${negativePrompt}`.slice(0, 2048),
+        steps: 8,
+        seed: seed,
+      }
+    : {
+        prompt,
+        negative_prompt: negativePrompt,
+        width: 1024,
+        height: 576,
+        num_steps: 20,
+        guidance: 7.5,
+        seed: seed,
+      };
+
+  const res = await fetch(cloudflareEndpoint(accountId, model), {
     method: "POST",
     headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
-    body: JSON.stringify({
-      prompt,
-      negative_prompt: negativePrompt,
-      width: 1024,
-      height: 576,
-      num_steps: 20,
-      guidance: 7.5,
-      seed: Math.floor(Math.random() * 2_147_483_646) + 1,
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!res.ok) {

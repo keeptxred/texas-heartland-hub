@@ -15,7 +15,7 @@ describe("Phase 11 image pipeline integration", () => {
 
   it("holds unsafe multi-source images before calling the existing generator", () => {
     const holdIndex = source.indexOf('grounding?.mode === "hold_image"');
-    const generationIndex = source.indexOf("generateImageBytes(prompt, negativePrompt)");
+    const generationIndex = source.indexOf("generateImageBytes(prompt, negativePrompt");
     expect(holdIndex).toBeGreaterThan(-1);
     expect(generationIndex).toBeGreaterThan(holdIndex);
   });
