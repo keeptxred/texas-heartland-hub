@@ -1,3 +1,3 @@
 Deploy current main to Cloudflare production.
-Trigger low-credit newsroom Phases 3-8 deployment for keeptxred.com.
-Target main: fa6c70fc7584b3f3f1b29b345c188e3b5e51a062
+Trigger Phase 13 final canary deployment convergence for keeptxred.com.
+Target main: 0e1884acd3b0262cb742849894fed7d1d5ec6d2e
