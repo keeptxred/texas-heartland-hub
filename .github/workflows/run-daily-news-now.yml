@@ -103,6 +103,26 @@ jobs:
               primary_count=$(jq -r '.primarySourceCount // 0' /tmp/newsroom-publish.json)
               ai_calls=$(jq -r '.aiCalls // 0' /tmp/newsroom-publish.json)
               repair=$(jq -r '.repairAttempted // false' /tmp/newsroom-publish.json)
+
+              finalize_payload=$(jq -nc --arg slug "$slug" '{slug:$slug}')
+              finalize_status=$(curl -sS -X POST -o /tmp/newsroom-finalize.json -w '%{http_code}' \
+                --max-time 300 \
+                -H 'accept: application/json' \
+                -H 'content-type: application/json' \
+                -H "Authorization: Bearer ${oidc_token}" \
+                --data "$finalize_payload" \
+                'https://keeptxred.com/api/public/hooks/finalize-newsroom-article' || echo 000)
+
+              echo "clustered-newsroom-finalize HTTP ${finalize_status}"
+              cat /tmp/newsroom-finalize.json 2>/dev/null || true
+              echo
+
+              if [[ "$finalize_status" != "200" ]] || ! jq -e '.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
+                echo "CLUSTERED_NEWSROOM_FINALIZE_WARNING slug=${slug} HTTP=${finalize_status}; article remains published."
+              elif ! jq -e '.image.ok == true' /tmp/newsroom-finalize.json >/dev/null 2>&1; then
+                echo "CLUSTERED_NEWSROOM_IMAGE_WARNING slug=${slug}; article remains published and image can be remediated separately."
+              fi
+
               echo "DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=${slug} sources=${source_count} primary=${primary_count} ai_calls=${ai_calls} repair=${repair}"
               exit 0
             fi
