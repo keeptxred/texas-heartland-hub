@@ -176,6 +176,7 @@ export function normalizeNewsroomDraft(value: unknown): unknown {
     dek: typeof value.dek === "string" ? stripGenericExpertAttribution(value.dek) : value.dek,
     summary: typeof value.summary === "string" ? stripGenericExpertAttribution(value.summary) : value.summary,
     relevance: typeof value.relevance === "string" ? stripGenericExpertAttribution(value.relevance) : value.relevance,
+    analysis: typeof value.analysis === "string" ? stripGenericExpertAttribution(value.analysis) : value.analysis,
     sections,
     keyTakeaways,
     faq,
