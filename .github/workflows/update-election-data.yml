@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: election-data-refresh
@@ -150,12 +151,14 @@ jobs:
         if: always()
         shell: bash
         env:
+          GH_TOKEN: ${{ github.token }}
           JOB_STATUS: ${{ job.status }}
           RUN_ID: ${{ github.run_id }}
           RUN_ATTEMPT: ${{ github.run_attempt }}
           RUN_SHA: ${{ github.sha }}
           RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
+          set -euo pipefail
           if [[ "$JOB_STATUS" == "cancelled" ]]; then
             echo "Superseded refresh cancelled; preserving the last completed workflow status."
             exit 0
@@ -189,8 +192,8 @@ jobs:
           );
           NODE
 
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "KeepTXRed Election Refresh"
+          git config user.email "actions@users.noreply.github.com"
 
           if [[ "$JOB_STATUS" == "success" ]]; then
             git add src/data/elections/2026
@@ -202,19 +205,64 @@ jobs:
 
           git restore --worktree .
           if git diff --cached --quiet; then
-            echo "No refresh status or election data changes to commit."
+            echo "No refresh status or election data changes to publish."
             exit 0
           fi
-          unexpected_files="$(git diff --cached --name-only | grep -v '^src/data/elections/2026/' || true)"
+
+          allowed='^src/data/elections/2026/'
+          unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
           if [[ -n "$unexpected_files" ]]; then
-            echo "Refusing to publish files outside the election-data allowlist:"
-            echo "$unexpected_files"
+            echo "Refusing to publish files outside the election-data allowlist:" >&2
+            echo "$unexpected_files" >&2
             exit 1
           fi
-          git commit -m "$message"
+
+          git diff --cached --binary > /tmp/election-data-refresh.patch
+          if [[ ! -s /tmp/election-data-refresh.patch ]]; then
+            echo "No staged election-data patch to publish."
+            exit 0
+          fi
+
           git fetch origin main
-          if [[ "$(git rev-parse HEAD^)" != "$(git rev-parse origin/main)" ]]; then
-            echo "Main advanced during election refresh; refusing to publish stale generated data."
+          git reset --hard origin/main
+          if ! git apply --index --3way /tmp/election-data-refresh.patch; then
+            echo "Fresh election-data patch conflicts with current main; refusing to publish without a new refresh." >&2
             exit 1
           fi
-          git push origin HEAD:main
+
+          unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Reapplied patch touched files outside the election-data allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
+
+          if [[ "$JOB_STATUS" == "success" ]]; then
+            bun run elections:validate
+            bun run elections:qa
+          fi
+
+          if git diff --cached --quiet; then
+            echo "Election data already matches current main."
+            exit 0
+          fi
+
+          refresh_branch='automation/election-data-refresh'
+          git checkout -B "$refresh_branch"
+          git commit -m "$message"
+          git push --force-with-lease origin "$refresh_branch"
+
+          pr_number="$(gh pr list --head "$refresh_branch" --base main --state open --json number --jq '.[0].number // empty')"
+          if [[ -z "$pr_number" ]]; then
+            pr_url="$(gh pr create \
+              --base main \
+              --head "$refresh_branch" \
+              --title "$message" \
+              --body $'Automated Election Central refresh.\n\nThe workflow restricts publication to src/data/elections/2026, rebases the generated-data patch onto current protected main, and reruns election validation and structural QA after the rebase for successful refreshes. Normal branch protection and required checks remain authoritative.')"
+            pr_number="${pr_url##*/}"
+          else
+            echo "Updated existing election data refresh PR #$pr_number."
+          fi
+
+          gh pr merge "$pr_number" --auto --squash
+          echo "Election refresh is queued through protected PR #$pr_number."
