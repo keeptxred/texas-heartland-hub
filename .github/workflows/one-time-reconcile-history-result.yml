@@ -1,0 +1,39 @@
+name: One-time reconciliation dry-run result
+
+on:
+  push:
+    branches:
+      - debug/reconcile-history-result
+
+permissions:
+  contents: write
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: debug/reconcile-history-result
+      - name: Capture dry-run summary
+        run: |
+          set -euo pipefail
+          response="$(curl --retry 3 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error --max-time 90 'https://keeptxred.com/api/public/hooks/reconcile-news-history?days=30&limit=5000')"
+          python3 - "$response" > reconcile-dry-run-result.json <<'PY'
+          import json,sys
+          data=json.loads(sys.argv[1])
+          print(json.dumps({
+            'ok': data.get('ok'), 'mode': data.get('mode'), 'scanned': data.get('scanned'),
+            'planned': data.get('planned'), 'safe': data.get('safe'), 'held': data.get('held'),
+            'holdsQueued': data.get('holdsQueued'), 'aiCalls': data.get('aiCalls'),
+            'articleWrites': data.get('articleWrites'), 'slugChanges': data.get('slugChanges'),
+            'results': [{'canonicalSlug': r.get('canonicalSlug'), 'status': r.get('status'), 'reason': r.get('reason')} for r in data.get('results', [])]
+          }, indent=2))
+          PY
+      - name: Commit captured result
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add reconcile-dry-run-result.json
+          git commit -m 'Capture reconciliation dry-run result'
+          git push origin HEAD:debug/reconcile-history-result
