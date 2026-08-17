@@ -16,6 +16,7 @@ describe("culture image model routing", () => {
   it("uses FLUX native steps schema instead of DreamShaper-only fields", () => {
     expect(cloudflareSource).toContain("model === CLOUDFLARE_CULTURE_IMAGE_MODEL");
     expect(cloudflareSource).toContain("steps: 8");
+    expect(cloudflareSource).toContain("seed: seed");
     expect(cloudflareSource).toContain("Avoid all of the following");
     expect(cloudflareSource).toContain("negative_prompt: negativePrompt");
   });
