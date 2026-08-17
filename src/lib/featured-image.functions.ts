@@ -4,6 +4,7 @@ import { extractEntities } from "@/lib/nlp";
 import {
   buildImagePrompt,
   buildNegativeImagePrompt,
+  inferArticleImageDomain,
   inferDomain,
   parseVisionVerdict,
   type Domain,
@@ -22,7 +23,6 @@ export { buildImagePrompt, buildNegativeImagePrompt, inferDomain, parseVisionVer
 export type { Domain, SubjectExtract, VisionVerdict } from "./featured-image-core";
 
 const BUCKET = "article-images";
-const PURPLE_HEART_IMAGE_URL = "/images/military-honors/purple-heart.svg";
 
 type ArticleRow = {
   slug: string;
@@ -111,7 +111,7 @@ function extractImageSubject(row: ArticleRow, grounding: MultiSourceImageGroundi
   const entities = extractEntities(haystack);
   const locations = [...(row.affected_regions ?? []), ...entities.filter((e) => /houston|dallas|austin|san antonio|fort worth|el paso|rio grande|texas/i.test(e))]
     .filter((v, i, a) => a.indexOf(v) === i);
-  const domain = inferDomain(haystack);
+  const domain = inferArticleImageDomain(`${title} ${row.dek ?? ""}`, haystack);
   const concreteSubject = domain === "legal"
     ? `${title}. A real Texas courthouse or courtroom representing the judicial ruling. ${intro}`.trim()
     : `${title}. ${intro}`.trim();
@@ -120,13 +120,6 @@ function extractImageSubject(row: ArticleRow, grounding: MultiSourceImageGroundi
 
 export function buildAltText(a: { title: string; category?: string | null }): string {
   return `Editorial news photograph for Keep TX Red article: ${a.title}${a.category ? ` — ${a.category}` : ""}`;
-}
-
-function staticFeaturedImage(row: ArticleRow): { url: string; alt: string } | null {
-  const subject = `${row.title} ${row.seo_headline ?? ""} ${row.dek ?? ""}`;
-  return /\bpurple heart\b/i.test(subject)
-    ? { url: PURPLE_HEART_IMAGE_URL, alt: `Purple Heart medal — ${row.title}` }
-    : null;
 }
 
 async function serviceClient() {
@@ -180,17 +173,6 @@ async function loadMultiSourceImageGrounding(db: any, slug: string): Promise<Mul
 
 async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } = {}): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
   const supabase = await serviceClient();
-  const staticImage = staticFeaturedImage(row);
-  if (staticImage) {
-    await supabase.from("daily_articles").update({
-      featured_image_url: staticImage.url,
-      image_alt_text: staticImage.alt,
-      image_generation_status: "ready",
-      image_prompt: null,
-      image_validation_note: "static military-honor asset",
-    }).eq("slug", row.slug);
-    return { ok: true, url: staticImage.url, alt: staticImage.alt };
-  }
   if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
 
   // Multi-source stories must derive their visual subject from durable verified facts.
