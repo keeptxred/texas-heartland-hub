@@ -16,12 +16,14 @@ export type SubjectExtract = {
 
 export type VisionVerdict = { matches: boolean; photorealistic: boolean; reason: string };
 
+const MILITARY_HONORS_RE = /\b(purple heart|medal of honor|military honor(?:s)?|military award(?:s)?|service member(?:s)?|servicemember(?:s)?|fallen (?:service member|servicemember|soldier|marine|airman|sailor|troop|hero)(?:s)?|memorial day|veterans day|veteran(?:s)?|remembrance|military remembrance|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia)\b/i;
+
 const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine)\b/i],
   ["weather", /\b(hurricane|tornado|flood|drought|storm|heat wave|freeze|blizzard|wildfire|rainfall|weather)\b/i],
   ["energy", /\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig)\b/i],
   ["sports", /\b(cowboys|texans|rangers|astros|mavericks|spurs|rockets|stars|nfl|nba|mlb|football|basketball|baseball|playoff)\b/i],
-  ["military", /\b(purple heart|medal of honor|military|army|navy|air force|marines|fort cavazos|soldier|veteran)\b/i],
+  ["military", /\b(purple heart|medal of honor|military|army|navy|air force|airman|marines?|marine corps|coast guard|soldier|sailor|troop|veteran(?:s)?|service member(?:s)?|servicemember(?:s)?|armed forces|military honor(?:s)?|military award(?:s)?|remembrance|memorial|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia|fort cavazos)\b/i],
   ["education", /\b(school|isd|university|college|teacher|classroom|student|curriculum)\b/i],
   ["health", /\b(hospital|clinic|doctor|nurse|patient|disease|virus|outbreak|medicaid|healthcare)\b/i],
   ["transportation", /\b(highway|interstate|traffic|txdot|airport|rail|transit|bridge|road construction)\b/i],
@@ -43,7 +45,7 @@ const DOMAIN_STEER: Record<Domain, string> = {
   weather: "the actual weather event affecting a recognizable Texas landscape",
   energy: "the actual Texas energy infrastructure described in the story",
   sports: "a realistic game-day stadium or athletic action with no logos or identifiable player faces",
-  military: "the specific medal, honor, installation, aircraft, or anonymous military scene named by the story",
+  military: "the actual military subject named in the story; for honors or remembrance coverage, center the specific medal, decoration, folded flag, memorial, or remembrance setting rather than generic bases, aircraft, hangars, or troops",
   education: "a realistic school classroom, hallway, or campus exterior",
   health: "a realistic hospital, clinic, medical campus, or healthcare facility",
   transportation: "the actual road, highway, airport, bridge, rail, or transit infrastructure",
@@ -60,10 +62,14 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   const loc = subject.locations.slice(0, 2).join(", ");
   const correction = extraGuidance ? `Correction from rejected attempt: ${extraGuidance}. ` : "";
   const evidenceLock = subject.evidenceGuidance ? `EVIDENCE CONSTRAINTS: ${subject.evidenceGuidance} ` : "";
+  const isMilitaryHonors = subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`);
+  const militaryHonorsLock = isMilitaryHonors
+    ? "MILITARY HONORS OVERRIDE: This is an honors/remembrance story. Make the named medal, decoration, folded flag, memorial, or remembrance subject dominate the frame. Do not center a politician, government building, press event, generic military base, aircraft, hangar, unrelated combat scene, or generic troops. "
+    : "";
   if (subject.domain === "legal") {
     return `${correction}${evidenceLock}Professional documentary photojournalism photograph, horizontal 16:9. Story: ${subject.title}. Photograph ${DOMAIN_STEER.legal}. Natural daylight or realistic courtroom lighting, 35mm camera, lifelike stone and wood, true photographic depth of field, realistic architecture, neutral news photography. PRIMARY SUBJECT: a believable real Texas courthouse or courtroom representing the judicial ruling. ${loc ? `Location context: ${loc}, Texas.` : "Texas setting."} Election-law context may appear only as subtle ordinary paperwork or voting materials in the background. Do not use a politician, Texas-shaped graphic, map, flagpole, capitol dome, campaign rally, podium, poster, illustration, vector art, cartoon, infographic, collage, text overlay, seal, logo, or symbolic state graphic.`.slice(0, 1800);
   }
-  return `${correction}${evidenceLock}Professional photorealistic editorial news photograph, horizontal 16:9, documentary photojournalism, natural lighting, realistic textures, believable perspective and depth of field. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER[subject.domain]}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting where relevant."} One coherent real-world scene. No illustration, vector art, cartoon, infographic, collage, poster, text overlay, watermark, logo, generic symbolic placeholder, or fabricated recognizable face.`.slice(0, 1800);
+  return `${correction}${evidenceLock}${militaryHonorsLock}Professional photorealistic editorial news photograph, horizontal 16:9, documentary photojournalism, natural lighting, realistic textures, believable perspective and depth of field. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER[subject.domain]}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting where relevant."} One coherent real-world scene. No illustration, vector art, cartoon, infographic, collage, poster, text overlay, watermark, logo, generic symbolic placeholder, or fabricated recognizable face.`.slice(0, 1800);
 }
 
 export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason = ""): string {
@@ -80,6 +86,10 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
   if (subject.domain === "legal") items.push(
     "Texas state silhouette", "Texas-shaped graphic", "map of Texas", "politician", "candidate", "campaign rally",
     "podium", "flagpole", "capitol dome", "election icon", "ballot illustration", "government seal",
+  );
+  if (subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.push(
+    "politician", "governor", "press conference", "capitol building", "government signing ceremony",
+    "generic military base", "generic aircraft", "hangar", "unrelated combat", "generic troops",
   );
   if (rejectedReason) items.push(`rejected visual motif: ${rejectedReason.slice(0, 240)}`);
   return items.join(", ").slice(0, 1500);
