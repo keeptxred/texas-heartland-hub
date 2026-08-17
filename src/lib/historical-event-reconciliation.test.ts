@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  historicalArticleOwnershipCompatible,
   historicalEventIdentityCompatible,
   planHistoricalReconciliation,
   type HistoricalFeedItem,
@@ -64,6 +65,53 @@ describe("historical event reconciliation", () => {
 
     expect(historicalEventIdentityCompatible(mayor, tickets)).toBe(false);
     expect(planHistoricalReconciliation([mayor, tickets])).toEqual([]);
+  });
+
+  it("rejects a different named award even when generic watch-list wording overlaps", () => {
+    const rayGuy = row({
+      id: 47270,
+      title: "Chance Added to Ray Guy Award Preseason Watch List",
+      link: "https://gofrogs.com/ray-guy",
+      source: "TCU Athletics",
+      internal_slug: "ray-guy-watch-list",
+    });
+    const hornung = row({
+      id: 36592,
+      title: "Tyre Named to Paul Hornung Award Preseason Watch List",
+      link: "https://meangreensports.com/paul-hornung",
+      source: "North Texas Athletics",
+    });
+
+    expect(historicalEventIdentityCompatible(rayGuy, hornung)).toBe(false);
+    expect(planHistoricalReconciliation([rayGuy, hornung])).toEqual([]);
+  });
+
+  it("validates a slug-owning row against published editorial evidence", () => {
+    const austin = row({
+      id: 88556,
+      title: "Two Austin ISD schools receive fifth consecutive F accountability rating",
+      link: "https://news.google.com/austin-isd",
+      source: "KXAN Austin",
+      internal_slug: "austin-isd-future",
+      description: "Two Austin ISD schools received fifth consecutive F ratings and face potential state intervention.",
+    });
+    const badDataCenter = row({
+      id: 41817,
+      title: "Governor Abbott Announces Amazon, Lancium And Cipher Digital Commit To Comply With His Data Center Standards",
+      link: "https://gov.texas.gov/data-centers",
+      source: "Office of the Governor",
+      internal_slug: "texas-airports-review",
+    });
+
+    expect(historicalArticleOwnershipCompatible(austin, {
+      title: "Austin ISD's Future Hangs in the Balance",
+      bodyText: "Austin ISD schools received fifth consecutive F ratings, triggering potential Texas Education Agency intervention and a state takeover.",
+    })).toBe(true);
+
+    expect(historicalArticleOwnershipCompatible(badDataCenter, {
+      title: "Texas Airports Face Review Over Religious Facilities",
+      bodyText: "Texas airports face a review of state grants over alleged religious discrimination and airport ablution facilities.",
+    })).toBe(false);
   });
 
   it("never steals rows already owned by the modern event cluster system", () => {
