@@ -1,6 +1,7 @@
 // Repository and production-site broken-link audit for KeepTXRed.
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
+import { isNavigationalPath, shouldScanRuntimeLinks } from './broken-link-scan-scope.mjs';
 
 const ROOT = process.cwd();
 const SITE = process.env.AUDIT_SITE_URL || 'https://keeptxred.com';
@@ -47,7 +48,8 @@ function normalizeInternal(raw) {
   try {
     const url = new URL(raw, SITE);
     if (!['keeptxred.com', 'www.keeptxred.com'].includes(url.hostname)) return null;
-    return url.pathname.replace(/\/{2,}/g, '/') || '/';
+    const pathname = url.pathname.replace(/\/{2,}/g, '/') || '/';
+    return isNavigationalPath(pathname) ? pathname : null;
   } catch {
     return null;
   }
@@ -74,6 +76,7 @@ async function staticAudit() {
     const absolute = path.join(ROOT, root);
     try { await fs.access(absolute); } catch { continue; }
     for (const file of await walk(absolute)) {
+      if (!shouldScanRuntimeLinks(file)) continue;
       const text = await fs.readFile(file, 'utf8');
       const lines = text.split(/\r?\n/);
       lines.forEach((line, index) => {
