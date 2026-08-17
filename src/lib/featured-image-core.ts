@@ -74,6 +74,9 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   if (subject.domain === "legal") {
     return `${correction}${evidenceLock}Professional documentary photojournalism photograph, horizontal 16:9. Story: ${subject.title}. Photograph ${DOMAIN_STEER.legal}. Natural daylight or realistic courtroom lighting, 35mm camera, lifelike stone and wood, true photographic depth of field, realistic architecture, neutral news photography. PRIMARY SUBJECT: a believable real Texas courthouse or courtroom representing the judicial ruling. ${loc ? `Location context: ${loc}, Texas.` : "Texas setting."} Election-law context may appear only as subtle ordinary paperwork or voting materials in the background. Do not use a politician, Texas-shaped graphic, map, flagpole, capitol dome, campaign rally, podium, poster, illustration, vector art, cartoon, infographic, collage, text overlay, seal, logo, or symbolic state graphic.`.slice(0, 1800);
   }
+  if (subject.domain === "culture") {
+    return `${correction}${evidenceLock}REAL DOCUMENTARY PHOTOGRAPH ONLY, horizontal 16:9, candid Texas event photojournalism captured with a physical 35mm camera, natural daylight, realistic lens depth, real materials, real food and real venue architecture. Story: ${subject.title}. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER.culture}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting."} For a festival move or planned event, prefer a believable outdoor venue, festival-ground preparation, food-vendor setup, tables, tents, or ordinary event infrastructure rather than inventing a packed crowd. The image must look like an unedited newspaper photograph, not promotional artwork. Absolutely no event flyer, advertisement, poster, banner, signboard, mascot, giant novelty object, typography, readable words, title text, logo, vector shapes, illustration, painting, cartoon, collage, or graphic design.`.slice(0, 1800);
+  }
   return `${correction}${evidenceLock}${militaryHonorsLock}Professional photorealistic editorial news photograph, horizontal 16:9, documentary photojournalism, natural lighting, realistic textures, believable perspective and depth of field. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER[subject.domain]}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting where relevant."} One coherent real-world scene. No illustration, vector art, cartoon, infographic, collage, poster, text overlay, watermark, logo, generic symbolic placeholder, or fabricated recognizable face.`.slice(0, 1800);
 }
 
@@ -95,6 +98,10 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
   if (subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.push(
     "politician", "governor", "press conference", "capitol building", "government signing ceremony",
     "generic military base", "generic aircraft", "hangar", "unrelated combat", "generic troops",
+  );
+  if (subject.domain === "culture") items.push(
+    "event flyer", "advertisement", "promotional graphic", "event poster", "banner", "signboard",
+    "readable signage", "typography", "mascot", "giant novelty object", "oversized food mascot",
   );
   if (rejectedReason) items.push(`rejected visual motif: ${rejectedReason.slice(0, 240)}`);
   return items.join(", ").slice(0, 1500);
