@@ -1,23 +1,59 @@
 name: Run Daily News Now
 
-# Production publisher: try ranked stories until one publishes, then use the reserve safety net if needed.
+# Production publisher: prioritize eligible overdue newsroom gaps, then try
+# ranked RSS stories, then use the reserve safety net if needed.
 on:
   schedule:
-    - cron: "15 12 * * *"
+    - cron: "15 */8 * * *"
   workflow_dispatch:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - name: Invoke production daily news publisher (one ranked story per request)
+      - name: Publish overdue newsroom gaps before RSS fallback
         shell: bash
         run: |
           set -euo pipefail
+
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
+          oidc_token=$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')
+
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+            exit 1
+          fi
+
+          gap_status=$(curl -sS -X POST -o /tmp/overdue-gap.json -w '%{http_code}' \
+            --max-time 360 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            'https://keeptxred.com/api/public/hooks/publish-overdue-gap' || echo 000)
+
+          echo "overdue-gap HTTP ${gap_status}"
+          cat /tmp/overdue-gap.json 2>/dev/null || true
+          echo
+
+          if [[ "$gap_status" != "200" ]] || ! jq -e '.ok == true' /tmp/overdue-gap.json >/dev/null 2>&1; then
+            echo 'OVERDUE_GAP_PUBLISHER_FAILED'
+            exit 1
+          fi
+
+          overdue_published=$(jq -r '.published // 0' /tmp/overdue-gap.json)
+          if [[ "$overdue_published" -gt 0 ]]; then
+            echo "DAILY_NEWS_PUBLISH_SUCCESS overdue_published=${overdue_published}"
+            exit 0
+          fi
+
+          echo 'No overdue gap published; continuing to ranked RSS publisher.'
+
           base='https://keeptxred.com/api/public/hooks/generate-news'
           inserted=0
           failed=0
