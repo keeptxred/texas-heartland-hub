@@ -1,0 +1,68 @@
+name: One-time rewrite source consistency fix
+
+on:
+  push:
+    branches:
+      - fix/rewrite-source-consistency-current
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/rewrite-source-consistency-current
+          fetch-depth: 0
+      - name: Patch rewrite source consistency
+        shell: python
+        run: |
+          from pathlib import Path
+
+          preflight_path = Path('src/lib/rewrite-preflight.ts')
+          preflight = preflight_path.read_text()
+          replacements = [
+            (
+              'function normalize(text: string | null | undefined): string {\n  return (text ?? "").replace(/\\s+/g, " ").trim();\n}\n\nfunction wordCount(text: string): number {\n  const t = text.trim();\n  if (!t) return 0;\n  return t.split(/\\s+/).length;\n}',
+              '/** Normalizes the exact text that may be counted, displayed and rewritten. */\nexport function normalizeUsableSourceText(text: string | null | undefined): string {\n  return (text ?? "").replace(/\\s+/g, " ").trim();\n}\n\n/** Single source of truth for rewrite-source word counts. */\nexport function countUsableSourceWords(text: string | null | undefined): number {\n  const normalized = normalizeUsableSourceText(text);\n  if (!normalized) return 0;\n  return normalized.split(/\\s+/).filter(Boolean).length;\n}',
+            ),
+            ('const words = wordCount(text);', 'const words = countUsableSourceWords(text);'),
+            ('const title = normalize(input.title);\n  const body = normalize(input.description);\n  const words = wordCount(body);', 'const title = normalizeUsableSourceText(input.title);\n  const body = normalizeUsableSourceText(input.description);\n  const words = countUsableSourceWords(body);'),
+          ]
+          for old, new in replacements:
+            count = preflight.count(old)
+            if count != 1:
+              raise SystemExit(f'preflight expected exactly one match, found {count}: {old[:120]!r}')
+            preflight = preflight.replace(old, new, 1)
+          preflight_path.write_text(preflight)
+
+          resolver = Path('src/lib/rewrite-source.ts')
+          resolver.write_text('''import {\n  ABSOLUTE_MIN_SOURCE_WORDS,\n  countUsableSourceWords,\n  normalizeUsableSourceText,\n} from "@/lib/rewrite-preflight";\n\nexport type RewriteSourceKind =\n  | "cached-extraction"\n  | "stored-description"\n  | "reddit-selftext"\n  | "linked-article"\n  | "none";\n\nexport type RewriteSourceInput = {\n  cachedExtraction?: string | null;\n  storedDescription?: string | null;\n  redditSelftext?: string | null;\n  linkedArticleText?: string | null;\n  linkedArticleUrl?: string | null;\n};\n\nexport type ResolvedRewriteSource = {\n  text: string;\n  wordCount: number;\n  primaryKind: RewriteSourceKind;\n  includedKinds: RewriteSourceKind[];\n  meetsAbsoluteMinimum: boolean;\n};\n\ntype Candidate = { kind: Exclude<RewriteSourceKind, "cached-extraction" | "none">; text: string };\n\nexport function resolveRewriteSource(input: RewriteSourceInput): ResolvedRewriteSource {\n  const cached = normalizeUsableSourceText(input.cachedExtraction);\n  if (cached) {\n    const wordCount = countUsableSourceWords(cached);\n    return {\n      text: cached,\n      wordCount,\n      primaryKind: "cached-extraction",\n      includedKinds: ["cached-extraction"],\n      meetsAbsoluteMinimum: wordCount >= ABSOLUTE_MIN_SOURCE_WORDS,\n    };\n  }\n\n  const candidates: Candidate[] = [\n    { kind: "stored-description", text: normalizeUsableSourceText(input.storedDescription) },\n    { kind: "reddit-selftext", text: normalizeUsableSourceText(input.redditSelftext) },\n    { kind: "linked-article", text: normalizeUsableSourceText(input.linkedArticleText) },\n  ];\n  const seen = new Set<string>();\n  const unique = candidates.filter((candidate) => {\n    if (!candidate.text) return false;\n    const key = candidate.text.toLowerCase();\n    if (seen.has(key)) return false;\n    seen.add(key);\n    return true;\n  });\n\n  if (!unique.length) {\n    return { text: "", wordCount: 0, primaryKind: "none", includedKinds: [], meetsAbsoluteMinimum: false };\n  }\n\n  const parts = unique.map((candidate) => {\n    if (candidate.kind === "reddit-selftext") return `REDDIT SELFTEXT:\\n${candidate.text}`;\n    if (candidate.kind === "linked-article") {\n      const suffix = input.linkedArticleUrl ? ` (${input.linkedArticleUrl})` : "";\n      return `LINKED SOURCE${suffix}:\\n${candidate.text}`;\n    }\n    return candidate.text;\n  });\n  const text = normalizeUsableSourceText(parts.join("\\n\\n"));\n  const wordCount = countUsableSourceWords(text);\n  const primary = [...unique].sort((a, b) => countUsableSourceWords(b.text) - countUsableSourceWords(a.text))[0];\n  return {\n    text,\n    wordCount,\n    primaryKind: primary?.kind ?? "none",\n    includedKinds: unique.map((candidate) => candidate.kind),\n    meetsAbsoluteMinimum: wordCount >= ABSOLUTE_MIN_SOURCE_WORDS,\n  };\n}\n''')
+
+          legacy_path = Path('src/lib/ingest-feeds-legacy.ts')
+          legacy = legacy_path.read_text()
+          old = '''  let extractedBody: string = cachedBody;\n  let extractionFailureStage: "extraction" | "preflight" | "none" = "none";\n\n  if (isRedditLink(item.link) && !extractedBody) {\n    // Reddit RSS descriptions rarely contain the post body — pull selftext from\n    // the public JSON endpoint so the AI rewrite has real source material.\n    // Refuse to publish headline-only Reddit posts rather than fabricating facts.\n    const { selftext, externalUrl } = await fetchRedditPostData(item.link);\n    const selftextMeaningful = !!selftext && wordCount(selftext) >= 40;\n    let linkedText: string | null = null;\n    let linkedFrom: string | null = null;\n    if (!selftextMeaningful && externalUrl) {\n      const fetched = await fetchLinkedArticleText(externalUrl);\n      if (fetched && wordCount(fetched) >= 80) {\n        linkedText = fetched;\n        linkedFrom = externalUrl;\n      }\n    }\n    if (!selftextMeaningful && !linkedText) {\n      extractionFailureStage = "extraction";\n      const { assessRewritePreflight: preflightAssess, toPersistedSnapshot } =\n        await import("@/lib/rewrite-preflight");\n      const blocked = preflightAssess({ title: item.title, description: "", link: item.link });\n      await supabaseAdmin\n        .from("texas_news_feed")\n        .update({ preflight_json: toPersistedSnapshot(blocked, extractionFailureStage) } as never)\n        .eq("id", feedItemId);\n      return {\n        ok: false,\n        error:\n          "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",\n      };\n    }\n    const parts: string[] = [];\n    const base = item.description?.trim() ?? "";\n    if (base) parts.push(base);\n    if (selftextMeaningful) parts.push(`REDDIT SELFTEXT:\\n${selftext}`);\n    if (linkedText) parts.push(`LINKED SOURCE (${linkedFrom}):\\n${linkedText}`);\n    extractedBody = parts.join("\\n\\n");\n  } else if (!extractedBody) {'''
+          new = '''  let extractedBody: string = cachedBody;\n  let extractionFailureStage: "extraction" | "preflight" | "none" = "none";\n  let resolvedSourceWordCount: number | null = null;\n\n  if (isRedditLink(item.link)) {\n    // Resolve the exact Reddit source once so extraction, preflight and the AI\n    // rewrite all use and count the same text. Cached extraction remains authoritative.\n    let selftext: string | null = null;\n    let externalUrl: string | null = null;\n    let linkedText: string | null = null;\n    if (!cachedBody) {\n      const redditData = await fetchRedditPostData(item.link);\n      selftext = redditData.selftext;\n      externalUrl = redditData.externalUrl;\n      if (externalUrl) linkedText = await fetchLinkedArticleText(externalUrl);\n    }\n    const { resolveRewriteSource } = await import("@/lib/rewrite-source");\n    const resolvedSource = resolveRewriteSource({\n      cachedExtraction: cachedBody,\n      storedDescription: item.description,\n      redditSelftext: selftext,\n      linkedArticleText: linkedText,\n      linkedArticleUrl: externalUrl,\n    });\n    extractedBody = resolvedSource.text;\n    resolvedSourceWordCount = resolvedSource.wordCount;\n\n    if (!resolvedSource.meetsAbsoluteMinimum) {\n      extractionFailureStage = "extraction";\n      const { assessRewritePreflight: preflightAssess, toPersistedSnapshot } =\n        await import("@/lib/rewrite-preflight");\n      const blocked = preflightAssess({ title: item.title, description: resolvedSource.text, link: item.link });\n      await supabaseAdmin\n        .from("texas_news_feed")\n        .update({ preflight_json: toPersistedSnapshot(blocked, extractionFailureStage) } as never)\n        .eq("id", feedItemId);\n      return {\n        ok: false,\n        error: "This Reddit post does not contain enough text to generate a factual KeepTXRed article.",\n      };\n    }\n  } else if (!extractedBody) {'''
+          count = legacy.count(old)
+          if count != 1:
+            raise SystemExit(f'legacy Reddit block expected exactly one match, found {count}')
+          legacy = legacy.replace(old, new, 1)
+          old_log = '    extracted_body_words: wordCount(extractedBody),'
+          if legacy.count(old_log) != 1:
+            raise SystemExit('legacy extracted_body_words match failed')
+          legacy = legacy.replace(old_log, '    extracted_body_words: resolvedSourceWordCount ?? wordCount(extractedBody),', 1)
+          legacy_path.write_text(legacy)
+
+          test = Path('src/lib/rewrite-source.test.ts')
+          test.write_text('''import { describe, expect, it } from "vitest";\nimport {\n  ABSOLUTE_MIN_SOURCE_WORDS,\n  assessRewritePreflight,\n  countUsableSourceWords,\n} from "./rewrite-preflight";\nimport { resolveRewriteSource } from "./rewrite-source";\n\nfunction words(count: number): string {\n  return Array.from({ length: count }, (_, index) => `word${index + 1}`).join(" ");\n}\n\ndescribe("rewrite source consistency", () => {\n  it("uses a stored Reddit description when it alone clears the absolute floor", () => {\n    const resolved = resolveRewriteSource({ storedDescription: words(163) });\n    expect(resolved.primaryKind).toBe("stored-description");\n    expect(resolved.wordCount).toBe(163);\n    expect(resolved.meetsAbsoluteMinimum).toBe(true);\n  });\n\n  it("gives cached extraction precedence over fetched candidates", () => {\n    const resolved = resolveRewriteSource({\n      cachedExtraction: words(180),\n      storedDescription: words(163),\n      redditSelftext: words(220),\n      linkedArticleText: words(300),\n    });\n    expect(resolved.primaryKind).toBe("cached-extraction");\n    expect(resolved.includedKinds).toEqual(["cached-extraction"]);\n    expect(resolved.wordCount).toBe(180);\n  });\n\n  it("deduplicates identical stored description and selftext", () => {\n    const duplicate = words(ABSOLUTE_MIN_SOURCE_WORDS + 5);\n    const resolved = resolveRewriteSource({ storedDescription: duplicate, redditSelftext: duplicate });\n    expect(resolved.includedKinds).toEqual(["stored-description"]);\n    expect(resolved.wordCount).toBe(ABSOLUTE_MIN_SOURCE_WORDS + 5);\n  });\n\n  it("preserves a linked article URL in the rewrite source", () => {\n    const resolved = resolveRewriteSource({\n      linkedArticleText: words(170),\n      linkedArticleUrl: "https://example.com/report",\n    });\n    expect(resolved.text).toContain("LINKED SOURCE (https://example.com/report):");\n  });\n\n  it("uses the same normalized count as preflight", () => {\n    const source = resolveRewriteSource({ storedDescription: words(165) });\n    const preflight = assessRewritePreflight({\n      title: "Texas officials announced an update",\n      description: source.text,\n      link: "https://example.com/story",\n    });\n    expect(preflight.sourceWordCount).toBe(source.wordCount);\n    expect(countUsableSourceWords(source.text)).toBe(source.wordCount);\n  });\n});\n''')
+      - name: Commit patch and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/one-time-rewrite-source-consistency.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/lib/rewrite-preflight.ts src/lib/rewrite-source.ts src/lib/ingest-feeds-legacy.ts src/lib/rewrite-source.test.ts .github/workflows/one-time-rewrite-source-consistency.yml
+          git commit -m 'Unify rewrite source text and word counting'
+          git push origin HEAD:fix/rewrite-source-consistency-current
