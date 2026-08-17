@@ -6,6 +6,7 @@ import { isNavigationalPath, shouldScanRuntimeLinks } from './broken-link-scan-s
 
 const ROOT = process.cwd();
 const ROUTES_ROOT = path.join(ROOT, 'src', 'routes');
+const PUBLIC_ROOT = path.join(ROOT, 'public');
 const SITE = process.env.AUDIT_SITE_URL || 'https://keeptxred.com';
 const LIVE = process.argv.includes('--live');
 const SCAN_ROOTS = ['src', 'public', 'scripts', 'supabase'];
@@ -30,6 +31,27 @@ async function walk(dir) {
     else if (TEXT_EXTENSIONS.has(path.extname(entry.name))) files.push(full);
   }
   return files;
+}
+
+async function walkAllFiles(dir) {
+  const entries = await fs.readdir(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    if (['node_modules', '.git', 'dist', '.output', 'coverage'].includes(entry.name)) continue;
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) files.push(...await walkAllFiles(full));
+    else files.push(full);
+  }
+  return files;
+}
+
+async function collectPublicAssetPaths() {
+  try {
+    const files = await walkAllFiles(PUBLIC_ROOT);
+    return new Set(files.map((file) => `/${path.relative(PUBLIC_ROOT, file).replace(/\\/g, '/')}`));
+  } catch {
+    return new Set();
+  }
 }
 
 function routeRegexFromFile(file) {
@@ -83,6 +105,7 @@ function extractLinks(text) {
 async function staticAudit() {
   const routeFiles = await walk(ROUTES_ROOT);
   const routeRegexes = routeFiles.map(routeRegexFromFile).filter(Boolean);
+  const publicAssetPaths = await collectPublicAssetPaths();
   const findings = [];
   for (const root of SCAN_ROOTS) {
     const absolute = path.join(ROOT, root);
@@ -97,7 +120,8 @@ async function staticAudit() {
           if (!pathname || IGNORE_PREFIXES.some((prefix) => pathname.startsWith(prefix))) continue;
           const retired = RETIRED_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + '/'));
           const matched = routeRegexes.some((regex) => regex.test(pathname));
-          if (retired || !matched) findings.push({
+          const publicAsset = publicAssetPaths.has(decodeURIComponent(pathname));
+          if (retired || (!matched && !publicAsset)) findings.push({
             type: retired ? 'retired-internal-link' : 'unmatched-internal-route',
             severity: retired ? 'migration-debt' : 'blocking',
             file: path.relative(ROOT, file), line: index + 1, raw, pathname,
