@@ -10,10 +10,11 @@ export default defineConfig(({ mode }) => {
   const supabaseUrl = env.SUPABASE_URL || env.VITE_SUPABASE_URL;
   const supabasePublishableKey =
     env.SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const remoteBindings = env.CLOUDFLARE_VITE_REMOTE_BINDINGS !== "false";
 
   return {
     plugins: [
-      cloudflare({ viteEnvironment: { name: "ssr" } }),
+      cloudflare({ viteEnvironment: { name: "ssr" }, remoteBindings }),
       tanstackStart(),
       tsConfigPaths(),
       tailwindcss(),
