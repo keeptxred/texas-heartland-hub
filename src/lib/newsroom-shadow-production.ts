@@ -171,6 +171,16 @@ export function evaluateNewsroomShadowProduction(input: {
   const shadowDrafts = input.drafts.filter((draft) => draft.mode === "shadow");
   const generatedDrafts = shadowDrafts.filter((draft) => draft.status === "GENERATED");
   const rejectedDrafts = shadowDrafts.filter((draft) => draft.status === "REJECTED");
+  const completedShadowDrafts = shadowDrafts
+    .filter((draft) => draft.status === "GENERATED" || draft.status === "REJECTED")
+    .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt));
+  const currentValidationCohort = completedShadowDrafts.slice(0, MIN_SHADOW_DRAFTS);
+  const currentGeneratedDrafts = currentValidationCohort.filter((draft) => draft.status === "GENERATED");
+  const currentRejectedDrafts = currentValidationCohort.filter((draft) => draft.status === "REJECTED");
+  const currentValidationPassRate = pct(
+    currentGeneratedDrafts.length,
+    currentGeneratedDrafts.length + currentRejectedDrafts.length,
+  );
   const wordCounts = shadowDrafts
     .map((draft) => draft.mainWordCount)
     .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
@@ -214,17 +224,17 @@ export function evaluateNewsroomShadowProduction(input: {
     {
       key: "shadow_sample",
       label: "AI shadow sample",
-      passed: shadowDrafts.length >= MIN_SHADOW_DRAFTS,
-      detail: `${shadowDrafts.length} shadow drafts observed; minimum ${MIN_SHADOW_DRAFTS} required before controlled launch.`,
+      passed: currentValidationCohort.length >= MIN_SHADOW_DRAFTS,
+      detail: `${currentValidationCohort.length} completed drafts in the current validation cohort; minimum ${MIN_SHADOW_DRAFTS} required before controlled launch.`,
     },
   ];
 
-  if (shadowDrafts.length > 0) {
+  if (currentValidationCohort.length > 0) {
     readiness.push({
       key: "draft_validation",
       label: "Shadow draft validation",
-      passed: validationPassRate >= 80,
-      detail: `${validationPassRate}% of ${generatedDrafts.length + rejectedDrafts.length} completed shadow drafts passed validation.`,
+      passed: currentValidationCohort.length >= MIN_SHADOW_DRAFTS && currentValidationPassRate >= 80,
+      detail: `${currentValidationPassRate}% of the latest ${currentValidationCohort.length} completed shadow drafts passed validation.`,
     });
   }
 
