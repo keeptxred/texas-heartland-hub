@@ -12,6 +12,8 @@ describe("reconcile news history hook", () => {
     expect(source).toContain("if (apply && !isAuthorizedApply(request))");
     expect(source).toContain("NEWSROOM_HOOK_TOKEN");
     expect(source).toContain("ADMIN_PASSCODE");
+    expect(source).toContain("SUPABASE_SERVICE_ROLE_KEY");
+    expect(source).toContain('request.headers.get("x-reconcile-service-role-key") === serviceRoleKey');
   });
 
   it("pages beyond the Supabase 1000-row response cap", () => {
