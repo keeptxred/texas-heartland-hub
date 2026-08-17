@@ -5,6 +5,7 @@ import {
 } from '@/lib/bill-documents';
 
 const SITE_URL = 'https://keeptxred.com';
+const TEXAS_LEGISLATURE_URL = 'https://capitol.texas.gov';
 
 type BillReferenceRecord = {
   legislature_number: number;
@@ -59,6 +60,17 @@ export type BillPrimarySourceReference = {
   }>;
 };
 
+export function texasLegislatureBillHistoryUrl(bill: BillReferenceRecord) {
+  const legislature = Number(bill.legislature_number);
+  const session = String(bill.session_code || 'R').trim().toUpperCase();
+  const billType = String(bill.bill_type).trim().toUpperCase();
+  const billNumber = Number(bill.bill_number);
+  const legSess = `${legislature}${session}`;
+  const identifier = `${billType}${billNumber}`;
+
+  return `${TEXAS_LEGISLATURE_URL}/billlookup/History.aspx?Bill=${encodeURIComponent(identifier)}&LegSess=${encodeURIComponent(legSess)}`;
+}
+
 export function buildBillPrimarySourceReference(
   bill: BillReferenceRecord,
   actions: readonly BillActionRecord[],
@@ -101,7 +113,7 @@ export function buildBillPrimarySourceReference(
     title: bill.caption,
     status: bill.current_status_label || bill.current_status_code || null,
     canonicalUrl,
-    officialBillUrl: bill.source_url || null,
+    officialBillUrl: texasLegislatureBillHistoryUrl(bill),
     lastActionDate: bill.last_action_date || null,
     lastSyncedAt: bill.last_synced_at || null,
     documents: publicDocuments,
