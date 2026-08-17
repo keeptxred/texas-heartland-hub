@@ -1,6 +1,15 @@
 name: Authority JSON Production Smoke
 
 on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/authority-json-production-smoke.yml'
+      - 'src/routes/elections.reference[.]json.ts'
+      - 'src/lib/elections/referenceExport.ts'
+      - 'src/routes/bills/texas/**'
+      - 'src/lib/bill-primary-source-reference.ts'
+      - 'public/citation-magnets.json'
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
@@ -13,7 +22,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: authority-json-production-smoke
+  group: authority-json-production-smoke-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
