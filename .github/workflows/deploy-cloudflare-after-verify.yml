@@ -196,6 +196,61 @@ jobs:
             -o /dev/null "$PRODUCTION_URL/"
           echo "Production homepage reachable"
 
+      - name: Verify authority reference endpoints
+        if: steps.revision.outputs.deploy == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          verify_reference() {
+            local url="$1"
+            local kind="$2"
+            local headers body
+            headers="$(mktemp)"
+            body="$(mktemp)"
+            trap 'rm -f "$headers" "$body"' RETURN
+            curl --retry 10 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+              -D "$headers" -o "$body" "$url"
+            python3 - "$headers" "$body" "$kind" "$url" <<'PY'
+          import json, re, sys
+          headers_path, body_path, kind, url = sys.argv[1:]
+          with open(headers_path, encoding='utf-8') as fh:
+              headers = fh.read().lower()
+          if 'content-type: application/json' not in headers:
+              raise SystemExit(f'{kind} reference is not JSON: {headers!r}')
+          if 'x-robots-tag:' not in headers or 'noindex' not in headers:
+              raise SystemExit(f'{kind} reference lost noindex protection: {headers!r}')
+          with open(body_path, encoding='utf-8') as fh:
+              data = json.load(fh)
+          if not isinstance(data, dict) or not data:
+              raise SystemExit(f'{kind} reference payload is empty or not an object')
+          forbidden = re.compile(r'(service.?role|supabase|database.?id|internal.?id|ingestion|editorial.?metadata)', re.I)
+          def walk(value, path='root'):
+              if isinstance(value, dict):
+                  for key, child in value.items():
+                      if forbidden.search(str(key)):
+                          raise SystemExit(f'{kind} reference exposes forbidden field {path}.{key}')
+                      walk(child, f'{path}.{key}')
+              elif isinstance(value, list):
+                  for index, child in enumerate(value):
+                      walk(child, f'{path}[{index}]')
+          walk(data)
+          if kind == 'bill':
+              if data.get('schemaVersion') != 1 or data.get('site') != 'Keep TX Red' or data.get('jurisdiction') != 'Texas':
+                  raise SystemExit(f'Unexpected bill reference contract: {data!r}')
+              if data.get('canonicalUrl') != 'https://keeptxred.com/bills/texas/89/hb/1':
+                  raise SystemExit(f'Unexpected bill canonical URL: {data.get("canonicalUrl")!r}')
+              official = data.get('officialBillUrl')
+              if not isinstance(official, str) or 'capitol.texas.gov' not in official:
+                  raise SystemExit(f'Bill reference lacks official Texas Legislature source: {official!r}')
+              if not isinstance(data.get('documents'), list) or not isinstance(data.get('actions'), list):
+                  raise SystemExit('Bill reference documents/actions contract is invalid')
+          print(f'{kind} authority reference passed: {url}')
+          PY
+          }
+
+          verify_reference "$PRODUCTION_URL/elections/reference.json" election
+          verify_reference "$PRODUCTION_URL/bills/texas/89/hb/1/reference.json" bill
+
       - name: Apply guarded one-time news history reconciliation
         if: steps.revision.outputs.deploy == 'true'
         shell: bash
@@ -214,12 +269,13 @@ jobs:
           endpoint="$PRODUCTION_URL/api/public/hooks/reconcile-news-history?days=30&limit=5000"
           dry_file="$(mktemp)"
           apply_file="$(mktemp)"
-          trap 'rm -f "$dry_file" "$apply_file"' EXIT
+          pending_file="$(mktemp)"
+          trap 'rm -f "$dry_file" "$apply_file" "$pending_file"' EXIT
 
           curl --retry 4 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error \
             --max-time 90 -o "$dry_file" "$endpoint"
 
-          python3 - "$dry_file" <<'PY'
+          python3 - "$dry_file" "$pending_file" <<'PY'
           import json, sys
           with open(sys.argv[1], encoding='utf-8') as fh:
               data = json.load(fh)
@@ -227,20 +283,40 @@ jobs:
               '2026-08-14-austin-isd-s-future-hangs-in-the-balance-ebpaee',
               '2026-08-17-texas-college-football-players-named-to-2026-ray-guy-award-watch-list',
           }
-          safe = {
-              row.get('canonicalSlug')
-              for row in data.get('results', [])
-              if row.get('status') == 'would_backfill'
-          }
           if data.get('ok') is not True or data.get('mode') != 'dry-run':
               raise SystemExit(f'Unexpected dry-run response: {data!r}')
-          if safe != expected:
-              raise SystemExit(f'Reconciliation safe-set changed; refusing apply. expected={sorted(expected)!r} actual={sorted(x for x in safe if x)!r}')
           for key in ('aiCalls', 'articleWrites', 'slugChanges'):
               if data.get(key) != 0:
                   raise SystemExit(f'Dry-run safety invariant failed: {key}={data.get(key)!r}')
-          print(f"Dry-run safe set verified: {sorted(expected)}")
+          results = data.get('results', [])
+          safe = {
+              row.get('canonicalSlug')
+              for row in results
+              if row.get('status') == 'would_backfill' and row.get('canonicalSlug')
+          }
+          unexpected = safe - expected
+          if unexpected:
+              raise SystemExit(f'Unexpected new reconciliation candidates; refusing apply: {sorted(unexpected)!r}')
+          degraded = [
+              (row.get('canonicalSlug'), row.get('status'), row.get('reason'))
+              for row in results
+              if row.get('canonicalSlug') in expected
+              and row.get('status') not in {'would_backfill'}
+              and (str(row.get('status', '')).startswith('hold') or str(row.get('status', '')).startswith('failed'))
+          ]
+          if degraded:
+              raise SystemExit(f'Expected reconciliation candidate degraded into hold/failure: {degraded!r}')
+          with open(sys.argv[2], 'w', encoding='utf-8') as fh:
+              json.dump(sorted(safe), fh)
+          completed = expected - safe
+          print(f'Pending verified reconciliation candidates: {sorted(safe)!r}')
+          print(f'Expected candidates already complete/absent: {sorted(completed)!r}')
           PY
+
+          if [[ "$(cat "$pending_file")" == '[]' ]]; then
+            echo 'Verified one-time reconciliation is already complete; no apply required.'
+            exit 0
+          fi
 
           curl --retry 4 --retry-delay 2 --retry-all-errors --fail-with-body --silent --show-error \
             --max-time 90 -o "$apply_file" \
@@ -250,23 +326,21 @@ jobs:
             --data '{}' \
             "$endpoint"
 
-          python3 - "$apply_file" <<'PY'
+          python3 - "$apply_file" "$pending_file" <<'PY'
           import json, sys
           with open(sys.argv[1], encoding='utf-8') as fh:
               data = json.load(fh)
-          expected = {
-              '2026-08-14-austin-isd-s-future-hangs-in-the-balance-ebpaee',
-              '2026-08-17-texas-college-football-players-named-to-2026-ray-guy-award-watch-list',
-          }
+          with open(sys.argv[2], encoding='utf-8') as fh:
+              pending = set(json.load(fh))
           backfilled = {
               row.get('canonicalSlug')
               for row in data.get('results', [])
-              if row.get('status') == 'backfilled'
+              if row.get('status') == 'backfilled' and row.get('canonicalSlug')
           }
           if data.get('ok') is not True or data.get('mode') != 'apply':
               raise SystemExit(f'Unexpected apply response: {data!r}')
-          if backfilled != expected:
-              raise SystemExit(f'Unexpected backfill set. expected={sorted(expected)!r} actual={sorted(x for x in backfilled if x)!r}')
+          if backfilled != pending:
+              raise SystemExit(f'Unexpected backfill set. pending={sorted(pending)!r} actual={sorted(backfilled)!r}')
           for key in ('aiCalls', 'articleWrites', 'slugChanges'):
               if data.get(key) != 0:
                   raise SystemExit(f'Apply safety invariant failed: {key}={data.get(key)!r}')
@@ -276,7 +350,7 @@ jobs:
               'safe': data.get('safe'),
               'held': data.get('held'),
               'holdsQueued': data.get('holdsQueued'),
-              'backfilled': sorted(expected),
+              'backfilled': sorted(backfilled),
               'aiCalls': data.get('aiCalls'),
               'articleWrites': data.get('articleWrites'),
               'slugChanges': data.get('slugChanges'),
