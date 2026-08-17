@@ -32,15 +32,25 @@ const LOCATION_TERMS = new Set([
   "houston","dallas","fort worth","san antonio","austin","laredo","amarillo","killeen","temple","waco","hereford","galveston","lubbock","midland",
 ]);
 
+// These words are useful scoring signals after two reports are already tied to
+// the same event, but are too generic to establish event identity on their own.
+// In particular, a public official can announce many unrelated grants on the
+// same day; actor + generic action is not a story key.
+const GENERIC_EVENT_ANCHOR_TERMS = new Set([
+  "abbott","governor","grant","grants","fund","funds","funding","million","announce","announces","announced","announcement","state","statewide",
+]);
+
 const IMPORTANT = [
-  /\b(abbott|ercot|trump|buc-?ee'?s|comptroller|uil|spurs|mavericks|cowboys|texans|rangers|astros|stars|longhorns|aggies|texas tech)\b/gi,
+  /\b(abbott|ercot|trump|buc-?ee'?s|comptroller|uil|spurs|mavericks|cowboys|rangers|astros|stars|longhorns|aggies|texas tech)\b/gi,
   /\b(data center|data centers|tax[- ]free|sales tax|heat index|wet bulb|moratorium|water supply|power grid|counterfeit|trademark|immigration|ice detention|border|parkland|graduation)\b/gi,
   /\b(houston|dallas|fort worth|san antonio|austin|laredo|amarillo|killeen|temple|waco|hereford|galveston|lubbock|midland)\b/gi,
 ];
 
+const SPORTS_CONTEXT_RE = /\b(nfl|football|game|season|score|team|roster|offense|defense|quarterback|touchdown|training camp|practice|coach|player|depth chart|preseason|playoff)\b/i;
+
 const SPORTS_IDENTITIES: Array<{ id: string; pattern: RegExp }> = [
   { id: "cowboys", pattern: /\b(?:dallas\s+)?cowboys\b/i },
-  { id: "texans", pattern: /\b(?:houston\s+)?texans\b/i },
+  { id: "texans", pattern: /\bhouston\s+texans\b/i },
   { id: "aggies", pattern: /\b(?:texas\s+a\s*&?\s*m|aggies)\b/i },
   { id: "stars", pattern: /\bdallas\s+stars\b/i },
   { id: "dynamo", pattern: /\bhouston\s+dynamo\b/i },
@@ -120,7 +130,13 @@ function topicTags(item: ClusterableFeedItem): Set<string> {
 
 function sportsIdentities(item: ClusterableFeedItem): Set<string> {
   const text = textFor(item);
-  return new Set(SPORTS_IDENTITIES.filter(({ pattern }) => pattern.test(text)).map(({ id }) => id));
+  const identities = new Set(SPORTS_IDENTITIES.filter(({ pattern }) => pattern.test(text)).map(({ id }) => id));
+  // “Texans” is also the ordinary demonym for residents of Texas. Only treat a
+  // standalone occurrence as the NFL team when the same item contains sports context.
+  if (!identities.has("texans") && /\btexans\b/i.test(text) && SPORTS_CONTEXT_RE.test(text)) {
+    identities.add("texans");
+  }
+  return identities;
 }
 
 function hasSportsIdentityConflict(primary: ClusterableFeedItem, candidate: ClusterableFeedItem): boolean {
@@ -132,15 +148,18 @@ function hasSportsIdentityConflict(primary: ClusterableFeedItem, candidate: Clus
 
 function tokens(item: ClusterableFeedItem): Set<string> {
   const raw = textFor(item);
+  const sports = sportsIdentities(item);
   const out = new Set<string>();
   for (const token of raw.split(/\s+/)) {
     if (token.length < 4 || STOP.has(token)) continue;
+    if (token === "texans" && !sports.has("texans")) continue;
     out.add(token);
   }
   for (const re of IMPORTANT) {
     re.lastIndex = 0;
     for (const m of raw.matchAll(re)) out.add(m[0].toLowerCase());
   }
+  if (sports.has("texans")) out.add("texans");
   return out;
 }
 
@@ -199,6 +218,15 @@ function isLocationTerm(term: string): boolean {
   return LOCATION_TERMS.has(term);
 }
 
+function isEventSpecificTerm(term: string): boolean {
+  const normalized = term.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  if (!normalized) return false;
+  if (normalized.includes(" ")) {
+    return normalized.split(/\s+/).some((part) => !GENERIC_EVENT_ANCHOR_TERMS.has(part));
+  }
+  return !GENERIC_EVENT_ANCHOR_TERMS.has(normalized);
+}
+
 /**
  * High false-positive domains require stronger evidence before reports are
  * merged. Sports and routine government actions can safely use a slightly
@@ -227,6 +255,7 @@ export function combinationScore(primary: ClusterableFeedItem, candidate: Cluste
   const titleOverlap = [...titleA].filter((t) => titleB.has(t));
   const substantiveOverlap = overlap.filter((term) => !isLocationTerm(term));
   const substantiveTitleOverlap = titleOverlap.filter((term) => !isLocationTerm(term));
+  const eventSpecificTitleOverlap = substantiveTitleOverlap.filter(isEventSpecificTerm);
 
   const importantOverlap = substantiveOverlap.filter((t) => {
     if (t.includes(" ")) return true;
@@ -235,18 +264,20 @@ export function combinationScore(primary: ClusterableFeedItem, candidate: Cluste
       return re.test(t);
     });
   });
+  const eventSpecificImportantOverlap = importantOverlap.filter(isEventSpecificTerm);
 
   const primaryTopics = topicTags(primary);
   const candidateTopics = topicTags(candidate);
   const sharedTopics = [...primaryTopics].filter((tag) => candidateTopics.has(tag));
 
-  // Recency, a different outlet, or a shared city are useful confidence boosts,
-  // but none of them establish that two articles cover the same story. Require a
-  // real semantic anchor before those contextual signals are allowed to add score.
+  // Recency, a different outlet, a public official, a generic grant/funding word,
+  // or a shared city are confidence boosts only after the reports are tied to the
+  // same event. Require at least one event-specific title/important anchor unless
+  // a curated topic bridge establishes the event family.
   const hasSemanticAnchor =
     sharedTopics.length > 0 ||
-    substantiveTitleOverlap.length >= 2 ||
-    (importantOverlap.length >= 1 && substantiveOverlap.length >= 2);
+    (substantiveTitleOverlap.length >= 2 && eventSpecificTitleOverlap.length >= 1) ||
+    (eventSpecificImportantOverlap.length >= 1 && substantiveOverlap.length >= 2);
   if (!hasSemanticAnchor) return { score: 0, overlapTerms: [] };
 
   let score = 0;
