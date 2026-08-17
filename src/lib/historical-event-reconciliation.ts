@@ -42,11 +42,6 @@ function distinctSlugs(rows: readonly HistoricalFeedItem[]): string[] {
   )].sort();
 }
 
-/**
- * Plan deterministic historical reconciliation without mutating any article.
- * Modern rows that already belong to a durable event cluster are excluded so
- * backfill can never steal ownership from the live multi-source pipeline.
- */
 export function planHistoricalReconciliation(
   inputRows: readonly HistoricalFeedItem[],
   maxMembers = 5,
@@ -72,9 +67,6 @@ export function planHistoricalReconciliation(
 
     const feedItemIds = rows.map((row) => row.id).sort((a, b) => a - b);
     const sourceFamilies = [...new Set(rows.map(sourceFamily).filter(Boolean))].sort();
-
-    // A single canonical URL is not enough for multi-source backfill when the
-    // apparent supporting reports collapse to one lineage/family.
     if (slugs.length === 1 && sourceFamilies.length < 2) continue;
 
     const kind: "safe" | "hold" = slugs.length === 1 ? "safe" : "hold";
