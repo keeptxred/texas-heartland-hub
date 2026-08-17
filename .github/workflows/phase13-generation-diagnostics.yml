@@ -1,0 +1,33 @@
+name: Phase 13 Generation Diagnostics
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnostics:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issue_comment' && github.event.issue.number == 574 && github.event.comment.body == '/phase13-diagnostics')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Report zero-AI generation eligibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          response_file="$(mktemp)"
+          trap 'rm -f "$response_file"' EXIT
+          curl --retry 8 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+            https://keeptxred.com/api/public/hooks/newsroom-generation-diagnostics \
+            -o "$response_file"
+          jq -e '.ok == true and .aiCalls == 0 and .writes == 0' "$response_file" >/dev/null
+          jq -r '
+            "generation-eligibility | total=\(.summary.total) | eligible=\(.summary.eligible) | maxEvidence=\(.summary.maxEvidenceChars) | reasons=\(.summary.reasonCounts | tojson)",
+            (.closestBelowFloor[]? | "closest | candidate=\(.candidateId) | score=\(.score) | pillar=\(.pillar // "-") | format=\(.format) | evidence=\(.evidenceChars)/\(.evidenceFloor) | gap=\(.evidenceGap) | sources=\(.sourceCount) | primary=\(.primarySourceCount) | shadowed=\(.alreadyShadowed)"),
+            (.eligible[]? | "eligible | candidate=\(.candidateId) | score=\(.score) | pillar=\(.pillar // "-") | format=\(.format) | evidence=\(.evidenceChars)/\(.evidenceFloor) | sources=\(.sourceCount) | primary=\(.primarySourceCount)")
+          ' "$response_file"
