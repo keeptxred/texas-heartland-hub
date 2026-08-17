@@ -22,6 +22,8 @@ import {
 const SITE = "keeptxred";
 const STANDARD_MIN_SOURCE_EVIDENCE_CHARS = 5_000;
 const LONG_FORM_MIN_SOURCE_EVIDENCE_CHARS = 9_000;
+const GENERATED_NEWS_PROVENANCE_SIGNATURE =
+  "Keep TX Red rewrote the coverage independently and links to the original for verification.";
 
 type CandidateRow = {
   id: string;
@@ -338,6 +340,7 @@ async function handler({ request }: { request: Request }) {
         {
           heading: "Source Attribution",
           paragraphs: [
+            GENERATED_NEWS_PROVENANCE_SIGNATURE,
             "Keep TX Red is an aggregation and synthesis publication. This story was independently rewritten from the linked source material rather than copied from a single publisher. Where the research packet contains an exact primary or official record, that record is labeled separately in the source list below.",
           ],
         },
