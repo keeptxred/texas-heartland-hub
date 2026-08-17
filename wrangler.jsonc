@@ -10,7 +10,7 @@
     "SUPABASE_URL": "https://ftkznprjljkhymknvhye.supabase.co",
     "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_J6-Lke5yaaGA5N5agMsltQ_rCG2MVYo",
     "NEWSROOM_AI_ENABLED": "true",
-    "NEWSROOM_PUBLISH_ENABLED": "false"
+    "NEWSROOM_PUBLISH_ENABLED": "true"
   },
   "send_email": [
     {
