@@ -161,10 +161,19 @@ export const publishFeedItemFn = createServerFn({ method: "POST" })
       }
 
       if (!res.ok) {
-        return {
-          ok: false,
-          error: explainPublishFailure(res.error ?? "Publish failed", data.feed_item_id),
-        };
+        const failure = explainPublishFailure(res.error ?? "Publish failed", data.feed_item_id);
+        const finalized = await failPendingRewriteClaimsForFeedItem(
+          supabaseAdmin as unknown as RewriteCacheFinalizationClient,
+          data.feed_item_id,
+          failure,
+        );
+        if (!finalized.ok) {
+          console.error("[publishFeedItemFn] failed to finalize rejected rewrite claim", {
+            feed_item_id: data.feed_item_id,
+            error: finalized.error,
+          });
+        }
+        return { ok: false, error: failure };
       }
       return { ok: true, slug: res.slug!, alreadyPublished: res.alreadyPublished };
     } catch (error) {
