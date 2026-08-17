@@ -1,6 +1,7 @@
 import {
   normalizeClusterText,
   sourceFamily,
+  strongMergeThreshold,
   type ClusterCandidate,
   type ClusterableFeedItem,
   type StoryCluster,
@@ -44,11 +45,7 @@ function clusterRows(cluster: StoryCluster): Array<ClusterableFeedItem | Cluster
 }
 
 function clusterKey(cluster: StoryCluster): string {
-  const ids = clusterRows(cluster)
-    .map((row) => row.id)
-    .filter((id): id is number => typeof id === "number")
-    .sort((a, b) => a - b);
-  if (ids.length) return `feed-event:${ids[0]}`;
+  if (typeof cluster.primary.id === "number") return `feed-event:${cluster.primary.id}`;
   const normalized = normalizeClusterText(cluster.primary.title).slice(0, 96).replace(/\s+/g, "-");
   return `headline-event:${normalized || "unknown"}`;
 }
@@ -74,27 +71,45 @@ async function resolvePublishedArticleId(db: any, slug?: string): Promise<string
   return data?.id ?? null;
 }
 
-async function resolveExistingClusterId(
-  db: any,
-  rows: Array<ClusterableFeedItem | ClusterCandidate>,
-): Promise<string | null> {
-  const fromRows = rows
-    .map((row) => row.event_cluster_id)
-    .find((id): id is string => typeof id === "string" && id.length > 0);
-  if (fromRows) return fromRows;
-
-  const feedIds = rows
+export function strongSupportingFeedIds(cluster: StoryCluster): number[] {
+  const threshold = strongMergeThreshold(cluster.primary);
+  return cluster.members
+    .filter((row) => row.combinationScore >= threshold)
     .map((row) => row.id)
     .filter((id): id is number => typeof id === "number");
-  if (!feedIds.length) return null;
+}
 
+async function clusterMembershipForFeedIds(db: any, feedIds: number[]): Promise<Array<{ cluster_id: string; feed_item_id: number }>> {
+  if (!feedIds.length) return [];
   const { data, error } = await db
     .from("news_event_cluster_sources")
     .select("cluster_id,feed_item_id")
-    .in("feed_item_id", feedIds)
-    .limit(1);
+    .in("feed_item_id", feedIds);
   if (error) throw error;
-  return data?.[0]?.cluster_id ?? null;
+  return (data ?? []).filter(
+    (row: any) => typeof row.cluster_id === "string" && typeof row.feed_item_id === "number",
+  );
+}
+
+async function resolveExistingClusterId(db: any, cluster: StoryCluster): Promise<string | null> {
+  // The primary report owns durable event identity. Reuse its current cluster
+  // before considering any supporting source, even when the in-memory feed row
+  // did not select event_cluster_id.
+  if (typeof cluster.primary.event_cluster_id === "string" && cluster.primary.event_cluster_id.length > 0) {
+    return cluster.primary.event_cluster_id;
+  }
+  if (typeof cluster.primary.id === "number") {
+    const primaryMembership = await clusterMembershipForFeedIds(db, [cluster.primary.id]);
+    if (primaryMembership[0]?.cluster_id) return primaryMembership[0].cluster_id;
+  }
+
+  // A supporting report may connect a new primary to an established event, but
+  // only a strong direct match may choose that durable cluster. Weak 45-point
+  // context members must never pull an unrelated primary into their old event.
+  const strongIds = strongSupportingFeedIds(cluster);
+  const memberships = await clusterMembershipForFeedIds(db, strongIds);
+  const clusterIds = [...new Set(memberships.map((row) => row.cluster_id))];
+  return clusterIds.length === 1 ? clusterIds[0] : null;
 }
 
 async function refreshLedgerCounts(db: any, clusterId: string): Promise<{ sourceCount: number; independentSourceCount: number }> {
@@ -129,7 +144,7 @@ export async function persistEventCluster(
 ): Promise<string | null> {
   try {
     const rows = clusterRows(cluster);
-    let id = await resolveExistingClusterId(db, rows);
+    let id = await resolveExistingClusterId(db, cluster);
     const now = new Date().toISOString();
     const publishedArticleId = await resolvePublishedArticleId(db, options.publishedSlug);
     const payload: Record<string, unknown> = {

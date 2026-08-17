@@ -144,6 +144,63 @@ describe("story clustering", () => {
     expect(combinationScore(official, local).score).toBeGreaterThanOrEqual(45);
   });
 
+  it("does not merge unrelated Abbott grant and airport stories", () => {
+    const education = item(
+      "Office of the Governor",
+      "Governor Abbott Announces More Than $2 Million In Grants To Expand Free Educational Resources For Texas Students",
+      "Governor Greg Abbott announced more than $2 million in grants to nine Texas higher education institutions for open educational resources, nursing and workforce training programs.",
+      "https://gov.texas.gov/education-grants",
+      "2026-08-17T13:00:00Z",
+    );
+    const airport = item(
+      "Houston Public Media",
+      "Greg Abbott threatens Dallas, Houston airports’ grant funds over Islamic washing facilities",
+      "DFW said plans to install the religious washing station had been canceled.",
+      "https://example.org/airport-grants",
+      "2026-08-17T13:20:22Z",
+    );
+    expect(combinationScore(education, airport).score).toBe(0);
+    expect(buildStoryCluster(education, [airport]).members).toHaveLength(0);
+  });
+
+  it("does not treat Texans meaning residents as the Houston Texans team", () => {
+    const education = item(
+      "Office of the Governor",
+      "Governor Abbott Announces More Than $2 Million In Grants To Expand Free Educational Resources For Texas Students",
+      "The grants support free course materials for nursing and workforce training programs and make education more affordable for Texans.",
+      "https://gov.texas.gov/education-grants",
+      "2026-08-17T13:00:00Z",
+    );
+    const football = item(
+      "Houston Texans",
+      "Harris Hits: C.J. Stroud and the Texans Offense Have Their Best Day of Training Camp",
+      "Seven straight completions highlighted the Texans offense at training camp.",
+      "https://www.houstontexans.com/training-camp",
+      "2026-08-16T22:40:10Z",
+    );
+    expect(combinationScore(education, football).score).toBe(0);
+    expect(buildStoryCluster(education, [football]).members).toHaveLength(0);
+  });
+
+  it("still merges government reports sharing an event-specific subject", () => {
+    const primary = item(
+      "Office of the Governor",
+      "Governor Abbott Announces More Than $2 Million In Grants To Expand Free Educational Resources For Texas Students",
+      "The Open Educational Resource Grant Program will fund free educational resources for nursing and workforce training programs.",
+      "https://gov.texas.gov/education-grants",
+      "2026-08-17T13:00:00Z",
+    );
+    const corroboration = item(
+      "Independent News",
+      "Abbott awards $2 million in educational resource grants to Texas colleges",
+      "Nine colleges will receive open educational resources funding for nursing and workforce training programs.",
+      "https://news.example.com/education-resource-grants",
+      "2026-08-17T14:00:00Z",
+    );
+    expect(combinationScore(primary, corroboration).score).toBeGreaterThanOrEqual(45);
+    expect(buildStoryCluster(primary, [corroboration]).members).toHaveLength(1);
+  });
+
   it("limits a cluster to independent source families", () => {
     const primary = item("Outlet A", "Buc-ee's responds to beaver trademark suit", "Buc-ee's discussed the beaver logo lawsuit.", "https://a.com/1");
     const rows = [
