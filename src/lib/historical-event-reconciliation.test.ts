@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { planHistoricalReconciliation, type HistoricalFeedItem } from "./historical-event-reconciliation";
+import {
+  historicalEventIdentityCompatible,
+  planHistoricalReconciliation,
+  type HistoricalFeedItem,
+} from "./historical-event-reconciliation";
 
 function row(overrides: Partial<HistoricalFeedItem> & Pick<HistoricalFeedItem, "id" | "title" | "link" | "source">): HistoricalFeedItem {
   return {
@@ -37,6 +41,29 @@ describe("historical event reconciliation", () => {
     expect(plans[0].kind).toBe("hold");
     expect(plans[0].canonicalSlug).toBeNull();
     expect(plans[0].publishedSlugs).toEqual(["ercot-grid-rule", "texas-data-center-rule"]);
+  });
+
+  it("rejects the live Whitmire false positive where only person/city/office overlap", () => {
+    const mayor = row({
+      id: 6111,
+      title: "As John Whitmire turns 77, the ‘spry’ and ‘vigorous’ Houston mayor wants to stay in office into his 80s",
+      link: "https://www.houstonpublicmedia.org/articles/news/city-of-houston/2026/08/13/559448/houston-mayor-john-whitmire-birthday-age-politics/",
+      source: "Houston Public Media",
+      internal_slug: "2026-08-13-houston-mayor-john-whitmire-77-seeks-second-term-as-age-sparks-political-debate",
+      description: "After 50 years in the Texas Legislature and nearly three at City Hall, Whitmire says he will seek a second term as mayor.",
+      pub_date: "2026-08-13T20:42:58Z",
+    });
+    const tickets = row({
+      id: 19631,
+      title: "Houston Dynamo and Dash partner with Mayor John Whitmire to provide 10,000 free tickets to 2026 matches for Houstonians",
+      link: "https://www.houstondynamofc.com/houstondash/news/houston-dynamo-and-dash-partner-with-mayor-john-whitmire-to-provide-10-000-free-tickets-to-2026-matches-for-houstonians",
+      source: "Houston Dash",
+      description: "Houston Dynamo and Dash partner with Mayor John Whitmire to provide 10,000 free tickets to 2026 matches for Houstonians.",
+      pub_date: "2026-08-14T04:17:02Z",
+    });
+
+    expect(historicalEventIdentityCompatible(mayor, tickets)).toBe(false);
+    expect(planHistoricalReconciliation([mayor, tickets])).toEqual([]);
   });
 
   it("never steals rows already owned by the modern event cluster system", () => {
