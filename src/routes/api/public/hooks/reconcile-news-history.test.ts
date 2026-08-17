@@ -27,7 +27,7 @@ describe("reconcile news history hook", () => {
     expect(source).not.toMatch(/from\(["']daily_articles["']\)\.update/);
     expect(source).not.toMatch(/from\(["']daily_articles["']\)\.upsert/);
     expect(source).not.toMatch(/from\(["']daily_articles["']\)\.delete/);
-    expect(source).toContain('select("slug,published_at")');
+    expect(source).toContain('select("slug,title,published_at,body_json")');
     expect(source).toContain("articleWrites: 0");
     expect(source).toContain("slugChanges: 0");
   });
@@ -50,6 +50,17 @@ describe("reconcile news history hook", () => {
     expect(source).toContain("held_for_admin_review");
     expect(migration).toContain("news_event_reconciliation_holds");
     expect(migration).toContain("review_status");
+  });
+
+  it("validates legacy slug ownership against article editorial evidence before backfill", () => {
+    expect(source).toContain("historicalArticleOwnershipCompatible");
+    expect(source).toContain("articleEditorialEvidence");
+    expect(source).toContain("slugOwners");
+    expect(source).toContain("canonical_article_identity_mismatch");
+    expect(source).toContain("hold_canonical_identity_mismatch");
+    const ownershipBranch = source.slice(source.indexOf("const ownsCanonicalArticle"), source.indexOf("if (!apply)"));
+    expect(ownershipBranch).toContain("recordHold");
+    expect(ownershipBranch).not.toContain("persistEventCluster");
   });
 
   it("restores historical cluster timestamps instead of making backfill look newly published", () => {
