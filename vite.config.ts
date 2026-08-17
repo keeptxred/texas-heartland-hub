@@ -10,10 +10,18 @@ export default defineConfig(({ mode }) => {
   const supabaseUrl = env.SUPABASE_URL || env.VITE_SUPABASE_URL;
   const supabasePublishableKey =
     env.SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const remoteBindings = env.CLOUDFLARE_VITE_REMOTE_BINDINGS !== "false";
+  const compatibilityDateOverride = env.CLOUDFLARE_VITE_COMPATIBILITY_DATE;
 
   return {
     plugins: [
-      cloudflare({ viteEnvironment: { name: "ssr" } }),
+      cloudflare({
+        viteEnvironment: { name: "ssr" },
+        remoteBindings,
+        ...(compatibilityDateOverride
+          ? { config: { compatibility_date: compatibilityDateOverride } }
+          : {}),
+      }),
       tanstackStart(),
       tsConfigPaths(),
       tailwindcss(),

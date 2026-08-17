@@ -102,9 +102,10 @@ function CitationGuidePage() {
 
       <section className="mt-14 rounded-2xl border bg-muted/30 p-6 md:p-8" aria-labelledby="machine-heading">
         <h2 id="machine-heading" className="font-display text-3xl">Machine-readable reference index</h2>
-        <p className="mt-3 max-w-4xl text-sm leading-7 text-muted-foreground">The citation-magnet manifest is the machine-readable inventory of maintained factual-reference targets. The llms.txt file provides retrieval guidance and topic entry points. These files are discovery aids; the canonical page and its cited official sources remain the human-readable evidence layer.</p>
+        <p className="mt-3 max-w-4xl text-sm leading-7 text-muted-foreground">The citation-magnet manifest inventories maintained factual-reference targets. The published+verified Election Central JSON exposes a compact race/candidate relationship graph with canonical URLs and source dates while excluding private, contact, donation, biography and admin fields. The llms.txt file provides retrieval guidance and topic entry points. These files are discovery/reuse aids; the canonical page and its cited official sources remain the human-readable evidence layer.</p>
         <div className="mt-5 flex flex-wrap gap-3">
           <a href="/citation-magnets.json" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">citation-magnets.json</a>
+          <a href="/elections/reference.json" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">2026 election reference JSON</a>
           <a href="/llms.txt" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">llms.txt</a>
           <Link to="/editorial-standards" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">Editorial standards</Link>
           <Link to="/authors" className="rounded-md border px-4 py-2 text-sm font-semibold hover:border-primary">Newsroom desks</Link>
