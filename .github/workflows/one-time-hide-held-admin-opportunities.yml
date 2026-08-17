@@ -1,0 +1,133 @@
+name: One-time hide held admin opportunities
+
+on:
+  push:
+    branches:
+      - agent/hide-held-admin-opportunities
+    paths:
+      - .github/workflows/one-time-hide-held-admin-opportunities.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/hide-held-admin-opportunities
+          fetch-depth: 0
+
+      - name: Hide publication-held rows from actionable admin opportunities
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path("src/components/admin/ContentOpportunityPanel.tsx")
+          text = path.read_text()
+
+          old = '''  preflight_json?: {
+    status?: string;
+    reason?: string;
+    message?: string;
+    sourceWordCount?: number;
+    factualSignalCount?: number;
+  } | null;
+  // When set, this row is an already-published daily_articles piece surfaced
+'''
+          new = '''  preflight_json?: {
+    status?: string;
+    reason?: string;
+    message?: string;
+    sourceWordCount?: number;
+    factualSignalCount?: number;
+  } | null;
+  cluster_json?: {
+    publication_readiness?: string;
+    publication_hold_reason?: string;
+  } | null;
+  // When set, this row is an already-published daily_articles piece surfaced
+'''
+          if old not in text:
+              raise SystemExit("FeedItem insertion point not found")
+          text = text.replace(old, new, 1)
+
+          old = '''function shouldShowOpportunity(item: FeedItem): boolean {
+  if (item.id < 0 || item.internal_slug) return true;
+  if (!item.preflight_json) return true;
+  return canAttemptArticlePublish(effectivePreflight(item));
+}
+'''
+          new = '''function isPublicationHeld(item: FeedItem): boolean {
+  const reason = item.cluster_json?.publication_hold_reason?.trim();
+  const readiness = item.cluster_json?.publication_readiness?.trim().toLowerCase();
+  if (!reason) return false;
+  return !readiness || readiness.startsWith("hold");
+}
+
+function shouldShowOpportunity(item: FeedItem): boolean {
+  if (item.id < 0 || item.internal_slug) return true;
+  if (isPublicationHeld(item)) return false;
+  if (!item.preflight_json) return true;
+  return canAttemptArticlePublish(effectivePreflight(item));
+}
+'''
+          if old not in text:
+              raise SystemExit("shouldShowOpportunity block not found")
+          text = text.replace(old, new, 1)
+
+          old_select = 'select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json")'
+          new_select = 'select("id,title,source,pub_date,internal_slug,link,description,extracted_body,preflight_json,cluster_json")'
+          count = text.count(old_select)
+          if count != 2:
+              raise SystemExit(f"Expected 2 feed selects, found {count}")
+          text = text.replace(old_select, new_select)
+
+          old = '''        if (/does not contain enough text|not enough factual/i.test(res.error)) {
+          setItems((current) => current.filter((item) => item.id !== r.id));
+        }
+'''
+          new = '''        if (/^Publication held:/i.test(res.error) || /does not contain enough text|not enough factual/i.test(res.error)) {
+          setItems((current) => current.filter((item) => item.id !== r.id));
+        }
+'''
+          if old not in text:
+              raise SystemExit("publish failure removal block not found")
+          text = text.replace(old, new, 1)
+
+          path.write_text(text)
+
+      - name: Add focused regression test
+        shell: bash
+        run: |
+          cat > src/components/admin/ContentOpportunityPanel.hold.test.ts <<'EOF'
+          import { describe, expect, it } from "vitest";
+          import fs from "node:fs";
+          import path from "node:path";
+
+          describe("ContentOpportunityPanel publication holds", () => {
+            it("loads cluster hold metadata and removes publication-held rows", () => {
+              const source = fs.readFileSync(
+                path.join(process.cwd(), "src/components/admin/ContentOpportunityPanel.tsx"),
+                "utf8",
+              );
+
+              expect(source).toContain("preflight_json,cluster_json");
+              expect(source).toContain("if (isPublicationHeld(item)) return false;");
+              expect(source).toContain('/^Publication held:/i.test(res.error)');
+            });
+          });
+          EOF
+
+      - name: Remove one-time workflow
+        run: rm .github/workflows/one-time-hide-held-admin-opportunities.yml
+
+      - name: Commit patch
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/components/admin/ContentOpportunityPanel.tsx src/components/admin/ContentOpportunityPanel.hold.test.ts .github/workflows/one-time-hide-held-admin-opportunities.yml
+          git commit -m "Hide publication-held admin opportunities"
+          git push origin HEAD:agent/hide-held-admin-opportunities
