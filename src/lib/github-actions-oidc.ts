@@ -30,6 +30,12 @@ function decodeBase64Url(value: string): Uint8Array {
   return Uint8Array.from(binary, (char) => char.charCodeAt(0));
 }
 
+function toArrayBuffer(bytes: Uint8Array): ArrayBuffer {
+  const copy = new Uint8Array(bytes.byteLength);
+  copy.set(bytes);
+  return copy.buffer;
+}
+
 function parseJsonSegment<T>(value: string): T {
   const bytes = decodeBase64Url(value);
   return JSON.parse(new TextDecoder().decode(bytes)) as T;
@@ -75,8 +81,10 @@ export async function verifyGitHubActionsOidc(options: {
     false,
     ["verify"],
   );
-  const signingInput = new TextEncoder().encode(`${encodedHeader}.${encodedClaims}`);
-  const signature = decodeBase64Url(encodedSignature);
+  const signingInput = toArrayBuffer(
+    new TextEncoder().encode(`${encodedHeader}.${encodedClaims}`),
+  );
+  const signature = toArrayBuffer(decodeBase64Url(encodedSignature));
   const validSignature = await crypto.subtle.verify(
     { name: "RSASSA-PKCS1-v1_5" },
     key,
