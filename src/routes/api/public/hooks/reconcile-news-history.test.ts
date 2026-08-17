@@ -14,6 +14,15 @@ describe("reconcile news history hook", () => {
     expect(source).toContain("ADMIN_PASSCODE");
   });
 
+  it("pages beyond the Supabase 1000-row response cap", () => {
+    expect(source).toContain("const MAX_LIMIT = 5000");
+    expect(source).toContain("const PAGE_SIZE = 1000");
+    expect(source).toContain("fetchHistoricalFeedRows");
+    expect(source).toContain(".range(from, to)");
+    expect(source).toContain("if (batch.length < expected) break");
+    expect(source).toContain("limit,");
+  });
+
   it("does not write daily_articles or alter article slugs or publication timestamps", () => {
     expect(source).not.toMatch(/from\(["']daily_articles["']\)\.update/);
     expect(source).not.toMatch(/from\(["']daily_articles["']\)\.upsert/);
