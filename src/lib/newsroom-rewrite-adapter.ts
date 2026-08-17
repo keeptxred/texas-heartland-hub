@@ -84,6 +84,7 @@ NON-NEGOTIABLE RULES:
 - Use only facts, names, dates, figures, quotes, and relationships present in the supplied packet.
 - Prefer direct primary sources when they conflict with secondary coverage.
 - Never invent quotes, polling, prices, availability, unnamed experts, analysts, observers, or source content.
+- Never write generic attribution phrases such as "experts say", "experts suggest", "experts believe", "analysts say", "observers say", or equivalent wording. Name the supplied source responsible for a claim or omit the claim.
 - Preserve attribution where a claim belongs to a particular source.
 - Headline must be factual, specific, under 110 characters, and not clickbait.
 - Summary must be answer-first and 55–75 words. Do not exceed 90 words under any circumstance.
