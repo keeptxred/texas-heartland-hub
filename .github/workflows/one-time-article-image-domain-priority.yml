@@ -1,0 +1,71 @@
+name: One-time article image domain priority fix
+
+on:
+  push:
+    branches:
+      - fix/article-image-domain-priority-current
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/article-image-domain-priority-current
+          fetch-depth: 0
+      - name: Patch article image routing
+        shell: python
+        run: |
+          from pathlib import Path
+
+          core_path = Path('src/lib/featured-image-core.ts')
+          core = core_path.read_text()
+          old = '''export function inferDomain(text: string): Domain {\n  for (const [domain, re] of DOMAIN_KEYWORDS) if (re.test(text)) return domain;\n  return "general";\n}\n'''
+          new = '''export function inferDomain(text: string): Domain {\n  for (const [domain, re] of DOMAIN_KEYWORDS) if (re.test(text)) return domain;\n  return "general";\n}\n\nexport function inferArticleImageDomain(primaryText: string, fallbackText: string): Domain {\n  const primary = inferDomain(primaryText);\n  return primary !== "general" ? primary : inferDomain(fallbackText);\n}\n'''
+          if core.count(old) != 1:
+            raise SystemExit('inferDomain insertion point mismatch')
+          core = core.replace(old, new, 1)
+          core_path.write_text(core)
+
+          functions_path = Path('src/lib/featured-image.functions.ts')
+          source = functions_path.read_text()
+          replacements = [
+            (
+              '''  inferDomain,\n  parseVisionVerdict,''',
+              '''  inferArticleImageDomain,\n  inferDomain,\n  parseVisionVerdict,''',
+            ),
+            ('const PURPLE_HEART_IMAGE_URL = "/images/military-honors/purple-heart.svg";\n', ''),
+            (
+              '''  const domain = inferDomain(haystack);''',
+              '''  const domain = inferArticleImageDomain(`${title} ${row.dek ?? ""}`, haystack);''',
+            ),
+            (
+              '''function staticFeaturedImage(row: ArticleRow): { url: string; alt: string } | null {\n  const subject = `${row.title} ${row.seo_headline ?? ""} ${row.dek ?? ""}`;\n  return /\\bpurple heart\\b/i.test(subject)\n    ? { url: PURPLE_HEART_IMAGE_URL, alt: `Purple Heart medal — ${row.title}` }\n    : null;\n}\n\n''',
+              '',
+            ),
+            (
+              '''  const supabase = await serviceClient();\n  const staticImage = staticFeaturedImage(row);\n  if (staticImage) {\n    await supabase.from("daily_articles").update({\n      featured_image_url: staticImage.url,\n      image_alt_text: staticImage.alt,\n      image_generation_status: "ready",\n      image_prompt: null,\n      image_validation_note: "static military-honor asset",\n    }).eq("slug", row.slug);\n    return { ok: true, url: staticImage.url, alt: staticImage.alt };\n  }\n  if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };''',
+              '''  const supabase = await serviceClient();\n  if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };''',
+            ),
+          ]
+          for old, new in replacements:
+            count = source.count(old)
+            if count != 1:
+              raise SystemExit(f'featured-image.functions replacement mismatch ({count}): {old[:140]!r}')
+            source = source.replace(old, new, 1)
+          functions_path.write_text(source)
+
+          test = Path('src/lib/article-image-domain-priority.test.ts')
+          test.write_text('''import { readFileSync } from "node:fs";\nimport { describe, expect, it } from "vitest";\nimport { inferArticleImageDomain } from "./featured-image-core";\n\ndescribe("article image domain priority", () => {\n  it("keeps a festival story in culture even when body text contains court language", () => {\n    expect(\n      inferArticleImageDomain(\n        "Texas Pickle Festival Moves to Helotes After Last Year’s Crowd Backlash",\n        "The festival moved after complaints. A separate paragraph mentions a court ruling and election law.",\n      ),\n    ).toBe("culture");\n  });\n\n  it("still recognizes a genuinely legal headline as legal", () => {\n    expect(\n      inferArticleImageDomain(\n        "Texas Court Upholds Election Integrity Law Amid Democratic Challenges",\n        "The ruling came from a Texas appellate court.",\n      ),\n    ).toBe("legal");\n  });\n\n  it("keeps Purple Heart coverage in the military domain", () => {\n    expect(\n      inferArticleImageDomain(\n        "Governor Marks Purple Heart Day for Texas Veterans",\n        "The governor signed a proclamation at the Capitol.",\n      ),\n    ).toBe("military");\n  });\n\n  it("does not retain the SVG military-honor bypass", () => {\n    const source = readFileSync(new URL("./featured-image.functions.ts", import.meta.url), "utf8");\n    expect(source).not.toContain("PURPLE_HEART_IMAGE_URL");\n    expect(source).not.toContain("staticFeaturedImage");\n    expect(source).not.toContain("static military-honor asset");\n  });\n});\n''')
+      - name: Commit patch and remove temporary workflow
+        shell: bash
+        run: |
+          rm .github/workflows/one-time-article-image-domain-priority.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/lib/featured-image-core.ts src/lib/featured-image.functions.ts src/lib/article-image-domain-priority.test.ts .github/workflows/one-time-article-image-domain-priority.yml
+          git commit -m 'Prioritize article headline for image domain routing'
+          git push origin HEAD:fix/article-image-domain-priority-current
