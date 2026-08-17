@@ -47,6 +47,7 @@ jobs:
         env:
           VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE: "false"
           CLOUDFLARE_VITE_REMOTE_BINDINGS: "false"
+          CLOUDFLARE_VITE_COMPATIBILITY_DATE: "2026-08-11"
         run: bun run elections:test:mobile
       - name: Create mobile QA report
         if: always()
@@ -73,6 +74,7 @@ jobs:
             "## Election Central mobile QA", "", `**Conclusion:** ${passed ? "PASS" : "FAIL"}`, "",
             `- Mobile browser tests: ${checks.mobileTests === "success" ? "✅" : "❌"} ${checks.mobileTests}`,
             "- Cloudflare remote bindings are disabled for browser QA; bindings are locally simulated and no deploy credential is required.",
+            "- Local workerd uses its newest supported compatibility date (2026-08-11); production remains configured at 2026-08-12.",
             "- Production build is validated by the dedicated Production Build Validation workflow.",
             "- Viewport: 390 × 844", "",
           ].join("\n"));
