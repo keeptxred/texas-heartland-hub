@@ -42,7 +42,10 @@ jobs:
         run: bun run test
 
       - name: Route generation and TypeScript
-        run: bun run typecheck
+        run: |
+          set -euo pipefail
+          bun run typecheck
+          grep -Fq "/bills/texas/\$legislature/\$billType/\$billNumber/reference.json" src/routeTree.gen.ts
 
       - name: SEO validation
         run: bun run seo:validate
