@@ -13,7 +13,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
 
 concurrency:
   group: keeptxred-cloudflare-production
@@ -25,7 +24,6 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (github.event.workflow_run.conclusion == 'success' &&
        (github.event.workflow_run.event == 'push' ||
-        github.event.workflow_run.event == 'pull_request' ||
         github.event.workflow_run.event == 'workflow_dispatch'))
     runs-on: ubuntu-latest
     timeout-minutes: 25
@@ -46,113 +44,47 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           DEPLOY_EVENT: ${{ github.event_name }}
-          RUN_EVENT: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.event || 'workflow_dispatch' }}
           VERIFIED_SHA: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || inputs.verified_sha }}
           VERIFIED_BRANCH: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_branch || 'main' }}
         run: |
           set -euo pipefail
 
-          main_sha="$(curl --fail-with-body --silent --show-error \
+          if [[ -z "$VERIFIED_SHA" ]]; then
+            echo "::error title=Verified SHA required::Production deployment requires an exact verified SHA."
+            exit 1
+          fi
+
+          if [[ "$VERIFIED_BRANCH" != "main" ]]; then
+            if [[ "$DEPLOY_EVENT" == "workflow_dispatch" ]]; then
+              echo "::error title=Verified branch must be main::Manual production deployment must target main."
+              exit 1
+            fi
+            echo "deploy=false" >> "$GITHUB_OUTPUT"
+            echo "Verified workflow was not main; skipping production deployment."
+            exit 0
+          fi
+
+          main_sha="$(curl --retry 3 --retry-delay 2 --retry-all-errors \
+            --connect-timeout 5 --max-time 20 \
+            --fail-with-body --silent --show-error \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
             "https://api.github.com/repos/$REPOSITORY/git/ref/heads/main" \
             | python3 -c 'import json,sys; print(json.load(sys.stdin)["object"]["sha"])')"
 
-          # A successful verification run can sometimes report the already-merged
-          # main SHA instead of the original PR head SHA. If that exact verified
-          # revision is current main, it is safe to deploy immediately and there
-          # is no reason to wait for GitHub's commit-to-PR association endpoint.
-          if [[ -n "$VERIFIED_SHA" && "$VERIFIED_SHA" == "$main_sha" ]]; then
-            echo "sha=$VERIFIED_SHA" >> "$GITHUB_OUTPUT"
-            echo "deploy=true" >> "$GITHUB_OUTPUT"
-            echo "Verified revision is current main: $VERIFIED_SHA"
-            exit 0
-          fi
-
-          # A direct manual deployment is intentionally strict: the caller must
-          # supply the exact current verified main SHA. This is different from a
-          # workflow_run whose upstream verifier itself used workflow_dispatch.
-          if [[ "$DEPLOY_EVENT" == "workflow_dispatch" ]]; then
-            if [[ -z "$VERIFIED_SHA" ]]; then
-              echo "::error title=Verified SHA required::Manual production deployment requires an exact verified_sha."
+          if [[ "$VERIFIED_SHA" != "$main_sha" ]]; then
+            if [[ "$DEPLOY_EVENT" == "workflow_dispatch" ]]; then
+              echo "::error title=Verified revision is stale::Current main is $main_sha, but deployment requested verified SHA $VERIFIED_SHA."
               exit 1
             fi
-            echo "::error title=Verified revision is stale::Current main is $main_sha, but deployment requested verified SHA $VERIFIED_SHA."
-            exit 1
-          fi
-
-          # Post-merge verification is deliberately dispatched by automation.
-          # Accept it when it verified current main (handled above); otherwise
-          # skip a stale result without turning normal merge races into failures.
-          if [[ "$RUN_EVENT" == "workflow_dispatch" ]]; then
-            if [[ "$VERIFIED_BRANCH" != "main" ]]; then
-              echo "deploy=false" >> "$GITHUB_OUTPUT"
-              echo "Dispatched verification was not main; skipping production deployment."
-              exit 0
-            fi
             echo "deploy=false" >> "$GITHUB_OUTPUT"
-            echo "Dispatched verification $VERIFIED_SHA is no longer current main ($main_sha); refusing stale deployment."
+            echo "Verified revision $VERIFIED_SHA is no longer current main ($main_sha); refusing stale deployment."
             exit 0
           fi
 
-          if [[ "$RUN_EVENT" == "push" ]]; then
-            if [[ "$VERIFIED_BRANCH" != "main" ]]; then
-              echo "deploy=false" >> "$GITHUB_OUTPUT"
-              echo "Verified push was not main; skipping production deployment."
-              exit 0
-            fi
-            echo "deploy=false" >> "$GITHUB_OUTPUT"
-            echo "Verified main push $VERIFIED_SHA is no longer current main ($main_sha); refusing stale deployment."
-            exit 0
-          fi
-
-          if [[ "$RUN_EVENT" != "pull_request" ]]; then
-            echo "deploy=false" >> "$GITHUB_OUTPUT"
-            echo "Unsupported verification event '$RUN_EVENT'; skipping."
-            exit 0
-          fi
-
-          merged_sha=""
-          for attempt in $(seq 1 90); do
-            pulls_json="$(curl --fail-with-body --silent --show-error \
-              -H "Authorization: Bearer $GH_TOKEN" \
-              -H "Accept: application/vnd.github+json" \
-              -H "X-GitHub-Api-Version: 2022-11-28" \
-              "https://api.github.com/repos/$REPOSITORY/commits/$VERIFIED_SHA/pulls")"
-            merged_sha="$(python3 - "$pulls_json" "$VERIFIED_SHA" <<'PY'
-          import json, sys
-          pulls = json.loads(sys.argv[1])
-          verified = sys.argv[2]
-          matches = [
-              pr for pr in pulls
-              if pr.get("merged_at")
-              and (pr.get("base") or {}).get("ref") == "main"
-              and (
-                  (pr.get("head") or {}).get("sha") == verified
-                  or pr.get("merge_commit_sha") == verified
-              )
-          ]
-          print((matches[0].get("merge_commit_sha") or "") if len(matches) == 1 else "")
-          PY
-            )"
-            [[ -n "$merged_sha" ]] && break
-            sleep 4
-          done
-
-          if [[ -z "$merged_sha" ]]; then
-            echo "::error title=Verified PR merge could not be resolved::The verification passed, but GitHub did not expose one merged main PR matching either the verified head SHA or verified merge SHA within the wait window. Production was not changed."
-            exit 1
-          fi
-
-          if [[ "$main_sha" != "$merged_sha" ]]; then
-            echo "deploy=false" >> "$GITHUB_OUTPUT"
-            echo "A newer main revision already exists ($main_sha); refusing to deploy stale merge $merged_sha. The newer verified merge will own production deployment."
-            exit 0
-          fi
-
-          echo "sha=$merged_sha" >> "$GITHUB_OUTPUT"
+          echo "sha=$VERIFIED_SHA" >> "$GITHUB_OUTPUT"
           echo "deploy=true" >> "$GITHUB_OUTPUT"
-          echo "Verified PR merged and is current main: $merged_sha"
+          echo "Verified revision is current main: $VERIFIED_SHA"
 
       - name: Checkout verified revision
         if: steps.revision.outputs.deploy == 'true'
