@@ -23,10 +23,25 @@ describe("newsroom authority contract", () => {
     expect(source).toContain("timeline.length >= 2");
   });
 
-  it("keeps weak single-source aggregation out of the index", () => {
+  it("keeps weak single-source aggregation out of production and out of the index", () => {
+    expect(source).toContain("packetRow.source_count >= 2 || packetRow.primary_source_count >= 1");
     expect(source).toContain("sourceCount < 2 && primarySourceCount === 0");
     expect(source).toContain('"seo_noindex"');
     expect(source).toContain('"single_source_aggregation"');
+  });
+
+  it("allows the production workflow to authenticate with short-lived GitHub OIDC", () => {
+    expect(source).toContain("verifyGitHubActionsOidc");
+    expect(source).toContain('PRODUCTION_WORKFLOW_PATH = ".github/workflows/run-daily-news-now.yml"');
+    expect(source).toContain('audience: OIDC_AUDIENCE');
+  });
+
+  it("uses one bounded targeted repair instead of weakening validation", () => {
+    expect(source).toContain("newsroomRepairUserPrompt");
+    expect(source).toContain("REPAIR MODE:");
+    expect(source).toContain("firstValidationReasons");
+    expect(source).toContain("repairAttempted");
+    expect(source).toContain("aiCalls += 1");
   });
 });
 
