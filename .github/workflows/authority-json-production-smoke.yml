@@ -1,0 +1,34 @@
+name: Authority JSON Production Smoke
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/authority-json-production-smoke.yml'
+      - 'scripts/authority/**'
+      - 'src/routes/elections*'
+      - 'src/lib/elections/**'
+      - 'src/routes/bills/texas/**'
+      - 'src/lib/bill-primary-source-reference.ts'
+      - 'public/citation-magnets.json'
+  workflow_dispatch:
+  schedule:
+    - cron: '17 13 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: authority-json-production-smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+      - name: Verify live machine-readable authority resources
+        run: python3 scripts/authority/smoke-production.py
