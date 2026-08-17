@@ -1,0 +1,21 @@
+name: Broken-link public asset regression
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/seo/audit-broken-links.mjs'
+      - 'scripts/seo/broken-link-public-assets.test.mjs'
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: node scripts/seo/broken-link-public-assets.test.mjs
