@@ -187,7 +187,10 @@ function nullableDate(value: unknown) {
 }
 
 function newestDate(values: Array<string | null>) {
-  const dates = values.filter((value): value is string => Boolean(value) && !Number.isNaN(Date.parse(value)));
+  const dates = values.filter(
+    (value): value is string =>
+      typeof value === 'string' && value.length > 0 && !Number.isNaN(Date.parse(value)),
+  );
   dates.sort((a, b) => Date.parse(b) - Date.parse(a));
   return dates[0] ?? null;
 }
