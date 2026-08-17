@@ -72,6 +72,11 @@ export function planHistoricalReconciliation(
 
     const feedItemIds = rows.map((row) => row.id).sort((a, b) => a - b);
     const sourceFamilies = [...new Set(rows.map(sourceFamily).filter(Boolean))].sort();
+
+    // A single canonical URL is not enough for multi-source backfill when the
+    // apparent supporting reports collapse to one lineage/family.
+    if (slugs.length === 1 && sourceFamilies.length < 2) continue;
+
     const kind: "safe" | "hold" = slugs.length === 1 ? "safe" : "hold";
     const reason = kind === "safe"
       ? `One existing published slug is supported by ${rows.length} matched reports from ${sourceFamilies.length} source families.`
