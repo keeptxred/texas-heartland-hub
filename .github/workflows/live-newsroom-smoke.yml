@@ -10,6 +10,7 @@ on:
     paths:
       - 'src/routes/api/public/hooks/ingest-feeds.ts'
       - 'src/routes/api/public/hooks/health.ts'
+      - 'src/routes/api/public/hooks/newsroom-generation-diagnostics.ts'
       - 'src/routes/api/public/newsroom-health.ts'
       - 'src/lib/multi-source-publish.ts'
       - 'src/lib/ingest-feeds-legacy.ts'
@@ -73,6 +74,19 @@ jobs:
           if (payload.image_validation_model !== '@cf/meta/llama-3.2-11b-vision-instruct') throw new Error(`unexpected image_validation_model=${payload.image_validation_model}`);
           console.log(`OK rewrite provider=${payload.rewrite_provider} model=${payload.rewrite_model} image=${payload.image_model} validator=${payload.image_validation_model}`);
           NODE
+      - name: Report zero-AI newsroom generation eligibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --retry 6 --retry-delay 3 --retry-all-errors --fail-with-body --silent --show-error \
+            https://keeptxred.com/api/public/hooks/newsroom-generation-diagnostics \
+            -o /tmp/newsroom-generation-diagnostics.json
+          jq -e '.ok == true and .aiCalls == 0 and .writes == 0' /tmp/newsroom-generation-diagnostics.json >/dev/null
+          jq -r '
+            "generation-eligibility | total=\(.summary.total) | eligible=\(.summary.eligible) | maxEvidence=\(.summary.maxEvidenceChars) | reasons=\(.summary.reasonCounts | tojson)",
+            (.closestBelowFloor[]? | "closest | candidate=\(.candidateId) | score=\(.score) | pillar=\(.pillar // "-") | format=\(.format) | evidence=\(.evidenceChars)/\(.evidenceFloor) | gap=\(.evidenceGap) | sources=\(.sourceCount) | primary=\(.primarySourceCount) | shadowed=\(.alreadyShadowed)"),
+            (.eligible[]? | "eligible | candidate=\(.candidateId) | score=\(.score) | pillar=\(.pillar // "-") | format=\(.format) | evidence=\(.evidenceChars)/\(.evidenceFloor) | sources=\(.sourceCount) | primary=\(.primarySourceCount)")
+          ' /tmp/newsroom-generation-diagnostics.json
       - name: Check live ingestion and both publication sites
         env:
           KTR_BASE_URL: https://keeptxred.com
