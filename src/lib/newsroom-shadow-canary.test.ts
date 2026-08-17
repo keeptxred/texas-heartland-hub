@@ -32,18 +32,15 @@ describe("newsroom Phase 13 AI canary and production promotion", () => {
 
   it("refreshes the full deterministic newsroom pipeline before either canary mode without AI", () => {
     const generatorCall = workflow.indexOf("generate-newsroom?mode=$RUN_MODE");
+    const deterministicLoop = workflow.indexOf("for endpoint in normalize-newsroom-feed cluster-newsroom-stories score-newsroom-stories decide-newsroom-packages; do");
+    const packetBuild = workflow.indexOf("/api/public/hooks/build-newsroom-research-packets");
     expect(generatorCall).toBeGreaterThan(-1);
-    for (const marker of [
-      "/api/public/hooks/enrich-newsroom-rss-evidence",
-      "/api/public/hooks/normalize-newsroom-feed",
-      "/api/public/hooks/cluster-newsroom-stories",
-      "/api/public/hooks/score-newsroom-stories",
-      "/api/public/hooks/decide-newsroom-packages",
-      "/api/public/hooks/build-newsroom-research-packets",
-    ]) {
-      expect(workflow).toContain(marker);
-      expect(workflow.indexOf(marker)).toBeLessThan(generatorCall);
-    }
+    expect(workflow).toContain("/api/public/hooks/enrich-newsroom-rss-evidence");
+    expect(deterministicLoop).toBeGreaterThan(-1);
+    expect(packetBuild).toBeGreaterThan(deterministicLoop);
+    expect(packetBuild).toBeLessThan(generatorCall);
+    expect(workflow.indexOf("/api/public/hooks/enrich-newsroom-rss-evidence")).toBeLessThan(deterministicLoop);
+    expect(workflow).toContain('"$PRODUCTION_URL/api/public/hooks/$endpoint"');
     expect(workflow).toContain('int(data.get("aiCalls") or 0) != 0');
   });
 
