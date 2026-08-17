@@ -10,6 +10,8 @@ export type SubjectExtract = {
   locations: string[];
   domain: Domain;
   concreteSubject: string;
+  evidenceGuidance?: string;
+  imageGroundingMode?: "verified_scene" | "verified_symbolic";
 };
 
 export type VisionVerdict = { matches: boolean; photorealistic: boolean; reason: string };
@@ -57,10 +59,11 @@ const DOMAIN_STEER: Record<Domain, string> = {
 export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): string {
   const loc = subject.locations.slice(0, 2).join(", ");
   const correction = extraGuidance ? `Correction from rejected attempt: ${extraGuidance}. ` : "";
+  const evidenceLock = subject.evidenceGuidance ? `EVIDENCE CONSTRAINTS: ${subject.evidenceGuidance} ` : "";
   if (subject.domain === "legal") {
-    return `${correction}Professional documentary photojournalism photograph, horizontal 16:9. Story: ${subject.title}. Photograph ${DOMAIN_STEER.legal}. Natural daylight or realistic courtroom lighting, 35mm camera, lifelike stone and wood, true photographic depth of field, realistic architecture, neutral news photography. PRIMARY SUBJECT: a believable real Texas courthouse or courtroom representing the judicial ruling. ${loc ? `Location context: ${loc}, Texas.` : "Texas setting."} Election-law context may appear only as subtle ordinary paperwork or voting materials in the background. Do not use a politician, Texas-shaped graphic, map, flagpole, capitol dome, campaign rally, podium, poster, illustration, vector art, cartoon, infographic, collage, text overlay, seal, logo, or symbolic state graphic.`.slice(0, 1800);
+    return `${correction}${evidenceLock}Professional documentary photojournalism photograph, horizontal 16:9. Story: ${subject.title}. Photograph ${DOMAIN_STEER.legal}. Natural daylight or realistic courtroom lighting, 35mm camera, lifelike stone and wood, true photographic depth of field, realistic architecture, neutral news photography. PRIMARY SUBJECT: a believable real Texas courthouse or courtroom representing the judicial ruling. ${loc ? `Location context: ${loc}, Texas.` : "Texas setting."} Election-law context may appear only as subtle ordinary paperwork or voting materials in the background. Do not use a politician, Texas-shaped graphic, map, flagpole, capitol dome, campaign rally, podium, poster, illustration, vector art, cartoon, infographic, collage, text overlay, seal, logo, or symbolic state graphic.`.slice(0, 1800);
   }
-  return `${correction}Professional photorealistic editorial news photograph, horizontal 16:9, documentary photojournalism, natural lighting, realistic textures, believable perspective and depth of field. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER[subject.domain]}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting where relevant."} One coherent real-world scene. No illustration, vector art, cartoon, infographic, collage, poster, text overlay, watermark, logo, generic symbolic placeholder, or fabricated recognizable face.`.slice(0, 1800);
+  return `${correction}${evidenceLock}Professional photorealistic editorial news photograph, horizontal 16:9, documentary photojournalism, natural lighting, realistic textures, believable perspective and depth of field. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER[subject.domain]}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting where relevant."} One coherent real-world scene. No illustration, vector art, cartoon, infographic, collage, poster, text overlay, watermark, logo, generic symbolic placeholder, or fabricated recognizable face.`.slice(0, 1800);
 }
 
 export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason = ""): string {
@@ -70,6 +73,10 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
     "split screen", "text", "headline", "caption", "watermark", "logo", "low detail", "plastic texture",
     "CGI", "concept art", "comic", "anime", "stylized", "surreal",
   ];
+  if (subject.evidenceGuidance) items.push(
+    "fabricated recognizable face", "invented casualty", "invented damage", "invented crowd", "invented protest",
+    "invented rally", "invented document text", "unsupported official seal", "unsupported numerical text",
+  );
   if (subject.domain === "legal") items.push(
     "Texas state silhouette", "Texas-shaped graphic", "map of Texas", "politician", "candidate", "campaign rally",
     "podium", "flagpole", "capitol dome", "election icon", "ballot illustration", "government seal",

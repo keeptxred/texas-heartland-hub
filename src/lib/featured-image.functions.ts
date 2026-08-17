@@ -11,6 +11,12 @@ import {
   type VisionVerdict,
 } from "./featured-image-core";
 import { generateImageBytes, validateImageMatchesArticle } from "./featured-image-cloudflare";
+import {
+  buildMultiSourceImageGrounding,
+  extractSelectedImageLead,
+  type MultiSourceImageFact,
+  type MultiSourceImageGrounding,
+} from "./multisource-image-grounding";
 
 export { buildImagePrompt, buildNegativeImagePrompt, inferDomain, parseVisionVerdict } from "./featured-image-core";
 export type { Domain, SubjectExtract, VisionVerdict } from "./featured-image-core";
@@ -76,8 +82,30 @@ function sanitizeFilename(slug: string): string {
   return slug.toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "").slice(0, 80) || "article";
 }
 
-function extractImageSubject(row: ArticleRow): SubjectExtract {
+function extractImageSubject(row: ArticleRow, grounding: MultiSourceImageGrounding | null = null): SubjectExtract {
   const title = row.seo_headline?.trim() || row.title;
+  if (grounding && grounding.mode !== "hold_image" && grounding.leadFact) {
+    const evidenceText = [grounding.leadFact, ...grounding.verifiedFacts].join(" ");
+    const entities = extractEntities(`${title} ${evidenceText}`);
+    const locations = [...(row.affected_regions ?? []), ...entities.filter((e) => /houston|dallas|austin|san antonio|fort worth|el paso|rio grande|texas/i.test(e))]
+      .filter((v, i, a) => a.indexOf(v) === i);
+    const domain = inferDomain(evidenceText);
+    const supporting = grounding.verifiedFacts.filter((fact) => fact !== grounding.leadFact).slice(0, 2).join(" ");
+    const concreteSubject = grounding.mode === "verified_symbolic"
+      ? `${grounding.leadFact} Neutral real Texas institutional setting representing only this verified action.`
+      : `${grounding.leadFact}${supporting ? ` ${supporting}` : ""}`;
+    return {
+      title,
+      firstParagraph: grounding.leadFact,
+      entities,
+      locations,
+      domain,
+      concreteSubject,
+      evidenceGuidance: grounding.guidance,
+      imageGroundingMode: grounding.mode,
+    };
+  }
+
   const intro = firstParagraph(row.body_json);
   const haystack = `${title} ${row.dek ?? ""} ${intro} ${bodyJsonText(row.body_json).slice(0, 1800)}`;
   const entities = extractEntities(haystack);
@@ -106,6 +134,50 @@ async function serviceClient() {
   return supabaseAdmin;
 }
 
+async function loadMultiSourceImageGrounding(db: any, slug: string): Promise<MultiSourceImageGrounding | null> {
+  const clusterResult = await db
+    .from("news_event_clusters")
+    .select("id,source_count,independent_source_count")
+    .eq("published_slug", slug)
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (clusterResult.error || !clusterResult.data) return null;
+  if (Number(clusterResult.data.independent_source_count ?? 0) < 2) return null;
+
+  const factsResult = await db
+    .from("news_event_facts")
+    .select("fact_text,fact_type,corroboration_count,primary_record_support,has_conflict")
+    .eq("cluster_id", clusterResult.data.id);
+
+  let selectedLeadFact: string | null = null;
+  const sourcesResult = await db
+    .from("news_event_cluster_sources")
+    .select("feed_item_id,is_primary_record,relationship_type")
+    .eq("cluster_id", clusterResult.data.id)
+    .order("is_primary_record", { ascending: false })
+    .limit(5);
+  const feedIds = (sourcesResult.data ?? [])
+    .map((source: { feed_item_id?: unknown }) => Number(source.feed_item_id))
+    .filter((id: number) => Number.isInteger(id) && id > 0);
+  if (feedIds.length) {
+    const feedResult = await db
+      .from("texas_news_feed")
+      .select("id,cluster_json")
+      .in("id", feedIds);
+    for (const feed of feedResult.data ?? []) {
+      selectedLeadFact = extractSelectedImageLead(feed.cluster_json);
+      if (selectedLeadFact) break;
+    }
+  }
+
+  return buildMultiSourceImageGrounding({
+    facts: factsResult.error ? [] : (factsResult.data ?? []) as MultiSourceImageFact[],
+    selectedLeadFact,
+  });
+}
+
 async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } = {}): Promise<{ ok: true; url: string; alt: string } | { ok: false; error: string }> {
   const supabase = await serviceClient();
   const staticImage = staticFeaturedImage(row);
@@ -121,7 +193,20 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
   }
   if (!opts.overwrite && row.featured_image_url) return { ok: true, url: row.featured_image_url, alt: buildAltText(row) };
 
-  const subject = extractImageSubject(row);
+  // Multi-source stories must derive their visual subject from durable verified facts.
+  // The service types intentionally lag these newsroom tables, so the runtime client is narrowed here.
+  const grounding = await loadMultiSourceImageGrounding(supabase as any, row.slug);
+  if (grounding?.mode === "hold_image") {
+    const note = `multisource-image-hold: no safe verified visual fact; excluded_conflicts=${grounding.excludedConflictCount}`;
+    await supabase.from("daily_articles").update({
+      image_generation_status: "failed",
+      image_prompt: null,
+      image_validation_note: note,
+    }).eq("slug", row.slug);
+    return { ok: false, error: "Featured image held: the multi-source story has no safe corroborated or primary-record fact for visual generation." };
+  }
+
+  const subject = extractImageSubject(row, grounding);
   const prompt = buildImagePrompt(subject);
   const alt = buildAltText(row);
   const filename = `${sanitizeFilename(row.slug)}.jpg`;
@@ -157,7 +242,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
       image_alt_text: alt,
       image_generation_status: "ready",
       image_prompt: usedPrompt,
-      image_validation_note: `cloudflare-vision ok: ${verdict.reason}`,
+      image_validation_note: `${grounding ? `multisource-${grounding.mode}; ` : ""}cloudflare-vision ok: ${verdict.reason}`,
     }).eq("slug", row.slug);
     return { ok: true, url, alt };
   } catch (err) {
