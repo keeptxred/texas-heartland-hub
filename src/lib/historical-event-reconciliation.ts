@@ -1,6 +1,9 @@
 import {
   buildStoryCluster,
+  normalizeClusterText,
   sourceFamily,
+  strongMergeThreshold,
+  type ClusterCandidate,
   type ClusterableFeedItem,
   type StoryCluster,
 } from "@/lib/story-clustering";
@@ -23,6 +26,14 @@ export type HistoricalReconciliationPlan = {
   reason: string;
 };
 
+const HISTORICAL_TITLE_STOP = new Set([
+  "about", "after", "again", "against", "along", "amid", "among", "another", "around", "before", "being", "between",
+  "could", "from", "have", "into", "more", "most", "over", "said", "says", "than", "that", "their", "there", "these",
+  "they", "this", "those", "through", "today", "under", "want", "wants", "were", "what", "when", "where", "which", "while",
+  "with", "would", "texas", "houston", "dallas", "austin", "antonio", "mayor", "governor", "judge", "senator", "representative",
+  "official", "officials", "city", "county", "state", "office", "news", "update", "latest", "new",
+]);
+
 function timestamp(item: HistoricalFeedItem): number {
   const value = Date.parse(item.pub_date ?? item.created_at ?? "");
   return Number.isFinite(value) ? value : Number.MAX_SAFE_INTEGER;
@@ -40,6 +51,54 @@ function distinctSlugs(rows: readonly HistoricalFeedItem[]): string[] {
       .map((row) => row.internal_slug?.trim())
       .filter((slug): slug is string => Boolean(slug)),
   )].sort();
+}
+
+function historicalTitleTokens(title: string): Set<string> {
+  const tokens = new Set<string>();
+  for (const raw of normalizeClusterText(title).split(/\s+/)) {
+    if (raw.length < 4 || HISTORICAL_TITLE_STOP.has(raw)) continue;
+    let token = raw;
+    if (token.length > 5 && token.endsWith("ies")) token = `${token.slice(0, -3)}y`;
+    else if (token.length > 5 && token.endsWith("s") && !token.endsWith("ss")) token = token.slice(0, -1);
+    if (!HISTORICAL_TITLE_STOP.has(token)) tokens.add(token);
+  }
+  return tokens;
+}
+
+/**
+ * Historical backfill is deliberately stricter than live candidate clustering.
+ * A shared person, office or city can connect unrelated stories days apart, so
+ * backfill requires substantial title-level event identity before it may attach
+ * provenance to an already-published URL.
+ */
+export function historicalEventIdentityCompatible(
+  anchor: HistoricalFeedItem,
+  candidate: ClusterableFeedItem,
+): boolean {
+  const left = historicalTitleTokens(anchor.title);
+  const right = historicalTitleTokens(candidate.title);
+  if (left.size < 3 || right.size < 3) return false;
+
+  const shared = [...left].filter((token) => right.has(token)).length;
+  if (shared < 4) return false;
+
+  const containment = shared / Math.max(1, Math.min(left.size, right.size));
+  const union = new Set([...left, ...right]).size;
+  const jaccard = shared / Math.max(1, union);
+  return containment >= 0.5 || jaccard >= 0.38;
+}
+
+function historicalCluster(anchor: HistoricalFeedItem, nearby: HistoricalFeedItem[], maxMembers: number): StoryCluster {
+  const initial = buildStoryCluster(anchor, nearby, maxMembers);
+  const members = initial.members.filter((member) => historicalEventIdentityCompatible(anchor, member));
+  const threshold = strongMergeThreshold(anchor);
+  return {
+    ...initial,
+    members: members as ClusterCandidate[],
+    sourceCount: 1 + members.length,
+    score: members.length ? Math.max(...members.map((member) => member.combinationScore)) : 0,
+    strongMerge: members.some((member) => member.combinationScore >= threshold),
+  };
 }
 
 /**
@@ -63,7 +122,7 @@ export function planHistoricalReconciliation(
   for (const anchor of anchors) {
     if (consumed.has(anchor.id)) continue;
     const nearby = eligible.filter((row) => row.id !== anchor.id && !consumed.has(row.id));
-    const cluster = buildStoryCluster(anchor, nearby, maxMembers);
+    const cluster = historicalCluster(anchor, nearby, maxMembers);
     if (!cluster.strongMerge || cluster.sourceCount < 2) continue;
 
     const rows = clusterRows(cluster);
