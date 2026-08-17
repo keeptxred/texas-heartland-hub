@@ -132,16 +132,54 @@ function hasNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
+const GENERIC_EXPERT_SENTENCE_RE = /[^.!?]*\bexperts\s+(?:say|suggest|believe)\b[^.!?]*(?:[.!?]|$)/gi;
+
+export function stripGenericExpertAttribution(value: string): string {
+  return value
+    .replace(GENERIC_EXPERT_SENTENCE_RE, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function normalizeNewsroomDraft(value: unknown): unknown {
   if (!isRecord(value) || !Array.isArray(value.faq)) return value;
   const faq = value.faq.map((item) => {
     if (!isRecord(item) || typeof item.q !== "string" || typeof item.a !== "string") return item;
     const q = item.q.trim();
     const a = item.a.trim();
-    if (!q.endsWith("?") && a.endsWith("?")) return { ...item, q: a, a: q };
-    return item;
+    const normalized = !q.endsWith("?") && a.endsWith("?")
+      ? { ...item, q: a, a: q }
+      : { ...item, q, a };
+    return {
+      ...normalized,
+      q: stripGenericExpertAttribution(normalized.q),
+      a: stripGenericExpertAttribution(normalized.a),
+    };
   });
-  return { ...value, faq };
+  const sections = Array.isArray(value.sections)
+    ? value.sections.map((section) => isRecord(section) && Array.isArray(section.paragraphs)
+      ? {
+          ...section,
+          heading: typeof section.heading === "string" ? stripGenericExpertAttribution(section.heading) : section.heading,
+          paragraphs: section.paragraphs.map((paragraph) => typeof paragraph === "string"
+            ? stripGenericExpertAttribution(paragraph)
+            : paragraph),
+        }
+      : section)
+    : value.sections;
+  const keyTakeaways = Array.isArray(value.keyTakeaways)
+    ? value.keyTakeaways.map((item) => typeof item === "string" ? stripGenericExpertAttribution(item) : item)
+    : value.keyTakeaways;
+  return {
+    ...value,
+    title: typeof value.title === "string" ? stripGenericExpertAttribution(value.title) : value.title,
+    dek: typeof value.dek === "string" ? stripGenericExpertAttribution(value.dek) : value.dek,
+    summary: typeof value.summary === "string" ? stripGenericExpertAttribution(value.summary) : value.summary,
+    relevance: typeof value.relevance === "string" ? stripGenericExpertAttribution(value.relevance) : value.relevance,
+    sections,
+    keyTakeaways,
+    faq,
+  };
 }
 
 function draftShapeReasons(value: unknown): string[] {
