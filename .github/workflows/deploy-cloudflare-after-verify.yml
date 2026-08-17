@@ -237,7 +237,7 @@ jobs:
           if kind == 'bill':
               if data.get('schemaVersion') != 1 or data.get('site') != 'Keep TX Red' or data.get('jurisdiction') != 'Texas':
                   raise SystemExit(f'Unexpected bill reference contract: {data!r}')
-              if data.get('canonicalUrl') != 'https://keeptxred.com/bills/texas/89/sb/37':
+              if data.get('canonicalUrl') != 'https://keeptxred.com/bills/texas/89/hb/149':
                   raise SystemExit(f'Unexpected bill canonical URL: {data.get("canonicalUrl")!r}')
               official = data.get('officialBillUrl')
               if not isinstance(official, str) or 'capitol.texas.gov' not in official:
@@ -249,7 +249,7 @@ jobs:
           }
 
           verify_reference "$PRODUCTION_URL/elections/reference.json" election
-          verify_reference "$PRODUCTION_URL/bills/texas/89/sb/37/reference.json" bill
+          verify_reference "$PRODUCTION_URL/bills/texas/89/hb/149/reference.json" bill
 
       - name: Apply guarded one-time news history reconciliation
         if: steps.revision.outputs.deploy == 'true'
