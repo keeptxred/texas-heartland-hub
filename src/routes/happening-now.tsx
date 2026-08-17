@@ -8,7 +8,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
-import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { PUBLISHER_LOGO } from "@/lib/seo";
 
@@ -64,8 +63,8 @@ const OFFICIAL_SOURCE_PATTERNS = [
   "capitol.texas.gov",
 ] as const;
 
-function isOfficialGovernmentSource(source: string) {
-  const normalized = source.trim().toLowerCase();
+function isOfficialGovernmentSource(source: string, sourceUrl?: string | null) {
+  const normalized = `${source} ${sourceUrl ?? ""}`.trim().toLowerCase();
   return OFFICIAL_SOURCE_PATTERNS.some((pattern) => normalized.includes(pattern));
 }
 
@@ -158,6 +157,8 @@ type Row = {
   title: string;
   source: string;
   link: string | null;
+  sourceUrl: string | null;
+  officialSource: boolean;
   pendingArticle: boolean;
   description: string | null;
   pub_date: string;
@@ -167,6 +168,7 @@ type FeedRow = {
   id: number;
   title: string;
   source: string;
+  link: string | null;
   internal_slug: string | null;
   description: string | null;
   pub_date: string;
@@ -186,27 +188,17 @@ function DashboardPage() {
 
     async function load() {
       const sinceIso = new Date(Date.now() - FALLBACK_WINDOW_MS).toISOString();
-      const [{ data: feedData, error: feedError }, { data: articleData, error: articleError }] =
-        await Promise.all([
-          supabase
-            .from("texas_news_feed")
-            .select("id,title,source,internal_slug,description,pub_date")
-            .gte("pub_date", sinceIso)
-            .order("pub_date", { ascending: false })
-            .limit(240),
-          supabase
-            .from("daily_articles")
-            .select("id,slug,title,category,dek,published_at,kind")
-            .gte("published_at", sinceIso)
-            .order("published_at", { ascending: false })
-            .limit(120),
-        ]);
+      const { data: feedData, error: feedError } = await supabase
+        .from("texas_news_feed")
+        .select("id,title,source,link,internal_slug,description,pub_date")
+        .gte("pub_date", sinceIso)
+        .order("pub_date", { ascending: false })
+        .limit(240);
 
       if (!active) return;
-      if (feedError || articleError) {
+      if (feedError) {
         console.error("[happening-now] load failed", {
-          feed: feedError?.message,
-          articles: articleError?.message,
+          feed: feedError.message,
         });
         setLoadError(true);
         setLoading(false);
@@ -236,16 +228,18 @@ function DashboardPage() {
       const feedRows = rawFeed.flatMap<Row>((row) => {
         const hasNativeArticle =
           Boolean(row.internal_slug) && validArticleSlugs.has(row.internal_slug as string);
-        const officialSource = isOfficialGovernmentSource(row.source);
+        const officialSource = isOfficialGovernmentSource(row.source, row.link);
 
-        if (!hasNativeArticle && !officialSource) return [];
+        if (!officialSource) return [];
 
         return [
           {
             id: row.id,
             title: row.title,
             source: row.source,
-            link: hasNativeArticle ? `/news/${row.internal_slug}` : null,
+            link: hasNativeArticle ? `/news/${row.internal_slug}` : row.link,
+            sourceUrl: row.link,
+            officialSource,
             pendingArticle: !hasNativeArticle,
             description: row.description,
             pub_date: row.pub_date,
@@ -253,32 +247,8 @@ function DashboardPage() {
         ];
       });
 
-      const nativeRows: Row[] = (
-        (articleData ?? []) as {
-          id: string;
-          slug: string;
-          title: string;
-          category: string;
-          dek: string | null;
-          published_at: string;
-          kind?: string | null;
-        }[]
-      )
-        .filter((article) =>
-          shouldDisplayBreakingSports(article.kind, article.published_at, "happening-now"),
-        )
-        .map((article, index) => ({
-          id: -1 - index,
-          title: article.title,
-          source: article.category || "Newsroom",
-          link: `/news/${article.slug}`,
-          pendingArticle: false,
-          description: article.dek,
-          pub_date: article.published_at,
-        }));
-
       const deduplicated = new Map<string, Row>();
-      [...feedRows, ...nativeRows]
+      feedRows
         .sort((a, b) => Date.parse(b.pub_date) - Date.parse(a.pub_date))
         .forEach((row) => {
           const key = row.link ?? `${row.source.toLowerCase()}::${row.title.toLowerCase()}`;
@@ -303,7 +273,12 @@ function DashboardPage() {
     const primaryCutoff = Date.now() - PRIMARY_WINDOW_MS;
     const hasPrimaryItems = items.some((item) => {
       const timestamp = Date.parse(item.pub_date);
-      return Number.isFinite(timestamp) && timestamp >= primaryCutoff && !isLowValueTitle(item.title);
+      return (
+        item.officialSource &&
+        Number.isFinite(timestamp) &&
+        timestamp >= primaryCutoff &&
+        !isLowValueTitle(item.title)
+      );
     });
     return hasPrimaryItems ? PRIMARY_WINDOW_MS : FALLBACK_WINDOW_MS;
   }, [items]);
@@ -444,7 +419,12 @@ function DashboardPage() {
                 </time>
                 <h3 className="font-serif text-base font-bold leading-snug">
                   {item.link ? (
-                    <a href={item.link} className="hover:underline underline-offset-4">
+                    <a
+                      href={item.link}
+                      target={item.pendingArticle ? "_blank" : undefined}
+                      rel={item.pendingArticle ? "noopener noreferrer" : undefined}
+                      className="hover:underline underline-offset-4"
+                    >
                       {item.title}
                     </a>
                   ) : (
@@ -457,12 +437,21 @@ function DashboardPage() {
                   </p>
                 ) : null}
                 <p className="mt-3 text-[10px] font-semibold uppercase tracking-widest text-primary">
-                  Source: {item.source}
+                  Official source: {item.source}
                 </p>
                 {item.pendingArticle ? (
                   <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-                    Full Keep TX Red article in progress
+                    Opens the official source · Keep TX Red article in progress
                   </p>
+                ) : item.sourceUrl ? (
+                  <a
+                    href={item.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground hover:text-primary"
+                  >
+                    View official source ↗
+                  </a>
                 ) : null}
               </article>
             ))}
