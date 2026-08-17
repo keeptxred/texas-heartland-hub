@@ -49,6 +49,77 @@ function normalizeGenericHeading(value: string, sectionIndex: number): string {
   return NORMALIZED_SECTION_HEADINGS[sectionIndex % NORMALIZED_SECTION_HEADINGS.length];
 }
 
+function splitSentences(value: string): string[] {
+  return value.trim().match(/[^.!?]+(?:[.!?]+[”’"']?|$)/g)?.map((sentence) => sentence.trim()).filter(Boolean) ?? [value.trim()];
+}
+
+function looksStructural(value: string): boolean {
+  const trimmed = value.trim();
+  return /^(?:[-*+]\s|\d+[.)]\s|>\s|#{1,6}\s|```|<[^>]+>)/.test(trimmed);
+}
+
+function splitOversizedProse(value: string): string[] {
+  const trimmed = value.trim();
+  if (!trimmed || looksStructural(trimmed) || wordCount(trimmed) <= READABILITY_LIMITS.hardParagraphWords) return [trimmed];
+
+  const sentences = splitSentences(trimmed);
+  if (sentences.length < 2) return [trimmed];
+
+  const chunks: string[] = [];
+  let current: string[] = [];
+  let currentWords = 0;
+
+  for (const sentence of sentences) {
+    const sentenceWords = wordCount(sentence);
+    const exceedsTarget = current.length > 0 && currentWords + sentenceWords > READABILITY_LIMITS.warningParagraphWords;
+    const exceedsSentenceTarget = current.length >= 4;
+    if (exceedsTarget || exceedsSentenceTarget) {
+      chunks.push(current.join(" "));
+      current = [];
+      currentWords = 0;
+    }
+    current.push(sentence);
+    currentWords += sentenceWords;
+  }
+  if (current.length) chunks.push(current.join(" "));
+
+  if (chunks.length > 1 && wordCount(chunks[chunks.length - 1]) < 25) {
+    const tail = chunks.pop()!;
+    const previous = chunks[chunks.length - 1];
+    if (wordCount(previous) + wordCount(tail) <= READABILITY_LIMITS.hardParagraphWords) chunks[chunks.length - 1] = `${previous} ${tail}`;
+    else chunks.push(tail);
+  }
+  return chunks;
+}
+
+function repairParagraph(value: string): string[] {
+  const trimmed = value.trim();
+  if (!trimmed) return [];
+  return trimmed
+    .split(/\n\s*\n/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .flatMap(splitOversizedProse);
+}
+
+/**
+ * Conservatively repairs malformed paragraph-array boundaries without rewriting
+ * article wording. Headings and all non-paragraph fields are preserved.
+ */
+export function repairArticleReadability<T extends ReadabilityArticleShape>(article: T): T {
+  if (!Array.isArray(article.sections)) return article;
+  let changed = false;
+  const sections = article.sections.map((section) => {
+    const original = Array.isArray(section?.paragraphs) ? section.paragraphs : [];
+    const repaired = original.flatMap((paragraph) => repairParagraph(paragraph ?? ""));
+    const sectionChanged = repaired.length !== original.length || repaired.some((paragraph, index) => paragraph !== original[index]);
+    if (!sectionChanged) return section;
+    changed = true;
+    return { ...section, paragraphs: repaired };
+  });
+  return changed ? ({ ...article, sections } as T) : article;
+}
+
 export function validateArticleReadability(article: ReadabilityArticleShape): string[] {
   const reasons: string[] = [];
   const paragraphs: { label: string; text: string }[] = [];
