@@ -223,9 +223,7 @@ function FindRepPage() {
                         </>
                       ) : (
                         <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                          No published KTR 2026 general-election race matches this district. Texas
-                          Senate seats are staggered, so not every Senate district appears on the
-                          2026 ballot.
+                          No published KTR 2026 general-election race matches this district. Texas Senate seats are staggered, so not every Senate district appears on the 2026 ballot.
                         </p>
                       )}
                     </article>
