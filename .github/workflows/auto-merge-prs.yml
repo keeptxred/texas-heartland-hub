@@ -84,6 +84,17 @@ jobs:
 
           gh run watch "$verify_run_id" --repo "$REPOSITORY" --exit-status
 
+          changed_files="$(gh api --paginate "repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename')"
+          if grep -qxF '.github/workflows/update-election-data.yml' <<<"$changed_files" || \
+             grep -qxF 'scripts/elections/scrape-official-primary-winners.mjs' <<<"$changed_files"; then
+            gh workflow run update-election-data.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main Election Central data refresh verification."
+          fi
+          if grep -qxF '.github/workflows/update-election-forecasts.yml' <<<"$changed_files"; then
+            gh workflow run update-election-forecasts.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main Election Central forecast verification."
+          fi
+
           main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
           if [[ "$main_sha" != "$merged_sha" ]]; then
             echo "A newer main revision exists ($main_sha); skipping stale deployment of $merged_sha."
