@@ -137,11 +137,30 @@ jobs:
           }, sort_keys=True))
           PY
 
+      - name: Refresh deterministic zero-AI newsroom ranking
+        shell: bash
+        run: |
+          set -euo pipefail
+          for endpoint in normalize-newsroom-feed cluster-newsroom-stories score-newsroom-stories decide-newsroom-packages; do
+            response="$(curl --max-time 90 --fail-with-body --silent --show-error -X POST \
+              "$PRODUCTION_URL/api/public/hooks/$endpoint")"
+            python3 - "$response" "$endpoint" <<'PY'
+          import json, sys
+          data = json.loads(sys.argv[1])
+          endpoint = sys.argv[2]
+          if data.get("ok") is not True:
+              raise SystemExit(f"{endpoint} failed: {data.get('error')}")
+          if int(data.get("aiCalls") or 0) != 0:
+              raise SystemExit(f"{endpoint} unexpectedly used AI: {data.get('aiCalls')}")
+          print(endpoint, json.dumps(data, sort_keys=True))
+          PY
+          done
+
       - name: Refresh zero-AI research packets
         shell: bash
         run: |
           set -euo pipefail
-          response="$(curl --max-time 60 --fail-with-body --silent --show-error -X POST \
+          response="$(curl --max-time 180 --fail-with-body --silent --show-error -X POST \
             "$PRODUCTION_URL/api/public/hooks/build-newsroom-research-packets")"
           python3 - "$response" <<'PY'
           import json, sys
