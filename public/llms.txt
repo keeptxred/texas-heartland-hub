@@ -8,6 +8,7 @@ Keep TX Red covers Texas politics, elections, public officials, the Legislature,
 
 - [How to Cite Keep TX Red References](/citation-guide): Human-readable citation rules, canonical URL guidance, official-source precedence, and machine-resource links.
 - [Machine-readable citation index](/citation-magnets.json): Maintained canonical reference targets with topic, type, and trust metadata.
+- [2026 Election reference JSON](/elections/reference.json): Published+verified race and candidate relationships with canonical URLs, source provenance, and verification dates; sensitive/admin candidate fields are excluded.
 - [2026 Texas Election Central](/elections/2026): Verified races, candidates, calendar dates, voting research, polling, forecasts, and results.
 - [Texas Statewide Elections](/elections/statewide): Expected statewide offices mapped to published, verified race and candidate records.
 - [Texas Election Races](/elections/races): Canonical race directory.
