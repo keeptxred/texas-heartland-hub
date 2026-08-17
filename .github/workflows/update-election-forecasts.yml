@@ -4,9 +4,14 @@ on:
   schedule:
     - cron: "17 11 * * *"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-election-forecasts.yml'
 
 permissions:
   contents: write
+  pull-requests: write
 
 concurrency:
   group: election-forecast-refresh
@@ -45,31 +50,82 @@ jobs:
           bun run elections:validate:forecast
           bun run elections:qa
 
-      - name: Commit changed forecast snapshots
+      - name: Publish changed forecast snapshots through PR
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          git add \
-            src/data/elections/2026/forecasts.json \
-            src/data/elections/2026/forecast-diagnostics.json \
-            src/data/elections/2026/polling-averages.json \
-            src/data/elections/2026/sources.json \
+          set -euo pipefail
+          allowed='^src/data/elections/2026/(forecasts|forecast-diagnostics|polling-averages|sources|readiness)\.json$'
+          tracked_paths=(
+            src/data/elections/2026/forecasts.json
+            src/data/elections/2026/forecast-diagnostics.json
+            src/data/elections/2026/polling-averages.json
+            src/data/elections/2026/sources.json
             src/data/elections/2026/readiness.json
+          )
+          refresh_branch='automation/election-forecast-refresh'
+
+          git add "${tracked_paths[@]}"
           if git diff --cached --quiet; then
-            echo "No forecast changes to commit."
+            echo "No forecast changes to publish."
             exit 0
           fi
-          unexpected_files="$(git diff --cached --name-only | grep -vE '^src/data/elections/2026/(forecasts|forecast-diagnostics|polling-averages|sources|readiness)\.json$' || true)"
+
+          unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
           if [[ -n "$unexpected_files" ]]; then
             echo "Refusing to publish files outside the forecast allowlist:" >&2
             echo "$unexpected_files" >&2
             exit 1
           fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Update daily election forecast snapshots"
+
+          git diff --cached --binary > /tmp/election-forecast-refresh.patch
+          if [[ ! -s /tmp/election-forecast-refresh.patch ]]; then
+            echo "No staged forecast patch to publish."
+            exit 0
+          fi
+
+          git config user.name "KeepTXRed Election Forecasts"
+          git config user.email "actions@users.noreply.github.com"
+
           git fetch origin main
-          if [[ "$(git rev-parse HEAD^)" != "$(git rev-parse origin/main)" ]]; then
-            echo "Main advanced during forecast generation; refusing to publish stale snapshots."
+          git reset --hard origin/main
+          if ! git apply --index --3way /tmp/election-forecast-refresh.patch; then
+            echo "Fresh forecast patch conflicts with current main; refusing to publish without a new forecast run." >&2
             exit 1
           fi
-          git push origin HEAD:main
+
+          unexpected_files="$(git diff --cached --name-only | grep -vE "$allowed" || true)"
+          if [[ -n "$unexpected_files" ]]; then
+            echo "Reapplied forecast patch touched files outside the forecast allowlist:" >&2
+            echo "$unexpected_files" >&2
+            exit 1
+          fi
+
+          bun run elections:validate
+          bun run elections:validate:forecast
+          bun run elections:qa
+
+          if git diff --cached --quiet; then
+            echo "Forecast snapshots already match current main."
+            exit 0
+          fi
+
+          git checkout -B "$refresh_branch"
+          git commit -m "Update daily election forecast snapshots"
+          git push --force-with-lease origin "$refresh_branch"
+
+          pr_number="$(gh pr list --head "$refresh_branch" --base main --state open --json number --jq '.[0].number // empty')"
+          if [[ -z "$pr_number" ]]; then
+            pr_url="$(gh pr create \
+              --base main \
+              --head "$refresh_branch" \
+              --title "Update daily election forecast snapshots" \
+              --body $'Automated Election Central forecast refresh.\n\nThe workflow restricts publication to forecast snapshot files, rebases the validated forecast patch onto current protected main, and reruns election, forecast, and structural QA before opening this PR. Normal branch protection and required checks remain authoritative.')"
+            pr_number="${pr_url##*/}"
+          else
+            echo "Updated existing election forecast refresh PR #$pr_number."
+          fi
+
+          gh pr merge "$pr_number" --auto --squash
+          echo "Election forecast refresh is queued through protected PR #$pr_number."
