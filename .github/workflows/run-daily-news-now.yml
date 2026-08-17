@@ -1,7 +1,7 @@
 name: Run Daily News Now
 
-# Production publisher: prioritize eligible overdue newsroom gaps, then try
-# ranked RSS stories, then use the reserve safety net if needed.
+# Production publisher: prioritize eligible overdue gaps, then the clustered
+# newsroom, then the legacy ranked RSS writer, with the reserve safety net last.
 on:
   schedule:
     - cron: "15 */8 * * *"
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - name: Publish overdue newsroom gaps before RSS fallback
+      - name: Publish best available newsroom story
         shell: bash
         run: |
           set -euo pipefail
@@ -52,8 +52,71 @@ jobs:
             exit 0
           fi
 
-          echo 'No overdue gap published; continuing to ranked RSS publisher.'
+          echo 'No overdue gap published; refreshing deterministic clustered newsroom pipeline.'
+          clustered_ready=1
 
+          run_zero_ai_stage() {
+            local name="$1"
+            local endpoint="$2"
+            local timeout="$3"
+            local output="/tmp/newsroom-${name}.json"
+            local status
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time "$timeout" -H 'accept: application/json' \
+              "https://keeptxred.com/api/public/hooks/${endpoint}" || echo 000)
+            echo "newsroom-${name} HTTP ${status}"
+            cat "$output" 2>/dev/null || true
+            echo
+            if [[ "$status" != "200" ]] || ! jq -e '.ok == true and (.aiCalls // 0) == 0' "$output" >/dev/null 2>&1; then
+              echo "CLUSTERED_NEWSROOM_${name^^}_FAILED; preserving legacy fallback."
+              clustered_ready=0
+              return 0
+            fi
+          }
+
+          run_zero_ai_stage evidence enrich-newsroom-rss-evidence 90
+          run_zero_ai_stage normalize normalize-newsroom-feed 90
+          run_zero_ai_stage cluster cluster-newsroom-stories 90
+          run_zero_ai_stage score score-newsroom-stories 90
+          run_zero_ai_stage decide decide-newsroom-packages 90
+          run_zero_ai_stage packets build-newsroom-research-packets 180
+
+          if [[ "$clustered_ready" -eq 1 ]]; then
+            newsroom_status=$(curl -sS -X POST -o /tmp/newsroom-publish.json -w '%{http_code}' \
+              --max-time 240 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              'https://keeptxred.com/api/public/hooks/generate-newsroom?mode=publish' || echo 000)
+
+            echo "clustered-newsroom HTTP ${newsroom_status}"
+            cat /tmp/newsroom-publish.json 2>/dev/null || true
+            echo
+
+            if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED|ai_budget_exhausted' /tmp/newsroom-publish.json 2>/dev/null; then
+              echo 'Clustered newsroom AI budget/quota exhausted; stopping to avoid additional AI calls.' >&2
+              exit 1
+            fi
+
+            if [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .published == true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
+              slug=$(jq -r '.slug // ""' /tmp/newsroom-publish.json)
+              source_count=$(jq -r '.sourceCount // 0' /tmp/newsroom-publish.json)
+              primary_count=$(jq -r '.primarySourceCount // 0' /tmp/newsroom-publish.json)
+              ai_calls=$(jq -r '.aiCalls // 0' /tmp/newsroom-publish.json)
+              repair=$(jq -r '.repairAttempted // false' /tmp/newsroom-publish.json)
+              echo "DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=${slug} sources=${source_count} primary=${primary_count} ai_calls=${ai_calls} repair=${repair}"
+              exit 0
+            fi
+
+            if [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .no_items == true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
+              echo "Clustered newsroom had no production-eligible packet: $(jq -r '.reason // "unknown"' /tmp/newsroom-publish.json). Continuing to legacy fallback."
+            elif [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .generated == true and .published != true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
+              echo "Clustered newsroom draft did not pass final validation; preserving legacy fallback."
+            else
+              echo "Clustered newsroom publish attempt was unavailable (HTTP ${newsroom_status}); preserving legacy fallback."
+            fi
+          fi
+
+          echo 'Continuing to legacy ranked RSS publisher.'
           base='https://keeptxred.com/api/public/hooks/generate-news'
           inserted=0
           failed=0
@@ -115,7 +178,7 @@ jobs:
 
             echo "offset=${offset} -> ${result}"
             if [[ "$inserted" -gt 0 ]]; then
-              echo "A normal article published at offset=${offset}; stopping further AI calls."
+              echo "A legacy fallback article published at offset=${offset}; stopping further AI calls."
               break
             fi
           done
