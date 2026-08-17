@@ -1,0 +1,154 @@
+name: Newsroom Production Observability
+
+on:
+  workflow_run:
+    workflows: ["Run Daily News Now"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  summarize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPOSITORY: ${{ github.repository }}
+      SOURCE_RUN_ID: ${{ github.event.workflow_run.id }}
+      SOURCE_RUN_EVENT: ${{ github.event.workflow_run.event }}
+      SOURCE_RUN_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
+      SOURCE_RUN_SHA: ${{ github.event.workflow_run.head_sha }}
+      SOURCE_RUN_CREATED_AT: ${{ github.event.workflow_run.created_at }}
+    steps:
+      - name: Download completed publisher logs
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail-with-body --silent --show-error --location \
+            -H "Authorization: Bearer ${GH_TOKEN}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${REPOSITORY}/actions/runs/${SOURCE_RUN_ID}/logs" \
+            -o /tmp/publisher-logs.zip
+          unzip -p /tmp/publisher-logs.zip > /tmp/publisher.log
+
+      - name: Build newsroom production telemetry
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          text = Path('/tmp/publisher.log').read_text(errors='replace')
+
+          def match(pattern, default=None, flags=0):
+              found = re.search(pattern, text, flags)
+              return found.group(1) if found else default
+
+          def intval(value, default=0):
+              try:
+                  return int(value)
+              except (TypeError, ValueError):
+                  return default
+
+          overdue = intval(match(r'DAILY_NEWS_PUBLISH_SUCCESS overdue_published=(\d+)'))
+          clustered = re.search(
+              r'DAILY_NEWS_PUBLISH_SUCCESS clustered_slug=([^\s]+) sources=(\d+) primary=(\d+) ai_calls=(\d+) repair=(true|false)',
+              text,
+          )
+          legacy = re.search(r'DAILY_NEWS_PUBLISH_SUCCESS inserted=(\d+) rejected=(\d+)', text)
+          safety_net_invoked = 'invoking reserve safety net' in text
+
+          publisher = 'none'
+          slug = None
+          source_count = 0
+          primary_source_count = 0
+          ai_calls = 0
+          repair_attempted = False
+          legacy_inserted = 0
+          legacy_rejected = 0
+
+          if overdue > 0:
+              publisher = 'overdue_gap'
+          elif clustered:
+              publisher = 'clustered_newsroom'
+              slug = clustered.group(1)
+              source_count = intval(clustered.group(2))
+              primary_source_count = intval(clustered.group(3))
+              ai_calls = intval(clustered.group(4))
+              repair_attempted = clustered.group(5) == 'true'
+          elif legacy:
+              legacy_inserted = intval(legacy.group(1))
+              legacy_rejected = intval(legacy.group(2))
+              if legacy_inserted > 0:
+                  publisher = 'legacy_rss'
+              elif safety_net_invoked:
+                  publisher = 'safety_net'
+
+          no_item_reason = match(r'Clustered newsroom had no production-eligible packet: ([^.\n]+)')
+          clustered_http = match(r'clustered-newsroom HTTP (\d{3})')
+          finalize_http = match(r'clustered-newsroom-finalize HTTP (\d{3})')
+          zero_ai_failures = sorted(set(re.findall(r'CLUSTERED_NEWSROOM_([A-Z]+)_FAILED', text)))
+          legacy_offsets = sorted({int(x) for x in re.findall(r'offset=(\d+)', text)})
+
+          telemetry = {
+              'schemaVersion': 1,
+              'sourceRunId': intval(os.environ.get('SOURCE_RUN_ID')),
+              'sourceEvent': os.environ.get('SOURCE_RUN_EVENT'),
+              'sourceConclusion': os.environ.get('SOURCE_RUN_CONCLUSION'),
+              'sourceSha': os.environ.get('SOURCE_RUN_SHA'),
+              'sourceCreatedAt': os.environ.get('SOURCE_RUN_CREATED_AT'),
+              'publisher': publisher,
+              'published': publisher != 'none',
+              'overduePublished': overdue,
+              'clusteredAttempted': clustered_http is not None,
+              'clusteredHttp': intval(clustered_http, -1) if clustered_http else None,
+              'clusteredNoItemReason': no_item_reason,
+              'clusteredValidationFallback': 'Clustered newsroom draft did not pass final validation' in text,
+              'clusteredUnavailableFallback': 'Clustered newsroom publish attempt was unavailable' in text,
+              'zeroAiStageFailures': zero_ai_failures,
+              'slug': slug,
+              'sourceCount': source_count,
+              'primarySourceCount': primary_source_count,
+              'aiCalls': ai_calls,
+              'repairAttempted': repair_attempted,
+              'finalizeHttp': intval(finalize_http, -1) if finalize_http else None,
+              'finalizeWarning': 'CLUSTERED_NEWSROOM_FINALIZE_WARNING' in text,
+              'imageWarning': 'CLUSTERED_NEWSROOM_IMAGE_WARNING' in text,
+              'legacyOffsetsAttempted': len(legacy_offsets),
+              'legacyInserted': legacy_inserted,
+              'legacyRejected': legacy_rejected,
+              'safetyNetInvoked': safety_net_invoked,
+              'quotaExhausted': bool(re.search(r'QUOTA_EXHAUSTED|AI budget/quota exhausted|ai_budget_exhausted', text, re.I)),
+          }
+
+          Path('newsroom-production-telemetry.json').write_text(json.dumps(telemetry, indent=2, sort_keys=True) + '\n')
+          print('NEWSROOM_PRODUCTION_TELEMETRY ' + json.dumps(telemetry, sort_keys=True))
+
+          summary = Path(os.environ['GITHUB_STEP_SUMMARY'])
+          summary.write_text(
+              '## Newsroom production telemetry\n\n'
+              f"- Publisher: **{publisher}**\n"
+              f"- Source run: `{telemetry['sourceRunId']}` ({telemetry['sourceEvent']}, {telemetry['sourceConclusion']})\n"
+              f"- Clustered attempted: **{telemetry['clusteredAttempted']}**\n"
+              f"- Clustered no-item reason: `{no_item_reason or 'none'}`\n"
+              f"- Clustered sources: **{source_count}** total / **{primary_source_count}** primary\n"
+              f"- Clustered AI calls: **{ai_calls}**; repair: **{repair_attempted}**\n"
+              f"- Legacy offsets attempted: **{len(legacy_offsets)}**; inserted: **{legacy_inserted}**\n"
+              f"- Safety net invoked: **{safety_net_invoked}**\n"
+              f"- Finalize warning: **{telemetry['finalizeWarning']}**; image warning: **{telemetry['imageWarning']}**\n"
+              f"- Quota exhausted: **{telemetry['quotaExhausted']}**\n"
+          )
+          PY
+
+      - name: Upload telemetry artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: newsroom-production-telemetry-${{ github.event.workflow_run.id }}
+          path: newsroom-production-telemetry.json
+          if-no-files-found: error
+          retention-days: 30
