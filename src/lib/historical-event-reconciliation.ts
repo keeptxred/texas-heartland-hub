@@ -16,6 +16,11 @@ export type HistoricalFeedItem = ClusterableFeedItem & {
   created_at?: string | null;
 };
 
+export type HistoricalArticleEvidence = {
+  title: string;
+  bodyText?: string | null;
+};
+
 export type HistoricalReconciliationPlan = {
   kind: "safe" | "hold";
   cluster: StoryCluster;
@@ -32,6 +37,10 @@ const HISTORICAL_TITLE_STOP = new Set([
   "they", "this", "those", "through", "today", "under", "want", "wants", "were", "what", "when", "where", "which", "while",
   "with", "would", "texas", "houston", "dallas", "austin", "antonio", "mayor", "governor", "judge", "senator", "representative",
   "official", "officials", "city", "county", "state", "office", "news", "update", "latest", "new",
+]);
+
+const AWARD_PREFIX_STOP = new Set([
+  "to", "the", "a", "an", "for", "named", "added", "selected", "makes", "make", "on", "preseason", "watch", "list", "2026",
 ]);
 
 function timestamp(item: HistoricalFeedItem): number {
@@ -65,6 +74,40 @@ function historicalTitleTokens(title: string): Set<string> {
   return tokens;
 }
 
+function namedAwardIdentity(title: string): string | null {
+  const tokens = normalizeClusterText(title).split(/\s+/).filter(Boolean);
+  const awardIndex = tokens.indexOf("award");
+  if (awardIndex <= 0) return null;
+
+  const identity: string[] = [];
+  for (let index = awardIndex - 1; index >= 0 && identity.length < 3; index -= 1) {
+    const token = tokens[index];
+    if (AWARD_PREFIX_STOP.has(token)) break;
+    identity.unshift(token);
+  }
+  return identity.length ? identity.join(" ") : null;
+}
+
+/**
+ * A legacy row may contain an internal_slug written by an older buggy pipeline.
+ * Before that slug can become canonical durable provenance, require the row's
+ * actual event title to be supported by the published article's editorial text.
+ */
+export function historicalArticleOwnershipCompatible(
+  row: HistoricalFeedItem,
+  article: HistoricalArticleEvidence,
+): boolean {
+  const rowTitle = historicalTitleTokens(row.title);
+  const articleEvidence = historicalTitleTokens(`${article.title} ${article.bodyText ?? ""}`);
+  if (rowTitle.size < 2 || articleEvidence.size < 2) return false;
+
+  const shared = [...rowTitle].filter((token) => articleEvidence.has(token)).length;
+  if (shared < 2) return false;
+
+  const containment = shared / Math.max(1, rowTitle.size);
+  return shared >= 3 || containment >= 0.34;
+}
+
 /**
  * Historical backfill is deliberately stricter than live candidate clustering.
  * A shared person, office or city can connect unrelated stories days apart, so
@@ -75,6 +118,10 @@ export function historicalEventIdentityCompatible(
   anchor: HistoricalFeedItem,
   candidate: ClusterableFeedItem,
 ): boolean {
+  const anchorAward = namedAwardIdentity(anchor.title);
+  const candidateAward = namedAwardIdentity(candidate.title);
+  if (anchorAward && candidateAward && anchorAward !== candidateAward) return false;
+
   const left = historicalTitleTokens(anchor.title);
   const right = historicalTitleTokens(candidate.title);
   if (left.size < 3 || right.size < 3) return false;

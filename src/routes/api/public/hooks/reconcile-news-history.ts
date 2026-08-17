@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { persistEventCluster } from "@/lib/event-cluster-persistence";
 import {
+  historicalArticleOwnershipCompatible,
   planHistoricalReconciliation,
   reconciliationSummary,
   type HistoricalFeedItem,
@@ -14,7 +15,12 @@ const DEFAULT_LIMIT = 500;
 const MAX_LIMIT = 5000;
 const PAGE_SIZE = 1000;
 
-type ExistingArticle = { slug: string; published_at: string | null };
+type ExistingArticle = {
+  slug: string;
+  title: string;
+  published_at: string | null;
+  body_json: unknown;
+};
 
 function numericParam(url: URL, name: string, fallback: number, min: number, max: number): number {
   const value = Number(url.searchParams.get(name) ?? fallback);
@@ -42,6 +48,18 @@ function historicalBounds(plan: HistoricalReconciliationPlan) {
   };
 }
 
+function articleEditorialEvidence(bodyJson: unknown): string {
+  if (!bodyJson || typeof bodyJson !== "object" || Array.isArray(bodyJson)) return "";
+  const { sources: _sources, authority: _authority, ...editorial } = bodyJson as Record<string, unknown>;
+  return JSON.stringify(editorial);
+}
+
+function planRows(plan: HistoricalReconciliationPlan): HistoricalFeedItem[] {
+  return [plan.cluster.primary, ...plan.cluster.members].filter(
+    (row): row is HistoricalFeedItem => typeof row.id === "number",
+  );
+}
+
 async function mergeReconciliationMetadata(db: any, clusterId: string, plan: HistoricalReconciliationPlan) {
   const { data } = await db.from("news_event_clusters").select("metadata").eq("id", clusterId).maybeSingle();
   const previous = data?.metadata && typeof data.metadata === "object" ? data.metadata : {};
@@ -64,7 +82,7 @@ async function mergeReconciliationMetadata(db: any, clusterId: string, plan: His
 
 async function existingArticles(db: any, slugs: string[]): Promise<Map<string, ExistingArticle>> {
   if (!slugs.length) return new Map();
-  const { data, error } = await db.from("daily_articles").select("slug,published_at").in("slug", slugs);
+  const { data, error } = await db.from("daily_articles").select("slug,title,published_at,body_json").in("slug", slugs);
   if (error) throw error;
   return new Map((data ?? []).map((row: ExistingArticle) => [row.slug, row]));
 }
@@ -144,6 +162,7 @@ async function reconcile(request: Request, apply: boolean) {
 
   const results: Array<Record<string, unknown>> = [];
   let holdsQueued = 0;
+  let ownershipHolds = 0;
   for (const plan of plans) {
     if (plan.kind === "hold") {
       if (apply) {
@@ -186,6 +205,42 @@ async function reconcile(request: Request, apply: boolean) {
       continue;
     }
 
+    const article = plan.canonicalSlug ? articles.get(plan.canonicalSlug) : undefined;
+    const slugOwners = planRows(plan).filter((row) => row.internal_slug?.trim() === plan.canonicalSlug);
+    const ownsCanonicalArticle = Boolean(article && slugOwners.some((row) => historicalArticleOwnershipCompatible(row, {
+      title: article.title,
+      bodyText: articleEditorialEvidence(article.body_json),
+    })));
+
+    if (!ownsCanonicalArticle) {
+      const reason = `Legacy feed/article ownership is not supported by the published article's editorial evidence for slug: ${plan.canonicalSlug ?? "unknown"}`;
+      ownershipHolds += 1;
+      if (apply) {
+        await recordHold(db, {
+          groupKey: `canonical-identity:${plan.canonicalSlug ?? "unknown"}:${plan.feedItemIds[0]}`,
+          reason,
+          feedItemIds: plan.feedItemIds,
+          publishedSlugs: plan.publishedSlugs,
+          sourceFamilies: plan.sourceFamilies,
+          details: {
+            kind: "canonical_article_identity_mismatch",
+            canonicalSlug: plan.canonicalSlug,
+            slugOwnerFeedItemIds: slugOwners.map((row) => row.id),
+          },
+        });
+        holdsQueued += 1;
+      }
+      results.push({
+        status: apply ? "held_for_admin_review" : "hold_canonical_identity_mismatch",
+        canonicalSlug: plan.canonicalSlug,
+        feedItemIds: plan.feedItemIds,
+        publishedSlugs: plan.publishedSlugs,
+        sourceFamilies: plan.sourceFamilies,
+        reason,
+      });
+      continue;
+    }
+
     if (!apply) {
       results.push({
         status: "would_backfill",
@@ -207,7 +262,6 @@ async function reconcile(request: Request, apply: boolean) {
       continue;
     }
 
-    const article = plan.canonicalSlug ? articles.get(plan.canonicalSlug) : undefined;
     const bounds = historicalBounds(plan);
     const historicalTimestamps: Record<string, string> = {};
     if (bounds.firstSeenAt) historicalTimestamps.first_seen_at = bounds.firstSeenAt;
@@ -237,13 +291,17 @@ async function reconcile(request: Request, apply: boolean) {
     });
   }
 
+  const summary = reconciliationSummary(plans);
   return Response.json({
     ok: true,
     mode: apply ? "apply" : "dry-run",
     days,
     limit,
     scanned: rows.length,
-    ...reconciliationSummary(plans),
+    planned: summary.planned,
+    safe: Math.max(0, summary.safe - ownershipHolds),
+    held: summary.held + ownershipHolds,
+    feedItems: summary.feedItems,
     holdsQueued,
     results,
     aiCalls: 0,
