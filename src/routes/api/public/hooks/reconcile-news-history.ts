@@ -13,6 +13,8 @@ const MAX_DAYS = 90;
 const DEFAULT_LIMIT = 500;
 const MAX_LIMIT = 1500;
 
+type ExistingArticle = { slug: string; published_at: string | null };
+
 function numericParam(url: URL, name: string, fallback: number, min: number, max: number): number {
   const value = Number(url.searchParams.get(name) ?? fallback);
   if (!Number.isFinite(value)) return fallback;
@@ -20,24 +22,36 @@ function numericParam(url: URL, name: string, fallback: number, min: number, max
 }
 
 function isAuthorizedApply(request: Request): boolean {
-  const expected = process.env.NEWSROOM_HOOK_TOKEN || process.env.ADMIN_PASSCODE;
-  if (!expected) return false;
-  return request.headers.get("x-newsroom-hook-token") === expected
-    || request.headers.get("x-admin-passcode") === expected;
+  const newsroomToken = process.env.NEWSROOM_HOOK_TOKEN;
+  const adminPasscode = process.env.ADMIN_PASSCODE;
+  return Boolean(
+    (newsroomToken && request.headers.get("x-newsroom-hook-token") === newsroomToken)
+    || (adminPasscode && request.headers.get("x-admin-passcode") === adminPasscode),
+  );
 }
 
-async function mergeReconciliationMetadata(db: any, clusterId: string, plan: HistoricalReconciliationPlan, applied: boolean) {
+function historicalBounds(plan: HistoricalReconciliationPlan) {
+  const values = [plan.cluster.primary, ...plan.cluster.members]
+    .map((row) => Date.parse(row.pub_date ?? ""))
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b);
+  return {
+    firstSeenAt: values.length ? new Date(values[0]).toISOString() : null,
+    lastSeenAt: values.length ? new Date(values[values.length - 1]).toISOString() : null,
+  };
+}
+
+async function mergeReconciliationMetadata(db: any, clusterId: string, plan: HistoricalReconciliationPlan) {
   const { data } = await db.from("news_event_clusters").select("metadata").eq("id", clusterId).maybeSingle();
   const previous = data?.metadata && typeof data.metadata === "object" ? data.metadata : {};
   const reconciliation = {
     version: 1,
-    status: plan.kind === "safe" ? "backfilled" : "hold_multiple_published_slugs",
+    status: "backfilled",
     canonical_slug: plan.canonicalSlug,
     published_slugs: plan.publishedSlugs,
     feed_item_ids: plan.feedItemIds,
     source_families: plan.sourceFamilies,
     reason: plan.reason,
-    applied,
     reconciled_at: new Date().toISOString(),
   };
   const { error } = await db
@@ -47,11 +61,36 @@ async function mergeReconciliationMetadata(db: any, clusterId: string, plan: His
   if (error) throw error;
 }
 
-async function existingArticleSlugs(db: any, slugs: string[]): Promise<Set<string>> {
-  if (!slugs.length) return new Set();
-  const { data, error } = await db.from("daily_articles").select("slug").in("slug", slugs);
+async function existingArticles(db: any, slugs: string[]): Promise<Map<string, ExistingArticle>> {
+  if (!slugs.length) return new Map();
+  const { data, error } = await db.from("daily_articles").select("slug,published_at").in("slug", slugs);
   if (error) throw error;
-  return new Set((data ?? []).map((row: { slug: string }) => row.slug));
+  return new Map((data ?? []).map((row: ExistingArticle) => [row.slug, row]));
+}
+
+async function recordHold(
+  db: any,
+  input: {
+    groupKey: string;
+    reason: string;
+    feedItemIds: number[];
+    publishedSlugs: string[];
+    sourceFamilies: string[];
+    details?: Record<string, unknown>;
+  },
+) {
+  const now = new Date().toISOString();
+  const { error } = await db.from("news_event_reconciliation_holds").upsert({
+    group_key: input.groupKey,
+    review_status: "pending",
+    reason: input.reason,
+    feed_item_ids: input.feedItemIds,
+    published_slugs: input.publishedSlugs,
+    source_families: input.sourceFamilies,
+    details: input.details ?? {},
+    last_seen_at: now,
+  }, { onConflict: "group_key" });
+  if (error) throw error;
 }
 
 async function reconcile(request: Request, apply: boolean) {
@@ -79,24 +118,55 @@ async function reconcile(request: Request, apply: boolean) {
   const rows = (data ?? []) as HistoricalFeedItem[];
   const plans = planHistoricalReconciliation(rows);
   const publishedSlugs = [...new Set(plans.flatMap((plan) => plan.publishedSlugs))];
-  const knownSlugs = await existingArticleSlugs(db, publishedSlugs);
+  const articles = await existingArticles(db, publishedSlugs);
 
   const results: Array<Record<string, unknown>> = [];
+  let holdsQueued = 0;
   for (const plan of plans) {
-    const missingSlugs = plan.publishedSlugs.filter((slug) => !knownSlugs.has(slug));
-    if (missingSlugs.length) {
+    if (plan.kind === "hold") {
+      if (apply) {
+        await recordHold(db, {
+          groupKey: `multiple-slugs:${plan.feedItemIds[0]}`,
+          reason: plan.reason,
+          feedItemIds: plan.feedItemIds,
+          publishedSlugs: plan.publishedSlugs,
+          sourceFamilies: plan.sourceFamilies,
+          details: { kind: "multiple_published_slugs" },
+        });
+        holdsQueued += 1;
+      }
       results.push({
-        status: "hold_missing_article",
-        reason: `Feed rows reference article slug(s) that are not present in daily_articles: ${missingSlugs.join(", ")}`,
+        status: apply ? "held_for_admin_review" : "would_hold",
+        canonicalSlug: null,
         feedItemIds: plan.feedItemIds,
         publishedSlugs: plan.publishedSlugs,
+        sourceFamilies: plan.sourceFamilies,
+        reason: plan.reason,
       });
+      continue;
+    }
+
+    const missingSlugs = plan.publishedSlugs.filter((slug) => !articles.has(slug));
+    if (missingSlugs.length) {
+      const reason = `Feed rows reference article slug(s) that are not present in daily_articles: ${missingSlugs.join(", ")}`;
+      if (apply) {
+        await recordHold(db, {
+          groupKey: `missing-article:${plan.feedItemIds[0]}`,
+          reason,
+          feedItemIds: plan.feedItemIds,
+          publishedSlugs: plan.publishedSlugs,
+          sourceFamilies: plan.sourceFamilies,
+          details: { kind: "missing_canonical_article", missingSlugs },
+        });
+        holdsQueued += 1;
+      }
+      results.push({ status: apply ? "held_for_admin_review" : "hold_missing_article", reason, feedItemIds: plan.feedItemIds, publishedSlugs: plan.publishedSlugs });
       continue;
     }
 
     if (!apply) {
       results.push({
-        status: plan.kind === "safe" ? "would_backfill" : "would_hold",
+        status: "would_backfill",
         canonicalSlug: plan.canonicalSlug,
         feedItemIds: plan.feedItemIds,
         publishedSlugs: plan.publishedSlugs,
@@ -107,30 +177,34 @@ async function reconcile(request: Request, apply: boolean) {
     }
 
     const clusterId = await persistEventCluster(db, plan.cluster, {
-      status: plan.kind === "safe" ? "published" : "ready",
-      publishedSlug: plan.kind === "safe" ? plan.canonicalSlug ?? undefined : undefined,
+      status: "published",
+      publishedSlug: plan.canonicalSlug ?? undefined,
     });
     if (!clusterId) {
       results.push({ status: "failed", reason: "Could not persist durable event cluster", feedItemIds: plan.feedItemIds });
       continue;
     }
 
-    const ledger = buildStructuredFactLedger(plan.cluster);
-    await persistStructuredFacts(db, clusterId, ledger);
-    try {
-      await mergeReconciliationMetadata(db, clusterId, plan, true);
-    } catch (metadataError) {
-      results.push({
-        status: "failed_metadata",
-        clusterId,
-        reason: metadataError instanceof Error ? metadataError.message : String(metadataError),
-        feedItemIds: plan.feedItemIds,
-      });
-      continue;
+    const article = plan.canonicalSlug ? articles.get(plan.canonicalSlug) : undefined;
+    const bounds = historicalBounds(plan);
+    const historicalTimestamps: Record<string, string> = {};
+    if (bounds.firstSeenAt) historicalTimestamps.first_seen_at = bounds.firstSeenAt;
+    if (bounds.lastSeenAt) historicalTimestamps.last_seen_at = bounds.lastSeenAt;
+    if (article?.published_at) {
+      historicalTimestamps.published_at = article.published_at;
+      historicalTimestamps.synthesized_at = article.published_at;
+    }
+    if (Object.keys(historicalTimestamps).length) {
+      const { error: timestampError } = await db.from("news_event_clusters").update(historicalTimestamps).eq("id", clusterId);
+      if (timestampError) throw timestampError;
     }
 
+    const ledger = buildStructuredFactLedger(plan.cluster);
+    await persistStructuredFacts(db, clusterId, ledger);
+    await mergeReconciliationMetadata(db, clusterId, plan);
+
     results.push({
-      status: plan.kind === "safe" ? "backfilled" : "held_for_admin_review",
+      status: "backfilled",
       clusterId,
       canonicalSlug: plan.canonicalSlug,
       publishedSlugs: plan.publishedSlugs,
@@ -147,6 +221,7 @@ async function reconcile(request: Request, apply: boolean) {
     days,
     scanned: rows.length,
     ...reconciliationSummary(plans),
+    holdsQueued,
     results,
     aiCalls: 0,
     articleWrites: 0,
