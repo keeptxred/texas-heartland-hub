@@ -39,7 +39,7 @@ type Candidate = {
 };
 
 const MONTHS = "january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|jun|jul|aug|sep|sept|oct|nov|dec";
-const ACTION_RE = /\b(announced|approved|adopted|signed|filed|charged|arrested|ordered|ruled|voted|reported|confirmed|issued|released|scheduled|opened|closed|increased|decreased|won|lost|killed|injured|died|declared|launched|recalled|settled|passed|rejected|blocked|allowed|required|rescinded|appointed|resigned)\b/i;
+const ACTION_RE = /\b(announced|approved|adopted|signed|filed|charged|arrested|ordered|ruled|voted|reported|confirmed|issued|released|scheduled|opened|closed|increased|decreased|won|lost|killed|injured|died|declared|launched|recalled|settled|passed|rejected|blocked|allowed|required|rescinded|appointed|resigned|paus(?:e|ed|es|ing)|halt(?:ed|s|ing)?|stopp(?:ed|ing)|stops?|suspend(?:ed|s|ing)?|resum(?:e|ed|es|ing))\b/i;
 const NEXT_RE = /\b(will|scheduled|expected|plans? to|set to|deadline|next hearing|next vote|takes effect|effective on|beginning on|starts? on|ends? on|must file|must respond)\b/i;
 const NUMBER_RE = /(?:\$\s*)?\b\d[\d,.]*(?:\s*(?:%|percent|million|billion|thousand|mw|megawatts?|acres?|miles?|days?|hours?|years?|votes?|people|students?|homes?|jobs?))?\b/gi;
 const DATE_RE = new RegExp(`\\b(?:${MONTHS})\\.?\\s+\\d{1,2}(?:,\\s*\\d{4})?\\b|\\b\\d{4}-\\d{2}-\\d{2}\\b`, "i");
@@ -93,11 +93,36 @@ function classify(sentence: string): StructuredFactType[] {
   return types;
 }
 
+function pushCandidates(out: Candidate[], item: ClusterableFeedItem, text: string, types: StructuredFactType[], primaryRecord: boolean): void {
+  const normalizedText = normalizeClusterText(text);
+  const tokenSet = words(text);
+  const numbers = numericValues(text);
+  for (const type of types) {
+    out.push({
+      item,
+      type,
+      text,
+      normalizedText,
+      tokens: tokenSet,
+      numericValues: numbers,
+      primaryRecord,
+    });
+  }
+}
+
 function candidateRows(cluster: StoryCluster): Candidate[] {
   const out: Candidate[] = [];
   for (const item of [cluster.primary, ...cluster.members]) {
     const text = (item.extracted_body ?? item.description ?? "").trim();
     const primaryRecord = isPrimaryRecord(item);
+
+    // Headlines are editorial assertions attached to the same traceable source URL.
+    // Including evidence-bearing headlines lets independently reported breaking events
+    // corroborate one another even when the article sentences use different wording.
+    const title = item.title.trim();
+    const titleTypes = classify(title);
+    if (titleTypes.length) pushCandidates(out, item, title, titleTypes, primaryRecord);
+
     const sentences = splitSentences(text).slice(0, 90);
     let contextualAdded = 0;
     for (const sentence of sentences) {
@@ -107,20 +132,7 @@ function candidateRows(cluster: StoryCluster): Candidate[] {
         contextualAdded += 1;
         types = ["context"];
       }
-      const normalizedText = normalizeClusterText(sentence);
-      const tokenSet = words(sentence);
-      const numbers = numericValues(sentence);
-      for (const type of types) {
-        out.push({
-          item,
-          type,
-          text: sentence,
-          normalizedText,
-          tokens: tokenSet,
-          numericValues: numbers,
-          primaryRecord,
-        });
-      }
+      pushCandidates(out, item, sentence, types, primaryRecord);
     }
   }
   return out;
