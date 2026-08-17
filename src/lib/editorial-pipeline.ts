@@ -221,14 +221,15 @@ function sourceSupportsSubject(sourceText: string, subject: string): boolean {
   if (containsName(sourceText, subject)) return true;
 
   const sourceTokens = tokensFrom(sourceText);
-  const subjectTokens = [...tokensFrom(subject)].filter(
-    (token) => !SOURCE_ALIAS_STOP_TOKENS.has(token),
-  );
+  const subjectTokens = [...tokensFrom(subject)];
+  const aliasToken = [...subjectTokens]
+    .reverse()
+    .find((token) => !SOURCE_ALIAS_STOP_TOKENS.has(token));
 
-  // Permit a normalized/full organization or team name only when the source contains
-  // a distinctive subject token (for example, "Seahawks" -> "Seattle Seahawks").
-  // Generic place/category tokens alone are intentionally insufficient.
-  return subjectTokens.some((token) => sourceTokens.has(token));
+  // A normalized/full subject may be supported by its trailing distinctive token:
+  // "Seahawks" supports "Seattle Seahawks", while the shared city "Seattle" alone
+  // does not support a different organization such as "Seattle Mariners".
+  return Boolean(aliasToken && sourceTokens.has(aliasToken));
 }
 
 function headlineMatchesBody(article: ArticleShape, brief?: StoryBrief): boolean {
