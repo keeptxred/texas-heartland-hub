@@ -1,4 +1,4 @@
-import { validateArticleReadability } from "./editorial-readability";
+import { repairArticleReadability, validateArticleReadability } from "./editorial-readability";
 import { validateMultiSourceDraftAgainstPacket } from "./multisource-draft-quality";
 
 // Shared analyze-first editorial validation for AI-generated articles.
@@ -418,14 +418,15 @@ export async function runEditorialRewrite<T extends ArticleShape>(
     };
   }
 
+  const firstArticle = parsedFirst.article ? repairArticleReadability(parsedFirst.article) : null;
   const firstValidation = validateArticle(
-    parsedFirst.article ?? {},
+    firstArticle ?? {},
     parsedFirst.brief ?? undefined,
     sourceText,
   );
-  if (firstValidation.ok && parsedFirst.article) {
+  if (firstValidation.ok && firstArticle) {
     return {
-      article: parsedFirst.article,
+      article: firstArticle,
       brief: parsedFirst.brief,
       validation: firstValidation,
       attempts: 1,
@@ -459,14 +460,15 @@ export async function runEditorialRewrite<T extends ArticleShape>(
     };
   }
 
+  const secondArticle = parsedSecond.article ? repairArticleReadability(parsedSecond.article) : null;
   const secondValidation = validateArticle(
-    parsedSecond.article ?? {},
+    secondArticle ?? {},
     parsedSecond.brief ?? undefined,
     sourceText,
   );
-  if (secondValidation.ok && parsedSecond.article) {
+  if (secondValidation.ok && secondArticle) {
     return {
-      article: parsedSecond.article,
+      article: secondArticle,
       brief: parsedSecond.brief,
       validation: secondValidation,
       attempts: 2,
