@@ -1,0 +1,43 @@
+name: One-time persist image failure diagnostics
+
+on:
+  push:
+    branches:
+      - fix/persist-image-failure-reason
+
+permissions:
+  contents: write
+
+jobs:
+  apply-fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: fix/persist-image-failure-reason
+          fetch-depth: 0
+      - name: Persist image generation failure reason
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('src/lib/featured-image.functions.ts')
+          source = path.read_text()
+          old = '''  } catch (err) {\n    const msg = err instanceof Error ? err.message : String(err);\n    await supabase.from("daily_articles").update({ image_generation_status: "failed" }).eq("slug", row.slug);\n    return { ok: false, error: msg };\n  }\n'''
+          new = '''  } catch (err) {\n    const msg = err instanceof Error ? err.message : String(err);\n    await supabase.from("daily_articles").update({\n      image_generation_status: "failed",\n      image_validation_note: msg.slice(0, 1000),\n    }).eq("slug", row.slug);\n    return { ok: false, error: msg };\n  }\n'''
+          count = source.count(old)
+          if count != 1:
+              raise SystemExit(f'expected exactly one image failure catch block, found {count}')
+          path.write_text(source.replace(old, new, 1))
+
+          test = Path('src/lib/featured-image-failure-diagnostics.test.ts')
+          test.write_text('''import { readFileSync } from "node:fs";\nimport { describe, expect, it } from "vitest";\n\nconst source = readFileSync(new URL("./featured-image.functions.ts", import.meta.url), "utf8");\n\ndescribe("featured image failure diagnostics", () => {\n  it("persists the generation or validation failure reason with failed status", () => {\n    expect(source).toContain('image_generation_status: "failed",\\n      image_validation_note: msg.slice(0, 1000),');\n    expect(source).toContain('return { ok: false, error: msg };');\n  });\n\n  it("keeps Cloudflare story-match validation as a hard gate", () => {\n    expect(source).toContain('if (!verdict.matches) throw new Error(`Generated image failed Cloudflare story-match/photorealism validation: ${verdict.reason}`);');\n  });\n});\n''')
+      - name: Commit source fix and remove one-time workflow
+        shell: bash
+        run: |
+          rm .github/workflows/one-time-persist-image-failure-reason.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/lib/featured-image.functions.ts src/lib/featured-image-failure-diagnostics.test.ts .github/workflows/one-time-persist-image-failure-reason.yml
+          git commit -m 'Persist featured image failure diagnostics'
+          git push origin HEAD:fix/persist-image-failure-reason
