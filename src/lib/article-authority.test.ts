@@ -41,6 +41,23 @@ describe("generated news authority enrichment", () => {
     expect(body.sources[0].label).toContain("primary / official source");
   });
 
+  it("preserves an explicit primary-source verdict for an uncatalogued official record", () => {
+    const result = applyGeneratedNewsAuthority({
+      kind: "news",
+      bodyJson: {
+        sections: [],
+        sources: [{
+          label: "County Elections Office — primary / official source",
+          url: "https://elections.example.gov/results/2026",
+        }],
+      },
+    });
+    const body = result.bodyJson as { authority: Record<string, unknown>; sources: Array<{ label?: string }> };
+    expect(result.flags).not.toContain("single_source_aggregation");
+    expect(body.authority.primarySourceCount).toBe(1);
+    expect(body.sources[0].label).toBe("County Elections Office — primary / official source");
+  });
+
   it("does not alter non-news content", () => {
     const bodyJson = { sections: [{ heading: "Guide", paragraphs: ["Evergreen content"] }] };
     const result = applyGeneratedNewsAuthority({ kind: "evergreen", bodyJson });
