@@ -31,9 +31,11 @@ function numericParam(url: URL, name: string, fallback: number, min: number, max
 function isAuthorizedApply(request: Request): boolean {
   const newsroomToken = process.env.NEWSROOM_HOOK_TOKEN;
   const adminPasscode = process.env.ADMIN_PASSCODE;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   return Boolean(
     (newsroomToken && request.headers.get("x-newsroom-hook-token") === newsroomToken)
-    || (adminPasscode && request.headers.get("x-admin-passcode") === adminPasscode),
+    || (adminPasscode && request.headers.get("x-admin-passcode") === adminPasscode)
+    || (serviceRoleKey && request.headers.get("x-reconcile-service-role-key") === serviceRoleKey),
   );
 }
 
