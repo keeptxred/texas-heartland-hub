@@ -54,6 +54,42 @@ describe("structured fact provenance", () => {
     expect(ledger.whatNext.length).toBeGreaterThan(0);
   });
 
+  it("uses independently sourced action headlines to corroborate pause events", () => {
+    const cluster: StoryCluster = {
+      primary: {
+        id: 201,
+        title: "Trump administration pauses border construction in Big Bend National Park",
+        source: "Texas Standard",
+        link: "https://texasstandard.org/stories/big-bend-pause/",
+        pub_date: "2026-08-17T19:59:17Z",
+        extracted_body: "U.S. Customs and Border Protection Commissioner Rodney Scott said Monday he was pausing all construction activity in the West Texas park ahead of a visit.",
+      },
+      members: [
+        {
+          id: 202,
+          title: "Trump administration pauses border construction in Big Bend National Park",
+          source: "Houston Public Media",
+          link: "https://www.houstonpublicmedia.org/articles/news/big-bend-pause/",
+          pub_date: "2026-08-17T19:59:04Z",
+          extracted_body: "Scott said he ordered construction paused Sunday night and planned an on-the-ground evaluation with local stakeholders.",
+          combinationScore: 100,
+          overlapTerms: ["trump", "administration", "pauses", "border", "construction", "big", "bend"],
+        },
+      ],
+      score: 100,
+      sourceCount: 2,
+      strongMerge: true,
+    } as StoryCluster;
+
+    const ledger = buildStructuredFactLedger(cluster);
+    const pauseFact = ledger.facts.find(
+      (fact) => fact.type === "action" && fact.normalizedText.includes("pauses border construction"),
+    );
+    expect(pauseFact).toBeTruthy();
+    expect(pauseFact?.corroborationCount).toBe(2);
+    expect(pauseFact?.sourceFeedItemIds).toEqual([201, 202]);
+  });
+
   it("marks incompatible figures from similar claims as a source conflict", () => {
     const cluster = clusterWith(
       "ERCOT announced the Texas grid plan will add 2,400 megawatts of capacity after the Austin review.",
