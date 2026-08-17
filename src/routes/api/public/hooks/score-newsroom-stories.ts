@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { routeEditorialPillar, scoreEditorialCluster } from "@/lib/newsroom-editorial-scoring";
+import { rankNewsroomStorySelection } from "@/lib/newsroom-story-selection";
 
 const LOOKBACK_HOURS = 48;
 const CLUSTER_LIMIT = 500;
@@ -83,13 +84,14 @@ async function handler() {
       .map((member) => feedById.get(member.feed_item_id))
       .filter((feed): feed is FeedScoreRow => Boolean(feed));
     const ageHours = Math.max(0, (now - Date.parse(cluster.first_seen_at)) / 3_600_000);
+    const primarySourceCount = Math.max(cluster.primary_source_count, members.filter((member) => member.is_primary_source).length);
     const score = scoreEditorialCluster({
       texasRelevance: maxNumber(feeds.map((feed) => feed.texas_relevance_score), 50),
       sourceReputation: maxNumber(feeds.map((feed) => feed.source_reputation_score), 50),
       viralScore: maxNumber(feeds.map((feed) => feed.viral_score), 0),
       trendVelocity: maxNumber(feeds.map((feed) => feed.trend_velocity), 0),
       sourceCount: cluster.source_count,
-      primarySourceCount: Math.max(cluster.primary_source_count, members.filter((member) => member.is_primary_source).length),
+      primarySourceCount,
       ageHours,
     });
     const pillarSlug = routeEditorialPillar({
@@ -98,27 +100,68 @@ async function handler() {
       sourceNames: feeds.map((feed) => feed.source),
       sourceUrls: feeds.map((feed) => feed.link),
     });
-    return { cluster, score, pillarSlug };
+    return { cluster, score, pillarSlug, primarySourceCount };
   });
 
-  const clusterUpdates = scored.map(({ cluster, score, pillarSlug }) => ({
+  // Phase 12: compare clusters against one another after their independent editorial
+  // scores are known. This is selection ordering only; later readiness, verification,
+  // synthesis quality, and publication lifecycle gates remain authoritative.
+  const ranked = rankNewsroomStorySelection(scored.map(({ cluster, score, pillarSlug, primarySourceCount }) => ({
     id: cluster.id,
-    canonical_subject: cluster.canonical_subject,
-    score: score.score,
-    score_breakdown: score.breakdown,
-    pillar_slug: pillarSlug,
-    status: "READY",
-  }));
+    canonicalSubject: cluster.canonical_subject,
+    editorialScore: score.score,
+    sourceCount: cluster.source_count,
+    primarySourceCount,
+    firstSeenAt: cluster.first_seen_at,
+    lastSeenAt: cluster.last_seen_at,
+    pillarSlug,
+  })));
+  const selectionByCluster = new Map(ranked.map((row) => [row.id, row]));
+
+  const clusterUpdates = scored.map(({ cluster, score, pillarSlug }) => {
+    const selection = selectionByCluster.get(cluster.id)!;
+    return {
+      id: cluster.id,
+      canonical_subject: cluster.canonical_subject,
+      score: selection.selectionScore,
+      score_breakdown: {
+        ...score.breakdown,
+        baseEditorialScore: score.score,
+        selectionScore: selection.selectionScore,
+        selectionRank: selection.selectionRank,
+        selectionTier: selection.selectionTier,
+        redundancyPenalty: selection.redundancyPenalty,
+        redundancyOf: selection.redundancyOf,
+        breakingOverride: selection.breakingOverride,
+        selectionReasons: selection.reasons,
+      },
+      pillar_slug: pillarSlug,
+      status: "READY",
+    };
+  });
   const { error: updateError } = await newsroomDb
     .from("news_story_clusters")
     .upsert(clusterUpdates, { onConflict: "id" });
   if (updateError) return Response.json({ ok: false, error: updateError.message }, { status: 500 });
 
-  const candidates = scored.map(({ cluster, score }) => ({
-    cluster_id: cluster.id,
-    editorial_score: score.score,
-    score_breakdown: score.breakdown,
-  }));
+  const candidates = scored.map(({ cluster, score }) => {
+    const selection = selectionByCluster.get(cluster.id)!;
+    return {
+      cluster_id: cluster.id,
+      editorial_score: selection.selectionScore,
+      score_breakdown: {
+        ...score.breakdown,
+        baseEditorialScore: score.score,
+        selectionScore: selection.selectionScore,
+        selectionRank: selection.selectionRank,
+        selectionTier: selection.selectionTier,
+        redundancyPenalty: selection.redundancyPenalty,
+        redundancyOf: selection.redundancyOf,
+        breakingOverride: selection.breakingOverride,
+        selectionReasons: selection.reasons,
+      },
+    };
+  });
   const { error: candidateError } = await newsroomDb
     .from("news_publish_candidates")
     .upsert(candidates, { onConflict: "cluster_id" });
@@ -128,7 +171,11 @@ async function handler() {
     ok: true,
     scored: scored.length,
     candidates: candidates.length,
-    topScore: Math.max(0, ...scored.map(({ score }) => score.score)),
+    topScore: Math.max(0, ...ranked.map((row) => row.selectionScore)),
+    urgent: ranked.filter((row) => row.selectionTier === "urgent").length,
+    highPriority: ranked.filter((row) => row.selectionTier === "high").length,
+    deprioritized: ranked.filter((row) => row.selectionTier === "deprioritized").length,
+    redundancySuppressed: ranked.filter((row) => row.redundancyPenalty > 0).length,
     aiCalls: 0,
     quotaEnforced: false,
   });
