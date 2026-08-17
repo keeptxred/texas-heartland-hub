@@ -1,6 +1,9 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { newsroomRewriteSystemPrompt, type NewsroomDraft } from "./newsroom-rewrite-adapter";
+import {
+  newsroomRewriteSystemPrompt,
+  stripGenericExpertAttribution,
+} from "./newsroom-rewrite-adapter";
 import type { ResearchPacket } from "./newsroom-research-packet";
 
 const route = fs.readFileSync(new URL("../routes/api/public/hooks/retest-newsroom-shadow.ts", import.meta.url), "utf8");
@@ -32,9 +35,13 @@ describe("Phase 13 rejected shadow retest", () => {
     expect(route).toContain('db.rpc("newsroom_finalize_ai_generation"');
   });
 
-  it("runs exactly three one-attempt retests with temporary-token cleanup", () => {
+  it("runs exactly three distinct one-attempt retests with temporary-token cleanup", () => {
     expect(workflow).toContain("for i in 1 2 3");
-    expect(workflow).toContain("/api/public/hooks/retest-newsroom-shadow");
+    expect(workflow).toContain("/api/public/hooks/retest-newsroom-shadow$exclude_query");
+    expect(workflow).toContain('exclude_query="?exclude=$candidate_id"');
+    expect(workflow).toContain('exclude_query="$exclude_query&exclude=$candidate_id"');
+    expect(route).toContain('requestUrl.searchParams.getAll("exclude")');
+    expect(route).toContain("!excludedCandidateIds.has(row.id)");
     expect(workflow).toContain("NEWSROOM_HOOK_TOKEN");
     expect(workflow).toContain("trap cleanup EXIT");
     expect(workflow).toContain("published");
@@ -55,5 +62,14 @@ describe("Phase 13 rejected shadow retest", () => {
     expect(prompt).toContain('Never write generic attribution phrases such as "experts say"');
     expect(prompt).toContain('"experts suggest"');
     expect(prompt).toContain('"experts believe"');
+  });
+
+  it("deletes generic expert-attribution sentences rather than rewriting them", () => {
+    expect(stripGenericExpertAttribution("The agency released the report. Experts say the change will transform Texas. The filing takes effect Monday."))
+      .toBe("The agency released the report. The filing takes effect Monday.");
+    expect(stripGenericExpertAttribution("Experts suggest prices could rise. Verified figures remain unchanged."))
+      .toBe("Verified figures remain unchanged.");
+    expect(stripGenericExpertAttribution("The source states the official total is 42."))
+      .toBe("The source states the official total is 42.");
   });
 });
