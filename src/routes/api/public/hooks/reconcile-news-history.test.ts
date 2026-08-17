@@ -43,11 +43,15 @@ describe("reconcile news history hook", () => {
     expect(source).not.toContain("LOVABLE_API_KEY");
   });
 
-  it("queues ambiguous history for review without assigning cluster ownership", () => {
+  it("queues ambiguous and contaminated history for review without assigning cluster ownership", () => {
     expect(source).toContain('if (plan.kind === "hold")');
-    expect(source).toContain('groupKey: `multiple-slugs:${plan.feedItemIds[0]}`');
+    expect(source).toContain("multiple-slugs:${plan.feedItemIds[0]}");
+    expect(source).toContain("source-material-contamination:${plan.feedItemIds[0]}");
+    expect(source).toContain('plan.holdType === "source_material_contamination"');
+    expect(source).toContain('"hold_source_material_contamination"');
     const holdBranch = source.slice(source.indexOf('if (plan.kind === "hold")'), source.indexOf("const missingSlugs"));
     expect(holdBranch).toContain("recordHold");
+    expect(holdBranch).toContain('"source_material_contamination"');
     expect(holdBranch).not.toContain("persistEventCluster");
     expect(source).toContain("held_for_admin_review");
     expect(migration).toContain("news_event_reconciliation_holds");
