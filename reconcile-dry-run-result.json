@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "mode": "dry-run",
+  "scanned": 2061,
+  "planned": 3,
+  "safe": 1,
+  "held": 2,
+  "holdsQueued": 0,
+  "aiCalls": 0,
+  "articleWrites": 0,
+  "slugChanges": 0,
+  "results": [
+    {
+      "canonicalSlug": "2026-08-14-texas-airports-face-review-over-religious-facilities-jq9lzk",
+      "status": "hold_canonical_identity_mismatch",
+      "reason": "Legacy feed/article ownership is not supported by the published article's editorial evidence for slug: 2026-08-14-texas-airports-face-review-over-religious-facilities-jq9lzk"
+    },
+    {
+      "canonicalSlug": "2026-08-14-texas-school-districts-show-improvement-in-tea-a-f-ratings-gbezru",
+      "status": "would_backfill",
+      "reason": "One existing published slug is supported by 2 matched reports from 2 source families."
+    },
+    {
+      "canonicalSlug": "2026-08-14-texas-airports-face-review-over-religious-facilities-jq9lzk",
+      "status": "hold_canonical_identity_mismatch",
+      "reason": "Legacy feed/article ownership is not supported by the published article's editorial evidence for slug: 2026-08-14-texas-airports-face-review-over-religious-facilities-jq9lzk"
+    }
+  ]
+}
