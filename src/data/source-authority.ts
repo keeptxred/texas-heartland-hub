@@ -122,13 +122,83 @@ export const SOURCE_AUTHORITY_PROFILES: SourceAuthorityProfile[] = [
     description: "A Texas-focused publication covering state and local government, elections, policy, and political commentary.",
     usage: "When Texas Scorecard material is included in a Keep TX Red story cluster, Keep TX Red preserves the source link and distinguishes sourced reporting or commentary from primary government records.",
   },
+  {
+    slug: "the-texan",
+    name: "The Texan",
+    aliases: ["the texan", "thetexan.news"],
+    kind: "news",
+    label: "Reporting source",
+    homepage: "https://thetexan.news/",
+    description: "A Texas-focused news publication covering state and local government, elections, public policy, and political developments.",
+    usage: "When The Texan is used in a Keep TX Red article, the original report remains linked and reporting-dependent claims should be attributable to that source rather than presented as original Keep TX Red reporting.",
+  },
+  {
+    slug: "dallas-express",
+    name: "Dallas Express",
+    aliases: ["dallas express", "dallasexpress.com"],
+    kind: "news",
+    label: "Reporting source",
+    homepage: "https://dallasexpress.com/",
+    description: "A Dallas-area digital news publication covering local government, public safety, education, business, and politics.",
+    usage: "When Dallas Express reporting is used, Keep TX Red preserves the source link and identifies it as published reporting rather than a primary government record.",
+  },
+  {
+    slug: "center-square-texas",
+    name: "The Center Square — Texas",
+    aliases: ["the center square texas", "the center square — texas", "thecentersquare.com/texas"],
+    kind: "news",
+    label: "Reporting source",
+    homepage: "https://www.thecentersquare.com/texas/",
+    description: "The Texas edition of The Center Square, a news service covering state and local government, taxes, budgets, regulation, and public policy.",
+    usage: "Keep TX Red identifies Center Square material as published reporting and preserves the underlying article link for verification.",
+  },
+  {
+    slug: "texas-public-policy-foundation",
+    name: "Texas Public Policy Foundation",
+    aliases: ["texas public policy foundation", "texaspolicy.com"],
+    kind: "analysis",
+    label: "Policy and analysis source",
+    homepage: "https://www.texaspolicy.com/",
+    description: "A Texas public-policy organization that publishes research, commentary, policy recommendations, and issue analysis.",
+    usage: "Keep TX Red treats Texas Public Policy Foundation material as policy or analysis material, not as a neutral government record, and preserves the original link when it is used.",
+  },
+  {
+    slug: "houston-chronicle",
+    name: "Houston Chronicle",
+    aliases: ["houston chronicle", "houstonchronicle.com"],
+    kind: "news",
+    label: "Reporting source",
+    homepage: "https://www.houstonchronicle.com/",
+    description: "A Houston-based newspaper and digital news publication covering the region, Texas government, politics, business, and public affairs.",
+    usage: "When Houston Chronicle reporting is part of a Keep TX Red article, Keep TX Red preserves the original report link and attributes reporting-dependent claims to the Chronicle.",
+  },
+  {
+    slug: "houston-public-media",
+    name: "Houston Public Media",
+    aliases: ["houston public media", "houstonpublicmedia.org"],
+    kind: "news",
+    label: "Reporting source",
+    homepage: "https://www.houstonpublicmedia.org/",
+    description: "A Houston public-media newsroom publishing local and statewide news, government, education, transportation, weather, and public-affairs coverage.",
+    usage: "When Houston Public Media reporting is used, Keep TX Red preserves the source link and identifies it as published reporting.",
+  },
+  {
+    slug: "khou-11",
+    name: "KHOU 11",
+    aliases: ["khou 11", "khou.com"],
+    kind: "news",
+    label: "Reporting source",
+    homepage: "https://www.khou.com/",
+    description: "A Houston television and digital newsroom covering local news, public safety, weather, government, and regional developments.",
+    usage: "When KHOU 11 reporting is used, Keep TX Red preserves the source link and identifies it as published reporting rather than a primary record.",
+  },
 ];
 
 function normalizeSourceName(value: string): string {
   return value
     .toLowerCase()
     .replace(/https?:\/\/(?:www\.)?/g, "")
-    .replace(/\s+[—–-]\s+(?:primary government source|official system source|reporting source|news and commentary source|source)$/i, "")
+    .replace(/\s+[—–-]\s+(?:primary government source|official system source|reporting source|news and commentary source|policy and analysis source|published source|source)$/i, "")
     .replace(/[^a-z0-9.]+/g, " ")
     .replace(/\s+/g, " ")
     .trim();
@@ -141,6 +211,11 @@ export function getSourceAuthorityProfile(value: string | null | undefined): Sou
     normalizeSourceName(profile.name) === normalized
     || profile.aliases.some((alias) => normalized.includes(normalizeSourceName(alias))),
   );
+}
+
+export function isPrimaryOrOfficialSource(value: string | null | undefined): boolean {
+  const profile = getSourceAuthorityProfile(value);
+  return profile?.kind === "government" || profile?.kind === "official";
 }
 
 export function sourceAuthorityLabel(input: {
