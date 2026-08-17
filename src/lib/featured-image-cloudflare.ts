@@ -43,7 +43,7 @@ export async function generateImageBytes(
         // does not accept DreamShaper's negative_prompt parameter.
         prompt: `${prompt} Avoid all of the following: ${negativePrompt}`.slice(0, 2048),
         steps: 8,
-        seed,
+        seed: seed,
       }
     : {
         prompt,
@@ -52,7 +52,7 @@ export async function generateImageBytes(
         height: 576,
         num_steps: 20,
         guidance: 7.5,
-        seed,
+        seed: seed,
       };
 
   const res = await fetch(cloudflareEndpoint(accountId, model), {
