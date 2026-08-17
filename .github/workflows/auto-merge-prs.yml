@@ -94,6 +94,14 @@ jobs:
             gh workflow run update-election-forecasts.yml --ref main --repo "$REPOSITORY"
             echo "Dispatched current-main Election Central forecast verification."
           fi
+          if grep -qxF '.github/workflows/broken-link-audit.yml' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/audit-broken-links.mjs' <<<"$changed_files" || \
+             grep -qxF 'scripts/seo/broken-link-scan-scope.mjs' <<<"$changed_files" || \
+             grep -Eq '^src/routes/' <<<"$changed_files" || \
+             grep -Eq '^src/server/' <<<"$changed_files"; then
+            gh workflow run broken-link-audit.yml --ref main --repo "$REPOSITORY"
+            echo "Dispatched current-main broken-link audit verification."
+          fi
 
           main_sha="$(gh api "repos/$REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
           if [[ "$main_sha" != "$merged_sha" ]]; then
