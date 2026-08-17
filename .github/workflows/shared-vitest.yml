@@ -45,7 +45,8 @@ jobs:
         run: |
           set -euo pipefail
           bun run typecheck
-          grep -Fq "/bills/texas/\$legislature/\$billType/\$billNumber/reference.json" src/routeTree.gen.ts
+          grep -Fq "from './routes/bills.texas.\$legislature.\$billType.\$billNumber.reference[.]json'" src/routeTree.gen.ts
+          grep -Fq "'/bills/texas/\$legislature/\$billType/\$billNumber/reference.json': typeof" src/routeTree.gen.ts
 
       - name: SEO validation
         run: bun run seo:validate
