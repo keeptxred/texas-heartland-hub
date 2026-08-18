@@ -59,7 +59,7 @@ async function post({ request }: { request: Request }) {
   for (const slug of selected) {
     const { data: article } = await db
       .from("daily_articles")
-      .select("featured_image_url,quality_flags")
+      .select("featured_image_url")
       .eq("slug", slug)
       .maybeSingle();
 
@@ -74,13 +74,8 @@ async function post({ request }: { request: Request }) {
       continue;
     }
 
-    const cleanedFlags = (Array.isArray(article?.quality_flags) ? article.quality_flags : [])
-      .filter((flag: unknown): flag is string => typeof flag === "string" && flag !== "missing_image");
-    await db
-      .from("daily_articles")
-      .update({ quality_flags: cleanedFlags.length ? cleanedFlags : null })
-      .eq("slug", slug);
-
+    // `trg_clear_missing_image_when_ready` owns quality-flag cleanup whenever
+    // any image writer successfully attaches featured_image_url.
     results.push({ slug, ok: true, url: generated.url });
   }
 
