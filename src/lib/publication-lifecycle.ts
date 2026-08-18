@@ -22,7 +22,11 @@ export type PublicationClaim = {
 
 const BREAKING_RE = /\b(breaking|emergency|evacuat(?:e|ion)|tornado|hurricane|wildfire|flash flood|amber alert|active shooter|shooting|explosion|earthquake|major outage|grid emergency|declared disaster|shelter in place|missing child)\b/i;
 const COLLECTION_WINDOW_MINUTES = 12;
-const CLAIM_TTL_SECONDS = 20 * 60;
+// Keep the outer event lease aligned with claim_ai_rewrite_slot's stale-pending
+// window. If a Worker dies while an AI rewrite is pending, the next attempt can
+// recover the rewrite and the event claim at the same time instead of being
+// blocked by an extra five-minute outer lease.
+const CLAIM_TTL_SECONDS = 15 * 60;
 
 function firstSeenMs(cluster: StoryCluster): number {
   const values = [cluster.primary, ...cluster.members]
@@ -93,7 +97,11 @@ export async function acquirePublicationClaim(db: any, clusterId: string | null)
     if (row?.acquired) {
       return { acquired: true, alreadyPublished: false, claimToken, reason: "atomic event publication claim acquired" };
     }
-    return { acquired: false, alreadyPublished: false, reason: "another worker currently owns the event publication claim" };
+    return {
+      acquired: false,
+      alreadyPublished: false,
+      reason: "another worker is already publishing this event; stale claims auto-expire after 15 minutes",
+    };
   } catch (error) {
     console.warn("[multi-source] publication claim unavailable; retaining existing fallback", error instanceof Error ? error.message : String(error));
     return { acquired: true, alreadyPublished: false, reason: "claim RPC unavailable; existing fallback path retained" };
