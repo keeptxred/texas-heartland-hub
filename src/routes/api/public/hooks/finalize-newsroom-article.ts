@@ -3,6 +3,10 @@ import { scoreQuality } from "@/lib/content-quality";
 import { generateFeaturedImageForSlugDirect } from "@/lib/featured-image.functions";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { normalizeNewsroomWhyThisMatters } from "@/lib/newsroom-postpublish";
+import {
+  assessArticleSourceIntegrity,
+  sourceReferencesFromBodyJson,
+} from "@/lib/article-source-integrity";
 
 const OIDC_AUDIENCE = "keeptxred-newsroom";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
@@ -65,7 +69,7 @@ async function post({ request }: { request: Request }) {
   const db = supabaseAdmin as any;
   const { data: article, error } = await db
     .from("daily_articles")
-    .select("slug,title,dek,author,kind,published_at,body,body_json,quality_flags")
+    .select("slug,title,dek,author,kind,published_at,body,body_json,quality_flags,source_name,source_url")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -84,6 +88,15 @@ async function post({ request }: { request: Request }) {
     if (updateError) return Response.json({ error: updateError.message }, { status: 500 });
   }
 
+  const sourceIntegrity = assessArticleSourceIntegrity({
+    sourceName: article.source_name,
+    sourceUrl: article.source_url,
+    sources: sourceReferencesFromBodyJson(normalized.bodyJson),
+  });
+  const sourceIntegrityFlags = sourceIntegrity.falseMultiSourceClaim
+    ? ["seo_false_multisource", "seo_noindex"]
+    : [];
+
   const image = await generateFeaturedImageForSlugDirect(slug, false);
   const quality = scoreQuality({
     slug,
@@ -99,6 +112,7 @@ async function post({ request }: { request: Request }) {
   const qualityFlags = [...new Set([
     ...existingNonScoreFlags(article.quality_flags),
     ...quality.flags,
+    ...sourceIntegrityFlags,
   ])];
   const { error: qualityUpdateError } = await db
     .from("daily_articles")
@@ -116,6 +130,7 @@ async function post({ request }: { request: Request }) {
     image,
     contentQualityScore: quality.score,
     qualityFlags: qualityFlags.length > 0 ? qualityFlags : null,
+    sourceIntegrity,
   });
 }
 
