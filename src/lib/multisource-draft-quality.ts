@@ -14,6 +14,7 @@ const STOP = new Set([
   "during", "source", "sources", "story", "report", "reported",
 ]);
 const ATTRIBUTION_RE = /\b(according to|said|says|reported|reports|stated|states|announced|wrote|writes|argued|claims?|alleged|estimated|projected|predicted|officials?|agency|court|department|office|campaign|spokesperson)\b/i;
+const READER_VALUE_HEADING_RE = /\b(why it matters|what it means|what happens next|what to know|context|impact|timeline|background|for texans|next steps)\b/i;
 
 function normalize(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9%$]+/g, " ").replace(/\s+/g, " ").trim();
@@ -47,6 +48,20 @@ function proseSentences(prose: string): string[] {
     .split(/(?<=[.!?])\s+/)
     .map((sentence) => sentence.trim())
     .filter(Boolean);
+}
+
+function wordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function hasReaderValue(article: MultiSourceDraftShape): boolean {
+  const explicitContext = `${article.relevance ?? ""} ${article.analysis ?? ""}`.trim();
+  if (wordCount(explicitContext) >= 70) return true;
+
+  return (article.sections ?? []).some((section) => {
+    if (!READER_VALUE_HEADING_RE.test(section.heading ?? "")) return false;
+    return wordCount((section.paragraphs ?? []).join(" ")) >= 70;
+  });
 }
 
 function extractLine(packet: string, prefix: string): string | null {
@@ -184,6 +199,10 @@ export function validateMultiSourceDraftAgainstPacket(
   const required = strongFacts.length <= 2 ? strongFacts.length : Math.max(2, Math.ceil(strongFacts.length * 0.5));
   if (!strongFacts.length || represented.length < required) {
     reasons.push(`multisource_verified_fact_coverage:${represented.length}/${strongFacts.length}`);
+  }
+
+  if (!hasReaderValue(article)) {
+    reasons.push("multisource_missing_reader_value");
   }
 
   if (ledger.some((fact) => fact.conflict && overlap(fact.text, headline) >= 0.4)) {
