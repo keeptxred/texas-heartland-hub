@@ -1,3 +1,4 @@
+-- BULK_ARTICLE_MAINTENANCE
 -- KeepTXRed's public article taxonomy should describe its actual editorial beat.
 -- `Non-Political` is a legacy catch-all from before lifestyle coverage moved to
 -- TexasDefined. New KeepTXRed rows must resolve to a real KTR section instead.
@@ -29,8 +30,6 @@ BEGIN
      LIMIT 1;
   END IF;
 
-  -- TexasDefined-bound sources are rejected by the site-boundary trigger; do
-  -- not disguise them as KeepTXRed content here.
   IF routed_site = 'texasdefined' THEN
     RETURN NEW;
   END IF;
@@ -56,8 +55,6 @@ ON public.daily_articles
 FOR EACH ROW
 EXECUTE FUNCTION public.normalize_keeptxred_article_category();
 
--- Repair only currently public-eligible legacy catch-all rows. Quarantined
--- historical rows stay untouched; they are no longer part of public discovery.
 WITH eligible_nonpolitical AS (
   SELECT
     article.id,

@@ -1,3 +1,4 @@
+-- BULK_ARTICLE_MAINTENANCE
 -- AdSense Phase 5: repair the small set of currently indexable cloud articles
 -- after a manual source-family and taxonomy audit.
 
