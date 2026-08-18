@@ -4,6 +4,10 @@ import {
   rankFacebookCandidates,
   type RecentFacebookPost,
 } from "@/lib/facebook-editorial-selection";
+import {
+  facebookPostingDecision,
+  formatCentralMinute,
+} from "@/lib/facebook-posting-schedule";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { quickPublishToFacebookFn } from "@/services/quickPublish.functions";
 
@@ -63,13 +67,15 @@ async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
     .eq("status", "PUBLISHED")
     .gte("published_time", cutoff)
     .order("published_time", { ascending: false })
-    .limit(20);
+    .limit(30);
 
   if (queueError) throw new Error(queueError.message);
 
   const queueRows = (rawQueueRows ?? []) as RecentQueueRow[];
   const packageIds = [...new Set(queueRows.map((row) => row.content_package_id).filter(Boolean))];
-  if (packageIds.length === 0) return [];
+  if (packageIds.length === 0) {
+    return queueRows.map((row) => ({ title: "Facebook post", published_at: row.published_time }));
+  }
 
   const { data: rawPackages, error: packageError } = await db
     .from("content_packages")
@@ -82,12 +88,10 @@ async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
     ((rawPackages ?? []) as RecentPackageRow[]).map((row) => [row.id, row.source_title]),
   );
 
-  return queueRows
-    .map((row) => ({
-      title: titleByPackage.get(row.content_package_id) ?? "",
-      published_at: row.published_time,
-    }))
-    .filter((row) => row.title.length > 0);
+  return queueRows.map((row) => ({
+    title: titleByPackage.get(row.content_package_id) ?? "Facebook post",
+    published_at: row.published_time,
+  }));
 }
 
 async function runAutoFacebookPost(request: Request) {
@@ -117,8 +121,46 @@ async function runAutoFacebookPost(request: Request) {
   const adminToken = process.env.ADMIN_PASSCODE ?? "keeptxred";
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const db = supabaseAdmin as any;
-  const cutoff = new Date(Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
 
+  let recentPosts: RecentFacebookPost[] = [];
+  try {
+    recentPosts = await loadRecentFacebookPosts(db);
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: "Failed to load recent Facebook history",
+        detail: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
+  }
+
+  const mode = request.headers.get("x-ktr-facebook-mode")?.trim().toLowerCase() || "scheduled";
+  if (mode !== "manual") {
+    const decision = facebookPostingDecision({
+      now: new Date(),
+      seed: adminToken,
+      recentPosts,
+    });
+
+    if (!decision.shouldPost) {
+      return Response.json({
+        ok: true,
+        posted: false,
+        scheduled_wait: true,
+        reason: decision.reason,
+        schedule_date: decision.dateKey,
+        posts_today: decision.postsToday,
+        elapsed_slots: decision.elapsedSlots,
+        next_target_local: formatCentralMinute(decision.nextTargetMinute),
+        targets_local: decision.targets.map((target) => formatCentralMinute(target)),
+      });
+    }
+  }
+
+  const cutoff = new Date(Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
     .select("slug,title,category,featured_image_url,published_at,source_name,kind,is_breaking,score,body_json")
@@ -182,21 +224,6 @@ async function runAutoFacebookPost(request: Request) {
     return Response.json({ ok: true, posted: false, no_items: true, reason: "All eligible recent articles were already posted" });
   }
 
-  let recentPosts: RecentFacebookPost[] = [];
-  try {
-    recentPosts = await loadRecentFacebookPosts(db);
-  } catch (error) {
-    return Response.json(
-      {
-        ok: false,
-        posted: false,
-        error: "Failed to load recent Facebook history for editorial diversity",
-        detail: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
-    );
-  }
-
   const ranked = rankFacebookCandidates(candidates, recentPosts);
   if (ranked.length === 0) {
     return Response.json({
@@ -245,6 +272,7 @@ async function runAutoFacebookPost(request: Request) {
         post_url: result.post_url,
         posted_at: result.posted_at,
         attempted: attempts.length + 1,
+        mode,
       });
     }
 
