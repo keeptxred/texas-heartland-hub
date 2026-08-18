@@ -13,7 +13,7 @@ import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 import { AUTHORS, authorSlug } from "@/data/authors";
 import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
-import { ELECTION_DISTRICT_PATHS, ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
+import { ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
@@ -105,8 +105,12 @@ export const Route = createFileRoute("/sitemap.xml")({
           { file: "sitemap-news.xml", count: newsCount },
           { file: "sitemap-evergreen.xml", count: evergreenCount },
           { file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT },
-          { file: "sitemap-districts.xml", count: ELECTION_DISTRICT_PATHS.length },
-          { file: "sitemap-representatives.xml", count: 1 },
+          // Bulk district and representative detail sitemaps are intentionally not
+          // advertised in the sitemap index. Search Console showed hundreds of these
+          // programmatic URLs sitting in "Discovered - currently not indexed" while
+          // higher-value newsroom and hub pages competed for the same crawl attention.
+          // Their routes remain live and internally discoverable; they can be promoted
+          // back into the index once they meet stronger unique-content thresholds.
           { file: "sitemap-government.xml", count: GOVERNMENT_ENTITIES.length + 1 },
           { file: "sitemap-legislature.xml", count: 1 },
           { file: "sitemap-committees.xml", count: 1 },

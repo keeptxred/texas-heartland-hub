@@ -51,6 +51,12 @@ const LEGACY_CONTENT_PATHS = new Map([
   ["/hubs/texas-politics", "/texas-politics"],
   ["/hubs/texas-economy", "/texas-economy"],
 ]);
+const EXTERNAL_LEGACY_REDIRECTS = new Map([
+  ["/tax-calculator", "https://texasdefined.com/decide/property-taxes"],
+  ["/texas-property-tax-protest-guide", "https://texasdefined.com/do/property-tax-protest"],
+  ["/texas-financial-tools", "https://texasdefined.com/decide/financial-tools"],
+  ["/living-in-texas", "https://texasdefined.com/texas-living"],
+]);
 const BAD_YEAR_NEWS_REDIRECTS = new Map([
   ["live-2001-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8", "live-2026-01-28-texas-voter-registration-deadline-approaching-essential-guide-for-the--6rien8"],
   ["live-2001-02-11-texas-mail-in-ballot-deadlines-approach-for-march-2026-primary-electio-76tc0a", "live-2026-02-11-texas-mail-in-ballot-deadlines-approach-for-march-2026-primary-electio-76tc0a"],
@@ -126,8 +132,6 @@ function isTrackingParam(name: string): boolean {
   return normalized.startsWith("utm_") || TRACKING_PARAMS.has(normalized);
 }
 
-// Parameter-specific cleanup: only known tracking keys are removed, so
-// legitimate application query state is preserved.
 function stripTrackingParams(url: URL): void {
   for (const key of Array.from(url.searchParams.keys())) {
     if (isTrackingParam(key)) url.searchParams.delete(key);
@@ -159,10 +163,11 @@ function buildCanonicalTarget(url: URL): URL {
   const target = new URL(url.toString());
   target.pathname = resolveLegacyPath(target.pathname);
 
-  const topic = target.searchParams.get("topic");
-  if (topic && TOPIC_REDIRECT_PATHS.has(target.pathname)) {
+  if (TOPIC_REDIRECT_PATHS.has(target.pathname) && target.searchParams.has("topic")) {
+    const topic = target.searchParams.get("topic") ?? "";
     const slug = slugify(topic);
     if (slug) target.pathname = `${target.pathname}/${slug}`;
+    // Empty ?topic= is canonical noise too; always remove it.
     target.searchParams.delete("topic");
   }
 
@@ -190,20 +195,34 @@ function hasNoindexState(url: URL): boolean {
 const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const url = new URL(request.url);
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim().toLowerCase();
   const requestHost = (forwardedHost || url.host).toLowerCase();
+  const requestProto = forwardedProto || url.protocol.replace(":", "").toLowerCase();
   const canRedirect = request.method === "GET" || request.method === "HEAD";
   const excludedPath = url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe";
 
   if (canRedirect && !excludedPath) {
     const target = buildCanonicalTarget(url);
-    const hostChanged = requestHost === "www.keeptxred.com";
+    const externalTarget = EXTERNAL_LEGACY_REDIRECTS.get(target.pathname.toLowerCase());
+    if (externalTarget) {
+      const finalUrl = new URL(externalTarget);
+      target.searchParams.forEach((value, key) => finalUrl.searchParams.append(key, value));
+      return new Response(null, {
+        status: 301,
+        headers: {
+          location: finalUrl.toString(),
+          "cache-control": "public, max-age=86400",
+        },
+      });
+    }
+
+    const hostChanged = requestHost !== "keeptxred.com";
+    const protocolChanged = requestProto !== "https";
     const pathChanged = target.pathname !== url.pathname;
     const queryChanged = target.search !== url.search;
 
-    if (hostChanged || pathChanged || queryChanged) {
-      const location = hostChanged
-        ? `${CANONICAL_ORIGIN}${target.pathname}${target.search}`
-        : `${target.pathname}${target.search}`;
+    if (hostChanged || protocolChanged || pathChanged || queryChanged) {
+      const location = `${CANONICAL_ORIGIN}${target.pathname}${target.search}`;
       return new Response(null, {
         status: 301,
         headers: {
