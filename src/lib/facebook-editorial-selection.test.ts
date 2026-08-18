@@ -9,6 +9,7 @@ describe("Facebook editorial selection", () => {
   it("blocks routine appointment headlines from automation", () => {
     expect(isRoutineGovernmentAppointment("Gov. Abbott Appoints Three Judges to Texas Courts")).toBe(true);
     expect(isRoutineGovernmentAppointment("Abbott Names New Members to State Commission")).toBe(true);
+    expect(isRoutineGovernmentAppointment("Abbott Reappoints Two Members to an Advisory Board")).toBe(true);
   });
 
   it("does not treat a controversial appointment story as routine", () => {
