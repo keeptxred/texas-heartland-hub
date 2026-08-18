@@ -1,5 +1,6 @@
+import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { ARTICLES } from "@/data/articles";
+import { ARTICLES, type Article } from "@/data/articles";
 import {
   isRetiredStaticNewsPath,
   isStaticArticleIndexable,
@@ -9,6 +10,20 @@ function article(slug: string) {
   const found = ARTICLES.find((candidate) => candidate.slug === slug);
   expect(found, `missing static fixture ${slug}`).toBeTruthy();
   return found!;
+}
+
+function topicalFixture(contentCategory: Article["contentCategory"]): Article {
+  return {
+    slug: `fixture-${contentCategory}`,
+    category: "Non-Political",
+    title: "Fixture",
+    dek: "Fixture article for topical indexability policy.",
+    author: "Staff Reporter",
+    date: "Fixture",
+    publishedAt: "2026-08-18T00:00:00Z",
+    image: "/fixture.jpg",
+    contentCategory,
+  };
 }
 
 describe("static article indexability", () => {
@@ -30,10 +45,19 @@ describe("static article indexability", () => {
     "moving-to-el-paso-guide",
     "moving-to-texas-guide",
     "2026-07-06-rangers-texas-rangers-prospect-guide-the-next-stars-of-arlington",
+    "live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp",
+    "live-2026-06-29-the-history-behind-the-texas-stock-tank-name-bxkvg7",
   ])("retires legacy off-topic static article %s", (slug) => {
     expect(isStaticArticleIndexable(article(slug))).toBe(false);
     expect(isRetiredStaticNewsPath(`/news/${slug}`)).toBe(true);
   });
+
+  it.each(["relocation", "housing", "financial", "cost-of-living", "history", "culture", "lifestyle"] as const)(
+    "retires %s static content from the Keep TX Red search footprint",
+    (contentCategory) => {
+      expect(isStaticArticleIndexable(topicalFixture(contentCategory))).toBe(false);
+    },
+  );
 
   it.each([
     "texas-voting-guide-2026",
@@ -64,6 +88,15 @@ describe("static article indexability", () => {
       const retiredByPath = isRetiredStaticNewsPath(`/news/${candidate.slug}`);
       expect(retiredByPath, `robots mismatch for ${candidate.slug}`).toBe(retiredByInventory);
     }
+  });
+
+  it("removes retired static inventory from newsroom and author discovery", () => {
+    const newsIndex = fs.readFileSync(new URL("../routes/news.index.tsx", import.meta.url), "utf8");
+    const authorsIndex = fs.readFileSync(new URL("../routes/authors.index.tsx", import.meta.url), "utf8");
+    const authorProfile = fs.readFileSync(new URL("../routes/authors.$slug.tsx", import.meta.url), "utf8");
+    expect(newsIndex).toContain("isPublished(a) && isStaticArticleIndexable(a)");
+    expect(authorsIndex).toContain("isPublished(article) && isStaticArticleIndexable(article)");
+    expect(authorProfile).toContain("&& isStaticArticleIndexable(article)");
   });
 
   it("does not affect non-news paths", () => {
