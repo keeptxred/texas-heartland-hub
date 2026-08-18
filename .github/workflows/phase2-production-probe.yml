@@ -1,0 +1,53 @@
+name: Phase 2 Production Probe
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/phase2-production-probe.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Verify Phase 2 quarantine is live
+        shell: bash
+        run: |
+          set -euo pipefail
+          quarantine='2026-08-16-interior-opens-92-million-acres-to-hunting-what-north-texas-hunters-need-to-know'
+          eligible='2026-08-17-texas-cities-eye-property-tax-hikes-spending-cuts-amid-yawning-budget-gaps'
+
+          for attempt in $(seq 1 24); do
+            echo "Phase 2 production probe attempt ${attempt}/24"
+            news_status=$(curl -sS -L -o /tmp/news.html -w '%{http_code}' --max-time 25 'https://keeptxred.com/news' || echo 000)
+            article_status=$(curl -sS -L -o /tmp/quarantine.html -w '%{http_code}' --max-time 25 "https://keeptxred.com/news/${quarantine}" || echo 000)
+            eligible_status=$(curl -sS -L -o /tmp/eligible.html -w '%{http_code}' --max-time 25 "https://keeptxred.com/news/${eligible}" || echo 000)
+            evergreen_status=$(curl -sS -L -o /tmp/evergreen.xml -w '%{http_code}' --max-time 25 'https://keeptxred.com/sitemap-evergreen.xml' || echo 000)
+            newsmap_status=$(curl -sS -L -o /tmp/newsmap.xml -w '%{http_code}' --max-time 25 'https://keeptxred.com/sitemap-news.xml' || echo 000)
+
+            if [[ "$news_status" == "200" && "$article_status" == "200" && "$eligible_status" == "200" && "$evergreen_status" == "200" && "$newsmap_status" == "200" ]] \
+              && ! grep -Fq "$quarantine" /tmp/news.html \
+              && grep -Fq "$eligible" /tmp/news.html \
+              && grep -Eqi 'name="robots"[^>]*content="noindex,follow' /tmp/quarantine.html \
+              && grep -Eqi 'name="robots"[^>]*content="index,follow' /tmp/eligible.html \
+              && ! grep -Fq "$quarantine" /tmp/evergreen.xml \
+              && ! grep -Fq "$quarantine" /tmp/newsmap.xml \
+              && grep -Fq "$eligible" /tmp/evergreen.xml; then
+              echo 'PHASE2_PRODUCTION_PROBE_SUCCESS'
+              exit 0
+            fi
+
+            echo "statuses news=$news_status quarantine=$article_status eligible=$eligible_status evergreen=$evergreen_status newsmap=$newsmap_status"
+            echo "news_has_quarantine=$(grep -Fc "$quarantine" /tmp/news.html 2>/dev/null || true)"
+            echo "news_has_eligible=$(grep -Fc "$eligible" /tmp/news.html 2>/dev/null || true)"
+            echo "evergreen_has_quarantine=$(grep -Fc "$quarantine" /tmp/evergreen.xml 2>/dev/null || true)"
+            echo "evergreen_has_eligible=$(grep -Fc "$eligible" /tmp/evergreen.xml 2>/dev/null || true)"
+            sleep 10
+          done
+
+          echo 'Phase 2 production behavior did not converge to the expected quarantine contract.' >&2
+          exit 1
