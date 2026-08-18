@@ -8,6 +8,11 @@ const migration = readFileSync(
   "supabase/migrations/20260816152500_add_news_event_publication_claims.sql",
   "utf8",
 );
+const recoveryMigration = readFileSync(
+  "supabase/migrations/20260818003500_align_event_claim_with_rewrite_stale_window.sql",
+  "utf8",
+);
+const lifecycle = readFileSync("src/lib/publication-lifecycle.ts", "utf8");
 const publisher = readFileSync("src/lib/multi-source-publish.ts", "utf8");
 
 function cluster(overrides: Partial<StoryCluster> = {}): StoryCluster {
@@ -93,6 +98,17 @@ describe("publication timing lifecycle", () => {
     expect(migration).toContain("publish_claimed_at < now() - make_interval");
     expect(migration).toContain("status <> 'published'");
     expect(migration).toContain("publish_attempt_count = publish_attempt_count + 1");
+  });
+
+  it("aligns the event claim lease with the 15-minute rewrite stale window", () => {
+    expect(lifecycle).toContain("const CLAIM_TTL_SECONDS = 15 * 60");
+    expect(recoveryMigration).toContain("p_claim_ttl_seconds integer DEFAULT 900");
+    expect(recoveryMigration).toContain("publish_claimed_at <= now() - interval '15 minutes'");
+  });
+
+  it("treats a canonical published slug as terminal even if cluster status drifts", () => {
+    expect(recoveryMigration).toContain("IF v_slug IS NOT NULL THEN");
+    expect(recoveryMigration).toContain("AND published_slug IS NULL");
   });
 
   it("only releases a claim held by the same worker token", () => {
