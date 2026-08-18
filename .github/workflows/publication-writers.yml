@@ -13,6 +13,8 @@ on:
       - 'src/lib/publication-quality-gate.ts'
       - 'src/lib/publication-quality-gate.test.ts'
       - 'src/lib/multi-source-publish.ts'
+      - 'src/lib/newsroom-shadow-canary.test.ts'
+      - 'src/lib/newsroom-legacy-fallback-budget.test.ts'
       - 'src/routes/api/public/hooks/**'
       - 'src/lib/ingest-and-normalize.functions.ts'
       - 'scripts/shared/validate-publication-writers.mjs'
@@ -40,5 +42,5 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Audit article publication writers
         run: bun run publication:validate
-      - name: Test corroboration and primary-record publication gate
-        run: bunx vitest run src/lib/publication-quality-gate.test.ts src/routes/api/public/hooks/generate-news.word-budget.test.ts
+      - name: Test publication-quality contracts
+        run: bunx vitest run src/lib/publication-quality-gate.test.ts src/routes/api/public/hooks/generate-news.word-budget.test.ts src/lib/newsroom-shadow-canary.test.ts src/lib/newsroom-legacy-fallback-budget.test.ts
