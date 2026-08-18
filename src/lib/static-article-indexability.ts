@@ -5,14 +5,16 @@ const RETIRED_CONTENT_CATEGORIES = new Set([
   "housing",
   "financial",
   "cost-of-living",
+  "history",
+  "culture",
   "lifestyle",
 ]);
 
 /**
  * Explicit path list for legacy static pages that should stay accessible but
- * leave Google's index. Keep this synchronized with RETIRED_CONTENT_CATEGORIES;
- * the regression test scans the full ARTICLES registry so a newly retired
- * static article cannot be omitted from page-level robots handling.
+ * leave Google's index. Category-based retirement is handled from article
+ * metadata at the route/listing boundary; this slug list covers pages that
+ * need path-only retirement even when article metadata is unavailable.
  */
 const RETIRED_STATIC_SLUGS = new Set([
   "renting-vs-buying-in-texas",
@@ -36,8 +38,8 @@ const RETIRED_STATIC_SLUGS = new Set([
 
 /**
  * Static articles predate the current newsroom quality gate. Topical fit takes
- * precedence over the old `pillar` flag: several relocation/home-finance pages
- * were historically marked pillar but no longer belong in Keep TX Red's
+ * precedence over the old `pillar` flag: relocation, home-finance, lifestyle,
+ * culture and history pages belong on TexasDefined rather than in Keep TX Red's
  * politics, government, law, elections and public-policy search footprint.
  */
 export function isStaticArticleIndexable(article: Pick<Article, "slug" | "pillar" | "contentCategory">): boolean {
@@ -47,6 +49,7 @@ export function isStaticArticleIndexable(article: Pick<Article, "slug" | "pillar
   return true;
 }
 
+/** Path-only retirement used by the global SEO helper when article metadata is unavailable. */
 export function isRetiredStaticNewsPath(path: string): boolean {
   const match = path.match(/^\/news\/([^/?#]+)$/);
   if (!match) return false;
