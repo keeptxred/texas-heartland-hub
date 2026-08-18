@@ -13,10 +13,16 @@ SET search_path = public
 AS $$
 DECLARE
   v_slug text;
+  v_effective_ttl_seconds integer;
 BEGIN
   IF p_claim_ttl_seconds < 60 OR p_claim_ttl_seconds > 7200 THEN
     RAISE EXCEPTION 'claim ttl out of range';
   END IF;
+
+  -- The AI rewrite reservation becomes stale at 15 minutes. Cap the outer
+  -- event lease at the same duration even if an older deployed caller still
+  -- explicitly sends the former 20-minute value.
+  v_effective_ttl_seconds := LEAST(p_claim_ttl_seconds, 900);
 
   -- A canonical slug is terminal even if a later refresh accidentally changed
   -- the cluster status. Never mint a duplicate article for that event.
@@ -40,7 +46,7 @@ BEGIN
     AND (
       c.publish_claim_token IS NULL
       OR c.publish_claimed_at IS NULL
-      OR c.publish_claimed_at < now() - make_interval(secs => p_claim_ttl_seconds)
+      OR c.publish_claimed_at < now() - make_interval(secs => v_effective_ttl_seconds)
     );
 
   IF FOUND THEN
