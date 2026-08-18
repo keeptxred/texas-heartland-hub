@@ -39,7 +39,8 @@ jobs:
           random_u32=$(od -An -N4 -tu4 /dev/urandom | tr -d '[:space:]')
           delay_seconds=$(( random_u32 % 7201 ))
           delay_minutes=$(( delay_seconds / 60 ))
-          echo "Random Facebook delay selected: ${delay_minutes}m (plus ${delay_seconds}%60s remainder)."
+          delay_remainder=$(( delay_seconds % 60 ))
+          echo "Random Facebook delay selected: ${delay_minutes}m ${delay_remainder}s."
           sleep "$delay_seconds"
 
       - name: Post next eligible KeepTXRed article to Facebook
