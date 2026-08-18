@@ -6,14 +6,17 @@ export type Author = {
   beats: string[];
 };
 
+export const EDITORIAL_BYLINE_DISCLOSURE =
+  "Keep TX Red uses subject-matter desk names as editorial bylines. A desk or bureau name identifies a coverage area and editorial workflow; it is not a claim that a named individual, physical bureau, or separately staffed reporting team exists. Source-based and AI-assisted work is governed by our published editorial standards and disclosure policy.";
+
 export const AUTHORS: Author[] = [
   {
     slug: "staff-reporter",
     name: "Staff Reporter",
-    role: "Newsroom",
+    role: "General assignment editorial byline",
     beats: ["Breaking news", "General assignment"],
     bio: [
-      "Staff Reporter is the byline used for general-assignment Keep TX Red coverage produced by the full newsroom. Stories under this byline are edited by senior staff and reviewed against our editorial standards before publication.",
+      "Staff Reporter is the general-assignment editorial byline Keep TX Red uses when a story is not assigned to a subject-matter desk. It identifies the publication's editorial workflow rather than a named individual reporter.",
     ],
   },
   {
@@ -22,8 +25,8 @@ export const AUTHORS: Author[] = [
     role: "Texas sports & culture",
     beats: ["Cowboys", "Texans", "Rangers", "Astros", "Spurs", "Mavericks", "Rockets", "Texas HS football"],
     bio: [
-      "The Keep TX Red Sports Desk covers the teams and leagues that shape Texas identity — the NFL's Cowboys and Texans, MLB's Rangers and Astros, the NBA's Spurs, Mavericks, and Rockets, plus the Friday-night high-school football culture that defines fall in the Lone Star State.",
-      "Reporting focuses on the business of Texas sports, stadium and municipal-financing debates, and the on-field storylines that Texans actually argue about at the barbershop.",
+      "The Keep TX Red Sports Desk is the editorial byline for coverage of the teams and leagues that shape Texas identity — the NFL's Cowboys and Texans, MLB's Rangers and Astros, the NBA's Spurs, Mavericks, and Rockets, plus Texas high-school football.",
+      "Coverage emphasizes the business and public-policy side of Texas sports, stadium and municipal-financing debates, and major competition storylines with clear Texas relevance.",
     ],
   },
   {
@@ -32,8 +35,8 @@ export const AUTHORS: Author[] = [
     role: "Texas culture, history & identity",
     beats: ["Texas history", "Landmarks & heritage", "Regional identity", "Music & food culture"],
     bio: [
-      "The Texana Desk is Keep TX Red's culture and heritage byline — the history, landmarks, and traditions that make Texas Texas. From the Alamo to the King Ranch, from Selena to George Strait, from the Astrodome to the Cotton Bowl, we cover the stories that carry the state's identity forward.",
-      "Coverage blends primary-source history with contemporary reporting on the places, people, and rituals that anchor Texas culture.",
+      "The Texana Desk is the editorial byline for Texas culture and heritage coverage — history, landmarks, and traditions that shape the state's identity.",
+      "Coverage uses primary-source history and clearly attributed reporting when a cultural story has a meaningful connection to Keep TX Red's Texas public-affairs mission.",
     ],
   },
   {
@@ -42,7 +45,7 @@ export const AUTHORS: Author[] = [
     role: "Border & Rio Grande Valley",
     beats: ["Operation Lone Star", "Rio Grande Valley", "DPS", "Federal–state friction"],
     bio: [
-      "The Border Bureau covers the 1,254-mile Texas–Mexico border — from El Paso and the Big Bend down through the Rio Grande Valley. Reporting tracks Operation Lone Star, Texas DPS deployments, county sheriffs along the river, and the policy fights between Austin and Washington over enforcement.",
+      "Border Bureau is the editorial byline for Keep TX Red coverage of the Texas–Mexico border, including Operation Lone Star, Texas DPS deployments, county enforcement, and state-federal policy disputes. The name describes the coverage beat; it does not represent a claimed physical bureau location.",
     ],
   },
   {
@@ -51,7 +54,7 @@ export const AUTHORS: Author[] = [
     role: "Statewide politics & campaigns",
     beats: ["Statewide races", "Primary politics", "Polling", "GOP coalition"],
     bio: [
-      "The Politics Desk covers statewide races, the Texas Republican primary calendar, and the shifting coalitions inside both parties. We focus on what drives Texas voters in March — when, in most districts, the real election is decided.",
+      "The Politics Desk is the editorial byline for statewide races, the Texas primary calendar, polling, campaigns, and shifts inside the state's political coalitions.",
     ],
   },
   {
@@ -60,7 +63,7 @@ export const AUTHORS: Author[] = [
     role: "Local civics & school boards",
     beats: ["ISD boards", "Municipal elections", "Civic engagement"],
     bio: [
-      "Lone Star Civics is Keep TX Red's local-government desk: school boards, city councils, MUDs, and the May elections that decide them. Coverage centers on how Texans can actually influence the governments closest to their kitchen table.",
+      "Lone Star Civics is the editorial byline for local-government coverage: school boards, city councils, MUDs, and local elections, with an emphasis on practical civic participation.",
     ],
   },
   {
@@ -69,7 +72,7 @@ export const AUTHORS: Author[] = [
     role: "Capitol & Legislature",
     beats: ["Texas House", "Texas Senate", "Special sessions", "Governor's office"],
     bio: [
-      "The Austin Bureau covers the Texas Capitol — the House, the Senate, the Governor's office, and the special sessions that increasingly carry the most consequential bills. We track committee calendars, floor amendments, and the conservative caucus's leverage on leadership.",
+      "Austin Bureau is the editorial byline for Texas Capitol coverage — the House, Senate, Governor's office, committees, floor action, and special sessions. The name describes the Capitol coverage beat; it does not represent a claimed physical newsroom bureau.",
     ],
   },
   {
@@ -78,7 +81,7 @@ export const AUTHORS: Author[] = [
     role: "Data journalism",
     beats: ["Property tax data", "ISD spending", "Election results"],
     bio: [
-      "The Data Desk builds Keep TX Red's interactive tools and analytical reporting from primary-source filings — TEA, the Texas Comptroller, county appraisal districts, and the Secretary of State. We publish methodology with every dataset so readers can audit the numbers.",
+      "The Data Desk is the editorial byline for Keep TX Red's data tools and analytical coverage using primary-source records such as TEA, Texas Comptroller, county appraisal-district, and Secretary of State data. Methodology and source documentation are published when a dataset or analysis depends on them.",
     ],
   },
   {
@@ -87,7 +90,7 @@ export const AUTHORS: Author[] = [
     role: "Energy & the grid",
     beats: ["Permian Basin", "ERCOT", "Railroad Commission", "Pipeline policy"],
     bio: [
-      "The Energy Desk covers the Permian, the Eagle Ford, ERCOT, the Public Utility Commission, and the Railroad Commission — the agencies and basins that make Texas the energy capital of North America. We report on grid reliability, permitting, and federal pressure on Texas producers.",
+      "The Energy Desk is the editorial byline for the Permian Basin, Eagle Ford, ERCOT, Public Utility Commission, Railroad Commission, grid reliability, permitting, and Texas energy policy.",
     ],
   },
   {
@@ -96,7 +99,7 @@ export const AUTHORS: Author[] = [
     role: "Property tax & local spending",
     beats: ["Homestead exemption", "Appraisal protests", "ISD M&O rates", "Bond elections"],
     bio: [
-      "The Taxpayer Desk exists to arm Texas homeowners with the data and procedural know-how to push back on rising property tax bills. We explain appraisal protests, exemptions, ISD bond ballots, and where every line on your tax bill actually goes.",
+      "The Taxpayer Desk is the editorial byline for Texas property-tax and local-spending coverage, including appraisal protests, exemptions, ISD rates, bond elections, and practical explanations of local tax bills.",
     ],
   },
   {
@@ -105,7 +108,7 @@ export const AUTHORS: Author[] = [
     role: "Government & process explainers",
     beats: ["How Texas government works", "Voter rights", "Sunshine laws"],
     bio: [
-      "The Civics Desk writes the evergreen explainers: how a bill becomes Texas law, what an Attorney General actually does, how to read a posted commissioners court agenda. Plain-English government for Texans who want to engage but were never taught the rules.",
+      "The Civics Desk is the editorial byline for evergreen explainers about Texas government, elections, public records, and civic procedure. Coverage is written for readers who want plain-English guidance grounded in official sources.",
     ],
   },
   {
@@ -114,7 +117,7 @@ export const AUTHORS: Author[] = [
     role: "Constitutional rights",
     beats: ["Second Amendment", "Religious liberty", "Property rights", "Free speech"],
     bio: [
-      "The Liberty Desk covers the constitutional rights at the core of Texas's conservative identity — carry law, religious liberty, property rights, and the limits of government power. Reporting is grounded in statute, case law, and the Texas Constitution.",
+      "The Liberty Desk is the editorial byline for constitutional-rights coverage, including firearms law, religious liberty, property rights, free speech, and limits on government power, with sourcing centered on statutes, case law, and official records.",
     ],
   },
   {
@@ -123,7 +126,7 @@ export const AUTHORS: Author[] = [
     role: "Elections & ballots",
     beats: ["Primaries & runoffs", "Voter ID", "Polling places", "Ballot integrity"],
     bio: [
-      "The Elections Desk tracks every election Texans actually vote in — federal, state, ISD, city, MUD, and constitutional amendments. We publish the calendars, ID rules, and district maps Texans need to cast an informed ballot.",
+      "The Elections Desk is the editorial byline for Texas election calendars, races, voter-identification rules, polling-place information, district maps, results, and election administration.",
     ],
   },
   {
@@ -132,7 +135,7 @@ export const AUTHORS: Author[] = [
     role: "K-12 & higher education",
     beats: ["ISDs", "School choice", "Curriculum", "TEA"],
     bio: [
-      "The Education Desk covers Texas K-12 — ISD boards, the Texas Education Agency, curriculum, and the school choice debate. Coverage emphasizes the policy levers parents actually control and the May elections that decide them.",
+      "The Education Desk is the editorial byline for Texas K-12 and higher-education policy, including school districts, TEA, curriculum, school choice, governance, and public spending.",
     ],
   },
   {
@@ -141,7 +144,7 @@ export const AUTHORS: Author[] = [
     role: "Policy analysis",
     beats: ["Water rights", "Regulatory policy", "Federalism"],
     bio: [
-      "The Policy Desk handles long-form policy analysis on water rights, regulation, federalism, and the structural questions that don't fit a daily news cycle. Sourcing leans on statute, agency reports, and public-records work.",
+      "The Policy Desk is the editorial byline for long-form policy analysis on regulation, federalism, water, and structural public-policy questions, with sourcing centered on statutes, agency material, public records, and clearly attributed reporting.",
     ],
   },
 ];

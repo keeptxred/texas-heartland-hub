@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AUTHORS, authorSlug } from "@/data/authors";
+import { AUTHORS, EDITORIAL_BYLINE_DISCLOSURE, authorSlug } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
 
@@ -20,10 +20,10 @@ export const Route = createFileRoute("/authors/")({
   },
   head: () => ({
     meta: [
-      { title: "Authors & Desks — Keep TX Red" },
-      { name: "description", content: "Meet the Keep TX Red newsroom — our desks and bureaus covering Texas politics, energy, the border, elections, education, and taxpayers." },
-      { property: "og:title", content: "Authors & Desks — Keep TX Red" },
-      { property: "og:description", content: "Meet the Keep TX Red newsroom — our desks and bureaus covering Texas politics, energy, the border, elections, education, and taxpayers." },
+      { title: "Editorial Bylines & Desks — Keep TX Red" },
+      { name: "description", content: "How Keep TX Red identifies subject-matter editorial bylines for Texas politics, elections, government, energy, education, border, tax, and policy coverage." },
+      { property: "og:title", content: "Editorial Bylines & Desks — Keep TX Red" },
+      { property: "og:description", content: "How Keep TX Red identifies subject-matter editorial bylines and coverage desks." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://keeptxred.com/authors" },
     ],
@@ -41,12 +41,15 @@ function AuthorsIndex() {
       <nav aria-label="Breadcrumb" className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground mb-6">
         <Link to="/news" className="hover:text-primary">Newsroom</Link>
         <span className="mx-2">/</span>
-        <span className="text-primary">Authors</span>
+        <span className="text-primary">Editorial Bylines</span>
       </nav>
       <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Keep TX Red</span>
-      <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-2">Authors &amp; Desks</h1>
-      <p className="mt-3 font-serif italic text-muted-foreground max-w-2xl">
-        Keep TX Red is organized around subject-matter desks and bureaus. Each byline below represents a team of reporters and editors covering a specific Texas beat.
+      <h1 className="font-display text-5xl md:text-6xl tracking-tight mt-2">Editorial Bylines &amp; Desks</h1>
+      <p className="mt-3 font-serif text-muted-foreground max-w-3xl leading-relaxed">
+        {EDITORIAL_BYLINE_DISCLOSURE}
+      </p>
+      <p className="mt-3 text-sm text-muted-foreground max-w-3xl">
+        For details on sourcing, aggregation, synthesis, AI assistance, corrections, and review practices, see our <Link to="/editorial-standards" className="text-primary underline underline-offset-2">Editorial Standards</Link>.
       </p>
 
       <ul className="mt-10 grid gap-6 md:grid-cols-2">
