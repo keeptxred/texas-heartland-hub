@@ -1,0 +1,64 @@
+name: Auto Facebook Posts
+
+on:
+  schedule:
+    # Five daily runs. GitHub cron is UTC; these land roughly from morning
+    # through late evening in Texas, shifting by one hour across DST.
+    - cron: "10 13 * * *"
+    - cron: "40 16 * * *"
+    - cron: "10 20 * * *"
+    - cron: "40 23 * * *"
+    - cron: "10 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: keeptxred-auto-facebook
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Post next eligible KeepTXRed article to Facebook
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-facebook"
+          oidc_token=$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')
+
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the Facebook OIDC token.' >&2
+            exit 1
+          fi
+
+          status=$(curl -sS -X POST -o /tmp/facebook-post.json -w '%{http_code}' \
+            --max-time 420 \
+            -H 'accept: application/json' \
+            -H "Authorization: Bearer ${oidc_token}" \
+            'https://keeptxred.com/api/public/hooks/auto-facebook-post' || echo 000)
+
+          echo "auto-facebook-post HTTP ${status}"
+          cat /tmp/facebook-post.json 2>/dev/null || true
+          echo
+
+          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' /tmp/facebook-post.json >/dev/null 2>&1; then
+            echo 'AUTO_FACEBOOK_POST_FAILED' >&2
+            exit 1
+          fi
+
+          if jq -e '.posted == true' /tmp/facebook-post.json >/dev/null 2>&1; then
+            slug=$(jq -r '.slug // ""' /tmp/facebook-post.json)
+            post_url=$(jq -r '.post_url // ""' /tmp/facebook-post.json)
+            echo "AUTO_FACEBOOK_POST_SUCCESS slug=${slug} post_url=${post_url}"
+          else
+            reason=$(jq -r '.reason // "no eligible article"' /tmp/facebook-post.json)
+            echo "AUTO_FACEBOOK_POST_NOOP reason=${reason}"
+          fi
