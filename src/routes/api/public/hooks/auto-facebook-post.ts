@@ -7,9 +7,9 @@ const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
 const SITE_URL = "https://keeptxred.com";
-const LOOKBACK_DAYS = 7;
-const MAX_CANDIDATES = 40;
-const MAX_ATTEMPTS = 8;
+const LOOKBACK_DAYS = 14;
+const MAX_CANDIDATES = 160;
+const MAX_ATTEMPTS = 12;
 
 type ArticleRow = {
   slug: string;
