@@ -20,7 +20,7 @@ export type RankedFacebookCandidate<T extends FacebookEditorialCandidate> = {
 };
 
 const ROUTINE_APPOINTMENT_RE = /\b(appoint(?:s|ed|ing|ment)?|reappoint(?:s|ed|ing|ment)?|names?\s+[^:]{0,80}\b(?:judge|justice|board|commission|commissioner|council|authority|panel|task force)|fills?\s+[^:]{0,50}\bvacanc(?:y|ies))\b/i;
-const CONTROVERSY_RE = /\b(lawsuit|sues?|suing|challenge(?:s|d)?|scrutiny|backlash|fight|dispute|probe|investigation|indict(?:ed|ment)?|arrest(?:ed)?|resign(?:s|ed|ation)?|scandal|blocked?|overturn(?:s|ed)?|ruling|court|ethics|fraud|criminal)\b/i;
+const CONTROVERSY_RE = /\b(lawsuit|sues?|suing|challenge(?:s|d)?|scrutiny|backlash|fight|dispute|probe|investigation|indict(?:ed|ment)?|arrest(?:ed)?|resign(?:s|ed|ation)?|scandal|blocked?|overturn(?:s|ed)?|ruling|ethics|fraud|criminal)\b/i;
 
 const HIGH_INTEREST_PATTERNS: RegExp[] = [
   /\b(billion|million)\b/i,
