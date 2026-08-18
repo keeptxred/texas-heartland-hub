@@ -1,4 +1,4 @@
-import type { Article } from "@/data/articles";
+import { ARTICLES, type Article } from "@/data/articles";
 
 const RETIRED_CONTENT_CATEGORIES = new Set([
   "relocation",
@@ -13,8 +13,8 @@ const RETIRED_CONTENT_CATEGORIES = new Set([
 /**
  * Explicit path list for legacy static pages that should stay accessible but
  * leave Google's index. Category-based retirement is handled from article
- * metadata at the route/listing boundary; this slug list covers pages that
- * need path-only retirement even when article metadata is unavailable.
+ * metadata; this slug list covers pages that need retirement independently of
+ * their current metadata.
  */
 const RETIRED_STATIC_SLUGS = new Set([
   "renting-vs-buying-in-texas",
@@ -49,10 +49,16 @@ export function isStaticArticleIndexable(article: Pick<Article, "slug" | "pillar
   return true;
 }
 
-/** Path-only retirement used by the global SEO helper when article metadata is unavailable. */
+/**
+ * Path-only entry point used by the global SEO helper. When a static registry
+ * article exists, consult its topical metadata as well as the legacy slug rules
+ * so direct URLs, sitemap inclusion, and list discovery share one decision.
+ */
 export function isRetiredStaticNewsPath(path: string): boolean {
   const match = path.match(/^\/news\/([^/?#]+)$/);
   if (!match) return false;
   const slug = decodeURIComponent(match[1]);
+  const article = ARTICLES.find((candidate) => candidate.slug === slug);
+  if (article) return !isStaticArticleIndexable(article);
   return slug.startsWith("live-") || RETIRED_STATIC_SLUGS.has(slug);
 }
