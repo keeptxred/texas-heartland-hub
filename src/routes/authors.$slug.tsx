@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { AUTHORS, EDITORIAL_BYLINE_DISCLOSURE, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import {
   buildSeo,
   ORGANIZATION_ID,
@@ -24,7 +25,10 @@ export function isIndexableAuthor(author: Author | null | undefined): author is 
 
 function hasStaticByline(author: Author): boolean {
   return ARTICLES.some(
-    (article) => isPublished(article) && authorSlug(article.author) === author.slug,
+    (article) =>
+      isPublished(article)
+      && isStaticArticleIndexable(article)
+      && authorSlug(article.author) === author.slug,
   );
 }
 
@@ -145,7 +149,10 @@ function AuthorPage() {
   const { author, liveArticles } = Route.useLoaderData() as AuthorLoaderData;
 
   const staticArticles: ProfileArticle[] = ARTICLES.filter(
-    (article) => isPublished(article) && authorSlug(article.author) === author.slug,
+    (article) =>
+      isPublished(article)
+      && isStaticArticleIndexable(article)
+      && authorSlug(article.author) === author.slug,
   ).map((article) => ({
     slug: article.slug,
     category: article.category,

@@ -5,6 +5,7 @@ import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { AUTHORS, authorSlug } from "@/data/authors";
 import { getDailyArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { filterByCategorySlug, CATEGORY_NAME_TO_SLUG, type CategoryName } from "@/lib/articles-by-category";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import border from "@/assets/border.jpg";
 import ballot from "@/assets/ballot.jpg";
 import suburb from "@/assets/suburb.jpg";
@@ -49,8 +50,6 @@ function catToSlug(cat: (typeof CATS)[number]): string {
   return CATEGORY_NAME_TO_SLUG[cat as CategoryName];
 }
 
-// Static topical hero images for the built-in category boxes. Live articles
-// resolve their image through getArticleImage() (AI category → keyword → pool).
 const CATEGORY_IMAGES: Record<string, string> = {
   Border: border,
   Elections: ballot,
@@ -78,7 +77,7 @@ function NewsPage() {
       if (article.slug && article.author) slugs.add(authorSlug(article.author));
     }
     for (const article of ARTICLES) {
-      if (isPublished(article)) slugs.add(authorSlug(article.author));
+      if (isPublished(article) && isStaticArticleIndexable(article)) slugs.add(authorSlug(article.author));
     }
     return AUTHORS.filter((author) => slugs.has(author.slug));
   }, [articles]);
@@ -92,14 +91,12 @@ function NewsPage() {
   );
   const filteredStatic = useMemo(
     () => {
-      const live = ARTICLES.filter((a) => isPublished(a)).sort(sortByDateDesc);
+      const live = ARTICLES.filter((a) => isPublished(a) && isStaticArticleIndexable(a)).sort(sortByDateDesc);
       return activeCat === "All" ? live : filterByCategorySlug(live, catToSlug(activeCat));
     },
     [activeCat]
   );
 
-  // RULE: no duplicate images on a single page. Resolve the candidate image
-  // per card, then swap collisions with the next unused pool asset.
   const liveImages = useMemo(
     () =>
       assignUniqueImages(
@@ -199,7 +196,6 @@ function NewsPage() {
                   </Link>
                 );
               }
-              // Safety net: never link off-site from the live feed.
               return <article key={a.slug} className="group">{card}</article>;
             })
           : filteredStatic.slice(0, 30).map((a) => (

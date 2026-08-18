@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AUTHORS, EDITORIAL_BYLINE_DISCLOSURE, authorSlug } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 export const Route = createFileRoute("/authors/")({
   loader: async () => {
@@ -13,7 +14,7 @@ export const Route = createFileRoute("/authors/")({
     );
 
     for (const article of ARTICLES) {
-      if (isPublished(article)) activeSlugs.add(authorSlug(article.author));
+      if (isPublished(article) && isStaticArticleIndexable(article)) activeSlugs.add(authorSlug(article.author));
     }
 
     return { activeSlugs: [...activeSlugs] };
