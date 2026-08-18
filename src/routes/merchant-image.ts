@@ -43,8 +43,13 @@ export const Route = createFileRoute("/merchant-image")({
         }
 
         try {
+          // Printify mockup URLs may redirect to its image-delivery/CDN layer.
+          // The source URL itself is strictly allowlisted above, so following
+          // that trusted upstream redirect is required for Merchant Center to
+          // receive the actual image instead of a proxy-generated 502.
           const upstream = await fetch(target, {
-            redirect: "error",
+            redirect: "follow",
+            signal: AbortSignal.timeout(15_000),
             headers: {
               Accept: "image/avif,image/webp,image/*,*/*;q=0.8",
               "User-Agent": "KeepTXRed-Merchant-Image/1.0",
