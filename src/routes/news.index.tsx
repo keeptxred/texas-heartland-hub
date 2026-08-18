@@ -58,13 +58,28 @@ const CATEGORY_IMAGES: Record<string, string> = {
   Education: classroom,
 };
 
+function absoluteNewsDate(iso: string): string {
+  const parsed = new Date(iso);
+  if (Number.isNaN(parsed.getTime())) return "Date unavailable";
+  return parsed.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "America/Chicago",
+  });
+}
+
 function timeAgo(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
+  const ts = new Date(iso).getTime();
+  if (Number.isNaN(ts)) return "Date unavailable";
+  const diff = Date.now() - ts;
+  if (diff < 0) return absoluteNewsDate(iso);
   const h = Math.floor(diff / 3_600_000);
   if (h < 1) return "Just now";
   if (h < 24) return `${h} hour${h === 1 ? "" : "s"} ago`;
   const d = Math.floor(h / 24);
-  return `${d} day${d === 1 ? "" : "s"} ago`;
+  if (d <= 6) return `${d} day${d === 1 ? "" : "s"} ago`;
+  return absoluteNewsDate(iso);
 }
 
 function NewsPage() {
@@ -206,7 +221,7 @@ function NewsPage() {
                 <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-primary">{a.category}</span>
                 <h2 className="font-serif text-lg font-bold leading-snug mt-1 group-hover:underline underline-offset-4">{a.title}</h2>
                 <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{a.dek}</p>
-                <p className="mt-2 text-[11px] text-muted-foreground italic">{a.author} • {a.date}</p>
+                <p className="mt-2 text-[11px] text-muted-foreground italic">{a.author} • {absoluteNewsDate(a.publishedAt)}</p>
               </Link>
             ))}
       </div>
