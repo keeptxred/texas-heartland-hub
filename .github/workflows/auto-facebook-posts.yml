@@ -2,16 +2,12 @@ name: Auto Facebook Posts
 
 on:
   schedule:
-    # Five broad posting windows per day. Each scheduled run waits a fresh,
-    # cryptographically random 0-120 minutes before publishing, so the actual
-    # Facebook post times vary day to day instead of landing on a fixed clock.
-    # UTC bases correspond roughly to 8am/11am/2pm/5pm/8pm during Texas DST
-    # and shift one hour earlier during standard time.
-    - cron: "0 13 * * *"
-    - cron: "0 16 * * *"
-    - cron: "0 19 * * *"
-    - cron: "0 22 * * *"
-    - cron: "0 1 * * *"
+    # Lightweight checks every 30 minutes across the Texas waking/evening day.
+    # The application generates five different randomized Central-time targets
+    # per day and only publishes when the next target is due. This avoids long
+    # sleeping Actions jobs while keeping the actual Facebook times variable.
+    - cron: "0,30 12-23 * * *"
+    - cron: "0,30 0-4 * * *"
   workflow_dispatch:
 
 permissions:
@@ -25,25 +21,9 @@ concurrency:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 140
+    timeout-minutes: 10
     steps:
-      - name: Randomize scheduled post time
-        if: github.event_name == 'schedule'
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          # Draw from the runner's OS entropy source rather than relying on
-          # bash $RANDOM. Two hours of jitter keeps the five daily posts in
-          # useful waking/evening windows while avoiding a repeatable pattern.
-          random_u32=$(od -An -N4 -tu4 /dev/urandom | tr -d '[:space:]')
-          delay_seconds=$(( random_u32 % 7201 ))
-          delay_minutes=$(( delay_seconds / 60 ))
-          delay_remainder=$(( delay_seconds % 60 ))
-          echo "Random Facebook delay selected: ${delay_minutes}m ${delay_remainder}s."
-          sleep "$delay_seconds"
-
-      - name: Post next eligible KeepTXRed article to Facebook
+      - name: Check randomized Facebook schedule and post if due
         shell: bash
         run: |
           set -euo pipefail
@@ -58,13 +38,19 @@ jobs:
             exit 1
           fi
 
+          mode="scheduled"
+          if [[ "${GITHUB_EVENT_NAME}" != "schedule" ]]; then
+            mode="manual"
+          fi
+
           status=$(curl -sS -X POST -o /tmp/facebook-post.json -w '%{http_code}' \
             --max-time 420 \
             -H 'accept: application/json' \
             -H "Authorization: Bearer ${oidc_token}" \
+            -H "X-KTR-Facebook-Mode: ${mode}" \
             'https://keeptxred.com/api/public/hooks/auto-facebook-post' || echo 000)
 
-          echo "auto-facebook-post HTTP ${status}"
+          echo "auto-facebook-post HTTP ${status} mode=${mode}"
           cat /tmp/facebook-post.json 2>/dev/null || true
           echo
 
@@ -79,5 +65,7 @@ jobs:
             echo "AUTO_FACEBOOK_POST_SUCCESS slug=${slug} post_url=${post_url}"
           else
             reason=$(jq -r '.reason // "no eligible article"' /tmp/facebook-post.json)
-            echo "AUTO_FACEBOOK_POST_NOOP reason=${reason}"
+            next_target=$(jq -r '.next_target_local // ""' /tmp/facebook-post.json)
+            posts_today=$(jq -r '.posts_today // ""' /tmp/facebook-post.json)
+            echo "AUTO_FACEBOOK_POST_NOOP reason=${reason} next_target=${next_target} posts_today=${posts_today}"
           fi
