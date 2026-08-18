@@ -60,6 +60,21 @@ export function normalizedSourceUrlKey(url: string | null | undefined): string |
   }
 }
 
+export function sourceReferencesFromBodyJson(bodyJson: unknown): ArticleSourceReference[] {
+  if (!bodyJson || typeof bodyJson !== "object" || Array.isArray(bodyJson)) return [];
+  const sources = (bodyJson as { sources?: unknown }).sources;
+  if (!Array.isArray(sources)) return [];
+
+  return sources.flatMap((raw) => {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw)) return [];
+    const record = raw as { url?: unknown; label?: unknown };
+    const url = typeof record.url === "string" ? record.url.trim() : "";
+    const label = typeof record.label === "string" ? record.label.trim() : "";
+    if (!url) return [];
+    return [{ url, label: label || null }];
+  });
+}
+
 export function distinctSourceFamilies(
   sources: readonly ArticleSourceReference[] | null | undefined,
 ): string[] {
