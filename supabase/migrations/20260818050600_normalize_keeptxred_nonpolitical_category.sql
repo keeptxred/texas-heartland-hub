@@ -58,33 +58,53 @@ EXECUTE FUNCTION public.normalize_keeptxred_article_category();
 
 -- Repair only currently public-eligible legacy catch-all rows. Quarantined
 -- historical rows stay untouched; they are no longer part of public discovery.
+WITH eligible_nonpolitical AS (
+  SELECT
+    article.id,
+    article.kind,
+    coalesce((
+      SELECT feed.target_site
+      FROM public.texas_news_feed AS feed
+      WHERE feed.link = article.source_url
+      ORDER BY feed.pub_date DESC NULLS LAST, feed.id DESC
+      LIMIT 1
+    ), 'keeptxred') AS routed_site,
+    (
+      SELECT feed.target_section
+      FROM public.texas_news_feed AS feed
+      WHERE feed.link = article.source_url
+      ORDER BY feed.pub_date DESC NULLS LAST, feed.id DESC
+      LIMIT 1
+    ) AS routed_section
+  FROM public.daily_articles AS article
+  WHERE article.category = 'Non-Political'
+    AND NOT (
+      coalesce(article.quality_flags, ARRAY[]::text[])
+      && ARRAY[
+        'seo_noindex', 'noindex', 'seo_off_topic', 'site_boundary_violation',
+        'seo_false_multisource', 'source_integrity_failure', 'canonical_duplicate',
+        'seo_duplicate'
+      ]::text[]
+    )
+), repaired AS (
+  SELECT
+    id,
+    CASE
+      WHEN kind LIKE 'sports-%' THEN 'Sports'
+      WHEN routed_site = 'keeptxred' AND routed_section IN (
+        'Sports', 'Business', 'Politics', 'Elections', 'Texas News',
+        'Energy', 'Education', 'Border', 'Tax & Spending', 'Government',
+        'Legislature', 'Laws', 'Local Government'
+      ) THEN routed_section
+      ELSE 'Texas News'
+    END AS new_category
+  FROM eligible_nonpolitical
+  WHERE routed_site = 'keeptxred'
+)
 UPDATE public.daily_articles AS article
-   SET category = CASE
-     WHEN article.kind LIKE 'sports-%' THEN 'Sports'
-     WHEN feed.target_site = 'keeptxred' AND feed.target_section IN (
-       'Sports', 'Business', 'Politics', 'Elections', 'Texas News',
-       'Energy', 'Education', 'Border', 'Tax & Spending', 'Government',
-       'Legislature', 'Laws', 'Local Government'
-     ) THEN feed.target_section
-     ELSE 'Texas News'
-   END
-  FROM LATERAL (
-    SELECT f.target_site, f.target_section
-    FROM public.texas_news_feed AS f
-    WHERE f.link = article.source_url
-    ORDER BY f.pub_date DESC NULLS LAST, f.id DESC
-    LIMIT 1
-  ) AS feed
- WHERE article.category = 'Non-Political'
-   AND NOT (
-     coalesce(article.quality_flags, ARRAY[]::text[])
-     && ARRAY[
-       'seo_noindex', 'noindex', 'seo_off_topic', 'site_boundary_violation',
-       'seo_false_multisource', 'source_integrity_failure', 'canonical_duplicate',
-       'seo_duplicate'
-     ]::text[]
-   )
-   AND coalesce(feed.target_site, 'keeptxred') = 'keeptxred';
+   SET category = repaired.new_category
+  FROM repaired
+ WHERE article.id = repaired.id;
 
 COMMENT ON FUNCTION public.normalize_keeptxred_article_category() IS
   'Eliminates the legacy Non-Political catch-all from new KeepTXRed articles; uses sports kind or feed routing and otherwise falls back to Texas News.';
