@@ -22,7 +22,7 @@ const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine)\b/i],
   ["weather", /\b(hurricane|tornado|flood|drought|storm|heat wave|freeze|blizzard|wildfire|rainfall|weather)\b/i],
   ["energy", /\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig)\b/i],
-  ["sports", /\b(cowboys|texans|rangers|astros|mavericks|spurs|rockets|stars|nfl|nba|mlb|football|basketball|baseball|playoff)\b/i],
+  ["sports", /\b(cowboys|texans|rangers|astros|mavericks|spurs|rockets|stars|nfl|nba|mlb|football|basketball|baseball|playoff|cross country|track(?: and field)?|athletics?|athlete|runner|running|punter|punting|kicker|kicking|special teams|watch list|championship|tournament|meet)\b/i],
   ["military", /\b(purple heart|medal of honor|military|army|navy|air force|airman|marines?|marine corps|coast guard|soldier|sailor|troop|veteran(?:s)?|service member(?:s)?|servicemember(?:s)?|armed forces|military honor(?:s)?|military award(?:s)?|remembrance|memorial|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia|fort cavazos)\b/i],
   ["education", /\b(school|isd|university|college|teacher|classroom|student|curriculum)\b/i],
   ["health", /\b(hospital|clinic|doctor|nurse|patient|disease|virus|outbreak|medicaid|healthcare)\b/i],
@@ -49,7 +49,7 @@ const DOMAIN_STEER: Record<Domain, string> = {
   wildlife: "the actual named animal or species in its natural habitat",
   weather: "the actual weather event affecting a recognizable Texas landscape",
   energy: "the actual Texas energy infrastructure described in the story",
-  sports: "a realistic game-day stadium or athletic action with no logos or identifiable player faces",
+  sports: "the actual sport named in the story, photographed during believable athletic action or practice in a real outdoor course, track, field, stadium, or competition setting",
   military: "the actual military subject named in the story; for honors or remembrance coverage, center the specific medal, decoration, folded flag, memorial, or remembrance setting rather than generic bases, aircraft, hangars, or troops",
   education: "a realistic school classroom, hallway, or campus exterior",
   health: "a realistic hospital, clinic, medical campus, or healthcare facility",
@@ -74,6 +74,9 @@ export function buildImagePrompt(subject: SubjectExtract, extraGuidance = ""): s
   if (subject.domain === "legal") {
     return `${correction}${evidenceLock}Professional documentary photojournalism photograph, horizontal 16:9. Story: ${subject.title}. Photograph ${DOMAIN_STEER.legal}. Natural daylight or realistic courtroom lighting, 35mm camera, lifelike stone and wood, true photographic depth of field, realistic architecture, neutral news photography. PRIMARY SUBJECT: a believable real Texas courthouse or courtroom representing the judicial ruling. ${loc ? `Location context: ${loc}, Texas.` : "Texas setting."} Election-law context may appear only as subtle ordinary paperwork or voting materials in the background. Do not use a politician, Texas-shaped graphic, map, flagpole, capitol dome, campaign rally, podium, poster, illustration, vector art, cartoon, infographic, collage, text overlay, seal, logo, or symbolic state graphic.`.slice(0, 1800);
   }
+  if (subject.domain === "sports") {
+    return `${correction}${evidenceLock}REAL SPORTS PHOTOJOURNALISM PHOTOGRAPH ONLY, horizontal 16:9, captured with a physical professional camera, natural stadium or outdoor daylight, realistic motion blur where appropriate, authentic grass/dirt/track/course textures, true photographic depth of field, lifelike anatomy and equipment. Story: ${subject.title}. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER.sports}. Match the exact sport in the story: cross-country coverage must show believable distance runners on a real course or meet setting; punting coverage must show a believable football punter or special-teams practice/action on a real field. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas collegiate athletics setting."} Use anonymous athletes with no readable school logos, jersey text, sponsor marks, or identifiable faces. The frame must look like an ordinary newspaper sports photograph, never concept art or promotional artwork. No illustration, cartoon, digital painting, vector art, poster, collage, typography, readable signage, mascot, logo, trophy graphic, symbolic state shape, or invented named athlete likeness.`.slice(0, 1800);
+  }
   if (subject.domain === "culture") {
     return `${correction}${evidenceLock}REAL DOCUMENTARY PHOTOGRAPH ONLY, horizontal 16:9, candid Texas event photojournalism captured with a physical 35mm camera, natural daylight, realistic lens depth, real materials, real food and real venue architecture. Story: ${subject.title}. PRIMARY SUBJECT: ${subject.concreteSubject}. Depict ${DOMAIN_STEER.culture}. ${loc ? `Location context: ${loc}, Texas.` : "Believable Texas setting."} For a festival move or planned event, prefer a believable outdoor venue, festival-ground preparation, food-vendor setup, tables, tents, or ordinary event infrastructure rather than inventing a packed crowd. The image must look like an unedited newspaper photograph, not promotional artwork. Absolutely no event flyer, advertisement, poster, banner, signboard, mascot, giant novelty object, typography, readable words, title text, logo, vector shapes, illustration, painting, cartoon, collage, or graphic design.`.slice(0, 1800);
   }
@@ -94,6 +97,10 @@ export function buildNegativeImagePrompt(subject: SubjectExtract, rejectedReason
   if (subject.domain === "legal") items.push(
     "Texas state silhouette", "Texas-shaped graphic", "map of Texas", "politician", "candidate", "campaign rally",
     "podium", "flagpole", "capitol dome", "election icon", "ballot illustration", "government seal",
+  );
+  if (subject.domain === "sports") items.push(
+    "school logo", "team logo", "readable jersey text", "mascot", "trophy graphic", "sports poster",
+    "promotional athlete portrait", "invented named athlete likeness", "classroom", "lecture hall", "graduation scene",
   );
   if (subject.domain === "military" && MILITARY_HONORS_RE.test(`${subject.title} ${subject.firstParagraph}`)) items.push(
     "politician", "governor", "press conference", "capitol building", "government signing ceremony",
