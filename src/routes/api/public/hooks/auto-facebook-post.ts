@@ -14,13 +14,16 @@ const MAX_ATTEMPTS = 8;
 type ArticleRow = {
   slug: string;
   title: string;
-  dek: string;
   featured_image_url: string | null;
   published_at: string;
   source_name: string | null;
-  internal_url: string;
   kind: string;
   body_json: unknown;
+};
+
+type PackageRow = {
+  id: string;
+  source_url: string | null;
 };
 
 function bearerToken(request: Request): string | null {
@@ -30,9 +33,7 @@ function bearerToken(request: Request): string | null {
 }
 
 function articleUrl(row: ArticleRow): string {
-  const raw = String(row.internal_url ?? "").trim();
-  if (/^https?:\/\//i.test(raw)) return raw;
-  return `${SITE_URL}/news/${row.slug}`;
+  return `${SITE_URL}/news/${encodeURIComponent(row.slug)}`;
 }
 
 async function runAutoFacebookPost(request: Request) {
@@ -66,7 +67,7 @@ async function runAutoFacebookPost(request: Request) {
 
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
-    .select("slug,title,dek,featured_image_url,published_at,source_name,internal_url,kind,body_json")
+    .select("slug,title,featured_image_url,published_at,source_name,kind,body_json")
     .not("featured_image_url", "is", null)
     .gte("published_at", cutoff)
     .order("published_at", { ascending: false })
@@ -87,21 +88,40 @@ async function runAutoFacebookPost(request: Request) {
   }
 
   const urls = articles.map(articleUrl);
-  const { data: publishedPackages, error: packageError } = await db
+  const { data: rawPackages, error: packageError } = await db
     .from("content_packages")
-    .select("source_url,status,workflow_status")
-    .in("source_url", urls)
-    .or("status.eq.PUBLISHED,workflow_status.eq.PUBLISHED");
+    .select("id,source_url")
+    .in("source_url", urls);
 
   if (packageError) {
     return Response.json({ ok: false, error: packageError.message }, { status: 500 });
   }
 
-  const alreadyPosted = new Set<string>(
-    (publishedPackages ?? [])
-      .map((row: { source_url?: string | null }) => row.source_url)
-      .filter((value: unknown): value is string => typeof value === "string" && value.length > 0),
-  );
+  const packages = (rawPackages ?? []) as PackageRow[];
+  const packageIds = packages.map((row) => row.id);
+  const postedPackageIds = new Set<string>();
+
+  if (packageIds.length > 0) {
+    const { data: publishedQueueRows, error: queueError } = await db
+      .from("publishing_queue")
+      .select("content_package_id")
+      .in("content_package_id", packageIds)
+      .ilike("platform", "facebook")
+      .eq("status", "PUBLISHED");
+
+    if (queueError) {
+      return Response.json({ ok: false, error: queueError.message }, { status: 500 });
+    }
+
+    for (const row of publishedQueueRows ?? []) {
+      if (typeof row.content_package_id === "string") postedPackageIds.add(row.content_package_id);
+    }
+  }
+
+  const alreadyPosted = new Set<string>();
+  for (const row of packages) {
+    if (postedPackageIds.has(row.id) && row.source_url) alreadyPosted.add(row.source_url);
+  }
 
   const candidates = articles.filter((row) => !alreadyPosted.has(articleUrl(row)));
   if (candidates.length === 0) {
