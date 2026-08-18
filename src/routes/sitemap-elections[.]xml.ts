@@ -8,13 +8,21 @@ import results from "@/data/elections/2026/results.json";
 import { buildElectionSitemapEntries } from "@/lib/elections/sitemap";
 import { renderUrlset, xmlResponse } from "@/lib/sitemap-shared";
 
+const DISTRICT_RACE_SLUG = /^2026-(?:us-house|texas-house|texas-senate)-district-\d+$/;
+
 export const Route = createFileRoute("/sitemap-elections.xml")({
   server: {
     handlers: {
       GET: async () => {
         const entries = buildElectionSitemapEntries({
           lastmod: newestElectionUpdate(),
-          races: publicRecords(races, "/elections/races/"),
+          // Search Console showed a large crawl backlog dominated by hundreds of
+          // district-specific programmatic URLs. Keep the statewide/core race pages
+          // in the priority sitemap and let district pages remain reachable through
+          // Election Central until they have enough unique value to deserve promotion.
+          races: publicRecords(races, "/elections/races/").filter(
+            (record) => !DISTRICT_RACE_SLUG.test(record.path.replace("/elections/races/", "")),
+          ),
           candidates: publicCandidateRecords(candidates),
           additionalPages: [
             ...publicRecords(polls, "/elections/polls/"),
