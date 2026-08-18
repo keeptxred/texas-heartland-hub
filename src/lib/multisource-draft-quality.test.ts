@@ -34,12 +34,14 @@ SOURCE 3 — Austin Chronicle
 Reporting confirms the effective date and provider impact.`;
 }
 
+const READER_VALUE = "For licensed providers, the order turns an uncertain rulemaking dispute into a concrete compliance calendar. Organizations now know the publication step is complete, the September 1 effective date is controlling, and the rule applies statewide. That gives administrators time to compare current procedures with the revised requirements, identify training or documentation changes, and watch for agency implementation guidance. Texans can also use the published rule and court order to verify what changed rather than relying on summaries alone.";
+
 function goodDraft() {
   return {
     title: "Texas Supreme Court orders publication of revised statewide provider rule",
     dek: "The order clears the revised rule for a September 1 effective date and affects licensed providers across Texas.",
     summary: `${FACT_A} ${FACT_B}`,
-    relevance: "The order establishes a statewide compliance timeline for licensed providers.",
+    relevance: READER_VALUE,
     sections: [
       { heading: "What the court ordered", paragraphs: [`${FACT_A} The ruling resolves the immediate publication question.`] },
       { heading: "When the rule takes effect", paragraphs: [`${FACT_B} Agencies and providers now have a defined implementation date.`] },
@@ -58,12 +60,26 @@ describe("Phase 10 multi-source draft quality gate", () => {
     expect(reasons).toContain("multisource_provenance_incomplete");
   });
 
+  it("rejects a rewrite that reports facts but adds no meaningful reader value", () => {
+    const draft = goodDraft();
+    draft.relevance = "The rule affects providers in Texas.";
+    const reasons = validateMultiSourceDraftAgainstPacket(draft, packet());
+    expect(reasons).toContain("multisource_missing_reader_value");
+  });
+
+  it("accepts substantive reader value in a dedicated context section", () => {
+    const draft = goodDraft();
+    draft.relevance = "";
+    draft.sections.push({ heading: "Why it matters for Texas providers", paragraphs: [READER_VALUE] });
+    expect(validateMultiSourceDraftAgainstPacket(draft, packet())).not.toContain("multisource_missing_reader_value");
+  });
+
   it("rejects a draft that drifts away from the deterministic verified lead", () => {
     const draft = goodDraft();
     draft.title = "Local festival schedule draws weekend crowds";
     draft.dek = "Organizers released entertainment details and parking information for visitors attending this weekend.";
     draft.summary = "A local festival released its entertainment schedule, vendor list, and parking plan for a weekend event.";
-    draft.relevance = "The event is expected to draw visitors to downtown businesses.";
+    draft.relevance = READER_VALUE;
     draft.sections = [
       { heading: "Weekend schedule", paragraphs: ["Organizers published music, food, and parking details for the weekend festival."] },
       { heading: "Visitor information", paragraphs: ["The event site lists entry times and transportation information for attendees."] },
@@ -77,7 +93,7 @@ describe("Phase 10 multi-source draft quality gate", () => {
     const draft = goodDraft();
     draft.summary = FACT_A;
     draft.dek = "The court directed publication of the revised rule, resolving the immediate procedural question before the agency.";
-    draft.relevance = "The court order matters to regulated entities in Texas.";
+    draft.relevance = READER_VALUE;
     draft.sections = [{ heading: "Court action", paragraphs: [FACT_A] }];
     const reasons = validateMultiSourceDraftAgainstPacket(draft, packet());
     expect(reasons.some((reason) => reason.startsWith("multisource_verified_fact_coverage:"))).toBe(true);
@@ -106,7 +122,7 @@ describe("Phase 10 multi-source draft quality gate", () => {
     draft.title = "Local festival schedule draws weekend crowds";
     draft.dek = "Organizers released entertainment details and parking information for visitors attending this weekend.";
     draft.summary = "A local festival released its entertainment schedule, vendor list, and parking plan for a weekend event.";
-    draft.relevance = "The event is expected to draw visitors to downtown businesses.";
+    draft.relevance = READER_VALUE;
     draft.sections = [
       { heading: "Weekend schedule", paragraphs: ["Organizers published music, food, and parking details for the weekend festival."] },
       { heading: "Visitor information", paragraphs: ["The event site lists entry times and transportation information for attendees."] },
