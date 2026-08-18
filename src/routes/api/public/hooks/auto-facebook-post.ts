@@ -1,5 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import {
+  rankFacebookCandidates,
+  type RecentFacebookPost,
+} from "@/lib/facebook-editorial-selection";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
 import { quickPublishToFacebookFn } from "@/services/quickPublish.functions";
 
@@ -10,20 +14,34 @@ const SITE_URL = "https://keeptxred.com";
 const LOOKBACK_DAYS = 14;
 const MAX_CANDIDATES = 160;
 const MAX_ATTEMPTS = 12;
+const DIVERSITY_WINDOW_HOURS = 30;
 
 type ArticleRow = {
   slug: string;
   title: string;
+  category: string | null;
   featured_image_url: string | null;
   published_at: string;
   source_name: string | null;
   kind: string;
+  is_breaking: boolean | null;
+  score: number | null;
   body_json: unknown;
 };
 
 type PackageRow = {
   id: string;
   source_url: string | null;
+};
+
+type RecentQueueRow = {
+  content_package_id: string;
+  published_time: string | null;
+};
+
+type RecentPackageRow = {
+  id: string;
+  source_title: string;
 };
 
 function bearerToken(request: Request): string | null {
@@ -34,6 +52,42 @@ function bearerToken(request: Request): string | null {
 
 function articleUrl(row: ArticleRow): string {
   return `${SITE_URL}/news/${encodeURIComponent(row.slug)}`;
+}
+
+async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
+  const cutoff = new Date(Date.now() - DIVERSITY_WINDOW_HOURS * 60 * 60 * 1000).toISOString();
+  const { data: rawQueueRows, error: queueError } = await db
+    .from("publishing_queue")
+    .select("content_package_id,published_time")
+    .ilike("platform", "facebook")
+    .eq("status", "PUBLISHED")
+    .gte("published_time", cutoff)
+    .order("published_time", { ascending: false })
+    .limit(20);
+
+  if (queueError) throw new Error(queueError.message);
+
+  const queueRows = (rawQueueRows ?? []) as RecentQueueRow[];
+  const packageIds = [...new Set(queueRows.map((row) => row.content_package_id).filter(Boolean))];
+  if (packageIds.length === 0) return [];
+
+  const { data: rawPackages, error: packageError } = await db
+    .from("content_packages")
+    .select("id,source_title")
+    .in("id", packageIds);
+
+  if (packageError) throw new Error(packageError.message);
+
+  const titleByPackage = new Map<string, string>(
+    ((rawPackages ?? []) as RecentPackageRow[]).map((row) => [row.id, row.source_title]),
+  );
+
+  return queueRows
+    .map((row) => ({
+      title: titleByPackage.get(row.content_package_id) ?? "",
+      published_at: row.published_time,
+    }))
+    .filter((row) => row.title.length > 0);
 }
 
 async function runAutoFacebookPost(request: Request) {
@@ -67,7 +121,7 @@ async function runAutoFacebookPost(request: Request) {
 
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
-    .select("slug,title,featured_image_url,published_at,source_name,kind,body_json")
+    .select("slug,title,category,featured_image_url,published_at,source_name,kind,is_breaking,score,body_json")
     .not("featured_image_url", "is", null)
     .gte("published_at", cutoff)
     .order("published_at", { ascending: false })
@@ -128,9 +182,41 @@ async function runAutoFacebookPost(request: Request) {
     return Response.json({ ok: true, posted: false, no_items: true, reason: "All eligible recent articles were already posted" });
   }
 
-  const attempts: Array<{ slug: string; ok: boolean; error?: string }> = [];
+  let recentPosts: RecentFacebookPost[] = [];
+  try {
+    recentPosts = await loadRecentFacebookPosts(db);
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: "Failed to load recent Facebook history for editorial diversity",
+        detail: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
+    );
+  }
 
-  for (const row of candidates.slice(0, MAX_ATTEMPTS)) {
+  const ranked = rankFacebookCandidates(candidates, recentPosts);
+  if (ranked.length === 0) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      no_items: true,
+      reason: "Only routine or low-value government appointment stories remain",
+    });
+  }
+
+  const attempts: Array<{
+    slug: string;
+    topic: string;
+    editorial_score: number;
+    ok: boolean;
+    error?: string;
+  }> = [];
+
+  for (const rankedRow of ranked.slice(0, MAX_ATTEMPTS)) {
+    const row = rankedRow.candidate;
     const url = articleUrl(row);
     const result = await quickPublishToFacebookFn({
       data: {
@@ -152,6 +238,9 @@ async function runAutoFacebookPost(request: Request) {
         slug: row.slug,
         title: row.title,
         article_url: url,
+        topic: rankedRow.topic,
+        editorial_score: rankedRow.editorialScore,
+        editorial_reasons: rankedRow.reasons,
         external_id: result.external_id,
         post_url: result.post_url,
         posted_at: result.posted_at,
@@ -159,7 +248,13 @@ async function runAutoFacebookPost(request: Request) {
       });
     }
 
-    attempts.push({ slug: row.slug, ok: false, error: result.error });
+    attempts.push({
+      slug: row.slug,
+      topic: rankedRow.topic,
+      editorial_score: rankedRow.editorialScore,
+      ok: false,
+      error: result.error,
+    });
 
     if (result.requires_connection) {
       return Response.json(
@@ -179,7 +274,7 @@ async function runAutoFacebookPost(request: Request) {
     {
       ok: false,
       posted: false,
-      error: "No eligible article passed Facebook publishing checks",
+      error: "No editorially ranked article passed Facebook publishing checks",
       attempts,
     },
     { status: 422 },
