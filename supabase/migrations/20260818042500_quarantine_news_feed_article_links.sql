@@ -29,8 +29,10 @@ DECLARE
     'source_integrity_failure',
     'seo_off_topic'
   ]::text[];
-  is_quarantined boolean := coalesce(NEW.quality_flags, ARRAY[]::text[]) && quarantine_flags;
+  is_quarantined boolean;
 BEGIN
+  is_quarantined := coalesce(NEW.quality_flags, ARRAY[]::text[]) && quarantine_flags;
+
   IF is_quarantined THEN
     UPDATE public.texas_news_feed
        SET internal_slug = NULL
