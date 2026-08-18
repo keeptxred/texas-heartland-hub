@@ -70,23 +70,6 @@ function absoluteImageUrl(value: string | null | undefined): string {
   }
 }
 
-function merchantImageUrl(value: string | null | undefined): string {
-  const absolute = absoluteImageUrl(value);
-  if (!absolute) return "";
-
-  try {
-    const image = new URL(absolute);
-    const isPrintify = image.protocol === "https:" &&
-      (image.hostname === "printify.com" || image.hostname.endsWith(".printify.com"));
-
-    return isPrintify
-      ? `${BASE_URL}/merchant-image?src=${encodeURIComponent(absolute)}`
-      : absolute;
-  } catch {
-    return "";
-  }
-}
-
 function productCategory(product: Product): { category?: string; apparel: boolean } {
   const haystack = [product.title, ...(product.tags ?? [])].join(" ").toLowerCase();
 
@@ -196,7 +179,7 @@ function merchantItems(product: Product): MerchantItem[] {
   const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled !== false);
 
   if (enabledVariants.length === 0) {
-    const imageLink = merchantImageUrl(product.image);
+    const imageLink = absoluteImageUrl(product.image);
     if (!imageLink || !Number.isFinite(product.price) || product.price <= 0 || !description) return [];
 
     const color = product.colors?.length === 1 ? product.colors[0]?.trim() || undefined : undefined;
@@ -221,7 +204,7 @@ function merchantItems(product: Product): MerchantItem[] {
   const optionNames = variantOptionNames(product, enabledVariants, apparel);
 
   return enabledVariants.flatMap((variant) => {
-    const imageLink = merchantImageUrl(variant.image || variant.images?.[0] || product.image);
+    const imageLink = absoluteImageUrl(variant.image || variant.images?.[0] || product.image);
     const price = Number(variant.price || product.price);
     const attrs = variantAttributes(product, variant, apparel);
     const color = attrs.color || (product.colors?.length === 1 ? product.colors[0]?.trim() : undefined);
@@ -260,10 +243,7 @@ function merchantItems(product: Product): MerchantItem[] {
 
 function renderVariantOptions(options: VariantOption[] | undefined): string {
   if (!options?.length) return "";
-  return options.map((option) => `      <g:variant_option>
-        <g:name>${escapeXml(option.name)}</g:name>
-        <g:value>${escapeXml(option.value)}</g:value>
-      </g:variant_option>`).join("\n");
+  return options.map((option) => `      <g:variant_option>\n        <g:name>${escapeXml(option.name)}</g:name>\n        <g:value>${escapeXml(option.value)}</g:value>\n      </g:variant_option>`).join("\n");
 }
 
 function renderItem(item: MerchantItem): string {
@@ -277,39 +257,15 @@ function renderItem(item: MerchantItem): string {
     item.apparel ? "      <g:gender>unisex</g:gender>" : "",
     item.apparel && item.size ? "      <g:size_system>US</g:size_system>" : "",
     item.category ? `      <g:google_product_category>${escapeXml(item.category)}</g:google_product_category>` : "",
-    item.currency.toUpperCase() === "USD" ? `      <g:free_shipping_threshold>
-        <g:country>US</g:country>
-        <g:price_threshold>${FREE_SHIPPING_THRESHOLD_USD.toFixed(2)} USD</g:price_threshold>
-      </g:free_shipping_threshold>` : "",
+    item.currency.toUpperCase() === "USD" ? `      <g:free_shipping_threshold>\n        <g:country>US</g:country>\n        <g:price_threshold>${FREE_SHIPPING_THRESHOLD_USD.toFixed(2)} USD</g:price_threshold>\n      </g:free_shipping_threshold>` : "",
   ].filter(Boolean).join("\n");
 
-  return `    <item>
-      <g:id>${escapeXml(item.id)}</g:id>
-      <title>${escapeXml(item.title)}</title>
-      <description>${escapeXml(item.description)}</description>
-      <link>${escapeXml(item.link)}</link>
-      <g:canonical_link>${escapeXml(item.canonicalLink)}</g:canonical_link>
-      <g:image_link>${escapeXml(item.imageLink)}</g:image_link>
-      <g:availability>in_stock</g:availability>
-      <g:condition>new</g:condition>
-      <g:price>${escapeXml(item.price.toFixed(2))} ${escapeXml(item.currency)}</g:price>
-      <g:brand>${escapeXml(BRAND)}</g:brand>
-      <g:mpn>${escapeXml(item.mpn)}</g:mpn>
-${optional}
-    </item>`;
+  return `    <item>\n      <g:id>${escapeXml(item.id)}</g:id>\n      <title>${escapeXml(item.title)}</title>\n      <description>${escapeXml(item.description)}</description>\n      <link>${escapeXml(item.link)}</link>\n      <g:canonical_link>${escapeXml(item.canonicalLink)}</g:canonical_link>\n      <g:image_link>${escapeXml(item.imageLink)}</g:image_link>\n      <g:availability>in_stock</g:availability>\n      <g:condition>new</g:condition>\n      <g:price>${escapeXml(item.price.toFixed(2))} ${escapeXml(item.currency)}</g:price>\n      <g:brand>${escapeXml(BRAND)}</g:brand>\n      <g:mpn>${escapeXml(item.mpn)}</g:mpn>\n${optional}\n    </item>`;
 }
 
 function renderFeed(items: MerchantItem[]): string {
   const renderedItems = items.map(renderItem).join("\n");
-  return `${XML_HEADER}
-<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
-  <channel>
-    <title>Keep TX Red Product Catalog</title>
-    <link>${escapeXml(`${BASE_URL}/shop`)}</link>
-    <description>Official Keep TX Red apparel and merchandise.</description>
-${renderedItems}
-  </channel>
-</rss>`;
+  return `${XML_HEADER}\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n  <channel>\n    <title>Keep TX Red Product Catalog</title>\n    <link>${escapeXml(`${BASE_URL}/shop`)}</link>\n    <description>Official Keep TX Red apparel and merchandise.</description>\n${renderedItems}\n  </channel>\n</rss>`;
 }
 
 function response(body: string, status = 200): Response {
