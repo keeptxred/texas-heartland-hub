@@ -21,7 +21,7 @@ BEGIN
   -- A canonical slug is terminal even if a later refresh accidentally changed
   -- the cluster status. Never mint a duplicate article for that event.
   SELECT c.published_slug INTO v_slug
-  FROM public.news_event_clusters c
+  FROM public.news_event_clusters AS c
   WHERE c.id = p_cluster_id;
 
   IF v_slug IS NOT NULL THEN
@@ -29,18 +29,18 @@ BEGIN
     RETURN;
   END IF;
 
-  UPDATE public.news_event_clusters
+  UPDATE public.news_event_clusters AS c
   SET publish_claim_token = p_claim_token,
       publish_claimed_at = now(),
-      publish_attempt_count = publish_attempt_count + 1
-  WHERE id = p_cluster_id
-    AND status <> 'published'
-    AND published_slug IS NULL
-    AND (next_publish_eligible_at IS NULL OR next_publish_eligible_at <= now())
+      publish_attempt_count = c.publish_attempt_count + 1
+  WHERE c.id = p_cluster_id
+    AND c.status <> 'published'
+    AND c.published_slug IS NULL
+    AND (c.next_publish_eligible_at IS NULL OR c.next_publish_eligible_at <= now())
     AND (
-      publish_claim_token IS NULL
-      OR publish_claimed_at IS NULL
-      OR publish_claimed_at < now() - make_interval(secs => p_claim_ttl_seconds)
+      c.publish_claim_token IS NULL
+      OR c.publish_claimed_at IS NULL
+      OR c.publish_claimed_at < now() - make_interval(secs => p_claim_ttl_seconds)
     );
 
   IF FOUND THEN
@@ -49,7 +49,7 @@ BEGIN
   END IF;
 
   SELECT c.published_slug INTO v_slug
-  FROM public.news_event_clusters c
+  FROM public.news_event_clusters AS c
   WHERE c.id = p_cluster_id;
 
   RETURN QUERY SELECT false, v_slug;
