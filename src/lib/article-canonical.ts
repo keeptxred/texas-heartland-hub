@@ -3,7 +3,7 @@
  *
  * Pure module (no I/O) so it is testable and safe on both client and server:
  *  - resolve `article_slug_redirects` chains with a loop/self guard
- *  - detect SEO duplicate / noindex quality flags
+ *  - detect SEO duplicate / quarantine quality flags
  *  - pick the *strongest* article in a same-event cluster
  *  - decide conservatively whether two headlines are the same event rewrite
  *    or a materially new follow-up development
@@ -12,7 +12,15 @@
 import { isDuplicateTitle } from "@/lib/title-similarity";
 import { newsClusterKey } from "@/lib/article-slug-integrity";
 
-/** Quality flags that mean "do not advertise this URL to search engines". */
+/**
+ * Quality flags that mean "do not advertise this URL to search engines".
+ *
+ * The first group covers explicit duplicate/noindex decisions. The Phase 2
+ * markers below are stronger editorial findings from the legacy inventory
+ * audit: a row carrying one of those markers must stay out of page indexing
+ * and every article sitemap even if a future cleanup forgets to add the
+ * redundant `seo_noindex` flag.
+ */
 export const SEO_DUPLICATE_FLAGS = [
   "seo_duplicate",
   "duplicate",
@@ -22,6 +30,12 @@ export const SEO_DUPLICATE_FLAGS = [
   "noindex",
   "seo_noindex",
   "canonical_duplicate",
+  "legacy_thin_content",
+  "seo_legacy_single_source",
+  "seo_low_value_commodity",
+  "seo_false_multisource",
+  "source_integrity_failure",
+  "seo_off_topic",
 ] as const;
 
 export function hasSeoDuplicateFlag(flags: string[] | null | undefined): boolean {
