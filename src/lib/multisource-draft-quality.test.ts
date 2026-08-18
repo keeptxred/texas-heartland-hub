@@ -36,6 +36,8 @@ Reporting confirms the effective date and provider impact.`;
 
 const READER_VALUE = "For licensed providers, the order turns an uncertain rulemaking dispute into a concrete compliance calendar. Organizations now know the publication step is complete, the September 1 effective date is controlling, and the rule applies statewide. That gives administrators time to compare current procedures with the revised requirements, identify training or documentation changes, and watch for agency implementation guidance. Texans can also use the published rule and court order to verify what changed rather than relying on summaries alone.";
 
+const UNRELATED_READER_VALUE = "For weekend visitors, the festival schedule is useful because it puts entertainment times, parking choices, food vendors, and downtown activity in one place. Families can decide when to arrive, compare transportation options, plan around the busiest periods, and identify where they want to spend time before heading downtown. Nearby merchants may also see heavier foot traffic, while drivers should expect congestion around the event area and allow extra time for parking and walking between venues.";
+
 function goodDraft() {
   return {
     title: "Texas Supreme Court orders publication of revised statewide provider rule",
@@ -79,7 +81,7 @@ describe("Phase 10 multi-source draft quality gate", () => {
     draft.title = "Local festival schedule draws weekend crowds";
     draft.dek = "Organizers released entertainment details and parking information for visitors attending this weekend.";
     draft.summary = "A local festival released its entertainment schedule, vendor list, and parking plan for a weekend event.";
-    draft.relevance = READER_VALUE;
+    draft.relevance = UNRELATED_READER_VALUE;
     draft.sections = [
       { heading: "Weekend schedule", paragraphs: ["Organizers published music, food, and parking details for the weekend festival."] },
       { heading: "Visitor information", paragraphs: ["The event site lists entry times and transportation information for attendees."] },
@@ -122,7 +124,7 @@ describe("Phase 10 multi-source draft quality gate", () => {
     draft.title = "Local festival schedule draws weekend crowds";
     draft.dek = "Organizers released entertainment details and parking information for visitors attending this weekend.";
     draft.summary = "A local festival released its entertainment schedule, vendor list, and parking plan for a weekend event.";
-    draft.relevance = READER_VALUE;
+    draft.relevance = UNRELATED_READER_VALUE;
     draft.sections = [
       { heading: "Weekend schedule", paragraphs: ["Organizers published music, food, and parking details for the weekend festival."] },
       { heading: "Visitor information", paragraphs: ["The event site lists entry times and transportation information for attendees."] },
