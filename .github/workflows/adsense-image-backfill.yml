@@ -1,0 +1,79 @@
+name: AdSense Image Readiness Backfill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/routes/api/public/hooks/adsense-image-backfill.ts'
+      - '.github/workflows/adsense-image-backfill.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Wait for production route and generate ready-article images
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          oidc_url="${ACTIONS_ID_TOKEN_REQUEST_URL}&audience=keeptxred-newsroom"
+          oidc_token=$(curl -fsS \
+            -H "Authorization: bearer ${ACTIONS_ID_TOKEN_REQUEST_TOKEN}" \
+            "$oidc_url" | jq -r '.value // empty')
+          if [[ -z "$oidc_token" ]]; then
+            echo 'GitHub Actions did not issue the newsroom OIDC token.' >&2
+            exit 1
+          fi
+
+          endpoint='https://keeptxred.com/api/public/hooks/adsense-image-backfill'
+          ready=0
+          for attempt in $(seq 1 30); do
+            status=$(curl -sS -X POST -o /tmp/adsense-image-dry.json -w '%{http_code}' \
+              --max-time 45 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${endpoint}?dry=1" || echo 000)
+            echo "deployment probe ${attempt}/30 HTTP ${status}"
+            cat /tmp/adsense-image-dry.json 2>/dev/null || true
+            echo
+            if [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' /tmp/adsense-image-dry.json >/dev/null 2>&1; then
+              ready=$(jq -r '.ready // 0' /tmp/adsense-image-dry.json)
+              break
+            fi
+            sleep 10
+          done
+
+          if [[ "$ready" -le 0 ]]; then
+            echo 'AdSense image backfill route did not become ready or returned no eligible articles.' >&2
+            exit 1
+          fi
+
+          failures=0
+          for offset in 0 2 4; do
+            if [[ "$offset" -ge "$ready" ]]; then break; fi
+            status=$(curl -sS -X POST -o "/tmp/adsense-image-${offset}.json" -w '%{http_code}' \
+              --max-time 900 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              "${endpoint}?limit=2&offset=${offset}" || echo 000)
+            echo "image batch offset=${offset} HTTP ${status}"
+            cat "/tmp/adsense-image-${offset}.json" 2>/dev/null || true
+            echo
+            if [[ "$status" != "200" ]]; then
+              failures=$((failures + 1))
+            else
+              failures=$((failures + $(jq -r '.failed // 0' "/tmp/adsense-image-${offset}.json")))
+            fi
+          done
+
+          if [[ "$failures" -gt 0 ]]; then
+            echo "ADSENSE_IMAGE_BACKFILL_PARTIAL failures=${failures}" >&2
+            exit 1
+          fi
+          echo "ADSENSE_IMAGE_BACKFILL_SUCCESS ready=${ready}"
