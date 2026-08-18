@@ -1,7 +1,8 @@
 name: Run Daily News Now
 
-# Production publisher: prioritize eligible overdue gaps, then the clustered
-# newsroom, then the legacy ranked RSS writer, with the reserve safety net last.
+# Production publisher: prioritize quality-gated overdue gaps, then the
+# clustered newsroom, then the curated reserve safety net. The retired legacy
+# single-source RSS writer is intentionally not part of this workflow.
 on:
   schedule:
     - cron: "15 */8 * * *"
@@ -16,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - name: Publish best available newsroom story
+      - name: Publish best available quality-gated newsroom story
         shell: bash
         run: |
           set -euo pipefail
@@ -68,7 +69,7 @@ jobs:
             cat "$output" 2>/dev/null || true
             echo
             if [[ "$status" != "200" ]] || ! jq -e '.ok == true and (.aiCalls // 0) == 0' "$output" >/dev/null 2>&1; then
-              echo "CLUSTERED_NEWSROOM_${name^^}_FAILED; preserving legacy fallback."
+              echo "CLUSTERED_NEWSROOM_${name^^}_FAILED; unsafe legacy fallback is disabled."
               clustered_ready=0
               return 0
             fi
@@ -128,83 +129,31 @@ jobs:
             fi
 
             if [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .no_items == true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
-              echo "Clustered newsroom had no production-eligible packet: $(jq -r '.reason // "unknown"' /tmp/newsroom-publish.json). Continuing to legacy fallback."
+              echo "Clustered newsroom had no production-eligible packet: $(jq -r '.reason // "unknown"' /tmp/newsroom-publish.json). No lower-quality writer will be attempted."
             elif [[ "$newsroom_status" == "200" ]] && jq -e '.ok == true and .generated == true and .published != true' /tmp/newsroom-publish.json >/dev/null 2>&1; then
-              echo "Clustered newsroom draft did not pass final validation; preserving legacy fallback."
+              echo 'Clustered newsroom draft did not pass final validation. No lower-quality writer will be attempted.'
             else
-              echo "Clustered newsroom publish attempt was unavailable (HTTP ${newsroom_status}); preserving legacy fallback."
+              echo "Clustered newsroom publish attempt was unavailable (HTTP ${newsroom_status}). No lower-quality writer will be attempted."
             fi
+          else
+            echo 'Clustered newsroom preprocessing failed. No lower-quality writer will be attempted.'
           fi
 
-          echo 'Continuing to legacy ranked RSS publisher.'
-          base='https://keeptxred.com/api/public/hooks/generate-news'
-          inserted=0
-          failed=0
-          legacy_expensive_attempts=0
-          LEGACY_FALLBACK_MAX_EXPENSIVE_ATTEMPTS=2
+          echo 'No quality-gated normal article published; invoking curated reserve safety net.'
+          safety_status=$(curl -sS -X POST -o /tmp/safety-net.json -w '%{http_code}' \
+            --max-time 95 -H 'accept: application/json' \
+            'https://keeptxred.com/api/public/hooks/publishing-safety-net' || echo 000)
+          cat /tmp/safety-net.json 2>/dev/null || true
+          echo
 
-          # Free/no-item offsets may be scanned, but a response that could have
-          # consumed an AI rewrite counts against the fallback cap. Never retry a
-          # non-no-item response: a 5xx can occur after model generation, so an
-          # HTTP retry could silently spend a second AI call on the same candidate.
-          for offset in $(seq 0 9); do
-            result='unknown'
-            status=$(curl -sS -X POST -o /tmp/publish.json -w '%{http_code}' \
-              --max-time 95 -H 'accept: application/json' \
-              "${base}?offset=${offset}&limit=1" || echo 000)
-
-            if grep -Eqi 'daily free allocation|used up.*neurons|Workers AI.*quota|RESOURCE_EXHAUSTED' /tmp/publish.json 2>/dev/null; then
-              echo "offset=${offset} QUOTA_EXHAUSTED"
-              cat /tmp/publish.json || true
-              echo
-              echo 'Cloudflare Workers AI daily allocation exhausted; stopping to avoid waste.'
-              exit 1
-            fi
-
-            if [[ "$status" == "200" ]] && jq -e '.ok == true' /tmp/publish.json >/dev/null 2>&1; then
-              if jq -e '.no_items == true' /tmp/publish.json >/dev/null 2>&1; then
-                result="ok(no-items)"
-              else
-                current_inserted=$(jq -r '.inserted // 0' /tmp/publish.json)
-                result="ok(inserted=${current_inserted})"
-                inserted=$((inserted + current_inserted))
-                legacy_expensive_attempts=$((legacy_expensive_attempts + 1))
-              fi
-            elif [[ "$status" == "200" ]] && grep -Eqi 'No items met the publish threshold|duplicate' /tmp/publish.json 2>/dev/null; then
-              result='ok(benign-skip)'
-              legacy_expensive_attempts=$((legacy_expensive_attempts + 1))
-            else
-              echo "offset=${offset} -> failed(HTTP ${status})"
-              echo '--- production response body ---'
-              cat /tmp/publish.json 2>/dev/null || true
-              echo
-              result="rejected(HTTP ${status})"
-              failed=$((failed + 1))
-              legacy_expensive_attempts=$((legacy_expensive_attempts + 1))
-            fi
-
-            echo "offset=${offset} -> ${result} legacy_expensive_attempts=${legacy_expensive_attempts}"
-            if [[ "$inserted" -gt 0 ]]; then
-              echo "A legacy fallback article published at offset=${offset}; stopping further AI calls."
-              break
-            fi
-            if [[ "$legacy_expensive_attempts" -ge "$LEGACY_FALLBACK_MAX_EXPENSIVE_ATTEMPTS" ]]; then
-              echo "LEGACY_FALLBACK_AI_CAP_REACHED attempts=${legacy_expensive_attempts}; stopping before additional AI candidates."
-              break
-            fi
-          done
-
-          if [[ "$inserted" -eq 0 ]]; then
-            echo "No normal article published (${failed} rejected candidate(s)); invoking reserve safety net."
-            safety_status=$(curl -sS -X POST -o /tmp/safety-net.json -w '%{http_code}' \
-              --max-time 95 -H 'accept: application/json' \
-              'https://keeptxred.com/api/public/hooks/publishing-safety-net' || echo 000)
-            cat /tmp/safety-net.json 2>/dev/null || true
-            echo
-            if [[ "$safety_status" != "200" ]] || ! jq -e '.ok == true' /tmp/safety-net.json >/dev/null 2>&1; then
-              echo "PUBLISHING_SAFETY_NET_FAILED (HTTP ${safety_status})"
-              exit 1
-            fi
+          if [[ "$safety_status" != "200" ]] || ! jq -e '.ok == true' /tmp/safety-net.json >/dev/null 2>&1; then
+            echo "PUBLISHING_SAFETY_NET_FAILED (HTTP ${safety_status})"
+            exit 1
           fi
 
-          echo "DAILY_NEWS_PUBLISH_SUCCESS inserted=${inserted} rejected=${failed} legacy_expensive_attempts=${legacy_expensive_attempts}"
+          reserve_published=$(jq -r '.reserve_published // ""' /tmp/safety-net.json)
+          if [[ -n "$reserve_published" ]]; then
+            echo "DAILY_NEWS_PUBLISH_SUCCESS reserve_published=${reserve_published}"
+          else
+            echo 'DAILY_NEWS_PUBLISH_SUCCESS no_quality_gated_article=true reserve_published=false'
+          fi

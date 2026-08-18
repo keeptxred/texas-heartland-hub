@@ -44,19 +44,20 @@ describe("newsroom Phase 13 AI canary and production promotion", () => {
     expect(workflow).toContain('int(data.get("aiCalls") or 0) != 0');
   });
 
-  it("promotes the clustered newsroom before the legacy RSS fallback without removing either safety net", () => {
+  it("uses only quality-gated production paths before the curated reserve safety net", () => {
     const overdue = productionWorkflow.indexOf("publish-overdue-gap");
     const clustered = productionWorkflow.indexOf("generate-newsroom?mode=publish");
-    const legacy = productionWorkflow.indexOf("generate-news'");
+    const legacy = productionWorkflow.indexOf("/api/public/hooks/generate-news'");
     const safetyNet = productionWorkflow.indexOf("publishing-safety-net");
     expect(overdue).toBeGreaterThan(-1);
     expect(clustered).toBeGreaterThan(overdue);
-    expect(legacy).toBeGreaterThan(clustered);
-    expect(safetyNet).toBeGreaterThan(legacy);
+    expect(legacy).toBe(-1);
+    expect(safetyNet).toBeGreaterThan(clustered);
     expect(productionWorkflow).toContain("score-newsroom-stories");
     expect(productionWorkflow).toContain("decide-newsroom-packages");
     expect(productionWorkflow).toContain('(.aiCalls // 0) == 0');
     expect(productionWorkflow).toContain('Authorization: Bearer ${oidc_token}');
+    expect(productionWorkflow).toContain("No lower-quality writer will be attempted.");
   });
 
   it("requires the exact newsroom shape through Cloudflare JSON schema mode", () => {

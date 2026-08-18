@@ -5,26 +5,34 @@ const workflow = fs.readFileSync(
   new URL("../../.github/workflows/run-daily-news-now.yml", import.meta.url),
   "utf8",
 );
+const legacyWriter = fs.readFileSync(
+  new URL("../routes/api/public/hooks/generate-news.ts", import.meta.url),
+  "utf8",
+);
 
-describe("newsroom Phase 15 legacy fallback budget", () => {
-  it("hard-caps potentially expensive legacy fallback attempts", () => {
-    expect(workflow).toContain("LEGACY_FALLBACK_MAX_EXPENSIVE_ATTEMPTS=2");
-    expect(workflow).toContain("legacy_expensive_attempts=0");
-    expect(workflow).toContain("LEGACY_FALLBACK_AI_CAP_REACHED");
-    expect(workflow).toContain('legacy_expensive_attempts=$((legacy_expensive_attempts + 1))');
-    expect(workflow).toContain('legacy_expensive_attempts" -ge "$LEGACY_FALLBACK_MAX_EXPENSIVE_ATTEMPTS');
+describe("retired newsroom legacy fallback", () => {
+  it("removes the legacy RSS fallback from the scheduled publisher", () => {
+    expect(workflow).not.toContain("LEGACY_FALLBACK_MAX_EXPENSIVE_ATTEMPTS");
+    expect(workflow).not.toContain("legacy_expensive_attempts");
+    expect(workflow).not.toContain("LEGACY_FALLBACK_AI_CAP_REACHED");
+    expect(workflow).not.toContain("Continuing to legacy ranked RSS publisher");
+    expect(workflow).not.toContain("/api/public/hooks/generate-news'");
+    expect(workflow).not.toContain("for offset in $(seq 0 9)");
   });
 
-  it("does not retry a possibly-paid legacy response", () => {
-    expect(workflow).not.toContain("for attempt in 1 2");
-    expect(workflow).not.toContain('if [[ "$attempt" -lt 2 ]]');
-    expect(workflow).not.toContain("sleep 10");
+  it("makes the old writer incapable of a paid or database-writing retry", () => {
+    expect(legacyWriter).toContain("LEGACY_GENERATE_NEWS_DISABLED = true");
+    expect(legacyWriter).toContain("aiCalls: 0");
+    expect(legacyWriter).toContain("inserted: 0");
+    expect(legacyWriter).not.toContain("ai.gateway.lovable.dev");
+    expect(legacyWriter).not.toMatch(/\.from\(["']daily_articles["']\)/);
   });
 
-  it("still scans no-item offsets and preserves the reserve safety net", () => {
-    expect(workflow).toContain("for offset in $(seq 0 9)");
-    expect(workflow).toContain(".no_items == true");
+  it("preserves the quality-gated newsroom and reserve safety net", () => {
+    expect(workflow).toContain("publish-overdue-gap");
+    expect(workflow).toContain("generate-newsroom?mode=publish");
     expect(workflow).toContain("publishing-safety-net");
-    expect(workflow).toContain("DAILY_NEWS_PUBLISH_SUCCESS inserted=");
+    expect(workflow).toContain("No lower-quality writer will be attempted.");
+    expect(workflow).toContain("DAILY_NEWS_PUBLISH_SUCCESS no_quality_gated_article=true reserve_published=false");
   });
 });
