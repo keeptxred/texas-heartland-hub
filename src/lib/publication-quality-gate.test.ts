@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { assessPublicationReadiness } from "./publication-quality-gate";
+import {
+  assessPublicationReadiness,
+  independentPublisherFamilyCount,
+} from "./publication-quality-gate";
 import type { ClusterableFeedItem, StoryCluster } from "./story-clustering";
 
 function item(overrides: Partial<ClusterableFeedItem> = {}): ClusterableFeedItem {
@@ -36,13 +39,13 @@ describe("publication quality gate", () => {
   });
 
   it("allows independently corroborated multi-source events", () => {
-    const primary = item();
+    const primary = item({ link: "https://firstnews.com/story" });
     const readiness = assessPublicationReadiness(cluster(primary, {
       strongMerge: true,
       sourceCount: 2,
       members: [
         {
-          ...item({ id: 2, source: "Second News", link: "https://second.example/story" }),
+          ...item({ id: 2, source: "Second News", link: "https://secondnews.com/story" }),
           combinationScore: 91,
           overlapTerms: ["texas", "election", "guidance"],
         },
@@ -50,6 +53,34 @@ describe("publication quality gate", () => {
     }));
     expect(readiness.publish).toBe(true);
     expect(readiness.mode).toBe("multi_source");
+    expect(readiness.independentSourceCount).toBe(2);
+  });
+
+  it("does not count one publisher's feed and canonical URLs as independent corroboration", () => {
+    const primary = item({
+      source: "The Texas Tribune",
+      link: "https://www.texastribune.org/2026/08/17/texas-city-budgets-cuts-tax-hikes/",
+    });
+    const samePublisherFeed = {
+      ...item({
+        id: 2,
+        source: "Texas Tribune RSS",
+        link: "https://feeds.texastribune.org/link/123/texas-city-budgets-cuts-tax-hikes",
+      }),
+      combinationScore: 95,
+      overlapTerms: ["budget", "cities", "tax"],
+    };
+    const story = cluster(primary, {
+      strongMerge: true,
+      sourceCount: 2,
+      members: [samePublisherFeed] as StoryCluster["members"],
+    });
+
+    expect(independentPublisherFamilyCount(story)).toBe(1);
+    const readiness = assessPublicationReadiness(story);
+    expect(readiness.publish).toBe(false);
+    expect(readiness.mode).toBe("hold_for_corroboration");
+    expect(readiness.reason).toContain("same-publisher");
   });
 
   it("allows a substantive official primary record without manufacturing a second source", () => {
