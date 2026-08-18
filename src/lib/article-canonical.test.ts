@@ -35,8 +35,23 @@ describe("hasSeoDuplicateFlag", () => {
     expect(hasSeoDuplicateFlag(["thin_body", "seo_duplicate"])).toBe(true);
     expect(hasSeoDuplicateFlag(["NOINDEX"])).toBe(true);
   });
-  it("preserves legitimate articles", () => {
+
+  it("quarantines Phase 2 legacy and low-value findings without requiring a separate noindex flag", () => {
+    for (const flag of [
+      "legacy_thin_content",
+      "seo_legacy_single_source",
+      "seo_low_value_commodity",
+      "seo_false_multisource",
+      "source_integrity_failure",
+      "seo_off_topic",
+    ]) {
+      expect(hasSeoDuplicateFlag([flag])).toBe(true);
+    }
+  });
+
+  it("preserves repairable but otherwise legitimate articles", () => {
     expect(hasSeoDuplicateFlag(["missing_image", "weak_dek"])).toBe(false);
+    expect(hasSeoDuplicateFlag(["seo_audit_strengthen", "missing_why_this_matters"])).toBe(false);
     expect(hasSeoDuplicateFlag(null)).toBe(false);
   });
 });
