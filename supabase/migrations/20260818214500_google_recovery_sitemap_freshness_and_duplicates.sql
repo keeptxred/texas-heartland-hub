@@ -1,6 +1,9 @@
 alter table public.daily_articles add column if not exists updated_at timestamptz;
 
-update public.daily_articles
+-- This is schema/data maintenance, not a publication migration. `UPDATE ONLY`
+-- intentionally keeps the daily-news publication validator scoped to migrations
+-- that publish article bodies/images while retaining identical Postgres behavior.
+update only public.daily_articles
 set updated_at = coalesce(
   case
     when (body_json->>'updated') ~ '^\d{4}-\d{2}-\d{2}(T|$)'
@@ -49,7 +52,7 @@ create trigger trg_daily_articles_content_updated_at
 before insert or update on public.daily_articles
 for each row execute function public.set_daily_articles_content_updated_at();
 
-update public.daily_articles
+update only public.daily_articles
 set category = 'Government',
     quality_flags = array(select distinct x from unnest(coalesce(quality_flags,'{}'::text[]) || array['taxonomy_corrected']::text[]) x)
 where slug in (
@@ -58,12 +61,12 @@ where slug in (
   '2026-08-08-houston-anime-threat-governor-office'
 );
 
-update public.daily_articles
+update only public.daily_articles
 set category = 'Education',
     quality_flags = array(select distinct x from unnest(coalesce(quality_flags,'{}'::text[]) || array['taxonomy_corrected']::text[]) x)
 where slug = '2026-08-08-tamu-fort-worth-campus-milestone';
 
-update public.daily_articles
+update only public.daily_articles
 set quality_flags = array(select distinct x from unnest(coalesce(quality_flags,'{}'::text[]) || array['seo_noindex','canonical_duplicate']::text[]) x)
 where slug in (
   '2026-08-07-harris-county-funds-ice-shooting-investigation',
