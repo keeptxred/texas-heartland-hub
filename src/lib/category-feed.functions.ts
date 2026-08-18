@@ -12,6 +12,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
 
 export type CategoryFeedItem = {
   slug: string;
@@ -35,8 +36,13 @@ export type CategoryFeedItem = {
   affected_regions: string[] | null;
 };
 
+type CategoryFeedRow = CategoryFeedItem & {
+  body_json?: unknown;
+  quality_flags?: string[] | null;
+};
+
 const SELECT_COLS =
-  "slug,title,dek,category,kind,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,teams,affected_regions,body_json";
+  "slug,title,dek,category,kind,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,teams,affected_regions,body_json,quality_flags";
 
 const InputSchema = z.object({
   // Display category name as stored on daily_articles.category (e.g. "Economy",
@@ -71,8 +77,8 @@ export const getArticlesByCategory = createServerFn({ method: "GET" })
     const supabase = await client();
     if (!supabase) return [];
 
-    // Fetch a padded window so word-count filtering and pagination still
-    // return `limit` items after gating.
+    // Fetch a padded window so quality/word-count filtering and pagination still
+    // return useful results after gated rows are removed.
     const windowSize = Math.min(data.offset + data.limit * 3 + 20, 300);
 
     let q = supabase.from("daily_articles").select(SELECT_COLS);
@@ -89,9 +95,12 @@ export const getArticlesByCategory = createServerFn({ method: "GET" })
       return [];
     }
 
-    const gated = ((rows ?? []) as (CategoryFeedItem & { body_json?: unknown })[])
-      .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
-      .map(({ body_json: _b, ...row }) => row);
+    const gated = ((rows ?? []) as CategoryFeedRow[])
+      .filter((row) =>
+        !hasSeoDuplicateFlag(row.quality_flags)
+        && meetsArticleMainWordCount(row.kind, row.body_json as never),
+      )
+      .map(({ body_json: _bodyJson, quality_flags: _qualityFlags, ...row }) => row);
 
     return gated.slice(data.offset, data.offset + data.limit);
   });
