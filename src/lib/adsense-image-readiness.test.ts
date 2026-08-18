@@ -41,10 +41,12 @@ describe("AdSense-ready image backfill", () => {
     expect(migration).toContain("BEFORE INSERT OR UPDATE OF featured_image_url");
   });
 
-  it("runs automatically after the production route is merged and deployed", () => {
-    expect(workflow).toContain("push:");
-    expect(workflow).toContain("branches: [main]");
+  it("runs after the verified Cloudflare production deployment completes", () => {
+    expect(workflow).toContain("workflow_run:");
+    expect(workflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
+    expect(workflow).toContain("github.event.workflow_run.conclusion == 'success'");
     expect(workflow).toContain("dry=1");
     expect(workflow).toContain("limit=2&offset=${offset}");
+    expect(workflow).not.toContain("push:");
   });
 });

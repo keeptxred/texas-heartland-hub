@@ -1,23 +1,29 @@
 name: AdSense Image Readiness Backfill
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Deploy verified KeepTXRed to Cloudflare"]
+    types: [completed]
     branches: [main]
-    paths:
-      - 'src/routes/api/public/hooks/adsense-image-backfill.ts'
-      - '.github/workflows/adsense-image-backfill.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
   id-token: write
 
+concurrency:
+  group: adsense-image-readiness-backfill
+  cancel-in-progress: false
+
 jobs:
   backfill:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - name: Wait for production route and generate ready-article images
+      - name: Generate images for AdSense-ready articles
         shell: bash
         run: |
           set -euo pipefail
@@ -33,13 +39,13 @@ jobs:
 
           endpoint='https://keeptxred.com/api/public/hooks/adsense-image-backfill'
           ready=0
-          for attempt in $(seq 1 30); do
+          for attempt in $(seq 1 6); do
             status=$(curl -sS -X POST -o /tmp/adsense-image-dry.json -w '%{http_code}' \
               --max-time 45 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
               "${endpoint}?dry=1" || echo 000)
-            echo "deployment probe ${attempt}/30 HTTP ${status}"
+            echo "production endpoint probe ${attempt}/6 HTTP ${status}"
             cat /tmp/adsense-image-dry.json 2>/dev/null || true
             echo
             if [[ "$status" == "200" ]] && jq -e '.ok == true and .dryRun == true' /tmp/adsense-image-dry.json >/dev/null 2>&1; then
@@ -50,7 +56,7 @@ jobs:
           done
 
           if [[ "$ready" -le 0 ]]; then
-            echo 'AdSense image backfill route did not become ready or returned no eligible articles.' >&2
+            echo 'Production AdSense image endpoint returned no eligible articles.' >&2
             exit 1
           fi
 
