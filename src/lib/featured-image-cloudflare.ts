@@ -117,14 +117,18 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
   if (!accountId || !apiToken) return { matches: false, reason: "Cloudflare vision validator unavailable: missing credentials" };
   try {
     const image = `data:image/jpeg;base64,${bytesToBase64(bytes)}`;
+    const domainGuidance = subject.domain === "legal"
+      ? "For a court-ruling story, a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match; it does not need to literally visualize the abstract legal wording. Reject maps, state outlines, politicians, capitol scenes, election graphics, cartoons, and illustrations."
+      : subject.domain === "politics"
+        ? "For politics or public-policy stories, do NOT require a recognizable likeness of a named politician, the exact date, the exact venue, a specific broadcast or interview, a press conference, or any other historically exact scene. A believable photorealistic Texas government or policy-impact setting that directly represents one or more concrete issues in the story IS a valid direct story match. Prefer anonymous or non-identifiable people. Reject unrelated generic government imagery, fabricated readable text or logos, and recognizable faces presented as the named politician unless independently verified."
+        : "A valid match must depict the concrete real-world subject or setting, not generic symbolism.";
     const validationPrompt = [
       `Article title: "${subject.title}"`,
       `Article domain: ${subject.domain}`,
       `Primary visual subject: ${subject.concreteSubject}`,
       "Evaluate the supplied image as an editorial photograph.",
-      subject.domain === "legal"
-        ? "For a court-ruling story, a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match; it does not need to literally visualize the abstract legal wording. Reject maps, state outlines, politicians, capitol scenes, election graphics, cartoons, and illustrations."
-        : "A valid match must depict the concrete real-world subject or setting, not generic symbolism.",
+      domainGuidance,
+      "Judge whether the image is a truthful representative editorial visual for the article topic. Do not require it to prove that it was captured at the exact historical event described in the article.",
       "photorealistic=false for illustration, vector art, cartoon, poster, icon, graphic design, collage, or synthetic placeholder imagery.",
       "Return only matches, photorealistic, and reason.",
     ].join("\n");
@@ -144,7 +148,7 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
       headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         messages: [
-          { role: "system", content: "You are a strict editorial-photo quality reviewer. Return only the requested verdict." },
+          { role: "system", content: "You are a strict editorial-photo quality reviewer. Judge topical relevance and photorealism, not whether a generated editorial image proves an exact historical moment. Return only the requested verdict." },
           { role: "user", content: validationPrompt },
         ],
         image,
