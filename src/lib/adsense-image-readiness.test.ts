@@ -9,6 +9,10 @@ const workflow = fs.readFileSync(
   new URL("../../.github/workflows/adsense-image-backfill.yml", import.meta.url),
   "utf8",
 );
+const migration = fs.readFileSync(
+  new URL("../../supabase/migrations/20260818054000_clear_missing_image_when_ready.sql", import.meta.url),
+  "utf8",
+);
 
 describe("AdSense-ready image backfill", () => {
   it("is restricted to GitHub Actions OIDC from the dedicated workflow", () => {
@@ -24,10 +28,17 @@ describe("AdSense-ready image backfill", () => {
     expect(route).toContain('.eq("adsense_ready", true)');
   });
 
-  it("uses the existing verified featured-image generator and clears missing_image only after success", () => {
+  it("uses the existing verified featured-image generator without becoming a new article writer", () => {
     expect(route).toContain("generateFeaturedImageForSlugDirect(slug, false)");
-    expect(route).toContain('flag !== "missing_image"');
     expect(route).toContain("if (!generated.ok)");
+    expect(route).not.toContain('.update({ quality_flags:');
+  });
+
+  it("clears missing_image centrally only when featured_image_url exists", () => {
+    expect(migration).toContain("clear_missing_image_when_ready");
+    expect(migration).toContain("NEW.featured_image_url IS NOT NULL");
+    expect(migration).toContain("array_remove(coalesce(NEW.quality_flags, ARRAY[]::text[]), 'missing_image')");
+    expect(migration).toContain("BEFORE INSERT OR UPDATE OF featured_image_url");
   });
 
   it("runs automatically after the production route is merged and deployed", () => {
