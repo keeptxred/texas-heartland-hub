@@ -1,4 +1,5 @@
 import { sourceFamily, type ClusterableFeedItem, type StoryCluster } from "@/lib/story-clustering";
+import { sourceFamilyFromUrl } from "@/lib/article-source-integrity";
 
 export type PublicationReadiness = {
   publish: boolean;
@@ -6,6 +7,7 @@ export type PublicationReadiness = {
   mode: "multi_source" | "primary_record" | "hold_for_corroboration";
   authorityTopic: boolean;
   primaryRecord: boolean;
+  independentSourceCount: number;
 };
 
 const AUTHORITY_TOPIC_RE =
@@ -37,26 +39,39 @@ function hasSubstantivePrimaryRecord(item: ClusterableFeedItem): boolean {
   return words >= 80 || (words >= 35 && PUBLIC_IMPACT_RE.test(text));
 }
 
+/** Count genuinely independent publisher families, not feed/canonical hostnames. */
+export function independentPublisherFamilyCount(cluster: StoryCluster): number {
+  const families = new Set<string>();
+  for (const item of [cluster.primary, ...cluster.members]) {
+    const family = sourceFamilyFromUrl(item.link) ?? sourceFamily(item);
+    if (family) families.add(family);
+  }
+  return families.size;
+}
+
 /**
  * Google-facing publication gate.
  *
  * The newsroom may ingest any relevant feed item, but it should not mint a
  * crawlable article merely because an AI rewrite can reach a word-count floor.
- * New articles need either independent corroboration or a substantive primary
- * record. Secondary single-source reports stay in the feed/admin queue until a
- * second independent source arrives and clustering promotes the event.
+ * New articles need either genuinely independent corroboration or a substantive
+ * primary record. Feed/canonical/subdomain variants from one publisher count as
+ * one source family. Secondary single-source reports stay in the feed/admin
+ * queue until another independent publisher arrives.
  */
 export function assessPublicationReadiness(cluster: StoryCluster): PublicationReadiness {
   const primaryRecord = isPrimaryRecordSource(cluster.primary);
   const authorityTopic = isAuthorityTopic(cluster.primary);
+  const independentSourceCount = independentPublisherFamilyCount(cluster);
 
-  if (cluster.strongMerge && cluster.sourceCount >= 2) {
+  if (cluster.strongMerge && independentSourceCount >= 2) {
     return {
       publish: true,
-      reason: `independent multi-source event (${cluster.sourceCount} sources)`,
+      reason: `independent multi-source event (${independentSourceCount} publisher families)`,
       mode: "multi_source",
       authorityTopic,
       primaryRecord,
+      independentSourceCount,
     };
   }
 
@@ -69,16 +84,20 @@ export function assessPublicationReadiness(cluster: StoryCluster): PublicationRe
       mode: "primary_record",
       authorityTopic,
       primaryRecord: true,
+      independentSourceCount,
     };
   }
 
   return {
     publish: false,
-    reason: authorityTopic
-      ? "secondary single-source authority story held for independent corroboration"
-      : "secondary single-source story held for independent corroboration",
+    reason: independentSourceCount < 2 && cluster.sourceCount >= 2
+      ? "same-publisher feed/canonical variants do not satisfy independent corroboration"
+      : authorityTopic
+        ? "secondary single-source authority story held for independent corroboration"
+        : "secondary single-source story held for independent corroboration",
     mode: "hold_for_corroboration",
     authorityTopic,
     primaryRecord,
+    independentSourceCount,
   };
 }

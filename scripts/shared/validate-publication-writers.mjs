@@ -155,12 +155,17 @@ for (const marker of [
 }
 for (const marker of [
   'secondary single-source story held for independent corroboration',
-  'strongMerge && cluster.sourceCount >= 2',
+  'strongMerge && independentSourceCount >= 2',
+  'independentPublisherFamilyCount(cluster)',
+  'sourceFamilyFromUrl(item.link)',
   'substantive primary',
 ]) {
   if (!publicationQualityGate.includes(marker)) {
     errors.push(`Publication quality gate missing corroboration contract marker: ${marker}`);
   }
+}
+if (publicationQualityGate.includes('strongMerge && cluster.sourceCount >= 2')) {
+  errors.push('Publication quality gate must not trust raw sourceCount for independent corroboration; use normalized publisher families.');
 }
 
 if (!generatedNewsroomWriter.includes(generatedNewsSignature)) {
@@ -238,7 +243,7 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, legacy single-source writer retired, scheduled fallback locked out, corroboration gate locked, app-side newsroom author stamping locked, database fallback contract locked, no temporary exceptions or unregistered paths).`);
+console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, legacy single-source writer retired, scheduled fallback locked out, normalized publisher-family corroboration locked, app-side newsroom author stamping locked, database fallback contract locked, no temporary exceptions or unregistered paths).`);
 
 function read(file) {
   if (!fs.existsSync(file)) {
