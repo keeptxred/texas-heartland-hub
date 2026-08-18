@@ -103,12 +103,13 @@ describe("publication timing lifecycle", () => {
   it("aligns the event claim lease with the 15-minute rewrite stale window", () => {
     expect(lifecycle).toContain("const CLAIM_TTL_SECONDS = 15 * 60");
     expect(recoveryMigration).toContain("p_claim_ttl_seconds integer DEFAULT 900");
+    expect(recoveryMigration).toContain("LEAST(p_claim_ttl_seconds, 900)");
     expect(recoveryMigration).toContain("publish_claimed_at <= now() - interval '15 minutes'");
   });
 
   it("treats a canonical published slug as terminal even if cluster status drifts", () => {
     expect(recoveryMigration).toContain("IF v_slug IS NOT NULL THEN");
-    expect(recoveryMigration).toContain("AND published_slug IS NULL");
+    expect(recoveryMigration).toContain("AND c.published_slug IS NULL");
   });
 
   it("only releases a claim held by the same worker token", () => {
