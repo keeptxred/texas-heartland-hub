@@ -33,4 +33,17 @@ describe("Cloudflare featured-image payload", () => {
     expect(validatorSource).toContain("parseVisionVerdict(output)");
     expect(validatorSource).toContain("a believable photorealistic courthouse exterior or courtroom interior IS a valid direct story match");
   });
+
+  it("accepts representative political editorial photography without demanding an exact event recreation", () => {
+    const runtime = fs.readFileSync(new URL("./featured-image-cloudflare.ts", import.meta.url), "utf8");
+    const start = runtime.indexOf("export async function validateImageMatchesArticle");
+    const validatorSource = runtime.slice(start);
+
+    expect(validatorSource).toContain('subject.domain === "politics"');
+    expect(validatorSource).toContain("do NOT require a recognizable likeness of a named politician");
+    expect(validatorSource).toContain("the exact date");
+    expect(validatorSource).toContain("policy-impact setting");
+    expect(validatorSource).toContain("Do not require it to prove that it was captured at the exact historical event");
+    expect(validatorSource).toContain("Judge topical relevance and photorealism, not whether a generated editorial image proves an exact historical moment");
+  });
 });
