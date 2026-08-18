@@ -22,12 +22,5 @@ ON public.daily_articles
 FOR EACH ROW
 EXECUTE FUNCTION public.clear_missing_image_when_ready();
 
--- Repair stale flags on rows that already have a successfully attached image.
-UPDATE public.daily_articles
-SET quality_flags = array_remove(coalesce(quality_flags, ARRAY[]::text[]), 'missing_image')
-WHERE featured_image_url IS NOT NULL
-  AND btrim(featured_image_url) <> ''
-  AND 'missing_image' = ANY(coalesce(quality_flags, ARRAY[]::text[]));
-
 COMMENT ON FUNCTION public.clear_missing_image_when_ready() IS
   'Clears the missing_image quality flag whenever any pipeline successfully attaches featured_image_url.';
