@@ -9,6 +9,7 @@ CREATE OR REPLACE FUNCTION public.claim_news_event_cluster_publication(
 )
 RETURNS TABLE(acquired boolean, published_slug text)
 LANGUAGE plpgsql
+SET search_path = public
 AS $$
 DECLARE
   v_slug text;
