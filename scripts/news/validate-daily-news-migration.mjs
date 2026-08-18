@@ -18,6 +18,7 @@ for (const file of files) {
   const isBulkImageRemediation = /^\s*--\s*BULK_IMAGE_REMEDIATION\s*$/im.test(sql);
   const isBulkCategoryReclassification = /^\s*--\s*BULK_CATEGORY_RECLASSIFICATION\s*$/im.test(sql);
   const isBulkContentStructureRemediation = /^\s*--\s*BULK_CONTENT_STRUCTURE_REMEDIATION\s*$/im.test(sql);
+  const isBulkArticleMaintenance = /^\s*--\s*BULK_ARTICLE_MAINTENANCE\s*$/im.test(sql);
 
   if (isInsert) {
     if (!/SELECT\s+slug\s*,\s*'\/news\/'\s*\|\|\s*slug/i.test(sql)) {
@@ -29,12 +30,6 @@ for (const file of files) {
       errors.push("body_json must include an 'intro' or 'sections' field accepted by daily_articles_require_body");
     }
 
-    // Legacy ChatGPT publication migrations packed the complete article body
-    // into one `paragraphs` array item (`jsonb_build_array(body)`). The renderer
-    // correctly treats each array item as one paragraph, so that shape creates a
-    // giant wall of text even when the raw body string contains blank lines.
-    // Block that publication shape at validation time instead of repairing it
-    // after the article reaches production.
     const packsWholeBodyIntoOneParagraph =
       /['"]paragraphs['"]\s*,\s*jsonb_build_array\s*\(\s*body\s*\)/i.test(sql) ||
       /jsonb_build_array\s*\(\s*body\s*\)[\s\S]{0,300}?body_json/i.test(sql);
@@ -86,7 +81,26 @@ for (const file of files) {
     }
   }
 
-  const contentOnlyRemediation = isBulkCategoryReclassification || isBulkContentStructureRemediation;
+  if (isBulkArticleMaintenance) {
+    const explicitDatedScope = /WHERE[\s\S]*?slug\s*=\s*'20\d{2}-\d{2}-\d{2}-[a-z0-9-]+'/i.test(sql);
+    const guardedLegacyScope =
+      /category\s*=\s*'Non-Political'/i.test(sql) &&
+      /quality_flags/i.test(sql) &&
+      /target_site/i.test(sql);
+    const safelyScoped =
+      isUpdate &&
+      !isInsert &&
+      /WHERE/i.test(sql) &&
+      (explicitDatedScope || guardedLegacyScope);
+    if (!safelyScoped) {
+      errors.push('BULK_ARTICLE_MAINTENANCE must be update-only and narrowly scoped by an explicit dated slug or a guarded legacy category/quality/site-boundary predicate');
+    }
+  }
+
+  const contentOnlyRemediation =
+    isBulkCategoryReclassification ||
+    isBulkContentStructureRemediation ||
+    isBulkArticleMaintenance;
   if (!contentOnlyRemediation && (!/featured_image_url/i.test(sql) || !/image_alt_text/i.test(sql))) {
     errors.push('published article image changes must include featured_image_url and image_alt_text');
   }
@@ -107,9 +121,9 @@ for (const file of files) {
   const valuesSlugs = [...sql.matchAll(/\('((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*,/g)].map((match) => match[1]);
   const selectSlugs = [...sql.matchAll(/SELECT\s+'((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
   const dollarSlugs = [...sql.matchAll(/SELECT\s+\$slug\$((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)\$slug\$\s*::\s*text\s+slug\b/gi)].map((match) => match[1]);
-  const whereSlugs = [...sql.matchAll(/WHERE\s+slug\s*=\s*'((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'/gi)].map((match) => match[1]);
+  const whereSlugs = [...sql.matchAll(/WHERE\s+(?:[a-z_]+\.)?slug\s*=\s*'((?:20\d{2}-\d{2}-\d{2})-[a-z0-9-]+)'/gi)].map((match) => match[1]);
   const slugs = [...valuesSlugs, ...selectSlugs, ...dollarSlugs, ...whereSlugs];
-  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification && !isBulkContentStructureRemediation) {
+  if (!slugs.length && !isBulkImageRemediation && !isBulkCategoryReclassification && !isBulkContentStructureRemediation && !isBulkArticleMaintenance) {
     errors.push('could not find any dated article slugs in the publication input');
   }
   if (new Set(slugs).size !== slugs.length) errors.push('duplicate article slug found in migration');
@@ -125,7 +139,9 @@ for (const file of files) {
         ? 'bulk category reclassification'
         : isBulkContentStructureRemediation
           ? 'bulk content structure remediation'
-          : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
+          : isBulkArticleMaintenance
+            ? 'scoped article maintenance'
+            : `${slugs.length} article slug${slugs.length === 1 ? '' : 's'}`;
     console.log(`${file}: valid (${detail})`);
   }
 }
