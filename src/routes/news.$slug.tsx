@@ -25,6 +25,7 @@ import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { resolveArticleImage } from "@/lib/seo-headline";
 import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
 type RenderedArticle = Omit<Article, "category"> & { category: CategoryName; noindex?: boolean };
@@ -69,7 +70,11 @@ export const Route = createFileRoute("/news/$slug")({
       if (!isPublished(article)) throw notFound();
       const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
       const body = dedupeArticleBody(rawBody) as ArticleBody;
-      return { article, body, ctr: null };
+      const renderedArticle: RenderedArticle = {
+        ...article,
+        noindex: !isStaticArticleIndexable(article),
+      };
+      return { article: renderedArticle, body, ctr: null };
     }
     const mapped = await resolveArticleSlugRedirect({ data: { slug: params.slug } });
     if (mapped.slug && mapped.slug !== params.slug) {
@@ -125,7 +130,9 @@ export const Route = createFileRoute("/news/$slug")({
       sections: ever.body.sections,
       faq: ever.body.faq,
       sources: ever.body.sources,
-      related: ARTICLES.filter((x) => x.category === ever.category && isPublished(x)).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
+      related: ARTICLES.filter(
+        (x) => x.category === ever.category && isPublished(x) && isStaticArticleIndexable(x),
+      ).sort(sortByDateDesc).slice(0, 3).map((x) => x.slug),
       cta: { label: "Browse the Newsroom", href: "/news" },
       keyTakeaways: ever.body.keyTakeaways,
       entities: ever.body.entities,
@@ -277,7 +284,9 @@ function _buildDefaultBody(a: Article): ArticleBody {
       { label: "Texas Legislature Online", url: "https://capitol.texas.gov/" },
       { label: "Texas Secretary of State", url: "https://www.sos.state.tx.us/" },
     ],
-    related: ARTICLES.filter((x) => x.category === a.category && x.slug !== a.slug && isPublished(x))
+    related: ARTICLES.filter(
+      (x) => x.category === a.category && x.slug !== a.slug && isPublished(x) && isStaticArticleIndexable(x),
+    )
       .sort(sortByDateDesc)
       .slice(0, 3)
       .map((x) => x.slug),
@@ -294,7 +303,9 @@ function ArticlePage() {
 
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
-    .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
+    .filter(
+      (a): a is Article => Boolean(a) && isPublished(a as Article) && isStaticArticleIndexable(a as Article),
+    );
 
   const wordCount =
     body.intro.join(" ").split(/\s+/).length +
