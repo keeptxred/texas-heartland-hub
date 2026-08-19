@@ -37,11 +37,11 @@ export type RewritePreflightInput = {
 };
 
 // Practical thresholds. No source below the absolute floor may enter the
-// rewrite-ready queue, even when it contains several factual signals. This
-// prevents very short Reddit posts and snippets from being expanded into
-// articles. Government releases and other high-signal sources between the
-// absolute floor and the normal target may still use the factual-signal bypass.
+// rewrite-ready queue. Fact-dense government releases can still bypass the
+// normal 400-word target, but only after they contain enough source material to
+// support a full editorial article without padding or invention.
 export const ABSOLUTE_MIN_SOURCE_WORDS = 150;
+export const SHORT_RELEASE_MIN_SOURCE_WORDS = 300;
 const BREAKING_MIN_WORDS = 250;
 const STANDARD_MIN_WORDS = 400;
 const FACTUAL_SIGNALS_MIN = 4;
@@ -224,8 +224,13 @@ export function assessRewritePreflight(input: RewritePreflightInput): RewritePre
 
   const min = input.isBreaking ? BREAKING_MIN_WORDS : STANDARD_MIN_WORDS;
   if (words < min) {
-    // Allow fact-dense sources only after they clear the absolute 150-word floor.
-    if (factual >= FACTUAL_SIGNALS_FOR_SHORT_RELEASES) {
+    // Fact density does not substitute for source depth. The 300-word bypass
+    // floor prevents thin appointment notices and short official announcements
+    // from being expanded into 800/1,200-word stories they cannot support.
+    if (
+      words >= SHORT_RELEASE_MIN_SOURCE_WORDS &&
+      factual >= FACTUAL_SIGNALS_FOR_SHORT_RELEASES
+    ) {
       return finalize("READY");
     }
     return finalize("BODY_TOO_SHORT");
