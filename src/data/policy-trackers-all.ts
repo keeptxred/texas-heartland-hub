@@ -13,6 +13,7 @@ import { POLICY_TRACKERS_WAVE12 } from "@/data/policy-trackers-wave12";
 import { POLICY_TRACKERS_WAVE13 } from "@/data/policy-trackers-wave13";
 import { POLICY_TRACKERS_WAVE14 } from "@/data/policy-trackers-wave14";
 import { POLICY_TRACKERS_WAVE15 } from "@/data/policy-trackers-wave15";
+import { POLICY_TRACKERS_WAVE16 } from "@/data/policy-trackers-wave16";
 
 export const ALL_POLICY_TRACKERS = [
   ...POLICY_TRACKERS,
@@ -30,6 +31,7 @@ export const ALL_POLICY_TRACKERS = [
   ...POLICY_TRACKERS_WAVE13,
   ...POLICY_TRACKERS_WAVE14,
   ...POLICY_TRACKERS_WAVE15,
+  ...POLICY_TRACKERS_WAVE16,
 ];
 
 export const ALL_POLICY_TRACKER_SLUGS = ALL_POLICY_TRACKERS.map((tracker) => tracker.slug);

@@ -6,7 +6,7 @@ const manifest = JSON.parse(
 ) as {
   schemaVersion: number;
   canonicalDomain: string;
-  resources: Array<{ url: string; title: string; type: string; topic: string; trust: string[] }>;
+  resources: Array<{ url: string; title: string; type: string; topic: string; trust: string[]; machineResource?: string }>;
 };
 const llms = readFileSync(new URL("../../public/llms.txt", import.meta.url), "utf8");
 const pagesSitemap = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
@@ -27,7 +27,7 @@ describe("citation magnet discovery and extraction contracts", () => {
   it("keeps a canonical machine-readable citation manifest", () => {
     expect(manifest.schemaVersion).toBe(1);
     expect(manifest.canonicalDomain).toBe("https://keeptxred.com");
-    expect(manifest.resources.length).toBeGreaterThanOrEqual(19);
+    expect(manifest.resources.length).toBeGreaterThanOrEqual(20);
 
     const urls = manifest.resources.map((resource) => resource.url);
     expect(new Set(urls).size).toBe(urls.length);
@@ -39,6 +39,13 @@ describe("citation magnet discovery and extraction contracts", () => {
       expect(resource.trust.length).toBeGreaterThan(0);
       expect(llms).toContain(new URL(resource.url).pathname);
     }
+  });
+
+  it("keeps the policy library in citation discovery", () => {
+    const policy = manifest.resources.find((resource) => resource.url === "https://keeptxred.com/policy");
+    expect(policy?.type).toBe("policy-reference-hub");
+    expect(policy?.machineResource).toBe("https://keeptxred.com/policy-trackers.txt");
+    expect(llms).toContain("/policy-trackers.txt");
   });
 
   it("keeps the visible trust vocabulary stable", () => {
