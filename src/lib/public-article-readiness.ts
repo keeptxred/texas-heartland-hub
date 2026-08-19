@@ -1,6 +1,6 @@
 import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
 
-type PublicArticleCandidate = {
+export type PublicArticleCandidate = {
   category?: string | null;
   source_name?: string | null;
   source_url?: string | null;
@@ -29,17 +29,12 @@ function validDate(value: unknown): number | null {
 
 export function isPublicArticleReady(article: PublicArticleCandidate): boolean {
   if (hasSeoDuplicateFlag(article.quality_flags)) return false;
-
   if ((article.category ?? "").trim().toLowerCase() === "non-political") return false;
-
   if ((article.content_quality_score ?? 0) < 60) return false;
 
   const sourceRefs = sourceReferenceCount(article.body_json);
   if (!article.source_url && sourceRefs === 0) return false;
-
-  if (/\bmultiple(?:\s+independent)?\s+sources?\b/i.test(article.source_name ?? "") && sourceRefs < 2) {
-    return false;
-  }
+  if (/\bmultiple(?:\s+independent)?\s+sources?\b/i.test(article.source_name ?? "") && sourceRefs < 2) return false;
 
   const published = validDate(article.published_at);
   const updated = article.body_json && typeof article.body_json === "object"
