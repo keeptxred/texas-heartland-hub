@@ -3,9 +3,11 @@ name: Run Daily News Now
 # Production publisher: prioritize quality-gated overdue gaps, then the
 # clustered newsroom, then the curated reserve safety net. The retired legacy
 # single-source RSS writer is intentionally not part of this workflow.
+# Six daily opportunities keep the fresh article pool deep enough for Facebook
+# while the existing AI reservation/budget gates remain authoritative.
 on:
   schedule:
-    - cron: "15 */8 * * *"
+    - cron: "15 */4 * * *"
   workflow_dispatch:
 
 permissions:
