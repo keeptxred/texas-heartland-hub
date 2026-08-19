@@ -18,6 +18,7 @@ const TEXAS_CASE_REFRESH = toIsoDate("2026-08-18T23:00:00-05:00");
 const POLITICAL_REFERENCE_REFRESH = toIsoDate("2026-08-18T23:53:00-05:00");
 const POLICY_REFRESH = toIsoDate("2026-08-19T06:30:00-05:00");
 const LAW_DATA_REFRESH = toIsoDate("2026-08-19T07:15:00-05:00");
+const DISTRICT_REFRESH = toIsoDate("2026-08-19T07:35:00-05:00");
 const SPORTS_SITEMAP_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const;
 const SPORTS_SITEMAP_TOPICS = ["football", "baseball", "basketball", "hockey", "soccer", "college", "recruiting", "nil", "business-policy", "stadiums", "motorsports", "postseason", "transactions", "injuries", "rivalries"] as const;
 const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(SUPPORTING_GUIDE_SLUGS.map((slug) => [`/guides/${slug}`, GUIDE_LASTMOD]));
@@ -43,6 +44,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/votes": CITATION_MAGNET_REFRESH,
   "/texas-government": CITATION_MAGNET_REFRESH,
   "/texas-government/agencies": CITATION_MAGNET_REFRESH,
+  "/districts": DISTRICT_REFRESH,
   "/laws": LAW_DATA_REFRESH,
   "/laws/topics": LAW_DATA_REFRESH,
   "/laws/constitutional-amendments": CITATION_MAGNET_REFRESH,
@@ -77,7 +79,7 @@ const STATIC_PATHS:string[]=[
   "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
-  "/texas-legislature/votes","/texas-government","/texas-government/agencies",
+  "/texas-legislature/votes","/texas-government","/texas-government/agencies","/districts",
   "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/topics","/laws/constitutional-amendments","/laws/effective-dates","/data",
   "/contact","/privacy","/terms-of-service",
