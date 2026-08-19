@@ -18,8 +18,9 @@ describe("accountability Data Center discovery and freshness", () => {
 
   it("includes accountability datasets in reference freshness governance", () => {
     expect(freshnessSource).toContain('import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog"');
-    expect(freshnessSource).toContain("const ALL_DATA_SETS = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS]");
-    expect(freshnessSource).toContain("const dataSetItems: FreshnessItem[] = ALL_DATA_SETS.map((dataset): FreshnessItem => {");
+    expect(freshnessSource).toContain("function mapDataFreshness(datasets: readonly ReviewableDataSet[], now: Date): FreshnessItem[]");
+    expect(freshnessSource).toContain("...mapDataFreshness(TEXAS_DATA_SETS, now),");
+    expect(freshnessSource).toContain("...mapDataFreshness(ACCOUNTABILITY_DATA_SETS, now),");
     expect(freshnessSource).toContain("...dataSetItems,");
   });
 });
