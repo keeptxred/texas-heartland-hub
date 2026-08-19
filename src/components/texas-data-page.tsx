@@ -1,5 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import type { TexasDataSet } from "@/data/texas-data-catalog";
+import {
+  PROPERTY_TAX_DATA_REVIEWED_AT,
+  PROPERTY_TAX_OFFICIAL_FILES,
+  PROPERTY_TAX_REFERENCE_LINKS,
+} from "@/data/property-tax-data";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 
 export function texasDataHead(dataset: TexasDataSet) {
@@ -22,6 +27,8 @@ export function TexasDataPage({ dataset }: { dataset: TexasDataSet }) {
 
     <section className="mt-8 border-l-4 border-primary bg-primary/5 p-6"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Quick answer</p><p className="mt-3 text-base font-semibold leading-7">{dataset.quickAnswer}</p></section>
 
+    {dataset.slug === "property-tax" ? <PropertyTaxOfficialData /> : null}
+
     <section className="mt-10"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">What the official data can show</h2><ul className="mt-5 space-y-3 text-base leading-7">{dataset.whatAvailable.map((item) => <li key={item} className="flex gap-3"><span className="font-bold text-primary">•</span><span>{item}</span></li>)}</ul></section>
 
     <section className="mt-11"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">Methodology and cautions</h2><div className="mt-5 space-y-5 font-serif text-base leading-8 md:text-[17px]">{dataset.methodology.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></section>
@@ -34,4 +41,39 @@ export function TexasDataPage({ dataset }: { dataset: TexasDataSet }) {
 
     <aside className="mt-10 border-t pt-6 text-xs leading-6 text-muted-foreground"><strong className="text-foreground">Data standard:</strong> KTR distinguishes raw official records, estimates, forecasts, polls, models, and editorial analysis. The source directory above identifies the authoritative starting point; any KTR chart or derived dataset should preserve source date, methodology, and transformation notes.</aside>
   </article>;
+}
+
+function PropertyTaxOfficialData() {
+  return (
+    <section className="mt-10 rounded-xl border-2 border-primary/30 bg-primary/5 p-6">
+      <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Current official files</p>
+      <h2 className="mt-2 font-display text-3xl tracking-tight">2025 Texas tax rates and levies</h2>
+      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+        Direct Texas Comptroller workbooks for the latest completed statewide rate-and-levy publication. These files are reported through appraisal districts; the Comptroller notes that calculated levies are not the same as actual tax collections and may be updated when reported data changes.
+      </p>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        {PROPERTY_TAX_OFFICIAL_FILES.map((file) => (
+          <a key={file.url} href={file.url} target="_blank" rel="noopener noreferrer" className="rounded-lg border bg-background p-4 hover:border-primary">
+            <div className="flex items-start justify-between gap-3">
+              <span className="font-semibold text-primary">{file.label}</span>
+              <span className="rounded bg-muted px-2 py-1 text-[10px] font-bold uppercase tracking-wider">{file.format}</span>
+            </div>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{file.scope}</p>
+          </a>
+        ))}
+      </div>
+      <div className="mt-6 border-t pt-5">
+        <h3 className="font-semibold">Verify and drill down</h3>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          {PROPERTY_TAX_REFERENCE_LINKS.map((link) => (
+            <a key={link.url} href={link.url} target="_blank" rel="noopener noreferrer" className="rounded-lg border bg-background p-4 text-sm hover:border-primary">
+              <span className="font-semibold text-primary">{link.label}</span>
+              <p className="mt-2 leading-5 text-muted-foreground">{link.note}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+      <p className="mt-5 text-xs leading-5 text-muted-foreground">Official-file links reviewed {PROPERTY_TAX_DATA_REVIEWED_AT}. Parcel-specific values and bills remain controlled by the local appraisal district and taxing units.</p>
+    </section>
+  );
 }
