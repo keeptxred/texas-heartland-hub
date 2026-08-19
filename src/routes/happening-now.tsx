@@ -10,6 +10,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { isLowValueTitle } from "@/lib/low-value-titles";
 import { PUBLISHER_LOGO } from "@/lib/seo";
+import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { isPublicArticleReady, type PublicArticleCandidate } from "@/lib/public-article-readiness";
 
 const FAQS = [
   {
@@ -129,12 +131,12 @@ export const Route = createFileRoute("/happening-now")({
               name: "Statewide Conservative News Dashboard",
               description:
                 "Live aggregated feeds from official Texas government sources: Legislature bills filed, Governor press releases, and Secretary of State updates.",
-isPartOf: { "@id": "https://keeptxred.com/#org" },
-about: [
-  { "@type": "Thing", name: "Texas Legislative Tracking" },
-  { "@type": "Thing", name: "Conservative Policy News" },
-  { "@type": "Thing", name: "Texas Primary Elections" },
-],
+              isPartOf: { "@id": "https://keeptxred.com/#org" },
+              about: [
+                { "@type": "Thing", name: "Texas Legislative Tracking" },
+                { "@type": "Thing", name: "Conservative Policy News" },
+                { "@type": "Thing", name: "Texas Primary Elections" },
+              ],
               mainEntity: {
                 "@type": "FAQPage",
                 mainEntity: FAQS.map((faq) => ({
@@ -174,6 +176,11 @@ type FeedRow = {
   pub_date: string;
 };
 
+type LinkedArticleRow = PublicArticleCandidate & {
+  slug: string;
+  kind?: string | null;
+};
+
 function DashboardPage() {
   const [items, setItems] = useState<Row[]>([]);
   const [fetchedAt, setFetchedAt] = useState("");
@@ -210,7 +217,10 @@ function DashboardPage() {
         new Set(rawFeed.flatMap((row) => (row.internal_slug ? [row.internal_slug] : []))),
       );
       const { data: linkedArticles, error: linkedArticleError } = candidateSlugs.length
-        ? await supabase.from("daily_articles").select("slug").in("slug", candidateSlugs)
+        ? await supabase
+            .from("daily_articles")
+            .select("slug,kind,category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags")
+            .in("slug", candidateSlugs)
         : { data: [], error: null };
 
       if (!active) return;
@@ -222,7 +232,12 @@ function DashboardPage() {
       }
 
       const validArticleSlugs = new Set(
-        ((linkedArticles ?? []) as { slug: string }[]).map((article) => article.slug),
+        ((linkedArticles ?? []) as LinkedArticleRow[])
+          .filter((article) =>
+            isPublicArticleReady(article)
+            && meetsArticleMainWordCount(article.kind, article.body_json as never),
+          )
+          .map((article) => article.slug),
       );
 
       const feedRows = rawFeed.flatMap<Row>((row) => {
