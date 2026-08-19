@@ -2,6 +2,10 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
+import {
+  isPublicArticleReady,
+  type PublicArticleCandidate,
+} from "@/lib/public-article-readiness";
 
 function client() {
   const url = process.env.SUPABASE_URL;
@@ -11,17 +15,19 @@ function client() {
 }
 
 /**
- * Cloud article indexability is deliberately fail-closed. A migration-backed
- * article can still render when Supabase is unavailable, so treating a failed
- * quality lookup as indexable would temporarily expose quarantined legacy
- * inventory to crawlers. A successful lookup may opt the article into indexing
- * only when none of the centralized SEO quarantine flags are present.
+ * Cloud article indexability is deliberately fail-closed. The legacy array
+ * overload remains for older unit tests/callers, while article rows use the
+ * full AdSense/public-readiness contract.
  */
 export function shouldNoindexCloudArticle(
-  flags: string[] | null | undefined,
+  candidate: PublicArticleCandidate | string[] | null | undefined,
   lookupSucceeded: boolean,
 ): boolean {
-  return !lookupSucceeded || hasSeoDuplicateFlag(flags);
+  if (!lookupSucceeded) return true;
+  if (Array.isArray(candidate) || candidate == null) {
+    return hasSeoDuplicateFlag(candidate as string[] | null | undefined);
+  }
+  return !isPublicArticleReady(candidate);
 }
 
 export const getCloudArticleIndexability = createServerFn({ method: "GET" })
@@ -32,11 +38,10 @@ export const getCloudArticleIndexability = createServerFn({ method: "GET" })
 
     const { data: row, error } = await supabase
       .from("daily_articles")
-      .select("quality_flags")
+      .select("category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags")
       .eq("slug", data.slug)
       .maybeSingle();
 
     if (error || !row) return { noindex: true };
-    const flags = (row as { quality_flags?: string[] | null }).quality_flags ?? null;
-    return { noindex: shouldNoindexCloudArticle(flags, true) };
+    return { noindex: shouldNoindexCloudArticle(row as PublicArticleCandidate, true) };
   });
