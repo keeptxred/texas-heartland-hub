@@ -14,6 +14,7 @@ export type GovernmentGraphNode = {
 const CORE_NODES: GovernmentGraphNode[] = [
   { id: "texas-government", label: "Texas Government", href: "/texas-government", kind: "government", keywords: ["governor", "attorney general", "comptroller", "agency", "state government", "executive", "commission", "board"] },
   { id: "texas-agencies", label: "Texas Agency Authority", href: "/texas-government/agencies", kind: "government", keywords: ["agency", "department", "commission", "regulator", "authority", "oversight", "program"] },
+  { id: "texas-contract-watch", label: "Texas Contract Watch", href: "/contracts", kind: "government", keywords: ["contract", "contracts", "vendor", "vendors", "procurement", "bid", "solicitation", "award", "amendment", "renewal", "extension", "texas smartbuy", "vendor performance"] },
   { id: "texas-legislature", label: "Texas Legislature", href: "/texas-legislature", kind: "legislature", keywords: ["legislature", "lawmakers", "house", "senate", "committee", "session", "legislation", "bill", "vote"] },
   { id: "texas-bills", label: "Texas Bills", href: "/bills", kind: "legislature", keywords: ["bill", "bills", "legislation", "filed", "committee", "passed", "signed", "veto"] },
   { id: "texas-laws", label: "Texas Laws", href: "/laws", kind: "law", keywords: ["law", "laws", "statute", "code", "legal", "court", "effective date"] },
