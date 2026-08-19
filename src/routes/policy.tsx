@@ -5,11 +5,12 @@ import { POLICY_TRACKERS_WAVE3 } from "@/data/policy-trackers-wave3";
 import { POLICY_TRACKERS_WAVE4 } from "@/data/policy-trackers-wave4";
 import { POLICY_TRACKERS_WAVE5 } from "@/data/policy-trackers-wave5";
 import { POLICY_TRACKERS_WAVE6 } from "@/data/policy-trackers-wave6";
+import { POLICY_TRACKERS_WAVE7 } from "@/data/policy-trackers-wave7";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Texas Policy Trackers | Taxes, Border, Energy, Elections & More";
 const DESCRIPTION = "Keep TX Red's permanent Texas policy trackers connect the daily news to laws, agencies, bills, official data, editorial positions, and the questions that keep shaping Texas.";
-const ALL_POLICY_TRACKERS = [...POLICY_TRACKERS, ...POLICY_TRACKERS_WAVE2, ...POLICY_TRACKERS_WAVE3, ...POLICY_TRACKERS_WAVE4, ...POLICY_TRACKERS_WAVE5, ...POLICY_TRACKERS_WAVE6];
+const ALL_POLICY_TRACKERS = [...POLICY_TRACKERS, ...POLICY_TRACKERS_WAVE2, ...POLICY_TRACKERS_WAVE3, ...POLICY_TRACKERS_WAVE4, ...POLICY_TRACKERS_WAVE5, ...POLICY_TRACKERS_WAVE6, ...POLICY_TRACKERS_WAVE7];
 
 export const Route = createFileRoute("/policy")({
   head: () => {
