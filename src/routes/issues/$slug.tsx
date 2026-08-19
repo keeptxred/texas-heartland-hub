@@ -3,6 +3,55 @@ import { issueGuideBySlug } from "@/data/issue-guides";
 
 const SITE_URL = "https://keeptxred.com";
 
+const CATEGORY_HUBS: Record<string, Array<{ label: string; href: string }>> = {
+  "Energy & Environment": [
+    { label: "Texas Energy", href: "/texas-energy" },
+    { label: "Texas Legislature", href: "/texas-legislature" },
+  ],
+  "Border Security & Immigration": [
+    { label: "Texas Border Security", href: "/texas-border-security" },
+    { label: "Texas Government", href: "/texas-government" },
+  ],
+  "Economy & Fiscal Policy": [
+    { label: "Texas Economy", href: "/texas-economy" },
+    { label: "Texas Business", href: "/texas-business" },
+  ],
+  "Education & Parental Rights": [
+    { label: "Texas Legislature", href: "/texas-legislature" },
+    { label: "Texas Laws", href: "/laws" },
+  ],
+  "Constitutional Rights & Law Enforcement": [
+    { label: "Texas Law Enforcement", href: "/texas-law-enforcement" },
+    { label: "Texas Laws", href: "/laws" },
+  ],
+  "Election Integrity & Governance": [
+    { label: "Election Central", href: "/elections" },
+    { label: "Texas Government", href: "/texas-government" },
+  ],
+  "Healthcare, Social Issues & Rural Life": [
+    { label: "Texas Agriculture", href: "/texas-agriculture" },
+    { label: "Texas Government", href: "/texas-government" },
+  ],
+};
+
+const GUIDE_TOOL_LINKS: Record<string, Array<{ label: string; href: string }>> = {
+  "texas-property-tax-relief": [
+    { label: "Property-tax increase calculator", href: "/texas-property-tax-increase-calculator" },
+    { label: "Texas spending-growth calculator", href: "/tools/texas-spending-growth-cap" },
+  ],
+  "texas-economy-no-income-tax": [
+    { label: "Texas spending-growth calculator", href: "/tools/texas-spending-growth-cap" },
+  ],
+  "texas-election-law": [
+    { label: "Election Central", href: "/elections" },
+    { label: "Bill finder", href: "/civic-tools/bill-finder" },
+  ],
+  "texas-school-choice-esas": [{ label: "Bill finder", href: "/civic-tools/bill-finder" }],
+  "texas-dei-higher-education": [{ label: "Bill finder", href: "/civic-tools/bill-finder" }],
+  "texas-medical-transition-minors-law": [{ label: "Texas law finder", href: "/civic-tools/texas-law-finder" }],
+  "texas-state-federal-power": [{ label: "Government authority finder", href: "/civic-tools/government-authority-finder" }],
+};
+
 export const Route = createFileRoute("/issues/$slug")({
   head: ({ params }) => {
     const guide = issueGuideBySlug[params.slug];
@@ -51,6 +100,10 @@ function IssueGuidePage() {
     );
   }
 
+  const toolLinks = [...(guide.toolLinks ?? []), ...(GUIDE_TOOL_LINKS[slug] ?? [])]
+    .filter((link, index, links) => links.findIndex((candidate) => candidate.href === link.href) === index);
+  const hubLinks = CATEGORY_HUBS[guide.category] ?? [];
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 md:py-16">
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_300px]">
@@ -80,11 +133,11 @@ function IssueGuidePage() {
             ))}
           </div>
 
-          {guide.toolLinks?.length ? (
+          {toolLinks.length ? (
             <section className="mt-12 border-y py-7">
               <h2 className="font-display text-3xl tracking-tight">Related KTR tools</h2>
               <div className="mt-4 flex flex-wrap gap-3">
-                {guide.toolLinks.map((link) => (
+                {toolLinks.map((link) => (
                   <a key={link.href} href={link.href} className="border px-4 py-3 text-sm font-semibold transition hover:border-primary hover:text-primary">{link.label} →</a>
                 ))}
               </div>
@@ -122,10 +175,22 @@ function IssueGuidePage() {
             </div>
           </section>
 
+          {hubLinks.length ? (
+            <section className="border p-5">
+              <h2 className="font-display text-2xl tracking-tight">Explore this topic</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Move between this evergreen explainer and KTR's broader reporting, government, law and election resources.</p>
+              <div className="mt-4 space-y-3">
+                {hubLinks.map((link) => <a key={link.href} href={link.href} className="block text-sm font-semibold text-primary hover:underline">{link.label} →</a>)}
+                <a href="/topics" className="block text-sm font-semibold text-primary hover:underline">All coverage topics →</a>
+                <a href="/civic-tools" className="block text-sm font-semibold text-primary hover:underline">Civic tools →</a>
+              </div>
+            </section>
+          ) : null}
+
           <section className="border p-5">
             <h2 className="font-display text-2xl tracking-tight">Follow the live story</h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Evergreen guides explain the rules. KTR news coverage tracks new bills, lawsuits, agency actions, elections and political fights as they happen.</p>
-            <a href="/" className="mt-4 inline-block text-sm font-semibold text-primary">Latest Texas news →</a>
+            <a href="/news" className="mt-4 inline-block text-sm font-semibold text-primary">Latest Texas news →</a>
           </section>
         </aside>
       </div>
