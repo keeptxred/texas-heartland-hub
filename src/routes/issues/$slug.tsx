@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { issueGuideBySlug } from "@/data/issue-guides";
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { issueGuideBySlug, type IssueGuide } from "@/data/issue-guides";
 import { relatedPolicyTrackersForIssueGuide } from "@/lib/issue-policy-links";
 
 const SITE_URL = "https://keeptxred.com";
@@ -58,11 +58,24 @@ const GUIDE_TOOL_LINKS: Record<string, Array<{ label: string; href: string }>> =
 };
 
 export const Route = createFileRoute("/issues/$slug")({
-  head: ({ params }) => {
+  loader: ({ params }): IssueGuide => {
     const guide = issueGuideBySlug[params.slug];
-    const title = guide ? `${guide.title} | Keep TX Red` : "Texas Policy Guide | Keep TX Red";
-    const description = guide?.dek ?? "Keep TX Red Texas policy guide.";
-    const pageUrl = `${SITE_URL}/issues/${params.slug}`;
+    if (!guide) throw notFound();
+    return guide;
+  },
+  head: ({ loaderData }) => {
+    if (!loaderData) {
+      return {
+        meta: [
+          { title: "Texas Policy Guide Not Found | Keep TX Red" },
+          { name: "robots", content: "noindex,follow" },
+        ],
+      };
+    }
+    const guide = loaderData;
+    const title = `${guide.title} | Keep TX Red`;
+    const description = guide.dek;
+    const pageUrl = `${SITE_URL}/issues/${guide.slug}`;
     return {
       meta: [
         { title },
@@ -73,7 +86,7 @@ export const Route = createFileRoute("/issues/$slug")({
         { property: "og:url", content: pageUrl },
       ],
       links: [{ rel: "canonical", href: pageUrl }],
-      scripts: guide ? [{
+      scripts: [{
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -85,26 +98,22 @@ export const Route = createFileRoute("/issues/$slug")({
           about: guide.category,
           isPartOf: { "@type": "CollectionPage", name: "Texas Issues & Policy Guides", url: `${SITE_URL}/issues` },
         }),
-      }] : [],
+      }],
     };
   },
   component: IssueGuidePage,
+  notFoundComponent: () => (
+    <main className="mx-auto max-w-3xl px-4 py-20">
+      <h1 className="font-display text-5xl">Guide not found</h1>
+      <p className="mt-4 text-muted-foreground">This Texas policy guide is not available.</p>
+      <a href="/issues" className="mt-6 inline-block font-semibold text-primary underline">Browse Texas issue guides</a>
+    </main>
+  ),
 });
 
 function IssueGuidePage() {
-  const { slug } = Route.useParams();
-  const guide = issueGuideBySlug[slug];
-
-  if (!guide) {
-    return (
-      <main className="mx-auto max-w-3xl px-4 py-20">
-        <h1 className="font-display text-5xl">Guide not found</h1>
-        <p className="mt-4 text-muted-foreground">This Texas policy guide is not available.</p>
-        <a href="/issues" className="mt-6 inline-block font-semibold text-primary underline">Browse Texas issue guides</a>
-      </main>
-    );
-  }
-
+  const guide = Route.useLoaderData();
+  const slug = guide.slug;
   const toolLinks = [...(guide.toolLinks ?? []), ...(GUIDE_TOOL_LINKS[slug] ?? [])]
     .filter((link, index, links) => links.findIndex((candidate) => candidate.href === link.href) === index);
   const hubLinks = CATEGORY_HUBS[guide.category] ?? [];
