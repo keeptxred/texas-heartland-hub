@@ -10,6 +10,7 @@ const PRIMARY_LINKS = [
   { to: "/news", label: "Texas News" },
   { to: "/texas-politics", label: "Politics" },
   { to: "/texas-case", label: "The Texas Case" },
+  { to: "/issues", label: "Texas Issues" },
   { to: "/elections/2026", label: "Election Central" },
   { to: "/bills", label: "Bills" },
   { to: "/texas-legislature", label: "Texas Legislature" },
