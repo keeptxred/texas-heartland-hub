@@ -23,14 +23,16 @@ describe("AdSense-ready image backfill", () => {
     expect(workflow).toContain("audience=keeptxred-newsroom");
   });
 
-  it("selects only articles already approved by the AdSense readiness audit", () => {
+  it("selects only image-missing articles already approved by the AdSense readiness audit", () => {
     expect(route).toContain('.from("adsense_cloud_article_readiness")');
     expect(route).toContain('.eq("adsense_ready", true)');
+    expect(route).toContain('.eq("image_ready", false)');
   });
 
-  it("uses the existing verified featured-image generator without becoming a new article writer", () => {
-    expect(route).toContain("generateFeaturedImageForSlugDirect(slug, false)");
-    expect(route).toContain("if (!generated.ok)");
+  it("repairs one exact eligible slug with verified overwrite semantics", () => {
+    expect(route).toContain('const requestedSlug = (url.searchParams.get("slug") ?? "").trim()');
+    expect(route).toContain("if (!slugs.includes(requestedSlug))");
+    expect(route).toContain("generateFeaturedImageForSlugDirect(requestedSlug, true)");
     expect(route).not.toContain('.update({ quality_flags:');
   });
 
@@ -41,12 +43,15 @@ describe("AdSense-ready image backfill", () => {
     expect(migration).toContain("BEFORE INSERT OR UPDATE OF featured_image_url");
   });
 
-  it("runs after the verified Cloudflare production deployment completes", () => {
+  it("drains exact missing-image slugs after verified Cloudflare deployment", () => {
     expect(workflow).toContain("workflow_run:");
     expect(workflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
     expect(workflow).toContain("github.event.workflow_run.conclusion == 'success'");
     expect(workflow).toContain("dry=1");
-    expect(workflow).toContain("limit=2&offset=${offset}");
+    expect(workflow).toContain(".slugs[:$max][]");
+    expect(workflow).toContain('"${endpoint}?slug=${encoded_slug}"');
+    expect(workflow).toContain("ready=0; image queue already clean");
+    expect(workflow).not.toContain("for offset in 0 2 4");
     expect(workflow).not.toContain("push:");
   });
 });
