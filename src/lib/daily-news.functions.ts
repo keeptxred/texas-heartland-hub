@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
 import { dedupeByTitle } from "@/lib/title-similarity";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
-import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
+import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { isPublicBreaking, PUBLIC_BREAKING_WINDOW_MS } from "@/lib/public-breaking";
 
 export type DailyArticle = {
@@ -32,10 +32,11 @@ export type DailyArticle = {
 type DailyArticleRow = DailyArticle & {
   body_json?: unknown;
   quality_flags?: string[] | null;
+  content_quality_score?: number | null;
 };
 
 const ARTICLE_PAGE_SIZE = 1000;
-const DAILY_ARTICLE_SELECT = "slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json,quality_flags";
+const DAILY_ARTICLE_SELECT = "slug,category,title,dek,author,source_name,source_url,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,seo_keywords,ctr_score,headline_variants,published_at,kind,score,is_breaking,body_json,quality_flags,content_quality_score";
 
 function getSupabaseClient() {
   const url = process.env.SUPABASE_URL;
@@ -50,10 +51,10 @@ function getSupabaseClient() {
 function stripPrivateFields(rows: DailyArticleRow[]): DailyArticle[] {
   return rows
     .filter((article) =>
-      !hasSeoDuplicateFlag(article.quality_flags)
+      isPublicArticleReady(article)
       && meetsArticleMainWordCount(article.kind, article.body_json as never),
     )
-    .map(({ body_json: _bodyJson, quality_flags: _qualityFlags, ...article }) => article);
+    .map(({ body_json: _bodyJson, quality_flags: _qualityFlags, content_quality_score: _qualityScore, ...article }) => article);
 }
 
 async function loadPublishedDailyArticles(limit: number): Promise<DailyArticle[]> {
@@ -111,27 +112,16 @@ export const getDailyArticles = createServerFn({ method: "GET" }).handler(async 
     loadFreshBreakingArticles(),
   ]);
 
-  // Preserve the broader newsroom/admin breaking flag in the database, but
-  // expose only strict public-breaking decisions to homepage consumers.
   const dailyRotated = rawDaily.map((article) => ({
     ...article,
     is_breaking: isPublicBreaking(article),
   }));
 
-  // Strict public-breaking stories are loaded explicitly and placed first so
-  // they cannot be lost to the generic newest-30 homepage display window.
-  // SEO-quarantined rows have already been removed by stripPrivateFields, so
-  // they cannot regain crawl prominence through homepage/newsroom discovery.
   const merged = dedupeByTitle([...freshBreaking, ...dailyRotated]).slice(0, 30);
   return { articles: merged };
 });
 
 export const getPublishedAuthorArticles = createServerFn({ method: "GET" }).handler(async () => {
-  // Author discovery must not depend on the homepage's 30-story display window.
-  // Page through a broad publication history so active desks with older,
-  // indexable bylines remain discoverable. Quarantined rows are excluded by the
-  // shared loader and therefore cannot keep an otherwise dormant author page
-  // exposed to search engines.
   const articles = dedupeByTitle(await loadPublishedDailyArticles(5000));
   return { articles };
 });
