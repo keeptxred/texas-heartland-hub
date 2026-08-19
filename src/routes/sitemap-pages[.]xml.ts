@@ -76,7 +76,6 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
   "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
   "/guides/texas-law-enforcement-public-safety-guide": GUIDE_LASTMOD,
-  "/authors": GSC_CANONICAL_REFRESH,
   ...SUPPORTING_GUIDE_LASTMOD,
   ...TEXAS_CASE_LASTMOD,
   ...TEXAS_CASE_FACTS_LASTMOD,
