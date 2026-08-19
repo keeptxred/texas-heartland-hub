@@ -1,0 +1,18 @@
+# Texas Political Reference
+
+Canonical hub: https://keeptxred.com/texas-political-reference
+
+Keep TX Red maintains 50 permanent, source-backed Texas political search guides across five categories: high-profile races, redistricting and electoral maps, voter and demographic trends, policy priorities, and grassroots/PAC/campaign activity.
+
+Reference rules:
+- Prefer Texas Secretary of State, Texas Legislature, Texas Redistricting, Texas Ethics Commission, FEC, state agencies, courts, Census, BLS, and other primary records when available.
+- Treat polling, campaign claims, party target lists, fundraising totals, endorsements, event schedules, and candidate status as time-sensitive and preserve review dates.
+- Do not treat modeled party affiliation as official Texas voter registration; Texas does not maintain permanent party registration.
+- Do not infer individual vote choice, ethnicity, political preference, or candidate support from geography alone.
+- Distinguish candidate committees, party committees, state PACs, federal PACs, Super PACs, and similarly named organizations.
+- Distinguish editorial positions in /texas-case from factual reference pages.
+
+Each guide has a canonical URL at:
+https://keeptxred.com/texas-political-reference/{slug}
+
+Use the canonical hub for the current catalog and internal links.
