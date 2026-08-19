@@ -20,7 +20,7 @@ const OIDC_AUDIENCE = "keeptxred-facebook";
 const REPOSITORY = "keeptxred/texas-heartland-hub";
 const WORKFLOW_PATH = ".github/workflows/auto-facebook-posts.yml";
 const SITE_URL = "https://keeptxred.com";
-const LOOKBACK_DAYS = 14;
+const MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS = 4;
 const MAX_CANDIDATES = 160;
 const MAX_ATTEMPTS = 12;
 const DIVERSITY_WINDOW_HOURS = 30;
@@ -196,7 +196,9 @@ async function runAutoFacebookPost(request: Request) {
     }
   }
 
-  const cutoff = new Date(Date.now() - LOOKBACK_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  const cutoff = new Date(
+    Date.now() - MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS * 24 * 60 * 60 * 1000,
+  ).toISOString();
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
     .select("slug,title,category,featured_image_url,published_at,source_name,kind,is_breaking,score,body_json")
@@ -216,7 +218,12 @@ async function runAutoFacebookPost(request: Request) {
   );
 
   if (articles.length === 0) {
-    return Response.json({ ok: true, posted: false, no_items: true, reason: "No eligible recent articles" });
+    return Response.json({
+      ok: true,
+      posted: false,
+      no_items: true,
+      reason: `No eligible articles newer than ${MAX_AUTO_FACEBOOK_ARTICLE_AGE_DAYS} days`,
+    });
   }
 
   const urls = articles.map(articleUrl);
