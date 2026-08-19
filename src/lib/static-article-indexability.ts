@@ -15,6 +15,11 @@ const RETIRED_CONTENT_CATEGORIES = new Set([
  * leave Google's index. Category-based retirement is handled from article
  * metadata; this slug list covers pages that need retirement independently of
  * their current metadata.
+ *
+ * The time-sensitive fixture-news entries below predate the current newsroom
+ * sourcing/chronology gate and use stale relative framing such as "ahead of the
+ * 2026 primary". They remain reachable for old links but are no longer promoted
+ * as current/indexable reporting.
  */
 const RETIRED_STATIC_SLUGS = new Set([
   "renting-vs-buying-in-texas",
@@ -34,14 +39,15 @@ const RETIRED_STATIC_SLUGS = new Set([
   "moving-to-el-paso-guide",
   "moving-to-texas-guide",
   "2026-07-06-rangers-texas-rangers-prospect-guide-the-next-stars-of-arlington",
+  "property-tax-relief-package",
+  "operation-lone-star",
+  "voter-id-surge",
+  "school-board-elections",
+  "speaker-special-session",
+  "isd-tax-burdens",
+  "permian-energy",
 ]);
 
-/**
- * Static articles predate the current newsroom quality gate. Topical fit takes
- * precedence over the old `pillar` flag: relocation, home-finance, lifestyle,
- * culture and history pages belong on TexasDefined rather than in Keep TX Red's
- * politics, government, law, elections and public-policy search footprint.
- */
 export function isStaticArticleIndexable(article: Pick<Article, "slug" | "pillar" | "contentCategory">): boolean {
   if (article.slug.startsWith("live-")) return false;
   if (RETIRED_STATIC_SLUGS.has(article.slug)) return false;
@@ -49,11 +55,6 @@ export function isStaticArticleIndexable(article: Pick<Article, "slug" | "pillar
   return true;
 }
 
-/**
- * Path-only entry point used by the global SEO helper. When a static registry
- * article exists, consult its topical metadata as well as the legacy slug rules
- * so direct URLs, sitemap inclusion, and list discovery share one decision.
- */
 export function isRetiredStaticNewsPath(path: string): boolean {
   const match = path.match(/^\/news\/([^/?#]+)$/);
   if (!match) return false;
