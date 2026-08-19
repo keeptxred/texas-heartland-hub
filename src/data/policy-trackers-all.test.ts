@@ -12,6 +12,7 @@ import { POLICY_TRACKERS_WAVE8 } from "@/data/policy-trackers-wave8";
 import { POLICY_TRACKERS_WAVE9 } from "@/data/policy-trackers-wave9";
 import { POLICY_TRACKERS_WAVE10 } from "@/data/policy-trackers-wave10";
 import { POLICY_TRACKERS_WAVE11 } from "@/data/policy-trackers-wave11";
+import { POLICY_TRACKERS_WAVE12 } from "@/data/policy-trackers-wave12";
 
 const expectedCount = [
   POLICY_TRACKERS,
@@ -25,6 +26,7 @@ const expectedCount = [
   POLICY_TRACKERS_WAVE9,
   POLICY_TRACKERS_WAVE10,
   POLICY_TRACKERS_WAVE11,
+  POLICY_TRACKERS_WAVE12,
 ].reduce((sum, wave) => sum + wave.length, 0);
 
 describe("unified policy tracker registry", () => {
