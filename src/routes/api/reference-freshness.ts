@@ -40,6 +40,19 @@ function dueDate(reviewed: string, days: number) {
 
 function handler() {
   const now = new Date();
+  const dataSetItems: FreshnessItem[] = ALL_DATA_SETS.map((dataset): FreshnessItem => {
+    const due = dueDate(dataset.updated, DATA_REVIEW_DAYS);
+    return {
+      kind: "data-source-map",
+      slug: dataset.slug,
+      path: `/data/${dataset.slug}`,
+      reviewed: dataset.updated,
+      reviewDays: DATA_REVIEW_DAYS,
+      dueAt: due.toISOString(),
+      overdue: due.getTime() < now.getTime(),
+    };
+  });
+
   const items: FreshnessItem[] = [
     ...POLITICAL_SEARCH_GUIDES.map((guide) => {
       const reviewDays = POLITICAL_REVIEW_DAYS[guide.category];
@@ -54,10 +67,7 @@ function handler() {
       const due = dueDate(topic.updated, LAW_REVIEW_DAYS);
       return { kind: "law-topic" as const, slug: topic.slug, path: `/laws/topic/${topic.slug}`, reviewed: topic.updated, reviewDays: LAW_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
-    ...ALL_DATA_SETS.map((dataset) => {
-      const due = dueDate(dataset.updated, DATA_REVIEW_DAYS);
-      return { kind: "data-source-map" as const, slug: dataset.slug, path: `/data/${dataset.slug}`, reviewed: dataset.updated, reviewDays: DATA_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
-    }),
+    ...dataSetItems,
     ...AGENCY_AUTHORITY_PROFILES.map((agency) => {
       const due = dueDate(agency.reviewed, AGENCY_REVIEW_DAYS);
       return { kind: "agency-authority" as const, slug: agency.slug, path: `/texas-government/agencies/${agency.slug}`, reviewed: agency.reviewed, reviewDays: AGENCY_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
