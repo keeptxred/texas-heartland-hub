@@ -10,6 +10,7 @@ import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
+import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
@@ -30,7 +31,8 @@ const TEXAS_CASE_FACTS_LASTMOD = Object.fromEntries(TEXAS_CASE_FACTS.map((facts)
 const POLITICAL_REFERENCE_LASTMOD = Object.fromEntries(POLITICAL_SEARCH_GUIDES.map((guide) => [`/texas-political-reference/${guide.slug}`, toIsoDate(`${guide.updated}T12:00:00-05:00`)]));
 const POLICY_TRACKER_LASTMOD = Object.fromEntries(POLICY_TRACKERS.map((tracker) => [`/policy/${tracker.slug}`, toIsoDate(`${tracker.updated}T12:00:00-05:00`)]));
 const LAW_TOPIC_LASTMOD = Object.fromEntries(LAW_TOPICS.map((topic) => [`/laws/topic/${topic.slug}`, toIsoDate(`${topic.updated}T12:00:00-05:00`)]));
-const DATA_SET_LASTMOD = Object.fromEntries(TEXAS_DATA_SETS.map((dataset) => [`/data/${dataset.slug}`, toIsoDate(`${dataset.updated}T12:00:00-05:00`)]));
+const ALL_DATA_SETS = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS];
+const DATA_SET_LASTMOD = Object.fromEntries(ALL_DATA_SETS.map((dataset) => [`/data/${dataset.slug}`, toIsoDate(`${dataset.updated}T12:00:00-05:00`)]));
 const AGENCY_LASTMOD = Object.fromEntries(AGENCY_AUTHORITY_PROFILES.map((agency) => [`/texas-government/agencies/${agency.slug}`, toIsoDate(`${agency.reviewed}T12:00:00-05:00`)]));
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
@@ -101,4 +103,4 @@ const STATIC_PATHS:string[]=[
   "/authors","/shop",
 ];
 
-export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`),...TEXAS_CASE_POSITIONS.map((position)=>`/texas-case/${position.slug}`),...TEXAS_CASE_FACTS.map((facts)=>`/texas-case/facts/${facts.slug}`),...POLITICAL_SEARCH_GUIDES.map((guide)=>`/texas-political-reference/${guide.slug}`),...POLICY_TRACKERS.map((tracker)=>`/policy/${tracker.slug}`),...LAW_TOPICS.map((topic)=>`/laws/topic/${topic.slug}`),...TEXAS_DATA_SETS.map((dataset)=>`/data/${dataset.slug}`),...AGENCY_AUTHORITY_PROFILES.map((agency)=>`/texas-government/agencies/${agency.slug}`)];for(const league of SPORTS_SITEMAP_LEAGUES){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}for(const topic of SPORTS_SITEMAP_TOPICS){if(await hasEnoughContent({keyword:topic},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/topic/${topic}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});
+export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`),...TEXAS_CASE_POSITIONS.map((position)=>`/texas-case/${position.slug}`),...TEXAS_CASE_FACTS.map((facts)=>`/texas-case/facts/${facts.slug}`),...POLITICAL_SEARCH_GUIDES.map((guide)=>`/texas-political-reference/${guide.slug}`),...POLICY_TRACKERS.map((tracker)=>`/policy/${tracker.slug}`),...LAW_TOPICS.map((topic)=>`/laws/topic/${topic.slug}`),...ALL_DATA_SETS.map((dataset)=>`/data/${dataset.slug}`),...AGENCY_AUTHORITY_PROFILES.map((agency)=>`/texas-government/agencies/${agency.slug}`)];for(const league of SPORTS_SITEMAP_LEAGUES){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}for(const topic of SPORTS_SITEMAP_TOPICS){if(await hasEnoughContent({keyword:topic},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/topic/${topic}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});

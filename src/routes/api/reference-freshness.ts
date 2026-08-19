@@ -3,6 +3,7 @@ import { POLITICAL_SEARCH_GUIDES, type PoliticalSearchGuideCategory } from "@/da
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
+import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
 import { TEXAS_LEGISLATIVE_SEATS } from "@/data/texas-legislators.generated";
 import { stateDistrictSlug } from "@/lib/state-districts";
@@ -30,14 +31,36 @@ type FreshnessItem = {
   overdue: boolean;
 };
 
+type ReviewableDataSet = { slug: string; updated: string };
+
 function dueDate(reviewed: string, days: number) {
   const due = new Date(`${reviewed}T12:00:00-05:00`);
   due.setUTCDate(due.getUTCDate() + days);
   return due;
 }
 
+function mapDataFreshness(datasets: readonly ReviewableDataSet[], now: Date): FreshnessItem[] {
+  return datasets.map((dataset) => {
+    const due = dueDate(dataset.updated, DATA_REVIEW_DAYS);
+    return {
+      kind: "data-source-map",
+      slug: dataset.slug,
+      path: `/data/${dataset.slug}`,
+      reviewed: dataset.updated,
+      reviewDays: DATA_REVIEW_DAYS,
+      dueAt: due.toISOString(),
+      overdue: due.getTime() < now.getTime(),
+    };
+  });
+}
+
 function handler() {
   const now = new Date();
+  const dataSetItems: FreshnessItem[] = [
+    ...mapDataFreshness(TEXAS_DATA_SETS, now),
+    ...mapDataFreshness(ACCOUNTABILITY_DATA_SETS, now),
+  ];
+
   const items: FreshnessItem[] = [
     ...POLITICAL_SEARCH_GUIDES.map((guide) => {
       const reviewDays = POLITICAL_REVIEW_DAYS[guide.category];
@@ -52,10 +75,7 @@ function handler() {
       const due = dueDate(topic.updated, LAW_REVIEW_DAYS);
       return { kind: "law-topic" as const, slug: topic.slug, path: `/laws/topic/${topic.slug}`, reviewed: topic.updated, reviewDays: LAW_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
-    ...TEXAS_DATA_SETS.map((dataset) => {
-      const due = dueDate(dataset.updated, DATA_REVIEW_DAYS);
-      return { kind: "data-source-map" as const, slug: dataset.slug, path: `/data/${dataset.slug}`, reviewed: dataset.updated, reviewDays: DATA_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
-    }),
+    ...dataSetItems,
     ...AGENCY_AUTHORITY_PROFILES.map((agency) => {
       const due = dueDate(agency.reviewed, AGENCY_REVIEW_DAYS);
       return { kind: "agency-authority" as const, slug: agency.slug, path: `/texas-government/agencies/${agency.slug}`, reviewed: agency.reviewed, reviewDays: AGENCY_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
