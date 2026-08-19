@@ -5,6 +5,7 @@ import {
   type AuthorityEntityType,
 } from '@/lib/authority-entity';
 import { authorityEntityPath } from '@/lib/authority-entity-paths';
+import { isPublicArticleReady } from '@/lib/public-article-readiness';
 
 const db = supabase as any;
 
@@ -54,7 +55,6 @@ const fallback = (row: any): RelatedAuthorityItem => {
     government: '/texas-government/',
     session: '/texas-legislature/sessions/',
     subject: '/bills/subject/',
-    article: '/news/',
   };
   const type = row.target_type as AuthorityRelationshipType;
   const href = isAuthorityEntityType(type)
@@ -99,18 +99,23 @@ export async function getRelatedAuthorityContent(
           .in('id', billIds)
       : { data: [] },
     articleIds.length
-      ? db.from('daily_articles').select('id,title,slug,dek').in('id', articleIds)
+      ? db
+          .from('daily_articles')
+          .select('id,title,slug,dek,category,source_name,source_url,published_at,content_quality_score,body_json,quality_flags')
+          .in('id', articleIds)
       : { data: [] },
   ]);
   const billMap = new Map((bills.data ?? []).map((bill: any) => [bill.id, bill]));
   const articleMap = new Map(
-    (articles.data ?? []).map((article: any) => [article.id, article]),
+    (articles.data ?? [])
+      .filter((article: any) => isPublicArticleReady(article))
+      .map((article: any) => [article.id, article]),
   );
 
-  return rows.map((row: any) => {
+  return rows.flatMap((row: any): RelatedAuthorityItem[] => {
     if (row.target_type === 'bill' && billMap.has(row.target_key)) {
       const bill: any = billMap.get(row.target_key);
-      return {
+      return [{
         type: 'bill',
         key: row.target_key,
         relationship: row.relationship_type,
@@ -118,11 +123,12 @@ export async function getRelatedAuthorityContent(
         title: `${bill.bill_identifier}: ${bill.caption}`,
         description: bill.current_status_label,
         href: canonicalBillPath(bill),
-      };
+      }];
     }
-    if (row.target_type === 'article' && articleMap.has(row.target_key)) {
+    if (row.target_type === 'article') {
+      if (!articleMap.has(row.target_key)) return [];
       const article: any = articleMap.get(row.target_key);
-      return {
+      return [{
         type: 'article',
         key: row.target_key,
         relationship: row.relationship_type,
@@ -130,8 +136,8 @@ export async function getRelatedAuthorityContent(
         title: article.title,
         description: article.dek,
         href: `/news/${article.slug}`,
-      };
+      }];
     }
-    return fallback(row);
+    return [fallback(row)];
   });
 }
