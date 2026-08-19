@@ -1,6 +1,6 @@
 import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
 
-type PublicArticleCandidate = {
+export type PublicArticleCandidate = {
   category?: string | null;
   source_name?: string | null;
   source_url?: string | null;
