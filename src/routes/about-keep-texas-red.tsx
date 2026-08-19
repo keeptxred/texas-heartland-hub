@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 const URL_SELF = "https://keeptxred.com/about-keep-texas-red";
 const TITLE = "About Keep Texas Red | Texas Politics, Elections & News";
 const DESC =
-  "Learn about Keep Texas Red (KeepTXRed), an independent Texas publication covering politics, elections, legislation, public officials, statewide news, business, and civic life.";
+  "Keep Texas Red delivers Texas news, commentary, government accountability, and common-sense analysis backed by elections, legislation, and civic resources.";
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
 export const Route = createFileRoute("/about-keep-texas-red")({
@@ -57,7 +57,7 @@ export const Route = createFileRoute("/about-keep-texas-red")({
               name: "What is Keep Texas Red?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "Keep Texas Red is an independent Texas publication covering state politics, elections, legislation, public officials, statewide news, business, and civic affairs.",
+                text: "Keep Texas Red is an independent Texas publication delivering Texas news, commentary, government accountability, and common-sense analysis.",
               },
             },
             {
@@ -98,8 +98,8 @@ function AboutKeepTexasRed() {
       </h1>
       <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
         <strong>Keep Texas Red</strong>, also known as <strong>Keep TX Red</strong> and <strong>KeepTXRed</strong>,
-        is an independent publication focused on the decisions, elections, officials, legislation, and
-        public debates shaping Texas.
+        delivers Texas news, commentary, government accountability, and common-sense analysis, backed by
+        reporting and reference resources on the decisions, elections, officials, legislation, and public debates shaping Texas.
       </p>
 
       <section className="mt-12">
@@ -123,9 +123,9 @@ function AboutKeepTexasRed() {
       <section className="mt-10">
         <h2 className="text-2xl font-semibold text-foreground">Our mission</h2>
         <p className="mt-3 leading-relaxed text-muted-foreground">
-          Our goal is to make Texas public affairs easier to follow. That means connecting news stories
-          to the candidates, districts, offices, bills, committees, elections, and laws behind them instead
-          of treating each headline as an isolated event.
+          Our goal is to make Texas public affairs easier to follow while applying clear, common-sense analysis.
+          That means connecting news stories to the candidates, districts, offices, bills, committees, elections,
+          and laws behind them instead of treating each headline as an isolated event.
         </p>
       </section>
 
