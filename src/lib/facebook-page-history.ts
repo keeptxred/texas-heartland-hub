@@ -10,6 +10,7 @@ export type FacebookPagePost = {
 export type FacebookArticleIdentity = {
   title: string;
   url: string;
+  alternateUrls?: string[];
 };
 
 function normalizeWhitespace(value: string): string {
@@ -26,16 +27,38 @@ export function normalizeFacebookHeadline(value: string): string {
   );
 }
 
+export function canonicalArticleUrlKey(raw: string): string | null {
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    const host = url.hostname.toLowerCase().replace(/^www\./, "");
+    const path = (url.pathname.replace(/\/+$/, "") || "/").toLowerCase();
+    return `${host}${path}`;
+  } catch {
+    return null;
+  }
+}
+
 export function canonicalKtrArticlePath(raw: string): string | null {
   try {
     const url = new URL(raw);
     const host = url.hostname.toLowerCase().replace(/^www\./, "");
     if (host !== "keeptxred.com") return null;
-    const path = url.pathname.replace(/\/+$/, "") || "/";
-    return path.toLowerCase();
+    return url.pathname.replace(/\/+$/, "").toLowerCase() || "/";
   } catch {
     return null;
   }
+}
+
+function extractMessageUrlKeys(message: string): Set<string> {
+  const keys = new Set<string>();
+  const matches = message.match(/https?:\/\/[^\s<>()]+/gi) ?? [];
+  for (const raw of matches) {
+    const cleaned = raw.replace(/[.,!?;:'"\])}]+$/g, "");
+    const key = canonicalArticleUrlKey(cleaned);
+    if (key) keys.add(key);
+  }
+  return keys;
 }
 
 function meaningfulTokens(value: string): Set<string> {
@@ -65,6 +88,12 @@ export function facebookPostMatchesArticle(
   article: FacebookArticleIdentity,
 ): boolean {
   const message = post.message ?? "";
+  const messageUrlKeys = extractMessageUrlKeys(message);
+  for (const rawUrl of [article.url, ...(article.alternateUrls ?? [])]) {
+    const key = canonicalArticleUrlKey(rawUrl);
+    if (key && messageUrlKeys.has(key)) return true;
+  }
+
   const articlePath = canonicalKtrArticlePath(article.url);
   if (articlePath && message.toLowerCase().includes(articlePath)) return true;
 
