@@ -1,3 +1,4 @@
+-- BULK_ARTICLE_MAINTENANCE
 -- AdSense Phase 35: one ready cloud story was stored as generic Texas News
 -- even though it is clearly Texas college sports. Keep the production data
 -- correction reproducible in migration history.
