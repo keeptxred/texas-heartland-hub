@@ -1,10 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { getStateDistrictDirectory } from "@/lib/state-districts.functions";
-import { STATE_DISTRICT_PLANS, partyLabel } from "@/lib/state-districts";
+import { STATE_DISTRICT_PLANS, partyLabel, stateDistrictSlug, type StateDistrictSummary } from "@/lib/state-districts";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Texas Legislative Districts | House & Senate District Directory";
 const DESCRIPTION = "Permanent Keep TX Red directory for all 150 Texas House districts and 31 Texas Senate districts, with current members, official maps, legislation, election history, and primary sources.";
+const DISTRICT_LIST = [
+  ...Array.from({ length: STATE_DISTRICT_PLANS.house.seats }, (_, index) => ({ chamber: "house" as const, district: index + 1 })),
+  ...Array.from({ length: STATE_DISTRICT_PLANS.senate.seats }, (_, index) => ({ chamber: "senate" as const, district: index + 1 })),
+];
 
 export const Route = createFileRoute("/districts")({
   loader: () => getStateDistrictDirectory(),
@@ -15,7 +19,18 @@ export const Route = createFileRoute("/districts")({
       links: seo.links,
       scripts: [
         { type: "application/ld+json", children: JSON.stringify(webPageJsonLd({ name: TITLE, description: DESCRIPTION, path: "/districts", type: "CollectionPage" })) },
-        { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Texas legislative districts", numberOfItems: 181, itemListElement: Array.from({ length: 181 }, (_, index) => ({ "@type": "ListItem", position: index + 1 })) }) },
+        { type: "application/ld+json", children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Texas legislative districts",
+          numberOfItems: DISTRICT_LIST.length,
+          itemListElement: DISTRICT_LIST.map((item, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: `${STATE_DISTRICT_PLANS[item.chamber].chamberLabel} District ${item.district}`,
+            url: `${SITE_URL}/districts/${stateDistrictSlug(item.chamber, item.district)}`,
+          })),
+        }) },
       ],
     };
   },
@@ -77,7 +92,7 @@ function StateDistrictDirectoryPage() {
   );
 }
 
-function DistrictSection({ title, description, districts }: { title: string; description: string; districts: ReturnType<typeof Route.useLoaderData> }) {
+function DistrictSection({ title, description, districts }: { title: string; description: string; districts: StateDistrictSummary[] }) {
   return (
     <section className="mx-auto max-w-[1180px] px-6 py-10">
       <div className="mb-6 border-b pb-4">
