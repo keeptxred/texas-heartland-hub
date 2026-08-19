@@ -5,6 +5,7 @@ import forecasts from "@/data/elections/2026/forecasts.json";
 import polls from "@/data/elections/2026/polls.json";
 import races from "@/data/elections/2026/races.json";
 import results from "@/data/elections/2026/results.json";
+import { candidateSeoSlug, raceSeoSlug } from "@/lib/elections/seoSlugs";
 import { buildElectionSitemapEntries } from "@/lib/elections/sitemap";
 import { renderUrlset, xmlResponse } from "@/lib/sitemap-shared";
 
@@ -20,9 +21,9 @@ export const Route = createFileRoute("/sitemap-elections.xml")({
           // district-specific programmatic URLs. Keep the statewide/core race pages
           // in the priority sitemap and let district pages remain reachable through
           // Election Central until they have enough unique value to deserve promotion.
-          races: publicRecords(races, "/elections/races/").filter(
-            (record) => !DISTRICT_RACE_SLUG.test(record.path.replace("/elections/races/", "")),
-          ),
+          races: publicRaceRecords(races).filter(
+            (record) => !DISTRICT_RACE_SLUG.test(record.storedSlug),
+          ).map(({ storedSlug: _storedSlug, ...record }) => record),
           candidates: publicCandidateRecords(candidates),
           additionalPages: [
             ...publicRecords(polls, "/elections/polls/"),
@@ -112,12 +113,38 @@ function publicCandidateRecords(records: readonly Record<string, unknown>[]) {
         typeof record.slug === "string" &&
         isSitemapWorthyCandidate(record),
     )
-    .map((record) => ({
-      path: `/elections/candidates/${record.slug}`,
-      canonicalPath: `/elections/candidates/${record.slug}`,
-      updatedAt: String(record.updatedAt ?? record.dataAsOf ?? newestElectionUpdate()),
-      indexable: true,
-    }));
+    .map((record) => {
+      const canonicalSlug = candidateSeoSlug(String(record.slug));
+      const path = `/elections/candidates/${canonicalSlug}`;
+      return {
+        path,
+        canonicalPath: path,
+        updatedAt: String(record.updatedAt ?? record.dataAsOf ?? newestElectionUpdate()),
+        indexable: true,
+      };
+    });
+}
+
+function publicRaceRecords(records: readonly Record<string, unknown>[]) {
+  return records
+    .filter(
+      (record) =>
+        record.publicationStatus === "published" &&
+        record.verificationStatus === "verified" &&
+        typeof record.slug === "string",
+    )
+    .map((record) => {
+      const storedSlug = String(record.slug);
+      const canonicalSlug = raceSeoSlug(storedSlug);
+      const path = `/elections/races/${canonicalSlug}`;
+      return {
+        path,
+        canonicalPath: path,
+        updatedAt: String(record.updatedAt ?? record.dataAsOf ?? newestElectionUpdate()),
+        indexable: true,
+        storedSlug,
+      };
+    });
 }
 
 function publicRecords(records: readonly Record<string, unknown>[], prefix: string) {
