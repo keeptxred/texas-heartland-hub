@@ -22,6 +22,24 @@ describe("Government Graph matching", () => {
     expect(links.some((link) => link.href === "/elections/2026")).toBe(true);
   });
 
+  it("connects procurement reporting to Texas Contract Watch", () => {
+    const links = getGovernmentGraphLinks(
+      "A state agency awarded a procurement contract to a vendor after a competitive solicitation and later amended the contract value.",
+      8,
+    );
+
+    expect(links.some((link) => link.href === "/data/contracts")).toBe(true);
+  });
+
+  it("connects agency rulemaking reporting to Texas Rule Watch", () => {
+    const links = getGovernmentGraphLinks(
+      "The agency published a proposed rule with a public comment deadline before adoption and an eventual effective date.",
+      8,
+    );
+
+    expect(links.some((link) => link.href === "/data/rules")).toBe(true);
+  });
+
   it("honors exclusions so pages do not recommend duplicate destinations", () => {
     const links = getGovernmentGraphLinks(
       "The Texas Legislature is considering a bill in committee before lawmakers vote.",
