@@ -16,12 +16,15 @@ const DISCOVERY_PRIORITY_LINKS = [
   { title: "Latest Texas news", href: "/news", description: "Breaking news, statewide reporting, politics, business, and public affairs." },
   { title: "Texas politics", href: "/texas-politics", description: "Reporting and explainers on state government, campaigns, officials, and policy." },
   { title: "The Texas Case", href: "/texas-case", description: "KTR's permanent editorial arguments on life, liberty, taxes, rights, education, and border security." },
+  { title: "Policy trackers", href: "/policy", description: "Permanent issue pages for taxes, border security, education, energy, elections, crime, water, healthcare, and more." },
+  { title: "Legislative districts", href: "/districts", description: "Permanent authority pages for every Texas House and Senate district, independent of the current officeholder." },
   { title: "Texas Legislature", href: "/texas-legislature", description: "Sessions, lawmakers, committees, chambers, and legislative resources." },
+  { title: "Texas law library", href: "/laws/topics", description: "Plain-English legal frameworks grounded in Texas statutes and official sources." },
+  { title: "Texas Data Center", href: "/data", description: "Authoritative source maps for taxes, spending, elections, demographics, energy, water, and public safety." },
+  { title: "Representatives", href: "/representatives", description: "Find Texas lawmakers and connect legislative coverage to public officials." },
   { title: "Border security", href: "/texas-border-security", description: "Texas border policy, enforcement, federal-state disputes, and related reporting." },
   { title: "Energy", href: "/texas-energy", description: "ERCOT, oil and gas, electricity, grid policy, and the Texas energy economy." },
   { title: "Texas economy", href: "/texas-economy", description: "Jobs, taxes, business, growth, regulation, and major economic developments." },
-  { title: "Texas laws", href: "/laws", description: "Plain-language guides to Texas laws, legal changes, and civic rules." },
-  { title: "Representatives", href: "/representatives", description: "Find Texas lawmakers and connect legislative coverage to public officials." },
 ] as const;
 
 function homepageHead() {
@@ -81,7 +84,7 @@ function DiscoveryPriorityLinks() {
         <div className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">More from Keep TX Red</p>
           <h2 id="keep-tx-red-discovery-priority" className="mt-2 font-display text-3xl">Texas news, commentary, government and policy</h2>
-          <p className="mt-3 leading-7 text-muted-foreground">Election Central is the homepage focus during election season, while KTR continues publishing statewide news, permanent editorial positions, and core civic reference coverage.</p>
+          <p className="mt-3 leading-7 text-muted-foreground">Election Central is the homepage focus during election season, while KTR continues publishing statewide news, permanent editorial positions, policy trackers, district authority, law guides, and official-data reference coverage.</p>
         </div>
         <nav className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-label="Core Keep TX Red coverage">
           {DISCOVERY_PRIORITY_LINKS.map((item) => (
@@ -137,7 +140,7 @@ function PoliticalHomepage() {
           <aside className="rounded-xl border border-white/15 bg-white/5 p-6">
             <p className="text-xs font-bold uppercase tracking-[0.2em] text-primary">Start here</p>
             <nav className="mt-4 grid gap-3">
-              {[["Read The Texas Case", "/texas-case"], ["Find your representatives", "/find-representative"], ["Explore the Texas Legislature", "/texas-legislature"], ["Register to vote", "/register-to-vote"], ["Contact Texas legislators", "/contact-legislators"], ["Browse Texas laws", "/laws"]].map(([label, to]) => <Link key={to} to={to} className="flex justify-between border-b border-white/10 py-2 text-sm font-semibold hover:text-primary"><span>{label}</span><span aria-hidden>→</span></Link>)}
+              {[["Read The Texas Case", "/texas-case"], ["Find your representatives", "/find-representative"], ["Browse legislative districts", "/districts"], ["Explore policy trackers", "/policy"], ["Explore the Texas Legislature", "/texas-legislature"], ["Browse Texas laws", "/laws/topics"]].map(([label, to]) => <Link key={to} to={to} className="flex justify-between border-b border-white/10 py-2 text-sm font-semibold hover:text-primary"><span>{label}</span><span aria-hidden>→</span></Link>)}
             </nav>
           </aside>
         </div>
