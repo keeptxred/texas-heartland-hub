@@ -55,6 +55,22 @@ const GUIDE_TOOL_LINKS: Record<string, Array<{ label: string; href: string }>> =
   "texas-dei-higher-education": [{ label: "Bill finder", href: "/civic-tools/bill-finder" }],
   "texas-medical-transition-minors-law": [{ label: "Texas law finder", href: "/civic-tools/texas-law-finder" }],
   "texas-state-federal-power": [{ label: "Government authority finder", href: "/civic-tools/government-authority-finder" }],
+  "texas-abortion-law-pro-life-policy": [
+    { label: "Texas law finder", href: "/civic-tools/texas-law-finder" },
+    { label: "Bill finder", href: "/civic-tools/bill-finder" },
+  ],
+  "texas-bail-criminal-justice": [
+    { label: "Texas law finder", href: "/civic-tools/texas-law-finder" },
+    { label: "Government authority finder", href: "/civic-tools/government-authority-finder" },
+  ],
+  "texas-rural-healthcare": [
+    { label: "Government authority finder", href: "/civic-tools/government-authority-finder" },
+    { label: "Texas law finder", href: "/civic-tools/texas-law-finder" },
+  ],
+  "texas-local-preemption-home-rule": [
+    { label: "Government authority finder", href: "/civic-tools/government-authority-finder" },
+    { label: "Bill finder", href: "/civic-tools/bill-finder" },
+  ],
 };
 
 export const Route = createFileRoute("/issues/$slug")({
