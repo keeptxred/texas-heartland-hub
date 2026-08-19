@@ -4,6 +4,7 @@ import {
   assessRewritePreflight,
   assertRewriteableOrThrow,
   PreflightBlockedError,
+  SHORT_RELEASE_MIN_SOURCE_WORDS,
 } from "@/lib/rewrite-preflight";
 
 const SHORT_RSS =
@@ -43,6 +44,14 @@ will allocate $250 million in emergency funds. Attorney General Ken Paxton filed
 order today. Senator Charles Perry voted in support. Harris County will receive 42% of the initial
 500,000 dollar disbursement. State officials said the program begins January 1, 2026 and directs
 the Texas Division of Emergency Management to publish implementation rules within 90 days.`;
+
+function repeatedReleaseAtLeast(minWords: number): string {
+  let release = FACT_DENSE_RELEASE_PARAGRAPH;
+  while (release.trim().split(/\s+/).length < minWords) {
+    release = `${release}\n\n${FACT_DENSE_RELEASE_PARAGRAPH}`;
+  }
+  return release;
+}
 
 describe("assessRewritePreflight — extracted body vs RSS blurb", () => {
   it("blocks when only a short RSS description is passed", () => {
@@ -90,14 +99,28 @@ describe("assessRewritePreflight — extracted body vs RSS blurb", () => {
     expect(r.reason).toBe("BODY_TOO_SHORT");
   });
 
-  it("passes fact-dense official releases after they clear the absolute floor", () => {
-    const release = `${FACT_DENSE_RELEASE_PARAGRAPH}\n\n${FACT_DENSE_RELEASE_PARAGRAPH}\n\n${FACT_DENSE_RELEASE_PARAGRAPH}`;
+  it("blocks fact-dense official releases that clear 150 words but not the 300-word source-depth floor", () => {
+    const release = repeatedReleaseAtLeast(ABSOLUTE_MIN_SOURCE_WORDS);
     const r = assessRewritePreflight({
       title: "Texas Announces $250M Emergency Fund",
       description: release,
       link: "https://gov.texas.gov/news/release",
     });
     expect(r.sourceWordCount).toBeGreaterThanOrEqual(ABSOLUTE_MIN_SOURCE_WORDS);
+    expect(r.sourceWordCount).toBeLessThan(SHORT_RELEASE_MIN_SOURCE_WORDS);
+    expect(r.factualSignalCount).toBeGreaterThanOrEqual(6);
+    expect(r.rewriteable).toBe(false);
+    expect(r.reason).toBe("BODY_TOO_SHORT");
+  });
+
+  it("passes fact-dense official releases after they clear the 300-word source-depth floor", () => {
+    const release = repeatedReleaseAtLeast(SHORT_RELEASE_MIN_SOURCE_WORDS);
+    const r = assessRewritePreflight({
+      title: "Texas Announces $250M Emergency Fund",
+      description: release,
+      link: "https://gov.texas.gov/news/release",
+    });
+    expect(r.sourceWordCount).toBeGreaterThanOrEqual(SHORT_RELEASE_MIN_SOURCE_WORDS);
     expect(r.sourceWordCount).toBeLessThan(400);
     expect(r.rewriteable).toBe(true);
     expect(r.reason).toBe("READY");
