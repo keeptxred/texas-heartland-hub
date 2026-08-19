@@ -3,6 +3,20 @@ import type { PolicyTracker } from "@/data/policy-trackers";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 
+const POLICY_REVIEW_DAYS = 30;
+const PERMANENT_HREF_ALIASES: Record<string, string> = {
+  "/texas-case/secure-border": "/texas-case/secure-texas-border",
+  "/texas-case/facts/secure-border": "/texas-case/facts/secure-texas-border",
+  "/texas-case/gun-rights": "/texas-case/gun-rights-over-gun-control",
+  "/texas-case/facts/gun-rights": "/texas-case/facts/gun-rights-over-gun-control",
+  "/texas-case/protecting-unborn-life": "/texas-case/protect-unborn-life",
+  "/texas-case/facts/protecting-unborn-life": "/texas-case/facts/protect-unborn-life",
+};
+
+function canonicalPermanentHref(href: string) {
+  return PERMANENT_HREF_ALIASES[href] ?? href;
+}
+
 function relatedGuides(tracker: PolicyTracker) {
   const keywords = tracker.keywords.map((keyword) => keyword.toLowerCase());
   return POLITICAL_SEARCH_GUIDES
@@ -15,6 +29,11 @@ function relatedGuides(tracker: PolicyTracker) {
     .sort((a, b) => b.score - a.score)
     .slice(0, 4)
     .map(({ guide }) => guide);
+}
+
+function policyIsStale(tracker: PolicyTracker) {
+  const reviewed = new Date(`${tracker.updated}T23:59:59-05:00`).getTime();
+  return Date.now() - reviewed > POLICY_REVIEW_DAYS * 86_400_000;
 }
 
 export function policyTrackerHead(tracker: PolicyTracker) {
@@ -70,6 +89,7 @@ export function policyTrackerHead(tracker: PolicyTracker) {
 
 export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
   const guides = relatedGuides(tracker);
+  const stale = policyIsStale(tracker);
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
       <nav aria-label="Breadcrumb" className="mb-6 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -85,6 +105,8 @@ export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
         <span className="font-semibold text-foreground">Keep TX Red Policy Desk</span><span>•</span>
         <span>Reviewed <time dateTime={tracker.updated}>{new Date(`${tracker.updated}T12:00:00-05:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></span>
       </div>
+
+      {stale ? <aside className="mt-5 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm leading-6"><strong>Freshness notice:</strong> This tracker has passed KTR's {POLICY_REVIEW_DAYS}-day policy review window. Use the official sources below for the latest controlling law, agency action, or data while the Policy Desk refreshes the page.</aside> : null}
 
       <section className="mt-8 border-l-4 border-primary bg-primary/5 p-6">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Quick answer</p>
@@ -124,7 +146,10 @@ export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
       <section className="mt-10 rounded-xl border bg-card p-6">
         <h2 className="font-display text-2xl tracking-tight">Permanent KTR context</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          {tracker.related.map((item) => <a key={item.href} href={item.href} className="rounded-lg border p-4 text-sm font-semibold text-primary hover:border-primary">{item.label} →</a>)}
+          {tracker.related.map((item) => {
+            const href = canonicalPermanentHref(item.href);
+            return <a key={`${item.label}-${href}`} href={href} className="rounded-lg border p-4 text-sm font-semibold text-primary hover:border-primary">{item.label} →</a>;
+          })}
         </div>
       </section>
 
