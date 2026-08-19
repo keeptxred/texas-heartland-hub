@@ -4,7 +4,7 @@ import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
 import { SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
-import { TEXAS_CASE_POSITIONS } from "@/data/texas-case";
+import { TEXAS_CASE_POSITIONS } from "@/data/texas-case-all";
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
 const GSC_CANONICAL_REFRESH = toIsoDate("2026-08-11T12:30:00-05:00");
