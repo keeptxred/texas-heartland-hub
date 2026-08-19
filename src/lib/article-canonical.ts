@@ -15,11 +15,10 @@ import { newsClusterKey } from "@/lib/article-slug-integrity";
 /**
  * Quality flags that mean "do not advertise this URL to search engines".
  *
- * The first group covers explicit duplicate/noindex decisions. The Phase 2
- * markers below are stronger editorial findings from the legacy inventory
- * audit: a row carrying one of those markers must stay out of page indexing
- * and every article sitemap even if a future cleanup forgets to add the
- * redundant `seo_noindex` flag.
+ * This list is also the public-discovery quarantine contract used by newsroom
+ * loaders. Keep it synchronized with the AdSense readiness audit so a row that
+ * is deliberately noindexed cannot still be promoted through homepage,
+ * newsroom, or author discovery.
  */
 export const SEO_DUPLICATE_FLAGS = [
   "seo_duplicate",
@@ -36,6 +35,7 @@ export const SEO_DUPLICATE_FLAGS = [
   "seo_false_multisource",
   "source_integrity_failure",
   "seo_off_topic",
+  "site_boundary_violation",
 ] as const;
 
 export function hasSeoDuplicateFlag(flags: string[] | null | undefined): boolean {
@@ -75,12 +75,11 @@ export function resolveRedirectChain(
   for (let hop = 0; hop < maxHops; hop++) {
     const next = (get(current) ?? "").trim();
     if (!next) break;
-    if (next === current || seen.has(next)) return null; // self redirect or loop
+    if (next === current || seen.has(next)) return null;
     seen.add(next);
     current = next;
   }
   if (current === start) return null;
-  // Chain longer than allowed and still pointing somewhere: refuse.
   if (get(current)) return null;
   return current;
 }
@@ -89,10 +88,6 @@ export function resolveRedirectChain(
  * Same-event clustering
  * ------------------------------------------------------------------ */
 
-/**
- * Markers that signal a materially new development in an ongoing story.
- * These keep legitimate follow-up reporting publishable and indexable.
- */
 const FOLLOW_UP_MARKERS = [
   /\barrest(ed|s)?\b/i,
   /\bindict(ed|ment)\b/i,
@@ -115,10 +110,6 @@ function numbersIn(title: string): string[] {
   return (title.match(/\d+(?:[.,]\d+)?/g) ?? []).filter((n) => n.length > 0);
 }
 
-/**
- * True when `candidate` reads like a new development on the same story as
- * `existing` rather than a straight rewrite of it.
- */
 export function isFollowUpDevelopment(existing: string, candidate: string): boolean {
   const a = existing ?? "";
   const b = candidate ?? "";
@@ -132,17 +123,10 @@ export function isFollowUpDevelopment(existing: string, candidate: string): bool
   );
   if (newMarker) return true;
 
-  // New concrete figures (death toll, vote count, dollar amount) also mark a
-  // genuine development.
   const existingNumbers = new Set(numbersIn(a));
   return numbersIn(b).some((n) => !existingNumbers.has(n));
 }
 
-/**
- * Conservative same-event test used before insertion and before sitemap
- * exposure. Only blocks when the headlines are near-identical rewrites, or
- * share a same-event fingerprint with no new development signal.
- */
 export function isSameEventRewrite(existing: string, candidate: string): boolean {
   if (!existing?.trim() || !candidate?.trim()) return false;
   if (isDuplicateTitle(existing, candidate)) {
@@ -166,10 +150,6 @@ export type ClusterCandidate = {
   main_word_count?: number | null;
 };
 
-/**
- * Cluster winner: highest content_quality_score, then most substantive body,
- * then newest published_at, then a stable slug tiebreak.
- */
 export function isStrongerArticle(a: ClusterCandidate, b: ClusterCandidate): boolean {
   const qa = a.content_quality_score ?? 0;
   const qb = b.content_quality_score ?? 0;
@@ -191,10 +171,6 @@ export function pickStrongestArticle<T extends ClusterCandidate>(candidates: T[]
   return best;
 }
 
-/**
- * Collapses same-event clusters to their strongest member. Articles that are
- * only topically related, or that report a new development, are preserved.
- */
 export function selectCanonicalArticles<T extends ClusterCandidate>(articles: T[]): T[] {
   const groups: T[][] = [];
   for (const article of articles) {
