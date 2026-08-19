@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
 import { POLICY_TRACKERS_WAVE2 } from "@/data/policy-trackers-wave2";
+import { POLICY_TRACKERS_WAVE3 } from "@/data/policy-trackers-wave3";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Texas Policy Trackers | Taxes, Border, Energy, Elections & More";
 const DESCRIPTION = "Keep TX Red's permanent Texas policy trackers connect the daily news to laws, agencies, bills, official data, editorial positions, and the questions that keep shaping Texas.";
-const ALL_POLICY_TRACKERS = [...POLICY_TRACKERS, ...POLICY_TRACKERS_WAVE2];
+const ALL_POLICY_TRACKERS = [...POLICY_TRACKERS, ...POLICY_TRACKERS_WAVE2, ...POLICY_TRACKERS_WAVE3];
 
 export const Route = createFileRoute("/policy")({
   head: () => {
