@@ -36,7 +36,6 @@ const CATEGORY_HUBS: Record<string, Array<{ label: string; href: string }>> = {
 
 const GUIDE_TOOL_LINKS: Record<string, Array<{ label: string; href: string }>> = {
   "texas-property-tax-relief": [
-    { label: "Property-tax increase calculator", href: "/texas-property-tax-increase-calculator" },
     { label: "Texas spending-growth calculator", href: "/tools/texas-spending-growth-cap" },
   ],
   "texas-economy-no-income-tax": [
