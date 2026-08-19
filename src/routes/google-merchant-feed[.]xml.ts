@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
+import { merchantImageUrl } from "@/lib/merchant-image-url";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { BASE_URL } from "@/lib/sitemap-shared";
 import { seoDescription, seoTitle } from "@/lib/shop-seo";
@@ -59,15 +60,6 @@ function plainText(value: string): string {
 function limitText(value: string, maxLength: number): string {
   if (value.length <= maxLength) return value;
   return value.slice(0, maxLength).replace(/\s+\S*$/, "").trim();
-}
-
-function absoluteImageUrl(value: string | null | undefined): string {
-  if (!value) return "";
-  try {
-    return new URL(value, BASE_URL).toString();
-  } catch {
-    return "";
-  }
 }
 
 function productCategory(product: Product): { category?: string; apparel: boolean } {
@@ -179,7 +171,7 @@ function merchantItems(product: Product): MerchantItem[] {
   const enabledVariants = (product.variants ?? []).filter((variant) => variant.is_enabled !== false);
 
   if (enabledVariants.length === 0) {
-    const imageLink = absoluteImageUrl(product.image);
+    const imageLink = merchantImageUrl(product.image);
     if (!imageLink || !Number.isFinite(product.price) || product.price <= 0 || !description) return [];
 
     const color = product.colors?.length === 1 ? product.colors[0]?.trim() || undefined : undefined;
@@ -204,7 +196,7 @@ function merchantItems(product: Product): MerchantItem[] {
   const optionNames = variantOptionNames(product, enabledVariants, apparel);
 
   return enabledVariants.flatMap((variant) => {
-    const imageLink = absoluteImageUrl(variant.image || variant.images?.[0] || product.image);
+    const imageLink = merchantImageUrl(variant.image || variant.images?.[0] || product.image);
     const price = Number(variant.price || product.price);
     const attrs = variantAttributes(product, variant, apparel);
     const color = attrs.color || (product.colors?.length === 1 ? product.colors[0]?.trim() : undefined);
