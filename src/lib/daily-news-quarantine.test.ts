@@ -10,11 +10,12 @@ const feedLinkMigration = fs.readFileSync(
 );
 
 describe("public cloud article quarantine", () => {
-  it("removes quarantined rows before homepage, newsroom, breaking, and author discovery", () => {
-    expect(dailySource).toContain('import { hasSeoDuplicateFlag } from "@/lib/article-canonical"');
-    expect(dailySource).toContain("body_json,quality_flags");
-    expect(dailySource).toContain("!hasSeoDuplicateFlag(article.quality_flags)");
+  it("removes not-ready rows before homepage, newsroom, breaking, and author discovery", () => {
+    expect(dailySource).toContain('import { isPublicArticleReady } from "@/lib/public-article-readiness"');
+    expect(dailySource).toContain("body_json,quality_flags,content_quality_score");
+    expect(dailySource).toContain("isPublicArticleReady(article)");
     expect(dailySource).toContain("quality_flags: _qualityFlags");
+    expect(dailySource).toContain("content_quality_score: _qualityScore");
   });
 
   it("removes quarantined rows from shared category and region feeds", () => {
