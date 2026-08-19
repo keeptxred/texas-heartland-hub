@@ -9,7 +9,7 @@ const XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
 const BRAND = "Keep TX Red";
 const TITLE_LIMIT = 150;
 const DESCRIPTION_LIMIT = 5000;
-const FREE_SHIPPING_THRESHOLD_USD = 35.01;
+const FREE_SHIPPING_THRESHOLD_USD = 35;
 
 type VariantOption = {
   name: "Color" | "Size";
