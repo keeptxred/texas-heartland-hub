@@ -44,6 +44,7 @@ const GUIDE_TOOL_LINKS: Record<string, Array<{ label: string; href: string }>> =
     { label: "Texas spending-growth calculator", href: "/tools/texas-spending-growth-cap" },
     { label: "Texas tax-structure comparison", href: "/tools/texas-tax-structure-comparison" },
     { label: "Texas Rainy Day Fund explorer", href: "/tools/texas-rainy-day-fund" },
+    { label: "Texas budget headroom calculator", href: "/tools/texas-budget-headroom" },
     { label: "All Texas policy tools", href: "/tools" },
   ],
   "texas-election-law": [
