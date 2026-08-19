@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PageHero } from "@/components/page-hero";
 import { ARTICLES, isPublished } from "@/data/articles";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { SITE_URL } from "@/lib/seo";
 
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
@@ -58,7 +59,7 @@ type LinkedArticle = { slug: string; title: string; blurb: string };
 
 function articleLink(slug: string): LinkedArticle | null {
   const a = ARTICLES.find((x) => x.slug === slug);
-  if (!a || !isPublished(a)) return null;
+  if (!a || !isPublished(a) || !isStaticArticleIndexable(a)) return null;
   return { slug: a.slug, title: a.title, blurb: a.dek };
 }
 
