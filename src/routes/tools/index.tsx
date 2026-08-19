@@ -74,8 +74,8 @@ function PolicyToolsHub() {
             <h2 className="font-display text-3xl tracking-tight">{tool.title}</h2>
             <p className="mt-3 flex-1 text-sm leading-6 text-muted-foreground">{tool.description}</p>
             <div className="mt-6 space-y-3 border-t pt-4">
-              <a href={tool.href} className="block font-semibold text-primary hover:underline">Open tool →</a>
-              <a href={tool.guideHref} className="block text-sm font-semibold hover:text-primary">{tool.guideLabel} →</a>
+              <a href={String(tool.href)} className="block font-semibold text-primary hover:underline">Open tool →</a>
+              <a href={String(tool.guideHref)} className="block text-sm font-semibold hover:text-primary">{tool.guideLabel} →</a>
             </div>
           </article>
         ))}
