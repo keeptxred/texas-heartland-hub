@@ -25,6 +25,7 @@ import { dedupeArticleBody } from "@/lib/article-dedupe";
 import { resolveArticleImage } from "@/lib/seo-headline";
 import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
+import { matchIssueGuides } from "@/lib/issue-linking";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
 type RenderedArticle = Omit<Article, "category"> & { category: CategoryName; noindex?: boolean };
@@ -295,6 +296,14 @@ function ArticlePage() {
   const related = body.related
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
     .filter((a): a is Article => Boolean(a) && isPublished(a as Article));
+  const issueText = [
+    article.title,
+    article.dek,
+    article.category,
+    ...body.intro,
+    ...body.sections.flatMap((section) => [section.heading, ...(section.paragraphs ?? []), ...(section.bullets ?? [])]),
+  ].join(" ");
+  const suggestedIssues = matchIssueGuides(issueText, 3);
 
   const wordCount =
     body.intro.join(" ").split(/\s+/).length +
@@ -423,6 +432,22 @@ function ArticlePage() {
         ))}
 
         <AdSlot placement="in-content" />
+
+        {suggestedIssues.length > 0 ? (
+          <aside className="mt-12 border-2 border-primary/40 bg-primary/5 p-5 md:p-6 not-prose" aria-labelledby="issue-context-heading">
+            <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-primary">Background & primary sources</p>
+            <h2 id="issue-context-heading" className="mt-1 font-display text-2xl md:text-3xl tracking-tight">Understand the issue behind this story</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">KTR's evergreen issue guides explain the governing law, agencies, enacted bills and policy background behind developing news.</p>
+            <div className="mt-4 grid gap-3">
+              {suggestedIssues.map((guide) => (
+                <Link key={guide.slug} to="/issues/$slug" params={{ slug: guide.slug }} className="block border bg-background px-4 py-3 transition hover:border-primary">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary">{guide.category}</span>
+                  <span className="mt-1 block font-semibold leading-snug">{guide.title} →</span>
+                </Link>
+              ))}
+            </div>
+          </aside>
+        ) : null}
 
         {body.faq.length > 0 ? (
           <section className="mt-14 md:mt-16">
