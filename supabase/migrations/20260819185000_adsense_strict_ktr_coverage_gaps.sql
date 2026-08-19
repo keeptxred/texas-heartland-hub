@@ -35,5 +35,7 @@ WHERE target_site = 'keeptxred'
     OR routing_type = ANY (ARRAY['SEO_ARTICLE'::text, 'BOTH'::text])
   );
 
+ALTER VIEW public.news_coverage_gaps SET (security_invoker = true);
+
 COMMENT ON VIEW public.news_coverage_gaps IS
   'KeepTXRed-only feed coverage gaps. Review-held and TexasDefined-routed rows are excluded from KTR retry and health operations.';
