@@ -40,19 +40,23 @@ function TexasCaseHub() {
           <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-primary">Keep TX Red Editorial</p>
           <h1 className="mt-4 max-w-4xl font-display text-5xl leading-none tracking-tight md:text-7xl">The Texas Case</h1>
           <p className="mt-6 max-w-3xl text-lg leading-8 text-white/80 md:text-xl">Clear arguments about the policies and principles we believe make Texas freer, safer, stronger, and more accountable.</p>
-          <p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">These are permanent editorial positions, not breaking-news articles. Each case states KTR's view plainly, engages the strongest opposing argument, and links to laws, bills, official records, and KTR reference resources so readers can inspect the facts underneath the opinion.</p>
+          <p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">These are permanent editorial positions, not breaking-news articles. Each case states KTR's view plainly and links to a separately labeled factual companion so readers can inspect the legal framework, primary sources, and key questions without adopting the editorial conclusion.</p>
+          <a href="/texas-case/facts" className="mt-7 inline-flex rounded-md border border-white/25 px-4 py-2.5 text-sm font-bold text-white hover:border-primary hover:text-primary">Browse Facts & Framework →</a>
         </div>
       </section>
 
       <section className="mx-auto max-w-[1100px] px-6 py-14">
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {TEXAS_CASE_POSITIONS.map((position) => (
-            <a key={position.slug} href={`/texas-case/${position.slug}`} className="group rounded-xl border bg-card p-6 transition hover:border-primary hover:shadow-md">
+            <article key={position.slug} className="group rounded-xl border bg-card p-6 transition hover:border-primary hover:shadow-md">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">The Texas Case for</p>
               <h2 className="mt-2 font-display text-3xl tracking-tight group-hover:text-primary">{position.shortTitle}</h2>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">{position.dek}</p>
-              <span className="mt-5 block text-sm font-bold text-primary">Read the case →</span>
-            </a>
+              <div className="mt-5 flex flex-wrap gap-4 text-sm font-bold">
+                <a href={`/texas-case/${position.slug}`} className="text-primary hover:underline">Read the case →</a>
+                <a href={`/texas-case/facts/${position.slug}`} className="text-muted-foreground hover:text-primary">Facts →</a>
+              </div>
+            </article>
           ))}
         </div>
       </section>
@@ -62,7 +66,7 @@ function TexasCaseHub() {
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-primary">How this section works</p>
             <h2 className="mt-2 font-display text-4xl tracking-tight">Opinion on top. Evidence underneath.</h2>
-            <p className="mt-4 leading-7 text-muted-foreground">KTR does not pretend to be viewpoint-free. The Texas Case is where the editorial position is explicit. But the position does not get to rewrite the statute, invent a vote, alter a budget number, or ignore a court ruling. The factual layer remains independently verifiable.</p>
+            <p className="mt-4 leading-7 text-muted-foreground">KTR does not pretend to be viewpoint-free. The Texas Case is where the editorial position is explicit. But the position does not get to rewrite the statute, invent a vote, alter a budget number, or ignore a court ruling. The factual layer remains independently labeled and verifiable.</p>
           </div>
           <div className="rounded-xl border bg-card p-6">
             <h3 className="font-display text-2xl tracking-tight">Our editorial rules</h3>
@@ -83,9 +87,10 @@ function TexasCaseHub() {
           <div>
             <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Follow the evidence</p>
             <h2 className="mt-2 font-display text-3xl tracking-tight">From argument to public record</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Use KTR's permanent government resources to check the bills, laws, lawmakers, and official actions behind current policy debates.</p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Use the Facts & Framework library plus KTR's permanent government resources to check the laws, agencies, bills, lawmakers, and official actions behind current policy debates.</p>
           </div>
           <div className="mt-5 flex flex-wrap gap-3 md:mt-0">
+            <a href="/texas-case/facts" className="rounded-md border px-4 py-2.5 text-sm font-bold hover:border-primary">Facts & Framework</a>
             <Link to="/laws" className="rounded-md border px-4 py-2.5 text-sm font-bold hover:border-primary">Texas laws</Link>
             <Link to="/texas-legislature" className="rounded-md border px-4 py-2.5 text-sm font-bold hover:border-primary">Legislature</Link>
             <Link to="/representatives" className="rounded-md border px-4 py-2.5 text-sm font-bold hover:border-primary">Representatives</Link>
