@@ -29,13 +29,38 @@ describe("publisher identity trust contract", () => {
 });
 
 describe("AdSense document integration", () => {
-  it("loads the publisher script directly in the document head", () => {
+  it("keeps the publisher id and AdSense network URL in the document integration", () => {
     expect(rootSource).toContain('const ADSENSE_CLIENT = "ca-pub-1891256141359926"');
-    expect(rootSource).toContain('<script async crossOrigin="anonymous" src={ADSENSE_SCRIPT} />');
+    expect(rootSource).toContain("pagead2.googlesyndication.com/pagead/js/adsbygoogle.js");
   });
 
-  it("does not delay or dynamically inject the AdSense script", () => {
-    expect(rootSource).not.toContain("setTimeout(l,1500)");
-    expect(rootSource).not.toContain("s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js");
+  it("does not unconditionally fetch AdSense on every rendered route", () => {
+    expect(rootSource).not.toContain('<script async crossOrigin="anonymous" src={ADSENSE_SCRIPT} />');
+    expect(rootSource).toContain("ADSENSE_BOOTSTRAP");
+    expect(rootSource).toContain("document.querySelectorAll('meta[name=\"robots\"]')");
+    expect(rootSource).toContain("noindex");
+  });
+
+  it("excludes administrative, transactional, authentication, and trust-policy paths", () => {
+    for (const path of [
+      "/admin",
+      "/api",
+      "/auth",
+      "/shop/checkout",
+      "/privacy",
+      "/terms-of-service",
+      "/return-refund-policy",
+      "/shipping-policy",
+      "/contact",
+    ]) {
+      expect(rootSource).toContain(`\"${path}\"`);
+    }
+  });
+
+  it("injects the AdSense network script only after eligibility checks pass", () => {
+    expect(rootSource).toContain("if(excluded||noindex)return");
+    expect(rootSource).toContain("document.createElement('script')");
+    expect(rootSource).toContain("s.src='${ADSENSE_SCRIPT}'");
+    expect(rootSource).toContain("data-adsense-gated");
   });
 });
