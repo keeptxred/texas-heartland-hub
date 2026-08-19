@@ -1,18 +1,14 @@
 // Shared website-only category feed service.
 //
 // Single source of truth for pulling published rows out of `public.daily_articles`
-// for any website category page (Texas News, Politics, Houston, Business,
-// Non-Political, Sports, etc.). All website category feeds should route
-// through this function so filtering, word-count gates, and ordering stay
-// consistent across the site.
-//
-// NOT related to admin, publishing_queue, content_packages, Facebook, or any
-// social workflow — those systems continue to use their own paths.
+// for any website category page. Public feeds use the same AdSense/readiness
+// floor as homepage/newsroom discovery so alternate browse routes cannot
+// re-promote a row that has been deliberately withheld from Google-facing pages.
 
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
-import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
+import { isPublicArticleReady } from "@/lib/public-article-readiness";
 
 export type CategoryFeedItem = {
   slug: string;
@@ -37,22 +33,20 @@ export type CategoryFeedItem = {
 };
 
 type CategoryFeedRow = CategoryFeedItem & {
+  source_url?: string | null;
+  content_quality_score?: number | null;
   body_json?: unknown;
   quality_flags?: string[] | null;
 };
 
 const SELECT_COLS =
-  "slug,title,dek,category,kind,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,author,published_at,teams,affected_regions,body_json,quality_flags";
+  "slug,title,dek,category,kind,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,source_name,source_url,author,published_at,teams,affected_regions,body_json,quality_flags,content_quality_score";
 
 const InputSchema = z.object({
-  // Display category name as stored on daily_articles.category (e.g. "Economy",
-  // "Non-Political", "Sports Culture"). Optional — omit to skip filter.
   category: z.string().min(1).max(64).optional(),
-  // Region tag added by the content-quality enrichment pass.
   region: z
     .enum(["statewide", "houston", "dfw", "austin", "san-antonio", "el-paso", "rural"])
     .optional(),
-  // `kind` filter (e.g. "evergreen", "ingested", "sports-nfl"). Optional.
   kind: z.union([z.string().min(1).max(32), z.array(z.string().min(1).max(32))]).optional(),
   limit: z.number().int().min(1).max(200).default(24),
   offset: z.number().int().min(0).max(2000).default(0),
@@ -77,8 +71,6 @@ export const getArticlesByCategory = createServerFn({ method: "GET" })
     const supabase = await client();
     if (!supabase) return [];
 
-    // Fetch a padded window so quality/word-count filtering and pagination still
-    // return useful results after gated rows are removed.
     const windowSize = Math.min(data.offset + data.limit * 3 + 20, 300);
 
     let q = supabase.from("daily_articles").select(SELECT_COLS);
@@ -97,10 +89,16 @@ export const getArticlesByCategory = createServerFn({ method: "GET" })
 
     const gated = ((rows ?? []) as CategoryFeedRow[])
       .filter((row) =>
-        !hasSeoDuplicateFlag(row.quality_flags)
+        isPublicArticleReady(row)
         && meetsArticleMainWordCount(row.kind, row.body_json as never),
       )
-      .map(({ body_json: _bodyJson, quality_flags: _qualityFlags, ...row }) => row);
+      .map(({
+        source_url: _sourceUrl,
+        content_quality_score: _qualityScore,
+        body_json: _bodyJson,
+        quality_flags: _qualityFlags,
+        ...row
+      }) => row);
 
     return gated.slice(data.offset, data.offset + data.limit);
   });
