@@ -26,6 +26,7 @@ import { resolveArticleImage } from "@/lib/seo-headline";
 import type { HeadlineVariants } from "@/lib/ctr-score";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { visibleArticleDates } from "@/lib/article-visible-dates";
 
 type StructuredArticleBody = ArticleBody & { entities?: EvergreenBody["entities"] };
 type RenderedArticle = Omit<Article, "category"> & { category: CategoryName; noindex?: boolean };
@@ -44,12 +45,11 @@ function validIsoDate(value: string | null | undefined): string | undefined {
 }
 
 function articleDates(article: Pick<RenderedArticle, "publishedAt">, body: ArticleBody) {
-  const published = validIsoDate(article.publishedAt) ?? validIsoDate(body.updated) ?? new Date().toISOString();
-  const candidateModified = validIsoDate(body.updated) ?? published;
-  const modified = new Date(candidateModified).getTime() < new Date(published).getTime()
-    ? published
-    : candidateModified;
-  return { published, modified };
+  const visible = visibleArticleDates(article.publishedAt, body.updated);
+  return {
+    published: visible.publishedIso,
+    modified: visible.updatedIso ?? visible.publishedIso,
+  };
 }
 
 function isSpecificFaq(faq: { q: string; a: string }) {
@@ -318,12 +318,21 @@ function ArticlePage() {
     );
   const readingMinutes = Math.max(2, Math.round(wordCount / 230));
 
-  const formattedDate = new Date(body.updated).toLocaleDateString("en-US", {
+  const visibleDates = visibleArticleDates(article.publishedAt, body.updated);
+  const publishedDisplay = new Date(visibleDates.publishedIso).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
     timeZone: "America/Chicago",
   });
+  const updatedDisplay = visibleDates.updatedIso
+    ? new Date(visibleDates.updatedIso).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        timeZone: "America/Chicago",
+      })
+    : null;
   const author = getAuthor(article.author);
   const authorHref = author ? `/authors/${author.slug}` : `/authors/${authorSlug(article.author)}`;
 
@@ -344,9 +353,13 @@ function ArticlePage() {
           By {article.author}
         </Link>
         <span>•</span>
-        <span>Published <time dateTime={article.publishedAt ?? body.updated}>{new Date(article.publishedAt ?? body.updated).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></span>
-        <span>•</span>
-        <span>Updated <time dateTime={body.updated}>{formattedDate}</time></span>
+        <span>Published <time dateTime={visibleDates.publishedIso}>{publishedDisplay}</time></span>
+        {visibleDates.updatedIso && updatedDisplay ? (
+          <>
+            <span>•</span>
+            <span>Updated <time dateTime={visibleDates.updatedIso}>{updatedDisplay}</time></span>
+          </>
+        ) : null}
         <span>•</span>
         <span>{readingMinutes} min read</span>
         <span>•</span>
