@@ -15,7 +15,7 @@ describe('buildBillPrimarySourceReference', () => {
         current_status_label: 'Signed by the Governor',
         last_action_date: '2025-06-20',
         last_synced_at: '2026-08-17T12:00:00Z',
-        source_url: 'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB7',
+        source_url: 'ftp://ftp.legis.state.tx.us/bills/89R/billhistory/house_bills/HB00001_HB00099/HB%207.xml',
       },
       [
         {
@@ -23,7 +23,7 @@ describe('buildBillPrimarySourceReference', () => {
           action_text: 'Signed by the Governor',
           chamber: 'house',
           normalized_status: 'signed',
-          source_url: 'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB7',
+          source_url: 'ftp://ftp.legis.state.tx.us/bills/89R/billhistory/house_bills/HB00001_HB00099/HB%207.xml',
           internal_note: 'must not leak',
         } as any,
       ],
@@ -56,7 +56,9 @@ describe('buildBillPrimarySourceReference', () => {
     );
 
     expect(payload.canonicalUrl).toBe('https://keeptxred.com/bills/texas/89/hb/7');
-    expect(payload.officialBillUrl).toContain('capitol.texas.gov');
+    expect(payload.officialBillUrl).toBe(
+      'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=HB7',
+    );
     expect(payload.documents).toHaveLength(2);
     expect(payload.documents[0]).toMatchObject({ versionCode: 'F', versionLabel: 'Enrolled' });
     expect(payload.documents[0].officialUrl).toContain('/html/HB00007F.htm');
@@ -69,7 +71,7 @@ describe('buildBillPrimarySourceReference', () => {
     expect(serialized).not.toContain('"id"');
   });
 
-  it('drops document rows without a public URL and blank actions', () => {
+  it('drops document rows without a public URL and blank actions while retaining a canonical official bill URL', () => {
     const payload = buildBillPrimarySourceReference(
       {
         legislature_number: 89,
@@ -84,5 +86,8 @@ describe('buildBillPrimarySourceReference', () => {
 
     expect(payload.documents).toEqual([]);
     expect(payload.actions).toEqual([]);
+    expect(payload.officialBillUrl).toBe(
+      'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=89R&Bill=SB1',
+    );
   });
 });
