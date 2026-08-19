@@ -40,7 +40,7 @@ export async function loadStateDistrictDetail(slug: string): Promise<StateDistri
       bills = legislation.bills.slice(0, 8).map((bill) => ({
         id: String(bill.id),
         identifier: bill.bill_identifier,
-        caption: bill.caption,
+        caption: bill.caption ?? bill.bill_identifier,
         status: bill.current_status_label ?? null,
         path: canonicalBillPath(bill),
       }));
