@@ -1,0 +1,32 @@
+# Keep TX Red Texas Law Library
+
+Canonical hub: https://keeptxred.com/laws/topics
+
+Keep TX Red law-topic pages are plain-English legal-reference guides grounded in controlling Texas statutes and official government sources. They are not legal advice and do not replace the statutory text, court decisions, agency rules, or case-specific counsel.
+
+## Current law topics
+
+- https://keeptxred.com/laws/topic/property-tax-law
+- https://keeptxred.com/laws/topic/gun-carry-law
+- https://keeptxred.com/laws/topic/self-defense-use-of-force
+- https://keeptxred.com/laws/topic/election-law
+- https://keeptxred.com/laws/topic/parental-rights-education-law
+- https://keeptxred.com/laws/topic/open-records-public-information
+- https://keeptxred.com/laws/topic/eminent-domain-property-rights
+- https://keeptxred.com/laws/topic/abortion-law
+- https://keeptxred.com/laws/topic/administrative-rulemaking
+- https://keeptxred.com/laws/topic/local-government-authority
+
+## Related permanent layers
+
+- Texas laws hub: https://keeptxred.com/laws
+- Texas bills: https://keeptxred.com/bills
+- Texas Legislature: https://keeptxred.com/texas-legislature
+- Texas Government: https://keeptxred.com/texas-government
+- Texas Policy Trackers: https://keeptxred.com/policy
+- The Texas Case editorial positions: https://keeptxred.com/texas-case
+- Texas Data Center: https://keeptxred.com/data
+
+## Source standard
+
+For legal claims, the current Texas Constitution, statutes, controlling court decisions, and applicable official agency rules or guidance take precedence over summaries. Each law-topic page should clearly distinguish the legal framework from Keep TX Red's editorial position. Review dates are source-review dates, not guarantees that no court, agency, or Legislature action has occurred afterward.
