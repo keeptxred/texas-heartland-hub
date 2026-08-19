@@ -2,6 +2,7 @@ import { createCsrfMiddleware, createStart, createMiddleware } from "@tanstack/r
 
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
+import { isExplicitlyRetiredStaticNewsPath } from "@/lib/retired-static-news";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -167,7 +168,6 @@ function buildCanonicalTarget(url: URL): URL {
     const topic = target.searchParams.get("topic") ?? "";
     const slug = slugify(topic);
     if (slug) target.pathname = `${target.pathname}/${slug}`;
-    // Empty ?topic= is canonical noise too; always remove it.
     target.searchParams.delete("topic");
   }
 
@@ -233,14 +233,21 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
     }
   }
 
+  if (canRedirect && !excludedPath && isExplicitlyRetiredStaticNewsPath(url.pathname)) {
+    return new Response(renderErrorPage(), {
+      status: 404,
+      headers: {
+        "content-type": "text/html; charset=utf-8",
+        "x-robots-tag": "noindex, follow",
+        "cache-control": "public, max-age=300",
+      },
+    });
+  }
+
   if (excludedPath) return next();
 
   const result = await next();
 
-  // Shareable filters and UI states remain usable, but do not compete with
-  // their clean canonical route in search results. Clean bill page 2+ URLs are
-  // an explicit exception because those routes self-canonicalize and are part
-  // of the bill discovery hierarchy.
   const shouldNoindex = hasNoindexState(url) || result.response.status === 404 || result.response.status === 410;
   if (shouldNoindex) {
     try {
