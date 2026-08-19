@@ -14,6 +14,7 @@ const NAV = [
   { to: "/texas-politics", label: "Politics" },
   { to: "/texas-case", label: "The Texas Case" },
   { to: "/topics", label: "Topics" },
+  { to: "/issues", label: "Issues" },
   { to: "/texas-business", label: "Business" },
   { to: "/shop", label: "Shop" },
 ] as const;
