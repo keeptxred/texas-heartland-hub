@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
+import { POLICY_TRACKERS_WAVE2 } from "@/data/policy-trackers-wave2";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
 const TITLE = "Texas Policy Trackers | Taxes, Border, Energy, Elections & More";
 const DESCRIPTION = "Keep TX Red's permanent Texas policy trackers connect the daily news to laws, agencies, bills, official data, editorial positions, and the questions that keep shaping Texas.";
+const ALL_POLICY_TRACKERS = [...POLICY_TRACKERS, ...POLICY_TRACKERS_WAVE2];
 
 export const Route = createFileRoute("/policy")({
   head: () => {
@@ -13,7 +15,7 @@ export const Route = createFileRoute("/policy")({
       links: seo.links,
       scripts: [
         { type: "application/ld+json", children: JSON.stringify(webPageJsonLd({ name: TITLE, description: DESCRIPTION, path: "/policy", type: "CollectionPage" })) },
-        { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Texas Policy Trackers", numberOfItems: POLICY_TRACKERS.length, itemListElement: POLICY_TRACKERS.map((tracker, index) => ({ "@type": "ListItem", position: index + 1, name: tracker.title, url: `${SITE_URL}/policy/${tracker.slug}` })) }) },
+        { type: "application/ld+json", children: JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", name: "Texas Policy Trackers", numberOfItems: ALL_POLICY_TRACKERS.length, itemListElement: ALL_POLICY_TRACKERS.map((tracker, index) => ({ "@type": "ListItem", position: index + 1, name: tracker.title, url: `${SITE_URL}/policy/${tracker.slug}` })) }) },
       ],
     };
   },
@@ -34,7 +36,7 @@ function PolicyHub() {
 
       <section className="mx-auto max-w-[1180px] px-6 py-12">
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {POLICY_TRACKERS.map((tracker) => (
+          {ALL_POLICY_TRACKERS.map((tracker) => (
             <a key={tracker.slug} href={`/policy/${tracker.slug}`} className="group flex h-full flex-col rounded-xl border bg-card p-6 transition hover:border-primary hover:shadow-md">
               <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Permanent tracker</p>
               <h2 className="mt-2 font-display text-2xl leading-tight tracking-tight group-hover:text-primary">{tracker.shortTitle}</h2>
