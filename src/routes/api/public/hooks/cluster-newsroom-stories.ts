@@ -55,10 +55,7 @@ async function handler() {
 
   const feedById = new Map<number, FeedRouteRow>(feedRows.map((row) => [row.id, row]));
   const clusterable = normalizedRows
-    .filter((row) => {
-      const feed = feedById.get(row.feed_item_id);
-      return Boolean(feed && (!feed.target_site || feed.target_site === "keeptxred"));
-    })
+    .filter((row) => feedById.get(row.feed_item_id)?.target_site === "keeptxred")
     .map((row) => ({
       feedItemId: row.feed_item_id,
       normalizedTitle: row.normalized_title,
