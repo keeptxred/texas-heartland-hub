@@ -133,13 +133,12 @@ def verify_elections() -> None:
 
 
 def verify_bill() -> None:
-    # HB 149 is present in the production 89R bill dataset and has a deep official action history.
-    path = "/bills/texas/89/hb/149/reference.json"
+    path = "/bills/texas/89/sb/37/reference.json"
     payload, headers = fetch_json(path)
     if "noindex" not in headers.get("x-robots-tag", "").lower():
         raise SmokeFailure(f"{path} is missing noindex X-Robots-Tag")
 
-    canonical = "https://keeptxred.com/bills/texas/89/hb/149"
+    canonical = "https://keeptxred.com/bills/texas/89/sb/37"
     link = headers.get("link", "")
     if canonical not in link or 'rel="canonical"' not in link:
         raise SmokeFailure(f"{path} canonical Link header is invalid: {link!r}")
@@ -150,7 +149,7 @@ def verify_bill() -> None:
             "schemaVersion": 1,
             "site": "Keep TX Red",
             "jurisdiction": "Texas",
-            "billIdentifier": "HB 149",
+            "billIdentifier": "SB 37",
             "legislature": 89,
             "canonicalUrl": canonical,
         },
