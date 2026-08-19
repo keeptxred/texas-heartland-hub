@@ -112,9 +112,6 @@ for (const [file, source] of contents) {
   if (!routePath.startsWith("/") || routePath.includes("$") || routePath.includes("*")) continue;
 
   const redirects = /\bredirect\s*\(\s*\{/.test(source);
-  // Only treat a static no-argument head as an always-noindex page. Dynamic
-  // heads such as `head: ({ match }) => ...` legitimately noindex filtered
-  // query states while keeping the clean route itself indexable.
   const staticHeadMatch = source.match(/head:\s*\(\)\s*=>\s*\(\{([\s\S]*?)\n\s*\}\),/);
   const alwaysNoindex = staticHeadMatch
     ? /name:\s*["']robots["'][\s\S]{0,160}content:\s*["'][^"']*noindex/i.test(staticHeadMatch[1])
@@ -133,11 +130,6 @@ for (const [routePath, definitionFile] of retiredRoutes) {
   if (llms.includes(`](${routePath})`)) {
     fail("public/llms.txt", `AI-facing link index must not advertise retired/noindex route: ${routePath}`);
   }
-
-  // Literal route strings are not proof of a crawlable link: route metadata,
-  // admin tooling, tests, redirect definitions, and migrated route trees all
-  // legitimately mention retired paths. Keep this heuristic visible without
-  // blocking CI. The sitemap and llms.txt checks above remain hard failures.
   for (const [file, source] of contents) {
     const publicFacing = (file.startsWith("src/routes/") || file.startsWith("src/components/")) && file.endsWith(".tsx");
     if (!publicFacing || file === definitionFile) continue;
@@ -184,11 +176,13 @@ const sitemapArticleLoader = contents.get("src/lib/evergreen.functions.ts") ?? "
 for (const required of [
   "const SITEMAP_ARTICLE_PAGE_SIZE = 1000;",
   "const MAX_CLOUD_SITEMAP_ARTICLES = 45000;",
-  ".select(\"slug,title,published_at,updated_at,image_url,kind,body_json,quality_flags,content_quality_score\")",
+  ".select(\"slug,title,category,source_name,source_url,published_at,updated_at,image_url,kind,body_json,quality_flags,content_quality_score\")",
   ".range(from, from + SITEMAP_ARTICLE_PAGE_SIZE - 1)",
+  'import { isPublicArticleReady } from "@/lib/public-article-readiness"',
+  "if (!isPublicArticleReady(a)) return false;",
 ]) {
   if (!sitemapArticleLoader.includes(required)) {
-    fail("src/lib/evergreen.functions.ts", `cloud sitemap loader missing completeness/freshness contract: ${required}`);
+    fail("src/lib/evergreen.functions.ts", `cloud sitemap loader missing completeness/readiness contract: ${required}`);
   }
 }
 if (/updated_at:\s*null/.test(sitemapArticleLoader)) {
