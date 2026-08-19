@@ -1,10 +1,7 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { ARTICLES, type Article } from "@/data/articles";
-import {
-  isRetiredStaticNewsPath,
-  isStaticArticleIndexable,
-} from "@/lib/static-article-indexability";
+import { isRetiredStaticNewsPath, isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 function article(slug: string) {
   const found = ARTICLES.find((candidate) => candidate.slug === slug);
@@ -52,11 +49,22 @@ describe("static article indexability", () => {
     expect(isRetiredStaticNewsPath(`/news/${slug}`)).toBe(true);
   });
 
+  it.each([
+    "property-tax-relief-package",
+    "operation-lone-star",
+    "voter-id-surge",
+    "school-board-elections",
+    "speaker-special-session",
+    "isd-tax-burdens",
+    "permian-energy",
+  ])("retires stale pre-gate static fixture-news article %s", (slug) => {
+    expect(isStaticArticleIndexable(article(slug))).toBe(false);
+    expect(isRetiredStaticNewsPath(`/news/${slug}`)).toBe(true);
+  });
+
   it.each(["relocation", "housing", "financial", "cost-of-living", "history", "culture", "lifestyle"] as const)(
     "retires %s static content from the Keep TX Red search footprint",
-    (contentCategory) => {
-      expect(isStaticArticleIndexable(topicalFixture(contentCategory))).toBe(false);
-    },
+    (contentCategory) => expect(isStaticArticleIndexable(topicalFixture(contentCategory))).toBe(false),
   );
 
   it.each([
@@ -84,9 +92,8 @@ describe("static article indexability", () => {
 
   it("keeps sitemap and page-level robots decisions synchronized for the full static registry", () => {
     for (const candidate of ARTICLES) {
-      const retiredByInventory = !isStaticArticleIndexable(candidate);
-      const retiredByPath = isRetiredStaticNewsPath(`/news/${candidate.slug}`);
-      expect(retiredByPath, `robots mismatch for ${candidate.slug}`).toBe(retiredByInventory);
+      expect(isRetiredStaticNewsPath(`/news/${candidate.slug}`), `robots mismatch for ${candidate.slug}`)
+        .toBe(!isStaticArticleIndexable(candidate));
     }
   });
 
