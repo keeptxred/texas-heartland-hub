@@ -1,5 +1,5 @@
 import { TEXAS_LEGISLATIVE_SEATS } from "@/data/texas-legislators.generated";
-import { canonicalBillPath, getRepresentativeLegislation } from "@/lib/bills";
+import { canonicalBillPath, getRepresentativeLegislation, type Bill } from "@/lib/bills";
 import {
   STATE_DISTRICT_PLANS,
   stateDistrictSlug,
@@ -37,7 +37,8 @@ export async function loadStateDistrictDetail(slug: string): Promise<StateDistri
   if (seat.name && seat.slug) {
     try {
       const legislation = await getRepresentativeLegislation(seat.slug);
-      bills = legislation.bills.slice(0, 8).map((bill) => ({
+      const representativeBills = legislation.bills as Bill[];
+      bills = representativeBills.slice(0, 8).map((bill) => ({
         id: String(bill.id),
         identifier: bill.bill_identifier,
         caption: bill.caption ?? bill.bill_identifier,
