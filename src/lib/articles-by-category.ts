@@ -7,6 +7,7 @@ import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
  * never accidentally surface articles from another category.
  */
 export const CATEGORY_SLUG_TO_NAME = {
+  "texas-news": "Texas News",
   politics: "Politics",
   legislature: "Legislature",
   government: "Government",
