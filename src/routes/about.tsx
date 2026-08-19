@@ -10,9 +10,9 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "About Keep TX Red | Texas News & Standards" },
-      { name: "description", content: "About Keep TX Red — our mission, editorial standards, sourcing, corrections policy, and contact information for the Texas politics and news publication." },
+      { name: "description", content: "About Keep TX Red — Texas news, commentary, government accountability, common-sense analysis, editorial standards, sourcing, corrections, and contact information." },
       { property: "og:title", content: "About Keep TX Red | Texas News & Standards" },
-      { property: "og:description", content: "Mission, standards, sourcing, corrections policy, and contact information for Keep TX Red." },
+      { property: "og:description", content: "Texas news, commentary, government accountability, common-sense analysis, and the standards behind Keep TX Red." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: PAGE_URL },
       { property: "og:image", content: SITE_URL + heroImg.url },
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/about")({
         "@context": "https://schema.org",
         "@type": "AboutPage",
         name: "About Keep TX Red",
-        description: "Mission, editorial standards, sourcing, corrections policy, and contact information for Keep TX Red.",
+        description: "Keep TX Red delivers Texas news, commentary, government accountability, and common-sense analysis.",
         url: PAGE_URL,
         isPartOf: { "@type": "WebSite", name: "Keep TX Red", url: SITE_URL },
       }),
@@ -43,7 +43,8 @@ function AboutPage() {
       <div className="mt-10 space-y-8 text-base leading-relaxed">
         <section>
           <h2 className="font-display text-3xl tracking-tight">Mission</h2>
-          <p className="mt-3 text-lg"><strong>Keep TX Red is an independent Texas news and analysis publication covering politics, elections, legislation, public officials, government accountability, and major statewide developments.</strong></p>
+          <p className="mt-3 text-lg"><strong>Keep TX Red delivers Texas news, commentary, government accountability, and common-sense analysis.</strong></p>
+          <p className="mt-3 text-muted-foreground">We cover politics, elections, legislation, public officials, policy debates, and major statewide developments with an emphasis on clear context, primary sources, and the decisions that affect Texans.</p>
           <p className="mt-3 text-muted-foreground">We are not a political action committee, campaign, or candidate organization. We do not raise money for candidates or coordinate with campaigns. Our work is informational and explanatory.</p>
         </section>
 
