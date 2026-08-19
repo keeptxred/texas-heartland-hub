@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { issueGuideBySlug } from "@/data/issue-guides";
+import { relatedPolicyTrackersForIssueGuide } from "@/lib/issue-policy-links";
 
 const SITE_URL = "https://keeptxred.com";
 
@@ -106,6 +107,7 @@ function IssueGuidePage() {
   const toolLinks = [...(guide.toolLinks ?? []), ...(GUIDE_TOOL_LINKS[slug] ?? [])]
     .filter((link, index, links) => links.findIndex((candidate) => candidate.href === link.href) === index);
   const hubLinks = CATEGORY_HUBS[guide.category] ?? [];
+  const policyTrackers = relatedPolicyTrackersForIssueGuide(guide);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 md:py-16">
@@ -162,6 +164,22 @@ function IssueGuidePage() {
         </article>
 
         <aside className="space-y-7 lg:sticky lg:top-24 lg:self-start">
+          {policyTrackers.length ? (
+            <section className="border border-primary/30 bg-primary/5 p-5">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-primary">Current-status layer</p>
+              <h2 className="mt-1 font-display text-2xl tracking-tight">Related policy trackers</h2>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Move from this durable explainer into narrower trackers for current law, implementation, litigation and official data.</p>
+              <div className="mt-4 space-y-3">
+                {policyTrackers.map((tracker) => (
+                  <a key={tracker.slug} href={`/policy/${tracker.slug}`} className="block border-b pb-3 text-sm font-semibold last:border-0 last:pb-0 hover:text-primary">
+                    {tracker.shortTitle} →
+                  </a>
+                ))}
+              </div>
+              <a href="/policy" className="mt-4 inline-block text-sm font-semibold text-primary hover:underline">All policy trackers →</a>
+            </section>
+          ) : null}
+
           <section className="border p-5">
             <h2 className="font-display text-2xl tracking-tight">Related issue guides</h2>
             <div className="mt-4 space-y-4">
