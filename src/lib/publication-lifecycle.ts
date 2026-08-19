@@ -42,6 +42,15 @@ function storyText(cluster: StoryCluster): string {
     .join(" ");
 }
 
+export function publicationRetryDelayMinutes(attemptCount: number): number {
+  const attempts = Math.max(1, Math.floor(Number(attemptCount) || 1));
+  if (attempts <= 1) return 15;
+  if (attempts <= 3) return 30;
+  if (attempts <= 6) return 120;
+  if (attempts <= 12) return 360;
+  return 1440;
+}
+
 export function assessPublicationTiming(
   cluster: StoryCluster,
   verification: FactVerificationDecision,
@@ -100,7 +109,7 @@ export async function acquirePublicationClaim(db: any, clusterId: string | null)
     return {
       acquired: false,
       alreadyPublished: false,
-      reason: "another worker is already publishing this event; stale claims auto-expire after 15 minutes",
+      reason: "another worker is already publishing this event or it is cooling down after a failed attempt; stale claims auto-expire after 15 minutes",
     };
   } catch (error) {
     console.warn("[multi-source] publication claim unavailable; retaining existing fallback", error instanceof Error ? error.message : String(error));
@@ -111,6 +120,40 @@ export async function acquirePublicationClaim(db: any, clusterId: string | null)
 export async function releasePublicationClaim(db: any, clusterId: string | null, claimToken?: string): Promise<void> {
   if (!clusterId || !claimToken) return;
   try {
+    const { data: clusterRow, error: readError } = await db
+      .from("news_event_clusters")
+      .select("publish_attempt_count,metadata")
+      .eq("id", clusterId)
+      .eq("publish_claim_token", claimToken)
+      .maybeSingle();
+    if (readError) throw readError;
+
+    if (clusterRow) {
+      const attemptCount = Math.max(1, Number(clusterRow.publish_attempt_count) || 1);
+      const delayMinutes = publicationRetryDelayMinutes(attemptCount);
+      const nextEligibleAt = new Date(Date.now() + delayMinutes * 60_000).toISOString();
+      const currentMetadata = clusterRow.metadata && typeof clusterRow.metadata === "object"
+        ? clusterRow.metadata
+        : {};
+      const { error: cooldownError } = await db
+        .from("news_event_clusters")
+        .update({
+          next_publish_eligible_at: nextEligibleAt,
+          metadata: {
+            ...currentMetadata,
+            publication_retry: {
+              attempt_count: attemptCount,
+              delay_minutes: delayMinutes,
+              next_eligible_at: nextEligibleAt,
+              recorded_at: new Date().toISOString(),
+            },
+          },
+        })
+        .eq("id", clusterId)
+        .eq("publish_claim_token", claimToken);
+      if (cooldownError) throw cooldownError;
+    }
+
     const { error } = await db.rpc("release_news_event_cluster_publication_claim", {
       p_cluster_id: clusterId,
       p_claim_token: claimToken,
@@ -146,15 +189,22 @@ export async function persistTimingDecision(
     if (clusterId) {
       const { data: clusterRow, error: readClusterError } = await db
         .from("news_event_clusters")
-        .select("metadata")
+        .select("metadata,next_publish_eligible_at")
         .eq("id", clusterId)
         .maybeSingle();
       if (readClusterError) throw readClusterError;
       const currentClusterMetadata = clusterRow?.metadata && typeof clusterRow.metadata === "object"
         ? clusterRow.metadata
         : {};
+      const currentNextMs = Date.parse(clusterRow?.next_publish_eligible_at ?? "");
+      const hasFutureCooldown = Number.isFinite(currentNextMs) && currentNextMs > Date.now();
+      const nextPublishEligibleAt = decision.mode === "collect_briefly"
+        ? decision.waitUntil ?? null
+        : hasFutureCooldown
+          ? clusterRow.next_publish_eligible_at
+          : null;
       const { error: clusterError } = await db.from("news_event_clusters").update({
-        next_publish_eligible_at: decision.mode === "collect_briefly" ? decision.waitUntil ?? null : null,
+        next_publish_eligible_at: nextPublishEligibleAt,
         metadata: { ...currentClusterMetadata, publication_timing: timingMetadata },
       }).eq("id", clusterId);
       if (clusterError) throw clusterError;
