@@ -7,6 +7,7 @@ import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
   { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections" },
+  { title: "Political Reference", description: "Races, redistricting, voter trends, policy questions, PACs, and campaign activity — 50 source-backed search guides.", href: "/texas-political-reference" },
   { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/texas-legislature" },
   { title: "Governor & Leadership", description: "The Governor, Lt. Governor, AG, and statewide officeholders.", href: "/representatives" },
   { title: "Voting & Policy", description: "Voter ID, registration, election integrity, and ballot access.", href: "/register-to-vote" },
@@ -91,9 +92,7 @@ function TexasPoliticsPage() {
               Republican priorities pass in a single session while others stall for years.
             </p>
             <p>
-              Below is our full stack: voting guides, primary vs. general breakdowns, a walkthrough
-              of how a bill actually becomes Texas law, and the plain-English glossary of terms — from
-              "quorum break" to "sine die" — that show up in every session recap.
+              Our <a href="/texas-political-reference" className="font-semibold text-primary underline underline-offset-4">Texas Political Reference</a> answers the high-intent questions behind the daily headlines — current races, map changes, voter trends, policy disputes, campaign finance, PACs, and public grassroots events — with dated status and source links.
             </p>
           </div>
         </section>
