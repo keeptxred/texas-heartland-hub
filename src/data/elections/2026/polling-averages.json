@@ -4,23 +4,23 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-08T11:44:47.558Z",
+    "recalculatedAt": "2026-08-19T11:42:29.420Z",
     "weightedMargin": 5,
     "uncertaintyRange": {
-      "low": 2.1,
-      "high": 7.9
+      "low": 2.2,
+      "high": 7.8
     },
     "candidates": [
       {
         "candidateId": "candidate-mayes-middleton-republican-race-2026-attorney-general",
         "candidateName": "MAYES MIDDLETON",
-        "averagePercentage": 42.2,
+        "averagePercentage": 42.4,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-nathan-johnson-democratic-race-2026-attorney-general",
         "candidateName": "NATHAN JOHNSON",
-        "averagePercentage": 37.2,
+        "averagePercentage": 37.4,
         "pollCount": 2
       },
       {
@@ -45,7 +45,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "72 day(s) old",
+          "83 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -56,9 +56,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-attorney-general",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.165,
+        "finalWeight": 0.131,
         "factors": {
-          "recency": 0.152,
+          "recency": 0.12,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -66,7 +66,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "57 day(s) old",
+          "68 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -80,7 +80,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-08T11:44:47.558Z",
+    "recalculatedAt": "2026-08-19T11:42:29.420Z",
     "weightedMargin": 6,
     "uncertaintyRange": {
       "low": 2,
@@ -111,9 +111,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-comptroller",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.165,
+        "finalWeight": 0.131,
         "factors": {
-          "recency": 0.152,
+          "recency": 0.12,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -121,7 +121,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "57 day(s) old",
+          "68 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -135,23 +135,23 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-08T11:44:47.558Z",
-    "weightedMargin": 6.2,
+    "recalculatedAt": "2026-08-19T11:42:29.420Z",
+    "weightedMargin": 6,
     "uncertaintyRange": {
-      "low": 3.3,
-      "high": 9.1
+      "low": 3.2,
+      "high": 8.8
     },
     "candidates": [
       {
         "candidateId": "candidate-greg-abbott-republican-race-2026-governor",
         "candidateName": "GREG ABBOTT",
-        "averagePercentage": 46.6,
+        "averagePercentage": 46.5,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidateName": "GINA HINOJOSA",
-        "averagePercentage": 40.4,
+        "averagePercentage": 40.5,
         "pollCount": 2
       },
       {
@@ -176,7 +176,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "72 day(s) old",
+          "83 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -187,9 +187,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.165,
+        "finalWeight": 0.131,
         "factors": {
-          "recency": 0.152,
+          "recency": 0.12,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -197,7 +197,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "57 day(s) old",
+          "68 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -211,7 +211,7 @@
     "pollCount": 1,
     "fieldDateFrom": "2026-06-12",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-08T11:44:47.558Z",
+    "recalculatedAt": "2026-08-19T11:42:29.420Z",
     "weightedMargin": 7,
     "uncertaintyRange": {
       "low": 3,
@@ -248,9 +248,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-lieutenant-governor",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.165,
+        "finalWeight": 0.131,
         "factors": {
-          "recency": 0.152,
+          "recency": 0.12,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -258,7 +258,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "57 day(s) old",
+          "68 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
@@ -272,23 +272,23 @@
     "pollCount": 2,
     "fieldDateFrom": "2026-05-28",
     "fieldDateTo": "2026-06-12",
-    "recalculatedAt": "2026-08-08T11:44:47.558Z",
-    "weightedMargin": 0.7,
+    "recalculatedAt": "2026-08-19T11:42:29.420Z",
+    "weightedMargin": 0.8,
     "uncertaintyRange": {
-      "low": -2.2,
+      "low": -2,
       "high": 3.6
     },
     "candidates": [
       {
         "candidateId": "candidate-james-talarico-democratic-race-2026-us-senate",
         "candidateName": "JAMES TALARICO",
-        "averagePercentage": 44.1,
+        "averagePercentage": 44.3,
         "pollCount": 2
       },
       {
         "candidateId": "candidate-ken-paxton-republican-race-2026-us-senate",
         "candidateName": "KEN PAXTON",
-        "averagePercentage": 43.4,
+        "averagePercentage": 43.5,
         "pollCount": 2
       },
       {
@@ -313,7 +313,7 @@
           "methodology": 0.727
         },
         "explanation": [
-          "72 day(s) old",
+          "83 day(s) old",
           "1,670 likely voters",
           "pollster grade unrated",
           "independent poll",
@@ -324,9 +324,9 @@
         "pollId": "poll-ut-texas-politics-project-june-2026-us-senate",
         "pollsterName": "University of Texas/Texas Politics Project Poll",
         "fieldEndDate": "2026-06-12",
-        "finalWeight": 0.165,
+        "finalWeight": 0.131,
         "factors": {
-          "recency": 0.152,
+          "recency": 0.12,
           "sampleSize": 1.414,
           "population": 0.88,
           "pollsterQuality": 0.8,
@@ -334,7 +334,7 @@
           "methodology": 1.093
         },
         "explanation": [
-          "57 day(s) old",
+          "68 day(s) old",
           "1,200 registered voters",
           "pollster grade unrated",
           "independent poll",
