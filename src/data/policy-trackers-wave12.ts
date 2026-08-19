@@ -108,7 +108,7 @@ export const POLICY_TRACKERS_WAVE12: PolicyTracker[] = [
       { label: "Texas Health and Human Services — TANF", url: "https://www.hhs.texas.gov/services/financial/cash/tanf-cash-help", primary: true },
     ],
     related: [
-      { label: "Career & Technical Education tracker", href: "/policy/career-technical-education", kind: "reference" },
+      { label: "Career & Technical Education tracker", href: "/policy/career-technical-workforce", kind: "reference" },
       { label: "Texas Economy", href: "/texas-economy", kind: "reference" },
       { label: "Right-to-Work tracker", href: "/policy/right-to-work", kind: "reference" },
       { label: "Texas Workforce Commission", href: "/texas-government/agencies/texas-workforce-commission", kind: "government" },
