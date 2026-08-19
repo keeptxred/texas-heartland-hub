@@ -22,6 +22,15 @@ describe("Government Graph matching", () => {
     expect(links.some((link) => link.href === "/elections/2026")).toBe(true);
   });
 
+  it("connects contract and procurement reporting to Contract Watch", () => {
+    const links = getGovernmentGraphLinks(
+      "A Texas agency awarded a major procurement contract to a vendor after a solicitation, then approved a contract amendment and renewal.",
+      6,
+    );
+
+    expect(links.some((link) => link.href === "/contracts")).toBe(true);
+  });
+
   it("honors exclusions so pages do not recommend duplicate destinations", () => {
     const links = getGovernmentGraphLinks(
       "The Texas Legislature is considering a bill in committee before lawmakers vote.",
