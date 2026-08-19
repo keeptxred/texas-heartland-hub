@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { AIReferralTracker } from "@/components/analytics/AIReferralTracker";
 import { CitationCollectionTrustRouter } from "@/components/authority/CitationCollectionTrustRouter";
+import { NewsGovernmentGraphRouter } from "@/components/news-government-graph-router";
 import { SocialLinks } from "@/components/social-links";
 import { TexasDefinedCrosslinks } from "@/components/texas-defined-crosslinks";
 
@@ -58,6 +59,7 @@ export function SiteFooter() {
     <>
       <AIReferralTracker />
       <CitationCollectionTrustRouter />
+      <NewsGovernmentGraphRouter />
       <TexasDefinedCrosslinks />
       <footer className="mt-16 bg-secondary text-secondary-foreground">
         <div className="mx-auto max-w-7xl px-4 py-14">
