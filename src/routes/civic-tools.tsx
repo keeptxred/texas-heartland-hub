@@ -6,6 +6,7 @@ const TOOLS = [
   { title: "Texas Law Finder", href: "/civic-tools/texas-law-finder", description: "Search KTR's permanent law library by a plain-English problem such as property taxes, self-defense, public records, school parental rights, or election rules." },
   { title: "Texas Bill Finder", href: "/civic-tools/bill-finder", description: "Start with a policy issue and hand it directly to KTR's Texas bill database, then narrow by Legislature, chamber, bill type, and status." },
   { title: "Compare Texas Legislators", href: "/civic-tools/compare-legislators", description: "Compare two current Texas House or Senate members side by side, then open their authority profiles for committees, bills, elections, and sources." },
+  { title: "Education Freedom Account Guide", href: "/civic-tools/education-freedom-account-guide", description: "Check Texas TEFA basic eligibility factors, first-year priority tiers, and the published 2026–27 funding amount for private-school, disability, homeschool, or other eligible settings." },
   { title: "Find My Representative", href: "/find-representative", description: "Use official lookup resources to identify the Texas and federal officials connected to your address." },
   { title: "Contact Texas Legislators", href: "/contact-legislators", description: "Find official contact routes for Texas lawmakers and legislative offices." },
   { title: "Register to Vote", href: "/register-to-vote", description: "Review Texas voter-registration rules, deadlines, and official state resources." },
@@ -16,7 +17,7 @@ export const Route = createFileRoute("/civic-tools")({
   head: () => {
     const seo = buildSeo({
       title: "Texas Civic Tools: Government, Law, Bills & Representatives",
-      description: "Use Keep TX Red civic tools to identify Texas government authority, find relevant Texas laws and bills, compare legislators, locate representatives, contact lawmakers, and research voting resources.",
+      description: "Use Keep TX Red civic tools to identify Texas government authority, find relevant Texas laws and bills, compare legislators, research Texas Education Freedom Accounts, locate representatives, contact lawmakers, and research voting resources.",
       path: "/civic-tools",
     });
     return { meta: seo.meta, links: seo.links };
