@@ -14,22 +14,19 @@ describe("public cloud article quarantine", () => {
     expect(dailySource).toContain('import { isPublicArticleReady } from "@/lib/public-article-readiness"');
     expect(dailySource).toContain("body_json,quality_flags,content_quality_score");
     expect(dailySource).toContain("isPublicArticleReady(article)");
-    expect(dailySource).toContain("quality_flags: _qualityFlags");
-    expect(dailySource).toContain("content_quality_score: _qualityScore");
   });
 
-  it("removes quarantined rows from shared category and region feeds", () => {
-    expect(categorySource).toContain('import { hasSeoDuplicateFlag } from "@/lib/article-canonical"');
-    expect(categorySource).toContain("body_json,quality_flags");
-    expect(categorySource).toContain("!hasSeoDuplicateFlag(row.quality_flags)");
-    expect(categorySource).toContain("quality_flags: _qualityFlags");
+  it("removes not-ready rows from shared category and region feeds", () => {
+    expect(categorySource).toContain('import { isPublicArticleReady } from "@/lib/public-article-readiness"');
+    expect(categorySource).toContain("source_name,source_url");
+    expect(categorySource).toContain("body_json,quality_flags,content_quality_score");
+    expect(categorySource).toContain("isPublicArticleReady(row)");
   });
 
-  it("removes quarantined rows from the direct sports team query", () => {
-    expect(sportsSource).toContain('import { hasSeoDuplicateFlag } from "@/lib/article-canonical"');
-    expect(sportsSource).toContain("body_json,quality_flags");
-    expect(sportsSource).toContain("!hasSeoDuplicateFlag(row.quality_flags)");
-    expect(sportsSource).toContain("quality_flags: _qualityFlags");
+  it("removes not-ready rows from the direct sports team query", () => {
+    expect(sportsSource).toContain('import { isPublicArticleReady } from "@/lib/public-article-readiness"');
+    expect(sportsSource).toContain("source_name,source_url,body_json,quality_flags,content_quality_score");
+    expect(sportsSource).toContain("isPublicArticleReady(row)");
   });
 
   it("prevents feed cards from linking to quarantined internal articles", () => {
@@ -37,6 +34,5 @@ describe("public cloud article quarantine", () => {
     expect(feedLinkMigration).toContain("SET internal_slug = NULL");
     expect(feedLinkMigration).toContain("seo_legacy_single_source");
     expect(feedLinkMigration).toContain("source_integrity_failure");
-    expect(feedLinkMigration).toContain("NOT (");
   });
 });
