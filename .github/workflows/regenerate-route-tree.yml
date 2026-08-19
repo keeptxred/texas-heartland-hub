@@ -34,3 +34,5 @@ jobs:
           git add src/routeTree.gen.ts
           git commit -m "[route-tree] Regenerate TanStack route tree"
           git push origin HEAD:feat/ktr-issue-guides-policy-tools
+
+# Temporary branch-only helper; remove after routeTree.gen.ts is synchronized.
