@@ -20,6 +20,7 @@ const POLITICAL_REFERENCE_REFRESH = toIsoDate("2026-08-18T23:53:00-05:00");
 const POLICY_REFRESH = toIsoDate("2026-08-19T06:30:00-05:00");
 const LAW_DATA_REFRESH = toIsoDate("2026-08-19T07:15:00-05:00");
 const AGENCY_REFRESH = toIsoDate("2026-08-19T07:40:00-05:00");
+const CIVIC_TOOLS_REFRESH = toIsoDate("2026-08-19T07:50:00-05:00");
 const SPORTS_SITEMAP_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const;
 const SPORTS_SITEMAP_TOPICS = ["football", "baseball", "basketball", "hockey", "soccer", "college", "recruiting", "nil", "business-policy", "stadiums", "motorsports", "postseason", "transactions", "injuries", "rivalries"] as const;
 const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(SUPPORTING_GUIDE_SLUGS.map((slug) => [`/guides/${slug}`, GUIDE_LASTMOD]));
@@ -51,6 +52,9 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/laws/constitutional-amendments": CITATION_MAGNET_REFRESH,
   "/laws/effective-dates": CITATION_MAGNET_REFRESH,
   "/data": LAW_DATA_REFRESH,
+  "/civic-tools": CIVIC_TOOLS_REFRESH,
+  "/civic-tools/government-authority-finder": CIVIC_TOOLS_REFRESH,
+  "/civic-tools/texas-law-finder": CIVIC_TOOLS_REFRESH,
   "/topics": GUIDE_LASTMOD,
   "/texas-politics": POLICY_REFRESH,
   "/texas-political-reference": POLITICAL_REFERENCE_REFRESH,
@@ -84,6 +88,7 @@ const STATIC_PATHS:string[]=[
   "/texas-legislature/votes","/texas-government","/texas-government/agencies",
   "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/topics","/laws/constitutional-amendments","/laws/effective-dates","/data",
+  "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder",
   "/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/citation-guide",
   "/topics","/texas-politics","/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
