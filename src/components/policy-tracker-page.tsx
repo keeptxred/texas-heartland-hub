@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { PolicyTracker } from "@/data/policy-trackers";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
+import { relatedIssueGuidesForTracker } from "@/lib/issue-policy-links";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 
 const POLICY_REVIEW_DAYS = 30;
@@ -89,6 +90,7 @@ export function policyTrackerHead(tracker: PolicyTracker) {
 
 export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
   const guides = relatedGuides(tracker);
+  const broaderIssueGuides = relatedIssueGuidesForTracker(tracker);
   const stale = policyIsStale(tracker);
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
@@ -142,6 +144,15 @@ export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
           {tracker.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">{source.label}</a>{source.primary ? <span className="ml-2 rounded border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Primary</span> : null}</li>)}
         </ul>
       </section>
+
+      {broaderIssueGuides.length > 0 ? <section className="mt-10 rounded-xl border bg-primary/5 p-6">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Broader evergreen context</p>
+        <h2 className="mt-2 font-display text-2xl tracking-tight">Related Texas issue guides</h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">Use these guides for the durable legal, institutional and policy framework behind this narrower tracker.</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {broaderIssueGuides.map((guide) => <a key={guide.slug} href={`/issues/${guide.slug}`} className="rounded-lg border bg-background p-4 text-sm font-semibold hover:border-primary hover:text-primary">{guide.title} →</a>)}
+        </div>
+      </section> : null}
 
       <section className="mt-10 rounded-xl border bg-card p-6">
         <h2 className="font-display text-2xl tracking-tight">Permanent KTR context</h2>
