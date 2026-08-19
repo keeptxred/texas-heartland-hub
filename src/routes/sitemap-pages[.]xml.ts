@@ -4,14 +4,19 @@ import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@
 import { hasEnoughContent, MIN_ARTICLES_DEFAULT } from "@/lib/content-readiness";
 import { TEAMS } from "@/lib/texas-teams";
 import { SUPPORTING_GUIDE_SLUGS } from "@/data/all-guides";
+import { TEXAS_CASE_POSITIONS } from "@/data/texas-case";
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
 const GSC_CANONICAL_REFRESH = toIsoDate("2026-08-11T12:30:00-05:00");
 const CITATION_MAGNET_REFRESH = toIsoDate("2026-08-11T22:00:00-05:00");
+const TEXAS_CASE_REFRESH = toIsoDate("2026-08-18T23:00:00-05:00");
 const SPORTS_SITEMAP_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const;
 const SPORTS_SITEMAP_TOPICS = ["football", "baseball", "basketball", "hockey", "soccer", "college", "recruiting", "nil", "business-policy", "stadiums", "motorsports", "postseason", "transactions", "injuries", "rivalries"] as const;
 const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(
   SUPPORTING_GUIDE_SLUGS.map((slug) => [`/guides/${slug}`, GUIDE_LASTMOD]),
+);
+const TEXAS_CASE_LASTMOD = Object.fromEntries(
+  TEXAS_CASE_POSITIONS.map((position) => [`/texas-case/${position.slug}`, toIsoDate(`${position.updated}T12:00:00-05:00`)]),
 );
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
@@ -40,10 +45,12 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-agriculture": GUIDE_LASTMOD,
   "/texas-veterans": GUIDE_LASTMOD,
   "/texas-law-enforcement": GUIDE_LASTMOD,
+  "/texas-case": TEXAS_CASE_REFRESH,
   "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
   "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
   "/guides/texas-law-enforcement-public-safety-guide": GUIDE_LASTMOD,
   ...SUPPORTING_GUIDE_LASTMOD,
+  ...TEXAS_CASE_LASTMOD,
 };
 
 const STATIC_PATHS:string[]=[
@@ -64,7 +71,7 @@ const STATIC_PATHS:string[]=[
   "/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/citation-guide",
   "/topics","/texas-politics","/texas-economy","/texas-border-security","/texas-energy",
-  "/texas-agriculture","/texas-veterans","/texas-law-enforcement",
+  "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-case",
   "/guides/texas-agriculture-rural-guide","/guides/texas-veterans-military-guide",
   "/guides/texas-law-enforcement-public-safety-guide",
   "/authors","/shop",
@@ -72,4 +79,4 @@ const STATIC_PATHS:string[]=[
   // listing them here duplicated 250+ URLs across two sitemaps.
 ];
 
-export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`)];for(const league of SPORTS_SITEMAP_LEAGUES){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}for(const topic of SPORTS_SITEMAP_TOPICS){if(await hasEnoughContent({keyword:topic},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/topic/${topic}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});
+export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`),...TEXAS_CASE_POSITIONS.map((position)=>`/texas-case/${position.slug}`)];for(const league of SPORTS_SITEMAP_LEAGUES){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}for(const topic of SPORTS_SITEMAP_TOPICS){if(await hasEnoughContent({keyword:topic},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/topic/${topic}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});
