@@ -12,6 +12,7 @@ import { POLICY_TRACKERS_WAVE8 } from "@/data/policy-trackers-wave8";
 import { POLICY_TRACKERS_WAVE9 } from "@/data/policy-trackers-wave9";
 import { POLICY_TRACKERS_WAVE10 } from "@/data/policy-trackers-wave10";
 import { POLICY_TRACKERS_WAVE11 } from "@/data/policy-trackers-wave11";
+import { POLICY_TRACKERS_WAVE12 } from "@/data/policy-trackers-wave12";
 
 const expectedCount = [
   POLICY_TRACKERS,
@@ -25,6 +26,7 @@ const expectedCount = [
   POLICY_TRACKERS_WAVE9,
   POLICY_TRACKERS_WAVE10,
   POLICY_TRACKERS_WAVE11,
+  POLICY_TRACKERS_WAVE12,
 ].reduce((sum, wave) => sum + wave.length, 0);
 
 describe("unified policy tracker registry", () => {
@@ -34,12 +36,15 @@ describe("unified policy tracker registry", () => {
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
-  it("is the source of truth for both the policy hub and sitemap", () => {
+  it("is the source of truth for the policy hub, sitemap, and text manifest", () => {
     const hubSource = readFileSync(new URL("../routes/policy.tsx", import.meta.url), "utf8");
     const sitemapSource = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
+    const manifestSource = readFileSync(new URL("../routes/policy-trackers[.]txt.ts", import.meta.url), "utf8");
 
     expect(hubSource).toContain('import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all"');
     expect(sitemapSource).toContain('import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all"');
     expect(sitemapSource).toContain("...ALL_POLICY_TRACKERS.map((tracker)=>`/policy/${tracker.slug}`)");
+    expect(manifestSource).toContain('import { ALL_POLICY_TRACKERS } from "@/data/policy-trackers-all"');
+    expect(manifestSource).toContain("...ALL_POLICY_TRACKERS.map((tracker) =>");
   });
 });
