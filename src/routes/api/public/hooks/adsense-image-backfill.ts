@@ -32,10 +32,7 @@ async function post({ request }: { request: Request }) {
   if (!(await authorized(request))) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const url = new URL(request.url);
-  const rawLimit = Number(url.searchParams.get("limit") ?? "2");
-  const rawOffset = Number(url.searchParams.get("offset") ?? "0");
-  const limit = Math.max(1, Math.min(6, Number.isFinite(rawLimit) ? Math.floor(rawLimit) : 2));
-  const offset = Math.max(0, Math.min(20, Number.isFinite(rawOffset) ? Math.floor(rawOffset) : 0));
+  const requestedSlug = (url.searchParams.get("slug") ?? "").trim();
   const dryRun = url.searchParams.get("dry") === "1";
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -47,48 +44,36 @@ async function post({ request }: { request: Request }) {
     .from("adsense_cloud_article_readiness")
     .select("slug,published_at")
     .eq("adsense_ready", true)
+    .eq("image_ready", false)
     .order("published_at", { ascending: false });
   if (error) return Response.json({ error: error.message }, { status: 500 });
 
   const slugs = (readyRows ?? []).map((row: { slug: string }) => row.slug);
   if (dryRun) return Response.json({ ok: true, dryRun: true, ready: slugs.length, slugs });
 
-  const selected = slugs.slice(offset, offset + limit);
-  const results: Array<{ slug: string; ok: boolean; url?: string; error?: string }> = [];
-
-  for (const slug of selected) {
-    const { data: article } = await db
-      .from("daily_articles")
-      .select("featured_image_url")
-      .eq("slug", slug)
-      .maybeSingle();
-
-    if (article?.featured_image_url) {
-      results.push({ slug, ok: true, url: article.featured_image_url });
-      continue;
-    }
-
-    const generated = await generateFeaturedImageForSlugDirect(slug, false);
-    if (!generated.ok) {
-      results.push({ slug, ok: false, error: generated.error });
-      continue;
-    }
-
-    // `trg_clear_missing_image_when_ready` owns quality-flag cleanup whenever
-    // any image writer successfully attaches featured_image_url.
-    results.push({ slug, ok: true, url: generated.url });
+  if (!requestedSlug) {
+    return Response.json({ error: "Missing eligible slug" }, { status: 400 });
+  }
+  if (!slugs.includes(requestedSlug)) {
+    return Response.json({ error: "Slug is not currently image-missing and AdSense-ready" }, { status: 409 });
   }
 
+  // The readiness view says this article is not image-ready. Force a verified
+  // regeneration so URL, alt text and ready status converge together even when
+  // a stale featured_image_url already exists from an earlier failed attempt.
+  const generated = await generateFeaturedImageForSlugDirect(requestedSlug, true);
+  const result = generated.ok
+    ? { slug: requestedSlug, ok: true as const, url: generated.url }
+    : { slug: requestedSlug, ok: false as const, error: generated.error };
+
   return Response.json({
-    ok: results.every((result) => result.ok),
+    ok: result.ok,
     ready: slugs.length,
-    offset,
-    limit,
-    processed: results.length,
-    succeeded: results.filter((result) => result.ok).length,
-    failed: results.filter((result) => !result.ok).length,
-    results,
-  });
+    processed: 1,
+    succeeded: result.ok ? 1 : 0,
+    failed: result.ok ? 0 : 1,
+    results: [result],
+  }, { status: result.ok ? 200 : 422 });
 }
 
 export const Route = createFileRoute("/api/public/hooks/adsense-image-backfill")({

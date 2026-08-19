@@ -38,7 +38,7 @@ jobs:
           fi
 
           endpoint='https://keeptxred.com/api/public/hooks/adsense-image-backfill'
-          ready=0
+          ready=-1
           for attempt in $(seq 1 6); do
             status=$(curl -sS -X POST -o /tmp/adsense-image-dry.json -w '%{http_code}' \
               --max-time 45 \
@@ -55,31 +55,45 @@ jobs:
             sleep 10
           done
 
-          if [[ "$ready" -le 0 ]]; then
-            echo 'Production AdSense image endpoint returned no eligible articles.' >&2
+          if [[ "$ready" -lt 0 ]]; then
+            echo 'Production AdSense image endpoint never became ready.' >&2
             exit 1
           fi
+          if [[ "$ready" -eq 0 ]]; then
+            echo 'ADSENSE_IMAGE_BACKFILL_SUCCESS ready=0; image queue already clean.'
+            exit 0
+          fi
 
+          max_per_run=24
+          mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/adsense-image-dry.json)
           failures=0
-          for offset in 0 2 4; do
-            if [[ "$offset" -ge "$ready" ]]; then break; fi
-            status=$(curl -sS -X POST -o "/tmp/adsense-image-${offset}.json" -w '%{http_code}' \
+          processed=0
+
+          for slug in "${slugs[@]}"; do
+            encoded_slug=$(jq -rn --arg value "$slug" '$value|@uri')
+            output="/tmp/adsense-image-${processed}.json"
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
               --max-time 900 \
               -H 'accept: application/json' \
               -H "Authorization: Bearer ${oidc_token}" \
-              "${endpoint}?limit=2&offset=${offset}" || echo 000)
-            echo "image batch offset=${offset} HTTP ${status}"
-            cat "/tmp/adsense-image-${offset}.json" 2>/dev/null || true
+              "${endpoint}?slug=${encoded_slug}" || echo 000)
+            echo "image slug=${slug} HTTP ${status}"
+            cat "$output" 2>/dev/null || true
             echo
-            if [[ "$status" != "200" ]]; then
+            processed=$((processed + 1))
+            if [[ "$status" != "200" ]] || ! jq -e '.ok == true and .failed == 0' "$output" >/dev/null 2>&1; then
               failures=$((failures + 1))
-            else
-              failures=$((failures + $(jq -r '.failed // 0' "/tmp/adsense-image-${offset}.json")))
             fi
           done
 
           if [[ "$failures" -gt 0 ]]; then
-            echo "ADSENSE_IMAGE_BACKFILL_PARTIAL failures=${failures}" >&2
+            echo "ADSENSE_IMAGE_BACKFILL_PARTIAL processed=${processed} failures=${failures} ready_at_start=${ready}" >&2
             exit 1
           fi
-          echo "ADSENSE_IMAGE_BACKFILL_SUCCESS ready=${ready}"
+
+          remaining=$((ready - processed))
+          if [[ "$remaining" -gt 0 ]]; then
+            echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining_for_next_deploy=${remaining}"
+          else
+            echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining=0"
+          fi
