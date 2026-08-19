@@ -4,7 +4,7 @@ import { z } from "zod";
 import { TEAM_BY_SLUG, isTeamSlug, type LeagueSlug } from "./texas-teams";
 import { classifySportsText, type SportsTopicSlug } from "./sports-taxonomy";
 import { meetsArticleMainWordCount } from "@/lib/article-length";
-import { hasSeoDuplicateFlag } from "@/lib/article-canonical";
+import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { shouldDisplayBreakingSports } from "@/lib/sports-lifecycle";
 import { getArticlesByCategory, type CategoryFeedItem } from "./category-feed.functions";
 
@@ -157,7 +157,7 @@ export const listSportsByTeam = createServerFn({ method: "GET" })
     const supabase = client();
     if (!supabase) return { items: [] };
     const team = TEAM_BY_SLUG[data.team];
-    const select = "slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams,kind,body_json,quality_flags";
+    const select = "slug,title,dek,author,published_at,image_url,image_hash,image_category,featured_image_url,image_alt_text,seo_headline,discover_category,keywords,seo_keywords,category,teams,kind,source_name,source_url,body_json,quality_flags,content_quality_score";
 
     const canonical = await supabase
       .from("daily_articles")
@@ -183,8 +183,11 @@ export const listSportsByTeam = createServerFn({ method: "GET" })
 
     type TeamFeedRow = SportsListItem & {
       kind?: string | null;
+      source_name?: string | null;
+      source_url?: string | null;
       body_json?: unknown;
       quality_flags?: string[] | null;
+      content_quality_score?: number | null;
     };
     const merged = new Map<string, TeamFeedRow>();
     for (const row of (canonical.data ?? []) as TeamFeedRow[]) merged.set(row.slug, row);
@@ -192,9 +195,17 @@ export const listSportsByTeam = createServerFn({ method: "GET" })
 
     const items = Array.from(merged.values())
       .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
-      .filter((row) => !hasSeoDuplicateFlag(row.quality_flags))
+      .filter((row) => isPublicArticleReady(row))
       .filter((row) => meetsArticleMainWordCount(row.kind, row.body_json as never))
       .filter((row) => shouldDisplayBreakingSports(row.kind, row.published_at, "team"))
-      .map(({ kind: _kind, body_json: _bodyJson, quality_flags: _qualityFlags, ...row }) => row);
+      .map(({
+        kind: _kind,
+        source_name: _sourceName,
+        source_url: _sourceUrl,
+        body_json: _bodyJson,
+        quality_flags: _qualityFlags,
+        content_quality_score: _qualityScore,
+        ...row
+      }) => row);
     return { items };
   });
