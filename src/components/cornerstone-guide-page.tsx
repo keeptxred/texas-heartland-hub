@@ -1,6 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import type { CornerstoneGuide } from "@/data/cornerstone-guides";
+import { ARTICLES } from "@/data/articles";
 import { SITE_URL } from "@/lib/seo";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+
+function isRelatedGuideLinkPublic(href: string): boolean {
+  const match = /^\/news\/([^/?#]+)$/.exec(href);
+  if (!match) return true;
+  const article = ARTICLES.find((candidate) => candidate.slug === match[1]);
+  return !article || isStaticArticleIndexable(article);
+}
 
 export function cornerstoneGuideHead(guide: CornerstoneGuide) {
   const url = `${SITE_URL}/guides/${guide.slug}`;
@@ -62,6 +71,7 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
     ...guide.faq.flatMap((item) => [item.q, item.a]),
   ].join(" ").split(/\s+/).filter(Boolean).length;
   const readingMinutes = Math.max(5, Math.round(wordCount / 230));
+  const publicRelated = guide.related.filter((item) => isRelatedGuideLinkPublic(item.href));
 
   return (
     <article className="mx-auto max-w-4xl px-4 py-14">
@@ -135,12 +145,14 @@ export function CornerstoneGuidePage({ guide }: { guide: CornerstoneGuide }) {
         </ul>
       </section>
 
-      <section className="mt-10 rounded-xl border bg-muted/20 p-6">
-        <h2 className="font-display text-2xl tracking-tight">Continue this topic</h2>
-        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold">
-          {guide.related.map((item) => <a key={item.href} href={item.href} className="text-primary hover:underline">{item.label} →</a>)}
-        </div>
-      </section>
+      {publicRelated.length > 0 ? (
+        <section className="mt-10 rounded-xl border bg-muted/20 p-6">
+          <h2 className="font-display text-2xl tracking-tight">Continue this topic</h2>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-3 text-sm font-semibold">
+            {publicRelated.map((item) => <a key={item.href} href={item.href} className="text-primary hover:underline">{item.label} →</a>)}
+          </div>
+        </section>
+      ) : null}
     </article>
   );
 }
