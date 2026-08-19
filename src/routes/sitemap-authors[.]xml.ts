@@ -5,45 +5,44 @@ import { AUTHORS, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { hasEnoughAuthorArticles, isCompleteAuthorProfile } from "@/lib/author-indexability";
 
-const MIN_AUTHOR_ARTICLES_FOR_SITEMAP = 3;
+type AuthorArticleRecord = { slug: string; publishedAt: string };
 
-function isCompleteAuthor(author: Author): boolean {
-  const biography = author.bio.join(" ").trim();
-  return Boolean(
-    /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(author.slug) &&
-      author.name.trim().length >= 3 &&
-      author.role.trim().length >= 3 &&
-      biography.length >= 100 &&
-      author.beats.length > 0 &&
-      author.beats.every((beat) => beat.trim().length >= 3),
-  );
-}
+function authorArticleRecords(author: Author, liveArticles: DailyArticle[]): AuthorArticleRecord[] {
+  const records = new Map<string, string>();
 
-function authorArticleDates(author: Author, liveArticles: DailyArticle[]): string[] {
-  return [
-    ...ARTICLES.filter(
-      (article) =>
-        isPublished(article)
-        && isStaticArticleIndexable(article)
-        && authorSlug(article.author) === author.slug,
-    )
-      .map((article) => article.publishedAt)
-      .filter((value): value is string => Boolean(value)),
-    ...liveArticles
-      .filter((article) => article.slug && authorSlug(article.author) === author.slug)
-      .map((article) => article.published_at)
-      .filter(Boolean),
-  ];
+  for (const article of ARTICLES) {
+    if (
+      isPublished(article)
+      && isStaticArticleIndexable(article)
+      && authorSlug(article.author) === author.slug
+      && article.publishedAt
+    ) {
+      records.set(article.slug, article.publishedAt);
+    }
+  }
+
+  for (const article of liveArticles) {
+    if (article.slug && authorSlug(article.author) === author.slug && article.published_at) {
+      const existing = records.get(article.slug);
+      if (!existing || Date.parse(article.published_at) > Date.parse(existing)) {
+        records.set(article.slug, article.published_at);
+      }
+    }
+  }
+
+  return Array.from(records, ([slug, publishedAt]) => ({ slug, publishedAt }));
 }
 
 function activeAuthorEntry(author: Author, liveArticles: DailyArticle[]): UrlEntry | null {
-  if (!isCompleteAuthor(author)) return null;
-  const dates = authorArticleDates(author, liveArticles);
-  if (dates.length < MIN_AUTHOR_ARTICLES_FOR_SITEMAP) return null;
+  if (!isCompleteAuthorProfile(author)) return null;
+  const records = authorArticleRecords(author, liveArticles);
+  if (!hasEnoughAuthorArticles(records.map((record) => record.slug))) return null;
 
-  const latestArticleDate = dates
-    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
+  const latestArticleDate = records
+    .map((record) => record.publishedAt)
+    .sort((a, b) => Date.parse(b) - Date.parse(a))[0];
 
   return {
     loc: `${BASE_URL}/authors/${author.slug}`,
