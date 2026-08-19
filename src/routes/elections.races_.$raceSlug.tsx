@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import races from "@/data/elections/2026/races.json";
 import {
   ElectionErrorState,
@@ -25,20 +25,39 @@ import {
   useResultByRace,
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
+import { findRaceStoredSlug, raceSeoSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/races_/$raceSlug")({
+  beforeLoad: ({ params }) => {
+    const storedSlug = findRaceStoredSlug(params.raceSlug, races);
+    if (!storedSlug) return;
+
+    const canonicalSlug = raceSeoSlug(storedSlug);
+    if (params.raceSlug !== canonicalSlug) {
+      throw redirect({
+        to: "/elections/races/$raceSlug",
+        params: { raceSlug: canonicalSlug },
+        replace: true,
+        statusCode: 301,
+      });
+    }
+  },
   head: ({ params }) => {
-    const record = races.find(
-      (item) =>
-        item.slug === params.raceSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
-    );
-    const validSlug = isElectionSlug(params.raceSlug);
+    const storedSlug = findRaceStoredSlug(params.raceSlug, races);
+    const record = storedSlug
+      ? races.find(
+          (item) =>
+            item.slug === storedSlug &&
+            item.publicationStatus === "published" &&
+            item.verificationStatus === "verified",
+        )
+      : undefined;
+    const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));
     const indexable = validSlug && Boolean(record);
-    const canonicalUrl = `https://keeptxred.com/elections/races/${params.raceSlug}`;
+    const canonicalSlug = storedSlug ? raceSeoSlug(storedSlug) : params.raceSlug;
+    const canonicalUrl = `https://keeptxred.com/elections/races/${canonicalSlug}`;
     const recordName =
       record && "fullName" in record && typeof record.fullName === "string"
         ? record.fullName
@@ -122,15 +141,20 @@ export const Route = createFileRoute("/elections/races_/$raceSlug")({
 
 function ElectionRaceDetailRoute() {
   const { raceSlug } = Route.useParams();
-  const validSlug = isElectionSlug(raceSlug);
+  const storedSlug = findRaceStoredSlug(raceSlug, races);
+  const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));
   const indexable =
     validSlug &&
-    races.some(
-      (item) =>
-        item.slug === raceSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
+    Boolean(
+      storedSlug &&
+        races.some(
+          (item) =>
+            item.slug === storedSlug &&
+            item.publicationStatus === "published" &&
+            item.verificationStatus === "verified",
+        ),
     );
+  const canonicalSlug = storedSlug ? raceSeoSlug(storedSlug) : raceSlug;
 
   return (
     <ElectionRepositoryProvider>
@@ -138,11 +162,11 @@ function ElectionRaceDetailRoute() {
         title="Texas Election Race"
         description="Verified race details from KeepTXRed Election Central."
         indexable={indexable}
-        canonicalUrl={indexable ? `https://keeptxred.com/elections/races/${raceSlug}` : undefined}
+        canonicalUrl={indexable ? `https://keeptxred.com/elections/races/${canonicalSlug}` : undefined}
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.races} />}
       >
-        {indexable ? (
-          <ElectionRaceDetailData raceSlug={raceSlug} />
+        {indexable && storedSlug ? (
+          <ElectionRaceDetailData raceSlug={storedSlug} />
         ) : (
           <ElectionErrorState
             title="Invalid election race URL"

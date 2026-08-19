@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import candidates from "@/data/elections/2026/candidates.json";
 import {
   CandidateBiographySection,
@@ -24,20 +24,39 @@ import {
 } from "@/hooks/elections";
 import { ELECTION_ROUTES } from "@/lib/elections";
 import { getFeaturedCandidateProfile } from "@/lib/elections/featuredCandidateProfiles";
+import { findCandidateStoredSlug, candidateSeoSlug } from "@/lib/elections/seoSlugs";
 import { ElectionRepositoryProvider } from "@/lib/elections/repositories";
 import { electionSlugs, isElectionSlug } from "@/types/elections";
 
 export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
+  beforeLoad: ({ params }) => {
+    const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);
+    if (!storedSlug) return;
+
+    const canonicalSlug = candidateSeoSlug(storedSlug);
+    if (params.candidateSlug !== canonicalSlug) {
+      throw redirect({
+        to: "/elections/candidates/$candidateSlug",
+        params: { candidateSlug: canonicalSlug },
+        replace: true,
+        statusCode: 301,
+      });
+    }
+  },
   head: ({ params }) => {
-    const record = candidates.find(
-      (item) =>
-        item.slug === params.candidateSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
-    );
-    const validSlug = isElectionSlug(params.candidateSlug);
+    const storedSlug = findCandidateStoredSlug(params.candidateSlug, candidates);
+    const record = storedSlug
+      ? candidates.find(
+          (item) =>
+            item.slug === storedSlug &&
+            item.publicationStatus === "published" &&
+            item.verificationStatus === "verified",
+        )
+      : undefined;
+    const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));
     const indexable = validSlug && Boolean(record);
-    const canonicalUrl = `https://keeptxred.com/elections/candidates/${params.candidateSlug}`;
+    const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : params.candidateSlug;
+    const canonicalUrl = `https://keeptxred.com/elections/candidates/${canonicalSlug}`;
     const recordName =
       record && "fullName" in record && typeof record.fullName === "string"
         ? record.fullName
@@ -159,15 +178,20 @@ export const Route = createFileRoute("/elections/candidates_/$candidateSlug")({
 
 function ElectionCandidateDetailRoute() {
   const { candidateSlug } = Route.useParams();
-  const validSlug = isElectionSlug(candidateSlug);
+  const storedSlug = findCandidateStoredSlug(candidateSlug, candidates);
+  const validSlug = Boolean(storedSlug && isElectionSlug(storedSlug));
   const indexable =
     validSlug &&
-    candidates.some(
-      (item) =>
-        item.slug === candidateSlug &&
-        item.publicationStatus === "published" &&
-        item.verificationStatus === "verified",
+    Boolean(
+      storedSlug &&
+        candidates.some(
+          (item) =>
+            item.slug === storedSlug &&
+            item.publicationStatus === "published" &&
+            item.verificationStatus === "verified",
+        ),
     );
+  const canonicalSlug = storedSlug ? candidateSeoSlug(storedSlug) : candidateSlug;
 
   return (
     <ElectionRepositoryProvider>
@@ -176,12 +200,12 @@ function ElectionCandidateDetailRoute() {
         description="Verified candidate details from KeepTXRed Election Central."
         indexable={indexable}
         canonicalUrl={
-          indexable ? `https://keeptxred.com/elections/candidates/${candidateSlug}` : undefined
+          indexable ? `https://keeptxred.com/elections/candidates/${canonicalSlug}` : undefined
         }
         navigation={<ElectionNavigation currentPath={ELECTION_ROUTES.candidates} />}
       >
-        {indexable ? (
-          <ElectionCandidateDetailData candidateSlug={candidateSlug} />
+        {indexable && storedSlug ? (
+          <ElectionCandidateDetailData candidateSlug={storedSlug} />
         ) : (
           <ElectionErrorState
             kind="not_found"
