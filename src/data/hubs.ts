@@ -24,9 +24,6 @@ export const HUBS: Hub[] = [
       "texas-political-terminology",
       "texas-attorney-general-powers",
       "texas-governor-powers",
-      "speaker-special-session",
-      "voter-id-surge",
-      "school-board-elections",
     ],
   },
   {
@@ -42,9 +39,7 @@ export const HUBS: Hub[] = [
       "appraisal-protest-playbook",
       "county-appraisal-districts-explained",
       "why-texas-has-no-income-tax",
-      "isd-tax-burdens",
       "how-texas-counties-spend",
-      "property-tax-relief-package",
       "texas-energy-economy-overview",
     ],
   },
@@ -57,7 +52,6 @@ export const HUBS: Hub[] = [
     pillarSlug: "texas-border-policy-full-guide",
     articleSlugs: [
       "texas-border-policy-full-guide",
-      "operation-lone-star",
       "border-security-state-role",
       "texas-border-geography-101",
     ],
@@ -71,7 +65,6 @@ export const HUBS: Hub[] = [
     pillarSlug: "texas-energy-economy-overview",
     articleSlugs: [
       "texas-energy-economy-overview",
-      "permian-energy",
       "texas-grid-ercot-explained",
       "texas-energy-policy-guide",
     ],
