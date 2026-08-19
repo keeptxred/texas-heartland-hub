@@ -137,6 +137,21 @@ descriptive section headings instead of generic filler. If a factual article can
 be produced, set brief.hasClearNewsEvent to false and leave article fields empty.
 `;
 
+export const EDITORIAL_LENGTH_COMPLETION_ADDENDUM = `
+
+LENGTH COMPLETION — FINAL REPAIR PASS:
+The strict retry is still below the required main-story word floor. Complete the
+existing draft rather than replacing it. Preserve its verified angle, supported
+facts, source attribution, title, and answer-first summary whenever those fields
+already pass. Add enough source-supported main-story prose to clear the exact
+word-count failure listed below, using chronology, corroborated details,
+stakeholders, consequences, official context, and reader-useful next steps that
+are actually present in the source packet. Do not pad, repeat, speculate, copy
+source language closely, or introduce a person, organization, number, quotation,
+or causal claim that is not supported. Also repair every other listed validation
+failure. Return the complete article JSON, not just the added paragraphs.
+`;
+
 const BANNED_UNSUPPORTED_PATTERNS: RegExp[] = [
   /\bpolitical momentum\b/i,
   /\bgrassroots movement\b/i,
@@ -363,7 +378,7 @@ export function parseEditorialResponse<T extends ArticleShape>(
 
 export type GeneratorFn<T extends ArticleShape> = (
   addendum: string,
-  attempt: "initial" | "strict-retry",
+  attempt: "initial" | "strict-retry" | "length-completion",
 ) => Promise<{ raw: string | null } | null>;
 
 export type EditorialResult<T extends ArticleShape> = {
@@ -390,6 +405,10 @@ or existing supported section merely because another field failed.
 PREVIOUS DRAFT JSON:
 ${priorDraft}
 `;
+}
+
+function needsLengthCompletion(validation: ValidationResult): boolean {
+  return validation.reasons.some((reason) => /^tiered_main_word_count:\d+\/\d+$/.test(reason));
 }
 
 export async function runEditorialRewrite<T extends ArticleShape>(
@@ -472,6 +491,64 @@ export async function runEditorialRewrite<T extends ArticleShape>(
       brief: parsedSecond.brief,
       validation: secondValidation,
       attempts: 2,
+    };
+  }
+
+  // The downstream expansion path cannot repair a short draft after this
+  // function returns null. Give a second-pass draft one narrowly scoped final
+  // completion attempt only when the tiered word-count gate is still failing,
+  // then run the complete validator again. Nothing is accepted on length alone.
+  if (secondArticle && needsLengthCompletion(secondValidation)) {
+    const third = await generate(
+      EDITORIAL_SYSTEM_ADDENDUM +
+        EDITORIAL_STRICT_RETRY_ADDENDUM +
+        EDITORIAL_LENGTH_COMPLETION_ADDENDUM +
+        retryContext(second.raw, secondValidation),
+      "length-completion",
+    );
+
+    if (third?.raw) {
+      const parsedThird = parseEditorialResponse<T>(third.raw);
+      if (parsedThird.brief?.hasClearNewsEvent === false) {
+        return {
+          article: null,
+          brief: parsedThird.brief,
+          validation: { ok: false, reasons: ["brief_no_clear_news_event"] },
+          attempts: 3,
+          droppedReason: "no_clear_news_event",
+        };
+      }
+
+      const thirdArticle = parsedThird.article ? repairArticleReadability(parsedThird.article) : null;
+      const thirdValidation = validateArticle(
+        thirdArticle ?? {},
+        parsedThird.brief ?? parsedSecond.brief ?? undefined,
+        sourceText,
+      );
+      if (thirdValidation.ok && thirdArticle) {
+        return {
+          article: thirdArticle,
+          brief: parsedThird.brief ?? parsedSecond.brief,
+          validation: thirdValidation,
+          attempts: 3,
+        };
+      }
+
+      return {
+        article: null,
+        brief: parsedThird.brief ?? parsedSecond.brief ?? parsedFirst.brief,
+        validation: thirdValidation,
+        attempts: 3,
+        droppedReason: "validation_failed_twice",
+      };
+    }
+
+    return {
+      article: null,
+      brief: parsedSecond.brief ?? parsedFirst.brief,
+      validation: secondValidation,
+      attempts: 3,
+      droppedReason: "validation_failed_twice",
     };
   }
 
