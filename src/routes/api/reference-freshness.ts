@@ -3,6 +3,8 @@ import { POLITICAL_SEARCH_GUIDES, type PoliticalSearchGuideCategory } from "@/da
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
+import { TEXAS_LEGISLATIVE_SEATS } from "@/data/texas-legislators.generated";
+import { stateDistrictSlug } from "@/lib/state-districts";
 
 const POLITICAL_REVIEW_DAYS: Record<PoliticalSearchGuideCategory, number> = {
   races: 7,
@@ -14,9 +16,10 @@ const POLITICAL_REVIEW_DAYS: Record<PoliticalSearchGuideCategory, number> = {
 const POLICY_REVIEW_DAYS = 30;
 const LAW_REVIEW_DAYS = 90;
 const DATA_REVIEW_DAYS = 90;
+const DISTRICT_REVIEW_DAYS = 90;
 
 type FreshnessItem = {
-  kind: "political-reference" | "policy-tracker" | "law-topic" | "data-source-map";
+  kind: "political-reference" | "policy-tracker" | "law-topic" | "data-source-map" | "state-district";
   slug: string;
   path: string;
   reviewed: string;
@@ -83,10 +86,24 @@ function handler() {
         overdue: due.getTime() < now.getTime(),
       };
     }),
+    ...TEXAS_LEGISLATIVE_SEATS.map((seat) => {
+      const slug = stateDistrictSlug(seat.chamber, seat.district);
+      const reviewed = seat.authority?.reviewedAt ?? "2026-07-31";
+      const due = dueDate(reviewed, DISTRICT_REVIEW_DAYS);
+      return {
+        kind: "state-district" as const,
+        slug,
+        path: `/districts/${slug}`,
+        reviewed,
+        reviewDays: DISTRICT_REVIEW_DAYS,
+        dueAt: due.toISOString(),
+        overdue: due.getTime() < now.getTime(),
+      };
+    }),
   ].sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt));
 
   const overdue = items.filter((item) => item.overdue);
-  const upcoming = items.filter((item) => !item.overdue).slice(0, 30);
+  const upcoming = items.filter((item) => !item.overdue).slice(0, 40);
   return Response.json({
     ok: true,
     checkedAt: now.toISOString(),
@@ -95,6 +112,7 @@ function handler() {
       policyTrackerDays: POLICY_REVIEW_DAYS,
       lawTopicDays: LAW_REVIEW_DAYS,
       dataSourceMapDays: DATA_REVIEW_DAYS,
+      stateDistrictDays: DISTRICT_REVIEW_DAYS,
       note: "This endpoint identifies pages due for source review. It does not invent or auto-update facts; primary-source refresh remains required before changing dated claims.",
     },
     totalPages: items.length,
