@@ -1,5 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { getTexasCasePosition } from "@/data/texas-case";
+import { getTexasCasePosition } from "@/data/texas-case-all";
 import { TexasCasePositionPage, texasCasePositionHead } from "@/components/texas-case-position-page";
 
 export const Route = createFileRoute("/texas-case/$slug")({

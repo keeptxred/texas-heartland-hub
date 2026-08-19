@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { TEXAS_CASE_POSITIONS } from "@/data/texas-case";
+import { TEXAS_CASE_POSITIONS } from "@/data/texas-case-all";
 import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 
 const TITLE = "The Texas Case | Keep TX Red Editorial Positions";
-const DESCRIPTION = "Keep TX Red's permanent editorial case for life, gun rights, lower taxes, eliminating property taxes, parental rights, school choice, border security, and limited government.";
+const DESCRIPTION = "Keep TX Red's permanent editorial case for life, liberty, gun rights, lower taxes, property rights, public safety, election integrity, energy abundance, federalism, free speech, and limited government.";
 
 export const Route = createFileRoute("/texas-case")({
   head: () => {
