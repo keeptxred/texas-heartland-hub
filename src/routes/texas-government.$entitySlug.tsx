@@ -3,6 +3,7 @@ import { ExternalLink, Gavel, Landmark, Scale, ShieldCheck, Users } from "lucide
 import { ARTICLES, isPublished } from "@/data/articles";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
 import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { GOVERNMENT_ENTITIES, GOVERNMENT_REVIEWED_AT, getGovernmentEntity, governmentJsonLd, governmentPath, SITE_URL, type GovernmentLink } from "@/lib/texas-government";
 
 export const Route = createFileRoute("/texas-government/$entitySlug")({
@@ -11,7 +12,7 @@ export const Route = createFileRoute("/texas-government/$entitySlug")({
     if (!entity) throw notFound();
     const relatedEntities = entity.relatedEntities.map(getGovernmentEntity).filter(Boolean);
     const terms = [...entity.newsKeywords, entity.name, entity.shortName].map((value) => value.toLowerCase());
-    const news = ARTICLES.filter((article: any) => isPublished(article))
+    const news = ARTICLES.filter((article: any) => isPublished(article) && isStaticArticleIndexable(article))
       .filter((article: any) => {
         const haystack = `${article.title} ${article.dek} ${(article.topics ?? []).join(" ")}`.toLowerCase();
         return terms.some((term) => haystack.includes(term));
