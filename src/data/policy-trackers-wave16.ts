@@ -73,7 +73,7 @@ export const POLICY_TRACKERS_WAVE16: PolicyTracker[] = [
     related: [
       { label: "Consumer Data Privacy tracker", href: "/policy/consumer-data-privacy", kind: "reference" },
       { label: "AI Governance tracker", href: "/policy/ai-governance", kind: "reference" },
-      { label: "Critical Minerals tracker", href: "/policy/critical-minerals", kind: "reference" },
+      { label: "Critical Minerals tracker", href: "/policy/critical-minerals-rare-earths", kind: "reference" },
       { label: "Texas Government", href: "/texas-government", kind: "government" },
     ],
     keywords: ["Texas Cyber Command", "HB 150", "Chapter 2063", "Texas cybersecurity", "cyber incident response", "critical infrastructure", "DIR cybersecurity"],
