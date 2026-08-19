@@ -81,7 +81,8 @@ const checks = [
   {
     file: 'src/lib/authority-relationships.ts',
     required: [
-      "article: '/news/'",
+      "if (row.target_type === 'article') {",
+      'if (!articleMap.has(row.target_key)) return [];',
       'href: `/news/${article.slug}`',
     ],
   },
@@ -128,6 +129,11 @@ for (const file of [
   if (source.includes('/article/${article.slug}') || source.includes("article: '/article/'")) {
     errors.push(`${file} must use canonical /news/ article links`);
   }
+}
+
+const authorityRelationships = await readFile('src/lib/authority-relationships.ts', 'utf8');
+if (authorityRelationships.includes("article: '/news/'")) {
+  errors.push('authority article relationships must not synthesize /news/ fallbacks for unresolved or unready articles');
 }
 
 const robots = await readFile('src/routes/robots[.]txt.ts', 'utf8');
