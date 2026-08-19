@@ -20,7 +20,7 @@ const GSC_CANONICAL_REFRESH = toIsoDate("2026-08-11T12:30:00-05:00");
 const CITATION_MAGNET_REFRESH = toIsoDate("2026-08-11T22:00:00-05:00");
 const TEXAS_CASE_REFRESH = toIsoDate("2026-08-18T23:00:00-05:00");
 const POLITICAL_REFERENCE_REFRESH = toIsoDate("2026-08-18T23:53:00-05:00");
-const POLICY_REFRESH = toIsoDate("2026-08-19T16:50:00-05:00");
+const POLICY_REFRESH = toIsoDate("2026-08-19T06:30:00-05:00");
 const LAW_DATA_REFRESH = toIsoDate("2026-08-19T07:15:00-05:00");
 const DISTRICT_REFRESH = toIsoDate("2026-08-19T07:35:00-05:00");
 const AGENCY_REFRESH = toIsoDate("2026-08-19T07:40:00-05:00");
@@ -66,8 +66,10 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/civic-tools/compare-legislators": CIVIC_TOOLS_REFRESH,
   "/topics": GUIDE_LASTMOD,
   "/issues": ISSUE_GUIDE_REFRESH,
+  "/tools": ISSUE_GUIDE_REFRESH,
   "/tools/texas-spending-growth-cap": ISSUE_GUIDE_REFRESH,
   "/tools/texas-tax-structure-comparison": ISSUE_GUIDE_REFRESH,
+  "/tools/texas-rainy-day-fund": ISSUE_GUIDE_REFRESH,
   "/texas-politics": POLICY_REFRESH,
   "/texas-political-reference": POLITICAL_REFERENCE_REFRESH,
   "/policy": POLICY_REFRESH,
@@ -104,7 +106,7 @@ const STATIC_PATHS:string[]=[
   "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder","/civic-tools/bill-finder","/civic-tools/compare-legislators",
   "/contact","/privacy","/terms-of-service",
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/citation-guide",
-  "/topics","/issues","/tools/texas-spending-growth-cap","/tools/texas-tax-structure-comparison","/texas-politics","/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
+  "/topics","/issues","/tools","/tools/texas-spending-growth-cap","/tools/texas-tax-structure-comparison","/tools/texas-rainy-day-fund","/texas-politics","/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
   "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-case","/texas-case/facts",
   "/guides/texas-agriculture-rural-guide","/guides/texas-veterans-military-guide","/guides/texas-law-enforcement-public-safety-guide",
   "/authors","/shop",

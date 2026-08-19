@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ISSUE_CATEGORIES, getGuidesByCategory, issueGuides } from "@/data/issue-guides";
 
 const SITE_URL = "https://keeptxred.com";
@@ -39,6 +39,13 @@ export const Route = createFileRoute("/issues/")({
   component: IssuesHub,
 });
 
+const AUTHORITY_LAYERS = [
+  { href: "/policy", label: "Policy Trackers", eyebrow: "Current status", text: "Follow narrower policy questions as laws, agencies, litigation, implementation and official data change." },
+  { href: "/tools", label: "Policy Tools", eyebrow: "Do the math", text: "Test fiscal-policy assumptions with transparent calculators and scenario explorers tied back to source context." },
+  { href: "/civic-tools", label: "Civic Tools", eyebrow: "Find the source", text: "Locate Texas laws, bills, government authority and elected officials without relying on a summary alone." },
+  { href: "/news", label: "Texas News", eyebrow: "Live coverage", text: "Move from permanent background into the latest bills, rulings, campaigns, agency actions and political fights." },
+] as const;
+
 function IssuesHub() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 md:py-16">
@@ -50,8 +57,19 @@ function IssuesHub() {
 
       <div className="mt-10 border-l-4 border-primary bg-muted/40 p-5">
         <p className="font-semibold">How these pages work</p>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Each guide starts with a quick answer, explains the governing structure, links primary sources, and cross-links related KTR topics. When a law or court ruling changes, the evergreen guide is the page we update so readers do not have to reconstruct the issue from old news stories.</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">Issue guides explain the durable framework. Policy trackers handle narrower questions that change more often. Tools expose the arithmetic. Civic tools help you reach the underlying law, bill or official. News coverage handles the live event. That division keeps KTR from creating multiple pages that compete to answer the same search.</p>
       </div>
+
+      <section className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4" aria-label="Keep TX Red authority layers">
+        {AUTHORITY_LAYERS.map((layer) => (
+          <a key={layer.href} href={layer.href} className="group border bg-background p-5 transition hover:border-primary">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">{layer.eyebrow}</span>
+            <h2 className="mt-2 font-display text-2xl tracking-tight group-hover:text-primary">{layer.label}</h2>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">{layer.text}</p>
+            <span className="mt-4 inline-block text-sm font-semibold text-primary">Open →</span>
+          </a>
+        ))}
+      </section>
 
       <div className="mt-12 space-y-14">
         {ISSUE_CATEGORIES.map((category) => {
@@ -80,6 +98,11 @@ function IssuesHub() {
       <section className="mt-16 border-t pt-8">
         <h2 className="font-display text-3xl tracking-tight">Use the reporting, not just the label</h2>
         <p className="mt-3 max-w-4xl leading-relaxed text-muted-foreground">Keep TX Red has a conservative editorial perspective, but these reference pages are built to make claims checkable. Primary-source links are included so readers can inspect enacted bills, current statutes and agency material directly. Commentary belongs on top of a factual foundation, not in place of one.</p>
+        <div className="mt-5 flex flex-wrap gap-4 text-sm font-semibold">
+          <Link to="/policy" className="text-primary hover:underline">Browse policy trackers →</Link>
+          <Link to="/tools" className="text-primary hover:underline">Use policy tools →</Link>
+          <Link to="/texas-case" className="text-primary hover:underline">Read The Texas Case →</Link>
+        </div>
       </section>
     </main>
   );

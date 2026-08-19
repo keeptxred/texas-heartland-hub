@@ -44,6 +44,7 @@ const CIVIC_LINKS = [
   { to: "/elections/candidates", label: "Candidates" },
   { to: "/laws", label: "Texas Laws" },
   { to: "/bills", label: "Track Legislation" },
+  { to: "/tools", label: "Policy Tools" },
   { to: "/authors", label: "Newsroom Desks" },
 ] as const;
 
