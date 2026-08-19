@@ -5,6 +5,7 @@ import {
   PROPERTY_TAX_OFFICIAL_FILES,
   PROPERTY_TAX_REFERENCE_LINKS,
 } from "@/data/property-tax-data";
+import { StateBudgetDataPanel } from "@/components/state-budget-data-panel";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 
 export function texasDataHead(dataset: TexasDataSet) {
@@ -28,6 +29,7 @@ export function TexasDataPage({ dataset }: { dataset: TexasDataSet }) {
     <section className="mt-8 border-l-4 border-primary bg-primary/5 p-6"><p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Quick answer</p><p className="mt-3 text-base font-semibold leading-7">{dataset.quickAnswer}</p></section>
 
     {dataset.slug === "property-tax" ? <PropertyTaxOfficialData /> : null}
+    {dataset.slug === "state-budget-spending" ? <StateBudgetDataPanel /> : null}
 
     <section className="mt-10"><h2 className="border-b pb-2 font-display text-3xl tracking-tight">What the official data can show</h2><ul className="mt-5 space-y-3 text-base leading-7">{dataset.whatAvailable.map((item) => <li key={item} className="flex gap-3"><span className="font-bold text-primary">•</span><span>{item}</span></li>)}</ul></section>
 
