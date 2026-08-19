@@ -4,6 +4,7 @@ import { BASE_URL, renderUrlset, xmlResponse, toIsoDate, type UrlEntry } from "@
 import { AUTHORS, authorSlug, type Author } from "@/data/authors";
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 const MIN_AUTHOR_ARTICLES_FOR_SITEMAP = 3;
 
@@ -22,7 +23,10 @@ function isCompleteAuthor(author: Author): boolean {
 function authorArticleDates(author: Author, liveArticles: DailyArticle[]): string[] {
   return [
     ...ARTICLES.filter(
-      (article) => isPublished(article) && authorSlug(article.author) === author.slug,
+      (article) =>
+        isPublished(article)
+        && isStaticArticleIndexable(article)
+        && authorSlug(article.author) === author.slug,
     )
       .map((article) => article.publishedAt)
       .filter((value): value is string => Boolean(value)),
