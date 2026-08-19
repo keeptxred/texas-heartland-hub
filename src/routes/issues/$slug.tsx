@@ -37,9 +37,13 @@ const CATEGORY_HUBS: Record<string, Array<{ label: string; href: string }>> = {
 const GUIDE_TOOL_LINKS: Record<string, Array<{ label: string; href: string }>> = {
   "texas-property-tax-relief": [
     { label: "Texas spending-growth calculator", href: "/tools/texas-spending-growth-cap" },
+    { label: "Texas policy tools", href: "/tools" },
   ],
   "texas-economy-no-income-tax": [
     { label: "Texas spending-growth calculator", href: "/tools/texas-spending-growth-cap" },
+    { label: "Texas tax-structure comparison", href: "/tools/texas-tax-structure-comparison" },
+    { label: "Texas Rainy Day Fund explorer", href: "/tools/texas-rainy-day-fund" },
+    { label: "All Texas policy tools", href: "/tools" },
   ],
   "texas-election-law": [
     { label: "Election Central", href: "/elections" },
@@ -182,6 +186,7 @@ function IssueGuidePage() {
                 {hubLinks.map((link) => <a key={link.href} href={link.href} className="block text-sm font-semibold text-primary hover:underline">{link.label} →</a>)}
                 <a href="/topics" className="block text-sm font-semibold text-primary hover:underline">All coverage topics →</a>
                 <a href="/civic-tools" className="block text-sm font-semibold text-primary hover:underline">Civic tools →</a>
+                <a href="/tools" className="block text-sm font-semibold text-primary hover:underline">Policy tools →</a>
               </div>
             </section>
           ) : null}
