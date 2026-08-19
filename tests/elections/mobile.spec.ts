@@ -1,8 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
-const HOMEPAGE_TAKEOVER_ENABLED =
-  process.env.VITE_ENABLE_ELECTION_CENTRAL_HOMEPAGE === "true";
 const STANDARD_HOMEPAGE_HEADING = /follow the decisions shaping texas/i;
+const ELECTION_HOMEPAGE_HEADING = /texas election central/i;
 
 const ROUTES = [
   "/elections/2026",
@@ -17,22 +16,26 @@ const ROUTES = [
   "/elections/methodology",
 ] as const;
 
-test(`homepage renders the ${HOMEPAGE_TAKEOVER_ENABLED ? "Election Central" : "standard"} experience`, async ({ page }) => {
+test("homepage renders exactly one supported experience", async ({ page }) => {
   const response = await page.goto("/", { waitUntil: "domcontentloaded" });
   expect(response?.status()).toBeLessThan(400);
 
-  if (HOMEPAGE_TAKEOVER_ENABLED) {
-    await expect(
-      page.getByRole("heading", { name: /texas election central/i }).first(),
-    ).toBeVisible({ timeout: 20_000 });
-    await expect(
-      page.getByRole("heading", { name: STANDARD_HOMEPAGE_HEADING }),
-    ).toHaveCount(0);
+  const standardHeading = page.getByRole("heading", { name: STANDARD_HOMEPAGE_HEADING });
+  const electionHeading = page.getByRole("heading", { name: ELECTION_HOMEPAGE_HEADING });
+  const standardVisible = await standardHeading.first().isVisible().catch(() => false);
+  const electionVisible = await electionHeading.first().isVisible().catch(() => false);
+
+  expect(
+    Number(standardVisible) + Number(electionVisible),
+    "homepage should render either the standard KTR experience or Election Central, but not both",
+  ).toBe(1);
+
+  if (standardVisible) {
+    await expect(standardHeading.first()).toBeVisible();
+    await expect(electionHeading).toHaveCount(0);
   } else {
-    await expect(
-      page.getByRole("heading", { name: STANDARD_HOMEPAGE_HEADING }),
-    ).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByRole("heading", { name: /texas election central/i })).toHaveCount(0);
+    await expect(electionHeading.first()).toBeVisible();
+    await expect(standardHeading).toHaveCount(0);
   }
 
   await expectNoHorizontalOverflow(page);

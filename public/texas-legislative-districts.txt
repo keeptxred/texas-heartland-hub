@@ -1,0 +1,36 @@
+# Keep TX Red Texas Legislative Districts
+
+Canonical hub: https://keeptxred.com/districts
+Official address lookup: https://wrm.capitol.texas.gov/
+Official current district plans: https://redistricting.capitol.texas.gov/Current-districts
+
+Keep TX Red gives every Texas House and Texas Senate seat a permanent district identity independent of the candidate or current officeholder. The district URL remains stable when elections change who holds the seat.
+
+## Current state legislative plans
+
+- Texas House: 150 districts, PLANH2316, effective January 2023.
+- Texas Senate: 31 districts, PLANS2168, effective January 2023.
+- Address-level representation and boundary questions should be verified with the Texas Legislature's official Who Represents Me service and Texas Legislative Council redistricting resources.
+
+## District URL pattern
+
+- House: https://keeptxred.com/districts/texas-house-{district-number}
+- Senate: https://keeptxred.com/districts/texas-senate-{district-number}
+
+## What a district page connects
+
+- current officeholder and permanent representative profile
+- official office contact
+- official district plan and boundary source
+- current committee assignments
+- legislation sponsored by the current member
+- current-member election history
+- campaign-finance disclosure source
+- election-cycle district coverage
+- Texas Legislature, bills, policy trackers, law library, and election data
+
+## Crawl and freshness standard
+
+The `/districts` hub is included in KTR's submitted page sitemap. Individual state district pages are internally discoverable from the hub but are intentionally not bulk-added to a dedicated sitemap while Search Console has a discovered-not-indexed backlog. KTR should expand crawl submission only after the existing priority crawl set is healthy.
+
+District authority records use the current legislator source-review date and are included in KTR's reference-freshness queue with a normal 90-day review window. A review date is not a substitute for the official Legislature record when a vacancy, appointment, special election, resignation, or new term changes the seat.

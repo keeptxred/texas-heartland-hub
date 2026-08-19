@@ -4,6 +4,8 @@ import { POLICY_TRACKERS } from "@/data/policy-trackers";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
+import { TEXAS_LEGISLATIVE_SEATS } from "@/data/texas-legislators.generated";
+import { stateDistrictSlug } from "@/lib/state-districts";
 
 const POLITICAL_REVIEW_DAYS: Record<PoliticalSearchGuideCategory, number> = {
   races: 7,
@@ -16,9 +18,10 @@ const POLICY_REVIEW_DAYS = 30;
 const LAW_REVIEW_DAYS = 90;
 const DATA_REVIEW_DAYS = 90;
 const AGENCY_REVIEW_DAYS = 60;
+const DISTRICT_REVIEW_DAYS = 90;
 
 type FreshnessItem = {
-  kind: "political-reference" | "policy-tracker" | "law-topic" | "data-source-map" | "agency-authority";
+  kind: "political-reference" | "policy-tracker" | "law-topic" | "data-source-map" | "agency-authority" | "state-district";
   slug: string;
   path: string;
   reviewed: string;
@@ -57,6 +60,12 @@ function handler() {
       const due = dueDate(agency.reviewed, AGENCY_REVIEW_DAYS);
       return { kind: "agency-authority" as const, slug: agency.slug, path: `/texas-government/agencies/${agency.slug}`, reviewed: agency.reviewed, reviewDays: AGENCY_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
+    ...TEXAS_LEGISLATIVE_SEATS.map((seat) => {
+      const slug = stateDistrictSlug(seat.chamber, seat.district);
+      const reviewed = seat.authority?.reviewedAt ?? "2026-07-31";
+      const due = dueDate(reviewed, DISTRICT_REVIEW_DAYS);
+      return { kind: "state-district" as const, slug, path: `/districts/${slug}`, reviewed, reviewDays: DISTRICT_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
+    }),
   ].sort((a, b) => Date.parse(a.dueAt) - Date.parse(b.dueAt));
 
   const overdue = items.filter((item) => item.overdue);
@@ -70,6 +79,7 @@ function handler() {
       lawTopicDays: LAW_REVIEW_DAYS,
       dataSourceMapDays: DATA_REVIEW_DAYS,
       agencyAuthorityDays: AGENCY_REVIEW_DAYS,
+      stateDistrictDays: DISTRICT_REVIEW_DAYS,
       note: "This endpoint identifies pages due for source review. It does not invent or auto-update facts; primary-source refresh remains required before changing dated claims.",
     },
     totalPages: items.length,
