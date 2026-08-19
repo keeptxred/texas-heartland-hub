@@ -15,16 +15,7 @@ import { getPublishedAuthorArticles } from "@/lib/daily-news.functions";
 import { ELECTION_STATIC_SITEMAP_COUNT } from "@/lib/elections/sitemap";
 import { GOVERNMENT_ENTITIES } from "@/lib/texas-government";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
-
-function isCompleteAuthor(author: (typeof AUTHORS)[number]): boolean {
-  return Boolean(
-    author.slug.trim()
-      && author.name.trim().length >= 3
-      && author.role.trim().length >= 3
-      && author.bio.some((paragraph) => paragraph.trim().length >= 80)
-      && author.beats.some((beat) => beat.trim().length >= 3),
-  );
-}
+import { hasEnoughAuthorArticles, isCompleteAuthorProfile } from "@/lib/author-indexability";
 
 /** Sitemap index. Includes every dedicated sitemap at most once and omits empty dynamic sitemaps. */
 export const Route = createFileRoute("/sitemap.xml")({
@@ -78,19 +69,26 @@ export const Route = createFileRoute("/sitemap.xml")({
           console.error("sitemap index: products fetch failed", error);
         }
 
-        const activeAuthorSlugs = new Set(
-          localArticles.map((article) => authorSlug(article.author)).filter(Boolean),
-        );
+        const authorArticleSlugs = new Map<string, Set<string>>();
+        const addAuthorArticle = (authorName: string, slug: string) => {
+          const slugKey = authorSlug(authorName);
+          if (!slugKey || !slug) return;
+          const slugs = authorArticleSlugs.get(slugKey) ?? new Set<string>();
+          slugs.add(slug);
+          authorArticleSlugs.set(slugKey, slugs);
+        };
+        for (const article of localArticles) addAuthorArticle(article.author, article.slug);
         try {
           const { articles: liveArticles } = await getPublishedAuthorArticles();
           for (const article of liveArticles) {
-            if (article.slug && article.author) activeAuthorSlugs.add(authorSlug(article.author));
+            if (article.slug && article.author) addAuthorArticle(article.author, article.slug);
           }
         } catch (error) {
           console.error("sitemap index: live author bylines fetch failed", error);
         }
-        const authorCount = AUTHORS.filter(
-          (author) => isCompleteAuthor(author) && activeAuthorSlugs.has(author.slug),
+        const authorCount = AUTHORS.filter((author) =>
+          isCompleteAuthorProfile(author)
+          && hasEnoughAuthorArticles(authorArticleSlugs.get(author.slug) ?? []),
         ).length;
 
         const imageCount =

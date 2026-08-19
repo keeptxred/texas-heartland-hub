@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { MIN_AUTHOR_ARTICLES_FOR_INDEXING } from "@/lib/author-indexability";
 
 const read = (path: string) => readFileSync(path, "utf8");
 
@@ -15,8 +16,9 @@ describe("discovered-not-indexed crawl priority", () => {
 
   it("requires sustained author activity before sitemap inclusion", () => {
     const source = read("src/routes/sitemap-authors[.]xml.ts");
-    expect(source).toContain("MIN_AUTHOR_ARTICLES_FOR_SITEMAP = 3");
-    expect(source).toContain("dates.length < MIN_AUTHOR_ARTICLES_FOR_SITEMAP");
+    expect(MIN_AUTHOR_ARTICLES_FOR_INDEXING).toBe(3);
+    expect(source).toContain("hasEnoughAuthorArticles");
+    expect(source).toContain("records.map((record) => record.slug)");
   });
 
   it("keeps bill sitemap quality scoring in place", () => {
