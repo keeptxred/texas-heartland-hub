@@ -185,7 +185,7 @@ export function planHistoricalReconciliation(
 ): HistoricalReconciliationPlan[] {
   const eligible = inputRows
     .filter((row) => !row.event_cluster_id)
-    .filter((row) => !row.target_site || row.target_site === "keeptxred")
+    .filter((row) => row.target_site === "keeptxred")
     .sort((a, b) => timestamp(a) - timestamp(b) || a.id - b.id);
 
   const anchors = eligible.filter((row) => Boolean(row.internal_slug?.trim()));
