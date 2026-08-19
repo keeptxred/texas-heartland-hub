@@ -8,7 +8,9 @@ Keep TX Red covers Texas politics, elections, public officials, the Legislature,
 
 - [How to Cite Keep TX Red References](/citation-guide): Human-readable citation rules, canonical URL guidance, official-source precedence, and machine-resource links.
 - [Machine-readable citation index](/citation-magnets.json): Maintained canonical reference targets with topic, type, and trust metadata.
+- [Texas Issues & Policy Guides](/issues): Broad evergreen, source-first explanations of major Texas policy frameworks, controlling institutions, enacted laws, and primary sources.
 - [Texas Policy Trackers](/policy): Permanent factual policy pages grounded in controlling Texas law, agencies, official records, current status, and review dates.
+- [Texas Policy Tools & Calculators](/tools): Transparent fiscal-policy calculators and scenario explorers that expose assumptions and link back to source context rather than presenting model output as law or forecast.
 - [Machine-readable policy tracker index](/policy-trackers.txt): Plain-text index of every current policy tracker with canonical URL, title, and review date.
 - [2026 Election reference JSON](/elections/reference.json): Published+verified race and candidate relationships with canonical URLs, source provenance, and verification dates; sensitive/admin candidate fields are excluded.
 - Per-bill primary-source JSON: append `/reference.json` to any canonical Texas bill URL, for example `/bills/texas/{legislature}/{bill-type}/{bill-number}/reference.json`. The JSON exposes the canonical Keep TX Red bill URL, official Texas Legislature bill URL, official document versions, and dated official actions while excluding database IDs, ingestion metadata, editorial relationships, and internal fields.
