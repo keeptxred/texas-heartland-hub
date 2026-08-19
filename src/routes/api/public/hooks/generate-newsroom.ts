@@ -3,6 +3,7 @@ import { sourceAuthorityLabel } from "@/data/source-authority";
 import { enrichArticleRow } from "@/lib/content-quality";
 import { runCloudflareJson } from "@/lib/cloudflare-json-ai.server";
 import { verifyGitHubActionsOidc } from "@/lib/github-actions-oidc";
+import { getGovernmentGraphLinks } from "@/lib/government-graph";
 import {
   categoryForPillar,
   NEWSROOM_DRAFT_JSON_SCHEMA,
@@ -400,6 +401,23 @@ async function handler({ request }: { request: Request }) {
         paragraphs: timeline,
       }] : []),
     ].filter((section) => section.paragraphs.length > 0);
+    const graphText = [
+      cluster.canonical_subject,
+      cluster.pillar_slug ?? "",
+      draft.title,
+      draft.dek,
+      draft.summary,
+      draft.relevance,
+      ...draft.sections.flatMap((section) => [section.heading, ...section.paragraphs]),
+      ...draft.keyTakeaways,
+    ].join(" ");
+    const graphLinks = getGovernmentGraphLinks(graphText, 6, [`/news/${slug}`]);
+    const permanentContextSections = graphLinks.length > 0 ? [{
+      heading: "Permanent KTR Context",
+      paragraphs: [
+        `This story connects to KTR's permanent policy and government coverage: ${graphLinks.map((node) => `[${node.label}](${node.href})`).join(", ")}. These pages continue tracking the issue after this news cycle moves on.`,
+      ],
+    }] : [];
     const bodyJson = {
       updated: now.toISOString().slice(0, 10),
       intro: [draft.summary.trim()],
@@ -407,6 +425,7 @@ async function handler({ request }: { request: Request }) {
         ...authoritySections,
         { heading: "Texas relevance", paragraphs: [draft.relevance.trim()] },
         ...draft.sections,
+        ...permanentContextSections,
         {
           heading: "Source Attribution",
           paragraphs: [
@@ -480,6 +499,7 @@ async function handler({ request }: { request: Request }) {
       model: ai.model,
       attempts: providerAttempts,
       aiCalls,
+      graphLinks: graphLinks.map((node) => node.href),
     });
   } catch (error) {
     await db.from("news_publish_candidates").update({ status: "HELD" }).eq("id", candidate.id);
