@@ -41,12 +41,17 @@ describe("failure-aware editorial retry", () => {
     };
 
     const calls: Array<{ addendum: string; attempt: string }> = [];
-    const generate = vi.fn(async (addendum: string, attempt: "initial" | "strict-retry") => {
-      calls.push({ addendum, attempt });
-      return {
-        raw: JSON.stringify(attempt === "initial" ? firstDraft : validArticle()),
-      };
-    });
+    const generate = vi.fn(
+      async (
+        addendum: string,
+        attempt: "initial" | "strict-retry" | "length-completion",
+      ) => {
+        calls.push({ addendum, attempt });
+        return {
+          raw: JSON.stringify(attempt === "initial" ? firstDraft : validArticle()),
+        };
+      },
+    );
 
     const result = await runEditorialRewrite(generate);
 
