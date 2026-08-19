@@ -98,7 +98,7 @@ async function publishOverdueGaps(request: Request) {
   const candidates = gaps.filter((gap) => {
     const feed = feedById.get(gap.id);
     if (!feed || feed.internal_slug) return false;
-    if (feed.target_site && feed.target_site !== "keeptxred") return false;
+    if (feed.target_site !== "keeptxred") return false;
     const key = titleKey(feed.title || gap.title);
     if (!key || seenTitles.has(key)) return false;
     seenTitles.add(key);
@@ -139,6 +139,7 @@ async function publishOverdueGaps(request: Request) {
         .update({ internal_slug: result.slug })
         .eq("title", gap.title)
         .is("internal_slug", null)
+        .eq("target_site", "keeptxred")
         .gte("pub_date", recentCutoff);
     }
 
