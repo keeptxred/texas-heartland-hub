@@ -1,6 +1,9 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { assessPublicationTiming } from "@/lib/publication-lifecycle";
+import {
+  assessPublicationTiming,
+  publicationRetryDelayMinutes,
+} from "@/lib/publication-lifecycle";
 import type { StoryCluster } from "@/lib/story-clustering";
 import type { FactVerificationDecision } from "@/lib/fact-verification-gate";
 
@@ -92,6 +95,18 @@ describe("publication timing lifecycle", () => {
     expect(decision.reason).toContain("corroboration");
   });
 
+  it("backs repeated generation failures off progressively", () => {
+    expect(publicationRetryDelayMinutes(1)).toBe(15);
+    expect(publicationRetryDelayMinutes(2)).toBe(30);
+    expect(publicationRetryDelayMinutes(3)).toBe(30);
+    expect(publicationRetryDelayMinutes(4)).toBe(120);
+    expect(publicationRetryDelayMinutes(6)).toBe(120);
+    expect(publicationRetryDelayMinutes(7)).toBe(360);
+    expect(publicationRetryDelayMinutes(12)).toBe(360);
+    expect(publicationRetryDelayMinutes(13)).toBe(1440);
+    expect(publicationRetryDelayMinutes(253)).toBe(1440);
+  });
+
   it("uses an atomic database claim with stale-claim recovery", () => {
     expect(migration).toContain("claim_news_event_cluster_publication");
     expect(migration).toContain("publish_claim_token IS NULL");
@@ -107,6 +122,22 @@ describe("publication timing lifecycle", () => {
     expect(recoveryMigration).toContain("publish_claimed_at <= now() - interval '15 minutes'");
   });
 
+  it("records a retry cooldown before releasing a failed publication claim", () => {
+    expect(lifecycle).toContain("publicationRetryDelayMinutes(attemptCount)");
+    expect(lifecycle).toContain("next_publish_eligible_at: nextEligibleAt");
+    expect(lifecycle).toContain("publication_retry:");
+    const cooldownWrite = lifecycle.indexOf("next_publish_eligible_at: nextEligibleAt");
+    const releaseRpc = lifecycle.indexOf('db.rpc("release_news_event_cluster_publication_claim"');
+    expect(cooldownWrite).toBeGreaterThan(0);
+    expect(releaseRpc).toBeGreaterThan(cooldownWrite);
+  });
+
+  it("preserves a future retry cooldown when timing is recalculated", () => {
+    expect(lifecycle).toContain('select("metadata,next_publish_eligible_at")');
+    expect(lifecycle).toContain("hasFutureCooldown");
+    expect(lifecycle).toContain("? clusterRow.next_publish_eligible_at");
+  });
+
   it("treats a canonical published slug as terminal even if cluster status drifts", () => {
     expect(recoveryMigration).toContain("IF v_slug IS NOT NULL THEN");
     expect(recoveryMigration).toContain("AND c.published_slug IS NULL");
@@ -115,6 +146,7 @@ describe("publication timing lifecycle", () => {
   it("only releases a claim held by the same worker token", () => {
     expect(migration).toContain("release_news_event_cluster_publication_claim");
     expect(migration).toContain("publish_claim_token = p_claim_token");
+    expect(lifecycle).toContain('.eq("publish_claim_token", claimToken)');
   });
 
   it("runs timing and the atomic claim before the legacy synthesis publisher", () => {
