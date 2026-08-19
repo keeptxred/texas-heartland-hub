@@ -5,6 +5,14 @@ import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 const TITLE = "Texas Policy Trackers | Taxes, Border, Energy, Elections & More";
 const DESCRIPTION = "Keep TX Red's permanent Texas policy trackers connect the daily news to laws, agencies, bills, official data, editorial positions, and the questions that keep shaping Texas.";
 
+const AUTHORITY_LAYERS = [
+  { href: "/issues", eyebrow: "Evergreen context", title: "Issue Guides", text: "Broad, source-first explanations of the durable Texas policy framework behind recurring headlines." },
+  { href: "/policy", eyebrow: "Current status", title: "Policy Trackers", text: "Narrower laws, implementation, litigation, agencies, official data and what to watch next." },
+  { href: "/tools", eyebrow: "Arithmetic", title: "Policy Tools", text: "Transparent calculators and scenario explorers that expose assumptions instead of hiding them." },
+  { href: "/civic-tools", eyebrow: "Primary-source navigation", title: "Civic Tools", text: "Find the controlling law, bill, government authority or elected official behind a policy claim." },
+  { href: "/news", eyebrow: "Live event", title: "Texas News", text: "Follow the bill, ruling, campaign, agency action or political fight as it happens." },
+] as const;
+
 export const Route = createFileRoute("/policy")({
   head: () => {
     const seo = buildSeo({ title: TITLE, description: DESCRIPTION, path: "/policy" });
@@ -27,8 +35,13 @@ function PolicyHub() {
         <div className="mx-auto max-w-[1180px] px-6 py-16 md:py-20">
           <p className="text-xs font-extrabold uppercase tracking-[0.25em] text-primary">Keep TX Red Policy Desk</p>
           <h1 className="mt-4 max-w-5xl font-display text-5xl leading-none tracking-tight md:text-7xl">Texas Policy Trackers</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/80 md:text-xl">The permanent layer beneath the headlines: what Texas law says, who controls the issue, what changed, what KTR believes, and what to watch next.</p>
-          <p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">These pages are designed to survive individual news cycles. They connect current reporting to statutes, agencies, bills, official data, Election Central, The Texas Case, and KTR's reference library.</p>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-white/80 md:text-xl">The current-status layer beneath the headlines: what Texas law says, who controls the issue, what changed, what KTR believes, and what to watch next.</p>
+          <p className="mt-5 max-w-3xl text-sm leading-7 text-white/65">Use a broader Issue Guide when you need durable background. Use a tracker when you need the narrower law, agency, litigation or implementation status. From there, move into source-finding tools, calculators or live reporting instead of duplicating the same answer across multiple pages.</p>
+          <div className="mt-6 flex flex-wrap gap-4 text-sm font-bold">
+            <a href="/issues" className="text-primary hover:underline">Browse Issue Guides →</a>
+            <a href="/tools" className="text-primary hover:underline">Use Policy Tools →</a>
+            <a href="/civic-tools" className="text-primary hover:underline">Find primary sources →</a>
+          </div>
         </div>
       </section>
 
@@ -47,11 +60,20 @@ function PolicyHub() {
 
       <section className="border-t bg-muted/25">
         <div className="mx-auto max-w-[1180px] px-6 py-14">
-          <h2 className="font-display text-3xl tracking-tight">Three layers, one issue</h2>
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <a href="/texas-case" className="rounded-xl border bg-background p-5"><p className="text-xs font-bold uppercase tracking-wider text-primary">Editorial</p><h3 className="mt-2 font-semibold">The Texas Case</h3><p className="mt-2 text-sm text-muted-foreground">What KTR believes and why.</p></a>
-            <a href="/policy" className="rounded-xl border bg-background p-5"><p className="text-xs font-bold uppercase tracking-wider text-primary">Policy</p><h3 className="mt-2 font-semibold">Policy Trackers</h3><p className="mt-2 text-sm text-muted-foreground">Current law, institutions, facts, disputes, and changes.</p></a>
-            <a href="/texas-political-reference" className="rounded-xl border bg-background p-5"><p className="text-xs font-bold uppercase tracking-wider text-primary">Search intent</p><h3 className="mt-2 font-semibold">Political Reference</h3><p className="mt-2 text-sm text-muted-foreground">Direct answers to the political questions Texans search for.</p></a>
+          <h2 className="font-display text-3xl tracking-tight">Five layers, one issue</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">KTR separates durable explanation, current policy status, arithmetic, primary-source navigation and breaking reporting so each URL has a distinct job.</p>
+          <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            {AUTHORITY_LAYERS.map((layer) => (
+              <a key={layer.href} href={layer.href} className="rounded-xl border bg-background p-5 transition hover:border-primary">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-primary">{layer.eyebrow}</p>
+                <h3 className="mt-2 font-semibold">{layer.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">{layer.text}</p>
+              </a>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-5 text-sm font-semibold">
+            <a href="/texas-case" className="text-primary hover:underline">Editorial positions: The Texas Case →</a>
+            <a href="/texas-political-reference" className="text-primary hover:underline">Search-intent answers: Political Reference →</a>
           </div>
         </div>
       </section>
