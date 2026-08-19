@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  canonicalArticleUrlKey,
   canonicalKtrArticlePath,
   facebookHeadlineSimilarity,
   facebookPostMatchesArticle,
@@ -10,6 +11,8 @@ describe("facebook page history duplicate detection", () => {
   it("normalizes KeepTXRed URLs by host and path", () => {
     expect(canonicalKtrArticlePath("https://www.keeptxred.com/news/example-story/?utm_source=facebook"))
       .toBe("/news/example-story");
+    expect(canonicalArticleUrlKey("https://www.keeptxred.com/news/example-story/?utm_source=facebook"))
+      .toBe("keeptxred.com/news/example-story");
   });
 
   it("matches an article when the prior Facebook message contains its KTR path", () => {
@@ -19,6 +22,24 @@ describe("facebook page history duplicate detection", () => {
         {
           title: "Flock Camera Backlash Spreads Across the Houston Region as Privacy Fight Intensifies",
           url: "https://keeptxred.com/news/2026-08-09-houston-flock-camera-backlash",
+        },
+      ),
+    ).toBe(true);
+  });
+
+  it("matches a prior admin post that used the original source URL before a KTR article existed", () => {
+    expect(
+      facebookPostMatchesArticle(
+        {
+          message:
+            "Houston-area communities push back on Flock surveillance cameras\n\nhttps://www.houstonchronicle.com/news/houston-texas/article/flock-surveillance-cameras-backlash-22363916.php?utm_source=facebook",
+        },
+        {
+          title: "Flock Camera Backlash Spreads Across the Houston Region as Privacy Fight Intensifies",
+          url: "https://keeptxred.com/news/2026-08-09-houston-flock-camera-backlash",
+          alternateUrls: [
+            "https://www.houstonchronicle.com/news/houston-texas/article/flock-surveillance-cameras-backlash-22363916.php",
+          ],
         },
       ),
     ).toBe(true);
