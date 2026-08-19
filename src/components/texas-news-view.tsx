@@ -4,6 +4,7 @@ import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import type { CategoryFeedItem } from "@/lib/category-feed.functions";
 import { resolveArticleImage } from "@/lib/seo-headline";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
@@ -73,7 +74,10 @@ function articlesForSlugs(slugs: string[]) {
     .map((slug) => ARTICLES.find((a) => a.slug === slug))
     .filter(
       (a): a is NonNullable<typeof a> =>
-        Boolean(a) && isPublished(a!) && !TEXAS_NEWS_EXCLUDED_SLUGS.has(a!.slug),
+        Boolean(a)
+        && isPublished(a!)
+        && isStaticArticleIndexable(a!)
+        && !TEXAS_NEWS_EXCLUDED_SLUGS.has(a!.slug),
     )
     .sort(sortByDateDesc);
 }

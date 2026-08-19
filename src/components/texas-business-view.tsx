@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { ARTICLES, isPublished, sortByDateDesc } from "@/data/articles";
 import { assignUniqueImages } from "@/lib/dedupe-images";
 import { filterArticlesByCategory } from "@/lib/article-filters";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import schoolbus from "@/assets/article-schoolbus.jpg";
 import boardroom from "@/assets/article-boardroom.jpg";
 import rotunda from "@/assets/article-rotunda.jpg";
@@ -68,11 +69,13 @@ export function TexasBusinessView({ topic }: { topic: string }) {
   const curated = topic && BUSINESS_SLUGS[topic] ? BUSINESS_SLUGS[topic] : ALL_BUSINESS_SLUGS;
   const curatedArticles = curated
     .map((s) => ARTICLES.find((a) => a.slug === s))
-    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!));
+    .filter((a): a is NonNullable<typeof a> => Boolean(a) && isPublished(a!) && isStaticArticleIndexable(a!));
   const filtered = topic ? filterArticlesByCategory(ARTICLES, topic) : [];
   const merged = new Map<string, (typeof ARTICLES)[number]>();
   for (const a of [...curatedArticles, ...filtered]) merged.set(a.slug, a);
-  const businessArticles = Array.from(merged.values()).sort(sortByDateDesc);
+  const businessArticles = Array.from(merged.values())
+    .filter(isStaticArticleIndexable)
+    .sort(sortByDateDesc);
   const uniqImg = assignUniqueImages(
     businessArticles,
     (a) => a.slug,
