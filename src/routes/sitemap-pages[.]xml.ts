@@ -133,10 +133,10 @@ export const Route = createFileRoute("/sitemap-pages.xml")({
         for (const topic of SPORTS_SITEMAP_TOPICS) {
           if (await hasEnoughContent({ keyword: topic }, MIN_ARTICLES_DEFAULT)) paths.push(`/texas-sports/topic/${topic}`);
         }
-        const entries: UrlEntry[] = paths.map((path) => ({
-          loc: `${BASE_URL}${path}`,
-          lastmod: STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined,
-        }));
+        const entries: UrlEntry[] = paths.map((path) => {
+          const lastmod = STATIC_PAGE_LASTMOD_OVERRIDES[path];
+          return lastmod ? { loc: `${BASE_URL}${path}`, lastmod } : { loc: `${BASE_URL}${path}` };
+        });
         return xmlResponse(renderUrlset(entries));
       },
     },
