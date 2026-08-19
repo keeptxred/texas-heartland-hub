@@ -25,6 +25,18 @@ import {
 
 const ADSENSE_CLIENT = "ca-pub-1891256141359926";
 const ADSENSE_SCRIPT = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_CLIENT}`;
+const ADSENSE_EXCLUDED_PATH_PREFIXES = [
+  "/admin",
+  "/api",
+  "/auth",
+  "/shop/checkout",
+  "/privacy",
+  "/terms-of-service",
+  "/return-refund-policy",
+  "/shipping-policy",
+  "/contact",
+] as const;
+const ADSENSE_BOOTSTRAP = `(function(){var p=location.pathname;var x=${JSON.stringify(ADSENSE_EXCLUDED_PATH_PREFIXES)};var excluded=x.some(function(prefix){return p===prefix||p.indexOf(prefix+'/')===0;});var noindex=Array.prototype.some.call(document.querySelectorAll('meta[name="robots"]'),function(m){return /(?:^|[,\\s])noindex(?:$|[,\\s])/i.test(m.content||'');});if(excluded||noindex)return;var s=document.createElement('script');s.async=true;s.crossOrigin='anonymous';s.src='${ADSENSE_SCRIPT}';s.setAttribute('data-adsense-gated','true');document.head.appendChild(s);}());`;
 
 function NotFoundComponent() {
   return (
@@ -143,7 +155,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
-        <script async crossOrigin="anonymous" src={ADSENSE_SCRIPT} />
+        <script dangerouslySetInnerHTML={{ __html: ADSENSE_BOOTSTRAP }} />
       </head>
       <body>
         {children}
