@@ -7,6 +7,7 @@ import {
 } from "@/data/representative-authority";
 import { canonicalBillPath, getRepresentativeLegislation, SITE_URL } from "@/lib/bills";
 import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthorityContent";
 
 export const Route = createFileRoute("/representatives/$representativeSlug")({
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/representatives/$representativeSlug")({
     const terms = (
       authority?.newsKeywords ?? (directoryRepresentative ? [directoryRepresentative.name] : [])
     ).map((term) => term.toLowerCase());
-    const news = ARTICLES.filter((article) => isPublished(article))
+    const news = ARTICLES.filter((article) => isPublished(article) && isStaticArticleIndexable(article))
       .filter((article) => {
         const haystack =
           `${article.title} ${article.dek} ${(article.topics ?? []).join(" ")}`.toLowerCase();
