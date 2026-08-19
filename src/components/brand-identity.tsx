@@ -16,13 +16,13 @@ export function BrandIdentity({ variant = "default" }: { variant?: "default" | "
         </h2>
         <p className="mt-3 text-base text-foreground leading-relaxed max-w-3xl">
           <strong>
-            Keep Texas Red is a Texas-focused news and analysis outlet covering policy, elections, and issues shaping the state.
+            Keep TX Red delivers Texas news, commentary, government accountability, and common-sense analysis.
           </strong>
         </p>
         <p className="mt-3 text-sm text-muted-foreground leading-relaxed max-w-3xl">
           We are a news publication — not a political action committee, campaign, or candidate organization. Our editors and
-          contributors produce daily reporting and explainers focused on Texas government, elections, the economy, the border,
-          energy, and statewide developments, sourced from primary Texas records and verified before publication.
+          contributors produce daily reporting, commentary, and explainers focused on Texas government, elections, the economy,
+          the border, energy, and statewide developments, sourced from primary Texas records and verified before publication.
         </p>
       </div>
     </section>
