@@ -111,8 +111,8 @@ export const POLICY_TRACKERS_WAVE11: PolicyTracker[] = [
     ],
     related: [
       { label: "Semiconductor Manufacturing tracker", href: "/policy/semiconductor-manufacturing", kind: "reference" },
-      { label: "Foreign-Adversary Investments tracker", href: "/policy/china-affiliated-state-investments", kind: "reference" },
-      { label: "Agriculture & Family Farms tracker", href: "/policy/agriculture-family-farms", kind: "reference" },
+      { label: "China Investment Restrictions tracker", href: "/policy/china-investment-restrictions", kind: "reference" },
+      { label: "Foreign-Adversary Property tracker", href: "/policy/foreign-adversary-property", kind: "reference" },
       { label: "Texas Economy", href: "/texas-economy", kind: "reference" },
     ],
     keywords: ["critical minerals", "rare earth", "rare earth Texas", "Round Top", "USA Rare Earth", "MP Materials", "rare earth magnets", "domestic supply chain", "mineral independence"],
