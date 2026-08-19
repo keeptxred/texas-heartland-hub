@@ -8,7 +8,6 @@ import {
   xmlResponse,
 } from "@/lib/sitemap-shared";
 import { ARTICLES, isPublished } from "@/data/articles";
-import { SOURCE_AUTHORITY_PROFILES } from "@/data/source-authority";
 import { listSitemapArticles } from "@/lib/evergreen.functions";
 import { getProducts } from "@/lib/products.functions";
 import { AUTHORS, authorSlug } from "@/data/authors";
@@ -101,7 +100,7 @@ export const Route = createFileRoute("/sitemap.xml")({
 
         const candidates = [
           { file: "sitemap-pages.xml", count: 1 },
-          { file: "sitemap-sources.xml", count: SOURCE_AUTHORITY_PROFILES.length + 1 },
+          { file: "sitemap-sources.xml", count: 1 },
           { file: "sitemap-news.xml", count: newsCount },
           { file: "sitemap-evergreen.xml", count: evergreenCount },
           { file: "sitemap-elections.xml", count: ELECTION_STATIC_SITEMAP_COUNT },
