@@ -1,7 +1,21 @@
 import { Link } from "@tanstack/react-router";
-import type { PoliticalSearchGuide } from "@/data/political-search-guides";
+import type { PoliticalSearchGuide, PoliticalSearchGuideCategory } from "@/data/political-search-guides";
 import { POLITICAL_SEARCH_GUIDE_CATEGORY_LABELS } from "@/data/political-search-guides";
+import { getGovernmentGraphLinks } from "@/lib/government-graph";
 import { buildSeo, SITE_URL } from "@/lib/seo";
+
+const REFRESH_DAYS: Record<PoliticalSearchGuideCategory, number> = {
+  races: 7,
+  redistricting: 14,
+  demographics: 90,
+  issues: 30,
+  grassroots: 7,
+};
+
+function guideIsStale(guide: PoliticalSearchGuide) {
+  const reviewed = new Date(`${guide.updated}T23:59:59-05:00`).getTime();
+  return Date.now() - reviewed > REFRESH_DAYS[guide.category] * 86_400_000;
+}
 
 export function politicalSearchGuideHead(guide: PoliticalSearchGuide) {
   const path = `/texas-political-reference/${guide.slug}`;
@@ -48,6 +62,13 @@ export function politicalSearchGuideHead(guide: PoliticalSearchGuide) {
 }
 
 export function PoliticalSearchGuidePage({ guide }: { guide: PoliticalSearchGuide }) {
+  const graphText = [guide.searchQuery, guide.title, guide.dek, guide.quickAnswer, ...guide.keyFacts, ...guide.context].join(" ");
+  const graphLinks = getGovernmentGraphLinks(graphText, 6, [
+    `/texas-political-reference/${guide.slug}`,
+    ...guide.related.map((item) => item.href),
+  ]);
+  const stale = guideIsStale(guide);
+
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
       <nav aria-label="Breadcrumb" className="mb-6 text-[11px] uppercase tracking-[0.22em] text-muted-foreground">
@@ -67,6 +88,12 @@ export function PoliticalSearchGuidePage({ guide }: { guide: PoliticalSearchGuid
         <span>•</span>
         <span>Reviewed <time dateTime={guide.updated}>{new Date(`${guide.updated}T12:00:00-05:00`).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time></span>
       </div>
+
+      {stale ? (
+        <aside className="mt-5 rounded-lg border border-amber-500/40 bg-amber-500/10 p-4 text-sm leading-6">
+          <strong>Freshness notice:</strong> This is a time-sensitive reference page and has passed KTR's normal {REFRESH_DAYS[guide.category]}-day review window. Verify candidate status, polls, fundraising, court orders, maps, or event dates with the primary sources below while the Reference Desk refreshes the page.
+        </aside>
+      ) : null}
 
       <section className="mt-8 border-l-4 border-primary bg-primary/5 p-5 md:p-6" aria-labelledby="quick-answer">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Quick answer</p>
@@ -99,6 +126,17 @@ export function PoliticalSearchGuidePage({ guide }: { guide: PoliticalSearchGuid
           {guide.watchFor.map((item) => <li key={item} className="flex gap-3"><span className="font-bold text-primary">•</span><span>{item}</span></li>)}
         </ul>
       </section>
+
+      {graphLinks.length > 0 ? (
+        <section className="mt-10 rounded-xl border border-primary/25 bg-primary/5 p-6">
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">Government Graph</p>
+          <h2 className="mt-2 font-display text-2xl tracking-tight">Follow this issue into KTR's permanent coverage</h2>
+          <p className="mt-3 text-sm leading-6 text-muted-foreground">This search question is connected to the policy, law, government, election, or legislative pages below. Those pages persist after the daily headline changes.</p>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {graphLinks.map((node) => <a key={node.href} href={node.href} className="rounded-lg border bg-background p-4 text-sm font-semibold hover:border-primary hover:text-primary"><span className="block text-[9px] uppercase tracking-wider text-muted-foreground">{node.kind}</span><span className="mt-1 block">{node.label} →</span></a>)}
+          </div>
+        </section>
+      ) : null}
 
       <section className="mt-12 border-t border-border pt-8">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">Sources</p>

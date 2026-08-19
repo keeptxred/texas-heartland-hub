@@ -1,0 +1,39 @@
+# Keep TX Red Policy Trackers
+
+Canonical hub: https://keeptxred.com/policy
+Freshness queue: https://keeptxred.com/api/reference-freshness
+
+Keep TX Red policy trackers are permanent factual and institutional pages underneath daily news and separate from KTR's explicitly labeled editorial positions in The Texas Case. Each tracker should identify the controlling law or authority, current status, official sources, relevant KTR reference pages, and the next changes readers should watch.
+
+## Current trackers
+
+- https://keeptxred.com/policy/property-taxes
+- https://keeptxred.com/policy/border-security
+- https://keeptxred.com/policy/public-education
+- https://keeptxred.com/policy/school-choice
+- https://keeptxred.com/policy/energy-ercot
+- https://keeptxred.com/policy/water
+- https://keeptxred.com/policy/housing
+- https://keeptxred.com/policy/immigration
+- https://keeptxred.com/policy/gun-rights
+- https://keeptxred.com/policy/elections
+- https://keeptxred.com/policy/criminal-justice
+- https://keeptxred.com/policy/transportation
+- https://keeptxred.com/policy/life-abortion
+- https://keeptxred.com/policy/healthcare
+- https://keeptxred.com/policy/state-budget
+
+## Editorial / factual separation
+
+Editorial argument: https://keeptxred.com/texas-case
+Factual companion library: https://keeptxred.com/texas-case/facts
+Political search-intent reference: https://keeptxred.com/texas-political-reference
+Government reference: https://keeptxred.com/texas-government
+Legislature: https://keeptxred.com/texas-legislature
+Bills: https://keeptxred.com/bills
+Laws: https://keeptxred.com/laws
+Representatives: https://keeptxred.com/representatives
+
+## Source standard
+
+Primary government records control factual claims when they conflict with summaries or campaign material. A tracker review date is not a guarantee that a time-sensitive fact remains unchanged after that date. Policy trackers use a 30-day normal review window; political-reference pages use shorter windows for races, redistricting, PACs, fundraising, and events. The machine-readable freshness endpoint identifies pages due for source review without auto-inventing replacements.
