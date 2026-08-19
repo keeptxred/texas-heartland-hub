@@ -1,10 +1,11 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { getTexasDataSet } from "@/data/texas-data-catalog";
+import { getAccountabilityDataSet } from "@/data/accountability-data-catalog";
 import { TexasDataPage, texasDataHead } from "@/components/texas-data-page";
 
 export const Route = createFileRoute("/data/$slug")({
   loader: ({ params }) => {
-    const dataset = getTexasDataSet(params.slug);
+    const dataset = getTexasDataSet(params.slug) ?? getAccountabilityDataSet(params.slug);
     if (!dataset) throw notFound();
     return { dataset };
   },
