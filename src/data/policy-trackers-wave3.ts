@@ -77,4 +77,42 @@ export const POLICY_TRACKERS_WAVE3: PolicyTracker[] = [
     ],
     keywords: ["ESG", "energy boycott", "SB 13", "Chapter 809", "divestment", "BlackRock", "oil and gas", "Texas Comptroller", "fossil fuel"],
   },
+  {
+    slug: "agriculture-family-farms",
+    shortTitle: "Agriculture & Family Farms",
+    title: "Texas Agriculture and Family Farm Policy Tracker",
+    description: "Track Texas right-to-farm protections, agricultural property appraisal, family farms and ranches, water, land-use regulation, eminent domain, and state agriculture policy.",
+    updated: "2026-08-19",
+    quickAnswer: "The Texas Constitution protects the right to engage in generally accepted farming, ranching, timber production, horticulture, and wildlife-management practices on owned or leased land, subject to specified public-health, animal-health, crop-production, natural-resource, and public-use authorities. Texas also provides special appraisal systems for qualifying agricultural, timber, and wildlife-management land.",
+    currentStatus: "Texas agriculture policy sits at the intersection of property rights, food and fiber production, water, taxation, local regulation, infrastructure, animal and crop health, and land acquisition. The state's constitutional right-to-farm protection and special-appraisal rules are permanent anchors for following those disputes.",
+    keyFacts: [
+      "Article I, Section 36 of the Texas Constitution protects generally accepted farm, ranch, timber, horticulture, and wildlife-management practices on property a person owns or leases.",
+      "The constitutional protection preserves specified authority to regulate for imminent public-health and safety dangers, animal or crop health, natural-resource conservation, and public-use property acquisition.",
+      "The Comptroller publishes statewide guidance and forms for 1-d and 1-d-1 agricultural appraisal and qualified timber and wildlife-management uses; eligibility depends on statutory criteria rather than simply owning rural acreage.",
+      "Agricultural subsidies and special incentives are not a single consensus conservative issue: property-rights and tax-treatment arguments can differ from debates over market distortion, spending, risk management, and disaster assistance.",
+    ],
+    context: [
+      "KTR's editorial emphasis is protecting family farms, ranches, productive land, water access, and private-property rights while scrutinizing unnecessary regulation and eminent-domain abuse.",
+      "This tracker treats subsidies and incentive programs as an intra-conservative policy debate rather than assuming every government agriculture program is automatically consistent with limited-government principles.",
+    ],
+    watchFor: [
+      "Local ordinances and litigation involving Article I, Section 36",
+      "Changes to agricultural appraisal, rollback taxes, exemptions, or eligibility rules",
+      "Water-supply, groundwater, drought, and infrastructure policy affecting producers",
+      "Eminent-domain, transmission, pipeline, highway, and conservation proposals affecting working land",
+    ],
+    sources: [
+      { label: "Texas Constitution — Article I, Section 36", url: "https://statutes.capitol.texas.gov/SOTWDocs/CN/htm/CN.1.htm", primary: true },
+      { label: "Texas Legislature Online — HJR 126 enrolled text", url: "https://capitol.texas.gov/tlodocs/88R/billtext/html/HJ00126F.htm", primary: true },
+      { label: "Texas Comptroller — Agricultural, Timberland and Wildlife Management Appraisal", url: "https://comptroller.texas.gov/taxes/property-tax/ag-timber/", primary: true },
+      { label: "Texas Department of Agriculture", url: "https://texasagriculture.gov/", primary: true },
+    ],
+    related: [
+      { label: "Water tracker", href: "/policy/water", kind: "reference" },
+      { label: "Housing & Property Rights tracker", href: "/policy/housing", kind: "reference" },
+      { label: "Property Taxes tracker", href: "/policy/property-taxes", kind: "reference" },
+      { label: "Texas bills", href: "/bills", kind: "bill" },
+    ],
+    keywords: ["Texas agriculture", "family farms", "family ranches", "right to farm", "HJR 126", "ag exemption", "agricultural appraisal", "1-d-1", "eminent domain", "water"],
+  },
 ];
