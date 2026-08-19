@@ -20,7 +20,6 @@ const LAW_REVIEW_DAYS = 90;
 const DATA_REVIEW_DAYS = 90;
 const AGENCY_REVIEW_DAYS = 60;
 const DISTRICT_REVIEW_DAYS = 90;
-const ALL_DATA_SETS = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS];
 
 type FreshnessItem = {
   kind: "political-reference" | "policy-tracker" | "law-topic" | "data-source-map" | "agency-authority" | "state-district";
@@ -32,15 +31,16 @@ type FreshnessItem = {
   overdue: boolean;
 };
 
+type ReviewableDataSet = { slug: string; updated: string };
+
 function dueDate(reviewed: string, days: number) {
   const due = new Date(`${reviewed}T12:00:00-05:00`);
   due.setUTCDate(due.getUTCDate() + days);
   return due;
 }
 
-function handler() {
-  const now = new Date();
-  const dataSetItems: FreshnessItem[] = ALL_DATA_SETS.map((dataset): FreshnessItem => {
+function mapDataFreshness(datasets: readonly ReviewableDataSet[], now: Date): FreshnessItem[] {
+  return datasets.map((dataset) => {
     const due = dueDate(dataset.updated, DATA_REVIEW_DAYS);
     return {
       kind: "data-source-map",
@@ -52,6 +52,14 @@ function handler() {
       overdue: due.getTime() < now.getTime(),
     };
   });
+}
+
+function handler() {
+  const now = new Date();
+  const dataSetItems: FreshnessItem[] = [
+    ...mapDataFreshness(TEXAS_DATA_SETS, now),
+    ...mapDataFreshness(ACCOUNTABILITY_DATA_SETS, now),
+  ];
 
   const items: FreshnessItem[] = [
     ...POLITICAL_SEARCH_GUIDES.map((guide) => {
