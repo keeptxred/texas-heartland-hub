@@ -3,7 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { articleMainWordCount, meetsArticleMainWordCount, sanitizeArticleFaqs } from "@/lib/article-length";
 import { isSitemapEligibleSlug } from "@/lib/article-slug-integrity";
-import { hasSeoDuplicateFlag, selectCanonicalArticles } from "@/lib/article-canonical";
+import { selectCanonicalArticles } from "@/lib/article-canonical";
+import { isPublicArticleReady } from "@/lib/public-article-readiness";
 import { getChatNewsFallbackBySlug } from "@/lib/chat-news-fallback";
 
 export type EvergreenSection = {
@@ -188,10 +189,6 @@ export type SitemapArticle = {
   kind: string;
 };
 
-/**
- * Resolves an `article_slug_redirects` mapping (old_slug -> new_slug),
- * following short chains and refusing self-redirects / loops.
- */
 export const resolveArticleSlugRedirect = createServerFn({ method: "GET" })
   .validator((d: unknown) => z.object({ slug: z.string().min(1).max(240) }).parse(d))
   .handler(async ({ data }): Promise<{ slug: string | null }> => {
@@ -220,15 +217,15 @@ export const resolveArticleSlugRedirect = createServerFn({ method: "GET" })
 const SITEMAP_ARTICLE_PAGE_SIZE = 1000;
 const MAX_CLOUD_SITEMAP_ARTICLES = 45000;
 
-/** Returns indexable cloud articles (evergreen + ingested news/sports) with data
- * needed to build page, news, evergreen, and image sitemaps. Reads are paged so
- * PostgREST response caps cannot silently truncate sitemap inventory. */
 export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
   async (): Promise<{ articles: SitemapArticle[] }> => {
     const supabase = client();
     if (!supabase) return { articles: [] };
 
     type Row = SitemapArticle & {
+      category?: string | null;
+      source_name?: string | null;
+      source_url?: string | null;
       body_json?: EvergreenBody | null;
       quality_flags?: string[] | null;
       content_quality_score?: number | null;
@@ -237,7 +234,7 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     for (let from = 0; from < MAX_CLOUD_SITEMAP_ARTICLES; from += SITEMAP_ARTICLE_PAGE_SIZE) {
       const { data, error } = await supabase
         .from("daily_articles")
-        .select("slug,title,published_at,updated_at,image_url,kind,body_json,quality_flags,content_quality_score")
+        .select("slug,title,category,source_name,source_url,published_at,updated_at,image_url,kind,body_json,quality_flags,content_quality_score")
         .in("kind", ["evergreen", "ingested", "news", "sports-nfl", "sports-mlb", "sports-nba", "sports-cfb"])
         .order("published_at", { ascending: false })
         .order("slug", { ascending: true })
@@ -251,24 +248,16 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
     const eligible = rows
       .filter((a) => {
         if (!a.body_json) return false;
-        // Never advertise a URL whose date prefix disagrees with its real
-        // publish date — those are legacy bad-year aliases.
         if (!isSitemapEligibleSlug(a.slug, a.published_at)) return false;
-        // Rows already flagged as SEO duplicates / noindex stay reachable but
-        // are never advertised to search engines.
-        if (hasSeoDuplicateFlag(a.quality_flags)) return false;
+        if (!isPublicArticleReady(a)) return false;
         const sanitized = sanitizeEvergreenBody(a.body_json, a.published_at);
         return meetsArticleMainWordCount(a.kind, sanitized);
       })
-      .map(({ body_json, quality_flags: _flags, ...a }) => ({
+      .map(({ body_json, quality_flags: _flags, category: _category, source_name: _sourceName, source_url: _sourceUrl, ...a }) => ({
         ...a,
         main_word_count: articleMainWordCount(sanitizeEvergreenBody(body_json!, a.published_at)),
       }));
 
-    // Collapse same-event near-duplicate clusters to the *strongest* article
-    // (quality score, then substantive length, then recency) so Google is not
-    // offered five versions of the same flood/appointment/game. Routine
-    // follow-up developments are preserved. Rows stay published and reachable.
     const canonical = selectCanonicalArticles(eligible);
     const articles = canonical.map(
       ({ main_word_count: _wc, content_quality_score: _score, ...a }) => a,
@@ -277,11 +266,6 @@ export const listSitemapArticles = createServerFn({ method: "GET" }).handler(
   },
 );
 
-/**
- * Resolves a legacy article URL by its slug tail (descriptive words + link
- * hash). Used to 301 bad-year URLs like `/news/live-2001-…` onto the
- * corrected date-prefixed slug.
- */
 export const resolveArticleSlugByTail = createServerFn({ method: "GET" })
   .validator((d: unknown) => z.object({ tail: z.string().min(4).max(200) }).parse(d))
   .handler(async ({ data }): Promise<{ slug: string | null }> => {
