@@ -22,6 +22,7 @@ export const Route = createFileRoute("/sources/$slug")({
       meta: [
         { title: `${profile.name} Source Profile — Keep TX Red` },
         { name: "description", content: `${profile.label}. ${profile.description}` },
+        { name: "robots", content: "noindex,follow" },
         { property: "og:title", content: `${profile.name} Source Profile — Keep TX Red` },
         { property: "og:description", content: profile.description },
         { property: "og:type", content: "website" },
