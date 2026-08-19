@@ -10,6 +10,7 @@ import { buildSeo, SITE_URL, webPageJsonLd } from "@/lib/seo";
 const TITLE = "Texas Political Reference | Races, Maps, Voter Trends & Policy";
 const DESCRIPTION = "Keep TX Red's permanent reference library for high-profile Texas races, redistricting, voter trends, policy questions, campaign finance, PACs, grassroots events, and political search topics.";
 const CATEGORY_ORDER: PoliticalSearchGuideCategory[] = ["races", "redistricting", "demographics", "issues", "grassroots"];
+const EMPTY_BILLS_SEARCH = { q: "", status: "", legislature: 0, chamber: "", billType: "", page: 1 } as const;
 
 export const Route = createFileRoute("/texas-political-reference")({
   head: () => {
@@ -103,7 +104,7 @@ function TexasPoliticalReferenceHub() {
             <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Use KTR's permanent government products to inspect legislation, laws, officeholders, and election records behind these topics.</p>
           </div>
           <div className="mt-5 flex flex-wrap gap-3 md:mt-0">
-            <Link to="/bills" className="rounded-md border bg-background px-4 py-2.5 text-sm font-bold hover:border-primary">Bills</Link>
+            <Link to="/bills" search={EMPTY_BILLS_SEARCH} className="rounded-md border bg-background px-4 py-2.5 text-sm font-bold hover:border-primary">Bills</Link>
             <Link to="/laws" className="rounded-md border bg-background px-4 py-2.5 text-sm font-bold hover:border-primary">Laws</Link>
             <Link to="/representatives" className="rounded-md border bg-background px-4 py-2.5 text-sm font-bold hover:border-primary">Officials</Link>
           </div>
