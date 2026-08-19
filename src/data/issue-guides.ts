@@ -300,6 +300,83 @@ export const issueGuides: IssueGuide[] = [
     ],
     relatedSlugs: ["parental-rights-texas-schools", "texas-state-federal-power"],
   },
+  {
+    slug: "texas-abortion-law-pro-life-policy",
+    category: "Healthcare, Social Issues & Rural Life",
+    title: "Texas Abortion Law & Pro-Life Policy: Current Law, Exceptions and Enforcement",
+    dek: "A source-first guide to Texas abortion law after Dobbs, including the Chapter 170A prohibition, medical exceptions, related statutes, enforcement, funding debates, and the difference between current law and proposed changes.",
+    quickAnswer: "Texas Health and Safety Code Chapter 170A generally prohibits knowingly performing, inducing, or attempting an abortion, while providing a statutory exception when a licensed physician, using reasonable medical judgment, determines that a pregnancy creates a life-threatening physical condition posing a risk of death or serious risk of substantial impairment of a major bodily function. Other Texas statutes also govern abortion-related conduct, so claims about the law should identify the exact provision and any applicable exception.",
+    sections: [
+      { heading: "Start with the current code, not an old trigger-law summary", body: ["Texas abortion law now operates through multiple statutes and has been amended since the original 2021 trigger-law enactment. Chapter 170A is a central starting point, but readers should also check related Health and Safety Code provisions, later amendments, agency guidance, and controlling court decisions before treating a past summary as current law.", "The highest-value KTR coverage should distinguish enacted law from bills that were filed but did not become law, and distinguish statutory text from political descriptions such as 'total ban' or 'exception-free' when those labels omit operative language."] },
+      { heading: "Medical exceptions require precise language", body: ["Chapter 170A's exception turns on a licensed physician's reasonable medical judgment and a qualifying life-threatening physical condition tied to pregnancy. A story about emergency care should identify the statutory standard actually being applied rather than substituting a generalized political phrase.", "When later legislation changes definitions, procedures, or physician protections, this evergreen guide should be refreshed from the current code and enrolled bill text before KTR changes its summary."] },
+      { heading: "Enforcement and funding are separate policy questions", body: ["Criminal, civil, professional-licensing, funding, insurance, and local-government questions can arise under different provisions. A dispute over taxpayer funding for abortion-related services is not necessarily governed by the same section as a physician's criminal exposure, and KTR should link each claim to the controlling source."] },
+      { heading: "Where the continuing debate sits", body: ["Texas policy fights continue over medical-emergency standards, enforcement, interstate activity, abortion-inducing drugs, public funding, pregnancy-support programs, adoption and foster care, maternal health, and federal-state authority. The narrower Life & Abortion policy tracker should carry fast-changing implementation and litigation status; this page supplies the durable legal framework."] },
+    ],
+    sources: [
+      { label: "Texas Health and Safety Code, Chapter 170A — Performance of Abortion", url: "https://tcss.legis.texas.gov/Docs/HS/htm/HS.170a.htm", note: "Current statutory prohibition and exception language." },
+      { label: "Texas Health and Safety Code, Chapter 171", url: "https://statutes.capitol.texas.gov/Docs/HS/htm/HS.171.htm", note: "Additional abortion-related definitions and requirements." },
+      { label: "Texas Legislature Online", url: "https://capitol.texas.gov/", note: "Use enrolled bill text to verify later statutory amendments." },
+    ],
+    relatedSlugs: ["texas-medical-transition-minors-law", "texas-state-federal-power", "rural-texas", "texas-rural-healthcare"],
+  },
+  {
+    slug: "texas-bail-criminal-justice",
+    category: "Constitutional Rights & Law Enforcement",
+    title: "Texas Bail & Criminal Justice: Public Safety, Due Process and Pretrial Release",
+    dek: "How the Texas Constitution and Code of Criminal Procedure govern bail, personal bonds, conditions of release, public-safety considerations, detention, and the recurring debate over bail reform.",
+    quickAnswer: "Texas bail decisions are governed by the Texas Constitution and Code of Criminal Procedure Chapter 17. Bail is intended to secure a defendant's appearance while protecting constitutional rights, and current law requires individualized consideration of statutory factors rather than treating every defendant or charge the same. Texas law also restricts personal bonds and authorizes denial of bail in specified circumstances.",
+    sections: [
+      { heading: "Bail is security for appearance, not a sentence", body: ["Chapter 17 defines bail as security given by an accused person to ensure appearance before the proper court. Because a defendant awaiting trial has not been convicted of the pending charge, pretrial rules operate within constitutional due-process limits even when lawmakers and judges place greater weight on public safety.", "That distinction is essential when evaluating proposals described as 'tougher bail.' The useful questions are which defendants are affected, whether the change concerns eligibility, amount, conditions, personal bonds, detention, or appellate review, and which constitutional provision authorizes the change."] },
+      { heading: "Texas law requires individualized factors", body: ["Article 17.15 directs the decision-maker to follow constitutional and statutory rules when setting bail and conditions. The law requires sufficient assurance of compliance and says bail may not be used as an instrument of oppression, while also directing consideration of the nature and circumstances of the offense and other statutory factors.", "Recent sessions have continued to amend Chapter 17. Because publication of some amendments can lag a legislative session, KTR should check current statute notes and the enrolled bill whenever reporting on a newly enacted bail change."] },
+      { heading: "Personal bonds, cash and surety bonds are different", body: ["A personal bond, a surety bond, and a cash deposit are different mechanisms. Political arguments often collapse them into the single phrase 'cash bail,' which can obscure what a bill or court order actually changes. KTR should name the release mechanism and the affected class of defendants."] },
+      { heading: "Public safety and local accountability", body: ["Bail policy connects state constitutional rules with county jails, magistrates, prosecutors, defense counsel, court backlogs, mental-health systems, and local budgets. The narrower criminal-justice trackers should carry fast-changing legislative and implementation details, while this guide remains the constitutional and procedural background page."] },
+    ],
+    sources: [
+      { label: "Texas Code of Criminal Procedure, Chapter 17 — Bail", url: "https://statutes.capitol.texas.gov/Docs/CR/htm/CR.17.htm", note: "Current bail definitions, eligibility rules, conditions and setting factors." },
+      { label: "Texas Constitution, Article I", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.1.htm", note: "Includes constitutional bail and due-process provisions." },
+      { label: "Texas Office of Court Administration", url: "https://www.txcourts.gov/", note: "Court administration and judicial-system resources." },
+    ],
+    relatedSlugs: ["texas-gun-laws", "texas-state-federal-power", "texas-election-law"],
+  },
+  {
+    slug: "texas-rural-healthcare",
+    category: "Healthcare, Social Issues & Rural Life",
+    title: "Rural Healthcare in Texas: Hospitals, Workforce, Telemedicine and Access",
+    dek: "A permanent guide to the state rules and programs shaping rural hospitals, emergency access, workforce shortages, telemedicine, limited-services rural hospitals, and rural healthcare finance.",
+    quickAnswer: "Rural Texas healthcare depends on more than whether a county has a hospital. Emergency coverage, workforce, reimbursement, specialty access, telemedicine, transportation, broadband, facility licensing, and state and federal funding all affect whether care is realistically available. Texas HHSC regulates rural hospital facility categories and administers programs intended to support access, infrastructure, training, and financial stability.",
+    sections: [
+      { heading: "Access is a network, not a building count", body: ["A rural community can have a licensed facility and still lack obstetrics, trauma capability, behavioral-health capacity, specialty care, or enough clinicians to provide continuous coverage. KTR should therefore distinguish hospital closure from service-line reduction, staffing shortages, EMS travel time, and loss of specialty access.", "The policy question is often regional: what care can be stabilized locally, what must be transferred, how far patients travel, and whether communications and transportation systems make that transfer reliable."] },
+      { heading: "Texas has a limited-services rural hospital framework", body: ["Texas maintains a specific licensing framework for limited services rural hospitals. HHSC rules define operational requirements for those facilities and have continued to receive updates, including rules effective in 2026. That framework is distinct from ordinary acute-care hospital licensing and should be named accurately when a facility converts or operates under the rural model."] },
+      { heading: "Workforce, telemedicine and infrastructure interact", body: ["Recruiting physicians, nurses, therapists, technicians, and emergency personnel can be as important as capital spending. Telemedicine can extend specialist access, but it depends on workforce at the originating site, broadband, reimbursement, equipment, and a plan for patients who ultimately need in-person care.", "State rural-health initiatives should be evaluated by their eligibility rules, award documents, provider participation and measurable access outcomes rather than by the announced grant total alone."] },
+      { heading: "Keep funding claims tied to the program", body: ["Rural hospital finance can include Medicare, Medicaid, private insurance, local hospital-district taxes, state grants, federal programs, uncompensated care and other sources. KTR should identify the exact program and funding period when reporting that Texas is 'spending' or 'cutting' a rural-health amount, because temporary grants and recurring reimbursement are not interchangeable."] },
+    ],
+    sources: [
+      { label: "Texas Health and Human Services", url: "https://www.hhs.texas.gov/", note: "State health-facility regulation and rural-health programs." },
+      { label: "Texas Register — Limited Services Rural Hospitals rules", url: "https://www.sos.texas.gov/texreg/archive/March62026/Adopted%20Rules/26.HEALTH%20AND%20HUMAN%20SERVICES.html", note: "2026 adopted HHSC rule for Chapter 511 facilities." },
+      { label: "Texas Health and Safety Code", url: "https://statutes.capitol.texas.gov/Docs/HS/htm/HS.241.htm", note: "Hospital licensing statutes, including limited-services rural hospital authority." },
+    ],
+    relatedSlugs: ["rural-texas", "texas-water-policy", "texas-economy-no-income-tax", "texas-abortion-law-pro-life-policy"],
+  },
+  {
+    slug: "texas-local-preemption-home-rule",
+    category: "Election Integrity & Governance",
+    title: "Texas vs. City Hall: Home Rule, State Preemption and Local Government Power",
+    dek: "A source-first guide to when Texas cities and counties can regulate locally, when state law overrides them, and how the Texas Regulatory Consistency Act changed the preemption landscape.",
+    quickAnswer: "Texas home-rule cities possess broad local authority, but that authority remains subject to the Texas Constitution and state law. HB 2127, the Texas Regulatory Consistency Act effective September 1, 2023, added express preemption provisions across several state codes and limited municipal and county regulation in fields occupied by those codes unless another statute expressly authorizes the local rule.",
+    sections: [
+      { heading: "Home rule is broad, not unlimited", body: ["Texas home-rule municipalities generally begin with broad local governing authority rather than needing a separate state statute for every action. But state constitutional and statutory preemption can limit that authority. Counties operate under a different legal structure and generally depend more directly on powers granted by state law.", "That makes 'local control' an incomplete legal answer. A disputed ordinance must be compared with the constitutional provision, state statute, and field of regulation at issue."] },
+      { heading: "What HB 2127 changed", body: ["The 88th Legislature enacted HB 2127 as the Texas Regulatory Consistency Act. The enrolled act added preemption provisions across specified codes and stated that, unless another statute expressly authorizes the local action, municipalities and counties may not regulate conduct in a field occupied by provisions of those codes. The act also added a Local Government Code rule limiting municipal ordinances or rules to those consistent with state law.", "The act contains exceptions and savings provisions. KTR should not describe every city ordinance as automatically invalid; the relevant code, express statutory authorization and any controlling court ruling still matter."] },
+      { heading: "Why preemption appears across policy areas", body: ["Employment rules, business regulation, natural resources, property, agriculture, finance, insurance, occupations and other subjects can trigger state-local conflicts. Other Texas statutes separately preempt local regulation in particular fields, so HB 2127 is not the only preemption law readers may encounter."] },
+      { heading: "How KTR should cover local-state fights", body: ["Every preemption story should identify the local ordinance, the state provision alleged to control, the government body enforcing each rule, and whether litigation has produced a binding decision. This guide provides durable context while current-status policy trackers handle new ordinances, lawsuits and legislative amendments."] },
+    ],
+    sources: [
+      { label: "HB 2127, 88th Legislature (2023) — enrolled text", url: "https://capitol.texas.gov/tlodocs/88R/billtext/html/HB02127F.htm", note: "Texas Regulatory Consistency Act." },
+      { label: "HB 2127 — enrolled bill summary", url: "https://capitol.texas.gov/billlookup/BillSummary.aspx?Bill=HB2127&LegSess=88R", note: "Official Texas Legislature summary and effective date." },
+      { label: "Texas Constitution, Article XI", url: "https://statutes.capitol.texas.gov/Docs/CN/htm/CN.11.htm", note: "Municipal corporations and home-rule constitutional framework." },
+      { label: "Texas Local Government Code", url: "https://statutes.capitol.texas.gov/Docs/LG/htm/LG.51.htm", note: "Municipal ordinance authority and state-law consistency provisions." },
+    ],
+    relatedSlugs: ["texas-state-federal-power", "texas-property-tax-relief", "texas-water-policy", "parental-rights-texas-schools"],
+  },
 ];
 
 export const issueGuideBySlug = Object.fromEntries(issueGuides.map((guide) => [guide.slug, guide])) as Record<string, IssueGuide>;
