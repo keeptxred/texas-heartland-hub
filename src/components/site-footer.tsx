@@ -40,6 +40,7 @@ const TRUST_LINKS = [
 const CIVIC_LINKS = [
   { to: "/find-representative", label: "Find My Representative" },
   { to: "/contact-legislators", label: "Contact Legislators" },
+  { to: "/contracts", label: "Texas Contract Watch" },
   { to: "/elections/candidates", label: "Candidates" },
   { to: "/laws", label: "Texas Laws" },
   { to: "/bills", label: "Track Legislation" },
