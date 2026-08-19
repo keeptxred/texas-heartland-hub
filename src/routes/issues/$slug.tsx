@@ -183,7 +183,7 @@ function IssueGuidePage() {
         <aside className="space-y-7 lg:sticky lg:top-24 lg:self-start">
           {policyTrackers.length ? (
             <section className="border border-primary/30 bg-primary/5 p-5">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-primary">Current-status layer</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-primary">Current-status layer</p>
               <h2 className="mt-1 font-display text-2xl tracking-tight">Related policy trackers</h2>
               <p className="mt-2 text-sm leading-relaxed text-muted-foreground">Move from this durable explainer into narrower trackers for current law, implementation, litigation and official data.</p>
               <div className="mt-4 space-y-3">
