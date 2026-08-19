@@ -64,12 +64,18 @@ export const STATE_DISTRICT_OFFICIAL_LINKS = {
   legislature: "https://capitol.texas.gov/",
 } as const;
 
+export const TEXAS_SENATE_2026_ELECTION_DISTRICTS = new Set([1, 2, 3, 4, 5, 9, 11, 13, 18, 19, 21, 22, 24, 26, 28, 31]);
+
 export function stateDistrictSlug(chamber: StateDistrictChamber, district: number) {
   return `texas-${chamber}-${district}`;
 }
 
 export function electionDistrictSlug(chamber: StateDistrictChamber, district: number) {
   return `texas-${chamber}-district-${district}`;
+}
+
+export function has2026ElectionDistrict(chamber: StateDistrictChamber, district: number) {
+  return chamber === "house" || TEXAS_SENATE_2026_ELECTION_DISTRICTS.has(district);
 }
 
 export function partyLabel(party: "R" | "D" | null) {
