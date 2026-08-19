@@ -1,6 +1,7 @@
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
+import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
 
 export type GovernmentGraphNode = {
   id: string;
@@ -12,6 +13,7 @@ export type GovernmentGraphNode = {
 
 const CORE_NODES: GovernmentGraphNode[] = [
   { id: "texas-government", label: "Texas Government", href: "/texas-government", kind: "government", keywords: ["governor", "attorney general", "comptroller", "agency", "state government", "executive", "commission", "board"] },
+  { id: "texas-agencies", label: "Texas Agency Authority", href: "/texas-government/agencies", kind: "government", keywords: ["agency", "department", "commission", "regulator", "authority", "oversight", "program"] },
   { id: "texas-legislature", label: "Texas Legislature", href: "/texas-legislature", kind: "legislature", keywords: ["legislature", "lawmakers", "house", "senate", "committee", "session", "legislation", "bill", "vote"] },
   { id: "texas-bills", label: "Texas Bills", href: "/bills", kind: "legislature", keywords: ["bill", "bills", "legislation", "filed", "committee", "passed", "signed", "veto"] },
   { id: "texas-laws", label: "Texas Laws", href: "/laws", kind: "law", keywords: ["law", "laws", "statute", "code", "legal", "court", "effective date"] },
@@ -53,7 +55,21 @@ const DATA_NODES: GovernmentGraphNode[] = TEXAS_DATA_SETS.map((dataset) => ({
   keywords: inferredKeywords(dataset.slug.replace(/-/g, " "), dataset.title, dataset.dek, ...dataset.whatAvailable),
 }));
 
-export const GOVERNMENT_GRAPH_NODES: GovernmentGraphNode[] = [...POLICY_NODES, ...LAW_NODES, ...DATA_NODES, ...CORE_NODES];
+const AGENCY_NODES: GovernmentGraphNode[] = AGENCY_AUTHORITY_PROFILES.map((agency) => ({
+  id: `agency:${agency.slug}`,
+  label: agency.shortName,
+  href: `/texas-government/agencies/${agency.slug}`,
+  kind: "government" as const,
+  keywords: agency.keywords,
+}));
+
+export const GOVERNMENT_GRAPH_NODES: GovernmentGraphNode[] = [
+  ...POLICY_NODES,
+  ...LAW_NODES,
+  ...DATA_NODES,
+  ...AGENCY_NODES,
+  ...CORE_NODES,
+];
 
 function scoreNode(text: string, node: GovernmentGraphNode): number {
   const haystack = text.toLowerCase();
