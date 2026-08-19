@@ -25,6 +25,13 @@ const POLICY_TOOLS = [
     guideHref: "/issues/texas-economy-no-income-tax",
     guideLabel: "Texas fiscal policy context",
   },
+  {
+    href: "/tools/texas-budget-headroom",
+    title: "Texas Budget Headroom Calculator",
+    description: "Stress-test certified General Revenue-related revenue and spending assumptions to see how much projected ending balance remains or whether a shortfall appears.",
+    guideHref: "/issues/texas-economy-no-income-tax",
+    guideLabel: "Texas budget & fiscal context",
+  },
 ] as const;
 
 export const Route = createFileRoute("/tools/")({
@@ -68,7 +75,7 @@ function PolicyToolsHub() {
         </p>
       </header>
 
-      <section className="mt-10 grid gap-5 md:grid-cols-3" aria-label="Texas policy calculators">
+      <section className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4" aria-label="Texas policy calculators">
         {POLICY_TOOLS.map((tool) => (
           <article key={tool.href} className="flex flex-col border bg-muted/20 p-6">
             <h2 className="font-display text-3xl tracking-tight">{tool.title}</h2>
