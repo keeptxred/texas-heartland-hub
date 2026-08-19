@@ -7,6 +7,7 @@ import { PillarRelationshipNav } from "@/components/pillar-relationship-nav";
 const HUB = HUBS.find((h) => h.slug === "texas-politics")!;
 const SECTIONS = [
   { title: "Elections", description: "Primaries, runoffs, and the races shaping the next Texas Legislature.", href: "/elections" },
+  { title: "Policy Trackers", description: "Permanent trackers for taxes, border security, education, energy, elections, crime, water, housing, healthcare, and the state budget.", href: "/policy" },
   { title: "Political Reference", description: "Races, redistricting, voter trends, policy questions, PACs, and campaign activity — 50 source-backed search guides.", href: "/texas-political-reference" },
   { title: "State Legislature", description: "Bills, special sessions, and the conservative caucus in Austin.", href: "/texas-legislature" },
   { title: "Governor & Leadership", description: "The Governor, Lt. Governor, AG, and statewide officeholders.", href: "/representatives" },
@@ -29,9 +30,9 @@ export const Route = createFileRoute("/texas-politics")({
     return {
       meta: [
         { title: "Texas Politics — Elections, Legislature & Government News" },
-        { name: "description", content: "Coverage of Texas elections, government, legislative updates, and political developments from Austin to the precinct." },
+        { name: "description", content: "Coverage of Texas elections, government, legislative updates, permanent policy trackers, and political developments from Austin to the precinct." },
         { property: "og:title", content: "Texas Politics — Keep TX Red" },
-        { property: "og:description", content: "Coverage of Texas elections, government, legislative updates, and political developments." },
+        { property: "og:description", content: "Coverage of Texas elections, government, legislative updates, policy trackers, and political developments." },
         { property: "og:url", content: canonical },
         { property: "og:type", content: "website" },
         ...(topic ? [{ name: "robots", content: "noindex,follow" }] : []),
@@ -90,6 +91,9 @@ function TexasPoliticsPage() {
               Senate and controls what bills reach the floor), the Attorney General, and the Speaker
               of the House. Understanding what each office can and can't do explains why some
               Republican priorities pass in a single session while others stall for years.
+            </p>
+            <p>
+              Our <a href="/policy" className="font-semibold text-primary underline underline-offset-4">Texas Policy Trackers</a> are the permanent layer beneath the news — taxes, border security, education, school choice, energy, water, housing, immigration, gun rights, elections, criminal justice, transportation, life policy, healthcare, and the state budget. Each tracker connects the issue to official sources, laws, legislation, KTR's editorial position, and related search guides.
             </p>
             <p>
               Our <a href="/texas-political-reference" className="font-semibold text-primary underline underline-offset-4">Texas Political Reference</a> answers the high-intent questions behind the daily headlines — current races, map changes, voter trends, policy disputes, campaign finance, PACs, and public grassroots events — with dated status and source links.
