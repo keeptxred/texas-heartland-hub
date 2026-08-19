@@ -3,7 +3,7 @@ import { LegalPage } from "@/components/legal-page";
 import { SITE_URL } from "@/lib/seo";
 
 const title = "Privacy Policy | Keep TX Red";
-const description = "How KeepTXRed.com collects, uses, shares, and protects information from readers, calculator users, and shop customers.";
+const description = "How KeepTXRed.com collects, uses, shares, and protects information from readers, tool users, and shop customers.";
 const canonical = `${SITE_URL}/privacy`;
 
 export const Route = createFileRoute("/privacy")({
@@ -30,7 +30,7 @@ function PrivacyPage() {
       <section>
         <h2>Who We Are</h2>
         <p>
-          Keep TX Red operates KeepTXRed.com, an independent Texas news, civic-tools, relocation, and e-commerce website. References to “we,” “us,” and “our” mean Keep TX Red.
+          Keep TX Red operates KeepTXRed.com, an independent Texas news, politics, elections, civic-tools, and e-commerce website. References to “we,” “us,” and “our” mean Keep TX Red.
         </p>
       </section>
 
