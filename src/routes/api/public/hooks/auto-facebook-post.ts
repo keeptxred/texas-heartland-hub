@@ -32,6 +32,7 @@ type ArticleRow = {
   featured_image_url: string | null;
   published_at: string;
   source_name: string | null;
+  source_url: string | null;
   kind: string;
   is_breaking: boolean | null;
   score: number | null;
@@ -201,7 +202,7 @@ async function runAutoFacebookPost(request: Request) {
   ).toISOString();
   const { data: rawArticles, error: articleError } = await db
     .from("daily_articles")
-    .select("slug,title,category,featured_image_url,published_at,source_name,kind,is_breaking,score,body_json")
+    .select("slug,title,category,featured_image_url,published_at,source_name,source_url,kind,is_breaking,score,body_json")
     .not("featured_image_url", "is", null)
     .gte("published_at", cutoff)
     .order("published_at", { ascending: false })
@@ -283,7 +284,11 @@ async function runAutoFacebookPost(request: Request) {
   }
 
   const candidates = databaseUniqueCandidates.filter((row) => {
-    const identity = { title: row.title, url: articleUrl(row) };
+    const identity = {
+      title: row.title,
+      url: articleUrl(row),
+      alternateUrls: row.source_url ? [row.source_url] : [],
+    };
     return !livePagePosts.some((post) => facebookPostMatchesArticle(post, identity));
   });
   const liveDuplicateCount = databaseUniqueCandidates.length - candidates.length;
