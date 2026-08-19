@@ -1,10 +1,11 @@
 import { applyStaticArticleBodyUpgrade } from "@/lib/static-article-body-upgrades";
 import { applyNoIncomeTaxArticleUpgrade } from "@/lib/static-no-income-tax-upgrade";
+import { applyVotingGuide2026Upgrade } from "@/lib/static-voting-guide-upgrade";
 
 type UpgradeCandidate = {
   editorNote?: string;
   intro?: string[];
-  sections?: Array<{ heading?: string }>;
+  sections?: Array<{ heading?: string; paragraphs?: string[]; bullets?: string[] }>;
   faq?: Array<{ q?: string }>;
   [key: string]: unknown;
 };
@@ -30,6 +31,9 @@ function isCurrentLegacyHomesteadExplainer(body: UpgradeCandidate): boolean {
  * intentional rewrite is never silently replaced.
  */
 export function applyReviewedStaticArticleBodyUpgrade<T extends UpgradeCandidate>(body: T): T {
+  const votingGuideUpgrade = applyVotingGuide2026Upgrade(body);
+  if (votingGuideUpgrade !== body) return votingGuideUpgrade;
+
   const noIncomeTaxUpgrade = applyNoIncomeTaxArticleUpgrade(body);
   if (noIncomeTaxUpgrade !== body) return noIncomeTaxUpgrade;
 
