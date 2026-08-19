@@ -3,6 +3,7 @@ import { POLITICAL_SEARCH_GUIDES, type PoliticalSearchGuideCategory } from "@/da
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
+import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
 import { TEXAS_LEGISLATIVE_SEATS } from "@/data/texas-legislators.generated";
 import { stateDistrictSlug } from "@/lib/state-districts";
@@ -19,6 +20,7 @@ const LAW_REVIEW_DAYS = 90;
 const DATA_REVIEW_DAYS = 90;
 const AGENCY_REVIEW_DAYS = 60;
 const DISTRICT_REVIEW_DAYS = 90;
+const ALL_DATA_SETS = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS];
 
 type FreshnessItem = {
   kind: "political-reference" | "policy-tracker" | "law-topic" | "data-source-map" | "agency-authority" | "state-district";
@@ -52,7 +54,7 @@ function handler() {
       const due = dueDate(topic.updated, LAW_REVIEW_DAYS);
       return { kind: "law-topic" as const, slug: topic.slug, path: `/laws/topic/${topic.slug}`, reviewed: topic.updated, reviewDays: LAW_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
-    ...TEXAS_DATA_SETS.map((dataset) => {
+    ...ALL_DATA_SETS.map((dataset) => {
       const due = dueDate(dataset.updated, DATA_REVIEW_DAYS);
       return { kind: "data-source-map" as const, slug: dataset.slug, path: `/data/${dataset.slug}`, reviewed: dataset.updated, reviewDays: DATA_REVIEW_DAYS, dueAt: due.toISOString(), overdue: due.getTime() < now.getTime() };
     }),
