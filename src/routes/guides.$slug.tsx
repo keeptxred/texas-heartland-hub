@@ -1,7 +1,23 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CornerstoneGuidePage, cornerstoneGuideHead } from "@/components/cornerstone-guide-page";
-import { ALL_GUIDES } from "@/data/all-guides";
+import { ALL_GUIDES, SUPPORTING_GUIDES } from "@/data/all-guides";
 import type { CornerstoneGuide } from "@/data/cornerstone-guides";
+import { isSupportingGuideIndexable } from "@/lib/supporting-guide-indexability";
+
+function guideHead(guide: CornerstoneGuide) {
+  const base = cornerstoneGuideHead(guide);
+  const supportingGuide = SUPPORTING_GUIDES[guide.slug];
+  if (!supportingGuide || isSupportingGuideIndexable(supportingGuide)) return base;
+
+  return {
+    ...base,
+    meta: base.meta.map((meta) =>
+      meta.name === "robots"
+        ? { ...meta, content: "noindex,follow" }
+        : meta,
+    ),
+  };
+}
 
 export const Route = createFileRoute("/guides/$slug")({
   loader: ({ params }): CornerstoneGuide => {
@@ -10,7 +26,7 @@ export const Route = createFileRoute("/guides/$slug")({
     return guide;
   },
   head: ({ loaderData }) => loaderData
-    ? cornerstoneGuideHead(loaderData)
+    ? guideHead(loaderData)
     : { meta: [{ title: "Guide not found — Keep TX Red" }, { name: "robots", content: "noindex,follow" }] },
   component: GuideRoute,
   notFoundComponent: () => (
