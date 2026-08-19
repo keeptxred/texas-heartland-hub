@@ -8,6 +8,7 @@ const PRIMARY_LINKS = [
   { to: "/", label: "Home" },
   { to: "/news", label: "Texas News" },
   { to: "/texas-politics", label: "Politics" },
+  { to: "/texas-case", label: "The Texas Case" },
   { to: "/elections/2026", label: "Election Central" },
   { to: "/bills", label: "Bills" },
   { to: "/texas-legislature", label: "Texas Legislature" },
@@ -67,7 +68,7 @@ export function SiteFooter() {
               </div>
               <h2 className="font-display text-3xl tracking-tight">KEEP TEXAS RED</h2>
               <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/80">
-                Texas news, politics, elections, legislation, public officials, business coverage and Texas-made designs.
+                Texas news, commentary, government accountability, and common-sense analysis.
               </p>
             </div>
             <FooterColumn heading="Explore" links={PRIMARY_LINKS} />
