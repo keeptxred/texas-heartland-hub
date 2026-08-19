@@ -16,7 +16,9 @@ type Props = {
     document_type?: string | null;
     document_title?: string | null;
     document_url?: string | null;
+    source_html_url?: string | null;
     version_label?: string | null;
+    version_code?: string | null;
   }>;
 };
 
@@ -33,12 +35,12 @@ export function OfficialBillTextViewer(props: Props) {
     for (const document of props.documents) {
       if (
         /bill\s*text|introduced|engrossed|enrolled|substitute/i.test(
-          `${document.document_type ?? ""} ${document.document_title ?? ""} ${document.version_label ?? ""}`,
+          `${document.document_type ?? ""} ${document.document_title ?? ""} ${document.version_label ?? ""} ${document.version_code ?? ""}`,
         )
       ) {
         add(
-          document.version_label || document.document_title || "Official bill text",
-          document.document_url,
+          document.version_label || document.version_code || document.document_title || "Official bill text",
+          document.source_html_url || document.document_url,
         );
       }
     }
