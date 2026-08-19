@@ -322,22 +322,28 @@ export async function publishSingleFeedItem(feedItemId: number): Promise<Publish
 
   const { data: primary, error } = await db
     .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body")
+    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")
     .eq("id", feedItemId)
     .maybeSingle();
   if (error || !primary) return { ok: false, error: error?.message ?? "Feed item not found" };
+  if (primary.target_site && primary.target_site !== "keeptxred") {
+    return { ok: false, error: `Publication held: feed item is routed to ${primary.target_site}, not KeepTXRed.` };
+  }
   if (primary.internal_slug) return { ok: true, slug: primary.internal_slug, alreadyPublished: true };
 
   const since = new Date(Date.now() - CLUSTER_LOOKBACK_HOURS * 60 * 60 * 1000).toISOString();
   const { data: recent } = await db
     .from("texas_news_feed")
-    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body")
+    .select("id,title,link,source,description,pub_date,internal_slug,extracted_body,target_site")
     .gte("pub_date", since)
     .neq("id", feedItemId)
     .order("pub_date", { ascending: false })
     .limit(140);
 
-  let cluster = buildStoryCluster(primary, (recent ?? []) as ClusterableFeedItem[], MAX_CLUSTER_SOURCES);
+  const recentKeepTxRed = (recent ?? []).filter(
+    (row: { target_site?: string | null }) => !row.target_site || row.target_site === "keeptxred",
+  );
+  let cluster = buildStoryCluster(primary, recentKeepTxRed as ClusterableFeedItem[], MAX_CLUSTER_SOURCES);
   if (!cluster.strongMerge) {
     cluster = await enrichClusterBodies(cluster, db);
     const readiness = assessPublicationReadiness(cluster);
