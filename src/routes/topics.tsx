@@ -59,6 +59,14 @@ function TopicsPage() {
         Keep TX Red organizes developing news and evergreen explainers around these core Texas content pillars. Each hub connects the latest reporting to the laws, institutions, elections, industries, and public-policy context behind the story.
       </p>
 
+      <section className="mt-8 border-l-4 border-primary bg-muted/40 p-5" aria-labelledby="issue-guides-heading">
+        <h2 id="issue-guides-heading" className="font-display text-2xl tracking-tight">Need the law and policy behind the headline?</h2>
+        <p className="mt-2 max-w-4xl text-sm leading-relaxed text-muted-foreground">
+          The coverage hubs below follow developing stories. Our Texas Issues library goes deeper with source-first evergreen guides, direct links to enacted bills and statutes, quick answers, related tools, and cross-topic context.
+        </p>
+        <a href="/issues" className="mt-4 inline-block text-sm font-bold text-primary hover:underline underline-offset-4">Browse Texas issue guides →</a>
+      </section>
+
       <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {CONTENT_PILLARS.map((pillar) => {
           const related = getRelatedContentPillars(pillar.slug);
@@ -90,6 +98,12 @@ function TopicsPage() {
           );
         })}
       </div>
+
+      <section className="mt-12 border-t pt-8 text-center">
+        <h2 className="font-display text-3xl tracking-tight">From coverage hub to primary source</h2>
+        <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">Use Topics for the ongoing news stream and Issues for durable explainers. The two systems are intentionally complementary so readers can move from a developing story to the governing law without competing duplicate pages.</p>
+        <a href="/issues" className="mt-5 inline-block border px-5 py-3 text-sm font-semibold hover:border-primary hover:text-primary">Open Texas Issues →</a>
+      </section>
     </main>
   );
 }
