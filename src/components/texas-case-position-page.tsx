@@ -91,6 +91,14 @@ export function TexasCasePositionPage({ position }: { position: TexasCasePositio
         <span>About {readingMinutes} min read</span>
       </div>
 
+      <aside className="mt-6 rounded-xl border bg-card p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+        <div>
+          <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-muted-foreground">Separate factual companion</p>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">Want the legal and administrative framework without KTR's editorial conclusion?</p>
+        </div>
+        <a href={`/texas-case/facts/${position.slug}`} className="mt-3 inline-flex shrink-0 rounded-md border px-4 py-2.5 text-sm font-bold text-primary hover:border-primary sm:mt-0">Facts & Framework →</a>
+      </aside>
+
       <section className="mt-8 border-l-4 border-primary bg-primary/5 p-5 md:p-6" aria-labelledby="ktr-position">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.22em] text-primary">KTR position</p>
         <h2 id="ktr-position" className="mt-2 font-display text-2xl tracking-tight">What we believe</h2>
@@ -140,6 +148,7 @@ export function TexasCasePositionPage({ position }: { position: TexasCasePositio
       <section className="mt-10 rounded-xl border bg-card p-6">
         <h2 className="font-display text-2xl tracking-tight">Follow the facts behind the argument</h2>
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-3 text-sm font-semibold">
+          <a href={`/texas-case/facts/${position.slug}`} className="text-primary hover:underline">Facts & Framework →</a>
           {position.related.map((item) => <a key={item.href} href={item.href} className="text-primary hover:underline">{item.label} →</a>)}
         </div>
       </section>
