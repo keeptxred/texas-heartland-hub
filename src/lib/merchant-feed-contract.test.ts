@@ -13,7 +13,8 @@ describe("Google Merchant feed contract", () => {
     expect(FREE_SHIPPING_THRESHOLD_CENTS).toBe(3500);
     expect(qualifiesForFreeShipping(3500)).toBe(false);
     expect(qualifiesForFreeShipping(3501)).toBe(true);
-    expect(feed).toContain("const FREE_SHIPPING_THRESHOLD_USD = 35.01");
+    // Google defines price_threshold as the order cost ABOVE which shipping is free.
+    expect(feed).toContain("const FREE_SHIPPING_THRESHOLD_USD = 35;");
     expect(feed).toContain("<g:price_threshold>${FREE_SHIPPING_THRESHOLD_USD.toFixed(2)} USD</g:price_threshold>");
   });
 
