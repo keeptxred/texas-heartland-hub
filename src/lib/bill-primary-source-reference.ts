@@ -5,6 +5,7 @@ import {
 } from '@/lib/bill-documents';
 
 const SITE_URL = 'https://keeptxred.com';
+const TEXAS_CAPITOL_BILL_LOOKUP = 'https://capitol.texas.gov/BillLookup/History.aspx';
 
 type BillReferenceRecord = {
   legislature_number: number;
@@ -38,7 +39,7 @@ export type BillPrimarySourceReference = {
   title: string;
   status: string | null;
   canonicalUrl: string;
-  officialBillUrl: string | null;
+  officialBillUrl: string;
   lastActionDate: string | null;
   lastSyncedAt: string | null;
   documents: Array<{
@@ -58,6 +59,21 @@ export type BillPrimarySourceReference = {
     officialUrl: string | null;
   }>;
 };
+
+function officialTexasBillUrl(bill: BillReferenceRecord) {
+  const sessionCode = String(bill.session_code || 'R').trim().toUpperCase() || 'R';
+  const legislatureSession = `${Number(bill.legislature_number)}${sessionCode}`;
+  const billIdentifier = String(
+    bill.bill_identifier || `${bill.bill_type}${bill.bill_number}`,
+  )
+    .replace(/\s+/g, '')
+    .toUpperCase();
+  const params = new URLSearchParams({
+    LegSess: legislatureSession,
+    Bill: billIdentifier,
+  });
+  return `${TEXAS_CAPITOL_BILL_LOOKUP}?${params.toString()}`;
+}
 
 export function buildBillPrimarySourceReference(
   bill: BillReferenceRecord,
@@ -101,7 +117,7 @@ export function buildBillPrimarySourceReference(
     title: bill.caption,
     status: bill.current_status_label || bill.current_status_code || null,
     canonicalUrl,
-    officialBillUrl: bill.source_url || null,
+    officialBillUrl: officialTexasBillUrl(bill),
     lastActionDate: bill.last_action_date || null,
     lastSyncedAt: bill.last_synced_at || null,
     documents: publicDocuments,
