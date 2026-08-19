@@ -3,6 +3,7 @@ import { AUTHORS, EDITORIAL_BYLINE_DISCLOSURE, authorSlug, type Author } from "@
 import { ARTICLES, isPublished } from "@/data/articles";
 import { getPublishedAuthorArticles, type DailyArticle } from "@/lib/daily-news.functions";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
+import { hasEnoughAuthorArticles, isCompleteAuthorProfile } from "@/lib/author-indexability";
 import {
   buildSeo,
   ORGANIZATION_ID,
@@ -10,46 +11,39 @@ import {
   WEBSITE_ID,
 } from "@/lib/seo";
 
-export function isIndexableAuthor(author: Author | null | undefined): author is Author {
-  if (!author) return false;
-  const biography = author.bio.join(" ").trim();
-  return Boolean(
-    /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(author.slug) &&
-      author.name.trim().length >= 3 &&
-      author.role.trim().length >= 3 &&
-      biography.length >= 100 &&
-      author.beats.length > 0 &&
-      author.beats.every((beat) => beat.trim().length >= 3),
-  );
-}
-
-function hasStaticByline(author: Author): boolean {
-  return ARTICLES.some(
-    (article) =>
-      isPublished(article)
-      && isStaticArticleIndexable(article)
-      && authorSlug(article.author) === author.slug,
-  );
-}
+export const isIndexableAuthor = isCompleteAuthorProfile;
 
 type AuthorLoaderData = {
   author: Author;
   liveArticles: DailyArticle[];
-  hasPublishedArticles: boolean;
+  hasEnoughPublishedArticles: boolean;
 };
+
+function staticBylineSlugs(author: Author): string[] {
+  return ARTICLES.filter(
+    (article) =>
+      isPublished(article)
+      && isStaticArticleIndexable(article)
+      && authorSlug(article.author) === author.slug,
+  ).map((article) => article.slug);
+}
 
 export const Route = createFileRoute("/authors/$slug")({
   loader: async ({ params }): Promise<AuthorLoaderData> => {
     const author = AUTHORS.find((candidate) => candidate.slug === params.slug);
-    if (!isIndexableAuthor(author)) throw notFound();
+    if (!isCompleteAuthorProfile(author)) throw notFound();
     const { articles } = await getPublishedAuthorArticles();
-    const liveArticles = articles
-      .filter((article) => article.slug && authorSlug(article.author) === author.slug)
-      .slice(0, 12);
+    const allLiveArticles = articles.filter(
+      (article) => article.slug && authorSlug(article.author) === author.slug,
+    );
+    const publishedSlugs = [
+      ...staticBylineSlugs(author),
+      ...allLiveArticles.map((article) => article.slug),
+    ];
     return {
       author,
-      liveArticles,
-      hasPublishedArticles: liveArticles.length > 0 || hasStaticByline(author),
+      liveArticles: allLiveArticles.slice(0, 12),
+      hasEnoughPublishedArticles: hasEnoughAuthorArticles(publishedSlugs),
     };
   },
   head: ({ loaderData }) => {
@@ -62,7 +56,7 @@ export const Route = createFileRoute("/authors/$slug")({
       };
     }
 
-    const { author, hasPublishedArticles } = loaderData;
+    const { author, hasEnoughPublishedArticles } = loaderData;
     const path = `/authors/${author.slug}`;
     const url = `${SITE_URL}${path}`;
     const deskId = `${url}#desk`;
@@ -72,7 +66,7 @@ export const Route = createFileRoute("/authors/$slug")({
       description,
       path,
       type: "website",
-      noindex: !hasPublishedArticles,
+      noindex: !hasEnoughPublishedArticles,
     });
     const desk = {
       "@type": "Organization",
