@@ -1,4 +1,5 @@
 import { ARTICLES, isPublished, sortByDateDesc, type Article } from "@/data/articles";
+import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 
 /**
  * Canonical mapping from URL category slug to the display `category` field
@@ -19,7 +20,6 @@ export const CATEGORY_SLUG_TO_NAME = {
   business: "Business",
   sports: "Sports",
   "non-political": "Non-Political",
-  // Texas News (culture / economy / lifestyle) categories
   economy: "Economy",
   housing: "Housing",
   migration: "Growth & Migration",
@@ -46,21 +46,25 @@ export function normalizeCategoryName(value: string | null | undefined): Categor
 }
 
 /**
- * Shared category filter. Every category/topic page MUST go through this
- * function so an article only appears on the page whose category_slug
- * exactly matches its own category. Returns published articles, newest first.
+ * Shared static category discovery filter. Category pages, Election Central,
+ * and any other static-article surface must not re-promote a legacy article
+ * that the site's robots/sitemap policy has deliberately retired.
  */
 export function getArticlesByCategory(categorySlug: string): Article[] {
   if (!isCategorySlug(categorySlug)) return [];
   const name = CATEGORY_SLUG_TO_NAME[categorySlug];
   return ARTICLES
-    .filter((a) => a.category === name && isPublished(a))
+    .filter((article) =>
+      article.category === name
+      && isPublished(article)
+      && isStaticArticleIndexable(article),
+    )
     .sort(sortByDateDesc);
 }
 
 /**
- * Same contract, applied to any list of items that carry a `category`
- * display name (e.g. rows from `daily_articles`). Exact-match only.
+ * Same exact-category contract for caller-supplied lists such as cloud rows.
+ * Cloud/article readiness is applied by those loaders before this helper.
  */
 export function filterByCategorySlug<T extends { category: string }>(
   items: readonly T[],
@@ -68,5 +72,5 @@ export function filterByCategorySlug<T extends { category: string }>(
 ): T[] {
   if (!isCategorySlug(categorySlug)) return [];
   const name = CATEGORY_SLUG_TO_NAME[categorySlug];
-  return items.filter((i) => i.category === name);
+  return items.filter((item) => item.category === name);
 }
