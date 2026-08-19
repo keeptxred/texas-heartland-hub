@@ -72,7 +72,7 @@ export const POLICY_TRACKERS_WAVE12: PolicyTracker[] = [
     ],
     related: [
       { label: "Religious Liberty tracker", href: "/policy/religious-liberty", kind: "reference" },
-      { label: "Life & Abortion tracker", href: "/policy/abortion", kind: "reference" },
+      { label: "Life & Abortion tracker", href: "/policy/life-abortion", kind: "reference" },
       { label: "Texas laws", href: "/laws", kind: "law" },
       { label: "Texas bills", href: "/bills", kind: "bill" },
     ],
