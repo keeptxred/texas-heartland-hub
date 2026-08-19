@@ -19,6 +19,7 @@ const TEXAS_CASE_REFRESH = toIsoDate("2026-08-18T23:00:00-05:00");
 const POLITICAL_REFERENCE_REFRESH = toIsoDate("2026-08-18T23:53:00-05:00");
 const POLICY_REFRESH = toIsoDate("2026-08-19T06:30:00-05:00");
 const LAW_DATA_REFRESH = toIsoDate("2026-08-19T07:15:00-05:00");
+const DISTRICT_REFRESH = toIsoDate("2026-08-19T07:35:00-05:00");
 const AGENCY_REFRESH = toIsoDate("2026-08-19T07:40:00-05:00");
 const CIVIC_TOOLS_REFRESH = toIsoDate("2026-08-19T07:50:00-05:00");
 const SPORTS_SITEMAP_LEAGUES = ["nfl", "mlb", "nba", "nhl", "mls", "nwsl", "wnba", "cfb"] as const;
@@ -47,6 +48,7 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-legislature/votes": CITATION_MAGNET_REFRESH,
   "/texas-government": CITATION_MAGNET_REFRESH,
   "/texas-government/agencies": AGENCY_REFRESH,
+  "/districts": DISTRICT_REFRESH,
   "/laws": LAW_DATA_REFRESH,
   "/laws/topics": LAW_DATA_REFRESH,
   "/laws/constitutional-amendments": CITATION_MAGNET_REFRESH,
@@ -85,7 +87,7 @@ const STATIC_PATHS:string[]=[
   "/houston","/dallas-fort-worth","/san-antonio","/austin","/el-paso","/texas-sports",
   "/texas-business","/texas-legislature","/texas-legislature/house",
   "/texas-legislature/senate","/texas-legislature/current-session","/texas-legislature/sessions",
-  "/texas-legislature/votes","/texas-government","/texas-government/agencies",
+  "/texas-legislature/votes","/texas-government","/texas-government/agencies","/districts",
   "/about","/representatives","/register-to-vote","/contact-legislators",
   "/get-involved","/county-elections","/laws","/laws/topics","/laws/constitutional-amendments","/laws/effective-dates","/data",
   "/civic-tools","/civic-tools/government-authority-finder","/civic-tools/texas-law-finder",
