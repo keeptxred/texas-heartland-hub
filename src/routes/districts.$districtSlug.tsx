@@ -4,6 +4,7 @@ import {
   STATE_DISTRICT_OFFICIAL_LINKS,
   STATE_DISTRICT_PLANS,
   electionDistrictSlug,
+  has2026ElectionDistrict,
   partyLabel,
 } from "@/lib/state-districts";
 import { buildSeo, SITE_URL } from "@/lib/seo";
@@ -79,6 +80,7 @@ function StateDistrictPage() {
   const { district } = Route.useLoaderData();
   const plan = STATE_DISTRICT_PLANS[district.chamber];
   const electionSlug = electionDistrictSlug(district.chamber, district.district);
+  const hasElectionPage = has2026ElectionDistrict(district.chamber, district.district);
   const reviewed = new Date(`${district.reviewedAt}T12:00:00-05:00`).toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -102,7 +104,7 @@ function StateDistrictPage() {
         <div className="mt-6 flex flex-wrap gap-3">
           {district.currentMemberSlug ? <a href={`/representatives/${district.currentMemberSlug}`} className="rounded-md bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground">Current member profile</a> : null}
           <a href={STATE_DISTRICT_OFFICIAL_LINKS.whoRepresentsMe} target="_blank" rel="noopener noreferrer" className="rounded-md border px-4 py-2.5 text-sm font-bold">Verify your address</a>
-          <a href={`/elections/districts/${electionSlug}`} className="rounded-md border px-4 py-2.5 text-sm font-bold">Election-cycle district page</a>
+          {hasElectionPage ? <a href={`/elections/districts/${electionSlug}`} className="rounded-md border px-4 py-2.5 text-sm font-bold">2026 election district page</a> : null}
         </div>
       </header>
 
@@ -161,7 +163,7 @@ function StateDistrictPage() {
           <section className="rounded-xl border bg-card p-6">
             <h2 className="text-2xl font-bold">Election history attached to the current officeholder</h2>
             {district.electionHistory.length ? <ol className="mt-5 space-y-4">{district.electionHistory.map((event) => <li key={`${event.year}-${event.result}`} className="grid gap-1 border-l-2 border-primary pl-4 sm:grid-cols-[6rem_1fr]"><strong>{event.year}</strong><span className="text-muted-foreground">{event.result}</span></li>)}</ol> : <p className="mt-4 text-muted-foreground">KTR has not attached a verified election-history summary to the current member record.</p>}
-            <a href={`/elections/districts/${electionSlug}`} className="mt-5 inline-block font-semibold text-primary hover:underline">Open the election-cycle district record →</a>
+            {hasElectionPage ? <a href={`/elections/districts/${electionSlug}`} className="mt-5 inline-block font-semibold text-primary hover:underline">Open the 2026 election-cycle district record →</a> : <p className="mt-5 text-sm text-muted-foreground">This Senate seat is not scheduled for a regular 2026 district election; the permanent page remains active between election cycles.</p>}
           </section>
 
           <section className="rounded-xl border bg-card p-6">
