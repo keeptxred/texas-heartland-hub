@@ -1,6 +1,7 @@
 import { POLICY_TRACKERS } from "@/data/policy-trackers";
 import { LAW_TOPICS } from "@/data/law-topics";
 import { TEXAS_DATA_SETS } from "@/data/texas-data-catalog";
+import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
 
 export type GovernmentGraphNode = {
@@ -47,7 +48,7 @@ const LAW_NODES: GovernmentGraphNode[] = LAW_TOPICS.map((topic) => ({
   keywords: inferredKeywords(topic.slug.replace(/-/g, " "), topic.title, topic.dek, ...topic.keyRules),
 }));
 
-const DATA_NODES: GovernmentGraphNode[] = TEXAS_DATA_SETS.map((dataset) => ({
+const DATA_NODES: GovernmentGraphNode[] = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS].map((dataset) => ({
   id: `data:${dataset.slug}`,
   label: dataset.title,
   href: `/data/${dataset.slug}`,
