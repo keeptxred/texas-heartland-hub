@@ -5,6 +5,11 @@ import {
   type RecentFacebookPost,
 } from "@/lib/facebook-editorial-selection";
 import {
+  facebookPostMatchesArticle,
+  fetchRecentFacebookPagePosts,
+  type FacebookPagePost,
+} from "@/lib/facebook-page-history";
+import {
   facebookPostingDecision,
   formatCentralMinute,
 } from "@/lib/facebook-posting-schedule";
@@ -46,6 +51,12 @@ type RecentQueueRow = {
 type RecentPackageRow = {
   id: string;
   source_title: string;
+};
+
+type SocialConnectionRow = {
+  account_id: string | null;
+  access_token: string | null;
+  connection_status: string | null;
 };
 
 function bearerToken(request: Request): string | null {
@@ -92,6 +103,31 @@ async function loadRecentFacebookPosts(db: any): Promise<RecentFacebookPost[]> {
     title: titleByPackage.get(row.content_package_id) ?? "Facebook post",
     published_at: row.published_time,
   }));
+}
+
+async function loadLiveFacebookPagePosts(db: any): Promise<FacebookPagePost[]> {
+  const { data: rawConnection, error } = await db
+    .from("social_connections")
+    .select("account_id,access_token,connection_status")
+    .ilike("platform", "facebook")
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  const connection = rawConnection as SocialConnectionRow | null;
+  if (
+    !connection ||
+    connection.connection_status !== "CONNECTED" ||
+    !connection.account_id ||
+    !connection.access_token
+  ) {
+    throw new Error("Facebook Page connection is unavailable for duplicate verification");
+  }
+
+  return fetchRecentFacebookPagePosts({
+    pageId: String(connection.account_id),
+    pageToken: String(connection.access_token),
+    limit: 100,
+  });
 }
 
 async function runAutoFacebookPost(request: Request) {
@@ -219,9 +255,40 @@ async function runAutoFacebookPost(request: Request) {
     if (postedPackageIds.has(row.id) && row.source_url) alreadyPosted.add(row.source_url);
   }
 
-  const candidates = articles.filter((row) => !alreadyPosted.has(articleUrl(row)));
-  if (candidates.length === 0) {
+  const databaseUniqueCandidates = articles.filter((row) => !alreadyPosted.has(articleUrl(row)));
+  if (databaseUniqueCandidates.length === 0) {
     return Response.json({ ok: true, posted: false, no_items: true, reason: "All eligible recent articles were already posted" });
+  }
+
+  let livePagePosts: FacebookPagePost[] = [];
+  try {
+    livePagePosts = await loadLiveFacebookPagePosts(db);
+  } catch (error) {
+    return Response.json(
+      {
+        ok: false,
+        posted: false,
+        error: "Facebook automation stopped because live Page duplicate verification failed",
+        detail: error instanceof Error ? error.message : String(error),
+      },
+      { status: 503 },
+    );
+  }
+
+  const candidates = databaseUniqueCandidates.filter((row) => {
+    const identity = { title: row.title, url: articleUrl(row) };
+    return !livePagePosts.some((post) => facebookPostMatchesArticle(post, identity));
+  });
+  const liveDuplicateCount = databaseUniqueCandidates.length - candidates.length;
+
+  if (candidates.length === 0) {
+    return Response.json({
+      ok: true,
+      posted: false,
+      no_items: true,
+      reason: "All eligible recent articles were already found on the live Facebook Page",
+      live_duplicates_filtered: liveDuplicateCount,
+    });
   }
 
   const ranked = rankFacebookCandidates(candidates, recentPosts);
@@ -231,6 +298,7 @@ async function runAutoFacebookPost(request: Request) {
       posted: false,
       no_items: true,
       reason: "Only routine or low-value government appointment stories remain",
+      live_duplicates_filtered: liveDuplicateCount,
     });
   }
 
@@ -273,6 +341,7 @@ async function runAutoFacebookPost(request: Request) {
         posted_at: result.posted_at,
         attempted: attempts.length + 1,
         mode,
+        live_duplicates_filtered: liveDuplicateCount,
       });
     }
 
