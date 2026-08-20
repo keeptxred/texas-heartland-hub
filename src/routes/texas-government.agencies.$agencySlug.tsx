@@ -1,6 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getAgencyAuthorityProfile } from "@/data/agency-authority";
 import { buildSeo, SITE_URL } from "@/lib/seo";
+import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability";
 
 export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
   loader: ({ params }) => {
@@ -9,7 +10,7 @@ export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
     return profile;
   },
   head: ({ loaderData }) => {
-    if (!loaderData) return {};
+    if (!loaderData) return { meta: [{ name: "robots", content: "noindex,follow" }] };
     const path = `/texas-government/agencies/${loaderData.slug}`;
     const seo = buildSeo({
       title: `${loaderData.name}: Authority, Responsibilities & Oversight`,
@@ -21,9 +22,12 @@ export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
       section: "Texas Government Authority",
       author: "Keep TX Red Government Desk",
     });
+    const robots = isAgencyAuthorityIndexable(loaderData)
+      ? "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+      : "noindex,follow";
     const canonical = `${SITE_URL}${path}`;
     return {
-      meta: seo.meta,
+      meta: seo.meta.map((item) => item.name === "robots" ? { ...item, content: robots } : item),
       links: seo.links,
       scripts: [
         {
