@@ -10,6 +10,12 @@ import {
 const guideRoute = fs.readFileSync(new URL("../routes/guides.$slug.tsx", import.meta.url), "utf8");
 const pageSitemap = fs.readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
 
+function staticSitemapBlock() {
+  const match = pageSitemap.match(/const STATIC_PATHS:string\[\]=\[([\s\S]*?)\];/);
+  if (!match) throw new Error("Could not locate STATIC_PATHS in sitemap source");
+  return match[1];
+}
+
 describe("AdSense supporting guide indexability", () => {
   it("requires substantial depth in addition to existing sourcing and FAQ structure", () => {
     expect(MIN_SUPPORTING_GUIDE_WORDS).toBe(1200);
@@ -31,6 +37,14 @@ describe("AdSense supporting guide indexability", () => {
     expect(pageSitemap).toContain("Object.values(SUPPORTING_GUIDES).filter(isSupportingGuideIndexable)");
     expect(pageSitemap).toContain("INDEXABLE_SUPPORTING_GUIDES.map((guide)=>`/guides/${guide.slug}`)");
     expect(pageSitemap).not.toContain("SUPPORTING_GUIDE_SLUGS.map((slug)=>`/guides/${slug}`)");
+  });
+
+  it("does not let a hard-coded static path or lastmod entry bypass readiness", () => {
+    expect(staticSitemapBlock()).not.toContain('"/guides/');
+    for (const guide of Object.values(SUPPORTING_GUIDES)) {
+      expect(pageSitemap).not.toContain(`"/guides/${guide.slug}": GUIDE_LASTMOD`);
+    }
+    expect(pageSitemap).toContain("...SUPPORTING_GUIDE_LASTMOD");
   });
 
   it("currently keeps every known sub-1200-word supporting guide out of the index", () => {
