@@ -1,8 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { queryOptions, useSuspenseQuery } from "@tanstack/react-query";
 import { SITE_URL } from "@/lib/seo";
 import { getProducts, type Product, type ProductVariant } from "@/lib/products.functions";
 import { buildAddPayload, parseVariantSize, useCart } from "@/lib/cart-context";
 import { seoAlt, seoDescription, seoTitle } from "@/lib/shop-seo";
+
+const productsQuery = queryOptions({
+  queryKey: ["products", "listings"],
+  queryFn: () => getProducts(),
+  staleTime: 5 * 60 * 1000,
+});
 
 function offerId(product: Product, variant: ProductVariant): string {
   return `${product.id}-${variant.id}`;
@@ -24,8 +31,8 @@ function formatPrice(price: number, currency: string): string {
 }
 
 export const Route = createFileRoute("/product-offer/$productId/$variantId")({
-  loader: async ({ params }) => {
-    const data = await getProducts();
+  loader: async ({ context, params }) => {
+    const data = await context.queryClient.ensureQueryData(productsQuery);
     if (data.isFallback) throw new Error("Product catalog temporarily unavailable.");
 
     const product = data.products.find((item) => item.id === params.productId);
@@ -97,7 +104,12 @@ export const Route = createFileRoute("/product-offer/$productId/$variantId")({
 });
 
 function ProductOfferPage() {
-  const { product, variant } = Route.useLoaderData();
+  const { productId, variantId } = Route.useParams();
+  const { data } = useSuspenseQuery(productsQuery);
+  const product = data.products.find((item) => item.id === productId)!;
+  const variant = (product.variants ?? []).find(
+    (item) => item.is_enabled !== false && String(item.id) === variantId,
+  )!;
   const { addItem } = useCart();
   const title = seoTitle(product);
   const description = seoDescription(product);
