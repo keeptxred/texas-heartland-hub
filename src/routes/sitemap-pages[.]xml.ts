@@ -19,6 +19,7 @@ import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
 import { isPoliticalReferenceIndexable } from "@/lib/political-reference-indexability";
 import { isLawTopicIndexable } from "@/lib/law-topic-indexability";
 import { isDataDetailIndexable } from "@/lib/data-detail-indexability";
+import { isTexasCasePositionIndexable, isTexasCaseFactsIndexable, isAgencyAuthorityIndexable } from "@/lib/case-agency-indexability";
 
 const GUIDE_LASTMOD = toIsoDate("2026-08-09T00:00:00-05:00");
 const ISSUE_GUIDE_REFRESH = toIsoDate("2026-08-19T13:15:00-05:00");
@@ -40,14 +41,17 @@ const INDEXABLE_POLITICAL_SEARCH_GUIDES = POLITICAL_SEARCH_GUIDES.filter(isPolit
 const INDEXABLE_LAW_TOPICS = LAW_TOPICS.filter(isLawTopicIndexable);
 const ALL_DATA_SETS = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS];
 const INDEXABLE_DATA_SETS = ALL_DATA_SETS.filter(isDataDetailIndexable);
+const INDEXABLE_TEXAS_CASE_POSITIONS = TEXAS_CASE_POSITIONS.filter(isTexasCasePositionIndexable);
+const INDEXABLE_TEXAS_CASE_FACTS = TEXAS_CASE_FACTS.filter(isTexasCaseFactsIndexable);
+const INDEXABLE_AGENCY_AUTHORITY_PROFILES = AGENCY_AUTHORITY_PROFILES.filter(isAgencyAuthorityIndexable);
 const SUPPORTING_GUIDE_LASTMOD = Object.fromEntries(INDEXABLE_SUPPORTING_GUIDES.map((guide) => [`/guides/${guide.slug}`, GUIDE_LASTMOD]));
-const TEXAS_CASE_LASTMOD = Object.fromEntries(TEXAS_CASE_POSITIONS.map((position) => [`/texas-case/${position.slug}`, toIsoDate(`${position.updated}T12:00:00-05:00`)]));
-const TEXAS_CASE_FACTS_LASTMOD = Object.fromEntries(TEXAS_CASE_FACTS.map((facts) => [`/texas-case/facts/${facts.slug}`, toIsoDate(`${facts.reviewed}T12:00:00-05:00`)]));
+const TEXAS_CASE_LASTMOD = Object.fromEntries(INDEXABLE_TEXAS_CASE_POSITIONS.map((position) => [`/texas-case/${position.slug}`, toIsoDate(`${position.updated}T12:00:00-05:00`)]));
+const TEXAS_CASE_FACTS_LASTMOD = Object.fromEntries(INDEXABLE_TEXAS_CASE_FACTS.map((facts) => [`/texas-case/facts/${facts.slug}`, toIsoDate(`${facts.reviewed}T12:00:00-05:00`)]));
 const POLITICAL_REFERENCE_LASTMOD = Object.fromEntries(INDEXABLE_POLITICAL_SEARCH_GUIDES.map((guide) => [`/texas-political-reference/${guide.slug}`, toIsoDate(`${guide.updated}T12:00:00-05:00`)]));
 const POLICY_TRACKER_LASTMOD = Object.fromEntries(INDEXABLE_POLICY_TRACKERS.map((tracker) => [`/policy/${tracker.slug}`, toIsoDate(`${tracker.updated}T12:00:00-05:00`)]));
 const LAW_TOPIC_LASTMOD = Object.fromEntries(INDEXABLE_LAW_TOPICS.map((topic) => [`/laws/topic/${topic.slug}`, toIsoDate(`${topic.updated}T12:00:00-05:00`)]));
 const DATA_SET_LASTMOD = Object.fromEntries(INDEXABLE_DATA_SETS.map((dataset) => [`/data/${dataset.slug}`, toIsoDate(`${dataset.updated}T12:00:00-05:00`)]));
-const AGENCY_LASTMOD = Object.fromEntries(AGENCY_AUTHORITY_PROFILES.map((agency) => [`/texas-government/agencies/${agency.slug}`, toIsoDate(`${agency.reviewed}T12:00:00-05:00`)]));
+const AGENCY_LASTMOD = Object.fromEntries(INDEXABLE_AGENCY_AUTHORITY_PROFILES.map((agency) => [`/texas-government/agencies/${agency.slug}`, toIsoDate(`${agency.reviewed}T12:00:00-05:00`)]));
 const ISSUE_GUIDE_LASTMOD = Object.fromEntries(INDEXABLE_ISSUE_GUIDES.map((guide) => [`/issues/${guide.slug}`, ISSUE_GUIDE_REFRESH]));
 
 const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
@@ -125,4 +129,4 @@ const STATIC_PATHS:string[]=[
   "/authors","/shop",
 ];
 
-export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...INDEXABLE_ISSUE_GUIDES.map((guide)=>`/issues/${guide.slug}`),...INDEXABLE_SUPPORTING_GUIDES.map((guide)=>`/guides/${guide.slug}`),...TEXAS_CASE_POSITIONS.map((position)=>`/texas-case/${position.slug}`),...TEXAS_CASE_FACTS.map((facts)=>`/texas-case/facts/${facts.slug}`),...INDEXABLE_POLITICAL_SEARCH_GUIDES.map((guide)=>`/texas-political-reference/${guide.slug}`),...INDEXABLE_POLICY_TRACKERS.map((tracker)=>`/policy/${tracker.slug}`),...INDEXABLE_LAW_TOPICS.map((topic)=>`/laws/topic/${topic.slug}`),...INDEXABLE_DATA_SETS.map((dataset)=>`/data/${dataset.slug}`),...AGENCY_AUTHORITY_PROFILES.map((agency)=>`/texas-government/agencies/${agency.slug}`)];for(const league of SPORTS_SITEMAP_LEAGUES){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}for(const topic of SPORTS_SITEMAP_TOPICS){if(await hasEnoughContent({keyword:topic},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/topic/${topic}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});
+export const Route=createFileRoute("/sitemap-pages.xml")({server:{handlers:{GET:async()=>{const paths=[...STATIC_PATHS,...INDEXABLE_ISSUE_GUIDES.map((guide)=>`/issues/${guide.slug}`),...INDEXABLE_SUPPORTING_GUIDES.map((guide)=>`/guides/${guide.slug}`),...INDEXABLE_TEXAS_CASE_POSITIONS.map((position)=>`/texas-case/${position.slug}`),...INDEXABLE_TEXAS_CASE_FACTS.map((facts)=>`/texas-case/facts/${facts.slug}`),...INDEXABLE_POLITICAL_SEARCH_GUIDES.map((guide)=>`/texas-political-reference/${guide.slug}`),...INDEXABLE_POLICY_TRACKERS.map((tracker)=>`/policy/${tracker.slug}`),...INDEXABLE_LAW_TOPICS.map((topic)=>`/laws/topic/${topic.slug}`),...INDEXABLE_DATA_SETS.map((dataset)=>`/data/${dataset.slug}`),...INDEXABLE_AGENCY_AUTHORITY_PROFILES.map((agency)=>`/texas-government/agencies/${agency.slug}`)];for(const league of SPORTS_SITEMAP_LEAGUES){if(await hasEnoughContent({kind:`sports-${league}`},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/${league}`)}for(const team of TEAMS){if(await hasEnoughContent({teamSlug:team.slug,league:team.league},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/team/${team.slug}`)}for(const topic of SPORTS_SITEMAP_TOPICS){if(await hasEnoughContent({keyword:topic},MIN_ARTICLES_DEFAULT))paths.push(`/texas-sports/topic/${topic}`)}const entries:UrlEntry[]=paths.map((path)=>({loc:`${BASE_URL}${path}`,lastmod:STATIC_PAGE_LASTMOD_OVERRIDES[path] || undefined}));return xmlResponse(renderUrlset(entries))}}}});
