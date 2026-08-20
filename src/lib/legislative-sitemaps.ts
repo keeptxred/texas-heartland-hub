@@ -5,6 +5,7 @@ import { absUrl, toIsoDate, type UrlEntry } from '@/lib/sitemap-shared';
 const db = supabase as any;
 const SITEMAP_PAGE_SIZE = 1000;
 const SIMPLE_RESOLUTION_TYPES = new Set(['hr', 'sr']);
+const MIN_BILLS_PER_SITEMAP_SUBJECT = 3;
 
 type SitemapBill = Bill & {
   updated_at?: string | null;
@@ -45,6 +46,11 @@ function idSet(rows: any[] | null | undefined): Set<string> {
 
 function hasMeaningfulText(value: string | null | undefined, minimum = 80): boolean {
   return String(value ?? '').trim().length >= minimum;
+}
+
+function isSitemapWorthySubjectSlug(slug: string): boolean {
+  const taxonomyCodeCount = (String(slug ?? '').match(/-[a-z][0-9a-z]{4}(?=-|$)/gi) ?? []).length;
+  return taxonomyCodeCount <= 1;
 }
 
 /**
@@ -179,10 +185,17 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
       .range(from, to)),
   ]);
 
-  const linkedSubjectIds = new Set(
-    subjectRelationshipRows.map((row) => String(row.subject_id ?? '')).filter(Boolean),
+  const approvedSubjectBillCounts = new Map<string, number>();
+  for (const relationship of subjectRelationshipRows) {
+    const subjectId = String(relationship.subject_id ?? '');
+    if (!subjectId) continue;
+    approvedSubjectBillCounts.set(subjectId, (approvedSubjectBillCounts.get(subjectId) ?? 0) + 1);
+  }
+  const sitemapSubjects = subjectRows.filter(
+    (subject) =>
+      isSitemapWorthySubjectSlug(subject.slug)
+      && (approvedSubjectBillCounts.get(subject.id) ?? 0) >= MIN_BILLS_PER_SITEMAP_SUBJECT,
   );
-  const sitemapSubjects = subjectRows.filter((subject) => linkedSubjectIds.has(subject.id));
   const evidence = {
     actions: idSet(actionRows),
     sponsors: idSet(sponsorRows),
