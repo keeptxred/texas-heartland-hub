@@ -100,9 +100,6 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/texas-law-enforcement": GUIDE_LASTMOD,
   "/texas-case": TEXAS_CASE_REFRESH,
   "/texas-case/facts": TEXAS_CASE_REFRESH,
-  "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
-  "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
-  "/guides/texas-law-enforcement-public-safety-guide": GUIDE_LASTMOD,
   ...SUPPORTING_GUIDE_LASTMOD,
   ...TEXAS_CASE_LASTMOD,
   ...TEXAS_CASE_FACTS_LASTMOD,
@@ -127,7 +124,6 @@ const STATIC_PATHS:string[]=[
   "/shipping-policy","/return-refund-policy","/glossary","/editorial-standards","/citation-guide",
   "/topics","/issues","/tools","/tools/texas-spending-growth-cap","/tools/texas-tax-structure-comparison","/tools/texas-rainy-day-fund","/tools/texas-budget-headroom","/texas-politics","/texas-political-reference","/policy","/texas-economy","/texas-border-security","/texas-energy",
   "/texas-agriculture","/texas-veterans","/texas-law-enforcement","/texas-case","/texas-case/facts",
-  "/guides/texas-agriculture-rural-guide","/guides/texas-veterans-military-guide","/guides/texas-law-enforcement-public-safety-guide",
   "/authors","/shop",
 ];
 
