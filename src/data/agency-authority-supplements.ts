@@ -6,6 +6,9 @@ export const AGENCY_AUTHORITY_SUPPLEMENTS: Record<string, string[]> = {
   "public-utility-commission": [
     "PUCT oversight is not identical across every electricity provider in Texas. Investor-owned utilities, retail electric providers and the competitive market operate under different statutory and commission rules, while municipally owned utilities and electric cooperatives retain substantial local or member governance where state law limits commission jurisdiction. ERCOT administers the grid and wholesale market under commission oversight, but the commission establishes and enforces the regulatory framework rather than operating the grid itself. That distinction matters when tracing responsibility for rates, market rules, reliability standards and customer complaints.",
   ],
+  ercot: [
+    "ERCOT accountability also depends on separating real-time operational decisions from longer-term market and reliability policy. Public operating data, protocol revisions, board materials, PUCT proceedings and post-event reports allow readers to trace whether a failure arose from dispatch, generation availability, transmission constraints, forecasting, market design or regulatory standards instead of assigning every grid problem to a single institution.",
+  ],
 };
 
 export function getAgencyAuthoritySupplement(slug: string) {
