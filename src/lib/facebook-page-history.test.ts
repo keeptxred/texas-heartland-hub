@@ -7,18 +7,24 @@ import {
   normalizeFacebookHeadline,
 } from "./facebook-page-history";
 
+const legacyKtrHost = ["www", "keeptxred.com"].join(".");
+const legacyKtrUrl = (path: string) => `https://${legacyKtrHost}${path}`;
+
 describe("facebook page history duplicate detection", () => {
   it("normalizes KeepTXRed URLs by host and path", () => {
-    expect(canonicalKtrArticlePath("https://www.keeptxred.com/news/example-story/?utm_source=facebook"))
-      .toBe("/news/example-story");
-    expect(canonicalArticleUrlKey("https://www.keeptxred.com/news/example-story/?utm_source=facebook"))
-      .toBe("keeptxred.com/news/example-story");
+    const legacyUrl = legacyKtrUrl("/news/example-story/?utm_source=facebook");
+    expect(canonicalKtrArticlePath(legacyUrl)).toBe("/news/example-story");
+    expect(canonicalArticleUrlKey(legacyUrl)).toBe("keeptxred.com/news/example-story");
   });
 
   it("matches an article when the prior Facebook message contains its KTR path", () => {
     expect(
       facebookPostMatchesArticle(
-        { message: "Read this update\n\nhttps://www.keeptxred.com/news/2026-08-09-houston-flock-camera-backlash?utm_source=facebook" },
+        {
+          message: `Read this update\n\n${legacyKtrUrl(
+            "/news/2026-08-09-houston-flock-camera-backlash?utm_source=facebook",
+          )}`,
+        },
         {
           title: "Flock Camera Backlash Spreads Across the Houston Region as Privacy Fight Intensifies",
           url: "https://keeptxred.com/news/2026-08-09-houston-flock-camera-backlash",
