@@ -1,13 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getAgencyAuthorityProfile } from "@/data/agency-authority";
+import { upgradeAgencyAuthorityProfile } from "@/data/agency-authority-upgrades";
+import { getAgencyAuthoritySupplement } from "@/data/agency-authority-supplements";
 import { buildSeo, SITE_URL } from "@/lib/seo";
 import { isAgencyAuthorityIndexable } from "@/lib/agency-authority-indexability";
 
 export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
   loader: ({ params }) => {
-    const profile = getAgencyAuthorityProfile(params.agencySlug);
-    if (!profile) throw notFound();
-    return profile;
+    const baseProfile = getAgencyAuthorityProfile(params.agencySlug);
+    if (!baseProfile) throw notFound();
+    return upgradeAgencyAuthorityProfile(baseProfile);
   },
   head: ({ loaderData }) => {
     if (!loaderData) return { meta: [{ name: "robots", content: "noindex,follow" }] };
@@ -67,6 +69,7 @@ export const Route = createFileRoute("/texas-government/agencies/$agencySlug")({
 
 function AgencyAuthorityPage() {
   const profile = Route.useLoaderData();
+  const supplements = getAgencyAuthoritySupplement(profile.slug);
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
       <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
@@ -88,6 +91,7 @@ function AgencyAuthorityPage() {
       <section className="mt-10">
         <h2 className="border-b pb-2 font-display text-3xl tracking-tight">Where its authority comes from</h2>
         <p className="mt-5 font-serif text-[17px] leading-8">{profile.authority}</p>
+        {supplements.length ? <div className="mt-5 space-y-4">{supplements.map((item) => <p key={item} className="font-serif text-[17px] leading-8">{item}</p>)}</div> : null}
       </section>
 
       <section className="mt-10 grid gap-6 md:grid-cols-2">
