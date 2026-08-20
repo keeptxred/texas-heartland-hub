@@ -21,9 +21,13 @@ describe("discovered-not-indexed crawl priority", () => {
     expect(source).toContain("records.map((record) => record.slug)");
   });
 
-  it("keeps bill sitemap quality scoring in place", () => {
+  it("requires bill and subject substance before sitemap inclusion", () => {
     const source = read("src/lib/legislative-sitemaps.ts");
     expect(source).toContain("isSitemapWorthyBill");
     expect(source).toContain("const minimumScore = SIMPLE_RESOLUTION_TYPES.has(billType) ? 4 : 2");
+    expect(source).toContain("MIN_BILLS_PER_SITEMAP_SUBJECT = 3");
+    expect(source).toContain("isSitemapWorthySubjectSlug");
+    expect(source).toContain("taxonomyCodeCount <= 1");
+    expect(source).toContain("approvedSubjectBillCounts.get(subject.id)");
   });
 });
