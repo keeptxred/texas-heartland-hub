@@ -1,6 +1,6 @@
 import type { TexasCasePosition } from "@/data/texas-case";
 
-export const MIN_TEXAS_CASE_POSITION_WORDS = 700;
+export const MIN_TEXAS_CASE_POSITION_WORDS = 1000;
 
 function words(value: string) {
   return value.trim().split(/\s+/).filter(Boolean).length;
