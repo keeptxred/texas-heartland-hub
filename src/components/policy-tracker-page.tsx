@@ -14,6 +14,61 @@ const PERMANENT_HREF_ALIASES: Record<string, string> = {
   "/texas-case/facts/protecting-unborn-life": "/texas-case/facts/protect-unborn-life",
 };
 
+const TEXASDEFINED_PRACTICAL_LINKS: Record<string, { label: string; href: string; description: string }[]> = {
+  "property-taxes": [
+    {
+      label: "TexasDefined property-tax calculators",
+      href: "https://texasdefined.com/property-tax-calculators",
+      description: "Model the household side of exemptions, county differences, escrow, protests and homeownership costs.",
+    },
+    {
+      label: "MUDs, PIDs, HOAs and special districts",
+      href: "https://texasdefined.com/article/muds-pids-hoas-special-districts-texas",
+      description: "See how local districts and neighborhood charges affect a specific home beyond statewide tax policy.",
+    },
+  ],
+  "public-education": [
+    {
+      label: "Texas schools and family life",
+      href: "https://texasdefined.com/article/texas-schools-family-life",
+      description: "Use the practical relocation guide for ISDs, campuses, STAAR, Pre-K, UIL, charters and family logistics.",
+    },
+  ],
+  "school-choice": [
+    {
+      label: "Texas schools and family life",
+      href: "https://texasdefined.com/article/texas-schools-family-life",
+      description: "Compare the family-facing differences among assigned districts, charter options and homeschooling.",
+    },
+  ],
+  "charter-schools": [
+    {
+      label: "Texas schools and family life",
+      href: "https://texasdefined.com/article/texas-schools-family-life",
+      description: "Read the practical enrollment and relocation context separately from charter authorization policy.",
+    },
+  ],
+  "homeschool-autonomy": [
+    {
+      label: "Texas schools and family life",
+      href: "https://texasdefined.com/article/texas-schools-family-life",
+      description: "Read the practical family and school-transition context separately from homeschool law and policy.",
+    },
+  ],
+  "border-security": [
+    {
+      label: "Texas cities and regional differences",
+      href: "https://texasdefined.com/article/texas-major-cities-regional-differences",
+      description: "Understand El Paso, the Rio Grande Valley and border communities as places to live, work and visit—not only policy subjects.",
+    },
+    {
+      label: "Texas borderlands historic sites",
+      href: "https://texasdefined.com/article/texas-borderlands-historic-sites-guide",
+      description: "Explore the Indigenous, Spanish, Mexican, Tejano and American history behind the borderlands.",
+    },
+  ],
+};
+
 function canonicalPermanentHref(href: string) {
   return PERMANENT_HREF_ALIASES[href] ?? href;
 }
@@ -91,6 +146,7 @@ export function policyTrackerHead(tracker: PolicyTracker) {
 export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
   const guides = relatedGuides(tracker);
   const broaderIssueGuides = relatedIssueGuidesForTracker(tracker);
+  const practicalLinks = TEXASDEFINED_PRACTICAL_LINKS[tracker.slug] ?? [];
   const stale = policyIsStale(tracker);
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
@@ -144,6 +200,15 @@ export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
           {tracker.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">{source.label}</a>{source.primary ? <span className="ml-2 rounded border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Primary</span> : null}</li>)}
         </ul>
       </section>
+
+      {practicalLinks.length > 0 ? <section className="mt-10 rounded-xl border bg-muted/20 p-6">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-muted-foreground">Practical living context</p>
+        <h2 className="mt-2 font-display text-2xl tracking-tight">Use TexasDefined for the household side</h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">KeepTXRed keeps the law, politics and government action here. These TexasDefined guides cover what the same subject means when choosing a school, home, community or monthly budget.</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {practicalLinks.map((item) => <a key={item.href} href={item.href} target="_blank" rel="noopener noreferrer" className="rounded-lg border bg-background p-4 hover:border-primary"><span className="block text-sm font-semibold text-primary">{item.label} →</span><span className="mt-1 block text-xs leading-5 text-muted-foreground">{item.description}</span></a>)}
+        </div>
+      </section> : null}
 
       {broaderIssueGuides.length > 0 ? <section className="mt-10 rounded-xl border bg-primary/5 p-6">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Broader evergreen context</p>
