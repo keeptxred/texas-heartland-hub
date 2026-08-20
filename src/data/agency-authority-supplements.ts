@@ -18,6 +18,9 @@ export const AGENCY_AUTHORITY_SUPPLEMENTS: Record<string, string[]> = {
   "health-human-services-commission": [
     "HHSC accountability spans both direct program administration and oversight of a very large contractor and provider network. Medicaid eligibility, managed-care contracts, procurement, provider enrollment, licensing, inspections, complaint handling and benefit timeliness each create different public records and performance measures. Legislative appropriations and federal requirements set major constraints, while HHSC still makes administrative decisions about contracts, rules, service delivery and enforcement. Evaluating those records separately helps distinguish a statutory benefit change from an agency processing backlog, a managed-care performance problem or a provider-level compliance failure.",
   ],
+  "railroad-commission": [
+    "Railroad Commission accountability is broader than drilling permits alone. The agency regulates oil and gas production, well construction and plugging, pipeline safety, surface mining and several related energy activities under powers granted by state and federal law. Permit records, inspection results, enforcement dockets, penalty orders, plugging activity and orphan-well inventories provide distinct ways to measure whether operators comply and whether the agency is resolving known risks. That record also helps separate questions the commission controls—such as permitting, enforcement and state plugging priorities—from commodity prices, private mineral agreements, local land-use disputes or federal requirements outside its jurisdiction.",
+  ],
 };
 
 export function getAgencyAuthoritySupplement(slug: string) {
