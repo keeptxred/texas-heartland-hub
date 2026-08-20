@@ -8,9 +8,9 @@ import {
 const startSource = fs.readFileSync(new URL("../start.ts", import.meta.url), "utf8");
 
 describe("retired static news hard removal", () => {
-  it("retires every legacy live-news slug", () => {
+  it("lets legacy live-news slugs reach dynamic content and redirect resolution", () => {
     expect(isExplicitlyRetiredStaticSlug("live-2026-07-16-h-e-b-confirms-product-safety-standards-amid-regional-cyclospora-healt-wwcptt")).toBe(true);
-    expect(isExplicitlyRetiredStaticNewsPath("/news/live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp")).toBe(true);
+    expect(isExplicitlyRetiredStaticNewsPath("/news/live-2026-07-07-texas-pitmasters-to-feature-in-new-food-network-competition-series-v3wglp")).toBe(false);
   });
 
   it("retires explicit pre-quality-gate fixture news", () => {
@@ -28,5 +28,9 @@ describe("retired static news hard removal", () => {
     expect(startSource).toContain("isExplicitlyRetiredStaticNewsPath(url.pathname)");
     expect(startSource).toContain("status: 404");
     expect(startSource).toContain('"x-robots-tag": "noindex, follow"');
+  });
+
+  it("lets the workers.dev health probe test the deployed worker directly", () => {
+    expect(startSource).toContain('url.pathname === "/api/public/hooks/health"');
   });
 });
