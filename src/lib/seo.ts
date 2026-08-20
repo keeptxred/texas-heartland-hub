@@ -146,7 +146,7 @@ export function buildSeo(input: SeoInput) {
   const image = absoluteSeoImage(effectiveInput.image);
   const isArticle = effectiveInput.type === "article";
   const imageAlt = effectiveInput.imageAlt?.trim() || effectiveInput.title;
-  const effectiveNoindex = effectiveInput.noindex === true || isRetiredStaticNewsPath(path);
+  const effectiveNoindex = effectiveInput.noindex ?? isRetiredStaticNewsPath(path);
 
   const meta: Array<Record<string, string>> = [
     { title },
