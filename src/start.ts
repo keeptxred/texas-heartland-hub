@@ -199,7 +199,10 @@ const seoUrlCleanup = createMiddleware().server(async ({ next, request }) => {
   const requestHost = (forwardedHost || url.host).toLowerCase();
   const requestProto = forwardedProto || url.protocol.replace(":", "").toLowerCase();
   const canRedirect = request.method === "GET" || request.method === "HEAD";
-  const excludedPath = url.pathname.startsWith("/lovable/") || url.pathname === "/email/unsubscribe";
+  const excludedPath =
+    url.pathname.startsWith("/lovable/")
+    || url.pathname === "/email/unsubscribe"
+    || url.pathname === "/api/public/hooks/health";
 
   if (canRedirect && !excludedPath) {
     const target = buildCanonicalTarget(url);

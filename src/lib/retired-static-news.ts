@@ -32,5 +32,5 @@ export function isExplicitlyRetiredStaticSlug(slug: string): boolean {
 export function isExplicitlyRetiredStaticNewsPath(path: string): boolean {
   const match = path.match(/^\/news\/([^/?#]+)$/);
   if (!match) return false;
-  return isExplicitlyRetiredStaticSlug(decodeURIComponent(match[1]));
+  return RETIRED_STATIC_SLUGS.has(decodeURIComponent(match[1]));
 }
