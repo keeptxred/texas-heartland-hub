@@ -1,0 +1,31 @@
+name: Diagnose authority typecheck
+
+on:
+  push:
+    branches:
+      - chatgpt/government-authority-wave2-current-main-v2
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - name: Generate routes
+        run: npm run build:dev
+      - name: Capture TypeScript diagnostics
+        run: |
+          set +e
+          npx tsc --noEmit > tsc.log 2>&1
+          status=$?
+          cat tsc.log
+          echo "tsc_status=$status" >> "$GITHUB_ENV"
+          exit 0
+      - name: Upload diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: authority-tsc-diagnostics
+          path: tsc.log
+      - name: Preserve typecheck result
+        run: exit "$tsc_status"
