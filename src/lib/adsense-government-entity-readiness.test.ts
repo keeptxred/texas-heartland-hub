@@ -27,7 +27,7 @@ describe("AdSense government entity indexability", () => {
     const entity = expandedEntities.find((candidate) => candidate.slug === slug);
     expect(entity, `${slug}: missing government entity`).toBeDefined();
     expect(governmentEntityWordCount(entity!), `${slug}: substantive word count`).toBeGreaterThanOrEqual(MIN_GOVERNMENT_ENTITY_WORDS);
-    expect(isGovernmentEntityIndexable(entity)).toBe(true);
+    expect(isGovernmentEntityIndexable(entity!)).toBe(true);
   });
 
   it("keeps every permanent government authority page above the readiness gate", () => {
