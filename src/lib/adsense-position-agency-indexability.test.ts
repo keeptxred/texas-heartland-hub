@@ -2,8 +2,9 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { TEXAS_CASE_POSITIONS } from "@/data/texas-case-all";
 import { AGENCY_AUTHORITY_PROFILES } from "@/data/agency-authority";
+import { upgradeAgencyAuthorityProfiles } from "@/data/agency-authority-upgrades";
 import { isTexasCasePositionIndexable, MIN_TEXAS_CASE_POSITION_WORDS } from "@/lib/texas-case-position-indexability";
-import { isAgencyAuthorityIndexable, MIN_AGENCY_AUTHORITY_WORDS } from "@/lib/agency-authority-indexability";
+import { agencyAuthorityWordCount, isAgencyAuthorityIndexable, MIN_AGENCY_AUTHORITY_WORDS } from "@/lib/agency-authority-indexability";
 
 const texasCaseRoute = readFileSync(new URL("../routes/texas-case.$slug.tsx", import.meta.url), "utf8");
 const agencyRoute = readFileSync(new URL("../routes/texas-government.agencies.$agencySlug.tsx", import.meta.url), "utf8");
@@ -18,21 +19,40 @@ const CURRENT_INDEXABLE_TEXAS_CASE = [
   "secure-texas-border",
 ];
 
+const EXPECTED_AGENCY_SLUGS = [
+  "texas-education-agency",
+  "texas-department-public-safety",
+  "public-utility-commission",
+  "ercot",
+  "texas-department-transportation",
+  "texas-commission-environmental-quality",
+  "health-human-services-commission",
+  "railroad-commission",
+  "texas-water-development-board",
+];
+
 describe("AdSense Texas Case position and agency authority indexability", () => {
   it("retains only the current substantive Texas Case position cohort", () => {
     expect(MIN_TEXAS_CASE_POSITION_WORDS).toBe(700);
     expect(TEXAS_CASE_POSITIONS.filter(isTexasCasePositionIndexable).map((position) => position.slug)).toEqual(CURRENT_INDEXABLE_TEXAS_CASE);
   });
 
-  it("keeps the current thin agency authority cohort out of standalone indexing", () => {
+  it("makes every expanded agency authority profile genuinely index-ready", () => {
     expect(MIN_AGENCY_AUTHORITY_WORDS).toBe(700);
-    expect(AGENCY_AUTHORITY_PROFILES.length).toBeGreaterThan(0);
-    expect(AGENCY_AUTHORITY_PROFILES.filter(isAgencyAuthorityIndexable)).toEqual([]);
+    const expanded = upgradeAgencyAuthorityProfiles(AGENCY_AUTHORITY_PROFILES);
+    expect(expanded.map((profile) => profile.slug)).toEqual(EXPECTED_AGENCY_SLUGS);
+    for (const profile of expanded) {
+      expect(agencyAuthorityWordCount(profile), `${profile.slug}: substantive word count`).toBeGreaterThanOrEqual(MIN_AGENCY_AUTHORITY_WORDS);
+      expect(profile.sources.length, `${profile.slug}: source count`).toBeGreaterThanOrEqual(3);
+      expect(profile.sources.filter((source) => source.primary).length, `${profile.slug}: primary source count`).toBeGreaterThanOrEqual(2);
+      expect(isAgencyAuthorityIndexable(profile), `${profile.slug}: readiness`).toBe(true);
+    }
   });
 
-  it("uses the same readiness helpers for robots and sitemap discovery", () => {
+  it("uses the same expanded readiness for robots and sitemap discovery", () => {
     expect(texasCaseRoute).toContain('isTexasCasePositionIndexable(loaderData.position)');
     expect(texasCaseRoute).toContain('"noindex,follow"');
+    expect(agencyRoute).toContain('upgradeAgencyAuthorityProfile(baseProfile)');
     expect(agencyRoute).toContain('isAgencyAuthorityIndexable(loaderData)');
     expect(agencyRoute).toContain('"noindex,follow"');
     expect(sitemapSource).toContain("const INDEXABLE_TEXAS_CASE_POSITIONS = TEXAS_CASE_POSITIONS.filter(isTexasCasePositionIndexable)");
