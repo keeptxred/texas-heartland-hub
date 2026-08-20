@@ -40,6 +40,20 @@ function TexasGovernmentHub() {
         <div className="mt-6 flex flex-wrap gap-3"><a href="/laws/texas-constitution" className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Read the Texas Constitution</a><a href="/elections" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Texas Election Central</a><a href="/bills" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">Track Texas bills</a><a href="/texas-government/agencies" className="rounded-md border px-4 py-2 text-sm font-bold hover:border-primary">State agency directory</a></div>
       </header>
 
+      <section className="mt-8 rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 md:p-8" aria-labelledby="texas-child-support-government">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">Texas families & government</p>
+        <div className="mt-3 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <h2 id="texas-child-support-government" className="text-2xl font-bold md:text-3xl">Texas child support connects the Family Code with the Attorney General's enforcement role.</h2>
+            <p className="mt-3 max-w-4xl leading-7 text-muted-foreground">KeepTXRed's verified child-support guide explains the Chapter 154 guideline framework, net resources, deviations and multiple-household rules. The Texas Attorney General authority page explains the office that administers the state's child-support enforcement program.</p>
+          </div>
+          <div className="flex flex-wrap gap-3 lg:justify-end">
+            <Link to="/guides/$slug" params={{ slug: "texas-child-support-guidelines-law" }} className="rounded-md bg-primary px-4 py-2 text-sm font-bold text-primary-foreground">Texas child support guide</Link>
+            <Link to="/texas-government/$entitySlug" params={{ entitySlug: "attorney-general" }} className="rounded-md border bg-card px-4 py-2 text-sm font-bold hover:border-primary">Texas Attorney General</Link>
+          </div>
+        </div>
+      </section>
+
       <section className="mt-10 grid gap-5 md:grid-cols-3" aria-label="Texas government branches">
         {groups.map(({ branch, title, description, icon: Icon }) => <div key={branch} className="rounded-xl border bg-card p-6"><Icon className="h-7 w-7 text-primary"/><h2 className="mt-4 text-xl font-bold">{title}</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p><p className="mt-4 text-sm font-semibold">{GOVERNMENT_ENTITIES.filter((entity) => entity.branch === branch).length} authority guides</p></div>)}
       </section>
