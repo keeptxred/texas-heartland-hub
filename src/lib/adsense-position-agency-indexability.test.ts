@@ -10,6 +10,12 @@ const texasCaseRoute = readFileSync(new URL("../routes/texas-case.$slug.tsx", im
 const agencyRoute = readFileSync(new URL("../routes/texas-government.agencies.$agencySlug.tsx", import.meta.url), "utf8");
 const sitemapSource = readFileSync(new URL("../routes/sitemap-pages[.]xml.ts", import.meta.url), "utf8");
 
+const EXPECTED_PRIORITY_POSITION_SLUGS = [
+  "protect-unborn-life",
+  "gun-rights-over-gun-control",
+  "eliminate-property-taxes",
+];
+
 const EXPECTED_AGENCY_SLUGS = [
   "texas-education-agency",
   "texas-department-public-safety",
@@ -23,9 +29,14 @@ const EXPECTED_AGENCY_SLUGS = [
 ];
 
 describe("AdSense Texas Case position and agency authority indexability", () => {
-  it("keeps the current sub-1,000-word Texas Case position cohort out of standalone indexing", () => {
+  it("indexes only the genuinely expanded 1,000-word Texas Case position cohort", () => {
     expect(MIN_TEXAS_CASE_POSITION_WORDS).toBe(1000);
-    expect(TEXAS_CASE_POSITIONS.filter(isTexasCasePositionIndexable).map((position) => position.slug)).toEqual([]);
+    const indexableSlugs = TEXAS_CASE_POSITIONS.filter(isTexasCasePositionIndexable).map((position) => position.slug);
+    expect(indexableSlugs).toEqual(EXPECTED_PRIORITY_POSITION_SLUGS);
+
+    const remaining = TEXAS_CASE_POSITIONS.filter((position) => !EXPECTED_PRIORITY_POSITION_SLUGS.includes(position.slug));
+    expect(remaining).toHaveLength(15);
+    expect(remaining.filter(isTexasCasePositionIndexable)).toEqual([]);
   });
 
   it("makes every expanded agency authority profile genuinely index-ready", () => {
