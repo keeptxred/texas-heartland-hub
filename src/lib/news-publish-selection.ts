@@ -20,10 +20,10 @@ export function isRoutineGovernmentAppointment(title: string): boolean {
 
 export function releaseSeriesKey(title: string): string | null {
   const normalized = title.toLowerCase().replace(/\s+/g, " ");
-  if (/governor abbott announces .*commit to comply with his data center standards/.test(normalized)) {
+  if (/governor abbott announces .*commit to comply with his data centers? standards/.test(normalized)) {
     return "abbott-data-center-standards";
   }
-  if (/data center coalition .*comply with his data center standards/.test(normalized)) {
+  if (/data center coalition .*comply with his data centers? standards/.test(normalized)) {
     return "abbott-data-center-standards";
   }
   return null;
