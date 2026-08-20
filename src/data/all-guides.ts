@@ -1,4 +1,5 @@
 import { CORNERSTONE_GUIDES, type CornerstoneGuide } from "@/data/cornerstone-guides";
+import { CORNERSTONE_GUIDE_UPGRADES } from "@/data/cornerstone-guide-upgrades";
 import { AGRICULTURE_SUPPORTING_GUIDES } from "@/data/supporting-guides-agriculture";
 import { VETERANS_SUPPORTING_GUIDES } from "@/data/supporting-guides-veterans";
 import { LAW_ENFORCEMENT_SUPPORTING_GUIDES } from "@/data/supporting-guides-law-enforcement";
@@ -61,11 +62,15 @@ export const SUPPORTING_GUIDES = {
 
 export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
   ...CORNERSTONE_GUIDES,
+  ...CORNERSTONE_GUIDE_UPGRADES,
   ...SUPPORTING_GUIDES,
 };
 
 export const SUPPORTING_GUIDE_SLUGS = Object.keys(SUPPORTING_GUIDES);
 
 export function supportingGuidesForPillar(pillarHref: string): CornerstoneGuide[] {
-  return Object.values(SUPPORTING_GUIDES).filter((guide) => guide.pillarHref === pillarHref);
+  return [
+    ...Object.values(CORNERSTONE_GUIDE_UPGRADES),
+    ...Object.values(SUPPORTING_GUIDES),
+  ].filter((guide) => guide.pillarHref === pillarHref);
 }
