@@ -35,11 +35,12 @@ describe("AdSense programmatic indexability", () => {
     expect(referenceRoute).toContain('"noindex,follow"');
   });
 
-  it("uses the same filtered collections in sitemap-pages and preserves supporting-guide gating", () => {
+  it("uses the same filtered collections in sitemap-pages and preserves guide gating", () => {
     expect(sitemap).toContain("INDEXABLE_ISSUE_GUIDES");
     expect(sitemap).toContain("INDEXABLE_POLICY_TRACKERS");
     expect(sitemap).toContain("INDEXABLE_POLITICAL_SEARCH_GUIDES");
-    expect(sitemap).toContain("INDEXABLE_SUPPORTING_GUIDES");
+    expect(sitemap).toContain("INDEXABLE_GUIDES");
+    expect(sitemap).toContain("Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable)");
     expect(sitemap).not.toContain("...issueGuides.map((guide)=>`/issues/${guide.slug}`)");
     expect(sitemap).not.toContain("...ALL_POLICY_TRACKERS.map((tracker)=>`/policy/${tracker.slug}`)");
     expect(sitemap).not.toContain("...POLITICAL_SEARCH_GUIDES.map((guide)=>`/texas-political-reference/${guide.slug}`)");
