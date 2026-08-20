@@ -55,6 +55,13 @@ describe("production regression image routing", () => {
     )).toBe("transportation");
   });
 
+  it("handles the shorter plural-airports production headline too", () => {
+    expect(inferArticleImageDomain(
+      "Texas Airports Face Review Over Religious Facilities",
+      "Texas officials are reviewing grants to airports including DFW Airport and George Bush Intercontinental Airport",
+    )).toBe("transportation");
+  });
+
   it("routes cross-country schedules to sports rather than generic classrooms", () => {
     expect(inferArticleImageDomain(
       "Texas Colleges Announce 2026 Cross Country Schedules",
