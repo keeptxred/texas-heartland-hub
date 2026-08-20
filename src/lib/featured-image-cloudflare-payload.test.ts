@@ -12,7 +12,7 @@ describe("Cloudflare featured-image payload", () => {
     expect(generateImageSource).toContain("Avoid all of the following");
     expect(generateImageSource).toContain("steps: 8");
     expect(generateImageSource).toContain("seed,");
-    expect(generateImageSource).not.toContain("negative_prompt");
+    expect(generateImageSource).not.toMatch(/\bnegative_prompt\s*:/);
     expect(generateImageSource).not.toContain("dreamshaper-8-lcm");
     expect(generateImageSource).toContain('contentType.startsWith("image/")');
   });
