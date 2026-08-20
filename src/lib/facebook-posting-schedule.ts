@@ -80,9 +80,17 @@ export function facebookPostingDecision(args: {
   now: Date;
   seed: string;
   recentPosts: RecentFacebookPost[];
+  maxDailyPosts?: number;
+  targetSlots?: number[];
 }): FacebookPostingDecision {
   const clock = centralClock(args.now);
-  const targets = facebookDailyTargetMinutes(clock.dateKey, args.seed);
+  const allTargets = facebookDailyTargetMinutes(clock.dateKey, args.seed);
+  const targets = args.targetSlots?.length
+    ? args.targetSlots
+        .filter((slot) => Number.isInteger(slot) && slot >= 0 && slot < allTargets.length)
+        .map((slot) => allTargets[slot])
+    : allTargets;
+  const maxDailyPosts = Math.max(1, args.maxDailyPosts ?? MAX_DAILY_FACEBOOK_POSTS);
   const todayPosts = args.recentPosts
     .filter((post) => Boolean(post.published_at) && centralDateKey(post.published_at as string) === clock.dateKey)
     .sort((a, b) => Date.parse(b.published_at as string) - Date.parse(a.published_at as string));
@@ -91,7 +99,7 @@ export function facebookPostingDecision(args: {
   const elapsedSlots = targets.filter((target) => target <= clock.minutes).length;
   const nextTargetMinute = targets.find((target) => target > clock.minutes) ?? null;
 
-  if (postsToday >= MAX_DAILY_FACEBOOK_POSTS) {
+  if (postsToday >= maxDailyPosts) {
     return {
       shouldPost: false,
       reason: "Daily Facebook post cap reached",
