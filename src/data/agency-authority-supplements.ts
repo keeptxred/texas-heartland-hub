@@ -21,6 +21,9 @@ export const AGENCY_AUTHORITY_SUPPLEMENTS: Record<string, string[]> = {
   "railroad-commission": [
     "Railroad Commission accountability is broader than drilling permits alone. The agency regulates oil and gas production, well construction and plugging, pipeline safety, surface mining and several related energy activities under powers granted by state and federal law. Permit records, inspection results, enforcement dockets, penalty orders, plugging activity and orphan-well inventories provide distinct ways to measure whether operators comply and whether the agency is resolving known risks. That record also helps separate questions the commission controls—such as permitting, enforcement and state plugging priorities—from commodity prices, private mineral agreements, local land-use disputes or federal requirements outside its jurisdiction.",
   ],
+  "texas-water-development-board": [
+    "TWDB can approve and administer state financing commitments for eligible water and flood projects, but the local sponsor remains responsible for engineering, procurement, construction, operations, rate-setting, and securing any permits the project requires. For accountability reporting, that distinction matters: board records can identify the funding source, approved commitment, closing or disbursement milestones, and financing conditions, while local records show how the project is actually designed, contracted, built, and operated.",
+  ],
 };
 
 export function getAgencyAuthoritySupplement(slug: string) {
