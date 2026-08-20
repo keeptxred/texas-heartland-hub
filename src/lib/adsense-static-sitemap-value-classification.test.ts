@@ -21,9 +21,6 @@ const VALUE_CLASSES = {
     "/texas-legislature/current-session", "/texas-legislature/votes", "/register-to-vote", "/contact-legislators", "/county-elections",
     "/laws/constitutional-amendments", "/laws/effective-dates", "/glossary", "/citation-guide",
   ],
-  editorialGuide: [
-    "/guides/texas-agriculture-rural-guide", "/guides/texas-veterans-military-guide", "/guides/texas-law-enforcement-public-safety-guide",
-  ],
   trustOrCommerce: [
     "/about", "/contact", "/privacy", "/terms-of-service", "/shipping-policy", "/return-refund-policy", "/editorial-standards",
   ],
@@ -57,5 +54,10 @@ describe("AdSense static sitemap value classification", () => {
       "/laws/constitutional-amendments",
       "/laws/effective-dates",
     ]));
+  });
+
+  it("does not allow dynamic supporting guides to bypass readiness through STATIC_PATHS", () => {
+    expect(staticPathsFromSitemapSource().filter((path) => path.startsWith("/guides/"))).toEqual([]);
+    expect(sitemapSource).toContain("...INDEXABLE_SUPPORTING_GUIDES.map((guide)=>`/guides/${guide.slug}`)");
   });
 });
