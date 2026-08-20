@@ -1,13 +1,12 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { CornerstoneGuidePage, cornerstoneGuideHead } from "@/components/cornerstone-guide-page";
-import { ALL_GUIDES, SUPPORTING_GUIDES } from "@/data/all-guides";
+import { ALL_GUIDES } from "@/data/all-guides";
 import type { CornerstoneGuide } from "@/data/cornerstone-guides";
 import { isSupportingGuideIndexable } from "@/lib/supporting-guide-indexability";
 
 function guideHead(guide: CornerstoneGuide) {
   const base = cornerstoneGuideHead(guide);
-  const supportingGuide = SUPPORTING_GUIDES[guide.slug];
-  if (!supportingGuide || isSupportingGuideIndexable(supportingGuide)) return base;
+  if (isSupportingGuideIndexable(guide)) return base;
 
   return {
     ...base,
