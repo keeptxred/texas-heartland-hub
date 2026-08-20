@@ -10,10 +10,12 @@ describe("accountability Data Center discovery and freshness", () => {
     expect(ACCOUNTABILITY_DATA_SETS.map((dataset) => dataset.slug)).toEqual(expect.arrayContaining(["contracts", "rules"]));
   });
 
-  it("includes accountability datasets in sitemap paths and lastmod generation", () => {
+  it("includes accountability datasets in readiness-filtered sitemap paths and lastmod generation", () => {
     expect(sitemapSource).toContain('import { ACCOUNTABILITY_DATA_SETS } from "@/data/accountability-data-catalog"');
     expect(sitemapSource).toContain("const ALL_DATA_SETS = [...TEXAS_DATA_SETS, ...ACCOUNTABILITY_DATA_SETS]");
-    expect(sitemapSource).toContain("...ALL_DATA_SETS.map((dataset)=>`/data/${dataset.slug}`)");
+    expect(sitemapSource).toContain("const INDEXABLE_DATA_SETS = ALL_DATA_SETS.filter(isDataDetailIndexable)");
+    expect(sitemapSource).toContain("...INDEXABLE_DATA_SETS.map((dataset)=>`/data/${dataset.slug}`)");
+    expect(sitemapSource).not.toContain("...ALL_DATA_SETS.map((dataset)=>`/data/${dataset.slug}`)");
   });
 
   it("includes accountability datasets in reference freshness governance", () => {
