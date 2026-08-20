@@ -12,6 +12,9 @@ export const AGENCY_AUTHORITY_SUPPLEMENTS: Record<string, string[]> = {
   "texas-department-transportation": [
     "TxDOT's authority is strongest over the state highway system, but transportation responsibility in Texas is divided among several layers of government and specialized entities. Cities and counties control many local streets and roads, regional mobility and toll authorities can finance or operate particular facilities, and metropolitan planning organizations help set regional priorities for federally supported transportation spending. TxDOT may design, acquire right of way for, contract, build or maintain a project without controlling every connecting local road or land-use decision. Distinguishing project ownership, funding approval, environmental review, toll policy and day-to-day maintenance helps identify which public body is actually accountable for a delay, condition or policy choice.",
   ],
+  "texas-commission-environmental-quality": [
+    "TCEQ accountability is easiest to evaluate by separating rulemaking, permitting, compliance monitoring and enforcement. The commission adopts statewide environmental rules under authority granted by statute, while agency staff review permit applications, inspect regulated facilities, investigate complaints and pursue administrative enforcement when requirements are violated. Many major permit and rule proceedings also include public notice, comment or hearing procedures, creating a record that lets readers distinguish the agency's technical findings from the policy choices made by commissioners or lawmakers. Looking at permit conditions, inspection history, enforcement orders, penalty amounts and public participation records provides a more concrete measure of performance than treating every environmental dispute as though TCEQ alone controls the underlying statute or local land-use decision.",
+  ],
 };
 
 export function getAgencyAuthoritySupplement(slug: string) {
