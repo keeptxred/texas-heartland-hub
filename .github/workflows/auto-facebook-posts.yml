@@ -3,9 +3,8 @@ name: Auto Facebook Posts
 on:
   schedule:
     # Lightweight checks every 30 minutes across the Texas waking/evening day.
-    # The application generates five different randomized Central-time targets
-    # per day and only publishes when the next target is due. This avoids long
-    # sleeping Actions jobs while keeping the actual Facebook times variable.
+    # KeepTXRed generates five randomized Central-time targets per day.
+    # TexasDefined uses two randomized targets from the same waking/evening span.
     - cron: "0,30 12-23 * * *"
     - cron: "0,30 0-4 * * *"
   workflow_dispatch:
@@ -23,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Check randomized Facebook schedule and post if due
+      - name: Check randomized Facebook schedules and post if due
         shell: bash
         run: |
           set -euo pipefail
@@ -43,29 +42,46 @@ jobs:
             mode="manual"
           fi
 
-          status=$(curl -sS -X POST -o /tmp/facebook-post.json -w '%{http_code}' \
-            --max-time 420 \
-            -H 'accept: application/json' \
-            -H "Authorization: Bearer ${oidc_token}" \
-            -H "X-KTR-Facebook-Mode: ${mode}" \
-            'https://keeptxred.com/api/public/hooks/auto-facebook-post' || echo 000)
+          run_post_check() {
+            local label="$1"
+            local endpoint="$2"
+            local output="$3"
 
-          echo "auto-facebook-post HTTP ${status} mode=${mode}"
-          cat /tmp/facebook-post.json 2>/dev/null || true
-          echo
+            status=$(curl -sS -X POST -o "$output" -w '%{http_code}' \
+              --max-time 420 \
+              -H 'accept: application/json' \
+              -H "Authorization: Bearer ${oidc_token}" \
+              -H "X-KTR-Facebook-Mode: ${mode}" \
+              "$endpoint" || echo 000)
 
-          if [[ "$status" != "200" ]] || ! jq -e '.ok == true' /tmp/facebook-post.json >/dev/null 2>&1; then
-            echo 'AUTO_FACEBOOK_POST_FAILED' >&2
-            exit 1
-          fi
+            echo "${label} HTTP ${status} mode=${mode}"
+            cat "$output" 2>/dev/null || true
+            echo
 
-          if jq -e '.posted == true' /tmp/facebook-post.json >/dev/null 2>&1; then
-            slug=$(jq -r '.slug // ""' /tmp/facebook-post.json)
-            post_url=$(jq -r '.post_url // ""' /tmp/facebook-post.json)
-            echo "AUTO_FACEBOOK_POST_SUCCESS slug=${slug} post_url=${post_url}"
-          else
-            reason=$(jq -r '.reason // "no eligible article"' /tmp/facebook-post.json)
-            next_target=$(jq -r '.next_target_local // ""' /tmp/facebook-post.json)
-            posts_today=$(jq -r '.posts_today // ""' /tmp/facebook-post.json)
-            echo "AUTO_FACEBOOK_POST_NOOP reason=${reason} next_target=${next_target} posts_today=${posts_today}"
-          fi
+            if [[ "$status" != "200" ]] || ! jq -e '.ok == true' "$output" >/dev/null 2>&1; then
+              echo "${label}_FAILED" >&2
+              return 1
+            fi
+
+            if jq -e '.posted == true' "$output" >/dev/null 2>&1; then
+              title=$(jq -r '.title // .slug // ""' "$output")
+              post_url=$(jq -r '.post_url // ""' "$output")
+              echo "${label}_SUCCESS title=${title} post_url=${post_url}"
+            else
+              reason=$(jq -r '.reason // "no eligible item"' "$output")
+              next_target=$(jq -r '.next_target_local // ""' "$output")
+              posts_today=$(jq -r '.posts_today // ""' "$output")
+              setup_required=$(jq -r '.setup_required // false' "$output")
+              echo "${label}_NOOP reason=${reason} next_target=${next_target} posts_today=${posts_today} setup_required=${setup_required}"
+            fi
+          }
+
+          run_post_check \
+            "AUTO_FACEBOOK_POST" \
+            "https://keeptxred.com/api/public/hooks/auto-facebook-post" \
+            "/tmp/facebook-post.json"
+
+          run_post_check \
+            "AUTO_TEXASDEFINED_FACEBOOK_POST" \
+            "https://keeptxred.com/api/public/hooks/auto-texasdefined-facebook-post" \
+            "/tmp/texasdefined-facebook-post.json"
