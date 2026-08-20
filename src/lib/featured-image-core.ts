@@ -26,7 +26,7 @@ const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["military", /\b(purple heart|medal of honor|military|army|navy|air force|airman|marines?|marine corps|coast guard|soldier|sailor|troop|veteran(?:s)?|service member(?:s)?|servicemember(?:s)?|armed forces|military honor(?:s)?|military award(?:s)?|remembrance|memorial|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia|fort cavazos)\b/i],
   ["education", /\b(school|isd|university|college|teacher|classroom|student|curriculum)\b/i],
   ["health", /\b(hospital|clinic|doctor|nurse|patient|disease|virus|outbreak|medicaid|healthcare)\b/i],
-  ["transportation", /\b(highway|interstate|traffic|txdot|airport|rail|transit|bridge|road construction)\b/i],
+  ["transportation", /\b(highways?|interstates?|traffic|txdot|airports?|rail|transit|bridges?|road construction)\b/i],
   ["housing", /\b(housing|rent|home price|real estate|apartment|homebuyer|mortgage|property tax|appraisal)\b/i],
   ["border", /\b(border|migrant|immigration|cartel|rio grande|asylum)\b/i],
   ["business", /\b(company|corporation|factory|manufacturing|semiconductor|investment|economy|jobs|hiring)\b/i],
