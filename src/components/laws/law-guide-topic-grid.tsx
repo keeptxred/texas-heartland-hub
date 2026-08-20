@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { ALL_GUIDES } from "@/data/all-guides";
 import { LAW_TOPICS, type LawTopic } from "@/lib/law-guides";
 import { guidesForTopic } from "@/lib/guide-registry";
+import { isSupportingGuideIndexable } from "@/lib/supporting-guide-indexability";
 
 const FEATURED_LAW_TOPICS: LawTopic[] = [
   "driving",
@@ -28,7 +29,7 @@ function TopicSection({ topic }: { topic: LawTopic }) {
   const guides = guidesForTopic(topic)
     .filter((meta) => meta.status === "verified")
     .map((meta) => ({ meta, guide: ALL_GUIDES[meta.slug] }))
-    .filter((entry) => Boolean(entry.guide));
+    .filter((entry) => isSupportingGuideIndexable(entry.guide));
 
   if (guides.length === 0) return null;
 
