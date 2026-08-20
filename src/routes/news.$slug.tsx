@@ -66,7 +66,7 @@ export const Route = createFileRoute("/news/$slug")({
     ctr?: { variants: HeadlineVariants | null; score: number | null } | null;
   }> => {
     const article = ARTICLES.find((a) => a.slug === params.slug);
-    if (article) {
+    if (article && isStaticArticleIndexable(article)) {
       if (!isPublished(article)) throw notFound();
       const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
       const body = dedupeArticleBody(rawBody) as ArticleBody;
@@ -82,6 +82,12 @@ export const Route = createFileRoute("/news/$slug")({
     }
     const ever = await getEvergreenBySlug({ data: { slug: params.slug } });
     if (!ever || !ever.body) {
+      if (article) {
+        if (!isPublished(article)) throw notFound();
+        const rawBody = ARTICLE_BODIES[params.slug] ?? buildDefaultBody(article);
+        const body = dedupeArticleBody(rawBody) as ArticleBody;
+        return { article: { ...article, noindex: true }, body, ctr: null };
+      }
       const parsed = parseArticleSlug(params.slug);
       if (parsed && isBadYearSlug(params.slug)) {
         const { slug } = await resolveArticleSlugByTail({ data: { tail: parsed.tail } });

@@ -97,6 +97,15 @@ describe("static article indexability", () => {
     }
   });
 
+  it("lets a restored cloud article supersede its retired static placeholder", () => {
+    const route = fs.readFileSync(new URL("../routes/news.$slug.tsx", import.meta.url), "utf8");
+
+    expect(route.indexOf("article && isStaticArticleIndexable(article)")).toBeLessThan(
+      route.indexOf("await getEvergreenBySlug"),
+    );
+    expect(route).toContain("return { article: { ...article, noindex: true }, body, ctr: null }");
+  });
+
   it("removes retired static inventory from newsroom and author discovery", () => {
     const newsIndex = fs.readFileSync(new URL("../routes/news.index.tsx", import.meta.url), "utf8");
     const authorsIndex = fs.readFileSync(new URL("../routes/authors.index.tsx", import.meta.url), "utf8");
