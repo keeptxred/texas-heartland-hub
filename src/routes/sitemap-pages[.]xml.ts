@@ -99,20 +99,16 @@ const STATIC_PAGE_LASTMOD_OVERRIDES: Record<string, string> = {
   "/guides/texas-agriculture-rural-guide": GUIDE_LASTMOD,
   "/guides/texas-veterans-military-guide": GUIDE_LASTMOD,
   "/guides/texas-law-enforcement-public-safety-guide": GUIDE_LASTMOD,
-  "/authors","/shop",
+  ...SUPPORTING_GUIDE_LASTMOD,
+  ...TEXAS_CASE_LASTMOD,
+  ...TEXAS_CASE_FACTS_LASTMOD,
+  ...POLITICAL_REFERENCE_LASTMOD,
+  ...POLICY_TRACKER_LASTMOD,
+  ...LAW_TOPIC_LASTMOD,
+  ...DATA_SET_LASTMOD,
+  ...AGENCY_LASTMOD,
+  ...ISSUE_GUIDE_LASTMOD,
 };
-
-Object.assign(STATIC_PAGE_LASTMOD_OVERRIDES,
-  SUPPORTING_GUIDE_LASTMOD,
-  TEXAS_CASE_LASTMOD,
-  TEXAS_CASE_FACTS_LASTMOD,
-  POLITICAL_REFERENCE_LASTMOD,
-  POLICY_TRACKER_LASTMOD,
-  LAW_TOPIC_LASTMOD,
-  DATA_SET_LASTMOD,
-  AGENCY_LASTMOD,
-  ISSUE_GUIDE_LASTMOD,
-);
 
 const STATIC_PATHS:string[]=[
   "/","/news","/happening-now","/keep-texas-red",
