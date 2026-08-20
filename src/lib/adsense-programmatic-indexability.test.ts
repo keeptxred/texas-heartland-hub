@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { issueGuides } from "@/data/issue-guides";
 import { ALL_POLICY_TRACKERS, getAnyPolicyTracker } from "@/data/policy-trackers-all";
+import { PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS } from "@/data/policy-tracker-upgrades";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 import { isPolicyTrackerIndexable } from "@/lib/policy-tracker-indexability";
@@ -13,9 +14,11 @@ const policyRoute = fs.readFileSync(new URL("../routes/policy.$slug.tsx", import
 const referenceRoute = fs.readFileSync(new URL("../routes/texas-political-reference.$slug.tsx", import.meta.url), "utf8");
 
 describe("AdSense programmatic indexability", () => {
-  it("keeps current thin collections out of search until they are genuinely expanded", () => {
+  it("indexes only deliberately expanded policy trackers while keeping thin collections quarantined", () => {
     expect(issueGuides.filter(isIssueGuideIndexable)).toHaveLength(0);
-    expect(ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable)).toHaveLength(0);
+    expect(
+      ALL_POLICY_TRACKERS.filter(isPolicyTrackerIndexable).map((tracker) => tracker.slug).sort(),
+    ).toEqual([...PRIORITY_INDEXABLE_POLICY_TRACKER_SLUGS].sort());
     expect(POLITICAL_SEARCH_GUIDES.filter(isPoliticalReferenceIndexable)).toHaveLength(0);
   });
 
