@@ -42,6 +42,8 @@ function TexasEnergyPage() {
           { label: "Texas Economy & Small Business", href: "/texas-economy" },
           { label: "Texas Laws & Legislature", href: "/laws" },
           { label: "Texas Politics & Government", href: "/texas-politics" },
+          { label: "TexasDefined: Choosing a Texas electricity plan", href: "https://texasdefined.com/article/how-to-choose-electricity-plan-texas" },
+          { label: "TexasDefined: Texas jobs and industries", href: "https://texasdefined.com/article/texas-jobs-economy-industries" },
         ]}
       />
       <EvergreenAuthorityReference
