@@ -69,5 +69,8 @@ export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
 export const SUPPORTING_GUIDE_SLUGS = Object.keys(SUPPORTING_GUIDES);
 
 export function supportingGuidesForPillar(pillarHref: string): CornerstoneGuide[] {
-  return Object.values(SUPPORTING_GUIDES).filter((guide) => guide.pillarHref === pillarHref);
+  return [
+    ...Object.values(CORNERSTONE_GUIDE_UPGRADES),
+    ...Object.values(SUPPORTING_GUIDES),
+  ].filter((guide) => guide.pillarHref === pillarHref);
 }
