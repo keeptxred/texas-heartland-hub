@@ -1,20 +1,24 @@
 {
-  "auditedAt": "2026-08-08T13:12:14.784Z",
+  "auditedAt": "2026-08-20T13:10:41.875Z",
   "officialFile": "scripts/elections/import/official-candidates.json",
   "statewideRaceCount": 14,
-  "officialStatewideCandidateCount": 44,
-  "generatedStatewideCandidateCount": 44,
+  "officialStatewideCandidateCount": 48,
+  "generatedStatewideCandidateCount": 48,
   "races": [
     {
       "id": "race-2026-governor",
       "officeName": "Governor",
       "candidateIds": [
         "candidate-demetra-jefferson-wysinger-independent-race-2026-governor",
+        "candidate-edward-earl-giles-other-race-2026-governor",
         "candidate-gina-hinojosa-democratic-race-2026-governor",
         "candidate-greg-abbott-republican-race-2026-governor",
         "candidate-jenn-mack-other-race-2026-governor",
+        "candidate-jinghpaw-majoishingra-other-race-2026-governor",
+        "candidate-mike-miller-other-race-2026-governor",
         "candidate-pat-dixon-libertarian-race-2026-governor",
-        "candidate-sarah-bowman-cunningham-independent-race-2026-governor"
+        "candidate-sarah-bowman-cunningham-independent-race-2026-governor",
+        "candidate-stephen-samuelson-other-race-2026-governor"
       ]
     },
     {
