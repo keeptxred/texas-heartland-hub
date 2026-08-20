@@ -262,7 +262,7 @@ async function run(request: Request) {
     .maybeSingle();
   if (connectionError) return Response.json({ ok: false, error: connectionError.message }, { status: 500 });
   const connection = rawConnection as SocialConnectionRow | null;
-  if (!connection || connection.connection_status !== "CONNECTED" || connection.account_id !== PAGE_ID || !connection.access_token) {
+  if (!connection || connection.connection_status !== "CONNECTED" || String(connection.account_id) !== PAGE_ID || !connection.access_token) {
     return Response.json({ ok: true, posted: false, setup_required: true, reason: "TexasDefined Facebook Page is not connected yet. Reconnect Meta and grant the TexasDefined Page." });
   }
 
@@ -305,7 +305,7 @@ async function run(request: Request) {
     if (result.ok) {
       return Response.json({ ok: true, posted: true, title: candidate.title, article_url: candidate.url, image_url: candidate.image, mode, ...result });
     }
-    if (!result.duplicate) {
+    if (!("duplicate" in result && result.duplicate)) {
       console.error("[TexasDefined Facebook] candidate failed", { url: candidate.url, error: result.error });
     }
   }
