@@ -4,7 +4,7 @@ import { SupportingGuideGrid } from "@/components/supporting-guide-grid";
 import { EvergreenAuthorityReference } from "@/components/authority/EvergreenAuthorityReference";
 
 const SECTIONS = [
-  { title: "Agriculture Agencies & Authority", description: "Find the state institutions responsible for agriculture programs, water planning, legislation, and rural policy.", href: "/texas-government" },
+  { title: "Essential Agriculture Guide", description: "Start here: agencies, financing, water, land, rural infrastructure, and the policy system affecting Texas producers.", href: "/guides/texas-agriculture-rural-guide" },
   { title: "Rural Economy", description: "Jobs, taxes, infrastructure, and business conditions beyond the major metros.", href: "/texas-economy" },
   { title: "Water & Land", description: "Water rights, drought, land use, and resources that shape farms and ranches.", href: "/news/texas-water-rights-explained" },
   { title: "Laws & Legislature", description: "Bills, regulation, and state policy affecting agriculture and rural Texas.", href: "/laws" },
@@ -40,7 +40,7 @@ function TexasAgriculturePage() {
           "Coverage is routed here when agriculture or rural Texas is the primary subject, keeping those stories from disappearing inside generic business or statewide-news categories.",
         ]}
         related={[
-          { label: "Texas Government & Agencies", href: "/texas-government" },
+          { label: "Read the essential agriculture guide", href: "/guides/texas-agriculture-rural-guide" },
           { label: "Texas Economy & Small Business", href: "/texas-economy" },
           { label: "Texas Laws & Legislature", href: "/laws" },
           { label: "Texas Politics & Government", href: "/texas-politics" },
@@ -57,7 +57,7 @@ function TexasAgriculturePage() {
           { name: "Texas Legislature", href: "/texas-legislature", role: "Creates state statutes affecting agriculture, water, taxes, rural infrastructure and agency authority.", scopeNote: "Use the bill tracker for proposals and the enacted law for final requirements." },
         ]}
         questions={[
-          { question: "Is the Texas Department of Agriculture responsible for every agriculture issue?", answer: "No. TDA handles a broad agriculture portfolio, but water planning, environmental rules, groundwater, federal farm programs, taxes and local land questions can belong to other state, federal or local institutions.", href: "https://texasagriculture.gov/", linkLabel: "Visit the Texas Department of Agriculture" },
+          { question: "Is the Texas Department of Agriculture responsible for every agriculture issue?", answer: "No. TDA handles a broad agriculture portfolio, but water planning, environmental rules, groundwater, federal farm programs, taxes and local land questions can belong to other state, federal or local institutions.", href: "/guides/texas-agriculture-rural-guide", linkLabel: "Open the agriculture and rural guide" },
           { question: "Where should a producer verify a water-policy claim?", answer: "Start by identifying whether the issue is statewide water planning, a water right or environmental permit, a groundwater district rule, or a federal program. Texas water governance is divided among several institutions, so the controlling source depends on the specific decision.", href: "/news/texas-water-rights-explained", linkLabel: "Read the Texas water-rights explainer" },
           { question: "How should readers track a proposed agriculture law?", answer: "Use the official bill history for text, sponsors, actions and votes; then identify the agency or local authority responsible for implementation after enactment. A filed bill is not the same thing as current law.", href: "/bills", linkLabel: "Search Texas bills" },
         ]}
