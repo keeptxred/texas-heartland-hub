@@ -7,6 +7,7 @@ const SECTIONS = [
   { title: "Essential Agriculture Guide", description: "Start here: agencies, financing, water, land, rural infrastructure, and the policy system affecting Texas producers.", href: "/guides/texas-agriculture-rural-guide" },
   { title: "Rural Economy", description: "Jobs, taxes, infrastructure, and business conditions beyond the major metros.", href: "/texas-economy" },
   { title: "Water & Land", description: "Water rights, drought, land use, and resources that shape farms and ranches.", href: "/news/texas-water-rights-explained" },
+  { title: "Why Texans Call It a Stock Tank", description: "The ranch history, water-law context, and two meanings behind a familiar Texas term.", href: "/news/live-2026-06-29-the-history-behind-the-texas-stock-tank-name-bxkvg7" },
   { title: "Laws & Legislature", description: "Bills, regulation, and state policy affecting agriculture and rural Texas.", href: "/laws" },
 ];
 
