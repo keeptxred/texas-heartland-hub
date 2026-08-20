@@ -23,6 +23,7 @@ export const AGENCY_AUTHORITY_SUPPLEMENTS: Record<string, string[]> = {
   ],
   "texas-water-development-board": [
     "TWDB can approve and administer state financing commitments for eligible water and flood projects, but the local sponsor remains responsible for engineering, procurement, construction, operations, rate-setting, and securing any permits the project requires. For accountability reporting, that distinction matters: board records can identify the funding source, approved commitment, closing or disbursement milestones, and financing conditions, while local records show how the project is actually designed, contracted, built, and operated.",
+    "TWDB's planning role also creates a statewide evidence base for decisions that are ultimately made by many different institutions. Regional water and flood plans move through public planning processes before they are incorporated into statewide plans, and the board publishes supporting projections, inventories and planning records. Those materials let readers compare identified needs with funded projects and later outcomes, while avoiding the mistaken assumption that inclusion in a state plan is itself a permit, construction authorization or guarantee that a project will proceed.",
   ],
 };
 
