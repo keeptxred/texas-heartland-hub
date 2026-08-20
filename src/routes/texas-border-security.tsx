@@ -45,6 +45,8 @@ function TexasBorderSecurityPage() {
           { label: "Texas Laws & Legislature", href: "/laws" },
           { label: "Texas Politics & Government", href: "/texas-politics" },
           { label: "Law Enforcement & Public Safety", href: "/texas-law-enforcement" },
+          { label: "TexasDefined: Texas cities and regional differences", href: "https://texasdefined.com/article/texas-major-cities-regional-differences" },
+          { label: "TexasDefined: Texas borderlands historic sites", href: "https://texasdefined.com/article/texas-borderlands-historic-sites-guide" },
         ]}
       />
       <EvergreenAuthorityReference
