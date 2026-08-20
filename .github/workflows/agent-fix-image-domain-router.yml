@@ -1,0 +1,69 @@
+name: Agent fix image domain router
+
+on:
+  push:
+    branches: [agent/facebook-hard-duplicate-guard]
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/facebook-hard-duplicate-guard
+          fetch-depth: 0
+      - name: Replace first-match image routing with subject-aware routing
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('src/lib/featured-image-core.ts')
+          text = path.read_text()
+
+          text = text.replace(
+            '["wildlife", /\\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine)\\b/i],',
+            '["wildlife", /\\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine|hunting|hunter(?:s)?|fishing|angler(?:s)?)\\b/i],',
+          )
+          text = text.replace(
+            '["energy", /\\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig)\\b/i],',
+            '["energy", /\\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig|data center(?:s)?)\\b/i],',
+          )
+          text = text.replace(
+            '["sports", /\\b(cowboys|texans|rangers|astros|mavericks|spurs|rockets|stars|nfl|nba|mlb|football|basketball|baseball|playoff|cross country|track(?: and field)?|athletics?|athlete|runner|running|punter|punting|kicker|kicking|special teams|watch list|championship|tournament|meet)\\b/i],',
+            '["sports", /\\b(dallas cowboys|houston texans|houston astros|dallas mavericks|san antonio spurs|houston rockets|dallas stars|nfl|nba|mlb|mls|football|basketball|baseball|soccer|playoff|cross country|track(?: and field)?|athletics?|athlete|runner|running|punter|punting|kicker|kicking|special teams|watch list|championship|tournament|meet)\\b/i],',
+          )
+          text = text.replace(
+            '["legal", /\\b(court|courthouse|judge|justice|lawsuit|ruling|appeal|appellate|injunction|litigation|plaintiff|defendant|judicial|legal challenge|supreme court|court of appeals)\\b/i],',
+            '["legal", /\\b(court|courthouse|judge|justice|lawsuit|sues?|suing|ruling|appeal|appellate|injunction|litigation|plaintiff|defendant|judicial|legal challenge|supreme court|court of appeals|acquit(?:s|ted|tal)?|extradition|custody|parental rights|surrogacy|fraud case|criminal charges?)\\b/i],',
+          )
+
+          old = '''export function inferDomain(text: string): Domain {\n  for (const [domain, re] of DOMAIN_KEYWORDS) if (re.test(text)) return domain;\n  return "general";\n}\n\nexport function inferArticleImageDomain(primaryText: string, fallbackText: string): Domain {\n  const primary = inferDomain(primaryText);\n  return primary !== "general" ? primary : inferDomain(fallbackText);\n}\n'''
+          new = '''const VISUAL_DOMAIN_PRIORITY: Domain[] = [\n  "sports", "transportation", "energy", "border", "weather", "wildlife",\n  "health", "housing", "business", "education", "legal", "military",\n  "culture", "politics",\n];\n\nfunction matchedDomains(text: string): Set<Domain> {\n  const matches = new Set<Domain>();\n  for (const [domain, re] of DOMAIN_KEYWORDS) if (re.test(text)) matches.add(domain);\n  return matches;\n}\n\nfunction chooseVisualDomain(text: string): Domain {\n  const matches = matchedDomains(text);\n  if (matches.size === 0) return "general";\n\n  // Multi-topic governor/legislative agenda stories are policy stories, not a\n  // sports/classroom/energy image merely because one agenda item contains a\n  // domain keyword. Three or more competing domains plus politics is a strong\n  // signal that the visual should remain a neutral government/policy scene.\n  if (matches.has("politics") && matches.size >= 3) return "politics";\n\n  for (const domain of VISUAL_DOMAIN_PRIORITY) if (matches.has(domain)) return domain;\n  return "general";\n}\n\nexport function inferDomain(text: string): Domain {\n  return chooseVisualDomain(text);\n}\n\nexport function inferArticleImageDomain(primaryText: string, fallbackText: string): Domain {\n  const primary = chooseVisualDomain(primaryText);\n  return primary !== "general" ? primary : chooseVisualDomain(fallbackText);\n}\n'''
+          if old not in text:
+            raise SystemExit('first-match domain router block not found')
+          text = text.replace(old, new, 1)
+          text = text.replace(
+            'wildlife: "the actual named animal or species in its natural habitat",',
+            'wildlife: "the actual named animal or species in its natural habitat; when no species is named, use a believable Texas wildlife habitat, refuge, fishing water, or hunting-access landscape instead of inventing an animal",',
+          )
+          path.write_text(text)
+
+          test = Path('src/lib/article-image-domain-priority.test.ts')
+          current = test.read_text()
+          addition = '''\n\ndescribe("production regression image routing", () => {\n  it("does not mistake ordinary Texans or property-tax coverage for sports", () => {\n    expect(inferArticleImageDomain(\n      "Texas cities eye property tax hikes, spending cuts amid yawning budget gaps",\n      "Texans are watching city budgets and proposed property tax increases",\n    )).toBe("housing");\n  });\n\n  it("routes airport policy stories to the actual airport instead of sports or military", () => {\n    expect(inferArticleImageDomain(\n      "Texas Governor Abbott Targets Airports Over Alleged Religious Discrimination",\n      "The review covers DFW Airport and George Bush Intercontinental Airport",\n    )).toBe("transportation");\n  });\n\n  it("routes cross-country schedules to sports rather than generic classrooms", () => {\n    expect(inferArticleImageDomain(\n      "Texas Colleges Announce 2026 Cross Country Schedules",\n      "Baylor and Houston runners open the cross country season",\n    )).toBe("sports");\n  });\n\n  it("routes election-fraud acquittals to legal imagery rather than housing", () => {\n    expect(inferArticleImageDomain(\n      "Jury Acquits Granbury City Council Candidate in Election Fraud Case",\n      "A Hood County jury returned an acquittal",\n    )).toBe("legal");\n  });\n\n  it("keeps multi-topic governor agendas in politics instead of a single agenda-item domain", () => {\n    expect(inferArticleImageDomain(\n      "Gov. Abbott outlines 2027 agenda with closed primaries, data center rules, school choice",\n      "The governor described election policy, energy oversight and education priorities",\n    )).toBe("politics");\n  });\n\n  it("recognizes surrogacy and parental-rights litigation as legal coverage", () => {\n    expect(inferArticleImageDomain(\n      "Texas surrogate's fight for parental rights could reshape surrogacy laws",\n      "The custody dispute could reshape Texas surrogacy law",\n    )).toBe("legal");\n  });\n});\n'''
+          if 'production regression image routing' not in current:
+            test.write_text(current + addition)
+          PY
+
+          git diff --check
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/lib/featured-image-core.ts src/lib/article-image-domain-priority.test.ts
+          git rm .github/workflows/agent-fix-image-domain-router.yml
+          git commit -m 'Fix image domain routing for multi-topic news'
+          git push origin HEAD:agent/facebook-hard-duplicate-guard
