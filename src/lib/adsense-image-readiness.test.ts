@@ -14,7 +14,7 @@ const migration = fs.readFileSync(
   "utf8",
 );
 
-describe("AdSense-ready image backfill", () => {
+describe("fresh article image recovery", () => {
   it("is restricted to GitHub Actions OIDC from the dedicated workflow", () => {
     expect(route).toContain("verifyGitHubActionsOidc");
     expect(route).toContain('const WORKFLOW_PATH = ".github/workflows/adsense-image-backfill.yml"');
@@ -23,10 +23,13 @@ describe("AdSense-ready image backfill", () => {
     expect(workflow).toContain("audience=keeptxred-newsroom");
   });
 
-  it("selects only image-missing articles already approved by the AdSense readiness audit", () => {
-    expect(route).toContain('.from("adsense_cloud_article_readiness")');
-    expect(route).toContain('.eq("adsense_ready", true)');
-    expect(route).toContain('.eq("image_ready", false)');
+  it("recovers every fresh substantive article instead of only the AdSense subset", () => {
+    expect(route).toContain('.from("daily_articles")');
+    expect(route).toContain("FACEBOOK_FRESHNESS_DAYS = 4");
+    expect(route).toContain("meetsArticleMainWordCount(row.kind, row.body_json)");
+    expect(route).toContain('scope: "fresh_quality_articles"');
+    expect(route).not.toContain('.from("adsense_cloud_article_readiness")');
+    expect(route).not.toContain('.eq("adsense_ready", true)');
   });
 
   it("repairs one exact eligible slug with verified overwrite semantics", () => {
@@ -43,10 +46,13 @@ describe("AdSense-ready image backfill", () => {
     expect(migration).toContain("BEFORE INSERT OR UPDATE OF featured_image_url");
   });
 
-  it("drains exact missing-image slugs after verified Cloudflare deployment", () => {
+  it("retries a bounded batch every four hours and after verified deployments", () => {
+    expect(workflow).toContain('cron: "47 */4 * * *"');
     expect(workflow).toContain("workflow_run:");
     expect(workflow).toContain('workflows: ["Deploy verified KeepTXRed to Cloudflare"]');
+    expect(workflow).toContain("github.event_name == 'schedule'");
     expect(workflow).toContain("github.event.workflow_run.conclusion == 'success'");
+    expect(workflow).toContain("max_per_run=8");
     expect(workflow).toContain("dry=1");
     expect(workflow).toContain(".slugs[:$max][]");
     expect(workflow).toContain('"${endpoint}?slug=${encoded_slug}"');

@@ -7,6 +7,10 @@ import {
   normalizeFacebookUploadImageUrl,
   verifyImageIsReachable,
 } from "@/lib/facebook-image-readiness";
+import {
+  facebookPostMatchesArticle,
+  fetchRecentFacebookPagePosts,
+} from "@/lib/facebook-page-history";
 
 function authOk(token: string): boolean {
   const expected = process.env.ADMIN_PASSCODE ?? "keeptxred";
@@ -284,11 +288,12 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       };
     }
 
+    let originalSourceUrl: string | null = null;
     if (data.slug && articleUrl.startsWith(`${SITE_URL}/news/`)) {
       const safeSlug = String(data.slug).trim().replace(/^\/+|\/+$/g, "");
       const { data: articleRow } = await supabaseAdmin
         .from("daily_articles")
-        .select("kind, body_json")
+        .select("kind, body_json, source_url")
         .eq("slug", safeSlug)
         .maybeSingle();
       if (!articleRow) {
@@ -297,6 +302,42 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       if (!meetsArticleMainWordCount(articleRow.kind, articleRow.body_json as never)) {
         return { ok: false, error: "Cannot publish: the KeepTXRed article is below the minimum length and would 404. Regenerate the article before posting." };
       }
+      originalSourceUrl = validateArticleUrl(articleRow.source_url);
+    }
+
+    const pageId = String(conn.account_id);
+    const pageToken = String(conn.access_token);
+    try {
+      const livePagePosts = await fetchRecentFacebookPagePosts({
+        pageId,
+        pageToken,
+        limit: 100,
+      });
+      const identity = {
+        title: data.headline,
+        url: articleUrl,
+        alternateUrls: originalSourceUrl ? [originalSourceUrl] : [],
+      };
+      if (livePagePosts.some((post) => facebookPostMatchesArticle(post, identity))) {
+        console.log("[quickPublish] duplicate blocked by live Facebook Page history", {
+          headline: data.headline,
+          article_url: articleUrl,
+          has_original_source_url: Boolean(originalSourceUrl),
+        });
+        return {
+          ok: false,
+          error: "This article already appears on the Keep TX Red Facebook Page and was not reposted.",
+        };
+      }
+    } catch (error) {
+      console.error(
+        "[quickPublish] live Facebook duplicate verification failed",
+        error instanceof Error ? error.message : String(error),
+      );
+      return {
+        ok: false,
+        error: "Facebook publishing stopped because recent Page history could not be verified for duplicates.",
+      };
     }
 
     const rawCaption = data.caption?.trim() || buildDefaultCaption(data.headline, data.source);
@@ -373,8 +414,6 @@ export const quickPublishToFacebookFn = createServerFn({ method: "POST" })
       .single();
     if (pkgErr || !pkg) return { ok: false, error: pkgErr?.message ?? "Failed to create package" };
 
-    const pageId = String(conn.account_id);
-    const pageToken = String(conn.access_token);
     const link = articleUrl;
     let externalId: string | null = null;
     let postUrl: string | null = null;

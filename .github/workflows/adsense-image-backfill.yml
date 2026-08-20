@@ -1,6 +1,11 @@
 name: AdSense Image Readiness Backfill
 
 on:
+  # Recurring recovery prevents one failed generation/validation attempt from
+  # permanently removing an otherwise publishable article from Facebook and
+  # AdSense-ready inventory. The endpoint still applies the full image gate.
+  schedule:
+    - cron: "47 */4 * * *"
   workflow_run:
     workflows: ["Deploy verified KeepTXRed to Cloudflare"]
     types: [completed]
@@ -19,6 +24,7 @@ jobs:
   backfill:
     if: >-
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 45
@@ -64,7 +70,9 @@ jobs:
             exit 0
           fi
 
-          max_per_run=24
+          # Keep recurring Cloudflare AI spend bounded while still clearing the
+          # newest missing-image backlog over successive four-hour runs.
+          max_per_run=8
           mapfile -t slugs < <(jq -r --argjson max "$max_per_run" '.slugs[:$max][]' /tmp/adsense-image-dry.json)
           failures=0
           processed=0
@@ -93,7 +101,7 @@ jobs:
 
           remaining=$((ready - processed))
           if [[ "$remaining" -gt 0 ]]; then
-            echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining_for_next_deploy=${remaining}"
+            echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining_for_next_run=${remaining}"
           else
             echo "ADSENSE_IMAGE_BACKFILL_SUCCESS processed=${processed} remaining=0"
           fi

@@ -17,6 +17,10 @@ const maintenanceWriters = new Map([
     ['body_json', 'source_name'],
   ],
   [
+    'src/routes/api/public/hooks/publish-overdue-gap.ts',
+    ['body_json', 'source_name', 'related release series'],
+  ],
+  [
     'src/lib/ctr-loop.functions.ts',
     ['headline_variants', 'variant_b_impressions', 'variant_b_clicks'],
   ],
@@ -123,7 +127,7 @@ if (disabledLegacyAlias.includes('fetch(`${origin}/api/public/hooks/generate-new
 }
 
 for (const marker of [
-  'cron: "15 */8 * * *"',
+  'cron: "15 */4 * * *"',
   'publish-overdue-gap',
   'generate-newsroom?mode=publish',
   'publishing-safety-net',
@@ -243,7 +247,7 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exit(1);
 }
-console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, legacy single-source writer retired, scheduled fallback locked out, normalized publisher-family corroboration locked, app-side newsroom author stamping locked, database fallback contract locked, no temporary exceptions or unregistered paths).`);
+console.log(`Publication writer audit passed (${writers.length} ownership-gated writers, ${maintenanceWriters.size} metadata-only writers, legacy single-source writer retired, six-daily quality-gated cadence locked, scheduled fallback locked out, normalized publisher-family corroboration locked, app-side newsroom author stamping locked, database fallback contract locked, no temporary exceptions or unregistered paths).`);
 
 function read(file) {
   if (!fs.existsSync(file)) {

@@ -201,7 +201,7 @@ async function generateAndStore(row: ArticleRow, opts: { overwrite?: boolean } =
     let verdict = await validateImageMatchesArticle(bytes, subject);
     let usedPrompt = prompt;
 
-    for (let attempt = 1; !verdict.matches && attempt <= 3; attempt += 1) {
+    for (let attempt = 1; !verdict.matches && attempt <= 1; attempt += 1) {
       const correction = `Previous attempt rejected: ${verdict.reason}. Generate a completely new photographic composition. Use unmistakably real camera photography with natural materials and lighting. Do not repeat the rejected motif.`;
       const stronger = buildImagePrompt(subject, correction);
       usedPrompt = stronger;

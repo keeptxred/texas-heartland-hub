@@ -6,7 +6,7 @@ export const SPORTS_BREAKING_MIN_MAIN_WORDS = 800;
 export const SPORTS_ANALYSIS_MIN_MAIN_WORDS = 1200;
 export const SPORTS_MIN_MAIN_WORDS = SPORTS_ANALYSIS_MIN_MAIN_WORDS;
 // Automated ingested RSS rewrites keep the stricter breaking-news floor.
-export const INGESTED_MIN_MAIN_WORDS = 800;
+export const INGESTED_MIN_MAIN_WORDS = 650;
 // Curated newsroom briefs are source-backed editorial items and may be much
 // shorter than automated ingested rewrites. Keep a substantive floor while
 // allowing both narrative-section and intro-only brief formats.

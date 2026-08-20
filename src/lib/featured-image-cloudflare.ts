@@ -1,12 +1,14 @@
 import { parseVisionVerdict, type SubjectExtract } from "./featured-image-core";
 
-export const CLOUDFLARE_IMAGE_MODEL = "@cf/lykon/dreamshaper-8-lcm";
-export const CLOUDFLARE_CULTURE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
+// FLUX has proven materially more reliable for documentary/photojournalistic
+// output than DreamShaper in the live KTR image pipeline. Use it as the default
+// for every category so a published article is not routinely stranded without
+// a featured image because the generator produced poster/cartoon artwork.
+export const CLOUDFLARE_IMAGE_MODEL = "@cf/black-forest-labs/flux-1-schnell";
+export const CLOUDFLARE_CULTURE_IMAGE_MODEL = CLOUDFLARE_IMAGE_MODEL;
 export const CLOUDFLARE_VISION_MODEL = "@cf/mistralai/mistral-small-3.1-24b-instruct";
 
-export type CloudflareImageModel =
-  | typeof CLOUDFLARE_IMAGE_MODEL
-  | typeof CLOUDFLARE_CULTURE_IMAGE_MODEL;
+export type CloudflareImageModel = typeof CLOUDFLARE_IMAGE_MODEL;
 
 function cloudflareEndpoint(accountId: string, model: string): string {
   return `https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId)}/ai/run/${model}`;
@@ -36,24 +38,14 @@ export async function generateImageBytes(
   if (!accountId || !apiToken) throw new Error("Missing Cloudflare Workers AI credentials: CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN are required");
 
   const seed = Math.floor(Math.random() * 2_147_483_646) + 1;
-  const requestBody = model === CLOUDFLARE_CULTURE_IMAGE_MODEL
-    ? {
-        // FLUX.1 Schnell uses its own compact Workers AI schema. Put the most
-        // important negative constraints into the text prompt because the model
-        // does not accept DreamShaper's negative_prompt parameter.
-        prompt: `${prompt} Avoid all of the following: ${negativePrompt}`.slice(0, 2048),
-        steps: 8,
-        seed: seed,
-      }
-    : {
-        prompt,
-        negative_prompt: negativePrompt,
-        width: 1024,
-        height: 576,
-        num_steps: 20,
-        guidance: 7.5,
-        seed: seed,
-      };
+  // FLUX.1 Schnell uses its own compact Workers AI schema. Put the negative
+  // constraints into the prompt because the model does not accept the
+  // DreamShaper negative_prompt parameter.
+  const requestBody = {
+    prompt: `${prompt} Avoid all of the following: ${negativePrompt}`.slice(0, 2048),
+    steps: 8,
+    seed,
+  };
 
   const res = await fetch(cloudflareEndpoint(accountId, model), {
     method: "POST",
@@ -111,6 +103,21 @@ export function extractCloudflareVisionOutput(result: unknown): { output: unknow
   return { output: result };
 }
 
+// Mistral occasionally follows the requested labels but wraps the label names
+// and colons in Markdown (for example **Matches:** Yes), or emits 1/0 and N/A.
+// Normalize only that presentation layer before using the existing strict
+// parser. N/A is conservatively treated as a negative, never as approval.
+export function normalizeCloudflareVisionVerdictOutput(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  return value
+    .replace(/\*\*\s*(Matches|Photorealistic|Reason)\s*:\s*\*\*/gi, "$1:")
+    .replace(/\bMatches\s*:\s*1\b/gi, "Matches: yes")
+    .replace(/\bMatches\s*:\s*0\b/gi, "Matches: no")
+    .replace(/\bPhotorealistic\s*:\s*1\b/gi, "Photorealistic: yes")
+    .replace(/\bPhotorealistic\s*:\s*0\b/gi, "Photorealistic: no")
+    .replace(/\bPhotorealistic\s*:\s*N\/?A\b/gi, "Photorealistic: no");
+}
+
 export async function validateImageMatchesArticle(bytes: Uint8Array, subject: SubjectExtract): Promise<{ matches: boolean; reason: string }> {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
   const apiToken = process.env.CLOUDFLARE_API_TOKEN;
@@ -164,9 +171,11 @@ export async function validateImageMatchesArticle(bytes: Uint8Array, subject: Su
     if (!res.ok || json.success === false) return { matches: false, reason: `Cloudflare vision HTTP ${res.status}: ${json.errors?.[0]?.message || raw.slice(0, 180)}` };
 
     const { output, finishReason } = extractCloudflareVisionOutput(json.result);
-    const parsed = parseVisionVerdict(output);
+    const normalizedOutput = normalizeCloudflareVisionVerdictOutput(output);
+    const parsed = parseVisionVerdict(normalizedOutput);
     if (!parsed) {
-      const preview = typeof output === "string" ? output.replace(/\s+/g, " ").trim().slice(0, 220) : JSON.stringify(output ?? "").slice(0, 220);
+      const previewValue = typeof normalizedOutput === "string" ? normalizedOutput : output;
+      const preview = typeof previewValue === "string" ? previewValue.replace(/\s+/g, " ").trim().slice(0, 220) : JSON.stringify(previewValue ?? "").slice(0, 220);
       const finish = finishReason ? ` (finish_reason=${finishReason})` : "";
       return { matches: false, reason: `Cloudflare vision validator returned no parseable verdict${finish}${preview ? `: ${preview}` : ""}` };
     }

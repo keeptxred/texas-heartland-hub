@@ -5,19 +5,19 @@ import { CLOUDFLARE_CULTURE_IMAGE_MODEL, CLOUDFLARE_IMAGE_MODEL } from "./featur
 const functionsSource = readFileSync(new URL("./featured-image.functions.ts", import.meta.url), "utf8");
 const cloudflareSource = readFileSync(new URL("./featured-image-cloudflare.ts", import.meta.url), "utf8");
 
-describe("culture image model routing", () => {
-  it("keeps DreamShaper as the general default and uses hosted FLUX for culture", () => {
-    expect(CLOUDFLARE_IMAGE_MODEL).toBe("@cf/lykon/dreamshaper-8-lcm");
-    expect(CLOUDFLARE_CULTURE_IMAGE_MODEL).toBe("@cf/black-forest-labs/flux-1-schnell");
+describe("featured image model routing", () => {
+  it("uses hosted FLUX as the default for every image category", () => {
+    expect(CLOUDFLARE_IMAGE_MODEL).toBe("@cf/black-forest-labs/flux-1-schnell");
+    expect(CLOUDFLARE_CULTURE_IMAGE_MODEL).toBe(CLOUDFLARE_IMAGE_MODEL);
     expect(functionsSource).toContain('subject.domain === "culture" ? CLOUDFLARE_CULTURE_IMAGE_MODEL : undefined');
     expect(functionsSource).toContain("generateImageBytes(stronger, negativePrompt, imageModel)");
   });
 
-  it("uses FLUX native steps schema instead of DreamShaper-only fields", () => {
-    expect(cloudflareSource).toContain("model === CLOUDFLARE_CULTURE_IMAGE_MODEL");
+  it("uses FLUX native schema and embeds negative constraints in the prompt", () => {
     expect(cloudflareSource).toContain("steps: 8");
-    expect(cloudflareSource).toContain("seed: seed");
+    expect(cloudflareSource).toContain("seed,");
     expect(cloudflareSource).toContain("Avoid all of the following");
-    expect(cloudflareSource).toContain("negative_prompt: negativePrompt");
+    expect(cloudflareSource).not.toContain("negative_prompt: negativePrompt");
+    expect(cloudflareSource).not.toContain("dreamshaper-8-lcm");
   });
 });

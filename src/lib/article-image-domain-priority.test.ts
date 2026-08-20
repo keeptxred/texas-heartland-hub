@@ -37,3 +37,56 @@ describe("article image domain priority", () => {
     expect(source).not.toContain("static military-honor asset");
   });
 });
+
+// These cases are taken directly from recent production failures where the old
+// first-match router sent a valid news story to an unrelated visual category.
+describe("production regression image routing", () => {
+  it("does not mistake ordinary Texans or property-tax coverage for sports", () => {
+    expect(inferArticleImageDomain(
+      "Texas cities eye property tax hikes, spending cuts amid yawning budget gaps",
+      "Texans are watching city budgets and proposed property tax increases",
+    )).toBe("housing");
+  });
+
+  it("routes airport policy stories to the actual airport instead of sports or military", () => {
+    expect(inferArticleImageDomain(
+      "Texas Governor Abbott Targets Airports Over Alleged Religious Discrimination",
+      "The review covers DFW Airport and George Bush Intercontinental Airport",
+    )).toBe("transportation");
+  });
+
+  it("handles the shorter plural-airports production headline too", () => {
+    expect(inferArticleImageDomain(
+      "Texas Airports Face Review Over Religious Facilities",
+      "Texas officials are reviewing grants to airports including DFW Airport and George Bush Intercontinental Airport",
+    )).toBe("transportation");
+  });
+
+  it("routes cross-country schedules to sports rather than generic classrooms", () => {
+    expect(inferArticleImageDomain(
+      "Texas Colleges Announce 2026 Cross Country Schedules",
+      "Baylor and Houston runners open the cross country season",
+    )).toBe("sports");
+  });
+
+  it("routes election-fraud acquittals to legal imagery rather than housing", () => {
+    expect(inferArticleImageDomain(
+      "Jury Acquits Granbury City Council Candidate in Election Fraud Case",
+      "A Hood County jury returned an acquittal",
+    )).toBe("legal");
+  });
+
+  it("keeps multi-topic governor agendas in politics instead of a single agenda-item domain", () => {
+    expect(inferArticleImageDomain(
+      "Gov. Abbott outlines 2027 agenda with closed primaries, data center rules, school choice",
+      "The governor described election policy, energy oversight and education priorities",
+    )).toBe("politics");
+  });
+
+  it("recognizes surrogacy and parental-rights litigation as legal coverage", () => {
+    expect(inferArticleImageDomain(
+      "Texas surrogate's fight for parental rights could reshape surrogacy laws",
+      "The custody dispute could reshape Texas surrogacy law",
+    )).toBe("legal");
+  });
+});
