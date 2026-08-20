@@ -24,6 +24,45 @@ const FEATURED_LAW_TOPICS: LawTopic[] = [
   "animals",
 ];
 
+const CHILD_SUPPORT_SLUG = "texas-child-support-guidelines-law";
+
+function ChildSupportPriorityGuide() {
+  const guide = ALL_GUIDES[CHILD_SUPPORT_SLUG];
+  if (!isSupportingGuideIndexable(guide)) return null;
+
+  return (
+    <section className="border-t-4 border-primary bg-primary/[0.05]" aria-labelledby="texas-child-support-priority-heading">
+      <div className="mx-auto max-w-6xl px-4 py-12">
+        <span className="text-[10px] font-bold tracking-[0.3em] uppercase text-primary">★ Popular Texas law guide</span>
+        <div className="mt-3 grid gap-7 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div>
+            <h2 id="texas-child-support-priority-heading" className="font-display text-4xl md:text-5xl tracking-tight">
+              Texas Child Support
+            </h2>
+            <p className="mt-3 max-w-3xl font-serif text-lg text-muted-foreground">
+              Understand Texas child-support guidelines, statutory net resources, guideline percentages, multiple households, medical support, deviations and the Family Code provisions behind the calculation.
+            </p>
+          </div>
+          <Link
+            to="/guides/$slug"
+            params={{ slug: CHILD_SUPPORT_SLUG }}
+            className="inline-flex min-h-11 items-center justify-center border-2 border-primary bg-primary px-5 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground hover:bg-primary/90"
+          >
+            Texas child support guide →
+          </Link>
+        </div>
+        <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+          <span>Texas Family Code Chapter 154</span>
+          <span>Net resources</span>
+          <span>Guideline support</span>
+          <span>Deviations</span>
+          <span>Medical & dental support</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function TopicSection({ topic }: { topic: LawTopic }) {
   const topicInfo = LAW_TOPICS[topic];
   const guides = guidesForTopic(topic)
@@ -83,6 +122,7 @@ export function LawGuideTopicGrid({ topic }: { topic: LawTopic }) {
   const topics = topic === "driving" ? FEATURED_LAW_TOPICS : [topic];
   return (
     <>
+      {topic === "driving" ? <ChildSupportPriorityGuide /> : null}
       {topics.map((item) => (
         <Fragment key={item}>
           <TopicSection topic={item} />
