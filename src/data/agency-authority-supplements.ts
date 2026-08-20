@@ -9,6 +9,9 @@ export const AGENCY_AUTHORITY_SUPPLEMENTS: Record<string, string[]> = {
   ercot: [
     "ERCOT accountability also depends on separating real-time operational decisions from longer-term market and reliability policy. Public operating data, protocol revisions, board materials, PUCT proceedings and post-event reports allow readers to trace whether a failure arose from dispatch, generation availability, transmission constraints, forecasting, market design or regulatory standards instead of assigning every grid problem to a single institution.",
   ],
+  "texas-department-transportation": [
+    "TxDOT's authority is strongest over the state highway system, but transportation responsibility in Texas is divided among several layers of government and specialized entities. Cities and counties control many local streets and roads, regional mobility and toll authorities can finance or operate particular facilities, and metropolitan planning organizations help set regional priorities for federally supported transportation spending. TxDOT may design, acquire right of way for, contract, build or maintain a project without controlling every connecting local road or land-use decision. Distinguishing project ownership, funding approval, environmental review, toll policy and day-to-day maintenance helps identify which public body is actually accountable for a delay, condition or policy choice.",
+  ],
 };
 
 export function getAgencyAuthoritySupplement(slug: string) {
