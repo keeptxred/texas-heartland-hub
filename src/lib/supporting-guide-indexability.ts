@@ -1,4 +1,5 @@
 import type { CornerstoneGuide } from "@/data/cornerstone-guides";
+import { isLawGuideIndexable } from "@/lib/law-guides";
 
 export const MIN_SUPPORTING_GUIDE_WORDS = 1200;
 export const MIN_SUPPORTING_GUIDE_FAQS = 3;
@@ -23,11 +24,16 @@ export function supportingGuideWordCount(guide: CornerstoneGuide): number {
     .filter(Boolean).length;
 }
 
-export function isSupportingGuideIndexable(guide: CornerstoneGuide | null | undefined): guide is CornerstoneGuide {
+export function isSupportingGuideIndexable(
+  guide: CornerstoneGuide | null | undefined,
+): guide is CornerstoneGuide {
   if (!guide) return false;
-  return supportingGuideWordCount(guide) >= MIN_SUPPORTING_GUIDE_WORDS
-    && guide.faq.length >= MIN_SUPPORTING_GUIDE_FAQS
-    && guide.sources.length >= MIN_SUPPORTING_GUIDE_SOURCES
-    && guide.keyTakeaways.length > 0
-    && guide.sections.length > 0;
+  return (
+    isLawGuideIndexable(guide.slug) &&
+    supportingGuideWordCount(guide) >= MIN_SUPPORTING_GUIDE_WORDS &&
+    guide.faq.length >= MIN_SUPPORTING_GUIDE_FAQS &&
+    guide.sources.length >= MIN_SUPPORTING_GUIDE_SOURCES &&
+    guide.keyTakeaways.length > 0 &&
+    guide.sections.length > 0
+  );
 }

@@ -3,12 +3,60 @@ import { AGRICULTURE_SUPPORTING_GUIDES } from "@/data/supporting-guides-agricult
 import { VETERANS_SUPPORTING_GUIDES } from "@/data/supporting-guides-veterans";
 import { LAW_ENFORCEMENT_SUPPORTING_GUIDES } from "@/data/supporting-guides-law-enforcement";
 import { BORDER_SUPPORTING_GUIDES } from "@/data/supporting-guides-border";
+import { DRIVING_SUPPORTING_GUIDES } from "@/data/supporting-guides-driving";
+import { RENTER_GUIDES } from "@/data/supporting-guides-renters";
+import { RENTER_GUIDES_B } from "@/data/supporting-guides-renters-b";
+import { LANDLORD_SMOKE_ALARM_GUIDES } from "@/data/laws-landlord-smoke-alarm";
+import { LANDLORD_BATCH4_GUIDES } from "@/data/laws-landlord-batch4-index";
+import { HOA_BATCH6_GUIDES } from "@/data/laws-hoa-batch6-index";
+import { HOA_BATCH7_GUIDES } from "@/data/laws-hoa-batch7-index";
+import { FIREARMS_BATCH8_GUIDES } from "@/data/laws-firearms-batch8-index";
+import { CRIMINAL_BATCH9_GUIDES } from "@/data/laws-criminal-batch9-index";
+import { FAMILY_BATCH10_GUIDES } from "@/data/laws-family-batch10-index";
+import { FAMILY_BATCH11_GUIDES } from "@/data/laws-family-batch11-index";
+import { EMPLOYMENT_BATCH12_GUIDES } from "@/data/laws-employment-batch12-index";
+import { EMPLOYMENT_BATCH13_GUIDES } from "@/data/laws-employment-batch13-index";
+import { CONSUMER_BATCH14_GUIDES } from "@/data/laws-consumer-batch14-index";
+import { CONSUMER_BATCH15_GUIDES } from "@/data/laws-consumer-batch15-index";
+import { BUSINESS_BATCH16_GUIDES } from "@/data/laws-business-batch16";
+import { EDUCATION_BATCH17_GUIDES } from "@/data/laws-education-batch17";
+import { EDUCATION_BATCH18_GUIDES } from "@/data/laws-education-batch18";
+import { OPEN_GOVERNMENT_BATCH19_GUIDES } from "@/data/laws-open-government-batch19";
+import { ELECTIONS_BATCH20_GUIDES } from "@/data/laws-elections-batch20";
+import { PROBATE_BATCH21_GUIDES } from "@/data/laws-probate-batch21";
+import { OUTDOORS_BATCH22_GUIDES } from "@/data/laws-outdoors-batch22";
+import { ALCOHOL_BATCH23_GUIDES } from "@/data/laws-alcohol-batch23";
+import { ANIMALS_BATCH24_GUIDES } from "@/data/laws-animals-batch24";
 
 export const SUPPORTING_GUIDES = {
   ...AGRICULTURE_SUPPORTING_GUIDES,
   ...VETERANS_SUPPORTING_GUIDES,
   ...LAW_ENFORCEMENT_SUPPORTING_GUIDES,
   ...BORDER_SUPPORTING_GUIDES,
+  ...DRIVING_SUPPORTING_GUIDES,
+  ...RENTER_GUIDES,
+  ...RENTER_GUIDES_B,
+  ...LANDLORD_SMOKE_ALARM_GUIDES,
+  ...LANDLORD_BATCH4_GUIDES,
+  ...HOA_BATCH6_GUIDES,
+  ...HOA_BATCH7_GUIDES,
+  ...FIREARMS_BATCH8_GUIDES,
+  ...CRIMINAL_BATCH9_GUIDES,
+  ...FAMILY_BATCH10_GUIDES,
+  ...FAMILY_BATCH11_GUIDES,
+  ...EMPLOYMENT_BATCH12_GUIDES,
+  ...EMPLOYMENT_BATCH13_GUIDES,
+  ...CONSUMER_BATCH14_GUIDES,
+  ...CONSUMER_BATCH15_GUIDES,
+  ...BUSINESS_BATCH16_GUIDES,
+  ...EDUCATION_BATCH17_GUIDES,
+  ...EDUCATION_BATCH18_GUIDES,
+  ...OPEN_GOVERNMENT_BATCH19_GUIDES,
+  ...ELECTIONS_BATCH20_GUIDES,
+  ...PROBATE_BATCH21_GUIDES,
+  ...OUTDOORS_BATCH22_GUIDES,
+  ...ALCOHOL_BATCH23_GUIDES,
+  ...ANIMALS_BATCH24_GUIDES,
 };
 
 export const ALL_GUIDES: Record<string, CornerstoneGuide> = {
