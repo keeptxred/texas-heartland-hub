@@ -3,6 +3,7 @@ import type { PolicyTracker } from "@/data/policy-trackers";
 import { POLITICAL_SEARCH_GUIDES } from "@/data/political-search-guides";
 import { relatedIssueGuidesForTracker } from "@/lib/issue-policy-links";
 import { buildSeo, SITE_URL } from "@/lib/seo";
+import { texasDefinedPolicyHandoffFor } from "@/lib/texasdefined-policy-handoffs";
 
 const POLICY_REVIEW_DAYS = 30;
 const PERMANENT_HREF_ALIASES: Record<string, string> = {
@@ -91,6 +92,7 @@ export function policyTrackerHead(tracker: PolicyTracker) {
 export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
   const guides = relatedGuides(tracker);
   const broaderIssueGuides = relatedIssueGuidesForTracker(tracker);
+  const practicalCompanion = texasDefinedPolicyHandoffFor(tracker.slug);
   const stale = policyIsStale(tracker);
   return (
     <article className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
@@ -144,6 +146,13 @@ export function PolicyTrackerPage({ tracker }: { tracker: PolicyTracker }) {
           {tracker.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary underline underline-offset-4">{source.label}</a>{source.primary ? <span className="ml-2 rounded border px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-muted-foreground">Primary</span> : null}</li>)}
         </ul>
       </section>
+
+      {practicalCompanion ? <section className="mt-10 rounded-xl border border-primary/30 bg-primary/5 p-6">
+        <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">TexasDefined practical companion</p>
+        <h2 className="mt-2 font-display text-2xl tracking-tight">How this reaches everyday Texas life</h2>
+        <p className="mt-2 text-sm leading-6 text-muted-foreground">{practicalCompanion.description}</p>
+        <a href={practicalCompanion.href} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex rounded-lg border bg-background px-4 py-3 text-sm font-semibold text-primary hover:border-primary">{practicalCompanion.label} →</a>
+      </section> : null}
 
       {broaderIssueGuides.length > 0 ? <section className="mt-10 rounded-xl border bg-primary/5 p-6">
         <p className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-primary">Broader evergreen context</p>
