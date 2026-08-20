@@ -56,8 +56,9 @@ describe("AdSense static sitemap value classification", () => {
     ]));
   });
 
-  it("does not allow dynamic supporting guides to bypass readiness through STATIC_PATHS", () => {
+  it("does not allow dynamic guides to bypass readiness through STATIC_PATHS", () => {
     expect(staticPathsFromSitemapSource().filter((path) => path.startsWith("/guides/"))).toEqual([]);
-    expect(sitemapSource).toContain("...INDEXABLE_SUPPORTING_GUIDES.map((guide)=>`/guides/${guide.slug}`)");
+    expect(sitemapSource).toContain("...INDEXABLE_GUIDES.map((guide)=>`/guides/${guide.slug}`)");
+    expect(sitemapSource).toContain("Object.values(ALL_GUIDES).filter(isSupportingGuideIndexable)");
   });
 });
