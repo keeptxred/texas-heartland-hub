@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SUPPORTING_GUIDES } from "@/data/all-guides";
+import { ALL_GUIDES } from "@/data/all-guides";
 import { isSupportingGuideIndexable } from "@/lib/supporting-guide-indexability";
 
 const FLAGSHIP_GUIDE_SLUGS = [
@@ -10,8 +10,8 @@ const FLAGSHIP_GUIDE_SLUGS = [
 
 describe("AdSense flagship pillar guide link readiness", () => {
   it.each(FLAGSHIP_GUIDE_SLUGS)("keeps hard-coded pillar target %s index-ready", (slug) => {
-    const guide = SUPPORTING_GUIDES[slug];
-    expect(guide, `${slug}: missing supporting-guide content`).toBeDefined();
+    const guide = ALL_GUIDES[slug];
+    expect(guide, `${slug}: missing guide content`).toBeDefined();
     expect(isSupportingGuideIndexable(guide), `${slug}: hard-coded pillar link points at an unready guide`).toBe(true);
   });
 });
