@@ -5,13 +5,18 @@ import { RelatedAuthorityContent } from "@/components/authority/RelatedAuthority
 import { getRelatedAuthorityContent } from "@/lib/authority-relationships";
 import { isStaticArticleIndexable } from "@/lib/static-article-indexability";
 import { isGovernmentEntityIndexable } from "@/lib/government-entity-indexability";
-import { GOVERNMENT_ENTITIES, GOVERNMENT_REVIEWED_AT, getGovernmentEntity, governmentJsonLd, governmentPath, SITE_URL, type GovernmentLink } from "@/lib/texas-government";
+import { upgradeGovernmentEntity } from "@/lib/government-entity-upgrades";
+import { GOVERNMENT_REVIEWED_AT, getGovernmentEntity, governmentJsonLd, governmentPath, SITE_URL, type GovernmentLink } from "@/lib/texas-government";
 
 export const Route = createFileRoute("/texas-government/$entitySlug")({
   loader: async ({ params }) => {
-    const entity = getGovernmentEntity(params.entitySlug);
-    if (!entity) throw notFound();
-    const relatedEntities = entity.relatedEntities.map(getGovernmentEntity).filter(Boolean);
+    const baseEntity = getGovernmentEntity(params.entitySlug);
+    if (!baseEntity) throw notFound();
+    const entity = upgradeGovernmentEntity(baseEntity);
+    const relatedEntities = entity.relatedEntities
+      .map(getGovernmentEntity)
+      .filter(Boolean)
+      .map((related) => upgradeGovernmentEntity(related!));
     const terms = [...entity.newsKeywords, entity.name, entity.shortName].map((value) => value.toLowerCase());
     const news = ARTICLES.filter((article: any) => isPublished(article) && isStaticArticleIndexable(article))
       .filter((article: any) => {
