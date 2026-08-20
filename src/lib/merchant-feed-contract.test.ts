@@ -9,6 +9,14 @@ const feed = readFileSync("src/routes/google-merchant-feed[.]xml.ts", "utf8");
 const robots = readFileSync("src/routes/robots[.]txt.ts", "utf8");
 
 describe("Google Merchant feed contract", () => {
+  it("provides complete US shipping data for every USD offer", () => {
+    expect(feed).toContain("const STANDARD_SHIPPING_PRICE_USD = 6.99;");
+    expect(feed).toContain("<g:shipping>");
+    expect(feed).toContain("<g:country>US</g:country>");
+    expect(feed).toContain("<g:service>Standard</g:service>");
+    expect(feed).toContain("<g:price>${STANDARD_SHIPPING_PRICE_USD.toFixed(2)} USD</g:price>");
+  });
+
   it("matches the checkout rule that shipping is free only above $35", () => {
     expect(FREE_SHIPPING_THRESHOLD_CENTS).toBe(3500);
     expect(qualifiesForFreeShipping(3500)).toBe(false);
