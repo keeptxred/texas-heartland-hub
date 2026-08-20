@@ -9,6 +9,7 @@ const XML_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
 const BRAND = "Keep TX Red";
 const TITLE_LIMIT = 150;
 const DESCRIPTION_LIMIT = 5000;
+const STANDARD_SHIPPING_PRICE_USD = 6.99;
 const FREE_SHIPPING_THRESHOLD_USD = 35;
 
 type VariantOption = {
@@ -249,6 +250,7 @@ function renderItem(item: MerchantItem): string {
     item.apparel ? "      <g:gender>unisex</g:gender>" : "",
     item.apparel && item.size ? "      <g:size_system>US</g:size_system>" : "",
     item.category ? `      <g:google_product_category>${escapeXml(item.category)}</g:google_product_category>` : "",
+    item.currency.toUpperCase() === "USD" ? `      <g:shipping>\n        <g:country>US</g:country>\n        <g:service>Standard</g:service>\n        <g:price>${STANDARD_SHIPPING_PRICE_USD.toFixed(2)} USD</g:price>\n      </g:shipping>` : "",
     item.currency.toUpperCase() === "USD" ? `      <g:free_shipping_threshold>\n        <g:country>US</g:country>\n        <g:price_threshold>${FREE_SHIPPING_THRESHOLD_USD.toFixed(2)} USD</g:price_threshold>\n      </g:free_shipping_threshold>` : "",
   ].filter(Boolean).join("\n");
 
