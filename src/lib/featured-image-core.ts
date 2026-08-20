@@ -19,10 +19,10 @@ export type VisionVerdict = { matches: boolean; photorealistic: boolean; reason:
 const MILITARY_HONORS_RE = /\b(purple heart|medal of honor|military honor(?:s)?|military award(?:s)?|service member(?:s)?|servicemember(?:s)?|fallen (?:service member|servicemember|soldier|marine|airman|sailor|troop|hero)(?:s)?|memorial day|veterans day|veteran(?:s)?|remembrance|military remembrance|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia)\b/i;
 
 const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
-  ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine)\b/i],
+  ["wildlife", /\b(jellyfish|shark|whale|dolphin|bird|fish|species|wildlife|reef|coral|deer|coyote|snake|alligator|manatee|turtle|habitat|ecosystem|marine|hunting|hunter(?:s)?|fishing|angler(?:s)?)\b/i],
   ["weather", /\b(hurricane|tornado|flood|drought|storm|heat wave|freeze|blizzard|wildfire|rainfall|weather)\b/i],
-  ["energy", /\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig)\b/i],
-  ["sports", /\b(cowboys|texans|rangers|astros|mavericks|spurs|rockets|stars|nfl|nba|mlb|football|basketball|baseball|playoff|cross country|track(?: and field)?|athletics?|athlete|runner|running|punter|punting|kicker|kicking|special teams|watch list|championship|tournament|meet)\b/i],
+  ["energy", /\b(oil|gas|permian|pipeline|refinery|ercot|grid|wind farm|solar farm|drilling|rig|data center(?:s)?)\b/i],
+  ["sports", /\b(dallas cowboys|houston texans|houston astros|dallas mavericks|san antonio spurs|houston rockets|dallas stars|nfl|nba|mlb|mls|football|basketball|baseball|soccer|playoff|cross country|track(?: and field)?|athletics?|athlete|runner|running|punter|punting|kicker|kicking|special teams|watch list|championship|tournament|meet)\b/i],
   ["military", /\b(purple heart|medal of honor|military|army|navy|air force|airman|marines?|marine corps|coast guard|soldier|sailor|troop|veteran(?:s)?|service member(?:s)?|servicemember(?:s)?|armed forces|military honor(?:s)?|military award(?:s)?|remembrance|memorial|wounded warrior(?:s)?|combat wounded|killed in action|missing in action|pow|mia|fort cavazos)\b/i],
   ["education", /\b(school|isd|university|college|teacher|classroom|student|curriculum)\b/i],
   ["health", /\b(hospital|clinic|doctor|nurse|patient|disease|virus|outbreak|medicaid|healthcare)\b/i],
@@ -30,23 +30,48 @@ const DOMAIN_KEYWORDS: Array<[Domain, RegExp]> = [
   ["housing", /\b(housing|rent|home price|real estate|apartment|homebuyer|mortgage|property tax|appraisal)\b/i],
   ["border", /\b(border|migrant|immigration|cartel|rio grande|asylum)\b/i],
   ["business", /\b(company|corporation|factory|manufacturing|semiconductor|investment|economy|jobs|hiring)\b/i],
-  ["legal", /\b(court|courthouse|judge|justice|lawsuit|ruling|appeal|appellate|injunction|litigation|plaintiff|defendant|judicial|legal challenge|supreme court|court of appeals)\b/i],
+  ["legal", /\b(court|courthouse|judge|justice|lawsuit|sues?|suing|ruling|appeal|appellate|injunction|litigation|plaintiff|defendant|judicial|legal challenge|supreme court|court of appeals|acquit(?:s|ted|tal)?|extradition|custody|parental rights|surrogacy|fraud case|criminal charges?)\b/i],
   ["politics", /\b(governor|senator|representative|legislature|capitol|abbott|patrick|paxton|cruz|cornyn|bill|law|policy|election|ballot)\b/i],
   ["culture", /\b(rodeo|barbecue|music|festival|art|museum|heritage|cultural)\b/i],
 ];
 
-export function inferDomain(text: string): Domain {
-  for (const [domain, re] of DOMAIN_KEYWORDS) if (re.test(text)) return domain;
+const VISUAL_DOMAIN_PRIORITY: Domain[] = [
+  "sports", "transportation", "energy", "border", "weather", "wildlife",
+  "health", "housing", "business", "education", "legal", "military",
+  "culture", "politics",
+];
+
+function matchedDomains(text: string): Set<Domain> {
+  const matches = new Set<Domain>();
+  for (const [domain, re] of DOMAIN_KEYWORDS) if (re.test(text)) matches.add(domain);
+  return matches;
+}
+
+function chooseVisualDomain(text: string): Domain {
+  const matches = matchedDomains(text);
+  if (matches.size === 0) return "general";
+
+  // Multi-topic governor/legislative agenda stories are policy stories, not a
+  // sports/classroom/energy image merely because one agenda item contains a
+  // domain keyword. Three or more competing domains plus politics is a strong
+  // signal that the visual should remain a neutral government/policy scene.
+  if (matches.has("politics") && matches.size >= 3) return "politics";
+
+  for (const domain of VISUAL_DOMAIN_PRIORITY) if (matches.has(domain)) return domain;
   return "general";
 }
 
+export function inferDomain(text: string): Domain {
+  return chooseVisualDomain(text);
+}
+
 export function inferArticleImageDomain(primaryText: string, fallbackText: string): Domain {
-  const primary = inferDomain(primaryText);
-  return primary !== "general" ? primary : inferDomain(fallbackText);
+  const primary = chooseVisualDomain(primaryText);
+  return primary !== "general" ? primary : chooseVisualDomain(fallbackText);
 }
 
 const DOMAIN_STEER: Record<Domain, string> = {
-  wildlife: "the actual named animal or species in its natural habitat",
+  wildlife: "the actual named animal or species in its natural habitat; when no species is named, use a believable Texas wildlife habitat, refuge, fishing water, or hunting-access landscape instead of inventing an animal",
   weather: "the actual weather event affecting a recognizable Texas landscape",
   energy: "the actual Texas energy infrastructure described in the story",
   sports: "the actual sport named in the story, photographed during believable athletic action or practice in a real outdoor course, track, field, stadium, or competition setting",
