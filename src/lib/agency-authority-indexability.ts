@@ -1,4 +1,5 @@
 import type { AgencyAuthorityProfile } from "@/data/agency-authority";
+import { upgradeAgencyAuthorityProfile } from "@/data/agency-authority-upgrades";
 
 export const MIN_AGENCY_AUTHORITY_WORDS = 700;
 
@@ -6,26 +7,32 @@ function words(value: string) {
   return value.trim().split(/\s+/).filter(Boolean).length;
 }
 
+function effectiveProfile(profile: AgencyAuthorityProfile) {
+  return profile.reviewed === "2026-08-20" ? profile : upgradeAgencyAuthorityProfile(profile);
+}
+
 export function agencyAuthorityWordCount(profile: AgencyAuthorityProfile) {
+  const effective = effectiveProfile(profile);
   return words([
-    profile.name,
-    profile.dek,
-    profile.quickAnswer,
-    profile.authority,
-    ...profile.responsibilities,
-    ...profile.notResponsibleFor,
-    ...profile.accountability,
-    ...profile.programs,
-    ...profile.sources.map((source) => source.label),
+    effective.name,
+    effective.dek,
+    effective.quickAnswer,
+    effective.authority,
+    ...effective.responsibilities,
+    ...effective.notResponsibleFor,
+    ...effective.accountability,
+    ...effective.programs,
+    ...effective.sources.map((source) => source.label),
   ].join(" "));
 }
 
 export function isAgencyAuthorityIndexable(profile: AgencyAuthorityProfile | null | undefined): profile is AgencyAuthorityProfile {
-  return Boolean(profile)
-    && agencyAuthorityWordCount(profile!) >= MIN_AGENCY_AUTHORITY_WORDS
-    && profile!.sources.length >= 3
-    && profile!.sources.filter((source) => source.primary).length >= 2
-    && profile!.responsibilities.length >= 4
-    && profile!.notResponsibleFor.length >= 3
-    && profile!.accountability.length >= 3;
+  if (!profile) return false;
+  const effective = effectiveProfile(profile);
+  return agencyAuthorityWordCount(effective) >= MIN_AGENCY_AUTHORITY_WORDS
+    && effective.sources.length >= 3
+    && effective.sources.filter((source) => source.primary).length >= 2
+    && effective.responsibilities.length >= 4
+    && effective.notResponsibleFor.length >= 3
+    && effective.accountability.length >= 3;
 }
