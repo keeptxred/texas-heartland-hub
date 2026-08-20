@@ -47,6 +47,11 @@ function hasMeaningfulText(value: string | null | undefined, minimum = 80): bool
   return String(value ?? '').trim().length >= minimum;
 }
 
+function isSitemapWorthySubjectSlug(slug: string): boolean {
+  const taxonomyCodeCount = (String(slug ?? '').match(/-[a-z][0-9a-z]{4}(?=-|$)/gi) ?? []).length;
+  return taxonomyCodeCount <= 1;
+}
+
 /**
  * Sitemaps are crawl invitations, not a complete database export. Keep every valid
  * bill route available, but explicitly advertise bills that have at least two
@@ -182,7 +187,9 @@ export async function billSitemapEntries(): Promise<UrlEntry[]> {
   const linkedSubjectIds = new Set(
     subjectRelationshipRows.map((row) => String(row.subject_id ?? '')).filter(Boolean),
   );
-  const sitemapSubjects = subjectRows.filter((subject) => linkedSubjectIds.has(subject.id));
+  const sitemapSubjects = subjectRows.filter(
+    (subject) => linkedSubjectIds.has(subject.id) && isSitemapWorthySubjectSlug(subject.slug),
+  );
   const evidence = {
     actions: idSet(actionRows),
     sponsors: idSet(sponsorRows),
