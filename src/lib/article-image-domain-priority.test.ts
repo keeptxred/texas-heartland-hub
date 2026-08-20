@@ -38,7 +38,8 @@ describe("article image domain priority", () => {
   });
 });
 
-
+// These cases are taken directly from recent production failures where the old
+// first-match router sent a valid news story to an unrelated visual category.
 describe("production regression image routing", () => {
   it("does not mistake ordinary Texans or property-tax coverage for sports", () => {
     expect(inferArticleImageDomain(
