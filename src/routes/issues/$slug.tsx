@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { issueGuideBySlug, type IssueGuide } from "@/data/issue-guides";
 import { relatedPolicyTrackersForIssueGuide } from "@/lib/issue-policy-links";
+import { isIssueGuideIndexable } from "@/lib/issue-guide-indexability";
 
 const SITE_URL = "https://keeptxred.com";
 
@@ -92,10 +93,14 @@ export const Route = createFileRoute("/issues/$slug")({
     const title = `${guide.title} | Keep TX Red`;
     const description = guide.dek;
     const pageUrl = `${SITE_URL}/issues/${guide.slug}`;
+    const robots = isIssueGuideIndexable(guide)
+      ? "index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"
+      : "noindex,follow";
     return {
       meta: [
         { title },
         { name: "description", content: description },
+        { name: "robots", content: robots },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "article" },
