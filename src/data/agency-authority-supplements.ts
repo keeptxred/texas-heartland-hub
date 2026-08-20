@@ -15,6 +15,9 @@ export const AGENCY_AUTHORITY_SUPPLEMENTS: Record<string, string[]> = {
   "texas-commission-environmental-quality": [
     "TCEQ accountability is easiest to evaluate by separating rulemaking, permitting, compliance monitoring and enforcement. The commission adopts statewide environmental rules under authority granted by statute, while agency staff review permit applications, inspect regulated facilities, investigate complaints and pursue administrative enforcement when requirements are violated. Many major permit and rule proceedings also include public notice, comment or hearing procedures, creating a record that lets readers distinguish the agency's technical findings from the policy choices made by commissioners or lawmakers. Looking at permit conditions, inspection history, enforcement orders, penalty amounts and public participation records provides a more concrete measure of performance than treating every environmental dispute as though TCEQ alone controls the underlying statute or local land-use decision.",
   ],
+  "health-human-services-commission": [
+    "HHSC accountability spans both direct program administration and oversight of a very large contractor and provider network. Medicaid eligibility, managed-care contracts, procurement, provider enrollment, licensing, inspections, complaint handling and benefit timeliness each create different public records and performance measures. Legislative appropriations and federal requirements set major constraints, while HHSC still makes administrative decisions about contracts, rules, service delivery and enforcement. Evaluating those records separately helps distinguish a statutory benefit change from an agency processing backlog, a managed-care performance problem or a provider-level compliance failure.",
+  ],
 };
 
 export function getAgencyAuthoritySupplement(slug: string) {
